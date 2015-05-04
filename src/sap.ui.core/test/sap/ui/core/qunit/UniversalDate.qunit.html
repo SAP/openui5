@@ -26,7 +26,9 @@
 	<script language="javascript">
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.core.date.UniversalDate");
-		jQuery.sap.require("sap.ui.core.date.IslamicDate");
+		jQuery.sap.require("sap.ui.core.date.Gregorian");
+		jQuery.sap.require("sap.ui.core.date.Islamic");
+		jQuery.sap.require("sap.ui.core.date.Japanese");
 
 		//next values must not overlap each other!
 		var year = 1400,
@@ -76,17 +78,6 @@
 			equal(this.dateSpy.firstCall.args[0], 1000, "Wrapped date must be instantiated with singe argument with particular value");
 		});
 
-		test("without 'new' keyword", function () {
-			this.dateSpy.restore();
-			this.dateSpy = this.sandbox.stub(window, 'Date').returns({
-				toString: function () {
-					return "some fake date info";
-				}
-			});
-			var oUniversalDate = sap.ui.core.date.UniversalDate();
-			equal(oUniversalDate, oUniversalDate.toString(), "When no 'new' keyword is used, the constructor must return a string corresponding to the current date");
-		});
-
 		test("with all 7 parameters", function () {
 			new sap.ui.core.date.UniversalDate(year, month, date, hours, minutes, seconds, milliseconds);
 			check.call(this, 7);
@@ -117,13 +108,57 @@
 			check.call(this, 2);
 		});
 
+		test("getClass", function() {
+			var oClass;
+			
+			oClass = sap.ui.core.date.UniversalDate.getClass(sap.ui.core.CalendarType.Gregorian);
+			equal(oClass, sap.ui.core.date.Gregorian, "getClass returns correct class object");
+
+			oClass = sap.ui.core.date.UniversalDate.getClass(sap.ui.core.CalendarType.Islamic);
+			equal(oClass, sap.ui.core.date.Islamic, "getClass returns correct class object");
+
+			oClass = sap.ui.core.date.UniversalDate.getClass(sap.ui.core.CalendarType.Japanese);
+			equal(oClass, sap.ui.core.date.Japanese, "getClass returns correct class object");
+		});
+		
+		test("getInstance", function() {
+			var oDate, oJSDate = new Date();
+			
+			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Gregorian);
+			ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
+
+			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Islamic);
+			ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
+
+			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Japanese);
+			ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
+		});
+		
+		test("determineType with Gregorian calendar", function () {
+			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Gregorian);
+			var spy = this.sandbox.spy(sap.ui.core.date, 'Gregorian');
+			var oUniversalDate = new sap.ui.core.date.UniversalDate();
+			ok(1, spy.callCount, "sap.ui.core.date.Gregorian must be instantiated just ones");
+			ok(oUniversalDate instanceof sap.ui.core.date.Gregorian, "Date object must be instance of Gregorian");
+			equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "Universal date must report correct calendarType");
+		});
 
 		test("determineType with Islamic calendar", function () {
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Islamic);
-			var stub = this.sandbox.stub(sap.ui.core.date, 'IslamicDate');
+			var spy = this.sandbox.spy(sap.ui.core.date, 'Islamic');
 			var oUniversalDate = new sap.ui.core.date.UniversalDate();
-			ok(1, stub.callCount, "sap.ui.core.date.IslamicDate must be instantiated just ones");
+			ok(1, spy.callCount, "sap.ui.core.date.Islamic must be instantiated just ones");
+			ok(oUniversalDate instanceof sap.ui.core.date.Islamic, "Date object must be instance of Islamic");
 			equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Islamic, "Universal date must report correct calendarType");
+		});
+
+		test("determineType with Japanese calendar", function () {
+			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Japanese);
+			var spy = this.sandbox.spy(sap.ui.core.date, 'Japanese');
+			var oUniversalDate = new sap.ui.core.date.UniversalDate();
+			ok(1, spy.callCount, "sap.ui.core.date.Japanese must be instantiated just ones");
+			ok(oUniversalDate instanceof sap.ui.core.date.Japanese, "Date object must be instance of Japanese");
+			equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Japanese, "Universal date must report correct calendarType");
 		});
 
 		test("Method calls are forwarded to the inner instance", function () {
@@ -138,27 +173,17 @@
 					result,
 					aMethodCallArg = [10, 11];
 
-			var aMethods = [{name: "getFullYear"}, {name: "getYear"}, {name: "getMonth"}, {name: "getDate"}, {name: "getDay"}, {name: "getHours"}, {name: "getMinutes"}, {name: "getSeconds"}, {name: "getMilliseconds"}, {name: "getTime"}, {name: "valueOf"}, {name: "getTimezoneOffset"},
-				{name: "getUTCFullYear"}, {name: "getUTCMonth"}, {name: "getUTCDate"}, {name: "getUTCDay"}, {name: "getUTCHours"}, {name: "getUTCMinutes"}, {name: "getUTCSeconds"}, {name: "getUTCMilliseconds"}, {name: "toString"}, {name: "toDateString"}, {name: "toGMTString"},
-				{name: "toISOString"}, {name: "toJSON"}, {name: "toTimeString"}, {name: "toUTCString"},
-				{name: "setFullYear", hasArgs: true},
-				{name: "setYear", hasArgs: true},
-				{name: "setDate", hasArgs: true},
-				{name: "setMonth", hasArgs: true},
-				{name: "setHours", hasArgs: true},
-				{name: "setMinutes", hasArgs: true},
-				{name: "setSeconds", hasArgs: true},
-				{name: "setMilliseconds", hasArgs: true},
-				{name: "setUTCFullYear", hasArgs: true},
-				{name: "setUTCDate", hasArgs: true},
-				{name: "setUTCMonth", hasArgs: true},
-				{name: "setUTCHours", hasArgs: true},
-				{name: "setUTCMinutes", hasArgs: true},
-				{name: "setUTCSeconds", hasArgs: true},
-				{name: "setUTCMilliseconds", hasArgs: true},
-				{name: "toLocaleDateString", hasArgs: true},
-				{name: "toLocaleString", hasArgs: true},
-				{name: "toLocaleTimeString", hasArgs: true}
+			var aMethods = [
+			    {name: "getFullYear"}, {name: "getYear"}, {name: "getMonth"}, {name: "getDate"}, 
+			    {name: "getDay"}, {name: "getHours"}, {name: "getMinutes"}, {name: "getSeconds"}, {name: "getMilliseconds"}, 
+				{name: "getUTCFullYear"}, {name: "getUTCMonth"}, {name: "getUTCDate"}, {name: "getUTCDay"}, 
+				{name: "getUTCHours"}, {name: "getUTCMinutes"}, {name: "getUTCSeconds"}, {name: "getUTCMilliseconds"}, 
+				{name: "setFullYear", hasArgs: true}, {name: "setYear", hasArgs: true}, {name: "setDate", hasArgs: true},
+				{name: "setMonth", hasArgs: true}, {name: "setHours", hasArgs: true}, {name: "setMinutes", hasArgs: true},
+				{name: "setSeconds", hasArgs: true}, {name: "setMilliseconds", hasArgs: true}, {name: "setUTCFullYear", hasArgs: true},
+				{name: "setUTCDate", hasArgs: true}, {name: "setUTCMonth", hasArgs: true}, {name: "setUTCHours", hasArgs: true},
+				{name: "setUTCMinutes", hasArgs: true}, {name: "setUTCSeconds", hasArgs: true}, {name: "setUTCMilliseconds", hasArgs: true},
+			    {name: "getTime"}, {name: "valueOf"}, {name: "getTimezoneOffset"}, {name: "toString"}
 			];
 
 			var oMockDate = null;
@@ -197,8 +222,7 @@
 			this.dateSpy.restore();
 			var aStaticMethods = [
 						{name: "UTC", hasArgs: true},
-						{name: "now"},
-						{name: "parse"}],
+						{name: "now"}],
 					returnValue = 111,
 					sMethodName,
 					oDateConstructorStub,

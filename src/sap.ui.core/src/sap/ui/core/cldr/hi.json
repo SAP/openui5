@@ -1712,6 +1712,301 @@
 			"0": "AH"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "G EEEE, d MMMM y",
+		"dateFormat-long": "G d MMMM y",
+		"dateFormat-medium": "G d MMM y",
+		"dateFormat-short": "G d/M/y",
+		"timeFormat-full": "h:mm:ss a zzzz",
+		"timeFormat-long": "h:mm:ss a z",
+		"timeFormat-medium": "h:mm:ss a",
+		"timeFormat-short": "h:mm a",
+		"dateTimeFormat-full": "{1} को {0}",
+		"dateTimeFormat-long": "{1} को {0}",
+		"dateTimeFormat-medium": "{1}, {0}",
+		"dateTimeFormat-short": "{1}, {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "HH–HH",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "HH–HH v",
+		"intervalFormat-M-M": "M–M",
+		"intervalFormat-Md-d": "d/M – d/M",
+		"intervalFormat-Md-M": "d/M – d/M",
+		"intervalFormat-MEd-d": "E, d/M – E, d/M",
+		"intervalFormat-MEd-M": "E, d/M – E, d/M",
+		"intervalFormat-MMM-M": "MMM–MMM",
+		"intervalFormat-MMMd-d": "d–d MMM",
+		"intervalFormat-MMMd-M": "d MMM – d MMM",
+		"intervalFormat-MMMEd-d": "E, d MMM – E, d MMM",
+		"intervalFormat-MMMEd-M": "E, d MMM – E, d MMM",
+		"intervalFormat-y-y": "y–y G",
+		"intervalFormat-yM-M": "M/y – M/y G",
+		"intervalFormat-yM-y": "M/y – M/y G",
+		"intervalFormat-yMd-d": "d/M/y – d/M/y G",
+		"intervalFormat-yMd-M": "d/M/y – d/M/y G",
+		"intervalFormat-yMd-y": "d/M/y – d/M/y G",
+		"intervalFormat-yMEd-d": "E, d/M/y – E, d/M/y G",
+		"intervalFormat-yMEd-M": "E, d/M/y – E, d/M/y G",
+		"intervalFormat-yMEd-y": "E, d/M/y – E, d/M/y G",
+		"intervalFormat-yMMM-M": "MMM–MMM y G",
+		"intervalFormat-yMMM-y": "MMM y – MMM y G",
+		"intervalFormat-yMMMd-d": "d – d MMM y G",
+		"intervalFormat-yMMMd-M": "d MMM – d MMM y G",
+		"intervalFormat-yMMMd-y": "d MMM y – d MMM y G",
+		"intervalFormat-yMMMEd-d": "E, d MMM – E, d MMM y G",
+		"intervalFormat-yMMMEd-M": "E, d MMM – E, d MMM y G",
+		"intervalFormat-yMMMEd-y": "E, d MMM y – E, d MMM y G",
+		"intervalFormat-yMMMM-M": "MMMM–MMMM y G",
+		"intervalFormat-yMMMM-y": "MMMM y – MMMM y G",
+		"months-format-abbreviated": [
+			"जन॰",
+			"फ़र॰",
+			"मार्च",
+			"अप्रैल",
+			"मई",
+			"जून",
+			"जुल॰",
+			"अग॰",
+			"सित॰",
+			"अक्तू॰",
+			"नव॰",
+			"दिस॰"
+		],
+		"months-format-narrow": [
+			"ज",
+			"फ़",
+			"मा",
+			"अ",
+			"म",
+			"जू",
+			"जु",
+			"अ",
+			"सि",
+			"अ",
+			"न",
+			"दि"
+		],
+		"months-format-wide": [
+			"जनवरी",
+			"फ़रवरी",
+			"मार्च",
+			"अप्रैल",
+			"मई",
+			"जून",
+			"जुलाई",
+			"अगस्त",
+			"सितंबर",
+			"अक्तूबर",
+			"नवंबर",
+			"दिसंबर"
+		],
+		"months-standAlone-abbreviated": [
+			"जन॰",
+			"फ़र॰",
+			"मार्च",
+			"अप्रैल",
+			"मई",
+			"जून",
+			"जुल॰",
+			"अग॰",
+			"सित॰",
+			"अक्तू॰",
+			"नव॰",
+			"दिस॰"
+		],
+		"months-standAlone-narrow": [
+			"ज",
+			"फ़",
+			"मा",
+			"अ",
+			"म",
+			"जू",
+			"जु",
+			"अ",
+			"सि",
+			"अ",
+			"न",
+			"दि"
+		],
+		"months-standAlone-wide": [
+			"जनवरी",
+			"फ़रवरी",
+			"मार्च",
+			"अप्रैल",
+			"मई",
+			"जून",
+			"जुलाई",
+			"अगस्त",
+			"सितंबर",
+			"अक्तूबर",
+			"नवंबर",
+			"दिसंबर"
+		],
+		"days-format-abbreviated": [
+			"रवि",
+			"सोम",
+			"मंगल",
+			"बुध",
+			"गुरु",
+			"शुक्र",
+			"शनि"
+		],
+		"days-format-narrow": [
+			"र",
+			"सो",
+			"मं",
+			"बु",
+			"गु",
+			"शु",
+			"श"
+		],
+		"days-format-short": [
+			"र",
+			"सो",
+			"मं",
+			"बु",
+			"गु",
+			"शु",
+			"श"
+		],
+		"days-format-wide": [
+			"रविवार",
+			"सोमवार",
+			"मंगलवार",
+			"बुधवार",
+			"गुरुवार",
+			"शुक्रवार",
+			"शनिवार"
+		],
+		"days-standAlone-abbreviated": [
+			"रवि",
+			"सोम",
+			"मंगल",
+			"बुध",
+			"गुरु",
+			"शुक्र",
+			"शनि"
+		],
+		"days-standAlone-narrow": [
+			"र",
+			"सो",
+			"मं",
+			"बु",
+			"गु",
+			"शु",
+			"श"
+		],
+		"days-standAlone-short": [
+			"र",
+			"सो",
+			"मं",
+			"बु",
+			"गु",
+			"शु",
+			"श"
+		],
+		"days-standAlone-wide": [
+			"रविवार",
+			"सोमवार",
+			"मंगलवार",
+			"बुधवार",
+			"गुरुवार",
+			"शुक्रवार",
+			"शनिवार"
+		],
+		"quarters-format-abbreviated": [
+			"ति1",
+			"ति2",
+			"ति3",
+			"ति4"
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"पहली तिमाही",
+			"दूसरी तिमाही",
+			"तीसरी तिमाही",
+			"चौथी तिमाही"
+		],
+		"quarters-standAlone-abbreviated": [
+			"ति1",
+			"ति2",
+			"ति3",
+			"ति4"
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"पहली तिमाही",
+			"दूसरी तिमाही",
+			"तीसरी तिमाही",
+			"चौथी तिमाही"
+		],
+		"dayPeriods-format-abbreviated": [
+			"पूर्व",
+			"अपर"
+		],
+		"dayPeriods-format-narrow": [
+			"पू",
+			"अ"
+		],
+		"dayPeriods-format-wide": [
+			"पूर्वाह्न",
+			"अपराह्न"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"पूर्व",
+			"अपर"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"पू",
+			"अ"
+		],
+		"dayPeriods-standAlone-wide": [
+			"पूर्वाह्न",
+			"अपराह्न"
+		],
+		"era-wide": {
+			"232": "मेजी",
+			"233": "ताईशो",
+			"234": "शोवा",
+			"235": "हेईसेई"
+		},
+		"era-abbreviated": {
+			"232": "मेजी",
+			"233": "ताईशो",
+			"234": "शोवा",
+			"235": "हेईसेई"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "वर्ष",
 	"dateField-year-relative--1": "पिछला वर्ष",
 	"dateField-year-relative-0": "इस वर्ष",
@@ -1932,5 +2227,32 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 0,
 	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	},
 	"calendarPreference": "gregorian indian"
 }

@@ -1730,6 +1730,301 @@
 			"0": "AH"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "y MMMM d G, EEEE",
+		"dateFormat-long": "y MMMM d G",
+		"dateFormat-medium": "y MMM d G",
+		"dateFormat-short": "y-MM-dd G",
+		"timeFormat-full": "HH:mm:ss zzzz",
+		"timeFormat-long": "HH:mm:ss z",
+		"timeFormat-medium": "HH:mm:ss",
+		"timeFormat-short": "HH:mm",
+		"dateTimeFormat-full": "{1} {0}",
+		"dateTimeFormat-long": "{1} {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a–h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "HH–HH",
+		"intervalFormat-hm-a": "hh:mm a–hh:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "hh:mm a–hh:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "h a–h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "HH–HH v",
+		"intervalFormat-M-M": "M–M",
+		"intervalFormat-Md-d": "MM-dd–MM-dd",
+		"intervalFormat-Md-M": "MM-dd–MM-dd",
+		"intervalFormat-MEd-d": "MM-dd, E – MM-dd, E",
+		"intervalFormat-MEd-M": "MM-dd, E – MM-dd, E",
+		"intervalFormat-MMM-M": "MMM–MMM",
+		"intervalFormat-MMMd-d": "MMM d–d",
+		"intervalFormat-MMMd-M": "MMM d–MMM d",
+		"intervalFormat-MMMEd-d": "MMM d, E – MMM d, E",
+		"intervalFormat-MMMEd-M": "MMM d, E – MMM d, E",
+		"intervalFormat-y-y": "y–y G",
+		"intervalFormat-yM-M": "y-MM – y-MM G",
+		"intervalFormat-yM-y": "y-MM – y-MM G",
+		"intervalFormat-yMd-d": "y-MM-dd–y-MM-dd G",
+		"intervalFormat-yMd-M": "y-MM-dd– y-MM-dd G",
+		"intervalFormat-yMd-y": "y-MM-dd – y-MM-dd G",
+		"intervalFormat-yMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
+		"intervalFormat-yMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
+		"intervalFormat-yMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
+		"intervalFormat-yMMM-M": "y MMM–MMM G",
+		"intervalFormat-yMMM-y": "y-MM – y-MM G",
+		"intervalFormat-yMMMd-d": "y 'm'. MMM d 'd'.–d 'd'. G",
+		"intervalFormat-yMMMd-M": "y-MM-dd – MM-d G",
+		"intervalFormat-yMMMd-y": "y-MM-dd – y-MM-dd G",
+		"intervalFormat-yMMMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
+		"intervalFormat-yMMMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
+		"intervalFormat-yMMMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
+		"intervalFormat-yMMMM-M": "y LLLL – y LLLL G",
+		"intervalFormat-yMMMM-y": "y LLLL – y LLLL G",
+		"months-format-abbreviated": [
+			"saus.",
+			"vas.",
+			"kov.",
+			"bal.",
+			"geg.",
+			"birž.",
+			"liep.",
+			"rugp.",
+			"rugs.",
+			"spal.",
+			"lapkr.",
+			"gruod."
+		],
+		"months-format-narrow": [
+			"S",
+			"V",
+			"K",
+			"B",
+			"G",
+			"B",
+			"L",
+			"R",
+			"R",
+			"S",
+			"L",
+			"G"
+		],
+		"months-format-wide": [
+			"sausio",
+			"vasario",
+			"kovo",
+			"balandžio",
+			"gegužės",
+			"birželio",
+			"liepos",
+			"rugpjūčio",
+			"rugsėjo",
+			"spalio",
+			"lapkričio",
+			"gruodžio"
+		],
+		"months-standAlone-abbreviated": [
+			"saus.",
+			"vas.",
+			"kov.",
+			"bal.",
+			"geg.",
+			"birž.",
+			"liep.",
+			"rugp.",
+			"rugs.",
+			"spal.",
+			"lapkr.",
+			"gruod."
+		],
+		"months-standAlone-narrow": [
+			"S",
+			"V",
+			"K",
+			"B",
+			"G",
+			"B",
+			"L",
+			"R",
+			"R",
+			"S",
+			"L",
+			"G"
+		],
+		"months-standAlone-wide": [
+			"sausis",
+			"vasaris",
+			"kovas",
+			"balandis",
+			"gegužė",
+			"birželis",
+			"liepa",
+			"rugpjūtis",
+			"rugsėjis",
+			"spalis",
+			"lapkritis",
+			"gruodis"
+		],
+		"days-format-abbreviated": [
+			"sk",
+			"pr",
+			"an",
+			"tr",
+			"kt",
+			"pn",
+			"št"
+		],
+		"days-format-narrow": [
+			"S",
+			"P",
+			"A",
+			"T",
+			"K",
+			"P",
+			"Š"
+		],
+		"days-format-short": [
+			"Sk",
+			"Pr",
+			"An",
+			"Tr",
+			"Kt",
+			"Pn",
+			"Št"
+		],
+		"days-format-wide": [
+			"sekmadienis",
+			"pirmadienis",
+			"antradienis",
+			"trečiadienis",
+			"ketvirtadienis",
+			"penktadienis",
+			"šeštadienis"
+		],
+		"days-standAlone-abbreviated": [
+			"sk",
+			"pr",
+			"an",
+			"tr",
+			"kt",
+			"pn",
+			"št"
+		],
+		"days-standAlone-narrow": [
+			"S",
+			"P",
+			"A",
+			"T",
+			"K",
+			"P",
+			"Š"
+		],
+		"days-standAlone-short": [
+			"Sk",
+			"Pr",
+			"An",
+			"Tr",
+			"Kt",
+			"Pn",
+			"Št"
+		],
+		"days-standAlone-wide": [
+			"sekmadienis",
+			"pirmadienis",
+			"antradienis",
+			"trečiadienis",
+			"ketvirtadienis",
+			"penktadienis",
+			"šeštadienis"
+		],
+		"quarters-format-abbreviated": [
+			"I k.",
+			"II k.",
+			"III k.",
+			"IV k."
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"I ketvirtis",
+			"II ketvirtis",
+			"III ketvirtis",
+			"IV ketvirtis"
+		],
+		"quarters-standAlone-abbreviated": [
+			"I ketv.",
+			"II ketv.",
+			"III ketv.",
+			"IV ketv."
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"I ketvirtis",
+			"II ketvirtis",
+			"III ketvirtis",
+			"IV ketvirtis"
+		],
+		"dayPeriods-format-abbreviated": [
+			"priešpiet",
+			"popiet"
+		],
+		"dayPeriods-format-narrow": [
+			"pr. p.",
+			"pop."
+		],
+		"dayPeriods-format-wide": [
+			"priešpiet",
+			"popiet"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"priešpiet",
+			"popiet"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"pr. p.",
+			"pop."
+		],
+		"dayPeriods-standAlone-wide": [
+			"priešpiet",
+			"popiet"
+		],
+		"era-wide": {
+			"232": "Meidži",
+			"233": "Taišo",
+			"234": "Šova",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meidži",
+			"233": "Taišo",
+			"234": "Šova",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "metai",
 	"dateField-year-relative--1": "praėjusiais metais",
 	"dateField-year-relative-0": "šiais metais",
@@ -1977,5 +2272,32 @@
 	"weekData-minDays": 4,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
-	"weekData-weekendEnd": 0
+	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	}
 }

@@ -1720,6 +1720,301 @@
 			"0": "AH"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "EEEE, 'ngày' dd MMMM 'năm' y G",
+		"dateFormat-long": "'Ngày' dd 'tháng' M 'năm' y G",
+		"dateFormat-medium": "dd-MM-y G",
+		"dateFormat-short": "dd/MM/y G",
+		"timeFormat-full": "HH:mm:ss zzzz",
+		"timeFormat-long": "HH:mm:ss z",
+		"timeFormat-medium": "HH:mm:ss",
+		"timeFormat-short": "HH:mm",
+		"dateTimeFormat-full": "{1} 'lúc' {0}",
+		"dateTimeFormat-long": "{1} l'ú'c {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0} - {1}",
+		"intervalFormat-d-d": "'Ngày' dd–dd",
+		"intervalFormat-h-a": "h'h' a – h'h' a",
+		"intervalFormat-h-h": "h'h' - h'h' a",
+		"intervalFormat-H-H": "HH'h' - HH'h'",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "h'h' a – h'h' a v",
+		"intervalFormat-hv-h": "h'h'-h'h' a v",
+		"intervalFormat-Hv-H": "HH'h'-HH'h' v",
+		"intervalFormat-M-M": "'Tháng' M - 'Tháng' M",
+		"intervalFormat-Md-d": "dd/MM – dd/MM",
+		"intervalFormat-Md-M": "dd/MM – dd/MM",
+		"intervalFormat-MEd-d": "EEEE, dd/MM – EEEE, dd/MM",
+		"intervalFormat-MEd-M": "EEEE, dd/MM – EEEE, dd/MM",
+		"intervalFormat-MMM-M": "MMM–MMM",
+		"intervalFormat-MMMd-d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M",
+		"intervalFormat-MMMd-M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M",
+		"intervalFormat-MMMEd-d": "EEEE, 'ngày' dd – EEEE, 'ngày' dd 'tháng' M",
+		"intervalFormat-MMMEd-M": "EEEE, 'ngày' dd 'tháng' M – EEEE, 'ngày' dd 'tháng' M",
+		"intervalFormat-y-y": "y–y G",
+		"intervalFormat-yM-M": "MM/y – MM/y G",
+		"intervalFormat-yM-y": "MM/y – MM/y G",
+		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y G",
+		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y G",
+		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y G",
+		"intervalFormat-yMEd-d": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
+		"intervalFormat-yMEd-M": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
+		"intervalFormat-yMEd-y": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
+		"intervalFormat-yMMM-M": "'Tháng' M - 'Tháng' M 'năm' y G",
+		"intervalFormat-yMMM-y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y G",
+		"intervalFormat-yMMMd-d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
+		"intervalFormat-yMMMd-M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
+		"intervalFormat-yMMMd-y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y G",
+		"intervalFormat-yMMMEd-d": "EEEE, 'ngày' dd MMM – EEEE, 'ngày' dd MMM 'năm' y G",
+		"intervalFormat-yMMMEd-M": "E, dd 'tháng' M – E, dd 'tháng' M, y G",
+		"intervalFormat-yMMMEd-y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y G",
+		"intervalFormat-yMMMM-M": "MMMM–MMMM y G",
+		"intervalFormat-yMMMM-y": "MMMM y – MMMM y G",
+		"months-format-abbreviated": [
+			"thg 1",
+			"thg 2",
+			"thg 3",
+			"thg 4",
+			"thg 5",
+			"thg 6",
+			"thg 7",
+			"thg 8",
+			"thg 9",
+			"thg 10",
+			"thg 11",
+			"thg 12"
+		],
+		"months-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-format-wide": [
+			"tháng 1",
+			"tháng 2",
+			"tháng 3",
+			"tháng 4",
+			"tháng 5",
+			"tháng 6",
+			"tháng 7",
+			"tháng 8",
+			"tháng 9",
+			"tháng 10",
+			"tháng 11",
+			"tháng 12"
+		],
+		"months-standAlone-abbreviated": [
+			"Thg 1",
+			"Thg 2",
+			"Thg 3",
+			"Thg 4",
+			"Thg 5",
+			"Thg 6",
+			"Thg 7",
+			"Thg 8",
+			"Thg 9",
+			"Thg 10",
+			"Thg 11",
+			"Thg 12"
+		],
+		"months-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-standAlone-wide": [
+			"Tháng 1",
+			"Tháng 2",
+			"Tháng 3",
+			"Tháng 4",
+			"Tháng 5",
+			"Tháng 6",
+			"Tháng 7",
+			"Tháng 8",
+			"Tháng 9",
+			"Tháng 10",
+			"Tháng 11",
+			"Tháng 12"
+		],
+		"days-format-abbreviated": [
+			"CN",
+			"Th 2",
+			"Th 3",
+			"Th 4",
+			"Th 5",
+			"Th 6",
+			"Th 7"
+		],
+		"days-format-narrow": [
+			"CN",
+			"T2",
+			"T3",
+			"T4",
+			"T5",
+			"T6",
+			"T7"
+		],
+		"days-format-short": [
+			"CN",
+			"T2",
+			"T3",
+			"T4",
+			"T5",
+			"T6",
+			"T7"
+		],
+		"days-format-wide": [
+			"Chủ Nhật",
+			"Thứ Hai",
+			"Thứ Ba",
+			"Thứ Tư",
+			"Thứ Năm",
+			"Thứ Sáu",
+			"Thứ Bảy"
+		],
+		"days-standAlone-abbreviated": [
+			"CN",
+			"Th 2",
+			"Th 3",
+			"Th 4",
+			"Th 5",
+			"Th 6",
+			"Th 7"
+		],
+		"days-standAlone-narrow": [
+			"CN",
+			"T2",
+			"T3",
+			"T4",
+			"T5",
+			"T6",
+			"T7"
+		],
+		"days-standAlone-short": [
+			"CN",
+			"T2",
+			"T3",
+			"T4",
+			"T5",
+			"T6",
+			"T7"
+		],
+		"days-standAlone-wide": [
+			"Chủ Nhật",
+			"Thứ Hai",
+			"Thứ Ba",
+			"Thứ Tư",
+			"Thứ Năm",
+			"Thứ Sáu",
+			"Thứ Bảy"
+		],
+		"quarters-format-abbreviated": [
+			"Q1",
+			"Q2",
+			"Q3",
+			"Q4"
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"Quý 1",
+			"Quý 2",
+			"Quý 3",
+			"Quý 4"
+		],
+		"quarters-standAlone-abbreviated": [
+			"Q1",
+			"Q2",
+			"Q3",
+			"Q4"
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"quý 1",
+			"quý 2",
+			"quý 3",
+			"quý 4"
+		],
+		"dayPeriods-format-abbreviated": [
+			"SA",
+			"CH"
+		],
+		"dayPeriods-format-narrow": [
+			"s",
+			"c"
+		],
+		"dayPeriods-format-wide": [
+			"SA",
+			"CH"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"SA",
+			"CH"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"SA",
+			"CH"
+		],
+		"dayPeriods-standAlone-wide": [
+			"SA",
+			"CH"
+		],
+		"era-wide": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "Năm",
 	"dateField-year-relative--1": "năm ngoái",
 	"dateField-year-relative-0": "năm nay",
@@ -1901,5 +2196,32 @@
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
-	"weekData-weekendEnd": 0
+	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	}
 }

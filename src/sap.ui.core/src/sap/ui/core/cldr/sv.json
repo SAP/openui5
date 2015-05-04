@@ -1720,6 +1720,301 @@
 			"0": "AH"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "EEEE d MMMM y G",
+		"dateFormat-long": "d MMMM y G",
+		"dateFormat-medium": "d MMM y G",
+		"dateFormat-short": "G y-MM-dd",
+		"timeFormat-full": "'kl'. HH:mm:ss zzzz",
+		"timeFormat-long": "HH:mm:ss z",
+		"timeFormat-medium": "HH:mm:ss",
+		"timeFormat-short": "HH:mm",
+		"dateTimeFormat-full": "{1} {0}",
+		"dateTimeFormat-long": "{1} {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "HH–HH",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "HH–HH v",
+		"intervalFormat-M-M": "M–M",
+		"intervalFormat-Md-d": "d–d/M",
+		"intervalFormat-Md-M": "d/M–d/M",
+		"intervalFormat-MEd-d": "E d/M – E d/M",
+		"intervalFormat-MEd-M": "E d/M – E d/M",
+		"intervalFormat-MMM-M": "MMM–MMM",
+		"intervalFormat-MMMd-d": "d–d MMM",
+		"intervalFormat-MMMd-M": "d MMM – d MMM",
+		"intervalFormat-MMMEd-d": "E d – E d MMM",
+		"intervalFormat-MMMEd-M": "E d MMM – E d MMM",
+		"intervalFormat-y-y": "y–y G",
+		"intervalFormat-yM-M": "G y-MM – MM",
+		"intervalFormat-yM-y": "G y-MM – y-MM",
+		"intervalFormat-yMd-d": "G y-MM-dd – dd",
+		"intervalFormat-yMd-M": "G y-MM-dd – MM-dd",
+		"intervalFormat-yMd-y": "G y-MM-dd – y-MM-dd",
+		"intervalFormat-yMEd-d": "E y-MM-dd – E y-MM-dd",
+		"intervalFormat-yMEd-M": "E y-MM-dd – E y-MM-dd G",
+		"intervalFormat-yMEd-y": "E y-MM-dd – E y-MM-dd G",
+		"intervalFormat-yMMM-M": "MMM–MMM y G",
+		"intervalFormat-yMMM-y": "MMM y – MMM y G",
+		"intervalFormat-yMMMd-d": "d–d MMM y G",
+		"intervalFormat-yMMMd-M": "d MMM–d MMM y G",
+		"intervalFormat-yMMMd-y": "d MMM y–d MMM y G",
+		"intervalFormat-yMMMEd-d": "E dd MMM–E dd MMM y G",
+		"intervalFormat-yMMMEd-M": "E dd MMM–E dd MMM y G",
+		"intervalFormat-yMMMEd-y": "E dd MMM y–E dd MMM y G",
+		"intervalFormat-yMMMM-M": "MMMM–MMMM y G",
+		"intervalFormat-yMMMM-y": "MMMM y – MMMM y G",
+		"months-format-abbreviated": [
+			"jan.",
+			"feb.",
+			"mars",
+			"apr.",
+			"maj",
+			"juni",
+			"juli",
+			"aug.",
+			"sep.",
+			"okt.",
+			"nov.",
+			"dec."
+		],
+		"months-format-narrow": [
+			"J",
+			"F",
+			"M",
+			"A",
+			"M",
+			"J",
+			"J",
+			"A",
+			"S",
+			"O",
+			"N",
+			"D"
+		],
+		"months-format-wide": [
+			"januari",
+			"februari",
+			"mars",
+			"april",
+			"maj",
+			"juni",
+			"juli",
+			"augusti",
+			"september",
+			"oktober",
+			"november",
+			"december"
+		],
+		"months-standAlone-abbreviated": [
+			"jan.",
+			"feb.",
+			"mars",
+			"apr.",
+			"maj",
+			"juni",
+			"juli",
+			"aug.",
+			"sep.",
+			"okt.",
+			"nov.",
+			"dec."
+		],
+		"months-standAlone-narrow": [
+			"J",
+			"F",
+			"M",
+			"A",
+			"M",
+			"J",
+			"J",
+			"A",
+			"S",
+			"O",
+			"N",
+			"D"
+		],
+		"months-standAlone-wide": [
+			"januari",
+			"februari",
+			"mars",
+			"april",
+			"maj",
+			"juni",
+			"juli",
+			"augusti",
+			"september",
+			"oktober",
+			"november",
+			"december"
+		],
+		"days-format-abbreviated": [
+			"sön",
+			"mån",
+			"tis",
+			"ons",
+			"tors",
+			"fre",
+			"lör"
+		],
+		"days-format-narrow": [
+			"S",
+			"M",
+			"T",
+			"O",
+			"T",
+			"F",
+			"L"
+		],
+		"days-format-short": [
+			"sö",
+			"må",
+			"ti",
+			"on",
+			"to",
+			"fr",
+			"lö"
+		],
+		"days-format-wide": [
+			"söndag",
+			"måndag",
+			"tisdag",
+			"onsdag",
+			"torsdag",
+			"fredag",
+			"lördag"
+		],
+		"days-standAlone-abbreviated": [
+			"sön",
+			"mån",
+			"tis",
+			"ons",
+			"tors",
+			"fre",
+			"lör"
+		],
+		"days-standAlone-narrow": [
+			"S",
+			"M",
+			"T",
+			"O",
+			"T",
+			"F",
+			"L"
+		],
+		"days-standAlone-short": [
+			"sö",
+			"må",
+			"ti",
+			"on",
+			"to",
+			"fr",
+			"lö"
+		],
+		"days-standAlone-wide": [
+			"söndag",
+			"måndag",
+			"tisdag",
+			"onsdag",
+			"torsdag",
+			"fredag",
+			"lördag"
+		],
+		"quarters-format-abbreviated": [
+			"K1",
+			"K2",
+			"K3",
+			"K4"
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"1:a kvartalet",
+			"2:a kvartalet",
+			"3:e kvartalet",
+			"4:e kvartalet"
+		],
+		"quarters-standAlone-abbreviated": [
+			"K1",
+			"K2",
+			"K3",
+			"K4"
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"1:a kvartalet",
+			"2:a kvartalet",
+			"3:e kvartalet",
+			"4:e kvartalet"
+		],
+		"dayPeriods-format-abbreviated": [
+			"fm",
+			"em"
+		],
+		"dayPeriods-format-narrow": [
+			"fm",
+			"em"
+		],
+		"dayPeriods-format-wide": [
+			"fm",
+			"em"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"f.m.",
+			"e.m."
+		],
+		"dayPeriods-standAlone-narrow": [
+			"fm",
+			"em"
+		],
+		"dayPeriods-standAlone-wide": [
+			"förmiddag",
+			"eftermiddag"
+		],
+		"era-wide": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "år",
 	"dateField-year-relative--1": "i fjol",
 	"dateField-year-relative-0": "i år",
@@ -1940,5 +2235,32 @@
 	"weekData-minDays": 4,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
-	"weekData-weekendEnd": 0
+	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	}
 }

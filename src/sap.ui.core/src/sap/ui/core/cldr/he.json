@@ -1702,6 +1702,302 @@
 			"0": "שנת היג׳רה"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "EEEE, d בMMMM y G",
+		"dateFormat-long": "d בMMMM y G",
+		"dateFormat-medium": "d בMMM y G",
+		"dateFormat-short": "d.M.y GGGGG",
+		"timeFormat-full": "H:mm:ss zzzz",
+		"timeFormat-long": "H:mm:ss z",
+		"timeFormat-medium": "H:mm:ss",
+		"timeFormat-short": "H:mm",
+		"dateTimeFormat-full": "{1} בשעה {0}",
+		"dateTimeFormat-long": "{1} בשעה {0}",
+		"dateTimeFormat-medium": "{1}, {0}",
+		"dateTimeFormat-short": "{1}, {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "H–H",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "H:mm–H:mm",
+		"intervalFormat-Hm-m": "H:mm–H:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "H:mm–H:mm v",
+		"intervalFormat-Hmv-m": "H:mm–H:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "H–H v",
+		"intervalFormat-M-M": "M–M",
+		"intervalFormat-Md-d": "dd/MM – dd/MM",
+		"intervalFormat-Md-M": "dd/MM – dd/MM",
+		"intervalFormat-MEd-d": "EEEE dd/MM – EEEE dd/MM",
+		"intervalFormat-MEd-M": "EEEE dd/MM – EEEE dd/MM",
+		"intervalFormat-MMM-M": "MMM–MMM",
+		"intervalFormat-MMMd-d": "d–d MMM",
+		"intervalFormat-MMMd-M": "d MMM – d MMM",
+		"intervalFormat-MMMEd-d": "EEEE d MMM – EEEE d MMM",
+		"intervalFormat-MMMEd-M": "EEEE d MMM – EEEE d MMM",
+		"intervalFormat-MMMM-M": "LLLL–LLLL",
+		"intervalFormat-y-y": "y–y",
+		"intervalFormat-yM-M": "MM/y – MM/y",
+		"intervalFormat-yM-y": "MM/y – MM/y",
+		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y",
+		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y",
+		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y",
+		"intervalFormat-yMEd-d": "EEEE dd/MM/y – EEEE dd/MM/y",
+		"intervalFormat-yMEd-M": "EEEE dd/MM/y – EEEE dd/MM/y",
+		"intervalFormat-yMEd-y": "EEEE dd/MM/y – EEEE dd/MM/y",
+		"intervalFormat-yMMM-M": "MMM–MMM y",
+		"intervalFormat-yMMM-y": "MMM y – MMM y",
+		"intervalFormat-yMMMd-d": "d–d MMM y",
+		"intervalFormat-yMMMd-M": "d MMM – d MMM y",
+		"intervalFormat-yMMMd-y": "d MMM y – d MMM y",
+		"intervalFormat-yMMMEd-d": "EEEE d MMM – EEEE d MMM y",
+		"intervalFormat-yMMMEd-M": "EEEE d MMM – EEEE d MMM y",
+		"intervalFormat-yMMMEd-y": "EEEE d MMM y – EEEE d MMM y",
+		"intervalFormat-yMMMM-M": "MMMM – MMMM y G",
+		"intervalFormat-yMMMM-y": "MMMM y–MMMM y",
+		"months-format-abbreviated": [
+			"ינו׳",
+			"פבר׳",
+			"מרץ",
+			"אפר׳",
+			"מאי",
+			"יוני",
+			"יולי",
+			"אוג׳",
+			"ספט׳",
+			"אוק׳",
+			"נוב׳",
+			"דצמ׳"
+		],
+		"months-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-format-wide": [
+			"ינואר",
+			"פברואר",
+			"מרץ",
+			"אפריל",
+			"מאי",
+			"יוני",
+			"יולי",
+			"אוגוסט",
+			"ספטמבר",
+			"אוקטובר",
+			"נובמבר",
+			"דצמבר"
+		],
+		"months-standAlone-abbreviated": [
+			"ינו׳",
+			"פבר׳",
+			"מרץ",
+			"אפר׳",
+			"מאי",
+			"יוני",
+			"יולי",
+			"אוג׳",
+			"ספט׳",
+			"אוק׳",
+			"נוב׳",
+			"דצמ׳"
+		],
+		"months-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-standAlone-wide": [
+			"ינואר",
+			"פברואר",
+			"מרץ",
+			"אפריל",
+			"מאי",
+			"יוני",
+			"יולי",
+			"אוגוסט",
+			"ספטמבר",
+			"אוקטובר",
+			"נובמבר",
+			"דצמבר"
+		],
+		"days-format-abbreviated": [
+			"יום א׳",
+			"יום ב׳",
+			"יום ג׳",
+			"יום ד׳",
+			"יום ה׳",
+			"יום ו׳",
+			"שבת"
+		],
+		"days-format-narrow": [
+			"א׳",
+			"ב׳",
+			"ג׳",
+			"ד׳",
+			"ה׳",
+			"ו׳",
+			"ש׳"
+		],
+		"days-format-short": [
+			"א׳",
+			"ב׳",
+			"ג׳",
+			"ד׳",
+			"ה׳",
+			"ו׳",
+			"ש׳"
+		],
+		"days-format-wide": [
+			"יום ראשון",
+			"יום שני",
+			"יום שלישי",
+			"יום רביעי",
+			"יום חמישי",
+			"יום שישי",
+			"יום שבת"
+		],
+		"days-standAlone-abbreviated": [
+			"יום א׳",
+			"יום ב׳",
+			"יום ג׳",
+			"יום ד׳",
+			"יום ה׳",
+			"יום ו׳",
+			"שבת"
+		],
+		"days-standAlone-narrow": [
+			"א׳",
+			"ב׳",
+			"ג׳",
+			"ד׳",
+			"ה׳",
+			"ו׳",
+			"ש׳"
+		],
+		"days-standAlone-short": [
+			"א׳",
+			"ב׳",
+			"ג׳",
+			"ד׳",
+			"ה׳",
+			"ו׳",
+			"ש׳"
+		],
+		"days-standAlone-wide": [
+			"יום ראשון",
+			"יום שני",
+			"יום שלישי",
+			"יום רביעי",
+			"יום חמישי",
+			"יום שישי",
+			"יום שבת"
+		],
+		"quarters-format-abbreviated": [
+			"רבעון 1",
+			"רבעון 2",
+			"רבעון 3",
+			"רבעון 4"
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"רבעון 1",
+			"רבעון 2",
+			"רבעון 3",
+			"רבעון 4"
+		],
+		"quarters-standAlone-abbreviated": [
+			"רבעון 1",
+			"רבעון 2",
+			"רבעון 3",
+			"רבעון 4"
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"רבעון 1",
+			"רבעון 2",
+			"רבעון 3",
+			"רבעון 4"
+		],
+		"dayPeriods-format-abbreviated": [
+			"AM",
+			"PM"
+		],
+		"dayPeriods-format-narrow": [
+			"AM",
+			"PM"
+		],
+		"dayPeriods-format-wide": [
+			"לפנה״צ",
+			"אחה״צ"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"AM",
+			"PM"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"AM",
+			"PM"
+		],
+		"dayPeriods-standAlone-wide": [
+			"AM",
+			"PM"
+		],
+		"era-wide": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "שנה",
 	"dateField-year-relative--1": "השנה שעברה",
 	"dateField-year-relative-0": "השנה",
@@ -1971,5 +2267,32 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 6,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	},
 	"calendarPreference": "gregorian hebrew islamic islamic-civil islamic-tbla"
 }

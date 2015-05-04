@@ -633,18 +633,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		 * The Islamic calendar
 		 * @public
 		 */
-		Islamic: "Islamic"
+		Islamic: "Islamic",
+		
+		/**
+		 * The Japanese emperor calendar
+		 * @public
+		 */
+		Japanese: "Japanese"
 	};
-
-	/**
-	 * The map between calendar type and its class that implements its support.
-	 *
-	 * All new calendar types have to be added in the CalendarType their implementations registered in CalendarTypeToClassMap
-	 * @enum {string}
-	 * @private
-	 */
-	sap.ui.core.CalendarTypeToClassMap = {};
-	sap.ui.core.CalendarTypeToClassMap[sap.ui.core.CalendarType.Islamic] = "sap.ui.core.date.IslamicDate";
 
 	/**
 	 * @classdesc A string type that represents CSS color values.

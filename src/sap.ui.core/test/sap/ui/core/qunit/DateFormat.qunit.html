@@ -336,6 +336,7 @@
 		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
 	});
 
+	/** TODO: Move to sap.ui.core.date.Gregorian
 	test("DateFormat.calculateWeekNumber", function() {
 		var DateFormat = sap.ui.core.format.DateFormat;
 
@@ -398,6 +399,7 @@
 			locale: "de"
 		}), 1, "31.12.2000 in 'de' locale is in week 1");
 	});
+	**/
 
 	test("format and parse weekInYear pattern", function() {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
@@ -646,6 +648,80 @@
 			doTestRelative(false, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
 		});
 	});
+	
+	module("Japanese Date");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	test("format date to Japanese type", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			}, new sap.ui.core.Locale("ja_JP"));
+
+		equal(oDateFormat.format(oDate), "平成13年7月4日", "Date is formatted in Japanese calendar");
+	});
+
+	test("format date to Japanese type with relative", function() {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	test("parse date to Japanese type", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			}, new sap.ui.core.Locale("ja_JP"));
+
+		var oDate = oDateFormat.parse("平成13年7月4日");
+		ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		equal(oDate.getFullYear(), 2001, "Year 2011");
+		equal(oDate.getMonth(), 6, "Month July");
+		equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	test("parse date to Japanese type with relative", function() {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	module("Japanese Date in locale en");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	test("format date to Japanese type with locale en", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			});
+
+		equal(oDateFormat.format(oDate), "Jul 4, 13 Heisei", "Date is formatted in Japanese calendar");
+	});
+
+	test("format date to Japanese type with relative and locale en", function() {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "en", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	test("parse date to Japanese type with locale en", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			});
+
+		var oDate = oDateFormat.parse("Jul 4, 13 Heisei");
+		ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		equal(oDate.getFullYear(), 2001, "Year 2011");
+		equal(oDate.getMonth(), 6, "Month July");
+		equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	test("parse date to Japanese type with relative and locale en", function() {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "en", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	
 </script>
 
 </head>
