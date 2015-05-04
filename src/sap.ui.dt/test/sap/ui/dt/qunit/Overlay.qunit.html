@@ -33,8 +33,8 @@
 			jQuery.sap.require("sap.m.Button");
 			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
 
-			module("Given that an Overlay is created for a control", {
-				setup : function() {
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function() {
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
@@ -45,70 +45,70 @@
 					// Render Controls
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oButton.destroy();
 					this.oOverlay.destroy();
 				}
 			});
 
-			test("when OverlayRegistry initialized", function() {
-				strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oButton.getId()), "overlay is registered in OverlayRegistery");
+			QUnit.test("when OverlayRegistry initialized", function(assert) {
+				assert.strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oButton.getId()), "overlay is registered in OverlayRegistery");
 			});
 
-			test("when the control is rendered", function() {				
+			QUnit.test("when the control is rendered", function(assert) {				
 				var oDomRef = this.oOverlay.getDomRef();
 				var oElementDomRef = this.oOverlay.getElementInstance().getDomRef();
 				var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
-				equal(oDomRef.parentNode, oDomRef.parentNode, 'then the overlay is added to the static UI area');
+				assert.equal(oDomRef.parentNode, oDomRef.parentNode, 'then the overlay is added to the static UI area');
 
-				equal(oDomRef.className, "sapUiDtOverlay", 'and the right CSS class is set to the element');
+				assert.equal(oDomRef.className, "sapUiDtOverlay", 'and the right CSS class is set to the element');
 
 				var mSize = sap.ui.dt.DOMUtil.getSize(oElementDomRef);
-				equal(oDomRef.offsetWidth, mSize.width, 'and the right width is applied to the overlay');
-				equal(oDomRef.offsetHeight, mSize.height, 'and the right height is applied to the overlay');
+				assert.equal(oDomRef.offsetWidth, mSize.width, 'and the right width is applied to the overlay');
+				assert.equal(oDomRef.offsetHeight, mSize.height, 'and the right height is applied to the overlay');
 
 				var mElementOffset = jQuery(oDomRef).offset();
 				var mOverlayOffset = jQuery(oDomRef).offset();
-				equal(mOverlayOffset.top, mElementOffset.top, 'and the right postion "top" is applied to the overlay');
-				equal(mOverlayOffset.left, mElementOffset.left, 'and the right postion "left" is applied to the overlay');
+				assert.equal(mOverlayOffset.top, mElementOffset.top, 'and the right postion "top" is applied to the overlay');
+				assert.equal(mOverlayOffset.left, mElementOffset.left, 'and the right postion "left" is applied to the overlay');
 
 				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
-				equal(oDesignTimeMetadata.getName(), "{name}", "and the design time metadata for the control is set");
+				assert.equal(oDesignTimeMetadata.getName(), "{name}", "and the design time metadata for the control is set");
 			});
 
-			test("when the overlay is selected", function() {
+			QUnit.test("when the overlay is selected", function(assert) {
 				this.oOverlay.attachSelectionChange(function(oEvent) {
-					ok(oEvent.getParameter("selected"), 'and a "selectionChange" event is fired which provides the right selected state');
+					assert.ok(oEvent.getParameter("selected"), 'and a "selectionChange" event is fired which provides the right selected state');
 				}, this);
 				this.oOverlay.setSelected(true);
-				ok(this.oOverlay.isSelected(), 'then the state of the overlay is "selected"');
+				assert.ok(this.oOverlay.isSelected(), 'then the state of the overlay is "selected"');
 			});
 
-			test("when the overlay is selected and selected again", function() {
+			QUnit.test("when the overlay is selected and selected again", function(assert) {
 				this.oOverlay.setSelected(true);
 				var bFired = false;
 				this.oOverlay.attachSelectionChange(function(oEvent) {
 					bFired = true;
 				}, this);
 				this.oOverlay.setSelected(true);
-				ok(!bFired, 'then the "selection change" event should not fire again');
+				assert.ok(!bFired, 'then the "selection change" event should not fire again');
 			});
 
-			test("when the overlay is changed to selectable false and the overlay is selected", function() {
+			QUnit.test("when the overlay is changed to selectable false and the overlay is selected", function(assert) {
 				this.oOverlay.setSelectable(false);
-				ok(!this.oOverlay.isSelectable(), 'then the state of the overlay is "not selectable"');
+				assert.ok(!this.oOverlay.isSelectable(), 'then the state of the overlay is "not selectable"');
 
 				var bFired = false;
 				this.oOverlay.attachSelectionChange(function(oEvent) {
 					bFired = true;
 				}, this);
 				this.oOverlay.setSelected(true);
-				ok(!this.oOverlay.isSelected(), 'and the state of the overlay is "not selected"');
-				ok(!bFired, 'and no "selection change" event is fired');
+				assert.ok(!this.oOverlay.isSelected(), 'and the state of the overlay is "not selected"');
+				assert.ok(!bFired, 'and no "selection change" event is fired');
 			});
 
-			module("Given that an Overlay is created for a layout with child controls", {
-				setup : function() {
+			QUnit.module("Given that an Overlay is created for a layout with child controls", {
+				beforeEach : function() {
 					this.oButton1 = new sap.m.Button({
 						text : "Button 1"
 					});
@@ -141,7 +141,7 @@
 					this.oVerticalLayout2.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					
 					this.oButton1.destroy();
 					this.oButton2.destroy();
@@ -155,15 +155,15 @@
 				}
 			});
 
-			test("when a control is moved from one layout to another", function() {
+			QUnit.test("when a control is moved from one layout to another", function(assert) {
 				this.oVerticalLayout2.addContent(this.oButton2);
 				sap.ui.getCore().applyChanges();
 				// first parent is aggregation overlay, second parent is overlay control
-				ok(this.oOverlayButton2.getParent().getParent() === this.oOverlayLayout2, "then a button's overlay should be inside of an another layout's overlay");
+				assert.ok(this.oOverlayButton2.getParent().getParent() === this.oOverlayLayout2, "then a button's overlay should be inside of an another layout's overlay");
 			});
 
-			module("Given that an Overlay is created for a control with custom design time metadata", {
-				setup : function() {
+			QUnit.module("Given that an Overlay is created for a control with custom design time metadata", {
+				beforeEach : function() {
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
@@ -179,19 +179,19 @@
 					// Render Controls
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oButton.destroy();
 					this.oOverlay.destroy();
 				}
 			});
 
-			test("when the design time metadata is retrieved", function() {
+			QUnit.test("when the design time metadata is retrieved", function(assert) {
 				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
-				equal(oDesignTimeMetadata.getName(), "My Custom Metadata", "then the right custom data is set");
+				assert.equal(oDesignTimeMetadata.getName(), "My Custom Metadata", "then the right custom data is set");
 			});
 
-			module("Given that an Overlay is created for a control", {
-				setup : function() {
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function() {
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
@@ -201,19 +201,19 @@
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oButton.destroy();
 				}
 			});
 
-			test("when the overlay is destroyed", function() {
+			QUnit.test("when the overlay is destroyed", function(assert) {
 				var sId = this.oOverlay.getId();
 				this.oOverlay.destroy();
-				strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
+				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
 			});
 
-			module("Given that an Overlay is created for a control", {
-				setup : function() {
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function() {
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
@@ -223,15 +223,15 @@
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 				}
 			});
 
-			test("when the control is destroyed before the overlay", function() {
+			QUnit.test("when the control is destroyed before the overlay", function(assert) {
 				var sId = this.oButton.getId();
 				this.oButton.destroy();
 				this.oOverlay.destroy();
-				strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
+				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
 			});
 
 			// TODO : test create / remove overlay container

@@ -30,8 +30,8 @@
 
 			jQuery.sap.require("sap.ui.dt.Overlay");
 
-			module("Given that overlay is created for a m.Page with Panels", {
-				setup : function() {
+			QUnit.module("Given that overlay is created for a m.Page with Panels", {
+				beforeEach : function() {
 					this.aPanels = [];
 					this.aPanelOverlays = [];
 					for (var i = 0; i < 10; i++) {
@@ -54,7 +54,7 @@
 					sap.ui.getCore().applyChanges();
 
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oPage.destroy();
 					this.oPageOverlay.destroy();
 					for (var i = 0; i < 10; i++) {
@@ -65,7 +65,8 @@
 			});
 
 
-			test("styles for page content overlay are similar to aggregation's and scroll is propagated to the original content's DOM", function() {
+			QUnit.test("styles for page content overlay are similar to aggregation's and scroll is propagated to the original content's DOM", function(assert) {
+				var done = assert.async();
 				var oPageContentOverlay = this.oPageOverlay.getAggregation("_aggregationOverlays")[0];
 				var $PageContentOverlay = jQuery(oPageContentOverlay.getDomRef());
 				strictEqual($PageContentOverlay.length, 1, "page content overlay is rendered");
@@ -74,10 +75,9 @@
 				strictEqual($PageContent.scrollTop(), $PageContentOverlay.scrollTop(), "initial scroll position is equal");
 
 				$PageContentOverlay.scrollTop(20);
-				stop();
 				oPageContentOverlay.attachBrowserEvent("scroll", function() {
 					strictEqual($PageContent.scrollTop(), 20, "page content is scrolled to position 20");
-					start();
+					done();
 				});
 			});
 

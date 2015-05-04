@@ -7,10 +7,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/dt/DOMUtil',
-	'sap/ui/dt/Utils',
-	'sap/ui/dt/OverlayRegistry'
+	'sap/ui/dt/Utils'
 ],
-function(jQuery, Control, DOMUtil, Utils, OverlayRegistry) {
+function(jQuery, Control, DOMUtil, Utils) {
 	"use strict";
 
 
@@ -59,24 +58,9 @@ function(jQuery, Control, DOMUtil, Utils, OverlayRegistry) {
 				}
 			},
 			events : {
-				dragEnter : {
+				droppableChange : {
 					parameters : {
-						"aggregationName" : "string"
-					}
-				},
-				dragLeave: {
-					parameters : {
-						"aggregationName" : "string"
-					}
-				},
-				dragOver : {
-					parameters : {
-						"aggregationName" : "string"
-					}
-				},
-				drop : {
-					parameters : {
-						"aggregationName" : "string"
+						droppable : "boolean"
 					}
 				}
 			}
@@ -164,88 +148,29 @@ function(jQuery, Control, DOMUtil, Utils, OverlayRegistry) {
 	 */
 	AggregationOverlay.prototype.setDroppable = function(bDroppable) {
 		if (this.getDroppable() !== bDroppable) {
-			if (bDroppable) {
-				this._enableDroppable();
-			} else {
-				this._disableDroppable();
-			}
 			this.setProperty("droppable", bDroppable);
+			this.toggleStyleClass("sapUiDtAggregationOverlayDroppable", bDroppable);
+
+			// TODO : cancelable
+			this.fireDroppableChange({droppable : bDroppable});
 		}
 	};	
 
 	/** 
-	 * @private
-	 * @param {jQuery.Event} The event object
+	 * @public
 	 */
-	AggregationOverlay.prototype._onDragEnter = function(oEvent) {
-		this.fireDragEnter({aggregationName : this.getAggregationName()});
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
-	};
-
-	/** 
-	 * @private
-	 * @param {jQuery.Event} The event object
-	 */
-	AggregationOverlay.prototype._onDragLeave = function(oEvent) {
-		this.fireDragLeave({aggregationName : this.getAggregationName()});
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
-	};
-	
-	/** 
-	 * @private
-	 * @param {jQuery.Event} The event object
-	 */
-	AggregationOverlay.prototype._onDragOver = function(oEvent) {
-		this.fireDragOver({aggregationName : this.getAggregationName()});
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
-	};
-
-	/** 
-	 * @private
-	 * @param {jQuery.Event} The event object
-	 */
-	AggregationOverlay.prototype._onDrop = function(oEvent) {
-		this.fireDrop({aggregationName : this.getAggregationName()});
-
-		oEvent.stopPropagation();
-		return false;
-	};
-
-	/** 
-	 * @private
-	 */
-	AggregationOverlay.prototype._enableDroppable = function() {
-		this.attachBrowserEvent("dragenter", this._onDragEnter, this);
-		this.attachBrowserEvent("dragleave", this._onDragLeave, this);
-		this.attachBrowserEvent("dragover", this._onDragOver, this);
-		this.attachBrowserEvent("drop", this._onDrop, this);
-	};
-
-	/** 
-	 * @private
-	 */
-	AggregationOverlay.prototype._disableDroppable = function() {
-		this.detachBrowserEvent("dragenter", this._onDragEnter, this);
-		this.detachBrowserEvent("dragleave", this._onDragLeave, this);
-		this.detachBrowserEvent("dragover", this._onDragOver, this);
-		this.detachBrowserEvent("drop", this._onDrop, this);
-	};
-
+	AggregationOverlay.prototype.getElementInstance = function() {
+		var oElementOverlay = this.getParent();
+		if (oElementOverlay) {
+			return oElementOverlay.getElementInstance();
+		}
+	};	
 	/** 
 	 * @public
 	 */
 	AggregationOverlay.prototype.isDroppable = function() {
 		return this.getDroppable();
-	};
+	};	
 
 	return AggregationOverlay;
 }, /* bExport= */ true);

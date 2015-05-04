@@ -20,8 +20,8 @@
 
 			jQuery.sap.require("sap.ui.dt.ControlObserver");
 
-			module("Given that a Button is observed", {
-				setup : function() {
+			QUnit.module("Given that a Button is observed", {
+				beforeEach : function() {
 					this.oButton = new sap.m.Button();
 					this.oControlObserver = new sap.ui.dt.ControlObserver({
 						target : this.oButton
@@ -29,22 +29,22 @@
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oControlObserver.destroy();
 					this.oButton.destroy();
 				}
 			});
 
-			test("when the property of the Button is changed", function() {
+			QUnit.test("when the property of the Button is changed", function(assert) {
 				var that = this;
 				this.oControlObserver.attachEventOnce("changed", function(oEvent) {
-					ok(oEvent, 'then a "Changed" event is fired because of the property change');
+					assert.ok(oEvent, 'then a "Changed" event is fired because of the property change');
 				});
 				this.oControlObserver.attachBeforeRendering(function(oEvent) {
-					ok(oEvent, 'and a "BeforeRendering" event is fired');
+					assert.ok(oEvent, 'and a "BeforeRendering" event is fired');
 				});
 				this.oControlObserver.attachAfterRendering(function(oEvent) {
-					ok(oEvent, 'and a "AfterRendering" event is fired');
+					assert.ok(oEvent, 'and a "AfterRendering" event is fired');
 				});
 				this.oButton.setText("test");
 				sap.ui.getCore().applyChanges();

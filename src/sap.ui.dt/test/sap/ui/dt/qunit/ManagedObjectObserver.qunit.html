@@ -41,41 +41,41 @@
 			});
 
 
-			module("Given that an ManagedObject is observed", {
-				setup : function() {
+			QUnit.module("Given that an ManagedObject is observed", {
+				beforeEach : function() {
 					this.oManagedObject = new TestObject();
 					this.oManagedObjectObserver = new sap.ui.dt.ManagedObjectObserver({
 						target : this.oManagedObject
 					});
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oManagedObjectObserver.destroy();
 					this.oManagedObject.destroy();
 				}
 			});
 
-			test("when the property of the ManagedObject is modified", 1, function() {
+			QUnit.test("when the property of the ManagedObject is modified", 1, function(assert) {
 				this.oManagedObjectObserver.attachModified(function(oEvent) {
-					ok(oEvent, 'then a "Modified" event is fired');
+					assert.ok(oEvent, 'then a "Modified" event is fired');
 				});
 				this.oManagedObject.setMyProperty(true);
 			});
 
-			module("Given that an ManagedObject is observed", {
-				setup : function() {
+			QUnit.module("Given that an ManagedObject is observed", {
+				beforeEach : function() {
 					this.oManagedObject = new TestObject();
 					this.oManagedObjectObserver = new sap.ui.dt.ManagedObjectObserver({
 						target : this.oManagedObject
 					});
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oManagedObjectObserver.destroy();
 				}
 			});
 
-			test("when the MangedObject is destroyed", 1, function() {
+			QUnit.test("when the MangedObject is destroyed", 1, function(assert) {
 				this.oManagedObjectObserver.attachDestroyed(function(oEvent) {
-					ok(oEvent, 'then a "Destroyed" event is fired');
+					assert.ok(oEvent, 'then a "Destroyed" event is fired');
 				});
 				this.oManagedObject.destroy();
 			});

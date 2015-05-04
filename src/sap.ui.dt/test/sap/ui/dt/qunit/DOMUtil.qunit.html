@@ -30,9 +30,9 @@
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
 			jQuery.sap.require("sap.m.Button");
 
-			module("Given that a control is rendered", {
+			QUnit.module("Given that a control is rendered", {
 
-				setup : function() {
+				beforeEach : function() {
 					this.iWidth = 100;
 					this.iHeight = 48;
 					this.oButton = new sap.m.Button({
@@ -44,18 +44,18 @@
 					// Render Controls
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oButton.destroy();
 				}
 			});
 
-			test("when the DOM reference is available", function() {
+			QUnit.test("when the DOM reference is available", function(assert) {
 				var oButtonDomRef = this.oButton.getDomRef();
 				var mSize = sap.ui.dt.DOMUtil.getSize(oButtonDomRef);
-				deepEqual(mSize, {width: this.iWidth, height: this.iHeight}, 'then the static method "getSize" returns the right value');
+				assert.deepEqual(mSize, {width: this.iWidth, height: this.iHeight}, 'then the static method "getSize" returns the right value');
 
 				var zIndex = sap.ui.dt.DOMUtil.getZIndex(oButtonDomRef);
-				equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
+				assert.equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
 			});
 
 			// TODO:

@@ -18,22 +18,22 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
-			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
+			jQuerH.sap.require("sap.ui.dt.DesignTimeMetadata");
 			jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
-			module("Given that an DesignTimeMetadata is created for a control", {
-				setup : function() {
+			QUnit.module("Given that an DesignTimeMetadata is created for a control", {
+				beforeEach : function() {
 					this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
 						data : sap.ui.layout.VerticalLayout.getMetadata().getDesignTime()
 					});
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oDesignTimeMetadata.destroy();
 				}
 			});
-			test("when the DesignTimeMetadata is initialized", 2, function() {
-				equal(this.oDesignTimeMetadata.getName(), "{name}", "then the name is returned right");
-				deepEqual(this.oDesignTimeMetadata.getAggregation("content"), {
+			QUnit.test("when the DesignTimeMetadata is initialized", 2, function(assert) {
+				assert.equal(this.oDesignTimeMetadata.getName(), "{name}", "then the name is returned right");
+				assert.deepEqual(this.oDesignTimeMetadata.getAggregation("content"), {
 					cssSelector : ":sap-domref"
 				}, "and the aggregation is returned right");
 			});

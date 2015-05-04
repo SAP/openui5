@@ -164,5 +164,9 @@ function(jQuery, Utils) {
 		return sString.replace(/([;&,\.\+\*\~':"\!\^#$%@\[\]\(\)=>\|])/g, '\\$1');
 	};
 
+	DOMUtil.setDraggable = function($element, bValue) {
+		$element.attr("draggable", bValue);
+	};
+
 	return DOMUtil;
 }, /* bExport= */ true);

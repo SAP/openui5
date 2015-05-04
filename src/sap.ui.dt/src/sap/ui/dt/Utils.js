@@ -28,7 +28,7 @@ function(jQuery) {
 	var Utils = {};
 
 	Utils.getAggregationFilter = function() {
-		return [ "tooltip", "customData", "dependents", "layoutData" ];
+		return [ "tooltip", "customData", "dependents", "layoutData", "layout" ];
 	};
 
 	Utils.getControlFilter = function() {
@@ -128,10 +128,11 @@ function(jQuery) {
 		var oCore = sap.ui.core;
 
 		function internalFind(oElement) {
-			if (!(oElement instanceof oCore.Element)) {
+			if (!(oElement instanceof oCore.Element) || that.isElementFiltered(oElement)) {
 				return;
 			}
 
+			//check if needed
 			if (oElement.getMetadata().getClass() === oCore.UIArea) {
 				var aContent = oElement.getContent();
 				for (var i = 0; i < aContent.length; i++) {
@@ -223,12 +224,68 @@ function(jQuery) {
 				(oControlContentMetaData && oControlContentMetaData._sClassName === "sap.m.Page") ? true
 				: this.isTypeOf(oControl.getMetadata(), aType));
 	};
+
+	Utils.isElementFiltered = function(oControl, aType) {
+		var that = this;
+
+		aType = aType || this.getControlFilter();
+		var bFiltered = false;
+
+		aType.forEach(function(sType) {
+			bFiltered = that.isInstance(oControl, sType);
+			if (bFiltered) {
+				return false;
+			}
+		});
+
+		return bFiltered;
+	};
 	
 	Utils.isTypeOf = function(oMetadata, aType) {
 		if (aType.indexOf(oMetadata.getName()) !== -1) {
 			return true;
 		} else if (oMetadata.getParent().getName() !== "sap.ui.base.Object") {
 			return this.isTypeOf(oMetadata.getParent(), aType);
+		} else {
+			return false;
+		}
+	};
+
+	Utils.getAggregationMutators = function(oElement, sAggregationName) {
+		var oAggregationMetadata = oElement.getMetadata().getAggregation(sAggregationName);
+		return {
+			add : oAggregationMetadata._sMutator,
+			remove : oAggregationMetadata._sRemoveMutator,
+			insert : oAggregationMetadata._sInsertMutator
+		};
+	};
+	
+	Utils.addAggregation = function(oParent, sAggregationName, oElement) {
+		var sAggregationAddMutator = this.getAggregationMutators(oParent, sAggregationName).add;
+		oParent[sAggregationAddMutator](oElement);
+	};
+	
+	Utils.removeAggregation = function(oParent, sAggregationName, oElement) {
+		var sAggregationRemoveMutator = this.getAggregationMutators(oParent, sAggregationName).remove;
+		oParent[sAggregationRemoveMutator](oElement);
+	};
+
+	Utils.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
+		var sAggregationInsertMutator = this.getAggregationMutators(oParent, sAggregationName).insert;
+		oParent[sAggregationInsertMutator](oElement, iIndex);
+	};
+
+	Utils.isValidForAggregation = function(oParent, sAggregationName, oElement) {
+		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
+
+		// TODO : test altTypes
+		return this.isInstance(oElement, oAggregationMetadata.type);
+	};
+
+	Utils.isInstance = function(oElement, sType) {
+		var oInstance = jQuery.sap.getObject(sType);
+		if (typeof oInstance === "function") {
+			return oElement instanceof oInstance;
 		} else {
 			return false;
 		}

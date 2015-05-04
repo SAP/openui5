@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.dt.Overlay
-sap.ui.define(['jquery.sap.global', 'sap/ui/dt/AggregationOverlay', 'sap/ui/dt/DOMUtil'],
-	function(jQuery, AggregationOverlay, DOMUtil) {
+sap.ui.define(['sap/ui/dt/AggregationOverlay', 'sap/ui/dt/DOMUtil'],
+	function(AggregationOverlay, DOMUtil) {
 	"use strict";
 
 
@@ -62,8 +62,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/dt/AggregationOverlay', 'sap/ui/dt/D
 
 
 	OverlayRenderer.renderAggregationOverlays = function(oRm, oOverlay) {
-		var aAggregationOverlays = oOverlay.getAggregation("_aggregationOverlays") || [];
-		jQuery.each(aAggregationOverlays, function(iIndex, oAggregationOverlay) {
+		var aAggregationOverlays = oOverlay.getAggregationOverlays();
+		aAggregationOverlays.forEach(function(oAggregationOverlay) {
 			oRm.renderControl(oAggregationOverlay);
 		});	
 	};

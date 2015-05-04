@@ -31,8 +31,8 @@
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
 
-			module("Given that overlays are created for a form with formContainers", {
-				setup : function() {
+			QUnit.module("Given that overlays are created for a form with formContainers", {
+				beforeEach : function() {
 					this.oElement1 = new sap.ui.layout.form.FormElement({
 						label: new sap.ui.commons.Label({text:"Label0"}),
 						fields: [new sap.ui.commons.TextField({required:true})]
@@ -91,7 +91,7 @@
 						rootElements : [this.oForm]
 					});
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oElement1.destroy();
 					this.oFormContainer1.destroy();
 					this.oFormContainer2.destroy();
@@ -102,7 +102,7 @@
 				}
 			});
 
-			test("when rendering is finished and ResponsiveLayout is used withing a Form, overlays are visible and ...", function() {
+			QUnit.test("when rendering is finished and ResponsiveLayout is used withing a Form, overlays are visible and ...", function(assert) {
 				if (this.oLayout) {
 					this.oLayout.destroy();
 				}
@@ -113,7 +113,7 @@
 			});
 
 
-			test("when rendering is finished and ResponsiveGridLayout is used withing a Form, overlays are visible and ...", function() {
+			QUnit.test("when rendering is finished and ResponsiveGridLayout is used withing a Form, overlays are visible and ...", function(assert) {
 				if (this.oLayout) {
 					this.oLayout.destroy();
 				}
@@ -123,7 +123,7 @@
 				testFormHierarchyWithDesignTime.call(this);
 			});
 
-			test("when rendering is finished and FormLayout is used withing a Form, overlays are visible and ...", function() {
+			QUnit.test("when rendering is finished and FormLayout is used withing a Form, overlays are visible and ...", function(assert) {
 				if (this.oLayout) {
 					this.oLayout.destroy();
 				}
@@ -133,7 +133,7 @@
 				testFormHierarchyWithDesignTime.call(this);
 			});
 
-			test("when rendering is finished and GridLayout is used withing a Form, overlays are visible and ...", function() {
+			QUnit.test("when rendering is finished and GridLayout is used withing a Form, overlays are visible and ...", function(assert) {
 				if (this.oLayout) {
 					this.oLayout.destroy();
 				}
@@ -148,33 +148,33 @@
 				var $FormOverlay = jQuery(oFormOverlay.getDomRef());
 
 				var $FormContainersOverlay = jQuery(oFormOverlay.getAggregation("_aggregationOverlays")[0].getDomRef());
-				notEqual($FormContainersOverlay.width(), 0, "Overlay for aggregation FormContainers exists and ... ");
-				ok(isElementChildOf($FormContainersOverlay, $FormOverlay), "... and is a child of a form overlay");
+				assert.notEqual($FormContainersOverlay.width(), 0, "Overlay for aggregation FormContainers exists and ... ");
+				assert.ok(isElementChildOf($FormContainersOverlay, $FormOverlay), "... and is a child of a form overlay");
 
 				var oContainerOverlay1 = OverlayRegistry.getOverlay(this.oFormContainer1.getId());
 				var $ContainerOverlay1 = jQuery(oContainerOverlay1.getDomRef());
-				notEqual($ContainerOverlay1.width(), 0, "Overlay for FormContainer1 exists and has width");
-				ok(isElementChildOf($ContainerOverlay1, $FormContainersOverlay), "... and is a child of a formContainers overlay");
+				assert.notEqual($ContainerOverlay1.width(), 0, "Overlay for FormContainer1 exists and has width");
+				assert.ok(isElementChildOf($ContainerOverlay1, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 
 				var $formElementsOverlay1 = jQuery(oContainerOverlay1.getAggregation("_aggregationOverlays")[0].getDomRef());
-				notEqual($formElementsOverlay1.width(), 0, "Overlay for aggregation formElements exists and ... ");
-				ok(isElementChildOf($formElementsOverlay1, $ContainerOverlay1), "... and is a child of a FormContainer1 overlay");
+				assert.notEqual($formElementsOverlay1.width(), 0, "Overlay for aggregation formElements exists and ... ");
+				assert.ok(isElementChildOf($formElementsOverlay1, $ContainerOverlay1), "... and is a child of a FormContainer1 overlay");
 
 				var oElementOverlay1 = OverlayRegistry.getOverlay(this.oElement1.getId());
 				var $ElementOverlay1 = jQuery(oElementOverlay1.getDomRef());
-				notEqual($ElementOverlay1.width(), 0, "Overlay for Element0 exists and has width");
-				ok(isElementChildOf($ElementOverlay1, $formElementsOverlay1), "... and is a child of a FormContainer1 overlay");
+				assert.notEqual($ElementOverlay1.width(), 0, "Overlay for Element0 exists and has width");
+				assert.ok(isElementChildOf($ElementOverlay1, $formElementsOverlay1), "... and is a child of a FormContainer1 overlay");
 
 				var oContainerOverlay2 = OverlayRegistry.getOverlay(this.oFormContainer2.getId());
 				var $ContainerOverlay2 = jQuery(oContainerOverlay2.getDomRef());
-				notEqual($ContainerOverlay2.width(), 0, "Overlay for FormContainer2 exists and has width");
-				ok(isElementChildOf($ContainerOverlay2, $FormContainersOverlay), "... and is a child of a formContainers overlay");
+				assert.notEqual($ContainerOverlay2.width(), 0, "Overlay for FormContainer2 exists and has width");
+				assert.ok(isElementChildOf($ContainerOverlay2, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 
 
 				var oContainerOverlay3 = OverlayRegistry.getOverlay(this.oFormContainer3.getId());
 				var $ContainerOverlay3 = jQuery(oContainerOverlay3.getDomRef());
-				notEqual($ContainerOverlay3.width(), 0, "Overlay for FormContainer3 exists and has width");
-				ok(isElementChildOf($ContainerOverlay3, $FormContainersOverlay), "... and is a child of a formContainers overlay");
+				assert.notEqual($ContainerOverlay3.width(), 0, "Overlay for FormContainer3 exists and has width");
+				assert.ok(isElementChildOf($ContainerOverlay3, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 			};
 
 			var isElementChildOf = function($child, $parent) {

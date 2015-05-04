@@ -26,20 +26,23 @@
 
 		<script>
 			jQuery.sap.require("sap.ui.dt.DesignTimeNew");
-			jQuery.sap.require("sap.ui.dt.DragManagerNew");
-			jQuery.sap.require("sap.ui.dt.SelectionManager");
+			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
+			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
 			var oView = sap.ui.xmlview("testView", "dt.view.Test2");
 			oView.placeAt("content");
 
 
 			jQuery(function() {
-				var oDragManager = new sap.ui.dt.DragManagerNew();
-				var oSelectionManager = new sap.ui.dt.SelectionManager();
+				var oSelectionManager = new sap.ui.dt.plugin.MouseSelection();
+				var oDragManager = new sap.ui.dt.plugin.ControlDragDrop({
+					draggableTypes : ["sap.m.Button", "sap.m.StandardListItem"]
+				});
+
 				var oDesignTime = new sap.ui.dt.DesignTimeNew({
 					rootElements : [oView],
-					managers : [
-						oDragManager,
-						oSelectionManager
+					plugins : [
+						oSelectionManager,
+						oDragManager
 					]
 				});
 			});

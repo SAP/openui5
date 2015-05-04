@@ -21,8 +21,8 @@
 			jQuery.sap.require("sap.ui.dt.ElementObserver");
 			jQuery.sap.require("sap.ui.commons.Button");
 
-			module("Given that an Overlay is created for a control", {
-				setup : function() {
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function() {
 					this.oButton = new sap.m.Button();
 					this.oOverlay = new sap.ui.dt.ElementObserver({
 						element : this.oButton
@@ -30,13 +30,13 @@
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					//this.oButton.destroy();
 				}
 			});
 
-			test("an absolute positioned DIV is created above the control", function() {
-				ok(this.oOverlay, "Overlay is created");
+			QUnit.test("an absolute positioned DIV is created above the control", function(assert) {
+				assert.ok(this.oOverlay, "Overlay is created");
 			});
 
 		</script>

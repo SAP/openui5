@@ -29,36 +29,36 @@
 
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 
-			module("Given that an OverlayRegistry is created", {
-				setup : function() {
+			QUnit.module("Given that an OverlayRegistry is created", {
+				beforeEach : function() {
 					this.oOverlayRegistry = sap.ui.dt.OverlayRegistry;
 				},
-				teardown : function() {
+				afterEach : function() {
 				}
 			});
 
-			test("when an overlay is created and registered...", function() {	
+			QUnit.test("when an overlay is created and registered...", function(assert) {	
 				var oOverlay = { a : "b"};		
 				this.oOverlayRegistry.register("id1", oOverlay);
-				deepEqual(this.oOverlayRegistry.getOverlay("id1"), oOverlay, "getOverlay should return registered overlay for registered id");
-				ok(this.oOverlayRegistry.hasOverlays(), "oOverlayRegistry has overlays");
+				assert.deepEqual(this.oOverlayRegistry.getOverlay("id1"), oOverlay, "getOverlay should return registered overlay for registered id");
+				assert.ok(this.oOverlayRegistry.hasOverlays(), "oOverlayRegistry has overlays");
 			});
 
-			module("Given that an OverlayRegistry is created and registered", {
-				setup : function() {
+			QUnit.module("Given that an OverlayRegistry is created and registered", {
+				beforeEach : function() {
 					this.oOverlayRegistry = sap.ui.dt.OverlayRegistry;
 					this.oOverlay = { a : "b"};		
 					this.oOverlayRegistry.register("id1", this.oOverlay);
 				},
-				teardown : function() {
+				afterEach : function() {
 					delete this.oOverlay;
 				}
 			});
 
-			test("when an overlay is deregistered...", function() {
+			QUnit.test("when an overlay is deregistered...", function(assert) {
 				this.oOverlayRegistry.deregister("id1");	
-				strictEqual(this.oOverlayRegistry.getOverlay("id1"), undefined, "getOverlay should return undefined for it's id");
-				strictEqual(this.oOverlayRegistry.hasOverlays(), false, "oOverlayRegistry has no overlays");
+				assert.strictEqual(this.oOverlayRegistry.getOverlay("id1"), undefined, "getOverlay should return undefined for it's id");
+				assert.strictEqual(this.oOverlayRegistry.hasOverlays(), false, "oOverlayRegistry has no overlays");
 			});
 
 		</script>

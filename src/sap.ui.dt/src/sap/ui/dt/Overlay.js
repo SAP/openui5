@@ -9,12 +9,11 @@ sap.ui.define([
 	'sap/ui/dt/ControlObserver',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/AggregationOverlay',
-	'sap/ui/dt/OverlayContainer',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Utils',
 	'sap/ui/dt/DOMUtil'
 ],
-function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverlay, OverlayContainer, OverlayRegistry, Utils, DOMUtil) {
+function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, Utils, DOMUtil) {
 	"use strict";
 
 	var sOverlayContainerId = "overlay-container";
@@ -57,8 +56,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 					defaultValue : true
 				},
 				draggable : {
-					type : "boolean",
-					defaultValue : true
+					type : "boolean"
 				},
 				offset : {
 					type : "object"
@@ -81,10 +79,20 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 				}
 			},
 			events : {
+				destroyed : {
+					parameters : {}
+				},
 				selectionChange : {
 					parameters : {
 						selected : {
 							type : "boolean"
+						}
+					}
+				},
+				draggableChange : {
+					parameters : {
+						selected : {
+							draggable : "boolean"
 						}
 					}
 				},
@@ -94,40 +102,6 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 						value : "any",
 						oldValue : "any",
 						target : "sap.ui.core.Element"
-					}
-				},
-				// dom events
-				dragStart : {
-					parameters : {}
-				},
-				dragStop : {
-					parameters : {}
-				},
-				drag : {
-					parameters : {}
-				},
-				dragEnter : {
-					parameters : {}
-				},
-				// aggregation events propagation
-				aggregationDragEnter : {
-					parameters : {
-						"aggregationName" : "string"						
-					}
-				},
-				aggregationDragOver : {
-					parameters : {
-						"aggregationName" : "string"
-					}
-				},
-				aggregationDragLeave : {
-					parameters : {
-						"aggregationName" : "string"
-					}
-				},
-				aggregationDrop : {
-					parameters : {
-						"aggregationName" : "string"
 					}
 				}
 			}
@@ -165,8 +139,6 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	Overlay.prototype.init = function() {
 		this._oDefaultDesignTimeMetadata = null;
 		this._addToOverlayContainer();	
-
-		this.attachBrowserEvent("dragenter", this._onDragEnter, this);
 	};
 
 	/** 
@@ -191,6 +163,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		}
 
 		delete this._elementId;
+		this.fireDestroyed();
 	};
 
 	/** 
@@ -199,7 +172,6 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	 * @returns {sap.ui.dt.Overlay} returns itself
 	 */
 	Overlay.prototype.setElement = function(vElement) {
-
 		var oOldElement = this.getElementInstance();
 		if (oOldElement instanceof sap.ui.core.Element) {
 			OverlayRegistry.deregister(oOldElement);
@@ -255,87 +227,10 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 
 				that._syncAggregationOverlay(oAggregationOverlay);
 
-				that._attachAggregationOverlayEvents(oAggregationOverlay);
-
 				that.addAggregation("_aggregationOverlays", oAggregationOverlay);
 
 			}, null, Utils.getAggregationFilter());
 		}
-	};
-
-	/** 
-	 * @private
-	 * @param {sap.ui.dt.AggregationOverlay}
-	 */
-	Overlay.prototype._attachAggregationOverlayEvents = function(oAggregationOverlay) {
-		oAggregationOverlay.attachEvent("dragEnter", this._onAggregationOverlayDragEvent, this);
-		oAggregationOverlay.attachEvent("dragLeave", this._onAggregationOverlayDragEvent, this);
-		oAggregationOverlay.attachEvent("dragOver", this._onAggregationOverlayDragEvent, this);
-		oAggregationOverlay.attachEvent("drop", this._onAggregationOverlayDragEvent, this);
-	};
-
-	/**
-	 * @protected
-	 */
-	Overlay.prototype.onAfterRendering = function() {
-		if (this.isDraggable()) {
-			this._enableDraggable();
-		}
-	};
-
-	/**
-	 * @private
-	 */
-	Overlay.prototype._enableDraggable = function() {
-		this.$().attr("draggable", true);
-	};
-
-	/**
-	 * @private
-	 * @param {jQuery.Event} The event object
-	 */
-	Overlay.prototype.ondragstart = function(oEvent) {
-		this.fireDragStart(oEvent);
-
-		oEvent.stopPropagation();
-	};
-
-	/**
-	 * @private
-	 * @param {jQuery.Event} The event object
-	 */
-	Overlay.prototype.ondrag = function(oEvent) {
-		this.fireDrag(oEvent);
-
-		oEvent.stopPropagation();
-	};
-
-	/**
-	 * @private
-	 * @param {jQuery.Event} The event object
-	 */
-	Overlay.prototype.ondragstop = function(oEvent) {
-		this.fireDragStop(oEvent);
-
-		oEvent.stopPropagation();
-	};
-
-	/** 
-	 * @private
-	 * @param {jQuery.Event} The event object
-	 */
-	Overlay.prototype._onDragEnter = function(oEvent) {
-		this.fireDragEnter();
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
-	};
-
-	Overlay.prototype._onAggregationOverlayDragEvent = function(oEvent) {
-		var sEventType = oEvent.getId();
-
-		this["fireAggregation" + jQuery.sap.charToUpperCase(sEventType, 0)](oEvent.getParameters());
 	};
 
 	/**
@@ -350,16 +245,22 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 
 		return this;
 	};
+	
 	/**
+	 * @param {boolean} bSelected
+	 * @param {boolean} bSuppressEvent internal use only, supress firing selectionChange event
 	 * @public
 	 */
-	Overlay.prototype.setSelected = function(bSelected) {
+	Overlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
 		if (this.isSelectable() && bSelected !== this.isSelected()) {
 			this.setProperty("selected", bSelected);
 			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
-			this.fireSelectionChange({
-				selected : bSelected
-			});	
+
+			if (!bSuppressEvent) {
+				this.fireSelectionChange({
+					selected : bSelected
+				});	
+			}
 		}
 
 		return this;
@@ -433,7 +334,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		var sAggregationName = oAggregationOverlay.getAggregationName();
 		var aAggregationElements = Utils.getAggregationValue(sAggregationName, this.getElementInstance());
 
-		jQuery.each(aAggregationElements, function(iIndex, oAggregationElement) {
+		aAggregationElements.forEach(function(oAggregationElement) {
 			var oChildOverlay = OverlayRegistry.getOverlay(oAggregationElement);
 			if (oChildOverlay) {
 				oAggregationOverlay.addChild(oChildOverlay);
@@ -446,8 +347,8 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	 */
 	Overlay.prototype.sync = function() {
 		var that = this;
-		var aAggregationOverlays = this.getAggregation("_aggregationOverlays") || [];
-		jQuery.each(aAggregationOverlays, function(index, oAggregationOverlay) {
+		var aAggregationOverlays = this.getAggregationOverlays();
+		aAggregationOverlays.forEach(function(oAggregationOverlay) {
 			that._syncAggregationOverlay(oAggregationOverlay);
 		});
 	};
@@ -486,7 +387,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	 * @public
 	 */
 	Overlay.prototype.getAggregationOverlays = function() {
-		return this.getAggregation("_aggregationOverlays");
+		return this.getAggregation("_aggregationOverlays") || [];
 	};
 
 	/**
@@ -502,6 +403,19 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	Overlay.prototype.isSelectable = function() {
 		return this.getSelectable();
 	};
+
+	/** 
+	 * @public
+	 */
+	Overlay.prototype.setDraggable = function(bDraggable) {
+		if (this.getDraggable() !== bDraggable) {
+			this.fireDraggableChange({draggable : bDraggable});
+			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
+			
+			// TODO: canceleable
+			this.setProperty("draggable", bDraggable);
+		}
+	};	
 
 	/**
 	 * @public
