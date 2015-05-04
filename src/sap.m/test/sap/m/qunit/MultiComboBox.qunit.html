@@ -2569,9 +2569,9 @@
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
-		this.clock.tick(500);
+		this.clock.tick(1100);
 		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 300 msec');
+				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2612,9 +2612,9 @@
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
-		this.clock.tick(500);
+		this.clock.tick(1100);
 		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 300 msec');
+				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();

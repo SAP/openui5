@@ -486,19 +486,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	/*                                                             */
 	/* ----------------------------------------------------------- */
 	/**
-	 * 
+	 * Triggers the value state "Error" for 1s, and resets the state to the previous one.
 	 * @private
 	 */
 	MultiComboBox.prototype._showWrongValueVisualEffect = function() {
-		var sValueState = this.getValueState();
-		if (sValueState === sap.ui.core.ValueState.Error || sValueState === sap.ui.core.ValueState.Success
-				|| sValueState === sap.ui.core.ValueState.Warning) {
-			this.$().removeClass("sapMInputBase" + sValueState);
-			jQuery.sap.delayedCall(300, this.$(), "addClass", ["sapMInputBase" + sValueState]);
-		} else {
-			this.$().addClass("sapMInputBaseError");
-			jQuery.sap.delayedCall(300, this.$(), "removeClass", ["sapMInputBaseError"]);
+		var sOldValueState = this.getValueState();
+		if (sOldValueState === sap.ui.core.ValueState.Error) {
+			return;
 		}
+
+		this.setValueState(sap.ui.core.ValueState.Error);
+		jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
 	};
 	
 	/**
