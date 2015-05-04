@@ -707,17 +707,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
 
-					//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
 					oBindingInfo = BindingParser.simpleParser("{" + sPath + "}");
 					sVar = sVar || oBindingInfo.model; // default variable is same model name
 
-					//TODO Simplify code once named contexts are supported by the core
 					if (sHelper || sVar) { // create a "named context"
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
 							error("Missing model '" + oBindingInfo.model + "' in ", oElement);
 						}
-						//TODO any trick to avoid explicit resolution of relative paths here?
 						sResolvedPath = oModel.resolve(oBindingInfo.path,
 							oWithControl.getBindingContext(oBindingInfo.model));
 						if (!sResolvedPath) {
@@ -741,7 +738,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							}
 						}
 						oNewWithControl.setModel(oModel, sVar);
-						oNewWithControl.bindObject({ //TODO setBindingContext?!
+						oNewWithControl.bindObject({
 							model : sVar,
 							path : sResolvedPath
 						});

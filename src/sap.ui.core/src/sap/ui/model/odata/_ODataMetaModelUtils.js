@@ -82,7 +82,6 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			if (sTypeClass === "EntitySet" && oExtension.value === sNonDefaultValue) {
 				// potentially nested structure so do deep copy
 				if (bDeepCopy) {
-					// TODO check performance impact
 					jQuery.extend(true, o, mV2ToV4[oExtension.name]);
 				} else {
 					// Warning: Passing false for the first argument is not supported!
