@@ -367,6 +367,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					 */
 					fileName : {type : "string"}
 				}
+			},
+
+			/**
+			 * Event is fired before an upload is started.
+			 * @since 1.30.0
+			 */
+			uploadStart : {
+				parameters : {
+
+					/**
+					 * The name of a file to be uploaded.
+					 */
+					fileName : {type : "string"},
+
+					/**
+					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true.
+					 * This property is not supported by Internet Explorer 9.
+					 */
+					requestHeaders : {type : "object[]"}
+				}
 			}
 		}
 	}});
@@ -846,6 +866,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 
 		var oRequestHeaders = oXhr.requestHeaders;
+
+		that.fireUploadStart({
+			"fileName": sFilename,
+			"requestHeaders": oRequestHeaders
+		});
 
 		var fnProgressListener = function(oProgressEvent) {
 			var oProgressData = {
