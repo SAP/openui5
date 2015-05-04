@@ -11,8 +11,8 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/OperationMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/core/message/MessageParser', 'sap/ui/model/odata/ODataMessageParser', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
-		function(jQuery, Model, ODataUtils, CountMode, OperationMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, MessageParser, ODataMessageParser, URI, OData) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/UpdateMethod', 'sap/ui/model/odata/OperationMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/core/message/MessageParser', 'sap/ui/model/odata/ODataMessageParser', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
+		function(jQuery, Model, ODataUtils, CountMode, UpdateMethod, OperationMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, MessageParser, ODataMessageParser, URI, OData) {
 	"use strict";
 
 
@@ -39,6 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} [mParameters.defaultBindingMode] sets the default binding mode for the model. If not set, sap.ui.model.BindingMode.OneWay is used.
 	 * @param {string} [mParameters.defaultCountMode] sets the default count mode for the model. If not set, sap.ui.model.odata.CountMode.Request is used.
 	 * @param {string} [mParameters.defaultOperationMode] sets the default operation mode for the model. If not set, sap.ui.model.odata.OperationModel.Server is used.
+	 * @param {string} [mParameters.defaultUpdateMethod] sets the default update method which is used for all update requests. If not set, sap.ui.model.odata.UpdateMethod.Merge is used.
 	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document 
 	 *
@@ -65,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
-			bSkipMetadataAnnotationParsing,
+			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod,
 			that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -93,6 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				bJSON = mParameters.json;
 				oMessageParser = mParameters.messageParser;
 				bSkipMetadataAnnotationParsing = mParameters.skipMetadataAnnotationParsing;
+				sDefaultUpdateMethod = mParameters.defaultUpdateMethod;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || sap.ui.model.BindingMode.OneWay;
@@ -106,6 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.mChangeHandles = {};
 			this.mDeferredBatchGroups = {};
 			this.mChangeBatchGroups = {'*' : {batchGroupId:undefined, single: true}};
+			this.sDefaultUpdateMethod = sDefaultUpdateMethod || sap.ui.model.odata.UpdateMethod.Merge;
 
 			this.bTokenHandling = bTokenHandling !== false;
 			this.bWithCredentials = bWithCredentials === true;
@@ -2497,23 +2500,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {string} sKey Key of the entity to change
 	 * @param {object} oData The entry data
-	 * @param {boolean} [bMerge] Sets MERGE/PUT method
+	 * @param {boolean} [sUpdateMethod] Sets MERGE/PUT method
 	 * @returns {object} oRequest The request object
 	 * @private
 	 */
-	ODataModel.prototype._processChange = function(sKey, oData, bMerge) {
+	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
 		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry, that = this;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
-
-		//default to true
-		bMerge = bMerge !== false;
-
+		
+		//default to MERGE
+		if (!sUpdateMethod) {
+			sUpdateMethod = "MERGE";
+		}
+		
 		if (oData.__metadata && oData.__metadata.created){
 			sMethod = "POST";
 			sKey = oData.__metadata.created.key;
-		} else if (bMerge) {
+		} else if (sUpdateMethod === "MERGE") {
 			sMethod = "MERGE";
 			// get original unmodified entry for diff 
 			oUnModifiedEntry = this.oData[sKey];
@@ -2549,7 +2554,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			});
 		}
 		
-		if (bMerge && oEntityType && oUnModifiedEntry) {
+		if (sMethod === "MERGE" && oEntityType && oUnModifiedEntry) {
 			jQuery.each(oPayload, function(sPropName, oPropValue) {
 				if (sPropName !== '__metadata') {
 					// remove unmodified properties and keep only modified properties for delta MERGE
@@ -2844,8 +2849,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 	
 	/**
-	 * Trigger a PUT/MERGE request to the odata service that was specified in the model constructor. Please note that deep updates are not supported
-	 * and may not work. These should be done seperate on the entry directly.
+	 * Trigger a PUT/MERGE request to the odata service that was specified in the model constructor. 
+	 * The update method used is defined by the global <code>defaultUpdateMethod</code> parameter which is sap.ui.model.odata.UpdateMethod.Merge by default.
+	 * Please note that deep updates are not supported and may not work. These should be done seperate on the entry directly.
 	 *
 	 * @param {string} sPath A string containing the path to the data that should be updated.
 	 * 		The path is concatenated to the sServiceUrl which was specified
@@ -2856,7 +2862,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 * 		The handler can have the parameter <code>oError</code> which contains additional error information.
-	 * @param {boolean} [mParameters.merge=true] trigger a MERGE request instead of a PUT request to perform a differential update.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
 	 * 		Please be advised that this feature is officially unsupported as using asynchronous
 	 * 		requests can lead to data inconsistencies if the application does not make sure that
@@ -2871,13 +2876,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
-		var fnSuccess, fnError, bMerge, oRequest, sUrl, oContext, sETag, 
+		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag, 
 			oStoredEntry, sKey, aUrlParams, sBatchGroupId, sChangeSetId,
 			mUrlParams, mHeaders, sMethod, mRequests, 
 			oKeys = {},
 			that = this;
-
-		bMerge = true;
 		
 		if (mParameters) {
 			sBatchGroupId = mParameters.batchGroupId;
@@ -2887,13 +2890,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			fnError   = mParameters.error;
 			sETag     = mParameters.eTag;
 			mHeaders  = mParameters.headers;
-			bMerge    = mParameters.merge !== false;
 			mUrlParams = mParameters.urlParameters;
+			// ensure merge paramater backwards compatibility
+			if (mParameters.merge !== undefined) {
+				sMethod =  mParameters.merge ? "MERGE" : "PUT";
+			}
 		}
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
-		sMethod = bMerge ? "MERGE" : "PUT";
+		sMethod = sMethod ? sMethod : this.sDefaultUpdateMethod;
 		sETag = sETag || this._getETag(sPath, oContext, oData);
 		oStoredEntry = that._getObject(sPath, oContext);
 		if (oStoredEntry) {
@@ -3353,7 +3359,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Submits the collected changes which were collected by the setProperty method. A MERGE request will be triggered to only update the changed properties.
+	 * Submits the collected changes which were collected by the setProperty method. The update method is defined by the global <code>defaultUpdateMethod</code>
+	 * parameter which is sap.ui.model.odata.UpdateMethod.Merge by default. In case of a sap.ui.model.odata.UpdateMethod.Merge request only the changed properties will be updated.
 	 * If a URI with a $expand System Query Option was used then the expand entries will be removed from the collected changes.
 	 * Changes to this entries should be done on the entry itself. So no deep updates are supported.
 	 *
@@ -3364,7 +3371,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *            	                 following parameters: oData
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
 	 * additional error information
-	 * @param {boolean} [mParameters.merge=true] trigger a MERGE request instead of a PUT request to perform a differential update.
 	 *
 	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
 	 *
@@ -3374,16 +3380,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var bMerge = true, oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError, 
+		var oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError, 
 			oRequestHandle, vRequestHandleInternal,
-			bAborted = false,
+			bAborted = false, sMethod,
 			that = this;
 
 		if (mParameters) {
 			sBatchGroupId = mParameters.batchGroupId;
 			fnSuccess =	mParameters.success;
 			fnError = mParameters.error;
-			bMerge = mParameters.merge !== false;
+			// ensure merge paramater backwards compatibility
+			if (mParameters.merge !== undefined) {
+				sMethod =  mParameters.merge ? "MERGE" : "PUT";
+			}
 		}
 		
 		if (sBatchGroupId && !this.mDeferredBatchGroups[sBatchGroupId]) {
@@ -3394,7 +3403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			jQuery.each(that.mChangedEntities, function(sKey, oData) {
 				oGroupInfo = that._resolveGroup(sKey);
 				if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
-					oRequest = that._processChange(sKey, oData, bMerge);
+					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
 					if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
 						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
