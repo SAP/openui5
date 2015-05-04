@@ -4,10 +4,9 @@
 
 sap.ui.define([
 		'sap/ui/demo/worklist/controller/BaseController',
-		'sap/ui/demo/worklist/model/promise',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/demo/worklist/model/formatter'
-	], function (BaseController, promise, JSONModel, formatter) {
+	], function (BaseController, JSONModel, formatter) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.worklist.controller.Object", {
@@ -40,7 +39,7 @@ sap.ui.define([
 			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 			this.setModel(oViewModel, "objectView");
-			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
+			this.getOwnerComponent().getModel().metadataLoaded().then(function () {
 					// Restore original busy indicator delay for the object view
 					oViewModel.setProperty("/delay", iOriginalBusyDelay);
 				}
@@ -83,35 +82,55 @@ sap.ui.define([
 		 * @private
 		 */
 		_bindView : function (sObjectPath) {
-			var oView = this.getView(),
-				oViewModel = this.getModel("objectView");
+			var oViewModel = this.getModel("objectView"),
+				oDataModel = this.getModel();
+
 			// Set busy indicator during view binding
 			oViewModel.setProperty("/busy", true);
-			oView.bindElement(sObjectPath);
+			this.getView().bindElement({
+				path: sObjectPath,
+				events: {
+					change: this._onBindingChange.bind(this),
+					dataRequested: function () {
+						oDataModel.metadataLoaded().then(function () {
+							// Busy indicator on view should only be set if metadata is loaded,
+							// otherwise there may be two busy indications next to each other on the
+							// screen. This happens because route matched handler already calls '_bindView'
+							// while metadata is loaded.
+							oViewModel.setProperty("/busy", true);
+						});
+					},
+					dataReceived: function () {
+						oViewModel.setProperty("/busy", false);
+					}
+				}
+			});
+		},
 
-			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
-				function () {
-					var oResourceBundle = this.getResourceBundle(),
-						oObject = oView.getBindingContext().getObject(),
-						sObjectId = oObject.ObjectID,
-						sObjectName = oObject.Name;
+		_onBindingChange : function (oEvent) {
+			var oView = this.getView(),
+				oViewModel = this.getModel("objectView"),
+				oElementBinding = oView.getElementBinding();
 
-					// Everything went fine.
-					oViewModel.setProperty("/busy", false);
-					oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
-					oViewModel.setProperty("/shareOnJamTitle", sObjectName);
-					oViewModel.setProperty("/shareSendEmailSubject",
-						oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
-					oViewModel.setProperty("/shareSendEmailMessage",
-						oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
-				}.bind(this),
-				function () {
-					// Something went wrong. Display an error page.
-					oViewModel.setProperty("/busy", false);
-					this.getRouter().getTargets().display("objectNotFound");
-				}.bind(this)
-			);
+			// No data for the binding
+			if (!oElementBinding.getBoundContext()) {
+				this.getRouter().getTargets().display("objectNotFound");
+				return;
+			}
 
+			var oResourceBundle = this.getResourceBundle(),
+				oObject = oView.getBindingContext().getObject(),
+				sObjectId = oObject.ObjectID,
+				sObjectName = oObject.Name;
+
+			// Everything went fine.
+			oViewModel.setProperty("/busy", false);
+			oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
+			oViewModel.setProperty("/shareOnJamTitle", sObjectName);
+			oViewModel.setProperty("/shareSendEmailSubject",
+				oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
+			oViewModel.setProperty("/shareSendEmailMessage",
+				oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
 		}
 
 	});

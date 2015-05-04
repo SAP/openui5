@@ -26,10 +26,6 @@ sap.ui.define([
 		 * @override
 		 */
 		init : function () {
-			// create the metadata promise
-			this._createMetadataPromise(this.getModel());
-
-
 			this.oListSelector = new ListSelector();
 
 			this._oErrorHandler = new ErrorHandler(this);
@@ -74,18 +70,6 @@ sap.ui.define([
 				}
 			}
 			return this._sCompactCozyClass;
-		},
-
-		/**
-		 * Creates a promise which is resolved when the metadata is loaded.
-		 * @param {sap.ui.core.Model} oModel the app model
-		 * @private
-		 */
-		_createMetadataPromise : function(oModel) {
-			this.oWhenMetadataIsLoaded = new Promise(function (fnResolve, fnReject) {
-				oModel.attachEventOnce("metadataLoaded", fnResolve);
-				oModel.attachEventOnce("metadataFailed", fnReject);
-			});
 		}
 
 	});

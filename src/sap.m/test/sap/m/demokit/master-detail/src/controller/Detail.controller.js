@@ -5,9 +5,8 @@
 sap.ui.define([
 		"sap/ui/demo/masterdetail/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/Device",
-		"sap/ui/demo/masterdetail/model/promise"
-	], function (BaseController, JSONModel, Device, promise) {
+		"sap/ui/Device"
+	], function (BaseController, JSONModel, Device) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.masterdetail.controller.Detail", {
@@ -17,9 +16,9 @@ sap.ui.define([
 		/* =========================================================== */
 
 		onInit : function () {
-			var oViewModel;
+			var oViewModel,
+				iOriginalViewBusyDelay = this.getView().getBusyIndicatorDelay();
 
-			this._bMetadataIsLoaded = false;
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
 			this._oLineItemsList = this.byId("lineItemsList");
 
@@ -33,6 +32,7 @@ sap.ui.define([
 			// detail page is busy indication immediately so there is no break in
 			// between the busy indication for loading the view's meta data
 			oViewModel = new JSONModel({
+				delay: 0,
 				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading"),
 				shareSaveAsTileTitle: "",
 				shareOnJamTitle: "",
@@ -41,36 +41,26 @@ sap.ui.define([
 			});
 
 			this.setModel(oViewModel, "detailView");
-			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
+			this.getOwnerComponent().getModel().metadataLoaded().then(function () {
 					// Store original busy indicator delay for the detail view
-					var iOriginalViewBusyDelay = this.getView().getBusyIndicatorDelay(),
-						oLineItemTable = this.getView().byId("lineItemsList"),
+					var oLineItemTable = this.getView().byId("lineItemsList"),
 						iOriginalLineItemTableBusyDelay = oLineItemTable.getBusyIndicatorDelay();
+
 					// Make sure busy indicator is displayed immediately when
 					// detail view is displayed for the first time
 					oViewModel.setProperty("/delay", 0);
 					oViewModel.setProperty("/lineItemTableDelay", 0);
-					oViewModel.setProperty("/busy", true);
 
-					oLineItemTable.attachEventOnce("updateFinished", function(){
+					oLineItemTable.attachEventOnce("updateFinished", function() {
 						// Restore original busy indicator delay for line item table
 						oViewModel.setProperty("/lineItemTableDelay", iOriginalLineItemTableBusyDelay);
 					});
+
+					oViewModel.setProperty("/busy", true);
 					// Restore original busy indicator delay for the detail view
 					oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
-					this._bMetadataIsLoaded = true;
-				}.bind(this),
-				function () {
-					// Called when loading metadata fails.
-					this._bMetadataIsLoaded = true;
 				}.bind(this)
 			);
-
-			// Control state model
-			this._oViewModel = new JSONModel({
-				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
-			});
-			this.setModel(this._oViewModel, "view");
 		},
 
 
@@ -117,45 +107,59 @@ sap.ui.define([
 		 */
 		_bindView : function (sObjectPath) {
 			// Set busy indicator during view binding
-			var oView,
+			var oDataModel = this.getModel(),
 				oViewModel = this.getModel("detailView");
-			// Busy indicator on view should only be set if metadata is loaded,
-			// otherwise there may be two busy indications next to each other on the
-			// screen. This happens because route matched handler already calls '_bindView'
-			// while metadata is loaded.
-			if (this._bMetadataIsLoaded) {
-				oViewModel.setProperty("/busy", true);
+
+			this.getView().bindElement({
+				path : sObjectPath,
+				events: {
+					change : this._onBindingChange.bind(this),
+					dataRequested : function () {
+						oDataModel.metadataLoaded().then(function () {
+							// Busy indicator on view should only be set if metadata is loaded,
+							// otherwise there may be two busy indications next to each other on the
+							// screen. This happens because route matched handler already calls '_bindView'
+							// while metadata is loaded.
+							oViewModel.setProperty("/busy", true);
+						});
+					},
+					dataReceived: function () {
+						oViewModel.setProperty("/busy", false);
+					}
+				}
+			});
+
+
+		},
+
+		_onBindingChange : function (oEvent) {
+			var oView = this.getView(),
+				oElementBinding = oView.getElementBinding();
+
+			// No data for the binding
+			if (!oElementBinding.getBoundContext()) {
+				this.getRouter().getTargets().display("detailObjectNotFound");
+				// if object could not be found, the selection in the master list
+				// does not make sense anymore.
+				this.getOwnerComponent().oListSelector.clearMasterListSelection();
+				return;
 			}
 
-			oView = this.getView().bindElement(sObjectPath);
+			var sPath = oElementBinding.getPath(),
+				oResourceBundle = this.getResourceBundle(),
+				oObject = oView.getModel().getObject(sPath),
+				sObjectId = oObject.ObjectID,
+				sObjectName = oObject.Name,
+				oViewModel = this.getModel("detailView");
 
-			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
-				function (sPath) {
-					var oResourceBundle = this.getResourceBundle(),
-						oObject = oView.getModel().getObject(oView.getElementBinding().getPath()),
-						sObjectId = oObject.ObjectID,
-						sObjectName = oObject.Name;
+			this.getOwnerComponent().oListSelector.selectAListItem(sPath);
 
-					oViewModel.setProperty("/busy", false);
-					this.getOwnerComponent().oListSelector.selectAListItem(sPath);
-
-					oViewModel.setProperty("/saveAsTileTitle",oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
-					oViewModel.setProperty("/shareOnJamTitle", sObjectName);
-					oViewModel.setProperty("/shareSendEmailSubject",
-						oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
-					oViewModel.setProperty("/shareSendEmailMessage",
-						oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
-
-				}.bind(this),
-				function () {
-					oViewModel.setProperty("/busy", false);
-					this.getRouter().getTargets().display("detailObjectNotFound");
-					// if object could not be found, the selection in the master list
-					// does not make sense anymore.
-					this.getOwnerComponent().oListSelector.clearMasterListSelection();
-				}.bind(this)
-			);
-
+			oViewModel.setProperty("/saveAsTileTitle",oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
+			oViewModel.setProperty("/shareOnJamTitle", sObjectName);
+			oViewModel.setProperty("/shareSendEmailSubject",
+			oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
+			oViewModel.setProperty("/shareSendEmailMessage",
+			oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
 		},
 
 		/**

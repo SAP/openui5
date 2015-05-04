@@ -27,8 +27,7 @@ sap.ui.define([
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			};
 
-			this.getOwnerComponent().oWhenMetadataIsLoaded
-				.then(fnSetAppNotBusy, fnSetAppNotBusy);
+			this.getOwnerComponent().getModel().metadataLoaded().then(fnSetAppNotBusy, fnSetAppNotBusy);
 
 			// Makes sure that master view is hidden in split app
 			// after a new list entry has been selected.
