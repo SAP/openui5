@@ -43,6 +43,7 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 	 * @private
 	 */
 	AnalyticalColumnMenu.prototype._addMenuItems = function() {
+		// when you add or remove menu items here, remember to update the hasItems function
 		ColumnMenu.prototype._addMenuItems.apply(this);
 		if (this._oColumn) {
 			this._addSumMenuItem();

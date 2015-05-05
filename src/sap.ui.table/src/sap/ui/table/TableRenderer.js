@@ -115,7 +115,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.addStyle("top", "-20000px");
 			rm.writeStyles();
 			rm.write(">");
-			rm.write(oTable._oResBundle.getText("TBL_TABLE"));
+			if (oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "") {
+				rm.write(oTable.getTitle().getText());
+			} else {
+				rm.write(oTable._oResBundle.getText("TBL_TABLE"));
+			}
+
 			rm.write("</span>");
 			// aria description for the row count
 			rm.write("<span");
@@ -169,6 +174,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.writeStyles();
 			rm.write(">");
 			rm.write(oTable._oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY"));
+			rm.write("</span>");
+			// table row count
+			rm.write("<span");
+			rm.writeAttribute("id", oTable.getId() + "-rownumberofrows");
+			//rm.writeAttribute("aria-live", "polite");
+			rm.addStyle("position", "absolute");
+			rm.addStyle("top", "-20000px");
+			rm.writeStyles();
+			rm.write(">");
 			rm.write("</span>");
 		}
 
@@ -427,6 +441,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 	};
 
+	/**
+	 * This function renders aria attributes if bAccMode is true.
+	 * @param {sap.ui.core.RenderManager} rm Instance of the RenderManager
+	 * @param {Map} mAriaAttributes Map of aria attributes. The Key of the maps equals the attribute name
+	 * @param {Boolean} bAccMode Flag if Acc Mode is turned on
+	 */
+	TableRenderer.renderAriaAttributes = function(rm, mAriaAttributes, bAccMode) {
+		if (bAccMode) {
+			for (var sKey in mAriaAttributes) {
+				var mAriaAttribute = mAriaAttributes[sKey];
+				if (mAriaAttribute.escaped) {
+					rm.writeAttributeEscaped(sKey, mAriaAttribute.value);
+				} else {
+					rm.writeAttribute(sKey, mAriaAttribute.value);
+				}
+			}
+		}
+	};
+
+	TableRenderer.getAriaAttributesForRowHdr = function(oTable) {
+		return {
+			"aria-label": {value: oTable._oResBundle.getText("TBL_SELECT_ALL_KEY"), escaped: true}
+		};
+	};
+
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-selall");
@@ -440,10 +479,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 		rm.addClass("sapUiTableColRowHdr");
 		rm.writeClasses();
-		if (oTable._bAccMode) {
-			rm.writeAttribute("tabindex", "-1");
-			rm.writeAttributeEscaped("aria-label", oTable._oResBundle.getText("TBL_SELECT_ALL_KEY"));
-		}
+
+		rm.writeAttribute("tabindex", "-1");
+
+		var mAriaAttributes = this.getAriaAttributesForRowHdr(oTable);
+		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+
 		rm.write(">");
 		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.Single) {
 			rm.write("<div");
@@ -456,6 +497,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.write("</div>");
 		}
 		rm.write("</div>");
+	};
+
+	TableRenderer.getAriaAttributesForCol = function(oTable, oColumn, iColumnIndex) {
+		var mAriaAttributes = {};
+
+		// aria-haspopup should only be added if the column has a column menu
+		// the column menu always gets created but might have no items.
+		if (oColumn._menuHasItems()) {
+			mAriaAttributes["aria-haspopup"] = {value: "true"};
+		}
+
+		if (!!sap.ui.Device.browser.internet_explorer) {
+			mAriaAttributes.role = {value: "columnheader"};
+		}
+
+		if (iColumnIndex < oTable.getFixedColumnCount()) {
+			mAriaAttributes["aria-labelledby"] = {value: oColumn.getId() + " " + oTable.getId() + "-ariafixedcolumn"};
+		}
+
+		return mAriaAttributes;
 	};
 
 	TableRenderer.renderCol = function(rm, oTable, oColumn, iIndex, iHeader, bInvisible) {
@@ -476,14 +537,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 		rm.writeAttribute('data-sap-ui-colid', oColumn.getId());
 		rm.writeAttribute("data-sap-ui-colindex", iIndex);
-		if (oTable._bAccMode) {
-			if (!!sap.ui.Device.browser.internet_explorer) {
-				rm.writeAttribute("role", "columnheader");
-			}
-			// TODO: determine if the column has a column menu
-			rm.writeAttribute("aria-haspopup", "true");
-			rm.writeAttribute("tabindex", "-1");
-		}
+
+		rm.writeAttribute("tabindex", "-1");
+
+		var mAriaAttributes = this.getAriaAttributesForCol(oTable, oColumn, iIndex);
+		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+
 		rm.addClass("sapUiTableCol");
 		rm.writeClasses();
 		rm.addStyle("width", oColumn.getWidth());
@@ -551,6 +610,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("</div>");
 	};
 
+	TableRenderer.getAriaAttributesForRowHdrRow = function(oTable, oRow) {
+		var mAriaAttributes = {
+			"aria-labelledby": {value: oTable.getId() + "-rownumberofrows " + oRow.getId() + "-rowselecttext"}
+		};
+
+		var sSelctionMode = oTable.getSelectionMode();
+		if (sSelctionMode !== sap.ui.table.SelectionMode.None) {
+			mAriaAttributes["title"] = {value: oTable._oResBundle.getText("TBL_ROW_SELECT")};
+			mAriaAttributes["aria-selected"] = {value: "false"};
+			if (sSelctionMode === sap.ui.table.SelectionMode.Multi) {
+				if (oTable.getSelectedIndices().length > 1) {
+					mAriaAttributes["aria-label"] = {value: oTable._oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY")};
+				}
+			} else {
+				mAriaAttributes["aria-label"] = {value: oTable._oResBundle.getText("TBL_ROW_SELECT_KEY")};
+			}
+		}
+
+		return mAriaAttributes;
+	};
+
 	TableRenderer.renderRowHdrRow = function(rm, oTable, oRow, iRowIndex) {
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-rowsel" + iRowIndex);
@@ -563,25 +643,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oTable.getRowHeight() > 0) {
 			rm.addStyle("height", oTable.getRowHeight() + "px");
 		}
-		if (oTable._bAccMode) {
-			// defined via ARIA spec but not yet supported
-			var aCellIds = [];
-			jQuery.each(oRow.getCells(), function(iIndex, oCell) {
-				aCellIds.push(oRow.getId() + "-col" + iIndex);
-			});
-			if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
-				rm.writeAttribute("aria-selected", "false");
-			}
-			if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
-				rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_ROW_SELECT"));
-				if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi && oTable._oSelection.getSelectedIndices().length > 1) {
-					rm.writeAttributeEscaped("aria-label", oTable._oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY"));
-				} else {
-					rm.writeAttributeEscaped("aria-label", oTable._oResBundle.getText("TBL_ROW_SELECT_KEY"));
-				}
-			}
-			rm.writeAttribute("tabindex", "-1");
-		}
+
+		rm.writeAttribute("tabindex", "-1");
+
+		var mAriaAttributes = this.getAriaAttributesForRowHdrRow(oTable, oRow);
+		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+
+		var aCellIds = [];
+		jQuery.each(oRow.getCells(), function(iIndex, oCell) {
+			aCellIds.push(oRow.getId() + "-col" + iIndex);
+		});
+
 		rm.writeStyles();
 		rm.write("></div>");
 	};
@@ -596,6 +668,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 			this.renderTableControl(rm, oTable, true);
 
+			rm.write("<span");
+			rm.writeAttribute("id", oTable.getId() + "-ariafixedcolumn");
+			rm.addStyle("position", "absolute");
+			rm.addStyle("top", "-20000px");
+			rm.writeStyles();
+			rm.write(">");
+			rm.write(oTable._oResBundle.getText("TBL_FIXED_COLUMN"));
 			rm.write("</div>");
 		}
 
@@ -675,9 +754,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 	};
 
+	TableRenderer.getAriaAttributesForTableControlCntColTh = function(oColumn, bHasRowSelector) {
+		var mAriaAttributes = {
+			"role": {value: "columnheader"},
+			"scope": {value: "col"}
+		};
+
+		if (bHasRowSelector) {
+			mAriaAttributes["aria-owns"] = {value: "" + oColumn.getId()};
+			mAriaAttributes["aria-labelledby"] = {value: "" + oColumn.getId()};
+		}
+
+		return mAriaAttributes;
+	};
+
 	TableRenderer.renderTableControlCnt = function(rm, oTable, bFixedTable, iStartColumn, iEndColumn, bFixedRow, bFixedBottomRow, iStartRow, iEndRow) {
 		rm.write("<table");
 		var sId = oTable.getId() + "-table";
+
 		if (bFixedTable) {
 			sId += "-fixed";
 			rm.addClass("sapUiTableCtrlFixed");
@@ -723,9 +817,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.write("<th");
 			rm.addStyle("width", "0px");
 			rm.writeStyles();
-			if (oTable._bAccMode && iStartRow == 0) {
-				rm.writeAttribute("role", "columnheader");
-				rm.writeAttribute("scope", "col");
+			if (iStartRow == 0) {
+				var mAriaAttributes = this.getAriaAttributesForTableControlCntColTh(oColumn);
+				this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
 				rm.writeAttribute("id", oTable.getId() + "_colsel");
 			}
 			rm.write("></th>");
@@ -743,13 +837,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				rm.addStyle("width", oColumn.getWidth());
 				rm.writeStyles();
 				if (iStartRow == 0) {
-					if (oTable._bAccMode) {
-						rm.writeAttribute("aria-owns", oColumn.getId());
-						rm.writeAttribute("aria-labelledby", oColumn.getId());
-						rm.writeAttribute("role", "columnheader");
-						rm.writeAttribute("scope", "col");
-						rm.writeAttribute("id", oTable.getId() + "_col" + col);
-					}
+					var mAriaAttributes = this.getAriaAttributesForTableControlCntColTh(oColumn, true);
+					this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+					rm.writeAttribute("id", oTable.getId() + "_col" + col);
 				}
 				rm.writeAttribute("data-sap-ui-headcolindex", col);
 				rm.write(">");
@@ -787,6 +877,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("</table>");
 	};
 
+	TableRenderer.getAriaAttributesForRowTr = function(oTable, iRowIndex, aCells) {
+		var mAriaAttributes = {};
+
+		mAriaAttributes["role"] = {value: "row"};
+
+		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+			mAriaAttributes["aria-selected"] = {value: "false"};
+		}
+
+		return mAriaAttributes;
+	};
+
+	TableRenderer.getAriaAttributesForRowTd = function(oTable, iRowIndex, aCells) {
+		var mAriaAttributes = {};
+
+		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None &&
+			oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
+			mAriaAttributes["role"] = {value: "rowheader"};
+		} else {
+			if (aCells.length === 0) {
+				mAriaAttributes["role"] = {value: "gridcell"};
+			}
+		}
+
+		mAriaAttributes["headers"] = {value: oTable.getId() + "_colsel"};
+		mAriaAttributes["aria-owns"] = {value: oTable.getId() + "-rowsel" + iRowIndex};
+		mAriaAttributes["role"] = {value: "rowheader"};
+
+		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+			mAriaAttributes["aria-selected"] = {value: "false"};
+		}
+
+		return mAriaAttributes;
+	};
+
 	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns) {
 
 		rm.write("<tr");
@@ -810,32 +935,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.addStyle("height", oTable.getRowHeight() + "px");
 		}
 		rm.writeStyles();
-		if (oTable._bAccMode) {
-			rm.writeAttribute("role", "row");
-			if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
-				rm.writeAttribute("aria-selected", "false");
-			}
-	//		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
-	//			rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_ROW_SELECT"));
-	//			rm.writeAttributeEscaped("aria-label", oTable._oResBundle.getText("TBL_ROW_SELECT_KEY"));
-	//		}
-		}
+
+		var mAriaAttributes = this.getAriaAttributesForRowTr(oTable);
+		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+
 		rm.write(">");
 		var aCells = oRow.getCells();
-		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None &&
-				oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
+		// render the row headers
+		if ((oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None &&
+			oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) ||
+			aCells.length === 0) {
 			rm.write("<td");
-			if (oTable._bAccMode) {
-				rm.writeAttribute("role", "gridcell");
-				rm.writeAttribute("headers", oTable.getId() + "_colsel");
-				rm.writeAttribute("aria-owns", oTable.getId() + "-rowsel" + iRowIndex);
-				if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
-					rm.writeAttribute("aria-selected", "false");
-				}
-			}
+			var mAriaAttributes = this.getAriaAttributesForRowTd(oTable, iRowIndex, aCells);
+			this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+
 			rm.write(">");
 			if (oTable._bAccMode) {
 				rm.write("<div");
+				rm.writeAttribute("id", oRow.getId() + "-rowselecttext");
 				rm.addClass("sapUiTableAriaRowSel");
 				rm.writeClasses();
 				rm.write(">");
@@ -843,28 +960,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				rm.write("</div>");
 			}
 			rm.write("</td>");
-		} else {
-			if (aCells.length === 0) {
-				rm.write("<td");
-				if (oTable._bAccMode) {
-					rm.writeAttribute("role", "gridcell");
-					rm.writeAttribute("headers", oTable.getId() + "_colsel");
-					rm.writeAttribute("aria-owns", oTable.getId() + "-rowsel" + iRowIndex);
-					if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
-						rm.writeAttribute("aria-selected", "false");
-					}
-				}
-				rm.write(">");
-				if (oTable._bAccMode) {
-					rm.write("<div");
-					rm.addClass("sapUiTableAriaRowSel");
-					rm.writeClasses();
-					rm.write(">");
-					rm.write(oTable._oResBundle.getText("TBL_ROW_SELECT_KEY"));
-					rm.write("</div>");
-				}
-				rm.write("</td>");
-			}
 		}
 		
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
@@ -877,6 +972,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 	};
 
+	TableRenderer.getAriaAttributesForCell = function(oTable, bFixedTable, oRow, oColumn, iColIndex, oCell) {
+		var mAriaAttributes = {};
+
+		mAriaAttributes["headers"] = {value: oTable.getId() + "_col" + iColIndex};
+		mAriaAttributes["role"] = {value: "gridcell"};
+
+		var sRowSelectorId = oTable.getId() + "-rownumberofrows";
+		var sLabelledBy = sRowSelectorId + " " + oTable.getId() + "-ariadesc " + oColumn.getId();
+		var iMultiLabels = oColumn.getMultiLabels().length;
+		if (iMultiLabels > 1) {
+			for (var i = 1; i < iMultiLabels; i++) {
+				sLabelledBy +=  " " + oColumn.getId() + "_" + i;
+			}
+		}
+		sLabelledBy +=  " " + oCell.getId();
+
+		var sDescribedBy = "";
+		if (bFixedTable) {
+			sLabelledBy += " " + oTable.getId() + "-ariafixedcolumn";
+		}
+
+		mAriaAttributes["aria-labelledby"] = {value: sLabelledBy};
+		mAriaAttributes["aria-describedby"] = {value: oTable.getId() + "-toggleedit" + sDescribedBy};
+
+		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+			mAriaAttributes["aria-selected"] = {value: "false"};
+		}
+
+
+		return mAriaAttributes;
+	};
+
 	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns) {
 		var iColIndex = oCell.data("sap-ui-colindex");
 		var oColumn = oTable.getColumns()[iColIndex];
@@ -885,25 +1012,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			var sId = oRow.getId() + "-col" + iCellIndex;
 			rm.writeAttribute("id", sId);
 			rm.writeAttribute("tabindex", "-1");
-			if (oTable._bAccMode) {
-				// correct would be aria-labelledby but doesn't work for JAWS
-				rm.writeAttribute("headers", oTable.getId() + "_col" + iColIndex);
-				rm.writeAttribute("role", "gridcell");
-				var sLabelledBy = oTable.getId() + "-ariadesc " + oColumn.getId();
-				var iMultiLabels = oColumn.getMultiLabels().length;
-				if (iMultiLabels > 1) {
-					for (var i = 1; i < iMultiLabels; i++) {
-						sLabelledBy +=  " " + oColumn.getId() + "_" + i;
-					}
-				}
-				sLabelledBy +=  " " + oCell.getId();
-				rm.writeAttribute("aria-labelledby", sLabelledBy);
-				rm.writeAttribute("aria-describedby", oTable.getId() + "-toggleedit");
-				rm.writeAttribute("aria-activedescendant", oCell.getId());
-				if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
-					rm.writeAttribute("aria-selected", "false");
-				}
-			}
+
+			var mAriaAttributes = this.getAriaAttributesForCell(oTable, bFixedTable, oRow, oColumn, iColIndex, oCell);
+			this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+
 			var sHAlign = this.getHAlign(oColumn.getHAlign(), oTable._bRtlMode);
 			if (sHAlign) {
 				rm.addStyle("text-align", sHAlign);

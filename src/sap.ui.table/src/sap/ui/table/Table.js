@@ -692,7 +692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var iVisibleRowCount = this.getVisibleRowCount();
 		var that = this;
 
-		if (oBinding && (iFixedBottomRows > 0 || iFixedTopRows > 0)) {
+		if (oBinding) {
 			jQuery.each(this.getRows(), function(iIndex, oRow) {
 
 				var $row = oRow.$();
@@ -999,6 +999,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			if (this.getBinding("rows") && !this._bRefreshing) {
 				this.updateRows();
 			}
+
+			this._updateAriaRowOfRowsText(true);
 		//}
 		return this;
 	};
@@ -1158,6 +1160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// when not scrolling we update also the scroll position of the scrollbar
 		if (this._oVSb.getScrollPosition() !== iStartIndex) {
 			this._oVSb.setScrollPosition(iStartIndex);
+			this._updateAriaRowOfRowsText(true);
 		}
 
 		// update the paginator
@@ -2751,8 +2754,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype.onfocusin = function(oEvent) {
 		var $target = jQuery(oEvent.target);
+		var bNoData = this.$().hasClass("sapUiTableEmpty");
+		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
+		this._updateAriaRowOfRowsText();
 		// KEYBOARD HANDLING (_bIgnoreFocusIn is set in onsaptabXXX)
-		if (!this._bIgnoreFocusIn && ($target.hasClass("sapUiTableCtrlBefore") || $target.hasClass("sapUiTableCtrlAfter"))) {
+		if (!this._bIgnoreFocusIn && (bControlBefore || $target.hasClass("sapUiTableCtrlAfter"))) {
+			// set the focus on the last focused dom ref of the item navigation or
+			// in case if not set yet (tab previous into item nav) then we set the
+			// focus to the root domref
 			// reset the aria description of the table that the table is announced the
 			// first time the table grabs the focus
 			this.$("ariadesc").text(this._oResBundle.getText("TBL_TABLE"));
@@ -2760,19 +2769,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			// focus on the current focus element of the item navigation and we
 			// leave the action mode!
 			this._leaveActionMode();
-			// set the focus on the last focused dom ref of the item navigation or
-			// in case if not set yet (tab previous into item nav) then we set the
-			// focus to the root domref
 			if (jQuery.contains(this.$().find('.sapUiTableColHdrCnt')[0], oEvent.target)) {
 				jQuery(this._oItemNavigation.getFocusedDomRef() || this._oItemNavigation.getRootDomRef()).focus();
 			} else {
-				if ($target.hasClass("sapUiTableCtrlBefore")) {
-					this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex() % this._oItemNavigation.iColumns, oEvent);
+				if (bControlBefore) {
+					if (bNoData) {
+						this._bIgnoreFocusIn = true;
+						this.$().find(".sapUiTableCtrlEmpty").focus();
+						this._bIgnoreFocusIn = false;
+					} else {
+						this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex() % this._oItemNavigation.iColumns, oEvent);
+					}
 				} else {
 					this._oItemNavigation.focusItem((this._oItemNavigation.getFocusedIndex() % this._oItemNavigation.iColumns) + (this._oItemNavigation.iColumns * this._iLastSelectedDataRow), oEvent);
 				}
 			}
-			oEvent.preventDefault();
+
+			if (!bNoData) {
+				oEvent.preventDefault();
+			}
 		} else if (jQuery.sap.endsWith(oEvent.target.id, "-rsz")) {
 			// prevent that the ItemNavigation grabs the focus!
 			// only for the column resizing
@@ -3939,7 +3954,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._scrollPageDown = function() {
-		this.setFirstVisibleRow(Math.min(this.getFirstVisibleRow() + this.getVisibleRowCount(), this._getRowCount() - this.getVisibleRowCount()));
+		this.setFirstVisibleRow(Math.min(this.getFirstVisibleRow() + this.getVisibleRowCount() - this.getFixedBottomRowCount(), this._getRowCount() - this.getVisibleRowCount()));
 	};
 
 	/**
@@ -4095,6 +4110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (!this._bEventSapSelect === true) {
 			return;
 		}
+
 		this._bEventSapSelect = false;
 
 		// this mimics the sapselect event but on keyup
@@ -4223,11 +4239,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			oEvent.preventDefault();
 		} else {
 			var oIN = this._oItemNavigation;
-			if (jQuery.contains($this.find('.sapUiTableCCnt')[0], oEvent.target) && this.getColumnHeaderVisible()) {
+			var bNoData = this.$().hasClass("sapUiTableEmpty");
+			var oSapUiTableCCnt = $this.find('.sapUiTableCCnt')[0];
+			var bFocusFromTableContent = jQuery.contains(oSapUiTableCCnt, oEvent.target);
+
+			if (bFocusFromTableContent && this.getColumnHeaderVisible()) {
+				// Focus comes from table content. Focus the column header which corresponds to the
+				// selected column (column index)
 				var iColumn = oIN.getFocusedIndex() % oIN.iColumns;
 				oIN.focusItem(iColumn, oEvent);
 				oEvent.preventDefault();
-			} else if (oIN.getFocusedDomRef() === oEvent.target && jQuery.sap.containsOrEquals($this.find(".sapUiTableCCnt").get(0), oEvent.target)) {
+			} else if (oIN.getFocusedDomRef() === oEvent.target && jQuery.sap.containsOrEquals(oSapUiTableCCnt, oEvent.target) ||
+				(!this.getColumnHeaderVisible() && bNoData && bFocusFromTableContent)) {
 				// in case of having the focus in the row or column header we do not need to
 				// place the focus to the div before the table control because there we do
 				// not need to skip the table controls anymore.
@@ -4257,10 +4280,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			oEvent.preventDefault();
 		} else {
 			var oIN = this._oItemNavigation;
-			if (jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target)) {
+			var bContainsColHdrCnt = jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target);
+			var bNoData = this.$().hasClass("sapUiTableEmpty");
+
+			if (bContainsColHdrCnt && !bNoData) {
 				oIN.focusItem(oIN.getFocusedIndex() + oIN.iColumns * this._iLastSelectedDataRow, oEvent);
 				oEvent.preventDefault();
-			} else if (oIN.getFocusedDomRef() === oEvent.target) {
+			} else if (oIN.getFocusedDomRef() === oEvent.target || (bNoData && bContainsColHdrCnt)) {
 				this._bIgnoreFocusIn = true;
 				$this.find(".sapUiTableCtrlAfter").focus();
 				this._bIgnoreFocusIn = false;
@@ -4268,13 +4294,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 	};
 
-	/**
+	Table.prototype._updateAriaRowOfRowsText = function(bForceUpdate) {
+		var oAriaElement = document.getElementById(this.getId() + "-rownumberofrows");
+
+		var oIN = this._oItemNavigation;
+		if (oIN) {
+			var iIndex = oIN.getFocusedIndex();
+			var iColumnNumber = iIndex % oIN.iColumns;
+
+			var iFirstVisibleRow = this.getFirstVisibleRow();
+			var iTotalRowCount = this._getRowCount();
+			var iRowIndex = Math.floor(iIndex / oIN.iColumns) + iFirstVisibleRow + 1 - this._getHeaderRowCount();
+
+			var sRowCountText = this._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowIndex, iTotalRowCount]);
+			if (iRowIndex > 0 && iColumnNumber === 0 || bForceUpdate) {
+				oAriaElement.innerText = sRowCountText;
+			} else {
+				oAriaElement.innerText = " ";
+			}
+		}
+	};
+
+
+		/**
 	 * dynamic scrolling when reaching the bottom row with the ARROW DOWN key
 	 * @private
 	 */
 	Table.prototype.onsapdown = function(oEvent) {
 		if (!this._bActionMode && this._isBottomRow(oEvent)) {
-			if (this.getFirstVisibleRow() != this._getRowCount() - this.getVisibleRowCount() - this.getFixedBottomRowCount()) {
+			if (this.getFirstVisibleRow() != this._getRowCount() - this.getVisibleRowCount()) {
 				oEvent.stopImmediatePropagation(true);
 				if (this.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
 					this._scrollNext();
@@ -4391,6 +4439,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				if (this._isBottomRow(oEvent)) {
 					this._scrollPageDown();
 				}
+
+				var iFixedBottomRowsOffset = this.getFixedBottomRowCount();
+				if (this.getFirstVisibleRow() === this._getRowCount() - this.getVisibleRowCount()) {
+					iFixedBottomRowsOffset = 0;
+				}
+
+				var iRowCount = (oIN.aItemDomRefs.length / oIN.iColumns) - iFixedBottomRowsOffset;
+				var iCol = oIN.iFocusedIndex % oIN.iColumns;
+				var iIndex = (iRowCount - 1) * oIN.iColumns + iCol;
+
+				oIN.focusItem(iIndex, oEvent);
+
+				oEvent.stopImmediatePropagation(true);
 			}
 			oEvent.preventDefault();
 		}
