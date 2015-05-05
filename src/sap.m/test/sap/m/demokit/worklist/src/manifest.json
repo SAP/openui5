@@ -5,17 +5,17 @@
 		"_version": "1.1.0",
 		"id": "sap.ui.demo.worklist",
 		"type": "application",
-		
+
 		"i18n": "i18n/i18n.properties",
 		"title": "{i18n>appTitle}",
 		"description": "{i18n>appDescription}",
-		
+
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
 		"ach": "CA-UI5-DOC",
 		"dataSources": {
-			"mainservice": {
+			"mainService": {
 				"uri": "/here/goes/your/serviceUrl/",
 				"type": "OData",
 				"settings": {
@@ -28,8 +28,11 @@
 	"sap.ui": {
 		"_version": "1.1.0",
 		"technology": "UI5",
-		
-		"icon": "sap-icon://task",
+
+	  	"icons": {
+		  	"icon": "sap-icon://task"
+		},
+
 		"deviceTypes": {
 			"desktop": true,
 			"tablet": true,
@@ -54,10 +57,6 @@
 			}
 		},
 
-		"config": {
-			"serviceUrl": "here/goes/your/serviceUrl/"
-		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -66,7 +65,7 @@
 				}
 			},
 			"" : {
-				"dataSource": "mainservice",
+				"dataSource": "mainService",
 				"settings": {
 					"metadataUrlParams": {
 						"sap-documentation": "heading"
@@ -113,8 +112,7 @@
 				},
 				"objectNotFound": {
 					"viewName": "ObjectNotFound",
-					"viewId": "objectNotFound",
-					"viewLevel": 2
+					"viewId": "objectNotFound"
 				},
 				"notFound": {
 					"viewName": "NotFound",

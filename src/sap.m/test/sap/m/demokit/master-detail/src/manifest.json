@@ -15,7 +15,7 @@
 		},
 		"ach": "CA-UI5-DOC",
 		"dataSources": {
-			"mainservice": {
+			"mainService": {
 				"uri": "/here/goes/your/serviceUrl/",
 				"type": "OData",
 				"settings": {
@@ -32,7 +32,7 @@
 		"icons": {
 			"icon": "sap-icon://detail-view"
 		},
-		
+
 		"deviceTypes": {
 			"desktop": true,
 			"tablet": true,
@@ -65,7 +65,7 @@
 				}
 			},
 			"" : {
-				"dataSource": "mainservice",
+				"dataSource": "mainService",
 				"settings": {
 					"metadataUrlParams": {
 						"sap-documentation": "heading"
@@ -113,18 +113,15 @@
 				},
 				"detailObjectNotFound": {
 					"viewName": "DetailObjectNotFound",
-					"viewId": "detailObjectNotFound",
-					"viewLevel": 3
+					"viewId": "detailObjectNotFound"
 				},
 				"detailNoObjectsAvailable": {
 					"viewName": "DetailNoObjectsAvailable",
-					"viewId": "detailNoObjectsAvailable",
-					"viewLevel": 3
+					"viewId": "detailNoObjectsAvailable"
 				},
 				"notFound": {
 					"viewName": "NotFound",
-					"viewId": "notFound",
-					"viewLevel": 3
+					"viewId": "notFound"
 				}
 			}
 		}
