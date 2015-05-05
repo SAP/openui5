@@ -44,7 +44,8 @@ sap.ui.require([
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
 				<Property Name="AnyProperty" Type="Edm.String" sap:field-control="UX_FC_READONLY" \
-					sap:updatable="false" sap:sortable="false"/>\
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/>\
+				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false"/>\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
@@ -694,6 +695,7 @@ sap.ui.require([
 					oBusinessPartnerSet = oEntityContainer.entitySet[0],
 					oContact = oGWSampleBasic.entityType[3],
 					oAnyProperty = oBusinessPartner.property[1],
+					oNonFilterable = oBusinessPartner.property[2],
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
@@ -1025,6 +1027,22 @@ sap.ui.require([
 					]
 				}, "BusinessPartnerSet not searchable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"];
+
+				// sap:filterable
+				deepEqual(oAnyProperty["sap:filterable"], "false");
+				delete oAnyProperty["sap:filterable"];
+				deepEqual(oNonFilterable["sap:filterable"], "false");
+				delete oNonFilterable["sap:filterable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
+						["NonFilterableProperties"],
+					i > 0 ? undefined :
+						[
+							{"PropertyPath" : "AnyProperty"},
+							{"PropertyPath" : "NonFilterable"}
+						],
+					"BusinessPartnerSet not filterable");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
+					["NonFilterableProperties"];
 
 				// sap:required-in-filter
 				deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");

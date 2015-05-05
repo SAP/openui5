@@ -5089,6 +5089,11 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "WebAddress"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "WebAddress"
@@ -5107,6 +5112,17 @@
 						"Searchable" : {
 							"Bool" : "false"
 						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Name"
+						}, {
+							"PropertyPath" : "NameLanguage"
+						}, {
+							"PropertyPath" : "Description"
+						}, {
+							"PropertyPath" : "DescriptionLanguage"
+						}]
 					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
@@ -5143,6 +5159,19 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Note"
+						}, {
+							"PropertyPath" : "NoteLanguage"
+						}, {
+							"PropertyPath" : "LifecycleStatusDescription"
+						}, {
+							"PropertyPath" : "BillingStatusDescription"
+						}, {
+							"PropertyPath" : "DeliveryStatusDescription"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "Note"
@@ -5169,6 +5198,19 @@
 						"Searchable" : {
 							"Bool" : "false"
 						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Note"
+						}, {
+							"PropertyPath" : "NoteLanguage"
+						}, {
+							"PropertyPath" : "DeliveryDate"
+						}, {
+							"PropertyPath" : "Quantity"
+						}, {
+							"PropertyPath" : "QuantityUnit"
+						}]
 					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
@@ -5252,6 +5294,13 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Sex"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "Sex"
@@ -5313,6 +5362,15 @@
 						"Searchable" : {
 							"Bool" : "false"
 						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Land1"
+						}, {
+							"PropertyPath" : "Landx"
+						}, {
+							"PropertyPath" : "Natio"
+						}]
 					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
@@ -5378,6 +5436,13 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "AddressType"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "AddressType"
@@ -5440,6 +5505,11 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Category"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "Category"
@@ -5499,6 +5569,13 @@
 						"Searchable" : {
 							"Bool" : "false"
 						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Waers"
+						}, {
+							"PropertyPath" : "Ltext"
+						}]
 					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
@@ -5562,6 +5639,13 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "Msehi"
@@ -5623,6 +5707,13 @@
 						"Searchable" : {
 							"Bool" : "false"
 						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
 					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
@@ -5686,6 +5777,13 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "Msehi"
@@ -5747,6 +5845,13 @@
 						"Searchable" : {
 							"Bool" : "false"
 						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "TypeCode"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
 					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
@@ -5810,6 +5915,13 @@
 							"Bool" : "false"
 						}
 					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "BpRole"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
 							"PropertyPath" : "BpRole"
@@ -5871,6 +5983,13 @@
 						"Searchable" : {
 							"Bool" : "false"
 						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Spras"
+						}, {
+							"PropertyPath" : "Sptxt"
+						}]
 					},
 					"Org.OData.Capabilities.V1.SortRestrictions" : {
 						"NonSortableProperties" : [{
