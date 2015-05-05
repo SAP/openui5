@@ -685,10 +685,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
 			oResult = parse(oTokens.tokens, sInput, mGlobals || mDefaultGlobals);
 
-			//TODO TDD replace !iStart by iStart === undefined
-			if (!iStart && oTokens.at < sInput.length) {
-				error("Invalid token in expression", sInput, oTokens.at);
-			}
+//			if (iStart === undefined && oTokens.at < sInput.length) {
+//				error("Invalid token in expression", sInput, oTokens.at);
+//			}
 			if (!oTokens.parts.length) {
 				return {
 					constant: oResult.formatter(),
@@ -697,8 +696,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			}
 
 			function formatter() {
-				//make separate parameters for parts one (array like) parameter
-				// TODO stringify the result?
+				//turn separate parameters for parts into one (array like) parameter
 				return oResult.formatter(arguments);
 			}
 			formatter.textFragments = true; //use CompositeBinding even if there is only one part
@@ -706,7 +704,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 				result: {
 					formatter: formatter,
 					parts: oTokens.parts
-					//TODO useRawValues: true --> use JS object instead of formatted String
 				},
 				at: oResult.at || oTokens.at
 			};
