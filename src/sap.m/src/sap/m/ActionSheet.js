@@ -178,7 +178,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionSheet.prototype.openBy = function(oControl){
-		var that = this;
+		var that = this, iTop, sEndTransform;
 
 		//Generate a translate3d string with the given y offset
 		function genTransformCSS(y){
@@ -310,13 +310,23 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							jQuery(this).unbind("webkitTransitionEnd transitionend");
 							$this.removeClass("sapMDialogSliding");
 							fnOpened();
+							// replace the css transform with css top because div with css transform can scroll the whole page
+							// on Android stock browser and blackberry browser
+							setTimeout(function(){
+								$this.css({
+									"top": iTop + "px",
+									"-webkit-transform": "",
+									"-moz-transform": "",
+									"transform": ""
+								});
+							}, 0);
 						});
 
 						//need a timeout to trigger the animation
 						setTimeout(function(){
-							var iTop = iWindowHeight - $this.outerHeight(),
-								//calculation for the end point of the animation
-								sEndTransform = genTransformCSS(iTop);
+							iTop = iWindowHeight - $this.outerHeight();
+							//calculation for the end point of the animation
+							sEndTransform = genTransformCSS(iTop);
 							$this.addClass("sapMDialogSliding") // Windows Phone: class should be added before CSS, otherwise no animation
 								 .removeClass("sapMDialogHidden")
 								 .css({
@@ -335,12 +345,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							$this.removeClass("sapMDialogSliding");
 							fnClosed();
 						});
-						$this.addClass("sapMDialogSliding")  // Windows Phone: class should be added before CSS, otherwise no animation
-							 .css({
-								"-webkit-transform": sTransform,
-								"-moz-transform": sTransform,
-								"transform": sTransform
-							 });
+
+						// set the css transform back before the real close animation
+						$this.css({
+							"-webkit-transform": sEndTransform,
+							"-moz-transform": sEndTransform,
+							"transform": sEndTransform,
+							"top": 0
+						});
+						setTimeout(function() {
+							$this.addClass("sapMDialogSliding") // Windows Phone: class should be added before CSS, otherwise no animation
+								.css({
+									"-webkit-transform": sTransform,
+									"-moz-transform": sTransform,
+									"transform": sTransform
+								});
+						}, 0);
 					};
 
 					//set the animation to the interal oPopup instance on Dialog
@@ -367,13 +387,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 						var $window = jQuery(window),
 							iWindowHeight = $window.height(),
 							$this = this.$(),
-							iTop = iWindowHeight - $this.outerHeight(),
-							sTransform = genTransformCSS(iTop);
+							iTop = iWindowHeight - $this.outerHeight();
 
 						$this.css({
-							"-webkit-transform": sTransform,
-							"-moz-transform": sTransform,
-							"transform": sTransform
+							top: iTop + "px"
 						});
 
 						this._adjustScrollingPane();
