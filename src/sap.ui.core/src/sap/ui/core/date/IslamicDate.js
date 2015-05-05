@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		IslamicDate.prototype.setFullYear = function (year) {
 			year = parseDateArgument(year);
 			this._year = year;
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setMonth");
 		};
 
 		IslamicDate.prototype.setYear = function (year) {
@@ -191,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			if (result.iAddend) {
 				this.setFullYear(this.getFullYear() + result.iAddend);
 			}
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setDate");
 		};
 
 		IslamicDate.prototype.setHours = function () {
@@ -204,16 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					this.setDate(this.getDate() + oComputedHours.iAddend);
 				}
 			}
-			if (iArgsLength >= 2) {
-				this.setMinutes(parseInt(arguments[1], 10));
-			}
-			if (iArgsLength >= 3) {
-				this.setSeconds(parseInt(arguments[2], 10));
-			}
-			if (iArgsLength == 4) {
-				this.setMilliseconds(parseInt(arguments[3], 10));
-			}
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setMinutes");
 		};
 
 		IslamicDate.prototype.setMinutes = function (minutes) {
@@ -223,7 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			if (oCalculatedValue.iAddend) {
 				this.setHours(this.getHours() + oCalculatedValue.iAddend);
 			}
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setSeconds");
 		};
 
 		IslamicDate.prototype.setSeconds = function (seconds) {
@@ -233,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			if (oCalculatedValue.iAddend) {
 				this.setMinutes(this.getMinutes() + oCalculatedValue.iAddend);
 			}
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setMilliseconds");
 		};
 
 		IslamicDate.prototype.setMilliseconds = function (milliseconds) {
@@ -518,20 +509,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			return oIslamicDate.getMilliseconds();
 		};
 
-		IslamicDate.prototype.setUTCDate = function (date) {
-			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), this.getUTCMonth(), date, this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
-			updateLocalFields.call(this, oTempIslamicUTC);
-			return this.getTime();
-		};
-
 		IslamicDate.prototype.setUTCFullYear = function (year) {
 			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(year, this.getUTCMonth(), this.getUTCDate(), this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setUTCMonth");
 		};
 
 		IslamicDate.prototype.setUTCMonth = function (month) {
 			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), month, this.getUTCDate(), this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
+			updateLocalFields.call(this, oTempIslamicUTC);
+			return callChildSetterIfNeeded.call(this, arguments, "setUTCDate");
+		};
+
+		IslamicDate.prototype.setUTCDate = function (date) {
+			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), this.getUTCMonth(), date, this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
 			return this.getTime();
 		};
@@ -539,19 +530,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		IslamicDate.prototype.setUTCHours = function (hours) {
 			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate(), hours, this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setUTCMinutes");
 		};
 
 		IslamicDate.prototype.setUTCMinutes = function (minutes) {
 			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate(), this.getUTCHours(), minutes, this.getUTCSeconds(), this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setUTCSeconds");
 		};
 
 		IslamicDate.prototype.setUTCSeconds = function (seconds) {
 			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate(), this.getUTCHours(), this.getUTCMinutes(), seconds, this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
-			return this.getTime();
+			return callChildSetterIfNeeded.call(this, arguments, "setUTCMilliseconds");
 		};
 
 		IslamicDate.prototype.setUTCMilliseconds = function (milliseconds) {
@@ -636,6 +627,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				jQuery.sap.padLeft(String(minutes), "0", 2) + ":" +
 				jQuery.sap.padLeft(String(seconds), "0", 2) + "." +
 				jQuery.sap.padLeft(String(milliseconds), "0", 4);
+		}
+
+		/**
+		 * Calls additional (lower in the hierarchy) function if there is at least one optional parameter
+		 * @private
+		 * @param aPreviousArgs the list of all arguments used in parent's call
+		 * @param sSetterName the name of the function to call
+		 * @returns {int} the timestamp corresponding to the last values of this
+		 */
+		function callChildSetterIfNeeded(aPreviousArgs, sSetterName) {
+			if (aPreviousArgs.length == 1) {
+				return this.getTime();
+			} else {
+				return IslamicDate.prototype[sSetterName].apply(this, Array.prototype.slice.call(aPreviousArgs, 1));
+			}
 		}
 
 		return IslamicDate;
