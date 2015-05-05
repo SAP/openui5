@@ -734,7 +734,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			// filename
 			oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
 				type : sap.m.InputType.Text,
-				fieldWidth: "80%",
+				fieldWidth: "76%",
 				valueState : sValueState,
 				valueStateText : this._oRb.getText("UPLOADCOLLECTION_EXISTS"),
 				showValueStateMessage: bShowValueStateMessage,
