@@ -437,21 +437,18 @@
 		sap.ui.getCore().applyChanges();
 
 		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "initial single-line mode");
-		equals(oMISingleLineMode.getValue(), "", "no indicator in single-line mode");
 
 		oMISingleLineMode.setEnableMultiLineMode(true);
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(10);
 
 		equals(oMISingleLineMode.getEnableMultiLineMode(), true, "multi-line set successfully");
-		equals(oMISingleLineMode.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator appears");
 
 		oMISingleLineMode.setEnableMultiLineMode(false);
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(10);
 
 		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "set back single-line mode");
-		equals(oMISingleLineMode.getValue(), "", "no indicator in single-line mode");
 
 	});
 
@@ -517,7 +514,6 @@
 		equals(oMLInput2.getTokens()[2].getVisible(), true, "token3 can be displayed");
 		equals(oMLInput2.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput2.getTokens()[0].getVisible(), false, "token1 is not visible");
-		equals(oMLInput2.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator is visible");
 
 		oMLInput2.focus();
 		sap.ui.getCore().applyChanges();
@@ -532,7 +528,6 @@
 		this.clock.tick(500);
 		oMLInput2.onsapenter();
 		this.clock.tick(500);
-		equals(oMLInput2._oPopupInput.getValue(), "", "no value");
 		equals(oTokenizerInPopup.getTokens().length, 4, "new token is added");
 		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
@@ -546,7 +541,6 @@
 		equals(oMLInput2._tokenizer.getTokens()[1].getVisible(), false, "token2 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[2].getVisible(), false, "token3 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[3].getVisible(), true, "new token can be displayed");
-		equals(oMLInput2.getValue(), oMessageBundle.getText(sShowMoreKey, 3), "indicator is visible");
 		
 		oMLInput2.destroy();
 	});
