@@ -2106,6 +2106,88 @@
 		});
 	});
 	
+	asyncTest("test oDataModel 2 times createEntry and one deleteCreatedEntry", function() {
+		var oContext, oContext2;
+		
+		oModel.setDeferredBatchGroups(["myId"]);
+		oModel.setChangeBatchGroups({
+			"Product": {
+				batchGroupId: "myId",  
+				changeSetId: "Test",
+				single: true
+			}
+		});
+		
+		var fnTest = function(){
+			oContext = oModel.createEntry("/ProductSet", {properties: {
+					"ProductID":"AD-1234",
+					"TypeCode":"AD",
+					"Category":"Computer system accessories",
+					"Name":"TestEntry",
+					"NameLanguage":"E",
+					"Description":"Flyer for our product palette",
+					"DescriptionLanguage":"E",
+					"SupplierID":"0100000015",
+					"SupplierName":"Robert Brown Entertainment",
+					"TaxTarifCode":1,
+					"MeasureUnit":"EA",
+					"WeightMeasure":"0.01",
+					"WeightUnit":"KG",
+					"CurrencyCode":"CAD",
+					"Price":"0.0",
+					"Width":"0.46",
+					"Depth":"0.3",
+					"Height":"0.03",
+					"DimUnit":"M"
+			}, batchGroupId: "myId"});
+	
+			oModel.deleteCreatedEntry(oContext);
+			
+			oContext2 = oModel.createEntry("/ProductSet", {properties: {
+				"ProductID":"AD-1235",
+				"TypeCode":"AD",
+				"Category":"Computer system accessories",
+				"Name":"TestEntry",
+				"NameLanguage":"E",
+				"Description":"Flyer for our product palette",
+				"DescriptionLanguage":"E",
+				"SupplierID":"0100000015",
+				"SupplierName":"Robert Brown Entertainment",
+				"TaxTarifCode":1,
+				"MeasureUnit":"EA",
+				"WeightMeasure":"0.01",
+				"WeightUnit":"KG",
+				"CurrencyCode":"CAD",
+				"Price":"0.0",
+				"Width":"0.46",
+				"Depth":"0.3",
+				"Height":"0.03",
+				"DimUnit":"M"
+		}, batchGroupId: "myId"});
+			
+			oModel.submitChanges({
+				success : function(oData, oResponse) {
+					ok(true, "should land here");
+				},
+				error : function(oError) {
+					ok(false, "should not land here");
+				}
+			});
+		};
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(true, "should land here");
+			var aRequests = oEvent.getParameter('requests');
+			equal(aRequests.length, 1, "should contain one request");
+			equal(aRequests[0].success, true, "request successful");
+			equal(aRequests[0].url, "ProductSet", "request successful");
+			equal(aRequests[0].response.statusCode, "201", "response code");
+			start();
+		});
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	
 	module("ODataModelV2 Eventing", {
 		setup : function() {
 			initServer();

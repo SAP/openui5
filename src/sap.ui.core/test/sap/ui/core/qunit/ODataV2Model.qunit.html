@@ -1084,7 +1084,7 @@
 			"RequestSent", "RequestFailed", "RequestCompleted",
 			"BatchRequestSent", "BatchRequestFailed", "BatchRequestCompleted"
 		];
-	function attachRequestEvents(oModel, oInfo) {
+	function attachRequestEvents(oModel, oInfo, iBatchRequestSentCount, iBatchRequestCompletedCount, iBatchRequestFailedCount) {
 		var fnHandler = function(oEvent) {
 			var sId = oEvent.getId();
 			if (!oInfo[sId]) {
@@ -1096,6 +1096,9 @@
 			switch (sId) {
 				case "batchRequestSent":
 					ok(mParameters.requests, sId + " contains requests");
+					if (iBatchRequestSentCount !== undefined) {
+						equal(mParameters.requests.length, iBatchRequestSentCount, "Event should contain " + iBatchRequestSentCount + " requests");
+					}
 				case "requestSent":
 					ok(mParameters.url, sId + " contains url");
 					ok(mParameters.method, sId + " contains method");
@@ -1103,6 +1106,9 @@
 					break;
 				case "batchRequestFailed":
 					ok(mParameters.requests, sId + " contains requests");
+					if (iBatchRequestFailedCount !== undefined) {
+						equal(mParameters.requests.length, iBatchRequestFailedCount, "Event should contain " + iBatchRequestFailedCount + " requests");
+					}
 				case "requestFailed":
 					ok(mParameters.url, sId + " contains url");
 					ok(mParameters.method, sId + " contains method");
@@ -1115,6 +1121,9 @@
 					break;
 				case "batchRequestCompleted":
 					ok(mParameters.requests, sId + " contains requests");
+					if (iBatchRequestCompletedCount !== undefined) {
+						equal(mParameters.requests.length, iBatchRequestCompletedCount, "Event should contain " + iBatchRequestCompletedCount + " requests");
+					}
 				case "requestCompleted":
 					ok(mParameters.url, sId + " contains url");
 					ok(mParameters.method, sId + " contains method");
@@ -1427,16 +1436,21 @@
 				success: 0,
 				error: 0
 			}, oRequest1, oRequest2, oRequest3;
-		attachRequestEvents(oModel, oInfo);
+		attachRequestEvents(oModel, oInfo, 1, 1, 0);
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError});
 			oRequest1.abort();
 			oRequest2.abort();
-			oModel.attachBatchRequestCompleted(function() {
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 1, "1 requests");
+				equal(oRequests[0].url, "Categories(7)", "request url check");
+				ok(oRequests[0].success, "request success check");
+				
 				setTimeout(function() {
 					equal(oInfo.requestSent, 1, "One requests sent");
 					equal(oInfo.requestFailed, 0, "No request failed");
@@ -1465,18 +1479,31 @@
 				success: 0,
 				error: 0
 			}, oRequest1, oRequest2, oRequest3;
-		attachRequestEvents(oModel, oInfo);
+		attachRequestEvents(oModel, oInfo, 3, 3, 0);
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError});
 			oModel.attachBatchRequestSent(function() {
 				oRequest1.abort();
 				oRequest2.abort();
 			});
-			oModel.attachBatchRequestCompleted(function() {
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 3, "3 requests");
+				equal(oRequests[0].url, "Categories(1)", "request url check");
+				ok(!oRequests[0].success, "request success check");
+				equal(oRequests[0].response.statusCode, "0", "request aborted");
+				equal(oRequests[0].response.statusText, "abort", "request aborted");
+				equal(oRequests[1].url, "Categories(2)", "request url check");
+				ok(!oRequests[1].success, "request success check");
+				equal(oRequests[1].response.statusCode, "0", "request aborted");
+				equal(oRequests[1].response.statusText, "abort", "request aborted");
+				equal(oRequests[2].url, "Categories(7)", "request url check");
+				ok(oRequests[2].success, "request success check");
+				
 				setTimeout(function() {
 					equal(oInfo.requestSent, 3, "Three requests sent");
 					equal(oInfo.requestFailed, 0, "No request failed");
@@ -1490,6 +1517,108 @@
 				}, 0);
 			})
 		})
+		
+	});	
+	
+	asyncTest("async test request events - aborted deferred requests batch", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo, 1, 1, 0);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredBatchGroups(["myId"]);
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest1.abort();
+			oRequest2.abort();
+			
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 1, "1 requests");
+				equal(oRequests[0].url, "Categories(7)", "request url check");
+				ok(oRequests[0].success, "request success check");
+				
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.success, 1, "One success callbacks called");
+					equal(oInfo.error, 2, "Two error callbacks called");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			});
+			oModel.submitChanges();
+		})
+		
+	});
+	
+	asyncTest("async test request events - aborted deferred requests batch after sent", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo, 3, 3, 0);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredBatchGroups(["myId"]);
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+
+			oModel.attachBatchRequestSent(function() {
+				oRequest1.abort();
+				oRequest2.abort();
+			});
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 3, "3 requests");
+				equal(oRequests[0].url, "Categories(1)", "request url check");
+				ok(!oRequests[0].success, "request success check");
+				equal(oRequests[0].response.statusCode, "0", "request aborted");
+				equal(oRequests[0].response.statusText, "abort", "request aborted");
+				equal(oRequests[1].url, "Categories(2)", "request url check");
+				ok(!oRequests[1].success, "request success check");
+				equal(oRequests[1].response.statusCode, "0", "request aborted");
+				equal(oRequests[1].response.statusText, "abort", "request aborted");
+				equal(oRequests[2].url, "Categories(7)", "request url check");
+				ok(oRequests[2].success, "request success check");
+				
+				setTimeout(function() {
+					equal(oInfo.requestSent, 3, "Three requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 3, "Three requests completed");
+					equal(oInfo.success, 1, "One success callbacks called");
+					equal(oInfo.error, 2, "Two error callbacks called");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			});
+			oModel.submitChanges();
+		});
 		
 	});	
 	
