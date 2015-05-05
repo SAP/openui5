@@ -1,4 +1,4 @@
-sap.ui.require(
+sap.ui.define(
 	[
 		"sap/ui/demo/worklist/model/promise",
 		"sap/ui/thirdparty/sinon",

@@ -1,9 +1,10 @@
-jQuery.sap.require("test.unit.model.models");
-jQuery.sap.require("test.unit.model.promise");
-jQuery.sap.require("test.unit.model.formatter");
-jQuery.sap.require("test.unit.model.grouper");
-jQuery.sap.require("test.unit.controller.ListSelector");
-jQuery.sap.require({
-	modName: "test.unit.controller.App",
-	type: "controller"
-});
+/*global expect*/
+//declare unusual global vars for JSLint/SAPUI5 validation
+sap.ui.define([
+	"test/unit/model/models",
+	"test/unit/model/promise",
+	"test/unit/model/formatter",
+	"test/unit/model/grouper",
+	"test/unit/controller/ListSelector",
+	"test/unit/controller/App.controller"
+], function() { });

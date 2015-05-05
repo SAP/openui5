@@ -1,5 +1,5 @@
 /*global QUnit, jQuery *///declare unusual global vars for JSLint/SAPUI5 validation
-sap.ui.require(
+sap.ui.define(
 	[
 		'sap/ui/demo/masterdetail/model/grouper',
 		'sap/ui/model/resource/ResourceModel',
