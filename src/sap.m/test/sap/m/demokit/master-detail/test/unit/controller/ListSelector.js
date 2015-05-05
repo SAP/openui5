@@ -1,4 +1,4 @@
-sap.ui.require(
+sap.ui.define(
 	[
 		"sap/ui/demo/masterdetail/controller/ListSelector",
 		"sap/ui/thirdparty/sinon",
