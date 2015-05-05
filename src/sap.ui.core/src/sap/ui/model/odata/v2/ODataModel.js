@@ -161,7 +161,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				// add statistics parameter to every request (supported only on Gateway servers)
 				this.aUrlParams.push("sap-statistics=true");
 			}
-
+			
+			this.oHeaders = {};
+			this.setHeaders(mHeaders);
+			
 			// Get/create service specific data container
 			this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
 			if (!this.oServiceData) {
@@ -213,11 +216,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (this.oMetadata.isLoaded()) {
 				this._initializeMetadata(true);
 			}
-
-			// prepare variables for request headers, data and metadata
-			this.oHeaders = {};
-			this.setHeaders(mHeaders);
-
+			
 			// set the header for the accepted content types
 			if (this.bJSON) {
 				if (this.sMaxDataServiceVersion === "3.0") {
