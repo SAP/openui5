@@ -398,7 +398,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 * Returns the thing with the given qualified name from the given model's array (within a
 		 * schema) of given name.
 		 *
-		 * @param {sap.ui.model.Model|[object]} vModel
+		 * @param {sap.ui.model.Model|object[]} vModel
 		 *   either a model or an array of schemas
 		 * @param {string} sArrayName
 		 *   name of array within schema which will be searched
