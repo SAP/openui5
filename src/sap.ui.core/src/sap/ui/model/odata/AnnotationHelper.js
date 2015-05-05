@@ -135,6 +135,9 @@ sap.ui.define([
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about
 			 * <ul>
+			 *   <li> the "14.4 Constant Expressions" for "edm:Bool", "edm:Date",
+			 *   "edm:DateTimeOffset", "edm:Decimal", "edm:Float", "edm:Guid", "edm:Int",
+			 *   "edm:TimeOfDay".
 			 *   <li> the constant "14.4.11 Expression edm:String": This is turned into a fixed
 			 *   text (e.g. <code>"Width"</code>) or into a data binding expression (e.g. <code>
 			 *   "{/##/dataServices/schema/0/entityType/1/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label/String}"
@@ -142,8 +145,8 @@ sap.ui.define([
 			 *   been started with the setting <code>bindTexts : true</code>. The purpose is to
 			 *   reference translatable texts from OData v4 annotations, especially for XML
 			 *   template processing at design time.
-			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": This is turned into an
-			 *   expression binding to perform the operation at run-time.
+			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": These are turned into
+			 *   expression bindings to perform the operations at run-time.
 			 *   <li> the dynamic "14.5.3 Expression edm:Apply":
 			 *   <ul>
 			 *     <li> "14.5.3.1.1 Function odata.concat": This is turned into a data binding
