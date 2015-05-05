@@ -52,23 +52,6 @@ sap.ui.define([
 		};
 
 	/**
-	 * Wrap the result's value with "()" in case it is an expression because the result will be
-	 * become a parameter of an infix operator and we have to ensure that the operator precedence
-	 * remains correct.
-	 *
-	 * @param {object} oResult
-	 *   a result object
-	 * @returns {object}
-	 *   the given result object (for chaining)
-	 */
-	function wrapExpression(oResult) {
-		if (oResult.result === "expression") {
-			oResult.value = "(" + oResult.value + ")";
-		}
-		return oResult;
-	}
-
-	/**
 	 * This object contains helper functions to process an expression in OData V4 annotations.
 	 *
 	 * All functions return a result object with the following properties:
@@ -144,7 +127,7 @@ sap.ui.define([
 			aResults.forEach(function (oResult) {
 				if (bExpression) {
 					// the expression might have a lower operator precedence than '+'
-					wrapExpression(oResult);
+					Expression.wrapExpression(oResult);
 				}
 				aParts.push(Basics.resultToString(oResult, bExpression, true));
 			});
@@ -153,6 +136,37 @@ sap.ui.define([
 				: {result: "composite", value: aParts.join("")};
 			oResult.type = "Edm.String";
 			return oResult;
+		},
+
+		/**
+		 * Handling of "14.5.6 Expression edm:If".
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
+		 * @param {object} oPathValue
+		 *   a path/value pair pointing to the parameters array. The first parameter element is the
+		 *   conditional expression and must evaluate to a Edm.Boolean. The second and third child
+		 *   elements are the expressions, which are evaluated conditionally.
+		 * @returns {object}
+		 *   the result object
+		 */
+		conditional: function (oInterface, oPathValue) {
+			var oCondition = Expression.parameter(oInterface, oPathValue, 0, "Edm.Boolean"),
+				oThen = Expression.parameter(oInterface, oPathValue, 1),
+				oElse = Expression.parameter(oInterface, oPathValue, 2);
+
+			if (oThen.type !== oElse.type) {
+				Basics.error(oPathValue,
+					"Expected same type for second and third parameter, types are '" + oThen.type
+					+ "' and '" + oElse.type + "'");
+			}
+			return {
+				result: "expression",
+				type: oThen.type,
+				value: Basics.resultToString(Expression.wrapExpression(oCondition), true)
+					+ "?" + Basics.resultToString(Expression.wrapExpression(oThen), true)
+					+ ":" + Basics.resultToString(Expression.wrapExpression(oElse), true)
+			};
 		},
 
 		/**
@@ -234,7 +248,7 @@ sap.ui.define([
 				oSubPathValue = Basics.descend(oPathValue, "Value");
 			} else {
 				["And", "Apply", "Bool", "Date", "DateTimeOffset", "Decimal", "Float", "Eq", "Ge",
-					"Gt", "Guid", "Int", "Le", "Lt", "Ne", "Not", "Or", "Path", "String",
+					"Gt", "Guid", "If", "Int", "Le", "Lt", "Ne", "Not", "Or", "Path", "String",
 					"TimeOfDay"
 				].forEach(function (sProperty) {
 					if (oRawValue.hasOwnProperty(sProperty)) {
@@ -247,6 +261,8 @@ sap.ui.define([
 			switch (sType) {
 				case "Apply": // 14.5.3 Expression edm:Apply
 					return Expression.apply(oInterface, oSubPathValue, bExpression);
+				case "If": // 14.5.6 Expression edm:If
+					return Expression.conditional(oInterface, oSubPathValue);
 				case "Path": // 14.5.12 Expression edm:Path
 					return Expression.path(oInterface, oSubPathValue);
 				case "Bool": // 14.4.2 Expression edm:Bool
@@ -361,7 +377,7 @@ sap.ui.define([
 
 			return {
 				result: "expression",
-				value: "!" + Basics.resultToString(wrapExpression(oParameter), true),
+				value: "!" + Basics.resultToString(Expression.wrapExpression(oParameter), true),
 				type: "Edm.Boolean"
 			};
 		},
@@ -390,9 +406,9 @@ sap.ui.define([
 			}
 			return {
 				result: "expression",
-				value: Basics.resultToString(wrapExpression(oResult0), true)
+				value: Basics.resultToString(Expression.wrapExpression(oResult0), true)
 					+ mOperators[sType]
-					+ Basics.resultToString(wrapExpression(oResult1), true),
+					+ Basics.resultToString(Expression.wrapExpression(oResult1), true),
 				type: "Edm.Boolean"
 			};
 		},
@@ -507,6 +523,23 @@ sap.ui.define([
 					+ Basics.toJSON(oResult.type) + ")",
 				type: "Edm.String"
 			};
+		},
+
+		/**
+		 * Wraps the result's value with "()" in case it is an expression because the result will be
+		 * become a parameter of an infix operator and we have to ensure that the operator precedence
+		 * remains correct.
+		 *
+		 * @param {object} oResult
+		 *   a result object
+		 * @returns {object}
+		 *   the given result object (for chaining)
+		 */
+		wrapExpression: function (oResult) {
+			if (oResult.result === "expression") {
+				oResult.value = "(" + oResult.value + ")";
+			}
+			return oResult;
 		}
 	};
 

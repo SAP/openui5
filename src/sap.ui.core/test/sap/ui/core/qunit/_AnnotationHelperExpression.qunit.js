@@ -504,6 +504,82 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("wrapExpression", function () {
+		deepEqual(Expression.wrapExpression({result: "binding", value: "path"}),
+				{result: "binding", value: "path"});
+		deepEqual(Expression.wrapExpression({result: "composite", value: "{a}{b}"}),
+				{result: "composite", value: "{a}{b}"});
+		deepEqual(Expression.wrapExpression({result: "constant", value: "42"}),
+				{result: "constant", value: "42"});
+		deepEqual(Expression.wrapExpression({result: "expression", value: "${test)?-1:1"}),
+				{result: "expression", value: "(${test)?-1:1)"});
+	});
+
+	//*********************************************************************************************
+	test("conditional", function () {
+		var oBasics = this.mock(Basics),
+			oExpression = this.mock(Expression),
+			oInterface = {},
+			oPathValue = {},
+			oParameter0 = {result: "expression", value: "A"},
+			oParameter1 = {result: "expression", value: "B", type: "foo"},
+			oParameter2 = {result: "expression", value: "C", type: "foo"},
+			oWrappedParameter0 = {result: "expression", value: "(A)"},
+			oWrappedParameter1 = {result: "expression", value: "(B)", type: "foo"},
+			oWrappedParameter2 = {result: "expression", value: "(C)", type: "foo"};
+
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean").returns(oParameter0);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 1).returns(oParameter1);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 2).returns(oParameter2);
+
+		oExpression.expects("wrapExpression")
+			.withExactArgs(oParameter0).returns(oWrappedParameter0);
+		oExpression.expects("wrapExpression")
+			.withExactArgs(oParameter1).returns(oWrappedParameter1);
+		oExpression.expects("wrapExpression")
+			.withExactArgs(oParameter2).returns(oWrappedParameter2);
+
+		oBasics.expects("resultToString").withExactArgs(oWrappedParameter0, true).returns("(A)");
+		oBasics.expects("resultToString").withExactArgs(oWrappedParameter1, true).returns("(B)");
+		oBasics.expects("resultToString").withExactArgs(oWrappedParameter2, true).returns("(C)");
+
+		deepEqual(Expression.conditional(oInterface, oPathValue), {
+			result: "expression",
+			value: "(A)?(B):(C)",
+			type: "foo"
+		});
+	});
+
+	//*********************************************************************************************
+	test("conditional: w/ incorrect types", function () {
+		var oExpression = this.mock(Expression),
+			oInterface = {},
+			oPathValue = {},
+			oParameter0 = {},
+			oParameter1 = {type: "foo"},
+			oParameter2 = {type: "bar"};
+
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean").returns(oParameter0);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 1).returns(oParameter1);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 2).returns(oParameter2);
+
+		this.mock(Basics).expects("error")
+			.withExactArgs(oPathValue,
+				"Expected same type for second and third parameter, types are 'foo' and 'bar'")
+			.throws(new SyntaxError());
+
+		throws(function () {
+			Expression.conditional(oInterface, oPathValue);
+		}, SyntaxError);
+	});
+
+	//*********************************************************************************************
 	[{
 		title: "composite binding",
 		bExpression: false,

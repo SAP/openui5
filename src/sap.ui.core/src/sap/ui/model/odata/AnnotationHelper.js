@@ -154,6 +154,9 @@ sap.ui.define([
 			 *     binding to encode the parameter at run-time.
 			 *     <li> Apply functions may be nested arbitrarily.
 			 *   </ul>
+			 *   <li> the dynamic "14.5.6 Expression edm:If": This is turned into an expression
+			 *   binding to be evaluated at run-time. The expression is a conditional expression
+			 *   like <code>"{=condition ? expression1 : expression2}"</code>.
 			 *   <li> the dynamic "14.5.12 Expression edm:Path": This is turned into a data
 			 *   binding relative to an entity, including type information and constraints as
 			 *   available from meta data, e.g. <code>"{path : 'Name',

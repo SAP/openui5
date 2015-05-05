@@ -287,6 +287,35 @@ sap.ui.require([
 			</Collection>\
 		</Annotation>\
 	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.Contact">\
+		<!-- edm:If -->\
+		<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">\
+			<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">\
+				<PropertyValue Property="Title">\
+					<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+						<PropertyValue Property="Label" String="Name"/>\
+						<PropertyValue Property="Value">\
+							<If>\
+								<Eq>\
+									<Path>Sex</Path>\
+									<String>M</String>\
+								</Eq>\
+								<String>Mr. </String>\
+								<If>\
+									<Eq>\
+										<Path>Sex</Path>\
+										<String>F</String>\
+									</Eq>\
+									<String>Mrs. </String>\
+									<String></String>\
+								</If>\
+							</If>\
+						</PropertyValue>\
+					</Record>\
+				</PropertyValue>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
 </Schema>\
 </edmx:DataServices>\
 </edmx:Edmx>\
@@ -1091,7 +1120,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.1 Comparison and Logical Operators: part 1, comparison", function () {
-		withMetaModel("/fake/annotations", function (oMetaModel) {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/6/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -1104,7 +1133,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.1 Comparison and Logical Operators: part 2, logical", function () {
-		withMetaModel("/fake/annotations", function (oMetaModel) {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/7/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -1112,6 +1141,19 @@ sap.ui.require([
 
 			strictEqual(format(oRawValue, oCurrentContext),
 				"{=(!(${p1}===${p2}))||((${p3}===${p4})&&(${p5}===${p6}))}");
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.6 Expression edm:If", function () {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2Contact
+					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath);
+
+			testBinding(oCurrentContext, "Mr. ", {Sex: "M"});
+			testBinding(oCurrentContext, "Mrs. ", {Sex: "F"});
+			testBinding(oCurrentContext, "", {Sex: ""});
 		});
 	});
 
