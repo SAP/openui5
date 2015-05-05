@@ -1,7 +1,10 @@
-jQuery.sap.declare("sap.test.lib2.library");
-jQuery.sap.require("sap.test.lib4.library");
+sap.ui.define(['jquery.sap.global', 'sap/test/lib4/library'],
+	function(jQuery, library1) {
+	"use strict";
 
-sap.ui.getCore().initLibrary({
-	name:"sap.test.lib2",
-	noLibraryCSS:true
+	sap.ui.getCore().initLibrary({
+		name:"sap.test.lib2",
+		noLibraryCSS:true
+	});
+
 });
