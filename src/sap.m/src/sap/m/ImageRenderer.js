@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
- 
+
 // Provides default renderer for control sap.m.Image
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
@@ -41,12 +41,9 @@ sap.ui.define(['jquery.sap.global'],
 		
 		rm.writeClasses();
 		
-		//TODO need further discussion to decide if tooltip is still needed for mobile
-		var tooltip = oImage.getTooltip_AsString();
-		if (tooltip) {
-			rm.writeAttributeEscaped("title", tooltip);
-		}
-	
+		var alt = oImage.getAlt(),
+			tooltip = oImage.getTooltip_AsString();
+
 		//TODO implement the ImageMap control
 		var sUseMap = oImage.getUseMap();
 		if (sUseMap) {
@@ -55,20 +52,29 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			rm.writeAttributeEscaped("useMap", sUseMap);
 		}
-		
+
 		// determine tab index and write alt attribute - both depending on "decorative" state (which is overridden by the "useMap" property
 		var myTabIndex = 0;
 		if ((oImage.getDecorative() && (!sUseMap))) {
 			myTabIndex = -1;
 			rm.writeAttribute("role", "presentation");
+			rm.writeAttribute("aria-hidden", "true");
 			rm.write(" alt=''"); // accessibility requirement: write always empty alt attribute for decorative images
 		} else {
-			if (oImage.getAlt()) {
-				rm.writeAttributeEscaped("alt", oImage.getAlt() || tooltip); // accessibility requirement: use tooltip for alt if alt is not set
-			} else if (tooltip) {
-				rm.writeAttributeEscaped("alt", tooltip);
+			rm.writeAttribute("role", "button");
+			if (alt || tooltip) {
+				rm.writeAttributeEscaped("alt", alt || tooltip);
 			}
 		}
+
+		if (alt || tooltip) {
+			rm.writeAttributeEscaped("aria-label", alt || tooltip);
+		}
+
+		if (tooltip) {
+			rm.writeAttributeEscaped("title", tooltip);
+		}
+
 		rm.writeAttribute("tabIndex", myTabIndex);
 		
 		// Dimensions
@@ -80,11 +86,6 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addStyle("height", oImage.getHeight());
 		}
 		rm.writeStyles();
-		
-		var sTooltip = oImage.getTooltip_AsString();
-		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
-		}
 		
 		rm.write(" />"); // close the <img> element
 	};
