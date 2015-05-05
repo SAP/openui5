@@ -18,7 +18,7 @@ function runODataMessagesTests() {
 	
 	
 	
-	var sServiceURI = "fakeService://testdata/odata/northwind/";
+	var sServiceURI = "fakeservice://testdata/odata/northwind/";
 	// var sServiceURI = "/testsuite/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
 	var mModelOptions = {
 		async: true,
@@ -69,7 +69,7 @@ function runODataMessagesTests() {
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		ok(oMessageModel.getProperty("/").length === undefined, "No message has been added");
+		equal(oMessageModel.getProperty("/").length, 0, "No message has been added");
 
 		ok(oInput.getValueState() === "None", "ValueState has not been set");
 
@@ -82,7 +82,9 @@ function runODataMessagesTests() {
 					ok(oInput.getValueState() === "Error", "ValueState has been set to 'Error'");
 
 					var iMessages = oMessageModel.getProperty("/").length;
-					ok(iMessages === 21, "One message has been added for every Item and one for the Collection");
+					equal(iMessages, 21, "One message has been added for every Item and one for the Collection");
+					
+					oModelJson.destroy();
 					start();
 				}, 0);
 			}
@@ -107,7 +109,9 @@ function runODataMessagesTests() {
 					ok(oInput2.getValueState() === "Error", "ValueState has been set to 'Error'");
 
 					var iMessages = oMessageModel.getProperty("/").length;
-					ok(iMessages === 42, "One message has been added for every Item and one for the Collection");
+					equal(iMessages, 21, "One message has been added for every Item and one for the Collection");
+					
+					oModelXml.destroy();
 					start();
 				}, 0);
 			}
@@ -115,5 +119,104 @@ function runODataMessagesTests() {
 	});
 	
 	
+	asyncTest("Function Imports", function() {
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
+			useBatch: false,
+			json: false
+		});
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		
+		oModel.attachMetadataLoaded(function() {
+			var mMessages = oMessageModel.getProperty("/");
+			var oMetadata = oModel.getServiceMetadata();
+
+			testFunctionTarget({
+				url: "/EditProduct",
+				parameters: {
+					"ProductUUID": "00000000-0000-0000-0000-000000000001",	
+					"foo": "bar"
+				},
+				
+				numMessages: 1,
+				lastTarget: "/Products(guid'10000000-0000-0000-0000-000000000000')",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/EditProduct",
+				parameters: {
+					"ProductUUID": "00000000-0000-0000-0000-000000000002",	
+					"foo": "bar"
+				},
+				
+				numMessages: 2,
+				lastTarget: "/Products(guid'20000000-0000-0000-0000-000000000000')",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/EditProduct",
+				parameters: {
+					"ProductUUID": "30000000-0000-0000-0000-000000000003",	
+					"foo": "bar"
+				},
+				
+				numMessages: 3,
+				lastTarget: "/Products(guid'30000000-0000-0000-0000-000000000003')",
+				final: true
+			});
+
+
+			function testFunctionTarget(mTestOptions) {
+				// Set default values
+				mTestOptions.method      = mTestOptions.method      ? mTestOptions.method      : "POST";
+				mTestOptions.parameters  = mTestOptions.parameters  ? mTestOptions.parameters  : {};
+				mTestOptions.numMessages = mTestOptions.numMessages ? mTestOptions.numMessages : {};
+				mTestOptions.final       = mTestOptions.final       ? mTestOptions.final       : false;
+				mTestOptions.lastTarget  = mTestOptions.lastTarget  ? mTestOptions.lastTarget  : "INVALIDTARGET";
+				
+				testFunctionTarget.aTests = testFunctionTarget.aTests ? testFunctionTarget.aTests : [];
+				testFunctionTarget.aTests.push(mTestOptions);
+				
+				var fnNextTest = function() {
+					var mTestOptions;
+					if (testFunctionTarget.aTests.length > 0) {
+						mTestOptions = testFunctionTarget.aTests.shift();
+					} else {
+						testFunctionTarget._running = false;
+					}
+					
+					oModel.callFunction(mTestOptions.url, {
+						method: mTestOptions.method,
+						urlParameters: mTestOptions.parameters,
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							equal(aMessages.length, mTestOptions.numMessages, mTestOptions.numMessages + " messages set after the function import");
+							equal(aMessages[aMessages.length - 1].target, mTestOptions.lastTarget, "Message has correct target");
+							
+							if (mTestOptions.final) {
+								testFunctionTarget._running = false;
+								start();
+							} else {
+								fnNextTest();
+							}
+						}
+					});
+					
+				};
+				
+				if (!testFunctionTarget._running) {
+					testFunctionTarget._running = true;
+					fnNextTest();
+				}
+				
+			}
+		});
+	});
+	
+
+		
 	
 }

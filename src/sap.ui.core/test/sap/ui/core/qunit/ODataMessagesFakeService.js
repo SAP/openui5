@@ -6,10 +6,8 @@ if (!String.prototype.startsWith) {
 }
 
 
-
-
-var sServiceUrl = "fakeService://testdata/odata/northwind/";
 var mServiceData = {
+	serviceUrl: "fakeservice://testdata/odata/northwind/",
 	collections: {
 		"Products": {
 			count: 20,
@@ -50,25 +48,117 @@ var xhr = sinon.useFakeXMLHttpRequest(), responseDelay = 50, _setTimeout = windo
 
 xhr.useFilters = true;
 xhr.addFilter(function(method, url) {
-	return url.indexOf(sServiceUrl) != 0;
+	return url.indexOf("fakeservice://") != 0;
 });
 xhr.onCreate = function(request) {
 	request.onSend = function() {
 		// Default request answer values:
+		
 		var sUrl = request.url;
-		var iStart =  sServiceUrl.length;
+		var sParams = "";
+		var iParamStart = sUrl.indexOf("?");
+		// if (iParamStart > -1) {
+		// 	sParams = sUrl.substr(iParamStart);
+		// 	sUrl = sUrl.substr(0, iParamStart);
+		// }
+		
 		var bJson = request.url.indexOf("$format=json") > -1 || request.requestHeaders["Accept"] == "application/json";
+		
+		var sRandomServiceUrl = null;
+		var iResponseDelay = 200;
+		var iStatus = 404;
+		var mResponseHeaders = [];
+		var sAnswer = "Not found";
+		
+		switch (sUrl) {
+			case "fakeservice://testdata/odata/function-imports/":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaders["xml"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		"999",
+					"message":	"This is a server wide test message",
+					"severity":	"error",
+					"target":	"",
+					"details": []
+				});
+				sAnswer = sFunctionImportMain;
+				break;
+			
+			case "fakeservice://testdata/odata/function-imports/$metadata":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaders["xml"]);
+				sAnswer = sFunctionImportMetadata;
+				break;
 
-
-		if (sUrl.startsWith(sServiceUrl)) {
-			// This one's for us...
-			sSubUrl = sUrl.substr(iStart);
+			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000001'":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaders["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		"999",
+					"message":	"This is FunctionImport specific test message",
+					"severity":	"error",
+					"target":	"",
+					"details": []
+				});
+				mResponseHeaders["location"] = "fakeservice://testdata/odata/function-imports/Products(guid'10000000-0000-0000-0000-000000000000')";
+				sAnswer = sFunctionImportProduct1;
+				break;
+			
+			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaders["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		"999",
+					"message":	"This is FunctionImport specific test message",
+					"severity":	"error",
+					"target":	"/Products(guid'20000000-0000-0000-0000-000000000000')",
+					"details": []
+				});
+				sAnswer = sFunctionImportProduct1;
+				break;
+				
+			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'30000000-0000-0000-0000-000000000003'":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaders["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		"999",
+					"message":	"This is FunctionImport specific test message",
+					"severity":	"error",
+					"details": []
+				});
+				sAnswer = sFunctionImportProduct1;
+				break;
+				
+			
+				
+			default:
+				if (sUrl.startsWith(mServiceData["serviceUrl"])) {
+					// This one's for us...
+					sRandomServiceUrl = sUrl.substr(mServiceData["serviceUrl"].length);
+				} else {
+					debugger;
+					throw "Unknown Fakeservice URL";
+				}
+			
+		}
+		
+		if (sRandomServiceUrl) {
+			// Use RandomService
 			oRandomService.serveUrl({ 
-				url: sSubUrl, 
+				url: sRandomServiceUrl, 
 				request: request,
 				json: bJson
 			});
+		} else if (request.async === true) {
+			var oRequest = request;
+			_setTimeout(function() {
+				oRequest.respond(iStatus, mResponseHeaders, sAnswer);
+			}.bind(this), iResponseDelay);
+		} else {
+			request.respond(iStatus, mResponseHeaders, sAnswer);
 		}
+		
+		
 
 	}
 };
@@ -83,6 +173,7 @@ xhr.onCreate = function(request) {
 
 function ODataRandomService(oServiceConfig) {
 	this._config = oServiceConfig;
+	this._serviceUrl = this._config["serviceUrl"];
 }
 
 var mHeaders = {
@@ -116,7 +207,7 @@ ODataRandomService.prototype.serveUrl = function(mOptions) {
 		sPath   = aMatches[1];
 		sParams = aMatches[2];
 	} else {
-		sPath   = sSubUrl;
+		sPath   = this._url;
 		sParams = "";
 	}
 
@@ -272,7 +363,7 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 	var aMessages = [];
 	
 	for (var i = 0; i < oColData.count; ++i) {
-		var sItemUrl = sServiceUrl + sColName + "(" + (i + 1) + ")";
+		var sItemUrl = this._serviceUrl + sColName + "(" + (i + 1) + ")";
 		
 		var mItem = {
 			"__metadata": {
@@ -422,23 +513,23 @@ var sNorthwindProductsDataJSON = {
 	"d" : {
 		"results" : [ {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(1)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(1)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(1)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(1)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(1)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(1)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(1)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Supplier"
 			}
 		},
 		"ProductID" : 1,
@@ -453,23 +544,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(2)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(2)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(2)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(2)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(2)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(2)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(2)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(2)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(2)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(2)/Supplier"
 			}
 		},
 		"ProductID" : 2,
@@ -484,23 +575,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(3)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(3)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(3)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(3)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(3)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(3)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(3)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(3)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(3)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(3)/Supplier"
 			}
 		},
 		"ProductID" : 3,
@@ -515,23 +606,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(4)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(4)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(4)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(4)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(4)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(4)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(4)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(4)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(4)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(4)/Supplier"
 			}
 		},
 		"ProductID" : 4,
@@ -546,23 +637,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(5)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(5)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(5)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(5)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(5)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(5)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(5)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(5)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(5)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(5)/Supplier"
 			}
 		},
 		"ProductID" : 5,
@@ -577,23 +668,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : true
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(6)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(6)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(6)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(6)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(6)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(6)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(6)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(6)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(6)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(6)/Supplier"
 			}
 		},
 		"ProductID" : 6,
@@ -608,23 +699,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(7)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(7)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(7)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(7)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(7)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(7)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(7)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(7)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(7)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(7)/Supplier"
 			}
 		},
 		"ProductID" : 7,
@@ -639,23 +730,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(8)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(8)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(8)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(8)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(8)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(8)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(8)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(8)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(8)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(8)/Supplier"
 			}
 		},
 		"ProductID" : 8,
@@ -670,23 +761,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(9)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(9)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(9)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(9)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(9)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(9)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(9)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(9)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(9)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(9)/Supplier"
 			}
 		},
 		"ProductID" : 9,
@@ -701,23 +792,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : true
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(10)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(10)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(10)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(10)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(10)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(10)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(10)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(10)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(10)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(10)/Supplier"
 			}
 		},
 		"ProductID" : 10,
@@ -732,23 +823,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(11)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(11)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(11)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(11)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(11)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(11)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(11)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(11)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(11)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(11)/Supplier"
 			}
 		},
 		"ProductID" : 11,
@@ -763,23 +854,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(12)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(12)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(12)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(12)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(12)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(12)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(12)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(12)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(12)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(12)/Supplier"
 			}
 		},
 		"ProductID" : 12,
@@ -794,23 +885,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(13)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(13)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(13)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(13)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(13)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(13)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(13)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(13)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(13)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(13)/Supplier"
 			}
 		},
 		"ProductID" : 13,
@@ -825,23 +916,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(14)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(14)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(14)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(14)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(14)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(14)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(14)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(14)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(14)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(14)/Supplier"
 			}
 		},
 		"ProductID" : 14,
@@ -856,23 +947,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(15)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(15)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(15)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(15)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(15)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(15)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(15)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(15)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(15)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(15)/Supplier"
 			}
 		},
 		"ProductID" : 15,
@@ -887,23 +978,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(16)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(16)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(16)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(16)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(16)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(16)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(16)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(16)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(16)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(16)/Supplier"
 			}
 		},
 		"ProductID" : 16,
@@ -918,23 +1009,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(17)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(17)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(17)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(17)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(17)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(17)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(17)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(17)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(17)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(17)/Supplier"
 			}
 		},
 		"ProductID" : 17,
@@ -949,23 +1040,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : true
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(18)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(18)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(18)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(18)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(18)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(18)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(18)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(18)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(18)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(18)/Supplier"
 			}
 		},
 		"ProductID" : 18,
@@ -980,23 +1071,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(19)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(19)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(19)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(19)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(19)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(19)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(19)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(19)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(19)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(19)/Supplier"
 			}
 		},
 		"ProductID" : 19,
@@ -1011,23 +1102,23 @@ var sNorthwindProductsDataJSON = {
 		"Discontinued" : false
 		}, {
 		"__metadata" : {
-		"id" : "fakeService://testdata/odata/northwind/Products(20)",
-		"uri" : "fakeService://testdata/odata/northwind/Products(20)",
+		"id" : "fakeservice://testdata/odata/northwind/Products(20)",
+		"uri" : "fakeservice://testdata/odata/northwind/Products(20)",
 		"type" : "NorthwindModel.Product"
 		},
 		"Category" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(20)/Category"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(20)/Category"
 			}
 		},
 		"Order_Details" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(20)/Order_Details"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(20)/Order_Details"
 			}
 		},
 		"Supplier" : {
 			"__deferred" : {
-				"uri" : "fakeService://testdata/odata/northwind/Products(20)/Supplier"
+				"uri" : "fakeservice://testdata/odata/northwind/Products(20)/Supplier"
 			}
 		},
 		"ProductID" : 20,
@@ -1041,30 +1132,30 @@ var sNorthwindProductsDataJSON = {
 		"ReorderLevel" : 0,
 		"Discontinued" : false
 		} ],
-	// "__next" : "fakeService://testdata/odata/northwind/Products/?$skiptoken=20"
+	// "__next" : "fakeservice://testdata/odata/northwind/Products/?$skiptoken=20"
 	}
 };
 
 var oProducts1JSON = {
 	"d" : {
 	"__metadata" : {
-	"id" : "fakeService://testdata/odata/northwind/Products(1)",
-	"uri" : "fakeService://testdata/odata/northwind/Products(1)",
+	"id" : "fakeservice://testdata/odata/northwind/Products(1)",
+	"uri" : "fakeservice://testdata/odata/northwind/Products(1)",
 	"type" : "NorthwindModel.Product"
 	},
 	"Category" : {
 		"__deferred" : {
-			"uri" : "fakeService://testdata/odata/northwind/Products(1)/Category"
+			"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Category"
 		}
 	},
 	"Order_Details" : {
 		"__deferred" : {
-			"uri" : "fakeService://testdata/odata/northwind/Products(1)/Order_Details"
+			"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Order_Details"
 		}
 	},
 	"Supplier" : {
 		"__deferred" : {
-			"uri" : "fakeService://testdata/odata/northwind/Products(1)/Supplier"
+			"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Supplier"
 		}
 	},
 	"ProductID" : 1,
@@ -1701,3 +1792,987 @@ var sNorthwindMetadata = '\
 	</edmx:DataServices>\
 </edmx:Edmx>';
 
+
+var sFunctionImportMain = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<app:service xml:lang="en"\
+	xml:base="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/" xmlns:app="http://www.w3.org/2007/app"\
+	xmlns:atom="http://www.w3.org/2005/Atom"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<app:workspace>\
+		<atom:title type="text">Data</atom:title>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:searchable="true" sap:content-version="1"\
+			href="DimensionUnits">\
+			<atom:title type="text">DimensionUnits</atom:title>\
+			<sap:member-title>DimensionUnit</sap:member-title>\
+			<atom:link href="DimensionUnits/OpenSearchDescription.xml"\
+				rel="search" type="application/opensearchdescription+xml" title="searchDimensionUnits" />\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:searchable="true" sap:content-version="1"\
+			href="QuantityUnits">\
+			<atom:title type="text">QuantityUnits</atom:title>\
+			<sap:member-title>QuantityUnit</sap:member-title>\
+			<atom:link href="QuantityUnits/OpenSearchDescription.xml"\
+				rel="search" type="application/opensearchdescription+xml" title="searchQuantityUnits" />\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:searchable="true" sap:content-version="1"\
+			href="WeightUnits">\
+			<atom:title type="text">WeightUnits</atom:title>\
+			<sap:member-title>WeightUnit</sap:member-title>\
+			<atom:link href="WeightUnits/OpenSearchDescription.xml"\
+				rel="search" type="application/opensearchdescription+xml" title="searchWeightUnits" />\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:searchable="true" sap:content-version="1"\
+			href="Suppliers">\
+			<atom:title type="text">Suppliers</atom:title>\
+			<sap:member-title>Supplier</sap:member-title>\
+			<atom:link href="Suppliers/OpenSearchDescription.xml" rel="search"\
+				type="application/opensearchdescription+xml" title="searchSuppliers" />\
+		</app:collection>\
+		<app:collection sap:searchable="true"\
+			sap:content-version="1" href="Products">\
+			<atom:title type="text">Products</atom:title>\
+			<sap:member-title>Product</sap:member-title>\
+			<atom:link href="Products/OpenSearchDescription.xml" rel="search"\
+				type="application/opensearchdescription+xml" title="searchProducts" />\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:searchable="true" sap:addressable="false"\
+			sap:content-version="1" href="DraftAdministrativeData">\
+			<atom:title type="text">DraftAdministrativeData</atom:title>\
+			<sap:member-title>DraftAdministrativeData</sap:member-title>\
+			<atom:link href="DraftAdministrativeData/OpenSearchDescription.xml"\
+				rel="search" type="application/opensearchdescription+xml" title="searchDraftAdministrativeData" />\
+		</app:collection>\
+		<app:collection sap:searchable="true" sap:addressable="false"\
+			sap:content-version="1" href="Attachments">\
+			<atom:title type="text">Attachments</atom:title>\
+			<sap:member-title>Attachment</sap:member-title>\
+			<atom:link href="Attachments/OpenSearchDescription.xml"\
+				rel="search" type="application/opensearchdescription+xml" title="searchAttachments" />\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:pageable="false" sap:addressable="false"\
+			sap:content-version="1" href="ProductCategories">\
+			<atom:title type="text">ProductCategories</atom:title>\
+			<sap:member-title>ProductCategory</sap:member-title>\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:pageable="false" sap:addressable="false"\
+			sap:content-version="1" href="MainProductCategories">\
+			<atom:title type="text">MainProductCategories</atom:title>\
+			<sap:member-title>MainProductCategory</sap:member-title>\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:searchable="true" sap:content-version="1"\
+			href="SalesDataSet">\
+			<atom:title type="text">SalesDataSet</atom:title>\
+			<sap:member-title>SalesData</sap:member-title>\
+			<atom:link href="SalesDataSet/OpenSearchDescription.xml"\
+				rel="search" type="application/opensearchdescription+xml" title="searchSalesDataSet" />\
+		</app:collection>\
+		<app:collection sap:creatable="false" sap:updatable="false"\
+			sap:deletable="false" sap:searchable="true" sap:content-version="1"\
+			href="Currencies">\
+			<atom:title type="text">Currencies</atom:title>\
+			<sap:member-title>Currency</sap:member-title>\
+			<atom:link href="Currencies/OpenSearchDescription.xml" rel="search"\
+				type="application/opensearchdescription+xml" title="searchCurrencies" />\
+		</app:collection>\
+	</app:workspace>\
+	<atom:link rel="self"\
+		href="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/" />\
+	<atom:link rel="latest-version"\
+		href="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/" />\
+</app:service>';
+
+var sFunctionImportMetadata = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:Reference\
+		Uri="https://https:/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value"\
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" />\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="SEPMRA_PROD_MAN" xml:lang="en"\
+			sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<EntityType Name="Currency" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Code" />\
+				</Key>\
+				<Property Name="Code" Type="Edm.String" Nullable="false"\
+					MaxLength="5" sap:label="Currency" sap:creatable="false"\
+					sap:updatable="false" sap:semantics="currency-code" />\
+				<Property Name="Text" Type="Edm.String" Nullable="false"\
+					MaxLength="15" sap:label="Short text" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="LongText" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Long Text" sap:creatable="false"\
+					sap:updatable="false" />\
+			</EntityType>\
+			<EntityType Name="DimensionUnit" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Unit" />\
+				</Key>\
+				<Property Name="Dimension" Type="Edm.String" Nullable="false"\
+					MaxLength="6" sap:label="Dimension" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="ISO code" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Unit" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Int. meas. unit" sap:creatable="false"\
+					sap:updatable="false" sap:semantics="unit-of-measure" />\
+				<Property Name="CommercialName" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Commercial" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="ShortText" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Meas. unit text" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="TechnicalName" Type="Edm.String" Nullable="false"\
+					MaxLength="6" sap:label="Technical" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Text" Type="Edm.String" Nullable="false"\
+					MaxLength="30" sap:label="Unit text" sap:creatable="false"\
+					sap:updatable="false" />\
+			</EntityType>\
+			<EntityType Name="QuantityUnit" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Unit" />\
+				</Key>\
+				<Property Name="Dimension" Type="Edm.String" Nullable="false"\
+					MaxLength="6" sap:label="Dimension" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="ISO code" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Unit" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Int. meas. unit" sap:creatable="false"\
+					sap:updatable="false" sap:semantics="unit-of-measure" />\
+				<Property Name="CommercialName" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Commercial" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="ShortText" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Meas. unit text" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="TechnicalName" Type="Edm.String" Nullable="false"\
+					MaxLength="6" sap:label="Technical" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Text" Type="Edm.String" Nullable="false"\
+					MaxLength="30" sap:label="Unit text" sap:creatable="false"\
+					sap:updatable="false" />\
+			</EntityType>\
+			<EntityType Name="WeightUnit" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Unit" />\
+				</Key>\
+				<Property Name="Dimension" Type="Edm.String" Nullable="false"\
+					MaxLength="6" sap:label="Dimension" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="ISO code" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Unit" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Int. meas. unit" sap:creatable="false"\
+					sap:updatable="false" sap:semantics="unit-of-measure" />\
+				<Property Name="CommercialName" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Commercial" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="ShortText" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Meas. unit text" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="TechnicalName" Type="Edm.String" Nullable="false"\
+					MaxLength="6" sap:label="Technical" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Text" Type="Edm.String" Nullable="false"\
+					MaxLength="30" sap:label="Unit text" sap:creatable="false"\
+					sap:updatable="false" />\
+			</EntityType>\
+			<EntityType Name="Supplier" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="SupplierUUID" />\
+				</Key>\
+				<Property Name="SupplierUUID" Type="Edm.Guid" Nullable="false"\
+					sap:label="Busi. Partner UUID" sap:creatable="false" sap:updatable="false"\
+					sap:filterable="false" />\
+				<Property Name="SupplierId" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Business Partner ID" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="Name" Type="Edm.String" Nullable="false"\
+					MaxLength="80" sap:label="Supplier" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="EmailAddress" Type="Edm.String" Nullable="false"\
+					MaxLength="255" sap:label="E-Mail" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="FaxNumber" Type="Edm.String" Nullable="false"\
+					MaxLength="30" sap:label="Phone No." sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="PhoneNumber" Type="Edm.String" Nullable="false"\
+					MaxLength="30" sap:label="Phone No." sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="Url" Type="Edm.String" Nullable="false"\
+					sap:label="URI" sap:creatable="false" sap:updatable="false"\
+					sap:filterable="false" />\
+				<Property Name="FormattedAddress" Type="Edm.String"\
+					Nullable="false" MaxLength="164" sap:label="Address" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="FormattedContactName" Type="Edm.String"\
+					Nullable="false" MaxLength="88" sap:label="Contact Name"\
+					sap:creatable="false" sap:updatable="false" sap:filterable="false" />\
+				<Property Name="ContactPhone1" Type="Edm.String" Nullable="false"\
+					MaxLength="30" sap:label="Phone No." sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="ContactPhone2" Type="Edm.String" Nullable="false"\
+					MaxLength="30" sap:label="Phone No." sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="ContactEmail" Type="Edm.String" Nullable="false"\
+					MaxLength="255" sap:label="E-Mail" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+			</EntityType>\
+			<EntityType Name="Product" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="ProductUUID" />\
+				</Key>\
+				<Property Name="ExclusiveBy" Type="Edm.String" Nullable="false"\
+					MaxLength="12" sap:label="Exclusive For" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="IsDraft" Type="Edm.Boolean" Nullable="false"\
+					sap:label="Is Draft" sap:creatable="false" sap:updatable="false"\
+					sap:sortable="false" sap:filterable="false" />\
+				<Property Name="HasTwin" Type="Edm.Boolean" Nullable="false"\
+					sap:label="Has Twin" sap:creatable="false" sap:updatable="false"\
+					sap:sortable="false" sap:filterable="false" />\
+				<Property Name="ProductUUID" Type="Edm.Guid" Nullable="false"\
+					sap:label="Node Key" sap:creatable="false" sap:updatable="false"\
+					sap:filterable="false" />\
+				<Property Name="ExclusiveSince" Type="Edm.DateTime"\
+					Precision="7" sap:label="Exclusive Since" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="SupplierUUID" Type="Edm.Guid" sap:label="Node Key"\
+					sap:creatable="false" sap:updatable="false" sap:filterable="false" />\
+				<Property Name="SupplierId" Type="Edm.String" MaxLength="10"\
+					sap:label="Supplier" sap:creatable="false" />\
+				<Property Name="ProductId" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Product ID" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="ProductType" Type="Edm.String" Nullable="false"\
+					MaxLength="2" sap:label="Type Code" sap:creatable="false" />\
+				<Property Name="ProductTypeName" Type="Edm.String"\
+					Nullable="false" MaxLength="60" sap:label="Short Descript."\
+					sap:creatable="false" sap:updatable="false" sap:filterable="false" />\
+				<Property Name="Category" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Category" sap:creatable="false" />\
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Category" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="MainCategory" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Main Category" sap:creatable="false" />\
+				<Property Name="MainCategoryName" Type="Edm.String"\
+					Nullable="false" MaxLength="40" sap:label="Main Category"\
+					sap:creatable="false" sap:updatable="false" />\
+				<Property Name="Name" Type="Edm.String" Nullable="false"\
+					MaxLength="255" sap:label="Name" />\
+				<Property Name="Description" Type="Edm.String" Nullable="false"\
+					MaxLength="255" sap:label="Description" sap:filterable="false" />\
+				<Property Name="Price" Type="Edm.Decimal" Nullable="false"\
+					Precision="15" Scale="2" sap:unit="Currency" sap:label="Price" />\
+				<Property Name="Currency" Type="Edm.String" Nullable="false"\
+					MaxLength="5" sap:label="Currency Code" sap:creatable="false"\
+					sap:semantics="currency-code" />\
+				<Property Name="ValueAddedTax" Type="Edm.Int32" Nullable="false"\
+					sap:filterable="false" />\
+				<Property Name="ValueAddedTaxName" Type="Edm.String"\
+					Nullable="false" MaxLength="60" sap:label="Short Descript."\
+					sap:creatable="false" sap:updatable="false" sap:filterable="false" />\
+				<Property Name="HeightInDimensionUnit" Type="Edm.Decimal"\
+					Nullable="false" Precision="13" Scale="3" sap:unit="DimensionUnit"\
+					sap:label="Height" sap:creatable="false" sap:filterable="false" />\
+				<Property Name="WidthInDimensionUnit" Type="Edm.Decimal"\
+					Nullable="false" Precision="13" Scale="3" sap:unit="DimensionUnit"\
+					sap:label="Width" sap:creatable="false" sap:filterable="false" />\
+				<Property Name="LengthInDimensionUnit" Type="Edm.Decimal"\
+					Nullable="false" Precision="13" Scale="3" sap:unit="DimensionUnit"\
+					sap:label="Depth" sap:creatable="false" sap:filterable="false" />\
+				<Property Name="DimensionUnit" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Dimension Unit" sap:creatable="false"\
+					sap:filterable="false" sap:semantics="unit-of-measure" />\
+				<Property Name="DimensionUnitName" Type="Edm.String"\
+					Nullable="false" MaxLength="10" sap:label="Meas. unit text"\
+					sap:creatable="false" sap:updatable="false" sap:filterable="false" />\
+				<Property Name="Weight" Type="Edm.Decimal" Nullable="false"\
+					Precision="13" Scale="3" sap:unit="WeightUnit" sap:label="Weight"\
+					sap:filterable="false" />\
+				<Property Name="WeightUnit" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"\
+					sap:filterable="false" sap:semantics="unit-of-measure" />\
+				<Property Name="WeightUnitName" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Meas. unit text" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="StockQuantityInBaseUnit" Type="Edm.Decimal"\
+					Nullable="false" Precision="13" Scale="3" sap:unit="BaseUnit"\
+					sap:label="Stock Quantity" />\
+				<Property Name="BaseUnit" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"\
+					sap:filterable="false" sap:semantics="unit-of-measure" />\
+				<Property Name="BaseUnitName" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Meas. unit text" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="ImageUrl" Type="Edm.String" Nullable="false"\
+					MaxLength="255" sap:label="Image" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="AverageRating" Type="Edm.Decimal" Nullable="false"\
+					Precision="4" Scale="2" sap:label="Average Rating" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="NumberOfRatings" Type="Edm.Int32" Nullable="false"\
+					sap:label="Number of Reviews" sap:creatable="false" sap:updatable="false" />\
+				<Property Name="SupplierName" Type="Edm.String" MaxLength="80"\
+					sap:label="Supplier" sap:creatable="false" sap:updatable="false" />\
+				<Property Name="EditState" Type="Edm.Int32" Nullable="false"\
+					sap:creatable="false" sap:updatable="false" />\
+				<NavigationProperty Name="SalesDataSet"\
+					Relationship="SEPMRA_PROD_MAN.Product2SalesData" FromRole="FromRole_Product2SalesData"\
+					ToRole="ToRole_Product2SalesData" />\
+				<NavigationProperty Name="ProductCategory"\
+					Relationship="SEPMRA_PROD_MAN.Product2ProductCategory" FromRole="ToRole_Product2ProductCategory"\
+					ToRole="FromRole_Product2ProductCategory" />\
+				<NavigationProperty Name="Attachments"\
+					Relationship="SEPMRA_PROD_MAN.Product2Attachment" FromRole="FromRole_Product2Attachment"\
+					ToRole="ToRole_Product2Attachment" />\
+				<NavigationProperty Name="Supplier"\
+					Relationship="SEPMRA_PROD_MAN.Product2Supplier" FromRole="ToRole_Product2Supplier"\
+					ToRole="FromRole_Product2Supplier" />\
+				<NavigationProperty Name="DraftAdministrativeData"\
+					Relationship="SEPMRA_PROD_MAN.Product2DraftAdministrativeData"\
+					FromRole="ToRole_Product2DraftAdministrativeData" ToRole="FromRole_Product2DraftAdministrativeData" />\
+				<NavigationProperty Name="TwinEntity"\
+					Relationship="SEPMRA_PROD_MAN.Product2TwinEntity" FromRole="FromRole_Product2TwinEntity"\
+					ToRole="ToRole_Product2TwinEntity" />\
+			</EntityType>\
+			<EntityType Name="DraftAdministrativeData"\
+				sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="DraftEntityUUID" />\
+				</Key>\
+				<Property Name="DraftEntityUUID" Type="Edm.Guid" Nullable="false"\
+					sap:label="Draft Document UUID" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="EditState" Type="Edm.Byte" Nullable="false"\
+					sap:label="Edit State" sap:creatable="false" sap:updatable="false"\
+					sap:filterable="false" />\
+				<Property Name="CreatedAt" Type="Edm.DateTime" Nullable="false"\
+					Precision="7" sap:label="Created" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="CreatedBy" Type="Edm.String" Nullable="false"\
+					MaxLength="12" sap:label="Created by" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="ChangedAt" Type="Edm.DateTime" Precision="7"\
+					sap:label="Last Changed" sap:creatable="false" sap:updatable="false"\
+					sap:filterable="false" />\
+				<Property Name="ChangedBy" Type="Edm.String" Nullable="false"\
+					MaxLength="12" sap:label="Last Changed by" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="ExclusiveBy" Type="Edm.String" Nullable="false"\
+					MaxLength="12" sap:label="Exclusive For" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+				<Property Name="ExclusiveSince" Type="Edm.DateTime"\
+					Precision="7" sap:label="Exclusive Since" sap:creatable="false"\
+					sap:updatable="false" sap:filterable="false" />\
+			</EntityType>\
+			<EntityType Name="Attachment" m:HasStream="true"\
+				sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="ActiveAttachmentObjectUUID" />\
+					<PropertyRef Name="ActiveAttachmentId" />\
+					<PropertyRef Name="DraftAttachmentUUID" />\
+				</Key>\
+				<Property Name="ActiveAttachmentObjectUUID" Type="Edm.Guid"\
+					Nullable="false" sap:creatable="false" sap:updatable="false" />\
+				<Property Name="ActiveAttachmentId" Type="Edm.String"\
+					Nullable="false" MaxLength="70" sap:label="Instance ID"\
+					sap:creatable="false" sap:updatable="false" />\
+				<Property Name="DraftAttachmentUUID" Type="Edm.Guid"\
+					Nullable="false" sap:creatable="false" sap:updatable="false" />\
+				<Property Name="Type" Type="Edm.String" Nullable="false"\
+					MaxLength="3" sap:label="File extension" sap:creatable="false"\
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />\
+				<Property Name="FileName" Type="Edm.String" Nullable="false"\
+					MaxLength="255" sap:creatable="false" sap:updatable="false"\
+					sap:sortable="false" sap:filterable="false" />\
+				<Property Name="MimeType" Type="Edm.String" Nullable="false"\
+					MaxLength="100" sap:creatable="false" sap:updatable="false"\
+					sap:sortable="false" sap:filterable="false" />\
+				<Property Name="CreatedBy" Type="Edm.String" Nullable="false"\
+					MaxLength="136" sap:creatable="false" sap:updatable="false" />\
+				<Property Name="CreatedAt" Type="Edm.DateTime" Nullable="false"\
+					Precision="7" sap:label="Created" sap:creatable="false"\
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />\
+				<Property Name="ChangedBy" Type="Edm.String" Nullable="false"\
+					MaxLength="136" sap:creatable="false" sap:updatable="false" />\
+				<Property Name="ChangedAt" Type="Edm.DateTime" Nullable="false"\
+					Precision="7" sap:label="Last Changed" sap:creatable="false"\
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />\
+				<Property Name="EditState" Type="Edm.Byte" Nullable="false"\
+					sap:creatable="false" sap:updatable="false" />\
+			</EntityType>\
+			<EntityType Name="ProductCategory" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Id" />\
+				</Key>\
+				<Property Name="Id" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Category" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Name" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Category" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="MainCategoryId" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Main Category" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="MainCategoryName" Type="Edm.String"\
+					Nullable="false" MaxLength="40" sap:label="Main Category"\
+					sap:creatable="false" sap:updatable="false" />\
+				<NavigationProperty Name="MainCategory"\
+					Relationship="SEPMRA_PROD_MAN.MainProductCategory2ProductCategory"\
+					FromRole="ToRole_MainProductCategory2ProductCategory" ToRole="FromRole_MainProductCategory2ProductCategory" />\
+			</EntityType>\
+			<EntityType Name="MainProductCategory"\
+				sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Id" />\
+				</Key>\
+				<Property Name="Id" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Main Category" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="Name" Type="Edm.String" Nullable="false"\
+					MaxLength="40" sap:label="Main Category" sap:creatable="false"\
+					sap:updatable="false" />\
+				<NavigationProperty Name="Categories"\
+					Relationship="SEPMRA_PROD_MAN.MainProductCategory2ProductCategory"\
+					FromRole="FromRole_MainProductCategory2ProductCategory" ToRole="ToRole_MainProductCategory2ProductCategory" />\
+			</EntityType>\
+			<EntityType Name="SalesData" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="ProductUUID" />\
+				</Key>\
+				<Property Name="ProductUUID" Type="Edm.Guid" Nullable="false"\
+					sap:label="Node Key" sap:creatable="false" sap:updatable="false"\
+					sap:filterable="false" />\
+				<Property Name="ProductId" Type="Edm.String" Nullable="false"\
+					MaxLength="10" sap:label="Product ID" sap:creatable="false"\
+					sap:updatable="false" />\
+				<Property Name="DeliveryYear" Type="Edm.String" Nullable="false"\
+					MaxLength="4" sap:label="Delivery Year" sap:creatable="false"\
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />\
+				<Property Name="DeliveryMonthName" Type="Edm.String"\
+					Nullable="false" MaxLength="10" sap:label="Delivery Month"\
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"\
+					sap:filterable="false" />\
+				<Property Name="DeliveryDateTime" Type="Edm.DateTime"\
+					Nullable="false" Precision="0" sap:label="Delivery Date"\
+					sap:creatable="false" sap:updatable="false" />\
+				<Property Name="Revenue" Type="Edm.Decimal" Nullable="false"\
+					Precision="15" Scale="2" sap:label="Revenue" sap:creatable="false"\
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />\
+			</EntityType>\
+			<Association Name="Product2DraftAdministrativeData"\
+				sap:content-version="1">\
+				<End Type="SEPMRA_PROD_MAN.DraftAdministrativeData"\
+					Multiplicity="0..1" Role="FromRole_Product2DraftAdministrativeData" />\
+				<End Type="SEPMRA_PROD_MAN.Product" Multiplicity="1"\
+					Role="ToRole_Product2DraftAdministrativeData" />\
+			</Association>\
+			<Association Name="Product2Supplier" sap:content-version="1">\
+				<End Type="SEPMRA_PROD_MAN.Supplier" Multiplicity="1"\
+					Role="FromRole_Product2Supplier" />\
+				<End Type="SEPMRA_PROD_MAN.Product" Multiplicity="*"\
+					Role="ToRole_Product2Supplier" />\
+				<ReferentialConstraint>\
+					<Principal Role="FromRole_Product2Supplier">\
+						<PropertyRef Name="SupplierUUID" />\
+					</Principal>\
+					<Dependent Role="ToRole_Product2Supplier">\
+						<PropertyRef Name="SupplierUUID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="Product2TwinEntity"\
+				sap:content-version="1">\
+				<End Type="SEPMRA_PROD_MAN.Product" Multiplicity="0..1"\
+					Role="FromRole_Product2TwinEntity" />\
+				<End Type="SEPMRA_PROD_MAN.Product" Multiplicity="0..1"\
+					Role="ToRole_Product2TwinEntity" />\
+			</Association>\
+			<Association Name="Product2Attachment"\
+				sap:content-version="1">\
+				<End Type="SEPMRA_PROD_MAN.Product" Multiplicity="1"\
+					Role="FromRole_Product2Attachment" />\
+				<End Type="SEPMRA_PROD_MAN.Attachment" Multiplicity="*"\
+					Role="ToRole_Product2Attachment" />\
+			</Association>\
+			<Association Name="Product2SalesData"\
+				sap:content-version="1">\
+				<End Type="SEPMRA_PROD_MAN.Product" Multiplicity="1"\
+					Role="FromRole_Product2SalesData" />\
+				<End Type="SEPMRA_PROD_MAN.SalesData" Multiplicity="*"\
+					Role="ToRole_Product2SalesData" />\
+			</Association>\
+			<Association Name="Product2ProductCategory"\
+				sap:content-version="1">\
+				<End Type="SEPMRA_PROD_MAN.ProductCategory" Multiplicity="1"\
+					Role="FromRole_Product2ProductCategory" />\
+				<End Type="SEPMRA_PROD_MAN.Product" Multiplicity="*"\
+					Role="ToRole_Product2ProductCategory" />\
+				<ReferentialConstraint>\
+					<Principal Role="FromRole_Product2ProductCategory">\
+						<PropertyRef Name="Id" />\
+					</Principal>\
+					<Dependent Role="ToRole_Product2ProductCategory">\
+						<PropertyRef Name="Category" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="MainProductCategory2ProductCategory"\
+				sap:content-version="1">\
+				<End Type="SEPMRA_PROD_MAN.MainProductCategory" Multiplicity="1"\
+					Role="FromRole_MainProductCategory2ProductCategory" />\
+				<End Type="SEPMRA_PROD_MAN.ProductCategory" Multiplicity="*"\
+					Role="ToRole_MainProductCategory2ProductCategory" />\
+				<ReferentialConstraint>\
+					<Principal Role="FromRole_MainProductCategory2ProductCategory">\
+						<PropertyRef Name="Id" />\
+					</Principal>\
+					<Dependent Role="ToRole_MainProductCategory2ProductCategory">\
+						<PropertyRef Name="MainCategoryId" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<EntityContainer Name="SEPMRA_PROD_MAN_Entities"\
+				m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">\
+				<EntitySet Name="DimensionUnits" EntityType="SEPMRA_PROD_MAN.DimensionUnit"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:searchable="true" sap:content-version="1" />\
+				<EntitySet Name="QuantityUnits" EntityType="SEPMRA_PROD_MAN.QuantityUnit"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:searchable="true" sap:content-version="1" />\
+				<EntitySet Name="WeightUnits" EntityType="SEPMRA_PROD_MAN.WeightUnit"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:searchable="true" sap:content-version="1" />\
+				<EntitySet Name="Suppliers" EntityType="SEPMRA_PROD_MAN.Supplier"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:searchable="true" sap:content-version="1" />\
+				<EntitySet Name="Products" EntityType="SEPMRA_PROD_MAN.Product"\
+					sap:searchable="true" sap:content-version="1" />\
+				<EntitySet Name="DraftAdministrativeData" EntityType="SEPMRA_PROD_MAN.DraftAdministrativeData"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:searchable="true" sap:addressable="false" sap:content-version="1" />\
+				<EntitySet Name="Attachments" EntityType="SEPMRA_PROD_MAN.Attachment"\
+					sap:searchable="true" sap:addressable="false" sap:content-version="1" />\
+				<EntitySet Name="ProductCategories" EntityType="SEPMRA_PROD_MAN.ProductCategory"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />\
+				<EntitySet Name="MainProductCategories" EntityType="SEPMRA_PROD_MAN.MainProductCategory"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />\
+				<EntitySet Name="SalesDataSet" EntityType="SEPMRA_PROD_MAN.SalesData"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:searchable="true" sap:content-version="1" />\
+				<EntitySet Name="Currencies" EntityType="SEPMRA_PROD_MAN.Currency"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:searchable="true" sap:content-version="1" />\
+				<AssociationSet Name="MainProductCategory2ProductCategorySet"\
+					Association="SEPMRA_PROD_MAN.MainProductCategory2ProductCategory"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:content-version="1">\
+					<End EntitySet="MainProductCategories" Role="FromRole_MainProductCategory2ProductCategory" />\
+					<End EntitySet="ProductCategories" Role="ToRole_MainProductCategory2ProductCategory" />\
+				</AssociationSet>\
+				<AssociationSet Name="Product2DraftAdministrativeDataSet"\
+					Association="SEPMRA_PROD_MAN.Product2DraftAdministrativeData"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:content-version="1">\
+					<End EntitySet="DraftAdministrativeData" Role="FromRole_Product2DraftAdministrativeData" />\
+					<End EntitySet="Products" Role="ToRole_Product2DraftAdministrativeData" />\
+				</AssociationSet>\
+				<AssociationSet Name="Product2SalesDataSet"\
+					Association="SEPMRA_PROD_MAN.Product2SalesData" sap:creatable="false"\
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">\
+					<End EntitySet="Products" Role="FromRole_Product2SalesData" />\
+					<End EntitySet="SalesDataSet" Role="ToRole_Product2SalesData" />\
+				</AssociationSet>\
+				<AssociationSet Name="Product2SupplierSet"\
+					Association="SEPMRA_PROD_MAN.Product2Supplier" sap:creatable="false"\
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">\
+					<End EntitySet="Suppliers" Role="FromRole_Product2Supplier" />\
+					<End EntitySet="Products" Role="ToRole_Product2Supplier" />\
+				</AssociationSet>\
+				<AssociationSet Name="Product2AttachmentSet"\
+					Association="SEPMRA_PROD_MAN.Product2Attachment" sap:creatable="false"\
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">\
+					<End EntitySet="Products" Role="FromRole_Product2Attachment" />\
+					<End EntitySet="Attachments" Role="ToRole_Product2Attachment" />\
+				</AssociationSet>\
+				<AssociationSet Name="Product2ProductCategorySet"\
+					Association="SEPMRA_PROD_MAN.Product2ProductCategory"\
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"\
+					sap:content-version="1">\
+					<End EntitySet="ProductCategories" Role="FromRole_Product2ProductCategory" />\
+					<End EntitySet="Products" Role="ToRole_Product2ProductCategory" />\
+				</AssociationSet>\
+				<AssociationSet Name="Product2TwinEntitySet"\
+					Association="SEPMRA_PROD_MAN.Product2TwinEntity" sap:creatable="false"\
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">\
+					<End EntitySet="Products" Role="FromRole_Product2TwinEntity" />\
+					<End EntitySet="Products" Role="ToRole_Product2TwinEntity" />\
+				</AssociationSet>\
+				<FunctionImport Name="ActivateProduct" ReturnType="SEPMRA_PROD_MAN.Product"\
+					EntitySet="Products" m:HttpMethod="POST" sap:action-for="SEPMRA_PROD_MAN.Product">\
+					<Parameter Name="ProductUUID" Type="Edm.Guid" Mode="In" />\
+				</FunctionImport>\
+				<FunctionImport Name="CopyProduct" ReturnType="SEPMRA_PROD_MAN.Product"\
+					EntitySet="Products" m:HttpMethod="POST" sap:action-for="SEPMRA_PROD_MAN.Product">\
+					<Parameter Name="ProductUUID" Type="Edm.Guid" Mode="In" />\
+				</FunctionImport>\
+				<FunctionImport Name="EditProduct" ReturnType="SEPMRA_PROD_MAN.Product"\
+					EntitySet="Products" m:HttpMethod="POST" sap:action-for="SEPMRA_PROD_MAN.Product">\
+					<Parameter Name="ProductUUID" Type="Edm.Guid" Mode="In" />\
+				</FunctionImport>\
+			</EntityContainer>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/SupplierName"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="Suppliers" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="SupplierName" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Name" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="SupplierUUID" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="SupplierUUID" />\
+								</Record>\
+								<Record\
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">\
+									<PropertyValue Property="ValueListProperty"\
+										String="FormattedAddress" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/SupplierId"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="Suppliers" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="SupplierId" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="SupplierId" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="SupplierName" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Name" />\
+								</Record>\
+								<Record\
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">\
+									<PropertyValue Property="ValueListProperty"\
+										String="FormattedAddress" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/Currency"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="Currencies" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="Currency" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Code" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="Currency" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Code" />\
+								</Record>\
+								<Record\
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">\
+									<PropertyValue Property="ValueListProperty"\
+										String="Text" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/BaseUnit"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="QuantityUnits" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="BaseUnit" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Unit" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="BaseUnitName" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Text" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/WeightUnit"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="WeightUnits" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="WeightUnit" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Unit" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="WeightUnitName" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Text" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/DimensionUnit"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="DimensionUnits" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="DimensionUnit" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="ISOCode" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="DimensionUnitName" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Text" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/MainCategory"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="MainProductCategories" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="MainCategory" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Id" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product/Category"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="CollectionPath" String="ProductCategories" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="Category" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Id" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="MainCategory" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="MainCategoryId" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/Products"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftRoot">\
+					<Record>\
+						<PropertyValue Property="ActivationAction"\
+							String="SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/ActivateProduct" />\
+						<PropertyValue Property="EditAction"\
+							String="SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/EditProduct" />\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Product"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticKey">\
+					<Collection>\
+						<PropertyPath>ProductId</PropertyPath>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/Attachment"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftActivationVia">\
+					<Collection>\
+						<String>SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/Products</String>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="SEPMRA_PROD_MAN.Supplier"\
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticKey">\
+					<Collection>\
+						<PropertyPath>SupplierId</PropertyPath>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<atom:link rel="self"\
+				href="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/$metadata"\
+				xmlns:atom="http://www.w3.org/2005/Atom" />\
+			<atom:link rel="latest-version"\
+				href="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/$metadata"\
+				xmlns:atom="http://www.w3.org/2005/Atom" />\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+var sFunctionImportProduct1 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<entry xml:base="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/"\
+	xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">\
+	<id>https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')\
+	</id>\
+	<title type="text">Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')\
+	</title>\
+	<updated>2015-05-05T09:05:16Z</updated>\
+	<category term="SEPMRA_PROD_MAN.Product"\
+		scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+	<link href="Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')"\
+		rel="edit" title="Product" />\
+	<link\
+		href="Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')/SalesDataSet"\
+		rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/SalesDataSet"\
+		type="application/atom+xml;type=feed" title="SalesDataSet" />\
+	<link\
+		href="Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')/ProductCategory"\
+		rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ProductCategory"\
+		type="application/atom+xml;type=entry" title="ProductCategory" />\
+	<link\
+		href="Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')/Attachments"\
+		rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Attachments"\
+		type="application/atom+xml;type=feed" title="Attachments" />\
+	<link href="Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')/Supplier"\
+		rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier"\
+		type="application/atom+xml;type=entry" title="Supplier" />\
+	<link\
+		href="Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')/DraftAdministrativeData"\
+		rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/DraftAdministrativeData"\
+		type="application/atom+xml;type=entry" title="DraftAdministrativeData" />\
+	<link href="Products(guid\'005056A7-004E-1ED4-BCD3-08AB3F15C97E\')/TwinEntity"\
+		rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/TwinEntity"\
+		type="application/atom+xml;type=entry" title="TwinEntity" />\
+	<content type="application/xml">\
+		<m:properties>\
+			<d:ExclusiveBy />\
+			<d:IsDraft>false</d:IsDraft>\
+			<d:HasTwin>false</d:HasTwin>\
+			<d:ProductUUID>005056A7-004E-1ED4-BCD3-08AB3F15C97E</d:ProductUUID>\
+			<d:ExclusiveSince m:null="true" />\
+			<d:SupplierUUID>005056A7-004E-1ED4-BCD3-08AB3ED0C97E</d:SupplierUUID>\
+			<d:SupplierId>100000000</d:SupplierId>\
+			<d:ProductId>HT-1000</d:ProductId>\
+			<d:ProductType>PR</d:ProductType>\
+			<d:ProductTypeName>Product</d:ProductTypeName>\
+			<d:Category>Notebooks</d:Category>\
+			<d:CategoryName>Notebooks</d:CategoryName>\
+			<d:MainCategory>Computer Systems</d:MainCategory>\
+			<d:MainCategoryName>Computer Systems</d:MainCategoryName>\
+			<d:Name>Notebook Basic 15</d:Name>\
+			<d:Description>Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4\
+				GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro</d:Description>\
+			<d:Price>956.00</d:Price>\
+			<d:Currency>USD</d:Currency>\
+			<d:ValueAddedTax>1</d:ValueAddedTax>\
+			<d:ValueAddedTaxName>Regular VAT</d:ValueAddedTaxName>\
+			<d:HeightInDimensionUnit>3.000</d:HeightInDimensionUnit>\
+			<d:WidthInDimensionUnit>30.000</d:WidthInDimensionUnit>\
+			<d:LengthInDimensionUnit>18.000</d:LengthInDimensionUnit>\
+			<d:DimensionUnit>CM</d:DimensionUnit>\
+			<d:DimensionUnitName>cm</d:DimensionUnitName>\
+			<d:Weight>4.200</d:Weight>\
+			<d:WeightUnit>KG</d:WeightUnit>\
+			<d:WeightUnitName>kg</d:WeightUnitName>\
+			<d:StockQuantityInBaseUnit>145</d:StockQuantityInBaseUnit>\
+			<d:BaseUnit>EA</d:BaseUnit>\
+			<d:BaseUnitName>each</d:BaseUnitName>\
+			<d:ImageUrl>/sap/public/bc/NWDEMO_MODEL/IMAGES/HT-1000.jpg\
+			</d:ImageUrl>\
+			<d:AverageRating>3.33</d:AverageRating>\
+			<d:NumberOfRatings>3</d:NumberOfRatings>\
+			<d:SupplierName>SAP</d:SupplierName>\
+			<d:EditState>0</d:EditState>\
+		</m:properties>\
+	</content>\
+</entry>';
