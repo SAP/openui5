@@ -53,7 +53,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 					/**
-					 * The value state to be displayed. Setting this attribute, when the accessibility feature is enabled, sets the value of the invalid property to “true”.
+					 * Тhe value state to be displayed for the radiobutton. Possible values are: Error, Warning, Success and None.
+					 * Note: Setting this attribute to sap.ui.core.ValueState.Error when the accessibility feature is enabled,
+					 * sets the value of the invalid propery for the whole radiobutton group to “true”.
 					 */
 					valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 
