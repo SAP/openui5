@@ -37,6 +37,7 @@
 			<Table id="lineItemsList"
 				   width="auto"
 				   items="{LineItems}"
+				   updateFinished="onListUpdateFinished"
 				   noDataText="{i18n>detailLineItemTableNoDataText}"
 				   busyIndicatorDelay="{detailView>/lineItemTableDelay}"
 				   class="sapUiResponsiveMargin">
