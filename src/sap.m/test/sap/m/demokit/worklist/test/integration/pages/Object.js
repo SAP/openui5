@@ -55,7 +55,21 @@ sap.ui.require([
 							success : function (oPage) {
 								ok(oPage.getBusy(), "The object view is busy");
 							},
-							errorMessage : "The worklist view is not busy"
+							errorMessage : "The object view is not busy"
+						});
+					},
+
+					theViewIsNotBusyAnymore : function () {
+						return this.waitFor({
+							id : "page",
+							viewName : sViewName,
+							matchers: function (oPage) {
+								return !oPage.getBusy();
+							},
+							success : function (oPage) {
+								ok(!oPage.getBusy(), "The object view is not busy");
+							},
+							errorMessage : "The object view is busy"
 						});
 					},
 

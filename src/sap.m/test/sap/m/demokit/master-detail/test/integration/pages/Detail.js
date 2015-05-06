@@ -54,6 +54,21 @@ sap.ui.require([
 						});
 					},
 
+					iShouldSeeNoBusyIndicator: function () {
+						return this.waitFor({
+							id : "page",
+							viewName : sViewName,
+							matchers: function (oPage) {
+								return !oPage.getBusy();
+							},
+							success : function (oPage) {
+								// we set the view busy, so we need to query the parent of the app
+								QUnit.ok(!oPage.getBusy(), "The detail view is not busy");
+							},
+							errorMessage : "The detail view is busy."
+						});
+					},
+
 					theObjectPageShowsTheFirstObject : function () {
 						return this.iShouldBeOnTheObjectNPage(0);
 					},

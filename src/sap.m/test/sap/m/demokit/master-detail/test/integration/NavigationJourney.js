@@ -16,7 +16,7 @@ function () {
 
 		// Assertions
 		Then.onTheMasterPage.theFirstItemShouldBeSelected();
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject().and.iShouldSeeNoBusyIndicator();
 		Then.onTheBrowserPage.iShouldSeeTheHashForTheRememberedObject();
 	});
 
@@ -26,7 +26,7 @@ function () {
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedId();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject().and.iShouldSeeNoBusyIndicator();
 		Then.onTheMasterPage.theRememberedListItemShouldBeSelected();
 	});
 

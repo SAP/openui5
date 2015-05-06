@@ -16,14 +16,11 @@ sap.ui.define([
 		/* =========================================================== */
 
 		onInit : function () {
-			var oViewModel;
-
-			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
-
 			// Model used to manipulate control states. The chosen values make sure,
 			// detail page is busy indication immediately so there is no break in
 			// between the busy indication for loading the view's meta data
-			oViewModel = new JSONModel({
+			var oViewModel = new JSONModel({
+				busy: false,
 				delay: 0,
 				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading"),
 				shareSaveAsTileTitle: "",
@@ -31,6 +28,9 @@ sap.ui.define([
 				shareSendEmailSubject: "",
 				shareSendEmailMessage: ""
 			});
+
+			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
+
 			this.setModel(oViewModel, "detailView");
 
 			this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
@@ -102,21 +102,17 @@ sap.ui.define([
 		 */
 		_bindView : function (sObjectPath) {
 			// Set busy indicator during view binding
-			var oDataModel = this.getModel(),
-				oViewModel = this.getModel("detailView");
+			var oViewModel = this.getModel("detailView");
+
+			// If the view was not bound yet its not busy, only if the binding requests data it is set to busy again
+			oViewModel.setProperty("/busy", false);
 
 			this.getView().bindElement({
 				path : sObjectPath,
 				events: {
 					change : this._onBindingChange.bind(this),
 					dataRequested : function () {
-						oDataModel.metadataLoaded().then(function () {
-							// Busy indicator on view should only be set if metadata is loaded,
-							// otherwise there may be two busy indications next to each other on the
-							// screen. This happens because route matched handler already calls '_bindView'
-							// while metadata is loaded.
-							oViewModel.setProperty("/busy", true);
-						});
+						oViewModel.setProperty("/busy", true);
 					},
 					dataReceived: function () {
 						oViewModel.setProperty("/busy", false);
@@ -125,7 +121,7 @@ sap.ui.define([
 			});
 		},
 
-		_onBindingChange : function (oEvent) {
+		_onBindingChange : function () {
 			var oView = this.getView(),
 				oElementBinding = oView.getElementBinding();
 
@@ -172,6 +168,7 @@ sap.ui.define([
 				oViewModel.setProperty("/lineItemTableDelay", iOriginalLineItemTableBusyDelay);
 			});
 
+			// Binding the view will set it to not busy - so the view is always busy if it is not bound
 			oViewModel.setProperty("/busy", true);
 			// Restore original busy indicator delay for the detail view
 			oViewModel.setProperty("/delay", iOriginalViewBusyDelay);

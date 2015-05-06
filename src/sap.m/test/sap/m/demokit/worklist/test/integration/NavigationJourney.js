@@ -13,7 +13,7 @@ function () {
 		Given.iStartMyApp();
 
 		//Actions
-		When.onTheWorklistPage.iLookAtTheScreen();
+		When.onTheWorklistPage.iRememberTheItemAtPosition(0);
 
 		// Assertions
 		Then.onTheWorklistPage.iShouldSeeTheTable();
@@ -25,7 +25,8 @@ function () {
 		When.onTheBrowser.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
+		Then.onTheObjectPage.iShouldSeeTheRememberedObject().
+			and.theViewIsNotBusyAnymore();
 	});
 
 	opaTest("Should go back to the TablePage", function (Given, When, Then) {

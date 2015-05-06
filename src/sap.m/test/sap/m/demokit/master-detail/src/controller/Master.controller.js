@@ -28,17 +28,21 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit : function () {
-			var oListSelector = this.getOwnerComponent().oListSelector,
-				oViewModel,
-				iOriginalBusyDelay;
+			// Control state model
+			var oList = this.byId("list"),
+				oViewModel = new JSONModel({
+					isFilterBarVisible : false,
+					filterBarLabel : "",
+					delay : 0,
+					title : this.getResourceBundle().getText("masterTitle"),
+					noDataText : this.getResourceBundle().getText("masterListNoDataText")
+				}),
+				// Put down master list's original value for busy indicator delay,
+				// so it can be restored later on. Busy handling on the master list is
+				// taken care of by the master list itself.
+				iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
-			this._oList = this.byId("list");
-			// Put down master list's original value for busy indicator delay,
-			// so it can be restored later on. Busy handling on the master list is
-			// taken care of by the master list itself.
-			iOriginalBusyDelay = this._oList.getBusyIndicatorDelay();
-
-			this._oPullToRefresh = this.byId("pullToRefresh");
+			this._oList = oList;
 			// keeps the filter and search state
 			this._oListFilterState = {
 				aFilter : [],
@@ -50,45 +54,18 @@ sap.ui.define([
 				aSort : []
 			};
 
-			// Control state model
-			oViewModel = new JSONModel({
-				isFilterBarVisible : false,
-				filterBarLabel : "",
-				delay : 0,
-				title : this.getResourceBundle().getText("masterTitle"),
-				noDataText : this.getResourceBundle().getText("masterListNoDataText")
-			});
 			this.setModel(oViewModel, "masterView");
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
 			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
-			this._oList.attachEventOnce("updateFinished", function(){
-				// Restore original busy indicator delay for worklist's table
+			oList.attachEventOnce("updateFinished", function(){
+				// Restore original busy indicator delay for the list
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			});
-			oListSelector.setBoundMasterList(this._oList);
 
-			// if the master route was hit (empty hash) we have to set
-			// the hash to to the first item in the list as soon as the
-			// listLoading is done and the first item in the list is known
-			this.getRouter().getRoute("master").attachPatternMatched( function() {
-				oListSelector.oWhenListLoadingIsDone.then(
-					function (mParams) {
-						if (mParams.list.getMode() === "None") {
-							return;
-						}
-						var sObjectId = mParams.firstListitem.getBindingContext().getProperty("ObjectID");
-						this.getRouter().navTo("object", {objectId : sObjectId}, true);
-					}.bind(this),
-					function (mParams) {
-						if (mParams.error) {
-							return;
-						}
-						this.getRouter().getTargets().display("detailNoObjectsAvailable");
-					}.bind(this)
-				);
-			}, this);
+			this.getOwnerComponent().oListSelector.setBoundMasterList(oList);
 
+			this.getRouter().getRoute("master").attachPatternMatched(this._onMasterMatched, this);
 			this.getRouter().attachBypassed(this.onBypassed, this);
 		},
 
@@ -108,7 +85,7 @@ sap.ui.define([
 			// update the master list object counter after new data is loaded
 			this._updateListItemCount(oEvent.getParameter("total"));
 			// hide pull to refresh if necessary
-			this._oPullToRefresh.hide();
+			this.byId("pullToRefresh").hide();
 		},
 
 		/**
@@ -304,6 +281,30 @@ sap.ui.define([
 		/* =========================================================== */
 		/* begin: internal methods                                     */
 		/* =========================================================== */
+
+		/**
+		 * if the master route was hit (empty hash) we have to set
+		 * the hash to to the first item in the list as soon as the
+		 * listLoading is done and the first item in the list is known
+		 * @private
+		 */
+		_onMasterMatched :  function() {
+			this.getOwnerComponent().oListSelector.oWhenListLoadingIsDone.then(
+				function (mParams) {
+					if (mParams.list.getMode() === "None") {
+						return;
+					}
+					var sObjectId = mParams.firstListitem.getBindingContext().getProperty("ObjectID");
+					this.getRouter().navTo("object", {objectId : sObjectId}, true);
+				}.bind(this),
+				function (mParams) {
+					if (mParams.error) {
+						return;
+					}
+					this.getRouter().getTargets().display("detailNoObjectsAvailable");
+				}.bind(this)
+			);
+		},
 
 		/**
 		 * Shows the selected item on the detail page
