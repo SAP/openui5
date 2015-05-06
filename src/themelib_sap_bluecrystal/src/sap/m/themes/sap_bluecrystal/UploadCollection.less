@@ -5,9 +5,6 @@
 /* ===================================================================================== */
 
 
-/* ************************************************************************************* */
-/* Cozy Form Factor                                                                      */
-/* ************************************************************************************* */
 /* List Header */
 .sapMTB.sapMUCListHeader {
 	background-color:		fade(@sapUiLightestBG,0%);
@@ -16,6 +13,7 @@
 	font-weight:			@sapUiFontHeaderWeight;
 	color:					@sapUiHeaderText;
 	text-shadow:			0.0625rem 0rem @sapUiLightShadowTint;
+	font-family:			@sapUiFontHeaderFamily;
 }
 
 .sapMLIB.sapMUCListSingleItem,
@@ -30,42 +28,42 @@
 	color:					@sapUiElement;
 }
 
-.sapMUCDeleteBtn>.sapMBtnTransparent>.sapMBtnIcon {
-	color:					@sapUiNegativeElement;
+/*if no link is provided the file name is displayed as an disabled link */
+.sapMLnkDsbl.sapMUCFileName {
+	color: @sapUiDarkText;
+}
+
+/* regular and hover state */
+.sapMUCDeleteBtn > .sapMBtnInner > .sapMBtnIcon {
+	color: @sapUiNegativeElement;
+}
+
+/* disabled state */
+.sapMBtnDisabled.sapMUCDeleteBtn > .sapMBtnInner > .sapMBtnIcon {
+	color: @sapUiBtnIcon;
+}
+
+/*for width > 30rem */
+@media(min-width: 30rem) {
+	.sapMUCButtonContainer >.sapMBtn >.sapMBtnInner {
+		background-image: none;
+  		background-color: @sapUiButtonLiteBackground;
+  		border-color: @sapUiButtonLiteBorderColor;
+  		color: @sapUiButtonLiteTextColor;
+  		text-shadow: none;
+
+  	}
+}
+
+.sapMUCAttrContainer {
+	color: @sapUiLightText;
 }
 
 /* Text: Filename */
 .sapMUCFileName.sapMLnk {
-	font-size:			@sapMFontLargeSize;
+	font-size: 			@sapMFontLargeSize; // it cannot be moved to base as the LESS constant is not known there
 }
 
-/* Text: Description (/Progress) */
-.sapMUCDescriptionHL .sapMLabel{
-	font-size:				@sapMFontMediumSize;
-	color:					@sapUiLightText;
-}
-
-/* ************************************************************************************* */
-/* Borderless Design (Cozy Form Factor)                                                  */
-/* ************************************************************************************* */
-.sapMUC .sapMListShowSeparatorsNone {
-	.sapMUC .sapMListShowSeparatorsNone {
-		.sapMUCFileName.sapMLnk {
-			margin-top:			0.25rem;
-			font-size:			@sapMFontMediumSize;
-		}
-	}
-}
-
-
-
-/* ************************************************************************************* */
-/* Compact Form Factor                                                                   */
-/* ************************************************************************************* */
-.sapUiSizeCompact .sapMUC {
-	/* Text: Filename */
-	.sapMUCFileName.sapMLnk {
-	margin-top:			0.25rem;
-	font-size:			@sapMFontMediumSize;
-	}
+.sapMUCAttrContainer, .sapMUCStatusContainer {
+	font-size: @sapMFontMediumSize; // it cannot be moved to base as the LESS constant is not known there
 }
