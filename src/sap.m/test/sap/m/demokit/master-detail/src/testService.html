@@ -13,17 +13,27 @@
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-preload="async"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"sap.ui.demo.masterdetail": "./src/"}'
-			data-sap-ui-frameOptions='deny'>
+			data-sap-ui-resourceroots='{"sap.ui.demo.masterdetail": "./", "sap.ui.demo.masterdetail.service": "../test/service/"}'
+			data-sap-ui-frameOptions='allow'>	// NON-SECURE setting for testing environment
 		</script>
 
 		<script>
-			// TODO: do this in the bootstrap when feature is implemented in the UI5 core
+			// Phantom js does not have a function.bind implementation so we are using a polyfill
+			if (!Function.prototype.bind) {
+				Function.prototype.bind = function(oThis) {
+					return jQuery.proxy(this, oThis);
+				};
+			}
+
 			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
+					"sap/ui/demo/masterdetail/service/server",
 					"sap/m/Shell",
 					"sap/ui/core/ComponentContainer"
-				 ], function (Shell, ComponentContainer) {
+				 ], function (server, Shell, ComponentContainer) {
+					// set up test service for local testing
+					server.init();
+
 					// initialize the UI component
 					new Shell({
 						app: new ComponentContainer({
