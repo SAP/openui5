@@ -395,11 +395,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
 		ComboBoxBase.prototype.onkeydown.apply(this, arguments);
-
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.V)) {
+			this._bIsPasteEvent = true;
+		} else {
+			this._bIsPasteEvent = false;
+		}
+
 		// only if there is no text and tokenizer has some tokens
 		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.A)
 				&& this._hasTokens()) {
@@ -422,10 +427,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
+
+		if (this._bIsPasteEvent) {
+			this.updateDomValue(this._sOldValue || "");
+			return;
+		}
 	
 		var aItems = this._getItemsStartingText(sValue);
 		var bVisibleItemFound = !!aItems.length;
-	
 		
 		// suppress invalid value
 		if (!bVisibleItemFound && sValue !== "") {
@@ -1176,7 +1185,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 				}
 	
 				this._resetCurrentItem();
-	
+				
 				// Handle when CTRL + A is pressed to select all
 				// Note: at first this function should be called and
 				// not the
@@ -1395,6 +1404,44 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
 		this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
+	};
+	
+	/**
+	 * Handle the paste event
+	 * Converts line-break separated strings into tokens, 
+	 * when there are selectable items available which contain the same text.
+	 *
+	 * @param {jQuery.Event} oEvent - the occurring event
+	 * @private
+	 */
+	MultiComboBox.prototype.onpaste = function (oEvent) {
+		var sOriginalText;
+		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+		if (window.clipboardData) {
+			// IE
+			sOriginalText = window.clipboardData.getData("Text");
+		} else {
+			// Chrome, Firefox, Safari
+			sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
+		}
+
+		var aSeparatedText = this._oTokenizer._parseString(sOriginalText);
+		if (aSeparatedText && aSeparatedText.length > 0) {
+			this.getSelectableItems().forEach(function(oItem) {
+				if (jQuery.inArray(oItem.getText(), aSeparatedText) > -1) {
+					this.setSelection({
+						item : oItem,
+						id : oItem.getId(),
+						key : oItem.getKey(),
+						fireChangeEvent : true,
+						fireFinishEvent : true,
+						suppressInvalidate : true,
+						listItemUpdated : false
+					});
+				}
+			}, this);
+		}
+	
 	};
 	
 	/**
@@ -1684,30 +1731,29 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 							this);
 			return this;
 		}
-		aItems
-				.forEach(
-						function(oItem) {
-							if (!(oItem instanceof sap.ui.core.Item) && (typeof oItem !== "string")) {
-								jQuery.sap.log
-										.warning(
-												'Warning: setSelectedItems() "aItems" has to be an array of sap.ui.core.Item instances or an array of valid sap.ui.core.Item Ids',
-												this);
-								// Go to next item
-								return;
-							}
-							if (typeof oItem === "string") {
-								oItem = sap.ui.getCore().byId(oItem);
-							}
-	
-							// Update and synchronize "selectedItems" association,
-							// "selectedKey" and "selectedItemId" properties.
-							this.setSelection({
-								item : oItem ? oItem : null,
-								id : oItem ? oItem.getId() : "",
-								key : oItem ? oItem.getKey() : "",
-								suppressInvalidate : true
-							});
-						}, this);
+		aItems.forEach(
+			function(oItem) {
+				if (!(oItem instanceof sap.ui.core.Item) && (typeof oItem !== "string")) {
+					jQuery.sap.log
+							.warning(
+									'Warning: setSelectedItems() "aItems" has to be an array of sap.ui.core.Item instances or an array of valid sap.ui.core.Item Ids',
+									this);
+					// Go to next item
+					return;
+				}
+				if (typeof oItem === "string") {
+					oItem = sap.ui.getCore().byId(oItem);
+				}
+
+				// Update and synchronize "selectedItems" association,
+				// "selectedKey" and "selectedItemId" properties.
+				this.setSelection({
+					item : oItem ? oItem : null,
+					id : oItem ? oItem.getId() : "",
+					key : oItem ? oItem.getKey() : "",
+					suppressInvalidate : true
+				});
+			}, this);
 		return this;
 	};
 	/**
