@@ -268,7 +268,7 @@ sap.ui.define([
 
 			if (sPreviousHash !== undefined || !oCrossAppNavigator) {
 				// The history contains a previous entry
-				window.history.go(-1);
+				history.go(-1);
 			} else if (oCrossAppNavigator) {
 				// Navigate back to FLP home
 				// TODO: Test this in a working sandbox, with the current version it is not possible
