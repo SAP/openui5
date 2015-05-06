@@ -9,8 +9,6 @@ sap.ui.require([
 		"use strict";
 		var sViewName = "Detail";
 
-		var sViewName = "Detail";
-
 		Opa5.createPageObjects({
 			onTheDetailPage: {
 				baseClass: Common,

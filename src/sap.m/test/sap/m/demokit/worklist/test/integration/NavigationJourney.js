@@ -13,7 +13,7 @@ function () {
 		Given.iStartMyApp();
 
 		//Actions
-		When.onTheWorklistPage.iRememberTheItemAtPosition(0);
+		When.onTheWorklistPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheWorklistPage.iShouldSeeTheTable();
