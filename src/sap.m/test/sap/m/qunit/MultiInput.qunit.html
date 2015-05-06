@@ -460,8 +460,7 @@
 		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 is not visible");
 		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
-		equals(oMLInput.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator is visible");
-
+		
 		oMLInput.focus();
 		this.clock.tick(500);
 		var bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
@@ -469,8 +468,7 @@
 		equals(oMLInput.getTokens()[0].getVisible(), true, "token1 can be displayed");
 		equals(oMLInput.getTokens()[1].getVisible(), true, "token2 can be displayed");
 		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 can be displayed");
-		equals(oMLInput.getValue(), "", "indicator is not visible");
-
+		
 		oMLInput.setValue("a");
 		oMLInput._getIsSuggestionPopupOpen = function(){ return true; };
 		oMLInput.onsapenter();
@@ -489,7 +487,6 @@
 		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
 		equals(bHasClass, false, "multi-line mode is closed");
 		equals(oMLInput.getTokens()[3].getVisible(), true, "last token can be displayed");
-		equals(oMLInput.getValue(), oMessageBundle.getText(sShowMoreKey, 3), "indicator is visible");
 		equals(oMLInput.getTokens()[2].getVisible(), false, "token3 is not visible");
 		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");

@@ -431,11 +431,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 
 		// necessary to display expanded MultiInput which is inside layout
-		var $parent = this.$().parent('[class*="sapUiRespGridSpan"]') || this.$().parent('[class*="sapUiVlt"]');
-		if ($parent) {
-			$parent.css("overflow", "visible");
+		var oParent = this.getParent();
+		this._originalOverflow = null;
+		if (oParent && oParent.$ && oParent.$().css("overflow") === "hidden") {
+			this._originalOverflow = oParent.$().css("overflow");
+			oParent.$().css("overflow", "visible");
 		}
-		
+
 	};
 	
 	/**
@@ -450,6 +452,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				this._$input.parent().removeClass("sapMMultiInputMultiModeInputContainer");
 			}
 			
+			// set overflow back
+			if (this._originalOverflow) {
+				var oParent = this.getParent();
+				oParent.$().css("overflow", this._originalOverflow);
+			}
 	};
 
 	/**
