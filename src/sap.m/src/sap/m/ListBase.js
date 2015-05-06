@@ -1476,14 +1476,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		// let the item navigation handle focus
 		return this.getNavigationRoot();
 	};
-	
-	ListBase.prototype.applyFocusInfo = function(oFocusInfo) {
-		// for backwards compatibility we focus to the root dom ref
-		// instead of focus dom ref
-		this.getDomRef().focus();
-		return this;
-	};
-	
+
 	ListBase.prototype._startItemNavigation = function(bIfNeeded) {
 		// if focus is not on the list then only invalidate the item navigation
 		if (bIfNeeded) {
