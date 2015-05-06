@@ -602,9 +602,8 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				$BusyIndicator.attr("id", sBusyIndicatorId);
 				$this.append($BusyIndicator);
 				$this.addClass('sapUiLocalBusy');
-				//Set the actual DOM Element to 'aria-busy' and adapt description
-				$this[0].setAttribute('aria-busy', true);
-				$this[0].setAttribute('aria-describedby', sBusyIndicatorId);
+				//Set the actual DOM Element to 'aria-busy'
+				$this.attr('aria-busy', true);
 				if (this._busyDelayedCallId) {
 					jQuery.sap.clearDelayedCall(this._busyDelayedCallId);
 				}
@@ -724,9 +723,8 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				//Remove the busy indicator from the DOM
 				this.$("busyIndicator").remove();
 				this.$().removeClass('sapUiLocalBusy');
-				//Unset the actual DOM Element´s 'aria-busy' and description
-				this.$()[0].removeAttribute('aria-busy');
-				this.$()[0].removeAttribute('aria-describedby');
+				//Unset the actual DOM Element´s 'aria-busy'
+				this.$().removeAttr('aria-busy');
 
 				//Reset the position style to its original state
 				if (this._busyStoredPosition) {
