@@ -1890,28 +1890,26 @@
 	});
 
 	asyncTest("Entityset metadata w/o context", function() {
-		var that = this;
-		this.oModel.attachMetadataLoaded(function() {
-			equal(that.oModel.getProperty("/Categories(1)/##name"), "Category");
-			equal(that.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
-			equal(that.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
-			equal(that.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
-			equal(that.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
+		this.oModel.getMetaModel().loaded().then(function() {
+			equal(this.oModel.getProperty("/Categories(1)/##name"), "Category");
+			equal(this.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
+			equal(this.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
+			equal(this.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
+			equal(this.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
 			start();
-		});
+		}.bind(this))
 	});
 
 	asyncTest("Entityset metadata w/ context", function() {
-		var that = this;
-		this.oModel.attachMetadataLoaded(function() {
-			var oContext = that.oModel.getContext("/Categories(1)")
-			equal(that.oModel.getProperty("##name", oContext), "Category");
-			equal(that.oModel.getProperty("##property/0/name", oContext), "CategoryID");
-			equal(that.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
-			equal(that.oModel.getProperty("Products(0)/##name", oContext), "Product");
-			equal(that.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
+		this.oModel.getMetaModel().loaded().then(function() {
+			var oContext = this.oModel.getContext("/Categories(1)")
+			equal(this.oModel.getProperty("##name", oContext), "Category");
+			equal(this.oModel.getProperty("##property/0/name", oContext), "CategoryID");
+			equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
+			equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
+			equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
 			start();
-		});
+		}.bind(this))
 	});
 	
 	asyncTest("test setProperty on complex Types (internal)",function(){
