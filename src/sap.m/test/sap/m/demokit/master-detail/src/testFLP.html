@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <!-- Copyright (c) 2015 SAP AG, All Rights Reserved -->
 <head>
@@ -56,26 +56,19 @@
 
 	<!-- Bootstrap the UI5 core library -->
 	<script id="sap-ui-bootstrap"
-			src="/resources/sap-ui-core.js"
+			src="resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.ushell"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"sap.ui.demo.masterdetail": "./src/", "sap.ui.demo.masterdetail.service": "./test/service/"}'
+			data-sap-ui-resourceroots='{"sap.ui.demo.masterdetail": "./", "sap.ui.demo.masterdetail.service": "./test/service/"}'
 			data-sap-ui-frameOptions='allow'> // NON-SECURE setting for testing environment
 	</script>
 
+
 	<script type="text/javascript">
 		sap.ui.getCore().attachInit(function() {
-
-			sap.ui.require([
-				"sap/ui/demo/masterdetail/service/server"
-			], function (server) {
-				// set up test service for local testing
-				server.init();
-
-				// initialize the ushell sandbox component
-				sap.ushell.Container.createRenderer().placeAt("content");
-			});
+			// initialize the ushell sandbox component
+			sap.ushell.Container.createRenderer().placeAt("content");
 		});
 	</script>
 
