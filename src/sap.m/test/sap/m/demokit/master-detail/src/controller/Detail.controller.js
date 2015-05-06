@@ -16,17 +16,9 @@ sap.ui.define([
 		/* =========================================================== */
 
 		onInit : function () {
-			var oViewModel,
-				iOriginalViewBusyDelay = this.getView().getBusyIndicatorDelay();
+			var oViewModel;
 
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
-			this._oLineItemsList = this.byId("lineItemsList");
-
-
-			// Update the line item list counter after data is loaded or updated
-			this._oLineItemsList.attachEvent("updateFinished", function (oData) {
-				this._updateListItemCount(oData.getParameter("total"));
-			}, this);
 
 			// Model used to manipulate control states. The chosen values make sure,
 			// detail page is busy indication immediately so there is no break in
@@ -39,28 +31,9 @@ sap.ui.define([
 				shareSendEmailSubject: "",
 				shareSendEmailMessage: ""
 			});
-
 			this.setModel(oViewModel, "detailView");
-			this.getOwnerComponent().getModel().metadataLoaded().then(function () {
-					// Store original busy indicator delay for the detail view
-					var oLineItemTable = this.getView().byId("lineItemsList"),
-						iOriginalLineItemTableBusyDelay = oLineItemTable.getBusyIndicatorDelay();
 
-					// Make sure busy indicator is displayed immediately when
-					// detail view is displayed for the first time
-					oViewModel.setProperty("/delay", 0);
-					oViewModel.setProperty("/lineItemTableDelay", 0);
-
-					oLineItemTable.attachEventOnce("updateFinished", function() {
-						// Restore original busy indicator delay for line item table
-						oViewModel.setProperty("/lineItemTableDelay", iOriginalLineItemTableBusyDelay);
-					});
-
-					oViewModel.setProperty("/busy", true);
-					// Restore original busy indicator delay for the detail view
-					oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
-				}.bind(this)
-			);
+			this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
 		},
 
 
@@ -78,6 +51,28 @@ sap.ui.define([
 			);
 		},
 
+		/**
+		 * Updates the item count within the line item table's header
+		 *
+		 * @param {number} iTotalItems the total number of items in the list
+		 * @private
+		 */
+		onListUpdateFinished : function (oEvent) {
+			var sTitle,
+				iTotalItems = oEvent.getParameter("total"),
+				oViewModel = this.getModel("detailView");
+
+			// only update the counter if the length is final
+			if (this.byId("lineItemsList").getBinding("items").isLengthFinal()) {
+				if (iTotalItems) {
+					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
+				} else {
+					//Display 'Line Items' instead of 'Line items (0)'
+					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading");
+				}
+				oViewModel.setProperty("/lineItemListTitle", sTitle);
+			}
+		},
 
 		/* =========================================================== */
 		/* begin: internal methods                                     */
@@ -128,8 +123,6 @@ sap.ui.define([
 					}
 				}
 			});
-
-
 		},
 
 		_onBindingChange : function (oEvent) {
@@ -162,26 +155,26 @@ sap.ui.define([
 			oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
 		},
 
-		/**
-		 * Updates the item count within the line item table's header
-		 *
-		 * @param {number} iTotalItems the total number of items in the list
-		 * @private
-		 */
-		_updateListItemCount : function (iTotalItems) {
-			var sTitle,
-				oViewModel = this.getModel("detailView");
+		_onMetadataLoaded : function () {
+			// Store original busy indicator delay for the detail view
+			var iOriginalViewBusyDelay = this.getView().getBusyIndicatorDelay(),
+				oViewModel = this.getModel("detailView"),
+				oLineItemTable = this.getView().byId("lineItemsList"),
+				iOriginalLineItemTableBusyDelay = oLineItemTable.getBusyIndicatorDelay();
 
-			// only update the counter if the length is final
-			if (this._oLineItemsList.getBinding("items").isLengthFinal()) {
-				if (iTotalItems) {
-					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
-				} else {
-					//Display 'Line Items' instead of 'Line items (0)'
-					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading");
-				}
-				oViewModel.setProperty("/lineItemListTitle", sTitle);
-			}
+			// Make sure busy indicator is displayed immediately when
+			// detail view is displayed for the first time
+			oViewModel.setProperty("/delay", 0);
+			oViewModel.setProperty("/lineItemTableDelay", 0);
+
+			oLineItemTable.attachEventOnce("updateFinished", function() {
+				// Restore original busy indicator delay for line item table
+				oViewModel.setProperty("/lineItemTableDelay", iOriginalLineItemTableBusyDelay);
+			});
+
+			oViewModel.setProperty("/busy", true);
+			// Restore original busy indicator delay for the detail view
+			oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
 		}
 
 	});

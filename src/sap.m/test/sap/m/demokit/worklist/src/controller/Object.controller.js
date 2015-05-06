@@ -85,8 +85,6 @@ sap.ui.define([
 			var oViewModel = this.getModel("objectView"),
 				oDataModel = this.getModel();
 
-			// Set busy indicator during view binding
-			oViewModel.setProperty("/busy", true);
 			this.getView().bindElement({
 				path: sObjectPath,
 				events: {
