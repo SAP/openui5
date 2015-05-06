@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './TreeBinding'],
-	function(jQuery, TreeBinding) {
+sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcessor'],
+	function(jQuery, TreeBinding, FilterProcessor) {
 	"use strict";
 
 
@@ -220,61 +220,14 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 			return;
 		}
 		var that = this,
-			oFilterGroups = {},
-			aFilterGroup,
-			aFiltered = [],
-			bGroupFiltered = false,
-			bFiltered = true;
+			aFiltered = [];
+		
 		this.bIsFiltering = true;
 		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
-		jQuery.each(that.aFilters, function(j, oFilter) {
-			if (oFilter.sPath) {
-				aFilterGroup = oFilterGroups[oFilter.sPath];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups[oFilter.sPath] = [];
-				}
-			} else {
-				aFilterGroup = oFilterGroups["__multiFilter"];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups["__multiFilter"] = [];
-				}
-			}
-			aFilterGroup.push(oFilter);
-		});
-		jQuery.each(aUnfilteredContexts, function(i, oUnfilteredContext) {
-			bFiltered = true;
-			jQuery.each(oFilterGroups, function(sPath, aFilterGroup) {
-				if (sPath !== "__multiFilter") {
-					var oValue = that.oModel._getObject(sPath, oUnfilteredContext);
-					if (typeof oValue == "string") {
-						oValue = oValue.toUpperCase();
-					}
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						var fnTest = that.getFilterFunction(oFilter);
-						if (oValue != undefined && fnTest(oValue)) {
-							bGroupFiltered = true;
-							return false;
-						}
-					});
-				} else {
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						bGroupFiltered = that._resolveMultiFilter(oFilter, oUnfilteredContext);
-						if (bGroupFiltered) {
-							return false;
-						}
-					});
-				}
-				if (!bGroupFiltered) {
-					bFiltered = false;
-					return false;
-				}
-			});
-			if (bFiltered) {
-				aFiltered.push(oUnfilteredContext);
-			}
+		
+		aFiltered = FilterProcessor.apply(aUnfilteredContexts, this.aFilters, function (oContext, sPath) {
+			return that.oModel.getProperty(sPath, oContext);
 		});
 		if (aFiltered.length > 0) {
 			jQuery.merge(this.filterInfo.aFilteredContexts, aFiltered);
@@ -289,90 +242,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 		}
 	
 	};
-	
-	/**
-	 * Resolve the client list binding and check if an index matches
-	 *
-	 * @private
-	 */
-	ClientTreeBinding.prototype._resolveMultiFilter = function(oMultiFilter, oUnfilteredContext){
-		var that = this,
-			bMatched = false,
-			aFilters = oMultiFilter.aFilters;
-		
-		if (aFilters) {
-			jQuery.each(aFilters, function(i, oFilter) {
-				var bLocalMatch = false;
-				if (oFilter._bMultiFilter) {
-					bLocalMatch = that._resolveMultiFilter(oFilter, oUnfilteredContext);
-				} else if (oFilter.sPath) {
-					var oValue = that.oModel.getProperty(oFilter.sPath, oUnfilteredContext);
-					if (typeof oValue == "string") {
-						oValue = oValue.toUpperCase();
-					}
-					var fnTest = that.getFilterFunction(oFilter);
-					if (oValue != undefined && fnTest(oValue)) {
-						bLocalMatch = true;
-					}
-				}
-				if (bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = true;
-				} else if (!bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = false;
-					return false;
-				} else if (bLocalMatch) {
-					bMatched = true;
-					return false;
-				}
-			});
-		}
-		
-		return bMatched;
-	};
-	
-	/**
-	 * Provides a JS filter function for the given filter
-	 * @private
-	 */
-	ClientTreeBinding.prototype.getFilterFunction = function(oFilter){
-		if (oFilter.fnTest) {
-			return oFilter.fnTest;
-		}
-		var oValue1 = oFilter.oValue1,
-			oValue2 = oFilter.oValue2;
-		if (typeof oValue1 == "string") {
-			oValue1 = oValue1.toUpperCase();
-		}
-		if (typeof oValue2 == "string") {
-			oValue2 = oValue2.toUpperCase();
-		}
-		switch (oFilter.sOperator) {
-			case "EQ":
-				oFilter.fnTest = function(value) { return value == oValue1; }; break;
-			case "NE":
-				oFilter.fnTest = function(value) { return value != oValue1; }; break;
-			case "LT":
-				oFilter.fnTest = function(value) { return value < oValue1; }; break;
-			case "LE":
-				oFilter.fnTest = function(value) { return value <= oValue1; }; break;
-			case "GT":
-				oFilter.fnTest = function(value) { return value > oValue1; }; break;
-			case "GE":
-				oFilter.fnTest = function(value) { return value >= oValue1; }; break;
-			case "BT":
-				oFilter.fnTest = function(value) { return (value > oValue1) && (value < oValue2); }; break;
-			case "Contains":
-				oFilter.fnTest = function(value) { return value.indexOf(oValue1) != -1; }; break;
-			case "StartsWith":
-				oFilter.fnTest = function(value) { return value.indexOf(oValue1) == 0; }; break;
-			case "EndsWith":
-				oFilter.fnTest = function(value) { return value.indexOf(oValue1) == value.length - new String(oFilter.oValue1).length; }; break;
-			default:
-				oFilter.fnTest = function(value) { return true; };
-		}
-		return oFilter.fnTest;
-	};
-	
 	
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
