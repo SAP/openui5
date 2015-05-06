@@ -542,6 +542,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * When the input event is buggy the input event is marked as "invalid".
 	 * - IE10+ fires the input event when an input field with a native placeholder is focused.
 	 * - IE11 fires input event from read-only fields.
+	 * - IE11 fires input event after rendering when value contains an accented character
+	 * - IE11 fires input event whenever placeholder attribute is changed 
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
@@ -556,6 +558,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// ie11 fires input event from read-only fields
 		if (!this.getEditable()) {
+			oEvent.setMarked("invalid");
+			return;
+		}
+		
+		// ie11 fires input event after rendering when value contains an accented character
+		// ie11 fires input event whenever placeholder attribute is changed 
+		if (document.activeElement !== oEvent.target) {
 			oEvent.setMarked("invalid");
 			return;
 		}

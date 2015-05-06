@@ -210,6 +210,7 @@
 		var fnFireChangeSpy = this.spy(i8, "fireChange");
 		i8.setValueLiveUpdate(false);
 		i8.setValue("");
+		i8.focus();
 		sap.ui.test.qunit.triggerCharacterInput(i8.getFocusDomRef(), "a");
 		sap.ui.test.qunit.triggerEvent("input", i8.getFocusDomRef());
 
