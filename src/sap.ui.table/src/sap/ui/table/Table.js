@@ -4297,6 +4297,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype._updateAriaRowOfRowsText = function(bForceUpdate) {
 		var oAriaElement = document.getElementById(this.getId() + "-rownumberofrows");
 
+		if (!oAriaElement) {
+			// table is not in DOM anymore
+			return;
+		}
+
 		var oIN = this._oItemNavigation;
 		if (oIN) {
 			var iIndex = oIN.getFocusedIndex();
