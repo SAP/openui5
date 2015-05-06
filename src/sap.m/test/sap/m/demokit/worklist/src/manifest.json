@@ -7,8 +7,8 @@
 		"type": "application",
 
 		"i18n": "i18n/i18n.properties",
-		"title": "{i18n>appTitle}",
-		"description": "{i18n>appDescription}",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
 
 		"applicationVersion": {
 			"version": "1.0.0"
