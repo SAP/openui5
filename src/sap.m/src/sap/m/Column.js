@@ -202,7 +202,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	// Checks the given width(px or em), if it is a predefined screen value
 	Column.prototype._isWidthPredefined = function(sWidth) {
 		var that = this,
-			unit = sWidth.replace(/[^a-z]/g, ""),
+			unit = sWidth.replace(/[^a-z]/ig, ""),
 			baseFontSize = parseFloat(sap.m.BaseFontSize) || 16;
 	
 		jQuery.each(sap.m.ScreenSizes, function(screen, size) {
@@ -215,6 +215,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 				return false;
 			}
 		});
+		
+		if (this._minWidth) {
+			return true;
+		}
+		
+		if (unit == "px") {
+			this._minWidth = sWidth;
+		} else {
+			this._minWidth = parseFloat(sWidth) * baseFontSize + "px";
+		}
 	};
 	
 	/**
@@ -474,23 +484,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			sWidth = sWidth.toLowerCase();
 			var width = sap.m.ScreenSizes[sWidth];
 			if (width) {
-				width += "px";
 				this._screen = sWidth;
+				this._minWidth = width + "px";
 			} else {
 				this._isWidthPredefined(sWidth);
-				width = sWidth;
 			}
-	
-			// keep the minimum width value
-			this._minWidth = width;
-	
-			/*
-			// OLD: if pop-in is requested or if unknown screen-size is given then go with JS media queries
-			// NEW: We always need JS media queries to detect table header visibility
-			if (this.getDemandPopin() || !this._screen) {
-				this._addMedia();
-			}
-			*/
+
 			this._addMedia();
 		}
 	
