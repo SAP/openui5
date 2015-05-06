@@ -3,8 +3,9 @@
  */
 
 // Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/Month', 'sap/ui/unified/library'],
-	function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, Month, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
+               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/calendar/Month', 'sap/ui/unified/library'],
+	function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, UniversalDate, Month, library) {
 	"use strict";
 
 	/**
@@ -69,12 +70,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
 			}
 
-			var oUTCDate = CalendarUtils._createUTCDate(oStartDate);
+			var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate);
 			this.setProperty("startDate", oStartDate, true);
 			this._oUTCStartDate = oUTCDate;
 
 			if (this.getDomRef()) {
-				var oOldDate = this._getDate();
+				var oOldDate = CalendarUtils._createLocalDate(this._getDate());
 				this._bNoRangeCheck = true;
 				this.displayDate(oStartDate); // don't set focus
 				this._bNoRangeCheck = false;
@@ -89,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		DatesRow.prototype._getStartDate = function(){
 
 			if (!this._oUTCStartDate) {
-				this._oUTCStartDate = CalendarUtils._createUTCDate(new Date());
+				this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(new Date());
 			}
 
 			return this._oUTCStartDate;
@@ -111,8 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		DatesRow.prototype.setDate = function(oDate){
 
 			// check if in visible date range
-			var oUTCDate = CalendarUtils._createUTCDate(oDate);
-			if (!this._bNoRangeCheck && !this.checkDateFocusable(oUTCDate)) {
+			if (!this._bNoRangeCheck && !this.checkDateFocusable(oDate)) {
 				throw new Error("Date must be in visible date range; " + this);
 			}
 
@@ -137,8 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		DatesRow.prototype.displayDate = function(oDate){
 
 			// check if in visible date range
-			var oUTCDate = CalendarUtils._createUTCDate(oDate);
-			if (!this._bNoRangeCheck && !this.checkDateFocusable(oUTCDate)) {
+			if (!this._bNoRangeCheck && !this.checkDateFocusable(oDate)) {
 				throw new Error("Date must be in visible date range; " + this);
 			}
 
@@ -153,7 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oEvent = oControlEvent.getParameter("event");
 			var iDays = this.getDays();
 			var oOldDate = this._getDate();
-			var oFocusedDate = new Date(oOldDate.getTime());
+			var oFocusedDate = new UniversalDate(oOldDate.getTime());
 
 			if (oEvent.type) {
 				switch (oEvent.type) {
@@ -194,6 +193,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		DatesRow.prototype.checkDateFocusable = function(oDate){
 
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
 			if (this._bNoRangeCheck) {
 				// to force to render days if start date is changed
 				return false;
@@ -201,10 +204,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oStartDate = this._getStartDate();
 
-			var oEndDate = new Date(oStartDate.getTime());
+			var oEndDate = new UniversalDate(oStartDate.getTime());
 			oEndDate.setUTCDate(oEndDate.getUTCDate() + this.getDays());
+			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate);
 
-			if (oDate.getTime() >= oStartDate.getTime() && oDate.getTime() < oEndDate.getTime()) {
+			if (oUTCDate.getTime() >= oStartDate.getTime() && oUTCDate.getTime() < oEndDate.getTime()) {
 				return true;
 			}else {
 				return false;

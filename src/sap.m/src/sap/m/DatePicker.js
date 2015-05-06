@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.DatePicker.
-sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/type/Date'],
-	function(jQuery, InputBase, library, Date1) {
+sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library'],
+	function(jQuery, InputBase, Date1, UniversalDate, library) {
 	"use strict";
 
 
@@ -40,6 +40,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			/**
 			 * Given value property should match with valueFormat to parse date. Default value is taken from locale settings.
 			 * You can set and get value in this format.
+			 * the value is always expected and updated in gregorian calendar
 			 * If you use data-binding on value property with type sap.ui.model.type.Date you can ignore this property or latter wins.
 			 */
 			valueFormat : {type : "string", group : "Data", defaultValue : null},
@@ -48,7 +49,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			 * This property as JavaScript Date Object can be used to assign a new value which is independent from valueFormat.
 			 * If this property is used, the value property should not be changed from the caller.
 			 */
-			dateValue : {type : "object", group : "Data", defaultValue : null}
+			dateValue : {type : "object", group : "Data", defaultValue : null},
+
+			/**
+			 * Displays date value in this given type in text field. Default value is taken from locale settings.
+			 * Acceptes are values of sap.ui.core.CalendarType or an empty string. If no type is set the default one of the 
+			 * configuration is used.
+			 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or latter wins.
+			 * @since 1.28.6
+			 */
+			displayFormatType : {type : "string", group : "Appearance", defaultValue : ""}
 		}
 	}});
 
@@ -63,9 +73,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			this._bValid = true;
 
-			this._oMinDate = new Date(1, 0, 1);
+			// use UniversalDate because this is calendar dependent.
+			// But timestamp comparison with JS-Date later should work fine
+			this._oMinDate = new UniversalDate(1, 0, 1);
 			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
-			this._oMaxDate = new Date(9999, 11, 31);
+			this._oMaxDate = new UniversalDate(9999, 11, 31);
 
 			this._bMobile = !sap.ui.Device.system.desktop;
 
@@ -88,8 +100,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			}
 
 			this._sUsedDisplayPattern = undefined;
+			this._sUsedDisplayCalendarType = undefined;
 			this._sDisplayFormat = undefined;
 			this._sUsedValuePattern = undefined;
+			this._sUsedValueCalendarType = undefined;
 			this._sValueFormat = undefined;
 
 		};
@@ -378,6 +392,30 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 		};
 
+		DatePicker.prototype.setDisplayFormatType = function(sDisplayFormatType) {
+
+			if (sDisplayFormatType) {
+				var bFound = false;
+				for ( var sType in sap.ui.core.CalendarType) {
+					if (sType == sDisplayFormatType) {
+						bFound = true;
+						break;
+					}
+				}
+				if (!bFound) {
+					throw new Error(sDisplayFormatType + " is not a valid calendar type" + this);
+				}
+			}
+
+			this.setProperty("displayFormatType", sDisplayFormatType, true); // no rerendering
+
+			// reuse update from format function
+			this.setDisplayFormat(this.getDisplayFormat());
+
+			return this;
+
+		};
+
 		DatePicker.prototype.onChange = function(oEvent) {
 			// don't call InputBase onChange because this calls setValue what would trigger a new formatting
 
@@ -438,7 +476,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 					this._oCalendar.focusDate(oDate);
 					var oStartDate = this._oDateRange.getStartDate();
 					if ((!oStartDate && oDate) || (oStartDate && oDate && oStartDate.getTime() != oDate.getTime())) {
-						this._oDateRange.setStartDate(new Date(oDate.getTime()));
+						this._oDateRange.setStartDate(new Date(oDate));
 					} else if (oStartDate && !oDate) {
 						this._oDateRange.setStartDate(undefined);
 					}
@@ -597,7 +635,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			var oDate = this.getDateValue();
 
 			if (oDate) {
-				this._oCalendar.focusDate(new Date(oDate.getTime()));
+				this._oCalendar.focusDate(new Date(oDate));
 				if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
 					this._oDateRange.setStartDate(new Date(oDate.getTime()));
 				}
@@ -679,8 +717,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			var iCurpos = oThis._$input.cursorPos();
 
 			if (oOldDate && oThis.getEditable() && oThis.getEnabled()) {
-				// use a new date object to have a real updated property
-				var oDate = new Date(oOldDate.getTime());
+				// use UniversalDate to calculate new date based on used calendar
+				var oDate = new UniversalDate(oOldDate.getTime());
+				oOldDate = new UniversalDate(oOldDate.getTime());
 
 				switch (sUnit) {
 				case "day":
@@ -700,7 +739,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				case "year":
 					oDate.setFullYear(oDate.getFullYear() + iNumber);
 					while (oDate.getMonth() != oOldDate.getMonth()) {
-						// day don't exist in this month (February 28th)
+						// day don't exist in this month (February 29th)
 						oDate.setDate(oDate.getDate() - 1);
 					}
 					break;
@@ -710,12 +749,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				}
 
 				if (oDate.getTime() < oThis._oMinDate.getTime()) {
-					oDate = new Date(oThis._oMinDate.getTime());
+					oDate = new UniversalDate(oThis._oMinDate.getTime());
 				}else if (oDate.getTime() > oThis._oMaxDate.getTime()){
-					oDate = new Date(oThis._oMaxDate.getTime());
+					oDate = new UniversalDate(oThis._oMaxDate.getTime());
 				}
 
-				oThis.setDateValue(oDate);
+				oThis.setDateValue(new Date(oDate.getTime()));
 
 				oThis._curpos = iCurpos;
 				oThis._$input.cursorPos(oThis._curpos);
@@ -748,13 +787,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 		function _getFormatter(oThis, bDisplayFormat) {
 
 			var sPattern = "";
-			var bRelative = false;
+			var bRelative = false; // if true strings like "Tomorrow" are parsed fine
 			var oFormat;
 			var oBinding = oThis.getBinding("value");
+			var sCalendarType;
 
 			if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
 				sPattern = oBinding.oType.getOutputPattern();
 				bRelative = !!oBinding.oType.oOutputFormat.oFormatOptions.relative;
+				sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
 			}
 
 			/* eslint-disable no-lonely-if */
@@ -762,32 +803,40 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				// not databinding is used -> use given format
 				if (bDisplayFormat) {
 					sPattern = ( oThis.getDisplayFormat() || "medium" );
+					sCalendarType = oThis.getDisplayFormatType();
 				} else {
 					sPattern = ( oThis.getValueFormat() || "short" );
+					sCalendarType = sap.ui.core.CalendarType.Gregorian;
 				}
 			}
 
+			if (!sCalendarType) {
+				sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			}
+
 			if (bDisplayFormat) {
-				if (sPattern == oThis._sUsedDisplayPattern) {
+				if (sPattern == oThis._sUsedDisplayPattern && sCalendarType == oThis._sUsedDisplayCalendarType) {
 					oFormat = oThis._sDisplayFormat;
 				}
 			} else {
-				if (sPattern == oThis._sUsedValuePattern) {
+				if (sPattern == oThis._sUsedValuePattern && sCalendarType == oThis._sUsedValueCalendarType) {
 					oFormat = oThis._sValueFormat;
 				}
 			}
 
 			if (!oFormat) {
 				if (sPattern == "short" || sPattern == "medium" || sPattern == "long") {
-					oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, relative: bRelative});
+					oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType});
 				} else {
-					oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, relative: bRelative});
+					oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType});
 				}
 				if (bDisplayFormat) {
 					oThis._sUsedDisplayPattern = sPattern;
+					oThis._sUsedDisplayCalendarType = sCalendarType;
 					oThis._sDisplayFormat = oFormat;
 				} else {
 					oThis._sUsedValuePattern = sPattern;
+					oThis._sUsedValueCalendarType = sCalendarType;
 					oThis._sValueFormat = oFormat;
 				}
 			}

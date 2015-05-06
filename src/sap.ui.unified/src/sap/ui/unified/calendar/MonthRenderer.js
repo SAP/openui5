@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
-	function(jQuery, CalendarUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate'],
+	function(jQuery, CalendarUtils, UniversalDate) {
 	"use strict";
 
 
@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		var oHelper = this.getDayHelper(oMonth, oDate);
 
 		// determine weekday of first day in month
-		var oFirstDay = new Date(oDate.getTime());
+		var oFirstDay = new UniversalDate(oDate.getTime());
 		oFirstDay.setUTCDate(1);
 		var iWeekDay = oFirstDay.getUTCDay();
 		var iDaysOldMonth = iWeekDay - oHelper.iFirstDayOfWeek;
@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 			oFirstDay.setUTCDate(1 - iDaysOldMonth);
 		}
 
-		var oDay = new Date(oFirstDay.getTime());
+		var oDay = new UniversalDate(oFirstDay.getTime());
 		var iNextMonth = (iMonth + 1) % 12;
 
 		do {
@@ -231,7 +231,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		oHelper.iWeekendStart = oHelper.oLocaleData.getWeekendStart();
 		oHelper.iWeekendEnd = oHelper.oLocaleData.getWeekendEnd();
 		oHelper.sToday = oHelper.oLocaleData.getRelativeDay(0);
-		oHelper.oToday = new Date();
+		oHelper.oToday = new UniversalDate();
 		oHelper.sId = oMonth.getId();
 		oHelper.oFormatLong = oMonth._getFormatLong();
 
