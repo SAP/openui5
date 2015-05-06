@@ -1,23 +1,43 @@
 {
-  "welcomeFile": "index.html",
-  "routes": [
+"welcomeFile": "index.html",
+"routes": [
 	{
-	  "path": "/resources",
-	  "target": {
-		"type": "service",
-		"name": "sapui5",
-		"entryPath": "/resources"
-	  },
-	  "description": "SAPUI5 Resources"
+		"path": "src/resources",
+		"target": {
+			"type": "service",
+			"name": "sapui5",
+			"version" : "snapshot",
+			"entryPath": "/resources"
+		},
+		"description": "SAPUI5 Resources"
 	},
 	{
-	  "path": "/test-resources",
-	  "target": {
-		"type": "service",
-		"name": "sapui5",
-		"entryPath": "/test-resources"
-	  },
-	  "description": "SAPUI5 Test Resources"
+		"path": "src/test-resources",
+		"target": {
+			"type": "service",
+			"name": "sapui5",
+			"entryPath": "/test-resources"
+		},
+		"description": "SAPUI5 Test Resources"
+	},
+	{
+		"path": "test/resources",
+		"target": {
+			"type": "service",
+			"name": "sapui5",
+			"version" : "snapshot",
+			"entryPath": "/resources"
+		},
+		"description": "SAPUI5 Resources for tests"
+	},
+	{
+		"path": "test/test-resources",
+		"target": {
+			  "type": "service",
+			  "name": "sapui5",
+			  "entryPath": "/test-resources"
+		},
+		"description": "SAPUI5 Test Resources for tests"
 	}
-  ]
+]
 }
