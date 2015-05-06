@@ -1,7 +1,3 @@
-/*!
- * ${copyright}
- */
-
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/RatingIndicator",
@@ -14,7 +10,7 @@ sap.ui.define([
 
 		metadata: {
 			properties: {
-				value: {type: "float", group: "Behavior", defaultValue: 0, bindable: "bindable"}
+				value: {type: "float", defaultValue: 0}
 			},
 			aggregations: {
 				_rating: {type: "sap.m.RatingIndicator", multiple: false, visibility: "hidden"},
@@ -69,7 +65,7 @@ sap.ui.define([
 			this.getAggregation("_button").setEnabled(false);
 			this.fireEvent("change", {
 				value: this.getValue()
-			})
+			});
 		},
 
 		renderer: function (oRM, oControl) {

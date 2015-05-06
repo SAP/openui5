@@ -16,5 +16,5 @@ sap.ui.define([
 			this.getView().setModel(oViewModel, "view");
 		}
 
-	})
+	});
 });

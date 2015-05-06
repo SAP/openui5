@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.require([
 		"sap/ui/demo/wt/model/formatter",
 		"sap/ui/model/resource/ResourceModel",
