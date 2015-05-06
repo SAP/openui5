@@ -122,6 +122,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		this.writeInnerValue(oRm, oControl);
 		this.writeAccessibilityState(oRm, oControl);
+
+		if (sap.ui.Device.browser.mozilla) {
+			if (sTooltip) {
+				// fill tooltip to mozilla validation flag too, to display it in validation error case too
+				oRm.writeAttribute("x-moz-errormessage", sTooltip);
+			} else {
+				// if no tooltip use blank text for mozilla validation text
+				oRm.writeAttribute("x-moz-errormessage", " ");
+			}
+		}
+
 		this.writeInnerAttributes(oRm, oControl);
 
 		// inner classes
