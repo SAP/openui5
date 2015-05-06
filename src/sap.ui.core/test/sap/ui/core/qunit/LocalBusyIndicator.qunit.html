@@ -52,6 +52,19 @@
 			equal(this.oListBox.getBusy(), false, "Listbox is not busy");
 		});
 
+		asyncTest("Accessibility", function() {
+			this.oListBox.setBusy(true);
+			$LB = this.oListBox.$();
+
+			setTimeout(function() {
+				equal($LB.children().length, 2, 'Busy Indicator added to DOM tree');
+				ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
+				ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("aria-role", "progressbar"),
+					'ARIA role "progressbar" is set to busy indicator');
+				start();
+			}, 1200);
+		});
+
 		module("Open and Close", {
 			setup : function() {
 				this.oListBox = new sap.ui.commons.ListBox({
