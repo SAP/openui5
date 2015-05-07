@@ -120,6 +120,10 @@
 			{ key: "Y", caption: "1234,56" }
 		],
 
+		calendarTypes: jQuery.map(sap.ui.core.CalendarType, function(value, key) {
+			return { key: key, caption: value };
+		}),
+
 		language : null,
 		locale : null,
 		formatLanguage : null,
@@ -219,8 +223,14 @@
 		function(oEvent) {
 			sap.ui.getCore().getConfiguration().setLanguage(oEvent.getParameter("selectedItem").getKey());
 		}, true
-	).bindValue("/localeCaption");	
-	
+	).bindValue("/localeCaption");
+
+	select("Calendar Type", "/calendarTypes", sap.ui.core.CalendarType.Gregorian,
+		function(oEvent) {
+			sap.ui.getCore().getConfiguration().setCalendarType(oEvent.getParameter("selectedItem").getKey());
+		}, true
+	);
+
 	select("Legacy Date Format", '/legacyDateFormats', "", 
 		function(oEvent) {
 			sap.ui.getCore().getConfiguration().getFormatSettings().setLegacyDateFormat(oEvent.getParameter("selectedItem").getKey());
