@@ -343,7 +343,7 @@
 			var date = testData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date, true);
 			oIslamicDate.setUTCMonth(-1);
-			verifyDateWithTestDate("1436_12_1__23_16_10_118 setMonth(-1) -> 1435_12_1__23_16_10_118(last month in the previous year)", oIslamicDate, testData.t1435_12_1__23_16_10_118.islamic, true);
+			verifyDateWithTestDate("1436_12_1__23_16_10_118 setUTCMonth(-1) -> 1435_12_1__23_16_10_118(last month in the previous year)", oIslamicDate, testData.t1435_12_1__23_16_10_118.islamic, true);
 		});
 
 		test("-1 as month in the constructor", function () {
@@ -458,16 +458,34 @@
 			afterEach: function () {
 				cleanup.call(this);
 			},
-			verifyYear2Date : function(bUTC, iYear, iMonth, iDate) {
+			verifyYear2Date : function(bUTC, iYear, iMonth, iDate, iYearToStartFrom, iMonthToStartFrom, iDateStartFrom) {
 				var oIslamicDate = null,
 						iOrigHours;
 
 				if (bUTC) {
 					oIslamicDate = new sap.ui.core.date.IslamicDate(sap.ui.core.date.IslamicDate.now());
+					if (arguments.length >=5) {
+						oIslamicDate.setUTCFullYear(iYearToStartFrom);
+					}
+					if (arguments.length >=6) {
+						oIslamicDate.setUTCMonth(iMonthToStartFrom);
+					}
+					if (arguments.length >=7) {
+						oIslamicDate.setUTCDate(iDateStartFrom);
+					}
 					iOrigHours = oIslamicDate.getUTCHours();
 					ok(oIslamicDate.setUTCFullYear(iYear, iMonth, iDate), "setUTCFullYear must return value");
 				} else {
 					oIslamicDate = new sap.ui.core.date.IslamicDate();
+					if (arguments.length >=5) {
+						oIslamicDate.setFullYear(iYearToStartFrom);
+					}
+					if (arguments.length >=6) {
+						oIslamicDate.setMonth(iMonthToStartFrom);
+					}
+					if (arguments.length >=7) {
+						oIslamicDate.setDate(iDateStartFrom);
+					}
 					iOrigHours = oIslamicDate.getHours();
 					ok(oIslamicDate.setFullYear(iYear, iMonth, iDate), "setFullYear must return value");
 				}
@@ -478,16 +496,28 @@
 				equals(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
 			},
 
-			verifyMonth2Date : function(bUTC, iMonth, iDate) {
+			verifyMonth2Date : function(bUTC, iMonth, iDate, iMonthToStartFrom, iDateStartFrom) {
 				var oIslamicDate = null,
 						iOrigHours;
 
 				if (bUTC) {
 					oIslamicDate = new sap.ui.core.date.IslamicDate(sap.ui.core.date.IslamicDate.now());
+					if (arguments.length >=4) {
+						oIslamicDate.setUTCMonth(iMonthToStartFrom);
+					}
+					if (arguments.length >=5) {
+						oIslamicDate.setUTCDate(iDateStartFrom);
+					}
 					iOrigHours = oIslamicDate.getUTCHours();
 					ok(oIslamicDate.setUTCMonth(iMonth, iDate), "setUTCMonth must return value");
 				} else {
 					oIslamicDate = new sap.ui.core.date.IslamicDate();
+					if (arguments.length >=4) {
+						oIslamicDate.setMonth(iMonthToStartFrom);
+					}
+					if (arguments.length >=5) {
+						oIslamicDate.setDate(iDateStartFrom);
+					}
 					iOrigHours = oIslamicDate.getHours();
 					ok(oIslamicDate.setMonth(iMonth, iDate), "setUTCMonth must return value");
 				}
@@ -560,6 +590,10 @@
 			this.verifyYear2Date(true, 1433, 2, 5);
 		});
 
+		test("setUTCFullYear with optional parameters close to the border values", function () {
+			this.verifyYear2Date(true, 1436, 7, 1, 1436, 6, 30);
+		});
+
 		test("Set/Get Year", function () {
 			var iYear = 35;
 			var oIslamicDate = new sap.ui.core.date.IslamicDate(1436, 5, 11, 23, 16, 10, 118);
@@ -580,6 +614,10 @@
 
 		test("setUTCMonth with optional parameters", function () {
 			this.verifyMonth2Date(true, 2, 5);
+		});
+
+		test("setUTCMonth with optional parameters close to te border values", function () {
+			this.verifyMonth2Date(true, 7, 1, 6, 30);
 		});
 
 		test("Set/Get Date", function () {
