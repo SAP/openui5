@@ -732,6 +732,10 @@ var sNorthwindAnnotations = '\
 					</Collection>\
 			</Annotation>\
 			</Annotations>\
+			<Annotations Target="NorthwindModel.Category/CategoryID">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />\
+				<Annotation Term="annotationSource" String="Annotations" />\
+			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>';
@@ -2537,26 +2541,28 @@ var sNorthwindMetadataAnnotated = '\
 				</AssociationSet>\
 			</EntityContainer>\
 		</Schema>\
-	</edmx:DataServices>\
-	<edmx:DataServices>\
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="NorthwindModelAnnotations">\
 			<Annotations Target="UnitTest">\
-			<Annotation Term="Test.FromMetadata">\
-					<Collection>\
-						<Record Type="Test.DataField">\
-							<PropertyValue Property="Label" String="From" />\
-							<PropertyValue Property="Value" Path="Metadata" />\
-						</Record>\
-					</Collection>\
-			</Annotation>\
-			<Annotation Term="Test.Merged">\
-					<Collection>\
-						<Record Type="Test.DataField">\
-							<PropertyValue Property="Label" String="From" />\
-							<PropertyValue Property="Value" Path="Metadata" />\
-						</Record>\
-					</Collection>\
-			</Annotation>\
+				<Annotation Term="Test.FromMetadata">\
+						<Collection>\
+							<Record Type="Test.DataField">\
+								<PropertyValue Property="Label" String="From" />\
+								<PropertyValue Property="Value" Path="Metadata" />\
+							</Record>\
+						</Collection>\
+				</Annotation>\
+				<Annotation Term="Test.Merged">\
+						<Collection>\
+							<Record Type="Test.DataField">\
+								<PropertyValue Property="Label" String="From" />\
+								<PropertyValue Property="Value" Path="Metadata" />\
+							</Record>\
+						</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Category/CategoryID">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />\
+				<Annotation Term="annotationSource" String="Metadata" />\
 			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\

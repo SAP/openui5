@@ -3726,19 +3726,57 @@ function runODataAnnotationTests() {
 	});
 	
 	asyncTest("V2 only: Annotated Metadata - Automated Parsing", function() {
-		expect(16);
+		expect(26);
 
-		var fnAsyncStart = function() {
-			if (!fnAsyncStart.count) {
-				fnAsyncStart.count = 0;
-			}
-			++fnAsyncStart.count;
+		var mTestsDone = {
+			"annotations": false,
+			"metadata":    false,
+			// "both":        false,
+			"metamodel":   false
+		};
+		var fnAsyncStart = function(sWhat) {
+			mTestsDone[sWhat] = true;
 			
-			if (fnAsyncStart.count == 2) {
-				start();
+			var bAllDone = true;
+			for (var sKey in mTestsDone) {
+				if (mTestsDone[sKey] !== true) {
+					bAllDone = false;
+				}
+			}
+			
+			if (bAllDone) {
+				// Timeout to make sure no other tests are run due to faulty events
+				window.setTimeout(start, 500);
 			}
 		}
 
+		var fnTestAnnotations = function(sTestType, oModel, sSource) {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			ok(oAnnotations["UnitTest"], "Annotation namespace available");
+			ok(oAnnotations["UnitTest"]["Test.From" + sSource],                                    "Annotation from correct source - " + sSource + " (2/5)");
+			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0],                                 "Annotation from correct source - " + sSource + " (3/5)");
+			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"],                        "Annotation from correct source - " + sSource + " (4/5)");
+			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"]["Path"] === sSource, "Annotation from correct source - " + sSource + " (5/5)");
+			
+			fnAsyncStart(sTestType);
+		};
+		
+		var fnTestMetaModel = function(oModel, bV4AnnotationsAvailable, sV4AnnotationSource) {
+			var sContainerName = oModel.getMetaModel().getProperty("/dataServices/schema/1/entityContainer/0/name");
+			var sLabelString  = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/com.sap.vocabularies.Common.v1.Label/String")
+			var sSource = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/annotationSource/String")
+
+			equals(sContainerName, "NorthwindEntities", "EntityContainer \"NorthwindEntities\" available");
+			equals(sLabelString, bV4AnnotationsAvailable ? "LabelString" : undefined, "LabelString for \"CategoryID\" is correct"); 
+			equals(sSource, sV4AnnotationSource, "Correct annotation source");
+		};
+		
+		
 		var mTest = mAdditionalTestsServices["Annotated Metadata"];
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
@@ -3747,48 +3785,47 @@ function runODataAnnotationTests() {
 		});
 		
 		var oModel2 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
-			annotationURI : "fakeService://testdata/odata/northwind-annotations-normal.xml",
+			annotationURI: "fakeService://testdata/odata/northwind-annotations-normal.xml",
 			skipMetadataAnnotationParsing: true,
 			loadAnnotationsJoined: true
 		});
 		
-
-		oModel.attachAnnotationsLoaded(function() {
-			var oMetadata = oModel.getServiceMetadata();
-			var oAnnotations = oModel.getServiceAnnotations();
-			
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
-			
-			ok(oAnnotations["UnitTest"], "Annotation namespace available");
-			ok(!oAnnotations["UnitTest"]["Test.FromAnnotations"],                                "Annotation from correct source - Metadata (1/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromMetadata"],                                    "Annotation from correct source - Metadata (2/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromMetadata"][0],                                 "Annotation from correct source - Metadata (3/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromMetadata"][0]["Value"],                        "Annotation from correct source - Metadata (4/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromMetadata"][0]["Value"]["Path"] === "Metadata", "Annotation from correct source - Metadata (5/5)");
-			
-			fnAsyncStart();
-		});
-
-
-		oModel2.attachAnnotationsLoaded(function() {
-			var oMetadata = oModel2.getServiceMetadata();
-			var oAnnotations = oModel2.getServiceAnnotations();
-			
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
-			
-			ok(oAnnotations["UnitTest"], "Annotation namespace available");
-			ok(!oAnnotations["UnitTest"]["Test.FromMetadata"],                                         "Annotation from correct source - Annotations (1/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"],                                       "Annotation from correct source - Annotations (2/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"][0],                                    "Annotation from correct source - Annotations (3/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"][0]["Value"],                           "Annotation from correct source - Annotations (4/5)");
-			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"][0]["Value"]["Path"] === "Annotations", "Annotation from correct source - Annotations (5/5)");
-			
-			fnAsyncStart();
+		var oModel3 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI: null,
+			skipMetadataAnnotationParsing: true,
+			loadAnnotationsJoined: true
 		});
 		
-
+		var oModel4 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI: "fakeService://testdata/odata/northwind-annotations-normal.xml",
+			skipMetadataAnnotationParsing: false,
+			loadAnnotationsJoined: true
+		});
+		
+		oModel.attachAnnotationsLoaded(fnTestAnnotations.bind(window, "metadata", oModel, "Metadata"));
+		oModel2.attachAnnotationsLoaded(fnTestAnnotations.bind(window, "annotations", oModel2, "Annotations"));
+		// No Test for oModel3, since no annotations are loaded
+		oModel3.attachAnnotationsLoaded(function() {
+			ok(false, "Annotation should not be loaded for this model");
+		});
+		
+		// TODO: Currently the loaded event is fired twice in this case, so it first has the data from Metadata and only
+		//       later the data from the annotations file is added. This test should be activated as soon as this 
+		//       problem is solved.
+		//       Don't forget to change mTestsDone and expect as well
+		//oModel4.attachAnnotationsLoaded(fnTestAnnotations.bind(window, "both", oModel4, "Annotations"));
+		
+		// Check availability of data in ODataMetaModel
+		Promise.all([oModel.getMetaModel().loaded(), oModel2.getMetaModel().loaded(), oModel3.getMetaModel().loaded()]).then(function() {
+			fnTestMetaModel(oModel, true, "Metadata");     // Annotations only from metadata document
+			fnTestMetaModel(oModel2, true, "Annotations"); // Annotations only from separate annotation file
+			fnTestMetaModel(oModel3, false);               // No annotations
+			fnTestMetaModel(oModel2, true, "Annotations"); // Anotations from metadata and annotation file
+			
+			fnAsyncStart("metamodel");
+		}, function() {
+			ok(false, "ODataMetaModel loading failed");
+		});
 	});
 
 	asyncTest("Apply in If", function() {

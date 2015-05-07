@@ -182,11 +182,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.oMetadata = this.oServiceData.oMetadata;
 			}
 
-			if (!this.bSkipMetadataAnnotationParsing) {
-				this.oMetadata.loaded().then(function(mParams) {
-					return that.addAnnotationXML(mParams["metadataString"]);
-				}).then(that.fireAnnotationsLoaded.bind(that), that.fireAnnotationsFailed.bind(that));
+			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
+				// Make sure the annotation parser object is already created and can be used by the MetaModel
+				var oAnnotations = this._getAnnotationParser();
+				
+				if (!this.bSkipMetadataAnnotationParsing) {
+					this.oMetadata.loaded().then(function(mParams) {
+						return that.addAnnotationXML(mParams["metadataString"]);
+					});
+				}
+				
+				if (this.sAnnotationURI) {
+					oAnnotations.addUrl(this.sAnnotationURI);
+				}
 			}
+
 
 			if (mServiceUrlParams) {
 				// new URL params used -> add to ones from sServiceUrl
@@ -207,17 +217,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			if (this.oMetadata.isFailed()){
 				this.refreshMetadata();
-			}
-
-			if (this.sAnnotationURI) {
-				var oAnnotations = this._getAnnotationParser();
-				oAnnotations.addUrl(this.sAnnotationURI);
-				oAnnotations.attachFailed(function(oEvent) {
-					that.fireAnnotationsFailed(oEvent.getParameters());
-				});
-				oAnnotations.attachLoaded(function(oEvent) {
-					that.fireAnnotationsLoaded(oEvent.getParameters());
-				});
 			}
 
 			if (this.oMetadata.isLoaded()) {
@@ -3311,6 +3310,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (!this.oAnnotations) {
 			jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
 			this.oAnnotations = new sap.ui.model.odata.ODataAnnotations(null, this.oMetadata, { async: this.bLoadMetadataAsync });
+			this.oAnnotations.attachFailed(function(oEvent) {
+				this.fireAnnotationsFailed(oEvent.getParameters());
+			}.bind(this));
+			this.oAnnotations.attachLoaded(function(oEvent) {
+				this.fireAnnotationsLoaded(oEvent.getParameters());
+			}.bind(this));
 		}
 
 		return this.oAnnotations;
@@ -3320,9 +3325,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Adds (a) new URL(s) to the be parsed for OData annotations, which are then merged into the annotations object
 	 * which can be retrieved by calling the getServiceAnnotations()-method.
 	 *
-	 * @param {string|sting[]} vUrl - Either one URL as string or an array or Uri strings
+	 * @param {string|string[]} vUrl - Either one URL as string or an array or URL strings
 	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at least one fails to load
-	 * @public
+	 * @protected
 	 */
 	ODataModel.prototype.addAnnotationUrl = function(vUrl) {
 		var aUrls = [].concat(vUrl),
@@ -3358,13 +3363,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {string} sXMLContent - The string that should be parsed as annotation XML
 	 * @return {Promise} The Promise to parse the given XML-String, resolved if parsed without errors, rejected if errors occur
-	 * @public
+	 * @protected
 	 */
 	ODataModel.prototype.addAnnotationXML = function(sXMLContent) {
 		return new Promise(function(resolve, reject) {
 			this._getAnnotationParser().setXML(null, sXMLContent, {
-				success : resolve,
-				error   : reject
+				success:    resolve,
+				error:      reject,
+				fireEvents: true
 			});
 		}.bind(this));
 	};
