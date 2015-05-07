@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		// convenience variable
 		var sMyId = oFeedListItem.getId(), bIsPhone = sap.ui.Device.system.phone;
 	
-		rm.write('<article');
+		rm.write('<div');
 		rm.writeControlData(oFeedListItem);
 		rm.addClass('sapMFeedListItem');
 	
@@ -86,8 +86,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
 				rm.writeEscaped(oFeedListItem.getText(), true);
+				rm.write('</span>');
 			}
-			rm.write('</span>');
 			rm.write('</p>');
 			if (!!oFeedListItem.getInfo()) {
 				// info
@@ -97,6 +97,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 					rm.writeEscaped(oFeedListItem.getInfo());
 					rm.write('</span>');
 				}
+				rm.write('</p>');
 			}
 		} else {
 			rm.write('<div class= "sapMFeedListItemText ');
@@ -116,8 +117,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
 				rm.writeEscaped(oFeedListItem.getText(), true);
+				rm.write('</span>');
 			}
-			rm.write('</span>');
+			rm.write('</p>');
 			if (!!oFeedListItem.getInfo() || !!oFeedListItem.getTimestamp()) {
 				// info and date
 				rm.write('<p class="sapMFeedListItemFooter">');
@@ -145,12 +147,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 					}
 	
 				}
-	
+				rm.write('</p>');
 			}
-			rm.write('</p>');
 			rm.write('</div>');
 		}
-		rm.write('</article>');
+		rm.write('</div>');
 	};
 	
 	FeedListItemRenderer._writeImageControl = function(rm, oFeedListItem, sMyId) {
@@ -161,19 +162,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		}
 		rm.writeClasses();
 		rm.write('>');
-	
-		if (!!oFeedListItem.getIconActive()) {
-			rm.write('<a id="' + sMyId + '-iconRef" ');
-			rm.write('tabindex="-1"'); // according to design there should be never a tab stop on the icon
-			/*eslint-disable no-script-url */
-			rm.writeAttribute('href', 'javascript:void(0);');
-			/*eslint-enable no-script-url */
-			rm.write('>');
-		}
 		rm.renderControl(oFeedListItem._getImageControl());
-		if (!!oFeedListItem.getIconActive()) {
-			rm.write('</a>');
-		}
 		rm.write('</figure>');
 	};
 	
