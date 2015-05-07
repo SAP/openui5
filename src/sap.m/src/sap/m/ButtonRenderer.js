@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global'],
 		// start button tag
 		oRm.write("<button type=\"button\"");
 		oRm.writeControlData(oButton);
+		oRm.addClass("sapMBtnBase");
 
 		// button container style class
 		if (!oButton._isUnstyled()) {
