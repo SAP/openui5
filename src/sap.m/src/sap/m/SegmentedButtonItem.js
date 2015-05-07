@@ -57,16 +57,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		}});
 
 		/**
-		 * Overwrite setProperty function to force sap.m.SegmentedButton to update on item property change
+		 * Overwrite property setters to update buttons on item property change
 		 * @overwrite
 		 */
-		SegmentedButtonItem.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
-			var oParent = this.getParent();
-			if (oParent && oParent instanceof sap.m.SegmentedButton && oParent.getButtons().length !== 0) {
-				// BCP: 1570296132
-				oParent.updateItems();
+		SegmentedButtonItem.prototype.setText = function (sValue) {
+			this.setProperty("text", sValue, true);
+			if (this.oButton) {
+				this.oButton.setText(this.getText());
 			}
-			sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
+			return this;
+		};
+		SegmentedButtonItem.prototype.setIcon = function (sValue) {
+			this.setProperty("icon", sValue, true);
+			if (this.oButton) {
+				this.oButton.setIcon(this.getIcon());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setEnabled = function (bValue) {
+			this.setProperty("enabled", bValue, true);
+			if (this.oButton) {
+				this.oButton.setEnabled(this.getEnabled());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setTextDirection = function (sValue) {
+			this.setProperty("textDirection", sValue, true);
+			if (this.oButton) {
+				this.oButton.setTextDirection(this.getTextDirection());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setWidth = function (sValue) {
+			this.setProperty("width", sValue, true);
+			if (this.oButton) {
+				this.oButton.setWidth(this.getWidth());
+			}
+			return this;
 		};
 
 		return SegmentedButtonItem;

@@ -486,7 +486,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oItem.firePress();
 			}
 		});
-
+		oItem.oButton = oButton;
 		this.addButton(oButton);
 	};
 
