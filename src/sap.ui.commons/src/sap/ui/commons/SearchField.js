@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.SearchField.
-sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListBox', './TextField', './TextFieldRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/History', 'sap/ui/core/Renderer'],
-	function(jQuery, ComboBox, ComboBoxRenderer, ListBox, TextField, TextFieldRenderer, library, Control, History, Renderer) {
+sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListBox', './TextField', './TextFieldRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/History', 'sap/ui/core/Renderer', 'jquery.sap.dom'],
+	function(jQuery, ComboBox, ComboBoxRenderer, ListBox, TextField, TextFieldRenderer, library, Control, History, Renderer/*, DOM*/) {
 	"use strict";
 
 
@@ -765,12 +765,21 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		onkeypress: SearchField.TF.prototype.onkeypress,
 
 		onkeyup: function(oEvent) {
-			this.getParent().$().toggleClass("sapUiSearchFieldVal", !!jQuery(this.getInputDomRef()).val());
+			var $Input = jQuery(this.getInputDomRef());
+			var sVal = $Input.val();
+			
+			this.getParent().$().toggleClass("sapUiSearchFieldVal", !!sVal);
 			_setClearTooltip(this.getParent());
 
 			if (oEvent) {
 				var oKC = jQuery.sap.KeyCodes;
 				if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === oKC.F4 && oEvent.which === 0 /* this is the Firefox case and ensures 's' with same charCode is accepted */) {
+					return;
+				}
+				
+				if (sVal == $Input.getSelectedText()) {
+					// When pressing Ctrl+A quite fast a keyup event for "A" is triggered without oEvent.ctrlKey flag.
+					// But it behaves like Ctrl+A (Text is marked and A is not entered into the field) -> see BCP 1570032167
 					return;
 				}
 
