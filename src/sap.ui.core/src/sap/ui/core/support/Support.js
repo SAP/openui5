@@ -366,7 +366,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 		}
 		try {
 			oWindow.close();
-		} catch (e) {}
+		} catch (e) {
+			//escape eslint check for empty block
+		}
 	}
 
 

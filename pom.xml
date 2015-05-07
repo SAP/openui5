@@ -281,7 +281,7 @@
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.4</version>
+						<version>0.1.7</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -291,7 +291,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<version>0.13.0</version>
+							<version>0.21.1</version>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
 							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>

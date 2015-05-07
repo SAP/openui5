@@ -674,7 +674,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			try {
 				oFocusInfo.selectionStart = oFocusDomRef.selectionStart;
 				oFocusInfo.selectionEnd = oFocusDomRef.selectionEnd;
-			} catch (e) {}	// note: chrome fail to read the "selectionStart" property from HTMLInputElement: The input element's type "number" does not support selection.
+			} catch (e) {
+				// note: chrome fail to read the "selectionStart" property from HTMLInputElement: The input element's type "number" does not support selection.
+			}	
 		}
 
 		return oFocusInfo;

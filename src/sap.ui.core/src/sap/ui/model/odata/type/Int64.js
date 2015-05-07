@@ -276,7 +276,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		if (typeof sValue === "string") {
 			sErrorText = checkValueRange(this, sValue, oRange);
 			if (sErrorText) {
-				throw new ValidateException(sErrorText)
+				throw new ValidateException(sErrorText);
 			}
 			return;
 		}
