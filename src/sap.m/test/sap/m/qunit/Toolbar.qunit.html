@@ -19,36 +19,36 @@
 
 <script>
 	jQuery.sap.require("sap.m.Toolbar");
-	
+
 	function createToolbar(oConfig) {
-		
+
 		// get toolbar config
 		oConfig = oConfig || {};
 		var oTBConfig = oConfig.Toolbar || {};
 		delete oConfig.Toolbar;
-		
+
 		// should place at qunit fixture
 		var bShouldRender = (oConfig.render !== false);
 		delete oConfig.render;
-		
+
 		// create toolbar
 		var oTB = new sap.m.Toolbar(oTBConfig);
-		
+
 		// add contents
 		Object.keys(oConfig).forEach(function(sControl) {
 			var oControl = new sap.m[sControl](oConfig[sControl] || {});
 			oTB.addContent(oControl);
 		})
-		
+
 		// render
 		if (bShouldRender) {
 			oTB.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		}
-		
+
 		return oTB;
 	}
-	
+
 	module("Rendering");
 	test("test rendering and visible property", function() {
 		var oTB = createToolbar({
@@ -68,13 +68,13 @@
 
 		oTB.destroy();
 	});
-	
+
 	test("test empty content", function() {
 		var oTB = createToolbar({Toolbar : {}});
 		strictEqual(oTB.$().length, 1, "Bar is in DOM even without any content");
 		oTB.destroy();
 	});
-	
+
 	test("test tooltip", function() {
 		var sTooltip = "tooltip";
 		var oTB = createToolbar({
@@ -122,7 +122,7 @@
 
 		oTB.destroy();
 	});
-	
+
 	test("Should add the IBar-CTX if style and tag are set", function() {
 		// Arrange + System under Test
 		var oTB = createToolbar();
@@ -140,7 +140,7 @@
 		//Cleanup
 		oTB.destroy();
 	});
-	
+
 	test("test that Toolbar Separator is rendered", function() {
 		var oToolbarSeparator = new sap.m.ToolbarSeparator();
 		var oTB = createToolbar({
@@ -148,12 +148,12 @@
 				content : [oToolbarSeparator]
 			}
 		});
-		
+
 		// Assert
 		ok(oToolbarSeparator.$().hasClass("sapMTBSeparator"), "Separator does have the expected CSS class");
 		ok(oToolbarSeparator.$().width() > 0, "Separator does have a width");
 		ok(oToolbarSeparator.$().height() > 0, "Separator does have a height");
-		
+
 		//Cleanup
 		oTB.destroy();
 	});
@@ -200,7 +200,7 @@
 
 		// Assert
 		ok(true, "no error occured");
-		
+
 		//Cleanup
 		oToolbar.destroy();
 	})
@@ -221,7 +221,7 @@
 			"0" : false,
 			"none" : false
 		};
-		
+
 		// check expecteds
 		Object.keys(oConfig).forEach(function(sWidth) {
 			var bExpected = oConfig[sWidth];
@@ -229,69 +229,69 @@
 			var sMessage = JSON.stringify(sWidth) + " is " + (bExpected ? "" : "not") + " relative width";
 			strictEqual(bExpected ? bRelative : !bRelative, true, sMessage);
 		});
-		
+
 	});
-	
+
 	test("should detect whether toolbar overflows or not", function() {
 		var sLongText = new Array(1000).join("text ");
-		
+
 		// test wrapper
 		var testOverflow = function(sMessage, bExpected, oConfig) {
 			var oTB = createToolbar(oConfig || {});
 			strictEqual(sap.m.Toolbar.checkOverflow(oTB.$()), bExpected, sMessage);
 			oTB.destroy();
 		};
-		
+
 		// run test
 		testOverflow("101px content in 100px toolbar", true, {
 			Toolbar : {width: "100px"},
 			ToolbarSpacer : {width : "101px"}
 		});
-		
+
 		testOverflow("101% unshrinkable content", true, {
 			Toolbar : {},
 			ToolbarSpacer : {width : "101%"}
 		});
-		
+
 		testOverflow("Long button text", true, {
 			Toolbar : {},
 			Button : {text : sLongText}
 		});
-		
+
 		testOverflow("Should respect min width", true, {
 			Toolbar : {width: "100px"},
 			Label : {text : "t"},
 			ToolbarSpacer : {width : "80px"}
-		});			
-		
+		});
+
 		testOverflow("Empty toolbar", false, {
 			Toolbar : {}
 		});
-		
+
 		testOverflow("Invisible toolbar", false, {
 			Toolbar : {visible: false}
 		});
-		
+
 		testOverflow("100% unshrinkable content", false, {
 			Toolbar : {},
 			ToolbarSpacer : {width : "100%"}
 		});
-		
+
 		testOverflow("1px content in 100px toolbar", false, {
 			Toolbar : {},
 			ToolbarSpacer : {width : "100%"}
 		});
 	});
-	
+
 	test("controls shoulds return correct original and initial width", function() {
 		var getOrigWidth = sap.m.Toolbar.getOrigWidth;
-		
+
 		// test dummy control has no width
 		var oControl = new sap.ui.core.Control();
 		strictEqual(getOrigWidth(oControl.getId()), "", "Control without width property returns empty text");
 		strictEqual(getOrigWidth(":)"), "", "Non-Control parameter calls should return empty text");
 		oControl.destroy();
-	
+
 		// test a real control's width
 		var oSF = new sap.m.SearchField();
 		strictEqual(getOrigWidth(oSF.getId()), "100%", "Default width of the SearchField is 100%");
@@ -299,7 +299,7 @@
 		strictEqual(getOrigWidth(oSF.getId()), oSF.getWidth(), "SearhField's width found correctly via ID");
 		oSF.destroy();
 	});
-	
+
 	test("should detect whether toolbar content is shrinkable or not", function() {
 		// test wrapper
 		var testShrinkable = function(bExpected, sMessage, sControlName, oConfig) {
@@ -307,17 +307,17 @@
 			var oControl = new sap.m[sControlName](oConfig || {});
 			oControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			
+
 			var bShrink = sap.m.Toolbar.checkShrinkable(oControl, sShrinkClass);
 			var sPrefix = (bExpected) ? "should shrink" : "should not shrink";
 			ok(bExpected ? bShrink : !bShrink, sMessage + " " + sPrefix);
 			oControl.destroy();
 		};
-		
+
 		// bind inital params
 		var shouldShrink = testShrinkable.bind(0, true);
 		var shouldNotShrink = testShrinkable.bind(0, false);
-		
+
 		// when should shrink
 		shouldShrink("ToolbarSpacer with default properties", "ToolbarSpacer", {});
 		shouldShrink("The Button width percent value", "Button", {width : "100%"});
@@ -329,13 +329,13 @@
 		shouldShrink("Text control with maxLines 2", "Text", {
 			maxLines : 2
 		});
-		
+
 		shouldShrink("Button with shrinkable layoutData", "Button", {
 			layoutData: new sap.m.ToolbarLayoutData({
 				shrinkable : true
 			})
 		});
-		
+
 		// when should not shrink
 		shouldNotShrink("Button control width default properties", "Button", {});
 		shouldNotShrink("Fixed width ToolbarSpacer", "ToolbarSpacer", {width : "200px"});
@@ -346,41 +346,41 @@
 			})
 		});
 	});
-	
+
 	module("Behaviour");
 	test("content property change handler should be registered correctly", function() {
 		var oLabel = new sap.m.Label({text : "text"});
 		var oTB = createToolbar();
 		var vRetVal;
-		
+
 		// test inital
 		ok(!oLabel.hasListeners("_change"), "Initially content does not have _change event");
-		
+
 		// add content and test
 		vRetVal = oTB.addContent(oLabel);
 		strictEqual(vRetVal, oTB, "Toolbar#addContent function returns the toolbar instance for method chaining");
 		ok(oLabel.hasListeners("_change"), "After new content is added _change event is registered to the control");
-		
+
 		// remove content and test
 		vRetVal = oTB.removeContent(oLabel);
 		strictEqual(vRetVal, oLabel, "Toolbar#removeContent function returns removed control");
 		ok(!oLabel.hasListeners("_change"), "After content is removed _change event is deregistered from the control");
-		
+
 		// insert content and test
 		vRetVal = oTB.insertContent(oLabel, 0);
 		strictEqual(vRetVal, oTB, "Toolbar#insertContent function returns the toolbar instance for method chaining");
 		ok(oLabel.hasListeners("_change"), "After new content is inserted _change event is registered to the control");
-		
+
 		// remove all content and test
 		vRetVal = oTB.removeAllContent();
 		strictEqual(vRetVal[0], oLabel, "Toolbar#removeAllContent function returns the array of removed controls");
 		ok(!oLabel.hasListeners("_change"), "After all content is removed _change event is deregistered from the control too");
-		
+
 		// cleanup
 		oLabel.destroy();
 		oTB.destroy();
 	});
-	
+
 	test("when content property is changed toolbar should be informed", function() {
 		var spy = this.spy(sap.m.Toolbar.prototype, "_onContentPropertyChanged");
 		var oLabel = new sap.m.Label({text : "text"});
@@ -389,14 +389,14 @@
 				content : [oLabel]
 			}
 		});
-		
+
 		// change property and check spy
 		oLabel.setText("x");
 		strictEqual(spy.callCount, 1, "Property change is detected");
 		oLabel.destroy();
 		oTB.destroy();
 	});
-	
+
 	test("if there is no flexiable content toolbar should just render the items", function() {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
@@ -406,12 +406,12 @@
 			ToolbarSpacer : { width : "100px"},
 			Label : {text: "text", layoutData : new sap.m.ToolbarLayoutData({ shrinkable : false })}
 		});
-		
+
 		ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
 		strictEqual(spy.callCount, 0, "Content resize handler is not needed");
 		oTB.destroy();
 	});
-	
+
 	test("should behave correct according to latest flex box support", function() {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
@@ -421,13 +421,13 @@
 			Toolbar : {},
 			Label : {text: "text"}
 		});
-		
+
 		ok(oTB.$().hasClass("sapMTBNewFlex"), "Toolbar has correct sapMTBNewFlex class");
 		ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
 		strictEqual(spy.callCount, 0, "Content resize handler is not needed");
 		oTB.destroy();
 	});
-	
+
 	test("should behave correct according to old flex box support", function() {
 		// stub for latest old flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
@@ -437,14 +437,14 @@
 			Toolbar : {},
 			Label : {text: "text"}
 		});
-		
+
 		ok(oTB._sResizeListenerId, "Toolbar has resize handler");
 		ok(oTB.$().hasClass("sapMTBOldFlex"), "Toolbar has correct sapMTBOldFlex class");
 		strictEqual(oTB.$().find(".sapMLabel").css("display"), "block", "Display is set to block for shrinkable item");
 		strictEqual(spy.callCount, 1, "Content resize handler is registered once");
 		oTB.destroy();
 	});
-	
+
 	test("should behave correct if there is no flex box support", function() {
 		// stub for no flex box support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
@@ -454,33 +454,33 @@
 			Toolbar : {},
 			Label : {text: "text"}
 		});
-		
+
 		ok(oTB._sResizeListenerId, "Toolbar has resize handler");
 		ok(oTB.$().hasClass("sapMTBNoFlex"), "Toolbar has correct sapMTBNoFlex class");
 		strictEqual(spy.callCount, 1, "Content resize handler is registered once");
 		oTB.destroy();
 	});
-	
+
 	test("should detect endpoint changes", function() {
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "label"},
 			Button : {text: "button"}
 		});
-		
+
 		var iInitEndPoint = oTB._getEndPoint();
 		ok(iInitEndPoint, "After rendering some control endpoint must be more than 0px");
-		
+
 		// change label
 		oTB.getContent()[0].setText("this is a long label");
 		sap.ui.getCore().applyChanges();
-		
+
 		// compare width the inital endpoint
 		var iLastEndPoint = oTB._getEndPoint();
 		strictEqual(iLastEndPoint - iInitEndPoint > 0,  true, "Text is longer so endpoint must be bigger than inital values");
 		oTB.destroy();
 	});
-	
+
 	module("Events");
 	test("active toolbar should fire press event", function() {
 		var oLabel = new sap.m.Label({text : "text"});
@@ -492,21 +492,21 @@
 				press: fnPressSpy
 			}
 		});
-		
+
 		sap.ui.test.qunit.triggerEvent("tap", oLabel.getDomRef());
 		strictEqual(fnPressSpy.callCount, 1, "Tap event from Label is triggered the press event of the active Toolbar");
-		
+
 		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "SPACE");
 		strictEqual(fnPressSpy.callCount, 2, "Space hotkey of the active Toolbar triggered press event.");
-		
+
 		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "ENTER");
 		strictEqual(fnPressSpy.callCount, 3, "Enter hotkey of the active Toolbar triggered press event");
-		
+
 		//Cleanup
 		oLabel.destroy();
 		oTB.destroy();
 	});
-	
+
 	test("inactive toolbar should not fire press event", function() {
 		var oLabel = new sap.m.Label({text : "text"});
 		var fnPressSpy = this.spy();
@@ -517,21 +517,21 @@
 				press: fnPressSpy
 			}
 		});
-		
+
 		sap.ui.test.qunit.triggerEvent("tap", oLabel.getDomRef());
 		strictEqual(fnPressSpy.callCount, 0, "Tap event from Label is not triggered the press event of the inactive Toolbar");
-		
+
 		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "SPACE");
 		strictEqual(fnPressSpy.callCount, 0, "Space hotkey is not triggered the press event of the inactive Toolbar");
-		
+
 		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "ENTER");
 		strictEqual(fnPressSpy.callCount, 0, "Enter hotkey is not triggered the press event of the inactive Toolbar");
-		
+
 		//Cleanup
 		oLabel.destroy();
 		oTB.destroy();
 	});
-	
+
 	test("active toolbar should not fire press when the event is handled by the child control", function() {
 		var oButton = new sap.m.Button({text : "text"});
 		var fnPressSpy = this.spy();
@@ -542,25 +542,25 @@
 				press: fnPressSpy
 			}
 		});
-		
+
 		sap.ui.test.qunit.triggerEvent("tap", oButton.getDomRef());
 		strictEqual(fnPressSpy.callCount, 0, "Tap event is handled by Button so press event did not fired from the Toolbar");
-		
+
 		sap.ui.test.qunit.triggerKeydown(oButton.getDomRef(), "ENTER");
 		strictEqual(fnPressSpy.callCount, 0, "Space hotkey is handled by Button so press event did not fired from the Toolbar");
-		
+
 		sap.ui.test.qunit.triggerKeydown(oButton.getDomRef(), "SPACE");
 		strictEqual(fnPressSpy.callCount, 0, "Enter hotkey is handled by Button so press event did not fired from the Toolbar");
-		
+
 		//Cleanup
 		oButton.destroy();
 		oTB.destroy();
 	});
-	
+
 	module("Shrinkables");
 	test("Toolbar should not overflow with shrinkable items", function() {
 		var sLongText = new Array(1000).join("text ");
-		
+
 		// test wrapper
 		var shouldNotOverflow = function(sMessage, oConfig) {
 			var oTB = createToolbar(oConfig || {});
@@ -571,7 +571,7 @@
 			ok(oDomRef.scrollWidth === oDomRef.clientWidth, sMessage + " even after resize.");
 			oTB.destroy();
 		};
-		
+
 		// run test
 		shouldNotOverflow("By default, text controls are shrinkable", {
 			Toolbar : {},
@@ -579,7 +579,7 @@
 			Text : {text : sLongText},
 			Link : {text : sLongText}
 		});
-		
+
 		shouldNotOverflow("By default, the controls have percent width are shrinkable", {
 			Toolbar : {},
 			SearchField : {},	/* default width is 100% */
@@ -589,21 +589,21 @@
 			Label : {text : sLongText, width: "25%"},
 			Button : {text : sLongText, width: "50%"}
 		});
-		
+
 		shouldNotOverflow("More than 100% shrinkable content has to fit", false, {
 			Toolbar : {},
 			Button : {text : sLongText, width: "500%"},
 			Label : {text : sLongText}
 		});
-		
+
 		shouldNotOverflow("controls have shrinkable layout data has to fit", false, {
 			Toolbar : {},
 			Button : {text : sLongText, layoutData: new sap.m.ToolbarLayoutData({shrinkable : true})},
 			TextArea : {text : sLongText, layoutData: new sap.m.ToolbarLayoutData({shrinkable : true})}
 		});
-		
+
 	});
-	
+
 	module("LayoutData");
 	test("should reapply layout data styles after content is rerendered", function() {
 		var sMinWidth = "100px";
@@ -618,22 +618,22 @@
 				content : oBtn
 			}
 		});
-		
+
 		// assert
 		strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After initial rendering minWidth is applied width layoutData");
-		
+
 		// act
 		oBtn.rerender();
 		sap.ui.getCore().applyChanges();
-		
+
 		// assert
 		strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After rerender minWidth is still available on the DOM");
-		
+
 		// cleanup
 		oBtn.destroy();
 		oTB.destroy();
 	});
-	
+
 	test("should reapply style after layout data is changed", function() {
 		var sInitMinWidth = "100px";
 		var sLastMinWidth = "200px";
@@ -648,16 +648,16 @@
 				content : oBtn
 			}
 		});
-		
+
 		// arrange
 		var fnRerenderSpy = this.spy(oTB.getRenderer(), "render");
-		
+
 		// assert
 		strictEqual(oBtn.getDomRef().style.minWidth, sInitMinWidth, "After initial rendering minWidth is applied according to layoutData");
-		
+
 		// act
 		oBtn.getLayoutData().setMinWidth(sLastMinWidth);
-		
+
 		// assert
 		strictEqual(oBtn.getDomRef().style.minWidth, sLastMinWidth, "After layout data changes min width is set on the DOM.");
 		strictEqual(fnRerenderSpy.callCount, 1, "Toolbar is rerendered because of the layoutData changes.");
@@ -666,7 +666,7 @@
 		oBtn.destroy();
 		oTB.destroy();
 	});
-	
+
 	test("setting layout data should apply changes with rerender", function() {
 		var sMinWidth = "100px";
 		var oBtn = new sap.m.Button({
@@ -677,16 +677,16 @@
 				content : oBtn
 			}
 		});
-		
+
 		// arrange
 		var fnRerenderSpy = this.spy(oTB.getRenderer(), "render");
-		
+
 		// act
 		oBtn.setLayoutData(new sap.m.ToolbarLayoutData({
 			minWidth : sMinWidth,
 			shrinkable : true
 		}));
-		
+
 		// assert
 		strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After layout data is set minWidth applied to the DOM.");
 		strictEqual(fnRerenderSpy.callCount, 1, "Toolbar is rerendered because of the layoutData set.");
@@ -695,7 +695,7 @@
 		oBtn.destroy();
 		oTB.destroy();
 	});
-	
+
 	module("Element Margins");
 	test("Should add margins to elements in a Toolbar", function() {
 		// Arrange
@@ -731,12 +731,12 @@
 		});
 
 		assertButton(oMiddleButton, {
-			left: 8,
+			left: 4,
 			right : 0
 		});
 
 		assertButton(oLastButton, {
-			left: 8,
+			left: 4,
 			right : 4
 		});
 
