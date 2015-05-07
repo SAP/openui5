@@ -1148,6 +1148,45 @@
 
 	});
 
+	test("sap.m.SegmentedButtonItem property update", function () {
+
+		// Arrange
+		var oSBI = new sap.m.SegmentedButtonItem({
+			key: "b1",
+			text: "Btn 1"
+		});
+
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				oSBI
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSBI.setText("Btn changed");
+		oSBI.setIcon("sap-icon://attachment");
+		oSBI.setTextDirection(sap.ui.core.TextDirection.RTL);
+		oSBI.setEnabled(false);
+		oSBI.setWidth("300px");
+		oSBI.setKey("changed");
+		oSegmentedButton.setSelectedKey("changed");
+
+		// Assert
+		var oButton = oSegmentedButton.getButtons()[0];
+
+		strictEqual(oButton.getText(), "Btn changed", "Button text should have the new value");
+		strictEqual(oButton.getIcon(), "sap-icon://attachment", "Button should have the new value");
+		strictEqual(oButton.getTextDirection(), sap.ui.core.TextDirection.RTL, "Button should have the new value");
+		strictEqual(oButton.getEnabled(), false, "Button should have the new value");
+		strictEqual(oButton.getWidth(), "300px", "Button should have the new value");
+		strictEqual(oSegmentedButton.getSelectedKey(), "changed", "SegmentedButton getSelectedKey() should return the new value");
+
+	});
+
 	/* =========================================================== */
 	/* API module                                                  */
 	/* =========================================================== */
