@@ -11,8 +11,8 @@
  */
 
 // Provides class ODataModelAdapter
-sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter", './odata4analytics', './AnalyticalVersionInfo'],
-	function(jQuery, AnalyticalBinding, TreeBindingAdapter, odata4analytics, AnalyticalVersionInfo) {
+sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata4analytics', './AnalyticalVersionInfo'],
+	function(jQuery, AnalyticalBinding, AnalyticalTreeBindingAdapter, odata4analytics, AnalyticalVersionInfo) {
 	"use strict";
 	
 	
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter
 		// detection for usage of AnalyticalBinding (aligned with AnalyticalTable#bindRows)
 		if (mParameters && mParameters.analyticalInfo) {
 			var oBinding = new AnalyticalBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
-			TreeBindingAdapter.apply(oBinding); // enhance the TreeBinding wit an adapter for the ListBinding
+			AnalyticalTreeBindingAdapter.apply(oBinding); // enhance the TreeBinding wit an adapter for the ListBinding
 			return oBinding;
 		} else {
 			// calling the preadapter functions makes sure, that v1 or v2 ODataListBindings get instantiated, depending on the model

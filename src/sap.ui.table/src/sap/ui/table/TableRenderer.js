@@ -472,6 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		var oSelMode = oTable.getSelectionMode();
 		if ((oSelMode == "Multi" || oSelMode == "MultiToggle") && oTable.getEnableSelectAll()) {
 			rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
+			//TODO: remove second _getSelectableRowCount Call!
 			if (oTable._getSelectableRowCount() == 0 || oTable._getSelectableRowCount() !== oTable.getSelectedIndices().length) {
 				rm.addClass("sapUiTableSelAll");
 			}
