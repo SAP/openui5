@@ -650,15 +650,15 @@
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
-				var oDialog = new sap.m.Dialog({
+				var oDialogInitialFocus = new sap.m.Dialog({
 					beginButton: oButton1,
 					endButton: oButton2
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE9(oDialogInitialFocus);
 
 				// Act
-				oDialog.open();
+				oDialogInitialFocus.open();
 				this.clock.tick(500);
 
 				// Assert
@@ -666,7 +666,7 @@
 				strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");
 
 				// Clean up
-				oDialog.destroy();
+				oDialogInitialFocus.destroy();
 			});
 
 			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function() {
