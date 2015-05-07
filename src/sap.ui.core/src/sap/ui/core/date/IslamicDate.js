@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		};
 
 		IslamicDate.prototype._fromGregorian = function (oGregorianDate, bUTC) {
-			var oDate = new Date(oGregorianDate);
+			var oDate = new Date(oGregorianDate.getTime());
 			var iGregorianYear = bUTC ? oDate.getUTCFullYear() : oDate.getFullYear(),
 				iGregorianMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth(),
 				iGregorianDay = bUTC ? oDate.getUTCDate() : oDate.getDate();
