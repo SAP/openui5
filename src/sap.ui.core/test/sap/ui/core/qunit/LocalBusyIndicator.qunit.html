@@ -153,7 +153,7 @@
 		});
 		asyncTest("OnAfterRendering", function() {
 			expect(4);
-			this.oButton.placeAt("target1")
+			this.oButton.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 			var that = this;
 
@@ -172,6 +172,43 @@
 					start();
 				}, that.iDelay);
 			}, 200);
+		});
+
+		asyncTest("Ensuring DelayedCall Only Used Once", function() {
+			expect(2);
+
+			var iFirstDelayedCallId,
+				iSecondDelayedCallId;
+			var oOnAfterRenderingDelegate = {
+				onAfterRendering : function() {
+					if (!iFirstDelayedCallId) {
+						// first rendering will call delegate
+						iFirstDelayedCallId = this.oButton._busyIndicatorDelayedCallId;
+					} else if (!iSecondDelayedCallId) {
+						// second call will happen when the text of the button is being changed
+						iSecondDelayedCallId = this.oButton._busyIndicatorDelayedCallId;
+					}
+				}
+			};
+			this.oButton.addDelegate(oOnAfterRenderingDelegate, false, this);
+			this.oButton.placeAt("target1");
+			sap.ui.getCore().applyChanges();
+			var that = this;
+
+			setTimeout(function() {
+				ok(iFirstDelayedCallId && !iSecondDelayedCallId, "Delayed call started in afterRendering of control");
+
+				// Force a re-rendering while waiting for the delay
+				// (possible for example if a binding changes properties asynchronously)
+				that.oButton.setText("Changed Text");
+
+				setTimeout(function() {
+					// set busy and animation shown
+					ok(iFirstDelayedCallId === iSecondDelayedCallId, "Delayed call not overwritten by rerendering");
+
+					start();
+				}, that.iDelay);
+			}, 20);
 		});
 
     </script>
