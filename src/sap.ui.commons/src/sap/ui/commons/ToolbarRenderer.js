@@ -188,7 +188,7 @@ function(jQuery) {
 		    oDomRef         = oToolbar.getDomRef(),
 		    oContext        = null,
 		    sMethod         = '',
-		    aArgs           = [];
+		    aAdditionalArgs = [];
 
 		if (bMoveItems === undefined) {
 			// by default the items are moved from the popup to the toolbar
@@ -199,15 +199,14 @@ function(jQuery) {
 			if (bMoveItems && oDomRef) {
 				// move the items from the popup to the toolbar
 				// i.e. oToolbarContent.insertBefore(oPopupHolder.firstChild, oOverflowButton)
-				oContext    = oDomRef.firstChild.firstChild; // the toolbar content holder
-				sMethod     = 'insertBefore';
-				aArgs       = [oPopupHolder.firstChild, oToolbar.getDomRef("mn")];
+				oContext        = oDomRef.firstChild.firstChild; // the toolbar content holder
+				sMethod         = 'insertBefore';
+				aAdditionalArgs = [oToolbar.getDomRef("mn")];
 			} else if (!bMoveItems) {
 				// simply remove the popup items from the DOM
 				// i.e. oPopupHolder.removeChild(oPopupHolder.firstChild)
 				oContext    = oPopupHolder;
 				sMethod     = 'removeChild';
-				aArgs       = [oPopupHolder.firstChild];
 			} else {
 				jQuery.sap.log.error("The renderer 'sap.ui.commons.ToolbarRenderer' cannot empty the toolbar overflow popup.");
 
@@ -215,6 +214,7 @@ function(jQuery) {
 			}
 
 			while (oPopupHolder.hasChildNodes()) {
+				var aArgs = [oPopupHolder.firstChild].concat(aAdditionalArgs);
 				oContext[sMethod].apply(oContext, aArgs);
 			}
 		}
