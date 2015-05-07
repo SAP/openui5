@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.13.1
 			 */
 			showFooter : {type : "boolean", group : "Appearance", defaultValue : true},
-			
+
 			/**
 			 * Decides which area is covered by the local BusyIndicator when <code>page.setBusy()</code> is called. By default the entire page is covered, including headers and footer. When this property is set to "true", only the content area is covered (not header/sub header and footer), which is useful e.g. when there is a SearchField in the sub header and live search continuously updates the content area while the user is still able to type.
 			 * @since 1.29.0
@@ -421,6 +421,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Page.prototype.scrollTo = function(y, time) {
 		if (this._oScroller) {
 			this._oScroller.scrollTo(0, y, time);
+		}
+		return this;
+	};
+
+	/**
+	 * Scrolls to an element(DOM or sap.ui.core.Element) within the page if the element is rendered.
+	 * @param {HTMLElement | sap.ui.core.Element} oElement The element to which should be scrolled.
+	 * @param {int} [iTime=0] The duration of animated scrolling. To scroll immediately without animation, give 0 as value or leave it default.
+	 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
+	 * @since 1.30
+	 * @public
+	 */
+	Page.prototype.scrollToElement = function(oElement, iTime) {
+		if (oElement instanceof sap.ui.core.Element) {
+			oElement = oElement.getDomRef();
+		}
+
+		if (this._oScroller) {
+			this._oScroller.scrollToElement(oElement, iTime);
 		}
 		return this;
 	};
