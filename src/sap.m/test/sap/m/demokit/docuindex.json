@@ -720,7 +720,12 @@
 				"name" : "View Settings Dialog",
 				"category" : "Popup",
 				"since" : "1.16",
-				"samples" : [ "sap.m.sample.ViewSettingsDialog", "sap.m.sample.ViewSettingsDialogCustom", "sap.m.sample.TableViewSettingsDialog" ]
+				"samples" : [
+				  "sap.m.sample.ViewSettingsDialog",
+				  "sap.m.sample.ViewSettingsDialogCustom",
+				  "sap.m.sample.ViewSettingsDialogCustomTabs",
+				  "sap.m.sample.TableViewSettingsDialog"
+				]
 			},
 			{
 				"id" : "sap.m.UrlHelper",
@@ -1578,8 +1583,13 @@
 			},
 			{
 				"id": "sap.m.sample.ViewSettingsDialogCustom",
-				"name": "View Settings Dialog - Custom",
+				"name": "View Settings Dialog - Custom Filters",
 				"description": "You can have custom filters in your View Settings Dialog, as shown in this example here."
+			},
+			{
+				"id": "sap.m.sample.ViewSettingsDialogCustomTabs",
+				"name": "View Settings Dialog - Custom Tabs",
+				"description": "You can have custom tabs with your own defined content in the View Settings Dialog, as shown in this example."
 			},
 			{
 				"id": "sap.m.sample.BusyDialog",
