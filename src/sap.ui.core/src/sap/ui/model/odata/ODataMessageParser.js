@@ -133,7 +133,12 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 
 
 	// Get EntitySet for Requested resource
-	var sRequestTarget = stripURI(sRequestUri).substr(this._serviceUrl.length + 1);
+	var sRequestTarget = stripURI(sRequestUri);
+	if (sRequestTarget.indexOf(this._serviceUrl) === 0) {
+		// This is an absolute URL, remove the service part at the front
+		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
+	}
+	
 	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
 	if (mEntitySet) {
 		mAffectedTargets[mEntitySet.name] = true;
@@ -347,7 +352,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 	// TODO: The main error object does not support "target". Find out how to proceed with the main error information (ignore/add without target/add to all other errors)
 
 	var sContentType = getContentType(oResponse);
-	if (sContentType.indexOf("xml") > -1) {
+	if (sContentType && sContentType.indexOf("xml") > -1) {
 		// XML response
 		this._parseBodyXML(/* ref: */ aMessages, oResponse, sRequestUri, sContentType);
 	} else {
