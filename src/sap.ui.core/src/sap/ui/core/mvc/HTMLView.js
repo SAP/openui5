@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		 *
 		 * @param {string} [sId] id of the newly created view, only allowed for instance creation
 		 * @param {string | object} vView name or implementation of the view.
+		 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 		 * @public
 		 * @static
 		 * @return {sap.ui.core.mvc.HTMLView | undefined} the created HTMLView instance in the creation case, otherwise undefined

@@ -397,8 +397,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 *   the view source as a JSON object, a raw text, or an XML document element
 	 * @param {boolean} [bSync]
 	 *   describes the view execution, true if sync
-	 * @returns {Promise}
-	 *   a promise resolving with the processed source or an error
+	 * @returns {Promise|object|string|element}
+	 *   a promise resolving with the processed source or an error | the source when bSync=true
 	 * @protected
 	 */
 	View.prototype.runPreprocessor = function(sType, vSource, bSync) {
@@ -471,7 +471,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
 	 *
 	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
-	 * in sync mode, as this could have unexpected side effects. You may override this behaviour by setting the
+	 * in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
 	 * bSyncSupport flag to true.
 	 *
 	 * @protected
@@ -487,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * 		also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
 	 * 		break the view initialization and lead to unexpected results.
 	 * @param {boolean} [bOnDemand]
-	 * 		ondemand preprocessor which enables developers to quickly specify the preprocessor for a view,
+	 * 		ondemand preprocessor which enables developers to quickly activate the preprocessor for a view,
 	 * 		by setting <code>preprocessors : { xml }</code>, for example.
 	 * @param {object} [mSettings]
 	 * 		optional configuration for preprocessor
@@ -542,20 +542,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * view types are listed in the enumeration sap.ui.core.mvc.ViewType.</li>
 	 * <li>The view data <code>vView.viewData</code> can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller</li>
+	 * <li>The view loading mode <code>vView.async</code> must be a boolean and defines if the view source is loaded
+	 * synchronously or asynchronously. In async mode, the view is rendered empty initially, and rerenderd with the
+	 * loaded view content.</li>
 	 * <li><code>vView.preprocessors</code></li> can hold a map from source type (e.g. "xml") to
 	 * preprocessor configuration; the configuration consists of an optional
 	 * <code>preprocessor</code> property and may contain further preprocessor-specific settings. The preprocessor can
-	 * be either an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
-	 * {@link sap.ui.core.mvc.View.Preprocessor.process}
+	 * be either a module name as string implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
+	 * {@link sap.ui.core.mvc.View.Preprocessor.process}.
 	 *
 	 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or a
 	 * default availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 	 *
-	 * <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
-	 * in sync mode, as this could have unexpected side effects.
+	 * <strong>Note</strong>: Please note that preprocessors in general are currently only available
+	 * to XMLViews.
+	 *
+	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
+	 * in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
+	 * bSyncSupport flag of the preprocessor to true.
 	 *
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
 	 * @param {string|object} [vView] the view name or view configuration object
+	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 	 * @public
 	 * @static
 	 * @return {sap.ui.core.mvc.View} the created View instance
@@ -579,6 +587,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				oView = vView;
 			}
 		}
+
+		// can be removed when generic type checking for special settings is introduced
+		jQuery.sap.assert(!oView.async || typeof oView.async === "boolean", "sap.ui.view factory: Special setting async has to be of the type 'boolean'!");
 
 		// apply the id if defined
 		if (sId) {
