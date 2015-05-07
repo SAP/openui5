@@ -236,6 +236,13 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 */
 		addV4Annotation: function (o, oExtension, sTypeClass) {
 			switch (oExtension.name) {
+				case "display-format":
+					if (oExtension.value === "NonNegative") {
+						o["com.sap.vocabularies.Common.v1.IsDigitSequence"] = oBoolTrue;
+					} else if (oExtension.value === "UpperCase") {
+						o["com.sap.vocabularies.Common.v1.IsUpperCase"] = oBoolTrue;
+					}
+					break;
 				case "pageable":
 				case "topable":
 					// true is the default in v4 so add annotation only in case of false

@@ -50,9 +50,10 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>pageable</code>,
 	 * <code>requires-filter</code>, <code>searchable</code>, <code>topable</code> and
 	 * <code>updatable</code> on entity sets;</li>
-	 * <li><code>creatable</code>, <code>field-control</code>, <code>filterable</code>,
-	 * <code>precision</code>, <code>required-in-filter</code>, <code>sortable</code>,
-	 * <code>text</code>, <code>unit</code> and <code>updatable</code> on properties;</li>
+	 * <li><code>creatable</code>, <code>display-format</code> ("UpperCase" and "NonNegative"),
+	 * <code>field-control</code>, <code>filterable</code>, <code>precision</code>,
+	 * <code>required-in-filter</code>, <code>sortable</code>, <code>text</code>, <code>unit</code>
+	 * and <code>updatable</code> on properties;</li>
 	 * <li><code>semantics</code>; the following values are supported:
 	 * <ul>
 	 * <li>"bday", "city", "country", "familyname", "givenname", "honorific", "middlename", "name",
