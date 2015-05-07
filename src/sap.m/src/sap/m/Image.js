@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * A decorative image is included for design reasons. Accessibility tools will ignore decorative images.
 			 * 
-			 * Note: If the Image has an image map (useMap is set), this property will be overridden (the image will not be rendered as decorative).
+			 * Note: If the Image has press event handler(s) or an image map (useMap is set), this property will be overridden (the image will not be rendered as decorative).
 			 * A decorative image has no ALT attribute, so the Alt property is ignored if the image is decorative.
 			 */
 			decorative : {type : "boolean", group : "Accessibility", defaultValue : true},
@@ -299,7 +299,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		this.setProperty("activeSrc", sActiveSrc, true);
 	};
-	
+
+	Image.prototype.attachPress = function() {
+		Array.prototype.unshift.apply(arguments, ["press"]);
+		sap.ui.core.Control.prototype.attachEvent.apply(this, arguments);
+
+		if (this.hasListeners("press")) {
+			this.$().attr("tabindex", "0");
+			this.$().attr("role", "button");
+		}
+	};
+
+	Image.prototype.detachPress = function() {
+		Array.prototype.unshift.apply(arguments, ["press"]);
+		sap.ui.core.Control.prototype.detachEvent.apply(this, arguments);
+
+		if (!this.hasListeners("press")) {
+			this.$().attr("tabindex", "-1");
+			if (this.getDecorative()) {
+				this.$().attr("role", "presentation");
+			} else {
+				this.$().removeAttr("role");
+			}
+		}
+	};
+
 	/**
 	 * Function is called when image is clicked.
 	 *
