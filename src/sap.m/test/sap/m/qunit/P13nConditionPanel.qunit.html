@@ -239,13 +239,13 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		oP13nConditionPanel._triggerRemoveCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		oP13nConditionPanel._handleRemoveCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 		
 		var nItems= 2;
 		strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
 
 		// assertions
-		oP13nConditionPanel._triggerAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 		
 		nItems= 3;
 		strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
@@ -272,7 +272,7 @@
 		// assertions
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 		oConditionGrid.keyField.setSelectedKey("CompanyName");
-		oP13nConditionPanel._triggerChangeKeyfield(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
+		oP13nConditionPanel._handleChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
 		
 		var sKeyField= "CompanyName";
 		strictEqual(oP13nConditionPanel.getConditions()[0].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");
@@ -280,7 +280,7 @@
 		
 		
 		oConditionGrid.operation.setSelectedIndex(2);
-		oP13nConditionPanel._triggerChangeOperations(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
+		oP13nConditionPanel._handleChangeOnOperationField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
 		
 		var sOperation= "Contains";
 		strictEqual(oP13nConditionPanel.getConditions()[0].operation, sOperation, "Operation of first condition must be '" + sOperation + "'.");
@@ -312,7 +312,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		oP13nConditionPanel._triggerAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 		
 		strictEqual(oP13nConditionPanel.getContainerQuery(), true, "ContainerQuery must be true!");
 		
