@@ -40,11 +40,13 @@ sap.ui.require([
 				<Property Name="BusinessPartnerID" Type="Edm.String"\
 					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID"\
 					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false" \
-					sap:sortable="false" sap:required-in-filter ="true">\
+					sap:sortable="false" sap:required-in-filter ="true" \
+					sap:display-format="UpperCase" >\
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
-				<Property Name="AnyProperty" Type="Edm.String" sap:field-control="UX_FC_READONLY" \
-					sap:updatable="false" sap:sortable="false" sap:filterable="false"/>\
+				<Property Name="AnyProperty" Type="Edm.String" sap:display-format="NonNegative" \
+					sap:field-control="UX_FC_READONLY" sap:filterable="false" sap:sortable="false" \
+					sap:updatable="false" />\
 				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false"/>\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
@@ -150,6 +152,7 @@ sap.ui.require([
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
 		<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" Path="UX_FC_READONLY"/>\
 		<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true"/>\
+		<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence" Bool="false"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/Price">\
 		<Annotation Term="Org.OData.Measures.V1.Scale" Path="PriceScale"/>\
@@ -1091,6 +1094,21 @@ sap.ui.require([
 					}
 				);
 				delete oContact["com.sap.vocabularies.Communication.v1.Contact"];
+
+				// sap:display-format
+				deepEqual(oAnyProperty["sap:display-format"], "NonNegative");
+				delete oAnyProperty["sap:display-format"];
+				deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"], {
+					"Bool" : (i === 0 ? "true" : "false")
+				}, "sap:display-format=NonNegative");
+				delete oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
+
+				deepEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
+				delete oBusinessPartnerId["sap:display-format"];
+				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"], {
+					"Bool" : "true"
+				}, "sap:display-format=UpperCase");
+				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			});
