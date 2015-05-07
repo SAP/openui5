@@ -288,13 +288,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			var tjd = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iYear - 1)) + Math.floor((iYear - 1) / 4)
 				- ( Math.floor((iYear - 1) / 100)) + Math.floor((iYear - 1) / 400) + Math.floor((739 / 12)
-				+ ( (this._isGregorianLeapYear(new Date(iYear, 3, 1)) ? -1 : -2)) + 1);
+				+ ( (this._isGregorianLeapYear(new Date(iYear, 3, 1), bUTC) ? -1 : -2)) + 1);
 
 			var iLeapAdj = 0;
 			if (iJulianDayNoon < tjd) {
 				iLeapAdj = 0;
 			} else {
-				iLeapAdj = this._isGregorianLeapYear(new Date(iYear, 3, 1)) ? 1 : 2;
+				iLeapAdj = this._isGregorianLeapYear(new Date(iYear, 3, 1), bUTC) ? 1 : 2;
 			}
 
 			var iMonth = Math.floor((((iDayOfYear + iLeapAdj) * 12) + 373) / 367);
@@ -305,7 +305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			var iLeapAdj2 = 0;
 			if (iMonth > 2) {
-				iLeapAdj2 = this._isGregorianLeapYear(new Date(iYear, (iMonth - 1), 1)) ? -1 : -2;
+				iLeapAdj2 = this._isGregorianLeapYear(new Date(iYear, (iMonth - 1), 1), bUTC) ? -1 : -2;
 			}
 			tjd2 += Math.floor((((367 * iMonth) - 362) / 12) + iLeapAdj2 + 1);
 
@@ -325,7 +325,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			var iLeapAdj = 0;
 			if ((iGregorianMonth + 1) > 2) {
-				iLeapAdj = (this._isGregorianLeapYear(oDate) ? -1 : -2);
+				iLeapAdj = (this._isGregorianLeapYear(oDate, bUTC) ? -1 : -2);
 			}
 			var iJulianDay = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iGregorianYear - 1)) + Math.floor((iGregorianYear - 1) / 4)
 				+ (-Math.floor((iGregorianYear - 1) / 100)) + Math.floor((iGregorianYear - 1) / 400)
@@ -456,8 +456,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			return a - (b * Math.floor(a / b));
 		};
 
-		IslamicDate.prototype._isGregorianLeapYear = function (date) {
-			var year = date.getFullYear();
+		IslamicDate.prototype._isGregorianLeapYear = function (date, bUTC) {
+			var year = bUTC ? date.getUTCFullYear() : date.getFullYear();
 			return !(year % 400) || (!(year % 4) && !!(year % 100));
 		};
 
@@ -509,16 +509,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			return oIslamicDate.getMilliseconds();
 		};
 
-		IslamicDate.prototype.setUTCFullYear = function (year) {
-			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(year, this.getUTCMonth(), this.getUTCDate(), this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
+		IslamicDate.prototype.setUTCFullYear = function (year, month, date) {
+			//Bare in mind that oDate.setUTCFullYear(y, m, d) is not the same as calling consequently oDate.setUTCFullYear(y), oDate.setUTCMonth(m), oDate.setDate(d)
+			var iMonth = arguments.length >= 2 ? month : this.getUTCMonth();
+			var iDate = arguments.length >= 3 ? date : this.getUTCDate();
+			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(year, iMonth, iDate, this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
-			return callChildSetterIfNeeded.call(this, arguments, "setUTCMonth");
+			return this.getTime();
 		};
 
-		IslamicDate.prototype.setUTCMonth = function (month) {
-			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), month, this.getUTCDate(), this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
+		IslamicDate.prototype.setUTCMonth = function (month, date) {
+			//Bare in mind that oDate.setUTCMonth(m, d) is not the same as calling consequently oDate.setUTCMonth(m), oDate.setDate(d)
+			var iDate = arguments.length >= 2 ? date : this.getUTCDate();
+			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(this.getUTCFullYear(), month, iDate, this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
-			return callChildSetterIfNeeded.call(this, arguments, "setUTCDate");
+			return this.getTime();
 		};
 
 		IslamicDate.prototype.setUTCDate = function (date) {
