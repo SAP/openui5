@@ -28,6 +28,12 @@
 	color:					@sapUiElement;
 }
 
+/*if no image is provided a standard placeholder is displayed */
+.sapMUCItemPlaceholder {
+	background-color: @sapUiExtraLightBG;
+}
+
+
 /*if no link is provided the file name is displayed as an disabled link */
 .sapMLnkDsbl.sapMUCFileName {
 	color: @sapUiDarkText;
@@ -43,7 +49,7 @@
 	color: @sapUiBtnIcon;
 }
 
-/*for width > 30rem */
+/*for width > 30rem the buttons should be displayed as buttons of type transparent */
 @media(min-width: 30rem) {
 	.sapMUCButtonContainer >.sapMBtn >.sapMBtnInner {
 		background-image: none;
@@ -51,8 +57,26 @@
   		border-color: @sapUiButtonLiteBorderColor;
   		color: @sapUiButtonLiteTextColor;
   		text-shadow: none;
-
   	}
+}
+
+/* an edit and delete button in a hover state; it should look like a transparent button in a hover state */
+@media(min-width: 30rem) {
+	.sapMUCEditBtn:hover >.sapMBtnHoverable, .sapMUCDeleteBtn:hover >.sapMBtnHoverable {
+		background-color: @sapUiButtonLiteHoverBackground;
+		border-color: @sapUiButtonLiteHoverBorderColor;
+	}
+}
+
+/*an edit and delete button in a pressed state; it should look like a transparent button in a pressed state  */
+@media(min-width: 30rem) {
+	:not(.sapMBtnDisabled).sapMUCEditBtn > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCEditBtn:hover > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCDeleteBtn > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCDeleteBtn:hover > .sapMBtnActive {
+	background-color: @sapUiButtonLiteActiveBackground;
+	border-color:     @sapUiButtonLiteActiveBorderColor;
+	}
 }
 
 .sapMUCAttrContainer {

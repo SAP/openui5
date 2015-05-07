@@ -21,6 +21,20 @@
 	color:					@sapHCStandardFG;
 }
 
+/*if no image is provided a placeholder camera is displayed */
+.sapMUCItemPlaceholder {
+	background-color: @sapHCStandardBG;
+	box-sizing: border-box;
+	border-width: 0.0625rem;
+	border-style: solid;
+	border-color: @sapHCReducedAltFG;
+	border-radius: 0;
+}
+
+/*pictogram color for the placeholder */
+.sapMUCItemPlaceholder.sapUiIcon::before {
+	color: @sapHCReducedAltFG;
+}
 /*padding between buttons */
 .sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
 	padding-right:		0.5rem;
