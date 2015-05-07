@@ -93,10 +93,12 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		// map from v2 annotation to an array of an annotation term and a name in that annotation
 		// that holds a collection of property references
 		mV2ToV4PropertyCollection = {
-			"sap:sortable" : [ "Org.OData.Capabilities.V1.SortRestrictions",
-				"NonSortableProperties" ],
+			"sap:filterable" : [ "Org.OData.Capabilities.V1.FilterRestrictions",
+				"NonFilterableProperties" ],
 			"sap:required-in-filter" : [ "Org.OData.Capabilities.V1.FilterRestrictions",
-				"RequiredProperties" ]
+				"RequiredProperties" ],
+			"sap:sortable" : [ "Org.OData.Capabilities.V1.SortRestrictions",
+				"NonSortableProperties" ]
 		},
 		Utils;
 
@@ -284,12 +286,15 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 
 			if (oEntityType.property) {
 				oEntityType.property.forEach(function (oProperty) {
-					if (oProperty["sap:sortable"] === "false") {
-						Utils.addPropertyToAnnotation("sap:sortable", oEntitySet, oProperty);
+					if (oProperty["sap:filterable"] === "false") {
+						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet, oProperty);
 					}
 					if (oProperty["sap:required-in-filter"] === "true") {
 						Utils.addPropertyToAnnotation("sap:required-in-filter", oEntitySet,
 							oProperty);
+					}
+					if (oProperty["sap:sortable"] === "false") {
+						Utils.addPropertyToAnnotation("sap:sortable", oEntitySet, oProperty);
 					}
 				});
 			}
