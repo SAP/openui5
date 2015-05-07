@@ -65,7 +65,7 @@ sap.ui.define([
 			this.getAggregation("_button").setEnabled(false);
 			this.fireEvent("change", {
 				value: this.getValue()
-			})
+			});
 		},
 
 		renderer: function (oRM, oControl) {

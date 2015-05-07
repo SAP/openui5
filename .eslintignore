@@ -5,4 +5,3 @@ src/*/test
 src/sap.ui.core/src/sap/ui/thirdparty
 src/sap.ui.demokit/src/sap/ui/demokit/js
 src/testsuite-utils
-src/testsuite/src/main/webapp/walkthrough/05/controller/App.controller.js
