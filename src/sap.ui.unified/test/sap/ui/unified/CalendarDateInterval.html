@@ -18,7 +18,7 @@
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
-			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var aSpecialDays = [["20150101",undefined,"Neujahr",1],
 			                    ["20150106",undefined,"Heilige Drei Könige",1],
