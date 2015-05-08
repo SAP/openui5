@@ -1,23 +1,64 @@
 {
-  "welcomeFile": "index.html",
-  "routes": [
-	{
-	  "path": "/resources",
-	  "target": {
-		"type": "service",
-		"name": "sapui5",
-		"entryPath": "/resources"
-	  },
-	  "description": "SAPUI5 Resources"
-	},
-	{
-	  "path": "/test-resources",
-	  "target": {
-		"type": "service",
-		"name": "sapui5",
-		"entryPath": "/test-resources"
-	  },
-	  "description": "SAPUI5 Test Resources"
-	}
-  ]
+	"welcomeFile": "src/FLPService.html",
+	"routes": [
+		{
+			"path": "/src/resources",
+			"target": {
+				"type": "service",
+				"name": "sapui5",
+				"version": "snapshot",
+				"entryPath": "/resources"
+			},
+			"description": "SAPUI5 Resources (Web IDE) for src folder"
+		},
+		{
+			"path": "/src/test-resources",
+			"target": {
+				"type": "application",
+				"name": "masterdetail",
+				"entryPath": "test",
+				"preferLocal": true
+			},
+			"description": "App Test Resources for src folder (Web IDE)"
+		},
+		{
+			"path": "/test",
+			"target": {
+				"type": "service",
+				"name": "sapui5",
+				"entryPath": "/test-resources"
+			},
+			"description": "SAPUI5 Test Resources"
+		},
+		{
+			"path": "/resources",
+			"target": {
+				"type": "service",
+				"name": "sapui5",
+				"version": "snapshot",
+				"entryPath": "/resources"
+			},
+			"description": "SAPUI5 Resources"
+		},
+		{
+			"path": "/test-resources",
+			"target": {
+				"type": "application",
+				"name": "masterdetail",
+				"entryPath": "test",
+				"preferLocal": true
+			},
+			"description": "App Test Resources for src folder (Web IDE)"
+		},
+		{
+			"path": "/",
+			"target": {
+				"type": "application",
+				"name": "masterdetail",
+				"entryPath": "src",
+				"preferLocal": true
+			},
+			"description": "App Resources (Web IDE) - root folder for cloud will not be able to load testfiles just resources"
+		}
+	]
 }
