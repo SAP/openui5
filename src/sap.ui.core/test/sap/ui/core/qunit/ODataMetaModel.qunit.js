@@ -47,7 +47,8 @@ sap.ui.require([
 				<Property Name="AnyProperty" Type="Edm.String" sap:display-format="NonNegative" \
 					sap:field-control="UX_FC_READONLY" sap:filterable="false" sap:sortable="false" \
 					sap:updatable="false" />\
-				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false"/>\
+				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false" \
+					sap:heading="No Filter" sap:quickinfo="No Filtering" />\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
@@ -59,9 +60,9 @@ sap.ui.require([
 					sap:precision="PriceScale" sap:unit="CurrencyCode"/>\
 				<Property Name="PriceScale" Type="Edm.Byte"/>\
 				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13" Scale="3" \
-					sap:unit="WeightUnit"/>\
+					sap:unit="WeightUnit" sap:visible="true" />\
 				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" \
-					sap:semantics="unit-of-measure"/>\
+					sap:semantics="unit-of-measure" sap:visible="false" />\
 				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" \
 					sap:semantics="currency-code"/>\
 			</EntityType>\
@@ -165,12 +166,22 @@ sap.ui.require([
 		<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true"/>\
 		<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence" Bool="false"/>\
 	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/NonFilterable">\
+			<Annotation Term="com.sap.vocabularies.Common.v1.Heading" \
+				String="No Filter via Annotation" />\
+			<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" \
+				String="No Filtering via Annotation" />\
+	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/Price">\
 		<Annotation Term="Org.OData.Measures.V1.Scale" Path="PriceScale"/>\
 		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCodeFromAnnotation"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/WeightMeasure">\
 		<Annotation Term="Org.OData.Measures.V1.Unit" Path="WeightUnit"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit">\
+			<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" \
+				EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
 		<Annotation Term="Org.OData.Capabilities.V1.FilterRestrictions">\
@@ -1144,6 +1155,33 @@ sap.ui.require([
 					"Bool" : "true"
 				}, "sap:display-format=UpperCase");
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"];
+
+				// sap:heading
+				deepEqual(oNonFilterable["sap:heading"], "No Filter");
+				delete oNonFilterable["sap:heading"];
+				deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.Heading"], {
+					"String" : (i === 0 ? "No Filter" : "No Filter via Annotation")
+				}, "sap:heading");
+				delete oNonFilterable["com.sap.vocabularies.Common.v1.Heading"];
+
+				// sap:quickinfo
+				deepEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
+				delete oNonFilterable["sap:quickinfo"];
+				deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"], {
+					"String" : (i === 0 ? "No Filtering" : "No Filtering via Annotation")
+				}, "sap:quickinfo");
+				delete oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"];
+
+				// sap:visible
+				deepEqual(oProductWeightUnit["sap:visible"], "false");
+				delete oProductWeightUnit["sap:visible"];
+				deepEqual(oProductWeightMeasure["sap:visible"], "true");
+				delete oProductWeightMeasure["sap:visible"];
+				deepEqual(oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"], {
+					"EnumMember" : "com.sap.vocabularies.Common.v1.FieldControlType/" +
+						(i === 0 ? "Hidden" : "ReadOnly")},
+					"Product WeightUnit invisible");
+				delete oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			});
