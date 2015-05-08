@@ -29,7 +29,6 @@ sap.ui.require([
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
-	xmlns:edmNs4="http://docs.oasis-open.org/odata/ns/edm"\
 	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
 	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
 	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
@@ -42,14 +41,12 @@ sap.ui.require([
 					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false" \
 					sap:sortable="false" sap:required-in-filter ="true" \
 					sap:display-format="UpperCase" >\
-					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
 				<Property Name="AnyProperty" Type="Edm.String" sap:display-format="NonNegative" \
 					sap:field-control="UX_FC_READONLY" sap:filterable="false" sap:sortable="false" \
 					sap:updatable="false" />\
 				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false"/>\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
-				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
 			<EntityType Name="VH_Sex" sap:content-version="1">\
 				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1" />\
@@ -326,9 +323,7 @@ sap.ui.require([
 			"/fake/emptyMetadata/$metadata" : [200, mHeaders, sEmptyDataServices],
 			"/fake/emptySchema/$metadata" : [200, mHeaders, sEmptySchema],
 			"/fake/service/$metadata" : [200, mHeaders, sMetadata],
-			//TODO separate test for V4 metadata with inline annotations
 			"/fake/annotations" : [200, mHeaders, sAnnotations],
-			//TODO cleanup GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID (artificial example)
 			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
 			"/fake/emptyAnnotations" : [200, mHeaders, sEmptyAnnotations],
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
