@@ -1,43 +1,64 @@
 {
-"welcomeFile": "index.html",
-"routes": [
-	{
-		"path": "src/resources",
-		"target": {
-			"type": "service",
-			"name": "sapui5",
-			"version" : "snapshot",
-			"entryPath": "/resources"
+	"welcomeFile": "src/FLPService.html",
+	"routes": [
+		{
+			"path": "/src/resources",
+			"target": {
+				"type": "service",
+				"name": "sapui5",
+				"version": "snapshot",
+				"entryPath": "/resources"
+			},
+			"description": "SAPUI5 Resources when running the app from the src folder"
 		},
-		"description": "SAPUI5 Resources"
-	},
-	{
-		"path": "src/test-resources",
-		"target": {
-			"type": "service",
-			"name": "sapui5",
-			"entryPath": "/test-resources"
+		{
+			"path": "/src/test-resources",
+			"target": {
+				"type": "application",
+				"name": "worklist",
+				"entryPath": "test",
+				"preferLocal": true
+			},
+			"description": "App Test Resources for src folder - needed to start the mockserver"
 		},
-		"description": "SAPUI5 Test Resources"
-	},
-	{
-		"path": "test/resources",
-		"target": {
-			"type": "service",
-			"name": "sapui5",
-			"version" : "snapshot",
-			"entryPath": "/resources"
+		{
+			"path": "/test",
+			"target": {
+				"type": "service",
+				"name": "sapui5",
+				"entryPath": "/test-resources"
+			},
+			"description": "SAPUI5 Test Resources when running the app from src - need to be included in the test wich is mapped on src/test-resources"
 		},
-		"description": "SAPUI5 Resources for tests"
-	},
-	{
-		"path": "test/test-resources",
-		"target": {
-			  "type": "service",
-			  "name": "sapui5",
-			  "entryPath": "/test-resources"
+		{
+			"path": "/resources",
+			"target": {
+				"type": "service",
+				"name": "sapui5",
+				"version": "snapshot",
+				"entryPath": "/resources"
+			},
+			"description": "SAPUI5 Resources when running the app from the root (used when deploying or running the tests from the test folder)"
 		},
-		"description": "SAPUI5 Test Resources for tests"
-	}
-]
+		{
+			"path": "/test-resources",
+			"target": {
+				"type": "application",
+				"name": "worklist",
+				"entryPath": "test",
+				"preferLocal": true
+			},
+			"description": "App Test Resources used for starting up the FLP when running the app from the root"
+		},
+		{
+			"path": "/",
+			"target": {
+				"type": "application",
+				"name": "worklist",
+				"entryPath": "src",
+				"preferLocal": true
+			},
+			"description": "App Resources root folder for deployment or when running the tests from the test folder"
+		}
+	]
 }
