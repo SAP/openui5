@@ -178,7 +178,8 @@
 		throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
 		throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
 		throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-
+		throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		
 		//valid ones
 		fnTestCase("8px");
 		fnTestCase("100000em");
@@ -428,6 +429,32 @@
 
 		//Cleanup
 		label.destroy();
+	});
+	
+	test("Should convert units correctly", function() {
+
+		var fnTestCase = function(width, px, screen) {
+			//SUT
+			var sut = new sap.m.Column({minScreenWidth: width});
+
+			//Assert
+			strictEqual(sut._minWidth, px);
+			strictEqual(sut._screen, screen);
+
+			//Cleanup
+			sut.destroy();
+		}
+
+		fnTestCase("64rem", "1024px", "desktop");
+		fnTestCase("64em", "1024px", "desktop");
+		fnTestCase("desktop", "1024px", "desktop");
+		fnTestCase("Desktop", "1024px", "desktop");
+		
+		fnTestCase("63rem", 63 * 16 + "px", "");
+		fnTestCase("63em", 63 * 16 + "px", "");
+		
+		fnTestCase("63px", "63px", "");
+		
 	});
 
 </script>
