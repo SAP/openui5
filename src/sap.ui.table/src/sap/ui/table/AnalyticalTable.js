@@ -201,7 +201,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	/**
 	 * Overwritten from Table.js - does nothing since the selection is stored in the 
 	 */
-	AnalyticalTable.prototype._initSelectionModel = function () {
+	AnalyticalTable.prototype._initSelectionModel = function (sSelectionMode) {
+		this._oSelection = new sap.ui.model.SelectionModel(sSelectionMode);
 		return this;
 	};
 	
