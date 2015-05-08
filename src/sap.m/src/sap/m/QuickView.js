@@ -166,7 +166,6 @@ sap.ui.define([
 	};
 
 	QuickView.prototype._restoreFocus = function() {
-
 		var oPage = this._oNavContainer.getCurrentPage();
 		var oFocusDomRef = this._oNavContainer._mFocusObject[oPage.getId()];
 

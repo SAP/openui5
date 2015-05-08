@@ -209,28 +209,28 @@ sap.ui.define([
 			oButton.$().attr('aria-haspopup', true);
 		},
 
-		handleCompanyQuickViewPress: function (oEvent) {
+		openQuickView: function (oEvent, oModel) {
 			this.createPopover();
 
-			this._oQuickView.setModel(this.oCompanyModel);
+			this._oQuickView.setModel(oModel);
 
-			this._oQuickView.openBy(oEvent.getSource());
+			// delay because addDependent will do a async rerendering and the actionSheet will immediately close without it.
+			var oButton = oEvent.getSource();
+			jQuery.sap.delayedCall(0, this, function () {
+				this._oQuickView.openBy(oButton);
+			});
+		},
+
+		handleCompanyQuickViewPress: function (oEvent) {
+			this.openQuickView(oEvent, this.oCompanyModel);
 		},
 
 		handleEmployeeQuickViewPress: function (oEvent) {
-			this.createPopover();
-
-			this._oQuickView.setModel(this.oEmployeeModel);
-
-			this._oQuickView.openBy(oEvent.getSource());
+			this.openQuickView(oEvent, this.oEmployeeModel);
 		},
 
 		handleGenericQuickViewPress: function (oEvent) {
-			this.createPopover();
-
-			this._oQuickView.setModel(this.oGenericModel);
-
-			this._oQuickView.openBy(oEvent.getSource());
+			this.openQuickView(oEvent, this.oGenericModel);
 		},
 
 		createPopover: function() {
