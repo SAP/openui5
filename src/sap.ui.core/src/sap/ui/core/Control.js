@@ -559,8 +559,10 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart mouseup touchend click",
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
-					if (this.getProperty("busy") === true && this.$()) {
+					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId) {
 						// Also use the BusyIndicatorDelay when a control is initialized with "busy = true"
+						// If the delayed call was already initialized skip any further call if the control was re-rendered while
+						// the delay is on its way.
 						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
 					}
 				}
