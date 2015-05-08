@@ -772,7 +772,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 				that._fnOrientationChange();
 			}
 			that._sResizeTimer = null;
-			that._reapplyPosition();
+			//reposition only if the resize is not caused by manually resizing the dialog
+			if (!that._oManuallySetSize) {
+				that._reapplyPosition();
+			}
 		}, 0);
 	};
 
