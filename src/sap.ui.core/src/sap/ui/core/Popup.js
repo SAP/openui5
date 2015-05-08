@@ -2175,11 +2175,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of),
 				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 
-			// if DOM-reference of 'of' was removed from the DOM or all values are set to '0'
-			if (!oCurrentOfRect || !oCurrentOfRect.top && !oCurrentOfRect.left || !oCurrentOfRect.height || !oCurrentOfRect.width ) {
-				// Docking not possibe due to missing opener.
+			// it's not possible to check for the width/height because the "of" could be window.document and the
+			// document doesn't have a height/width
+			if (!oCurrentOfRect) {
 				this.close();
 				return;
+			} else if (oCurrentOfRect.left === 0 && oCurrentOfRect.top === 0 &&
+					oCurrentOfRect.height === 0 && oCurrentOfRect.height === 0 &&
+					this._oLastPosition.of.id) {
+				// sometimes the "of" was rerendered and therefore the new DOM-reference must be used for the checks.
+				// An id is only ensured for controls and only those can be re-rendered
+				this._oLastPosition.of = jQuery.sap.domById(this._oLastPosition.of.id);
+				oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
+				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+
+				if (!oCurrentOfRect) {
+					this.close();
+					return;
+				}
 			}
 
 			// Check if the current 'of' dom element is removed from the dom tree which indicates that it
