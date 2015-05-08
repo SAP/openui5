@@ -25,7 +25,7 @@
     "grunt-contrib-copy": "^0.7.0",
     "grunt-eslint": "^5.2.0",
     "eslint-plugin-openui5": "0.1.0",
-    "grunt-openui5": "^0.5.0",
+    "grunt-openui5": "^0.7.0",
     "grunt-contrib-qunit": "^0.5.2"
   }
 }

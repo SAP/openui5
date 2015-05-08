@@ -2,6 +2,7 @@
 'use strict';
 
 module.exports = function(grunt) {
+	var fs = require('fs');
 
 	grunt.initConfig({
 
@@ -15,6 +16,25 @@ module.exports = function(grunt) {
 
 		connect: {
 			options: {
+				// hacky solution to replace the "version" placeholder in sap/ui/Global.js to enable version comparison
+				// the file won't be cached
+				middleware: function(connect, options, middlewares) {
+					// make sure to put the middleware after "cors"
+					middlewares.splice(1, 0, ['/resources/sap/ui/Global.js', function (req, res, next) {
+						fs.readFile('bower_components/openui5/src/sap.ui.core/src/sap/ui/Global.js', {encoding: 'utf-8'}, function (err, data) {
+							if (err) {
+								res.writeHead(404);
+								res.end();
+							} else {
+								res.writeHead(200, {'Content-Type': 'application/javascript'});
+								res.write(data.replace(/(?:\$\{version\}|@version@)/g, '1.29.1-SNAPSHOT'));
+								res.end();
+							}
+						});
+					}]);
+					return middlewares;
+				},
+				open: 'http://localhost:<%= connect.options.port %>/index.html',
 				port: 8080,
 				hostname: '*'
 			},
@@ -33,8 +53,11 @@ module.exports = function(grunt) {
 			},
 			src: {
 				options: {
-					appresources: ['.'],
-					testresources: ['<%= dir.tests %>']
+					appresources: ['<%= dir.webapp %>'],
+					testresources: [
+						'<%= dir.tests %>',
+						'<%= dir.bower_components %>/openui5/src/sap.ui.core/test'
+					]
 				}
 			},
 			dist: {
