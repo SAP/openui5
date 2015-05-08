@@ -665,12 +665,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		if (!bStretch) {
 			//set the size to the content
 			if (!this._oManuallySetSize) {
-				oStyles.width = sContentWidth || (bMessageType ? '480px' : undefined);
+				oStyles.width = sContentWidth ||  undefined;
 				oStyles.height = sContentHeight || undefined;
 			}
 
 			//set max height and width smaller that the screen
-			oStyles["max-width"] = iMaxWidth + 'px';
+			oStyles["max-width"] = bMessageType ? '480px' : iMaxWidth + 'px';
 			oStyles["max-height"] = iMaxHeight + 'px';
 
 			//set the max-height so contents with defined height and width can be displayed with scroller when the height/width is smaller than the content
