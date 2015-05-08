@@ -101,7 +101,10 @@
 							"com.sap.vocabularies.Common.v1.Label" : {
 								"String" : "E-Mail Address"
 							},
-							"sap:semantics" : "email"
+							"sap:semantics" : "email",
+							"com.sap.vocabularies.Communication.v1.IsEmailAddress" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "PhoneNumber",
 							"type" : "Edm.String",
@@ -119,7 +122,10 @@
 							"com.sap.vocabularies.Common.v1.Label" : {
 								"String" : "Phone No."
 							},
-							"sap:semantics" : "tel"
+							"sap:semantics" : "tel",
+							"com.sap.vocabularies.Communication.v1.IsPhoneNumber" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "FaxNumber",
 							"type" : "Edm.String",
@@ -254,6 +260,18 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/0",
+						"com.sap.vocabularies.Communication.v1.Contact" : {
+							"email" : [{
+								"address" : {
+									"Path" : "EmailAddress"
+								}
+							}],
+							"tel" : [{
+								"uri" : {
+									"Path" : "PhoneNumber"
+								}
+							}]
+						},
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
 								"String" : "Business Partner"
@@ -2897,7 +2915,10 @@
 							"com.sap.vocabularies.Common.v1.Label" : {
 								"String" : "Phone No."
 							},
-							"sap:semantics" : "tel"
+							"sap:semantics" : "tel",
+							"com.sap.vocabularies.Communication.v1.IsPhoneNumber" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "FaxNumber",
 							"type" : "Edm.String",
@@ -2928,7 +2949,10 @@
 							"com.sap.vocabularies.Common.v1.Label" : {
 								"String" : "E-Mail Address"
 							},
-							"sap:semantics" : "email"
+							"sap:semantics" : "email",
+							"com.sap.vocabularies.Communication.v1.IsEmailAddress" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Language",
 							"type" : "Edm.String",

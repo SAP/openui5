@@ -16,6 +16,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			"bday" : "Contact",
 			"city" : "Contact/adr",
 			"country" : "Contact/adr",
+			"email" : "Contact/email",
 			"familyname" : "Contact/n",
 			"givenname" : "Contact/n",
 			"honorific" : "Contact/n",
@@ -31,6 +32,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			"region" : "Contact/adr",
 			"street" : "Contact/adr",
 			"suffix" : "Contact/n",
+			"tel" : "Contact/tel",
 			"title" : "Contact",
 			"zip" : "Contact/adr",
 			// event annotations
@@ -55,18 +57,30 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			"percent-complete" : "Task",
 			"priority" : "Task"
 		},
-		// only if v4 name is different than v2 name
-		mV2ToV4Attribute = {
-			"city" : "locality",
-			"familyname" : "surname",
-			"givenname" : "given",
-			"honorific" : "prefix",
-			"middlename" : "additional",
-			"name" : "fn",
-			"org-role" : "role",
-			"org-unit" : "orgunit",
-			"percent-complete" : "percentcomplete",
-			"zip" : "code"
+		rSemanticsWithTypes = /(\w+)(?:;type=([\w,]+))?/,
+		mV2SemanticsToV4TypeInfo = {
+			"email" : {
+				typeMapping : {
+					"home" : "home",
+					"pref" : "preferred",
+					"work" : "work"
+				},
+				v4EnumType : "com.sap.vocabularies.Communication.v1.ContactInformationType",
+				v4PropertyAnnotation: "com.sap.vocabularies.Communication.v1.IsEmailAddress"
+			},
+			"tel" : {
+				typeMapping : {
+					"cell" : "cell",
+					"fax" : "fax",
+					"home" : "home",
+					"pref" : "preferred",
+					"video" : "video",
+					"voice" : "voice",
+					"work" : "work"
+				},
+				v4EnumType : "com.sap.vocabularies.Communication.v1.PhoneType",
+				v4PropertyAnnotation: "com.sap.vocabularies.Communication.v1.IsPhoneNumber"
+			}
 		},
 		// map from v2 to v4 for NON-DEFAULT cases only
 		mV2ToV4 = {
@@ -89,6 +103,21 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			updatable : {
 				"Org.OData.Capabilities.V1.UpdateRestrictions" : { "Updatable" : oBoolFalse }
 			}
+		},
+		// only if v4 name is different from v2 name
+		mV2ToV4Attribute = {
+			"city" : "locality",
+			"email" : "address",
+			"familyname" : "surname",
+			"givenname" : "given",
+			"honorific" : "prefix",
+			"middlename" : "additional",
+			"name" : "fn",
+			"org-role" : "role",
+			"org-unit" : "orgunit",
+			"percent-complete" : "percentcomplete",
+			"tel" : "uri",
+			"zip" : "code"
 		},
 		// map from v2 annotation to an array of an annotation term and a name in that annotation
 		// that holds a collection of property references
@@ -171,12 +200,36 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			if (oType.property) {
 				oType.property.forEach(function (oProperty) {
 					var aAnnotationParts,
-						sV4Annotation,
-						oV4Annotation,
+						bIsCollection,
+						aMatches,
 						sSubStructure,
+						vTmp,
 						sV2Semantics = oProperty["sap:semantics"],
-						sV4AnnotationPath = mSemanticsToV4AnnotationPath[sV2Semantics];
+						sV4Annotation,
+						sV4AnnotationPath,
+						oV4Annotation,
+						oV4TypeInfo,
+						sV4TypeList;
 
+					if (!sV2Semantics) {
+						return;
+					}
+					aMatches = rSemanticsWithTypes.exec(sV2Semantics);
+					if (!aMatches) {
+						jQuery.sap.log.warning("Unsupported sap:semantics: " + sV2Semantics,
+							oType.name + "." + oProperty.name,
+							"sap.ui.model.odata._ODataMetaModelUtils");
+						return;
+					}
+
+					if (aMatches[2]) {
+						sV2Semantics = aMatches[1];
+						oV4TypeInfo = mV2SemanticsToV4TypeInfo[sV2Semantics];
+						sV4TypeList = Utils.getV4TypesForV2Semantics(sV2Semantics, aMatches[2],
+							oProperty, oType);
+					}
+					bIsCollection = sV2Semantics === "tel" || sV2Semantics === "email";
+					sV4AnnotationPath = mSemanticsToV4AnnotationPath[sV2Semantics];
 					if (sV4AnnotationPath) {
 						aAnnotationParts = sV4AnnotationPath.split("/");
 						sV4Annotation = "com.sap.vocabularies.Communication.v1."
@@ -185,11 +238,29 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 						oV4Annotation = oType[sV4Annotation];
 						sSubStructure = aAnnotationParts[1];
 						if (sSubStructure) {
-							oV4Annotation[sSubStructure] = oV4Annotation[sSubStructure] || {};
-							oV4Annotation = oV4Annotation[sSubStructure];
+							oV4Annotation[sSubStructure] = oV4Annotation[sSubStructure] ||
+								(bIsCollection ? [] : {});
+							if (bIsCollection) {
+								vTmp = {};
+								oV4Annotation[sSubStructure].push(vTmp);
+								oV4Annotation = vTmp;
+							} else {
+								oV4Annotation = oV4Annotation[sSubStructure];
+							}
 						}
 						oV4Annotation[mV2ToV4Attribute[sV2Semantics] || sV2Semantics]
-							= {"Path": oProperty.name};
+							= { "Path" : oProperty.name };
+						if (sV4TypeList) {
+							// set also type attribute
+							oV4Annotation.type = { "EnumMember" : sV4TypeList };
+						}
+					}
+
+					// Additional annotation at the property with sap:semantics "tel" or "email";
+					// ensure not to overwrite existing v4 annotations
+					if (oV4TypeInfo) {
+						oProperty[oV4TypeInfo.v4PropertyAnnotation] =
+							oProperty[oV4TypeInfo.v4PropertyAnnotation] || oBoolTrue;
 					}
 				});
 			}
@@ -308,8 +379,8 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
-		 * Returns the index of the object inside the given array, where the property with the given
-		 * name has the given expected value.
+		 * Returns the index of the object inside the given array, where the property with the
+		 * given name has the given expected value.
 		 *
 		 * @param {object[]} aArray
 		 *   some array
@@ -337,8 +408,8 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
-		 * Returns the object inside the given array, where the property with the given name has the
-		 * given expected value.
+		 * Returns the object inside the given array, where the property with the given name has
+		 * the given expected value.
 		 *
 		 * @param {object[]} aArray
 		 *   some array
@@ -451,6 +522,44 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			});
 
 			return vResult;
+		},
+
+		/**
+		 * Compute a space-separated list of v4 annotation enumeration values for the given
+		 * sap:semantics "tel" and "email".
+		 * E.g. for <code>sap:semantics="tel;type=fax"</code> this function returns
+		 * "com.sap.vocabularies.Communication.v1.PhoneType/fax".
+		 *
+		 * @param {string} sSemantics
+		 *   the sap:semantivs value ("tel" or "email")
+		 * @param {string} sTypesList
+		 *   the comma-separated list of types for sap:semantics
+		 * @param {object} oProperty
+		 *   the property
+		 * @param {object} oType
+		 *   the type
+		 * @returns {string}
+		 *   the corresponding space-separated list of v4 annotation enumeration values;
+		 *   returns an empty string if the sap:semantics value is not supported; unsupported types
+		 *   are logged and skipped;
+		 */
+		getV4TypesForV2Semantics: function (sSemantics, sTypesList, oProperty, oType) {
+			var aResult = [],
+				oV4TypeInfo = mV2SemanticsToV4TypeInfo[sSemantics];
+
+			if (oV4TypeInfo) {
+				sTypesList.split(",").forEach(function (sType) {
+					var sTargetType = oV4TypeInfo.typeMapping[sType];
+					if (sTargetType) {
+						aResult.push(oV4TypeInfo.v4EnumType + "/" + sTargetType);
+					} else if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+						jQuery.sap.log.warning("Unsupported type for sap:semantics: " + sType,
+							oType.name + "." + oProperty.name,
+							"sap.ui.model.odata._ODataMetaModelUtils");
+					}
+				});
+			}
+			return aResult.join(" ");
 		},
 
 		/**

@@ -70,6 +70,7 @@ sap.ui.require([
 				<Property Name="Honorific" Type="Edm.String" sap:semantics="honorific"/>\
 				<Property Name="LastName" Type="Edm.String" sap:semantics="familyname"/>\
 				<Property Name="NickName" Type="Edm.String" sap:semantics="nickname"/>\
+				<Property Name="Tel" Type="Edm.String" sap:semantics="tel;type=anything,fax"/>\
 				<Property Name="Zip" Type="Edm.String" sap:semantics="zip"/>\
 			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
@@ -142,6 +143,16 @@ sap.ui.require([
 			</Record>\
 		</PropertyValue>\
 		<PropertyValue Property="nickname" Path="NickName"/>\
+		<PropertyValue Property="tel">\
+			<Collection>\
+				<Record>\
+					<PropertyValue Property="uri" Path="Tel"/>\
+					<PropertyValue Property="type">\
+						<EnumMember>com.sap.vocabularies.Communication.v1.PhoneType/work com.sap.vocabularies.Communication.v1.PhoneType/cell</EnumMember>\
+					</PropertyValue>\
+				</Record>\
+			</Collection>\
+		</PropertyValue>\
 	</Record>\
 </Annotation>\
 </Annotations>\
@@ -697,6 +708,7 @@ sap.ui.require([
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					oBusinessPartnerSet = oEntityContainer.entitySet[0],
 					oContact = oGWSampleBasic.entityType[3],
+					oContactTel = oContact.property[4],
 					oAnyProperty = oBusinessPartner.property[1],
 					oNonFilterable = oBusinessPartner.property[2],
 					oCTAddress = oGWSampleBasic.complexType[0],
@@ -1063,7 +1075,7 @@ sap.ui.require([
 				oContact.property.forEach(function (oProperty) {
 					// check only availability of sap:semantics
 					// lift is tested multiple times before
-					ok(oProperty["sap:semantics"]);
+					ok(oProperty["sap:semantics"], oProperty.name + " has sap:semantics");
 					delete oProperty["sap:semantics"];
 				});
 				deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"], i === 0
@@ -1076,7 +1088,16 @@ sap.ui.require([
 							"prefix": { "Path": "Honorific" },
 							"surname": { "Path": "LastName" }
 						},
-						"nickname": { "Path": "NickName" }
+						"nickname": { "Path": "NickName" },
+						"tel" : [{
+							"type" : {
+								"EnumMember" :
+									"com.sap.vocabularies.Communication.v1.PhoneType/fax"
+							},
+							"uri" : {
+								"Path" : "Tel"
+							}
+						}]
 					}
 					: {
 						"n": {
@@ -1090,10 +1111,24 @@ sap.ui.require([
 							// TODO why is EdmType contained here but not in properties in n above?
 							"EdmType": "Edm.String",
 							"Path": "NickName"
-						}
+						},
+						"tel" : [{
+							"type" : {
+								"EnumMember" :
+									"com.sap.vocabularies.Communication.v1.PhoneType/work " +
+									"com.sap.vocabularies.Communication.v1.PhoneType/cell"
+							},
+							"uri" : {
+								"Path" : "Tel"
+							}
+						}]
 					}
 				);
 				delete oContact["com.sap.vocabularies.Communication.v1.Contact"];
+
+				deepEqual(oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
+						{ "Bool" : "true" }, "IsPhoneNumber");
+				delete oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"];
 
 				// sap:display-format
 				deepEqual(oAnyProperty["sap:display-format"], "NonNegative");

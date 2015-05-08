@@ -43,7 +43,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * </pre>
 	 *
 	 * As of 1.29.0, the corresponding vocabulary-based annotations for the following
-	 * "<a src="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a>"
+	 * "<a href="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a>"
 	 * are added, if they are not yet defined in the v4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
@@ -56,15 +56,17 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * and <code>updatable</code> on properties;</li>
 	 * <li><code>semantics</code>; the following values are supported:
 	 * <ul>
-	 * <li>"bday", "city", "country", "familyname", "givenname", "honorific", "middlename", "name",
+	 * <li>"bday", "city", "country", "email" (including support for types, for example
+	 * "email;type=home,pref"), "familyname", "givenname", "honorific", "middlename", "name",
 	 * "nickname", "note", "org", "org-unit", "org-role", "photo", "pobox", "region", "street",
-	 * "suffix", "title" and "zip" (mapped to v4 annotation
-	 * <code>com.sap.vocabularies.Communication.v1.Contact</code>);</li>
+	 * "suffix", "tel" (including support for types, for example "tel;type=cell,pref"), "title" and
+	 * "zip" (mapped to v4 annotation <code>com.sap.vocabularies.Communication.v1.Contact</code>);
+	 * </li>
 	 * <li>"class", "dtend", "dtstart", "duration", "fbtype", "location", "status", "transp" and
 	 * "wholeday" (mapped to v4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Event</code>);</li>
 	 * <li>"body", "from", "received", "sender" and "subject" (mapped to v4 annotation
-	 * <code>com.sap.vocabularies.Communication.v1.Message</code>).</li>
+	 * <code>com.sap.vocabularies.Communication.v1.Message</code>);</li>
 	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to v4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Task</code>).</li>
 	 * </ul>
