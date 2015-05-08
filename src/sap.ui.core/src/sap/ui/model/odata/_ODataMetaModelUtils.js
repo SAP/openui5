@@ -333,14 +333,28 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 					o["com.sap.vocabularies.Common.v1.FieldControl"]
 						= { "Path" : oExtension.value };
 					break;
+				case "heading":
+					o["com.sap.vocabularies.Common.v1.Heading"] = { "String" : oExtension.value };
+					break;
 				case "label":
 					o["com.sap.vocabularies.Common.v1.Label"] = { "String" : oExtension.value };
 					break;
 				case "precision":
 					o["Org.OData.Measures.V1.Scale"] = { "Path" : oExtension.value };
 					break;
+				case "quickinfo":
+					o["com.sap.vocabularies.Common.v1.QuickInfo"] =
+						{ "String" : oExtension.value };
+					break;
 				case "text":
 					o["com.sap.vocabularies.Common.v1.Text"] = { "Path" : oExtension.value };
+					break;
+				case "visible":
+					if (oExtension.value === "false") {
+						o["com.sap.vocabularies.Common.v1.FieldControl"] = {
+							"EnumMember" : "com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
+						};
+					}
 					break;
 				default:
 					// no transformation for v2 annotation supported or necessary
