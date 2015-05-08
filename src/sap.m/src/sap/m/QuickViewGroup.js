@@ -4,7 +4,7 @@
 
 // Provides control sap.m.QuickViewGroup
 sap.ui.define([
-		'jquery.sap.global', 'sap/m/library', 'sap/ui/core/Element'],
+		'jquery.sap.global', './library', 'sap/ui/core/Element'],
 	function(jQuery, library, Element) {
 		"use strict";
 

@@ -4,8 +4,10 @@
 
 // Provides control sap.m.QuickViewGroupElement
 sap.ui.define([
-		'jquery.sap.global', 'sap/m/library', 'sap/ui/core/Element', 'sap/m/QuickViewGroupElementType'],
-	function(jQuery, library, Element, GroupElementType) {
+		'jquery.sap.global', './library', 'sap/ui/core/Element', './QuickViewGroupElementType',
+		'./Link', './Text', 'sap/ui/core/CustomData'],
+	function(jQuery, library, Element, GroupElementType,
+				Link, Text, CustomData) {
 		"use strict";
 
 		/**
@@ -94,33 +96,33 @@ sap.ui.define([
 		GroupElement.prototype._getGroupElementValue = function() {
 			switch (this.getType()) {
 				case GroupElementType.email:
-					return new sap.m.Link({
+					return new Link({
 						href : "mailto:" + this.getValue(),
 						text : this.getValue()
 					});
 				case GroupElementType.phone:
 				case GroupElementType.mobile:
-					return new sap.m.Link({
+					return new Link({
 						href : "tel:" + this.getValue(),
 						text : this.getValue()
 					});
 				case GroupElementType.link:
-					return new sap.m.Link({
+					return new Link({
 						href : this.getUrl(),
 						text : this.getValue(),
 						target : this.getTarget()
 					});
 				case GroupElementType.cardLink:
-					return new sap.m.Link({
+					return new Link({
 						href : "#",
 						text : this.getValue(),
-						customData : [ new sap.ui.core.CustomData({
+						customData : [new CustomData({
 							key : "cardNumber",
 							value : this.getCardLinkId()
 						})]
 					});
 				default:
-					return new sap.m.Text({
+					return new Text({
 						text : this.getValue()
 					});
 			}

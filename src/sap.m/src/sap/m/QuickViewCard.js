@@ -4,8 +4,22 @@
 
 // Provides control sap.m.QuickViewCard
 sap.ui.define([
-			'jquery.sap.global', 'sap/m/library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-		function(jQuery, library, Control, IconPool) {
+			'jquery.sap.global', './library', 'sap/ui/core/Control',
+				'sap/ui/core/IconPool', 'sap/ui/layout/form/SimpleForm',
+				'sap/ui/layout/VerticalLayout', 'sap/ui/layout/HorizontalLayout',
+				'./Page', './Button', './ButtonType', './Bar',
+				'./Title', './Image', './Link', './Text',
+				'./QuickViewGroupElementType',
+				'./Label', './HBox', 'sap/ui/core/Icon', 'sap/ui/core/Title', 'sap/ui/core/TitleLevel',
+				'sap/ui/core/CustomData', 'sap/ui/layout/form/SimpleFormLayout'],
+		function(jQuery, library, Control,
+					IconPool, SimpleForm,
+					VerticalLayout, HorizontalLayout,
+					Page, Button, ButtonType, Bar,
+					Title, Image, Link, Text,
+					QuickViewGroupElementType,
+					Label, HBox, Icon, CoreTitle, CoreTitleLevel,
+					CustomData, SimpleFormLayout) {
 			"use strict";
 
 			/**
@@ -134,23 +148,23 @@ sap.ui.define([
 
 				aContent.push(oHeaderContent, oForm);
 
-				var oCard = new sap.m.Page(this.getCardId(), {
+				var oCard = new Page(this.getCardId(), {
 					content : aContent,
-					customHeader : new sap.m.Bar()
+					customHeader : new Bar()
 				});
 
 				var oCustomHeader = oCard.getCustomHeader();
 
 				oCustomHeader.addContentMiddle(
-					new sap.m.Title({
+					new Title({
 						text : this.getHeader()
 					})
 				);
 
 				if (this._hasBackButton) {
 					oCustomHeader.addContentLeft(
-						new sap.m.Button({
-							type : sap.m.ButtonType.Back,
+						new Button({
+							type : ButtonType.Back,
 							tooltip : this._oResourceBundle.getText("PAGE_NAVBUTTON_TEXT"),
 							press : function() {
 								if (that._oNavContainer) {
@@ -163,7 +177,7 @@ sap.ui.define([
 
 				if (sap.ui.Device.system.phone) {
 					oCustomHeader.addContentRight(
-						new sap.m.Button({
+						new Button({
 							icon : "sap-icon://decline",
 							press : function() {
 								if (that._oPopover) {
@@ -173,6 +187,8 @@ sap.ui.define([
 						})
 					);
 				}
+
+				oCard.addStyleClass('sapMQuickViewCard');
 
 				return oCard;
 			};
@@ -189,10 +205,10 @@ sap.ui.define([
 
 			QuickViewCard.prototype._createForm = function () {
 				var aGroups = this.getAggregation("groups"),
-				    oForm = new sap.ui.layout.form.SimpleForm({
+				    oForm = new SimpleForm({
 						maxContainerCols: 1,
 						editable: false,
-						layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout
+						layout: SimpleFormLayout.ResponsiveGridLayout
 					});
 
 				if (aGroups) {
@@ -206,16 +222,16 @@ sap.ui.define([
 
 			QuickViewCard.prototype._getCardHeaderContent = function() {
 				var oIcon,
-					oVLayout = new sap.ui.layout.VerticalLayout(),
-					oHLayout = new sap.ui.layout.HorizontalLayout();
+					oVLayout = new VerticalLayout(),
+					oHLayout = new HorizontalLayout();
 
 				if (this.getIcon()) {
 					if (this.getIcon().indexOf("sap-icon") == 0) {
-						oIcon = new sap.ui.core.Icon({
+						oIcon = new Icon({
 							src: this.getIcon()
 						});
 					} else {
-						oIcon = new sap.m.Image({
+						oIcon = new Image({
 							src: this.getIcon()
 						}).addStyleClass("sapUiIcon");
 					}
@@ -232,24 +248,24 @@ sap.ui.define([
 				var oTitle;
 
 				if (this.getTitleUrl()) {
-					oTitle = new sap.m.Link({
+					oTitle = new Link({
 						text	: this.getTitle(),
 						href	: this.getTitleUrl(),
 						target	: "_blank"
 					});
 				} else if (this.getCrossAppNavCallback()) {
-					oTitle = new sap.m.Link({
+					oTitle = new Link({
 						text	: this.getTitle()
 					});
 					oTitle.attachPress(this._crossApplicationNavigation(this));
 				} else {
-					oTitle = new sap.m.Title({
+					oTitle = new Title({
 						text	: this.getTitle(),
-						level	: sap.ui.core.TitleLevel.H1
+						level	: CoreTitleLevel.H1
 					});
 				}
 
-				var oDescription = new sap.m.Text({
+				var oDescription = new Text({
 					text	: this.getDescription()
 				});
 
@@ -268,9 +284,9 @@ sap.ui.define([
 					oLabel;
 
 				if (oGroup.getHeading()) {
-					oForm.addContent( new sap.ui.core.Title({
+					oForm.addContent(new CoreTitle({
 						text : oGroup.getHeading(),
-						level : sap.ui.core.TitleLevel.H2
+						level : CoreTitleLevel.H2
 					}));
 				}
 
@@ -281,33 +297,33 @@ sap.ui.define([
 				for (var k = 0; k < aElements.length; k++) {
 					oCurrentGroupElement = aElements[k];
 
-					oLabel = new sap.m.Label({
+					oLabel = new Label({
 						text: oCurrentGroupElement.getLabel()
 					});
 
 					oCurrentGroupElementValue = oCurrentGroupElement._getGroupElementValue();
 
-					if (oCurrentGroupElementValue instanceof sap.m.Link) {
+					if (oCurrentGroupElementValue instanceof Link) {
 						oCurrentGroupElementValue.addAriaLabelledBy(oCurrentGroupElementValue);
 					}
 
 					oForm.addContent(oLabel);
 
-					if (oCurrentGroupElement.getType() == sap.m.QuickViewGroupElementType.cardLink) {
+					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.cardLink) {
 						oCurrentGroupElementValue.attachPress(this._attachPressLink(this));
 					}
 
-					if (oCurrentGroupElement.getType() == sap.m.QuickViewGroupElementType.mobile) {
-						var oSmsLink = new sap.ui.core.Icon({
+					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile) {
+						var oSmsLink = new Icon({
 							src: IconPool.getIconURI("post"),
 							decorative : false,
-							customData: [new sap.ui.core.CustomData({
+							customData: [new CustomData({
 								key: "phoneNumber",
 								value: oCurrentGroupElement.getValue()
 							})],
 							press: this._mobilePress
 						});
-						var oBox = new sap.m.HBox({
+						var oBox = new HBox({
 							items: [oCurrentGroupElementValue, oSmsLink]
 						});
 						oForm.addContent(oBox);
@@ -321,8 +337,11 @@ sap.ui.define([
 				return function () {
 					if (that.getCrossAppNavCallback() && that.oCrossAppNavigator) {
 						var href = this.oCrossAppNavigator.hrefForExternal(
-							{   target : { semanticObject : that.getCrossAppNavCallback().target.semanticObject,
-								action : that.getCrossAppNavCallback().target.action },
+							{
+								target : {
+									semanticObject : that.getCrossAppNavCallback().target.semanticObject,
+									action : that.getCrossAppNavCallback().target.action
+								},
 								params : that.getCrossAppNavCallback().params
 							}
 						);

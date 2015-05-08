@@ -35,7 +35,7 @@
 			title  : "John Doe",
 			titleActive: false,
 			icon  : "sap-icon://person-placeholder",
-			intro: "Department Manager1",
+			description: "Department Manager1",
 			groups: [
 				{
 					heading: "Job",
@@ -93,7 +93,7 @@
 				header: "{/header}",
 				title: "{/title}",
 				icon: "{/icon}",
-				intro: "{/intro}",
+				description: "{/description}",
 				groups: {
 					path: '/groups',
 					template: new sap.m.QuickViewGroup({
@@ -149,7 +149,7 @@
 		QUnit.test("When testing the binding of the data to the elements", function (assert) {
 			assert.strictEqual(this.oQuickViewCard.getHeader(), "Employee Info", "should be set correctly");
 			assert.strictEqual(this.oQuickViewCard.getTitle(), "John Doe", "should be set correctly");
-			assert.strictEqual(this.oQuickViewCard.getIntro(), "Department Manager1", "should be set correctly");
+			assert.strictEqual(this.oQuickViewCard.getDescription(), "Department Manager1", "should be set correctly");
 			assert.strictEqual(this.oQuickViewCard.getIcon(), "sap-icon://person-placeholder", "should be set correctly");
 		});
 
