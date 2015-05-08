@@ -249,7 +249,7 @@ sap.ui.define([
 		 * @returns {sap.m.GroupHeaderListItem} group header with non-capitalized caption.
 		 */
 		createGroupHeader: function (oGroup) {
-			return new GroupHeaderListItem( {
+			return new GroupHeaderListItem({
 				title: oGroup.text,
 				upperCase: false
 			});
@@ -364,13 +364,13 @@ sap.ui.define([
 
 		/**
 		 * Internal helper method that sets the filter bar visibility property and the label's caption to be shown
-		 * @param {sValue} sValue the selected filter value
+		 * @param {string} sFilterBarText the selected filter value
 		 * @private
 		 */
-		_updateFilterBar : function (sValue) {
+		_updateFilterBar : function (sFilterBarText) {
 			var oViewModel = this.getModel("masterView");
 			oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
-			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
+			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sFilterBarText]));
 		}
 	});
 
