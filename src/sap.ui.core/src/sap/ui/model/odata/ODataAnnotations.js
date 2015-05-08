@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		NavigationPropertyPath: true,
 		AnnotationPath: true
 	};
-	
+
 	var mMultipleArgumentDynamicExpressions = {
 		And: true,
 		Or: true,
@@ -54,8 +54,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		If: true,
 		Collection: true
 	};
-	
-	
+
+
 
 	/**
 	 * @param {string|string[]} aAnnotationURI The annotation-URL or an array of URLS that should be parsed and merged
@@ -251,7 +251,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Parses the alias definitions of the annotation document and fills the internal oAlias object.
-	 * 
+	 *
 	 * @param {object} oXMLDoc - The document containing the alias definitions
 	 * @param {map} mAnnotationReferences - The annotation reference object (output)
 	 * @param {map} mAlias - The alias reference object (output)
@@ -269,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			bFound = true;
 			oNode = this.xPath.nextNode(oAliasNodes, i);
 			mAlias[oNode.getAttribute("Alias")] = oNode.getAttribute("Namespace");
-		}		
+		}
 
 
 		var sReferenceSelector = "//edmx:Reference[@Uri]/edmx:IncludeAnnotations[@TermNamespace]";
@@ -621,7 +621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 		if (
 			// All browsers including IE
-			oXMLDoc.getElementsByTagName("parsererror").length > 0 
+			oXMLDoc.getElementsByTagName("parsererror").length > 0
 			// IE 11 special case
 			|| (oXMLDoc.parseError && oXMLDoc.parseError.errorCode !== 0)
 		) {
@@ -648,7 +648,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Adds (a) new URL(s) to the be parsed for OData annotations, which are then merged into the annotations object 
+	 * Adds (a) new URL(s) to the be parsed for OData annotations, which are then merged into the annotations object
 	 * which can be retrieved by calling the getAnnotations()-method.
 	 *
 	 * @param {string|sting[]} vUri - Either one Uri as string or an array or Uri strings
@@ -660,6 +660,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var that = this;
 
 		var aUris = vUrl;
+
+		if (Array.isArray(vUrl) && vUrl.length == 0) {
+			return Promise.resolve({annotations: this.oAnnotations});
+		}
+
 		if (!Array.isArray(vUrl)) {
 			aUris = [ vUrl ];
 		}
@@ -691,7 +696,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							annotations:	that.oAnnotations,
 							results: 	mResults
 						};
-						
+
 						if (that.bAsync) {
 							that.fireLoaded(mSuccess);
 						} else {
@@ -714,11 +719,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 		});
 	};
-	
+
 	/**
-	 * Returns a promise to load and parse annotations from a single URL, resolves if the URL could be loaded and parsed, rejects 
+	 * Returns a promise to load and parse annotations from a single URL, resolves if the URL could be loaded and parsed, rejects
 	 * otherwise
-	 * 
+	 *
 	 * @param {string} sUrl - The URL to load
 	 * @return {Promise} The promise to load the URL. Argument contains information about the failed or succeeded request
 	 */
@@ -1066,7 +1071,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Returns the text value of a given node and does an alias replacement if neccessary.
-	 * 
+	 *
 	 * @param {Node} oNode - The Node of which the text value should be determined
 	 * @param {map} mAlias - The alias map
 	 * @return {string} The text content
@@ -1132,20 +1137,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							for (var i = 0; i < oChildNodes.length; i++) {
 								var oChildNode = this.xPath.nextNode(oChildNodes, i);
 								var vValue;
-								
+
 								vValue = this.getPropertyValue(oXmlDocument, oChildNode, mAlias);
-								
+
 								var sNodeName = oChildNode.nodeName;
 								var sParentName = oChildNode.parentNode.nodeName;
-								
-								
-								// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
+
+
+								// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in
 								// their order within the document
 								if (mMultipleArgumentDynamicExpressions[sParentName]) {
 									if (!Array.isArray(vPropertyValue)) {
 										vPropertyValue = [];
 									}
-									
+
 									var mValue = {};
 									mValue[sNodeName] = vValue;
 									vPropertyValue.push(mValue);
@@ -1226,9 +1231,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				if (!vValue || Object.keys(vValue).length === 0) {
 					vValue = this.getPropertyValue(xmlDoc, oParameterNode, mAlias);
 				}
-				
+
 				mParameter.Value = vValue;
-			
+
 			} else if (mMultipleArgumentDynamicExpressions[oParameterNode.nodeName]) {
 				mParameter.Value = this.getPropertyValue(xmlDoc, oParameterNode, mAlias);
 			} else {
