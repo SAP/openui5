@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	 * @class
 	 * Allows end users to interact with date and/or time and select from a date and/or time pad.
 	 * Note: Since 1.22, this control should not be used as a date picker(type property "Date"), instead please use dedicated sap.m.DatePicker control.
+	 * Note: This control does not support the Islamic calendar.
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
