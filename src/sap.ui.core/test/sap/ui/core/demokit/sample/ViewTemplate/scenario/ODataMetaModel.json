@@ -1271,8 +1271,7 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.Decimal"
-							}],
-							"RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType"
+							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
 							"Label" : {
@@ -2114,8 +2113,7 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.String"
-							}],
-							"RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType"
+							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
 							"Label" : {
@@ -2715,8 +2713,7 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.String"
-							}],
-							"RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType"
+							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
 							"Label" : {

@@ -175,7 +175,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Dimensions">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Dimensions"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -374,7 +374,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Note">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Order Note"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -514,7 +514,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Note">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Order Note"/>
 						<PropertyValue Property="Data">
 							<Collection>
