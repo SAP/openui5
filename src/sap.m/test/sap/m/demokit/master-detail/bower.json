@@ -19,6 +19,6 @@
     "tests"
   ],
 	"dependencies": {
-		"openui5": "SAP/openui5"
+		"openui5": "SAP/openui5#master"
 	}
 }
