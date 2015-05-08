@@ -75,15 +75,13 @@
 
 		<semantic:semanticControls>
 			<semantic:SemanticButton id="shareEmail" type="SendEmail" press="onShareEmailPress"/>
+			<semantic:SemanticButton id="shareInJam" type="ShareInJam" visible="{FLP>/isShareInJamActive}" press="onShareInJamPress"/>
 		</semantic:semanticControls>
 
 		<!-- we have to comment this out since ushell lib is not available in the openui5 layer currenlty -->
 		<!-- <semantic:customShareMenuContent>
 			<footerbar:AddBookmarkButton id ="shareTile" appData="{
 				formatter: 'sap.ui.demo.mdtemplate.model.formatter.shareTileData'
-			}"/>
-			<footerbar:JamShareButton id ="shareJam" jamData="{
-				formatter: 'sap.ui.demo.mdtemplate.model.formatter.shareJamData'
 			}"/>
 		</semantic:customShareMenuContent> -->
 	</semantic:DetailPage>
