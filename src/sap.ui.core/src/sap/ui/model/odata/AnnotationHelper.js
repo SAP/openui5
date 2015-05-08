@@ -288,6 +288,34 @@ sap.ui.define([
 			},
 
 			/**
+			 * Helper function for a <code>template:with</code> instruction that goes to the
+			 * function import with the name which <code>oContext</code> points at.
+			 *
+			 * Example: Assume that "dataField" refers to a DataFieldForAction within an
+			 * OData meta model;
+			 * the helper function is then called on the "Action" property of that data field
+			 * (which holds an object with the qualified name of the function import in the
+			 * <code>String</code> property) and in turn the path of that function import
+			 * is assigned to the variable "function".
+			 * <pre>
+			 *   &lt;template:with path="dataField>Action"
+			 *   helper="sap.ui.model.odata.AnnotationHelper.gotoFunctionImport" var="function">
+			 * </pre>
+			 * @param {sap.ui.model.Context} oContext
+			 *   a context which must point to an object with a <code>String</code> property, which
+			 *   holds the qualified name of the function import;
+			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
+			 * @returns {string}
+			 *   the path to the function import with the given qualified name,
+			 *   or <code>undefined</code> if no function import is found
+			 * @public
+			 */
+			gotoFunctionImport : function (oContext) {
+				return oContext.getModel().getODataFunctionImport(oContext.getProperty("String"),
+					true);
+			},
+
+			/**
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about the dynamic
 			 * "14.5.2 Expression edm:AnnotationPath" and returns whether the navigation path
