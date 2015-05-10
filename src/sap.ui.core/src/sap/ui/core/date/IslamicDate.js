@@ -265,7 +265,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			var iIslamicYear = this._year,
 				iIslamicMonth = this._month,
 				iIslamicDate = this._date,
-				iJulianDay = iIslamicDate + Math.ceil(29.5 * iIslamicMonth) + (iIslamicYear - 1) * 354 + Math.floor((3 + (11 * iIslamicYear)) / 30) + ISLAMIC_EPOCH_DAYS - 1,
+				iJulianDay = iIslamicDate + this.getCustomMonthStartDays(12 * (iIslamicYear - 1) + iIslamicMonth) + ISLAMIC_EPOCH_DAYS - 1,
 				iJulianDayNoon = Math.floor(iJulianDay - 0.5) + 0.5,
 				iDaysSinceGregorianEpoch = iJulianDayNoon - GREGORIAN_EPOCH_DAYS,
 				iQuadricent = Math.floor(iDaysSinceGregorianEpoch / 146097),
@@ -397,14 +397,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			oCustomizationJSON.forEach(function (oEntry) {
 				if (oEntry.dateFormat === sDateFormat) {
 					var date = parseDate(oEntry.gregDate);
-					var iGregorianDate = new Date(Date.UTC(date.year, date.month, date.day));
+					var iGregorianDate = new Date(Date.UTC(date.year, date.month - 1, date.day));
 					var iMillis = iGregorianDate.getTime();
 					var iIslamicMonthStartDays = (iMillis - ISLAMIC_MILLIS) / ONE_DAY;
 
 					date = parseDate(oEntry.islamicMonthStart);
 					var iIslamicMonths = (date.year - 1) * 12 + date.month - 1;
 
-					oCustomizationMap[iIslamicMonthStartDays] = iIslamicMonths;
+					oCustomizationMap[iIslamicMonths] = iIslamicMonthStartDays;
 				}
 			});
 			jQuery.sap.log.info("Working with date format: [" + sDateFormat + "] and customization: " + JSON.stringify(oCustomizationJSON));
@@ -412,9 +412,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 		function parseDate(sDate) {
 			return {
-				year: sDate.substr(0, 4),
-				month: sDate.substr(4, 2) - 1,
-				day: sDate.substr(6, 2)
+				year: parseDateArgument(sDate.substr(0, 4)),
+				month: parseDateArgument(sDate.substr(4, 2)),
+				day: parseDateArgument(sDate.substr(6, 2))
 			};
 		}
 
@@ -424,7 +424,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				var year = Math.floor(months / 12) + 1;
 				var month = months % 12;
 				iIslamicMonthStartDays = this._monthStart(year, month);
-				oCustomizationMap[months] = iIslamicMonthStartDays;
 			}
 			return iIslamicMonthStartDays;
 		};
