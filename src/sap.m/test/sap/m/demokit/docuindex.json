@@ -10,7 +10,7 @@
 				{ "name": "cart", "id": "e002" },
 				{ "name": "helloworld", "id": "e003" },
 				{ "name": "crud", "id": "e009" },
-				{ "name": "splitapp", "id": "e00C" },
+				{ "name": "masterdetail", "id": "e00C" },
 				{ "name": "mvc", "id": "e00B" },
 				{ "name": "tdg", "id": "e001" }
 			]
@@ -33,7 +33,19 @@
 				"ref": "test-resources/sap/m/demokit/tdg/index.html?responderOn=true",
 				"icon": "sapmdemo/tdg",
 				"desc": "The reference app \"Application Best Practices\" of the developer guide"
-			} 
+			},
+			{
+				"text": "Master-Detail",
+				"ref": "test-resources/sap/m/demokit/master-detail/demokit.html",
+				"icon": "sapmdemo/masterdetail",
+				"desc": "A best practice implementation of the Master-Detail design pattern"
+			},
+			{
+				"text": "Worklist",
+				"ref": "test-resources/sap/m/demokit/worklist/demokit.html",
+				"icon": "list",
+				"desc": "A best practice implementation of the Worklist design pattern"
+			}
 		]
 	},
 
