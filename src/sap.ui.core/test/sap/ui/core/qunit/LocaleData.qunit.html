@@ -312,6 +312,25 @@
 		sap.ui.getCore().getConfiguration().setCalendarType(null);
 	});
 
+	test("Locale data with customization from format settings in configuration", function() {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+
+		oFormatSettings.setLegacyDateFormat("3");
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(oFormatSettings.getFormatLocale());
+		equal(oLocaleData.getDatePattern("short"), "MM-dd-yyyy", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("medium"), "MM-dd-yyyy", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "M/d/y GGGGG", "short pattern for Islamic calendar type should be fetched from locale data");
+
+		oFormatSettings.setLegacyTimeFormat("0");
+		equal(oLocaleData.getTimePattern("short"), "HH:mm", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "h:mm a", "short pattern for Islamic calendar type should be fetched from locale data");
+
+		oFormatSettings.setLegacyDateFormat("A");
+		equal(oLocaleData.getDatePattern("short"), "yyyy/MM/dd", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
+	});
 </script>
 
 </head>
