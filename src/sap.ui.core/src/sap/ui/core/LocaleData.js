@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 			}
 
-			return this._get(getCLDRCalendarName(sCalendarType))[sKey];
+			return this._get(getCLDRCalendarName(sCalendarType), sKey)[sKey];
 		},
 
 		/**
@@ -686,6 +686,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			this.mCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
 		},
 		_get : function(sId) {
+			var sCalendarName, sPropertyName, oRes = {};
+
+			if (arguments.length === 2) {
+				// this.mCustomData doesn't have the calendar type node wrapping the date locale data therefore we need to create the node on the fly
+				//  when this function is called with 2 parameters
+				sCalendarName = sId;
+				sPropertyName = arguments[1];
+
+				if (sCalendarName === getCLDRCalendarName(sap.ui.getCore().getConfiguration().getCalendarType()) && this.mCustomData[sPropertyName]) {
+					// create the node only when the given calendar type is the same as the calendar type set in configuration
+					oRes[sPropertyName] = this.mCustomData[sPropertyName];
+					return oRes;
+				}
+			}
 			return this.mCustomData[sId] || this.mData[sId];
 		}
 	});
