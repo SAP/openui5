@@ -11,10 +11,7 @@
 				{ "name": "helloworld", "id": "e003" },
 				{ "name": "crud", "id": "e009" },
 				{ "name": "splitapp", "id": "e00C" },
-			  {
-				"name": "mvc",
-				"id": "e00B"
-			  }
+				{ "name": "mvc", "id": "e00B" }
 			]
 		},
 		"links": [
@@ -29,12 +26,6 @@
 				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
 				"icon": "sapmdemo/helloworld",
 				"desc": "This is where it all starts when developing with sap.m"
-			},
-			{
-				"text": "Master Detail",
-				"ref": "test-resources/sap/m/demokit/md-template/demokit.html",
-				"icon": "sapmdemo/splitapp",
-				"desc": "A best practice implementation of the Master-Detail design pattern"
 			}
 		]
 	},
