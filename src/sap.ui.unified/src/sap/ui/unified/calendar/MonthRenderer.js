@@ -179,6 +179,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		var iMonth = oDate.getUTCMonth();
 		var oHelper = this.getDayHelper(oMonth, oDate);
+		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+		var bWeekNum = sCalendarType != sap.ui.core.CalendarType.Islamic; // on Islamic calendar week numbers are not used
 
 		// determine weekday of first day in month
 		var oFirstDay = new UniversalDate(oDate.getTime());
@@ -207,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				oRm.write(">"); // div
 			}
 
-			this.renderDay(oRm, oMonth, oDay, oHelper, true, true, -1, undefined);
+			this.renderDay(oRm, oMonth, oDay, oHelper, true, bWeekNum, -1, undefined);
 
 			if (iWeekDay == (oHelper.iFirstDayOfWeek + 6) % 7) {
 				// end of row
@@ -245,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				role: "gridcell",
 				selected: false,
 				label: "",
-				describedby: oHelper.sId + "-CW"
+				describedby: ""
 			};
 
 		var sYyyymmdd = oMonth._oFormatYyyymmdd.format(oDay, true);
@@ -256,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		var iWeekNumber = 0;
 		if (bWeekNum) {
 			iWeekNumber = CalendarUtils.calculateWeekNumber(oDay, oHelper.iYear, oHelper.sLocale, oHelper.oLocaleData);
-			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-WNum-" +  iWeekNumber;
+			mAccProps["describedby"] = oHelper.sId + "-CW" + " " + oHelper.sId + "-WNum-" +  iWeekNumber;
 		}
 
 		var sWHId = "";
