@@ -26,7 +26,30 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @alias sap.m.UploadCollection
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var UploadCollection = Control.extend("sap.m.UploadCollection", /** @lends sap.m.UploadCollection.prototype */ { metadata : {
+	var UploadCollection = Control.extend("sap.m.UploadCollection", /** @lends sap.m.UploadCollection.prototype */ {
+
+		constructor : function(sId, mSettings) {
+			// Delete 'instantUpload' before calling the super constructor to avoid unwanted error logs
+			var bInstandUpload;
+			if (mSettings && mSettings.instantUpload === false) {
+				bInstandUpload = mSettings.instantUpload;
+				delete mSettings.instantUpload;
+			} else if (sId && sId.instantUpload === false) {
+				bInstandUpload = sId.instantUpload;
+				delete sId.instantUpload;
+			}
+			try {
+				Control.apply(this, arguments);
+				if (bInstandUpload === false) {
+					this.setProperty("instantUpload", bInstandUpload, true);
+				}
+			} catch (e) {
+				this.destroy();
+				throw e;
+			}
+		},
+
+		metadata : {
 
 		library : "sap.m",
 		properties : {
@@ -87,7 +110,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			/**
 			 * Specifies the URL where the uploaded files have to be stored.
 			 */
-			uploadUrl : {type : "string", group : "Data", defaultValue : "../../../upload"}
+			uploadUrl : {type : "string", group : "Data", defaultValue : "../../../upload"},
+
+			/**
+			 * If false, no upload is triggered when a file is selected. In addition, if a file was selected, a new FileUploader instance is created to ensure that multiple files from multiple folders can be chosen.
+			 * @since 1.30.0
+			 * @experimental Since 1.30. Behavior might change.
+			 */
+			instantUpload : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -277,7 +307,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					/**
 					 * A list of uploaded files. Each entry contains the following members. 
 					 * fileName	: The name of a file to be uploaded.
-					 * response	: Response message which comes from the server. On the server side this response has to be put within the "body" tags of the response document of the iFrame. It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
+					 * response	: Response message which comes from the server. On the server side, this response has to be put within the 'body' tags of the response document of the iFrame. It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
 					 * responseRaw : HTTP-Response which comes from the server. This property is not supported by Internet Explorer Versions lower than 9.
 					 * status	: Status of the XHR request. This property is not supported by Internet Explorer 9 and lower.
 					 * headers : HTTP-Response-Headers which come from the server. Provided as a JSON-map, i.e. each header-field is reflected by a property in the header-object, with the property value reflecting the header-field's content. This property is not supported by Internet Explorer 9 and lower.
@@ -308,7 +338,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype.init = function() {
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		sap.m.UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oList = new sap.m.List(this.getId() + "-list", {});
 		this._oList.addStyleClass("sapMUCList");
 		this._cAddItems = 0;
@@ -397,6 +427,26 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			this._getFileUploader().setUploadUrl(sUploadUrl);
 		}
 		return this;
+	};
+
+	UploadCollection.prototype.setInstantUpload = function(bInstantUpload) {
+		jQuery.sap.log.error("It is not supported to change the behavior at runtime.");
+		return this;
+	};
+
+	/* =========================================================== */
+	/* API methods                                           */
+	/* =========================================================== */
+	/**
+	 * Starts the upload for all selected files.
+	 * @type void
+	 * @since 1.30.0
+	 * @experimental
+	 */
+	UploadCollection.prototype.upload = function() {
+		if (this.getInstantUpload()) {
+			jQuery.sap.log.error("Not a valid API call. 'instantUpload' should be set to 'false'.");
+		}
 	};
 
 	/* =========================================================== */

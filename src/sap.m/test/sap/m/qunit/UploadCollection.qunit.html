@@ -11,8 +11,10 @@
 
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="UploadCollectionForPendingUpload.qunit.js"></script>
 
 <script type="text/javascript">
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
@@ -85,7 +87,7 @@
 	/* --------------------------------------- */
 	QUnit.module("Rendering", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection({
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
 					template : oItemTemplate
@@ -101,10 +103,10 @@
 
 	QUnit.test("Basic tests", function(assert) {
 		assert.ok(this.oUploadCollection, "UploadCollection instantiated");
-		assert.ok(jQuery.sap.domById("__collection0-list"), "Item list is rendered");
-		assert.ok(jQuery.sap.domById("__collection0-toolbar"), "Toolbar of the item list is rendered");
-		assert.ok(jQuery.sap.domById("__collection0-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
-		assert.ok(jQuery.sap.domById("__collection0-uploader"), "FileUploader is rendered");
+		assert.ok(jQuery.sap.domById("uploadCollection-list"), "Item list is rendered");
+		assert.ok(jQuery.sap.domById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
+		assert.ok(jQuery.sap.domById("uploadCollection-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
+		assert.ok(jQuery.sap.domById("uploadCollection-uploader"), "FileUploader is rendered");
 	});
 
 
@@ -131,7 +133,7 @@
 	QUnit.test("Get number of attachments label", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		assert.equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
-		assert.equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), sText, "Correct label for number of attachments returned");
+		assert.equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), sText, "Correct label text for number of attachments");
 	});
 
 	QUnit.test("Determine icon from filename", function(assert) {
