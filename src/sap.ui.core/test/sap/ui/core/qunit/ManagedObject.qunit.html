@@ -288,6 +288,7 @@
 				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
 				this.obj.setProperty("value", "othervalue");
 				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
 				oModel.setProperty("/value", "testvalue");
 			});
 
@@ -305,6 +306,27 @@
 				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
 				this.obj.setProperty("value", "othervalue");
 				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with formatter & parts", function() {
+				this.obj.bindProperty("value", {
+					parts: [{
+						path: "/value"
+					}],
+					mode: "TwoWay",
+					formatter: function(sValue) {
+						return sValue;
+					}
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
 				oModel.setProperty("/value", "testvalue");
 			});
 

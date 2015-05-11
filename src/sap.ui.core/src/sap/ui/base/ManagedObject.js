@@ -2544,8 +2544,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oPart.model = oPart.path.substr(0, iSeparatorPos);
 				oPart.path = oPart.path.substr(iSeparatorPos + 1);
 			}
-			// if a formatter exists the binding mode can be one way only
-			if (oBindingInfo.formatter && oPart.mode == BindingMode.TwoWay) {
+			// if a formatter exists the binding mode can be one way or one time only
+			if (oBindingInfo.formatter && oPart.mode != BindingMode.OneWay && oPart.mode != BindingMode.OneTime) {
 				oPart.mode = BindingMode.OneWay;
 			}
 
