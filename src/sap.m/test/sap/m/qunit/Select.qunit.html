@@ -1778,6 +1778,33 @@
 				oSelect.destroy();
 			});
 
+			// BCP 1570296493
+			test("it should synchronize property changes of items to the select control", function() {
+
+				// system under test
+				var oItem;
+				var oSelect = new sap.m.Select({
+					items: [
+						oItem = new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					],
+					selectedKey: "CU"
+				});
+
+				// act
+				oItem.setKey("GER");
+				oItem.setText("Germany");
+
+				// assert
+				strictEqual(oSelect.getSelectedKey(), "GER");
+				strictEqual(oSelect.getSelectedItem().getText(), "Germany");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			/* ------------------------------ */
 			/* setName()                      */
 			/* ------------------------------ */
@@ -1896,7 +1923,26 @@
 				ok(oSelect.getFirstItem() === oItem);
 				ok(oSelect.getList().getFirstItem() === oItem);
 				ok(fnAddItemSpy.returned(oSelect));
+				ok(oItem.hasListeners("_change"));
 				// ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("addItem() it should not throw an exeption", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select();
+
+				// arrange
+				var fnAddItemSpy = this.spy(oSelect, "addItem");
+
+				// act
+				oSelect.addItem(null);
+
+				// assert
+				ok(fnAddItemSpy.returned(oSelect));
 
 				// cleanup
 				oSelect.destroy();
@@ -1927,7 +1973,26 @@
 				ok(oSelect.getList().getFirstItem() === oItem);
 				ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
 				ok(fnInsertItem.returned(oSelect), 'oSelect.insertAggregation() returns this to allow method chaining');
+				ok(oItem.hasListeners("_change"));
 				// ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("insertItem() it should not throw an exeption", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select();
+
+				// arrange
+				var fnInsertItemSpy = this.spy(oSelect, "insertItem");
+
+				// act
+				oSelect.insertItem(null);
+
+				// assert
+				ok(fnInsertItemSpy.returned(oSelect));
 
 				// cleanup
 				oSelect.destroy();
@@ -2706,7 +2771,7 @@
 			/* removeItem()                   */
 			/* ------------------------------ */
 
-			test("removeItem() called with faulty parameter", function() {
+			test("removeItem() it should return null when called with an invalid input argument value", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select();
@@ -2729,7 +2794,7 @@
 				oSelect.destroy();
 			});
 
-			test("removeItem() remove the selected item", function() {
+			test("removeItem() it should remove the selected item and change the selection to the first enabled item will be selected if any (test case 1)", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select({
@@ -2795,7 +2860,7 @@
 						{
 							"value": "8",
 							"text": "item 8"
-						},
+						}
 					],
 
 					"selected": "8"
@@ -2804,6 +2869,7 @@
 				oModel.setData(mData);
 				sap.ui.getCore().setModel(oModel);
 				oSelect.placeAt("content");
+				var oSelectedItem = oSelect.getItemByKey("8");
 				sap.ui.getCore().applyChanges();
 
 				// act
@@ -2818,12 +2884,13 @@
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.getList().getSelectedItem().getText(), "item 0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(oSelectedItem.hasListeners("_change"), false);
 
 				// cleanup
 				oSelect.destroy();
 			});
 
-			test("removeItem() remove the selected item", function() {
+			test("removeItem() it should remove the selected item and change the selection to the first enabled item will be selected if any (test case 2)", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select({
@@ -2839,10 +2906,6 @@
 					selectedKey: {
 						path : "/selected",
 						template: "{selected}"
-					},
-
-					change: function(oControlEvent) {
-						jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("selectedItem"));
 					}
 				});
 
@@ -2899,7 +2962,7 @@
 				oSelect.destroy();
 			});
 
-			test("removeItem()", function() {
+			test("removeItem() it should remove the selected item and change the selection to null (test case 3)", function() {
 
 				// system under test
 				var oExpectedItem;
@@ -2930,6 +2993,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "");
 				strictEqual(oSelect.$("label").text(), "");
 				ok(oExpectedItem.getDomRef() === null);
+				strictEqual(oExpectedItem.hasListeners("_change"), false);
 
 				// cleanup
 				oSelect.destroy();
@@ -2971,7 +3035,7 @@
 				var fnListRemoveAllItemsSpy = this.spy(oSelect.getList(), "removeAllItems");
 
 				// act
-				oSelect.removeAllItems();
+				var oRemovedItems = oSelect.removeAllItems();
 				sap.ui.getCore().applyChanges();
 
 				// assert
@@ -2988,6 +3052,10 @@
 				strictEqual(oSelect.$("label").text(), "");
 				strictEqual(oSelect.$().children("select").length, 1);
 
+				for (var i = 0; i < oRemovedItems.length; i++) {
+					strictEqual(oRemovedItems[i].hasListeners("_change"), false);
+				}
+
 				// cleanup
 				oSelect.destroy();
 			});
@@ -2999,23 +3067,25 @@
 			test("destroyItems()", function() {
 
 				// system under test
+				var aItems = [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				];
+
 				var oSelect = new sap.m.Select({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					]
+					items: aItems
 				});
 
 				// arrange
@@ -3034,6 +3104,10 @@
 				ok(oSelect.getList().getSelectedItem() === null);
 				strictEqual(oSelect.$("label").text(), "");
 				strictEqual(oSelect.$().children("select").length, 1);
+
+				for (var i = 0; i < aItems.length; i++) {
+					strictEqual(aItems[i].hasListeners("_change"), false);
+				}
 
 				// cleanup
 				oSelect.destroy();
