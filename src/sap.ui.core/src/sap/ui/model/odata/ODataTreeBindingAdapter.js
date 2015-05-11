@@ -1387,7 +1387,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		}
 		
 		//only fire event if the selection actually changed somehow
-		if (mParams.rowIndices.length > 0 || typeof mParams.leadIndex !== "undefined") {
+		if (mParams.rowIndices.length > 0 || (mParams.leadIndex != undefined && mParams.leadIndex !== -1)) {
 			this.fireSelectionChanged(mParams);
 		}
 	};
