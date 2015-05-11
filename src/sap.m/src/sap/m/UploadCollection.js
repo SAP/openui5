@@ -300,6 +300,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection._toBeDeletedStatus = "toBeDeleted";
 	UploadCollection.prototype._requestIdName = "requestId";
 	UploadCollection.prototype._requestIdValue = 0;
+	UploadCollection._placeholderCamera = 'sap-icon://camera';
 
 	/**
 	 * @description This file defines behavior for the control
@@ -653,7 +654,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/**
 	 * @description Renders fileName, attributes, statuses and buttons(except for IE9) into the oContainer. Later it should be moved to the UploadCollectionItemRenderer.
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
-	 * @param {string} sStatus status of the item: it can be uploading, display, edit
 	 * @param {string} sContainerId ID of the container where the content will be rendered to
 	 * @private
 	 */
@@ -694,6 +694,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			if (iStatusesCounter > 0) {
 				oRm.write('<div class="sapMUCStatusContainer">'); // begin of statuses container
 				for (i = 0; i < iStatusesCounter; i++ ) {
+					aStatuses[i].detachBrowserEvent("hover");
 					oRm.renderControl(aStatuses[i]);
 					if ((i + 1) < iStatusesCounter){
 						oRm.write("<span>&nbsp&#x00B7&#160</span>"); // separator between statuses
@@ -728,9 +729,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	/**
-	 * @description gets a file name which is a sap.m.link ( in display mode) or an input field with an extension ( in edit mode)
+	 * @description Gets a file name which is a sap.m.Link in display mode and a sap.m.Input with a description (file extension) in edit mode
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
-	 * @return {sap.m.Link || sap.m.HBox} oFileName is a file name of type sap.m.Link in display mode and sap.m.Input in edit mode
+	 * @return {sap.m.Link || sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
 	 * @private
 	 */
 	UploadCollection.prototype._getFileNameControl = function(oItem, that) {
@@ -796,13 +797,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			if ((iMaxLength - oFile.extension.length) > 0) {
 				oFileNameEditBox.setProperty("maxLength", iMaxLength - oFile.extension.length, true);
 			}
-			oFileName = oFileNameEditBox;
+			return oFileNameEditBox;
 		}
-		return oFileName;
 	};
 
 	/**
-	 * @description creates a label for upload progress
+	 * @description Creates a label for upload progress
 	 * @param {string} sItemId ID of the item being processed
 	 * @param {string} sPercentUploaded per cent having been uploaded
 	 * @return {sap.m.Label} oProgressLabel
@@ -823,7 +823,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	/**
-	 * @description creates an icon or image
+	 * @description Creates an icon or image
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {string} sItemId ID of the item being processed
 	 * @param {string} sFileNameLong file name
@@ -831,7 +831,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._createIcon = function(oItem, sItemId, sFileNameLong, that) {
-		var sStatus, bDecorative, sThumbnailUrl, oItemIcon;
+		var sStatus, bDecorative, sThumbnailUrl, sThumbnail, oItemIcon;
 		sStatus = oItem._status;
 		if (sStatus === UploadCollection._displayStatus || sStatus === "Edit") {
 			bDecorative = false;
@@ -845,10 +845,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					decorative : bDecorative
 				}).addStyleClass("sapMUCItemImage");
 			} else {
+				sThumbnail = sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong);
 				oItemIcon = new sap.ui.core.Icon(sItemId + "-ia_iconHL", {
-					src : sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong),
+					src : sThumbnail,
 					decorative : bDecorative
 				}).addStyleClass("sapMUCItemIcon");
+				if (sThumbnail == UploadCollection._placeholderCamera) {
+					oItemIcon.addStyleClass("sapMUCItemPlaceholder");
+				}
 			}
 			if (bDecorative === false) {
 				oItemIcon.attachPress(function(oEvent) {
@@ -860,11 +864,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	/**
-	 * @description gets Edit and Delete Buttons
+	 * @description Gets Edit and Delete Buttons
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {string} sStatus status of the item: edit, display, uploading
 	 * @param {string} sItemId ID of the item being processed
-	 * @return {sap.ui.layout.HorizontalLayout} oButtonsHL a container with buttons
+	 * @return {array} aButtons an Array with buttons
 	 * @private
 	 */
 	UploadCollection.prototype._getButtons = function(oItem, sStatus, sItemId, that) {
@@ -951,13 +955,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 
 	/**
-	 * @description creates a delete button
+	 * @description Creates a Delete button
 	 * @param {string} [sItemId] Id of the oItem
 	 * @param {string} [sButton]
-	 *  if sButton == "deleteButton" it is a delete button for the already uploaded file
+	 *  if sButton == "deleteButton" it is a Delete button for the already uploaded file
 	 *  if sButton == "terminateButton" it is a button to terminate the upload of the file being uploaded
 	 * @param {Object} [oItem]
 	 * @param {string} [sErrorState]
+	 * @return {sap.m.Button} oDeleteButton
 	 */
 	UploadCollection.prototype._createDeleteButton = function(sItemId, sButton, oItem, sErrorState, that) {
 		var bEnabled, oDeleteButton;
@@ -1251,10 +1256,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId, false);
 		} else if (oEvent.target.id.lastIndexOf("cancelButton") > 0) {
 			sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, sSourceId);
-						} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 && 
-								oEvent.target.id.lastIndexOf("ia_iconHL") < 0 && 
-								oEvent.target.id.lastIndexOf("deleteButton") < 0 && 
-								oEvent.target.id.lastIndexOf("ta_editFileName") < 0) {
+		} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 &&
+					oEvent.target.id.lastIndexOf("ia_iconHL") < 0 &&
+					oEvent.target.id.lastIndexOf("deleteButton") < 0 &&
+					oEvent.target.id.lastIndexOf("ta_editFileName-inner") < 0) {
 			if (oEvent.target.id.lastIndexOf("cli") > 0) {
 				oContext.sFocusId = oEvent.target.id;
 			}
@@ -1264,7 +1269,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of 'OK' of the list item (status = 'Edit')
-	 * @param {object} oEvent Event of the 'ok' activity
+	 * @param {object} oEvent Event of the 'OK' activity
 	 * @param {object} oContext Context of the list item where 'ok' was triggered
 	 * @param {string} sSourceId List item ID
 	 * @private
@@ -1685,7 +1690,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	/**
-	 * @description Handling of the uploadProgress event of the fileUploader to forward the Event to the application
+	 * @description Handling of the uploadProgress event of the fileUploader to forward the event to the application
 	 * @param {object} oEvent Event of the fileUploader
 	 * @private
 	 */
@@ -1802,7 +1807,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			case '.bmp' :
 			case '.jpg' :
 			case '.png' :
-				return 'sap-icon://camera';
+				return UploadCollection._placeholderCamera;  // if no image is provided a standard placeholder camera is displayed
 			case '.csv' :
 			case '.xls' :
 			case '.xlsx' :
