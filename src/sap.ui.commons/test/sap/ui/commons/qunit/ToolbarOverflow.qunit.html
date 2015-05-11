@@ -23,7 +23,7 @@
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.ui.commons">
+				data-sap-ui-libs="sap.ui.commons, sap.ui.layout">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 
@@ -120,32 +120,35 @@
 			addManyItems(oCtrl);
 
 
-			asyncTest("VisibleItems calculation with images involved", function() {
+			test("VisibleItems calculation with images involved", function(assert) {
+				var done = assert.async();
 				expect(2);
 
 				setTimeout(function(){ // give the Toolbar some time to recognize the change
 					equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible (6 Buttons + 2 Separators)");
 					equal(oCtrl.iItemDomRefCount, 7, "There should be 8 items considered navigable by the ItemNavigation (6 Buttons + 1 overflow button)");
-					start();
+					done();
 				}, 1000);
 			});
 
 
-			asyncTest("VisibleItems calculation with item size change", function() {
+			test("VisibleItems calculation with item size change", function(assert) {
+				var done = assert.async();
 				expect(2);
 				sap.ui.getCore().byId("Toolbar_b_0").setWidth("400px");
 
 				setTimeout(function(){ // give the Toolbar some time to recognize the change
 					equal(oCtrl.getVisibleItemInfo().count, 1, "1 item should be considered visible (1 huge Button)");
 					equal(oCtrl.iItemDomRefCount, 2, "There should be 2 items considered navigable by the ItemNavigation (1 huge Button + 1 overflow button)");
-					start();
+					done();
 				}, 500);
 			})
 
 
 
 
-			asyncTest("Test if emptyPopupOverflow method removes popup content from the DOM if called with the right parameter.", function() {
+			test("Test if emptyPopupOverflow method removes popup content from the DOM if called with the right parameter.", function(assert) {
+				var done = assert.async();
 				var oCtrl = new sap.ui.commons.Toolbar({
 					id: "Toolbar1",
 					width:"180px",
@@ -162,14 +165,15 @@
 					setTimeout(function() {
 						sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl, false);
 						equal(jQuery('#test', oCtrl.getDomRef("pu")).length, 0)
-						start();
+						done();
 					}, 500);
 				}, 500);
 
 
 			});
 
-			asyncTest("Test if emptyPopupOverflow method moves popup content to the toolbar when called with the right parameter and the toolbar DOM is existing", function() {
+			test("Test if emptyPopupOverflow method moves popup content to the toolbar when called with the right parameter and the toolbar DOM is existing", function(assert) {
+				var done = assert.async();
 				var oCtrl = new sap.ui.commons.Toolbar({
 					id: "Toolbar2",
 					width:"180px",
@@ -187,12 +191,13 @@
 						sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl, true);
 						equal(oCtrl.getDomRef("pu").hasChildNodes(), false);
 						equal(jQuery('#test_button', oCtrl.getDomRef()).length, 1);
-						start();
+						done();
 					}, 500);
 				}, 500);
 			});
 
-			asyncTest("Test if emptyPopupOverflow method throws error if it has to move popup contents to the toolbar when the toolbar DOM is not existing;", function() {
+			test("Test if emptyPopupOverflow method throws error if it has to move popup contents to the toolbar when the toolbar DOM is not existing;", function(assert) {
+				var done = assert.async();
 				var oCtrl = new sap.ui.commons.Toolbar({
 					id: "Toolbar3",
 					width:"180px",
@@ -242,7 +247,69 @@
 
 						oErrorSpy.restore();
 
-						start();
+						done();
+					}, 500);
+				}, 500);
+			});
+
+
+
+			test("Test if when opened the overflow popup is causing a (bug) toolbar resize when the toolbar is nested in horizontal layout.", function(assert) {
+				var done = assert.async();
+				var oCtrl = new sap.ui.commons.Toolbar({
+					id: 'Toolbar4',
+					items: [
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'})
+					],
+					rightItems: [
+						new sap.ui.commons.Button({text: 'Right'})
+					]
+				});
+
+				var testLayout = new sap.ui.layout.HorizontalLayout({
+					content: [
+						oCtrl
+					],
+					allowWrapping: false
+				});
+				testLayout.placeAt('uiArea2');
+
+
+				jQuery('#uiArea2').css('width', '400');
+
+				setTimeout(function() {
+					var btn = oCtrl.getDomRef('mn');
+					btn.click();
+					setTimeout(function() {
+						btn.click();
+						setTimeout(function() {
+							btn.click();
+							setTimeout(function() {
+								var pu = oCtrl.getDomRef('pu');
+								// if the popup is still visible, it means resize was not triggered (causing the popup to close)
+								equal(jQuery(pu).css('visibility'), 'visible', 'Popup is properly visible');
+								equal(jQuery('#Toolbar4-pu button').length, 7, 'There are seven buttons in the popup.');
+								btn.click();
+								jQuery('#uiArea2').css('width', '600');
+								setTimeout(function() {
+									btn.click();
+									equal(jQuery('#Toolbar4-pu button').length, 3, 'There are three buttons in the popup - toolbar resizing still works after popup opening/closing.');
+									btn.click();
+									done();
+								}, 500);
+							}, 500);
+						}, 500);
 					}, 500);
 				}, 500);
 			});
@@ -284,5 +351,6 @@
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
 		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
 	</body>
 </html>

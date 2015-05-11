@@ -75,11 +75,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.bOpen = false; // the overflow popup state
 
 		// Buffer for performance, updated after rendering
-		this.oDomRef = null;
-		this.oInnerRef = null;
-		this.oOverflowDomRef = null;
-		this.bHasRightItems = false;
-		this._bRendering = false;
+		this.oDomRef                        = null;
+		this.oInnerRef                      = null;
+		this.oOverflowDomRef                = null;
+		this.sOriginalStylePropertyWidth    = null;
+		this.bHasRightItems                 = false;
+		this._bRendering                    = false;
 
 		this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
@@ -528,6 +529,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Toolbar.prototype.openPopup = function() {
 		this.getRenderer().setActive(this);
+
+
+		/* set fixed (browser calculated) width in pixels, to avoid rendering bugs while moving the 'invisible' buttons
+		 from the toolbar to the popup - the original width must be restored when the popup is being emptied */
+		var oDomRef = jQuery(this.getDomRef());
+		// remember the original width property to set it back later
+		this.sOriginalStylePropertyWidth = oDomRef.prop('style').width;
+		// set fixed width from the browser calculated width property
+		oDomRef.width(oDomRef.width());
 
 		ToolbarRenderer.fillOverflowPopup(this);
 		this.popup.attachEvent("opened", this.handlePopupOpened, this);
