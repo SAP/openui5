@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 		
 		// determine items rendering 
-		var aItems = oControl.getItems();
+		var aItems = oControl.getItems(true);
 		var bRenderItems = oControl.shouldRenderItems() && aItems.length;
 	
 		// run hook method to start building list

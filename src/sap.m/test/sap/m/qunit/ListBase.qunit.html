@@ -193,7 +193,7 @@
 			oList.getBinding("items").filter([]);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + 'item ' + oList);
 		
-			oList.setRememberSelections(false);
+			oList.setRememberSelections(false).removeSelections(true);
 			strictEqual(oList.getRememberSelections(), false, 'The property "rememberSelections" is "false" on ' + oList);
 
 			// TODO: decide if check on internal variables is needed (Cahit)
@@ -260,7 +260,7 @@
 			strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber +' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
 		
-			oList.setRememberSelections(false);
+			oList.setRememberSelections(false).removeSelections(true);
 			strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
 		
 			// sort descending
