@@ -7,13 +7,14 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/dt/ControlObserver',
+	'sap/ui/dt/ManagedObjectObserver',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/AggregationOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Utils',
 	'sap/ui/dt/DOMUtil'
 ],
-function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, Utils, DOMUtil) {
+function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, Utils, DOMUtil) {
 	"use strict";
 
 	var sOverlayContainerId = "overlay-container";
@@ -150,9 +151,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		var oElement = this.getElementInstance();
 		if (oElement) {
 			OverlayRegistry.deregister(oElement);
-			if (oElement instanceof sap.ui.core.Control) {
-				this._unobserveControl(oElement);
-			}
+			this._unobserve(oElement);
 		} else {
 			// element can be destroyed before
 			OverlayRegistry.deregister(this._elementId);
@@ -175,7 +174,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		var oOldElement = this.getElementInstance();
 		if (oOldElement instanceof sap.ui.core.Element) {
 			OverlayRegistry.deregister(oOldElement);
-			this._unobserveControl(oOldElement);
+			this._unobserve(oOldElement);
 		}
 
 		this.destroyAggregation("_aggregationOverlays");
@@ -186,25 +185,20 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		this._createAggregationOverlays();
 
 		var oElement = this.getElementInstance();
-		if (oElement instanceof sap.ui.core.Element) {
 
-			this._elementId = oElement.getId();
-			OverlayRegistry.register(oElement, this);
-			this._observeControl(oElement);
+		this._elementId = oElement.getId();
+		OverlayRegistry.register(oElement, this);
+		this._observe(oElement);
 
-			var oParent = oElement.getParent();
-			var oParentOverlay = OverlayRegistry.getOverlay(oParent);
-			if (oParentOverlay) {
-				oParentOverlay.sync();
-			}
+		var oParent = oElement.getParent();
+		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
+		if (oParentOverlay) {
+			oParentOverlay.sync();
+		}
 
-			if (DOMUtil.getElementGeometry(oElement)) {
-				this.rerender();
-			}
-
-		} /*else { // Element
-
-		}*/
+		if (DOMUtil.getElementGeometry(oElement)) {
+			this.rerender();
+		}
 
 		return this;
 	};
@@ -300,24 +294,30 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	};
 
 	/**
-	 * @param {sap.ui.core.Control} oControl The control to observe
+	 * @param {sap.ui.core.Element} oElement The element to observe
 	 * @private
 	 */
-	Overlay.prototype._observeControl = function(oControl) {
-		this._oControlObserver = new ControlObserver({
-			target : oControl
-		});
-		this._oControlObserver.attachModified(this._onElementModified, this);
-		this._oControlObserver.attachAfterRendering(this._onElementRendered, this);
-		this._oControlObserver.attachDestroyed(this._onElementDestroyed, this);
+	Overlay.prototype._observe = function(oElement) {
+		if (oElement instanceof sap.ui.core.Control) {
+			this._oObserver = new ControlObserver({
+				target : oElement
+			});
+			this._oObserver.attachAfterRendering(this._onElementRendered, this);
+			this._oObserver.attachDestroyed(this._onElementDestroyed, this);
+		} else {
+			this._oObserver = new ManagedObjectObserver({
+				target : oElement
+			});
+		}
+		this._oObserver.attachModified(this._onElementModified, this);
 	};
 
 	/**
-	 * @param {sap.ui.core.Control} oControl The control to unobserve
+	 * @param {sap.ui.core.Element} oElement The element to unobserve
 	 * @private
 	 */
-	Overlay.prototype._unobserveControl = function(oControl) {
-		this._oControlObserver.destroy();
+	Overlay.prototype._unobserve = function(oElement) {
+		this._oObserver.destroy();
 	};
 
 	/**

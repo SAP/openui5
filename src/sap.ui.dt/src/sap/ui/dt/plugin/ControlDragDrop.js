@@ -107,11 +107,8 @@ function(DragDrop, Utils) {
 	/*
 	 * @override
 	 */
-	ControlDragDrop.prototype.onDragEnter = function(oOverlay) {
-		var oTargetOverlay = oOverlay;
-		var oParent = oTargetOverlay.getParent();
-		var bInDroppableAggregation = oParent && oParent.isDroppable && oParent.isDroppable();
-		if (oTargetOverlay.getElementInstance() !== this._oDraggedOverlay.getElementInstance() && bInDroppableAggregation) {
+	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
+		if (oTargetOverlay.getElementInstance() !== this._oDraggedOverlay.getElementInstance() ) {
 			this._repositionOn(oTargetOverlay);
 		}
 	};

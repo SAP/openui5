@@ -26,7 +26,6 @@
 					this.oControlObserver = new sap.ui.dt.ControlObserver({
 						target : this.oButton
 					});
-					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
@@ -36,16 +35,30 @@
 			});
 
 			QUnit.test("when the property of the Button is changed", function(assert) {
-				var that = this;
-				this.oControlObserver.attachEventOnce("changed", function(oEvent) {
-					assert.ok(oEvent, 'then a "Changed" event is fired because of the property change');
-				});
+				var doneBeforeRendering = assert.async();
+				var doneAfterRendering = assert.async();
+
+				var bBeforeRenderingIsFired = false;
 				this.oControlObserver.attachBeforeRendering(function(oEvent) {
-					assert.ok(oEvent, 'and a "BeforeRendering" event is fired');
+					assert.ok(oEvent, '"BeforeRendering" event is fired');
+					doneBeforeRendering();
 				});
 				this.oControlObserver.attachAfterRendering(function(oEvent) {
 					assert.ok(oEvent, 'and a "AfterRendering" event is fired');
+					doneAfterRendering();
 				});
+				this.oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("when the property of the Button is modified", function(assert) {
+				var done = assert.async();
+
+				this.oControlObserver.attachEventOnce("modified", function(oEvent) {
+					assert.ok(oEvent, 'then a "Changed" event is fired because of the property change');
+					done();
+				});
+				
 				this.oButton.setText("test");
 				sap.ui.getCore().applyChanges();
 			});

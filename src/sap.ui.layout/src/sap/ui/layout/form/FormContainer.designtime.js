@@ -9,9 +9,7 @@ sap.ui.define([],
 	
 	return {
 		aggregations : {
-			formElements : {
-				cssSelector : ":sap-domref > div"
-			}
+
 		},
 		name: "{name}",
 		description: "{description}"

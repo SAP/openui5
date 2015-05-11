@@ -123,11 +123,13 @@ function(Plugin, DOMUtil) {
 	DragDrop.prototype.onDrag = function(oDraggedOverlay, oEvent) { };
 
 	/*
+	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
 	DragDrop.prototype.onDragEnter = function(oOverlay, oEvent) { };
 
 	/*
+	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
 	DragDrop.prototype.onDragOver = function(oOverlay, oEvent) { };
@@ -170,7 +172,6 @@ function(Plugin, DOMUtil) {
 		this.onDragStart(oOverlay, oEvent);
 
 		oEvent.stopPropagation();
-		return true;
 	};
 
 	/*
@@ -181,7 +182,6 @@ function(Plugin, DOMUtil) {
 		this.onDragEnd(oOverlay, oEvent);
 
 		oEvent.stopPropagation();
-		return true;
 	};
 
 	/*
@@ -192,7 +192,6 @@ function(Plugin, DOMUtil) {
 		this.onDrag(oOverlay, oEvent);
 
 		oEvent.stopPropagation();
-		return true;
 	};
 
 	/*
@@ -200,11 +199,16 @@ function(Plugin, DOMUtil) {
 	 */
 	DragDrop.prototype._onDragEnter = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		this.onDragEnter(oOverlay, oEvent);
+		var oAggregationOverlay = oOverlay.getParent();
+		var bInDroppableAggregation = oAggregationOverlay && oAggregationOverlay.isDroppable && oAggregationOverlay.isDroppable();
+		if (bInDroppableAggregation) {
+			//if "true" returned, propagation won't be canceled
+			if (!this.onDragEnter(oOverlay, oEvent)) {
+				oEvent.stopPropagation();
+			}
+		}
 
 		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
 	};
 
 	/*
@@ -212,12 +216,18 @@ function(Plugin, DOMUtil) {
 	 */
 	DragDrop.prototype._onDragOver = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		this.onDragOver(oOverlay, oEvent);
+		var oAggregationOverlay = oOverlay.getParent();
+		var bInDroppableAggregation = oAggregationOverlay && oAggregationOverlay.isDroppable && oAggregationOverlay.isDroppable();
+		if (bInDroppableAggregation) {
+			//if "true" returned, propagation won't be canceled
+			if (!this.onDragOver(oOverlay, oEvent)) {
+				oEvent.stopPropagation();
+			}
+		}
 
 		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
 	};
+
 	/*
 	 * @private
 	 */
@@ -253,6 +263,7 @@ function(Plugin, DOMUtil) {
 		oAggregationOverlay.detachBrowserEvent("drop", this._onAggregationDrop, this);
 	};		
 
+
 	/*
 	 * @private
 	 */
@@ -262,7 +273,6 @@ function(Plugin, DOMUtil) {
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-		return false;
 	};
 
 	/*
@@ -274,7 +284,6 @@ function(Plugin, DOMUtil) {
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-		return false;
 	};
 
 	/*
@@ -286,7 +295,6 @@ function(Plugin, DOMUtil) {
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-		return false;
 	};
 
 	/*
@@ -297,7 +305,6 @@ function(Plugin, DOMUtil) {
 		this.onAggregationDrop(oAggregationOverlay, oEvent);
 
 		oEvent.stopPropagation();
-		return false;
 	};
 
 	return DragDrop;
