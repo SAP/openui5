@@ -58,6 +58,25 @@ sap.ui.define([
 			this.myNavBack("worklist");
 		},
 
+		/**
+		 * Event handler when the share in JAM button has been clicked
+		 * @public
+		 */
+		onShareInJamPress: function () {
+			var oViewModel = this.getModel("objectView"),
+				oShareDialog = sap.ui.getCore().createComponent({
+					name: "sap.collaboration.components.fiori.sharing.dialog",
+					settings: {
+						object:{
+							id: document.location.href,
+							share: oViewModel.getProperty("/shareOnJamTitle")
+						}
+					}
+				});
+
+			oShareDialog.open();
+		},
+
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */

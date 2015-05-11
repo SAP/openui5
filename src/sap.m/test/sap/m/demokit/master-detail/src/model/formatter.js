@@ -58,23 +58,6 @@ sap.ui.define(
 			return {
 				title: sTitle
 			};
-		},
-
-		/**
-		 * Returns a configuration object for the {@link sap.ushell.ui.footerbar.JamShareButton} "jamData" property
-		 *
-		 * @public
-		 * @param {string} sTitle the title for the "share on SAP Jam" dialog
-		 * @returns {object} the configuration object
-		 */
-		shareJamData : function (sTitle) {
-			return {
-				object: {
-					id: window.location.href,
-					display: new Text({text: sTitle}),
-					share: ""
-				}
-			};
 		}
 	};
 

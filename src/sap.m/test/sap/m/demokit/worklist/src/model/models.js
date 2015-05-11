@@ -13,6 +13,15 @@ sap.ui.define([
 			var oModel = new JSONModel(Device);
 			oModel.setDefaultBindingMode("OneWay");
 			return oModel;
+		},
+		createFLPModel: function () {
+			var fnGetUser = jQuery.sap.getObject("sap.ushell.Container.getUser"),
+				bIsShareInJamActive = fnGetUser ? fnGetUser().isJamActive() : false,
+				oModel = new JSONModel({
+					isShareInJamActive: bIsShareInJamActive
+				});
+			oModel.setDefaultBindingMode("OneWay");
+			return oModel;
 		}
 	};
 
