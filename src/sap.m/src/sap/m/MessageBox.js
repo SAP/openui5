@@ -252,7 +252,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						mDefaults.actions = [Action.OK, Action.CANCEL];
 						mOptions = jQuery.extend({}, mDefaults, mOptions);
 						if (typeof mOptions.details == 'object') {//covers JSON case
-							mOptions.details = JSON.stringify(mOptions.details);
+							//Using stringify() with "tab" as space argument
+							mOptions.details = JSON.stringify(mOptions.details, null, '\t');
 						}
 						vMessage = getInformationLayout(mOptions, vMessage);
 					}
