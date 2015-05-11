@@ -22,7 +22,7 @@
 
 		<script>
 
-		sinon.config.useFakeTimers = false;
+		sinon.config.useFakeTimers = true;
 
 		jQuery.sap.require("sap.m.TablePersoDialog");
 
@@ -425,7 +425,6 @@
 
 		module("Reset All");
 
-
 		test("Check column captions after Reset All", function(){
 			//Arrange
 			var oData4 = {
@@ -482,9 +481,10 @@
 			sap.ui.getCore().applyChanges();
 			oResetButton.firePress();
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(1);
 			equal(oList.getSelectedItem(), oList.getItems()[0], 'After repositioning and after reset, the last selected item is still selected');
 
-		    oTPC4.destroy();
+			oTPC4.destroy();
 			oTable4.destroy();
 		});
 
@@ -557,6 +557,7 @@
 			// act
 			oTPC.openDialog();
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(1);
 
 			// assert
 			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
@@ -628,6 +629,7 @@
 			// act
 			oTPC.openDialog();
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(1);
 
 			// assert
 			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();

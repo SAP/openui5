@@ -183,9 +183,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			that._oButtonDown.setEnabled(bButtonDownEnabled);
 		};
 
-		this._fnAfterListRendering = function(oEvent) {
+		this._fnListUpdateFinished = function() {
 			// Find all checkboxes in the list
-			var aItems = oEvent.srcControl.$().find('.sapMCb'),
+			var aItems = this.$().find('.sapMCb'),
 				iItemsLength = aItems.length;
 			// 'forEach' does not work
 			for (var i = 0; i < iItemsLength; i++) {
@@ -239,10 +239,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			includeItemInSelection: true,
 			noDataText: this._oRb.getText('PERSODIALOG_NO_DATA'),
 			mode: sap.m.ListMode.SingleSelectMaster,
-			selectionChange: this._fnUpdateArrowButtons
+			selectionChange: this._fnUpdateArrowButtons,
+			updateFinished: this._fnListUpdateFinished
 		});
 
-		this._oList.addDelegate({onAfterRendering : this._fnAfterListRendering});
+		//this._oList.addDelegate({onAfterRendering : this._fnAfterListRendering});
 
 		this._oSearchField = new sap.m.SearchField(this.getId() + "-searchField", {
 			width: "100%",
