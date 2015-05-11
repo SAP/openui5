@@ -97,6 +97,101 @@
 		deepEqual(oModel.getData(), arrMerged, "setData array with merge");
 	});
 
+	test("test model observation", function() {
+		var oData = {
+			obj: {
+				name1: "value1",
+				name2: "value2",
+				name3: "value3"
+			},
+			arr: [
+				{ name: "value1" },
+				{ name: "value2" },
+				{ name: "value3" },
+			],
+			string: "abc123",
+			number: 123,
+			bool: true,
+			func: function() {},
+			date: new Date()
+		};
+		var oModel = new sap.ui.model.json.JSONModel(oData, true),
+			oString = oModel.bindProperty("/string"),
+			oNumber = oModel.bindProperty("/number"),
+			oBool = oModel.bindProperty("/bool"),
+			oDate = oModel.bindProperty("/date"),
+			oObj = oModel.bindProperty("/obj"),
+			oObjName = oModel.bindProperty("/obj/name1"),
+			oArr = oModel.bindProperty("/arr"),
+			oArrName = oModel.bindProperty("/arr/0/name"),
+			bString = false,
+			bNumber = false,
+			bBool = false,
+			bDate = false,
+			bObj = false,
+			bObjName = false,
+			bArr = false,
+			bArrName = false,
+			iChangeCount = 0;
+
+
+		oString.attachChange(function(){bString = true; iChangeCount++});
+		oNumber.attachChange(function(){bNumber = true; iChangeCount++});
+		oBool.attachChange(function(){bBool = true; iChangeCount++});
+		oDate.attachChange(function(){bDate = true; iChangeCount++});
+		oObj.attachChange(function(){bObj = true; iChangeCount++});
+		oObjName.attachChange(function(){bObjName = true; iChangeCount++});
+		oArr.attachChange(function(){bArr = true; iChangeCount++});
+		oArrName.attachChange(function(){bArrName = true; iChangeCount++});
+
+		equal(typeof oData.obj, "object", "JSON object");
+		equal(jQuery.isArray(oData.arr), true, "JSON array");
+		equal(typeof oData.string, "string", "JSON string");
+		equal(typeof oData.number, "number", "JSON number");
+		equal(typeof oData.bool, "boolean", "JSON boolean");
+		equal(typeof oData.func, "function", "JSON function");
+		equal(oData.date instanceof Date, true, "JSON Date");
+
+		equal(oString.getValue(), "abc123", "String old value");
+		oData.string = "def456";
+		equal(oString.getValue(), "def456", "String new value");
+		ok(bString, "String change event fired");
+
+		equal(oNumber.getValue(), 123, "Number old value");
+		oData.number = 456;
+		equal(oNumber.getValue(), 456, "Number new value");
+		ok(bNumber, "Number change event fired");
+
+		equal(oBool.getValue(), true, "Boolean old value");
+		oData.bool = false;
+		equal(oBool.getValue(), false, "Boolean new value");
+		ok(bBool, "Boolean change event fired");
+
+		equal(oDate.getValue(), oData.date, "Date old value");
+		oData.date = new Date();
+		equal(oDate.getValue(), oData.date, "Date new value");
+		ok(bDate, "Date change event fired");
+
+		equal(oObj.getValue(), oData.obj, "Object old value");
+		equal(oObjName.getValue(), "value1", "Object name old value");
+		oData.obj = { name1 : "other1" };
+		equal(oObj.getValue(), oData.obj, "Object new value");
+		equal(oObjName.getValue(), "other1", "Object name new value");
+		ok(bObj, "Object change event fired");
+		ok(bObjName, "Object name change event fired");
+
+		equal(oArr.getValue(), oData.arr, "Array old value");
+		equal(oArrName.getValue(), "value1", "Array name old value");
+		oData.arr = [{ name : "other1" }];
+		equal(oArr.getValue(), oData.arr, "Array new value");
+		equal(oArrName.getValue(), "other1", "Array name new value");
+		ok(bArr, "Array change event fired");
+		ok(bArrName, "Array name change event fired");
+
+		equal(iChangeCount, 8, "All 8 change handlers have been called once");
+
+	});
+
 	test("test model getProperty", function(){
 		var value = oModel.getProperty("/teamMembers/6/lastName");
 		equal(value, "Wallace", "model value");
@@ -219,7 +314,8 @@
 		var oContext = oModel.createBindingContext("/teamMembers");
 		equal(oModel.getProperty(null, oContext).length, 7, "array of teammembers");
 	});
-
+	
+	
 	test("test createBindingContext with two models", function(){
 		var oContext = oModel.createBindingContext("/teamMembers");
 		oLayout.addContent(oLabel);
