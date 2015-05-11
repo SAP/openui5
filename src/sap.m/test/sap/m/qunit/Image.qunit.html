@@ -179,7 +179,7 @@
 			equal($Image.attr("alt"), "abcd", "alt is rendered");
 			equal($Image.attr("aria-label"), "abcd", "aria-label is rendered");
 			equal($Image.attr("title"), "abc", "title is rendered");
-			equal($Image.attr("role"), "button", "role 'button' is output");
+			ok(!$Image.attr("role"), "no role is output");
 			ok(!$Image.attr("aria-hidden"), "no aria-hidden is output");
 
 			oImage.destroy();
@@ -329,6 +329,48 @@
 					start();
 				});
 			});
+		});
+
+		test("Existence of attribute tabindex", function() {
+			var fn1 = function() {},
+				fn2 = function() {},
+				oImage = new sap.m.Image({
+					src: sSrc,
+					press: fn1
+				});
+
+			oImage.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+
+			var $Image = oImage.$();
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.attachPress(fn2);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn1);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn2);
+			equal($Image.attr("tabindex"), "-1", "tabindex -1 is still output");
+			equal($Image.attr("role"), "presentation", "role is set to presentation");
+
+			oImage.attachPress(fn2);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.setDecorative(false);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn2);
+			equal($Image.attr("tabindex"), "-1", "tabindex -1 is still output");
+			ok(!$Image.attr("role"), "role is removed");
+
+			oImage.destroy();
 		});
 		</script>
 	</head>

@@ -15,34 +15,35 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ImageRenderer = {
 	};
-	
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ImageRenderer.render = function(rm, oImage){
+		var alt = oImage.getAlt(),
+			tooltip = oImage.getTooltip_AsString(),
+			myTabIndex = 0,
+			bHasPressHandlers = oImage.hasListeners("press");
+
 		// Open the <img> tag
 		rm.write("<img");
 	
 		rm.writeAttributeEscaped("src", oImage._getDensityAwareSrc());
 		rm.writeControlData(oImage);
-		
+
 		rm.addClass("sapMImg");
 		if (oImage.hasListeners("press") || oImage.hasListeners("tap")) {
 			rm.addClass("sapMPointer");
 		}
-		
+
 		if (oImage.getUseMap() || !oImage.getDecorative()) {
 			rm.addClass("sapMImgFocusable");
 		}
-		
+
 		rm.writeClasses();
-		
-		var alt = oImage.getAlt(),
-			tooltip = oImage.getTooltip_AsString();
 
 		//TODO implement the ImageMap control
 		var sUseMap = oImage.getUseMap();
@@ -53,15 +54,11 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttributeEscaped("useMap", sUseMap);
 		}
 
-		// determine tab index and write alt attribute - both depending on "decorative" state (which is overridden by the "useMap" property
-		var myTabIndex = 0;
-		if ((oImage.getDecorative() && (!sUseMap))) {
-			myTabIndex = -1;
+		if (oImage.getDecorative() && !sUseMap && !bHasPressHandlers) {
 			rm.writeAttribute("role", "presentation");
 			rm.writeAttribute("aria-hidden", "true");
 			rm.write(" alt=''"); // accessibility requirement: write always empty alt attribute for decorative images
 		} else {
-			rm.writeAttribute("role", "button");
 			if (alt || tooltip) {
 				rm.writeAttributeEscaped("alt", alt || tooltip);
 			}
@@ -75,10 +72,14 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttributeEscaped("title", tooltip);
 		}
 
+		if (bHasPressHandlers) {
+			rm.writeAttribute("role", "button");
+		} else {
+			myTabIndex = -1;
+		}
 		rm.writeAttribute("tabIndex", myTabIndex);
-		
+
 		// Dimensions
-	
 		if (oImage.getWidth() && oImage.getWidth() != '') {
 			rm.addStyle("width", oImage.getWidth());
 		}
@@ -86,10 +87,9 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addStyle("height", oImage.getHeight());
 		}
 		rm.writeStyles();
-		
+
 		rm.write(" />"); // close the <img> element
 	};
-	
 
 	return ImageRenderer;
 
