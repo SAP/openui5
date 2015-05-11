@@ -1022,6 +1022,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 				if (sCldrFormat) {
 					// Note: CLDR uses a non-breaking space in the forma tstring
 					sCldrFormat = sCldrFormat.replace(/[\s\u00a0]/g, "");
+					//formatString may contain '.' (quoted to differentiate them decimal separator)
+					//which must be replaced with .
+					sCldrFormat = sCldrFormat.replace(/'.'/g, ".");
 					var match = sCldrFormat.match(/0+\.*0*/);
 					if (match) {
 						// determine unit -> may be on the beginning e.g. for he

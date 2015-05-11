@@ -383,7 +383,7 @@
 		deepEqual(currencyType.parseValue("3333", "string"), [3333, undefined], "parse test");
 		deepEqual(currencyType.parseValue("USD3333.555", "string"), [3333.555, "USD"], "parse test");
 		deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
-		deepEqual(currencyType.parseValue("JP¥-3.555", "string"), [-3.555, "JPY"], "parse test");
+		deepEqual(currencyType.parseValue("¥-3.555", "string"), [-3.555, "JPY"], "parse test");
 		
 		raises(function(){currencyType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){currencyType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");
@@ -424,13 +424,13 @@
 			currencyCode: false
 		});
 		
-		equal(currencyType.formatValue([22, "USD"], "string"), "US$22.00", "format test");
-		equal(currencyType.formatValue([-6622.333, "USD"], "string"), "US$-6,622.33", "format test");
+		equal(currencyType.formatValue([22, "USD"], "string"), "$22.00", "format test");
+		equal(currencyType.formatValue([-6622.333, "USD"], "string"), "$-6,622.33", "format test");
 		equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "€-6,622.34", "format test");
-		equal(currencyType.formatValue([1.0, "USD"], "string"), "US$1.00", "format test");
-		equal(currencyType.formatValue([1.0000, "JPY"], "string"), "JP¥1", "format test");
+		equal(currencyType.formatValue([1.0, "USD"], "string"), "$1.00", "format test");
+		equal(currencyType.formatValue([1.0000, "JPY"], "string"), "¥1", "format test");
 		equal(currencyType.formatValue([1.009, "EUR"], "string"), "€1.01", "format test");
-		equal(currencyType.formatValue([1.00001, "USD"], "string"), "US$1.00", "format test");
+		equal(currencyType.formatValue([1.00001, "USD"], "string"), "$1.00", "format test");
 				
 	});
 
@@ -441,7 +441,7 @@
 		
 		equal(currencyType.parseValue("EUR3333", "string"), "EUR3333.00", "parse test");
 		equal(currencyType.parseValue("USD3333.555", "string"), "USD3333.56", "parse test");
-		equal(currencyType.parseValue("US$3.555", "string"), "USD3.56", "parse test");
+		equal(currencyType.parseValue("$3.555", "string"), "USD3.56", "parse test");
 		equal(currencyType.parseValue("JPY-3.555", "string"), "JPY-4", "parse test");
 
 		equal(currencyType.formatValue("EUR22", "string"), "EUR22.00", "format test");
