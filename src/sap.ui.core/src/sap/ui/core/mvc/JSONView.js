@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 * @param {string | object} vView name of a view resource or view configuration as described above.
 		 * @param {string} [vView.viewName] name of a view resource in module name notation (without suffix)
 		 * @param {string|object} [vView.viewContent] view definition as a JSON string or an object literal
+		 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] controller to be used for this view instance
 		 * @public
 		 * @static

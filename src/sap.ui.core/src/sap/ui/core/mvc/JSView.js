@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 *
 		 * @param {string} [sId] id of the newly created view, only allowed for instance creation
 		 * @param {string | object} vView name or implementation of the view.
-		 * @param {boolean} [bAsync] determines if the view source gets loaded asynchronously (only relevant for instantiation, ignored for everything else)
+		 * @param {boolean} [bAsync] defines how the view source is loaded and rendered later on (only relevant for instantiation, ignored for everything else)
 		 * @public
 		 * @static
 		 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
