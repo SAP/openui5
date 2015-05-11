@@ -1967,7 +1967,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 		//same as with success
 		function fnSingleBatchError(oData, oResponse) {
-			oResponseCollector.error(oResponse);
+			oResponseCollector.error(oResponse || oData);
 		}
 
 		//create sub-requests for all defined requestDetails
@@ -2152,7 +2152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				return;
 			}
 			
-			var oV1Error;
+			var oV1Error = oError;
 			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
 				oV1Error = that.oModel._handleError(oError);
 			}
