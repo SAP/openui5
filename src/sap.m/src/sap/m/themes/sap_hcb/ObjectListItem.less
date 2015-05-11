@@ -91,13 +91,21 @@ li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF .sapMObj
 }
 
 .sapMObjLNumberStateError {
-	color: @sapHCStandardFG;
+	color: @sapUiNegativeText;
 }
 
 .sapMObjLNumberStateWarning {
-	color: @sapHCStandardFG;
+	color: @sapUiCriticalText;
 }
 
 .sapMObjLNumberStateSuccess {
+	color: @sapUiPositiveText;
+}
+
+.sapMLIB:hover .sapMObjLNumber {
+	color: @sapHCStandardFG;
+}
+
+.sapMLIB:hover .sapMObjLNumberUnit {
 	color: @sapHCStandardFG;
 }
