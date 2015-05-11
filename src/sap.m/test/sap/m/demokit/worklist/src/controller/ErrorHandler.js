@@ -24,17 +24,12 @@ sap.ui.define([
 			this._oComponent = oComponent;
 			this._oModel = oComponent.getModel();
 			this._bMessageOpen = false;
-			this._sErrorTitle = this._oResourceBundle.getText("errorTitle");
 			this._sErrorText = this._oResourceBundle.getText("errorText");
 
 			this._oModel.attachMetadataFailed(function (oEvent) {
 				var oParams = oEvent.getParameters();
 
-				this._showMetadataError(
-					oParams.statusCode + " (" + oParams.statusText + ")" + sLineBreak +
-					oParams.message + sLineBreak +
-					oParams.responseText + sLineBreak
-				);
+				this._showMetadataError(oParams.response);
 
 			}, this);
 
@@ -45,11 +40,7 @@ sap.ui.define([
 				// We already cover this case with a notFound target so we skip it here.
 				// A request that cannot be sent to the server is a technical error that we have to handle though
 				if (oParams.response.statusCode !== "404" || (oParams.response.statusCode === 404 && oParams.response.responseText.indexOf("Cannot POST") === 0)) {
-					this._showServiceError(
-						oParams.response.statusCode + " (" + oParams.response.statusText + ")" + sLineBreak +
-						oParams.response.message + sLineBreak +
-						oParams.response.responseText + sLineBreak
-					);
+					this._showServiceError(oParams.response);
 				}
 
 			}, this);
@@ -62,14 +53,12 @@ sap.ui.define([
 		 * @param {string} sDetails a technical error to be displayed on request
 		 * @private
 		 */
-		_showMetadataError : function (sDetails) {
-			MessageBox.show(
+		_showMetadataError : function (oDetails) {
+			MessageBox.error(
 				this._sErrorText,
 				{
 					id : "metadataErrorMessageBox",
-					icon: MessageBox.Icon.ERROR,
-					title: this._sErrorTitle,
-					details: sDetails,
+					details: oDetails,
 					styleClass: this._oComponent.getCompactCozyClass(),
 					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
@@ -88,20 +77,17 @@ sap.ui.define([
 		 * @param {string} sDetails a technical error to be displayed on request
 		 * @private
 		 */
-		_showServiceError : function (sDetails) {
+		_showServiceError : function (oDetails) {
 			if (this._bMessageOpen) {
 				return;
 			}
 			this._bMessageOpen = true;
-			MessageBox.show(
+			MessageBox.error(
 				this._sErrorText,
 				{
 					id : "serviceErrorMessageBox",
-					icon: MessageBox.Icon.ERROR,
-					title: this._sErrorTitle,
-					details: sDetails,
+					details: oDetails,
 					styleClass: this._oComponent.getCompactCozyClass(),
-					actions: [MessageBox.Action.CLOSE],
 					onClose: function () {
 						this._bMessageOpen = false;
 					}.bind(this)
