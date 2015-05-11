@@ -246,6 +246,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.write("<tr class='sapMListTblSubRow'");
 		rm.writeAttribute("id", oLI._popinId);
 		rm.writeAttribute("role", "row");
+		rm.writeAttribute("tabindex", "-1");
+		
 		if (bSelectable) {
 			rm.writeAttribute("aria-selected", bSelected);
 		}
