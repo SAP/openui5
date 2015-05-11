@@ -217,6 +217,11 @@ function(jQuery) {
 				var aArgs = [oPopupHolder.firstChild].concat(aAdditionalArgs);
 				oContext[sMethod].apply(oContext, aArgs);
 			}
+
+			if (oDomRef && oToolbar.sOriginalStylePropertyWidth) {
+				jQuery(oDomRef).width(oToolbar.sOriginalStylePropertyWidth);
+				oToolbar.sOriginalStylePropertyWidth = null;
+			}
 		}
 	};
 

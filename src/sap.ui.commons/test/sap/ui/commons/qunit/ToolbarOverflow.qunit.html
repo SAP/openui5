@@ -23,7 +23,7 @@
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.ui.commons">
+				data-sap-ui-libs="sap.ui.commons, sap.ui.layout">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 
@@ -121,7 +121,7 @@
 			addManyItems(oCtrl);
 
 
-			asyncTest("VisibleItems calculation with images involved", function() {
+			asyncTest("VisibleItems calculation with images involved", function(assert) {
 				expect(2);
 
 				setTimeout(function(){ // give the Toolbar some time to recognize the change
@@ -132,7 +132,7 @@
 			});
 
 
-			asyncTest("VisibleItems calculation with item size change", function() {
+			asyncTest("VisibleItems calculation with item size change", function(assert) {
 				expect(2);
 				sap.ui.getCore().byId("Toolbar_b_0").setWidth("400px");
 
@@ -146,7 +146,7 @@
 
 
 
-			asyncTest("Test if emptyPopupOverflow method removes popup content from the DOM if called with the right parameter.", function() {
+			asyncTest("Test if emptyPopupOverflow method removes popup content from the DOM if called with the right parameter.", function(assert) {
 				var oCtrl = new sap.ui.commons.Toolbar({
 					id: "Toolbar1",
 					width:"180px",
@@ -170,7 +170,7 @@
 
 			});
 
-			asyncTest("Test if emptyPopupOverflow method moves popup content to the toolbar when called with the right parameter and the toolbar DOM is existing", function() {
+			asyncTest("Test if emptyPopupOverflow method moves popup content to the toolbar when called with the right parameter and the toolbar DOM is existing", function(assert) {
 				var oCtrl = new sap.ui.commons.Toolbar({
 					id: "Toolbar2",
 					width:"180px",
@@ -193,7 +193,7 @@
 				}, 500);
 			});
 
-			asyncTest("Test if emptyPopupOverflow method throws error if it has to move popup contents to the toolbar when the toolbar DOM is not existing;", function() {
+			asyncTest("Test if emptyPopupOverflow method throws error if it has to move popup contents to the toolbar when the toolbar DOM is not existing;", function(assert) {
 				var oCtrl = new sap.ui.commons.Toolbar({
 					id: "Toolbar3",
 					width:"180px",
@@ -250,6 +250,67 @@
 
 
 
+			asyncTest("Test if when opened the overflow popup is causing a (bug) toolbar resize when the toolbar is nested in horizontal layout.", function(assert) {
+				var oCtrl = new sap.ui.commons.Toolbar({
+					id: 'Toolbar4',
+					items: [
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'})
+					],
+					rightItems: [
+						new sap.ui.commons.Button({text: 'Right'})
+					]
+				});
+
+				var testLayout = new sap.ui.layout.HorizontalLayout({
+					content: [
+						oCtrl
+					],
+					allowWrapping: false
+				});
+				testLayout.placeAt('uiArea2');
+
+
+				jQuery('#uiArea2').css('width', '400');
+
+				setTimeout(function() {
+					var btn = oCtrl.getDomRef('mn');
+					btn.click();
+					setTimeout(function() {
+						btn.click();
+						setTimeout(function() {
+							btn.click();
+							setTimeout(function() {
+								var pu = oCtrl.getDomRef('pu');
+								// if the popup is still visible, it means resize was not triggered (causing the popup to close)
+								equal(jQuery(pu).css('visibility'), 'visible', 'Popup is properly visible');
+								equal(jQuery('#Toolbar4-pu button').length, 7, 'There are seven buttons in the popup.');
+								btn.click();
+								jQuery('#uiArea2').css('width', '600');
+								setTimeout(function() {
+									btn.click();
+									equal(jQuery('#Toolbar4-pu button').length, 3, 'There are three buttons in the popup - toolbar resizing still works after popup opening/closing.');
+									btn.click();
+									start();
+								}, 500);
+							}, 500);
+						}, 500);
+					}, 500);
+				}, 500);
+			});
+
+
+
 
 			// ==================================================
 			//          helper functions
@@ -285,5 +346,6 @@
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
 		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
 	</body>
 </html>
