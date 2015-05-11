@@ -1041,7 +1041,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._clearList = function() {
 		if (this._oList) {
 			this._oList.destroyAggregation("items", false);	// note: suppress re-rendering
-			
 		}
 	};
 
