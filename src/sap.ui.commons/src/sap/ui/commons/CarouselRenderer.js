@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var CarouselRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -23,10 +23,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	CarouselRenderer.render = function(oRenderManager, oControl) {
-	
+
 		var rm = oRenderManager;
 		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		rm.write("<div");
 		rm.addClass("sapUiCrsl");
 		if (oControl.getWidth() != "") {
@@ -39,9 +39,9 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeClasses();
 		rm.writeControlData(oControl);
 		rm.write(">");
-	
+
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
-	
+
 		// Start Prev button
 		rm.write("<div");
 		rm.writeAttribute("id", oControl.getId() + "-prevbutton");
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("</div>");
 		// End Prev button
-	
+
 		// Start Next button
 		rm.write("<div");
 		rm.writeAttribute("id", oControl.getId() + "-nextbutton");
@@ -95,23 +95,16 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("</div>");
 		// End Next button
-	
-	
-		rm.write("<div");
-		rm.writeAttribute("tabindex", "0");
-		rm.addClass("sapUiCrslBefore");
-		rm.writeClasses();
-		rm.write("></div>");
-	
+
 		// Start content area
 		rm.write("<div");
 		rm.writeAttribute("id", oControl.getId() + "-contentarea");
 		rm.addClass("sapUiCrslCnt");
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		var aContent = oControl.getContent();
-	
+
 		rm.write("<ul");
 		rm.writeAttribute("id", oControl.getId() + "-scrolllist");
 		rm.writeAttribute("role", "listbox");
@@ -119,7 +112,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addClass("sapUiCrslScl");
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		for ( var i = 0; i < aContent.length; i++) {
 			var oChild = aContent[i];
 			rm.write("<li");
@@ -133,18 +126,24 @@ sap.ui.define(['jquery.sap.global'],
 			rm.renderControl(oChild);
 			rm.write("</li>");
 		}
-	
+
 		rm.write("</ul>");
-	
+
 		rm.write("</div>");
 		// End content area
-	
+
+		rm.write("<div");
+		rm.writeAttribute("tabindex", "0");
+		rm.addClass("sapUiCrslBefore");
+		rm.writeClasses();
+		rm.write("></div>");
+
 		rm.write("<div");
 		rm.writeAttribute("tabindex", "0");
 		rm.addClass("sapUiCrslAfter");
 		rm.writeClasses();
 		rm.write("></div>");
-	
+
 		// aria description for toggling the action mode
 		rm.write("<span");
 		rm.writeAttribute("id", oControl.getId() + "-toggleaction");
@@ -154,7 +153,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 		rm.write(rb.getText("CAROUSEL_ACTION_MODE"));
 		rm.write("</span>");
-	
+
 		// aria description for navigation
 		rm.write("<span");
 		rm.writeAttribute("id", oControl.getId() + "-navigate");
@@ -164,7 +163,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 		rm.write(rb.getText("CAROUSEL_NAV"));
 		rm.write("</span>");
-	
+
 		rm.write("</div>");
 	};
 
