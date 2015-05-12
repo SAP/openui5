@@ -44,7 +44,8 @@
 				"samples" : [
 					"sap.ui.core.sample.ViewTemplate.scenario",
 					"sap.ui.core.sample.ViewTemplate.tiny",
-					"sap.ui.core.sample.ViewTemplate.types"
+					"sap.ui.core.sample.ViewTemplate.types",
+					"sap.ui.core.sample.ViewTemplate.valuelist"
 				]
 			},
 			{
@@ -222,6 +223,11 @@
 				"id": "sap.ui.core.sample.ViewTemplate.types",
 				"name": "XML Templating: UI5 OData types",
 				"description": "XML Templating sample with UI5 core primitive OData types"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.valuelist",
+				"name": "Separate Value List Loading",
+				"description": "Separate loading of value lists to reduce size of OData service metadata to be loaded"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaMatchers",

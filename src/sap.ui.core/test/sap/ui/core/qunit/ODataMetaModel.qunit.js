@@ -31,7 +31,7 @@ sap.ui.require([
 		ok(false, "Failed to load: " + JSON.stringify(oParameters));
 	}
 
-	var oDataMetaModel, // single cached instance, see withMetaModel()
+	var mMetaModels = {}, //cached meta models keyed by annotation URLs, see withMetaModel
 		sMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
@@ -337,6 +337,31 @@ sap.ui.require([
 		',
 		sGWAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
 		sGWMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
+		sMultipleValueListAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="4.0"\
+	xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+<edmx:DataServices>\
+<Schema Namespace="zanno4sample_anno_mdl.v1">\
+	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+			<Record>\
+				<PropertyValue Property="CollectionPath" String="VH_UnitWeight"/>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit" Qualifier="FOO">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+			<Record>\
+				<PropertyValue Property="CollectionPath" String="VH_UnitQuantity"/>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
+</Schema>\
+</edmx:DataServices>\
+</edmx:Edmx>\
+		',
 		mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
 			"/fake/emptyDataServices/$metadata" : [200, mHeaders, sEmptyDataServices],
@@ -347,6 +372,7 @@ sap.ui.require([
 			"/fake/annotations" : [200, mHeaders, sAnnotations],
 			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
 			"/fake/emptyAnnotations" : [200, mHeaders, sEmptyAnnotations],
+			"/fake/multipleValueLists" : [200, mHeaders, sMultipleValueListAnnotations],
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
 			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sGWAnnotations]
 		},
@@ -377,34 +403,43 @@ sap.ui.require([
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code>.
 	 *
+	 * @param {string|string[]} [vAnnotationUrl="/GWSAMPLE_BASIC/annotations"]
+	 *   (array of) annotation URLs
 	 * @param {function} fnCodeUnderTest
 	 * @param {boolean} bImmediately
 	 *   whether to run the test immediately instead of waiting for the meta model to be loaded
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withMetaModel(fnCodeUnderTest, bImmediately) {
-		var oMetaModel,
+	function withMetaModel(vAnnotationUrl, fnCodeUnderTest, bImmediately) {
+		var sCacheKey,
 			oModel,
 			oSandbox; // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
 
 		/*
-		 * Call the given "code under test" with the given OData meta model, making sure that
-		 * no changes to the model are kept in the cached singleton.
+		 * Call the given "code under test" the given OData meta model,
+		 * making sure that no changes to the model are kept in the cached meta model.
 		 */
-		function call(fnCodeUnderTest, oDataMetaModel) {
-			var sCopy = oDataMetaModel.oModel.getJSON();
+		function call(fnCodeUnderTest, oMetaModel) {
+			var sCopy = oMetaModel.oModel.getJSON();
 
 			try {
-				return fnCodeUnderTest(oDataMetaModel);
+				return fnCodeUnderTest(oMetaModel);
 			} finally {
-				oDataMetaModel.oModel.setJSON(sCopy);
+				oMetaModel.oModel.setJSON(sCopy);
 			}
 		}
 
+		if (typeof vAnnotationUrl === "function") {
+			bImmediately = fnCodeUnderTest;
+			fnCodeUnderTest = vAnnotationUrl;
+			vAnnotationUrl = "/GWSAMPLE_BASIC/annotations";
+		}
+
+		sCacheKey = Array.isArray(vAnnotationUrl) ? vAnnotationUrl.join(",") : vAnnotationUrl;
 		// Note: bImmediately requires a fresh instance
-		if (oDataMetaModel && !bImmediately) {
-			return call(fnCodeUnderTest, oDataMetaModel);
+		if (mMetaModels[sCacheKey] && !bImmediately) {
+			return call(fnCodeUnderTest, mMetaModels[sCacheKey]);
 		}
 
 		try {
@@ -413,7 +448,7 @@ sap.ui.require([
 
 			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
 			oModel = new ODataModel2("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				annotationURI : vAnnotationUrl,
 				json : true,
 				loadMetadataAsync : true
 			});
@@ -425,9 +460,9 @@ sap.ui.require([
 				return fnCodeUnderTest(oModel.getMetaModel());
 			} else {
 				// calls the code under test once the meta model has loaded
-				oDataMetaModel = oModel.getMetaModel();
-				return oDataMetaModel.loaded().then(function () {
-					return call(fnCodeUnderTest, oDataMetaModel);
+				mMetaModels[sCacheKey] = oModel.getMetaModel();
+				return mMetaModels[sCacheKey].loaded().then(function () {
+					return call(fnCodeUnderTest, mMetaModels[sCacheKey]);
 				});
 			}
 		} finally {
@@ -1693,5 +1728,68 @@ sap.ui.require([
 			}, /Property not found: AndSoOn/);
 		});
 	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Metadata loaded completely, ValueList w/o qualifier", function () {
+		return withMetaModel(function (oMetaModel) {
+			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+				oProperty = oMetaModel.getODataProperty(oEntityType, "Category"),
+				oPromise = oMetaModel.getODataValueLists(oProperty);
+
+			oPromise.then(function (mValueLists) {
+				deepEqual(mValueLists, {"": oProperty["com.sap.vocabularies.Common.v1.ValueList"]});
+			});
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Metadata loaded completely, no ValueList", function () {
+		return withMetaModel(function (oMetaModel) {
+			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+				oProperty = oMetaModel.getODataProperty(oEntityType, "TypeCode"),
+				oPromise = oMetaModel.getODataValueLists(oProperty);
+
+			oPromise.then(function (mValueLists) {
+				deepEqual(mValueLists, {});
+			});
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Metadata loaded completely, multiple ValueLists", function () {
+		return withMetaModel(["/GWSAMPLE_BASIC/annotations", "/fake/multipleValueLists"],
+			function (oMetaModel) {
+				var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+					oProperty = oMetaModel.getODataProperty(oEntityType, "WeightUnit"),
+					oPromise = oMetaModel.getODataValueLists(oProperty);
+
+				oPromise.then(function (mValueLists) {
+					deepEqual(mValueLists, {
+						"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
+						"FOO" : oProperty["com.sap.vocabularies.Common.v1.ValueList#FOO"]
+					});
+				});
+				return oPromise;
+			}
+		);
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: error handling", function (assert) {
+		return withMetaModel(["/GWSAMPLE_BASIC/annotations"],
+			function (oMetaModel) {
+				[null, undefined, "", 42].forEach(function (oFixture) {
+					var sMessage = "Given property " + oFixture + " is not an object";
+					throws(function () {
+						oMetaModel.getODataValueLists(oFixture);
+					}, new RegExp(sMessage), "Expect error: " + sMessage);
+				});
+			}
+		);
+	});
+
 	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path
+	//TODO errors and warnings intentionally created should not be logged to console
 });

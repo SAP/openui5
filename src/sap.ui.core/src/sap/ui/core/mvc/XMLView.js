@@ -187,7 +187,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		};
 
 		XMLView.prototype.exit = function() {
-			this.oAfterRenderingNotifier.destroy();
+			if (this.oAfterRenderingNotifier) {
+				this.oAfterRenderingNotifier.destroy();
+			}
 			View.prototype.exit.apply(this, arguments);
 		};
 

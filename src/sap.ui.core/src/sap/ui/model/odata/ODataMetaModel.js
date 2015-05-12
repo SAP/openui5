@@ -559,6 +559,44 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
+	 * Returns a <code>Promise</code> which is resolved with a map representing the
+	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations of the given property or
+	 * rejected with an error.
+	 * The key in the map provided on successful resolution is the qualifier of the annotation or
+	 * the empty string if no qualifier is defined. The value in the map is the JSON object for
+	 * the annotation. The map is empty if the property has no
+	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
+	 *
+	 * @param {object} oProperty
+	 *   a property of an OData entity type or complex type as returned by
+	 *   {@link #getODataProperty getODataProperty}
+	 * @returns {Promise}
+	 *   a Promise that gets resolved as soon as the value lists as well as the required model
+	 *   elements have been loaded
+	 * @throws {Error} if <code>oProperty</code> is <code>null</code> or not an object
+	 * @since 1.29.1
+	 * @public
+	 */
+	ODataMetaModel.prototype.getODataValueLists = function (oProperty) {
+		if (oProperty === null || typeof oProperty !== "object") {
+			throw new Error("Given property " + oProperty + " is not an object");
+		}
+		return new Promise(function (fnResolve, fnReject) {
+			var mValueLists = {};
+
+			jQuery.each(oProperty, function (sName, oValue) {
+				var sQualifier;
+
+				if (jQuery.sap.startsWith(sName, "com.sap.vocabularies.Common.v1.ValueList")) {
+					sQualifier = sName.split("#")[1];
+					mValueLists[sQualifier ? sQualifier : ""] = oValue;
+				}
+			});
+			fnResolve(mValueLists);
+		});
+	};
+
+	/**
 	 * @inheritdoc
 	 */
 	ODataMetaModel.prototype.getProperty = function () {
