@@ -16,9 +16,7 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
@@ -28,7 +26,7 @@
 	function strictMatchTestCase (sTextValue, sMatcherValue, bExpected) {
 		// Arrange
 		var oButton = new sap.ui.commons.Button({text : sTextValue});
-	
+
 		// System under Test
 		var oMatcher = new sap.ui.test.matchers.PropertyStrictEquals({
 			name : "text",
@@ -37,44 +35,44 @@
 
 		// Act
 		var bResult = oMatcher.isMatching(oButton);
-	
+
 		// Assert
 		strictEqual(bResult, bExpected, "Did match strictly");
-	
+
 		// Cleanup
 		oButton.destroy();
 	}
-	
+
 	test("Should strictmatch a matching property", function() {
 		strictMatchTestCase.call(this, "foo", "foo", true)
 	});
-	
+
 	test("Should not strictmatch a not matching property", function() {
 		strictMatchTestCase.call(this, "foo", "bar", false)
 	});
-	
+
 	test("Should not strictmatch 2 falsy values", function() {
 		strictMatchTestCase.call(this, "", null, false)
 	});
-	
+
 	test("Should complain if control does not have a property", function() {
 		// Arrange
 		var oButton = new sap.ui.commons.Button();
 		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-	
+
 		// System under Test
 		var oMatcher = new sap.ui.test.matchers.PropertyStrictEquals({
 			name : "aPropertyThatWillNeverBeAddedToTheButton",
 			value : "anything"
 		});
-	
+
 		// Act
 		var bResult = oMatcher.isMatching(oButton);
-	
+
 		// Assert
 		strictEqual(bResult, false, "Did not match");
 		strictEqual(oErrorSpy.callCount, 1, "Did complain");
-	
+
 		// Cleanup
 		oButton.destroy();
 	});

@@ -16,9 +16,7 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
@@ -28,52 +26,52 @@
 	test("Should match a filled aggregation", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox({items : [new sap.ui.core.ListItem()]});
-	
+
 		// System under Test
 		var oMatcher = new sap.ui.test.matchers.AggregationFilled({ name : "items" });
-	
+
 		// Act
 		var bResult = oMatcher.isMatching(oComboBox);
-	
+
 		// Assert
 		ok(bResult, "Did match because there was an item");
-	
+
 		// Cleanup
 		oComboBox.destroy();
 	});
-	
+
 	test("Should not match an empty aggregation", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox({items : []});
-	
+
 		// System under Test
 		var oMatcher = new sap.ui.test.matchers.AggregationFilled({ name : "items" });
-	
+
 		// Act
 		var bResult = oMatcher.isMatching(oComboBox);
-	
+
 		// Assert
 		ok(!bResult, "Did not match because there was no item");
-	
+
 		// Cleanup
 		oComboBox.destroy();
 	});
-	
+
 	test("Should complain if control does not have an aggregation", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox();
 		var oErrorSpy = this.spy(jQuery.sap.log,"error");
-	
+
 		// System under Test
 		var oMatcher = new sap.ui.test.matchers.AggregationFilled({ name : "anAggregationThatWillNeverBeAddedToTheCombobox" });
-	
+
 		// Act
 		var bResult = oMatcher.isMatching(oComboBox);
-	
+
 		// Assert
 		strictEqual(bResult, false, "Did not match");
 		strictEqual(oErrorSpy.callCount, 1, "Did complain");
-	
+
 		// Cleanup
 		oComboBox.destroy();
 	});
