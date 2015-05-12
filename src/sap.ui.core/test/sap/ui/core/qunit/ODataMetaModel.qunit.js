@@ -81,7 +81,8 @@ sap.ui.require([
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
 				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
-					sap:topable="false" sap:requires-filter="true" sap:content-version="1" />\
+					sap:deletable-path="Deletable" sap:topable="false" sap:requires-filter="true"\
+					sap:updatable-path="Updatable" sap:content-version="1" />\
 				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex" \
 					sap:creatable="false" sap:updatable="false" sap:deletable="false" \
 					sap:pageable="false" sap:searchable="true" sap:content-version="1"/> \
@@ -134,6 +135,8 @@ sap.ui.require([
 			</PropertyValue>\
 		</Record>\
 	</Annotation>\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Deletable" Path="DeletableAnnotation" />\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Updatable" Path="UpdatableAnnotation" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.Contact">\
 <Annotation Term="com.sap.vocabularies.Communication.v1.Contact">\
@@ -1223,6 +1226,22 @@ sap.ui.require([
 						(i === 0 ? "Hidden" : "ReadOnly")},
 					"Product WeightUnit invisible");
 				delete oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"];
+
+				// sap:deletable-path (EntitySet)
+				deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
+				delete oBusinessPartnerSet["sap:deletable-path"];
+				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"], {
+						"Path" : (i === 0 ? "Deletable" : "DeletableAnnotation")},
+					"deletable-path");
+				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"];
+
+				// sap:updatable-path (EntitySet)
+				deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
+				delete oBusinessPartnerSet["sap:updatable-path"];
+				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"], {
+						"Path" : (i === 0 ? "Updatable" : "UpdatableAnnotation")},
+					"updatable-path");
+				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			});
