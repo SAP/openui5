@@ -626,14 +626,10 @@ sap.ui.define(['jquery.sap.global'],
 	//Returns the tooltip of the given step
 	var getStepTooltip = function(oStep){
 		var sTooltip = oStep.getTooltip_AsString();
-		if (!sTooltip) {
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-				sTooltip = getText("RDMP_DEFAULT_STEP_TOOLTIP", [oStep.__stepName]);
-			} else {
-				sTooltip = "";
-			}
+		if (!sTooltip && !oStep.getTooltip() && sap.ui.getCore().getConfiguration().getAccessibility()) {
+			sTooltip = getText("RDMP_DEFAULT_STEP_TOOLTIP", [oStep.__stepName]);
 		}
-		return sTooltip;
+		return sTooltip || "";
 	};
 	
 	
