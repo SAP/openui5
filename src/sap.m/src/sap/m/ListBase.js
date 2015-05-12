@@ -1061,7 +1061,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	ListBase.prototype.onItemBindingContextSet = function(oItem) {
-		if (!this._bSelectionMode || !this.getRememberSelections()) {
+		// determine whether selection remember is necessary or not
+		if (!this._bSelectionMode || !this.getRememberSelections() || !this.isBound("items")) {
 			return;
 		}
 		
@@ -1155,7 +1156,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// insert or remove given item's path from selection array
 	ListBase.prototype._updateSelectedPaths = function(oItem, bSelect) {
-		if (!this.getRememberSelections()) {
+		if (!this.getRememberSelections() || !this.isBound("items")) {
 			return;
 		}
 	
