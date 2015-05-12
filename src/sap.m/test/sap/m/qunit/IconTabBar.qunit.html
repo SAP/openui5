@@ -881,7 +881,7 @@
 				// Act
 				// Try to expand the IconTabBar by pressing SPACE key
 				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-				this.clock.tick(500);
+				this.clock.tick(1000);
 
 				// Assert
 				// Content shoud remain collapsed because expandable is set to false
@@ -914,7 +914,7 @@
 				// Act
 				// Try to expand the IconTabBar by pressing SPACE key
 				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-				this.clock.tick(500);
+				this.clock.tick(1000);
 
 				// Assert
 				// Content shoud collapsed because expandable is set to true
@@ -947,7 +947,7 @@
 				// Act
 				// Collapse the IconTabBar by pressing SPACE key
 				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-				this.clock.tick(500);
+				this.clock.tick(1000);
 
 				// Assert
 				ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
