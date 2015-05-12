@@ -271,7 +271,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		for (var j = 0; j < aAttribs.length; j++) {
 			if (aAttribs[j].getVisible()) {
-				aVisibleAttribs.push(aAttribs[j]);
+				if (aAttribs[j] instanceof sap.m.ObjectAttribute || aAttribs[j] instanceof sap.m.Link) {
+					aVisibleAttribs.push(aAttribs[j]);
+				} else {
+					jQuery.sap.log.warning("Only sap.m.ObjectAttribute or instance of sap.m.Link (including sap.ui.comp.navpopover.SmartLink are allowed in \"sap.m.ObjectHeader.attributes\" aggregation." + " Current object is "
+							+ aAttribs[j].constructor.getMetadata().getName() + " with id \"" + aAttribs[j].getId() + "\"");
+				}
+				
 			}
 		}
 
