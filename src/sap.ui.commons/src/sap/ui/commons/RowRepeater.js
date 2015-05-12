@@ -226,8 +226,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.iPreviousNumberOfRows = this.getNumberOfRows();
 	
 		// create filter and sorter toolbar control and add as aggregation
-		this.setAggregation( "filterToolbar", new sap.ui.commons.Toolbar(sId + "-ftb",{standalone:false,design:sap.ui.commons.ToolbarDesign.Transparent}));
-		this.setAggregation( "sorterToolbar", new sap.ui.commons.Toolbar(sId + "-stb",{standalone:false}));
+		this.setAggregation("filterToolbar", new sap.ui.commons.Toolbar(sId + "-ftb", {
+			standalone: false, 
+			design: sap.ui.commons.ToolbarDesign.Transparent
+		}));
+		this.setAggregation("sorterToolbar", new sap.ui.commons.Toolbar(sId + "-stb", {
+			standalone: false
+		}));
 	
 		// create pager controls and their event handlers, add them as aggregations
 		var oPager = new sap.ui.commons.Paginator(sId + "-fp",{page:[this.paging,this]});
@@ -235,8 +240,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		// create show more buttons and add them as aggregation
 		var sShowMoreText = this.oResourceBundle.getText("SHOW_MORE");
-		this.setAggregation( "headerShowMoreButton", new sap.ui.commons.Button(sId + "-hsm",{text:sShowMoreText,press:[this.triggerShowMore,this]}));
-		this.setAggregation( "footerShowMoreButton", new sap.ui.commons.Button(sId + "-fsm",{text:sShowMoreText,press:[this.triggerShowMore,this]}));
+		this.setAggregation("headerShowMoreButton", new sap.ui.commons.Button(sId + "-hsm", {
+			text: sShowMoreText,
+			tooltip: sShowMoreText,
+			press: [this.triggerShowMore, this]
+		}));
+		this.setAggregation("footerShowMoreButton", new sap.ui.commons.Button(sId + "-fsm", {
+			text: sShowMoreText,
+			tooltip: sShowMoreText,
+			press: [this.triggerShowMore, this]
+		}));
 	
 		this._bSecondPage = false;
 		
