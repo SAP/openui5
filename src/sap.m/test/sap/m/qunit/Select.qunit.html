@@ -4283,6 +4283,56 @@
 			});
 
 			/* ------------------------------------ */
+			/* updateItems()                        */
+			/* ------------------------------------ */
+
+			// BCP 1570150535
+			test('it should not dispatch the change event when the binding of the item aggregation is updated', function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: {
+						path: "/contries",
+						template: new sap.ui.core.Item({
+							text: "{name}"
+						})
+					},
+					change: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+					}
+				});
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"contries": [
+						{
+							"name": "Germany"
+						},
+						{
+							"name": "Cuba"
+						}
+					]
+				};
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+				oModel.setData(mData);
+				oSelect.setModel(oModel);
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.updateItems("change");
+
+				// act
+				oSelect.getFocusDomRef().blur();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event should not be fired");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			/* ------------------------------------ */
 			/* destroyAggregation()                 */
 			/* ------------------------------------ */
 

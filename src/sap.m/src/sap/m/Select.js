@@ -308,6 +308,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.updateItems = function(sReason) {
 			SelectList.prototype.updateItems.apply(this, arguments);
+
+			// note: after the items are recreated, the selected item association
+			// points to the new item
+			this._oSelectionOnFocus = this.getSelectedItem();
 		};
 
 		/**
@@ -466,8 +470,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
 				this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
 			};
-
-			oPopover._setArrowPosition = function() {};
 
 			oPopover._setMinWidth = function(sWidth) {
 				this.getDomRef().style.minWidth = sWidth;
