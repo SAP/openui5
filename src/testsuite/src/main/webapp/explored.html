@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+	<title>OpenUI5 Explored</title>
 	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 	<meta charset="UTF-8">
-	<title>SAPUI5 Explored</title>
 
 	<script
-			id='sap-ui-bootstrap'
-			src='resources/sap-ui-core.js'
-			data-sap-ui-theme='sap_bluecrystal'
-			data-sap-ui-preload="async"
-			data-sap-ui-libs='sap.m, sap.ui.layout, sap.ui.demokit'
-			data-sap-ui-bindingSyntax="complex"
-			data-sap-ui-compatVersion="1.16"
-			data-sap-ui-resourceroots='{
-			"sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/"}' >
+		id='sap-ui-bootstrap'
+		type='text/javascript'
+		src='resources/sap-ui-core.js'
+		data-sap-ui-xx-bindingSyntax="complex"
+		data-sap-ui-theme='sap_bluecrystal'
+		data-sap-ui-libs='sap.ui.layout, sap.ui.demokit, sap.m'
+		data-sap-ui-compatVersion="1.16"
+		data-sap-ui-resourceroots='{
+			"sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/"
+		}' >
 	</script>
 
 	<style type="text/css">
@@ -37,7 +39,7 @@
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit( function () {
+		sap.ui.getCore().attachInitEvent( function () {
 			jQuery.sap.require("sap.ui.demokit.explored.Bootstrap");
 			sap.ui.demokit.explored.Bootstrap.run();
 		});
