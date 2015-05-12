@@ -1413,10 +1413,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var aContexts;
 		if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
 			aContexts = oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1);
-			this._setBusy({
-				requestedLength: iFixedBottomRowCount,
-				receivedLength: aContexts.length
-			});
 		} else {
 			aContexts = [];
 		}
@@ -1477,8 +1473,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			aContexts = aContexts.concat(aFixedBottomContexts);
 
 			if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
-				var aFixedBottomContexts = oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1);
-				aContexts = aContexts.concat(aFixedBottomContexts);
 				this._setBusy({
 					requestedLength: iFixedBottomRowCount,
 					receivedLength: aFixedBottomContexts.length,
@@ -1683,14 +1677,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype._updateBindingContexts = function(bSuppressUpdate) {
 
 		var aRows = this.getRows(),
-		    oBinding = this.getBinding("rows"),
-		    oBindinginfo = this.mBindingInfos["rows"],
-		    aFixedContexts,
-		    aContexts,
-		    aFixedBottomContexts,
-		    iFixedRows = this.getFixedRowCount(),
-		    iFixedBottomRows = this.getFixedBottomRowCount(),
-		    iVisibleRowCount = this.getVisibleRowCount();
+			oBinding = this.getBinding("rows"),
+			oBindinginfo = this.mBindingInfos["rows"],
+			aFixedContexts,
+			aContexts,
+			aFixedBottomContexts,
+			iFixedRows = this.getFixedRowCount(),
+			iFixedBottomRows = this.getFixedBottomRowCount(),
+			iVisibleRowCount = this.getVisibleRowCount();
 
 		// fetch the contexts from the binding
 		if (oBinding) {
@@ -1714,13 +1708,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						requestedLength: iFixedRows,
 						receivedLength: aFixedContexts.length,
 						contexts: aFixedContexts });
-
+					
 					aContexts = aFixedContexts.concat(aContexts);
 				}
 				
 				var aFixedBottomContexts = this._getFixedBottomRowContexts(oBinding);
 				aContexts = aContexts.concat(aFixedBottomContexts);
-
+				
 				if (iFixedBottomRows > 0 && (iVisibleRowCount - iFixedBottomRows) < oBinding.getLength()) {
 					this._setBusy({
 						requestedLength: iFixedBottomRows,
