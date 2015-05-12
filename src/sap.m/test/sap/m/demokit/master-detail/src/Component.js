@@ -112,6 +112,7 @@ sap.ui.define([
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
+			this.setModel(models.createFLPModel(), "FLP");
 
 			// set the internationalization model
 			this.setModel(new ResourceModel({

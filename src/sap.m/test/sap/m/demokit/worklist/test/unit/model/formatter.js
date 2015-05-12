@@ -46,20 +46,5 @@ sap.ui.define(
 			assert.ok(oData instanceof Object, "The result of the formatter is an object");
 			assert.strictEqual(oData.title, sTitle, "The object has a \"title\" key and the value is as specified");
 		});
-
-		QUnit.module("shareJamData");
-
-		QUnit.test("Should return a configuration object for the jamShareButton data property", function (assert) {
-			// Act
-			var sTitle = "Share this",
-				oData = formatter.shareJamData(sTitle);
-
-			// Assert
-			assert.ok(oData instanceof Object, "The result of the formatter is an object");
-			assert.strictEqual(oData.object.id, window.location.href, "The \"id\" property should contain the current URL");
-			assert.ok(oData.object.display instanceof sap.m.Text, "The \"display\" property should be a sap.m.Text control");
-			assert.strictEqual(oData.object.display.getText(), sTitle, "The text control in the \"display\" property should have the value as specified");
-			assert.ok(oData.object.share !== undefined, "The \"share\" property should be set");
-		});
 	}
 );
