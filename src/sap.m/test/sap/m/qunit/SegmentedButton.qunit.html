@@ -1175,8 +1175,11 @@
 		oSBI.setKey("changed");
 		oSegmentedButton.setSelectedKey("changed");
 
+		sap.ui.getCore().applyChanges();
+
 		// Assert
 		var oButton = oSegmentedButton.getButtons()[0];
+		var $LI = jQuery(oSegmentedButton.$().find("li")[0]);
 
 		strictEqual(oButton.getText(), "Btn changed", "Button text should have the new value");
 		strictEqual(oButton.getIcon(), "sap-icon://attachment", "Button should have the new value");
@@ -1184,6 +1187,12 @@
 		strictEqual(oButton.getEnabled(), false, "Button should have the new value");
 		strictEqual(oButton.getWidth(), "300px", "Button should have the new value");
 		strictEqual(oSegmentedButton.getSelectedKey(), "changed", "SegmentedButton getSelectedKey() should return the new value");
+
+		strictEqual($LI.text(), "Btn changed", "Rendered li text should have the new value");
+		ok($LI.find(".sapMBtnIcon"), "Rendered li should contain a icon span");
+		strictEqual($LI.attr("dir"), "rtl", "Rendered li should have attribute dir equal to 'rtl'");
+		ok($LI.hasClass("sapMSegBBtnDis"), "Rendered li should have a disabled class");
+		strictEqual($LI.width(), 300, "Rendered li width must be equal the the new value");
 
 	});
 
