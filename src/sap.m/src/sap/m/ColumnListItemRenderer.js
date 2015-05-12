@@ -219,6 +219,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.write("<tr class='sapMListTblSubRow'");
 		rm.writeAttribute("id", oLI._popinId);
 		rm.writeAttribute("role", "row");
+		rm.writeAttribute("tabindex", "-1");
 		
 		// logical parent of the popin is the base row
 		rm.writeAttribute("aria-owns", oLI.getId());
