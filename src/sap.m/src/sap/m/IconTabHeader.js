@@ -108,6 +108,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Initialize the ItemNavigation
 		this._oItemNavigation = new ItemNavigation().setCycling(false);
 		this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this);
+		this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemNavigationAfterFocus, this);
 		this.addDelegate(this._oItemNavigation);
 
 		if (this._bDoScroll) {
@@ -147,6 +148,46 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this._oItemNavigation.setFocusedIndex(iIndex);
+	};
+
+	/**
+	 * Adjusts arrows when keyboard is used for navigation and the beginning/end of the toolbar is reached
+	 */
+	IconTabHeader.prototype._onItemNavigationAfterFocus = function(oEvent) {
+		var oHead = this.getDomRef("head"),
+			oIndex = oEvent.getParameter("index"),
+			$event = oEvent.getParameter('event');
+
+		// handle only keyboard navigation here
+		if ($event.keyCode === undefined) {
+			return;
+		}
+
+		this._iCurrentScrollLeft = oHead.scrollLeft;
+
+		this._checkOverflow(oHead, this.$());
+
+		if (oIndex !== null && oIndex !== undefined) {
+			this._scrollIntoView(this.getTabFilters()[oIndex], 0);
+		}
+	};
+
+	/**
+	 * Returns all tab filters, without the tab separators
+	 * @private
+	 */
+	IconTabHeader.prototype.getTabFilters = function() {
+
+		var aItems = this.getItems();
+		var aTabFilters = [];
+
+		aItems.forEach(function(oItem) {
+			if (oItem instanceof sap.m.IconTabFilter) {
+				aTabFilters.push(oItem);
+			}
+		});
+
+		return aTabFilters;
 	};
 
 	/**
@@ -447,6 +488,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this._oItemNavigation) {
 			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this);
+			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemNavigationAfterFocus, this);
 			this.addDelegate(this._oItemNavigation);
 		}
 
@@ -806,8 +848,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		iContainerWidth;
 
 		if ($item.length > 0) {
+			var $head = this.$('head');
+			var iHeadPaddingWidth = $head.innerWidth() - $head.width();
 			var iItemWidth = $item.outerWidth(true);
-			var iItemPosLeft = $item.position().left;
+			var iItemPosLeft = $item.position().left - iHeadPaddingWidth / 2;
 
 			// switch based on scrolling mode
 			if (this._bDoScroll) { // ScrollEnablement
