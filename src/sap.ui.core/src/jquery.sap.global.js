@@ -334,7 +334,7 @@
 					sScript = "<script src=\"" + window["sap-ui-sRestartUrl"] + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
 					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
-						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue + "\"";
+						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue.replace(/"/g, "&quot;") + "\"";
 					}
 				});
 				sScript += "></script>";
