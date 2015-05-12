@@ -626,7 +626,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._iMaxWidth = maxWidth;
 
 				var cLineHeight = maxHeight + "px";
-				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px");
+				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "inline-block");
 				$PrevButton.css("height", maxHeight).css("line-height", cLineHeight);
 				$NextButton.css("height", maxHeight).css("line-height", cLineHeight);
 				$ContentArea.height(maxHeight);
@@ -642,7 +642,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				maxHeight = contentBarSize / visibleItems;
 				this._iMaxWidth = maxHeight;
 
-				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "inline-block");
+				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "block");
 				$PrevButton.width(maxWidth).after($ContentArea);
 				$NextButton.width(maxWidth);
 				$ContentArea.width(maxWidth);
