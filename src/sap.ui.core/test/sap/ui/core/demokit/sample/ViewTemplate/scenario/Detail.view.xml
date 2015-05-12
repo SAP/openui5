@@ -47,7 +47,7 @@
 				</template:repeat>
 			</form:SimpleForm>
 
-			<template:repeat list="{path:'entityType>', filters: {path: 'RecordType', operator: 'EQ', value1: 'com.sap.vocabularies.UI.v1.FieldGroupType'}}" var="fieldGroup">
+			<template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
 				<form:SimpleForm>
 					<form:title>
 						<core:Title text="{path: 'fieldGroup>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>

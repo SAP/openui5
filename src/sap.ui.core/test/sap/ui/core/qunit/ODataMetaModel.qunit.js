@@ -2,8 +2,15 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/v2/ODataModel"
-], function(Utils, ODataModel) {
+	"sap/ui/model/BindingMode", "sap/ui/model/ClientContextBinding", "sap/ui/model/Context",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
+	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/MetaModel", "sap/ui/model/Model",
+	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
+	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel"
+], function(BindingMode, ClientContextBinding, Context, FilterProcessor, JSONListBinding,
+	JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel, ODataModel,
+	ODataModel2) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
@@ -402,7 +409,7 @@ sap.ui.require([
 			setupSandbox(oSandbox);
 
 			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-			oModel = new ODataModel("/GWSAMPLE_BASIC", {
+			oModel = new ODataModel2("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
 				loadMetadataAsync : true
@@ -432,8 +439,8 @@ sap.ui.require([
 		},
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			oGlobalSandbox. verifyAndRestore();
-			ODataModel.mServiceData = {}; // clear cache
+			oGlobalSandbox.verifyAndRestore();
+			ODataModel2.mServiceData = {}; // clear cache
 		}
 	});
 
@@ -476,7 +483,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("basics", function () {
-		var oMetaModel = new sap.ui.model.odata.ODataMetaModel({
+		var oMetaModel = new ODataMetaModel({
 				getServiceMetadata : function () { return {dataServices : {}}; },
 				isLoaded : function () { return true; }
 			});
@@ -486,9 +493,9 @@ sap.ui.require([
 				oModelMock = this.mock(oMetaModel.oModel),
 				oResult = {};
 
-			this.mock(sap.ui.model.Model.prototype).expects("destroy").once();
+			this.mock(Model.prototype).expects("destroy").once();
 			// do not mock/stub this or else "destroy" will not bubble up!
-			this.spy(sap.ui.model.MetaModel.prototype, "destroy");
+			this.spy(MetaModel.prototype, "destroy");
 
 			// generic dispatching
 			["destroy", "isList"].forEach(function (sName) {
@@ -502,7 +509,7 @@ sap.ui.require([
 				.returns(oResult);
 			strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
 
-			ok(sap.ui.model.MetaModel.prototype.destroy.calledOnce);
+			ok(MetaModel.prototype.destroy.calledOnce);
 
 			throws(function () {
 				oMetaModel.refresh();
@@ -514,13 +521,13 @@ sap.ui.require([
 				oMetaModel.setLegacySyntax(true);
 			}, /Legacy syntax not supported by ODataMetaModel/);
 
-			strictEqual(oMetaModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
-			strictEqual(oMetaModel.oModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
+			strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
+			strictEqual(oMetaModel.oModel.getDefaultBindingMode(), BindingMode.OneTime);
 			throws(function () {
-				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+				oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
 			});
 			throws(function () {
-				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+				oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
 			});
 		}).apply({/*give Sinon a "this" to enrich*/}));
 	});
@@ -537,14 +544,14 @@ sap.ui.require([
 
 			// Note: support for events not needed
 			oBinding = oMetaModel.bindContext(sPath, oContext, mParameters);
-			ok(oBinding instanceof sap.ui.model.ClientContextBinding);
+			ok(oBinding instanceof ClientContextBinding);
 			strictEqual(oBinding.getModel(), oMetaModel);
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
 			strictEqual(oBinding.mParameters, mParameters);
 
 			oBinding = oMetaModel.bindProperty(sPath, oContext, mParameters);
-			ok(oBinding instanceof sap.ui.model.json.JSONPropertyBinding);
+			ok(oBinding instanceof JSONPropertyBinding);
 			strictEqual(oBinding.getModel(), oMetaModel);
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
@@ -555,7 +562,7 @@ sap.ui.require([
 			}, /Unsupported operation: ODataMetaModel#setProperty/);
 
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
-			ok(oBinding instanceof sap.ui.model.json.JSONListBinding);
+			ok(oBinding instanceof JSONListBinding);
 			strictEqual(oBinding.getModel(), oMetaModel, "inner model not leaked");
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
@@ -564,12 +571,51 @@ sap.ui.require([
 			strictEqual(oBinding.mParameters, mParameters);
 
 			oBinding = oMetaModel.bindTree(sPath, oContext, aFilters, mParameters);
-			ok(oBinding instanceof sap.ui.model.json.JSONTreeBinding);
+			ok(oBinding instanceof JSONTreeBinding);
 			strictEqual(oBinding.getModel(), oMetaModel);
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
 			strictEqual(oBinding.aFilters, aFilters);
 			strictEqual(oBinding.mParameters, mParameters);
+		});
+	});
+
+	//*********************************************************************************************
+	test("bindList", function () {
+		var that = this;
+
+		return withMetaModel(function (oMetaModel) {
+			var fnApply = that.mock(FilterProcessor).expects("apply"),
+				oBinding,
+				oContext = oMetaModel.createBindingContext("/"),
+				aFilters = [],
+				fnGetValue,
+				aIndices = ["schema"],
+				mParameters = {},
+				sPath = "dataServices",
+				aSorters = [];
+
+			fnApply.once()
+				.withArgs(["dataServiceVersion", "schema"], aFilters)
+				.returns(aIndices);
+
+			// code under test
+			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
+			// implicitly calls oBinding.applyFilter()
+
+			strictEqual(oBinding.aIndices, aIndices);
+			strictEqual(oBinding.iLength, oBinding.aIndices.length);
+
+			fnGetValue = fnApply.args[0][2];
+			that.mock(oMetaModel).expects("getProperty").once()
+				.withExactArgs("0/namespace", oBinding.oList["schema"])
+				.returns("foo");
+
+			// code under test
+			strictEqual(fnGetValue("schema", "0/namespace"), "foo");
+
+			// code under test
+			strictEqual(fnGetValue("schema", "@sapui.name"), "schema");
 		});
 	});
 
@@ -690,7 +736,7 @@ sap.ui.require([
 			var oMetaModel, oModel;
 
 			setupSandbox(this.sandbox);
-			oModel = new ODataModel("/fake/service", {
+			oModel = new ODataModel2("/fake/service", {
 				annotationURI : oFixture.annotationURI,
 				json : true,
 				loadMetadataAsync : true
@@ -699,7 +745,7 @@ sap.ui.require([
 			oModel.attachAnnotationsFailed(onFailed);
 
 			oMetaModel = oModel.getMetaModel();
-			ok(oMetaModel instanceof sap.ui.model.odata.ODataMetaModel);
+			ok(oMetaModel instanceof ODataMetaModel);
 
 			return oMetaModel.loaded().then(function () {
 				var oAnnotations = oModel.getServiceAnnotations(),
@@ -1191,9 +1237,9 @@ sap.ui.require([
 		var oError = new Error("This call failed intentionally"),
 			oModel;
 
-		oGlobalSandbox.stub(sap.ui.model.Model.prototype, "setDefaultBindingMode").throws(oError);
+		oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
 		setupSandbox(this.sandbox);
-		oModel = new ODataModel("/fake/service", {
+		oModel = new ODataModel2("/fake/service", {
 			annotationURI : "",
 			json : true
 		});
@@ -1214,8 +1260,8 @@ sap.ui.require([
 				sMetadataURL = i < 2 ? "/invalid/service" : "/fake/service",
 				sAnnotationsURL = i < 2 ? "" : "/invalid/annotations",
 				fnConstructor = bAsync
-					? ODataModel
-					: sap.ui.model.odata.ODataModel;
+					? ODataModel2
+					: ODataModel;
 
 			setupSandbox(this.sandbox);
 			oModel = new fnConstructor(sMetadataURL, {
@@ -1241,7 +1287,7 @@ sap.ui.require([
 					var oMetaModel, oModel;
 
 					setupSandbox(this.sandbox);
-					oModel = new ODataModel("/fake/" + sPath, {
+					oModel = new ODataModel2("/fake/" + sPath, {
 						// annotations are mandatory for this test case
 						annotationURI : "/fake/" + sAnnotation,
 						json : true
@@ -1512,7 +1558,7 @@ sap.ui.require([
 		return withMetaModel(function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')");
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1");
 
@@ -1536,7 +1582,7 @@ sap.ui.require([
 		return withMetaModel(function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier");
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0");
 
@@ -1565,7 +1611,7 @@ sap.ui.require([
 			var sPath = "/ProductSet('ABC')/ProductID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1/property/0");
 
@@ -1587,7 +1633,7 @@ sap.ui.require([
 			var sPath = "/ProductSet('ABC')/ToSupplier/BusinessPartnerID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0/property/1");
 
@@ -1605,7 +1651,7 @@ sap.ui.require([
 			var sPath = "/ProductSet('ABC')/ToSupplier/Address/Street",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/complexType/0/property/2");
 

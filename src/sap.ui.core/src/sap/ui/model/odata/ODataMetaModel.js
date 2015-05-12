@@ -3,13 +3,42 @@
  */
 
 sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
-		'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONPropertyBinding',
-		'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel', './_ODataMetaModelUtils'],
-	function (BindingMode, ClientContextBinding, JSONListBinding, JSONPropertyBinding,
-			JSONTreeBinding, MetaModel, Utils) {
+		'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONListBinding',
+		'sap/ui/model/json/JSONPropertyBinding', 'sap/ui/model/json/JSONTreeBinding',
+		'sap/ui/model/MetaModel', './_ODataMetaModelUtils'],
+	function (BindingMode, ClientContextBinding, FilterProcessor, JSONListBinding,
+		JSONPropertyBinding, JSONTreeBinding, MetaModel, Utils) {
 	"use strict";
 
-	/*global Promise */
+	/**
+	 * @class List binding implementation for the OData meta model which supports filtering on
+	 * the virtual property "@sapui.name" (which refers back to the name of the object in
+	 * question).
+	 *
+	 * Example:
+	 * <pre>
+	 * &lt;template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
+	 * </pre>
+	 *
+	 * @extends sap.ui.model.json.JSONListBinding
+	 * @private
+	 */
+	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding");
+
+	/**
+	 * @inheritdoc
+	 */
+	ODataMetaListBinding.prototype.applyFilter = function () {
+		var that = this;
+
+		this.aIndices = FilterProcessor.apply(this.aIndices,
+			this.aFilters.concat(this.aApplicationFilters), function (vRef, sPath) {
+			return sPath === "@sapui.name"
+				? vRef
+				: that.oModel.getProperty(sPath, that.oList[vRef]);
+		});
+		this.iLength = this.aIndices.length;
+	};
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataMetaModel</code>,
@@ -166,23 +195,38 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		return oNode;
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ClientContextBinding(this, sPath, oContext, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
-			mParameters) {
-		return new JSONListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
+		mParameters) {
+		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new JSONPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindTree = function (sPath, oContext, aFilters, mParameters) {
 		return new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
 		return this.oModel.destroy.apply(this.oModel, arguments);
@@ -508,10 +552,16 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		return bAsPath ? sPropertyPath : oProperty;
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.getProperty = function () {
 		return this._getObject.apply(this, arguments);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.isList = function () {
 		return this.oModel.isList.apply(this.oModel, arguments);
 	};
