@@ -182,8 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (!this.bSkipMetadataAnnotationParsing) {
 				this.oMetadata.loaded().then(function(mParams) {
 					that.addAnnotationXML(mParams["metadataString"])
-						.then(that.fireAnnotationsLoaded.bind(that))
-						.catch(that.fireAnnotationsFailed.bind(that));
+						.then(that.fireAnnotationsLoaded.bind(that), that.fireAnnotationsFailed.bind(that));
 				});
 			}
 
@@ -3324,16 +3323,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					if (aAnnotaionUris.length > 0) {
 						that._getAnnotationParser().addUrl(aAnnotaionUris).then(function() {
 							resolve({annotations: that._getAnnotationParser().oAnnotations});
-						}).catch(function(mParams) {
+						}, function(mParams) {
 							reject({annotations: that._getAnnotationParser().oAnnotations});	
 						});
 					} else {
 						resolve({annotations: that._getAnnotationParser().oAnnotations});
 					}
-				}).catch(function(mParams) {
+				}, function(mParams) {
 					reject({annotations: that._getAnnotationParser().oAnnotations});	
 				});
-			}).catch(function(mParams) {
+			}, function(mParams) {
 				reject({annotations: that._getAnnotationParser().oAnnotations});	
 			});
 		});
