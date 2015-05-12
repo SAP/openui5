@@ -26,14 +26,15 @@ sap.ui.define(["jquery.sap.global"],
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
-			sTooltip = oControl.getTooltip_AsString();
+			sTooltip = oControl.getTooltip_AsString(),
+			bUseIconTooltip = oControl.getUseIconTooltip();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
-		if (sTooltip) {
-			oRm.writeAttribute("title", sTooltip);
+		if (sTooltip || (bUseIconTooltip && oIconInfo)) {
+			oRm.writeAttribute("title", sTooltip || oIconInfo.text);
 		}
 
 		if (!oControl.getDecorative()) {
