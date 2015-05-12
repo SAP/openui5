@@ -760,7 +760,7 @@ if (typeof window.sap.ui !== "object") {
 	device.support.pointer = !!window.PointerEvent;
 
 	device.support.matchmedia = !!window.matchMedia;
-	var m = device.support.matchmedia ? window.matchMedia("screen and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
+	var m = device.support.matchmedia ? window.matchMedia("all and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
 	device.support.matchmedialistener = !!(m && m.addListener);
 	if (device.browser.safari && device.browser.version < 6) {
 		//Safari seems to have addListener but no events are fired ?!
@@ -855,7 +855,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	function getQuery(from, to, unit){
 		unit = unit || "px";
-		var q = "screen";
+		var q = "all";
 		if (from > 0) {
 			q = q + " and (min-width:" + from + unit + ")";
 		}
