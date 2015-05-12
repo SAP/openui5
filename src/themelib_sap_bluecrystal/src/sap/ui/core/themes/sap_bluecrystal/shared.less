@@ -336,7 +336,9 @@ html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditabl
 
 .sapUiUfdShellBackground,
 .sapMGlobalBackgroundColor,
+.sapUshellShellBackground,
 html[data-sap-ui-browser="ie9"] .sapUiUfdShellBackground, 
+html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
 html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor,
 .sapMGlobalBackgroundColorStrong,
 html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColorStrong,
@@ -361,6 +363,7 @@ html[data-sap-ui-browser="ie9"] {
 
 
 .sapUiUfdShellBackground,
+.sapUshellShellBackground,
 .sapMGlobalBackgroundColor {
 	background-color: @sapUiGlobalBackgroundColorDefault;
 
@@ -368,6 +371,7 @@ html[data-sap-ui-browser="ie9"] {
 }
 
 html[data-sap-ui-browser="ie9"] .sapUiUfdShellBackground, 
+html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
 html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor {
 	.sapGlobalBackgroundColorMixinIE9;
 }
@@ -445,6 +449,7 @@ html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackground
 }
 
 .sapMGlobalBackgroundImage.sapUiUfdShellBG,
+.sapMGlobalBackgroundImage.sapUshellShellBG,
 .sapMShellGlobalOuterBackground > .sapMGlobalBackgroundImage {
 	display: block;
 }
