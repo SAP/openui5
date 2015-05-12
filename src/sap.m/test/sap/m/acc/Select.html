@@ -396,6 +396,9 @@
 			items: {
 				path: "/items",
 				template: oItemTemplate
+			},
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 			}
 		});
 
