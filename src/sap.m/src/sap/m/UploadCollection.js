@@ -763,7 +763,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var sItemId, i, iAttrCounter, iStatusesCounter, sPercentUploaded, aAttributes, aStatuses, oRm, sStatus;
 
 		sPercentUploaded = oItem._percentUploaded;
-		aAttributes = oItem.getAttributes();
+		aAttributes = oItem.getAllAttributes();
 		aStatuses = oItem.getStatuses();
 		sItemId = oItem.getId();
 		iAttrCounter = aAttributes.length;

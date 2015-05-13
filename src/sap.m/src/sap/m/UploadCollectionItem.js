@@ -169,6 +169,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 					multiple : true
 				},
 				/**
+				 * Hidden aggregation for the attributes created from the deprecated properties uploadedDate, contributor and fileSize
+				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
+				 */
+				_propertyAttributes : {
+					type : "sap.m.ObjectAttribute",
+					multiple : true,
+					visibility : "hidden"
+				},
+				/**
 				 * Statuses of an uploaded item
 				 * Statuses will be displayed after an item has been uploaded
 				 * @experimental since version 1.30. The behavior might change in the next version.
@@ -182,239 +191,77 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	});
 
 	UploadCollectionItem.prototype.init = function() {
-		this._mapDeprecatedProperties = {};
+		this._mDeprecatedProperties = {};
 	};
 
 	/**
 	 * @description Setter of the deprecated contributor property. The property is mapped to the aggregation attributes.
-	 * @deprecated
+	 * @deprecated since version 1.30
 	 */
 	UploadCollectionItem.prototype.setContributor = function(sContributor) {
-		this._setDeprecatedAttribute.bind(this)(sContributor, "contributor", this._addDeprecatedPropertyContributor);
 		this.setProperty("contributor", sContributor, false);
+		this._updateDeprecatedProperties();
 		return this;
 	};
 
 	/**
 	 * @description Setter of the deprecated uploadedDate property. The property is mapped to the aggregation attributes.
-	 * @deprecated
+	 * @deprecated since version 1.30
 	 */
 	UploadCollectionItem.prototype.setUploadedDate = function(sUploadedDate) {
-		this._setDeprecatedAttribute.bind(this)(sUploadedDate, "uploadedDate", this._addDecprecatedPropertyUploadedDate);
 		this.setProperty("uploadedDate", sUploadedDate, false);
+		this._updateDeprecatedProperties();
 		return this;
 	};
 
 	/**
 	 * @description Setter of the deprecated fileSize property. The property is mapped to the aggregation attributes.
-	 * @deprecated
+	 * @deprecated since version 1.30
 	 */
 	UploadCollectionItem.prototype.setFileSize = function(sFileSize) {
-		this._setDeprecatedAttribute.bind(this)(sFileSize, "fileSize", this._addDecprecatedPropertyFileSize);
 		this.setProperty("fileSize", sFileSize, false);
+		this._updateDeprecatedProperties();
 		return this;
 	};
 
 	/**
-	 * @description Creation or update of an item in the aggregation attributes triggered by a deprecated property.
-	 * @param {string} [sPropertyValue] Value of the deprecated property
-	 * @param {string} [sPropertyName] 	Name of the deprecated property for example, sFileSize
-	 * @param {string} [sAddMethodName] Method to create or update the given deprecated property in the aggregation attributes
+	 * @description Update deprecated properties aggregation
 	 * @private
+	 * @experimental since version 1.30. The behavior might change in the next version.
 	 */
-	UploadCollectionItem.prototype._setDeprecatedAttribute = function(sPropertyValue, sPropertyName, fnAddMethodName ) {
-			if (this._mapDeprecatedProperties[sPropertyName] && 
-					this.getAttributes() && this.getAttributes()[this._getPositionOfDeprecatedAttribute(sPropertyName)] && 
-					(this._mapDeprecatedProperties[sPropertyName].getText(sPropertyValue) === this.getAttributes()[this._getPositionOfDeprecatedAttribute(sPropertyName)].getText())) {
-				//overwriting existing value
-				this._mapDeprecatedProperties[sPropertyName].setText(sPropertyValue);
-			} else {
-				//new item
-				fnAddMethodName.bind(this)(sPropertyValue);
-			}
-	};
-
-	/**
-	 * @description Determines the position of the deprecated property in the attributes aggregation.
-	 * @param {string} [sPropertyName] 	Name of the deprecated property for example, sFileSize
-	 * @param {string} [sAddMethodName] Method to create or update the given deprecated property in the aggregation attributes
-	 * @private
-	 */
-	UploadCollectionItem.prototype._getPositionOfDeprecatedAttribute = function(sPropertyName) {
-		var iPosition;
-		switch (sPropertyName) {
-			case 'uploadedDate':
-				iPosition = 0;
-				break;
-			case 'contributor':
-				iPosition = 1;
-				if (!this._mapDeprecatedProperties.uploadedDate) {
-					iPosition = 0;
+	UploadCollectionItem.prototype._updateDeprecatedProperties = function() {
+		var aProperties = ["uploadedDate", "contributor", "fileSize"];
+		this.removeAllAggregation("_propertyAttributes");
+		jQuery.each(aProperties, function(i, sName) {
+			var sValue = this.getProperty(sName),
+				oAttribute = this._mDeprecatedProperties[sName];
+			if (sValue) {
+				if (oAttribute) {
+					oAttribute.setText(sValue);
+				} else {
+					oAttribute = new ObjectAttribute({
+						active : false,
+						text : sValue
+					});
+					this._mDeprecatedProperties[sName] = oAttribute;
 				}
-				break;
-			case 'fileSize':
-				iPosition = 2;
-				if (!this._mapDeprecatedProperties.contributor && !this._mapDeprecatedProperties.uploadedDate) {
-					iPosition = 0;
-				} else if (!this._mapDeprecatedProperties.contributor || !this._mapDeprecatedProperties.uploadedDate) {
-					iPosition = 1;
-				}
-				break;
-		}
-		return iPosition;
-	};
-
-	/**
-	 * @description Creation of an item in the aggregation attributes triggered by a deprecated contributor property.
-	 * @param {string} [sContributor] Value of the deprecated contributor property
-	 * @private
-	 * @experimental
-	 */
-	UploadCollectionItem.prototype._addDeprecatedPropertyContributor = function(sContributor) {
-		var iPosition = this._getPositionOfDeprecatedAttribute("contributor");
-		this._mapDeprecatedProperties.contributor = new ObjectAttribute({
-			active : false,
-			text : sContributor
-		});
-		Element.prototype.insertAggregation.apply(this, ["attributes", this._mapDeprecatedProperties.contributor, iPosition, true]);
-	};
-
-	/**
-	 * @description Creation of an item in the aggregation attributes triggered by a deprecated uploadedDate property.
-	 * @param {string} [sUploadedDate] Value of the deprecated uploadedDate property
-	 * @private
-	 * @experimental
-	 */
-	UploadCollectionItem.prototype._addDecprecatedPropertyUploadedDate = function(sUploadedDate) {
-		var iPosition = this._getPositionOfDeprecatedAttribute("uploadedDate");
-		this._mapDeprecatedProperties.uploadedDate = new ObjectAttribute({
-			active : false,
-			text : sUploadedDate
-		});
-		Element.prototype.insertAggregation.apply(this, ["attributes", this._mapDeprecatedProperties.uploadedDate, iPosition, true]);
-	};
-
-	/**
-	 * @description Creation of an item in the aggregation attributes triggered by a deprecated fileSize property.
-	 * @param {string} [sFileSize] Value of the deprecated fileSize property
-	 * @private
-	 */
-	UploadCollectionItem.prototype._addDecprecatedPropertyFileSize = function(sFileSize) {
-		var iPosition = this._getPositionOfDeprecatedAttribute("fileSize");
-		this._mapDeprecatedProperties.fileSize = new ObjectAttribute({
-			active : false,
-			text : sFileSize
-		});
-		Element.prototype.insertAggregation.apply(this, ["attributes", this._mapDeprecatedProperties.fileSize, iPosition, true]);
-	};
-
-  // addAggregation
-	UploadCollectionItem.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-		if (!sAggregationName || !oObject) {
-			return this;
-		}
-		Element.prototype.addAggregation.apply(this, arguments);
-		this._setDeprecatedProprtiesInAggregation.bind(this)("attributes");
-		return this;
-	};
-  // insertAggregation
-	UploadCollectionItem.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-		if (!sAggregationName || !oObject) {
-			return this;
-		}
-		if (sAggregationName === "attributes") {
-			this._setDeprecatedProprtiesInAggregation.bind(this)("attributes");
-			var iLength = Object.keys(this._mapDeprecatedProperties).length;
-			// iIndex could be < 0
-			if (iIndex >= 0){
-				iIndex = iIndex + iLength;
+				this.addAggregation("_propertyAttributes", oAttribute);
 			} else {
-				//in case iLength === 2 means at Position 3 the attribute will be inserted
-				iIndex = iLength;
+				if (oAttribute) {
+					oAttribute.destroy();
+					delete this._mDeprecatedProperties[sName];
+				}
 			}
-		}
-		Element.prototype.insertAggregation.apply(this, [sAggregationName, oObject, iIndex, bSuppressInvalidate]);
-		return this;
-	};
-  // removeAllAggregation
-	UploadCollectionItem.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
-		if (!sAggregationName) {
-			return this;
-		}
-		Element.prototype.removeAllAggregation.apply(this, arguments);
-		this._setDeprecatedProprtiesInAggregation.bind(this)("attributes");
-		return this;
-	};
-  // removeAggregation
-	UploadCollectionItem.prototype.removeAggregation = function (sAggregationName, vObject, bSuppressInvalidate) {
-		if (!sAggregationName || !vObject) {
-			return this;
-		}
-		Element.prototype.removeAggregation.apply(this, arguments);
-		this._setDeprecatedProprtiesInAggregation.bind(this)("attributes");
-		return this;
-	};
-  // destroyAggregation
-	UploadCollectionItem.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-		if (!sAggregationName) {
-			return this;
-		}
-		Element.prototype.destroyAggregation.apply(this, arguments);
-		this._setDeprecatedProprtiesInAggregation.bind(this)(sAggregationName);
-		return this;
+		}.bind(this));
 	};
 
 	/**
-	 * @description Deprecated properties will be set to the aggregation attributes.
-	 * @param {string} [sAggregationName] Name of the aggregation
+	 * @description Return all attributes, the deprecated property attributes and the aggregated attributes in one array
 	 * @private
-	 * @experimental
+	 * @experimental since version 1.30. The behavior might change in the next version.
 	 */
-	UploadCollectionItem.prototype._setDeprecatedProprtiesInAggregation = function (sAggregationName) {
-		if (sAggregationName === "attributes") {
-			//contributor
-			if (this.getContributor()) {
-				this.setContributor.bind(this)(this.getContributor());
-			}
-			//uploadedDate
-			if (this.getUploadedDate()) {
-				this.setUploadedDate.bind(this)(this.getUploadedDate());
-			}
-			//fileSize
-			if (this.getFileSize()) {
-				this.setFileSize.bind(this)(this.getFileSize());
-			}
-		}
-	};
-
-  // addAttributes
-	UploadCollectionItem.prototype.addAttribute = function (oObject) {
-		this.addAggregation.bind(this)("attributes", oObject, false);
-		return this;
-	};
-
-  // insertAttributes
-	UploadCollectionItem.prototype.insertAttribute = function(oObject, iIndex, bSuppressInvalidate) {
-		this.insertAggregation.bind(this)("attributes", oObject, iIndex, bSuppressInvalidate);
-		return this;
-	};
-
-  // removeAllAttributes
-	UploadCollectionItem.prototype.removeAllAttributes = function () {
-		this.removeAllAggregation.bind(this)("attributes", false);
-		return this;
-	};
-
-  // removeAttributes
-	UploadCollectionItem.prototype.removeAttribute = function (vObject, bSuppressInvalidate) {
-		this.removeAggregation.bind(this)("attributes", vObject, bSuppressInvalidate);
-		return this;
-	};
-
-  // destroyAttributes
-	UploadCollectionItem.prototype.destroyAttributes = function () {
-		this.destroyAggregation.bind(this)("attributes", false);
-		return this;
+	UploadCollectionItem.prototype.getAllAttributes = function() {
+		return this.getAggregation("_propertyAttributes", []).concat(this.getAttributes());
 	};
 
 	return UploadCollectionItem;
