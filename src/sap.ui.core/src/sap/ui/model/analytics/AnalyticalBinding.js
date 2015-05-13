@@ -2875,7 +2875,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// calculate previous remaining entries
 		iRemainingEntries = iStartIndex - iPreloadedPreviousIndex;
 		if (iPreloadedPreviousIndex && iStartIndex > iThreshold && iRemainingEntries < iThreshold) {
-			if (aContext.length != iLength) {
+			if (aContext.length !== iLength) {
 				iSectionStartIndex = iStartIndex - iThreshold;
 			} else {
 				iSectionStartIndex = iPreloadedPreviousIndex - iThreshold;
@@ -2884,13 +2884,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			iSectionLength = iThreshold;
 		}
 
+		// prevent startIndex from getting out of bounds
+		// FIX for BCP(1570041982)
+		// If the startIndex is negative, the $skip value will also be negative, and the length might also be bigger than necessary
+		iSectionStartIndex = Math.max(iSectionStartIndex, 0);
+		
 		// No negative preload needed; move startindex if we already have some data
-		if (iSectionStartIndex == iStartIndex) {
+		if (iSectionStartIndex === iStartIndex) {
 			iSectionStartIndex += aContext.length;
 		}
 
 		//read the rest of the requested data
-		if (aContext.length != iLength) {
+		if (aContext.length !== iLength) {
 			iSectionLength += iLength - aContext.length;
 		}
 
@@ -2903,13 +2908,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		if (iPreloadedSubsequentIndex && iRemainingEntries < iThreshold && iRemainingEntries > 0) {
 			//check if we need to load previous entries; If not we can move the startindex
-			if (iSectionStartIndex >= iStartIndex) {
+			// changed the ">=" to ">", because a fix was not migrated, see commit #455622
+			// FIX for BCP(1570041982)
+			if (iSectionStartIndex > iStartIndex) { 
 				iSectionStartIndex = iPreloadedSubsequentIndex;
 				iSectionLength += iThreshold;
 			}
 
 		}
-
+		
 		//check final length and adapt sectionLength if needed.
 		if (this.mFinalLength[sGroupId] && this.mLength[sGroupId] < (iSectionLength + iSectionStartIndex)) {
 			iSectionLength = this.mLength[sGroupId] - iSectionStartIndex;
