@@ -523,7 +523,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					if (oFocusedDate.getTime() != oOldFocusedDate.getTime()) {
 						if ($Target.hasClass("sapUiCalDayOtherMonth")) {
 							// in other month -> change month
-							this.fireFocus({date: oFocusedDate, otherMonth: true});
+							this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true});
 						} else {
 							this._setDate(oFocusedDate);
 							_selectDay(that, oFocusedDate, false, true);
@@ -608,7 +608,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oFocusedDate.setUTCFullYear(iYear - 1);
 			}
 
-			this.fireFocus({date: oFocusedDate, otherMonth: true});
+			this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true});
 
 			// cancel the event otherwise the browser select some text
 			oEvent.preventDefault();
@@ -628,7 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oFocusedDate.setUTCFullYear(iYear + 1);
 			}
 
-			this.fireFocus({date: oFocusedDate, otherMonth: true});
+			this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true});
 
 			// cancel the event otherwise the browser select some text
 			oEvent.preventDefault();
@@ -694,7 +694,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this._bNamesLengthChecked = undefined;
 			this._bLongWeekDays = undefined;
-			var aWeekHeaders = this.$().children(".sapUiCalWH");
+			var aWeekHeaders = this.$().find(".sapUiCalWH");
 			var oLocaleData = this._getLocaleData();
 			var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
 			var aDayNames = oLocaleData.getDaysStandAlone("abbreviated");
@@ -772,7 +772,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					break;
 				}
 
-				this.fireFocus({date: oFocusedDate, otherMonth: true});
+				this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true});
 
 			}
 
@@ -915,7 +915,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 			}
 
-			this.fireFocus({date: oFocusedDate, otherMonth: bOtherMonth});
+			this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: bOtherMonth});
 
 			if (oEvent.type == "mousedown") {
 				// as no click event is fired in some cases, e.g. if month is changed (because of changing DOM) select the day on mousedown

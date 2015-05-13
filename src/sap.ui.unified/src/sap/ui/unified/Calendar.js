@@ -1162,7 +1162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _handleFocus (oEvent){
 
-			var oDate = oEvent.getParameter("date");
+			var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"));
 			var bOtherMonth = oEvent.getParameter("otherMonth");
 			var that = this;
 
