@@ -32,8 +32,8 @@ sap.ui.define(["jquery.sap.global"],
 		oRm.writeControlData(oControl);
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
-		if (oIconInfo || sTooltip) {
-			oRm.writeAttribute("title", sTooltip || oIconInfo.name);
+		if (sTooltip) {
+			oRm.writeAttribute("title", sTooltip);
 		}
 
 		if (!oControl.getDecorative()) {
