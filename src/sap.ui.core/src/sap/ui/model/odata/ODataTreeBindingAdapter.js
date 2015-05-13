@@ -918,6 +918,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		
 		// clear page size
 		this._iPageSize = 0;
+		this._iThreshold = 0;
 		
 		if (!mParameters || mParameters.reason !== ChangeReason.Sort) {
 			//remove the selection/reset lead selection index
