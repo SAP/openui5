@@ -93,9 +93,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		if (!oTable || !oTable.hasPopin()) {
 			return sAriaLabelledBy;
 		}
+		
+		var sId = oLI.getId();
+		if (!sAriaLabelledBy) {
+			sAriaLabelledBy = sId;
+		} else if (sAriaLabelledBy.indexOf(sId) == -1) {
+			sAriaLabelledBy = sId + " " + sAriaLabelledBy;
+		}
 
 		// when table has pop-in let the screen readers announce it
-		return sAriaLabelledBy + " " + oLI.getId() + "-sub";
+		return sAriaLabelledBy + " " + sId + "-sub";
 	};
 	
 	// writes aria-selected for the cells when the item is selectable
