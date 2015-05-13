@@ -3025,7 +3025,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		// Update a single aggregation with the array of contexts. Reuse existing children
 		// and just append or remove at the end, if some are missing or too many.
 		function update(oControl, aContexts, fnBefore, fnAfter) {
-			var aChildren = oControl[oAggregationInfo._sGetter](),
+			var aChildren = oControl[oAggregationInfo._sGetter]() || [],
 				oContext,
 				oClone;
 			if (aChildren.length > aContexts.length) {
