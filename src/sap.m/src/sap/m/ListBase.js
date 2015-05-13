@@ -401,7 +401,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	ListBase.prototype.exit = function () {
 		this._oSelectedItem = null;
-		this._bReceivingData = false;
 		this._aNavSections = [];
 		this._aSelectedPaths = [];
 		this._destroyGrowingDelegate();
@@ -456,8 +455,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			// for flat list update items aggregation
 			this.updateAggregation("items");
 
-			// async to ensure that all bindings/dom are updated
-			jQuery.sap.delayedCall(0, this, "_updateFinished");
+			// items binding are updated
+			this._updateFinished();
 		}
 	};
 	
@@ -468,7 +467,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	ListBase.prototype._bindAggregation = function(sName) {
 		sName == "items" && this._resetItemsBinding();
-		return this._applyAggregation("_bind", arguments);
+		return Control.prototype._bindAggregation.apply(this, arguments);
 	};
 	
 	ListBase.prototype.destroyItems = function() {
@@ -519,7 +518,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	ListBase.prototype.setGrowingThreshold = function(iThreshold) {
 		this.setProperty("growingThreshold", iThreshold, true);
-		this._oItemNavigation && this._oItemNavigation.setPageSize(this.getGrowingThreshold());
+		if (this._oItemNavigation) {
+			this._oItemNavigation.setPageSize(this.getGrowingThreshold());
+		}
 		return this;
 	};
 	
@@ -826,10 +827,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.getGrowingInfo = function() {
-		if (this._oGrowingDelegate) {
-			return this._oGrowingDelegate.getInfo();
-		}
-		return null;
+		return this._oGrowingDelegate ? this._oGrowingDelegate.getInfo() : null;
 	};
 	
 	ListBase.prototype.setRememberSelections = function(bRemember) {
@@ -934,7 +932,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * This hook method get called if growing feature is enabled and after new page loaded
 	 * @protected
 	 */
-	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {	
+	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
 		this._fireUpdateFinished(oGrowingInfo);
 		this.fireGrowingFinished(oGrowingInfo);
 	};
@@ -968,11 +966,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 */
 	ListBase.prototype.shouldRenderItems = function() {
 		return true;
-	};
-	
-	// call the base aggregation functions according to given parameters
-	ListBase.prototype._applyAggregation = function(sFunction, oParams) {
-		return Control.prototype[sFunction + "Aggregation"].apply(this, oParams);
 	};
 	
 	// when new items binding we should turn back to initial state
