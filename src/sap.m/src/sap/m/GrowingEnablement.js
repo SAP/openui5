@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 		setTriggerText : function(sText) {
 			if (this._oTrigger) {
-				this._oTrigger.$().find(".sapMSLITitle").text(sText);
+				this._oTrigger.getContent()[0].$().find(".sapMSLITitle").text(sText);
 			}
 		},
 
@@ -252,6 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			this._oControl.addNavSection(sId);
 			
 			if (this._oTrigger) {
+				this.setTriggerText(sTriggerText);
 				return this._oTrigger;
 			}
 
