@@ -46,8 +46,7 @@ function(jQuery, ManagedObjectObserver) {
 				}
 			},
 			events : {
-				"beforeRendering" : {},
-				"afterRendering" : {}
+				"domChanged" : {}
 			}
 		}
 	});
@@ -58,10 +57,10 @@ function(jQuery, ManagedObjectObserver) {
 	 */
 	ControlObserver.prototype.init = function() {
 		ManagedObjectObserver.prototype.init.apply(this, arguments);
-		this._onWindowResizeProxy = jQuery.proxy(this.fireChanged, this);
+		this._fnFireDomChanged = this.fireDomChanged.bind(this);
 		this._oControlDelegate = {
-			onBeforeRendering: this._onBeforeRendering,
-			onAfterRendering: this._onAfterRendering
+			onAfterRendering : this._onAfterRendering,
+			onBeforeRendering : this._onBeforeRendering
 		};
 	};
 
@@ -71,8 +70,9 @@ function(jQuery, ManagedObjectObserver) {
 	 */
 	ControlObserver.prototype.observe = function(oControl) {
 		ManagedObjectObserver.prototype.observe.apply(this, arguments);
-		window.addEventListener("resize", this._onWindowResizeProxy);
-		oControl.addDelegate(this._oControlDelegate, this);	
+		jQuery(window).on("resize", this._fnFireDomChanged);
+		this._startMutationObserver();
+		oControl.addEventDelegate(this._oControlDelegate, this);	
 	};
 
 	/**
@@ -81,22 +81,53 @@ function(jQuery, ManagedObjectObserver) {
 	 */
 	ControlObserver.prototype.unobserve = function(oControl) {
 		ManagedObjectObserver.prototype.unobserve.apply(this, arguments);
-		window.removeEventListener("resize", this._onWindowResizeProxy);
+		this._stopMutationObserver();
+		jQuery(window).off("resize", this._fnFireDomChanged);
 		oControl.removeDelegate(this._oControlDelegate, this);
 	};
 
 	/**
 	 * @private
 	 */
-	ControlObserver.prototype._onBeforeRendering = function() {
-		this.fireBeforeRendering();
+	ControlObserver.prototype._startMutationObserver = function(oControl) {
+		var that = this;
+		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+		var oDomRef = this.getTargetInstance().getDomRef();
+		if (MutationObserver && oDomRef) {
+			this.oMutationObserver = new MutationObserver(function(aMutations) {
+				that.fireDomChanged();
+			});
+			this.oMutationObserver.observe(oDomRef, {
+				childList : true,
+				subtree : true,
+				attributes : true
+			});
+		}
 	};
 
 	/**
 	 * @private
 	 */
+	ControlObserver.prototype._stopMutationObserver = function(oControl) {
+		if (this.oMutationObserver) {
+			this.oMutationObserver.disconnect();
+			this.oMutationObserver = null;
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	ControlObserver.prototype._onBeforeRendering = function() {
+		this._stopMutationObserver();
+	};
+	
+	/**
+	 * @private
+	 */
 	ControlObserver.prototype._onAfterRendering = function() {
-		this.fireAfterRendering();
+		this._startMutationObserver();
+		this.fireDomChanged();
 	};
 
 	return ControlObserver;

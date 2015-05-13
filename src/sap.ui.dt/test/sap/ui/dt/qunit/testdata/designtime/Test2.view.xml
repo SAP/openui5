@@ -31,7 +31,7 @@
             <sap.ui.layout:VerticalLayout id="layout3" width="100%">
                <f:Form>
                 <f:layout>
-                    <f:GridLayout />
+                    <f:ResponsiveGridLayout />
                 </f:layout>
                 <f:formContainers>
                     <f:FormContainer>

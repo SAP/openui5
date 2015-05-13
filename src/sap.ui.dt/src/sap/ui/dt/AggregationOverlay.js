@@ -7,9 +7,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/dt/DOMUtil',
-	'sap/ui/dt/Utils'
+	'sap/ui/dt/ElementUtil'
 ],
-function(jQuery, Control, DOMUtil, Utils) {
+function(jQuery, Control, DOMUtil, ElementUtil) {
 	"use strict";
 
 
@@ -108,7 +108,7 @@ function(jQuery, Control, DOMUtil, Utils) {
 		}
 
 		if (!this._mGeometry) {
-			var aAggregationElements = Utils.getAggregationValue(sAggregationName, oElement);
+			var aAggregationElements = ElementUtil.getAggregation(oElement, sAggregationName);
 			this._mGeometry = DOMUtil.getChildrenAreaGeometry(aAggregationElements);
 		}
 

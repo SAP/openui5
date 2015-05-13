@@ -4,10 +4,9 @@
 
 // Provides class sap.ui.dt.Plugin.
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/Utils'
+	'sap/ui/base/ManagedObject'
 ],
-function(ManagedObject, Utils) {
+function(ManagedObject) {
 	"use strict";
 
 	/**

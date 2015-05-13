@@ -26,6 +26,7 @@
 					this.oControlObserver = new sap.ui.dt.ControlObserver({
 						target : this.oButton
 					});
+					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
@@ -35,20 +36,25 @@
 			});
 
 			QUnit.test("when the property of the Button is changed", function(assert) {
-				var doneBeforeRendering = assert.async();
-				var doneAfterRendering = assert.async();
+				var done = assert.async();
 
-				var bBeforeRenderingIsFired = false;
-				this.oControlObserver.attachBeforeRendering(function(oEvent) {
-					assert.ok(oEvent, '"BeforeRendering" event is fired');
-					doneBeforeRendering();
+				this.oControlObserver.attachDomChanged(function(oEvent) {
+					assert.ok(oEvent, 'DomChanged event is fired');
+					done();
 				});
-				this.oControlObserver.attachAfterRendering(function(oEvent) {
-					assert.ok(oEvent, 'and a "AfterRendering" event is fired');
-					doneAfterRendering();
-				});
-				this.oButton.placeAt("content");
+
+				this.oButton.rerender();
 				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("when window is resized", function(assert) {
+				var done = assert.async();
+
+				this.oControlObserver.attachDomChanged(function(oEvent) {
+					assert.ok(oEvent, 'DomChanged event is fired');
+					done();
+				});
+				jQuery(window).trigger("resize");
 			});
 
 			QUnit.test("when the property of the Button is modified", function(assert) {

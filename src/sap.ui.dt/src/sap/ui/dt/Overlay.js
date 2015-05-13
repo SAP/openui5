@@ -11,10 +11,11 @@ sap.ui.define([
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/AggregationOverlay',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/Utils',
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil'
 ],
-function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, Utils, DOMUtil) {
+function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, ElementUtil, OverlayUtil, DOMUtil) {
 	"use strict";
 
 	var sOverlayContainerId = "overlay-container";
@@ -190,8 +191,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		OverlayRegistry.register(oElement, this);
 		this._observe(oElement);
 
-		var oParent = oElement.getParent();
-		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
+		var oParentOverlay = OverlayUtil.getClosestOverlay(oElement);
 		if (oParentOverlay) {
 			oParentOverlay.sync();
 		}
@@ -212,7 +212,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 
 		if (oElement) {
 			var that = this;
-			Utils.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
+			ElementUtil.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
 				var sAggregationName = oAggregation.name;
 				
 				var oAggregationOverlay = new AggregationOverlay({
@@ -223,7 +223,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 
 				that.addAggregation("_aggregationOverlays", oAggregationOverlay);
 
-			}, null, Utils.getAggregationFilter());
+			}, null, ElementUtil.getAggregationFilter());
 		}
 	};
 
@@ -302,8 +302,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			this._oObserver = new ControlObserver({
 				target : oElement
 			});
-			this._oObserver.attachAfterRendering(this._onElementRendered, this);
-			this._oObserver.attachDestroyed(this._onElementDestroyed, this);
+			this._oObserver.attachDomChanged(this._onElementDomChanged, this);
 		} else {
 			this._oObserver = new ManagedObjectObserver({
 				target : oElement
@@ -332,7 +331,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 */
 	Overlay.prototype._syncAggregationOverlay = function(oAggregationOverlay) {
 		var sAggregationName = oAggregationOverlay.getAggregationName();
-		var aAggregationElements = Utils.getAggregationValue(sAggregationName, this.getElementInstance());
+		var aAggregationElements = ElementUtil.getAggregation(this.getElementInstance(), sAggregationName);
 
 		aAggregationElements.forEach(function(oAggregationElement) {
 			var oChildOverlay = OverlayRegistry.getOverlay(oAggregationElement);
@@ -365,7 +364,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	/**
 	 * @private
 	 */
-	Overlay.prototype._onElementRendered = function() {
+	Overlay.prototype._onElementDomChanged = function() {
 		this.invalidate();
 	};
 
@@ -427,24 +426,18 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	/**
 	 * @public
 	 */
-	Overlay.prototype.getPublicParentAggregationName = function() {
+	Overlay.prototype.getParentOverlay = function() {
 		var oParentAggregationOverlay = this.getParent();
 		if (oParentAggregationOverlay) { 
-			return oParentAggregationOverlay.getAggregationName();
+			return oParentAggregationOverlay.getParent();
 		}
 	};
 
 	/**
 	 * @public
 	 */
-	Overlay.prototype.getPublicParent = function() {
-		var oParentAggregationOverlay = this.getParent();
-		if (oParentAggregationOverlay) { 
-			var oPublicParentOverlay = oParentAggregationOverlay.getParent();
-			if (oPublicParentOverlay) {
-				return oPublicParentOverlay.getElementInstance();
-			}
-		}
+	Overlay.prototype.getParentAggregationOverlay = function() {
+		return this.getParent();
 	};
 
 	return Overlay;

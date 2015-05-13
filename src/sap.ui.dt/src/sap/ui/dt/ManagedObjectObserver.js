@@ -155,7 +155,7 @@ function(ManagedObject) {
 
 			var oCurrentParent = this.getParent();
 			that._fnOriginalSetParent.apply(this, arguments);
-			if (bFireModified) {
+			if (bFireModified && !this.__bSapUiDtSupressParentChangeEvent) {
 				this._bInSetParent = false;
 				if (oCurrentParent !== oParent) {
 					that.fireModified({

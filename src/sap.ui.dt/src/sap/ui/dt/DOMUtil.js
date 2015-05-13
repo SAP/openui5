@@ -2,12 +2,12 @@
  * ${copyright}
  */
 
-// Provides object sap.ui.dt.Utils.
+// Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/dt/Utils'
+	'sap/ui/dt/ElementUtil'
 ],
-function(jQuery, Utils) {
+function(jQuery, ElementUtil) {
 	"use strict";
 
 	/**
@@ -22,7 +22,7 @@ function(jQuery, Utils) {
 	 * @public
 	 * @static
 	 * @since 1.30
-	 * @alias sap.ui.dt.Utils
+	 * @alias sap.ui.dt.DOMUtil
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
@@ -133,7 +133,7 @@ function(jQuery, Utils) {
 			oDomRef = oElement.getRenderedDomRef();
 		}
 		if (!oDomRef)  {
-			var aFoundElements = Utils.findAllPublicChildren(oElement);
+			var aFoundElements = ElementUtil.findAllPublicChildren(oElement);
 			return this.getChildrenAreaGeometry(aFoundElements);
 		} else {
 			return this.getDomGeometry(oDomRef);

@@ -8,10 +8,10 @@ sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Selection',
-	'sap/ui/dt/Utils',
+	'sap/ui/dt/ElementUtil',
 	'./library'
 ],
-function(ManagedObject, Overlay, OverlayRegistry, Selection, Utils) {
+function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	"use strict";
 
 	/**
@@ -194,7 +194,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, Utils) {
 	DesignTimeNew.prototype.addRootElement = function(vRootElement) {
 		this.addAssociation("rootElements", vRootElement);
 
-		this._createOverlaysForRootElement(Utils.getElementInstance(vRootElement));
+		this._createOverlaysForRootElement(ElementUtil.getElementInstance(vRootElement));
 	};
 
 	/*
@@ -204,7 +204,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, Utils) {
 	DesignTimeNew.prototype.removeRootElement = function(vRootElement) {
 		this.removeAssociation("rootElements", vRootElement);
 
-		this._destroyOverlaysForRootElement(Utils.getElementInstance(vRootElement));
+		this._destroyOverlaysForRootElement(ElementUtil.getElementInstance(vRootElement));
 	}; 	
 
 	/*
@@ -353,7 +353,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, Utils) {
 		var bFoundAncestor = false;
 
 		this._iterateRootElements(function(oRootElement) {
-			if (Utils.hasAncestor(oElement, oRootElement)) {
+			if (ElementUtil.hasAncestor(oElement, oRootElement)) {
 				bFoundAncestor = true;
 				return false;
 			}
@@ -372,7 +372,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, Utils) {
 	DesignTimeNew.prototype._iterateRootElements = function(fnStep) {
 		var aRootElements = this.getRootElements();
 		aRootElements.forEach(function(sRootElementId) {
-			var oRootElement = Utils.getElementInstance(sRootElementId);
+			var oRootElement = ElementUtil.getElementInstance(sRootElementId);
 			fnStep(oRootElement);
 		});
 	};
@@ -381,7 +381,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, Utils) {
 	 * @private
 	 */
 	DesignTimeNew.prototype._iterateRootElementPublicChildren = function(oRootElement, fnStep) {
-		var aAllPublicElements = Utils.findAllPublicElements(oRootElement);
+		var aAllPublicElements = ElementUtil.findAllPublicElements(oRootElement);
 		aAllPublicElements.forEach(function(oElement) {
 			fnStep(oElement);
 		});

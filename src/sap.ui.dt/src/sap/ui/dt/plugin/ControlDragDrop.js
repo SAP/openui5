@@ -5,9 +5,9 @@
 // Provides class sap.ui.dt.plugin.ControlDragDrop.
 sap.ui.define([
 	'sap/ui/dt/plugin/DragDrop',
-	'sap/ui/dt/Utils'
+	'sap/ui/dt/ElementUtil'
 ],
-function(DragDrop, Utils) {
+function(DragDrop, ElementUtil) {
 	"use strict";
 
 	/**
@@ -71,7 +71,7 @@ function(DragDrop, Utils) {
 		var aDraggableTypes = this.getDraggableTypes();
 
 		return aDraggableTypes.some(function(sType) {
-			return  Utils.isInstance(oElement, sType);
+			return  ElementUtil.isInstance(oElement, sType);
 		});
 	};
 
@@ -120,10 +120,11 @@ function(DragDrop, Utils) {
 		var oParentElement = oAggregationOverlay.getElementInstance();
 
 		var oDraggedElement = this._oDraggedOverlay.getElementInstance();
+		var oParentOverlay = this._oDraggedOverlay.getParentOverlay();
 
-		if (oParentElement !== oDraggedElement.getParent()) {
+		if (oParentElement !== oParentOverlay.getElementInstance()) {
 			var sAggregationName = oAggregationOverlay.getAggregationName();
-			Utils.addAggregation(oParentElement, sAggregationName, oDraggedElement);
+			ElementUtil.addAggregation(oParentElement, sAggregationName, oDraggedElement);
 		}
 	};
 
@@ -148,7 +149,7 @@ function(DragDrop, Utils) {
 		var oDraggedElement = this._oDraggedOverlay.getElementInstance();
 		var sAggregationName = oAggregationOverlay.getAggregationName();
 
-		if (Utils.isValidForAggregation(oparentElement, sAggregationName, oDraggedElement)) {
+		if (ElementUtil.isValidForAggregation(oparentElement, sAggregationName, oDraggedElement)) {
 			oAggregationOverlay.setDroppable(true);
 		}
 	};
@@ -182,7 +183,7 @@ function(DragDrop, Utils) {
 	ControlDragDrop.prototype._iterateAllAggregations = function(fnStep) {	
 		var that = this;
 
-		var oDesignTime = Utils.getElementInstance(this.getDesignTime());
+		var oDesignTime = ElementUtil.getElementInstance(this.getDesignTime());
 		var aOverlays = oDesignTime.getOverlays();
 		aOverlays.forEach(function(oOverlay) {
 			that._iterateOverlayAggregations(oOverlay, fnStep);
@@ -206,15 +207,14 @@ function(DragDrop, Utils) {
 		var oDraggedElement = this._oDraggedOverlay.getElementInstance();
 
 		var oTargetElement = oTargetOverlay.getElementInstance();
-		var oPublicParent = oTargetOverlay.getPublicParent();
-		var sPublicParentAggregationName = oTargetOverlay.getPublicParentAggregationName();
+		var oPublicParent = oTargetOverlay.getParentOverlay().getElementInstance();
+		var sPublicParentAggregationName = oTargetOverlay.getParentAggregationOverlay().getAggregationName();
 
-		var aChildren = oPublicParent.getAggregation(sPublicParentAggregationName) || [];
+		var aChildren = ElementUtil.getAggregation(oPublicParent, sPublicParentAggregationName);
 		var iIndex = aChildren.indexOf(oTargetElement);
 
 		if (iIndex !== -1) {
-			Utils.removeAggregation(oPublicParent, sPublicParentAggregationName, oDraggedElement);				
-			Utils.insertAggregation(oPublicParent, sPublicParentAggregationName, oDraggedElement, iIndex);
+			ElementUtil.insertAggregation(oPublicParent, sPublicParentAggregationName, oDraggedElement, iIndex);
 		}
 	};
 

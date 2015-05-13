@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.dt.Overlay
-sap.ui.define(['sap/ui/dt/DOMUtil', 'sap/ui/dt/Utils'],
-	function(DOMUtil, Utils) {
+sap.ui.define(['sap/ui/dt/DOMUtil'],
+	function(DOMUtil) {
 	"use strict";
 
 
