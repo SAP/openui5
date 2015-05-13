@@ -141,10 +141,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	RadioButton.prototype._groupNames = {};
 
-	RadioButton.prototype.onBeforeRendering = function () {
-		this._changeGroupName(this.getGroupName());
-	};
-
 	/**
 	 * Function is called when radiobutton is tapped.
 	 *
@@ -215,8 +211,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sGroupName = this.getGroupName(),
 			aControlsInGroup = this._groupNames[sGroupName],
 			iLength = aControlsInGroup && aControlsInGroup.length;
-
+			
 		this.setProperty("selected", bSelected, true); // No re-rendering
+		this._changeGroupName(this.getGroupName());
 
 		if (bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
 			for (var i = 0; i < iLength; i++) {
