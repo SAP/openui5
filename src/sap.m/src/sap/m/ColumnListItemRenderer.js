@@ -87,13 +87,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	
 	// Returns the inner aria labelledby ids for the accessibility
 	ColumnListItemRenderer.getAriaLabelledBy = function(oLI) {
-		var oTable = oLI.getTable(); 
+		var oTable = oLI.getTable(),
+			sAriaLabelledBy = ListItemBaseRenderer.getAriaLabelledBy.call(this, oLI) || "";
+
 		if (!oTable || !oTable.hasPopin()) {
-			return;
+			return sAriaLabelledBy;
 		}
-		
+
 		// when table has pop-in let the screen readers announce it
-		return oLI.getId() + " " + oLI.getId() + "-sub";
+		return sAriaLabelledBy + " " + oLI.getId() + "-sub";
 	};
 	
 	// writes aria-selected for the cells when the item is selectable
