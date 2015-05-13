@@ -248,6 +248,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			iSectionLength = iThreshold;
 		}
 		
+		// prevent iSectionStartIndex to become negative
+		iSectionStartIndex = Math.max(iSectionStartIndex, 0);
+		
 		// No negative preload needed; move startindex if we already have some data
 		if (iSectionStartIndex == iStartIndex) {
 			iSectionStartIndex += aContexts.length;
