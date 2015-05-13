@@ -1089,7 +1089,7 @@ sap.ui.define([
 			layoutData: new sap.ui.layout.GridData({
 				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : this._oButtonGroupSpan["Span" + this._sConditionType]
 			})
-		});
+		}).addStyleClass("floatRight");
 		oConditionGrid.addContent(oButtonContainer);
 		oConditionGrid["ButtonContainer"] = oButtonContainer;
 
@@ -2234,6 +2234,7 @@ sap.ui.define([
 		if (this._sConditionType === "Filter") {
 			for (var i = 0; i < aGrids.length; i++) {
 				var grid = aGrids[i];
+				grid.ButtonContainer.removeStyleClass("floatRight");
 				grid.removeContent(grid.ButtonContainer);
 				grid.insertContent(grid.ButtonContainer, newIndex);
 	
