@@ -3,14 +3,15 @@
 	xmlns="sap.m">
 	<VBox>
 		<items>
-			<Label text="MultiInput using 2 validators"/>
+			<Label text="MultiInput using two validators:"/>
+			<Label text="first validator creates token where the text is the same as input value; second validator adds counter number to token."></Label>
 			<HBox>
 				<items>
 					<MultiInput id="multiInput1" width="400px"/>
 					<CheckBox id="checkbox1" text="Validate?" selected="true"/>
 				</items>
 			</HBox>
-			<Label text="MultiInput using asynchronous validator"/>
+			<Label text="MultiInput using asynchronous validator: add token by callback validation" width="100%"/>
 			<MultiInput id="multiInput2" width="500px"/>
 		</items>
 	</VBox>	
