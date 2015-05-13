@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	 */
 
 	(function() {
+		/* eslint-disable no-lonely-if */
 
 		DateRangeSelection.prototype.init = function(){
 
@@ -399,7 +400,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 					var oStartDate = this.getDateValue();
 					if (oStartDate) {
 						if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() !== oStartDate.getTime()) {
-							this._oDateRange.setStartDate(new Date(oStartDate.getTime()));
+							this._oDateRange.setStartDate(new Date(oStartDate));
 							this._oCalendar.focusDate(oStartDate);
 						}
 					} else {
@@ -411,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 					var oEndDate = this.getSecondDateValue();
 					if (oEndDate) {
 						if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
-							this._oDateRange.setEndDate(new Date(oEndDate.getTime()));
+							this._oDateRange.setEndDate(new Date(oEndDate));
 							this._oCalendar.focusDate(oEndDate);
 						}
 					} else {
@@ -469,7 +470,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		// This should be redesigned at all, because parsing should not update the properties in every case
 		DateRangeSelection.prototype._setLabelVisibility = function() {
 
-			if (!this._bShowLabelAsPlaceholder || !this._$label || !this.isActive()) {
+			if (!this.bShowLabelAsPlaceholder || !this._$label || !this.isActive()) {
 				return;
 			}
 
@@ -495,7 +496,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 			if (oEndDate) {
 				if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
-					this._oDateRange.setEndDate(new Date(oEndDate.getTime()));
+					this._oDateRange.setEndDate(new Date(oEndDate));
 				}
 			} else {
 				if (this._oDateRange.getEndDate()) {
