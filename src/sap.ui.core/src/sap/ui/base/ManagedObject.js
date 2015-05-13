@@ -3016,7 +3016,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,
 			oAggregationInfo = this.getMetadata().getAggregation(sName),  // TODO fix handling of hidden aggregations
-			oClone,
 			sGroup = null,
 			bGrouped,
 			aContexts,
@@ -3027,28 +3026,29 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		// and just append or remove at the end, if some are missing or too many.
 		function update(oControl, aContexts, fnBefore, fnAfter) {
 			var aChildren = oControl[oAggregationInfo._sGetter](),
-				oContext;
-			for (var i = 0; i < Math.min(aChildren.length, aContexts.length); i++) {
-				aChildren[i].setBindingContext(aContexts[i], oBindingInfo.model);
-			}
+				oContext,
+				oClone;
 			if (aChildren.length > aContexts.length) {
 				for (var i = aContexts.length; i < aChildren.length; i++) {
 					aChildren[i].destroy();
 				}
 			}
-			if (aChildren.length < aContexts.length) {
-				for (var i = aChildren.length; i < aContexts.length; i++) {
-					oContext = aContexts[i];
-					if (fnBefore) {
-						fnBefore(oContext);
-					}
+			for (var i = 0; i < aContexts.length; i++) {
+				oContext = aContexts[i];
+				oClone = aChildren[i];
+				if (fnBefore) {
+					fnBefore(oContext);
+				}
+				if (oClone) {
+					oClone.setBindingContext(oContext, oBindingInfo.model);
+				} else {
 					var sId = oControl.getId() + "-" + i;
 					oClone = fnFactory(sId, oContext);
 					oClone.setBindingContext(oContext, oBindingInfo.model);
 					oControl[oAggregationInfo._sMutator](oClone);
-					if (fnAfter) {
-						fnAfter(oContext, oClone);
-					}
+				}
+				if (fnAfter) {
+					fnAfter(oContext, oClone);
 				}
 			}
 		}
@@ -3073,6 +3073,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 		}
 		
+		// Update the tree recursively
+		function updateRecursive(oControl, oContexts) {
+			update(oControl, oContexts, null, function(oContext, oClone) {
+				updateRecursive(oClone, oBinding.getNodeContexts(oContext));
+			});
+		}
+		
 		// If a factory function is used, aggregation must be completely rebuild
 		if (!oBindingInfo.template) {
 			this[oAggregationInfo._sDestructor]();
@@ -3088,9 +3095,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			update(this, aContexts, bGrouped ? updateGroup : null);
 		} else if (oBinding instanceof sap.ui.model.TreeBinding) {
 			// In fnAfter call update recursively for the child nodes of the current tree node
-			update(this, oBinding.getRootContexts(), null, function(oContext, oClone) {
-				update(oClone, oBinding.getNodeContexts(oContext));
-			});
+			updateRecursive(this, oBinding.getRootContexts());
 		}
 	};
 
