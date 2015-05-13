@@ -570,6 +570,14 @@
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 			});
 
+			test("Bind single aggregation", function() {
+				// This worked in the past so I add a test to not break it accidentally
+				this.obj.bindAggregation("singleAggr", "/list", this.template);
+				equal(this.obj.isBound("singleAggr"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("singleAggr") instanceof sap.ui.core.TestManagedObject, true, "Aggregation is instance of TestManagedObject");
+				equal(this.obj.getAggregation("singleAggr").getValue(), "testvalue3", "Value matches the last array entry");
+			});
+
 			test("Bind aggregation with template non shareable", function() {
 				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:false});
 				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");

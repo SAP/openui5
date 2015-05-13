@@ -2854,11 +2854,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			aSorters,
 			aFilters,
 			oMetadata = this.getMetadata(),
-			oAggregation = oMetadata.getAggregation(sName);
+			oAggregationInfo = oMetadata.getAggregation(sName);
 
 		// check whether aggregation exists
-		if (!oAggregation) {
+		if (!oAggregationInfo) {
 			throw new Error("Aggregation \"" + sName + "\" does not exist in " + this);
+		}
+		if (!oAggregationInfo.multiple) {
+			jQuery.sap.log.error("Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
 		}
 
 		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
@@ -2884,7 +2887,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		// check whether a template has been provided, which is required for proper processing of the binding
 		// If aggregation is marked correspondingly in the metadata, factory can be omitted (usually requires an updateXYZ method)
 		if (!(oBindingInfo.template || oBindingInfo.factory)) {
-			if ( oAggregation._doesNotRequireFactory ) {
+			if ( oAggregationInfo._doesNotRequireFactory ) {
 				// add a dummy factory as property 'factory' is used to distinguish between property- and list-binding
 				oBindingInfo.factory = function() {
 					throw new Error("dummy factory called unexpectedly ");
