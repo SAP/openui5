@@ -49,7 +49,7 @@
 		<password></password> <!-- SDN Password -->
 		
 		<!-- SAPUI5 version for NW Cloud -->
-		<sapui5.version>1.29.0-SNAPSHOT</sapui5.version>
+		<sapui5.version>1.29.1-SNAPSHOT</sapui5.version>
 	
 	</properties>
 	
