@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Calendar ACC Test - sap.ui.unified</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.Calendar.gif">
@@ -18,10 +18,10 @@
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
-			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var aSpecialDays = [["20150101",undefined,"Neujahr",1],
-			                    ["20150106",undefined,"Heilige Drei Könige",1],
+			                    ["20150106",undefined,"Heilige Drei KÃ¶nige",1],
 			                    ["20150214",undefined,"Valentinstag",2],
 			                    ["20150216",undefined,"Rosenmontag",2],
 			                    ["20150217",undefined,"Fastnacht",2],
@@ -35,13 +35,13 @@
 			                    ["20150524",undefined,"Pfingstsonntag",1],
 			                    ["20150525",undefined,"Pfingstmontag",1],
 			                    ["20150604",undefined,"Fronleichnam",1],
-			                    ["20150815",undefined,"Mariä Himmelfahrt",2],
+			                    ["20150815",undefined,"MariÃ¤ Himmelfahrt",2],
 			                    ["20151003",undefined,"Tag der Deutschen Einheit",1],
 			                    ["20151004",undefined,"Erntedankfest",2],
 			                    ["20151031",undefined,"Reformationstag",2],
 			                    ["20151101",undefined,"Allerheiligen",1],
 			                    ["20151115",undefined,"Volkstrauertag",2],
-			                    ["20151118",undefined,"Buß- und Bettag",2],
+			                    ["20151118",undefined,"BuÃŸ- und Bettag",2],
 			                    ["20151125",undefined,"Totensonntag",2],
 			                    ["20151129",undefined,"1. Advent",2],
 			                    ["20151206",undefined,"Nikolaus",2],
@@ -52,7 +52,7 @@
 			                    ["20151225","20141226","Weihnachten",1],
 			                    ["20151231",undefined,"Silvester",2],
 			                    ["20160101",undefined,"Neujahr",1],
-			                    ["20160106",undefined,"Heilige Drei Könige",1]];
+			                    ["20160106",undefined,"Heilige Drei KÃ¶nige",1]];
 
 			var oCal = new sap.ui.unified.Calendar("Cal1",{
 				ariaLabelledBy: ["H-C1"]
