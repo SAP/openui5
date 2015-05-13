@@ -313,6 +313,11 @@ sap.ui.require([
 						</PropertyValue>\
 					</Record>\
 				</PropertyValue>\
+				<PropertyValue Property="Description">\
+					<Record Type="com.sap.vocabularies.UI.v1.DataFieldForAction">\
+						<PropertyValue Property="Action" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData"/>\
+					</Record>\
+				</PropertyValue>\
 			</Record>\
 		</Annotation>\
 	</Annotations>\
@@ -1462,6 +1467,21 @@ sap.ui.require([
 
 			strictEqual(AnnotationHelper.gotoEntitySet(oContext),
 				oMetaModel.getODataEntitySet("ProductSet", true));
+		});
+	});
+
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.gotoFunctionImport");
+
+	//*********************************************************************************************
+	test("gotoFunctionImport", function () {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath =
+					sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Description/Action",
+				oContext = oMetaModel.createBindingContext(sMetaPath);
+
+			strictEqual(AnnotationHelper.gotoFunctionImport(oContext),
+				oMetaModel.getODataFunctionImport("RegenerateAllData", true));
 		});
 	});
 });

@@ -1282,6 +1282,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	["annotations", "emptyAnnotations"].forEach(function (sAnnotation) {
 		["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"].forEach(
+
 			function (sPath) {
 				test(sAnnotation + ", " + sPath, function () {
 					var oMetaModel, oModel;
@@ -1356,6 +1357,12 @@ sap.ui.require([
 		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
+			strictEqual(oMetaModel.getODataFunctionImport(
+				"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData"),
+				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
+			strictEqual(oMetaModel.getODataFunctionImport(
+				"FOO_Bar/RegenerateAllData"),
+				null);
 			strictEqual(oMetaModel.getODataFunctionImport("Foo"), null);
 			strictEqual(oMetaModel.getODataFunctionImport(), null);
 		});

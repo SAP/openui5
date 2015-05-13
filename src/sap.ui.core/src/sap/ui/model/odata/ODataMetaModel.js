@@ -453,7 +453,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * container.
 	 *
 	 * @param {string} sName
-	 *   a simple name, e.g. "Save"
+	 *   a simple or qualified name, e.g. "Save" or "MyService.Entities/Save"
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the function import is returned as a path or as an object
 	 * @returns {object|string}
@@ -463,8 +463,13 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @since 1.29.0
 	 */
 	ODataMetaModel.prototype.getODataFunctionImport = function (sName, bAsPath) {
-		return Utils.getFromContainer(this.getODataEntityContainer(), "functionImport", sName,
-			bAsPath);
+		var aParts =  sName && sName.indexOf('/') >= 0  ? sName.split('/') : undefined,
+			oEntityContainer = aParts ?
+				Utils.getObject(this.oModel, "entityContainer", aParts[0]) :
+				this.getODataEntityContainer();
+
+		return Utils.getFromContainer(oEntityContainer, "functionImport",
+			aParts ? aParts[1] : sName, bAsPath);
 	};
 
 	/**
