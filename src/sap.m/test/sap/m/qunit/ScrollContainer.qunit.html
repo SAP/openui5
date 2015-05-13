@@ -227,7 +227,11 @@
 					vertical: true,
 					content: [
 						new sap.ui.core.HTML({
-							content : "<div style=\"height: 800px\">800px height div</div>"
+							content : "<div style=\"height: 800px\">800px height div" +
+							"<div style=\"position: absolute; left: 0; top: 200px;\">" +
+							"<div style=\"position: absolute; left: 0; top: 200px;\" id=\"nestedPositioned\">XYZ</div>" +
+							"</div>" +
+							"</div>"
 						}),
 						this.oTestButton = new sap.m.Button(),
 						new sap.ui.core.HTML({
@@ -242,6 +246,10 @@
 				oScrollContainer.scrollToElement(this.oTestButton);
 
 				assert.equal(getScrollPos(oScrollContainer.getId(), "top"), -800, "ScrollContainer should be scrolled to position 800 from the top");
+
+				oScrollContainer.scrollToElement(document.getElementById('nestedPositioned'));
+
+				assert.equal(getScrollPos(oScrollContainer.getId(), "top"), -400, "ScrollContainer should be scrolled to position 400 from the top");
 
 				oScrollContainer.destroy();
 

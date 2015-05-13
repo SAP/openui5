@@ -217,12 +217,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				// check if vElement is a DOM element and if yes convert it to jQuery object
 				var $Element = vElement instanceof jQuery ? vElement : $(vElement),
 					oElementPosition = $Element.position(),
-					$OffsetParent = $Element.offsetParent();
+					$OffsetParent = $Element.offsetParent(),
+					oAddUpPosition;
 
 				while (!$OffsetParent.is(this._$Container)) {
+					oAddUpPosition = $OffsetParent.position();
+					oElementPosition.top += oAddUpPosition.top;
+					oElementPosition.left += oAddUpPosition.left;
 					$OffsetParent = $OffsetParent.offsetParent();
-					oElementPosition.top += oElementPosition.top;
-					oElementPosition.left += oElementPosition.left;
 				}
 
 				return oElementPosition;
