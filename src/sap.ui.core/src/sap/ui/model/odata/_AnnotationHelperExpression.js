@@ -29,6 +29,7 @@ sap.ui.define([
 		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 		Expression,
+		rInteger = /^\d+$/,
 		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
 			And: "&&",
 			Eq: "===",
@@ -40,17 +41,7 @@ sap.ui.define([
 			Not: "!",
 			Or: "||"
 		},
-		mType2Type = { // mapping of constant "edm:*" type to dynamic "Edm.*" type
-			Bool : "Edm.Boolean",
-			Float : "Edm.Double",
-			Date : "Edm.Date",
-			DateTimeOffset :"Edm.DateTimeOffset",
-			Decimal : "Edm.Decimal",
-			Guid : "Edm.Guid",
-			Int : "Edm.Int64",
-			String : "Edm.String",
-			TimeOfDay : "Edm.TimeOfDay"
-		},
+		rSchemaPath = /^(\/dataServices\/schema\/\d+)(?:\/|$)/,
 		mType2Category = { // mapping of EDM type to a type category
 			"Edm.Boolean": "boolean",
 			"Edm.Byte": "number",
@@ -69,6 +60,17 @@ sap.ui.define([
 			"Edm.String": "string",
 			"Edm.Time": "time",
 			"Edm.TimeOfDay": "time"
+		},
+		mType2Type = { // mapping of constant "edm:*" type to dynamic "Edm.*" type
+			Bool : "Edm.Boolean",
+			Float : "Edm.Double",
+			Date : "Edm.Date",
+			DateTimeOffset :"Edm.DateTimeOffset",
+			Decimal : "Edm.Decimal",
+			Guid : "Edm.Guid",
+			Int : "Edm.Int64",
+			String : "Edm.String",
+			TimeOfDay : "Edm.TimeOfDay"
 		},
 		mTypeCategoryNeedsCompare = {
 			"boolean": false,
@@ -258,7 +260,8 @@ sap.ui.define([
 						result : "binding",
 						type: "Edm.String",
 						ignoreTypeInPath: true,
-						value : "/##" + oPathValue.path
+						value : "/##" + Expression.replaceIndexes(oInterface.getModel(),
+							oPathValue.path)
 					};
 				}
 			} else if (!mEdmType2RegExp[sEdmType].test(sValue)) {
@@ -675,6 +678,77 @@ sap.ui.define([
 			}
 
 			return oResult;
+		},
+
+		/**
+		 * Replaces the indexes in the given path by queries in the form
+		 * <code>[${key}==='value']</code> if possible. Expects the path to start with
+		 * "/dataServices/schema/<i>/".
+		 *
+		 * @param {sap.ui.model.Model} oModel
+		 *   the model the path belongs to
+		 * @param {string} sPath
+		 *   the path, where to replace the indexes
+		 * @returns {string}
+		 *   the replaced path
+		 */
+		replaceIndexes: function (oModel, sPath) {
+			var aMatches,
+				aParts = sPath.split('/'),
+				sObjectPath,
+				sRecordType;
+
+			/**
+			 * Processes the property with the given path of the object at <code>sObjectPath</code>.
+			 * If it exists and is of type "string", the index at position <code>i</code> in
+			 * <code>aParts</code> is replaced by a query "[${propertyPath}==='propertyValue']".
+			 *
+			 * @param {string} sPropertyPath the property path
+			 * @param {number} i the index in aParts
+			 * @returns {boolean} true if the index was replaced by a query
+			 */
+			function processProperty(sPropertyPath, i) {
+				var sProperty = oModel.getProperty(sObjectPath + "/" + sPropertyPath);
+
+				if (typeof sProperty === "string") {
+					aParts[i] = "[${" + sPropertyPath + "}===" + Basics.toJSON(sProperty) + "]";
+					return true;
+				}
+				return false;
+			}
+
+			aMatches = rSchemaPath.exec(sPath);
+			if (!aMatches) {
+				return sPath;
+			}
+			sObjectPath = aMatches[1];
+			// aParts now contains ["", "dataServices", "schema", "<i>", ...]
+			// try to replace the schema index in aParts[3] by a query for the schema's namespace
+			if (!processProperty("namespace", 3)) {
+				return sPath;
+			}
+			// continue after the schema index
+			for (var i = 4; i < aParts.length; i++) {
+				sObjectPath = sObjectPath + "/" + aParts[i];
+				// if there is an index, first try a query for "name"
+				if (rInteger.test(aParts[i]) && !processProperty("name", i)) {
+					// check data fields: since they always extend DataFieldAbstract, the record
+					// type must be given
+					sRecordType = oModel.getProperty(sObjectPath + "/RecordType");
+					if (sRecordType) {
+						if (sRecordType === "com.sap.vocabularies.UI.v1.DataFieldForAction") {
+							processProperty("Action/String", i);
+						} else if (sRecordType ===
+								"com.sap.vocabularies.UI.v1.DataFieldForAnnotation") {
+							processProperty("Target/AnnotationPath", i);
+						} else if (sRecordType.indexOf("com.sap.vocabularies.UI.v1.DataField")
+								=== 0) {
+							processProperty("Value/Path", i);
+						}
+					}
+				}
+			}
+			return aParts.join('/');
 		},
 
 		/**

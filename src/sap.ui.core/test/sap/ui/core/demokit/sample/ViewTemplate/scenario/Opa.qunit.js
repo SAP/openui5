@@ -9,6 +9,16 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 
 		Given.iStartMyAppInAFrame("index.html");
 
+		Then.waitFor({
+			controlType: "sap.m.CheckBox",
+			matchers : new sap.ui.test.matchers.Properties({text : "bindTexts"}),
+			success : function (aControls) {
+				// tap on the "bindTexts" check box and trigger a reload w/ bindTexts
+				aControls[0].ontap();
+			},
+			errorMessage : "'bindTexts' check box not found"
+		});
+
 		// check for existing controls
 		[
 			{controlType: "sap.ui.core.Title", text: "HeaderInfo"},
@@ -30,7 +40,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 			Then.waitFor({
 				controlType: oFixture.controlType,
 				matchers : new sap.ui.test.matchers.Properties({ text: oFixture.text}),
-				success : function (oControl) {
+				success : function () {
 					ok(true, "found: " + oFixture.controlType + " with text: " +
 						oFixture.text);
 				},

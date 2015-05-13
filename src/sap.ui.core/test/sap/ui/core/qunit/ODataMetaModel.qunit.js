@@ -693,6 +693,71 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("_getObject: queries instead of indexes", function () {
+		var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+
+		oLogMock.expects("error")
+			.withExactArgs("A query is not allowed when an object context has been given",
+				"entityType/[$\{name}==='BusinessPartner']", "sap.ui.model.odata.ODataMetaModel");
+		oLogMock.expects("error")
+			.withExactArgs("Invalid query: '/dataServices/' does not point to an array",
+				"/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
+				"sap.ui.model.odata.ODataMetaModel");
+
+		return withMetaModel(function (oMetaModel) {
+			[{
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']",
+				o: "/dataServices/schema/0"
+			}, { // syntax error (missing closing ']')
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC'",
+				o: undefined
+			}, { // syntax error (text after closing ']')
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a",
+				o: undefined
+			}, { // syntax error (text after closing ']')
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a/entityType/1",
+				o: undefined
+			}, { // query when we just landed in Nirvana
+				i: "/dataServices/unknown/[${namespace}==='GWSAMPLE_BASIC']",
+				o: undefined
+			}, {
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='Product']",
+				o: "/dataServices/schema/0/entityType/1",
+				c: {} // unnecessary context object (because of absolute path) silently ignored
+			}, { // ensure that we do not fail after a 'namespace' query that didn't find a result
+				i: "/dataServices/schema/[${namespace}==='unknown']/entityType/"
+					+ "[$\{name}==='Product']",
+				o: undefined
+			}, { // ensure that we do not fail after a 'name' query that didn't find a result
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='unknown']/property/[$\{name=}'foo']",
+				o: undefined
+			}, {
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='BusinessPartner']/com.sap.vocabularies.UI.v1.LineItem/"
+					+ "[${Value/Path}==='BusinessPartnerID']/Label/String",
+				o: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.LineItem/0"
+					+ "/Label/String"
+			}, {
+				i: "entityType/[$\{name}==='Product']",
+				o: "/dataServices/schema/0/entityType/1",
+				c: oMetaModel.getContext("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
+			}, { // query, but context is an object
+				i: "entityType/[$\{name}==='BusinessPartner']",
+				o: null,
+				c: oMetaModel.getObject("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
+			}, { // query on non-array
+				i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
+				o: null,
+			}].forEach(function (oFixture) {
+				strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c),
+					oFixture.o ? oMetaModel.oModel.getObject(oFixture.o) : oFixture.o, oFixture.i);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
 		test("_getObject: warning w/o context, log = " + bIsLoggable, function () {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
