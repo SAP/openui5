@@ -394,13 +394,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	};
 
 	/**
-	 * Returns the Core as new eventing parent to enable control event bubbling to the core to ensure compatibility with the core validation events.
+	 * Returns the Core's event provider as new eventing parent to enable control event bubbling to the core to ensure compatibility with the core validation events.
 	 *
 	 * @return {sap.ui.base.EventProvider} the parent event provider
 	 * @protected
 	 */
 	UIArea.prototype.getEventingParent = function() {
-		return this.oCore;
+		return this.oCore._getEventProvider();
 	};
 
 	// ###########################################################################
