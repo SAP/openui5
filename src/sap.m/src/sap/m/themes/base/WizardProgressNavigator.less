@@ -15,6 +15,7 @@
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
+	user-select: none;
 }
 
 .sapMWizardProgressNav ul {
@@ -51,7 +52,7 @@
 	/* anchors in all steps after the active one have the default cursor */
 	&[data-sap-ui-wpn-step-active="true"] ~
 		.sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
-		cursor: auto;
+		cursor: default;
 	}
 }
 
@@ -66,6 +67,12 @@
 	border-style: solid;
 	border-radius: 50%;
 	box-sizing: border-box;
+
+	&:focus {
+		outline-width: 1px;
+		outline-style: solid;
+		outline-offset: 1px;
+	}
 }
 
 .sapMWizardProgressNavSeparator::after {
