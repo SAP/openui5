@@ -18,12 +18,6 @@
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script type="text/javascript">
-		jQuery.sap.require("sap.m.QuickView");
-		jQuery.sap.require("sap.m.QuickViewCard");
-		jQuery.sap.require("sap.m.QuickViewGroup");
-		jQuery.sap.require("sap.m.QuickViewGroupElement");
-		jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-
 		sinon.config.useFakeTimers = true;
 
 		//create JSON model instance
@@ -45,9 +39,9 @@
 								{
 									label: "Company",
 									value: "SAP AG",
-									href: "http://sap.com",
+									url: "http://sap.com",
 									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLink: "customCardId4"
+									cardLinkId: "customCardId4"
 								},
 								{
 									label: "Company address",
@@ -61,7 +55,8 @@
 								{
 									label: "Email",
 									value: "john.dow@sap.com",
-									href: "john.dow@sap.com",
+									url: "john.dow@sap.com",
+									emailSubject: 'Subject',
 									elementType: sap.m.QuickViewGroupElementType.email
 								},
 								{
@@ -73,13 +68,13 @@
 									label: "Best Friend",
 									value: "Michael Muller",
 									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLink: "customCardId2"
+									cardLinkId: "customCardId2"
 								},
 								{
 									label: "Favorite Player",
 									value: "Ivaylo Ivanov",
 									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLink: "customCardId3"
+									cardLinkId: "customCardId3"
 								}
 							]
 						}
@@ -99,9 +94,9 @@
 								{
 									label: "Company",
 									value: "SAP AG",
-									href: "http://sap.com",
+									url: "http://sap.com",
 									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLink: "customCardId4"
+									cardLinkId: "customCardId4"
 								},
 								{
 									label: "Company address",
@@ -140,9 +135,9 @@
 								{
 									label: "Company",
 									value: "SAP AG",
-									href: "http://sap.com",
+									url: "http://sap.com",
 									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLink: "customCardId4"
+									cardLinkId: "customCardId4"
 								},
 								{
 									label: "Company address",
@@ -181,12 +176,13 @@
 								{
 									label: "Address",
 									value: "Waldorf, Germany",
-									href: "http://sap.com",
+									url: "http://sap.com",
 									elementType: "link"
 								},
 								{
 									label: "Email",
 									value: "office@sap.com",
+									emailSubject: 'Subject',
 									elementType: "email"
 								}
 							]
@@ -198,11 +194,12 @@
 									label: "Name",
 									value: "Michael Muller",
 									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLink: "customCardId2"
+									cardLinkId: "customCardId2"
 								},
 								{
 									label: "E-mail",
 									value: "michael.muller@sap.com",
+									emailSubject: 'Subject',
 									elementType: "email"
 								},
 								{
@@ -257,9 +254,10 @@
 									template: new sap.m.QuickViewGroupElement({
 										label: "{label}",
 										value: "{value}",
-										href: "{href}",
+										url: "{url}",
 										type: "{elementType}",
-										cardLink: "{cardLink}"
+										cardLinkId: "{cardLinkId}",
+										emailSubject: '{emailSubject}'
 									})
 								}
 							})

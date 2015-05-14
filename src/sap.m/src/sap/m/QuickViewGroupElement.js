@@ -31,7 +31,16 @@ sap.ui.define([
 					properties: {
 
 						/**
-						 * The text displayed below the associated label
+						 * Whether the element should be visible on the screen.
+						 */
+						visible : {
+							type: "boolean",
+							group : "Appearance",
+							defaultValue: true
+						},
+
+						/**
+						 * The text displayed below the associated label.
 						 */
 						label: {
 							type: "string",
@@ -83,6 +92,16 @@ sap.ui.define([
 							type: "string",
 							group: "Misc",
 							defaultValue: ""
+						},
+
+						/**
+						 * The subject of the email.
+						 * Works only with QuickViewGroupElement of type email.
+						 */
+						emailSubject: {
+							type: "string",
+							group: "Misc",
+							defaultValue: ""
 						}
 					}
 				}
@@ -96,8 +115,15 @@ sap.ui.define([
 		GroupElement.prototype._getGroupElementValue = function() {
 			switch (this.getType()) {
 				case GroupElementType.email:
+
+					var href = "mailto:" + this.getValue();
+					var subject = this.getEmailSubject();
+					if (subject) {
+						href += '?subject=' + subject;
+					}
+
 					return new Link({
-						href : "mailto:" + this.getValue(),
+						href : href,
 						text : this.getValue()
 					});
 				case GroupElementType.phone:

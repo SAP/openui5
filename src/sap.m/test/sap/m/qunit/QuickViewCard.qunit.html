@@ -18,11 +18,6 @@
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script type="text/javascript">
-		jQuery.sap.require("sap.m.QuickView");
-		jQuery.sap.require("sap.m.QuickViewCard");
-		jQuery.sap.require("sap.m.QuickViewGroup");
-		jQuery.sap.require("sap.m.QuickViewGroupElement");
-		jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 
 		sinon.config.useFakeTimers = true;
 
@@ -43,7 +38,7 @@
 						{
 							label: "Company",
 							value: "SAP AG",
-							href: "http://sap.com",
+							url: "http://sap.com",
 							elementType: "link"
 						},
 						{
@@ -58,13 +53,20 @@
 						{
 							label: "Email",
 							value: "john.dow@sap.com",
-							href: "john.dow@sap.com",
+							url: "john.dow@sap.com",
+							emailSubject: 'Subject',
 							elementType: "email"
 						},
 						{
 							label: "Phone",
 							value: "+359 888 888 888",
 							elementType: "phone"
+						},
+						{
+							label: "Phone",
+							value: "+359 888 888 888",
+							elementType: "phone",
+							visible : false
 						}
 					]
 				}
@@ -101,11 +103,12 @@
 						elements: {
 							path: 'elements',
 							template: new sap.m.QuickViewGroupElement({
-								label: "{/label}",
-								value: "{/value}",
-								href: "{/href}",
-								type: "{/elementType}",
-								cardLink: "{/cardLink}"
+								label: "{label}",
+								value: "{value}",
+								url: "{url}",
+								type: "{elementType}",
+								emailSubject: '{emailSubject}',
+								visible: '{visible}'
 							})
 						}
 					})
@@ -146,11 +149,29 @@
 			assert.strictEqual(fnSpyRenderGroup.callCount, 2, "_renderGroup() should be called twice");
 		});
 
-		QUnit.test("When testing the binding of the data to the elements", function (assert) {
-			assert.strictEqual(this.oQuickViewCard.getHeader(), "Employee Info", "should be set correctly");
-			assert.strictEqual(this.oQuickViewCard.getTitle(), "John Doe", "should be set correctly");
-			assert.strictEqual(this.oQuickViewCard.getDescription(), "Department Manager1", "should be set correctly");
-			assert.strictEqual(this.oQuickViewCard.getIcon(), "sap-icon://person-placeholder", "should be set correctly");
+		QUnit.test("Card properties", function (assert) {
+			assert.strictEqual(this.oQuickViewCard.getHeader(), "Employee Info", "Header should be set correctly");
+			assert.strictEqual(this.oQuickViewCard.getTitle(), "John Doe", "Title should be set correctly");
+			assert.strictEqual(this.oQuickViewCard.getDescription(), "Department Manager1", "Description should be set correctly");
+			assert.strictEqual(this.oQuickViewCard.getIcon(), "sap-icon://person-placeholder", "Icon should be set correctly");
+		});
+
+		QUnit.test("Group element properties", function (assert) {
+			var oGroup = this.oQuickViewCard.getGroups()[1];
+			var oElement = oGroup.getElements()[0];
+
+			assert.strictEqual(oElement.getLabel(), "Email", "Label should be set correctly");
+			assert.strictEqual(oElement.getValue(), "john.dow@sap.com", "Value should be set correctly");
+			assert.strictEqual(oElement.getUrl(), "john.dow@sap.com", "Url should be set correctly");
+			assert.strictEqual(oElement.getEmailSubject(), "Subject", "Email Subject should be set correctly");
+
+			oElement = oGroup.getElements()[1];
+			assert.strictEqual(oElement.getValue(), "+359 888 888 888", "Phone value should be set correctly");
+		});
+
+		QUnit.test("Element is not visible", function (assert) {
+			var $phoneLinks = this.oQuickViewCard.$().find('a[href*="tel"]');
+			assert.strictEqual($phoneLinks.length, 1, "Second phone is not visible");
 		});
 
 		QUnit.module("Rendering", {

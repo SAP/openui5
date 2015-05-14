@@ -52,6 +52,81 @@ sap.ui.define([
 							singularName: "card",
 							bindable: "bindable"
 						}
+					},
+					events: {
+						/**
+						 * This event fires after the QuickView is opened.
+						 */
+						afterOpen: {
+							parameters: {
+								/**
+								 * This parameter refers to the control, which opens the QuickView.
+								 */
+								openBy: {
+									type: "sap.ui.core.Control"
+								}
+							}
+						},
+
+						/**
+						 * This event fires after the QuickView is closed.
+						 */
+						afterClose: {
+							parameters: {
+								/**
+								 * This parameter refers to the control, which opens the QuickView.
+								 */
+								openBy: {
+									type: "sap.ui.core.Control"
+								},
+
+								/**
+								 * This parameter contains the control,
+								 * which triggers the close of the QuickView.
+								 * It is undefined when running on desktop or tablet.
+								 */
+								origin : {
+									type : "sap.m.Button"
+								}
+							}
+						},
+
+						/**
+						 * This event fires before the QuickView is opened.
+						 */
+						beforeOpen: {
+							parameters: {
+								/**
+								 * This parameter refers to the control, which opens the QuickView.
+								 */
+								openBy: {
+									type: "sap.ui.core.Control"
+								}
+							}
+						},
+
+						/**
+						 * This event fires before the QuickView is closed.
+						 */
+						beforeClose: {
+							parameters: {
+								/**
+								 * This parameter refers to the control, which opens the QuickView.
+								 */
+								openBy: {
+									type: "sap.ui.core.Control"
+								},
+
+								/**
+								 * This parameter contains the control,
+								 * which triggers the close of the QuickView.
+								 * It is undefined when running on desktop or tablet.
+								 */
+								origin : {
+									type : "sap.m.Button"
+								}
+							}
+						}
 					}
 				}
 			});
@@ -74,12 +149,36 @@ sap.ui.define([
 
 		this._oNavContainer = new NavContainer(oNavConfig);
 
+		var that = this;
+
 		this._oPopover = new ResponsivePopover({
 			placement: this.getPlacement(),
 			content: [this._oNavContainer],
-			afterOpen : this._afterOpen.bind(this),
 			showHeader: false,
-			showCloseButton : false
+			showCloseButton : false,
+			afterOpen: function (oEvent) {
+				that._afterOpen(oEvent);
+				that.fireAfterOpen({
+					openBy: oEvent.getParameter("openBy")
+				});
+			},
+			afterClose: function (oEvent) {
+				that.fireAfterClose({
+					openBy: oEvent.getParameter("openBy"),
+					origin: that.getCloseButton()
+				});
+			},
+			beforeOpen: function (oEvent) {
+				that.fireBeforeOpen({
+					openBy: oEvent.getParameter("openBy")
+				});
+			},
+			beforeClose: function (oEvent) {
+				that.fireBeforeClose({
+					openBy: oEvent.getParameter("openBy"),
+					origin: that.getCloseButton()
+				});
+			}
 		});
 
 		var oPopupControl = this._oPopover.getAggregation("_popup");
@@ -182,6 +281,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns this button, which closes the QuickView.
+	 * On desktop or tablet, this method returns undefined.
+	 * @private
+	 */
+	QuickView.prototype.getCloseButton = function() {
+		if (!sap.ui.Device.system.phone) {
+			return undefined;
+		}
+
+		var cardPage = this._oNavContainer.getCurrentPage();
+		var button = cardPage.getCustomHeader().getContentRight()[0];
+
+		return button;
+	};
+
+	/**
 	 * The method sets placement position of the QuickView.
 	 *
 	 * @param {sap.m.PlacementType} sPlacement Placement type
@@ -194,8 +309,17 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Opens the QuickView
+	 *
+	 * @param {sap.ui.core.Control} oControl Control which opens the QuickView
+	 * @returns {QuickView} this pointer for chaining
+	 * @public
+	 */
 	QuickView.prototype.openBy = function(oControl) {
 		this._oPopover.openBy(oControl);
+
+		return this;
 	};
 
 	return QuickView;

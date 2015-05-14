@@ -15,6 +15,7 @@
 						url="{url}"
 						type="{elementType}"
 						cardLinkId="{cardLinkId}"
+						emailSubject="{emailSubject}"
 						target="{target}"
 						>
 				</QuickViewGroupElement>
