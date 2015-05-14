@@ -9,6 +9,7 @@
 		responsive="true"
 		binding="{/ProductCollection/0}"
 		icon="{ProductPicUrl}"
+		iconAlt="{Name}"
 		intro="{Description}"
 		title="{Name}"
 		showMarkers="false"
