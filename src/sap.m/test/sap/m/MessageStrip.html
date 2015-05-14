@@ -94,10 +94,6 @@
 		var oPageNoLayout = new sap.m.Page("no-layout", {
 			title:"Several MessageStrip controls with no layout",
 			titleLevel: "H1",
-			showNavButton: true,
-			navButtonPress: function () {
-				oApp.back();
-			},
 			content: [
 				oMCInformation,
 				oMCSuccess,
@@ -119,86 +115,9 @@
 			})
 		});
 
-		var oMCFormError = new sap.m.MessageStrip("form-mcontainer1",{
-			type: "Error",
-			showIcon : true,
-			showCloseButton: true,
-			text: "<b>Error:</b> This page cannot load an unsigned ActiveX control. <a class='mmcLearnMore' href='#'>Learn more</a>"
-		});
-
-		var oSimpleForm = new sap.ui.layout.form.SimpleForm({
-			minWidth : 1024,
-			maxContainerCols : 2,
-			editable: true,
-			content : [
-				oMCFormError,
-				new sap.ui.core.Title({ text: "Register" }),
-				new sap.m.Label({
-					text: "First name"
-				}),
-				new sap.m.Input({
-					type: sap.m.InputType.Text,
-					placeholder: "Enter first name"
-				}),
-				new sap.m.Label({
-					text: "Last name"
-				}),
-				new sap.m.Input({
-					type: sap.m.InputType.Text,
-					placeholder: "Enter last name"
-				}),
-				new sap.m.Label({
-					text: "Gender"
-				}),
-				new sap.m.RadioButtonGroup({
-					columns: 2,
-					buttons: [
-						new sap.m.RadioButton({text: "Male"}),
-						new sap.m.RadioButton({text: "Female"})
-					]
-				}),
-				new sap.m.Label({
-					text: "Email"
-				}),
-				new sap.m.Input({
-					type: sap.m.InputType.Email,
-					placeholder: "Enter email"
-				})
-			]
-		});
-
-		var oPageWithForm = new sap.m.Page("form-messages", {
-			title: "MessageStrip control within a form",
-			titleLevel: "H1",
-			content: [oSimpleForm]
-		});
-
-		var oPageLanding = new sap.m.Page("landing-page", {
-			title: "Explore sap.m.MessageStrip",
-			titleLevel: "H1",
-			content: [
-				new sap.m.TileContainer({
-					tiles: [
-						new sap.m.StandardTile({
-							title: "Create Leave Request",
-							info: "12 days left",
-							infoState: "Success",
-							press: function () {
-								alert("UNDOCUMENTED");
-							}
-						})
-					]
-				})
-			]
-		});
-
 		var oApp = new sap.m.App("myApp", {
 			initialPage: "no-layout",
-			pages: [
-				oPageNoLayout,
-				oPageWithForm,
-				oPageLanding
-			]
+			pages: [oPageNoLayout]
 		});
 
 		oApp.placeAt("content");

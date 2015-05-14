@@ -93,13 +93,13 @@ sap.ui.define(function () {
 	};
 
 	MessageStripUtilities.getAccessibilityState = function () {
-		var oAriaText = this.getAggregation("_ariaTypeText").toStatic(),
-			mAccessibilityAttributes = {
-				role: "note",
-				describedby: oAriaText.getId()
-			};
+		var oAriaText = this.getAggregation("_ariaTypeText").toStatic();
 
-		return mAccessibilityAttributes;
+		return {
+			role: "note",
+			live: "assertive",
+			labelledby: [oAriaText.getId(), this.getId()].join(" ")
+		};
 	};
 
 	return MessageStripUtilities;
