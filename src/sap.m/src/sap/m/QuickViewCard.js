@@ -336,13 +336,14 @@ sap.ui.define([
 			QuickViewCard.prototype._crossApplicationNavigation = function (that) {
 				return function () {
 					if (that.getCrossAppNavCallback() && that.oCrossAppNavigator) {
-						var href = this.oCrossAppNavigator.hrefForExternal(
+						var targetConfig = that.getCrossAppNavCallback();
+						var href = that.oCrossAppNavigator.hrefForExternal(
 							{
 								target : {
-									semanticObject : that.getCrossAppNavCallback().target.semanticObject,
-									action : that.getCrossAppNavCallback().target.action
+									semanticObject : targetConfig.target.semanticObject,
+									action : targetConfig.target.action
 								},
-								params : that.getCrossAppNavCallback().params
+								params : targetConfig.params
 							}
 						);
 
