@@ -202,7 +202,7 @@
         "id": "524fc043763690ed758b06e5730637c134764be2",
         "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "ClientListBinding: Includeed "null" values for filters",
+        "text": "ClientListBinding: Includeed 'null' values for filters",
         "references": []
       },
       {

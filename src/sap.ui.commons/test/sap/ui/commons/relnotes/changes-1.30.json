@@ -83,7 +83,7 @@
         "id": "a9837bc4978617ce970d5324bc4fcab3fa7f10b4",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
-        "text": "core.Popup: Saving of "_followOfHandler" fixed",
+        "text": "core.Popup: Saving of '_followOfHandler' fixed",
         "references": []
       },
       {
