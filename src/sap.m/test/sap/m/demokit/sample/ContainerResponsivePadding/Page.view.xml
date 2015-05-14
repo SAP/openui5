@@ -11,7 +11,7 @@
 		the content area. On phone devices and small screens no padding is applied, on tablet devices
 		and inside a SplitApp control a medium padding is applied, and on desktop and fullscreen
 		applications a large padding is applied. Try the fullscreen mode of the Explored
-		app to see the difference" showIcon="true" showCloseButton="true"/>
+		app to see the difference" class="sapUiTinyMargin"/>
 	<Panel class="sapUiResponsiveContentPadding">
 		<headerToolbar>
 			<Toolbar height="3rem">
