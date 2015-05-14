@@ -498,9 +498,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			this._mAllAggregations = jQuery.extend({}, oParent._mAllAggregations, this._mAggregations);
 			this._mAllAssociations = jQuery.extend({}, oParent._mAllAssociations, this._mAssociations);
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
-			if ( oParent._mHiddenAggregations ) {
-				this._mHiddenAggregations = jQuery.extend({}, oParent._mHiddenAggregations);
-			}
 			this._mAllSpecialSettings = jQuery.extend({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
 		} else {
 			this._mAllEvents = this._mEvents;

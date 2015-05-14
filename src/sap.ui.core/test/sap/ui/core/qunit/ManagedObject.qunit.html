@@ -5,7 +5,6 @@
 		<title>ManagedObject - sap.ui.base</title>
 
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true" >
@@ -16,7 +15,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
+		<script>
 
 			var mObjects = {};
 
@@ -549,19 +548,6 @@
 				QUnit["throws"](function() {
 					this.obj.setAggregation("unknown", this.subObj);
 				}, null, "Must throw error on unknown aggregation setter");
-
-				// for controls in "unknown" libraries, the usage of invalid aggregations must not throw exceptions!
-				var object2 = new sap.test.TestManagedObject();
-				object2.setAggregation("phantasy", this.subObj);
-				object2.setAggregation("phantasy", null);
-				object2.addAggregation("phantasy", this.subObj);
-				object2.removeAggregation("phantasy", this.subObj);
-				object2.insertAggregation("phantasy", 0, this.subObj);
-				object2.removeAggregation("phantasy", this.subObj);
-				object2.setAggregation("phantasy", this.subObj);
-				object2.setAggregation("phantasy", null);
-				object2.destroy();
-				ok(true, "must not throw exception for unknown aggregations in custom libs");
 			});
 
 			test("Bind aggregation", function() {
@@ -921,11 +907,15 @@
 
 			});
 
-			test("ShouldInvaidateWhenSettingAnAggregation", function() {
+			test("ShouldInvalidateWhenSettingAnAggregation", function() {
+				
 				//Arrange
 				sap.ui.core.Element.extend("sap.test.Dummy", { metadata : {
-					defaultAggregation : "someAggregation"
+					aggregations : {
+						"someAggregation": { type: "sap.test.Dummy", multiple: false }
+					}
 				}});
+				
 				var fnTestCase = function(supressInvalidate) {
 
 					var sut,
@@ -949,6 +939,7 @@
 				fnTestCase(true);
 				fnTestCase(false);
 			});
+
 			module("bind Object", {
 				setup: function() {
 					this.obj = new sap.ui.core.TestManagedObject();
