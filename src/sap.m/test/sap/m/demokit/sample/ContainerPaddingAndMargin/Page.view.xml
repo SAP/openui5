@@ -8,8 +8,7 @@
 	<MessageStrip text="A layout container by default does not add margins or paddings to the content area.
 		By combining the margin and padding concepts you can flexibly design your application layout
 		without having to add any custom CSS. This example shows a HorizontalLayout that is layouted
-		with the standard margin and padding classes provided by UI5."
-		showIcon="true" showCloseButton="true"/>
+		with the standard margin and padding classes provided by UI5." class="sapUiTinyMargin"/>
 	<ScrollContainer>
 		<l:HorizontalLayout class="sapUiContentPadding">
 			<Image

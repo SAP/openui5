@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<MessageStrip text="The IconTabBar and other container controls have a content padding by default.
 		You can override default container content paddings by setting the CSS class 'sapUiNoContentPadding'
-		to the container control" showIcon="true" showCloseButton="true"/>
+		to the container control" class="sapUiTinyMargin"/>
 	<IconTabBar
 		id="idIconTabBar"
 		class="sapUiNoContentPadding">
