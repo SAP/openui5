@@ -861,21 +861,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		} 
 
 		function registerPath(vObj) {
-			if ( typeof vObj === 'object' && vObj.url ) {
-				jQuery.sap.registerModulePath(vObj.name, vObj.url);
+
+			jQuery.sap.assert(
+				(typeof vObj === 'string' && vObj) || 
+				(typeof vObj === 'object' && typeof vObj.name === 'string' && vObj.name), 
+				"reference either must be a non-empty string or an object with a non-empty 'name' and an optional 'url' property");
+
+			if ( typeof vObj === 'object' ) {
+				if ( vObj.url ) {
+					jQuery.sap.registerModulePath(vObj.name, vObj.url);
+				}
 				return vObj.name;
 			}
+
 			return vObj;
 		}
 
 		function preload(sComponentName, bAsync) {
-			
+
 			var sController = sComponentName + '.Component',
 				sPreloadName;
-			
+
 			// only load the Component-preload file if the Component module is not yet available
 			if ( bComponentPreload && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
-				
+
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, '-preload.js'); // URN
 					return jQuery.sap._loadJSResourceAsync(sPreloadName, true);
