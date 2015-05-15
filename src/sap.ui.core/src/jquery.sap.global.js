@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global URI, Promise, alert, console, XMLHttpRequest */
+/*global URI, Promise, alert, confirm, console, XMLHttpRequest */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -324,14 +324,30 @@
 	 */
 	(function() {
 		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
-			window["sap-ui-bRestart"] = false;
-			window["sap-ui-sRestartUrl"] = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
+			// Dear developer, the way to reload UI5 from a different location has changed: it can now be directly configured in the support popup (Ctrl-Alt-Shift-P),
+			// without stepping into the debugger.
+			// However, for convenience or cases where this popup is disabled, or for other usages of an early breakpoint, the "sap-bootstrap-debug" URL parameter option is still available.
+			// To reboot an alternative core just step down a few lines and set sRebootUrl
+			/*eslint-disable no-debugger */
+			debugger;
+		}
+		
+		// Check local storage for booting a different core
+		var sRebootUrl;
+		try { // Necessary for FF when Cookies are disabled
+			sRebootUrl = window.localStorage.getItem("sap-ui-reboot-URL");
+			window.localStorage.removeItem("sap-ui-reboot-URL"); // only reboot once from there (to avoid a deadlock when the alternative core is broken)
+		} catch (e) { /* no warning, as this will happen on every startup, depending on browser settings */ }
 
-			// function to replace the bootstrap tag with a newly created script tag to enable
-			// restarting the core from a different server
-			var restartCore = function() {
+		if (sRebootUrl && sRebootUrl !== "undefined") { // sic! It can be a string.
+			/*eslint-disable no-alert*/
+			var bUserConfirmed = confirm("WARNING!\n\nUI5 will be booted from the URL below.\nPress 'Cancel' unless you have configured this.\n\n" + sRebootUrl);
+			/*eslint-enable no-alert*/
+
+			if (bUserConfirmed) {
+				// replace the bootstrap tag with a newly created script tag to enable restarting the core from a different server
 				var oScript = _oBootstrap.tag,
-					sScript = "<script src=\"" + window["sap-ui-sRestartUrl"] + "\"";
+					sScript = "<script src=\"" + sRebootUrl + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
 					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
 						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue.replace(/"/g, "&quot;") + "\"";
@@ -339,31 +355,17 @@
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
-
+	
 				// clean up cachebuster stuff
 				jQuery("#sap-ui-bootstrap-cachebusted").remove();
 				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
-
+	
 				document.write(sScript);
-				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + window["sap-ui-sRestartUrl"]);
+				
+				// now this core commits suicide to enable clean loading of the other core
+				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: " + sRebootUrl);
 				oRestart.name = "Restart";
-
-				// clean up
-				delete window["sap-ui-bRestart"];
-				delete window["sap-ui-sRestartUrl"];
-
 				throw oRestart;
-			};
-
-			// debugger stops here. To restart UI5 from somewhere else (default: localhost), set:
-			//    window["sap-ui-bRestart"] = true
-			// If you want to restart from a different server than localhost, you can adapt the URL, e.g.:
-			//    window["sap-ui-sRestartUrl"] = "http://someserver:8080/sapui5/resources/sap-ui-core.js"
-			/*eslint-disable no-debugger */
-			debugger;
-			/*eslint-enable no-debugger */
-			if (window["sap-ui-bRestart"]) {
-				restartCore();
 			}
 		}
 	})();
@@ -535,6 +537,41 @@
 		return window.localStorage.getItem("sap-ui-debug") == "X";
 	};
 
+	/**
+	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
+	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
+	 * 
+	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
+	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared 
+	 * 
+	 * @private
+	 */
+	jQuery.sap.setReboot = function(sRebootUrl) { // null-ish clears the reboot request
+		var sUrl;
+		if (!window.localStorage) {
+			return null;
+		}
+
+		try {
+			if (sRebootUrl) {
+				window.localStorage.setItem("sap-ui-reboot-URL", sRebootUrl); // remember URL to reboot from
+				
+				/*eslint-disable no-alert */
+				alert("Next time this app is launched (only once), it will load UI5 from:\n" + sRebootUrl + ".\nPlease reload the application page now.");
+				/*eslint-enable no-alert */
+				
+			} else {
+				window.localStorage.removeItem("sap-ui-reboot-URL"); // clear reboot URL, so app will start normally
+			}
+
+			sUrl =  window.localStorage.getItem("sap-ui-reboot-URL");
+		} catch (e) {
+			jQuery.sap.log.warning("Could not access localStorage while setting reboot URL '" + sRebootUrl + "' (are cookies disabled?): " + e.message);
+		}
+
+		return sUrl;
+	};
+
 	// -------------------------- STATISTICS LOCAL STORAGE -------------------------------------
 
 	jQuery.sap.statistics = function(bEnable) {
@@ -542,7 +579,7 @@
 			return null;
 		}
 
-		function reloadHint(bUsesDbgSrc){
+		function gatewayStatsHint(bUsesDbgSrc){
 			/*eslint-disable no-alert */
 			alert("Usage of Gateway statistics " + (bUsesDbgSrc ? "on" : "off") + " now.\nFor the change to take effect, you need to reload the page.");
 			/*eslint-enable no-alert */
@@ -550,10 +587,10 @@
 
 		if (bEnable === true) {
 			window.localStorage.setItem("sap-ui-statistics", "X");
-			reloadHint(true);
+			gatewayStatsHint(true);
 		} else if (bEnable === false) {
 			window.localStorage.removeItem("sap-ui-statistics");
-			reloadHint(false);
+			gatewayStatsHint(false);
 		}
 
 		return window.localStorage.getItem("sap-ui-statistics") == "X";

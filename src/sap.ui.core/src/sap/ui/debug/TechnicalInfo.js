@@ -30,10 +30,10 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 				}
 				jQuery.each(o, function(i,v) {
 					if ( !v || typeof v === 'string' || typeof v === 'number' || v instanceof Date ) {
-					  html.push("<tr><td>", prefix, "<b>", jQuery.sap.escapeHTML(serialize(i)), "</b></td><td>", jQuery.sap.escapeHTML(serialize(v)), "</td></tr>");
+						html.push("<tr><td>", prefix, "<b>", jQuery.sap.escapeHTML(serialize(i)), "</b></td><td>", jQuery.sap.escapeHTML(serialize(v)), "</td></tr>");
 					} else {
-					  html.push("<tr><td>", prefix, "<b>", jQuery.sap.escapeHTML(serialize(i)), "</b></td><td></td></tr>");
-					  list(v, prefix + "&nbsp;&nbsp;");
+						html.push("<tr><td>", prefix, "<b>", jQuery.sap.escapeHTML(serialize(i)), "</b></td><td></td></tr>");
+						list(v, prefix + "&nbsp;&nbsp;");
 					}
 				});
 				if ( !prefix) {
@@ -89,10 +89,17 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 			if ( bOU ) {
 				html.push("<tr><td></td><td><a id=\"sap-ui-techinfo-optimizeModuleSet\" href=\"" + sOUUrl + "\">Calculate Optimized Module Set URL</a></td></tr>");
 			}
-			html.push("<tr><td align='right' valign='top' rowSpan='4'><b>Debug Tools</b></td>", "<td><input id='sap-ui-techinfo-useDbgSources' type='checkbox'",
+			html.push("<tr><td align='right' valign='top' rowSpan='7'><b>Debug Tools</b></td>", "<td><input id='sap-ui-techinfo-useDbgSources' type='checkbox'",
 					bUseDbgSrc ? " checked='checked'" : "",
 					"><span ",
 					">Use Debug Sources (reload)</span></input></td></tr>");
+			html.push("<tr><td>Boot app with different UI5 version on next reload:</td></tr>");
+			html.push("<tr><td style='padding-left: 2rem'><select id='sap-ui-techinfo-reboot-select' style='width: 100%;'>",
+					"<option value='none'>Disabled (no custom reboot URL)</option>",
+					"<option value='other' id='sap-ui-techinfo-reboot-other'>Other (enter URL to sap-ui-core.js below):</option>",
+					"</select></td></tr>");
+			html.push("<tr><td style='padding-left: 2rem'><input type='text' id='sap-ui-techinfo-reboot-input' style='width: 357px;' disabled='disabled'/>",
+					"<button id='sap-ui-techinfo-reboot'>Activate Reboot URL</button></td></tr>");
 			html.push("<tr><td><input id='sap-ui-techinfo-showControls' type='checkbox'",
 					bCT ? " checked='checked'" : "",
 					bEmbedded ? "" : " readonly='readonly'",
@@ -133,6 +140,8 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 			html.push("</div></div>");
 			this._$Ref = jQuery(html.join(""));
 			this._$Ref.find('#sap-ui-techinfo-useDbgSources').click(jQuery.proxy(this.onUseDbgSources, this));
+			this._$Ref.find('#sap-ui-techinfo-reboot').click(jQuery.proxy(this.onUseOtherUI5Version, this));
+			this._$Ref.find('#sap-ui-techinfo-reboot-select').on("change", this.onUI5VersionDropdownChanged);
 			this._$Ref.find('#sap-ui-techinfo-showControls').click(jQuery.proxy(this.onShowControls, this));
 			this._$Ref.find('#sap-ui-techinfo-showLogViewer').click(jQuery.proxy(this.onShowLogViewer, this));
 			this._$Ref.find('#sap-ui-techinfo-more').click(jQuery.proxy(this.onShowAllModules, this));
@@ -160,6 +169,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 				});
 			}
 			this._oPopup.open(400);
+			this.populateRebootUrls();
 		},
 
 		close : function() {
@@ -299,6 +309,103 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 
 		onUseDbgSources : function(e) {
 			jQuery.sap.debug(!!e.target.checked);
+		},
+
+		populateRebootUrls : function() { // checks whether known URLs where UI5 could be booted from are reachable
+			// these are the known standard URLs
+			var sUserUrls, aUserUrls, mUrls = this.mRebootUrls = {
+				// unfortunately we are not allowed to add the known internal URLs here
+				"https://openui5.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 server",
+				"https://openui5beta.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 PREVIEW server",
+				"https://sapui5.hana.ondemand.com/sdk/resources/sap-ui-core.js": "Public SAPUI5 server",
+				"http://localhost:8080/testsuite/resources/sap-ui-core.js": "Localhost (port 8080), /testsuite ('grunt serve' URL)",
+				"http://localhost:8080/sapui5/resources/sap-ui-core.js": "Localhost (port 8080), /sapui5 (maven URL)"
+			};
+
+			// also try any previously entered URLs
+			try { // Necessary for FF when Cookies are disabled
+				sUserUrls = window.localStorage.getItem("sap-ui-reboot-URLs");
+				aUserUrls = sUserUrls.split(" ");
+			} catch (e) { /* that's ok... */ }
+
+			for (var i in aUserUrls) {
+				var sUrl = aUserUrls[i];
+				if (!mUrls[sUrl]) {
+					mUrls[sUrl] = jQuery.sap.encodeHTML(sUrl);
+				}
+			}
+
+			var $Other = jQuery("#sap-ui-techinfo-reboot-other");
+			function createAppendFunction(sUrl) {
+				return function() {
+					// append URL and description to select box
+					var sHtml = "<option value='" + sUrl + "'>" + mUrls[sUrl] + "</option>";
+					$Other.before(sHtml);
+				};
+			}
+
+			// send an async HEAD request to each URL and append URL to the list in case of success
+			for (var sUrl in mUrls) {
+				jQuery.ajax({
+					type: "HEAD",
+					async: true,
+					url: sUrl,
+					success: createAppendFunction(sUrl)
+				});
+			}
+		},
+
+		onUI5VersionDropdownChanged : function() {
+			var sRebootUrl = jQuery("#sap-ui-techinfo-reboot-select").val(),
+				$Input = jQuery("#sap-ui-techinfo-reboot-input");
+
+			if (sRebootUrl === "other") {
+				// enable input field for custom URL
+				$Input.removeAttr("disabled");
+
+			} else {
+				// disable input field and fill the selected URL (if any)
+				$Input.attr("disabled", "disabled");
+				if (sRebootUrl === "none") {
+					$Input.val("");
+				} else {
+					$Input.val(sRebootUrl);
+				}
+			}
+		},
+
+		onUseOtherUI5Version : function() {
+			var sRebootUrl = jQuery("#sap-ui-techinfo-reboot-select").val();
+			if (sRebootUrl === "other") {
+				// use content of input field
+				sRebootUrl = jQuery("#sap-ui-techinfo-reboot-input").val();
+			}
+
+			if (!sRebootUrl || sRebootUrl === "none") {
+				// no custom reboot
+				jQuery.sap.setReboot(null);
+				/*eslint-disable no-alert */
+				alert("Reboot URL cleared. App will start normally.");
+				/*eslint-enable no-alert */
+			} else {
+				// configure a reboot
+				jQuery.sap.setReboot(sRebootUrl);
+
+				// remember this URL in case it is a custom one
+				if (!this.mRebootUrls[sRebootUrl]) {
+					try { // Necessary for FF when Cookies are disabled
+						var sUserUrls = window.localStorage.getItem("sap-ui-reboot-URLs");
+						var aUserUrls = sUserUrls ? sUserUrls.split(" ") : [];
+						if (jQuery.inArray(sRebootUrl, aUserUrls) === -1) {
+							aUserUrls.push(sRebootUrl.replace(/ /g,"%20"));
+							window.localStorage.setItem("sap-ui-reboot-URLs", aUserUrls.join(" "));
+						}
+					} catch (e) {
+					jQuery.sap.log.error("sgsrg");
+
+					/* there will already be a warning in the log because the reboot URL cannot be written */ }
+				}
+			}
 		},
 
 		onUseStatistics : function(e) {

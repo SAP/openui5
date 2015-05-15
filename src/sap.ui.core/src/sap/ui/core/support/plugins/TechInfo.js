@@ -30,6 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 					this.getId() + "FinishedE2ETrace"
 				] : [
 					this.getId() + "ToggleDebug",
+					this.getId() + "SetReboot",
 					this.getId() + "Refresh",
 					this.getId() + "StartE2ETrace",
 					this.getId() + "ToggleStatistics"
@@ -160,6 +161,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		TechInfo.prototype.onsapUiSupportTechInfoToggleDebug = function(oEvent){
 			jQuery.sap.debug(!jQuery.sap.debug());
 			sendData(this);
+		};
+	
+		/**
+		 * Handler for sapUiSupportTechInfoSetReboot event, which sets the URL from which UI5 should be loaded on next restart of the application
+		 * 
+		 * @param {sap.ui.base.Event} oEvent the event
+		 * @private
+		 */
+		TechInfo.prototype.onsapUiSupportTechInfoSetReboot = function(oEvent) {
+			jQuery.sap.setReboot(oEvent.getParameter("rebootUrl"));
 		};
 	
 		/**
