@@ -84,6 +84,54 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				};
 			}
 			
+			// PhantomJS fix for invalid date handling:
+			// ==> https://github.com/ariya/phantomjs/issues/11151
+			if (sap.ui.Device.browser.phantomJS) {
+				
+				/*eslint-disable */
+				// patch the parse function of the Date
+				var fnParse = Date.parse;
+				Date.parse = function(sDateString) {
+					var iMillis = fnParse.apply(Date, arguments);
+					if (sDateString && typeof sDateString === "string") {
+						// if the year is gt/eq 2034 we need to increment the 
+						// date by one additional day since this is broken in 
+						// PhantomJS => this is a workaround for the upper BUG!
+						var m = /^(\d{4})(?:-(\d+)?-(\d+))(?:[T ](\d+):(\d+)(?::(\d+)(?:\.(\d+))?)?)?(?:Z(-?\d*))?$/.exec(sDateString);
+						if (m && parseInt(m[1], 10) >= 2034) {
+							iMillis += 24 * 60 * 60 * 1000;
+						}
+					}
+					return iMillis;
+				};
+				
+				// override the constructor of the Date object
+				var fnDate = Date;
+				Date = function() {
+					var args = Array.prototype.slice.call(arguments);
+					if (args.length === 1 && typeof args[0] === "string") {
+						return new fnDate(Date.parse(args[0]));
+					}
+					args.unshift(window);
+					if (this instanceof Date) {
+						// usage of new Date(...):
+						// simulate a new call with Function.prototype.bind.apply(fnClass, args)
+						return new (Function.prototype.bind.apply(fnDate, args));
+					} else {
+						// usage of Date(...):
+						return fnDate.apply(window, args);
+					}
+				};
+				
+				// take over the static properties from the original date object
+				Date.parse = fnDate.parse;
+				Date.now = fnDate.now;
+				Date.UTC = fnDate.UTC;
+				Date.prototype = fnDate.prototype;
+				/*eslint-enable */
+				
+			}
+			
 		}
 	}());
 	
