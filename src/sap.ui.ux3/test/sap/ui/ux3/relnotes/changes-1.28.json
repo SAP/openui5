@@ -228,5 +228,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "30613ae967148bc6ae8e013130b196a4821ed6a1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: Fixed overflow when ToolPopup exceeds window",
+        "references": []
+      },
+      {
+        "id": "4a973f77e7673d74b24a423f331fad43da8bffc1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: ToolPopup is aware when content re-renders",
+        "references": []
+      }
+    ]
   }
 }
