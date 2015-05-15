@@ -85,5 +85,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      }
+    ]
   }
 }

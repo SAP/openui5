@@ -302,7 +302,7 @@
         "id": "8125edf782272b94b3a533863c24c6969994f60a",
         "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
         "type": "FIX",
-        "text": "Table.js - Rendering of 'select all' icon corrected",
+        "text": "Table.js - Rendering of \u0027select all\u0027 icon corrected",
         "references": []
       },
       {
@@ -345,6 +345,32 @@
         "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
         "type": "FIX",
         "text": "TreeTable: attachSelectionChanged for client tree bindings corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "c022a84f2924fcdfeb64522d62b15fe84e77692c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixed scrollbar flickering",
+        "references": []
+      },
+      {
+        "id": "e58c3eae23f00b825c1abd67a36a09e3393e62dc",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: When call is applied, second parameter must be an argument",
         "references": []
       }
     ]

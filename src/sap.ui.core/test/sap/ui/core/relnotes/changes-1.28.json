@@ -1679,5 +1679,171 @@
         "references": []
       }
     ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "d3a9a2ff63684e247fd90759ff6e1ae1c75d772e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Islamic Calendar Support",
+        "references": []
+      },
+      {
+        "id": "fd7a7017226f36ddb258bed3b9782753502d2110",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding.js: Negative $skip prevented",
+        "references": []
+      },
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "c70fef410ea403cd0beb54737ded34db1b5fe73c",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fixed JSdoc issue that breaks code completion in Eclipse",
+        "references": []
+      },
+      {
+        "id": "83f547138e6d89febf2eee5028b2f378b5aeb97f",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Non-strings in LabeledElement allowed",
+        "references": []
+      },
+      {
+        "id": "2ee012c323c392a2a11da18e54b8ccb315ee4538",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Dynamic expressions in apply fixed",
+        "references": []
+      },
+      {
+        "id": "9077a08f891e0299328d4afd7eb9688f0fe8edc9",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Added support for Internet Explorer 11\u0027s changed parse-error handling",
+        "references": []
+      },
+      {
+        "id": "f8af51b644fc95a7224fae03e621a9eef9a596f1",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataListBinding: Negative skip value in paging prevented",
+        "references": []
+      },
+      {
+        "id": "0febfb39c3ca21db86477e206a732116010edf7b",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: RequestUrl and all messages for targets are checked",
+        "references": []
+      },
+      {
+        "id": "82a7144e84c99125b80fc135110561d999c02885",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessagePaser: Handling of relative request paths fixed",
+        "references": []
+      },
+      {
+        "id": "5607bf8369cf5d144ba6ca5477d792ac1eadb8f7",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Metamodel bindings work asynchronously",
+        "references": []
+      },
+      {
+        "id": "f5f20a6892a86de8730b0c16ec7d88391afb18f9",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Event request parameters in batchRequestCompleted fixed",
+        "references": []
+      },
+      {
+        "id": "22bcd7587cd1fa2d3fd9bb7f61dba47164300b5c",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: SelectionChanged event fixed",
+        "references": []
+      },
+      {
+        "id": "5928d4059f21986db37bd44a02dcaed06799b266",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Control: LocalBusyIndicatorDelay also used in \u0027AfterRendering\u0027 fixed",
+        "references": []
+      },
+      {
+        "id": "269daa55763563793f664e4f1c9a8423fb34212f",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Control: overwriting \"_busyIndicatorDelayedCallId\" in \"onAfterRendering\" prevented",
+        "references": []
+      },
+      {
+        "id": "9306860e47a290107ab5fe0af1b352cd666cf3a8",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Selected tab gets the focus now",
+        "references": []
+      },
+      {
+        "id": "b2eb04a87efb2763e50e91cdb6b412f2536ec14a",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: Media queries in Device API are independent from current media",
+        "references": []
+      },
+      {
+        "id": "0d7a1e5d238e03e7dec114abdcd813164532c4c2",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.FocusHandler: Focus information updated immediately before a control/element is destroyed",
+        "references": []
+      },
+      {
+        "id": "d8c8874dc0aaaffc263043d6921f3472438cb753",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.RenderManager: Duplicate references to Labels (due to labelFor and ariaLabelledBy) in aria-labelledby attributes avoided",
+        "references": []
+      },
+      {
+        "id": "faf7bf6c4fbbf4f2e4f622e0615af49e77e4ce8b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Duplicate rendering avoided when content is moved in rendering phase",
+        "references": []
+      },
+      {
+        "id": "7d5a751620027b583155edfcff03d9263ca227f6",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Empty string is now parsed as 0 instead of NaN",
+        "references": []
+      },
+      {
+        "id": "7051e671826bbc2a6b1959691256068562254feb",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Parse function now respects custom plus and minus sign",
+        "references": []
+      },
+      {
+        "id": "df5d48b33989613c5c86147dbd695b7f067b6a37",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Custom header correctly set in $metadata request",
+        "references": []
+      }
+    ]
   }
 }
