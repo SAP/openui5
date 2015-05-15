@@ -110,8 +110,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Enables/Disables the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
+				 * Enables/Disables the Edit button.
+				 * If the value is true, the Edit button is enabled and the edit function can be used.
 				 * If the value is false, the edit function is not available.
 				 */
 				enableEdit : {
@@ -121,8 +121,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Enables/Disables the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
+				 * Enables/Disables the Edit button.
+				 * If the value is true, the Edit button is enabled and the edit function can be used.
 				 * If the value is false, the edit function is not available.
 				 */
 				enableDelete : {
@@ -132,9 +132,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Show/Hide the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is visible.
-				 * If the value is false, the Edit pushbutton is not visible.
+				 * Show/Hide the Edit button.
+				 * If the value is true, the Edit button is visible.
+				 * If the value is false, the Edit button is not visible.
 				 */
 				visibleEdit : {
 					type : "boolean",
@@ -143,14 +143,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Show/Hide the Delete pushbutton.
-				 * If the value is true, the Delete pushbutton is visible.
-				 * If the value is false, the Delete pushbutton is not visible.
+				 * Show/Hide the Delete button.
+				 * If the value is true, the Delete button is visible.
+				 * If the value is false, the Delete button is not visible.
 				 */
 				visibleDelete : {
 					type : "boolean",
 					group : "Behavior",
 					defaultValue : true
+				},
+
+				/**
+				 * Aria label for the icon (or for the image).
+				 * @experimental since version 1.30. The behavior of the property might change in the next version.
+				 */
+				ariaLabelForPicture : {type : "string",
+					group : "Accessibility",
+					defaultValue : null
 				}
 			},
 

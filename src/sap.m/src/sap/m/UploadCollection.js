@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			},
 
 			/**
-			 * The event is triggered when the Delete pushbutton is pressed.
+			 * The event is triggered when the Delete button is pressed.
 			 */
 			fileDeleted : {
 				parameters : {
@@ -902,28 +902,28 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._createIcon = function(oItem, sItemId, sFileNameLong, that) {
-		var bDecorative, sThumbnailUrl, sThumbnail, oItemIcon;
-		bDecorative = false;
-		if (this.sErrorState === "Error" || !jQuery.trim(oItem.getProperty("url"))) {
-			bDecorative = true;
-		}
+		var sThumbnailUrl, sThumbnail, oItemIcon;
+
 		sThumbnailUrl = oItem.getThumbnailUrl();
 		if (sThumbnailUrl) {
 			oItemIcon = new sap.m.Image(sItemId + "-ia_imageHL", {
 				src : sap.m.UploadCollection.prototype._getThumbnail(sThumbnailUrl, sFileNameLong),
-				decorative : bDecorative
+				decorative : false,
+				alt: this._getAriaLabelForPicture(oItem)
 			}).addStyleClass("sapMUCItemImage");
 		} else {
 			sThumbnail = sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong);
 			oItemIcon = new sap.ui.core.Icon(sItemId + "-ia_iconHL", {
 				src : sThumbnail,
-				decorative : bDecorative
+				decorative : false,
+				useIconTooltip : false,
+				alt: this._getAriaLabelForPicture(oItem)
 			}).addStyleClass("sapMUCItemIcon");
-			if (sThumbnail == UploadCollection._placeholderCamera) {
+			if (sThumbnail === UploadCollection._placeholderCamera) {
 				oItemIcon.addStyleClass("sapMUCItemPlaceholder");
 			}
 		}
-		if (bDecorative === false) {
+		if (!(this.sErrorState === "Error") && jQuery.trim(oItem.getProperty("url"))) {
 			oItemIcon.attachPress(function(oEvent) {
 				sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
 			});
@@ -982,19 +982,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 			oEditButton = sap.ui.getCore().byId(sItemId + "-editButton");
 			if (!oEditButton) {
-				if (oItem.getVisibleEdit()) { // if an edit button is invisible we do not need to render it
+				if (oItem.getVisibleEdit()) { // if the Edit button is invisible we do not need to render it
 					oEditButton = new sap.m.Button({
 						id : sItemId + "-editButton",
 						icon : "sap-icon://edit",
 						type : sap.m.ButtonType.Standard,
 						enabled : bEnabled,
 						visible : oItem.getVisibleEdit(),
+						tooltip : this._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"),
 						press : [oItem, this._handleEdit, this]
 					}).addStyleClass("sapMUCEditBtn");
 					aButtons.push(oEditButton);
 				}
 			} else {
-				 if (!oItem.getVisibleEdit()) { // oEditButton exists and is invisible -> delete it
+				 if (!oItem.getVisibleEdit()) { // If oEditButton exists and it is invisible, delete it.
 					oEditButton.destroy();
 					oEditButton = null;
 				} else { // oEditButton exists and is visible -> update
@@ -1018,7 +1019,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			return aButtons;
 		}
 	};
-
 
 	/**
 	 * @description Creates a Delete button
@@ -1045,13 +1045,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				icon : "sap-icon://sys-cancel",
 				type : sap.m.ButtonType.Standard,
 				enabled : bEnabled,
+				tooltip : this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT"),
 				visible : oItem.getVisibleDelete()
 			}).addStyleClass("sapMUCDeleteBtn");
-			if (sButton == "deleteButton") {
+			if (sButton === "deleteButton") {
+				oDeleteButton.setTooltip(this._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"));
 				oDeleteButton.attachPress(function(oEvent) {
 					sap.m.UploadCollection.prototype._handleDelete(oEvent, that);
 				});
-			} else if (sButton == "terminateButton") {
+			} else if (sButton === "terminateButton") {
 				oDeleteButton.attachPress(function(oEvent) {
 					sap.m.UploadCollection.prototype._handleTerminate(oEvent, that);
 				});
@@ -1818,7 +1820,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			return null;
 		}
 		for (var j = 0; j < oHeaderParams.length; j++) {
-			if (oHeaderParams[j].name == this._requestIdName) {
+			if (oHeaderParams[j].name === this._requestIdName) {
 				return oHeaderParams[j].value;
 			}
 		}
@@ -2127,7 +2129,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var o$Obj = jQuery.sap.byId(oEvent.target.id);
 
 		if (oObj !== undefined) {
-			if (oObj._status == UploadCollection._displayStatus) {
+			if (oObj._status === UploadCollection._displayStatus) {
 				//focus at list line (status = "display") and F2 pressed --> status = "Edit"
 				o$Obj = jQuery.sap.byId(oEvent.target.id);
 				var o$EditButton = o$Obj.find("[id$='-editButton']");
@@ -2182,7 +2184,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		sFilename = sFilename.replace(/^\s+/,"");
 
 		for (var i = 0; i < iLength; i++) {
-			if (sFilename == aItems[i].getProperty("fileName")){
+			if (sFilename === aItems[i].getProperty("fileName")){
 				return true;
 			}
 		}
@@ -2206,6 +2208,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		oResult.extension = "." + aNameSplit.pop();
 		oResult.name = aNameSplit.join(".");
 		return oResult;
+	};
+
+	/**
+	 * @description Getter of aria label for the icon or image.
+	 * @param {object} oItem An item of the list to which the text is to be retrieved
+	 * @returns {string} sText Text of the icon (or image)
+	 * @private
+	 */
+	UploadCollection.prototype._getAriaLabelForPicture = function(oItem) {
+		var sText;
+		// prerequisite: the items have field names or the app provides explicite texts for pictures
+		sText = (oItem.getAriaLabelForPicture() || oItem.getFileName());
+		return sText;
 	};
 
 	return UploadCollection;
