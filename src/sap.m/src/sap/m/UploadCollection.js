@@ -1235,7 +1235,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				// new
 				item : this._oItemForDelete
 			});
-			this._oItemForDelete._status = UploadCollection._toBeDeletedStatus;
 		} 
 		delete this._oItemForDelete;
 	};
@@ -1578,7 +1577,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				oItem.setUploadedDate(null);
 				oItem.setUrl(null);
 				this.aItems.unshift(oItem);
-				this.insertItem(oItem);
 				this._cAddItems++;
 			} else {
 				this._requestIdValue = this._requestIdValue + 1;
@@ -1599,7 +1597,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					oItem._requestIdName = sRequestValue;
 					oItem.fileSize = oEvent.getParameter("files")[i].size;
 					this.aItems.unshift(oItem);
-					this.insertItem(oItem);
 					this._cAddItems++;
 				}
 				//headerParameters
