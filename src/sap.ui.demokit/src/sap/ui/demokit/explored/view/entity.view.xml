@@ -26,7 +26,7 @@
 			backgroundDesign="Translucent"
 			number="{/deprecatedMark}"
 			numberState="Warning"
-			intro="{/deprecatedDescription}">
+			intro="{/shortDescription}">
 
 			<attributes>
 				<ObjectAttribute
