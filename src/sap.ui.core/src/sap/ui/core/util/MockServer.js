@@ -11,6 +11,12 @@ sap.ui
 
 			if (!!Device.browser.internet_explorer) {
 				jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+				// sinon internally checks the transported data to be an instance
+				// of FormData and this fails in case of IE9! - therefore we
+				// add a dummy function to enable instanceof check
+				if (!window.FormData) {
+					window.FormData = function() {};
+				}
 			}
 
 			/**
