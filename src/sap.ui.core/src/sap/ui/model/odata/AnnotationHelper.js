@@ -308,6 +308,7 @@ sap.ui.define([
 			 * @returns {string}
 			 *   the path to the function import with the given qualified name,
 			 *   or <code>undefined</code> if no function import is found
+			 * @since 1.29.1
 			 * @public
 			 */
 			gotoFunctionImport : function (oContext) {

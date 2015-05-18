@@ -2972,8 +2972,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	};
 
 	/**
-	 * Format a JavaScript value according to the given EDM type
-	 * http://www.odata.org/documentation/overview#AbstractTypeSystem
+	 * Formats a JavaScript value according to the given
+	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
+	 * EDM type</a>.
 	 *
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)

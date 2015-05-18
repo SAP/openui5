@@ -287,8 +287,9 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	};
 
 	/**
-	 * Format a JavaScript value according to the given EDM type
-	 * http://www.odata.org/documentation/overview#AbstractTypeSystem
+	 * Formats a JavaScript value according to the given
+	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
+	 * EDM type</a>.
 	 *
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
@@ -474,6 +475,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *   the result of the compare: <code>0</code> if the values are equal, <code>-1</code> if the
 	 *   first value is smaller, <code>1</code> if the first value is larger, <code>NaN</code> if
 	 *   they cannot be compared
+	 * @since 1.29.1
 	 * @public
 	 */
 	ODataUtils.compare = function (vValue1, vValue2, bAsDecimal) {
@@ -491,6 +493,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *   if the values are equal, <code>-1</code> if the first value is smaller, <code>1</code> if
 	 *   the first value is larger and <code>NaN</code> if they cannot be compared (e.g. one value
 	 *   is <code>null</code> or <code>undefined</code>)
+	 * @since 1.29.1
 	 * @public
 	 */
 	ODataUtils.getComparator = function (sEdmType) {
