@@ -185,51 +185,60 @@ sap.ui.require([
 						</UrlRef>\
 					</PropertyValue>\
 				</Record>\
-				<!-- uriEncode w/ constants -->\
+				<!-- fillUriTemplate + uriEncode w/ constants -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
 					<PropertyValue Property="Url">\
 						<UrlRef>\
 							<Apply Function="odata.fillUriTemplate">\
-								<String><![CDATA[{Bool}_{DateTimeOffset}_{Decimal}_{Float}_{Guid}_{Int}_{String}_{TimeOfDay}]]></String>\
+								<String>/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection?\
+$filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffset}\
++and+Decimal+eq+{Decimal}+and+Double+eq+{Float}+and+GlobalUID+eq+{Guid}+and+Int64+eq+{Int}\
++and+String40+eq+{String}+and+Time+eq+{TimeOfDay}</String>\
 								<LabeledElement Name="Bool">\
 									<Apply Function="odata.uriEncode">\
-										<Bool>true</Bool>\
+										<Bool>false</Bool>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="Date">\
+									<Apply Function="odata.uriEncode">\
+										<Date>2099-03-25</Date>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="DateTimeOffset">\
 									<Apply Function="odata.uriEncode">\
 										<!-- TODO split seconds, e.g. ".123456789012" -->\
-										<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+										<DateTimeOffset>2099-01-06T07:25:21Z</DateTimeOffset>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="Decimal">\
 									<Apply Function="odata.uriEncode">\
-										<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+										<Decimal>-12345678901234567.12345678901234</Decimal>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="Float">\
 									<Apply Function="odata.uriEncode">\
-										<Float>-7.4503e-36</Float>\
+										<Float>1.69E+308</Float>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="Guid">\
 									<Apply Function="odata.uriEncode">\
-										<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+										<Guid>0050568D-393C-1EE4-A5AE-9AAE85248FF1</Guid>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="Int">\
 									<Apply Function="odata.uriEncode">\
-										<Int>9007199254740992</Int>\
+										<Int>-9223372036854775800</Int>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="String">\
 									<Apply Function="odata.uriEncode">\
-										<String>hello, world</String>\
+										<String>String Filtered Maxlength 40</String>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="TimeOfDay">\
 									<Apply Function="odata.uriEncode">\
-										<TimeOfDay>13:57:06.123456789012</TimeOfDay>\
+										<!-- TODO split seconds, e.g. ".123456789012" -->\
+										<TimeOfDay>11:11:11</TimeOfDay>\
 									</Apply>\
 								</LabeledElement>\
 							</Apply>\
@@ -1030,17 +1039,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Note: there is no Date type in v2, thus it cannot be encoded for URIs
 	[ // see http://www.odata.org/documentation/odata-version-2-0/overview/
-		{type: "Bool", result: "true"},
+		{type: "Bool", result: "false"},
+		{type: "Date", result: "datetime'2099-03-25T00:00:00'"},
 		//TODO split seconds, e.g. ".123456789012"
-		{type: "DateTimeOffset", result: "datetimeoffset'2015-03-24T14:03:27Z'"},
-		{type: "Decimal", result: "-123456789012345678901234567890.1234567890M"},
-		{type: "Float", result: "-7.4503e-36d"},
-		{type: "Guid", result: "guid'0050568D-393C-1ED4-9D97-E65F0F3FCC23'"},
-		{type: "Int", result: "9007199254740992L"},
-		{type: "String", result: "'hello, world'"},
-		{type: "TimeOfDay", result: "time'13:57:06.123456789012'"}
+		{type: "DateTimeOffset", result: "datetimeoffset'2099-01-06T07:25:21Z'"},
+		{type: "Decimal", result: "-12345678901234567.12345678901234M"},
+		{type: "Float", result: "1.69E+308d"},
+		{type: "Guid", result: "guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'"},
+		{type: "Int", result: "-9223372036854775800L"},
+		{type: "String", result: "'String Filtered Maxlength 40'"},
+		//TODO split seconds, e.g. ".123456789012"
+		{type: "TimeOfDay", result: "time'PT11H11M11S'"}
 	].forEach(function (oFixture, index) {
 		test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function () {
 			return withMetaModel("/fake/annotations", function (oMetaModel) {
@@ -1056,25 +1066,40 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.3 odata.uriEncode: various constants", function () {
+	test("14.5.3.1.3 odata.uriEncode: integration-like test", function () {
+		function encode(s) {
+			return encodeURIComponent(s).replace(/'/g, "%27");
+		}
+
 		return withMetaModel("/fake/annotations", function (oMetaModel) {
-			var sMetaPath = sPath2BusinessPartner
+			var sExpectedUrl,
+				sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
-			strictEqual(formatAndParse(oRawValue, oCurrentContext), encodeURIComponent(
-				// see http://www.odata.org/documentation/odata-version-2-0/overview/
-				"true_"
+			// see http://www.odata.org/documentation/odata-version-2-0/overview/
+			sExpectedUrl = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection?$filter="
+				+ "Boolean+eq+false"
+				+ "+and+Date+eq+"
+				+ encode("datetime'2099-03-25T00:00:00'")
+				+ "+and+DateTimeOffset+eq+"
 				//TODO split seconds, e.g. ".123456789012"
-				+ "datetimeoffset'2015-03-24T14:03:27Z'_"
-				+ "-123456789012345678901234567890.1234567890M_"
-				+ "-7.4503e-36d_"
-				+ "guid'0050568D-393C-1ED4-9D97-E65F0F3FCC23'_"
-				+ "9007199254740992L_"
-				+ "'hello, world'_"
-				+ "time'13:57:06.123456789012'"
-			).replace(/'/g, "%27"));
+				+ encode("datetimeoffset'2099-01-06T07:25:21Z'")
+				+ "+and+Decimal+eq+"
+				+ encode("-12345678901234567.12345678901234M")
+				+ "+and+Double+eq+"
+				+ encode("1.69E+308d")
+				+ "+and+GlobalUID+eq+"
+				+ encode("guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'")
+				+ "+and+Int64+eq+"
+				+ encode("-9223372036854775800L")
+				+ "+and+String40+eq+"
+				+ encode("'String Filtered Maxlength 40'")
+				+ "+and+Time+eq+"
+				+ encode("time'PT11H11M11S'");
+
+			strictEqual(formatAndParse(oRawValue, oCurrentContext), sExpectedUrl, sExpectedUrl);
 		});
 	});
 

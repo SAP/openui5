@@ -689,6 +689,22 @@ sap.ui.define([
 		uriEncode: function (oInterface, oPathValue) {
 			var oResult = Expression.parameter(oInterface, oPathValue, 0);
 
+			if (oResult.result === "constant") {
+				// convert v4 to v2 for sap.ui.model.odata.ODataUtils
+				if (oResult.type === "Edm.Date") {
+					oResult.type = "Edm.DateTime";
+					// Note: ODataUtils.formatValue calls Date.parse() indirectly, use UTC to make
+					// sure IE9 does not mess with time zone
+					oResult.value = oResult.value + "T00:00:00Z";
+				} else if (oResult.type === "Edm.TimeOfDay") {
+					oResult.type = "Edm.Time";
+					oResult.value = "PT"
+						+ oResult.value.slice(0, 2) + "H"
+						+ oResult.value.slice(3, 5) + "M"
+						+ oResult.value.slice(6, 8) + "S";
+				}
+			}
+
 			return {
 				result: "expression",
 				value: 'odata.uriEncode(' + Basics.resultToString(oResult, true) + ","
