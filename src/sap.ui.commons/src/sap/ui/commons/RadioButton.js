@@ -125,6 +125,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		this.userSelect(oEvent);
 	};
+
+	RadioButton.prototype._groupNames = {};
 	
 	/**
 	 * Event handler called when the space key is pressed.
@@ -235,38 +237,57 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Overwrite the definition from RadioButton.API.js
 	 */
 	RadioButton.prototype.setSelected = function(bSelected) {
-	
-		var bSelectedOld = this.getSelected();
-	
+		var oControl,
+			bSelectedOld = this.getSelected(),
+			sGroupName = this.getGroupName(),
+			aControlsInGroup = this._groupNames[sGroupName],
+			iLength = aControlsInGroup && aControlsInGroup.length;
+			
 		this.setProperty("selected", bSelected, true); // No re-rendering
-		bSelected = this.getSelected();
-	
-		if (bSelected) { // If this radio button is selected, explicitly deselect the other radio buttons of the same group
-			if (this.getGroupName() && (this.getGroupName() != "")) { // Do it only if groupName is set
-				// TODO: Add control references to some static list when they are constructed, in order to avoid searching every time
-				var others = document.getElementsByName(this.getGroupName());
-				for (var i = 0; i < others.length; i++) {
-					var other = others[i];
-					// Recommendation is that the HTML radio button has an ID ending with "-RB"
-					if (other.id && (other.id.length > 3) && (other.id.substr(other.id.length - 3) == "-RB")) {
-						// The SAPUI5 control is known by an ID without the "-RB" suffix
-						var oControl = sap.ui.getCore().getElementById(other.id.substr(0, other.id.length - 3));
-						if (oControl instanceof RadioButton && (oControl != this)) {
-							oControl.setSelected(false);
-						}
-					}
+		this._changeGroupName(this.getGroupName());
+
+		if (bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
+			for (var i = 0; i < iLength; i++) {
+				oControl = aControlsInGroup[i];
+
+				if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
+					oControl.setSelected(false);
 				}
 			}
 		}
+
 		if ((bSelectedOld != bSelected) && this.getDomRef() && this.getRenderer().setSelected) {
 			this.getRenderer().setSelected(this, bSelected);
 		}
-	
+
 		return this;
+	};
+
+	RadioButton.prototype.setGroupName = function(sGroupName) {
+		this._changeGroupName(sGroupName, this.getGroupName());
+
+		return this.setProperty("groupName", sGroupName, false);
 	};
 	
 	RadioButton.prototype.getTooltipDomRefs = function() {
 		return this.$().children();
+	};
+
+	RadioButton.prototype._changeGroupName = function(sNewGroupName, sOldGroupName) {
+		var aNewGroup = this._groupNames[sNewGroupName],
+			aOldGroup = this._groupNames[sOldGroupName];
+
+		if (!aNewGroup) {
+			aNewGroup = this._groupNames[sNewGroupName] = [];
+		}
+
+		if (aNewGroup.indexOf(this) === -1) {
+			aNewGroup.push(this);
+		}
+
+		if (aOldGroup && aOldGroup.indexOf(this) !== -1) {
+			aOldGroup.splice(aOldGroup.indexOf(this), 1);
+		}
 	};
 
 	return RadioButton;
