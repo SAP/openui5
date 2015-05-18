@@ -989,8 +989,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	};
 
 	DateFormat.createUTCDate = function(sCalendarType) {
-		Array.prototype.splice.apply(arguments, [0, 1]);
-		switch (sCalendarType) {
+		// Save the sCalendarType because after shift it out the sCalendarType points to the second parameter
+		var sType = Array.prototype.shift.apply(arguments);
+		switch (sType) {
 			case sap.ui.core.CalendarType.Islamic:
 				return IslamicDate.UTC.apply(IslamicDate, arguments);
 			default:
