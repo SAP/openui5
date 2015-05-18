@@ -93,10 +93,12 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 		STEP: "data-sap-ui-wpn-step",
 		CURRENT_STEP: "data-sap-ui-wpn-step-current",
 		ACTIVE_STEP: "data-sap-ui-wpn-step-active",
-		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open"
+		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open",
+		TAB_INDEX: "tabindex"
 	};
 
 	WizardProgressNavigator.prototype.init = function () {
+		this.data("sap-ui-fastnavgroup", "true", true);
 		this._currentStep = 1;
 		this._activeStep = 1;
 		this._cachedSteps = null;
@@ -107,6 +109,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 		this._cacheDOMElements();
 		this._updateStepZIndex();
 		this._updateSeparatorsOpenAttribute();
+		this._allowFocusOnStep(this._activeStep - 1);
 		this._updateStepActiveAttribute(this._activeStep - 1);
 		this._updateStepCurrentAttribute(this._currentStep - 1);
 	};
@@ -169,17 +172,20 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 	 * @public
 	 */
 	WizardProgressNavigator.prototype.discardProgress = function (index) {
-		if (index > this._activeStep) {
+		if (index <= 0 || index > this._activeStep) {
 			return this;
 		}
 
 		this._updateStepActiveAttribute(index - 1, this._activeStep - 1);
 		this._updateCurrentStep(index, this._currentStep);
-		this._activeStep = index;
+		this._disallowFocusAfterStep(index - 1);
 		this._currentStep = index;
+		this._activeStep = index;
 	};
 
 	WizardProgressNavigator.prototype.ontap = function (event) {
+		event.preventDefault();
+
 		if (!this._isAnchor(event.target) ||
 			!this._isActiveStep(this._getStepNumber(event.target))) {
 			return;
@@ -187,6 +193,10 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 
 		this._updateCurrentStep(this._getStepNumber(event.target));
 	};
+
+	WizardProgressNavigator.prototype.onsapspace = WizardProgressNavigator.prototype.ontap;
+
+	WizardProgressNavigator.prototype.onsapenter = WizardProgressNavigator.prototype.ontap;
 
 	WizardProgressNavigator.prototype.exit = function () {
 		this._currentStep = null;
@@ -265,6 +275,30 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 	};
 
 	/**
+	 * Removes tabindex = -1 attribute from the anchor tag inside each step to allow focus
+	 * @param {number} stepIndex - The index of the step. Zero-based
+	 * @returns {undefined}
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._allowFocusOnStep = function (stepIndex) {
+		this._cachedSteps[stepIndex].firstChild
+			.removeAttribute(WizardProgressNavigator.ATTRIBUTES.TAB_INDEX);
+	};
+
+	/**
+	 * Adds tabindex = -1 attribute to the anchor tag inside each step to disallow focus
+	 * @param {number} index - The index of the step after which all steps will not be focusable. Zero-based.
+	 * @returns {undefined}
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._disallowFocusAfterStep = function (index) {
+		// slice includes the start index in the returned array but we do not what it
+		Array.prototype.slice.call(this._cachedSteps, index + 1).forEach(function (step) {
+			step.firstChild.setAttribute(WizardProgressNavigator.ATTRIBUTES.TAB_INDEX, -1);
+		});
+	};
+
+	/**
 	 * Updates the step active attribute in the DOM structure of the Control
 	 * @param {number} newIndex - The new index at which the attribute should be set. Zero-based
 	 * @param {number} oldIndex - The old index at which the attribute was set. Zero-based
@@ -330,7 +364,9 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 		oldStep = oldStep || this._activeStep;
 
 		this._activeStep = newStep;
+		this._allowFocusOnStep(newStep - 1);
 		this._updateStepActiveAttribute(newStep - 1, oldStep - 1);
+
 		return this.fireStepActivated({index: newStep});
 	};
 
