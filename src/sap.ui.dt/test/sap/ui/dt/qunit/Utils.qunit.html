@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.Overlay</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+				z-index: 1000;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		jQuery.sap.require("sap.ui.dt.Utils");
+
+		module("Given that an Overlay is created for a control", {
+			setup : function() {
+
+			},
+			teardown : function() {
+
+			}
+		});
+
+		
+		module("Given that controls are created", {
+			setup : function() {
+				this.oObjectAttribute1 = new sap.m.ObjectAttribute();
+
+				this.oObjectAttribute2 = new sap.m.ObjectAttribute();
+
+				this.oObjectAttribute3 = new sap.m.ObjectAttribute();
+				this.oObjectStatus1 = new sap.m.ObjectStatus();
+				this.oObjectStatus2 = new sap.m.ObjectStatus();
+
+				this.oObjectHeader = new sap.m.ObjectHeader({
+					attributes : [this.oObjectAttribute1, this.oObjectAttribute2, this.oObjectAttribute3],
+					statuses : [this.oObjectStatus1, this.oObjectStatus2]
+				});
+
+				this.oPage = new sap.m.Page();
+				this.oButton = new sap.m.Button();
+				this.oPage.addContent(this.oButton);
+			},
+			teardown : function() {
+
+			}
+		});
+
+		test("when the findNextParentBlockElement function is called with a", function() {
+			var oNextParentBlock = sap.ui.dt.Utils.findNextParentBlockElement(this.oObjectStatus2);
+			ok(oNextParentBlock == this.oObjectHeader, "ObjectStatus then expect that ObjectHeader is returned.");
+
+			var oNextParentBlock = sap.ui.dt.Utils.findNextParentBlockElement(this.oButton);
+			ok(oNextParentBlock == undefined, "Button then expect that undefined is returned.");
+			
+		});
+	</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.Overlay</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>
