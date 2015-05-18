@@ -482,6 +482,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			enabled: oItem.getEnabled(),
 			textDirection: oItem.getTextDirection(),
 			width: oItem.getWidth(),
+			tooltip: oItem.getTooltip(),
 			press: function () {
 				oItem.firePress();
 			}
