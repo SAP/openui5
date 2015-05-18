@@ -58,7 +58,7 @@ sap.ui.define(function () {
 		return sIconURI;
 	};
 
-	MessageStripUtilities.setAriaTypeText = function () {
+	MessageStripUtilities.getAriaTypeText = function () {
 		var sBundleKey = "MESSAGE_STRIP_" + this.getType().toUpperCase(),
 			sAriaText = MessageStripUtilities.RESOURCE_BUNDLE.getText(sBundleKey);
 
@@ -66,7 +66,7 @@ sap.ui.define(function () {
 			sAriaText += " " + MessageStripUtilities.RESOURCE_BUNDLE.getText("MESSAGE_STRIP_CLOSABLE");
 		}
 
-		this.getAggregation("_ariaTypeText").setText(sAriaText);
+		return sAriaText;
 	};
 
 	MessageStripUtilities.handleMSCloseButtonInteraction = function (oEvent) {
@@ -93,12 +93,10 @@ sap.ui.define(function () {
 	};
 
 	MessageStripUtilities.getAccessibilityState = function () {
-		var oAriaText = this.getAggregation("_ariaTypeText").toStatic();
-
 		return {
 			role: "note",
 			live: "assertive",
-			labelledby: [oAriaText.getId(), this.getId()].join(" ")
+			labelledby: this.getId()
 		};
 	};
 
