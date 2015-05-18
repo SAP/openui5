@@ -26,15 +26,15 @@ sap.ui.define(['jquery.sap.global'],
 	 *            rendered
 	 */
 	GridRenderer.render = function(oRm, oControl) {
-		var INDENTPATTERN = /^([L](?:[0-9]|1[0-1]))? ?([M](?:[0-9]|1[0-1]))? ?([S](?:[0-9]|1[0-1]))?$/i;
-		var SPANPATTERN = /^([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
+		var INDENTPATTERN = /^([X][L](?:[0-9]|1[0-1]))? ?([L](?:[0-9]|1[0-1]))? ?([M](?:[0-9]|1[0-1]))? ?([S](?:[0-9]|1[0-1]))?$/i;
+		var SPANPATTERN =   /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
 		
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiRespGrid");
 		
-		var  sMedia = sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD).name;
+		var  sMedia = sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED).name;
 		oRm.addClass("sapUiRespGridMedia-Std-" + sMedia);
 		
 		var fHSpacing = oControl.getHSpacing();
@@ -90,13 +90,18 @@ sap.ui.define(['jquery.sap.global'],
 	
 		var aItems = oControl.getContent();
 	
+		
+		
+
+		//************************************************************************
+		//  SPAN
+		//************************************************************************
+		
 		var defaultSpan = oControl.getDefaultSpan();
-		var defaultIndent = oControl.getDefaultIndent();
-		var aDIndent = INDENTPATTERN.exec(defaultIndent);
-	
+		
 		// Default Span if nothing is specified at all, not on Grid , not on the
 		// cell.
-		var aDefColSpan = [ "", "L3", "M6", "S12" ];
+		var aDefColSpan = [ "", "XL3", "L3", "M6", "S12"];
 	
 		// Default Span values defined on the whole Grid, that is used if there is
 		// no individual span defined for the cell.
@@ -105,14 +110,22 @@ sap.ui.define(['jquery.sap.global'],
 		for ( var i = 0; i < aItems.length; i++) { // loop over all child controls
 			oRm.write("<div");
 			var oLay = oControl._getLayoutDataForControl(aItems[i]);
-	
+			
 			if (oLay) {
-	
+	                          
 				// Line break
+				var bBreakXLChanged = false;
 				if (oLay.getLinebreak() === true) {
 					oRm.addClass("sapUiRespGridBreak");
 				} else {
+					if (oLay.getLinebreakXL() === true) {
+						bBreakXLChanged = true;
+						oRm.addClass("sapUiRespGridBreakXL");
+					}
 					if (oLay.getLinebreakL() === true) {
+						if (!bBreakXLChanged){
+							oRm.addClass("sapUiRespGridBreakXL");
+						}
 						oRm.addClass("sapUiRespGridBreakL");
 					}
 					if (oLay.getLinebreakM() === true) {
@@ -125,12 +138,19 @@ sap.ui.define(['jquery.sap.global'],
 	
 				// Span
 				var aSpan;
+				// sSpanL needed for XL if XL is not defined at all
+				var sSpanL, bDefaultSpanXLChanged = false;
 				var sSpan = oLay.getSpan();
 				if (!sSpan || !sSpan.lenght == 0) {
 					aSpan = aDSpan;
+					bDefaultSpanXLChanged = oControl._getSpanXLChanged();
 				} else {
 					aSpan = SPANPATTERN.exec(sSpan);
-				}
+					if (/XL/gi.test(sSpan)) {
+						bDefaultSpanXLChanged = true;
+					}
+				}	
+					
 	
 				if (aSpan) {
 					for ( var j = 1; j < aSpan.length; j++) {
@@ -141,39 +161,71 @@ sap.ui.define(['jquery.sap.global'],
 								span = aDefColSpan[j];
 							}
 						}
-	
+						
+						if (span.substr(0, 1) === "L") {
+							sSpanL = span.substr(1, 2);
+						} 
+						
 						// Catch the Individual Spans
+						var iSpanXLarge = oLay.getSpanXL();
 						var iSpanLarge = oLay.getSpanL();
 						var iSpanMedium = oLay.getSpanM();
 						var iSpanSmall = oLay.getSpanS();
-	
+	  
 						span = span.toUpperCase();
-						if ((span.substr(0, 1) === "L") && (iSpanLarge > 0)	&& (iSpanLarge < 13)) {
+						if ((span.substr(0, 2) === "XL") && (iSpanXLarge > 0)	&& (iSpanXLarge < 13)) {
+							oRm.addClass("sapUiRespGridSpanXL" + iSpanXLarge);
+							bDefaultSpanXLChanged = true;
+						} else if ((span.substr(0, 1) === "L") && (iSpanLarge > 0)	&& (iSpanLarge < 13)) {
 							oRm.addClass("sapUiRespGridSpanL" + iSpanLarge);
+							sSpanL = iSpanLarge;
 						} else if ((span.substr(0, 1) === "M") && (iSpanMedium > 0)	&& (iSpanMedium < 13)) {
 							oRm.addClass("sapUiRespGridSpanM" + iSpanMedium);
 						} else if ((span.substr(0, 1) === "S") && (iSpanSmall > 0) && (iSpanSmall < 13)) {
 							oRm.addClass("sapUiRespGridSpanS" + iSpanSmall);
 						} else {
-							oRm.addClass("sapUiRespGridSpan" + span);
+							if ((span.substr(0, 2) !== "XL") || bDefaultSpanXLChanged ){
+								oRm.addClass("sapUiRespGridSpan" + span);
+							}
 						}
+					}
+					
+					if (!bDefaultSpanXLChanged) { 
+						// Backwards compatibility - if the XL not defined - it should be as L.	
+						oRm.addClass("sapUiRespGridSpanXL" + sSpanL);
+					}	
+				}
+	
+				
+				
+				
+				//************************************************************************
+				//  INDENT
+				//************************************************************************
+				
+				// Default indent of the whole Grid control
+				var sDefaultIndent = oControl.getDefaultIndent();
+				var aDefaultIndent4Grid = INDENTPATTERN.exec(sDefaultIndent); 
+				
+				var aIndent;
+				var sIndentL, bDefaultXLChanged = false;
+				var sIndent = oLay.getIndent();
+				if (!sIndent || sIndent.length == 0) {
+					aIndent = aDefaultIndent4Grid;
+					bDefaultXLChanged = oControl._getIndentXLChanged();
+				} else {
+					aIndent = INDENTPATTERN.exec(sIndent);
+					if (/XL/gi.test(sIndent)) {
+						bDefaultXLChanged = true;
 					}
 				}
 	
-				// Indent
-				var aIndent;
-	
-				var sIndent = oLay.getIndent();
-				if (!sIndent || sIndent.length == 0) {
-					aIndent = aDIndent;
-				} else {
-					aIndent = INDENTPATTERN.exec(sIndent);
-				}
-	
 				if (!aIndent) {
-					aIndent = aDIndent;
+					aIndent = aDefaultIndent4Grid;
 					if (!aIndent) {
 						aIndent = undefined; // no indent
+					} else {
+						bDefaultXLChanged = oControl._getIndentXLChanged();	
 					}
 				}
 	
@@ -181,21 +233,29 @@ sap.ui.define(['jquery.sap.global'],
 					for ( var j = 1; j < aIndent.length; j++) {
 						var indent = aIndent[j];
 						if (!indent) {
-							if (aDIndent && aDIndent[j]) {
-								indent = aDIndent[j];
+							if (aDefaultIndent4Grid && aDefaultIndent4Grid[j]) {
+								indent = aDefaultIndent4Grid[j];
 							}
 						}
 						if (indent) {
 							indent = indent.toUpperCase();
-	
+							if (indent.substr(0, 1) === "L") {
+								sIndentL = indent.substr(1, 2);
+							}
+							
 							// Catch the Individual Indents
+							var iIndentXLarge = oLay.getIndentXL();
 							var iIndentLarge = oLay.getIndentL();
 							var iIndentMedium = oLay.getIndentM();
 							var iIndentSmall = oLay.getIndentS();
 	
-							if ((indent.substr(0, 1) === "L") && (iIndentLarge > 0)
+							if ((indent.substr(0, 2) === "XL") && (iIndentXLarge > 0) && (iIndentXLarge < 12)) {
+									oRm.addClass("sapUiRespGridIndentXL" + iIndentXLarge);
+									bDefaultXLChanged = true;
+							} else if ((indent.substr(0, 1) === "L") && (iIndentLarge > 0)
 									&& (iIndentLarge < 12)) {
 								oRm.addClass("sapUiRespGridIndentL" + iIndentLarge);
+								sIndentL = iIndentLarge;
 							} else if ((indent.substr(0, 1) === "M")
 									&& (iIndentMedium > 0) && (iIndentMedium < 12)) {
 								oRm.addClass("sapUiRespGridIndentM"	+ iIndentMedium);
@@ -203,28 +263,40 @@ sap.ui.define(['jquery.sap.global'],
 									&& (iIndentSmall > 0) && (iIndentSmall < 12)) {
 								oRm.addClass("sapUiRespGridIndentS" + iIndentSmall);
 							} else {
-								if (!(/^(L0)? ?(M0)? ?(S0)?$/.exec(indent))) {
+								if (!(/^(XL0)? ?(L0)? ?(M0)? ?(S0)?$/.exec(indent))) {
 									oRm.addClass("sapUiRespGridIndent" + indent);
 								}
 							}
 						}
 					}
+					if (!bDefaultXLChanged) { 
+						// Backwards compatibility - if the XL not defined - it should be as L.	
+						if (sIndentL && sIndentL > 0) {
+							oRm.addClass("sapUiRespGridIndentXL" + sIndentL);
+						}
+					}
+					
 				}
 				
 				
 				
 				
 				// Visibility
-				var l = oLay.getVisibleL(),
+				var  
+				l = oLay.getVisibleL(),
 				m = oLay.getVisibleM(),
 				s = oLay.getVisibleS();
-	
+	           
+				// TODO: visibility of XL //xl = oLay.getVisibleXL(),
+				
 				if (!l && m && s) {
 					oRm.addClass("sapUiRespGridHiddenL");
+					oRm.addClass("sapUiRespGridHiddenXL");
 				} else if (!l && !m && s) {
 					oRm.addClass("sapUiRespGridVisibleS");
 				} else if (l && !m && !s) {
 					oRm.addClass("sapUiRespGridVisibleL");
+					oRm.addClass("sapUiRespGridVisibleXL");
 				} else if (!l && m && !s) {
 					oRm.addClass("sapUiRespGridVisibleM");
 				} else if (l && !m && s) {
@@ -232,7 +304,7 @@ sap.ui.define(['jquery.sap.global'],
 				} else if (l && m && !s) {
 					oRm.addClass("sapUiRespGridHiddenS");
 				}
-	
+					
 				// Move - moveBwd shifts a grid element to the left in LTR mode and
 				// opposite in RTL mode
 	
@@ -290,10 +362,10 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				
 				var indent = "";
-				if (aDIndent) {
-					for ( var j = 1; j < aDIndent.length; j++) {
-						indent = aDIndent[j];
-						if (indent && (indent.substr(1,1) !== "0")) {
+				if (aDefaultIndent4Grid) {
+					for ( var j = 1; j < aDefaultIndent4Grid.length; j++) {
+						indent = aDefaultIndent4Grid[j];
+						if (indent && ((indent.substr(0,1) !== "X") && (indent.substr(1,1) !== "0")) || ((indent.substr(0,1) == "X") && (indent.substr(2,1) !== "0"))) {
 							oRm.addClass("sapUiRespGridIndent" + indent.toUpperCase());
 						}
 					}

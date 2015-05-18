@@ -838,7 +838,8 @@ if (typeof window.sap.ui !== "object") {
 		"SAP_3STEPS": "3Step",
 		"SAP_4STEPS": "4Step",
 		"SAP_6STEPS": "6Step",
-		"SAP_STANDARD": "Std"
+		"SAP_STANDARD": "Std",
+		"SAP_STANDARD_EXTENDED": "StdExt"
 	};
 	device.media.RANGESETS = RANGESETS;
 	
@@ -847,6 +848,7 @@ if (typeof window.sap.ui !== "object") {
 	device.media._predefinedRangeSets[RANGESETS.SAP_4STEPS] = {points: [520, 760, 960], unit: "px", name: RANGESETS.SAP_4STEPS, names: ["S", "M", "L", "XL"]};
 	device.media._predefinedRangeSets[RANGESETS.SAP_6STEPS] = {points: [241, 400, 541, 768, 960], unit: "px", name: RANGESETS.SAP_6STEPS, names: ["XS", "S", "M", "L", "XL", "XXL"]};
 	device.media._predefinedRangeSets[RANGESETS.SAP_STANDARD] = {points: [600, 1024], unit: "px", name: RANGESETS.SAP_STANDARD, names: ["Phone", "Tablet", "Desktop"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_STANDARD_EXTENDED] = {points: [600, 1024, 1440], unit: "px", name: RANGESETS.SAP_STANDARD_EXTENDED, names: ["Phone", "Tablet", "Desktop", "XL"]};
 	
 	var _defaultRangeSet = RANGESETS.SAP_STANDARD;
 	var media_timeout = device.support.matchmedialistener ? 0 : 100;
@@ -1581,6 +1583,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Always initialize the default media range set
 	device.media.initRangeSet();
+	device.media.initRangeSet(RANGESETS["SAP_STANDARD_EXTENDED"]);
 
 	// define module if API is available
 	if (sap.ui.define) {
