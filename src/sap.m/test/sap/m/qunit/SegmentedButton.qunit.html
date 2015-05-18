@@ -1139,6 +1139,7 @@
 		// Act
 		// Click on the second button
 		oSegmentedButton.getButtons()[1].$().trigger("tap");
+		oSegmentedButton.getButtons()[1].$().trigger("click");
 
 		// Assert
 		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
@@ -1642,7 +1643,8 @@
 		strictEqual(oButton2.$().attr("aria-checked"), "false", "Property 'aria-checked'  of Button2 should be 'false'");
 		strictEqual(oButton3.$().attr("aria-disabled"), "true", "Property 'aria-disabled' of Button3 should be 'true'");
 
-		oButton2.$().trigger("tap");
+		oButton2.$().trigger("tap");	// in a real mobile browser both tap and click are fired
+		oButton2.$().trigger("click");
 
 		strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
 		strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
