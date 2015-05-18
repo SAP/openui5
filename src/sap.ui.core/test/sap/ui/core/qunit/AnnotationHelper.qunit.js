@@ -2,9 +2,11 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/base/BindingParser", "sap/ui/model/odata/AnnotationHelper",
-	"sap/ui/model/odata/_AnnotationHelperBasics", "sap/ui/model/odata/_AnnotationHelperExpression"
-], function(BindingParser, AnnotationHelper, Basics, Expression) {
+	"sap/ui/base/BindingParser", "sap/ui/base/ManagedObject", "sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/AnnotationHelper", "sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/model/odata/_AnnotationHelperExpression", "sap/ui/model/odata/v2/ODataModel"
+], function(BindingParser, ManagedObject, JSONModel, AnnotationHelper, Basics, Expression,
+		ODataModel) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
@@ -325,119 +327,132 @@ sap.ui.require([
 </edmx:DataServices>\
 </edmx:Edmx>\
 		',
-		oTestData = {
-			"dataServices" : {
-				"schema" : [{
-					"entityType" : [{
-						// skip BusinessPartner
-					}, {
-						"property" : [{
-							"name" : "_Boolean",
-							"type" : "Edm.Boolean",
-							"nullable" : "false"
-						}, {
-							"name" : "_Byte",
-							"type" : "Edm.Byte",
-							"nullable" : "false"
-						}, {
-							"name" : "_DateTime",
-							"type" : "Edm.DateTime",
-							"nullable" : "false",
-							"sap:display-format" : "Date"
-						}, {
-							"name" : "_DateTimeOffset",
-							"type" : "Edm.DateTimeOffset",
-							"nullable" : "false"
-						}, {
-							"name" : "_Decimal",
-							"type" : "Edm.Decimal",
-							"nullable" : "false",
-							"precision" : "13",
-							"scale" : "3"
-						}, {
-							"name" : "_Double",
-							"type" : "Edm.Double",
-							"nullable" : "false"
-						}, {
-							"name" : "_Float",
-							"type" : "Edm.Float"
-						}, {
-							"name" : "_Guid",
-							"type" : "Edm.Guid",
-							"nullable" : "false"
-						}, {
-							"name" : "_Int16",
-							"type" : "Edm.Int16",
-							"nullable" : "false"
-						}, {
-							"name" : "_Int32",
-							"type" : "Edm.Int32",
-							"nullable" : "false"
-						}, {
-							"name" : "_Int64",
-							"type" : "Edm.Int64",
-							"nullable" : "false"
-						}, {
-							"name" : "_SByte",
-							"type" : "Edm.SByte",
-							"nullable" : "false"
-						}, {
-							"name" : "_Single",
-							"type" : "Edm.Single",
-							"nullable" : "false"
-						}, {
-							"name" : "_String10",
-							"type" : "Edm.String",
-							"maxLength" : "10",
-							"nullable" : "false"
-						}, {
-							"name" : "_String80",
-							"type" : "Edm.String",
-							"maxLength" : "80"
-						}, {
-							"name" : "_Time",
-							"type" : "Edm.Time",
-							"nullable" : "false"
-						}],
-						"com.sap.vocabularies.UI.v1.Identification" : [{
-							"Value" : {"Path" : "_Boolean"}
-						}, {
-							"Value" : {"Path" : "_Byte"}
-						}, {
-							"Value" : {"Path" : "_DateTime"}
-						}, {
-							"Value" : {"Path" : "_DateTimeOffset"}
-						}, {
-							"Value" : {"Path" : "_Decimal"}
-						}, {
-							"Value" : {"Path" : "_Double"}
-						}, {
-							"Value" : {"Path" : "_Float"}
-						}, {
-							"Value" : {"Path" : "_Guid"}
-						}, {
-							"Value" : {"Path" : "_Int16"}
-						}, {
-							"Value" : {"Path" : "_Int32"}
-						}, {
-							"Value" : {"Path" : "_Int64"}
-						}, {
-							"Value" : {"Path" : "_SByte"}
-						}, {
-							"Value" : {"Path" : "_Single"}
-						}, {
-							"Value" : {"Path" : "_String10"}
-						}, {
-							"Value" : {"Path" : "_String80"}
-						}, {
-							"Value" : {"Path" : "_Time"}
-						}]
-					}]
-				}]
-			}
-		},
-		mDataMetaModel = {}, // cached instances, see withMetaModel()
-		oTestModel = new sap.ui.model.json.JSONModel(oTestData),
+		sTestMetadata = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en" sap:schema-version="0000" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<EntityType Name="BusinessPartner" sap:content-version="1"/>\
+			<EntityType Name="Product" sap:content-version="1">\
+				<Property Name="_Boolean" Type="Edm.Boolean" Nullable="false"/>\
+				<Property Name="_Byte" Type="Edm.Byte" Nullable="false"/>\
+				<Property Name="_DateTime" Type="Edm.DateTime" Nullable="false" sap:display-format="Date"/>\
+				<Property Name="_DateTimeOffset" Type="Edm.DateTimeOffset" Nullable="false"/>\
+				<Property Name="_Decimal" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3"/>\
+				<Property Name="_Double" Type="Edm.Double" Nullable="false"/>\
+				<Property Name="_Float" Type="Edm.Float"/>\
+				<Property Name="_Guid" Type="Edm.Guid" Nullable="false"/>\
+				<Property Name="_Int16" Type="Edm.Int16" Nullable="false"/>\
+				<Property Name="_Int32" Type="Edm.Int32" Nullable="false"/>\
+				<Property Name="_Int64" Type="Edm.Int64" Nullable="false"/>\
+				<Property Name="_SByte" Type="Edm.SByte" Nullable="false"/>\
+				<Property Name="_Single" Type="Edm.Single" Nullable="false"/>\
+				<Property Name="_String10" Type="Edm.String" Nullable="false" MaxLength="10"/>\
+				<Property Name="_String80" Type="Edm.String" MaxLength="80"/>\
+				<Property Name="_Time" Type="Edm.Time" Nullable="false"/>\
+			</EntityType>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		',
+		sTestAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="4.0"\
+		xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+	<edmx:DataServices>\
+		<Schema Namespace="zanno4sample_anno_mdl.v1">\
+			<Annotations Target="GWSAMPLE_BASIC.Product">\
+				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Boolean</Path><Bool>true</Bool></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Byte</Path><Int>255</Int></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_DateTime</Path><DateTimeOffset>2015-04-22T12:43:07.236Z</DateTimeOffset></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_DateTimeOffset</Path><DateTimeOffset>2015-04-22T12:43:07.236Z</DateTimeOffset></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Decimal</Path><Decimal>104245025234234502435.6430345</Decimal></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Double</Path><Float>3.1415927</Float></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Float</Path><Float>0.30103</Float></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Guid</Path><Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Int16</Path><Int>16</Int></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Int32</Path><Int>32</Int></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Int64</Path><Int>64</Int></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_SByte</Path><Int>-126</Int></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Single</Path><Float>2.7182818</Float></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_String10</Path><String>foo</String></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_String80</Path><String>bar</String></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Time</Path><TimeOfDay>12:43:07.236</TimeOfDay></Eq>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		',
+		mDataMetaModel = {}, // cached instances, see withGivenMetaModel()
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
 		sPath2BusinessPartner = "/dataServices/schema/0/entityType/0",
 		sPath2Product = "/dataServices/schema/0/entityType/1",
@@ -449,7 +464,7 @@ sap.ui.require([
 		fnIsMultiple = AnnotationHelper.isMultiple,
 		fnSimplePath = AnnotationHelper.simplePath,
 		fnText = AnnotationHelper.text,
-		TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
+		TestControl = ManagedObject.extend("TestControl", {
 			metadata: {
 				properties: {
 					text: "string"
@@ -462,7 +477,9 @@ sap.ui.require([
 		mFixture = {
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sMetadata],
 			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sAnnotations],
-			"/fake/annotations" : [200, mHeaders, sFakeAnnotations]
+			"/fake/annotations" : [200, mHeaders, sFakeAnnotations],
+			"/test/$metadata" : [200, mHeaders, sTestMetadata],
+			"/test/annotations" : [200, mHeaders, sTestAnnotations],
 		};
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
@@ -529,7 +546,7 @@ sap.ui.require([
 	 *   the data for the JSONModel to bind to
 	 */
 	function testBinding(oCurrentContext, vExpected, oModelData) {
-		var oModel = new sap.ui.model.json.JSONModel(oModelData),
+		var oModel = new JSONModel(oModelData),
 			oControl = new TestControl({
 				models: oModel,
 				bindingContexts: oModel.createBindingContext("/")
@@ -543,14 +560,18 @@ sap.ui.require([
 	}
 
 	/**
-	 * Runs the given code under test with an <code>ODataMetaModel</code>.
+	 * Runs the given code under test with an <code>ODataMetaModel</code> loaded from the given
+	 * metamodel and annotations URL.
 	 *
-	 * @param {string} [sAnnotationUrl="/GWSAMPLE_BASIC/annotations"]
+	 * Note: The resulting meta model is cached by the annotation URL.
+	 *
+	 * @param {string} sMetaModelUrl
+	 * @param {string} sAnnotationUrl
 	 * @param {function} fnCodeUnderTest
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withMetaModel(sAnnotationUrl, fnCodeUnderTest) {
+	function withGivenMetaModel(sMetaModelUrl, sAnnotationUrl, fnCodeUnderTest) {
 		var oMetaModel,
 			oModel,
 			oSandbox, // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
@@ -579,11 +600,6 @@ sap.ui.require([
 			}
 		}
 
-		if (typeof sAnnotationUrl === "function") {
-			fnCodeUnderTest = sAnnotationUrl;
-			sAnnotationUrl = "/GWSAMPLE_BASIC/annotations";
-		}
-
 		if (mDataMetaModel[sAnnotationUrl]) {
 			return call(fnCodeUnderTest, mDataMetaModel[sAnnotationUrl]);
 		}
@@ -610,7 +626,7 @@ sap.ui.require([
 			oServer.autoRespond = true;
 
 			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-			oModel = new sap.ui.model.odata.v2.ODataModel("/GWSAMPLE_BASIC", {
+			oModel = new ODataModel(sMetaModelUrl, {
 				annotationURI : sAnnotationUrl,
 				json : true,
 				loadMetadataAsync : true
@@ -625,8 +641,24 @@ sap.ui.require([
 			});
 		} finally {
 			oSandbox.restore();
-			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
+			ODataModel.mServiceData = {}; // clear cache
 		}
+	}
+
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code>.
+	 *
+	 * @param {string} [sAnnotationUrl="/GWSAMPLE_BASIC/annotations"]
+	 * @param {function} fnCodeUnderTest
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
+	 */
+	function withMetaModel(sAnnotationUrl, fnCodeUnderTest) {
+		if (typeof sAnnotationUrl === "function") {
+			fnCodeUnderTest = sAnnotationUrl;
+			sAnnotationUrl = "/GWSAMPLE_BASIC/annotations";
+		}
+		return withGivenMetaModel("/GWSAMPLE_BASIC", sAnnotationUrl, fnCodeUnderTest);
 	}
 
 	/**
@@ -636,12 +668,7 @@ sap.ui.require([
 	 * @param {function} fnCodeUnderTest
 	 */
 	function withTestModel(fnCodeUnderTest) {
-		return withMetaModel(function (oMetaModel) {
-			// evil, test code only: write into ODataMetaModel
-			oMetaModel.getObject("/").dataServices = oTestData.dataServices;
-
-			fnCodeUnderTest(oMetaModel);
-		});
+		return withGivenMetaModel("/test", "/test/annotations", fnCodeUnderTest);
 	}
 
 	//*********************************************************************************************
@@ -698,8 +725,7 @@ sap.ui.require([
 			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
 
 			// ensure that the formatted value does not contain double quotes
-			ok(sap.ui.model.odata.AnnotationHelper.format(oCurrentContext, oRawValue)
-				.indexOf('"') < 0);
+			ok(AnnotationHelper.format(oCurrentContext, oRawValue).indexOf('"') < 0);
 
 
 			// check escaping via fake annotation
@@ -744,7 +770,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
-			var oMetaModel = new sap.ui.model.json.JSONModel({
+			var oMetaModel = new JSONModel({
 					"Value" : {
 						"Path" : sPath
 					}
@@ -779,13 +805,14 @@ sap.ui.require([
 		oString80,
 		oTime
 	].forEach(function(oType, i) {
-		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i + "/Value";
+		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i
+				+ "/Value/Eq/0";
 
 		test("14.5.12 Expression edm:Path w/ type, path = " + sPath + ", type = " + oType.name,
 			function () {
 				return withTestModel(function (oMetaModel) {
 					var oCurrentContext = oMetaModel.getContext(sPath),
-						oRawValue = oTestModel.getObject(sPath),
+						oRawValue = oMetaModel.getObject(sPath),
 						sBinding,
 						oSingleBindingInfo;
 
@@ -1150,6 +1177,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[
+	    {path: "_Boolean", value: true},
+	    {path: "_Byte", value: 255},
+	    {path: "_DateTime", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
+	    {path: "_DateTimeOffset", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
+	    {path: "_Decimal", value: "104245025234234502435.6430345"},
+	    {path: "_Double", value: 3.1415927},
+	    {path: "_Float", value: 0.30103},
+	    {path: "_Guid", value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
+	    {path: "_Int16", value: 16},
+	    {path: "_Int32", value: 32},
+	    {path: "_Int64", value: "64"},
+	    {path: "_SByte", value: -126},
+	    {path: "_Single", value: 2.7182818},
+	    {path: "_String10", value: "foo"},
+	    {path: "_String80", value: "bar"},
+	    {path: "_Time", value: {__edmType: "Edm.Time", ms: Date.UTC(1970, 0, 1, 12, 43, 7, 236)}}
+	].forEach(function (oFixture, i) {
+		test("14.5.1 Comparison and Logical Operators: Eq on" + oFixture.path, function () {
+			return withTestModel(function (oMetaModel) {
+				var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i
+						+ "/Value/",
+					oCurrentContext = oMetaModel.getContext(sPath),
+					oTestData = {};
+
+				// null handling (no value for the property)
+				testBinding(oCurrentContext, "false", oTestData);
+
+				oTestData[oFixture.path] = oFixture.value;
+				testBinding(oCurrentContext, "true", oTestData);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	test("14.5.6 Expression edm:If", function () {
 		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2Contact
@@ -1180,7 +1242,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
-			var oMetaModel = new sap.ui.model.json.JSONModel({
+			var oMetaModel = new JSONModel({
 					"Value" : {
 						"Path" : sPath
 					}

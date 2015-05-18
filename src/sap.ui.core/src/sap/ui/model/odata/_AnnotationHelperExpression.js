@@ -5,14 +5,15 @@
 // This module provides internal functions for dynamic expressions in OData V4 annotations. It is a
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([
-	'jquery.sap.global', './_AnnotationHelperBasics', 'sap/ui/base/BindingParser'
-], function(jQuery, Basics, BindingParser) {
+	'jquery.sap.global', './_AnnotationHelperBasics', 'sap/ui/base/BindingParser',
+	'sap/ui/core/format/DateFormat'
+], function(jQuery, Basics, BindingParser, DateFormat) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
-	var sDateValue = "[-]?\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
+	var sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
 		sDecimalValue = "[-+]?\\d+(?:\\.\\d+)?",
-		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d{1,12})?)?",
+		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(\\.\\d{1,12})?)?",
 		mEdmType2RegExp = {
 			Bool : /^true$|^false$/i,
 			// Note: 'NaN' and 'INF' are case sensitive, "e" is not!
@@ -28,7 +29,7 @@ sap.ui.define([
 		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 		Expression,
-		mOperators = {
+		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
 			And: "&&",
 			Eq: "===",
 			Ge: ">=",
@@ -49,12 +50,41 @@ sap.ui.define([
 			Int : "Edm.Int64",
 			String : "Edm.String",
 			TimeOfDay : "Edm.TimeOfDay"
+		},
+		mType2Category = { // mapping of EDM type to a type category
+			"Edm.Boolean": "boolean",
+			"Edm.Byte": "number",
+			"Edm.Date": "date",
+			"Edm.DateTime": "datetime",
+			"Edm.DateTimeOffset": "datetime",
+			"Edm.Decimal": "decimal",
+			"Edm.Double": "number",
+			"Edm.Float": "number",
+			"Edm.Guid": "string",
+			"Edm.Int16": "number",
+			"Edm.Int32": "number",
+			"Edm.Int64": "decimal",
+			"Edm.SByte": "number",
+			"Edm.Single": "number",
+			"Edm.String": "string",
+			"Edm.Time": "time",
+			"Edm.TimeOfDay": "time"
+		},
+		mTypeCategoryNeedsCompare = {
+			"boolean": false,
+			"date": true,
+			"datetime": true,
+			"decimal": true,
+			"number": false,
+			"string": false,
+			"time": true
 		};
 
 	/**
 	 * This object contains helper functions to process an expression in OData V4 annotations.
 	 *
-	 * All functions return a result object with the following properties:
+	 * Unless specified otherwise all functions return a result object with the following
+	 * properties:
 	 * <ul>
 	 *  <li><code>result</code>: "binding", "composite", "constant" or "expression"
 	 *  <li><code>value</code>: depending on result:
@@ -69,6 +99,28 @@ sap.ui.define([
 	 * </ul>
 	 */
 	Expression = {
+		/**
+		 * Adjusts the second operand so that both have the same category, if possible. The type is
+		 * not changed because it doesn't interest any more.
+		 *
+		 * @param {object} oOperand1
+		 *   the operand 1 (as a result object with category)
+		 * @param {object} oOperand2
+		 *   the operand 2 (as a result object with category) - may be modified
+		 */
+		adjustOperands: function (oOperand1, oOperand2) {
+			if (oOperand1.result !== "constant" && oOperand1.category === "number"
+					&& oOperand2.result === "constant" && oOperand2.type === "Edm.Int64") {
+				// adjust a integer constant (which is always "Edm.Int64") to the number
+				oOperand2.category = oOperand1.category;
+			}
+			if (oOperand1.result === "constant" && oOperand1.category === "date"
+					&& oOperand2.result !== "constant" && oOperand2.category === "datetime") {
+				// adjust a datetime parameter to the date constant
+				oOperand2.category = oOperand1.category;
+			}
+		},
+
 		/**
 		 * Handling of "14.5.3 Expression edm:Apply".
 		 *
@@ -294,6 +346,54 @@ sap.ui.define([
 		},
 
 		/**
+		 * Formats the result to be an operand for a logical or comparison operator. Handles
+		 * constants accordingly.
+		 *
+		 * @param {object} oPathValue
+		 *   a path/value pair pointing to the parameters array (for a possible error message)
+		 * @param {int} iIndex
+		 *   the parameter index (for a possible error message)
+		 * @param {object} oResult
+	 	 *   a result object with category
+		 * @param {boolean} bWrapExpression
+		 *   if true, wrap an expression in <code>oResult</code> with "()"
+		 * @returns {string}
+		 *   the formatted result
+		 */
+		formatOperand: function (oPathValue, iIndex, oResult, bWrapExpression) {
+			var oDate;
+
+			if (oResult.result === "constant") {
+				switch (oResult.category) {
+					case "boolean":
+					case "number":
+						return oResult.value;
+					case "date":
+						oDate = Expression.parseDate(oResult.value);
+						if (!oDate) {
+							Basics.error(Basics.descend(oPathValue, iIndex),
+									"Invalid Date " + oResult.value);
+						}
+						return String(oDate.getTime());
+					case "datetime":
+						oDate = Expression.parseDateTimeOffset(oResult.value);
+						if (!oDate) {
+							Basics.error(Basics.descend(oPathValue, iIndex),
+									"Invalid DateTime " + oResult.value);
+						}
+						return String(oDate.getTime());
+					case "time":
+						return String(Expression.parseTimeOfDay(oResult.value).getTime());
+					// no default
+				}
+			}
+			if (bWrapExpression) {
+				Expression.wrapExpression(oResult);
+			}
+			return Basics.resultToString(oResult, true);
+		},
+
+		/**
 		 * Calculates an expression. Ensures that errors that are thrown via {#error} while
 		 * processing are handled accordingly.
 		 *
@@ -372,7 +472,7 @@ sap.ui.define([
 		 * @returns {object}
 		 *   the result object
 		 */
-		not: function (oInterface, oPathValue, sType) {
+		not: function (oInterface, oPathValue) {
 			var oParameter = Expression.expression(oInterface, oPathValue, true);
 
 			return {
@@ -395,20 +495,34 @@ sap.ui.define([
 		 *   the result object
 		 */
 		operator: function (oInterface, oPathValue, sType) {
-			var sExpectedEdmType = sType == "And" || sType == "Or" ? "Edm.Boolean" : undefined,
-				oResult0 = Expression.parameter(oInterface, oPathValue, 0,  sExpectedEdmType),
-				oResult1 = Expression.parameter(oInterface, oPathValue, 1, sExpectedEdmType);
+			var sExpectedEdmType = sType === "And" || sType === "Or" ? "Edm.Boolean" : undefined,
+				oParameter0 = Expression.parameter(oInterface, oPathValue, 0, sExpectedEdmType),
+				oParameter1 = Expression.parameter(oInterface, oPathValue, 1, sExpectedEdmType),
+				sTypeInfo,
+				bNeedsCompare,
+				sValue0,
+				sValue1;
 
-			if (oResult0.type !== oResult1.type) {
+			oParameter0.category = mType2Category[oParameter0.type];
+			oParameter1.category = mType2Category[oParameter1.type];
+			Expression.adjustOperands(oParameter0, oParameter1);
+			Expression.adjustOperands(oParameter1, oParameter0);
+
+			if (oParameter0.category !== oParameter1.category) {
 				Basics.error(oPathValue,
-					"Expected two parameters of the same type but instead saw " + oResult0.type
-					+ " and " + oResult1.type);
+					"Expected two comparable parameters but instead saw " + oParameter0.type
+					+ " and " + oParameter1.type);
 			}
+			sTypeInfo = oParameter0.category === "decimal" ? ",true" : "";
+			bNeedsCompare = mTypeCategoryNeedsCompare[oParameter0.category];
+			sValue0 = Expression.formatOperand(oPathValue, 0, oParameter0, !bNeedsCompare);
+			sValue1 = Expression.formatOperand(oPathValue, 1, oParameter1, !bNeedsCompare);
 			return {
 				result: "expression",
-				value: Basics.resultToString(Expression.wrapExpression(oResult0), true)
-					+ mOperators[sType]
-					+ Basics.resultToString(Expression.wrapExpression(oResult1), true),
+				value: bNeedsCompare
+							? "odata.compare(" + sValue0 + "," + sValue1 + sTypeInfo + ")"
+								+ mOData2JSOperators[sType] + "0"
+							: sValue0 + mOData2JSOperators[sType] + sValue1,
 				type: "Edm.Boolean"
 			};
 		},
@@ -441,6 +555,64 @@ sap.ui.define([
 					"Expected " + sEdmType + " but instead saw " + oResult.type);
 			}
 			return oResult;
+		},
+
+		/**
+		 * Parses an Edm.Date value and returns the corresponding JavaScript Date value.
+		 *
+		 * @param {string} sValue
+		 *   the Edm.Date value to parse
+		 * @returns {Date}
+		 *   the JavaScript Date value or <code>null</code> in case the input could not be parsed
+		 */
+		parseDate: function (sValue) {
+			return DateFormat.getDateInstance({
+					pattern: "yyyy-MM-dd",
+					strictParsing: true,
+					UTC: true
+				}).parse(sValue);
+		},
+
+		/**
+		 * Parses an Edm.DateTimeOffset value and returns the corresponding JavaScript Date value.
+		 *
+		 * @param {string} sValue
+		 *   the Edm.DateTimeOffset value to parse
+		 * @returns {Date}
+		 *   the JavaScript Date value or <code>null</code> in case the input could not be parsed
+		 */
+		parseDateTimeOffset: function (sValue) {
+			var aMatches = mEdmType2RegExp.DateTimeOffset.exec(sValue);
+			if (aMatches && aMatches[1] && aMatches[1].length > 4) {
+				// "round" to millis, BEWARE of the dot!
+				sValue = sValue.replace(aMatches[1], aMatches[1].slice(0, 4));
+			}
+
+			return DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				strictParsing: true
+			}).parse(sValue.toUpperCase());
+		},
+
+		/**
+		 * Parses an Edm.TimeOfDay value and returns the corresponding JavaScript Date value.
+		 *
+		 * @param {string} sValue
+		 *   the Edm.TimeOfDay value to parse
+		 * @returns {Date}
+		 *   the JavaScript Date value or <code>null</code> in case the input could not be parsed
+		 */
+		parseTimeOfDay: function (sValue) {
+			if (sValue.length > 12) {
+				// "round" to millis: "HH:mm:ss.SSS"
+				sValue = sValue.slice(0, 12);
+			}
+
+			return DateFormat.getTimeInstance({
+				pattern: "HH:mm:ss.SSS",
+				strictParsing: true,
+				UTC: true
+			}).parse(sValue);
 		},
 
 		/**
