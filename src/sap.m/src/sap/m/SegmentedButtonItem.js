@@ -95,6 +95,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			}
 			return this;
 		};
+		SegmentedButtonItem.prototype.setTooltip = function (sValue) {
+			this.setAggregation("tooltip", sValue, true);
+			if (this.oButton) {
+				this.oButton.setTooltip(sValue);
+			}
+			return this;
+		};
 
 		return SegmentedButtonItem;
 

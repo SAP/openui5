@@ -538,6 +538,39 @@
 
 	});
 
+	test("Items aggregation tooltip", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "Button 1",
+					tooltip: "Tooltip 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 2"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var aButtons = oSegmentedButton.getButtons(),
+			$button1 = aButtons[0].$(),
+			$button2 = aButtons[1].$();
+
+
+		strictEqual($button1.attr("title"), "Tooltip 1", "First button should have a title with the setted value");
+		strictEqual($button2.attr("title"), undefined, "There should be no title for the second button");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
 	test("Initialize with XML view", function() {
 
 		// Arrange
