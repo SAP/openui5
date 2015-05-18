@@ -11,10 +11,6 @@
   "contributors": [
     "SAP SE <*@sap.com>"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.wdf.sap.corp/D060613/mdSkeleton"
-  },
   "dependencies": {
   },
   "devDependencies": {
