@@ -240,10 +240,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				that.fireAfterOpen({openBy: oEvent.getParameter('openBy')});
 			},
 			beforeClose: function(oEvent){
-				that.fireBeforeClose({openBy: oEvent.getParameter('openBy')});
+				that.fireBeforeClose({openBy: oEvent.getParameter('openBy'), origin: oEvent.getParameter('origin')});
 			},
 			afterClose: function(oEvent){
-				that.fireAfterClose({openBy: oEvent.getParameter('openBy')});
+				that.fireAfterClose({openBy: oEvent.getParameter('openBy'), origin: oEvent.getParameter('origin')});
 			}
 		};
 		if (sap.ui.Device.system.phone) {
