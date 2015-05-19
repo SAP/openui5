@@ -373,10 +373,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					this._parent._adjustScrollingPane = function(){
 						var $this = this.$(),
 							iHeight = $this.height(),
-							iHeaderHeight = $this.children("header.sapMIBar").outerHeight(true),
 							$content = this.$("cont");
 
-						$content.css("max-height", iHeight - (that.getTitle() ? iHeaderHeight : 0));
+						$content.css("max-height", iHeight);
 						if (this._oScroller) {
 							this._oScroller.refresh();
 						}
@@ -389,13 +388,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 						var $window = jQuery(window),
 							iWindowHeight = $window.height(),
 							$this = this.$(),
-							iTop = iWindowHeight - $this.outerHeight(),
-							sTransform = genTransformCSS(iTop);
+							iTop = iWindowHeight - $this.outerHeight();
 
 						$this.css({
-							"-webkit-transform": sTransform,
-							"-moz-transform": sTransform,
-							"transform": sTransform
+							top: iTop + "px"
 						});
 
 						this._adjustScrollingPane();
