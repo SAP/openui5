@@ -82,19 +82,21 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 
 	_createIframe : function (oIframeContent, vIframe) {
 		var sSampleId = this._sId,
-			rNoDot = /[^\.]*/,
-			rStripHtml = /.html$/;
+			rExtractFilename = /\/([^\/]*)$/,// extracts everything after the last slash (e.g. some/path/index.html -> index.html)
+			rStripUI5Ending = /\..+$/,// removes everything after the first dot in the filename (e.g. someFile.qunit.html -> .qunit.html)
+			aFileNameMatches,
+			sFileName,
+			sFileEnding;
 
 		if (typeof vIframe === "string") {
+			// strip the file extension to be able to use jQuery.sap.getModulePath
+			aFileNameMatches = rExtractFilename.exec(vIframe);
+			sFileName = (aFileNameMatches && aFileNameMatches.length > 1 ? aFileNameMatches[1] : vIframe);
+			sFileEnding = rStripUI5Ending.exec(sFileName)[0];
+			var sIframeWithoutUI5Ending = vIframe.replace(rStripUI5Ending, "");
 
-			var sIframeWithoutHtml = vIframe.replace(rStripHtml, "");
-
-			if (!rNoDot.test(sIframeWithoutHtml)) {
-				jQuery.sap.log.error("Don't put a . in your iframe sample url.");
-				return;
-			}
-
-			this.sIFrameUrl = jQuery.sap.getModulePath(sSampleId + "." + sIframeWithoutHtml, ".html");
+			// combine namespace with the file name again
+			this.sIFrameUrl = jQuery.sap.getModulePath(sSampleId + "." + sIframeWithoutUI5Ending, sFileEnding || ".html");
 		} else {
 			jQuery.sap.log.error("no iframe source was provided");
 			return;
