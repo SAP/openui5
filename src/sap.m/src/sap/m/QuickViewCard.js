@@ -297,6 +297,10 @@ sap.ui.define([
 				for (var k = 0; k < aElements.length; k++) {
 					oCurrentGroupElement = aElements[k];
 
+					if (!oCurrentGroupElement.getVisible()) {
+						continue;
+					}
+
 					oLabel = new Label({
 						text: oCurrentGroupElement.getLabel()
 					});

@@ -61,6 +61,7 @@ sap.ui.define([
 									{
 										label: "Email",
 										value: "main.contact@company.com",
+										emailSubject : 'Subject',
 										elementType: sap.m.QuickViewGroupElementType.email
 									}
 								]
@@ -99,6 +100,7 @@ sap.ui.define([
 									{
 										label: "Email",
 										value: "john.doe@sap.com",
+										emailSubject : 'Subject',
 										elementType: sap.m.QuickViewGroupElementType.email
 									},
 									{
@@ -138,6 +140,7 @@ sap.ui.define([
 									{
 										label: "Email",
 										value: "main.contact@company.com",
+										emailSubject : 'Subject',
 										elementType: sap.m.QuickViewGroupElementType.email
 									}
 								]
