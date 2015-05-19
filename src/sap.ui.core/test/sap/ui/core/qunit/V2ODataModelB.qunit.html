@@ -182,6 +182,23 @@
 		}
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
+	
+	asyncTest("test oDataModel read count request with filter test", function() {
+		var fnTest = function() {
+			oModel.read("/ProductSet/$count", {
+				filters : [ new sap.ui.model.Filter("ProductID", "EQ",
+						"HT-1000") ],
+				success : function(oData, oResponse) {
+					ok(oData === "1", "length check");
+					start();
+				},
+				error : function(oError) {
+					ok(false, "request failed");
+				}
+			});
+		}
+		oModel.attachMetadataLoaded(this, fnTest);
+	});
 
 	asyncTest("test oDataModel read sort test", function() {
 		var fnTest = function() {
