@@ -475,8 +475,10 @@ var factory = function (signals) {
             TOKENS = {
                 'OS' : {
                     //optional slashes
-                    //slash between `::` or `}:` or `\w:` or `:{?` or `}{?` or `\w{?`
-                    rgx : /([:}]|\w(?=\/))\/?(:|(?:\{\?))/g,
+                    // ##### BEGIN: MODIFIED BY SAP
+                    //slash between `::` or `}:` or `):` or `\w:` or `:{?` or `}{?` or `\w{?`
+                    rgx : /([:})]|\w(?=\/))\/?(:|(?:\{\?))/g,
+                    // ##### END: MODIFIED BY SAP
                     save : '$1{{id}}$2',
                     res : '\\/?'
                 },
@@ -696,4 +698,3 @@ var factory = function (signals) {
     }
 
 }());
-
