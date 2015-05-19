@@ -14,7 +14,7 @@
 			<Select id="selectInstance" change="onChangeInstance" selectedKey="{ui>/selectedInstance}">
 				<!-- aggregation items is bound in controller  -->
 			</Select>
-			<core:Icon src="{ui>/icon}" class="sapMBtnIcon"/>
+			<core:Icon src="{ui>/icon}" tooltip="{ui>/iconTooltip}" class="sapMBtnIcon"/>
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 			<CheckBox selected="{ui>/bindTexts}" select="onChangeType" text="bindTexts"/><!-- triggers XML templating! -->
 		</layout:HorizontalLayout>
