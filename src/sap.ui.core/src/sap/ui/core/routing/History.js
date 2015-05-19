@@ -165,11 +165,8 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 
 		sDirection = this._sCurrentDirection = this._getDirection(sNewHash, this._iHistoryLength < window.history.length);
 
-		if (this._oNextHash && !this._oNextHash.bWasReplaced) {
-			this._iHistoryLength = actualHistoryLength + 1;
-		} else {
-			this._iHistoryLength = actualHistoryLength;
-		}
+		// Remember the new history length, after it has been taken into account by getDirection
+		this._iHistoryLength = actualHistoryLength;
 
 		//the next hash direction was determined - set it back
 		if (this._oNextHash) {
