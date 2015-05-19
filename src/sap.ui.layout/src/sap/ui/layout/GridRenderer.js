@@ -139,11 +139,10 @@ sap.ui.define(['jquery.sap.global'],
 				// Span
 				var aSpan;
 				// sSpanL needed for XL if XL is not defined at all
-				var sSpanL, bDefaultSpanXLChanged = false;
+				var sSpanL, bDefaultSpanXLChanged = oControl._getSpanXLChanged();
 				var sSpan = oLay.getSpan();
 				if (!sSpan || !sSpan.lenght == 0) {
 					aSpan = aDSpan;
-					bDefaultSpanXLChanged = oControl._getSpanXLChanged();
 				} else {
 					aSpan = SPANPATTERN.exec(sSpan);
 					if (/XL/gi.test(sSpan)) {
@@ -207,12 +206,15 @@ sap.ui.define(['jquery.sap.global'],
 				var sDefaultIndent = oControl.getDefaultIndent();
 				var aDefaultIndent4Grid = INDENTPATTERN.exec(sDefaultIndent); 
 				
+				// Default Indent if nothing is specified at all, not on Grid , not on the
+				// cell.
+				var aInitialIndent = [ "", "XL0", "L0", "M0", "S0"];
+				
 				var aIndent;
-				var sIndentL, bDefaultXLChanged = false;
+				var sIndentL, bDefaultXLChanged = oControl._getIndentXLChanged();
 				var sIndent = oLay.getIndent();
 				if (!sIndent || sIndent.length == 0) {
 					aIndent = aDefaultIndent4Grid;
-					bDefaultXLChanged = oControl._getIndentXLChanged();
 				} else {
 					aIndent = INDENTPATTERN.exec(sIndent);
 					if (/XL/gi.test(sIndent)) {
@@ -224,17 +226,23 @@ sap.ui.define(['jquery.sap.global'],
 					aIndent = aDefaultIndent4Grid;
 					if (!aIndent) {
 						aIndent = undefined; // no indent
-					} else {
-						bDefaultXLChanged = oControl._getIndentXLChanged();	
-					}
+					} 
 				}
 	
+				// Catch the Individual Indents
+				var iIndentXLarge = oLay.getIndentXL();
+				var iIndentLarge = oLay.getIndentL();
+				var iIndentMedium = oLay.getIndentM();
+				var iIndentSmall = oLay.getIndentS();
+				
 				if (aIndent) {
 					for ( var j = 1; j < aIndent.length; j++) {
 						var indent = aIndent[j];
 						if (!indent) {
 							if (aDefaultIndent4Grid && aDefaultIndent4Grid[j]) {
 								indent = aDefaultIndent4Grid[j];
+							} else {
+								indent = aInitialIndent[j];
 							}
 						}
 						if (indent) {
@@ -243,11 +251,7 @@ sap.ui.define(['jquery.sap.global'],
 								sIndentL = indent.substr(1, 2);
 							}
 							
-							// Catch the Individual Indents
-							var iIndentXLarge = oLay.getIndentXL();
-							var iIndentLarge = oLay.getIndentL();
-							var iIndentMedium = oLay.getIndentM();
-							var iIndentSmall = oLay.getIndentS();
+							
 	
 							if ((indent.substr(0, 2) === "XL") && (iIndentXLarge > 0) && (iIndentXLarge < 12)) {
 									oRm.addClass("sapUiRespGridIndentXL" + iIndentXLarge);
