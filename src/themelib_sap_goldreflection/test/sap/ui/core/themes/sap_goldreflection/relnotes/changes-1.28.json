@@ -36,5 +36,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "185708fa4d39caa28199fa931ff29c778581083a",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Scrollbars in 100% height containers avoided",
+        "references": []
+      }
+    ]
   }
 }
