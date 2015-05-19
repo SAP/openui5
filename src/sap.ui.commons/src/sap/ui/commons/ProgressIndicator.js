@@ -237,14 +237,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (iPercentValue > 100 && widthBar <= 100) {
 			time = (100 - widthBar) * 20;
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
+
 			jQuery(this.oBar).animate({width: '100%'}, time, 'linear', function() {
-			that.setEndBar();
+				that.setEndBar();
 			});
 		} else if (iPercentValue <= 100 && widthBar > 100) {
 			time = (widthBar - 100) * 20;
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
+
 			jQuery(this.oBar).animate({width: '100%'}, time, 'linear', function() {
-			that.setEndBarGoesBack();
+				that.setEndBarGoesBack();
 			});
 		} else if (iPercentValue > 100 && widthBar > 100) {
 			if (iPercentValue > widthBar) {
