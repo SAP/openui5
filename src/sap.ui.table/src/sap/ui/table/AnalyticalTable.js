@@ -425,8 +425,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			
 			var iGroupHeaderBoundColumnIndex = 0;
+
 			// If group header is expanded, we grant the whole row space
-			if (oContextInfo.expanded && !this.getSumOnTop()) {
+			if (oContextInfo.nodeState.expanded && !this.getSumOnTop()) {
 				iFirstLabelWidth = 0;
 				iGroupHeaderBoundColumnIndex = this._getVisibleColumnCount() - 1;
 			}
