@@ -75,7 +75,17 @@
 		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://undo", "icon should be undo");
 	});
 
-	QUnit.test("Link control", function(assert) {
+	QUnit.test("Link control via setLink", function(assert) {
+		var linkText = "Link Text";
+
+		this.oMessageStrip.setLink(new sap.m.Link({ text: linkText }));
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oMessageStrip.getLink().getText(), linkText,
+			"should be set as an aggregation and have the specified text");
+	});
+
+	QUnit.test("Link control via setAggregation", function(assert) {
 		// arrange
 		var oLink = new sap.m.Link({
 			text: "Link Text"
@@ -195,6 +205,63 @@
 			jQuery(CLASS_CLOSE_BUTTON)[0].focus();
 			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], jQuery.sap.KeyCodes.SPACE);
 		}, 0);
+	});
+
+	QUnit.module("ARIA Support", {
+		setup: function() {
+			this.oMessageStrip = new sap.m.MessageStrip({
+				text: "Test",
+				showCloseButton: true,
+				link: new sap.m.Link({text: "Sample link"})
+			});
+
+			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
+
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function() {
+			if (this.oMessageStrip) {
+				this.oMessageStrip.destroy();
+			}
+		}
+	});
+
+	QUnit.test("Role note should be present", function (assert) {
+		var msgStripDom = this.oMessageStrip.getDomRef(),
+			role = msgStripDom.getAttribute("role");
+
+		assert.strictEqual(role, "note", "role=note is present");
+	});
+
+	QUnit.test("Live region with aria-live should be present", function (assert) {
+		var msgStripDom = this.oMessageStrip.getDomRef(),
+			live = msgStripDom.getAttribute("aria-live");
+
+		assert.strictEqual(live, "assertive", "aria-live=asserive is present");
+	});
+
+	QUnit.test("Labelledby attribute", function (assert) {
+		var msgStripDom = this.oMessageStrip.getDomRef(),
+			labelledBy = msgStripDom.getAttribute("aria-labelledby");
+
+		assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
+			"should point to the element's id");
+	});
+
+	QUnit.test("Invisible aria type text should be present in the root element", function (assert) {
+		var msgStripDom = this.oMessageStrip.getDomRef(),
+			invisibleText = msgStripDom.querySelectorAll(".sapUiPseudoInvisibleText");
+
+		assert.strictEqual(invisibleText.length, 1,
+			"only one element with class .sapUiPseudoInvisibleText should be present");
+	});
+
+	QUnit.test("When link is set it should have aria-labelledby attribute", function (assert) {
+		var linkDom = this.oMessageStrip.getLink().getDomRef(),
+			labelledBy = linkDom.getAttribute("aria-labelledby");
+
+		assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
+			"link aria-labelledby should point to the MessageStrip id");
 	});
 
 })();
