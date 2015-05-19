@@ -53,7 +53,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				m:"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
 				"":"http://schemas.microsoft.com/ado/2007/06/edmx"
 			};
-			this.pLoaded = this._loadMetadata();
+			var that = this;
+			this.fnResolve;
+			// global promise
+			this.pLoaded = new Promise(function(resolve, reject) {
+					that.fnResolve = resolve;
+			});
+			this._loadMetadata();
 		},
 
 		metadata : {
@@ -79,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		var that = this;
 		sUrl = sUrl || this.sUrl;
 		var oRequest = this._createRequest(sUrl);
-
+		
 		return new Promise(function(resolve, reject) {
 			var oRequestHandle;
 			function _handleSuccess(oMetadata, oResponse) {
@@ -92,16 +98,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					_handleError(mParameters);
 					return;
 				}
-
+				
 				that.sMetadataBody = oResponse.body;
 				that.oMetadata = !that.oMetadata ? oMetadata : that.merge(that.oMetadata, oMetadata);
 				that.oRequestHandle = null;
-
+				
 				var mParams = {
-					metadataString: that.sMetadataBody
+						metadataString: that.sMetadataBody
 				};
+				// resolve global promise
+				that.fnResolve(mParams);
+				// resolve this promise
 				resolve(mParams);
-
+				
 				if (that.bAsync && !bSuppressEvents) {
 					that.fireLoaded(that);
 				} else if (!that.bAsync && !bSuppressEvents){
@@ -111,19 +120,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mParams ]);
 				}
 			}
-
+			
 			function _handleError(oError) {
 				var mParams = {
-					message: oError.message,
-					request: oError.request,
-					response: oError.response
+						message: oError.message,
+						request: oError.request,
+						response: oError.response
 				};
 				if (oError.response) {
 					mParams.statusCode = oError.response.statusCode;
 					mParams.statusText = oError.response.statusText;
 					mParams.responseText = oError.response.body;
 				}
-
+				
 				if (oRequestHandle && oRequestHandle.bSuppressErrorHandlerCall) {
 					return;
 				}
@@ -138,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [mParams]);
 				}
 			}
-
+			
 			// execute the request
 			oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
 			if (that.bAsync) {
@@ -146,16 +155,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				that.mRequestHandles[oRequestHandle.id] = oRequestHandle;
 			}
 		});
+		
 	};
 
 	/**
-	 * refreshes the metadata creating a new request to the server
+	 * Refreshes the metadata creating a new request to the server.
+	 * Returns a new promise which can be resolved or rejected depending on the metadata loading state.
+	 * 
+	 * @returns {Promise} returns a promise on metadata loaded state
 	 *
 	 * @public
 	 */
 	ODataMetadata.prototype.refresh = function(){
-		this._loadMetadata();
-		return this;
+		return this._loadMetadata();
 	};
 
 
@@ -901,7 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * Add metadata url: The response will be merged with the existing metadata object
 	 *
 	 * @param string | array vUrl Either one URL as string or an array or Uri strings
-	 * @returns Promise The Promise for metadata loding
+	 * @returns Promise The Promise for metadata loading
 	 * @private
 	 */
 	ODataMetadata.prototype._addUrl = function(vUrl) {

@@ -666,13 +666,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed
+	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed. 
+	 * Returns a new promise which can be resolved or rejected depending on the metadata loading state.
+	 *
+	 * @returns {Promise} returns a promise on metadata loaded state or null if metadata is not initialized or currently refreshed.
 	 *
 	 * @public
 	 */
 	ODataModel.prototype.refreshMetadata = function(){
 		if (this.oMetadata && this.oMetadata.refresh){
-			this.oMetadata.refresh();
+			return this.oMetadata.refresh();
 		}
 	};
 
@@ -3271,7 +3274,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Returns a promise for the loaded state of the metadata
+	 * Returns a promise for the loaded state of the metadata. The promise won't get rejected in case the metadata loading failed but
+	 * is only resolved if the metadata is loaded successfully.
+	 * If <code>refreshMetadata</code> function is called after this promise is already resolved you should rely on the promise returned by
+	 * <code>refreshMetadata</code> to get information about the refreshed metadata loaded state.
 	 *
 	 * @public
 	 * @returns {Promise} returns a promise on metadata loaded state
