@@ -556,9 +556,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				}
 			};
 		}
+		
+		xPath.getPath = function(oNode) {
+			var sPath = "";
+			var sId = "getAttribute" in oNode ? oNode.getAttribute("id") : "";
+			var sTagName = oNode.tagName ? oNode.tagName : "";
+			
+		    if (sId) {
+				// If node has an ID, use that
+				sPath = 'id("' + sId + '")';
+			} else if (oNode === document) {
+				sPath = "/";
+			} else if (oNode === document.body) {
+				// If node is the body element, just return its tag name
+				sPath = sTagName;
+			} else if (oNode.parentNode) {
+				// Count the position in the parent and get the path of the parent recursively
+				
+				var iPos = 1;
+				for (var i = 0; i < oNode.parentNode.childNodes.length; ++i) {
+					if (oNode.parentNode.childNodes[i] === oNode) {
+						// Found the node inside its parent
+						sPath = xPath.getPath(oNode.parentNode) +  "/" + sTagName + "[" + iPos + "]";
+						break;
+					} else if (oNode.parentNode.childNodes[i].nodeType === 1 && oNode.parentNode.childNodes[i].tagName === sTagName) {
+						// In case there are other elements of the same kind, count them
+						++iPos;
+					}
+				}
+			} else {
+				jQuery.sap.log.error("Wrong Input node - cannot find XPath to it: " + sTagName);
+			}
+			
+			return sPath;
+		};
+		
 		return xPath;
 	};
 
+	
+	
 
 	/**
 	 * Sets an XML document
@@ -1128,7 +1165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					} else {
 						vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 
-						var oChildNodes = this.xPath.selectNodes(oXmlDocument, "./d:*[not(local-name() = \"Annotation\")]", oDocumentNode);
+						var oChildNodes = this.xPath.selectNodes(oXmlDocument, "./d:*[not(local-name() = \"Annotation\")][not(local-name() = \"Apply\")]", oDocumentNode);
 						if (oChildNodes.length > 0) {
 							var oAnnotationNodes = this.xPath.selectNodes(oXmlDocument, "./d:Annotation", oDocumentNode);
 							this._enrichValueFromAttribute(/* ref: */ vPropertyValue, mAlias, oAnnotationNodes, "Term");
@@ -1158,7 +1195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 									if (vPropertyValue[sNodeName]) {
 										jQuery.sap.log.warning(
 											"Annotation contained multiple " + sNodeName + " values. Only the last " +
-											"one will be stored"
+											"one will be stored: " + this.xPath.getPath(oChildNode)
 										);
 									}
 									vPropertyValue[sNodeName] = vValue;
