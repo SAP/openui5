@@ -3214,13 +3214,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				aUrlParams.push(sSorterParams);
 			}
 
-			if (sPath.indexOf("$count") === -1){
-				sNormalizedPath = that._normalizePath(sPath, oContext);
-				oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
-				sFilterParams = ODataUtils.createFilterParams(aFilters, that.oMetadata, oEntityType);
-				if (sFilterParams) {
-					aUrlParams.push(sFilterParams);
-				}
+			var sTempPath = sPath;
+			var iIndex = sPath.indexOf("$count");
+			// check if we have a manual count request with filters. Then we have to manually adjust the path.
+			if (iIndex !== -1) {
+				sTempPath = sPath.substring(0, iIndex - 1);
+			}
+			
+			sNormalizedPath = that._normalizePath(sTempPath, oContext);
+			oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
+			sFilterParams = ODataUtils.createFilterParams(aFilters, that.oMetadata, oEntityType);
+			if (sFilterParams) {
+				aUrlParams.push(sFilterParams);
 			}
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
