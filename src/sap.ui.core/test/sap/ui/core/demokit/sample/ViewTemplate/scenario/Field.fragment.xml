@@ -7,11 +7,11 @@
 			<template:with path="field>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
 				<!--  check that IsEmailAddress annotaion is available and that it has value true -->
 				<template:if test="{= ${target>com.sap.vocabularies.Communication.v1.IsEmailAddress} &amp;&amp; ${target>com.sap.vocabularies.Communication.v1.IsEmailAddress}.Bool}" >
-					<core:Icon src="sap-icon://email" />
+					<core:Icon src="sap-icon://email" tooltip="Email" />
 				</template:if>
 				<!--  check only the availability of the annotation -->
 				<template:if test="{target>com.sap.vocabularies.Communication.v1.IsPhoneNumber}" >
-					<core:Icon src="sap-icon://phone" />
+					<core:Icon src="sap-icon://phone" tooltip="Phone" />
 				</template:if>
 			</template:with>
 			<template:if test="{field>Url}">
