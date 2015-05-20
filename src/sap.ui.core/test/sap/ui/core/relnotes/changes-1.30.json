@@ -634,7 +634,7 @@
         "id": "0bd6ee92e6a0fd83867893e21bdff96ebed4a9de",
         "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.core.Icon: Fixed rendering issue with "src" values without protocol",
+        "text": "sap.ui.core.Icon: Fixed rendering issue with 'src' values without protocol",
         "references": []
       },
       {
