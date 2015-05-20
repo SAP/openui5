@@ -597,7 +597,13 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				deepEqual(oType.property[3/*EMail*/]
 						["com.sap.vocabularies.Communication.v1.IsEmailAddress"],
 					{ "Bool" : "true" });
+				deepEqual(oType.property[4/*EMail2*/]
+						["com.sap.vocabularies.Communication.v1.IsEmailAddress"],
+					{ "Bool" : "true" });
 				deepEqual(oType.property[20/*Tel*/]
+						["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
+					{ "Bool" : "true" });
+				deepEqual(oType.property[22/*Tel3*/]
 						["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
 					{ "Bool" : "true" });
 			}

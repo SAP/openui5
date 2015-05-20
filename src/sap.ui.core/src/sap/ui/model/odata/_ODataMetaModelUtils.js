@@ -224,10 +224,10 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 
 					if (aMatches[2]) {
 						sV2Semantics = aMatches[1];
-						oV4TypeInfo = mV2SemanticsToV4TypeInfo[sV2Semantics];
 						sV4TypeList = Utils.getV4TypesForV2Semantics(sV2Semantics, aMatches[2],
 							oProperty, oType);
 					}
+					oV4TypeInfo = mV2SemanticsToV4TypeInfo[sV2Semantics];
 					bIsCollection = sV2Semantics === "tel" || sV2Semantics === "email";
 					sV4AnnotationPath = mSemanticsToV4AnnotationPath[sV2Semantics];
 					if (sV4AnnotationPath) {

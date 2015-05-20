@@ -9,23 +9,6 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 
 		Given.iStartMyAppInAFrame("index.html");
 
-		// check for console log errors/warnings
-		When.waitFor({
-			id: /selectInstance/,
-			success : function (oControl) {
-				// check no warnings and errors
-				Opa5.getWindow().jQuery.sap.log.getLog().forEach(function(oLog) {
-					if (( oLog.component === "sap.ui.core.util.XMLPreprocessor"
-							|| oLog.component === "sap.ui.model.odata.AnnotationHelper")
-							&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-						ok(false, "Warning or Error found: " + oLog.component
-							+ " Level: " + oLog.level + " Message: " + oLog.message );
-					}
-				});
-			},
-			errorMessage : "Instance selector not found"
-		});
-
 		// check for existing controls
 		[
 			{controlType: "sap.ui.core.Title", text: "HeaderInfo"},
@@ -54,6 +37,27 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 				errorMessage : "not found: " + oFixture.controlType + " with text: " +
 					oFixture.text
 			});
+		});
+
+		// check for console log errors/warnings
+		Then.waitFor({
+			id: /selectInstance/,
+			success : function (oControl) {
+				// check no warnings and errors
+				Opa5.getWindow().jQuery.sap.log.getLog().forEach(function(oLog) {
+					var sComponent = oLog.component || "";
+
+					if (( sComponent === "sap.ui.core.util.XMLPreprocessor"
+							|| sComponent === "sap.ui.model.odata.AnnotationHelper"
+							|| sComponent === "sap.ui.model.odata.ODataMetaModel"
+							|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
+							&& oLog.level <= jQuery.sap.log.Level.WARNING) {
+						ok(false, "Warning or Error found: " + sComponent
+							+ " Level: " + oLog.level + " Message: " + oLog.message );
+					}
+				});
+			},
+			errorMessage : "Instance selector not found"
 		});
 
 		Then.iTeardownMyAppFrame();
