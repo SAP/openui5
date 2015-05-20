@@ -34,15 +34,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			library : "sap.m",
 			properties : {
 				/**
-				 * MessagePage text
+				 * Determines the main text displayed on the MessagePage
 				 */
 				text : {type : "string", group : "Misc", defaultValue : "No matching items found."},
 				/**
-				 * MessagePage description
+				 * Determines the detailed description that shows additional information on the MessagePage
 				 */
 				description : {type : "string", group : "Misc", defaultValue : "Check the filter settings."},
 				/**
-				 * MessagePage title
+				 * Determines the title in the header of MessagePage
 				 */
 				title : { type : "string", group : "Misc", defaultValue : null },
 				/**
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 */
 				showNavButton : {type : "boolean", group : "Appearance", defaultValue : false},
 				/**
-				 * MessagePage main icon
+				 * Determines the icon displayed on the MessagePage
 				 */
 				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : "sap-icon://documents" },
 				/**
