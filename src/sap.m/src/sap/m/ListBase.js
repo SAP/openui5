@@ -517,19 +517,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	ListBase.prototype.setGrowingThreshold = function(iThreshold) {
-		this.setProperty("growingThreshold", iThreshold, true);
-		if (this._oItemNavigation) {
-			this._oItemNavigation.setPageSize(this.getGrowingThreshold());
-		}
-		return this;
-	};
-	
-	ListBase.prototype.setGrowingTriggerText = function(sText) {
-		this.setProperty("growingTriggerText", sText, true);
-		if (this._oGrowingDelegate) {
-			this._oGrowingDelegate.setTriggerText(this.getGrowingTriggerText());
-		}
-		return this;
+		return this.setProperty("growingThreshold", iThreshold, true);
 	};
 	
 	ListBase.prototype.setEnableBusyIndicator = function(bEnable) {
@@ -537,51 +525,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		if (!this.getEnableBusyIndicator()) {
 			this._hideBusyIndicator();
 		}
-		return this;
-	};
-	
-	ListBase.prototype.setBackgroundDesign = function(sBgDesign) {
-		var sBgDesignOld = this.getBackgroundDesign();
-		this.setProperty("backgroundDesign", sBgDesign, true);
-		this.$().removeClass("sapMListBG" + sBgDesignOld).addClass("sapMListBG" + this.getBackgroundDesign());
-		return this;
-	};
-	
-	ListBase.prototype.setShowSeparators = function(sSeparators) {
-		var sSeparatorsOld = this.getShowSeparators();
-		this.setProperty("showSeparators", sSeparators, true);
-		this.$("listUl").removeClass("sapMListShowSeparators" + sSeparatorsOld).addClass("sapMListShowSeparators" + this.getShowSeparators());
-		return this;
-	};
-	
-	ListBase.prototype.setIncludeItemInSelection = function(bInclude) {
-		bInclude = this.validateProperty("includeItemInSelection", bInclude);
-		if (bInclude != this.getIncludeItemInSelection()) {
-			this.setProperty("includeItemInSelection", bInclude, true);
-			this.getItems(true).forEach(function(oItem) {
-				oItem._includeItemInSelection = bInclude;
-				oItem.$().toggleClass("sapMLIBCursor", bInclude);
-			});
-		}
-		return this;
-	};
-	
-	ListBase.prototype.setInset = function(bInset) {
-		bInset = this.validateProperty("inset", bInset);
-		if (bInset != this.getInset()) {
-			this.setProperty("inset", bInset, true);
-			if (this.getDomRef()) {
-				this.$().toggleClass("sapMListInsetBG", bInset);
-				this.$("listUl").toggleClass("sapMListInset", bInset);
-				this._setSwipePosition();
-			}
-		}
-		return this;
-	};
-	
-	ListBase.prototype.setWidth = function(sWidth) {
-		this.setProperty("width", sWidth, true);
-		this.$().css("width", this.getWidth());
 		return this;
 	};
 	
@@ -599,10 +542,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 		// return no data text from resource bundle when there is no custom
 		var sNoDataText = this.getProperty("noDataText");
-		if (!sNoDataText) {
-			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			sNoDataText = oRB.getText("LIST_NO_DATA");
-		}
+		sNoDataText = sNoDataText || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_NO_DATA");
 		return sNoDataText;
 	};
 	
@@ -1503,9 +1443,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			// root element should still be tabbable
 			this._oItemNavigation.setTabIndex0();
 	
-			// TODO: Maybe we need a real paging algorithm here
-			this._oItemNavigation.setPageSize(this.getGrowingThreshold());
-	
 			// implicitly setting table mode with one column
 			// to disable up/down reaction on events of the cell
 			this._oItemNavigation.setTableMode(true, true).setColumns(1);
@@ -1519,8 +1456,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			
 			// attach to the focus event of the navigation items
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this.onNavigationItemFocus, this);
-			
 		}
+		
+		// TODO: Maybe we need a real paging algorithm here
+		this._oItemNavigation.setPageSize(this.getGrowingThreshold());
+		
 		// configure navigation root
 		var oNavigationRoot = this.getNavigationRoot();
 		this._oItemNavigation.setRootDomRef(oNavigationRoot);
