@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
+			this.bRefreshBatchGroupId = undefined;
 		}
 	});
 
@@ -63,7 +64,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		}
 
 	};
-
+	/**
+	 * @see sap.ui.model.ContextBinding.prototype.refresh
+	 * 
+	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
+	 * @param {string} [sBatchGroupId] The batch group Id for the refresh
+	 * 
+	 * @public
+	 */
+	ODataContextBinding.prototype.refresh = function(bForceUpdate, sBatchGroupId) {
+		if (typeof bForceUpdate === "string") {
+			sBatchGroupId = bForceUpdate;
+			bForceUpdate = false;
+		}
+		this.sRefreshBatchGroup = sBatchGroupId;
+		this._refresh(bForceUpdate);
+		this.sRefreshBatchGroup = undefined;
+	};
+	
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
 	 * 
@@ -71,8 +89,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @param {map} [mChangedEntities] Map of changed entities
 	 * @private
 	 */
-	ODataContextBinding.prototype.refresh = function(bForceUpdate, mChangedEntities) {
-		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
+	ODataContextBinding.prototype._refresh = function(bForceUpdate, mChangedEntities) {
+		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false, 
+			mParameters = this.mParameters,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
 		if (this.bInitial) {
@@ -96,7 +115,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			if (sResolvedPath) {
 				this.fireDataRequested();
 			}
-			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+			if (this.sRefreshBatchGroup) {
+				mParameters = jQuery.extend({},this.mParameters);
+				mParameters.batchGroupId = this.sRefreshBatchGroup;
+			} 
+			this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
 				if (that.oElementContext === oContext) {
 					if (bForceUpdate) {
 						that._fireChange();

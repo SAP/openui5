@@ -215,7 +215,7 @@
 		}
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-	
+
 	asyncTest("test oDataModel read count request with filter test", function() {
 		var fnTest = function() {
 			oModel.read("/ProductSet/$count", {
@@ -639,15 +639,17 @@
 
 	var initTable = function(mEntities) {
 		var oTable = new sap.ui.table.Table();
-		for (var i = 0; i < mEntities.categories.properties.length; i++) {
-			oTable.addColumn(new sap.ui.table.Column().setLabel(
+		jQuery.each(mEntities, function(sName, oData) {
+			for (var i = 0; i <  mEntities[sName].properties; i++) {
+				oTable.addColumn(new sap.ui.table.Column().setLabel(
 					new sap.ui.commons.Label({
-						text : mEntities.categories.properties[i]
+						text : mEntities[sName].properties[i]
 					})).setTemplate(
 					new sap.ui.commons.TextField().bindProperty("value",
-							mEntities.categories.properties[i]))
-					.setFilterProperty(mEntities.categories.properties[i]));
-		}
+							mEntities[sName].properties[i]))
+					.setFilterProperty(mEntities[sName].properties[i]));
+			}
+		});
 		return oTable;
 	}
 
@@ -3717,6 +3719,415 @@
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm");
 			start();	
 		});
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+
+	module("ODataModelV2 refresh", {
+		setup : function() {
+			initServer();
+			oModel = initModel();
+		},
+		teardown : function() {
+			oModel = undefined;
+			removeSharedMetadata();
+			stopServer();
+		}
+	});
+	
+	asyncTest("test oDataModel refresh default batchGroup", function() {
+		var iCount = 0;
+		var oContext;
+		var mEntities = [
+			{
+				categories : {
+					collection : "/VH_CategorySet",
+					properties : [ "Category" ]
+				}
+			},
+			{
+				products : {
+					collection : "/ProductSet",
+					properties : [ "ProductID" ]
+				}
+			}
+		];
+		
+		var oTable = initTable(mEntities[1]);
+		oTable.placeAt("target1");
+		oTable.setModel(oModel);
+		var oTable2 = initTable(mEntities[1]);
+		oTable2.placeAt("target1");
+		oTable2.setModel(oModel);
+		
+		var fnTest = function(){
+			spy = sinon.spy(oModel, "_submitBatchRequest");
+			oTable.bindRows({
+				path : mEntities[0].categories.collection,
+				parameters: {
+					batchGroupId: "group1"
+				}
+			});
+			oTable2.bindRows({
+				path : mEntities[1].products.collection,
+				parameters: {
+					batchGroupId: "group2"
+				}
+			});
+		};
+		
+		var test1 = function(oEventinfo) {
+			iCount++;
+			if (iCount === 2 && spy.callCount === 2) {
+				ok(true,"2 batch requests sent");
+				iCount = 0;
+				spy.restore();
+				oModel.detachBatchRequestCompleted(test1);
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.refresh();
+				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
+					iCount++;
+					if (iCount === 2 && spy.callCount === 2) {
+						ok(true,"2 for refresh batch requests sent");
+						start();
+					}				
+				});
+			}
+		}
+		oModel.attachBatchRequestCompleted(this, test1);
+		
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	
+	asyncTest("test oDataModel refresh in one batchGroup", function() {
+		var iCount = 0;
+		var oContext;
+		var mEntities = [
+			{
+				categories : {
+					collection : "/VH_CategorySet",
+					properties : [ "Category" ]
+				}
+			},
+			{
+				products : {
+					collection : "/ProductSet",
+					properties : [ "ProductID" ]
+				}
+			}
+		];
+		
+		var oTable = initTable(mEntities[1]);
+		oTable.placeAt("target1");
+		oTable.setModel(oModel);
+		var oTable2 = initTable(mEntities[1]);
+		oTable2.placeAt("target1");
+		oTable2.setModel(oModel);
+		
+		var fnTest = function(){
+			spy = sinon.spy(oModel, "_submitBatchRequest");
+			oTable.bindRows({
+				path : mEntities[0].categories.collection,
+				parameters: {
+					batchGroupId: "group1"
+				}
+			});
+			oTable2.bindRows({
+				path : mEntities[1].products.collection,
+				parameters: {
+					batchGroupId: "group2"
+				}
+			});
+		};
+		
+		var test1 = function(oEventinfo) {
+			iCount++;
+			if (iCount === 2 && spy.callCount === 2) {
+				ok(true,"2 batch requests sent");
+				spy.restore();
+				oModel.detachBatchRequestCompleted(test1);
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.refresh(true,true,"refreshGroup");
+				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
+					if (spy.callCount === 1) {
+						ok(true,"1 for refresh batch requests sent");
+						start();
+					}				
+				});
+			}
+		}
+		oModel.attachBatchRequestCompleted(this, test1);
+		
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	
+	asyncTest("test ListBindingRefresh with batchGroup of binding info", function() {
+		var iCount = 0;
+		var oContext;
+		var mEntities = [
+			{
+				categories : {
+					collection : "/VH_CategorySet",
+					properties : [ "Category" ]
+				}
+			},
+			{
+				products : {
+					collection : "/ProductSet",
+					properties : [ "ProductID" ]
+				}
+			}
+		];
+		
+		var oTable = initTable(mEntities[1]);
+		oTable.placeAt("target1");
+		oTable.setModel(oModel);
+		var oTable2 = initTable(mEntities[1]);
+		oTable2.placeAt("target1");
+		oTable2.setModel(oModel);
+		
+		var fnTest = function(){
+			spy = sinon.spy(oModel, "_submitBatchRequest");
+			oTable.bindRows({
+				path : mEntities[0].categories.collection,
+				parameters: {
+					batchGroupId: "group1"
+				}
+			});
+			oTable2.bindRows({
+				path : mEntities[1].products.collection,
+				parameters: {
+					batchGroupId: "group2"
+				}
+			});
+		};
+		
+		var test1 = function(oEventinfo) {
+			iCount++;
+			if (iCount === 2 && spy.callCount === 2) {
+				ok(true,"2 batch requests sent");
+				spy.restore();
+				oModel.detachBatchRequestCompleted(test1);
+				iCount = 0;
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oTable.getBinding("rows").refresh();
+				oTable2.getBinding("rows").refresh();
+				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
+					iCount++;
+					if (iCount === 2 && spy.callCount === 2) {
+						ok(true,"1 for refresh batch requests sent");
+						start();
+					}				
+				});
+			}
+		}
+		oModel.attachBatchRequestCompleted(this, test1);
+		
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	asyncTest("test ListBindingRefresh passing a batchGroup", function() {
+		var iCount = 0;
+		var oContext;
+		var mEntities = [
+			{
+				categories : {
+					collection : "/VH_CategorySet",
+					properties : [ "Category" ]
+				}
+			},
+			{
+				products : {
+					collection : "/ProductSet",
+					properties : [ "ProductID" ]
+				}
+			}
+		];
+		
+		var oTable = initTable(mEntities[1]);
+		oTable.placeAt("target1");
+		oTable.setModel(oModel);
+		var oTable2 = initTable(mEntities[1]);
+		oTable2.placeAt("target1");
+		oTable2.setModel(oModel);
+		
+		var fnTest = function(){
+			spy = sinon.spy(oModel, "_submitBatchRequest");
+			oTable.bindRows({
+				path : mEntities[0].categories.collection,
+				parameters: {
+					batchGroupId: "group1"
+				}
+			});
+			oTable2.bindRows({
+				path : mEntities[1].products.collection,
+				parameters: {
+					batchGroupId: "group2"
+				}
+			});
+		};
+		
+		var test1 = function(oEventinfo) {
+			iCount++;
+			if (iCount === 2 && spy.callCount === 2) {
+				ok(true,"2 batch requests sent");
+				spy.restore();
+				oModel.detachBatchRequestCompleted(test1);
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oTable.getBinding("rows").refresh("test");
+				oTable2.getBinding("rows").refresh("test");
+				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
+					if (spy.callCount === 1) {
+						ok(true,"1 for refresh batch requests sent");
+						start();
+					}				
+				});
+			}
+		}
+		oModel.attachBatchRequestCompleted(this, test1);
+		
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	
+	asyncTest("test refresh ContextBinding", function() {
+		var iCount = 0;
+		var oContext;
+		var mEntities = [
+			{
+				categories : {
+					collection : "ToContacts",
+					properties : [ "BusinessPartnerID" ]
+				}
+			},
+			{
+				products : {
+					collection : "ToLineItems",
+					properties : [ "SalesOrderID" ]
+				}
+			}
+		];
+		
+		var oTable = initTable(mEntities[1]);
+		oTable.placeAt("target1");
+		oTable.setModel(oModel);
+		var oTable2 = initTable(mEntities[1]);
+		oTable2.placeAt("target1");
+		oTable2.setModel(oModel);
+		
+		var fnTest = function(){
+			spy = sinon.spy(oModel, "_submitBatchRequest");
+			oTable.bindRows({
+				path : mEntities[0].categories.collection,
+				parameters: {
+					batchGroupId: "group1"
+				}
+			});
+			oTable.bindElement("/BusinessPartnerSet('0100000000')");
+			oTable2.bindRows({
+				path : mEntities[1].products.collection,
+				parameters: {
+					batchGroupId: "group2"
+				}
+			});
+			oTable2.bindElement("/SalesOrderSet('0500000000')");
+		};
+		
+		var test1 = function(oEventinfo) {
+			iCount++;
+			if (iCount === 3 && spy.callCount === 3) {
+				ok(true,"3 batch requests sent");
+				spy.restore();
+				oModel.detachBatchRequestCompleted(test1);
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oTable.getElementBinding().refresh();
+				oTable2.getElementBinding().refresh();
+				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
+					if (spy.callCount === 1) {
+						ok(true,"1 for refresh batch requests sent");
+						start();
+					}				
+				});
+			}
+		}
+		oModel.attachBatchRequestCompleted(this, test1);
+		
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	
+	asyncTest("test refresh ContextBinding", function() {
+		var iCount = 0;
+		var oContext;
+		var mEntities = [
+			{
+				categories : {
+					collection : "ToContacts",
+					properties : [ "BusinessPartnerID" ]
+				}
+			},
+			{
+				products : {
+					collection : "ToLineItems",
+					properties : [ "SalesOrderID" ]
+				}
+			}
+		];
+		
+		var oTable = initTable(mEntities[1]);
+		oTable.placeAt("target1");
+		oTable.setModel(oModel);
+		var oTable2 = initTable(mEntities[1]);
+		oTable2.placeAt("target1");
+		oTable2.setModel(oModel);
+		
+		var fnTest = function(){
+			spy = sinon.spy(oModel, "_submitBatchRequest");
+			oTable.bindRows({
+				path : mEntities[0].categories.collection,
+				parameters: {
+					batchGroupId: "group1"
+				}
+			});
+			oTable.bindElement("/BusinessPartnerSet('0100000000')");
+			oTable2.bindRows({
+				path : mEntities[1].products.collection,
+				parameters: {
+					batchGroupId: "group2"
+				}
+			});
+			oTable2.bindElement("/SalesOrderSet('0500000000')");
+		};
+		
+		var test1 = function(oEventinfo) {
+			iCount++;
+			if (iCount === 3 && spy.callCount === 3) {
+				ok(true,"3 batch requests sent");
+				spy.restore();
+				oModel.detachBatchRequestCompleted(test1);
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oTable.getElementBinding().refresh("1");
+				oTable2.getElementBinding().refresh("2");
+				iCount = 0;
+				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
+					iCount++;
+					if (iCount === 2 && spy.callCount === 2) {
+						ok(true,"2 refresh batch requests sent");
+						start();
+					}				
+				});
+			}
+		}
+		oModel.attachBatchRequestCompleted(this, test1);
+		
 		oModel.attachMetadataLoaded(this, function() {
 			fnTest();
 		});

@@ -3974,7 +3974,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.mEntityKey = {};
 		}
 	};
-
+	
 	/**
 	 * Refreshes the binding, check whether the model data has been changed and fire change event if this is the case. For service side models this should refetch
 	 * the data from the service. To update a control, even if no data has been changed, e.g. to reset a control after failed validation, please use the parameter
@@ -3982,13 +3982,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 *
 	 * @param {boolean}
 	 *            [bForceUpdate] Update the bound control even if no data has been changed
-	 * @param {object}
-	 *            [mChangedEntities]
-	 * @param {object}
-	 *            [mEntityTypes]
 	 * @public
 	 */
-	AnalyticalBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
+	AnalyticalBinding.prototype.refresh = function(bForceUpdate) {
+		this._refresh(bForceUpdate);
+	};
+	
+	/**
+	 * @private
+	 */
+	AnalyticalBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes) {

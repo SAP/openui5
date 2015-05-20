@@ -1196,6 +1196,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData, sBatchGroupId) {
+		if (typeof bForceUpdate === "string") {
+			sBatchGroupId = bForceUpdate;
+			bForceUpdate = false;
+			bRemoveData = false;
+		}
+		
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		if (bRemoveData) {
 			this.removeData();
@@ -1216,7 +1222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		//the refresh calls read synchronous; we use this.sRefreshBatchGroupId in this case
 		this.sRefreshBatchGroupId = sBatchGroupId;
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.refresh(bForceUpdate, mChangedEntities, mEntityTypes);
+			oBinding._refresh(bForceUpdate, mChangedEntities, mEntityTypes);
 		});
 		this.sRefreshBatchGroupId = undefined;
 	};
