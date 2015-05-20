@@ -292,7 +292,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			threshold: this._iThreshold,
 			numberOfExpandedLevels: this._autoExpandMode === TreeAutoExpandMode.Bundled ? iNumberOfExpandedLevels : undefined
 		});
-		var oRootContext = aRootContext[0];
+		var oRootContext;
+		// sanity check for the binding
+		// if aRootContexts is null -> no $select is given, because no dimensions are part of the aggregation-level
+		if (aRootContext == null) {
+			jQuery.sap.log.warning("AnalyticalTreeBindingAdapter: No Dimensions given. An artificial rootContext has be created. Please check your Table/Service definition for dimension columns!");
+		} else {
+			// if aRootContexts is empty [] -> request sent and everything is ok
+			oRootContext = aRootContext[0];
+		}
 		
 		//If we have no root contexts we cannot load any children
 		if (!oRootContext) {
