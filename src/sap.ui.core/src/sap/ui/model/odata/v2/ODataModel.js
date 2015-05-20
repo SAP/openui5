@@ -3323,16 +3323,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * Adds (a) new URL(s) to the be parsed for OData annotations, which are then merged into the annotations object
-	 * which can be retrieved by calling the getServiceAnnotations()-method.
+	 * which can be retrieved by calling the getServiceAnnotations()-method. If a $metadata url is passed the data will 
+	 * also be merged into the metadata object, which can be reached by calling the getServiceMetadata() method.
 	 *
-	 * @param {string|string[]} vUrl - Either one URL as string or an array or URL strings
-	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at least one fails to load
+	 * @param {string|sting[]} vUrl - Either one URL as string or an array or URL strings
+	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at least one fails to load. 
+	 * 					 If this promise resolves it returns the following parameters:
+	 * 					 annotations: The annotation object
+	 * 					 entitySets: An array of EntitySet objects containing the newly merged EntitySets from a $metadata requests. 
+	 * 								 the structure is the same as in the metadata object reached by the getServiceMetadata() method.
+	 * 								 For non $metadata requests the array will be empty.
+	 * 					
 	 * @protected
 	 */
 	ODataModel.prototype.addAnnotationUrl = function(vUrl) {
 		var aUrls = [].concat(vUrl),
 			aMetadataUrls = [],
 			aAnnotationUrls = [],
+			aEntitySets = [],
 			that = this;
 
 		jQuery.each(aUrls, function(i, sUrl) {
@@ -3350,10 +3358,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		return this.oMetadata._addUrl(aMetadataUrls).then(function(aParams) {
 			return Promise.all(jQuery.map(aParams, function(oParam) {
+				aEntitySets = aEntitySets.concat(oParam.entitySets);
 				return that.addAnnotationXML(oParam.metadataString);
 			}));
 		}).then(function() {
 			return that._getAnnotationParser().addUrl(aAnnotationUrls);
+		}).then(function(oParam) {
+			return {
+				annotations: oParam.annotations,
+				entitySets: aEntitySets
+			};
 		});
 	};
 

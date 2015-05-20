@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		var oRequest = this._createRequest(sUrl);
 		
 		return new Promise(function(resolve, reject) {
-			var oRequestHandle;
+			var oRequestHandle, aEntitySets = [];
 			function _handleSuccess(oMetadata, oResponse) {
 				if (!oMetadata || !oMetadata.dataServices) {
 					var mParameters = {
@@ -100,11 +100,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				}
 				
 				that.sMetadataBody = oResponse.body;
-				that.oMetadata = !that.oMetadata ? oMetadata : that.merge(that.oMetadata, oMetadata);
+				that.oMetadata = that.oMetadata ? that.merge(that.oMetadata, oMetadata, aEntitySets) : oMetadata;
 				that.oRequestHandle = null;
 				
 				var mParams = {
-						metadataString: that.sMetadataBody
+					metadataString: that.sMetadataBody,
+					entitySets: aEntitySets
 				};
 				// resolve global promise
 				that.fnResolve(mParams);
@@ -927,34 +928,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 	/**
 	 * merges two metadata objects
-	 * @param object oTarget Target metadata object
-	 * @param object oSource Source metadata object
+	 * @param {object} oTarget Target metadata object
+	 * @param {object} oSource Source metadata object
+	 * @param {array} aEntitySets An array where the entitySets (metadata objects) from the source objects will 
+	 * 								be collected and returned.
+	 * @return {object} oTarget The merged metadata object
 	 * @private
 	 */
-	ODataMetadata.prototype.merge = function(oTarget, oSource) {
+	ODataMetadata.prototype.merge = function(oTarget, oSource, aEntitySets) {
 		jQuery.each(oTarget.dataServices.schema, function(i, oTargetSchema) {
 			// find schema
 			jQuery.each(oSource.dataServices.schema, function(j, oSourceSchema) {
 				if (oSourceSchema.namespace === oTargetSchema.namespace) {
 					//merge entityTypes
-					oTargetSchema.entityType = !oTargetSchema.entityType ? [] : oTargetSchema.entityType;
-					oTargetSchema.entityType = oTargetSchema.entityType.concat(oSourceSchema.entityType);
+					if (oSourceSchema.entityType) {
+						oTargetSchema.entityType = !oTargetSchema.entityType ? [] : oTargetSchema.entityType;
+						oTargetSchema.entityType = oTargetSchema.entityType.concat(oSourceSchema.entityType);
+					}
 					//find EntityContainer if any
 					if (oTargetSchema.entityContainer && oSourceSchema.entityContainer) {
 						jQuery.each(oTargetSchema.entityContainer, function(k, oTargetContainer) {
 							//merge entitySets
 							jQuery.each(oSourceSchema.entityContainer, function(l, oSourceContainer) {
-								if (oSourceContainer.name === oTargetContainer.name) {
-									oTargetContainer.entitySet = !oTargetContainer.entitySet ? [] : oTargetContainer.entitySet;
-									oTargetContainer.entitySet = oTargetContainer.entitySet.concat(oSourceContainer.entitySet);
+								if (oSourceContainer.entitySet) {
+									if (oSourceContainer.name === oTargetContainer.name) {
+										oTargetContainer.entitySet = !oTargetContainer.entitySet ? [] : oTargetContainer.entitySet;
+										oTargetContainer.entitySet = oTargetContainer.entitySet.concat(oSourceContainer.entitySet);
+										oSourceContainer.entitySet.forEach(function(oElement) {
+											aEntitySets.push(oElement);
+										});
+									}
 								}
 							});
 						});
 					}
 					//merge Annotations
-					oTargetSchema.annotations = !oTargetSchema.annotations ? [] : oTargetSchema.annotations;
-					oTargetSchema.annotations = oTargetSchema.annotations.concat(oSourceSchema.annotations);
-					return;
+					if (oSourceSchema.annotations) {
+						oTargetSchema.annotations = !oTargetSchema.annotations ? [] : oTargetSchema.annotations;
+						oTargetSchema.annotations = oTargetSchema.annotations.concat(oSourceSchema.annotations);
+					}
 				}
 			});
 		});
