@@ -658,17 +658,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10),
 			iMaxWidth = iWindowWidth - iHPaddingToScreen,
 			iMaxHeight = iWindowHeight - iVPaddingToScreen - iContentOffset,
-			sContentWidth = this.getContentWidth(),
-			sContentHeight = this.getContentHeight(),
 			oStyles = {};
 
-		if (!bStretch) {
-			//set the size to the content
-			if (!this._oManuallySetSize) {
-				oStyles.width = sContentWidth ||  undefined;
-				oStyles.height = sContentHeight || undefined;
-			}
+		//the initial size is set in the renderer when the dom is created
 
+		if (!bStretch) {
 			//set max height and width smaller that the screen
 			oStyles["max-width"] = bMessageType ? '480px' : iMaxWidth + 'px';
 			oStyles["max-height"] = iMaxHeight + 'px';
@@ -687,6 +681,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 		if ((bStretch && !bMessageType) || (bStretchOnPhone && jQuery.device.is.iphone)) {
 			oStyles.right = oStyles.bottom = oStyles.top = oStyles.left = 0;
+			oStyles.height = oStyles.width = 'auto';
 		}
 
 		$this.css(oStyles);

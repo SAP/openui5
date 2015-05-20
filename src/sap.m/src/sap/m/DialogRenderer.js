@@ -45,9 +45,12 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 		// write the HTML into the render manager
 		// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger then the html's height (scroller)
 		// The scroller will make the initial window width smaller and in the next recalculation the maxWidth will be larger.
-		var initialSmallSize = bStretch ? '' : ' style="max-height: 0; max-width: 0;"';
+		var initialSmallSize = bStretch ? '' : 'max-height: auto; max-width: auto;';
+		var initialWidth =  oControl.getContentWidth() ? ' width: ' + oControl.getContentWidth() + ';' : '';
+		var initialHeight = oControl.getContentHeight() ? ' height: ' +  oControl.getContentHeight() + ';' : '';
+		var initialStyles = "style='" + initialSmallSize + initialWidth + initialHeight + "'";
 
-		oRm.write("<div" + initialSmallSize);
+		oRm.write('<div ' + initialStyles);
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMDialog");
 		oRm.addClass("sapMDialog-CTX");
