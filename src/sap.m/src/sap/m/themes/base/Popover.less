@@ -137,5 +137,72 @@
 	line-height: 0;
 }
 
+// Adds a hidden layer below the Popover arrow to prevent closing the Popover when clicking on the arrow. In the past
+// it was working but the area was bigger you could not click near to the arrow
+.sapMPopoverArr {
+	pointer-events: none;
+}
+
+.sapMPopoverArr:before {
+	background: rgba(0, 0, 0, .01);
+	content: "";
+	display: block;
+	pointer-events: all;
+	-ms-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+	position: absolute;
+	z-index: -1;
+}
+
+.sapMPopoverArrLeft:before,
+.sapMPopoverArrRight:before {
+	margin-top: -.75rem;
+	margin-left: .35rem;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.sapMPopoverArrRight:before {
+	margin-left: -1.85rem;
+}
+
+.sapMPopoverArrUp:before,
+.sapMPopoverArrDown:before {
+	margin-top: .25rem;
+	margin-left: -.75rem;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.sapMPopoverArrDown:before {
+	margin-top: -1.85rem;
+}
+
+.sapMPopover.sapUiSizeCompact {
+	.sapMPopoverArrLeft:before,
+	.sapMPopoverArrRight:before {
+		margin-top: -.5rem;
+		margin-left: .25rem;
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.sapMPopoverArrRight:before {
+		margin-left: -1.25rem;
+	}
+
+	.sapMPopoverArrUp:before,
+	.sapMPopoverArrDown:before {
+		width: 1rem;
+		height: 1rem;
+		margin-left: -.5rem;
+	}
+
+	.sapMPopoverArrDown:before {
+		margin-top: -1.25rem;
+	}
+}
+
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMPopover", ~"> .sapMPopoverCont > .sapMPopoverScroll");
