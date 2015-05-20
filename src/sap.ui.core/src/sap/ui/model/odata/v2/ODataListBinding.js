@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.oLastContextData = null;
 			this.bInitial = true;
 			this.mRequestHandles = {};
-			
+
 			if (mParameters && mParameters.batchGroupId) {
 				this.sBatchGroupId = mParameters.batchGroupId;
 			}
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (this.sOperationMode == OperationMode.Server) {
 			oSection = this.calculateSection(iStartIndex, iLength, iThreshold, aContexts);
 			bLoadContexts = aContexts.length !== iLength && !(this.bLengthFinal && aContexts.length >= this.iLength - iStartIndex);
-	
+
 			// check if metadata are already available
 			if (this.oModel.getServiceMetadata()) {
 				// If rows are missing send a request
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				this.loadData();
 				aContexts.dataRequested = true;
 			}
-		}	
+		}
 
 		if (this.bRefresh) {
 			// if refreshing and length is 0, pretend a request to be fired to make a refresh with
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 		return aContexts;
 	};
-	
+
 	ODataListBinding.prototype.getCurrentContexts = function() {
 		return this.aLastContexts || [];
 	};
@@ -280,7 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			}
 			iSectionLength = iThreshold;
 		}
-		
+
 		// prevent iSectionStartIndex to become negative
 		iSectionStartIndex = Math.max(iSectionStartIndex, 0);
 
@@ -342,7 +342,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 						this.iLength = oRef.length;
 						this.bLengthFinal = true;
 						this._fireChange();
-					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){ 
+					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){
 						// if path does not resolve, or data is known to be null (e.g. expanded list)
 						this.aKeys = [];
 						this.iLength = 0;
@@ -450,7 +450,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				that.iLength = that.aKeys.length;
 				that.bLengthFinal = true;
 			}
-			
+
 			delete that.mRequestHandles[sPath];
 			that.bPendingRequest = false;
 
@@ -465,7 +465,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			});
 		}
 
-		function fnError(oError, bAborted) {
+		function fnError(oError) {
+			var bAborted = oError.statusCode == 0;
 			delete that.mRequestHandles[sPath];
 			that.bPendingRequest = false;
 			if (that.bFaultTolerant) {
@@ -513,7 +514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		}
 
 	};
-	
+
 	/**
 	 * @see sap.ui.model.ListBinding.prototype.isLengthFinal
 	 *
@@ -521,18 +522,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	ODataListBinding.prototype.isLengthFinal = function() {
 		return this.bLengthFinal;
 	};
-	
+
 	/**
 	 * Return the length of the list.
-	 * 
-	 * In case the final length is unknown (e.g. when searching on a large dataset), this will 
-	 * return an estimated length. 
+	 *
+	 * In case the final length is unknown (e.g. when searching on a large dataset), this will
+	 * return an estimated length.
 	 *
 	 * @return {number} the length
 	 * @public
 	 */
 	ODataListBinding.prototype.getLength = function() {
-		// If length is not final and larger than zero, add some additional length to enable 
+		// If length is not final and larger than zero, add some additional length to enable
 		// scrolling/paging for controls that only do this if more items are available
 		if (this.bLengthFinal || this.iLength == 0) {
 			return this.iLength;
@@ -785,7 +786,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.bPendingRequest = false;
 		}
 	};
-	
+
 	/**
 	 * Get download URL
 	 * @param {string} sFormat The required format for the download
@@ -794,7 +795,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	ODataListBinding.prototype.getDownloadUrl = function(sFormat) {
 		var aParams = [],
 			sPath;
-		
+
 		if (sFormat) {
 			aParams.push("$format=" + encodeURIComponent(sFormat));
 		}
@@ -807,7 +808,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (this.sCustomParams) {
 			aParams.push(this.sCustomParams);
 		}
-		
+
 		sPath = this.oModel.resolve(this.sPath,this.oContext);
 
 		if (sPath) {
@@ -831,11 +832,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		}
 
 		this.aSorters = aSorters;
-		
+
 		if (this.sOperationMode == OperationMode.Server) {
 			this.createSortParams(aSorters);
 		}
-		
+
 		if (!this.bInitial) {
 			if (this.sOperationMode == OperationMode.Server) {
 				// Only reset the keys, length usually doesn't change when sorting
@@ -851,7 +852,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				this._fireChange({reason: ChangeReason.Sort});
 			}
 		}
-		
+
 		if (bReturnSuccess) {
 			return bSuccess;
 		} else {
@@ -862,13 +863,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	ODataListBinding.prototype.applySort = function() {
 		var that = this,
 			oContext;
-		
+
 		this.aKeys = SorterProcessor.apply(this.aKeys, this.aSorters, function(vRef, sPath) {
 			oContext = that.oModel.getContext('/' + vRef);
 			return that.oModel.getProperty(sPath, oContext);
 		});
 	};
-	
+
 
 	ODataListBinding.prototype.createSortParams = function(aSorters) {
 		this.sSortParams = ODataUtils.createSortParams(aSorters);
@@ -918,7 +919,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (this.sOperationMode == OperationMode.Server) {
 			this.createFilterParams(aFilters);
 		}
-		
+
 		if (!this.bInitial) {
 			if (this.sOperationMode == OperationMode.Server) {
 				this.resetData();
@@ -938,20 +939,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				this._fireChange({reason: ChangeReason.Filter});
 			}
 		}
-			
+
 		if (bReturnSuccess) {
 			return bSuccess;
 		} else {
 			return this;
 		}
 	};
-	
+
 	ODataListBinding.prototype.applyFilter = function() {
 		var that = this,
 			oContext,
 			aFilters = this.aFilters.concat(this.aApplicationFilters),
 			aConvertedFilters = [];
-		
+
 		jQuery.each(aFilters, function(i, oFilter) {
 			if (oFilter instanceof sap.ui.model.odata.Filter) {
 				aConvertedFilters.push(oFilter.convert());
@@ -959,7 +960,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				aConvertedFilters.push(oFilter);
 			}
 		});
-		
+
 		this.aKeys = FilterProcessor.apply(this.aAllKeys, aConvertedFilters, function(vRef, sPath) {
 			oContext = that.oModel.getContext('/' + vRef);
 			return that.oModel.getProperty(sPath, oContext);
