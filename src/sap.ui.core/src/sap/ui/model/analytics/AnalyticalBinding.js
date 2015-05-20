@@ -784,6 +784,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns) {
+		if (!this.oModel.oMetadata || !this.oModel.oMetadata.isLoaded() || this.bInitial) {
+			this.aInitialAnalyticalInfo = aColumns;
+			return;
+		}
+		
 		// parameter is an array with elements whose structure is defined by sap.ui.analytics.model.AnalyticalTable.prototype._getColumnInformation()
 		var oPreviousDimensionDetailsSet = this.oDimensionDetailsSet;
 		this.mAnalyticalInfoByProperty = {}; // enable associative access to analytical update information
