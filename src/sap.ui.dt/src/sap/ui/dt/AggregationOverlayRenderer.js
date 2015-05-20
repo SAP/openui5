@@ -23,39 +23,17 @@ sap.ui.define(['sap/ui/dt/DOMUtil'],
 	 * @param {sap.ui.dt.Overlay} oOverlay An object representation of the control that should be rendered.
 	 */
 	AggregationOverlayRenderer.render = function(oRm, oAggregationOverlay) {
-		var sAggregationName = oAggregationOverlay.getAggregationName();
-		var oElementOverlay = oAggregationOverlay.getParent();
-		var mElementOffset = oElementOverlay ? oElementOverlay.getOffset() : null;
-		var oAggregationGeometry = oAggregationOverlay.getGeometry();
+		if (oAggregationOverlay.getDomRef()) {
+			this._triggerOnAfterRenderingWithoutRendering(oRm, oAggregationOverlay);
 
-		if (!mElementOffset || !oAggregationGeometry) {
 			return;
 		}
 
 		oRm.addClass("sapUiDtAggregationOverlay");
 		oRm.write("<div");
 		oRm.writeControlData(oAggregationOverlay);
-		oRm.write("data-sap-ui-dt-aggregation='" + sAggregationName + "'");
+		oRm.write("data-sap-ui-dt-aggregation='" + oAggregationOverlay.getAggregationName() + "'");
 		oRm.writeClasses();
-
-		var mSize = oAggregationGeometry.size;
-		var mPosition = DOMUtil.getOffsetFromParent(oAggregationGeometry.position, mElementOffset);
-		oAggregationOverlay.setOffset({left : oAggregationGeometry.position.left, top: oAggregationGeometry.position.top});
-
-		var iZIndex = DOMUtil.getZIndex(oAggregationGeometry.domRef);
-		var oOverflows = DOMUtil.getOverflows(oAggregationGeometry.domRef);
-
-		oRm.addStyle("width", mSize.width + "px");
-		oRm.addStyle("height", mSize.height + "px");
-		oRm.addStyle("top", mPosition.top + "px");
-		oRm.addStyle("left", mPosition.left + "px");
-		if (iZIndex) {
-			oRm.addStyle("z-index", iZIndex);
-		}
-		if (oOverflows) {
-			oRm.addStyle("overflow-x", oOverflows.overflowX);
-			oRm.addStyle("overflow-y", oOverflows.overflowY);	
-		}
 
 		oRm.writeStyles();
 		oRm.write(">");
@@ -70,6 +48,11 @@ sap.ui.define(['sap/ui/dt/DOMUtil'],
 		aChildren.forEach(function(oOverlay) {
 			oRm.renderControl(oOverlay);
 		});
+	};
+
+	AggregationOverlayRenderer._triggerOnAfterRenderingWithoutRendering = function(oRm, oAggregationOverlay) {
+		oRm.write("");
+		this._renderChildOverlays(oRm, oAggregationOverlay);
 	};
 
 	return AggregationOverlayRenderer;

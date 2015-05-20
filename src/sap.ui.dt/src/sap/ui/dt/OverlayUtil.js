@@ -5,9 +5,10 @@
 // Provides object sap.ui.dt.OverlayUtil.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/dt/OverlayRegistry'	
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/ElementUtil'
 ],
-function(jQuery, OverlayRegistry) {
+function(jQuery, OverlayRegistry, ElementUtil) {
 	"use strict";
 
 	/**
@@ -28,7 +29,7 @@ function(jQuery, OverlayRegistry) {
 
 	var OverlayUtil = {};
 
-	OverlayUtil.getClosestOverlay = function(oElement) {
+	OverlayUtil.getClosestOverlayFor = function(oElement) {
 		var oParent = oElement.getParent();
 		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
 		while (oParent && !oParentOverlay) {
@@ -39,5 +40,12 @@ function(jQuery, OverlayRegistry) {
 		return oParentOverlay;
 	};
 
+	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
+		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElementInstance(), sType)) {
+			oOverlay = oOverlay.getParentOverlay();
+		}
+
+		return oOverlay;
+	};
 	return OverlayUtil;
 }, /* bExport= */ true);

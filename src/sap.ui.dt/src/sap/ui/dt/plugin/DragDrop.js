@@ -72,6 +72,8 @@ function(Plugin, DOMUtil) {
 	DragDrop.prototype.registerOverlay = function(oOverlay) {
 		oOverlay.addEventDelegate(this._oOverlayDelegate, this);
 
+		oOverlay.attachEvent("draggableChange", this._onDraggableChange, this);
+
 		oOverlay.attachBrowserEvent("dragstart", this._onDragStart, this);
 		oOverlay.attachBrowserEvent("dragend", this._onDragEnd, this);
 		oOverlay.attachBrowserEvent("drag", this._onDrag, this);
@@ -106,6 +108,11 @@ function(Plugin, DOMUtil) {
 	DragDrop.prototype.deregisterAggregationOverlay = function(oAggregationOverlay) {
 		oAggregationOverlay.detachDroppableChange(this._onAggregationDroppableChange, this);
 	};
+
+	/*
+	 * @protected
+	 */
+	DragDrop.prototype.onDraggableChange = function(oEvent) { };
 
 	/*
 	 * @protected
@@ -162,6 +169,14 @@ function(Plugin, DOMUtil) {
 		if (oOverlay.isDraggable()) {
 			DOMUtil.setDraggable(oOverlay.$(), true);
 		}
+	};
+
+	/*
+	 * @private
+	 */
+	DragDrop.prototype._onDraggableChange = function(oEvent) {
+		var oOverlay = oEvent.getSource();
+		this.onDraggableChange(oOverlay, oEvent);
 	};
 
 	/*

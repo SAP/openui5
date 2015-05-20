@@ -143,6 +143,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		this._addToOverlayContainer();	
 	};
 
+
 	/** 
 	 * @private
 	 */
@@ -162,8 +163,77 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			Overlay.removeOverlayContainer();
 		}
 
+		delete this._oDomRef;
 		delete this._elementId;
 		this.fireDestroyed();
+	};
+
+	/** 
+	 * @override
+	 */
+	Overlay.prototype.getDomRef = function() {
+		return this._oDomRef || Control.prototype.getDomRef.apply(this, arguments);
+	};
+
+	/** 
+	 * @override
+	 */
+	Overlay.prototype.onAfterRendering = function() {
+		this._oDomRef = this.getDomRef();
+
+		if (this._oDomRef) {
+			this._updateDom();
+		}
+
+	};
+
+	/** 
+	 * @private
+	 */
+	Overlay.prototype._updateDom = function() {
+		var oElement = this.getElementInstance();
+
+		var oElementGeometry = DOMUtil.getElementGeometry(oElement);
+
+		var oParent = this.getParent();
+		if (oParent) {
+			if (oParent.getDomRef) {
+				this.$().appendTo(oParent.getDomRef());
+			} else {
+				this.$().appendTo(oParent.getRootNode());
+			}
+		}
+		if (oElementGeometry) {
+			this.$().show();
+			this._applyStyles(oElementGeometry);
+		} else {
+			// we should always be in DOM to make sure, that drop events (dragend) will be fired even if the overlay isn't visible anymore
+			this.$().hide();
+		}
+		
+	};
+
+
+	Overlay.prototype._applyStyles = function(oElementGeometry) {
+		var mSize = oElementGeometry.size;
+		var oOverlayParent = this.getParent();
+		var mParentOffset = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.getOffset() : null;
+		var mPosition = DOMUtil.getOffsetFromParent(oElementGeometry.position, mParentOffset);
+		this.setOffset({left : oElementGeometry.position.left, top: oElementGeometry.position.top});
+
+		var iZIndex = DOMUtil.getZIndex(oElementGeometry.domRef);
+
+		var $overlay = this.$();
+
+		$overlay.css("width", mSize.width + "px");
+		$overlay.css("height", mSize.height + "px");
+		$overlay.css("top", mPosition.top + "px");
+		$overlay.css("left", mPosition.left + "px");
+		if (iZIndex) {
+			$overlay.css("z-index", iZIndex);
+		}
+
+		// TODO : addStyleClass method
 	};
 
 	/** 
@@ -191,7 +261,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		OverlayRegistry.register(oElement, this);
 		this._observe(oElement);
 
-		var oParentOverlay = OverlayUtil.getClosestOverlay(oElement);
+		var oParentOverlay = OverlayUtil.getClosestOverlayFor(oElement);
 		if (oParentOverlay) {
 			oParentOverlay.sync();
 		}
@@ -309,6 +379,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			});
 		}
 		this._oObserver.attachModified(this._onElementModified, this);
+		this._oObserver.attachDestroyed(this._onElementDestroyed, this);
 	};
 
 	/**
@@ -427,7 +498,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 * @public
 	 */
 	Overlay.prototype.getParentOverlay = function() {
-		var oParentAggregationOverlay = this.getParent();
+		var oParentAggregationOverlay = this.getParentAggregationOverlay();
 		if (oParentAggregationOverlay) { 
 			return oParentAggregationOverlay.getParent();
 		}
@@ -437,7 +508,8 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 * @public
 	 */
 	Overlay.prototype.getParentAggregationOverlay = function() {
-		return this.getParent();
+		var oParentAggregationOverlay = this.getParent();
+		return oParentAggregationOverlay instanceof sap.ui.dt.AggregationOverlay ? oParentAggregationOverlay : null;
 	};
 
 	return Overlay;

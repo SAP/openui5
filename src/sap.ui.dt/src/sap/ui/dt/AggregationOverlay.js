@@ -81,6 +81,84 @@ function(jQuery, Control, DOMUtil, ElementUtil) {
 		this.removeAllChildren();
 		this._mGeometry = null;
 		this.setOffset(null);
+
+		delete this._oDomRef;
+	};	
+
+	/** 
+	 * @override
+	 */
+	AggregationOverlay.prototype.getDomRef = function() {
+		return this._oDomRef || Control.prototype.getDomRef.apply(this, arguments);
+	};
+
+	/** 
+	 * @protected
+	 */
+	AggregationOverlay.prototype.onBeforeRendering = function() {
+		this._mGeometry = null;
+	};
+
+	/** 
+	 * @protected
+	 */
+	AggregationOverlay.prototype.onAfterRendering = function() {
+		this._oDomRef = this.getDomRef();
+		if (this._oDomRef) {
+			this._updateDom();
+		}
+	};
+
+	/** 
+	 * @private
+	 */
+	AggregationOverlay.prototype._updateDom = function() {
+		var oAggregationGeometry = this.getGeometry();
+
+		var oParent = this.getParent();
+		if (oParent) {
+			if (oParent.getDomRef) {
+				this.$().appendTo(oParent.getDomRef());
+			} else {
+				this.$().appendTo(oParent.getRootNode());
+			}
+		}		
+		if (oAggregationGeometry) {
+			this.$().show();
+			this._applyStyles(oAggregationGeometry);
+		} else {
+			this.$().hide();
+		}
+
+		this._attachScrollHandler();
+	};
+
+	AggregationOverlay.prototype._applyStyles = function(oAggregationGeometry) {
+		var oElementOverlay = this.getParent();
+		var mElementOffset = oElementOverlay ? oElementOverlay.getOffset() : null;
+
+		var mSize = oAggregationGeometry.size;
+		var mPosition = DOMUtil.getOffsetFromParent(oAggregationGeometry.position, mElementOffset);
+		this.setOffset({left : oAggregationGeometry.position.left, top: oAggregationGeometry.position.top});
+
+		var iZIndex = DOMUtil.getZIndex(oAggregationGeometry.domRef);
+		var oOverflows = DOMUtil.getOverflows(oAggregationGeometry.domRef);
+
+		var $aggregation = this.$();
+
+		$aggregation.css("width", mSize.width + "px");
+		$aggregation.css("height", mSize.height + "px");
+		$aggregation.css("top", mPosition.top + "px");
+		$aggregation.css("left", mPosition.left + "px");
+		if (iZIndex) {
+			$aggregation.css("z-index", iZIndex);
+		}
+		if (oOverflows) {
+			$aggregation.css("overflow-x", oOverflows.overflowX);
+			$aggregation.css("overflow-y", oOverflows.overflowY);	
+		}
+
+		// TODO : addStyleClass method
 	};
 
 	/** 
@@ -116,26 +194,19 @@ function(jQuery, Control, DOMUtil, ElementUtil) {
 	};
 
 	/** 
-	 * @protected
-	 */
-	AggregationOverlay.prototype.onBeforeRendering = function() {
-		this._mGeometry = null;
-	};
-
-	/** 
-	 * @protected
-	 */
-	AggregationOverlay.prototype.onAfterRendering = function() {
-		this._attachScrollHandler();
-	};
-
-	/** 
 	 * @private
 	 */
 	AggregationOverlay.prototype._attachScrollHandler = function() {
-		var oAggregationDomRef = this.getGeometry().domRef;
+		// TODO : what if the aggregation dom ref was changed?
+		if (this._scrollHandlerAttached) {
+			return;
+		}
+
+		var oGeometry = this.getGeometry();
+		var oAggregationDomRef = oGeometry ? oGeometry.domRef : null;
 		if (oAggregationDomRef) {
 			var $this = this.$();
+			this._scrollHandlerAttached = true;
 			$this.get(0).addEventListener("scroll", function(oEvent) {
 				jQuery(oAggregationDomRef).scrollTop($this.scrollTop());
 				jQuery(oAggregationDomRef).scrollLeft($this.scrollLeft());
@@ -165,6 +236,7 @@ function(jQuery, Control, DOMUtil, ElementUtil) {
 			return oElementOverlay.getElementInstance();
 		}
 	};	
+
 	/** 
 	 * @public
 	 */

@@ -49,12 +49,13 @@ function(DragDrop, ElementUtil) {
 		}
 	});
 
-	/*
+	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.registerOverlay = function(oOverlay) {
 		DragDrop.prototype.registerOverlay.apply(this, arguments);
-		if (this._isOfDraggableType(oOverlay.getElementInstance())) {
+		var oElement = oOverlay.getElementInstance();
+		if (this.isDraggableType(oElement) && this.checkDraggable(oOverlay)) {
 			oOverlay.setDraggable(true);
 		}
 
@@ -63,19 +64,32 @@ function(DragDrop, ElementUtil) {
 		}
 	};
 
-	ControlDragDrop.getDraggableTypes = function() {
+	/**
+	 * @private
+	 */
+	ControlDragDrop.prototype._getDraggableTypes = function() {
 		return this.getProperty("draggableTypes") || [];
 	};
 
-	ControlDragDrop.prototype._isOfDraggableType = function(oElement) {
-		var aDraggableTypes = this.getDraggableTypes();
+	/**
+	 * @public
+	 */
+	ControlDragDrop.prototype.isDraggableType = function(oElement) {
+		var aDraggableTypes = this._getDraggableTypes();
 
 		return aDraggableTypes.some(function(sType) {
-			return  ElementUtil.isInstance(oElement, sType);
+			return  ElementUtil.isInstanceOf(oElement, sType);
 		});
 	};
 
-	/*
+	/**
+	 * @protected
+	 */
+	ControlDragDrop.prototype.checkDraggable = function(oOverlay) {
+		return true;
+	};
+
+	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.deregisterOverlay = function(oOverlay) {
@@ -87,24 +101,36 @@ function(DragDrop, ElementUtil) {
 		}
 	};
 
-	/*
+	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragStart = function(oOverlay) {
-		this._oDraggedOverlay = oOverlay;
+		// TODO : register on draggable
+		if (oOverlay.isDraggable()) {
+			this._oDraggedOverlay = oOverlay;
 
-		this._activateAllValidDroppables();
+			this._activateAllValidDroppables();
+			
+		}
 	};
 
-	/*
+	/**
+	 * @public
+	 */
+	ControlDragDrop.prototype.getDraggedOverlay = function(oOverlay) {
+		return this._oDraggedOverlay;
+	};
+
+	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
+		this._deactivateAllDroppables();
 		delete this._oDraggedOverlay;
 	};
 
 
-	/*
+	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
@@ -113,7 +139,7 @@ function(DragDrop, ElementUtil) {
 		}
 	};
 
-	/*
+	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay) {
@@ -129,46 +155,56 @@ function(DragDrop, ElementUtil) {
 	};
 
 	/*
-	 * @override
-	 */
-	ControlDragDrop.prototype.onAggregationDrop = function(oAggregationOverlay) {
-		this._deactivateAllDroppables();
-	};
-	/*
 	 * @private
 	 */
 	ControlDragDrop.prototype._activateAllValidDroppables = function() {
 		this._iterateAllAggregations(this._activateValidDroppable.bind(this));
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	ControlDragDrop.prototype._activateValidDroppable = function(oAggregationOverlay) {
-		var oparentElement = oAggregationOverlay.getElementInstance();
-		var oDraggedElement = this._oDraggedOverlay.getElementInstance();
-		var sAggregationName = oAggregationOverlay.getAggregationName();
-
-		if (ElementUtil.isValidForAggregation(oparentElement, sAggregationName, oDraggedElement)) {
+		if (this.checkDroppable(oAggregationOverlay)) {
 			oAggregationOverlay.setDroppable(true);
 		}
 	};
 
-	/*
+	/**
+	 * @protected
+	 */
+	ControlDragDrop.prototype.checkDroppable = function(oAggregationOverlay) {
+		var oParentElement = oAggregationOverlay.getElementInstance();
+		var oDraggedElement = this._oDraggedOverlay.getElementInstance();
+		var sAggregationName = oAggregationOverlay.getAggregationName();
+
+		if (ElementUtil.isValidForAggregation(oParentElement, sAggregationName, oDraggedElement)) {
+			return true;
+		}
+	};
+
+	/**
 	 * @private
 	 */
 	ControlDragDrop.prototype._deactivateDroppable = function(oAggregationOverlay) {
 		oAggregationOverlay.setDroppable(false);
 	};
 
-	/*
+	/**
+	 * @private
+	 */
+	ControlDragDrop.prototype._activateValidDroppablesFor = function(oOverlay) {
+		this._iterateOverlayAggregations(oOverlay, this._activateValidDroppable.bind(this));
+	};
+
+	/**
 	 * @private
 	 */
 	ControlDragDrop.prototype._deactivateDroppablesFor = function(oOverlay) {
 		this._iterateOverlayAggregations(oOverlay, this._deactivateDroppable.bind(this));
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	ControlDragDrop.prototype._deactivateAllDroppables = function() {
@@ -177,7 +213,7 @@ function(DragDrop, ElementUtil) {
 		});
 	};
 	
-	/*
+	/**
 	 * @private
 	 */
 	ControlDragDrop.prototype._iterateAllAggregations = function(fnStep) {	
@@ -190,7 +226,7 @@ function(DragDrop, ElementUtil) {
 		});
 	};
 	
-	/*
+	/**
 	 * @private
 	 */
 	ControlDragDrop.prototype._iterateOverlayAggregations = function(oOverlay, fnStep) {	
@@ -200,7 +236,7 @@ function(DragDrop, ElementUtil) {
 		});
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	ControlDragDrop.prototype._repositionOn = function(oTargetOverlay) {

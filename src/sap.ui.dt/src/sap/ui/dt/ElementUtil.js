@@ -127,7 +127,7 @@ function(jQuery) {
 		var bFiltered = false;
 
 		aType.forEach(function(sType) {
-			bFiltered = that.isInstance(oControl, sType);
+			bFiltered = that.isInstanceOf(oControl, sType);
 			if (bFiltered) {
 				return false;
 			}
@@ -192,10 +192,10 @@ function(jQuery) {
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
 
 		// TODO : test altTypes
-		return this.isInstance(oElement, oAggregationMetadata.type);
+		return this.isInstanceOf(oElement, oAggregationMetadata.type);
 	};
 
-	ElementUtil.isInstance = function(oElement, sType) {
+	ElementUtil.isInstanceOf = function(oElement, sType) {
 		var oInstance = jQuery.sap.getObject(sType);
 		if (typeof oInstance === "function") {
 			return oElement instanceof oInstance;
