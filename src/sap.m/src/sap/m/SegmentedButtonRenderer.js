@@ -28,6 +28,17 @@ sap.ui.define(['jquery.sap.global'],
 			sButtonTextDirection,
 			i = 0;
 
+		// Select representation mockup
+		if (oControl._bInOverflow) {
+			oRM.write("<div");
+			oRM.writeControlData(oControl);
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.renderControl(oControl.getAggregation("_select"));
+			oRM.write("</div>");
+			return;
+		}
+
 		// write the HTML into the render manager
 		oRM.write("<ul");
 		oRM.addClass("sapMSegB");
