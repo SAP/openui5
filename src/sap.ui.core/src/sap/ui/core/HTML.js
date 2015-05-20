@@ -179,6 +179,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		if (bSanitizeContent) {
 			this.setContent(this.getContent());
 		}
+		return this;
 	};
 	
 	HTML.prototype.onBeforeRendering = function() {
