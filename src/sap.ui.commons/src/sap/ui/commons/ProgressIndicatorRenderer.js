@@ -23,9 +23,12 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ProgressIndicatorRenderer.render = function (oRm, oProgressIndicator) {
-		var widthControl = oProgressIndicator.getWidth();
-		var widthBar = oProgressIndicator.getPercentValue();
-		var widthBorder;
+		var widthControl = oProgressIndicator.getWidth(),
+			widthBar = oProgressIndicator.getPercentValue(),
+			tooltip = oProgressIndicator.getTooltip_AsString(),
+			displayValue = oProgressIndicator.getDisplayValue(),
+			widthBorder;
+
 		oProgressIndicator.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (widthBar > 100) {
@@ -47,15 +50,16 @@ sap.ui.define(['jquery.sap.global'],
 			});
 		}
 
-		if (oProgressIndicator.getWidth() && oProgressIndicator.getWidth() !== '') {
-			oRm.writeAttribute('style', 'height: 16px; width:' + widthControl + ';');
+		if (displayValue) {
+			oRm.writeAttributeEscaped('aria-valuetext', displayValue);
 		}
 
-		if (oProgressIndicator.getTooltip_AsString()) {
-			oRm.writeAttributeEscaped('title',
-				oProgressIndicator.getDisplayValue() + '- ' + oProgressIndicator.getTooltip_AsString());
-		} else {
-			oRm.writeAttributeEscaped('title', oProgressIndicator.getDisplayValue());
+		if (tooltip) {
+			oRm.writeAttributeEscaped('title', tooltip);
+		}
+
+		if (oProgressIndicator.getWidth() && oProgressIndicator.getWidth() !== '') {
+			oRm.writeAttribute('style', 'height: 16px; width:' + widthControl + ';');
 		}
 
 		oRm.addClass('sapUiProgInd');
