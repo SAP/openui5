@@ -566,7 +566,7 @@
 				"name" : "Personalization Dialog",
 				"category" : "Popup",
 				"since" : "1.26",
-				"samples" : [ "sap.m.sample.P13nDialog" ]
+				"samples" : [ "sap.m.sample.P13nDialog", "sap.m.sample.P13nDialogWithCustomPanel"]
 			},
 			{
 				"id" : "sap.m.MultiInput",
@@ -1160,6 +1160,11 @@
 				"id": "sap.m.sample.P13nDialog",
 				"name": "P13nDialog stand-alone",
 				"description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
+			},
+			{
+				"id": "sap.m.sample.P13nDialogWithCustomPanel",
+				"name": "P13nDialog stand-alone with custom panel",
+				"description": "Dialog for personalization of column order and their visibility and custom panel."
 			},
 			{
 				"id": "sap.m.sample.MultiInput",
