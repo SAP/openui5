@@ -189,6 +189,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// check if target which started the event is the same
 			if ((!!this._target) && (this._target === oEvent.target)) {
+
+				// note: on mobile, the press event should be fired after the focus is on the button
+				if (oEvent.originalEvent && oEvent.originalEvent.type === "touchend") {
+					this.focus();
+				}
+
 				this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
 				this.firePress({/* no parameters */});
 			}
