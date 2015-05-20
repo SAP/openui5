@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						};
 					}
 
-					if (mOptions.hasOwnProperty("details")) {
+					if (mOptions && mOptions.hasOwnProperty("details")) {
 						mDefaults.icon = sap.m.MessageBox.Icon.INFORMATION;
 						mDefaults.actions = [Action.OK, Action.CANCEL];
 						mOptions = jQuery.extend({}, mDefaults, mOptions);

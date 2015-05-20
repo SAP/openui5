@@ -70,6 +70,14 @@
 			oMessageBox.destroy();
 		});
 
+		test("simple show usage", function () {
+			sap.m.MessageBox.show(sMessageText);
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
+			ok(oMessageBox, "Dialog should be created");
+			oMessageBox.destroy();
+		});
+
 		test("show error", function () {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sap.m.MessageBox.error(sMessageText, {

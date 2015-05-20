@@ -531,6 +531,19 @@
 			}
 		}));
 
+		oVL.addContent(new sap.m.Text("text5", {
+			text: "\n Simply usage"
+			})
+		);
+
+		oVL.addContent(new sap.m.Button({
+			text: "Simple show",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.show("Hello curly { brace");
+			}
+		}));
+
 		app.addPage(page1).placeAt("content");
 	</script>
 
