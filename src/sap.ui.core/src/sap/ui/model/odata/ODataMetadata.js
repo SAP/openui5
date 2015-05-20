@@ -927,16 +927,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					//merge entityTypes
 					oTargetSchema.entityType = !oTargetSchema.entityType ? [] : oTargetSchema.entityType;
 					oTargetSchema.entityType = oTargetSchema.entityType.concat(oSourceSchema.entityType);
-					//find EntityContainer
-					jQuery.each(oTargetSchema.entityContainer, function(k, oTargetContainer) {
-						//merge entitySets
-						jQuery.each(oSourceSchema.entityContainer, function(l, oSourceContainer) {
-							if (oSourceContainer.name === oTargetContainer.name) {
-								oTargetContainer.entitySet = !oTargetContainer.entitySet ? [] : oTargetContainer.entitySet;
-								oTargetContainer.entitySet = oTargetContainer.entitySet.concat(oSourceContainer.entitySet);
-							}
+					//find EntityContainer if any
+					if (oTargetSchema.entityContainer && oSourceSchema.entityContainer) {
+						jQuery.each(oTargetSchema.entityContainer, function(k, oTargetContainer) {
+							//merge entitySets
+							jQuery.each(oSourceSchema.entityContainer, function(l, oSourceContainer) {
+								if (oSourceContainer.name === oTargetContainer.name) {
+									oTargetContainer.entitySet = !oTargetContainer.entitySet ? [] : oTargetContainer.entitySet;
+									oTargetContainer.entitySet = oTargetContainer.entitySet.concat(oSourceContainer.entitySet);
+								}
+							});
 						});
-					});
+					}
 					//merge Annotations
 					oTargetSchema.annotations = !oTargetSchema.annotations ? [] : oTargetSchema.annotations;
 					oTargetSchema.annotations = oTargetSchema.annotations.concat(oSourceSchema.annotations);
