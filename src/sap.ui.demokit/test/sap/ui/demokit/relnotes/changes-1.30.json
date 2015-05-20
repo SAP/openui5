@@ -22,6 +22,13 @@
         "type": "FIX",
         "text": "Icon Explorer: Added footer for favorites list in edit mode",
         "references": []
+      },
+      {
+        "id": "453a5ed3834fc34eb13e30c9b8f51a644ebe04a3",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored App: Fixed CSS paths (Component includes)",
+        "references": []
       }
     ]
   }

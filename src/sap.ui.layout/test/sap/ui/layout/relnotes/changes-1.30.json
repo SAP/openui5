@@ -43,6 +43,27 @@
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: keyboard navigation issues",
         "references": []
+      },
+      {
+        "id": "17d7a6280708b3340f56d4c4b1c1ed52228e5c9a",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.layout.Grid: Added new XL breakpoint",
+        "references": []
+      },
+      {
+        "id": "d632d7a5649729bc7cd69d8fc0600c89d7597b14",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.for.Form: Fixed changing order of FormContainer",
+        "references": []
+      },
+      {
+        "id": "8ccdb3d0119cf91bff89b6cffbf61814cced86da",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
+        "references": []
       }
     ]
   }
