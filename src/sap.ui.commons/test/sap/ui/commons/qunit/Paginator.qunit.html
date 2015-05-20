@@ -16,6 +16,7 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script language="javascript">
@@ -201,8 +202,40 @@
 	  		start();
 			}, 600);
 		});
-		
-		
+
+		QUnit.module("Keyboard handling", {
+			setup: function() {
+				// arrange
+				this.oPaginator = new sap.ui.commons.Paginator({
+					currentPage: 1,
+					numberOfPages: 100
+				});
+
+				this.oPaginator.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			getPageLink: function(oPaginator, iIndex) {
+				return oPaginator.$("a--" + iIndex);
+			},
+			teardown: function() {
+				// cleanup
+				this.oPaginator.destroy();
+			}
+		});
+
+		QUnit.test("Tab chain", function(assert) {
+			var oFirstPageLink = this.getPageLink(this.oPaginator, 1),
+				oSecondPageLink = this.getPageLink(this.oPaginator, 2);
+
+			oFirstPageLink.focus();
+			sap.ui.test.qunit.triggerKeydown(oFirstPageLink[0], jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+			assert.strictEqual(document.activeElement, oSecondPageLink[0]);
+
+			sap.ui.test.qunit.triggerKeydown(oSecondPageLink[0], jQuery.sap.KeyCodes.ARROW_LEFT);
+
+			assert.strictEqual(document.activeElement, oFirstPageLink[0]);
+		});
 
 		</script>
 	</head>
