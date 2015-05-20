@@ -213,6 +213,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @protected
 	 */
 	DataSetSimpleView.prototype.updateView = function(aDiff) {
+		//if view is not rendered no Dom update is necessary
+		if (!this.getDomRef()) {
+			return;
+		}
 		var rm = sap.ui.getCore().createRenderManager(),
 			iLastLength = this.items.length;
 			
