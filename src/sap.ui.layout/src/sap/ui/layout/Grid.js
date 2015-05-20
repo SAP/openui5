@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The Grid control is a layout which positions its child controls in a 12 column flow layout. Its children can be specified to take on a variable amount of columns depending on available screen size. With this control it is possible to achieve flexible layouts and line-breaks for large-, medium- and small-sized screens, such as desktop, tablet, and mobile. The Grid control's width can be percentage- or pixel-based and the spacing between its columns can be set to various pre-defined values.
+	 * The Grid control is a layout which positions its child controls in a 12 column flow layout. Its children can be specified to take on a variable amount of columns depending on available screen size. With this control it is possible to achieve flexible layouts and line-breaks for extra large-, large-, medium- and small-sized screens, such as large desktop, desktop, tablet, and mobile. The Grid control's width can be percentage- or pixel-based and the spacing between its columns can be set to various pre-defined values.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		Grid.prototype.init = function() {
 			this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 			this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
-			this._iBreakPointXL = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
+			this._iBreakPointLargeDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
 			
 			// Backward compatibility - if no any settings for XL - the settings for L are used
 			this._indentXLChanged = false;
@@ -177,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		};
 		
 		Grid.prototype._setBreakPointXL = function( breakPoint) {
-			this._iBreakPointXL = breakPoint;
+			this._iBreakPointLargeDesktop = breakPoint;
 		};
 		
 		Grid.prototype._onParentResize = function() {
@@ -197,10 +197,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this._toggleClass("Phone");
 			} else if ((iCntWidth > this._iBreakPointTablet) && (iCntWidth <= this._iBreakPointDesktop)) {
 				this._toggleClass("Tablet");
-			} else if ((iCntWidth > this._iBreakPointDesktop) && (iCntWidth <= this._iBreakPointXL)) {
+			} else if ((iCntWidth > this._iBreakPointDesktop) && (iCntWidth <= this._iBreakPointLargeDesktop)) {
 				this._toggleClass("Desktop");
 			} else {
-				this._toggleClass("XL");
+				this._toggleClass("LargeDesktop");
 			}
 		};
 		
@@ -217,13 +217,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			
 			$DomRef.toggleClass("sapUiRespGridMedia-Std-" + sMedia, true);
 			if (sMedia === "Phone") {
-				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false).toggleClass("sapUiRespGridMedia-Std-XL", false);
+				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false).toggleClass("sapUiRespGridMedia-Std-LargeDesktop", false);
 			} else if (sMedia === "Tablet") {
-				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-XL", false);
-			} else if (sMedia === "XL") {
+				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-LargeDesktop", false);
+			} else if (sMedia === "LargeDesktop") {
 				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false);
 			} else {
-				$DomRef.toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false).toggleClass("sapUiRespGridMedia-Std-XL", false);
+				$DomRef.toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false).toggleClass("sapUiRespGridMedia-Std-LargeDesktop", false);
 			}
 			
 			this.fireEvent("mediaChanged", {media: sMedia});
