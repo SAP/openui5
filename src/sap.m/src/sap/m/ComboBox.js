@@ -98,6 +98,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			this.scrollToItem(this.getList().getSelectedItem());
 		}
 
+		function fnSelectTextIfFocused(iStart, iEnd) {
+			if (document.activeElement === this.getFocusDomRef()) {
+				this.selectText(iStart, iEnd);
+			}
+		}
+
 		/* ----------------------------------------------------------- */
 		/* Popover                                                     */
 		/* ----------------------------------------------------------- */
@@ -290,7 +296,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 					}
 
 					if (this._bDoTypeAhead) {
-						this.selectText(sValue.length, 9999999);
+
+						if (sap.ui.Device.os.blackberry) {
+
+							// note: timeout required for a BlackBerry bug
+							setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
+						} else {
+							this.selectText(sValue.length, 9999999);
+						}
 					}
 
 					this.scrollToItem(this.getList().getSelectedItem());
