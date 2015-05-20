@@ -450,8 +450,8 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
-	 * Returns the OData function import with the given simple name from the default entity
-	 * container.
+	 * Returns the OData function import with the given simple or qualified name from the default
+	 * entity container or the respective entity container specified in the qualified name.
 	 *
 	 * @param {string} sName
 	 *   a simple or qualified name, e.g. "Save" or "MyService.Entities/Save"
