@@ -9,72 +9,72 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	var oContactAnnotationFromV2 = {
 			"adr" : {
-				"code" : { "Path" :  "Zip" },
-				"country" : { "Path" :  "Country" },
-				"locality" : { "Path" :  "City" },
-				"pobox" : { "Path" :  "PoBox" },
-				"region" : { "Path" :  "Region" },
-				"street" : { "Path" :  "Street" }
+				"code" : { "Path" : "Zip" },
+				"country" : { "Path" : "Country" },
+				"locality" : { "Path" : "City" },
+				"pobox" : { "Path" : "PoBox" },
+				"region" : { "Path" : "Region" },
+				"street" : { "Path" : "Street" }
 			},
-			"bday" : { "Path" :  "Birthday" },
+			"bday" : { "Path" : "Birthday" },
 			"email" : [{
-				"address" : { "Path" :  "EMail" },
+				"address" : { "Path" : "EMail" },
 				"type" : {
-					"EnumMember": "com.sap.vocabularies.Communication.v1.ContactInformationType/"
+					"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/"
 						+ "preferred"
 				}
 			}, {
-				"address" : { "Path" :  "EMail2" }
+				"address" : { "Path" : "EMail2" }
 			}],
-			"fn" : { "Path" :  "Name" },
+			"fn" : { "Path" : "Name" },
 			"n" : {
-				"additional" : { "Path" :  "MiddleName" },
-				"given" : { "Path" :  "FirstName" },
-				"prefix" : { "Path" :  "Honorific" },
-				"suffix" : { "Path" :  "Suffix" },
-				"surname" : { "Path" :  "LastName" }
+				"additional" : { "Path" : "MiddleName" },
+				"given" : { "Path" : "FirstName" },
+				"prefix" : { "Path" : "Honorific" },
+				"suffix" : { "Path" : "Suffix" },
+				"surname" : { "Path" : "LastName" }
 			},
-			"nickname" : { "Path" :  "NickName" },
-			"note" : { "Path" :  "Note" },
-			"org" : { "Path" :  "Org" },
-			"orgunit" : { "Path" :  "OrgUnit" },
-			"photo" : { "Path" :  "Photo" },
-			"role" : { "Path" :  "OrgRole" },
+			"nickname" : { "Path" : "NickName" },
+			"note" : { "Path" : "Note" },
+			"org" : { "Path" : "Org" },
+			"orgunit" : { "Path" : "OrgUnit" },
+			"photo" : { "Path" : "Photo" },
+			"role" : { "Path" : "OrgRole" },
 			"tel" : [{
 				"type" : {
-					"EnumMember": "com.sap.vocabularies.Communication.v1.PhoneType/work "
+					"EnumMember" : "com.sap.vocabularies.Communication.v1.PhoneType/work "
 						+ "com.sap.vocabularies.Communication.v1.PhoneType/cell"
 				},
-				"uri" : { "Path" :  "Tel" }
+				"uri" : { "Path" : "Tel" }
 			}, {
 				"type" : {
-					"EnumMember": "com.sap.vocabularies.Communication.v1.PhoneType/fax"
+					"EnumMember" : "com.sap.vocabularies.Communication.v1.PhoneType/fax"
 				},
-				"uri" : { "Path" :  "Tel2" }
+				"uri" : { "Path" : "Tel2" }
 			}, {
-				"uri" : { "Path" :  "Tel3" }
+				"uri" : { "Path" : "Tel3" }
 			}, {
-				"uri" : { "Path" :  "Tel4" }
+				"uri" : { "Path" : "Tel4" }
 			}],
-			"title" : { "Path" :  "Title" }
+			"title" : { "Path" : "Title" }
 		},
 		oEventAnnotationFromV2 = {
-			"class" : { "Path" :  "Class" },
-			"dtend" : { "Path" :  "Dtend" },
-			"dtstart" : { "Path" :  "Dtstart" },
-			"duration" : { "Path" :  "Duration" },
-			"fbtype" : { "Path" :  "Fbtype" },
-			"location" : { "Path" :  "Location" },
-			"status" : { "Path" :  "Status" },
-			"transp" : { "Path" :  "Transp" },
-			"wholeday" : { "Path" :  "Wholeday" }
+			"class" : { "Path" : "Class" },
+			"dtend" : { "Path" : "Dtend" },
+			"dtstart" : { "Path" : "Dtstart" },
+			"duration" : { "Path" : "Duration" },
+			"fbtype" : { "Path" : "Fbtype" },
+			"location" : { "Path" : "Location" },
+			"status" : { "Path" : "Status" },
+			"transp" : { "Path" : "Transp" },
+			"wholeday" : { "Path" : "Wholeday" }
 		},
 		oMessageAnnotationFromV2 = {
-			"body" : { "Path" :  "Body" },
-			"from" : { "Path" :  "From" },
-			"received" : { "Path" :  "Received" },
-			"sender" : { "Path" :  "Sender" },
-			"subject" : { "Path" :  "Subject" }
+			"body" : { "Path" : "Body" },
+			"from" : { "Path" : "From" },
+			"received" : { "Path" : "Received" },
+			"sender" : { "Path" : "Sender" },
+			"subject" : { "Path" : "Subject" }
 		},
 		oTaskAnnotationFromV2 = {
 			"completed" : { "Path" : "Completed" },
@@ -346,7 +346,31 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 					"entityContainer" : [{
 						"name" : "GWSAMPLE_BASIC_Entities",
 						"isDefaultEntityContainer" : "true",
-						"entitySet" : [],
+						"entitySet" : [{
+							"name" : "ContactSet",
+							"entityType" : "GWSAMPLE_BASIC.Contact",
+							"extensions" : [{
+								"name" : "deletable-path",
+								"value" : "Deletable",
+								"namespace" : "http://www.sap.com/Protocols/SAPData"
+							}, {
+								"name" : "updatable-path",
+								"value" : "Updatable",
+								"namespace" : "http://www.sap.com/Protocols/SAPData"
+							}]
+						}, {
+							"name" : "ContactSet2",
+							"entityType" : "GWSAMPLE_BASIC.Contact",
+							"extensions" : [{
+								"name" : "deletable-path",
+								"value" : "Deletable2",
+								"namespace" : "http://www.sap.com/Protocols/SAPData"
+							}, {
+								"name" : "updatable-path",
+								"value" : "Updatable2",
+								"namespace" : "http://www.sap.com/Protocols/SAPData"
+							}]
+						}],
 						"associationSet" : [],
 						"functionImport" : [],
 						"extensions" : []
@@ -371,7 +395,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"com.sap.vocabularies.Communication.v1.Contact" : {
 					"fn" : { "Path" : "NameFromAnnotation" },
 					"adr" : {
-						"code" : { "Path" :  "ZipFromAnnotation" },
+						"code" : { "Path" : "ZipFromAnnotation" },
 					},
 					"nickname" : { "Path" : "NickNameFromAnnotation" }
 				}
@@ -542,13 +566,13 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	[{
-		expectedAnnotations: {"Contact": oContactAnnotationFromV2}, type: oContactType
+		expectedAnnotations: {"Contact" : oContactAnnotationFromV2}, type: oContactType
 	}, {
-		expectedAnnotations: {"Event": oEventAnnotationFromV2}, type: oEventType
+		expectedAnnotations: {"Event" : oEventAnnotationFromV2}, type: oEventType
 	}, {
-		expectedAnnotations: {"Message": oMessageAnnotationFromV2}, type: oMessageType
+		expectedAnnotations: {"Message" : oMessageAnnotationFromV2}, type: oMessageType
 	}, {
-		expectedAnnotations: {"Task": oTaskAnnotationFromV2}, type: oTaskType
+		expectedAnnotations: {"Task" : oTaskAnnotationFromV2}, type: oTaskType
 	}].forEach(function (oFixture) {
 		var sTypeName = oFixture.type.name;
 
@@ -605,6 +629,68 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 		// code under test
 		Utils.addSapSemantics(oType);
+
+	});
+
+	//*********************************************************************************************
+	test("convertEntitySetAnnotations", function () {
+		var oData = clone(oDataContact),
+			aSchema = oData.dataServices.schema,
+			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
+			oEntitySet2 = aSchema[0].entityContainer[0].entitySet[1],
+			oLogMock = this.mock(jQuery.sap.log);
+
+		//Prepare data
+		Utils.liftSAPData(oEntitySet, "EntitySet");
+		Utils.liftSAPData(oEntitySet2, "EntitySet");
+
+		oLogMock.expects("isLoggable").exactly(2).withExactArgs(jQuery.sap.log.Level.WARNING)
+			.returns(true);
+		oLogMock.expects("warning").exactly(1)
+			.withExactArgs("Ignored 'sap:deletable-path' annotation (Deletable2) of ContactSet2",
+				"The entity type Contact contains a" +
+					" 'com.sap.vocabularies.Common.v1.Deletable' annotation with different" +
+					" path (Deletable)",
+				"sap.ui.model.odata._ODataMetaModelUtils");
+		oLogMock.expects("warning").exactly(1)
+			.withExactArgs("Ignored 'sap:updatable-path' annotation (Updatable2) of ContactSet2",
+				"The entity type Contact contains a" +
+					" 'com.sap.vocabularies.Common.v1.Updatable' annotation with different" +
+					" path (Updatable)",
+				"sap.ui.model.odata._ODataMetaModelUtils");
+
+		// code under test
+		Utils.convertEntitySetAnnotations(aSchema, oEntitySet);
+		Utils.convertEntitySetAnnotations(aSchema, oEntitySet2);
+
+		//verify results
+		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Deletable"],
+				{"Path" : "Deletable"}, "deletable-path");
+		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Updatable"],
+				{"Path" : "Updatable"}, "updatable-path");
+
+
+	});
+
+	//*********************************************************************************************
+	test("convertEntitySetAnnotations no overwrite", function () {
+		var oData = clone(oDataContact),
+		aSchema = oData.dataServices.schema,
+		oEntitySet = aSchema[0].entityContainer[0].entitySet[0];
+
+		//Prepare data
+		Utils.liftSAPData(oEntitySet, "EntitySet");
+		aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Deletable"] = {"Path" : "bar"};
+		aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Updatable"] = {"Path" : "foo"};
+
+		// code under test
+		Utils.convertEntitySetAnnotations(aSchema, oEntitySet);
+
+		//verify results
+		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Deletable"],
+				{"Path" : "bar"}, "deletable-path not overwritten");
+		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Updatable"],
+				{"Path" : "foo"}, "updatable-path not overwritten");
 
 	});
 

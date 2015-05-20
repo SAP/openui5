@@ -76,9 +76,10 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * are added, if they are not yet defined in the v4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
-	 * <li><code>creatable</code>, <code>deletable</code>, <code>pageable</code>,
-	 * <code>requires-filter</code>, <code>searchable</code>, <code>topable</code> and
-	 * <code>updatable</code> on entity sets;</li>
+	 * <li><code>creatable</code>, <code>deletable</code>, <code>deletable-path</code>,
+	 * <code>pageable</code>, <code>requires-filter</code>, <code>searchable</code>,
+	 * <code>topable</code>, <code>updatable</code> and <code>updatable-path</code> on entity sets;
+	 * </li>
 	 * <li><code>creatable</code>, <code>display-format</code> ("UpperCase" and "NonNegative"),
 	 * <code>field-control</code>, <code>filterable</code>, <code>heading</code>,
 	 * <code>precision</code>, <code>quickinfo</code>, <code>required-in-filter</code>,
