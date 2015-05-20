@@ -13,7 +13,7 @@ sap.ui.define([
 	 * 
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class tbd
+	 * @class Base type for <code>panels</code> aggregation in P13nDialog control.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 * @constructor
@@ -29,6 +29,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Title text appears in the panel
+				 * 
 				 * @since 1.26.0
 				 */
 				title: {
@@ -38,17 +39,31 @@ sap.ui.define([
 				},
 
 				/**
-				 * Panel type for generic use
+				 * Large title text appears e.g. in dialog header in case that only one panel is shown
+				 * 
+				 * @since 1.28.0
+				 */
+				titleLarge: {
+					type: "string",
+					group: "Appearance",
+					defaultValue: null
+				},
+
+				/**
+				 * Panel type for generic use. Due to extensibility reason the type of "type" property should be "string". So it is feasible to add a
+				 * custom panel without expanding the type.
+				 * 
 				 * @since 1.26.0
 				 */
 				type: {
-					type: "sap.m.P13nPanelType",
+					type: "string",
 					group: "Misc",
 					defaultValue: null
 				},
 
 				/**
 				 * makes the vertical Scrolling on the P13nDialog enabled when the panel is shown
+				 * 
 				 * @since 1.26.0
 				 */
 				verticalScrolling: {
@@ -62,6 +77,7 @@ sap.ui.define([
 
 				/**
 				 * Aggregation of items
+				 * 
 				 * @since 1.26.0
 				 */
 				items: {
@@ -74,6 +90,7 @@ sap.ui.define([
 			events: {
 				/**
 				 * Due to performance the data of the panel can be requested in lazy mode e.g. when the panel is displayed
+				 * 
 				 * @since 1.28.0
 				 */
 				beforeNavigationTo: {}
@@ -90,7 +107,7 @@ sap.ui.define([
 	P13nPanel.prototype.getOkPayload = function() {
 		return {};
 	};
-	
+
 	/**
 	 * This method can be overwritten by subclass in order to return a payload for Reset action
 	 * 
@@ -100,7 +117,7 @@ sap.ui.define([
 	P13nPanel.prototype.getResetPayload = function() {
 		return {};
 	};
-	
+
 	/**
 	 * @public
 	 * @since 1.28.0
