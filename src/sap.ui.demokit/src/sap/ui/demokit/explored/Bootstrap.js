@@ -228,18 +228,39 @@ sap.ui.define(['jquery.sap.global'],
 							"id": oEnt.id + "." + fnPrependZero(i + 1),
 							"name": oEnt.name + " - Step " + (i + 1) + " - " + oEnt.samplesAsSteps[i]
 						};
+
+						// dynamically add a prev / next pointer to be able to cross-navigate between the samples of the same type
+						if (i > 0) {
+							oStep.previousSampleId = oEnt.id + "." + fnPrependZero(i);
+						}
+						if (i < oEnt.samplesAsSteps.length - 1) {
+							oStep.nextSampleId = oEnt.id + "." + fnPrependZero(i + 2);
+						}
+
+						// add generated sample to this entity and to the samples array
 						oEnt.samples.push(oStep);
 						sap.ui.demokit.explored.data.samples[oStep.id] = oStep;
 						oEnt.searchTags += " " + oStep.name;
 					}
 				} else {
 					// other entities: lookup samples and build search tags
-					var aSamples = [];
+					var aSamples = [],
+						oPreviousSample;
+
 					jQuery.each(oEnt.samples, function (j, sId) {
 						var oSample = sap.ui.demokit.explored.data.samples[sId];
+
 						if (!oSample) {
 							jQuery.sap.log.warning("explored: cannot register sample '" + sId + "' for '" + oEnt.id + "'. not found in the available docu indizes");
 						} else {
+							// dynamically add a prev / next pointer to be able to cross-navigate between the samples of the same type
+							oSample.previousSampleId = (oPreviousSample ? oPreviousSample.id : undefined);
+							if (oPreviousSample) {
+								oPreviousSample.nextSampleId = oSample.id;
+							}
+							oPreviousSample = oSample;
+
+							// add the sample to the local store
 							aSamples.push(oSample);
 							oEnt.searchTags += " " + oSample.name;
 						}
