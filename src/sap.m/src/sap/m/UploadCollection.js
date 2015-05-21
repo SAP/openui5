@@ -1630,10 +1630,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype._getIconFromFilename = function(sFilename) {
 		var sFileExtension = this._splitFilename(sFilename).extension;
+		if (jQuery.type(sFileExtension) === "string") {
+			 sFileExtension = sFileExtension.toLowerCase();
+		}
 
 		switch (sFileExtension) {
 			case '.bmp' :
 			case '.jpg' :
+			case '.jpeg' :
 			case '.png' :
 				return 'sap-icon://attachment-photo';
 			case '.csv' :

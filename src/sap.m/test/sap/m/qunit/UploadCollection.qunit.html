@@ -142,9 +142,12 @@
 	});
 
 	test("Determine icon from filename", function() {
+		equal(this.oUploadCollection._getIconFromFilename("fileName"), 'sap-icon://document', "Document icon returned in case no file extension exists.");
+
 		equal(this.oUploadCollection._getIconFromFilename("fileName.pdf"), 'sap-icon://pdf-attachment', "Correct icon for file type .pdf determined");
 
 		equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), 'sap-icon://attachment-photo', "Correct icon for file type .jpg determined");
+		equal(this.oUploadCollection._getIconFromFilename("complexFileName.JPEG"), 'sap-icon://attachment-photo', "Correct icon for file type 'JPEG' determined");
 		equal(this.oUploadCollection._getIconFromFilename("fileName.png"), 'sap-icon://attachment-photo', "Correct icon for file type .png determined");
 		equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), 'sap-icon://attachment-photo', "Correct icon for file type .bmp determined");
 
