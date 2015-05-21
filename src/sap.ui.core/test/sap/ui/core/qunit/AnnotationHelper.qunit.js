@@ -960,12 +960,19 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
 		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef";
+					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
+				oContext = oMetaModel.getContext(sMetaPath);
 
-			testBinding(oMetaModel.getContext(sMetaPath),
+			testBinding(oContext,
 				"#BusinessPartner-displayFactSheet?BusinessPartnerID=0815", {
 				BusinessPartnerID: "0815"
 			});
+
+			// test that the binding still works with bindTexts
+			// testBinding cannot be used because it uses a JSONModel w/o meta model
+			oContext.getSetting = function (sSetting) { return sSetting === "bindTexts"};
+			strictEqual(format(oContext.getObject(), oContext), "{=odata.fillUriTemplate(${/##"
+				+ sMetaPath + "/Apply/Parameters/0/Value},{'ID1':${BusinessPartnerID}})}")
 		});
 	});
 

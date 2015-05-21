@@ -129,7 +129,9 @@ sap.ui.require([
 
 						if (oFixture.constant === "String") {
 							deepEqual(oResult, {
+								ignoreTypeInPath: true,
 								result: "binding",
+								type: "Edm.String",
 								value: "/##" + oConstantPathValue.path
 							}, "bindTexts");
 						} else {

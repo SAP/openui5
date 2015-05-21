@@ -230,7 +230,21 @@ sap.ui.require([
 			oFixture.value.value = "foo/'bar'";
 			strictEqual(Basics.resultToString(oFixture.value, false, true),
 				"{path:'foo/\\'bar\\''" + oFixture.binding + "}",
-				oFixture.value.type);
+				JSON.stringify(oFixture.value));
 		});
+
+		strictEqual(Basics.resultToString({
+			result: "binding",
+			value: "foo",
+			type: "Edm.String",
+			ignoreTypeInPath: true
+		}, false, true), "{foo}");
+
+		strictEqual(Basics.resultToString({
+			result: "binding",
+			value: "foo:bar",
+			type: "Edm.String",
+			ignoreTypeInPath: true
+		}, false, true), "{path:'foo:bar'}");
 	});
 });
