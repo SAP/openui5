@@ -851,11 +851,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	FileUploader.prototype.sendFiles = function(aXhr, aFiles, iIndex) {
 
+		var that = this;
+
 		if (iIndex >= aFiles.length) {
+			if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
+				that.setValue("", true);
+			}
 			return;
 		}
 
-		var that = this;
 		var oXhr = aXhr[iIndex];
 		var sFilename = aFiles[iIndex].name;
 
@@ -1026,7 +1030,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					uploadForm.submit();
 				}
 				jQuery.sap.log.info("File uploading to " + this.getUploadUrl());
-				if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
+				if (this.getSameFilenameAllowed() && this.getUploadOnChange() && this.getUseMultipart()) {
 					this.setValue("", true);
 				}
 			}
