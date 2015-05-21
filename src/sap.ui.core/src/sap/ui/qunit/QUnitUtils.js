@@ -486,6 +486,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				try {
 					jQuery.sap.require(sType);
 				} catch (e) {
+					//escape eslint check for empty block
 				}
 				var oType = jQuery.sap.getObject(sType);
 				if ( !(oType instanceof sap.ui.base.DataType) ) {

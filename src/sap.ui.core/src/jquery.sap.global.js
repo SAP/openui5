@@ -378,9 +378,11 @@
 			bIsOptimized = window["sap-ui-optimized"];
 
 		//Check local storage
-		try { //Necessary for FF when Cookies are deactivated
+		try {
 			bDebugSources = bDebugSources || (window.localStorage.getItem("sap-ui-debug") == "X");
-		} catch (e) {}
+		} catch (e) {
+			//Happens in FF when Cookies are deactivated
+		}
 
 		window["sap-ui-debug"] = bDebugSources;
 
@@ -3323,6 +3325,7 @@
 						}
 						oSupport.openSupportTool();
 					} catch (err2) {
+						// ignore error
 					}
 				}
 			});

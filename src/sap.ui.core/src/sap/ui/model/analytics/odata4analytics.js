@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 */
 		_init : function(oModelReference, mParameter) {
 			if (typeof mParameter == "string") {
-				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead"
+				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead";
 			}
 			this._mParameter = mParameter;
 			

@@ -240,7 +240,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				oTextEditRange.moveEnd('character', iEnd - iStart);
 				oTextEditRange.select();
 			}
-		} catch (e) {}	// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		} catch (e) {
+			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		}	
 
 		return this;
 	};
@@ -268,7 +270,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			if (document.selection) {
 				return document.selection.createRange().text;
 			}
-		} catch (e) {}	// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		} catch (e) {
+			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		}	
 
 		return "";
 	};
