@@ -35,6 +35,8 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 		var oHistory = sap.ui.core.routing.History.getInstance();
 		var oPrevHash = oHistory.getPreviousHash();
 		oModelData.showNavButton = sap.ui.Device.system.phone || !!oPrevHash;
+		oModelData.previousSampleId = oSample.previousSampleId;
+		oModelData.nextSampleId = oSample.nextSampleId;
 
 		// set page title
 		oPage.setTitle("Sample: " + oSample.name);
@@ -78,6 +80,18 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 
 	onNewTab : function () {
 		sap.m.URLHelper.redirect(this.sIFrameUrl, true);
+	},
+
+	onPreviousSample: function (oEvent) {
+		this.router.navTo("sample", {
+			id: this._viewModel.getProperty("/previousSampleId")
+		}, false);
+	},
+
+	onNextSample: function (oEvent) {
+		this.router.navTo("sample", {
+			id: this._viewModel.getProperty("/nextSampleId")
+		}, false);
 	},
 
 	_createIframe : function (oIframeContent, vIframe) {
