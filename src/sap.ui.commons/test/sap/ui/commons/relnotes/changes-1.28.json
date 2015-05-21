@@ -692,5 +692,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.7": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "e7e86e51803b88dd2ad0607630f3ff112dcc4ff9",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ProgressIndicator: Screen reader improved",
+        "references": []
+      }
+    ]
   }
 }
