@@ -26,6 +26,7 @@
 						<ActionSheet id="shareSheet" showCancelButton="true" placement="Top">
 							<buttons>
 								<Button id="shareEmail" icon="sap-icon://email" text="{i18n>shareSendEmail}" press="onShareEmailPress" />
+								<Button id="shareInJam" icon="sap-icon://jam" text="{i18n>shareOnJamTitle}" press="onShareInJamPress" visible="{FLP>/isShareInJamActive}"/>
 								<!-- we have to comment this out since ushell lib is not available in the openui5 layer currenlty
 								<footerbar:AddBookmarkButton id ="shareTile" appData="{
 									path: 'objectView>/shareSaveAsTileTitle',
