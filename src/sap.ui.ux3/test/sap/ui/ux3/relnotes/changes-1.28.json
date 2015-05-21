@@ -254,5 +254,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.7": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "acd6c822f9cd0f31ff1019c2df02065641b26edc",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataSetSimpleView: Suppress view update if not rendered",
+        "references": []
+      }
+    ]
   }
 }

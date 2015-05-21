@@ -1845,5 +1845,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.7": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "8af56fb1a6c481ddd4399a23e54a91eb02cb1157",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "HTML: Return this in setSanitizeContent",
+        "references": []
+      },
+      {
+        "id": "d6c7a9c7d9448842e6a7c1a6ae44efb3ce44d227",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History: History length increase was not taken into account in some constellations",
+        "references": []
+      }
+    ]
   }
 }
