@@ -2,6 +2,8 @@ package org.openui5;
 
 import java.util.Date;
 
+import org.json.JSONObject;
+
 /**
  * Class holding the log data (only the extracted numbers) collected for one specific day
  *
@@ -25,7 +27,7 @@ class LogFileData {
 		super();
 
 		int day = date.getDate();
-		int month = date.getMonth()+1;
+		int month = date.getMonth() + 1;
 		int year = date.getYear() + 1900;
 
 		this.date = date;
@@ -53,6 +55,25 @@ class LogFileData {
 		String monthPad = month < 10 ? "0" : "";
 		String dateText = dayPad + day + "." + monthPad + month + "." + year; // padding for single-digit days to ease sorting in the end
 		return dateText;
+	}
+	
+	public static LogFileData fromJson(JSONObject obj) {
+		String yyyymmddWithDashes = obj.getString("date");
+		String[] dateParts = yyyymmddWithDashes.split("-");
+		int year = Integer.parseInt(dateParts[0]);
+		int month = Integer.parseInt(dateParts[1]);
+		int day = Integer.parseInt(dateParts[2]);
+		
+		LogFileData data = new LogFileData(
+				new Date(year-1900, month-1, day),
+				obj.getInt("runtime"), 
+				obj.getInt("mobile"), 
+				obj.getInt("sdk"), 
+				obj.getInt("githubHits"), 
+				obj.getInt("blogHits"), 
+				obj.getInt("demokitHits"), 
+				obj.getInt("ipCounter"));
+		return data;
 	}
 
 	public Date getDate() {
@@ -99,6 +120,6 @@ class LogFileData {
 		this.githubHits += other.githubHits;
 		this.blogHits += other.blogHits;
 		this.demokitHits += other.demokitHits;
-		this.ipCounter += other.ipCounter;
+		this.ipCounter = Math.max(this.ipCounter, other.ipCounter);
 	}
 }

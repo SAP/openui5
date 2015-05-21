@@ -14,37 +14,6 @@ import java.util.regex.Pattern;
  */
 public class AnonymousLogLine {
 
-	private static final Map<String, Integer> monthMap = new HashMap<String, Integer>(16);
-	static {
-		monthMap.put("Jan", 1);
-		monthMap.put("Feb", 2);
-		monthMap.put("Mar", 3);
-		monthMap.put("Apr", 4);
-		monthMap.put("May", 5);
-		monthMap.put("Jun", 6);
-		monthMap.put("Jul", 7);
-		monthMap.put("Aug", 8);
-		monthMap.put("Sep", 9);
-		monthMap.put("Oct", 10);
-		monthMap.put("Nov", 11);
-		monthMap.put("Dec", 12);
-	}
-	
-	private static final Map<Integer, String> inverseMonthMap = new HashMap<Integer, String>(16);
-	static {
-		inverseMonthMap.put(0, "Jan");
-		inverseMonthMap.put(1, "Feb");
-		inverseMonthMap.put(2, "Mar");
-		inverseMonthMap.put(3, "Apr");
-		inverseMonthMap.put(4, "May");
-		inverseMonthMap.put(5, "Jun");
-		inverseMonthMap.put(6, "Jul");
-		inverseMonthMap.put(7, "Aug");
-		inverseMonthMap.put(8, "Sep");
-		inverseMonthMap.put(9, "Oct");
-		inverseMonthMap.put(10, "Nov");
-		inverseMonthMap.put(11, "Dec");
-	}
 
 	/*
 	 * Groups:
@@ -64,8 +33,32 @@ public class AnonymousLogLine {
 	 * 14: HTTP code in case of one number
 	 * 15: the one number
 	 */
-	private static final Pattern ANON_LOGLINE_PATTERN = Pattern.compile("^(\\d+) \\[(\\d+)/(\\w+)/(\\d\\d\\d\\d):(\\d\\d):(\\d\\d):(\\d\\d) \\+0000\\] (\\w+) ([^\\s]+) HTTP/\\d.\\d ((\\d+) (\\d+) (\\d+)|(\\d+) - (\\d+))$");
-
+	//private static final Pattern ANON_LOGLINE_PATTERN = Pattern.compile("^(\\d+) \\[(\\d+)/(\\w+)/(\\d\\d\\d\\d):(\\d\\d):(\\d\\d):(\\d\\d) \\+0000\\] (\\w+) ([^\\s]+) HTTP/\\d.\\d ((\\d+) (\\d+) (\\d+)|(\\d+) - (\\d+))$");
+	/*
+	 * Groups:
+	 * 0: (entire string)
+	 * 1: (full date)
+	 * 2: year
+	 * 3: month
+	 * 4: day
+	 * 5: (full time)
+	 * 6: hours
+	 * 7: minutes
+	 * 8: seconds
+	 * 9: anonymized IP (integer counter)
+	 * 10: method
+	 * 11: full URL
+	 * 12: region
+	 * 13: local URL (starting with slash)
+	 * 14: HTTP status code
+	 * 15: some number... e.g. size?
+	 * 16: another number 0..3
+	 * 17: referrer or dash
+	 * 18: referrer if available
+	 * 19: user-agent
+	 */
+	private static final Pattern ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/openui5\\.(\\w\\w)\\d\\.hana\\.ondemand.com(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
+	
 	private static final Pattern RUNTIME_PATTERN = Pattern.compile("^/downloads/openui5-runtime-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
 	private static final Pattern MOBILE_PATTERN = Pattern.compile("^/downloads/openui5-runtime-mobile-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
 	private static final Pattern SDK_PATTERN = Pattern.compile("^/downloads/openui5-sdk-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
@@ -82,8 +75,11 @@ public class AnonymousLogLine {
 	private int firstNumber;
 	private int secondNumber;
 	private int oneNumber;
+	private String referrer;
+	private Region region;
+	private String userAgent;
 
-	private AnonymousLogLine(Date date, String ipCounter, Resource type, int code, String url, int firstNumber, int secondNumber, int oneNumber) {
+	private AnonymousLogLine(Date date, String ipCounter, Resource type, int code, String url, int firstNumber, int secondNumber, String referrer, Region region, String userAgent) {
 		super();
 		this.date = date;
 		this.ipCounter = ipCounter;
@@ -92,7 +88,9 @@ public class AnonymousLogLine {
 		this.url = url;
 		this.firstNumber = firstNumber;
 		this.secondNumber = secondNumber;
-		this.oneNumber = oneNumber;
+		this.referrer = referrer;
+		this.region = region;
+		this.userAgent = userAgent;
 	}
 
 	private AnonymousLogLine(Date date, String anonymizedFullText) {
@@ -137,26 +135,37 @@ public class AnonymousLogLine {
 	public int getOneNumber() {
 		return oneNumber;
 	}
+	
+	public String getReferrer() {
+		return referrer;
+	}
+
+	public Region getRegion() {
+		return region;
+	}
+	
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+
 
 	public static AnonymousLogLine createFromLine(String line) {
 		Matcher m = ANON_LOGLINE_PATTERN.matcher(line);
 
 		if (m.matches()) {
 
-			String codeStr = m.group(11);
-			if (codeStr == null) {
-				codeStr = m.group(14);
-			}
+			String codeStr = m.group(14);
 			int code = Integer.parseInt(codeStr);
 
-			if (!m.group(8).equals("GET")) { // only GET
+			if (!m.group(10).equals("GET")) { // only GET
 				return null;
 			}
 			if (code == 404 || code == 304) {
 				return null; // not found, not modified
 			}
 
-			Resource type = getResourceType(m.group(9));
+			Resource type = getResourceType(m.group(13));
 			if (type == null) {
 				if (line.indexOf("openui5-runtime") > -1 || line.indexOf("openui5-sdk") > -1) {
 					System.out.println("WARNING: did we not match a valid file? " + line);
@@ -166,24 +175,36 @@ public class AnonymousLogLine {
 
 			// now the line seems to be one of the interesting resources
 
-			String ipCounter = m.group(1);
+			String ipCounter = m.group(9);
+			
+			Region region = Region.EU;
+			String regionString = m.group(12);
+			if ("us".equals(regionString)) {
+				region = Region.US;
+			} else if ("ap".equals(regionString)) {
+				region = Region.AP;
+			} else if (!regionString.equals("eu")) {
+				throw new RuntimeException("Unknown Region string: " + regionString);
+			}
 
 			AnonymousLogLine logLine = new AnonymousLogLine(
 					new Date(
-							Integer.parseInt(m.group(4)) - 1900,
-							monthMap.get(m.group(3))-1,
-							Integer.parseInt(m.group(2)),
-							Integer.parseInt(m.group(5)),
+							Integer.parseInt(m.group(2)) - 1900,
+							Integer.parseInt(m.group(3))-1,
+							Integer.parseInt(m.group(4)),
 							Integer.parseInt(m.group(6)),
-							Integer.parseInt(m.group(7))
+							Integer.parseInt(m.group(7)),
+							Integer.parseInt(m.group(8))
 							),
 							ipCounter,
 							type,
 							code,
-							m.group(9), // url
-							m.group(12) != null ? Integer.parseInt(m.group(12)) : -1, // 12: first number in case of two
-									m.group(13) != null ? Integer.parseInt(m.group(13)) : -1, // 13: second number in case of two
-											m.group(15) != null ? Integer.parseInt(m.group(15)) : -1 // 15: the one number
+							m.group(13), // url
+							Integer.parseInt(m.group(14)), // first number
+							Integer.parseInt(m.group(15)),// second number
+							m.group(18), // url
+							region, // region
+							m.group(19) // user-agent
 					);
 			return logLine;
 		} else {
