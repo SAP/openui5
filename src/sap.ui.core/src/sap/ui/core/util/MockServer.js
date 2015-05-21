@@ -1884,6 +1884,8 @@ sap.ui
 										return "201 Created";
 									case 400:
 										return "400 Bad Request";
+									case 403:
+										return "403 Forbidden";
 									case 404:
 										return "404 Not Found";
 									default:
