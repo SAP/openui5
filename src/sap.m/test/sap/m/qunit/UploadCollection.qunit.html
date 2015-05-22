@@ -137,9 +137,12 @@
 	});
 
 	QUnit.test("Determine icon from filename", function(assert) {
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName"), 'sap-icon://document', "Document icon returned in case no file extension exists.");
+
 		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.pdf"), 'sap-icon://pdf-attachment', "Correct icon for file type .pdf determined");
 
 		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), 'sap-icon://camera', "Correct icon for file type .jpg determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("complexFileName.JPEG"), 'sap-icon://camera', "Correct icon for file type 'JPEG' determined");
 		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.png"), 'sap-icon://camera', "Correct icon for file type .png determined");
 		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), 'sap-icon://camera', "Correct icon for file type .bmp determined");
 
