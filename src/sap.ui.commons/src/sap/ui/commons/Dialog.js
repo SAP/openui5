@@ -586,8 +586,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
       var oFocusCtrl,
         sInitFocus = this.getDefaultButton();
 
-      // trigger the default button if it exists and is inside the Dialog
       if (sInitFocus && (oFocusCtrl = sap.ui.getCore().byId(sInitFocus)) && jQuery.contains(this.getDomRef(),
+        // trigger the default button if it exists and is inside the Dialog
           oFocusCtrl.getDomRef())) {
         // Okay, we have the control
         if (oFocusCtrl instanceof sap.ui.commons.Button) {
