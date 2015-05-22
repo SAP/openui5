@@ -256,7 +256,8 @@ sap.ui.define([
 					// "/##" is prepended because it leads from model to metamodel
 					return {
 						result : "binding",
-						// No type; it would become part of the output
+						type: "Edm.String",
+						ignoreTypeInPath: true,
 						value : "/##" + oPathValue.path
 					};
 				}

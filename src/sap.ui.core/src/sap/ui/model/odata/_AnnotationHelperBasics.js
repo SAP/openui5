@@ -157,6 +157,7 @@ sap.ui.define([
 			function binding(bAddType) {
 				var sConstraints, sResult;
 
+				bAddType = bAddType && !oResult.ignoreTypeInPath;
 				if (rBadChars.test(vValue) || bAddType) {
 					sResult = "{path:" + Basics.toJSON(vValue);
 					if (bAddType && oResult.type) {
