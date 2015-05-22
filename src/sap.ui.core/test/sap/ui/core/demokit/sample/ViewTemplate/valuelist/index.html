@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Standalone test for separate value list loading application in explored app</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta charset="UTF-8">
+
+	<base href="../../../../../../../../">
+	<!--[if lte IE 9]><script type="text/javascript">
+		(function() {
+			// The IE9 implementation of the <base> tag is not compliant with the HTML5 spec.
+			// It still requires an absolute URL (as in HMTL 4) and ignores relative URLs.
+			// By re-assigning the href attribute, it becomes an absolute URL and IE9 no longer
+			// ignores it.
+			var baseTag = document.getElementsByTagName('base')[0];
+			baseTag.href = baseTag.href;
+		})();
+	</script><![endif]-->
+
+	<script id="sap-ui-bootstrap"
+			src="resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.layout,sap.m,sap.ui.demokit"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-compatVersion="edge"
+			>
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInitEvent( function () {
+			jQuery.sap.registerModulePath("sap.ui.core.sample", "test-resources/sap/ui/core/demokit/sample");
+			sap.ui.require(['sap/ui/core/Component', 'sap/ui/core/ComponentContainer',
+				'sap/m/App',
+				'sap/m/Page'],
+				function(Component, ComponentContainer, App, Page) {
+					new App({
+						initialPage: "page",
+						pages: [
+							new Page("page", {
+								title: "Separate value list loading",
+								content: new ComponentContainer({
+									component: sap.ui.component({
+										name: "sap.ui.core.sample.ViewTemplate.valuelist"})
+								})
+							})
+						]}
+					).placeAt('content');
+				}
+			);
+		});
+	</script>
+
+</head>
+<body class='sapUiBody' id='content'>
+</body>
+</html>

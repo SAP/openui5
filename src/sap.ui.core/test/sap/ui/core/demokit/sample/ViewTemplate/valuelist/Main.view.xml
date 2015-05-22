@@ -1,0 +1,40 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:demo="sap.ui.core.sample.ViewTemplate.valuelist"
+	xmlns:mvc="sap.ui.core.mvc"
+	>
+	<VBox>
+		<Label text="Items"/>
+		<Table items="{/Items}">
+			<columns>
+				<Column>
+					<Text text="GeneratedID"/>
+				</Column>
+				<Column>
+					<Text text="Customer"/>
+				</Column>
+				<Column>
+					<Text text="CompanyCode"/>
+				</Column>
+				<Column>
+					<Text text="AccountingDocument"/>
+				</Column>
+				<Column>
+					<Text text="AccountingDocumentItem"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{GeneratedID}" />
+						<demo:ValueHelp text="{Customer}" qualifier="DEBID"/>
+						<demo:ValueHelp text="{CompanyCode}"/>
+						<Text text="{AccountingDocument}" />
+						<Text text="{AccountingDocumentItem}" />
+					</cells>
+				</ColumnListItem>
+			</items>
+
+		</Table>
+	</VBox>
+</mvc:View>

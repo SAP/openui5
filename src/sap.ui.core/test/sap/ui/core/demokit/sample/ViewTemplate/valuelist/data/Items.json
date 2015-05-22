@@ -1,0 +1,245 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000262F001002WILZBACH')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000262F001002WILZBACH')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1400000262",
+					"AccountingDocumentItem" : "002",
+					"CompanyCode" : "F001",
+					"Customer" : "WILZBACH",
+					"GeneratedID" : "1400000262F001002WILZBACH"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000500F001001WILZBACH')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000500F001001WILZBACH')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000500",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "WILZBACH",
+					"GeneratedID" : "1800000500F001001WILZBACH"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000263F001002WILZBACH')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000263F001002WILZBACH')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1400000263",
+					"AccountingDocumentItem" : "002",
+					"CompanyCode" : "F001",
+					"Customer" : "WILZBACH",
+					"GeneratedID" : "1400000263F001002WILZBACH"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000375F0010010000200450')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000375F0010010000200450')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000375",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "200450",
+					"GeneratedID" : "1800000375F0010010000200450"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('0100000400F001001C0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('0100000400F001001C0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "100000400",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "C0001",
+					"GeneratedID" : "0100000400F001001C0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000214F001001C0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000214F001001C0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1400000214",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "C0001",
+					"GeneratedID" : "1400000214F001001C0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000383F001001C0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000383F001001C0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000383",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "C0001",
+					"GeneratedID" : "1800000383F001001C0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000352F0010020000200450')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000352F0010020000200450')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1400000352",
+					"AccountingDocumentItem" : "002",
+					"CompanyCode" : "F001",
+					"Customer" : "200450",
+					"GeneratedID" : "1400000352F0010020000200450"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000650F0010010000200450')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000650F0010010000200450')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000650",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "200450",
+					"GeneratedID" : "1800000650F0010010000200450"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('18000000460001001JPMC')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('18000000460001001JPMC')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000046",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "0001",
+					"Customer" : "JPMC",
+					"GeneratedID" : "18000000460001001JPMC"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000353F0010020000200450')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000353F0010020000200450')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1400000353",
+					"AccountingDocumentItem" : "002",
+					"CompanyCode" : "F001",
+					"Customer" : "200450",
+					"GeneratedID" : "1400000353F0010020000200450"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000651F0010010000200450')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000651F0010010000200450')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000651",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "200450",
+					"GeneratedID" : "1800000651F0010010000200450"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000042F002002C0016')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1400000042F002002C0016')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1400000042",
+					"AccountingDocumentItem" : "002",
+					"CompanyCode" : "F002",
+					"Customer" : "C0016",
+					"GeneratedID" : "1400000042F002002C0016"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000002F001001C0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800000002F001001C0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000002",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "C0001",
+					"GeneratedID" : "1800000002F001001C0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('0100000460F001001C0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('0100000460F001001C0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "100000460",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "C0001",
+					"GeneratedID" : "0100000460F001001C0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('0100000459F001001C0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('0100000459F001001C0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "100000459",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "C0001",
+					"GeneratedID" : "0100000459F001001C0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('00900000390001001ANDK001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('00900000390001001ANDK001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "90000039",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "0001",
+					"Customer" : "ANDK001",
+					"GeneratedID" : "00900000390001001ANDK001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('00900001540001001C0028')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('00900001540001001C0028')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "90000154",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "0001",
+					"Customer" : "C0028",
+					"GeneratedID" : "00900001540001001C0028"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800001152F001001C0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1800001152F001001C0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800001152",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "F001",
+					"Customer" : "C0001",
+					"GeneratedID" : "1800001152F001001C0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('18000000020001001BUB')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('18000000020001001BUB')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.Item"
+					},
+					"AccountingDocument" : "1800000002",
+					"AccountingDocumentItem" : "001",
+					"CompanyCode" : "0001",
+					"Customer" : "BUB",
+					"GeneratedID" : "18000000020001001BUB"
+				}]
+	}
+}
