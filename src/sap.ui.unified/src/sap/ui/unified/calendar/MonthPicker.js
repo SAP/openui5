@@ -402,7 +402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 					for (i = 0; i < aMonths.length; i++) {
 						var oMonth = aMonths[i];
-						if (oMonth.clientWidth < oMonth.scrollWidth) {
+						if (Math.abs(oMonth.clientWidth - oMonth.scrollWidth) > 1) {
 							bTooLong = true;
 							break;
 						}
