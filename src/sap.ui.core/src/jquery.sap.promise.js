@@ -35,7 +35,9 @@
 	
 	Promise.prototype.then = function(fOnFulfilled, fOnRejected){
 		var oFollowUpPromise = new Promise(_dummy);
-		this._deferred.then(_doWrap(fOnFulfilled, oFollowUpPromise, true), _doWrap(fOnRejected, oFollowUpPromise, false));
+		setTimeout(function(){
+			this._deferred.then(_doWrap(fOnFulfilled, oFollowUpPromise, true), _doWrap(fOnRejected, oFollowUpPromise, false));
+		}.bind(this), 0);
 		return oFollowUpPromise;
 	};
 	
