@@ -2990,6 +2990,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oClone;
 			if (aChildren.length > aContexts.length) {
 				for (var i = aContexts.length; i < aChildren.length; i++) {
+					oControl[oAggregationInfo._sRemoveMutator](aChildren[i]);
 					aChildren[i].destroy();
 				}
 			}
