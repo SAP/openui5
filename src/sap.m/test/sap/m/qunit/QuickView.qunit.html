@@ -25,9 +25,9 @@
 
 		// JSON sample data
 		var mData = {
-			"cards": [
+			"pages": [
 				{
-					cardId: "customCardId",
+					pageId: "customPageId",
 					header: "Employee Info",
 					title: "John Doe",
 					icon: "",
@@ -40,8 +40,8 @@
 									label: "Company",
 									value: "SAP AG",
 									url: "http://sap.com",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId4"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
 								},
 								{
 									label: "Company address",
@@ -67,14 +67,14 @@
 								{
 									label: "Best Friend",
 									value: "Michael Muller",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId2"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
 								},
 								{
 									label: "Favorite Player",
 									value: "Ivaylo Ivanov",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId3"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId3"
 								}
 							]
 						}
@@ -82,7 +82,7 @@
 					]
 				},
 				{
-					cardId: "customCardId2",
+					pageId: "customPageId2",
 					header: "Page 2",
 					icon: "sap-icon://person-placeholder",
 					title: "Michael Muller",
@@ -95,8 +95,8 @@
 									label: "Company",
 									value: "SAP AG",
 									url: "http://sap.com",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId4"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
 								},
 								{
 									label: "Company address",
@@ -123,7 +123,7 @@
 					]
 				},
 				{
-					cardId: "customCardId3",
+					pageId: "customPageId3",
 					header: "Page 3",
 					icon: "sap-icon://person-placeholder",
 					title: "Ivaylo Ivanov",
@@ -136,8 +136,8 @@
 									label: "Company",
 									value: "SAP AG",
 									url: "http://sap.com",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId4"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
 								},
 								{
 									label: "Company address",
@@ -164,7 +164,7 @@
 					]
 				},
 				{
-					cardId: "customCardId4",
+					pageId: "customPageId4",
 					header: "Company View",
 					icon: "sap-icon://building",
 					title: "SAP AG",
@@ -193,8 +193,8 @@
 								{
 									label: "Name",
 									value: "Michael Muller",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId2"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
 								},
 								{
 									label: "E-mail",
@@ -236,11 +236,11 @@
 		});
 		oApp.addPage(oPage);
 
-		function getQuickViewCard() {
+		function getQuickViewPage() {
 			return new sap.m.QuickView({
-				cards: {
-					path: '/cards',
-					template: new sap.m.QuickViewCard({
+				pages: {
+					path: '/pages',
+					template: new sap.m.QuickViewPage({
 						header: "{header}",
 						icon: "{icon}",
 						title: "{title}",
@@ -256,7 +256,7 @@
 										value: "{value}",
 										url: "{url}",
 										type: "{elementType}",
-										cardLinkId: "{cardLinkId}",
+										pageLinkId: "{pageLinkId}",
 										emailSubject: '{emailSubject}'
 									})
 								}
@@ -269,7 +269,7 @@
 
 		QUnit.module("API", {
 			setup: function () {
-				this.oQuickView = getQuickViewCard();
+				this.oQuickView = getQuickViewPage();
 
 				this.oQuickView.setModel(oModel);
 				var that = this;
@@ -297,16 +297,16 @@
 		});
 
 		QUnit.test("Test binding", function (assert) {
-			var aQuickViewCards = this.oQuickView.getCards();
+			var aQuickViewPages = this.oQuickView.getPages();
 
-			aQuickViewCards.forEach(function (card, index) {
-				assert.strictEqual(card.mProperties.header, mData.cards[index].header, "Header property is set correctly");
+			aQuickViewPages.forEach(function (page, index) {
+				assert.strictEqual(page.mProperties.header, mData.pages[index].header, "Header property is set correctly");
 			});
 		});
 
 		QUnit.module("Render", {
 			setup: function () {
-				this.oQuickView = getQuickViewCard()
+				this.oQuickView = getQuickViewPage()
 
 				this.oQuickView.setModel(oModel);
 				var that = this;
@@ -359,7 +359,7 @@
 
 		QUnit.module("Keyboard handling", {
 			setup: function () {
-				this.oQuickView = getQuickViewCard()
+				this.oQuickView = getQuickViewPage()
 
 				this.oQuickView.setModel(oModel);
 				var that = this;

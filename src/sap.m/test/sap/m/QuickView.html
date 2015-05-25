@@ -25,9 +25,9 @@
 
 		// JSON sample data
 		var mData = {
-			"cards": [
+			"pages": [
 				{
-					cardId	: "customCardId",
+					pageId	: "customPageId",
 					header	: "Employee Info",
 					title	: "John Doe",
 					icon	: "",
@@ -44,8 +44,8 @@
 									label: "Company",
 									value: "SAP AG",
 									url: "http://sap.com",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId4"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
 								}
 							]
 						},
@@ -65,14 +65,14 @@
 								{
 									label: "Best Friend",
 									value: "Michael Muller",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId2"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
 								},
 								{
 									label: "Favorite Player",
 									value: "Ivaylo Ivanov",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId3"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId3"
 								}
 							]
 						}
@@ -80,7 +80,7 @@
 					]
 				},
 				{
-					cardId	: "customCardId2",
+					pageId	: "customPageId2",
 					header	: "Page 2",
 					icon	: "sap-icon://person-placeholder",
 					title	: "Michael Muller",
@@ -93,8 +93,8 @@
 									label: "Company",
 									value: "SAP AG",
 									url: "http://sap.com",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId4"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
 								},
 								{
 									label: "Company address",
@@ -121,7 +121,7 @@
 					]
 				},
 				{
-					cardId	: "customCardId3",
+					pageId	: "customPageId3",
 					header	: "Page 3",
 					icon	: "sap-icon://person-placeholder",
 					title	: "Ivaylo Ivanov",
@@ -134,8 +134,8 @@
 									label: "Company",
 									value: "SAP AG",
 									url: "http://sap.com",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId4"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
 								},
 								{
 									label: "Company address",
@@ -162,7 +162,7 @@
 					]
 				},
 				{
-					cardId	: "customCardId4",
+					pageId	: "customPageId4",
 					header	: "Company View",
 					icon	: "sap-icon://building",
 					title	: "SAP AG",
@@ -190,8 +190,8 @@
 								{
 									label: "Name",
 									value: "Michael Muller",
-									elementType: sap.m.QuickViewGroupElementType.cardLink,
-									cardLinkId: "customCardId2"
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
 								},
 								{
 									label: "E-mail",
@@ -223,20 +223,14 @@
 		sap.ui.getCore().setModel(oModel);
 
 		// create and add app
-		var app = new sap.m.App("myApp", {initialPage:"quickViewCard"});
+		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
 		app.placeAt("body");
 
-		jQuery.sap.require("sap.m.QuickView");
-		jQuery.sap.require("sap.m.QuickViewCard");
-		jQuery.sap.require("sap.m.QuickViewGroup");
-		jQuery.sap.require("sap.m.QuickViewGroupElement");
-		jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-
 		var oQuickView = new sap.m.QuickView({
-			cards : {
-				path : '/cards',
-				template : new sap.m.QuickViewCard({
-					cardId : "{cardId}",
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
 					header: "{header}",
 					icon: "{icon}",
 					title: "{title}",
@@ -252,7 +246,7 @@
 									value: "{value}",
 									url: "{url}",
 									type: "{elementType}",
-									cardLinkId: "{cardLinkId}"
+									pageLinkId: "{pageLinkId}"
 								})
 							}
 						})
@@ -264,8 +258,8 @@
 		var oQuickView1 = new sap.m.QuickView();
 
 		var oQuickView2 = new sap.m.QuickView({
-			cards : [
-				new sap.m.QuickViewCard({
+			pages : [
+				new sap.m.QuickViewPage({
 					header	: "Store",
 					title	: "Jumbo",
 					description	: "The best toy store in the USA",
@@ -315,8 +309,8 @@
 		var oModifyJsonButton = new sap.m.Button({
 			text: "Modify binded data",
 			press: function() {
-				for(var i in mData.cards[0].groups[1].elements) {
-					var element = mData.cards[0].groups[1].elements[i];
+				for(var i in mData.pages[0].groups[1].elements) {
+					var element = mData.pages[0].groups[1].elements[i];
 					var tmp = element.label;
 					element.label = element.value;
 					element.value = tmp;
@@ -340,7 +334,7 @@
 			}
 		});
 
-		var oQuickViewCard = new sap.m.QuickViewCard({
+		var oQuickViewPage = new sap.m.QuickViewPage({
 			header	: "Store",
 			title	: "Jumbo",
 			description	: "The best toy store in the USA",
@@ -374,16 +368,16 @@
 			]
 		});
 
-		var oPanel = new sap.m.Panel('quickViewCardPanel', {
+		var oPanel = new sap.m.Panel('quickViewPagePanel', {
 			width : '320px',
 			headerText : 'Store',
 			content : [
-				oQuickViewCard
+				oQuickViewPage
 			]
 		});
 
 		// create and add a page with icon tab bar
-		var page = new sap.m.Page("quickViewCard", {
+		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View",
 			content : [
 				oButton,
