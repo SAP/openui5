@@ -63,7 +63,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The "items" and "buttons" aggregations should NOT be used simultaneously as it causes the control to work incorrectly.
 			 * @since 1.28
 			 */
-			items : { type : "sap.m.SegmentedButtonItem", multiple : true, singularName : "item", bindable : "bindable" }
+			items : { type : "sap.m.SegmentedButtonItem", multiple : true, singularName : "item", bindable : "bindable" },
+
+			/**
+			 * Hidden aggregation that holds an instance of sap.m.Select to be used in some contexts as a representation of the segmented button (f.e. in a popover with little space)
+			 */
+			_select: { type : "sap.m.Select", multiple : false, visibility : "hidden"}
 		},
 		associations : {
 
@@ -327,8 +332,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iBarContainerPaddingFix = 2,//Temporary solution to fix the segmentedButton with 100% width in dialog issue.
 			iInnerWidth = $this.children('#' + this.getButtons()[0].getId()).outerWidth(true) - $this.children('#' + this.getButtons()[0].getId()).width(),
 			oButtons = this.getButtons();
-			// If parent width is bigger than actual screen width set parent width to screen width => android 2.3
-			iParentWidth;
+		// If parent width is bigger than actual screen width set parent width to screen width => android 2.3
+		iParentWidth;
 
 		if (jQuery(window).width() < $this.parent().outerWidth()) {
 			iParentWidth = jQuery(window).width();
@@ -394,7 +399,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	/**
 	 * The orientationchange event listener
-	*/
+	 */
 	SegmentedButton.prototype._fHandleResize = function () {
 		this._fCalcBtnWidth();
 	};
@@ -433,7 +438,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Only one is allowed.
 	 *
 	 * @param {string} sText
- 	 *         defines the title text of the newly created button
+	 *         defines the title text of the newly created button
 	 * @param {sap.ui.core.URI} sURI
 	 *         Icon to be displayed as graphical element within the button.
 	 *         Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided.
@@ -496,6 +501,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oButton) {
 				processButton(oButton, this);
 				this.addAggregation('buttons', oButton);
+				this._syncSelect();
 				return this;
 			}
 		};
@@ -504,6 +510,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oButton) {
 				processButton(oButton, this);
 				this.insertAggregation('buttons', oButton, iIndex);
+				this._syncSelect();
 				return this;
 			}
 		};
@@ -513,10 +520,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oParent._buttonPressed(oEvent);
 			});
 
+			oButton.attachEvent("_change", oParent._syncSelect, oParent);
+
 			var fnOriginalSetEnabled = sap.m.Button.prototype.setEnabled;
 			oButton.setEnabled = function (bEnabled) {
 				oButton.$().toggleClass("sapMSegBBtnDis", !bEnabled)
-						   .toggleClass("sapMFocusable", bEnabled);
+					.toggleClass("sapMFocusable", bEnabled);
 
 				fnOriginalSetEnabled.apply(oButton, arguments);
 			};
@@ -622,6 +631,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oRemovedButton = this.removeAggregation("buttons", oButton);
 		if (oRemovedButton) {
 			delete oRemovedButton.setEnabled;
+			oRemovedButton.detachEvent("_change", this._syncSelect, this);
+			this._syncSelect();
 		}
 	};
 
@@ -633,9 +644,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				if (oButton) {
 					delete oButton.setEnabled;
 					this.removeAggregation("buttons", oButton);
+					oButton.detachEvent("_change", this._syncSelect, this);
 				}
 
 			}
+			this._syncSelect();
 		}
 	};
 
@@ -713,6 +726,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._focusSelectedButton();
 			}
 		}
+
+		this._syncSelect();
 	};
 
 	SegmentedButton.prototype._focusSelectedButton = function () {
@@ -734,6 +749,97 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	SegmentedButton.prototype.onsappageup = function(oEvent) {
 		this._oItemNavigation.onsaphome(oEvent);
+	};
+
+
+
+
+	/** Select form function **/
+
+	/**
+	 * Lazy loader for the select hidden aggregation
+	 * @private
+	 */
+	SegmentedButton.prototype._lazyLoadSelectForm = function() {
+		var oSelect = this.getAggregation("_select");
+
+		if (!oSelect) {
+			oSelect = new sap.m.Select(this.getId() + "-select");
+			oSelect.attachChange(this._selectChangeHandler, this);
+			oSelect.addStyleClass("sapMSegBSelectWrapper");
+			this.setAggregation("_select", oSelect, true);
+		}
+	};
+
+	/**
+	 * This method is called when the select is changed so that the segmented button internals stay in sync
+	 * @param oEvent
+	 * @private
+	 */
+	SegmentedButton.prototype._selectChangeHandler = function(oEvent) {
+		var oSelectedItem = oEvent.getParameter("selectedItem"),
+			sNewKey = parseInt(oSelectedItem.getKey(), 10),
+			oButton = this.getButtons()[sNewKey],
+			sButtonId = oButton.getId();
+
+		this.setSelectedButton(sButtonId);
+		this.fireSelect({
+			button: oButton,
+			id: sButtonId,
+			key: sNewKey
+		});
+	};
+
+	/**
+	 * Builds/rebuilds the select from the buttons in the segmented button
+	 * @private
+	 */
+	SegmentedButton.prototype._syncSelect = function() {
+		var iKey = 0,
+			iSelectedKey = 0,
+			sButtonText,
+			oSelect = this.getAggregation("_select");
+
+		if (!oSelect) {
+			return;
+		}
+
+		oSelect.destroyItems();
+		this.getButtons().forEach(function (oButton) {
+			sButtonText = oButton.getText();
+			oSelect.addItem(new sap.ui.core.Item({
+				key: iKey.toString(),
+				text: sButtonText ? sButtonText : oButton.getTooltip_AsString(),
+				enabled: oButton.getEnabled()
+			}));
+			if (oButton.getId() === this.getSelectedButton()) {
+				iSelectedKey = iKey;
+			}
+			iKey++;
+		}, this);
+		oSelect.setSelectedKey(iSelectedKey.toString());
+	};
+
+	/**
+	 * To be called to make the control go to select mode
+	 * @private
+	 */
+	SegmentedButton.prototype._toSelectMode = function() {
+		this._bInOverflow = true;
+		this.addStyleClass("sapMSegBSelectWrapper");
+		this._lazyLoadSelectForm();
+		this._syncSelect();
+	};
+
+	/**
+	 * To be called to make the control go back to the default mode
+	 * @private
+	 */
+	SegmentedButton.prototype._toNormalMode = function() {
+		delete this._bInOverflow;
+		this.removeStyleClass("sapMSegBSelectWrapper");
+		this.getAggregation("_select").removeAllItems();
+		this.destroyAggregation("_select");
 	};
 
 	/**
