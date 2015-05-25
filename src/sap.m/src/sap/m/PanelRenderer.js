@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.renderControl(oHeaderTBar);
 
-		} else if (sHeaderText) {
+		} else {
 			oRm.write("<div");
 			oRm.addClass("sapMPanelHdr");
 			if (bIsExpandable) {
