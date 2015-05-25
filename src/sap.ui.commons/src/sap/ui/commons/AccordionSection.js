@@ -132,8 +132,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	
 		if (hdrLeft) {
 			hdrLeft.style.width = "auto";
-			var that = this;
-			setTimeout(function() {that.onAfterRendering();}, 0); // TODO: there is a problem in IE8, depending on what the surrounding container is...
+			this.onAfterRendering();
 		}
 	
 	}
