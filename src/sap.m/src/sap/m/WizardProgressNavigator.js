@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
+function (library, Control, ItemNavigation) {
 	"use strict";
 
 	/**
@@ -93,25 +94,27 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 		STEP: "data-sap-ui-wpn-step",
 		CURRENT_STEP: "data-sap-ui-wpn-step-current",
 		ACTIVE_STEP: "data-sap-ui-wpn-step-active",
-		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open",
-		TAB_INDEX: "tabindex"
+		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open"
 	};
 
 	WizardProgressNavigator.prototype.init = function () {
-		this.data("sap-ui-fastnavgroup", "true", true);
 		this._currentStep = 1;
 		this._activeStep = 1;
 		this._cachedSteps = null;
 		this._cachedSeparators = null;
+		this._createAnchorNavigation();
 	};
 
 	WizardProgressNavigator.prototype.onAfterRendering = function () {
+		var zeroBasedActiveStep = this._activeStep - 1,
+			zeroBasedCurrentStep = this._currentStep - 1;
+
 		this._cacheDOMElements();
 		this._updateStepZIndex();
 		this._updateSeparatorsOpenAttribute();
-		this._allowFocusOnStep(this._activeStep - 1);
-		this._updateStepActiveAttribute(this._activeStep - 1);
-		this._updateStepCurrentAttribute(this._currentStep - 1);
+		this._updateAnchorNavigation(zeroBasedActiveStep);
+		this._updateStepActiveAttribute(zeroBasedActiveStep);
+		this._updateStepCurrentAttribute(zeroBasedCurrentStep);
 	};
 
 	/**
@@ -178,14 +181,12 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 
 		this._updateStepActiveAttribute(index - 1, this._activeStep - 1);
 		this._updateCurrentStep(index, this._currentStep);
-		this._disallowFocusAfterStep(index - 1);
+		this._updateAnchorNavigation(index - 1);
 		this._currentStep = index;
 		this._activeStep = index;
 	};
 
 	WizardProgressNavigator.prototype.ontap = function (event) {
-		event.preventDefault();
-
 		if (!this._isAnchor(event.target) ||
 			!this._isActiveStep(this._getStepNumber(event.target))) {
 			return;
@@ -199,10 +200,23 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 	WizardProgressNavigator.prototype.onsapenter = WizardProgressNavigator.prototype.ontap;
 
 	WizardProgressNavigator.prototype.exit = function () {
+		this.removeDelegate(this._anchorNavigation);
+		this._anchorNavigation.destroy();
+		this._anchorNavigation = null;
 		this._currentStep = null;
 		this._activeStep = null;
 		this._cachedSteps = null;
 		this._cachedSeparators = null;
+	};
+
+	/**
+	 * Creates an ItemNavigation delegate for navigating between active anchors
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._createAnchorNavigation = function () {
+		this._anchorNavigation = new ItemNavigation();
+		this._anchorNavigation.setCycling(false);
+		this.addDelegate(this._anchorNavigation);
 	};
 
 	/**
@@ -250,7 +264,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 	 */
 	WizardProgressNavigator.prototype._updateSeparatorsOpenAttribute = function () {
 		var separatorsLength = this._cachedSeparators.length,
-			startIndex, endIndex;
+			startIndex,
+			endIndex;
 
 		if (this._currentStep === 1) {
 			startIndex = 0;
@@ -275,27 +290,21 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 	};
 
 	/**
-	 * Removes tabindex = -1 attribute from the anchor tag inside each step to allow focus
-	 * @param {number} stepIndex - The index of the step. Zero-based
-	 * @returns {undefined}
+	 * Allows focus on active anchors
+	 * @param  {number} index - The index of the last focusable anchor. Zero-based
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._allowFocusOnStep = function (stepIndex) {
-		this._cachedSteps[stepIndex].firstChild
-			.removeAttribute(WizardProgressNavigator.ATTRIBUTES.TAB_INDEX);
-	};
+	WizardProgressNavigator.prototype._updateAnchorNavigation = function (index) {
+		var navDomRef = this.getDomRef(),
+			focusableAnchors = [];
 
-	/**
-	 * Adds tabindex = -1 attribute to the anchor tag inside each step to disallow focus
-	 * @param {number} index - The index of the step after which all steps will not be focusable. Zero-based.
-	 * @returns {undefined}
-	 * @private
-	 */
-	WizardProgressNavigator.prototype._disallowFocusAfterStep = function (index) {
-		// slice includes the start index in the returned array but we do not what it
-		Array.prototype.slice.call(this._cachedSteps, index + 1).forEach(function (step) {
-			step.firstChild.setAttribute(WizardProgressNavigator.ATTRIBUTES.TAB_INDEX, -1);
-		});
+		for (var i = 0; i <= index; i++) {
+			focusableAnchors.push(this._cachedSteps[i].children[0]);
+		}
+
+		this._anchorNavigation.setRootDomRef(navDomRef);
+		this._anchorNavigation.setItemDomRefs(focusableAnchors);
+		this._anchorNavigation.setFocusedIndex(index);
 	};
 
 	/**
@@ -361,11 +370,12 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._updateActiveStep = function (newStep, oldStep) {
-		oldStep = oldStep || this._activeStep;
+		var zeroBasedNewStep = newStep - 1,
+			zeroBasedOldStep = (oldStep || this._activeStep) - 1;
 
 		this._activeStep = newStep;
-		this._allowFocusOnStep(newStep - 1);
-		this._updateStepActiveAttribute(newStep - 1, oldStep - 1);
+		this._updateAnchorNavigation(zeroBasedNewStep);
+		this._updateStepActiveAttribute(zeroBasedNewStep, zeroBasedOldStep);
 
 		return this.fireStepActivated({index: newStep});
 	};
@@ -378,11 +388,12 @@ sap.ui.define(['./library', 'sap/ui/core/Control'], function (library, Control) 
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._updateCurrentStep = function (newStep, oldStep) {
-		oldStep = oldStep || this.getCurrentStep();
+		var zeroBasedNewStep = newStep - 1,
+			zeroBasedOldStep = (oldStep || this._activeStep) - 1;
 
 		this._currentStep = newStep;
 		this._updateStepZIndex();
-		this._updateStepCurrentAttribute(newStep - 1, oldStep - 1);
+		this._updateStepCurrentAttribute(zeroBasedNewStep, zeroBasedOldStep);
 		this._updateSeparatorsOpenAttribute();
 		return this.fireStepChanged({
 			previous: oldStep,
