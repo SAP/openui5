@@ -61,7 +61,7 @@ sap.ui.define(function () {
 	};
 
 	WizardProgressNavigatorRenderer.renderAnchor = function (oRm, iAnchorNumber) {
-		oRm.write("<a tabindex='-1'");
+		oRm.write("<a tabindex='-1' aria-disabled='true'");
 		oRm.writeAttribute("class", CLASSES.ANCHOR);
 		oRm.writeAttribute("title", "Step " + iAnchorNumber);
 		oRm.write(">");
