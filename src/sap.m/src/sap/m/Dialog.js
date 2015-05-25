@@ -489,6 +489,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			this.fireBeforeClose({origin: this._oCloseTrigger});
 			oPopup.attachClosed(this._handleClosed, this);
 			this._deregisterResizeHandler();
+			this._bDisableRepositioning = false;
 			oPopup.close();
 		}
 		return this;
