@@ -202,6 +202,10 @@ function (library, Control, ItemNavigation) {
 		this._activeStep = index;
 	};
 
+	WizardProgressNavigator.prototype._setOnEnter = function (fnCallback) {
+		this._onEnter = fnCallback;
+	};
+
 	WizardProgressNavigator.prototype.ontap = function (event) {
 		if (!this._isAnchor(event.target) ||
 			!this._isActiveStep(this._getStepNumber(event.target))) {
@@ -211,9 +215,14 @@ function (library, Control, ItemNavigation) {
 		this._updateCurrentStep(this._getStepNumber(event.target));
 	};
 
-	WizardProgressNavigator.prototype.onsapspace = WizardProgressNavigator.prototype.ontap;
+	WizardProgressNavigator.prototype.onsapspace = function (event) {
+		if (this._onEnter) {
+			this._onEnter(event, this._anchorNavigation.getFocusedIndex());
+		}
+		this.ontap(event);
+	};
 
-	WizardProgressNavigator.prototype.onsapenter = WizardProgressNavigator.prototype.ontap;
+	WizardProgressNavigator.prototype.onsapenter = WizardProgressNavigator.prototype.onsapspace;
 
 	WizardProgressNavigator.prototype.exit = function () {
 		this.removeDelegate(this._anchorNavigation);
@@ -230,8 +239,17 @@ function (library, Control, ItemNavigation) {
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._createAnchorNavigation = function () {
+		var that = this;
 		this._anchorNavigation = new ItemNavigation();
 		this._anchorNavigation.setCycling(false);
+		this._anchorNavigation.attachEvent("AfterFocus", function (params) {
+			var event = params.mParameters.event;
+			if (!event || !event.relatedTarget || jQuery(event.relatedTarget).hasClass(WizardProgressNavigator.CLASSES.ANCHOR)) {
+				return;
+			}
+
+			that._anchorNavigation.focusItem(that._currentStep - 1);
+		});
 		this.addDelegate(this._anchorNavigation);
 	};
 
@@ -320,6 +338,7 @@ function (library, Control, ItemNavigation) {
 
 		this._anchorNavigation.setRootDomRef(navDomRef);
 		this._anchorNavigation.setItemDomRefs(focusableAnchors);
+		this._anchorNavigation.setPageSize(index);
 		this._anchorNavigation.setFocusedIndex(index);
 	};
 

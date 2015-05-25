@@ -853,6 +853,15 @@
 		  ]
 		},
 		{
+		  "id" : "sap.m.Wizard",
+		  "name" : "Wizard",
+		  "category" : "Container",
+		  "since" : "1.30",
+		  "samples" : [
+			"sap.m.sample.Wizard"
+		  ]
+		},
+		{
 		  "id": "sap.m.tutorial.walkthrough",
 		  "name": "SAPUI5 Walkthrough",
 		  "category": "Tutorial",
@@ -1813,6 +1822,11 @@
 		  "id": "sap.m.sample.OverflowToolbarFooter",
 		  "name": "Overflow Toolbar - in a table and in the footer of a page",
 		  "description": "Overflow Toolbar is useful for showing lists of action buttons that can display an icon in the toolbar, and icon+text when in the overflow."
+		},
+		{
+		  "id": "sap.m.sample.Wizard",
+		  "name": "Wizard standard use case",
+		  "description": "The Wizard is useful for breaking down complex tasks into smaller steps."
 		}
 	  ]
 	}

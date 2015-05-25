@@ -179,7 +179,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ViewSettingsDialog",
 			"sap.m.semantic.DetailPage",
 			"sap.m.semantic.FullscreenPage",
-			"sap.m.semantic.MasterPage"
+			"sap.m.semantic.MasterPage",
+			"sap.m.Wizard",
+			"sap.m.WizardStep"
 		],
 		elements: [
 			"sap.m.Column",
