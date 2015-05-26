@@ -644,7 +644,8 @@
 		  "samples": [
 			"sap.m.sample.MultiInput",
 			"sap.m.sample.MultiInputValidators",
-			"sap.m.sample.MultiInputMultiLine"
+			"sap.m.sample.MultiInputMultiLine",
+			"sap.m.sample.MultiInputDatabinding"
 		  ]
 		},
 		{
@@ -1340,6 +1341,11 @@
 		  "id": "sap.m.sample.MultiInputMultiLine",
 		  "name": "MultiInput Multi-line Mode",
 		  "description": "Multi-line display mode allows to fully view all tokens and easily edit tokens in the MultiInput. This display mode should be used if you need overview of all content in the MultiInput."
+		},
+		{
+			"id": "sap.m.sample.MultiInputDatabinding",
+			"name": "MultiInput Databinding",
+			"description": "MultiInput Databinding allows data to be binded to tokens in MultiInput."
 		},
 		{
 		  "id": "sap.m.sample.Token",
