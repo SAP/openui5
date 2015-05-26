@@ -5,9 +5,9 @@
   <vendor>SAP SE</vendor>
   <copyright>${copyright}</copyright>
   <version>${version}</version>
-  
+
   <documentation>SAPUI5 library with controls specialized for mobile devices.</documentation>
-  
+
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>
@@ -45,6 +45,15 @@
                 <module>sap/m/FeedInput</module>
                 <module>sap/m/FeedListItem</module>
                 <module>sap/m/UploadCollection</module>
+            </modules>
+        </component>
+        <component>
+            <name>CA-UI5-DOC</name>
+            <modules>
+                <module>sap/m/tutorial/Walkthrough</module>
+                <module>sap/m/tutorial/Testing-BulletinBoard</module>
+                <module>sap/m/tutorial/MasterDetail-DisplayOrders</module>
+                <module>sap/m/tutorial/Worklist-ManageProductStock</module>
             </modules>
         </component>
     </ownership>
