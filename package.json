@@ -25,6 +25,7 @@
     "async": "^0.9.0",
     "coffee-script": "^1.9.1",
     "download": "^3.3.0",
+    "eslint": "^0.21.1",
     "eslint-plugin-openui5": "0.1.0",
     "extend": "^2.0.0",
     "grunt": "^0.4.5",
