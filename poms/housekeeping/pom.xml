@@ -16,7 +16,7 @@
   <parent>
     <groupId>com.sap.ui5</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.5</version>
   </parent>
 
 
@@ -102,7 +102,7 @@
           <remoteTomcatPassword>${tomcat.sandbox.pwd}</remoteTomcatPassword>
           <skipDeploy>true</skipDeploy>
           <skipUndeploy>true</skipUndeploy>
-      <timeout>180</timeout>
+          <timeout>180</timeout>
         </configuration>
       </plugin>
 
@@ -311,6 +311,11 @@
                 <deployable>
                   <groupId>com.sap.ui5.training</groupId>
                   <artifactId>ui5school</artifactId>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>siemensapps</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
               </deployables>
