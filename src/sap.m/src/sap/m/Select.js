@@ -640,6 +640,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// selected item on focus
 			this._oSelectionOnFocus = null;
+
+			// to detect when the control is in the rendering phase
+			this._bRenderingPhase = false;
+
+			// to detect if the focusout event is triggered due a rendering
+			this._bFocusoutDueRendering = false;
 		};
 
 		/**
@@ -648,8 +654,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.onBeforeRendering = function() {
-			this._oSelectionOnFocus = this.getSelectedItem();
+
+			// rendering phase is started
+			this._bRenderingPhase = true;
 			this.synchronizeSelection();
+		};
+
+		/**
+		 * Required adaptations after rendering.
+		 *
+		 * @private
+		 */
+		Select.prototype.onAfterRendering = function() {
+
+			// rendering phase is finished
+			this._bRenderingPhase = false;
 		};
 
 		/**
@@ -1012,7 +1031,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.onfocusin = function(oEvent) {
 
-			this._oSelectionOnFocus = this.getSelectedItem();
+			if (!this._bFocusoutDueRendering) {
+				this._oSelectionOnFocus = this.getSelectedItem();
+			}
 
 			// note: in some circumstances IE browsers focus non-focusable elements
 			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
@@ -1031,7 +1052,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @function
 		 */
 		Select.prototype.onfocusout = function(oEvent) {
-			this._checkSelectionChange();
+
+			if (this._bRenderingPhase) {
+				this._bFocusoutDueRendering = true;
+			} else {
+				this._bFocusoutDueRendering = false;
+				this._checkSelectionChange();
+			}
 		};
 
 		/**
