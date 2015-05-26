@@ -2054,15 +2054,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				oBatchRequestHandle = {
 					abort: function() {
 						//relay the abort call to all sub-requests created by v2.ODataModel.read()
-						for (var iRequestIndex = 0; iRequestIndex < aExecutedRequestDetails.length; iRequestIndex++) {
-							aExecutedRequestDetails[iRequestIndex].abort();
+						for (var iRequestIndex = 0; iRequestIndex < aBatchQueryRequest.length; iRequestIndex++) {
+							aBatchQueryRequest[iRequestIndex].abort();
 						}
 					}
 				};
 				// The response collector keeps track of all returned requests and
 				// calls the original success/error handlers after all batch responses have returned
 				oResponseCollector.setup({
-					executedRequests: aExecutedRequestDetails, 
+					executedRequests: aExecutedRequestDetails,
 					binding: this,
 					success: fnSuccess,
 					error: fnError
@@ -3312,6 +3312,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._deregisterHandleOfCompletedRequest = function(iRequestHandleId) {
+		if (jQuery.isEmptyObject(this.oPendingRequestHandle)) {
+			jQuery.sap.log.warning("No request handles to be cleared. Previous abort/resetData?");
+			return;
+		}
 		if (this.oPendingRequestHandle[iRequestHandleId] === undefined) {
 			jQuery.sap.log.fatal("no handle found for this request ID");
 		}
@@ -3425,6 +3429,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._deregisterCompletedRequest = function(sRequestId) {
+		// in case there are no pending request, log a warning. This might happen during a refresh call
+		// helps to keep track of timing issues / race conditions with already returned requests
+		if (jQuery.isEmptyObject(this.oPendingRequests)) {
+			jQuery.sap.log.warning("There are no pending requests which could be set to 'completed'.");
+			return;
+		}
+		
 		if (!this.oPendingRequests[sRequestId]) {
 			jQuery.sap.log.fatal("assertion failed: there is no pending request ID " + sRequestId);
 		}
