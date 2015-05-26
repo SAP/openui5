@@ -462,6 +462,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 			return oBundle;
 		}
 	};
+	
+	/**
+	 * Checks if the given object is an instance of {@link jQuery.sap.util.ResourceBundle}
+	 * 
+	 * @param {jQuery.sap.util.ResourceBundle} oBundle object to check
+	 * @return {boolean} true, if the object is a {@link jQuery.sap.util.ResourceBundle}
+	 * @public
+	 */
+	jQuery.sap.resources.isBundle = function(oBundle) {
+		return oBundle && oBundle instanceof Bundle;
+	};
 
 	jQuery.sap.resources._getFallbackLocales = function(sLocale, aSupportedLocales) {
 		var sTempLocale = normalize(sLocale),
