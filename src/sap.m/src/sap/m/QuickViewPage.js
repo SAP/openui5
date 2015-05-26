@@ -143,15 +143,17 @@ sap.ui.define([
 			QuickViewPage.prototype._createPage = function () {
 				var oForm = this._createForm(),
 					that = this,
-					oHeaderContent = this._getPageHeaderContent(),
-					aContent = [];
-
-				aContent.push(oHeaderContent, oForm);
+					oHeaderContent = this._getPageHeaderContent();
 
 				var oPage = new Page(this.getPageId(), {
-					content : aContent,
 					customHeader : new Bar()
 				});
+
+				if (oHeaderContent) {
+					oPage.addContent(oHeaderContent);
+				}
+
+				oPage.addContent(oForm);
 
 				var oCustomHeader = oPage.getCustomHeader();
 
@@ -175,14 +177,12 @@ sap.ui.define([
 					);
 				}
 
-				if (sap.ui.Device.system.phone) {
+				if (that._oPopover && sap.ui.Device.system.phone) {
 					oCustomHeader.addContentRight(
 						new Button({
 							icon : "sap-icon://decline",
 							press : function() {
-								if (that._oPopover) {
-									that._oPopover.close();
-								}
+								that._oPopover.close();
 							}
 						})
 					);
@@ -195,10 +195,10 @@ sap.ui.define([
 
 			QuickViewPage.prototype._createPageContent = function () {
 
-				var mPageContent = {};
-
-				mPageContent.form = this._createForm();
-				mPageContent.header = this._getPageHeaderContent();
+				var mPageContent = {
+					form : this._createForm(),
+					header : this._getPageHeaderContent()
+				};
 
 				return mPageContent;
 			};
@@ -213,7 +213,9 @@ sap.ui.define([
 
 				if (aGroups) {
 					for (var j = 0; j < aGroups.length; j++) {
-						this._renderGroup(aGroups[j], oForm);
+						if (aGroups[j].getVisible()) {
+							this._renderGroup(aGroups[j], oForm);
+						}
 					}
 				}
 
@@ -225,14 +227,22 @@ sap.ui.define([
 					oVLayout = new VerticalLayout(),
 					oHLayout = new HorizontalLayout();
 
-				if (this.getIcon()) {
+				var sIcon = this.getIcon();
+				var sTitle = this.getTitle();
+				var sDescription = this.getDescription();
+
+				if (!sIcon && !sTitle && !sDescription) {
+					return null;
+				}
+
+				if (sIcon) {
 					if (this.getIcon().indexOf("sap-icon") == 0) {
 						oIcon = new Icon({
-							src: this.getIcon()
+							src: sIcon
 						});
 					} else {
 						oIcon = new Image({
-							src: this.getIcon()
+							src: sIcon
 						}).addStyleClass("sapUiIcon");
 					}
 
@@ -249,24 +259,24 @@ sap.ui.define([
 
 				if (this.getTitleUrl()) {
 					oTitle = new Link({
-						text	: this.getTitle(),
+						text	: sTitle,
 						href	: this.getTitleUrl(),
 						target	: "_blank"
 					});
 				} else if (this.getCrossAppNavCallback()) {
 					oTitle = new Link({
-						text	: this.getTitle()
+						text	: sTitle
 					});
 					oTitle.attachPress(this._crossApplicationNavigation(this));
 				} else {
 					oTitle = new Title({
-						text	: this.getTitle(),
+						text	: sTitle,
 						level	: CoreTitleLevel.H1
 					});
 				}
 
 				var oDescription = new Text({
-					text	: this.getDescription()
+					text	: sDescription
 				});
 
 				oVLayout.addContent(oTitle);

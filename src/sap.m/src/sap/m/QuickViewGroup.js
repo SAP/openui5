@@ -29,6 +29,15 @@ sap.ui.define([
 					properties: {
 
 						/**
+						 * Whether the group should be visible on the screen.
+						 */
+						visible : {
+							type: "boolean",
+							group : "Appearance",
+							defaultValue: true
+						},
+
+						/**
 						 * The title of the group
 						 */
 						heading: {

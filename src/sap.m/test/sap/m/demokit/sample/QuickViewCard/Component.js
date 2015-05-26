@@ -2,10 +2,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.QuickViewStandAlone.Component", {
+	var Component = UIComponent.extend("sap.m.sample.QuickViewCard.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.QuickViewStandAlone.QuickView",
+			rootView : "sap.m.sample.QuickViewCard.QuickView",
 			dependencies : {
 				libs : [
 					"sap.m",
