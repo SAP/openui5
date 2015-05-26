@@ -389,7 +389,7 @@ function (library, Control, ItemNavigation) {
 	 */
 	WizardProgressNavigator.prototype._updateCurrentStep = function (newStep, oldStep) {
 		var zeroBasedNewStep = newStep - 1,
-			zeroBasedOldStep = (oldStep || this._activeStep) - 1;
+			zeroBasedOldStep = (oldStep || this.getCurrentStep()) - 1;
 
 		this._currentStep = newStep;
 		this._updateStepZIndex();
