@@ -6,12 +6,13 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/Overlay',
+	'sap/ui/dt/DesignTimeMetadata',	
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Selection',
 	'sap/ui/dt/ElementUtil',
 	'./library'
 ],
-function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
+function(ManagedObject, Overlay, DesignTimeMetadata, OverlayRegistry, Selection, ElementUtil) {
 	"use strict";
 
 	/**
@@ -251,27 +252,50 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 				oOverlay.destroy();
 			}			
 		});
-	};	
+	};
 
-	/*
+	/**
+	 * @private
+	 * @param {String|sap.ui.core.Element} element
+	 */
+	DesignTimeNew.prototype._getDesignTimeMetadata = function(oElement) {
+		var oOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oOverlay) {
+			return oOverlay.getDesignTimeMetadata();
+		} else {
+			return this.createDesignTimeMetadata(oElement);
+		}
+	};
+
+	/**
+	 * @protected
+	 * @param {String|sap.ui.core.Element} element
+	 */
+	DesignTimeNew.prototype.createDesignTimeMetadata = function(oElement) {
+		var mDesignTimeMetadata = oElement.getMetadata().getDesignTime() || {};
+		return new DesignTimeMetadata({data : mDesignTimeMetadata});
+	};
+
+	/**
 	 * @private
 	 * @param {String|sap.ui.core.Element} element
 	 */
 	DesignTimeNew.prototype._createOverlay = function(oElement) {
-		// Filter
-		//if (this.fireBeforeCreateOverlay())
+		var oDesignTimeMetadata = this._getDesignTimeMetadata(oElement);
 
-		var oOverlay = this.createOverlay(oElement);
+		var oOverlay = this.createOverlay(oElement, oDesignTimeMetadata);
 		oOverlay.attachEvent("elementModified", this._onElementModified, this);
 		oOverlay.attachEvent("destroyed", this._onOverlayDestroyed, this);
 		oOverlay.attachEvent("selectionChange", this._onOverlaySelectionChange, this);
 
 		this.fireOverlayCreated({overlay : oOverlay});
+
+		return oOverlay;
 	};
 
 	/** 
 	 * @private
-	 * @param {sap.ui.baseEvent} event object
+	 * @param {sap.ui.baseEvent} oEvent event object
 	*/
 	DesignTimeNew.prototype._onOverlayDestroyed = function(oEvent) {
 		var oOverlay = oEvent.getSource();
@@ -295,9 +319,10 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 * @param {String|sap.ui.core.Element} oElement to create overlay for
 	 * @return {sap.ui.dt.Overlay} created overlay
 	 */
-	DesignTimeNew.prototype.createOverlay = function(oElement) {
+	DesignTimeNew.prototype.createOverlay = function(oElement, oDesignTimeMetadata) {
 		return new Overlay({
-			element : oElement
+			element : oElement,
+			designTimeMetadata : oDesignTimeMetadata
 		});
 	};
 
@@ -370,8 +395,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 * @private
 	 */
 	DesignTimeNew.prototype._iterateRootElements = function(fnStep) {
-		var aRootElements = this.getRootElements();
-		aRootElements.forEach(function(sRootElementId) {
+		this.getRootElements().forEach(function(sRootElementId) {
 			var oRootElement = ElementUtil.getElementInstance(sRootElementId);
 			fnStep(oRootElement);
 		});
@@ -381,8 +405,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 * @private
 	 */
 	DesignTimeNew.prototype._iterateRootElementPublicChildren = function(oRootElement, fnStep) {
-		var aAllPublicElements = ElementUtil.findAllPublicElements(oRootElement);
-		aAllPublicElements.forEach(function(oElement) {
+		ElementUtil.findAllPublicElements(oRootElement).forEach(function(oElement) {
 			fnStep(oElement);
 		});
 	};

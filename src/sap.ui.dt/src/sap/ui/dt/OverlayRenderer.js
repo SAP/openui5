@@ -23,7 +23,8 @@ sap.ui.define(['sap/ui/dt/AggregationOverlay', 'sap/ui/dt/DOMUtil'],
 	 * @param {sap.ui.dt.Overlay} oOverlay An object representation of the control that should be rendered.
 	 */
 	OverlayRenderer.render = function(oRm, oOverlay) {
-		if (oOverlay.getDomRef()) {			
+		if (oOverlay.getDomRef()) {
+			oOverlay.$().empty();
 			this._triggerOnAfterRenderingWithoutRendering(oRm, oOverlay);
 
 			return;

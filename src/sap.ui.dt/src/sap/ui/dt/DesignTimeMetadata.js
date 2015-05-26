@@ -48,7 +48,11 @@ function(jQuery, ManagedObject) {
 	DesignTimeMetadata.prototype._ensureProperties = function(oData) {
 		return jQuery.extend(true, {
 			defaultSettings : {},
-			aggregations : {},
+			aggregations : {
+				layout : {
+					visible : false
+				}
+			},
 			properties : {},
 			associations : {},
 			events : {},
@@ -73,7 +77,7 @@ function(jQuery, ManagedObject) {
 			selectable : true,
 			removable : true,
 			resizable : true,
-			display : true,
+			visible : true,
 			needDelegateFromParent : false
 		}, oData);
 	};
@@ -98,6 +102,18 @@ function(jQuery, ManagedObject) {
 	DesignTimeMetadata.prototype.getAggregations = function() {
 		return this.getData().aggregations;
 	};
+
+	DesignTimeMetadata.prototype.isVisible = function() {
+		return this.getData().visible !== false;
+	};
+
+	DesignTimeMetadata.prototype.isAggregationVisible = function(sAggregationName) {
+		return this.getAggregation(sAggregationName).visible !== false;
+	};
+
+	DesignTimeMetadata.prototype.getAggregationDomRef = function(sAggregationName) {
+		return this.getAggregation(sAggregationName).domRef;
+	};	
 
 	return DesignTimeMetadata;
 }, /* bExport= */ true);

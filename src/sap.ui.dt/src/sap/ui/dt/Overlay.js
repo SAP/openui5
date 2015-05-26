@@ -49,6 +49,11 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
+				// we redefine the "visible" property so that the RenderManager won't render invisible placeholder
+				visible : {
+					type : "boolean",
+					defaultValue : true
+				},
 				selected : {
 					type : "boolean",
 					defaultValue : false
@@ -141,6 +146,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	Overlay.prototype.init = function() {
 		this._oDefaultDesignTimeMetadata = null;
 		this._addToOverlayContainer();	
+		this._bVisible = null;
 	};
 
 
@@ -164,6 +170,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		}
 
 		delete this._oDomRef;
+		delete this._bVisible;
 		delete this._elementId;
 		this.fireDestroyed();
 	};
@@ -188,24 +195,50 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
+	 * @public
+	 */
+	Overlay.prototype.getAssociatedDomRef = function() {
+		return ElementUtil.getDomRef(this.getElementInstance());
+	};	
+
+	/** 
+	 * @public
+	 */
+	Overlay.prototype.getGeometry = function() {
+
+		var oDomRef = this.getAssociatedDomRef();
+		var mGeometry = DOMUtil.getGeometry(oDomRef);
+
+		if (!mGeometry) {
+			var aChildrenGeometry = [];
+			this.getAggregationOverlays().forEach(function(oAggregationOverlay) {
+				aChildrenGeometry.push(oAggregationOverlay.getGeometry());
+			});
+			mGeometry = OverlayUtil.getGeometry(aChildrenGeometry);
+		}
+
+		return mGeometry;
+	};	
+
+	/** 
 	 * @private
 	 */
 	Overlay.prototype._updateDom = function() {
-		var oElement = this.getElementInstance();
-
-		var oElementGeometry = DOMUtil.getElementGeometry(oElement);
+		var oElementGeometry = this.getGeometry();
 
 		var oParent = this.getParent();
 		if (oParent) {
 			if (oParent.getDomRef) {
 				this.$().appendTo(oParent.getDomRef());
 			} else {
-				this.$().appendTo(oParent.getRootNode());
+				// this.$().appendTo(oParent.getRootNode());
+				// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
+				this.$().appendTo(Overlay.getOverlayContainer());
+				this.applyStyles();
 			}
 		}
-		if (oElementGeometry) {
+		if (oElementGeometry && this.isVisible()) {
 			this.$().show();
-			this._applyStyles(oElementGeometry);
 		} else {
 			// we should always be in DOM to make sure, that drop events (dragend) will be fired even if the overlay isn't visible anymore
 			this.$().hide();
@@ -214,26 +247,33 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 
-	Overlay.prototype._applyStyles = function(oElementGeometry) {
-		var mSize = oElementGeometry.size;
-		var oOverlayParent = this.getParent();
-		var mParentOffset = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.getOffset() : null;
-		var mPosition = DOMUtil.getOffsetFromParent(oElementGeometry.position, mParentOffset);
-		this.setOffset({left : oElementGeometry.position.left, top: oElementGeometry.position.top});
+	Overlay.prototype.applyStyles = function() {
+		var oElementGeometry = this.getGeometry();
 
-		var iZIndex = DOMUtil.getZIndex(oElementGeometry.domRef);
+		if (oElementGeometry) {
+			var oOverlayParent = OverlayUtil.getClosestScrollable(this) || this.getParent();
+			var mParentOffset = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().offset() : null;
+			var iScrollOffsetLeft = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().scrollLeft() : null;
+			var iScrollOffsetTop = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().scrollTop() : null;
+			var mPosition = DOMUtil.getOffsetFromParent(oElementGeometry.position, mParentOffset, iScrollOffsetTop, iScrollOffsetLeft);
 
-		var $overlay = this.$();
+			var iZIndex = DOMUtil.getZIndex(oElementGeometry.domRef);
 
-		$overlay.css("width", mSize.width + "px");
-		$overlay.css("height", mSize.height + "px");
-		$overlay.css("top", mPosition.top + "px");
-		$overlay.css("left", mPosition.left + "px");
-		if (iZIndex) {
-			$overlay.css("z-index", iZIndex);
+			var $overlay = this.$();
+			var mSize = oElementGeometry.size;
+
+			$overlay.css("width", mSize.width + "px");
+			$overlay.css("height", mSize.height + "px");
+			$overlay.css("top", mPosition.top + "px");
+			$overlay.css("left", mPosition.left + "px");
+			if (iZIndex) {
+				$overlay.css("z-index", iZIndex);
+			}
+
+			this.getAggregationOverlays().forEach(function(oAggregationOverlay) {
+				oAggregationOverlay.applyStyles();
+			});
 		}
-
-		// TODO : addStyleClass method
 	};
 
 	/** 
@@ -266,10 +306,6 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			oParentOverlay.sync();
 		}
 
-		if (DOMUtil.getElementGeometry(oElement)) {
-			this.rerender();
-		}
-
 		return this;
 	};
 
@@ -279,21 +315,21 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 */
 	Overlay.prototype._createAggregationOverlays = function() {
 		var oElement = this.getElementInstance();
+		var oDesignTimeMetadata = this.getDesignTimeMetadata();
 
 		if (oElement) {
 			var that = this;
 			ElementUtil.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
 				var sAggregationName = oAggregation.name;
-				
 				var oAggregationOverlay = new AggregationOverlay({
-					aggregationName : sAggregationName
+					aggregationName : sAggregationName,
+					visible : oDesignTimeMetadata.isAggregationVisible(sAggregationName)
 				});
 
 				that._syncAggregationOverlay(oAggregationOverlay);
 
 				that.addAggregation("_aggregationOverlays", oAggregationOverlay);
-
-			}, null, ElementUtil.getAggregationFilter());
+			});
 		}
 	};
 
@@ -329,6 +365,38 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 
 		return this;
 	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.getVisible = function() {
+		if (this._bVisible === null) {
+			return this.getDesignTimeMetadata().isVisible();
+		} else {
+			return this.getProperty("visible");
+		}
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.setVisible = function(bVisible) {
+		this.setProperty("visible", bVisible);
+		this._bVisible = bVisible;
+	};
+
+	/** 
+	 * @public
+	 */
+	Overlay.prototype.setDraggable = function(bDraggable) {
+		if (this.getDraggable() !== bDraggable) {
+			this.fireDraggableChange({draggable : bDraggable});
+			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
+			
+			// TODO: canceleable
+			this.setProperty("draggable", bDraggable);
+		}
+	};	
 
 	/**
 	 * @public
@@ -460,6 +528,19 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return this.getAggregation("_aggregationOverlays") || [];
 	};
 
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.getAggregationOverlay = function(sAggregationName) {
+		var aAggregationOverlaysWithName = this.getAggregation("_aggregationOverlays").filter(function(oAggregationOverlay) {
+			return oAggregationOverlay.getAggregationName() === sAggregationName;
+		});
+		if (aAggregationOverlaysWithName.length) {
+			return aAggregationOverlaysWithName[0];
+		}
+	};
+
 	/**
 	 * @public
 	 */
@@ -474,24 +555,18 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return this.getSelectable();
 	};
 
-	/** 
-	 * @public
-	 */
-	Overlay.prototype.setDraggable = function(bDraggable) {
-		if (this.getDraggable() !== bDraggable) {
-			this.fireDraggableChange({draggable : bDraggable});
-			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
-			
-			// TODO: canceleable
-			this.setProperty("draggable", bDraggable);
-		}
-	};	
-
 	/**
 	 * @public
 	 */
 	Overlay.prototype.isDraggable = function() {
 		return this.getDraggable();
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.isVisible = function() {
+		return this.getVisible();
 	};
 
 	/**

@@ -27,31 +27,20 @@ function(jQuery) {
 
 	var ElementUtil = {};
 
-	ElementUtil.getAggregationFilter = function() {
-		return [ "tooltip", "customData", "dependents", "layoutData", "layout" ];
-	};
-
 	ElementUtil.getControlFilter = function() {
 		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout" ];
 	};
 
-	ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback, fnBreakCondition, aFilter) {
+	ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback) {
 		var mAggregations = oElement.getMetadata().getAllAggregations();
 		if (!mAggregations) {
 			fnCallback();
 		}
 		for ( var sName in mAggregations) {
-			if (aFilter && aFilter.indexOf(sName) !== -1) {
-				continue;
-			}
 			var oAggregation = mAggregations[sName];
 			var oValue = this.getAggregation(oElement, sName);
 
 			fnCallback(oAggregation, oValue);
-			if (fnBreakCondition && fnBreakCondition(oAggregation, oValue)) {
-				break;
-			}
-			
 		}
 	};
 
@@ -78,36 +67,46 @@ function(jQuery) {
 		var oCore = sap.ui.core;
 
 		function internalFind(oElement) {
-			if (!(oElement instanceof oCore.Element) || that.isElementFiltered(oElement)) {
+			if (!(oElement instanceof oCore.Element)) {
 				return;
 			}
 
-			//check if needed
-			if (oElement.getMetadata().getClass() === oCore.UIArea) {
-				var aContent = oElement.getContent();
-				for (var i = 0; i < aContent.length; i++) {
-					internalFind(aContent[i]);
-				}
-			} else if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
+			if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
 				internalFind(oElement.getComponentInstance().getAggregation("rootControl"));
 			} else {
 				aFoundElements.push(oElement);
 				that.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
 					if (vElements && vElements.length) {
-						for (var k = 0; k < vElements.length; k++) {
-							var oObj = vElements[k];
+						for (var i = 0; i < vElements.length; i++) {
+							var oObj = vElements[i];
 							internalFind(oObj);
 						}
 					} else if (vElements instanceof oCore.Element) {
 						internalFind(vElements);
 					}
-				}, null, sap.ui.dt.ElementUtil.getAggregationFilter());
+				});
 			}
 		}
 		internalFind(oElement);
 
 		return aFoundElements;
 
+	};
+
+	ElementUtil.getDomRef = function(oElement) {
+		var oDomRef;
+		if (!oElement) { 
+			return;
+		}
+		
+		if (oElement.getDomRef) {
+			oDomRef = oElement.getDomRef();
+		}
+		if (!oDomRef && oElement.getRenderedDomRef) {
+			oDomRef = oElement.getRenderedDomRef();
+		}
+
+		return oDomRef;
 	};
 
 	ElementUtil.findAllPublicChildren = function(oElement) {

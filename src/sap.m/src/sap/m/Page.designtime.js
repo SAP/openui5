@@ -12,7 +12,7 @@ sap.ui.define([],
 		},
 		aggregations : {
 			content : {
-				cssSelector : ":sap-domref > section"
+				domRef : ":sap-domref > section"
 			}
 		},
 		name: "{name}",

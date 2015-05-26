@@ -67,7 +67,7 @@
 
 			QUnit.test("styles for page content overlay are similar to aggregation's and scroll is propagated to the original content's DOM", function(assert) {
 				var done = assert.async();
-				var oPageContentOverlay = this.oPageOverlay.getAggregation("_aggregationOverlays")[0];
+				var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
 				var $PageContentOverlay = jQuery(oPageContentOverlay.getDomRef());
 				strictEqual($PageContentOverlay.length, 1, "page content overlay is rendered");
 
@@ -75,7 +75,7 @@
 				strictEqual($PageContent.scrollTop(), $PageContentOverlay.scrollTop(), "initial scroll position is equal");
 
 				$PageContentOverlay.scrollTop(20);
-				oPageContentOverlay.attachBrowserEvent("scroll", function() {
+				$PageContent.on("scroll", function() {
 					strictEqual($PageContent.scrollTop(), 20, "page content is scrolled to position 20");
 					done();
 				});

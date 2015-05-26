@@ -147,7 +147,7 @@
 				var oFormOverlay = OverlayRegistry.getOverlay(this.oForm.getId());
 				var $FormOverlay = jQuery(oFormOverlay.getDomRef());
 
-				var $FormContainersOverlay = jQuery(oFormOverlay.getAggregation("_aggregationOverlays")[0].getDomRef());
+				var $FormContainersOverlay = jQuery(oFormOverlay.getAggregationOverlay("formContainers").getDomRef());
 				assert.notEqual($FormContainersOverlay.width(), 0, "Overlay for aggregation FormContainers exists and ... ");
 				assert.ok(isElementChildOf($FormContainersOverlay, $FormOverlay), "... and is a child of a form overlay");
 
@@ -156,7 +156,7 @@
 				assert.notEqual($ContainerOverlay1.width(), 0, "Overlay for FormContainer1 exists and has width");
 				assert.ok(isElementChildOf($ContainerOverlay1, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 
-				var $formElementsOverlay1 = jQuery(oContainerOverlay1.getAggregation("_aggregationOverlays")[0].getDomRef());
+				var $formElementsOverlay1 = jQuery(oContainerOverlay1.getAggregationOverlay("formElements").getDomRef());
 				assert.notEqual($formElementsOverlay1.width(), 0, "Overlay for aggregation formElements exists and ... ");
 				assert.ok(isElementChildOf($formElementsOverlay1, $ContainerOverlay1), "... and is a child of a FormContainer1 overlay");
 

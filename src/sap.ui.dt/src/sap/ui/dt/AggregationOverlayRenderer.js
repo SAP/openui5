@@ -24,6 +24,7 @@ sap.ui.define(['sap/ui/dt/DOMUtil'],
 	 */
 	AggregationOverlayRenderer.render = function(oRm, oAggregationOverlay) {
 		if (oAggregationOverlay.getDomRef()) {
+			oAggregationOverlay.$().empty();
 			this._triggerOnAfterRenderingWithoutRendering(oRm, oAggregationOverlay);
 
 			return;

@@ -35,15 +35,15 @@ function(jQuery, ElementUtil) {
 		};
 	};
 
-	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset) {
+	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset, scrollTop, scrollLeft) {
 		var mOffset = {
 			left : oPosition.left,
 			top : oPosition.top
 		};
 		
 		if (mParentOffset) {
-			mOffset.left -= mParentOffset.left;
-			mOffset.top -= mParentOffset.top;
+			mOffset.left -= (mParentOffset.left - (scrollLeft ? scrollLeft : 0));
+			mOffset.top -= (mParentOffset.top - (scrollTop ? scrollTop : 0));
 		}
 		return mOffset;
 	};
@@ -68,49 +68,7 @@ function(jQuery, ElementUtil) {
 		return oOverflows;
 	};
 
-	DOMUtil.getChildrenAreaGeometry = function(aElements) {
-		var that = this;
-		if (!aElements) {
-			return;
-		}
-
-		var minLeft, maxRight, minTop, maxBottom;
-		jQuery.each(aElements, function(index, oElement) {
-			var oElementGeometry = that.getElementGeometry(oElement);
-			if (oElementGeometry) {
-				if (!minLeft || oElementGeometry.position.left < minLeft) {
-					minLeft = oElementGeometry.position.left;
-				}
-				if (!minTop || oElementGeometry.position.top < minTop) {
-					minTop = oElementGeometry.position.top;
-				}
-
-				var iRight = oElementGeometry.position.left + oElementGeometry.size.width;
-				if (!maxRight || iRight > maxRight) {
-					maxRight = iRight;
-				}
-				var iBottom = oElementGeometry.position.top + oElementGeometry.size.height;
-				if (!maxBottom || iBottom > maxBottom) {
-					maxBottom = iBottom;
-				}
-			}
-		});
-
-		if (typeof minLeft === "number") {
-			return {
-				size : {
-					width : maxRight - minLeft,
-					height : maxBottom - minTop
-				},
-				position : {
-					left : minLeft,
-					top : minTop
-				}
-			};
-		}
-	};
-
-	DOMUtil.getDomGeometry = function(oDomRef) {
+	DOMUtil.getGeometry = function(oDomRef) {
 		if (oDomRef) {
 			return {
 				domRef : oDomRef,
@@ -120,25 +78,21 @@ function(jQuery, ElementUtil) {
 		}
 	};
 
-	DOMUtil.getElementGeometry = function(oElement) {
-		var oDomRef;
-		if (!oElement) { 
-			return;
-		}
+	DOMUtil.syncScroll = function(oSourceDom, oTargetDom) {
+		var $target = jQuery(oTargetDom);
+		var oTargetScrollTop = $target.scrollTop();
+		var oTargetScrollLeft = $target.scrollLeft();
 		
-		if (oElement.getDomRef) {
-			oDomRef = oElement.getDomRef();
-		}
-		if (!oDomRef && oElement.getRenderedDomRef) {
-			oDomRef = oElement.getRenderedDomRef();
-		}
-		if (!oDomRef)  {
-			var aFoundElements = ElementUtil.findAllPublicChildren(oElement);
-			return this.getChildrenAreaGeometry(aFoundElements);
-		} else {
-			return this.getDomGeometry(oDomRef);
-		}
+		var $source = jQuery(oSourceDom);
+		var oSourceScrollTop = $source.scrollTop();
+		var oSourceScrollLeft = $source.scrollLeft();
 
+		if (oSourceScrollTop !== oTargetScrollTop) {
+			$target.scrollTop(oSourceScrollTop);
+		}
+		if (oSourceScrollLeft !== oTargetScrollLeft) {
+			$target.scrollLeft(oSourceScrollLeft);
+		}
 	};
 
 	DOMUtil.getDomRefForCSSSelector = function(oDomRef, sCSSSelector) {
@@ -154,10 +108,6 @@ function(jQuery, ElementUtil) {
 			return document.querySelector(sCSSSelector.replace(":sap-domref", "#" + this.getEscapedString(oDomRef.id)));
 		}
 		return oDomRef ? oDomRef.querySelector(sCSSSelector) : undefined;
-	};
-
-	DOMUtil.getAggregationGeometryForCSSSelector = function(oDomRef, sCSSSelector) {
-		return this.getDomGeometry(this.getDomRefForCSSSelector(oDomRef, sCSSSelector));
 	};
 
 	DOMUtil.getEscapedString = function(sString) {

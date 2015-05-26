@@ -39,7 +39,7 @@
 
 
 				this.oLayoutOverlay = new sap.ui.dt.Overlay({element : this.oLayout});
-				this.oAggregationOverlay = this.oLayoutOverlay.getAggregationOverlays()[0];
+				this.oAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
 				this.oButtonOverlay = new sap.ui.dt.Overlay({element : this.oButton});
 				
 				sap.ui.getCore().applyChanges();

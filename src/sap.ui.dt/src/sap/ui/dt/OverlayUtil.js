@@ -40,6 +40,42 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		return oParentOverlay;
 	};
 
+	OverlayUtil.getGeometry = function(aGeometry) {
+		var minLeft, maxRight, minTop, maxBottom;
+		aGeometry.forEach(function(oElementGeometry) {
+			if (oElementGeometry) {
+				if (!minLeft || oElementGeometry.position.left < minLeft) {
+					minLeft = oElementGeometry.position.left;
+				}
+				if (!minTop || oElementGeometry.position.top < minTop) {
+					minTop = oElementGeometry.position.top;
+				}
+
+				var iRight = oElementGeometry.position.left + oElementGeometry.size.width;
+				if (!maxRight || iRight > maxRight) {
+					maxRight = iRight;
+				}
+				var iBottom = oElementGeometry.position.top + oElementGeometry.size.height;
+				if (!maxBottom || iBottom > maxBottom) {
+					maxBottom = iBottom;
+				}
+			}
+		});
+
+		if (typeof minLeft === "number") {
+			return {
+				size : {
+					width : maxRight - minLeft,
+					height : maxBottom - minTop
+				},
+				position : {
+					left : minLeft,
+					top : minTop
+				}
+			};
+		}		
+	};	
+
 	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
 		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElementInstance(), sType)) {
 			oOverlay = oOverlay.getParentOverlay();
@@ -47,5 +83,15 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 
 		return oOverlay;
 	};
+
+	OverlayUtil.getClosestScrollable = function(oOverlay) {
+		oOverlay = oOverlay.getParent();
+		while (oOverlay && oOverlay.isScrollable && !oOverlay.isScrollable()) {
+			oOverlay = oOverlay.getParent();
+		}
+
+		return oOverlay && oOverlay.isScrollable ? oOverlay : null;
+	};
+
 	return OverlayUtil;
 }, /* bExport= */ true);

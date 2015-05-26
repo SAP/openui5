@@ -72,7 +72,8 @@
 		QUnit.test("when the plugin is added to designTime with two controls", function(assert) {
 			this.oDesignTime.addPlugin(this.oPlugin);
 			assert.strictEqual(this.iRegisterOverlayCalls, 2, "register was called for two overlays");
-			assert.strictEqual(this.iRegisterAggregationOverlayCalls, 1, "register was called for one aggregation overlay");
+			var iAggregationCount = Object.keys(this.oLayout.getMetadata().getAllAggregations()).length + Object.keys(this.oButton.getMetadata().getAllAggregations()).length;
+			assert.strictEqual(this.iRegisterAggregationOverlayCalls, iAggregationCount, "register was called for all aggregation overlays");
 		});
 
 		QUnit.test("when the plugin is added to designTime and new control is added to designTime", function(assert) {
@@ -84,7 +85,7 @@
 
 			this.oDesignTime.addRootElement(oLayout);
 			assert.strictEqual(this.iRegisterOverlayCalls, 1, "register was called for a new control");
-			assert.strictEqual(this.iRegisterAggregationOverlayCalls, 1, "register was called for a new aggregation");
+			assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
 		});
 
 		QUnit.test("when the plugin is added to designTime and then removed from DT", function(assert) {
