@@ -334,7 +334,7 @@
 					sScript = "<script src=\"" + window["sap-ui-sRestartUrl"] + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
 					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
-						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue + "\"";
+						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue.replace(/"/g, "&quot;") + "\"";
 					}
 				});
 				sScript += "></script>";
@@ -378,9 +378,11 @@
 			bIsOptimized = window["sap-ui-optimized"];
 
 		//Check local storage
-		try { //Necessary for FF when Cookies are deactivated
+		try {
 			bDebugSources = bDebugSources || (window.localStorage.getItem("sap-ui-debug") == "X");
-		} catch (e) {}
+		} catch (e) {
+			//Happens in FF when Cookies are deactivated
+		}
 
 		window["sap-ui-debug"] = bDebugSources;
 
@@ -3026,8 +3028,8 @@
 
 				var oScript = window.document.createElement('SCRIPT');
 				oScript.src = sUrl;
-				oScript.dataset.sapUiModule = sResource;
-				oScript.dataset.sapUiModuleError = '';
+				oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
+				// oScript.setAttribute("data-sap-ui-module-error", '');
 				oScript.addEventListener('load', function(e) {
 					jQuery.sap.log.info("Javascript resource loaded: " + sResource);
 // TODO either find a cross-browser solution to detect and assign execution errros or document behavior
@@ -3323,6 +3325,7 @@
 						}
 						oSupport.openSupportTool();
 					} catch (err2) {
+						// ignore error
 					}
 				}
 			});

@@ -18,7 +18,8 @@
 			<MessageStrip
 				text="Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				showIcon="true"
-				showCloseButton="true">
+				showCloseButton="true"
+				close="onMsgStripClose">
 			</MessageStrip>
 
 			<Label text="Error with icon and close button:" />
@@ -26,7 +27,8 @@
 				text="Error: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				type="Error"
 				showIcon="true"
-				showCloseButton="true">
+				showCloseButton="true"
+				close="onMsgStripClose">
 			</MessageStrip>
 
 			<Label text="Warning with icon and close button:" />
@@ -34,7 +36,8 @@
 				text="Warning: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				type="Warning"
 				showIcon="true"
-				showCloseButton="true">
+				showCloseButton="true"
+				close="onMsgStripClose">
 			</MessageStrip>
 
 			<Label text="Success with icon and close button:" />
@@ -42,7 +45,8 @@
 				text="Success: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				type="Success"
 				showIcon="true"
-				showCloseButton="true">
+				showCloseButton="true"
+				close="onMsgStripClose">
 			</MessageStrip>
 
 			<Label text="Information with icon" />
@@ -64,15 +68,14 @@
 			<MessageStrip
 				text="Error: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam pretium blandit sapien at pellentesque. Pellentesque tincidunt pretium justo at pharetra."
 				type="Error"
-				showCloseButton="true">
+				showCloseButton="true"
+				close="onMsgStripClose">
 				<link>
 					<Link text="Open SAP Homepage"
 						target="_blank"
 						href="http://www.sap.com" />
 				</link>
 			</MessageStrip>
-
-
 
 		</l:content>
 	</l:VerticalLayout>

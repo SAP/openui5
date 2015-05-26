@@ -393,9 +393,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		// optional dataSources from "sap.app" manifest
 		var mDataSources = (oAppManifest && oAppManifest["dataSources"]) ? oAppManifest["dataSources"] : null;
 
-		// base dir to resolve URIs relative to component
-		var sComponentBaseDir = jQuery.sap.getModulePath(this.getMetadata().getComponentName()) + "/";
-
 		// read current URI params to mix them into model URI
 		var oUriParams = jQuery.sap.getUriParameters();
 
@@ -472,10 +469,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 								continue;
 							}
 
+							// resolve relative to component
+							var oAnnotationUri = oMetadata._resolveUri(new URI(oAnnotation.uri)).toString();
+
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
 							oModelConfig.settings.annotationURI = oModelConfig.settings.annotationURI || [];
-							oModelConfig.settings.annotationURI.push(oAnnotation.uri);
+							oModelConfig.settings.annotationURI.push(oAnnotationUri);
 						}
 					}
 
@@ -523,13 +523,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				// parse model URI to be able to modify it
 				var oUri = new URI(oModelConfig.uri);
 
+				// resolve URI relative to component
+				oUri = oMetadata._resolveUri(oUri);
+
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
 					addSapUriParams(oUriParams, oUri);
 				}
 
-				// resolve URI relative to component
-				oModelConfig.uri = oUri.absoluteTo(sComponentBaseDir).toString();
+				oModelConfig.uri = oUri.toString();
 			}
 
 			// set model specific "uri" property names which should be used to map "uri" to model specific constructor
@@ -858,14 +860,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			return oClass;
 		} 
 
+		function registerPath(vObj) {
+
+			jQuery.sap.assert(
+				(typeof vObj === 'string' && vObj) || 
+				(typeof vObj === 'object' && typeof vObj.name === 'string' && vObj.name), 
+				"reference either must be a non-empty string or an object with a non-empty 'name' and an optional 'url' property");
+
+			if ( typeof vObj === 'object' ) {
+				if ( vObj.url ) {
+					jQuery.sap.registerModulePath(vObj.name, vObj.url);
+				}
+				return vObj.name;
+			}
+
+			return vObj;
+		}
+
 		function preload(sComponentName, bAsync) {
-			
+
 			var sController = sComponentName + '.Component',
 				sPreloadName;
-			
+
 			// only load the Component-preload file if the Component module is not yet available
 			if ( bComponentPreload && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
-				
+
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, '-preload.js'); // URN
 					return jQuery.sap._loadJSResourceAsync(sPreloadName, true);
@@ -893,7 +912,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 			// preload required libraries 
 			if ( hints.libs ) {
-				collect(sap.ui.getCore().loadLibraries( hints.libs ));
+				collect(sap.ui.getCore().loadLibraries( hints.libs.map(registerPath) ));
 			}
 
 			if ( bComponentPreload ) {
@@ -901,8 +920,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 				// if a hint about "used" components is given, preload those components
 				if ( hints.components ) {
-					jQuery.each(hints.components, function(i, sCompName) {
-						collect(preload(sCompName, true));
+					jQuery.each(hints.components, function(i, vComp) {
+						collect(preload(registerPath(vComp), true));
 					});
 				}
 			}

@@ -1,0 +1,152 @@
+/* ================================================= */
+/* CSS for control sap.m.QuickView */
+/* ================================================= */
+
+.sap-desktop .sapMQuickViewCard .sapUiFormResGrid > div,
+.sap-tablet .sapMQuickViewCard .sapUiFormResGrid > div {
+	padding: 0;
+	margin: 0;
+}
+
+.sap-desktop .sapMQuickViewCard.sapMNavItem.sapMPage,
+.sap-tablet .sapMQuickViewCard.sapMNavItem.sapMPage {
+	position: static;
+	height: 100%;
+	box-sizing: content-box;
+}
+
+.sap-desktop .sapMQuickViewCard.sapMPage > header,
+.sap-tablet .sapMQuickViewCard.sapMPage > header {
+	position: absolute;
+	height: 3rem;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	font-size: 16px;
+}
+
+.sap-desktop .sapUiSizeCompact .sapMQuickViewCard.sapMPage > header,
+.sap-tablet .sapUiSizeCompact .sapMQuickViewCard.sapMPage > header {
+	height: 2.5rem;
+
+}
+
+.sapMQuickViewCard.sapMPage > header .sapMBarRight .sapUiIcon {
+	font-size: 1rem;
+}
+
+.sap-desktop .sapMQuickViewCard > section,
+.sap-tablet .sapMQuickViewCard > section {
+	position: static;
+	height: 100%;
+	padding: 4rem 1rem 1rem 1rem;
+}
+
+.sapUiSizeCompact .sapMQuickViewCard > section {
+	padding-top: 3.5rem;
+}
+
+.sapMQuickViewCard .sapUiFormResGridCont > div {
+	padding: 0;
+}
+
+.sapMQuickViewCard .sapUiHLayout .sapUiIcon {
+	margin-right: .75rem;
+	font-size: 2.25rem;
+	font-weight: normal;
+}
+
+.sapMQuickViewCard .sapUiHLayout .sapUiIcon:before {
+	line-height: 3rem;
+}
+
+.sapMQuickViewCard .sapUiVlt .sapMText {
+	font-weight: normal;
+}
+
+.sapMQuickViewCard .sapUiFormResGrid > div {
+	background-color : transparent;
+}
+
+.sapMQuickViewCard .sapUiSimpleForm {
+	margin-top: 1rem;
+}
+
+.sapMQuickViewCard .sapUiSimpleForm .sapMTitle {
+	margin-top: 1rem;
+}
+
+.sapMQuickViewCard .sapMFlexItem:first-child {
+	flex: 7 0 auto;
+	-webkit-flex: 7 0 auto;
+	-ms-flex: 7 0 auto;
+}
+
+.sapMQuickViewCard .sapMFlexItem:last-child {
+	flex: 3 0 auto;
+	-webkit-flex: 3 0 auto;
+	-ms-flex: 3 0 auto;
+	font-family: SAP-icons;
+	min-width: 3rem;
+	text-align: right;
+}
+
+.sapMQuickViewCard .sapMQuickViewThumbnail {
+	font-family: SAP-icons;
+	font-size: 2.5rem;
+	font-weight: normal;
+	width: 3rem;
+	height: 3rem;
+}
+
+.sapMQuickViewCard .sapUiHLayout {
+	margin-bottom: 1rem;
+}
+
+.sap-phone .sapMQuickViewCard .sapUiHLayout {
+	margin: 1rem 0 0 0.75rem;
+}
+
+.sapMQuickViewCard .sapUiHLayoutChildWrapper + .sapUiHLayoutChildWrapper {
+	width: ~'calc(100% - 3.75rem)';
+}
+
+.sapMQuickViewCard .sapUiVltCell {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+.sapMQuickViewCard .sapUiVltCell:first-child {
+	max-height: 3rem;
+	margin-bottom: 0.5rem;
+	overflow: hidden;
+}
+
+.sapMQuickViewCard .sapUiVltCell + .sapUiVltCell span {
+	width: 100%;
+	max-height: 2rem;
+	overflow: hidden;
+}
+
+.sapMQuickViewCard .sapUiIcon {
+	margin: 1px;
+}
+
+.sapMQuickViewCard .sapUiSimpleForm .sapUiIcon {
+	margin: 0;
+	width: 100%;
+	text-align: right;
+	outline: none;
+}
+
+.sapMQuickViewCard .sapUiSimpleForm .sapUiIcon:before {
+	margin-right: 3px;
+}
+
+.sapMQuickViewCard div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
+	overflow: visible;
+}
+

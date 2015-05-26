@@ -53,7 +53,7 @@
 	});
 
 	test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
 		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
 		assert.equal(aAggregation[1].getText(), "Susan Baker", "2. attribute: contributor");
@@ -61,7 +61,7 @@
 	});
 
 	test("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		//before change
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
 		assert.equal(aAggregation[0].getText(), "2014-07-30", "2. attribute: uploadedDate");
@@ -72,7 +72,7 @@
 		this.oUploadCollectionItem.setFileSize(45);
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		//after change
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' updated");
 		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' updated");
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' updated");
@@ -103,16 +103,16 @@
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 		//fileSize
 		this.oUploadCollectionItem.setFileSize(20);
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation[0].getText(), "20", "1. attribute 'fileSize'");
 		//uploadedDate
 		this.oUploadCollectionItem.setUploadedDate("2014-07-30");
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute 'uploadedDate'");
 		assert.equal(aAggregation[1].getText(), "20", "2. attribute 'fileSize'");
 		//contributor
 		this.oUploadCollectionItem.setContributor("Susan Baker");
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, "3", "Aggregation filled with 3 attributes");
 		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
 		assert.equal(aAggregation[1].getText(), "Susan Baker", "2. attribute: contributor");
@@ -147,7 +147,7 @@
 			text : "Test 1"
 		}));
 		this.oUploadCollectionItem.removeAllAttributes();
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation, null, "Original attributes with RemoveAllAggregation were deleted");
 	});
 
@@ -155,14 +155,17 @@
 		this.oUploadCollectionItem.setFileSize(45);
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		this.oUploadCollectionItem.setContributor("John Doe");
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
 		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' set");
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
-		assert.equal(aAggregation.length, 4, "Additional attribute added");
+		assert.equal(aAggregation.length, 3, "Additional attribute added");
+
+		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		assert.equal(aAggregation.length, 1, "Additional attribute added");
 
 		this.oUploadCollectionItem.removeAllAggregation("attributes");
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, 3, "Additional attribute added");
 		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
 		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' set");
@@ -176,8 +179,8 @@
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		this.oUploadCollectionItem.setContributor("John Doe");
 
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 4, "4 attributes available");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation.length, 3, "3 deprecated attributes available");
 
 		//add additional attribute
 		this.oUploadCollectionItem.addAttribute(new sap.m.ObjectAttribute({
@@ -186,112 +189,20 @@
 		}));
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		//check existence/position of original attributes
-		assert.equal(aAggregation[3].getText(), "Test", "Original attribute still available");
-		assert.equal(aAggregation[4].getText(), "Test 2", "Original attribute correct added");
-		assert.equal(aAggregation.length, 5, "5 attributes available");
+		assert.equal(aAggregation[0].getText(), "Test", "Original attribute still available");
+		assert.equal(aAggregation[1].getText(), "Test 2", "Original attribute correct added");
+		assert.equal(aAggregation.length, 2, "2 attributes available");
 
 		var dummyName = "";
 		this.oUploadCollectionItem.removeAllAggregation(dummyName);
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 5, "5 attributes still available");
+		assert.equal(aAggregation.length, 2, "2 attributes still available");
+		
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation.length, 3, "3 deprecated attributes still available");
 	});
 
-	module("IV. Test addAggregation/addAttribute", {
-		setup : function() {
-			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
-				contributor : "Susan Baker",
-			});
-			sap.ui.getCore().applyChanges();
-		},
-		teardown : function() {
-			this.oUploadCollectionItem.destroy();
-		}
-	});
-
-	test("Test addAggregation/addAttribute", function(assert) {
-		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
-		this.oUploadCollectionItem.removeAllAggregation("attributes");
-		//add aggregation
-		var oTestAttribute = new sap.m.ObjectAttribute({
-			active : false,
-			text : "Test A"
-		});
-		//add original attribute
-		this.oUploadCollectionItem.addAttribute(oTestAttribute, true);
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "Aggregation were set and deprecated attributes were considered");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated property was considered in attributes aggregation");
-		assert.equal(aAggregation[1].getText(), "Test A", "Original attribute with correct position in attributes aggrgation");
-		//add the same original attribute again
-		this.oUploadCollectionItem.addAggregation("attributes", oTestAttribute, true);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "Aggregation were set and the same deprecated attribute were considered twice");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated property is still at the same position");
-		assert.equal(aAggregation[1].getText(), "Test A", "Original attribute is still at the same position");
-		//addAggregation with an empty attribute in the interface
-		this.oUploadCollectionItem.addAggregation("attributes", "", true);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "addAggregation does not work with empty object");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated property is still available at the correct position");
-		assert.equal(aAggregation[1].getText(), "Test A", "Original attribute is still available at the correct position");
-	});
-
-	module("V. Test insertAggregation/insertAttribute", {
-		setup : function() {
-			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
-				contributor : "Susan Baker",
-			});
-			sap.ui.getCore().applyChanges();
-		},
-		teardown : function() {
-			this.oUploadCollectionItem.destroy();
-		}
-	});
-
-	test("Test insertAggregation/insertAttribute with initial attribute", function(assert) {
-		//insert aggregation(original attribute)
-		this.oUploadCollectionItem.insertAggregation("attributes", "", 0, true);
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 1, "Aggregation with an initial insert");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated property is still available");
-		//insert attribute (original attribute)
-		this.oUploadCollectionItem.insertAttribute("", 0, true);
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 1, "Aggregation with an initial insert");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated property is still available");
-	});
-
-	test("Test insertAggregation/insertAttribute", function(assert) {
-		//insertattribute(original attribute)
-		this.oUploadCollectionItem.insertAttribute(new sap.m.ObjectAttribute({
-				active : false,
-				text : "Test A"
-		}), 0, true);
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "Aggregation with 2 items");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated contributor property is still at first position");
-		assert.equal(aAggregation[1].getText(), "Test A", "Original attribute at correct position");
-		//insert deprecated fileSize property
-		this.oUploadCollectionItem.setFileSize(45);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 3, "Aggregation with 3 items");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated contributor property is still at first position");
-		assert.equal(aAggregation[1].getText(), "45", "Deprecated fileSize property is at second position");
-		assert.equal(aAggregation[2].getText(), "Test A", "Original attribute at correct position");
-		//insert aggregation(original attribute) at first position
-		this.oUploadCollectionItem.insertAggregation("attributes", new sap.m.ObjectAttribute({
-				active : false,
-				text : "Test B"
-		}), -1, true);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 4, "Aggregation with 4 items");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "Deprecated contributor property is still at first position");
-		assert.equal(aAggregation[1].getText(), "45", "Deprecated fileSize property is still at second position")
-		assert.equal(aAggregation[2].getText(), "Test B", "Original attribute at correct position");
-		assert.equal(aAggregation[3].getText(), "Test A", "Original attribute at correct position");
-	});
-
-	module("VI. Test removeAggregation/removeAttribute", {
+	module("IV. Test getter for all attributes", {
 		setup : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
@@ -306,138 +217,23 @@
 		}
 	});
 
-	test("Test removeAggregation/removeAttribute with initial attribute", function(assert) {
-		var dummyName = "";
-		//remove aggregation(original attribute)
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		this.oUploadCollectionItem.removeAggregation(dummyName, aAggregation[0].getId());
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 1, "Aggregation with 1 items");
-		assert.equal(aAggregation[0].getText(), "Test", "Original attribute is still available in aggregation attributes");
-		//remove attribute (original attribute)
-		this.oUploadCollectionItem.removeAttribute(dummyName, aAggregation[0].getId());
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 1, "Aggregation with 1 items");
-		assert.equal(aAggregation[0].getText(), "Test", "Original attribute is still available in aggregation attributes");
-	});
-
-	test("Test removeAggregation/removeAttribute", function(assert) {
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 1, "Aggregation with 1 items");
-		this.oUploadCollectionItem.removeAggregation("attributes", aAggregation[0].getId());
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation, 0, "No aggregation attribute available");
-		//set deprecated property fileSize
-		this.oUploadCollectionItem.setFileSize(45);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		this.oUploadCollectionItem.removeAttribute(aAggregation[0].getId());
-		assert.equal(aAggregation.length, 1, "Aggregation with 1 items");
-		assert.equal(aAggregation[0].getText(), "45", "Deprecated fileSize property is still at first position");
-
-		var oTestAttributeA = new sap.m.ObjectAttribute({
-			active : false,
-			text : "Test A"
-		});
-		//add original attribute
-		this.oUploadCollectionItem.addAggregation("attributes", oTestAttributeA, true);
-		//set deprecated property uploadedDate
-		this.oUploadCollectionItem.setUploadedDate("2014-07-30");
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation[0].getText(), "2014-07-30", "Deprecated uploadedDate property at first position");
-		assert.equal(aAggregation[1].getText(), "45", "Deprecated fileSize property at second position");
-		assert.equal(aAggregation[2].getText(), "Test A", "Original atribute at third position");
-		assert.equal(aAggregation.length, 3, "Aggregation with 3 items");
-		//remove aggregation(original attribute)
-		this.oUploadCollectionItem.removeAggregation("attributes", aAggregation[2].getId());
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "Aggregation with 2 items");
-		assert.equal(aAggregation[0].getText(), "2014-07-30", "Deprecated uploadedDate property still at first position");
-		assert.equal(aAggregation[1].getText(), "45", "Deprecated fileSize property at still second position");
-		//add attribute(original attribute)
-		this.oUploadCollectionItem.addAttribute(oTestAttributeA);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		//remove attribute
-		this.oUploadCollectionItem.removeAttribute(aAggregation[2].getId());
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "Aggregation with 2 items");
-	});
-
-	module("VII. Test destroyAggregation/destroyAttributes", {
-		setup : function() {
-			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
-				attributes : [ new sap.m.ObjectAttribute({
-					active : false,
-					text : "Test"
-				})]
-			});
-			sap.ui.getCore().applyChanges();
-		},
-		teardown : function() {
-			this.oUploadCollectionItem.destroy();
-		}
-	});
-
-	test("Test destroyAggregation/destroyAttribute with initial attribute", function(assert) {
-		var dummyName = "";
-		//destroyAggregation(original attributes)
-		this.oUploadCollectionItem.destroyAggregation(dummyName);
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.ok(aAggregation, "Aggregation attributes still available");
-		assert.equal(aAggregation.length, 1, "Aggregation attributes still available with length 1");
-		//destroyAttributes(original attributes)
-		this.oUploadCollectionItem.destroyAttributes();
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation, null, "Aggregation attributes still available, but empty");
-
-	});
-
-	test("Test destroyAggregation/destroyAttributes with deprecated properties and original attributes", function(assert) {
+	test("Test getAllAttributes", function(assert) {
+		//set deprecated properties
+		this.oUploadCollectionItem.setContributor("deprecatedContributor");
+		this.oUploadCollectionItem.setUploadedDate("deprecatedDate");
+		this.oUploadCollectionItem.setFileSize(555);
+		
 		this.oUploadCollectionItem.addAggregation("attributes", new sap.m.ObjectAttribute({
 			active : false,
-			text : "Test A"
+			text : "someAttribute"
 		}), true);
-		this.oUploadCollectionItem.setUploadedDate("2014-07-30");
-		this.oUploadCollectionItem.setFileSize(70);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 4, "Aggregation with 4 items");
-		assert.equal(aAggregation[0].getText(), "2014-07-30", "Deprecated uploadedDate property at first position");
-		assert.equal(aAggregation[1].getText(), "70", "Deprecated fileSize property at second position");
-		assert.equal(aAggregation[2].getText(), "Test", "Original attribute at third position");
-		assert.equal(aAggregation[3].getText(), "Test A", "Original attribute at forth position");
-		//destroyAggregation(original attributes)
-		this.oUploadCollectionItem.destroyAggregation("attributes");
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "All original attributes were destroyed");
-		assert.equal(aAggregation[0].getText(), "2014-07-30", "Deprecated uploadedDate property at first position");
-		assert.equal(aAggregation[1].getText(), "70", "Deprecated filsSize property at second position");
-
-	});
-
-	test("Test destroyAggregation/destroyAttributes", function(assert) {
-		//aggregation with 2 original attributes
-		this.oUploadCollectionItem.addAggregation("attributes", new sap.m.ObjectAttribute({
-			active : false,
-			text : "Test A"
-		}), true);
-		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "Aggregation with 2 items");
-		this.oUploadCollectionItem.destroyAggregation("attributes");
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation, null, "All original attributes were destroyed");
-
-		this.oUploadCollectionItem.addAttribute(new sap.m.ObjectAttribute({
-			active : false,
-			text : "Test A"
-		}));
-		this.oUploadCollectionItem.setUploadedDate("2014-07-30");
-		this.oUploadCollectionItem.setFileSize(70);
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 3, "Aggregation with 3 items");
-		this.oUploadCollectionItem.destroyAttributes();
-		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation.length, 2, "All original attributes were destroyed, only 2 items of deprecatd properties are available");
-		assert.equal(aAggregation[0].getText(), "2014-07-30", "Deprecated uploadedDate property at first position");
-		assert.equal(aAggregation[1].getText(), "70", "Deprecated filsSize property at second position");
+		var aAggregation = this.oUploadCollectionItem.getAllAttributes();
+		assert.equal(aAggregation.length, 5, "Aggregation with 5 items");
+		assert.equal(aAggregation[0].getText(), "deprecatedDate", "Deprecated property uploadedDate at first position");
+		assert.equal(aAggregation[1].getText(), "deprecatedContributor", "Deprecated property contributor at second position");
+		assert.equal(aAggregation[2].getText(), "555", "Deprecated property fileSize at third position");
+		assert.equal(aAggregation[3].getText(), "Test", "Attribute Test at fourth position");
+		assert.equal(aAggregation[4].getText(), "someAttribute", "Attribute someAttribute at fifth position");
 	});
 
 </script>

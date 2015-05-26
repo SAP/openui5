@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarUtils', './MonthRenderer'],
-	function(jQuery, Renderer, CalendarUtils, MonthRenderer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', './MonthRenderer'],
+	function(jQuery, Renderer, CalendarUtils, UniversalDate, MonthRenderer) {
 	"use strict";
 
 
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 
 		var sId = oDatesRow.getId();
 		var iDays = oDatesRow.getDays();
-		var oDay = new Date(oDate.getTime());
+		var oDay = new UniversalDate(oDate.getTime());
 		var sWidth = "";
 		var iMonth = 0;
 		var aMonthDays = [];
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 		}
 
 		var oHelper = this.getDayHelper(oDatesRow, oDate);
-		var oDay = new Date(oDate.getTime());
+		var oDay = new UniversalDate(oDate.getTime());
 
 		for (var i = 0; i < iDays; i++) {
 			this.renderDay(oRm, oDatesRow, oDay, oHelper, false, false, i, sWidth);

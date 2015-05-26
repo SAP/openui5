@@ -3,13 +3,42 @@
  */
 
 sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
-		'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONPropertyBinding',
-		'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel', './_ODataMetaModelUtils'],
-	function (BindingMode, ClientContextBinding, JSONListBinding, JSONPropertyBinding,
-			JSONTreeBinding, MetaModel, Utils) {
+		'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONListBinding',
+		'sap/ui/model/json/JSONPropertyBinding', 'sap/ui/model/json/JSONTreeBinding',
+		'sap/ui/model/MetaModel', './_ODataMetaModelUtils'],
+	function (BindingMode, ClientContextBinding, FilterProcessor, JSONListBinding,
+		JSONPropertyBinding, JSONTreeBinding, MetaModel, Utils) {
 	"use strict";
 
-	/*global Promise */
+	/**
+	 * @class List binding implementation for the OData meta model which supports filtering on
+	 * the virtual property "@sapui.name" (which refers back to the name of the object in
+	 * question).
+	 *
+	 * Example:
+	 * <pre>
+	 * &lt;template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
+	 * </pre>
+	 *
+	 * @extends sap.ui.model.json.JSONListBinding
+	 * @private
+	 */
+	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding");
+
+	/**
+	 * @inheritdoc
+	 */
+	ODataMetaListBinding.prototype.applyFilter = function () {
+		var that = this;
+
+		this.aIndices = FilterProcessor.apply(this.aIndices,
+			this.aFilters.concat(this.aApplicationFilters), function (vRef, sPath) {
+			return sPath === "@sapui.name"
+				? vRef
+				: that.oModel.getProperty(sPath, that.oList[vRef]);
+		});
+		this.iLength = this.aIndices.length;
+	};
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataMetaModel</code>,
@@ -42,18 +71,36 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		}
 	 * </pre>
 	 *
-	 * Since 1.29.0 the equivalent vocabulary based annotations for the following
-	 * <a src="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a> are
-	 * also added if they are not defined in v4 annotations from the existing
-	 * {@link sap.ui.model.odata.ODataAnnotations}:
+	 * As of 1.29.0, the corresponding vocabulary-based annotations for the following
+	 * "<a href="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a>"
+	 * are added, if they are not yet defined in the v4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
-	 * <li><code>creatable</code>, <code>deletable</code>, <code>pageable</code>,
-	 * <code>requires-filter</code>, <code>searchable</code>, <code>topable</code> and
-	 * <code>updatable</code> on entity sets;</li>
-	 * <li><code>creatable</code>, <code>field-control</code>, <code>precision</code>,
-	 * <code>required-in-filter</code>, <code>sortable</code>, <code>text</code>, <code>unit</code>
-	 * and <code>updatable</code> on properties.</li>
+	 * <li><code>creatable</code>, <code>deletable</code>, <code>deletable-path</code>,
+	 * <code>pageable</code>, <code>requires-filter</code>, <code>searchable</code>,
+	 * <code>topable</code>, <code>updatable</code> and <code>updatable-path</code> on entity sets;
+	 * </li>
+	 * <li><code>creatable</code>, <code>display-format</code> ("UpperCase" and "NonNegative"),
+	 * <code>field-control</code>, <code>filterable</code>, <code>heading</code>,
+	 * <code>precision</code>, <code>quickinfo</code>, <code>required-in-filter</code>,
+	 * <code>sortable</code>, <code>text</code>, <code>unit</code>, <code>updatable</code> and
+	 * <code>visible</code> on properties;</li>
+	 * <li><code>semantics</code>; the following values are supported:
+	 * <ul>
+	 * <li>"bday", "city", "country", "email" (including support for types, for example
+	 * "email;type=home,pref"), "familyname", "givenname", "honorific", "middlename", "name",
+	 * "nickname", "note", "org", "org-unit", "org-role", "photo", "pobox", "region", "street",
+	 * "suffix", "tel" (including support for types, for example "tel;type=cell,pref"), "title" and
+	 * "zip" (mapped to v4 annotation <code>com.sap.vocabularies.Communication.v1.Contact</code>);
+	 * </li>
+	 * <li>"class", "dtend", "dtstart", "duration", "fbtype", "location", "status", "transp" and
+	 * "wholeday" (mapped to v4 annotation
+	 * <code>com.sap.vocabularies.Communication.v1.Event</code>);</li>
+	 * <li>"body", "from", "received", "sender" and "subject" (mapped to v4 annotation
+	 * <code>com.sap.vocabularies.Communication.v1.Message</code>);</li>
+	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to v4 annotation
+	 * <code>com.sap.vocabularies.Communication.v1.Task</code>).</li>
+	 * </ul>
 	 * </ul>
 	 * For example:
 	 * <pre>
@@ -149,23 +196,38 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		return oNode;
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ClientContextBinding(this, sPath, oContext, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
-			mParameters) {
-		return new JSONListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
+		mParameters) {
+		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new JSONPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.bindTree = function (sPath, oContext, aFilters, mParameters) {
 		return new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
 		return this.oModel.destroy.apply(this.oModel, arguments);
@@ -280,7 +342,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
-	 * Returns the OData association <b>set</b> end corresponding to the given entity type's
+	 * Returns the OData association <em>set</em> end corresponding to the given entity type's
 	 * navigation property of given name.
 	 *
 	 * @param {object} oEntityType
@@ -388,11 +450,11 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
-	 * Returns the OData function import with the given simple name from the default entity
-	 * container.
+	 * Returns the OData function import with the given simple or qualified name from the default
+	 * entity container or the respective entity container specified in the qualified name.
 	 *
 	 * @param {string} sName
-	 *   a simple name, e.g. "Save"
+	 *   a simple or qualified name, e.g. "Save" or "MyService.Entities/Save"
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the function import is returned as a path or as an object
 	 * @returns {object|string}
@@ -402,8 +464,13 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @since 1.29.0
 	 */
 	ODataMetaModel.prototype.getODataFunctionImport = function (sName, bAsPath) {
-		return Utils.getFromContainer(this.getODataEntityContainer(), "functionImport", sName,
-			bAsPath);
+		var aParts =  sName && sName.indexOf('/') >= 0  ? sName.split('/') : undefined,
+			oEntityContainer = aParts ?
+				Utils.getObject(this.oModel, "entityContainer", aParts[0]) :
+				this.getODataEntityContainer();
+
+		return Utils.getFromContainer(oEntityContainer, "functionImport",
+			aParts ? aParts[1] : sName, bAsPath);
 	};
 
 	/**
@@ -491,10 +558,54 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		return bAsPath ? sPropertyPath : oProperty;
 	};
 
+	/**
+	 * Returns a <code>Promise</code> which is resolved with a map representing the
+	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations of the given property or
+	 * rejected with an error.
+	 * The key in the map provided on successful resolution is the qualifier of the annotation or
+	 * the empty string if no qualifier is defined. The value in the map is the JSON object for
+	 * the annotation. The map is empty if the property has no
+	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
+	 *
+	 * @param {object} oProperty
+	 *   a property of an OData entity type or complex type as returned by
+	 *   {@link #getODataProperty getODataProperty}
+	 * @returns {Promise}
+	 *   a Promise that gets resolved as soon as the value lists as well as the required model
+	 *   elements have been loaded
+	 * @throws {Error} if <code>oProperty</code> is <code>null</code> or not an object
+	 * @since 1.29.1
+	 * @public
+	 */
+	ODataMetaModel.prototype.getODataValueLists = function (oProperty) {
+		if (oProperty === null || typeof oProperty !== "object") {
+			throw new Error("Given property " + oProperty + " is not an object");
+		}
+		return new Promise(function (fnResolve, fnReject) {
+			var mValueLists = {};
+
+			jQuery.each(oProperty, function (sName, oValue) {
+				var sQualifier;
+
+				if (jQuery.sap.startsWith(sName, "com.sap.vocabularies.Common.v1.ValueList")) {
+					sQualifier = sName.split("#")[1];
+					mValueLists[sQualifier ? sQualifier : ""] = oValue;
+				}
+			});
+			fnResolve(mValueLists);
+		});
+	};
+
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.getProperty = function () {
 		return this._getObject.apply(this, arguments);
 	};
 
+	/**
+	 * @inheritdoc
+	 */
 	ODataMetaModel.prototype.isList = function () {
 		return this.oModel.isList.apply(this.oModel, arguments);
 	};

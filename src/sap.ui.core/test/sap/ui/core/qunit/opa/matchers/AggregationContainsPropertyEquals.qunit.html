@@ -16,9 +16,7 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
@@ -32,7 +30,7 @@
 	test("Should match an aggregation with items that match the property", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox({
-			items : 
+			items :
 			[
 				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "" }),
 				new sap.ui.core.ListItem({ key : "foo" }),
@@ -40,10 +38,10 @@
 			]});
 
 		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({ 
-			aggregationName : "items", 
-			propertyName : "text", 
-			propertyValue : "foo" 
+		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
+			aggregationName : "items",
+			propertyName : "text",
+			propertyValue : "foo"
 		});
 
 		// Act
@@ -59,7 +57,7 @@
 	test("Should not match an aggregation filled with multiple items that match the property", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox({
-			items : 
+			items :
 			[
 				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ key : "", text : "baz" }),
 				new sap.ui.core.ListItem({ text : "foo" }),
@@ -70,7 +68,7 @@
 		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
 			aggregationName : "items",
 			propertyName : "text",
-			propertyValue : "foo" 
+			propertyValue : "foo"
 		});
 
 		// Act
@@ -78,7 +76,7 @@
 
 		// Assert
 		ok(bResult, "Did match because there were two matching items");
-	
+
 		// Cleanup
 		oComboBox.destroy();
 	});
@@ -88,7 +86,7 @@
 	test("Should not match a filled with items that do not have the property", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox({
-			items : 
+			items :
 			[
 				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "foo" }),
 				new sap.ui.core.ListItem({ text : "bar" }),
@@ -96,7 +94,7 @@
 			]});
 
 		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({ 
+		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
 			aggregationName : "items",
 			propertyName : "someUnknownProperty",
 			propertyValue : "foo"
@@ -115,7 +113,7 @@
 	test("Should not match a filled with items that do not match the property", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox({
-			items : 
+			items :
 			[
 				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "" }),
 				new sap.ui.core.ListItem({ text : "bar" }),
@@ -123,7 +121,7 @@
 			]});
 
 		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({ 
+		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
 			aggregationName : "items",
 			propertyName : "text",
 			propertyValue : "foo"
@@ -144,7 +142,7 @@
 		var oComboBox = new  sap.ui.commons.ComboBox({items : []});
 
 		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({ 
+		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
 			aggregationName : "items",
 			propertyName : "text",
 			propertyValue : "foo"
@@ -159,7 +157,7 @@
 		// Cleanup
 		oComboBox.destroy();
 	});
-	
+
 	test("Should complain if control does not have an aggregation", function() {
 		// Arrange
 		var oComboBox = new  sap.ui.commons.ComboBox();

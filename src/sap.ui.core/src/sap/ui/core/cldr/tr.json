@@ -1410,9 +1410,21 @@
 		"dayPeriods-standAlone-wide": [
 			"ÖÖ",
 			"ÖS"
-		]
+		],
+		"era-wide": {
+			"0": "Milattan Önce",
+			"1": "Milattan Sonra"
+		},
+		"era-abbreviated": {
+			"0": "MÖ",
+			"1": "MS"
+		},
+		"era-narrow": {
+			"0": "MÖ",
+			"1": "MS"
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "G d MMMM y EEEE",
 		"dateFormat-long": "G d MMMM y",
 		"dateFormat-medium": "G d MMM y",
@@ -1687,284 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ÖÖ",
 			"ÖS"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "G d MMMM y EEEE",
-		"dateFormat-long": "G d MMMM y",
-		"dateFormat-medium": "G d MMM y",
-		"dateFormat-short": "GGGGG d.MM.y",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-H-H": "HH-HH",
-		"intervalFormat-Hm-H": "HH:mm-HH:mm",
-		"intervalFormat-Hm-m": "HH:mm-HH:mm",
-		"intervalFormat-Hmv-H": "HH:mm-HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm-HH:mm v",
-		"intervalFormat-Hv-H": "HH-HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-MEd-M": "dd/MM E – dd/MM E",
-		"intervalFormat-MEd-d": "dd/MM E – dd/MM E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMEd-M": "d MMM E – d MMM E",
-		"intervalFormat-MMMEd-d": "d MMM E – d MMM E",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMd-d": "d – d MMM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a - h a",
-		"intervalFormat-h-h": "h-h a",
-		"intervalFormat-hm-a": "h:mm a - h:mm a",
-		"intervalFormat-hm-h": "h:mm-h:mm a",
-		"intervalFormat-hm-m": "h:mm-h:mm a",
-		"intervalFormat-hmv-a": "h:mm a - h:mm a v",
-		"intervalFormat-hmv-h": "h:mm-h:mm a v",
-		"intervalFormat-hmv-m": "h:mm-h:mm a v",
-		"intervalFormat-hv-a": "h a - h a v",
-		"intervalFormat-hv-h": "h-h a v",
-		"intervalFormat-y-y": "G y–y",
-		"intervalFormat-yM-M": "GGGGG M/y – M/y",
-		"intervalFormat-yM-y": "GGGGG M/y – M/y",
-		"intervalFormat-yMEd-M": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-d": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-y": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMMM-M": "G MMM–MMM y",
-		"intervalFormat-yMMM-y": "G MMM y – MMM y",
-		"intervalFormat-yMMMEd-M": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-d": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-y": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMM-M": "G MMMM – MMMM y",
-		"intervalFormat-yMMMM-y": "G MMMM y – MMMM y",
-		"intervalFormat-yMMMd-M": "G d MMM – d MMM y",
-		"intervalFormat-yMMMd-d": "G d–d MMM y",
-		"intervalFormat-yMMMd-y": "G d MMM y – d MMM y",
-		"intervalFormat-yMd-M": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-d": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-y": "GGGGG dd.MM.y – dd.MM.y",
-		"months-format-abbreviated": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
-		],
-		"months-standAlone-abbreviated": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
-		],
-		"days-format-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-format-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-format-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-format-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"days-standAlone-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-standAlone-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-standAlone-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-standAlone-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"quarters-format-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-format-narrow": [
-			"öö",
-			"ös"
-		],
-		"dayPeriods-format-wide": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"öö",
-			"ös"
-		],
-		"dayPeriods-standAlone-wide": [
-			"ÖÖ",
-			"ÖS"
-		]
+		"era-wide": {
+			"0": "Hicri"
+		},
+		"era-abbreviated": {
+			"0": "Hicri"
+		},
+		"era-narrow": {
+			"0": "Hicri"
+		}
 	},
 	"dateField-year-displayName": "Yıl",
 	"dateField-year-relative--1": "geçen yıl",

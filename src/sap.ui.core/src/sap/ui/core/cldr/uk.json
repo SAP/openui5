@@ -1411,9 +1411,21 @@
 		"dayPeriods-standAlone-wide": [
 			"дп",
 			"пп"
-		]
+		],
+		"era-wide": {
+			"0": "до нашої ери",
+			"1": "нашої ери"
+		},
+		"era-abbreviated": {
+			"0": "до н.е.",
+			"1": "н.е."
+		},
+		"era-narrow": {
+			"0": "до н.е.",
+			"1": "н.е."
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "EEEE, d MMMM y 'р'. G",
 		"dateFormat-long": "d MMMM y 'р'. G",
 		"dateFormat-medium": "d MMM y G",
@@ -1688,284 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"дп",
 			"пп"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "EEEE, d MMMM y 'р'. G",
-		"dateFormat-long": "d MMMM y 'р'. G",
-		"dateFormat-medium": "d MMM y G",
-		"dateFormat-short": "dd.MM.yy GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-MEd-M": "E, dd.MM – E, dd.MM",
-		"intervalFormat-MEd-d": "E, dd.MM – E, dd.MM",
-		"intervalFormat-MMM-M": "LLL–LLL",
-		"intervalFormat-MMMEd-M": "E, d MMM – E, d MMM",
-		"intervalFormat-MMMEd-d": "E, d – E, d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMd-d": "d–d MMM",
-		"intervalFormat-Md-M": "dd.MM – dd.MM",
-		"intervalFormat-Md-d": "dd.MM – dd.MM",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-y-y": "y–y",
-		"intervalFormat-yM-M": "MM.y – MM.y",
-		"intervalFormat-yM-y": "MM.y – MM.y",
-		"intervalFormat-yMEd-M": "E, dd.MM.y – E, dd.MM.y",
-		"intervalFormat-yMEd-d": "E, dd.MM.y – E, dd.MM.y",
-		"intervalFormat-yMEd-y": "E, dd.MM.y – E, dd.MM.y",
-		"intervalFormat-yMMM-M": "LLL–LLL y",
-		"intervalFormat-yMMM-y": "LLL y – LLL y",
-		"intervalFormat-yMMMEd-M": "E, d MMM – E, d MMM y",
-		"intervalFormat-yMMMEd-d": "E, d – E, d MMM y",
-		"intervalFormat-yMMMEd-y": "E, d MMM y – E, d MMM y",
-		"intervalFormat-yMMMM-M": "LLLL – LLLL y",
-		"intervalFormat-yMMMM-y": "LLLL y – LLLL y",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM y",
-		"intervalFormat-yMMMd-d": "d–d MMM y",
-		"intervalFormat-yMMMd-y": "d MMM y – d MMM y",
-		"intervalFormat-yMd-M": "dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-d": "dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-y": "dd.MM.y – dd.MM.y",
-		"months-format-abbreviated": [
-			"мух.",
-			"саф.",
-			"раб. I",
-			"раб. II",
-			"джум. I",
-			"джум. II",
-			"радж.",
-			"шааб.",
-			"рам.",
-			"дав.",
-			"зу-ль-к.",
-			"зу-ль-х."
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Мухаррам",
-			"Сафар",
-			"Рабі I",
-			"Рабі II",
-			"Джумада I",
-			"Джумада II",
-			"Раджаб",
-			"Шаабан",
-			"Рамадан",
-			"Даввал",
-			"Зу-ль-каада",
-			"Зу-ль-хіджа"
-		],
-		"months-standAlone-abbreviated": [
-			"Мух",
-			"Саф",
-			"Раб I",
-			"Раб.II",
-			"Джум I",
-			"Джум II",
-			"Радж",
-			"Шааб",
-			"Рам",
-			"Дав",
-			"Зу-ль-к",
-			"Зу-ль-х"
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Мухаррам",
-			"Сафар",
-			"Рабі I",
-			"Рабі II",
-			"Джумада I",
-			"Джумада II",
-			"Раджаб",
-			"Шаабан",
-			"Рамадан",
-			"Даввал",
-			"Зу-ль-каада",
-			"Зу-ль-хіджа"
-		],
-		"days-format-abbreviated": [
-			"Нд",
-			"Пн",
-			"Вт",
-			"Ср",
-			"Чт",
-			"Пт",
-			"Сб"
-		],
-		"days-format-narrow": [
-			"Н",
-			"П",
-			"В",
-			"С",
-			"Ч",
-			"П",
-			"С"
-		],
-		"days-format-short": [
-			"Нд",
-			"Пн",
-			"Вт",
-			"Ср",
-			"Чт",
-			"Пт",
-			"Сб"
-		],
-		"days-format-wide": [
-			"неділя",
-			"понеділок",
-			"вівторок",
-			"середа",
-			"четвер",
-			"пʼятниця",
-			"субота"
-		],
-		"days-standAlone-abbreviated": [
-			"Нд",
-			"Пн",
-			"Вт",
-			"Ср",
-			"Чт",
-			"Пт",
-			"Сб"
-		],
-		"days-standAlone-narrow": [
-			"Н",
-			"П",
-			"В",
-			"С",
-			"Ч",
-			"П",
-			"С"
-		],
-		"days-standAlone-short": [
-			"Нд",
-			"Пн",
-			"Вт",
-			"Ср",
-			"Чт",
-			"Пт",
-			"Сб"
-		],
-		"days-standAlone-wide": [
-			"Неділя",
-			"Понеділок",
-			"Вівторок",
-			"Середа",
-			"Четвер",
-			"Пʼятниця",
-			"Субота"
-		],
-		"quarters-format-abbreviated": [
-			"I кв.",
-			"II кв.",
-			"III кв.",
-			"IV кв."
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"I квартал",
-			"II квартал",
-			"III квартал",
-			"IV квартал"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1-й кв.",
-			"2-й кв.",
-			"3-й кв.",
-			"4-й кв."
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1-й квартал",
-			"2-й квартал",
-			"3-й квартал",
-			"4-й квартал"
-		],
-		"dayPeriods-format-abbreviated": [
-			"дп",
-			"пп"
-		],
-		"dayPeriods-format-narrow": [
-			"дп",
-			"пп"
-		],
-		"dayPeriods-format-wide": [
-			"дп",
-			"пп"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"дп",
-			"пп"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"дп",
-			"пп"
-		],
-		"dayPeriods-standAlone-wide": [
-			"дп",
-			"пп"
-		]
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Рік",
 	"dateField-year-relative--1": "торік",

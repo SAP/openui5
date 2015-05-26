@@ -135,6 +135,9 @@ sap.ui.define([
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about
 			 * <ul>
+			 *   <li> the "14.4 Constant Expressions" for "edm:Bool", "edm:Date",
+			 *   "edm:DateTimeOffset", "edm:Decimal", "edm:Float", "edm:Guid", "edm:Int",
+			 *   "edm:TimeOfDay".
 			 *   <li> the constant "14.4.11 Expression edm:String": This is turned into a fixed
 			 *   text (e.g. <code>"Width"</code>) or into a data binding expression (e.g. <code>
 			 *   "{/##/dataServices/schema/0/entityType/1/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label/String}"
@@ -142,6 +145,8 @@ sap.ui.define([
 			 *   been started with the setting <code>bindTexts : true</code>. The purpose is to
 			 *   reference translatable texts from OData v4 annotations, especially for XML
 			 *   template processing at design time.
+			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": These are turned into
+			 *   expression bindings to perform the operations at run-time.
 			 *   <li> the dynamic "14.5.3 Expression edm:Apply":
 			 *   <ul>
 			 *     <li> "14.5.3.1.1 Function odata.concat": This is turned into a data binding
@@ -152,6 +157,9 @@ sap.ui.define([
 			 *     binding to encode the parameter at run-time.
 			 *     <li> Apply functions may be nested arbitrarily.
 			 *   </ul>
+			 *   <li> the dynamic "14.5.6 Expression edm:If": This is turned into an expression
+			 *   binding to be evaluated at run-time. The expression is a conditional expression
+			 *   like <code>"{=condition ? expression1 : expression2}"</code>.
 			 *   <li> the dynamic "14.5.12 Expression edm:Path": This is turned into a data
 			 *   binding relative to an entity, including type information and constraints as
 			 *   available from meta data, e.g. <code>"{path : 'Name',
@@ -277,6 +285,35 @@ sap.ui.define([
 			 */
 			gotoEntityType : function (oContext) {
 				return oContext.getModel().getODataEntityType(oContext.getProperty(""), true);
+			},
+
+			/**
+			 * Helper function for a <code>template:with</code> instruction that goes to the
+			 * function import with the name which <code>oContext</code> points at.
+			 *
+			 * Example: Assume that "dataField" refers to a DataFieldForAction within an
+			 * OData meta model;
+			 * the helper function is then called on the "Action" property of that data field
+			 * (which holds an object with the qualified name of the function import in the
+			 * <code>String</code> property) and in turn the path of that function import
+			 * is assigned to the variable "function".
+			 * <pre>
+			 *   &lt;template:with path="dataField>Action"
+			 *   helper="sap.ui.model.odata.AnnotationHelper.gotoFunctionImport" var="function">
+			 * </pre>
+			 * @param {sap.ui.model.Context} oContext
+			 *   a context which must point to an object with a <code>String</code> property, which
+			 *   holds the qualified name of the function import;
+			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
+			 * @returns {string}
+			 *   the path to the function import with the given qualified name,
+			 *   or <code>undefined</code> if no function import is found
+			 * @since 1.29.1
+			 * @public
+			 */
+			gotoFunctionImport : function (oContext) {
+				return oContext.getModel().getODataFunctionImport(oContext.getProperty("String"),
+					true);
 			},
 
 			/**

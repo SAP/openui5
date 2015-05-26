@@ -34,10 +34,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 		_getCalendarData :  function(sKey, sCalendarType) {
 			if (!sCalendarType) {
-				sCalendarType = sap.ui.core.CalendarType.Gregorian;
+				sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 			}
 
-			return this._get(getCLDRCalendarName(sCalendarType))[sKey];
+			return this._get(getCLDRCalendarName(sCalendarType), sKey)[sKey];
 		},
 
 		/**
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get month names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {array} array of month names (starting with January)
 		 * @public
 		 */
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get stand alone month names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {array} array of month names (starting with January)
 		 * @public
 		 */
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get day names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {array} array of day names (starting with Sunday)
 		 * @public
 		 */
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get stand alone day names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {array} array of day names (starting with Sunday)
 		 * @public
 		 */
@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get quarter names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the quarter names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {array} array of quarters
 		 * @public
 		 */
@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get stand alone quarter names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the quarter names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {array} array of quarters
 		 * @public
 		 */
@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get day periods in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day period names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {array} array of day periods (AM, PM)
 		 * @public
 		 */
@@ -175,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get date pattern in style "short", "medium", "long" or "full"
 		 *
 		 * @param {string} sStyle the required style for the date pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the selected date pattern
 		 * @public
 		 */
@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get time pattern in style "short", "medium", "long" or "full"
 		 *
 		 * @param {string} sStyle the required style for the date pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the selected time pattern
 		 * @public
 		 */
@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get datetime pattern in style "short", "medium", "long" or "full"
 		 *
 		 * @param {string} sStyle the required style for the datetime pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the selected datetime pattern
 		 * @public
 		 */
@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * The empty Id ("") might be used to retrieve the interval format fallback. 
 		 *
 		 * @param {string} sId Id of the interval format, e.g. "d-d"
-		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} interval format string with placeholders {0} and {1}
 		 * @public
 		 * @since 1.17.0 
@@ -455,8 +455,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 			return sFormat;
 
-		}
+		},
 
+		/**
+		 * Returns the era name.
+		 *
+		 * @param {string} sStyle the style of the era name. It can be 'wide', 'abbreviated' or 'narrow'
+		 * @param {int} [iIndex] the index of the era name in era name set. If this isn't set, the last element in era name set is returned
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @return {string} the era name
+		 * @public
+		 * @since 1.28.6
+		 */
+		getEra : function(sStyle, iIndex, sCalendarType) {
+			jQuery.sap.assert(sStyle == "wide" || sStyle == "abbreviated" || sStyle == "narrow" , "sStyle must be wide, abbreviate or narrow");
+
+			if (typeof iIndex === "string") {
+				sCalendarType = iIndex;
+				iIndex = undefined;
+			}
+
+			var oEras = this._getCalendarData("era-" + sStyle, sCalendarType),
+				sName, iMax = 0, iName;
+			if (iIndex !== undefined && iIndex !== null) {
+				return oEras["" + iIndex];
+			} else {
+				for (sName in oEras) {
+					iName = parseInt(sName, 10);
+					if (iName > iMax) {
+						iMax = iName;
+					}
+				}
+				return oEras["" + iMax];
+			}
+		},
+
+		/**
+		 * Returns the preferred calendar type for the current locale which exists in {@link sap.ui.core.CalendarType}
+		 *
+		 * returns {sap.ui.core.CalendarType} the preferred calendar type
+		 * @public
+		 * @since 1.28.6
+		 */
+		getPreferredCalendarType: function() {
+			var sCalendarPreference = this._get("calendarPreference"),
+				aCalendars = sCalendarPreference ? sCalendarPreference.split(" ") : [],
+				sCalendarName, sType, i;
+
+			for ( i = 0 ; i < aCalendars.length ; i++ ) {
+				sCalendarName = aCalendars[i];
+				for (sType in sap.ui.core.CalendarType) {
+					if (sCalendarName === getCLDRCalendarName(sType).substring(3).toLowerCase()) {
+						return sType;
+					}
+				}
+			}
+
+			return sap.ui.core.CalendarType.Gregorian;
+		}
 	});
 
 	/**
@@ -503,7 +559,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				"quarters-standAlone-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
 				"dayPeriods-format-narrow":["AM","PM"],
 				"dayPeriods-format-wide":["AM","PM"],
-				"dayPeriods-format-abbreviated":["AM","PM"]
+				"dayPeriods-format-abbreviated":["AM","PM"],
+				"era-wide":"Anno Domini",
+				"era-abbreviated":"AD",
+				"era-narrow":"A"
 			},
 			"decimalFormat": { "standard": "#,##0.###" },
 			"currencyFormat": { "standard": "¤#,##0.00"},
@@ -555,23 +614,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	var mLocaleDatas = {};
 
 	/**
-	 * Mapping bewteen the sap.ui.core.CalendarType and the CLDR calendar name
-	 *
-	 * @private
-	 */
-	var mCLDRCalendarNames = {
-		IslamicCivil: "islamic-civil",
-		IslamicUmalqura: "islamic-umalqura"
-	};
-
-	/**
 	 * Returns the corresponding calendar name in CLDR of the given calendar type
 	 *
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type defined in {@link sap.ui.core.CalendarType}.
 	 * @private
 	 */
 	function getCLDRCalendarName(sCalendarType) {
-		return "ca-" + (mCLDRCalendarNames[sCalendarType] || sCalendarType.toLowerCase());
+		return "ca-" + sCalendarType.toLowerCase();
 	}
 
 	/**
@@ -637,6 +686,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			this.mCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
 		},
 		_get : function(sId) {
+			var sCalendarName, sPropertyName, oRes = {};
+
+			if (arguments.length === 2) {
+				// this.mCustomData doesn't have the calendar type node wrapping the date locale data therefore we need to create the node on the fly
+				//  when this function is called with 2 parameters
+				sCalendarName = sId;
+				sPropertyName = arguments[1];
+
+				if (sCalendarName === getCLDRCalendarName(sap.ui.getCore().getConfiguration().getCalendarType()) && this.mCustomData[sPropertyName]) {
+					// create the node only when the given calendar type is the same as the calendar type set in configuration
+					oRes[sPropertyName] = this.mCustomData[sPropertyName];
+					return oRes;
+				}
+			}
 			return this.mCustomData[sId] || this.mData[sId];
 		}
 	});

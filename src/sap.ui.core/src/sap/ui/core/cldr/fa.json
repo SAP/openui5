@@ -1414,9 +1414,21 @@
 		"dayPeriods-standAlone-wide": [
 			"قبل‌ازظهر",
 			"بعدازظهر"
-		]
+		],
+		"era-wide": {
+			"0": "قبل از میلاد",
+			"1": "میلادی"
+		},
+		"era-abbreviated": {
+			"0": "ق.م.",
+			"1": "م."
+		},
+		"era-narrow": {
+			"0": "ق",
+			"1": "م"
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "EEEE d MMMM y GGGG",
 		"dateFormat-long": "d MMMM y G",
 		"dateFormat-medium": "y/M/d G",
@@ -1691,284 +1703,16 @@
 		"dayPeriods-standAlone-wide": [
 			"قبل‌ازظهر",
 			"بعدازظهر"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "EEEE d MMMM y GGGG",
-		"dateFormat-long": "d MMMM y G",
-		"dateFormat-medium": "y/M/d G",
-		"dateFormat-short": "yy/M/d G",
-		"timeFormat-full": "H:mm:ss (zzzz)",
-		"timeFormat-long": "H:mm:ss (z)",
-		"timeFormat-medium": "H:mm:ss",
-		"timeFormat-short": "H:mm",
-		"dateTimeFormat-full": "{1}، ساعت {0}",
-		"dateTimeFormat-long": "{1}، ساعت {0}",
-		"dateTimeFormat-medium": "{1}،‏ {0}",
-		"dateTimeFormat-short": "{1}،‏ {0}",
-		"intervalFormatFallback": "{0} تا {1}",
-		"intervalFormat-H-H": "H تا H",
-		"intervalFormat-Hm-H": "H:mm تا H:mm",
-		"intervalFormat-Hm-m": "H:mm تا H:mm",
-		"intervalFormat-Hmv-H": "H:mm تا H:mm (v)",
-		"intervalFormat-Hmv-m": "H:mm تا H:mm (v)",
-		"intervalFormat-Hv-H": "H تا H (v)",
-		"intervalFormat-M-M": "M تا M",
-		"intervalFormat-MEd-M": "E M/d تا E M/d",
-		"intervalFormat-MEd-d": "E M/d تا E M/d",
-		"intervalFormat-MMM-M": "LLL تا LLL",
-		"intervalFormat-MMMEd-M": "E d LLL تا E d LLL",
-		"intervalFormat-MMMEd-d": "E d LLL تا E d LLL",
-		"intervalFormat-MMMd-M": "d LLL تا d LLL",
-		"intervalFormat-MMMd-d": "d تا d LLL",
-		"intervalFormat-Md-M": "M/d تا M/d",
-		"intervalFormat-Md-d": "M/d تا M/d",
-		"intervalFormat-d-d": "d تا d",
-		"intervalFormat-h-a": "h a تا h a",
-		"intervalFormat-h-h": "h تا h a",
-		"intervalFormat-hm-a": "h:mm a تا h:mm a",
-		"intervalFormat-hm-h": "h:mm تا h:mm a",
-		"intervalFormat-hm-m": "h:mm تا h:mm a",
-		"intervalFormat-hmv-a": "h:mm a تا h:mm a (v)",
-		"intervalFormat-hmv-h": "h:mm تا h:mm a (v)",
-		"intervalFormat-hmv-m": "h:mm تا h:mm a (v)",
-		"intervalFormat-hv-a": "h a تا h a (v)",
-		"intervalFormat-hv-h": "h تا h a (v)",
-		"intervalFormat-y-y": "y تا y G",
-		"intervalFormat-yM-M": "y/M تا y/M G",
-		"intervalFormat-yM-y": "y/M تا y/M G",
-		"intervalFormat-yMEd-M": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMEd-d": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMEd-y": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMMM-M": "LLL تا MMM y G",
-		"intervalFormat-yMMM-y": "MMM y تا MMM y G",
-		"intervalFormat-yMMMEd-M": "E d LLL تا E d MMM y G",
-		"intervalFormat-yMMMEd-d": "E d LLL تا E d MMM y G",
-		"intervalFormat-yMMMEd-y": "E d MMM y تا E d MMM y G",
-		"intervalFormat-yMMMM-M": "LLLL تا MMMM y G",
-		"intervalFormat-yMMMM-y": "MMMM y تا MMMM y G",
-		"intervalFormat-yMMMd-M": "d LLL تا d MMM y G",
-		"intervalFormat-yMMMd-d": "d تا d MMM y G",
-		"intervalFormat-yMMMd-y": "d MMM y تا d MMM y G",
-		"intervalFormat-yMd-M": "y/M/d تا y/M/d G",
-		"intervalFormat-yMd-d": "y/M/d تا y/M/d G",
-		"intervalFormat-yMd-y": "y/M/d تا y/M/d G",
-		"months-format-abbreviated": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعدهٔ",
-			"ذیحجهٔ"
 		],
-		"months-format-narrow": [
-			"م",
-			"ص",
-			"ر",
-			"ر",
-			"ج",
-			"ج",
-			"ر",
-			"ش",
-			"ر",
-			"ش",
-			"ذ",
-			"ذ"
-		],
-		"months-format-wide": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعدهٔ",
-			"ذیحجهٔ"
-		],
-		"months-standAlone-abbreviated": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعده",
-			"ذیحجه"
-		],
-		"months-standAlone-narrow": [
-			"م",
-			"ص",
-			"ر",
-			"ر",
-			"ج",
-			"ج",
-			"ر",
-			"ش",
-			"ر",
-			"ش",
-			"ذ",
-			"ذ"
-		],
-		"months-standAlone-wide": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعده",
-			"ذیحجه"
-		],
-		"days-format-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-format-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-format-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-format-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"quarters-format-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-format-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-format-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"quarters-standAlone-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-standAlone-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-standAlone-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"dayPeriods-format-abbreviated": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
-		"dayPeriods-format-narrow": [
-			"ق",
-			"ب"
-		],
-		"dayPeriods-format-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ق",
-			"ب"
-		],
-		"dayPeriods-standAlone-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		]
+		"era-wide": {
+			"0": "هجری قمری"
+		},
+		"era-abbreviated": {
+			"0": "ه‍.ق."
+		},
+		"era-narrow": {
+			"0": "ه‍.ق."
+		}
 	},
 	"dateField-year-displayName": "سال",
 	"dateField-year-relative--1": "سال گذشته",

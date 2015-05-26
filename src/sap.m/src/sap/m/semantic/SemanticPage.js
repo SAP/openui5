@@ -160,6 +160,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 	SemanticPage.prototype.init = function () {
 
+		this._currentMode = SemanticPage._PageMode.display;
 		this._getPage().setCustomHeader(this._getInternalHeader());
 	};
 
@@ -493,8 +494,6 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 		}
 	};
 
-	SemanticPage._currentMode = SemanticPage._PageMode.display;
-
 	SemanticPage.prototype._initMonitor = function (oSemanticControl) {
 
 		var oConfig = oSemanticControl._getConfiguration();
@@ -543,7 +542,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 		var oConfig = oEvent.oSource._getConfiguration();
 		// update global state
 		if (typeof oConfig.triggers === 'string') {
-			SemanticPage._currentMode = oConfig.triggers;
+			this._currentMode = oConfig.triggers;
 		} else {
 			var iLength = oConfig.triggers.length; // control triggers more than one global state,
 			// depending on current state (e.g. if toggle button)
@@ -551,15 +550,15 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 				for (var iIndex = 0; iIndex < iLength; iIndex++) {
 
 					var oTriggerConfig = oConfig.triggers[iIndex];
-					if (oTriggerConfig && (oTriggerConfig.inState === SemanticPage._currentMode)) {
-						SemanticPage._currentMode = oTriggerConfig.triggers;
+					if (oTriggerConfig && (oTriggerConfig.inState === this._currentMode)) {
+						this._currentMode = oTriggerConfig.triggers;
 						break;
 					}
 				}
 			}
 		}
 
-		this.fireEvent(SemanticPage._currentMode);
+		this.fireEvent(this._currentMode);
 	};
 
 	SemanticPage.prototype._addToInnerAggregation = function (oControl, oConfig, bSuppressInvalidate) {

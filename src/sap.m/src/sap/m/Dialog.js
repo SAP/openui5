@@ -489,6 +489,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			this.fireBeforeClose({origin: this._oCloseTrigger});
 			oPopup.attachClosed(this._handleClosed, this);
 			this._deregisterResizeHandler();
+			this._bDisableRepositioning = false;
 			oPopup.close();
 		}
 		return this;
@@ -658,19 +659,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10),
 			iMaxWidth = iWindowWidth - iHPaddingToScreen,
 			iMaxHeight = iWindowHeight - iVPaddingToScreen - iContentOffset,
-			sContentWidth = this.getContentWidth(),
-			sContentHeight = this.getContentHeight(),
 			oStyles = {};
 
-		if (!bStretch) {
-			//set the size to the content
-			if (!this._oManuallySetSize) {
-				oStyles.width = sContentWidth || (bMessageType ? '480px' : undefined);
-				oStyles.height = sContentHeight || undefined;
-			}
+		//the initial size is set in the renderer when the dom is created
 
+		if (!bStretch) {
 			//set max height and width smaller that the screen
-			oStyles["max-width"] = iMaxWidth + 'px';
+			oStyles["max-width"] = bMessageType ? '480px' : iMaxWidth + 'px';
 			oStyles["max-height"] = iMaxHeight + 'px';
 
 			//set the max-height so contents with defined height and width can be displayed with scroller when the height/width is smaller than the content
@@ -687,6 +682,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 		if ((bStretch && !bMessageType) || (bStretchOnPhone && jQuery.device.is.iphone)) {
 			oStyles.right = oStyles.bottom = oStyles.top = oStyles.left = 0;
+			oStyles.height = oStyles.width = 'auto';
 		}
 
 		$this.css(oStyles);
@@ -772,6 +768,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 				that._fnOrientationChange();
 			}
 			that._sResizeTimer = null;
+			//reposition only if the resize is not caused by manually resizing the dialog
+			if (!that._oManuallySetSize) {
+				that._reapplyPosition();
+			}
 		}, 0);
 	};
 

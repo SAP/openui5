@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 */
 	sap.ui.layout.GridIndent = DataType.createType('sap.ui.layout.GridIndent', {
 	    isValid : function(vValue) {
-	      return /^(([Ll](?:[0-9]|1[0-1]))? ?([Mm](?:[0-9]|1[0-1]))? ?([Ss](?:[0-9]|1[0-1]))?)$/.test(vValue);
+	      return /^(([Xx][Ll](?:[0-9]|1[0-1]))? ?([Ll](?:[0-9]|1[0-1]))? ?([Mm](?:[0-9]|1[0-1]))? ?([Ss](?:[0-9]|1[0-1]))?)$/.test(vValue);
 	    }
 	
 	  },
@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 */
 	sap.ui.layout.GridSpan = DataType.createType('sap.ui.layout.GridSpan', {
 	    isValid : function(vValue) {
-	      return /^(([Ll](?:[1-9]|1[0-2]))? ?([Mm](?:[1-9]|1[0-2]))? ?([Ss](?:[1-9]|1[0-2]))?)$/.test(vValue);
+	      return /^(([Xx][Ll](?:[1-9]|1[0-2]))? ?([Ll](?:[1-9]|1[0-2]))? ?([Mm](?:[1-9]|1[0-2]))? ?([Ss](?:[1-9]|1[0-2]))?)$/.test(vValue);
 	    }
 	
 	  },

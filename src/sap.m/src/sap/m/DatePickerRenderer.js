@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
 
-		if (sap.ui.Device.browser.mobile) {
+		if (oDP._bMobile) {
 			// prevent keyboard in mobile devices
 			oRm.writeAttribute("readonly", "readonly");
 		}
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	};
 
 	DatePickerRenderer.getDescribedByAnnouncement = function(oDP) {
-	
+
 		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE") + " " + sBaseAnnouncement;
 
@@ -98,6 +98,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		mAccessibilityState["autocomplete"] = "none";
 		mAccessibilityState["haspopup"] = true;
 		mAccessibilityState["owns"] = oDP.getId() + "-cal";
+
+		if (oDP._bMobile && oDP.getEnabled() && oDP.getEditable()) {
+			// if on mobile device readonly property is set, but should not be announced
+			mAccessibilityState["readonly"] = false;
+		}
 
 		return mAccessibilityState;
 

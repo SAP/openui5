@@ -760,7 +760,7 @@ if (typeof window.sap.ui !== "object") {
 	device.support.pointer = !!window.PointerEvent;
 
 	device.support.matchmedia = !!window.matchMedia;
-	var m = device.support.matchmedia ? window.matchMedia("screen and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
+	var m = device.support.matchmedia ? window.matchMedia("all and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
 	device.support.matchmedialistener = !!(m && m.addListener);
 	if (device.browser.safari && device.browser.version < 6) {
 		//Safari seems to have addListener but no events are fired ?!
@@ -816,7 +816,7 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * A 3 step range set (Phone, Tablet, Desktop). <br/>
 	 * <br/>
-	 * This range set is initialized always by default.<br/>
+	 * This range set is initialized by default.<br/>
 	 * Phone is < 600px<br/>
 	 * Tablet is 600px >= Tablet < 1024<br/>
 	 * Desktop is > 1024px<br/>
@@ -833,12 +833,26 @@ if (typeof window.sap.ui !== "object") {
 	 * @alias sap.ui.Device.media.RANGESETS#SAP_STANDARD
 	 * @public
 	 */
+	/**
+	 * A 4 step range set (Phone, Tablet, Desktop, LargeDesktop). <br/>
+	 * <br/>
+	 * This range set is initialized by default. <br/>
+	 * It is similar to the range set SAP_STANDARD but with an additional breakpoint for large desktop screens. <br/>
+	 * Phone is < 600px<br/>
+	 * Tablet is 600px >= Tablet < 1024px <br/>
+	 * Desktop is 1024px >= Desktop < 1440px <br/>
+	 * LargeDesktop is > 1440px <br/>
+	 * <br/>
+	 * @alias sap.ui.Device.media.RANGESETS#SAP_STANDARD_EXTENDED
+	 * @public
+	 */
 	
 	var RANGESETS = {
 		"SAP_3STEPS": "3Step",
 		"SAP_4STEPS": "4Step",
 		"SAP_6STEPS": "6Step",
-		"SAP_STANDARD": "Std"
+		"SAP_STANDARD": "Std",
+		"SAP_STANDARD_EXTENDED": "StdExt"
 	};
 	device.media.RANGESETS = RANGESETS;
 	
@@ -847,6 +861,7 @@ if (typeof window.sap.ui !== "object") {
 	device.media._predefinedRangeSets[RANGESETS.SAP_4STEPS] = {points: [520, 760, 960], unit: "px", name: RANGESETS.SAP_4STEPS, names: ["S", "M", "L", "XL"]};
 	device.media._predefinedRangeSets[RANGESETS.SAP_6STEPS] = {points: [241, 400, 541, 768, 960], unit: "px", name: RANGESETS.SAP_6STEPS, names: ["XS", "S", "M", "L", "XL", "XXL"]};
 	device.media._predefinedRangeSets[RANGESETS.SAP_STANDARD] = {points: [600, 1024], unit: "px", name: RANGESETS.SAP_STANDARD, names: ["Phone", "Tablet", "Desktop"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_STANDARD_EXTENDED] = {points: [600, 1024, 1440], unit: "px", name: RANGESETS.SAP_STANDARD_EXTENDED, names: ["Phone", "Tablet", "Desktop", "LargeDesktop"]};
 	
 	var _defaultRangeSet = RANGESETS.SAP_STANDARD;
 	var media_timeout = device.support.matchmedialistener ? 0 : 100;
@@ -855,7 +870,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	function getQuery(from, to, unit){
 		unit = unit || "px";
-		var q = "screen";
+		var q = "all";
 		if (from > 0) {
 			q = q + " and (min-width:" + from + unit + ")";
 		}
@@ -1581,6 +1596,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Always initialize the default media range set
 	device.media.initRangeSet();
+	device.media.initRangeSet(RANGESETS["SAP_STANDARD_EXTENDED"]);
 
 	// define module if API is available
 	if (sap.ui.define) {

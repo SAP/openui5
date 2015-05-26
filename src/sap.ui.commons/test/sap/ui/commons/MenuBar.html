@@ -79,13 +79,18 @@
 			oMenu1.addItem(oMenuItem5);
 			oMenu1.addItem(oMenuItem6);
 			oMenu1.addItem(oMenuItem7);
+			
+			var fnSelect = function (oEvent) {
+				alert("You selected " + oEvent.getParameter("item").getText());
+			};
 
 			for(var i=2; i<9; i++){
 				var oItem = new sap.ui.commons.MenuItem({text: "Item"+i, tooltip: "Item"+i+" Tooltip"});
 				oItem.setEnabled(i%2==0);
 				oMenuBar1.addItem(oItem);
 				var oMenu = new sap.ui.commons.Menu();
-				oMenu.addItem(new sap.ui.commons.MenuItem({text: "Item"+i+"-1"}));
+				oMenu.attachItemSelect(fnSelect);
+				oMenu.addItem(new sap.ui.commons.MenuItem({text: "Item"+i+"-1", select: fnSelect}));
 				oMenu.addItem(new sap.ui.commons.MenuItem({text: "Item"+i+"-2"}));
 				oItem.setSubmenu(oMenu);
 			}
@@ -109,6 +114,13 @@
 				bIsTopMenubar = true;
 				fToggleDesign();
 			});
+			
+			oMenuBar1.addItem(new sap.ui.commons.MenuItem({
+				text: "Item without submenu",
+				select : function () {
+					alert("You selected a MenuItem without submenu");
+				}
+			}));
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">

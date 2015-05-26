@@ -22,6 +22,10 @@
 <!--[if IE 9]>
 	<script>
 		// If this flag is set to `false` sinon will only fake `XDomainRequest` but not `XMLHttpRequest`
+		// GH Issues:
+		// - https://github.com/cjohansen/Sinon.JS/issues/715
+		// - https://github.com/cjohansen/Sinon.JS/issues/732
+		// TODO: remove once this has been fixed!!!
 		sinon.xhr.supportsCORS = true;
 	</script>
 <![endif]-->

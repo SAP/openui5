@@ -141,6 +141,50 @@
 			equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
 		});
 
+		test("Decorative Image", function() {
+			var oImage = new sap.m.Image({
+				src: sSrc,
+				decorative: true,
+				alt: "abcd"
+			});
+
+			oImage.placeAt("uiArea7");
+			sap.ui.getCore().applyChanges();
+
+			var $Image = oImage.$();
+			equal($Image.attr("role"), "presentation", "role is set to presentation");
+			equal($Image.attr("aria-hidden"), "true", "aria-hidden is set to true");
+			ok(!$Image.attr("alt"), "alt is kept empty");
+			ok(!$Image.attr("title"), "title isn't set when no tooltip is provided");
+
+			oImage.setTooltip("abced");
+			sap.ui.getCore().applyChanges();
+			equal(oImage.$().attr("title"), "abced", "title is updated with tooltip after it's set");
+
+			oImage.destroy();
+		});
+
+		test("Non decorative Image", function() {
+			var oImage = new sap.m.Image({
+				src: sSrc,
+				decorative: false,
+				tooltip: "abc",
+				alt: "abcd"
+			});
+
+			oImage.placeAt("uiArea7");
+			sap.ui.getCore().applyChanges();
+
+			var $Image = oImage.$();
+			equal($Image.attr("alt"), "abcd", "alt is rendered");
+			equal($Image.attr("aria-label"), "abcd", "aria-label is rendered");
+			equal($Image.attr("title"), "abc", "title is rendered");
+			ok(!$Image.attr("role"), "no role is output");
+			ok(!$Image.attr("aria-hidden"), "no aria-hidden is output");
+
+			oImage.destroy();
+		});
+
 		test("Offset Dimensions", function() {
 
 			// test the initial dimensions
@@ -286,6 +330,48 @@
 				});
 			});
 		});
+
+		test("Existence of attribute tabindex", function() {
+			var fn1 = function() {},
+				fn2 = function() {},
+				oImage = new sap.m.Image({
+					src: sSrc,
+					press: fn1
+				});
+
+			oImage.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+
+			var $Image = oImage.$();
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.attachPress(fn2);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn1);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn2);
+			equal($Image.attr("tabindex"), "-1", "tabindex -1 is still output");
+			equal($Image.attr("role"), "presentation", "role is set to presentation");
+
+			oImage.attachPress(fn2);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.setDecorative(false);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn2);
+			equal($Image.attr("tabindex"), "-1", "tabindex -1 is still output");
+			ok(!$Image.attr("role"), "role is removed");
+
+			oImage.destroy();
+		});
 		</script>
 	</head>
 	<body>
@@ -301,5 +387,6 @@
 		<div id="uiArea4"></div>
 		<div id="uiArea5"></div>
 		<div id="uiArea6"></div>
+		<div id="uiArea7"></div>
 	</body>
 </html>

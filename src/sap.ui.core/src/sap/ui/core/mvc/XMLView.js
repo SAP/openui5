@@ -63,6 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		 * @param {string | object} vView name of the view or a view configuration object as described above.
 		 * @param {string} [vView.viewName] name of the view resource in module name notation (without suffix)
 		 * @param {string|Document} [vView.viewContent] XML string or XML document that defines the view.
+		 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
 		 * @static
@@ -186,7 +187,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		};
 
 		XMLView.prototype.exit = function() {
-			this.oAfterRenderingNotifier.destroy();
+			if (this.oAfterRenderingNotifier) {
+				this.oAfterRenderingNotifier.destroy();
+			}
 			View.prototype.exit.apply(this, arguments);
 		};
 
@@ -262,7 +265,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		* function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
 		*
 		* <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
-		* in sync mode, as this could have unexpected side effects. You may override this behaviour by setting the
+		* in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
 		* bSyncSupport flag to true.
 		*
 		* @public
@@ -276,7 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		* 		also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
 		* 		break the view initialization and lead to unexpected results.
 		* @param {boolean} [bOnDemand]
-		* 		ondemand preprocessor which enables developers to quickly specify the preprocessor for a view,
+		* 		ondemand preprocessor which enables developers to quickly activate the preprocessor for a view,
 		* 		by setting <code>preprocessors : { xml }</code>, for example.
 		* @param {object} [mSettings]
 		* 		optional configuration for preprocessor

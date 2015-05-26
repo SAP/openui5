@@ -98,6 +98,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			this.scrollToItem(this.getList().getSelectedItem());
 		}
 
+		function fnSelectTextIfFocused(iStart, iEnd) {
+			if (document.activeElement === this.getFocusDomRef()) {
+				this.selectText(iStart, iEnd);
+			}
+		}
+
 		/* ----------------------------------------------------------- */
 		/* Popover                                                     */
 		/* ----------------------------------------------------------- */
@@ -168,6 +174,20 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			// position adaptations
 			oPopover._setPosition();
+		};
+
+		/**
+		 * Synchronize the width of the picker pop-up with the width of the input field.
+		 *
+		 * @private
+		 * @since 1.30
+		 */
+		ComboBox.prototype._synchronizePickerWidth = function() {
+			var oDomRef = this.getDomRef();
+
+			if (oDomRef) {
+				this.getPicker().setContentWidth((oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem");
+			}
 		};
 
 		/* ----------------------------------------------------------- */
@@ -241,8 +261,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype.oninput = function(oEvent) {
 			ComboBoxBase.prototype.oninput.apply(this, arguments);
 
-			// note: suppress input events of read-only fields (IE11)
-			if (!this.getEditable()) {
+			// note: input event can be buggy
+			// @see sap.m.InputBase#oninput
+			if (oEvent.isMarked("invalid")) {
 				return;
 			}
 
@@ -290,7 +311,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 					}
 
 					if (this._bDoTypeAhead) {
-						this.selectText(sValue.length, 9999999);
+
+						if (sap.ui.Device.os.blackberry) {
+
+							// note: timeout required for a BlackBerry bug
+							setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
+						} else {
+							this.selectText(sValue.length, 9999999);
+						}
 					}
 
 					this.scrollToItem(this.getList().getSelectedItem());
@@ -886,6 +914,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// call the hook to add additional content to the List
 			this.addContent();
 
+			sap.ui.Device.resize.attachHandler(this._synchronizePickerWidth, this);
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
 
@@ -895,11 +924,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.onBeforeOpenPopover = function() {
-			var oDomRef = this.getDomRef();
-
-			if (oDomRef) {
-				this.getPicker().setContentWidth((oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem");
-			}
+			this._synchronizePickerWidth();
 		};
 
 		/*
@@ -938,6 +963,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			// remove the active state of the control's field
 			this.removeStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+			sap.ui.Device.resize.detachHandler(this._synchronizePickerWidth, this);
 		};
 
 		/*

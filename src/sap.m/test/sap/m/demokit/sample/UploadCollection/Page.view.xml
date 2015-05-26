@@ -26,26 +26,46 @@
 				maximumFilenameLength="55"
 				maximumFileSize="10"
 				multiple="true"
-				items="{/items}"
-				showSeparators="None"
+				showSeparators="All"
 				change="onChange"
 				fileDeleted="onFileDeleted"
 				filenameLengthExceed="onFilenameLengthExceed"
 				fileRenamed="onFileRenamed"
 				fileSizeExceed="onFileSizeExceed"
 				typeMissmatch="onTypeMissmatch"
-				uploadComplete="onUploadComplete">
-				<UploadCollectionItem
-					contributor="{contributor}"
-					documentId="{documentId}"
-					fileName="{fileName}"
-					fileSize="{fileSize}"
-					mimeType="{mimeType}"
-					thumbnailUrl="{thumbnailUrl}"
-					uploadedDate="{uploadedDate}"
-					url="{url}"
-					enableEdit="{enableEdit}"
-					enableDelete="{enableDelete}" />
+				uploadComplete="onUploadComplete"
+				items="{/items}">
+				<items>
+					<UploadCollectionItem
+						documentId="{documentId}"
+						fileName="{fileName}"
+						mimeType="{mimeType}"
+						thumbnailUrl="{thumbnailUrl}"
+						url="{url}"
+						enableEdit="{enableEdit}"
+						enableDelete="{enableDelete}"
+						visibleDelete="{visibleDelete}"
+						visibleEdit="{visibleEdit}"
+						attributes="{attributes}"
+						statuses="{statuses}">
+						<attributes>
+							<ObjectAttribute
+								title="{title}"
+								text="{text}"
+								active="{active}"
+								textDirection="{textDirection}"/>
+						</attributes>
+						<statuses>
+							<ObjectStatus
+								title="{title}"
+								text="{text}"
+								state="{state}"
+								icon="{icon}"
+								iconDensityAware="{iconDensityAware}"
+								textDirection="{textDirection}"/>
+						</statuses>
+					</UploadCollectionItem>
+				</items>
 			</UploadCollection>
 		</content>
 	</Page>

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.ProgressIndicator
   Author: D037899
 -->
@@ -8,7 +8,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -17,15 +17,14 @@
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Control initialization -->
 	<script language="javascript">
 
 		var oProgInds = {};
-		
-		var initProgInd = function(idx, bVisible, bEnabled, xBarColor, sDispVal, iPercentVal, bShowVal, iWidth){			
+
+		var initProgInd = function(idx, bVisible, bEnabled, xBarColor, sDispVal, iPercentVal, bShowVal, iWidth){
 			var sId = "oProgInd"+idx;
 			var oProgInd = new sap.ui.commons.ProgressIndicator(sId);
 			if(bVisible != -1) oProgInd.setVisible(bVisible);
@@ -35,8 +34,8 @@
 			if(iPercentVal != -1) oProgInd.setPercentValue(iPercentVal);
 			if(bShowVal != -1) oProgInd.setShowValue(bShowVal);
 			if(iWidth != -1) oProgInd.setWidth(iWidth);
-			
-			sap.ui.setRoot("uiArea"+idx, oProgInd);
+
+			oProgInd.placeAt("qunit-fixture");
 			oProgInds[sId] = oProgInd;
 		};
 
@@ -47,18 +46,18 @@
 		initProgInd(5, true, true, "NEGATIVE", "50%", 50, true, "300px"); // ProgressIndicator with 50% NEGATIVE
 		initProgInd(6, true, true, -1, "50%", 50, true, "100%"); // ProgressIndicator with 50% NEUTRAL width=100%
 		initProgInd(7, true, true, -1, "200%", 200, false, "10%"); // ProgressIndicator with 200% NEUTRAL width=10% and no value displayed
-		
+
 	</script>
 
 	<!-- Test functions -->
 	<script language="javascript">
-
 	qutils.delayTestStart();
-	
+
 	module("Properties");
 
 	test("Default Values", function() {
 		var oProgInd = oProgInds["oProgInd1"];
+
 		equals(oProgInd.getVisible(), true, "Default 'visible':");
 		equals(oProgInd.getEnabled(), true, "Default 'enabled':");
 		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
@@ -66,10 +65,13 @@
 		equals(oProgInd.getPercentValue(), 0, "Default 'percent value':");
 		equals(oProgInd.getShowValue(), true, "Default 'show value':");
 		equals(oProgInd.getWidth(), "100%", "Default 'width':");
+
+		oProgInd.destroy();
 	 });
 
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd2"];
+
 		equals(oProgInd.getVisible(), true, "Default 'visible':");
 		equals(oProgInd.getEnabled(), true, "Default 'enabled':");
 		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
@@ -77,10 +79,13 @@
 		equals(oProgInd.getPercentValue(), 30, "Custom 'percent value':");
 		equals(oProgInd.getShowValue(), true, "Default 'show value':");
 		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+
+		oProgInd.destroy();
 	});
 
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd3"];
+
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
 		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
 		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
@@ -88,10 +93,13 @@
 		equals(oProgInd.getPercentValue(), 110, "Custom 'percent value':");
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
-	});	
-	
+
+		oProgInd.destroy();
+	});
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd4"];
+
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
 		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
 		equals(oProgInd.getBarColor(), "POSITIVE", "Custom 'bar color':");
@@ -99,10 +107,13 @@
 		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+
+		oProgInd.destroy();
 	});
-	
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd5"];
+
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
 		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
 		equals(oProgInd.getBarColor(), "NEGATIVE", "Custom 'bar color':");
@@ -110,10 +121,13 @@
 		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+
+		oProgInd.destroy();
 	});
-	
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd6"];
+
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
 		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
 		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
@@ -121,10 +135,13 @@
 		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "100%", "Custom 'width:");
+
+		oProgInd.destroy();
 	});
-	
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd7"];
+
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
 		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
 		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
@@ -132,27 +149,125 @@
 		equals(oProgInd.getPercentValue(), 200, "Custom 'percent value':");
 		equals(oProgInd.getShowValue(), false, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "10%", "Custom 'width:");
+
+		oProgInd.destroy();
 	});
-	
+
+	QUnit.test("Setting the value to -100 should default to 0", function (assert) {
+		var oProgInd = new sap.ui.commons.ProgressIndicator().placeAt("qunit-fixture");
+
+		oProgInd.setPercentValue(-100);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oProgInd.getPercentValue(), 0, "value should be 0");
+
+		oProgInd.destroy();
+	});
+
+	QUnit.test("Setting the value to 120 should work", function (assert) {
+		var oProgInd = new sap.ui.commons.ProgressIndicator({
+			percentValue: 50
+		}).placeAt("qunit-fixture");
+
+		oProgInd.setPercentValue(120);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oProgInd.getPercentValue(), 120, "value should be 120");
+
+		oProgInd.destroy();
+	});
+
+	QUnit.module("Css Classes", {
+		setup: function () {
+			this.progressIndicator = new sap.ui.commons.ProgressIndicator();
+
+			this.progressIndicator.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.progressIndicator.destroy();
+			this.progressIndicator = null;
+		}
+	});
+
+	QUnit.test("Percent value with default value", function (assert) {
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEndHidden").length, 1,
+			"should have .sapUiProgIndEndHidden class set on the bar");
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEnd").length, 0,
+			"should NOT have .sapUiProgIndEnd class set to the bar");
+	});
+
+	QUnit.test("Setting percent value over 100", function (assert) {
+		this.progressIndicator.setPercentValue(120);
+
+		jQuery(this.progressIndicator.oBar).finish();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEndHidden").length, 0,
+			"should remove .sapUiProgIndEndHidden class from the bar");
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEnd").length, 1,
+			"should add .sapUiProgIndEnd class to the bar");
+	});
+
+	QUnit.test("Setting percentValue to 120 then back to 50", function (assert) {
+		this.progressIndicator.setPercentValue(120);
+		jQuery(this.progressIndicator.oBar).finish();
+		sap.ui.getCore().applyChanges();
+
+		this.progressIndicator.setPercentValue(50);
+		jQuery(this.progressIndicator.oBar).finish();
+		sap.ui.getCore().applyChanges();
+
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEndHidden").length, 1,
+			"should have .sapUiProgIndEndHidden class set on the bar");
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEnd").length, 0,
+			"should NOT have .sapUiProgIndEnd class set to the bar");
+	});
+
+	QUnit.test("Setting percentValue to 120 then to 200", function (assert) {
+		this.progressIndicator.setPercentValue(120);
+		jQuery(this.progressIndicator.oBar).finish();
+		sap.ui.getCore().applyChanges();
+
+		this.progressIndicator.setPercentValue(200);
+		jQuery(this.progressIndicator.oBar).finish();
+		sap.ui.getCore().applyChanges();
+
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEndHidden").length, 0,
+			"should remove .sapUiProgIndEndHidden class from the bar");
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEnd").length, 1,
+			"should add .sapUiProgIndEnd class to the bar");
+	});
+
+	QUnit.test("Setting percentValue to 100 then to 50", function (assert) {
+		this.progressIndicator.setPercentValue(100);
+		jQuery(this.progressIndicator.oBar).finish();
+		sap.ui.getCore().applyChanges();
+
+		this.progressIndicator.setPercentValue(50);
+		jQuery(this.progressIndicator.oBar).finish();
+		sap.ui.getCore().applyChanges();
+
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEndHidden").length, 1,
+			"should have .sapUiProgIndEndHidden class set on the bar");
+
+		assert.strictEqual(this.progressIndicator.$().find(".sapUiProgIndEnd").length, 0,
+			"should NOT have .sapUiProgIndEnd class set to the bar");
+	});
+
 	</script>
 
 	<title>qunit Test for ProgressIndicator</title>
-
 </head>
-<body>
-	<h1 id="qunit-header">QUnit tests: sap.ui.commons.ProgressIndicator</h1>
-	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-	<div id="uiArea2"></div>
-	<div id="uiArea3"></div>
-	<div id="uiArea4"></div>
-	<div id="uiArea5"></div>
-	<div id="uiArea6"></div>
-	<div id="uiArea7"></div>
-
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

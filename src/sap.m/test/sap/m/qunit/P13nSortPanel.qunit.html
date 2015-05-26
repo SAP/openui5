@@ -173,12 +173,12 @@
 		// Remove item
  		var nItems= 1;
 		var oConditionPanel= oP13nSortPanel._oSortPanel;
-		oConditionPanel._triggerRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+		oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 		
 		// Add item
 		nItems= 2;
- 		oConditionPanel._triggerAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+ 		oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		
  		// Change item
 		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];

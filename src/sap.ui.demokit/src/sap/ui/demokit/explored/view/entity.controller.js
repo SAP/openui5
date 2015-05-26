@@ -34,11 +34,11 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			part : sTab
 		}, true);
 	},
-	
+
 	onNavBack : function (oEvt) {
 		this.router.myNavBack("home", {});
 	},
-	
+
 	onNavToSample : function (oEvt) {
 		var sPath = oEvt.getSource().getBindingContext("entity").getPath();
 		var oSample = this.getView().getModel("entity").getProperty(sPath);
@@ -48,7 +48,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 	},
 
 	_TAB_KEYS : [ "sampes", "about", "properties", "aggregations", "associations", "events", "methods" ],
-	
+
 	onRouteMatched : function (oEvt) {
 
 		var sRouteName = oEvt.getParameter("name"),
@@ -118,15 +118,15 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			oTab.setSelectedKey(sNewTab);
 		}
 	},
-	
+
 	onToggleFullScreen : function (oEvt) {
 		sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateMode(oEvt, this.getView());
 	},
 
 	// ========= internal ===========================================================================
-	
+
 	/*
-	 * as there are only few deprecated items and methods (at least when you run the explored app locally on your machine), 
+	 * as there are only few deprecated items and methods (at least when you run the explored app locally on your machine),
 	 * this function generates randomly false deprecation descriptions
 	 */
 	_generateFakeDeprecatedDescription : function(){
@@ -134,23 +134,23 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			return "Since version 1.22.1. Use sap.lorem.ipsum.Dolor instead.";
 		}
 	},
-	
+
 	_isObjectEmpty : function (_propertyMap){
-		
+
 		var size = 0;
 		for (var key in _propertyMap) {
 			if (_propertyMap.hasOwnProperty(key)){
 				size++;
 			}
 		}
-		
+
 		return (size == 0) ? true : false;
-		
+
 	},
-	
+
 	//inject some fake test data (workaround until a bug in ModuleAnalyzer.js is fixed); call this for test purposes in _getViewData() before the docu is converted
 	_injectFakeDeprecationData : function (_oDoc){
-		
+
 		_oDoc.deprecation = this._generateFakeDeprecatedDescription();
 
 		//if there are any properties, add a fake deprecated one as well
@@ -163,7 +163,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 				};
 			_oDoc.properties.myFakeProperty = fakeProperty;
 		}
-		
+
 		//if there are any aggregations, add a fake deprecated one as well
 		if (!this._isObjectEmpty(_oDoc.aggregations)){
 			var fakeAggregation = {
@@ -174,9 +174,9 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 				doc : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.",
 				since: "1.12"
 			};
-			_oDoc.aggregations.myFakeAggregation = fakeAggregation; 
+			_oDoc.aggregations.myFakeAggregation = fakeAggregation;
 		}
-		
+
 		//if there are any aggregations, add a fake deprecated one as well
 		if (!this._isObjectEmpty(_oDoc.associations)){
 			var fakeAssociation = {
@@ -200,36 +200,41 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 				};
 			_oDoc.events.myFakeEvent = fakeEvent;
 		}
-		
-		
+
+
 		return _oDoc;
 	},
-	
-	
+
+
 	_getViewData : function (sId, oDoc, oEntity) {
-		
+
 		// convert docu
 		var oData = this._convertEntityInfo(sId, oDoc);
+
+		// show the description as intro text if the entity is not deprecated
+		if (!oData.shortDescription && oEntity.description) {
+			oData.shortDescription = oEntity.description;
+		}
 
 		// apply entity related stuff
 		oData.show.samples = (oEntity) ? oEntity.samples.length > 0 : false;
 		oData.count.samples = (oEntity) ? oEntity.samples.length : 0;
-		
+
 		// done
 		return oData;
 	},
 
 	_convertEntityInfo : function (sId, oDoc) {
-		
+
 		// create skeleton data structure
 		var oData = {
 			name : sId,
 			deprecated : (oDoc) ? this._formatDeprecated(oDoc.deprecation) : null,
-			deprecatedDescription : (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 			deprecatedMark : (oDoc) ? this._createDeprecatedMark(oDoc.deprecation) : null,
 			baseType : (oDoc) ? this._formatType(oDoc.baseType) : null,
-			baseTypeText : (oDoc) ? this._formatTypeText(oDoc.baseType) : null,
+			baseTypeText: (oDoc) ? this._formatTypeText(oDoc.baseType) : "-",
 			baseTypeNav : (oDoc) ? this._formatTypeNav(oDoc.baseType) : null,
+			shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 			description : (oDoc) ? oDoc.doc : null,
 			properties : [],
 			events : [],
@@ -333,7 +338,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			}
 		}
 		for (key in oDoc.aggregations) {
-			
+
 			var oAggr = oDoc.aggregations[key];
 			var bNotHidden = (!oAggr.hasOwnProperty("visibility") || oAggr.visibility !== "hidden");
 			if (oDoc.aggregations.hasOwnProperty(key) && key.indexOf("_") !== 0 && bNotHidden) {
@@ -429,7 +434,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			return (index !== -1) ? sType.substr(index + 1) : sType;
 		}
 	},
-	
+
 	/**
 	 * Converts the deprecated boolean to a human readable text
 	 */

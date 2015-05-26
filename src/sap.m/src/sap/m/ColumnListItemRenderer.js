@@ -50,9 +50,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
 		rm.write('<td role="gridcell" class="sapMListTblNavCol"');
 		
-		if (oLI.getSelected()) {
-			rm.writeAttribute("aria-selected", "true");
-		}
+		this.writeAriaSelected(rm, oLI);
 		
 		if (!oLI.needsTypeColumn()) {
 			rm.writeAttribute("aria-hidden", "true");
@@ -69,7 +67,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	// wrap mode content with a cell
 	ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
 		rm.write('<td role="gridcell" class="sapMListTblSelCol"');
-		oLI.getSelected() && rm.writeAttribute("aria-selected", "true");
+		this.writeAriaSelected(rm, oLI);
 		rm.write('>');
 		
 		// let the list item base render the mode control
@@ -89,13 +87,29 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	
 	// Returns the inner aria labelledby ids for the accessibility
 	ColumnListItemRenderer.getAriaLabelledBy = function(oLI) {
-		var oTable = oLI.getTable(); 
+		var oTable = oLI.getTable(),
+			sAriaLabelledBy = ListItemBaseRenderer.getAriaLabelledBy.call(this, oLI) || "";
+
 		if (!oTable || !oTable.hasPopin()) {
-			return;
+			return sAriaLabelledBy;
 		}
 		
+		var sId = oLI.getId();
+		if (!sAriaLabelledBy) {
+			sAriaLabelledBy = sId;
+		} else if (sAriaLabelledBy.indexOf(sId) == -1) {
+			sAriaLabelledBy = sId + " " + sAriaLabelledBy;
+		}
+
 		// when table has pop-in let the screen readers announce it
-		return oLI.getId() + " " + oLI.getId() + "-sub";
+		return sAriaLabelledBy + " " + sId + "-sub";
+	};
+	
+	// writes aria-selected for the cells when the item is selectable
+	ColumnListItemRenderer.writeAriaSelected = function(rm, oLI) {
+		if (oLI.isSelectable()) {
+			rm.writeAttribute("aria-selected", oLI.getProperty("selected"));
+		}
 	};
 	
 	/**
@@ -134,7 +148,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	
 		var aColumns = oTable.getColumns(true),
 			aCells = oLI.getCells(),
-			bSelected = oLI.getSelected();
+			bSelectable = oLI.isSelectable(),
+			bSelected = oLI.getProperty("selected");
 	
 		// remove cloned headers
 		oLI.destroyClonedHeaders();
@@ -154,9 +169,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			rm.writeAttribute("id", oLI.getId() + "_cell" + i);
 			rm.writeAttribute("role", "gridcell");
 			
-			if (bSelected) {
+			if (bSelectable) {
 				// write aria-selected explicitly for the cells
-				rm.writeAttribute("aria-selected", "true");
+				rm.writeAttribute("aria-selected", bSelected);
 			}
 	
 			// check column properties
@@ -233,14 +248,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	 * @param {sap.m.Table} oTable Table control
 	 */
 	ColumnListItemRenderer.renderPopin = function(rm, oLI, oTable) {
-		var bSelected = oLI.getSelected();
+		var bSelected = oLI.getProperty("selected"),
+			bSelectable = oLI.isSelectable();
+			
 		oLI._popinId = oLI.getId() + "-sub";
-		
 		rm.write("<tr class='sapMListTblSubRow'");
 		rm.writeAttribute("id", oLI._popinId);
 		rm.writeAttribute("role", "row");
-		if (bSelected) {
-			rm.writeAttribute("aria-selected", "true");
+		rm.writeAttribute("tabindex", "-1");
+		
+		if (bSelectable) {
+			rm.writeAttribute("aria-selected", bSelected);
 		}
 		
 		// logical parent of the popin is the base row
@@ -249,9 +267,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.write("><td");
 		rm.writeAttribute("role", "gridcell");
 		rm.writeAttribute("colspan", oTable.getColCount());
-		if (bSelected) {
+		if (bSelectable) {
 			// write aria-selected explicitly for the cells
-			rm.writeAttribute("aria-selected", "true");
+			rm.writeAttribute("aria-selected", bSelectable);
 		}
 		
 		rm.write("><div class='sapMListTblSubCnt'>");

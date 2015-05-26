@@ -70,7 +70,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	};
 
 	ListItemBaseRenderer.decorateMode = function(rm, oLI) {
-		if (!oLI.getListProperty("modeAnimationOn")) {
+		// determine whether animation is necessary or not
+		if (!sap.ui.getCore().getConfiguration().getAnimation() ||
+			!oLI.getListProperty("modeAnimationOn")) {
 			return;
 		}
 
@@ -276,6 +278,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 			mAccessibilityState = {
 				role: this.getAriaRole(oLI)
 			};
+
+		if (oLI.isSelectable()) {
+			mAccessibilityState.selected = oLI.getProperty("selected");
+		}
 
 		if (sAriaLabelledBy) {
 			mAccessibilityState.labelledby = {

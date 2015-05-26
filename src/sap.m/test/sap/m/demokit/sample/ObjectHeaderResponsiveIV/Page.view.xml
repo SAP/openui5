@@ -10,6 +10,7 @@
 		fullScreenOptimized="false"
 		binding="{/ProductCollection/3}"
 		icon="{ProductPicUrl}"
+		iconAlt="{Name}"
 		intro="{Description}"
 		title="{Name}"
 		titleActive="true"

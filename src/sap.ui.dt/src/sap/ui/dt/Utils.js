@@ -58,6 +58,13 @@ function(jQuery) {
 		return oValue;
 	};
 
+	Utils.getSupportedControlBlocks = function() {
+		return {
+			"sap.ui.comp.smartform.SmartForm" : {}, 
+			"sap.ui.comp.smartform.Group" : {}, 
+			"sap.m.ObjectHeader" : {}
+		};
+	};
 	Utils.iterateOverAllPublicAggregations = function(oControl, fnCallback, fnBreakCondition, aFilter) {
 		var aPromises = [],
 			oRes;
@@ -316,6 +323,20 @@ function(jQuery) {
 		var bDefaultParentLayoutData = !!(oParentLayoutDataFactory && oParent.__widget.getDesignTimeProperty("aggregations")[oControl.sParentAggregationName]._defaultLayoutData);
 
 		switchLayout(oControl, oLayoutData, oParentLayoutData, bDefaultParentLayoutData, bSameLayoutDataType);
+	};
+
+	Utils.findNextParentBlockElement = function(oControl) {
+		var mSupportedBlockControls = Utils.getSupportedControlBlocks();
+
+		if (!oControl) {
+			return;
+		}
+
+		if (!mSupportedBlockControls[oControl.getMetadata().getName()]) {
+			return Utils.findNextParentBlockElement(oControl.getParent());
+		} else {
+			return oControl;
+		}
 	};
 
 	function switchLayout(oControl, oLayoutData, oParentLayoutData, bDefaultParentLayoutData, bSameLayoutDataType) {

@@ -5,7 +5,8 @@
 		"dataServiceVersion" : "2.0",
 		"schema" : [{
 			"namespace" : "GWSAMPLE_BASIC",
-			"entityType" : [{
+			"entityType" : [
+					{
 						"name" : "BusinessPartner",
 						"key" : {
 							"propertyRef" : [{
@@ -35,8 +36,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Bus. Part. ID",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Bus. Part. ID"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "CompanyName",
 							"type" : "Edm.String",
@@ -46,7 +53,10 @@
 								"value" : "Company Name",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Company Name"
+							"sap:label" : "Company Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Company Name"
+							}
 						}, {
 							"name" : "WebAddress",
 							"type" : "Edm.String",
@@ -68,6 +78,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Web Address",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Web Address"
+							},
 							"sap:sortable" : "false",
 							"sap:filterable" : "false",
 							"sap:semantics" : "url"
@@ -85,7 +98,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "E-Mail Address",
-							"sap:semantics" : "email"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "E-Mail Address"
+							},
+							"sap:semantics" : "email",
+							"com.sap.vocabularies.Communication.v1.IsEmailAddress" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "PhoneNumber",
 							"type" : "Edm.String",
@@ -100,7 +119,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Phone No.",
-							"sap:semantics" : "tel"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Phone No."
+							},
+							"sap:semantics" : "tel",
+							"com.sap.vocabularies.Communication.v1.IsPhoneNumber" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "FaxNumber",
 							"type" : "Edm.String",
@@ -110,7 +135,10 @@
 								"value" : "Fax Number",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Fax Number"
+							"sap:label" : "Fax Number",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Fax Number"
+							}
 						}, {
 							"name" : "LegalForm",
 							"type" : "Edm.String",
@@ -120,7 +148,10 @@
 								"value" : "Legal Form",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Legal Form"
+							"sap:label" : "Legal Form",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Legal Form"
+							}
 						}, {
 							"name" : "CurrencyCode",
 							"type" : "Edm.String",
@@ -135,6 +166,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Currency",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Currency"
+							},
 							"sap:semantics" : "currency-code"
 						}, {
 							"name" : "BusinessPartnerRole",
@@ -145,7 +179,10 @@
 								"value" : "Bus. Part. Role",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Bus. Part. Role"
+							"sap:label" : "Bus. Part. Role",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Bus. Part. Role"
+							}
 						}, {
 							"name" : "CreatedAt",
 							"type" : "Edm.DateTime",
@@ -164,8 +201,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Time Stamp",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Time Stamp"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "ChangedAt",
 							"type" : "Edm.DateTime",
@@ -185,8 +228,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Time Stamp",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Time Stamp"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"navigationProperty" : [{
 							"name" : "ToSalesOrders",
@@ -210,6 +259,19 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"$path" : "/dataServices/schema/0/entityType/0",
+						"com.sap.vocabularies.Communication.v1.Contact" : {
+							"email" : [{
+								"address" : {
+									"Path" : "EmailAddress"
+								}
+							}],
+							"tel" : [{
+								"uri" : {
+									"Path" : "PhoneNumber"
+								}
+							}]
+						},
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
 								"String" : "Business Partner"
@@ -324,6 +386,7 @@
 											"Type" : "String",
 											"Value" : "https://www.google.de/maps/place/{street},{city}"
 										}, {
+											"Type" : "LabeledElement",
 											"Name" : "street",
 											"Value" : {
 												"Apply" : {
@@ -335,6 +398,7 @@
 												}
 											}
 										}, {
+											"Type" : "LabeledElement",
 											"Name" : "city",
 											"Value" : {
 												"Apply" : {
@@ -453,9 +517,9 @@
 								"AnnotationPath" : "ToProducts/@com.sap.vocabularies.UI.v1.LineItem"
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
-						}],
-						"$path" : "/dataServices/schema/0/entityType/0"
-					}, {
+						}]
+					},
+					{
 						"name" : "Product",
 						"key" : {
 							"propertyRef" : [{
@@ -477,7 +541,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Product ID",
-							"sap:updatable" : "false"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Product ID"
+							},
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Immutable" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "TypeCode",
 							"type" : "Edm.String",
@@ -487,7 +557,10 @@
 								"value" : "Prod. Type Code",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Prod. Type Code"
+							"sap:label" : "Prod. Type Code",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Prod. Type Code"
+							}
 						}, {
 							"name" : "Category",
 							"type" : "Edm.String",
@@ -498,6 +571,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Prod. Cat.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Prod. Cat."
+							},
 							"com.sap.vocabularies.Common.v1.ValueList" : {
 								"CollectionPath" : {
 									"String" : "VH_CategorySet"
@@ -531,6 +607,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Product Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Product Name"
+							},
 							"sap:sortable" : "false",
 							"sap:filterable" : "false"
 						}, {
@@ -559,10 +638,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Language",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Language"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Description",
 							"type" : "Edm.String",
@@ -581,6 +666,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Prod.Descrip.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Prod.Descrip."
+							},
 							"sap:sortable" : "false",
 							"sap:filterable" : "false"
 						}, {
@@ -609,10 +697,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Language",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Language"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "SupplierID",
 							"type" : "Edm.String",
@@ -622,7 +716,10 @@
 								"value" : "Bus. Part. ID",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Bus. Part. ID"
+							"sap:label" : "Bus. Part. ID",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Bus. Part. ID"
+							}
 						}, {
 							"name" : "SupplierName",
 							"type" : "Edm.String",
@@ -641,8 +738,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Company Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Company Name"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "TaxTarifCode",
 							"type" : "Edm.Byte",
@@ -651,7 +754,10 @@
 								"value" : "Prod. Tax Code",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Prod. Tax Code"
+							"sap:label" : "Prod. Tax Code",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Prod. Tax Code"
+							}
 						}, {
 							"name" : "MeasureUnit",
 							"type" : "Edm.String",
@@ -666,6 +772,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Qty. Unit",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Qty. Unit"
+							},
 							"sap:semantics" : "unit-of-measure"
 						}, {
 							"name" : "WeightMeasure",
@@ -683,6 +792,9 @@
 							}],
 							"sap:unit" : "WeightUnit",
 							"sap:label" : "Wt. Measure",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Wt. Measure"
+							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "WeightUnit"
 							}
@@ -700,6 +812,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Qty. Unit",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Qty. Unit"
+							},
 							"sap:semantics" : "unit-of-measure"
 						}, {
 							"name" : "CurrencyCode",
@@ -715,6 +830,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Currency",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Currency"
+							},
 							"sap:semantics" : "currency-code"
 						}, {
 							"name" : "Price",
@@ -732,6 +850,9 @@
 							}],
 							"sap:unit" : "CurrencyCode",
 							"sap:label" : "Unit Price",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Unit Price"
+							},
 							"Org.OData.Measures.V1.ISOCurrency" : {
 								"Path" : "CurrencyCode"
 							}
@@ -751,6 +872,9 @@
 							}],
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Dimensions"
+							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
 							}
@@ -770,6 +894,9 @@
 							}],
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Dimensions"
+							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
 							}
@@ -789,6 +916,9 @@
 							}],
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Dimensions"
+							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
 							}
@@ -806,6 +936,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Dim. Unit",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Dim. Unit"
+							},
 							"sap:semantics" : "unit-of-measure"
 						}, {
 							"name" : "CreatedAt",
@@ -825,8 +958,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Time Stamp",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Time Stamp"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "ChangedAt",
 							"type" : "Edm.DateTime",
@@ -846,8 +985,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Time Stamp",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Time Stamp"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"navigationProperty" : [{
 							"name" : "ToSalesOrderLineItems",
@@ -866,6 +1011,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"$path" : "/dataServices/schema/0/entityType/1",
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
 								"String" : "Product"
@@ -1125,8 +1271,7 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.Decimal"
-							}],
-							"RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType"
+							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
 							"Label" : {
@@ -1158,9 +1303,9 @@
 								"AnnotationPath" : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
-						}],
-						"$path" : "/dataServices/schema/0/entityType/1"
-					}, {
+						}]
+					},
+					{
 						"name" : "SalesOrder",
 						"key" : {
 							"propertyRef" : [{
@@ -1186,8 +1331,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Sa. Ord. ID",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Sa. Ord. ID"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Note",
 							"type" : "Edm.String",
@@ -1210,9 +1361,15 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Description",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Description"
+							},
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Immutable" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "NoteLanguage",
 							"type" : "Edm.String",
@@ -1239,10 +1396,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Language",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Language"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "CustomerID",
 							"type" : "Edm.String",
@@ -1257,7 +1420,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Bus. Part. ID",
-							"sap:updatable" : "false"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Bus. Part. ID"
+							},
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Immutable" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "CustomerName",
 							"type" : "Edm.String",
@@ -1276,8 +1445,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Company Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Company Name"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "CurrencyCode",
 							"type" : "Edm.String",
@@ -1296,8 +1471,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Currency",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Currency"
+							},
 							"sap:updatable" : "false",
-							"sap:semantics" : "currency-code"
+							"sap:semantics" : "currency-code",
+							"Org.OData.Core.V1.Immutable" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "GrossAmount",
 							"type" : "Edm.Decimal",
@@ -1322,8 +1503,14 @@
 							}],
 							"sap:unit" : "CurrencyCode",
 							"sap:label" : "Gross Amt.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Gross Amt."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"Org.OData.Measures.V1.ISOCurrency" : {
 								"Path" : "CurrencyCode"
 							}
@@ -1351,8 +1538,14 @@
 							}],
 							"sap:unit" : "CurrencyCode",
 							"sap:label" : "Net Amt.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Net Amt."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"Org.OData.Measures.V1.ISOCurrency" : {
 								"Path" : "CurrencyCode"
 							}
@@ -1380,8 +1573,14 @@
 							}],
 							"sap:unit" : "CurrencyCode",
 							"sap:label" : "Tax Amt.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Tax Amt."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"Org.OData.Measures.V1.ISOCurrency" : {
 								"Path" : "CurrencyCode"
 							}
@@ -1403,8 +1602,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "PO Lifecycle",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "PO Lifecycle"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"com.sap.vocabularies.Common.v1.Text" : {
 								"Path" : "LifecycleStatusDescription"
 							}
@@ -1434,10 +1639,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Lifecycle Descript.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Lifecycle Descript."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "BillingStatus",
 							"type" : "Edm.String",
@@ -1456,8 +1667,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "PO Confirmation",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "PO Confirmation"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"com.sap.vocabularies.Common.v1.Text" : {
 								"Path" : "BillingStatusDescription"
 							}
@@ -1487,10 +1704,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Billing Description",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Billing Description"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "DeliveryStatus",
 							"type" : "Edm.String",
@@ -1509,9 +1732,26 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "PO Ordering",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "PO Ordering"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"com.sap.vocabularies.Common.v1.Text" : {
+								"If" : [{
+									"Eq" : [{
+										"Path" : "DeliveryStatus"
+									}, {
+										"String" : ""
+									}]
+								}, {
+									"String" : "Not delivered"
+								}, {
+									"Path" : "DeliveryStatusDescription"
+								}],
 								"Path" : "DeliveryStatusDescription"
 							}
 						}, {
@@ -1540,10 +1780,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Delivery Description",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Delivery Description"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "CreatedAt",
 							"type" : "Edm.DateTime",
@@ -1562,8 +1808,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Time Stamp",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Time Stamp"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"com.sap.vocabularies.Common.v1.FieldControl" : {
 								"EnumMember" : "Common.FieldControlType/ReadOnly"
 							}
@@ -1585,8 +1837,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Time Stamp",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Time Stamp"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"navigationProperty" : [{
 							"name" : "ToBusinessPartner",
@@ -1605,6 +1863,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"$path" : "/dataServices/schema/0/entityType/2",
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
 								"String" : "Sales Order"
@@ -1854,8 +2113,7 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.String"
-							}],
-							"RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType"
+							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
 							"Label" : {
@@ -1881,9 +2139,9 @@
 								"AnnotationPath" : "@com.sap.vocabularies.UI.v1.FieldGroup#Note"
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
-						}],
-						"$path" : "/dataServices/schema/0/entityType/2"
-					}, {
+						}]
+					},
+					{
 						"name" : "SalesOrderLineItem",
 						"key" : {
 							"propertyRef" : [{
@@ -1907,7 +2165,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Sa. Ord. ID",
-							"sap:updatable" : "false"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Sa. Ord. ID"
+							},
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Immutable" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "ItemPosition",
 							"type" : "Edm.String",
@@ -1927,8 +2191,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "PO Item Pos",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "PO Item Pos"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "ProductID",
 							"type" : "Edm.String",
@@ -1938,7 +2208,10 @@
 								"value" : "Product ID",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Product ID"
+							"sap:label" : "Product ID",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Product ID"
+							}
 						}, {
 							"name" : "Note",
 							"type" : "Edm.String",
@@ -1957,6 +2230,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Description",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Description"
+							},
 							"sap:sortable" : "false",
 							"sap:filterable" : "false"
 						}, {
@@ -1985,10 +2261,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Language",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Language"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "CurrencyCode",
 							"type" : "Edm.String",
@@ -2011,9 +2293,15 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Currency",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Currency"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
-							"sap:semantics" : "currency-code"
+							"sap:semantics" : "currency-code",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "GrossAmount",
 							"type" : "Edm.Decimal",
@@ -2038,8 +2326,14 @@
 							}],
 							"sap:unit" : "CurrencyCode",
 							"sap:label" : "Gross Amt.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Gross Amt."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"Org.OData.Measures.V1.ISOCurrency" : {
 								"Path" : "CurrencyCode"
 							}
@@ -2067,8 +2361,14 @@
 							}],
 							"sap:unit" : "CurrencyCode",
 							"sap:label" : "Net Amt.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Net Amt."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"Org.OData.Measures.V1.ISOCurrency" : {
 								"Path" : "CurrencyCode"
 							}
@@ -2096,8 +2396,14 @@
 							}],
 							"sap:unit" : "CurrencyCode",
 							"sap:label" : "Tax Amt.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Tax Amt."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							},
 							"Org.OData.Measures.V1.ISOCurrency" : {
 								"Path" : "CurrencyCode"
 							}
@@ -2124,6 +2430,9 @@
 							}],
 							"sap:display-format" : "Date",
 							"sap:label" : "Time Stamp",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Time Stamp"
+							},
 							"sap:sortable" : "false",
 							"sap:filterable" : "false"
 						}, {
@@ -2150,6 +2459,9 @@
 							}],
 							"sap:unit" : "QuantityUnit",
 							"sap:label" : "Quantity",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Quantity"
+							},
 							"sap:sortable" : "false",
 							"sap:filterable" : "false",
 							"Org.OData.Measures.V1.Unit" : {
@@ -2185,11 +2497,17 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Qty. Unit",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Qty. Unit"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
 							"sap:filterable" : "false",
-							"sap:semantics" : "unit-of-measure"
+							"sap:semantics" : "unit-of-measure",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"navigationProperty" : [{
 							"name" : "ToHeader",
@@ -2208,6 +2526,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"$path" : "/dataServices/schema/0/entityType/3",
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
 								"String" : "Sales Order Item"
@@ -2394,8 +2713,7 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.String"
-							}],
-							"RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType"
+							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
 							"Label" : {
@@ -2405,9 +2723,9 @@
 								"AnnotationPath" : "@com.sap.vocabularies.UI.v1.FieldGroup#Note"
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
-						}],
-						"$path" : "/dataServices/schema/0/entityType/3"
-					}, {
+						}]
+					},
+					{
 						"name" : "Contact",
 						"key" : {
 							"propertyRef" : [{
@@ -2436,8 +2754,14 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Contact GUID",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Contact GUID"
+							},
 							"sap:creatable" : "false",
-							"sap:updatable" : "false"
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "BusinessPartnerID",
 							"type" : "Edm.String",
@@ -2453,7 +2777,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Bus. Part. ID",
-							"sap:updatable" : "false"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Bus. Part. ID"
+							},
+							"sap:updatable" : "false",
+							"Org.OData.Core.V1.Immutable" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Title",
 							"type" : "Edm.String",
@@ -2463,7 +2793,10 @@
 								"value" : "Title",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Title"
+							"sap:label" : "Title",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Title"
+							}
 						}, {
 							"name" : "FirstName",
 							"type" : "Edm.String",
@@ -2478,6 +2811,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "First Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "First Name"
+							},
 							"sap:semantics" : "givenname"
 						}, {
 							"name" : "MiddleName",
@@ -2493,6 +2829,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Middle Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Middle Name"
+							},
 							"sap:semantics" : "middlename"
 						}, {
 							"name" : "LastName",
@@ -2508,6 +2847,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Last Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Last Name"
+							},
 							"sap:semantics" : "familyname"
 						}, {
 							"name" : "Nickname",
@@ -2523,6 +2865,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Nickname",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Nickname"
+							},
 							"sap:semantics" : "nickname"
 						}, {
 							"name" : "Initials",
@@ -2533,7 +2878,10 @@
 								"value" : "Initials",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Initials"
+							"sap:label" : "Initials",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Initials"
+							}
 						}, {
 							"name" : "Sex",
 							"type" : "Edm.String",
@@ -2543,7 +2891,10 @@
 								"value" : "Sex",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Sex"
+							"sap:label" : "Sex",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Sex"
+							}
 						}, {
 							"name" : "PhoneNumber",
 							"type" : "Edm.String",
@@ -2558,7 +2909,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Phone No.",
-							"sap:semantics" : "tel"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Phone No."
+							},
+							"sap:semantics" : "tel",
+							"com.sap.vocabularies.Communication.v1.IsPhoneNumber" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "FaxNumber",
 							"type" : "Edm.String",
@@ -2568,7 +2925,10 @@
 								"value" : "Fax Number",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Fax Number"
+							"sap:label" : "Fax Number",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Fax Number"
+							}
 						}, {
 							"name" : "EmailAddress",
 							"type" : "Edm.String",
@@ -2583,7 +2943,13 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "E-Mail Address",
-							"sap:semantics" : "email"
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "E-Mail Address"
+							},
+							"sap:semantics" : "email",
+							"com.sap.vocabularies.Communication.v1.IsEmailAddress" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Language",
 							"type" : "Edm.String",
@@ -2593,7 +2959,10 @@
 								"value" : "Language Key",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
-							"sap:label" : "Language Key"
+							"sap:label" : "Language Key",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Language Key"
+							}
 						}, {
 							"name" : "DateOfBirth",
 							"type" : "Edm.DateTime",
@@ -2608,6 +2977,9 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Date of Birth",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Date of Birth"
+							},
 							"sap:semantics" : "bday"
 						}],
 						"navigationProperty" : [{
@@ -2622,6 +2994,109 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"$path" : "/dataServices/schema/0/entityType/4",
+						"com.sap.vocabularies.Communication.v1.Contact" : {
+							"fn" : {
+								"Apply" : {
+									"Name" : "odata.concat",
+									"Parameters" : [{
+										"Type" : "Path",
+										"Value" : "Title"
+									}, {
+										"Type" : "String",
+										"Value" : ""
+									}, {
+										"Type" : "Path",
+										"Value" : "FirstName"
+									}, {
+										"Type" : "String",
+										"Value" : ""
+									}, {
+										"Type" : "Path",
+										"Value" : "MiddleName"
+									}, {
+										"Type" : "String",
+										"Value" : ""
+									}, {
+										"Type" : "Path",
+										"Value" : "LastName"
+									}]
+								}
+							},
+							"n" : {
+								"surname" : {
+									"Path" : "LastName"
+								},
+								"given" : {
+									"Path" : "FirstName"
+								},
+								"additional" : {
+									"Path" : "MiddleName"
+								},
+								"prefix" : {
+									"Path" : "Title"
+								},
+								"RecordType" : "com.sap.vocabularies.Communication.v1.NameType"
+							},
+							"nickname" : {
+								"Path" : "Nickname",
+								"EdmType" : "Edm.String"
+							},
+							"bday" : {
+								"Path" : "DateOfBirth",
+								"EdmType" : "Edm.DateTime"
+							},
+							"gender" : {
+								"Path" : "Sex",
+								"EdmType" : "Edm.String"
+							},
+							"tel" : [{
+								"uri" : {
+									"Path" : "PhoneNumber"
+								},
+								"type" : {
+									"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
+								},
+								"RecordType" : "com.sap.vocabularies.Communication.v1.PhoneNumberType"
+							}],
+							"email" : [{
+								"address" : {
+									"Path" : "EmailAddress"
+								},
+								"type" : {
+									"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work com.sap.vocabularies.Communication.v1.ContactInformationType/preferred"
+								},
+								"RecordType" : "com.sap.vocabularies.Communication.v1.EmailAddressType"
+							}],
+							"adr" : [{
+								"street" : {
+									"Path" : "Address/Street"
+								},
+								"locality" : {
+									"Path" : "Address/City"
+								},
+								"code" : {
+									"Path" : "Address/PostalCode"
+								},
+								"country" : {
+									"Path" : "Address/Country"
+								},
+								"ext" : {
+									"Apply" : {
+										"Name" : "odata.concat",
+										"Parameters" : [{
+											"Type" : "String",
+											"Value" : "Building"
+										}, {
+											"Type" : "Path",
+											"Value" : "Address/Building"
+										}]
+									}
+								},
+								"RecordType" : "com.sap.vocabularies.Communication.v1.AddressType"
+							}],
+							"RecordType" : "com.sap.vocabularies.Communication.v1.ContactType"
+						},
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
 								"String" : "Contact"
@@ -2637,6 +3112,29 @@
 									"Apply" : {
 										"Name" : "odata.concat",
 										"Parameters" : [{
+											"Type" : "If",
+											"Value" : [{
+												"Eq" : [{
+													"Path" : "Sex"
+												}, {
+													"String" : "M"
+												}]
+											}, {
+												"String" : "Mr. "
+											}, {
+												"If" : [{
+													"Eq" : [{
+														"Path" : "Sex"
+													}, {
+														"String" : "F"
+													}]
+												}, {
+													"String" : "Mrs. "
+												}, {
+													"String" : ""
+												}]
+											}]
+										}, {
 											"Type" : "Path",
 											"Value" : "FirstName",
 											"EdmType" : "Edm.String"
@@ -2819,111 +3317,9 @@
 								}
 							},
 							"RecordType" : "com.sap.vocabularies.Communication.v1.AddressType"
-						},
-						"com.sap.vocabularies.Communication.v1.Contact" : {
-							"fn" : {
-								"Apply" : {
-									"Name" : "odata.concat",
-									"Parameters" : [{
-										"Type" : "Path",
-										"Value" : "Title"
-									}, {
-										"Type" : "String",
-										"Value" : ""
-									}, {
-										"Type" : "Path",
-										"Value" : "FirstName"
-									}, {
-										"Type" : "String",
-										"Value" : ""
-									}, {
-										"Type" : "Path",
-										"Value" : "MiddleName"
-									}, {
-										"Type" : "String",
-										"Value" : ""
-									}, {
-										"Type" : "Path",
-										"Value" : "LastName"
-									}]
-								}
-							},
-							"n" : {
-								"surname" : {
-									"Path" : "LastName"
-								},
-								"given" : {
-									"Path" : "FirstName"
-								},
-								"additional" : {
-									"Path" : "MiddleName"
-								},
-								"prefix" : {
-									"Path" : "Title"
-								},
-								"RecordType" : "com.sap.vocabularies.Communication.v1.NameType"
-							},
-							"nickname" : {
-								"Path" : "Nickname",
-								"EdmType" : "Edm.String"
-							},
-							"bday" : {
-								"Path" : "DateOfBirth",
-								"EdmType" : "Edm.DateTime"
-							},
-							"gender" : {
-								"Path" : "Sex",
-								"EdmType" : "Edm.String"
-							},
-							"tel" : [{
-								"uri" : {
-									"Path" : "PhoneNumber"
-								},
-								"type" : {
-									"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
-								},
-								"RecordType" : "com.sap.vocabularies.Communication.v1.PhoneNumberType"
-							}],
-							"email" : [{
-								"address" : {
-									"Path" : "EmailAddress"
-								},
-								"type" : {
-									"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work com.sap.vocabularies.Communication.v1.ContactInformationType/preferred"
-								},
-								"RecordType" : "com.sap.vocabularies.Communication.v1.EmailAddressType"
-							}],
-							"adr" : [{
-								"street" : {
-									"Path" : "Address/Street"
-								},
-								"locality" : {
-									"Path" : "Address/City"
-								},
-								"code" : {
-									"Path" : "Address/PostalCode"
-								},
-								"country" : {
-									"Path" : "Address/Country"
-								},
-								"ext" : {
-									"Apply" : {
-										"Name" : "odata.concat",
-										"Parameters" : [{
-											"Type" : "String",
-											"Value" : "Building"
-										}, {
-											"Type" : "Path",
-											"Value" : "Address/Building"
-										}]
-									}
-								},
-								"RecordType" : "com.sap.vocabularies.Communication.v1.AddressType"
-							}],
-							"RecordType" : "com.sap.vocabularies.Communication.v1.ContactType"
-						},
-						"$path" : "/dataServices/schema/0/entityType/4"
-					}, {
+						}
+					},
+					{
 						"name" : "VH_Sex",
 						"key" : {
 							"propertyRef" : [{
@@ -2957,10 +3353,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Sex",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Sex"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Shorttext",
 							"type" : "Edm.String",
@@ -2988,10 +3390,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Short Descript.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Short Descript."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3000,7 +3408,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/5"
-					}, {
+					},
+					{
 						"name" : "VH_Country",
 						"key" : {
 							"propertyRef" : [{
@@ -3034,10 +3443,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Country",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Country"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Landx",
 							"type" : "Edm.String",
@@ -3065,10 +3480,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Name"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Natio",
 							"type" : "Edm.String",
@@ -3096,10 +3517,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Nationality",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Nationality"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3108,7 +3535,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/6"
-					}, {
+					},
+					{
 						"name" : "VH_AddressType",
 						"key" : {
 							"propertyRef" : [{
@@ -3142,10 +3570,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Address Type",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Address Type"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Shorttext",
 							"type" : "Edm.String",
@@ -3173,10 +3607,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Short Descript.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Short Descript."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3185,7 +3625,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/7"
-					}, {
+					},
+					{
 						"name" : "VH_Category",
 						"key" : {
 							"propertyRef" : [{
@@ -3219,10 +3660,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Prod. Cat.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Prod. Cat."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3231,7 +3678,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/8"
-					}, {
+					},
+					{
 						"name" : "VH_Currency",
 						"key" : {
 							"propertyRef" : [{
@@ -3269,11 +3717,17 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Currency",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Currency"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
 							"sap:filterable" : "false",
-							"sap:semantics" : "currency-code"
+							"sap:semantics" : "currency-code",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Ltext",
 							"type" : "Edm.String",
@@ -3301,10 +3755,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Long Text",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Long Text"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3313,7 +3773,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/9"
-					}, {
+					},
+					{
 						"name" : "VH_UnitQuantity",
 						"key" : {
 							"propertyRef" : [{
@@ -3351,11 +3812,17 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Int. meas. unit",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Int. meas. unit"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
 							"sap:filterable" : "false",
-							"sap:semantics" : "unit-of-measure"
+							"sap:semantics" : "unit-of-measure",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Msehl",
 							"type" : "Edm.String",
@@ -3383,10 +3850,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Unit text",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Unit text"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3395,7 +3868,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/10"
-					}, {
+					},
+					{
 						"name" : "VH_UnitWeight",
 						"key" : {
 							"propertyRef" : [{
@@ -3433,11 +3907,17 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Int. meas. unit",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Int. meas. unit"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
 							"sap:filterable" : "false",
-							"sap:semantics" : "unit-of-measure"
+							"sap:semantics" : "unit-of-measure",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Msehl",
 							"type" : "Edm.String",
@@ -3465,10 +3945,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Unit text",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Unit text"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3477,7 +3963,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/11"
-					}, {
+					},
+					{
 						"name" : "VH_UnitLength",
 						"key" : {
 							"propertyRef" : [{
@@ -3515,11 +4002,17 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Int. meas. unit",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Int. meas. unit"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
 							"sap:filterable" : "false",
-							"sap:semantics" : "unit-of-measure"
+							"sap:semantics" : "unit-of-measure",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Msehl",
 							"type" : "Edm.String",
@@ -3547,10 +4040,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Unit text",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Unit text"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3559,7 +4058,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/12"
-					}, {
+					},
+					{
 						"name" : "VH_ProductTypeCode",
 						"key" : {
 							"propertyRef" : [{
@@ -3593,10 +4093,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Prod. Type Code",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Prod. Type Code"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Shorttext",
 							"type" : "Edm.String",
@@ -3624,10 +4130,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Short Descript.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Short Descript."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3636,7 +4148,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/13"
-					}, {
+					},
+					{
 						"name" : "VH_BPRole",
 						"key" : {
 							"propertyRef" : [{
@@ -3670,10 +4183,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Bus. Part. Role",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Bus. Part. Role"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Shorttext",
 							"type" : "Edm.String",
@@ -3701,10 +4220,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Short Descript.",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Short Descript."
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3713,7 +4238,8 @@
 						}],
 						"sap:content-version" : "1",
 						"$path" : "/dataServices/schema/0/entityType/14"
-					}, {
+					},
+					{
 						"name" : "VH_Language",
 						"key" : {
 							"propertyRef" : [{
@@ -3747,10 +4273,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Language",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Language"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}, {
 							"name" : "Sptxt",
 							"type" : "Edm.String",
@@ -3778,10 +4310,16 @@
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}],
 							"sap:label" : "Name",
+							"com.sap.vocabularies.Common.v1.Label" : {
+								"String" : "Name"
+							},
 							"sap:creatable" : "false",
 							"sap:updatable" : "false",
 							"sap:sortable" : "false",
-							"sap:filterable" : "false"
+							"sap:filterable" : "false",
+							"Org.OData.Core.V1.Computed" : {
+								"Bool" : "true"
+							}
 						}],
 						"extensions" : [{
 							"name" : "content-version",
@@ -3807,6 +4345,9 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:label" : "City",
+					"com.sap.vocabularies.Common.v1.Label" : {
+						"String" : "City"
+					},
 					"sap:semantics" : "city"
 				}, {
 					"name" : "PostalCode",
@@ -3822,6 +4363,9 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:label" : "Postal Code",
+					"com.sap.vocabularies.Common.v1.Label" : {
+						"String" : "Postal Code"
+					},
 					"sap:semantics" : "zip"
 				}, {
 					"name" : "Street",
@@ -3837,6 +4381,9 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:label" : "Street",
+					"com.sap.vocabularies.Common.v1.Label" : {
+						"String" : "Street"
+					},
 					"sap:semantics" : "street"
 				}, {
 					"name" : "Building",
@@ -3847,7 +4394,10 @@
 						"value" : "Building",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:label" : "Building"
+					"sap:label" : "Building",
+					"com.sap.vocabularies.Common.v1.Label" : {
+						"String" : "Building"
+					}
 				}, {
 					"name" : "Country",
 					"type" : "Edm.String",
@@ -3862,6 +4412,9 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:label" : "Country",
+					"com.sap.vocabularies.Common.v1.Label" : {
+						"String" : "Country"
+					},
 					"sap:semantics" : "country"
 				}, {
 					"name" : "AddressType",
@@ -3872,9 +4425,28 @@
 						"value" : "Address Type",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:label" : "Address Type"
+					"sap:label" : "Address Type",
+					"com.sap.vocabularies.Common.v1.Label" : {
+						"String" : "Address Type"
+					}
 				}],
-				"$path" : "/dataServices/schema/0/complexType/0"
+				"$path" : "/dataServices/schema/0/complexType/0",
+				"com.sap.vocabularies.Communication.v1.Contact" : {
+					"adr" : {
+						"locality" : {
+							"Path" : "City"
+						},
+						"code" : {
+							"Path" : "PostalCode"
+						},
+						"street" : {
+							"Path" : "Street"
+						},
+						"country" : {
+							"Path" : "Country"
+						}
+					}
+				}
 			}, {
 				"name" : "CT_String",
 				"property" : [{
@@ -3901,7 +4473,10 @@
 					"sap:creatable" : "false",
 					"sap:updatable" : "false",
 					"sap:sortable" : "false",
-					"sap:filterable" : "false"
+					"sap:filterable" : "false",
+					"Org.OData.Core.V1.Computed" : {
+						"Bool" : "true"
+					}
 				}],
 				"$path" : "/dataServices/schema/0/complexType/1"
 			}],
@@ -4529,7 +5104,22 @@
 						"value" : "1",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:content-version" : "1"
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "WebAddress"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "WebAddress"
+						}]
+					}
 				}, {
 					"name" : "ProductSet",
 					"entityType" : "GWSAMPLE_BASIC.Product",
@@ -4538,7 +5128,34 @@
 						"value" : "1",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:content-version" : "1"
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Name"
+						}, {
+							"PropertyPath" : "NameLanguage"
+						}, {
+							"PropertyPath" : "Description"
+						}, {
+							"PropertyPath" : "DescriptionLanguage"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Name"
+						}, {
+							"PropertyPath" : "NameLanguage"
+						}, {
+							"PropertyPath" : "Description"
+						}, {
+							"PropertyPath" : "DescriptionLanguage"
+						}]
+					}
 				}, {
 					"name" : "SalesOrderSet",
 					"entityType" : "GWSAMPLE_BASIC.SalesOrder",
@@ -4552,7 +5169,43 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:updatable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Note"
+						}, {
+							"PropertyPath" : "NoteLanguage"
+						}, {
+							"PropertyPath" : "LifecycleStatusDescription"
+						}, {
+							"PropertyPath" : "BillingStatusDescription"
+						}, {
+							"PropertyPath" : "DeliveryStatusDescription"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Note"
+						}, {
+							"PropertyPath" : "NoteLanguage"
+						}, {
+							"PropertyPath" : "LifecycleStatusDescription"
+						}, {
+							"PropertyPath" : "BillingStatusDescription"
+						}, {
+							"PropertyPath" : "DeliveryStatusDescription"
+						}]
+					}
 				}, {
 					"name" : "SalesOrderLineItemSet",
 					"entityType" : "GWSAMPLE_BASIC.SalesOrderLineItem",
@@ -4561,7 +5214,38 @@
 						"value" : "1",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:content-version" : "1"
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Note"
+						}, {
+							"PropertyPath" : "NoteLanguage"
+						}, {
+							"PropertyPath" : "DeliveryDate"
+						}, {
+							"PropertyPath" : "Quantity"
+						}, {
+							"PropertyPath" : "QuantityUnit"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Note"
+						}, {
+							"PropertyPath" : "NoteLanguage"
+						}, {
+							"PropertyPath" : "DeliveryDate"
+						}, {
+							"PropertyPath" : "Quantity"
+						}, {
+							"PropertyPath" : "QuantityUnit"
+						}]
+					}
 				}, {
 					"name" : "ContactSet",
 					"entityType" : "GWSAMPLE_BASIC.Contact",
@@ -4570,7 +5254,12 @@
 						"value" : "1",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:content-version" : "1"
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					}
 				}, {
 					"name" : "VH_SexSet",
 					"entityType" : "GWSAMPLE_BASIC.VH_Sex",
@@ -4596,10 +5285,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Sex"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Sex"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					}
 				}, {
 					"name" : "VH_CountrySet",
 					"entityType" : "GWSAMPLE_BASIC.VH_Country",
@@ -4625,10 +5354,54 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Land1"
+						}, {
+							"PropertyPath" : "Landx"
+						}, {
+							"PropertyPath" : "Natio"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Land1"
+						}, {
+							"PropertyPath" : "Landx"
+						}, {
+							"PropertyPath" : "Natio"
+						}]
+					}
 				}, {
 					"name" : "VH_AddressTypeSet",
 					"entityType" : "GWSAMPLE_BASIC.VH_AddressType",
@@ -4654,10 +5427,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "AddressType"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "AddressType"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					}
 				}, {
 					"name" : "VH_CategorySet",
 					"entityType" : "GWSAMPLE_BASIC.VH_Category",
@@ -4683,10 +5496,46 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Category"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Category"
+						}]
+					}
 				}, {
 					"name" : "VH_CurrencySet",
 					"entityType" : "GWSAMPLE_BASIC.VH_Currency",
@@ -4712,10 +5561,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Waers"
+						}, {
+							"PropertyPath" : "Ltext"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Waers"
+						}, {
+							"PropertyPath" : "Ltext"
+						}]
+					}
 				}, {
 					"name" : "VH_UnitQuantitySet",
 					"entityType" : "GWSAMPLE_BASIC.VH_UnitQuantity",
@@ -4741,10 +5630,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					}
 				}, {
 					"name" : "VH_UnitWeightSet",
 					"entityType" : "GWSAMPLE_BASIC.VH_UnitWeight",
@@ -4770,10 +5699,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					}
 				}, {
 					"name" : "VH_UnitLengthSet",
 					"entityType" : "GWSAMPLE_BASIC.VH_UnitLength",
@@ -4799,10 +5768,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Msehi"
+						}, {
+							"PropertyPath" : "Msehl"
+						}]
+					}
 				}, {
 					"name" : "VH_ProductTypeCodeSet",
 					"entityType" : "GWSAMPLE_BASIC.VH_ProductTypeCode",
@@ -4828,10 +5837,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "TypeCode"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "TypeCode"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					}
 				}, {
 					"name" : "VH_BPRoleSet",
 					"entityType" : "GWSAMPLE_BASIC.VH_BPRole",
@@ -4857,10 +5906,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "BpRole"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "BpRole"
+						}, {
+							"PropertyPath" : "Shorttext"
+						}]
+					}
 				}, {
 					"name" : "VH_LanguageSet",
 					"entityType" : "GWSAMPLE_BASIC.VH_Language",
@@ -4886,10 +5975,50 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:creatable" : "false",
+					"Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"Insertable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:updatable" : "false",
+					"Org.OData.Capabilities.V1.UpdateRestrictions" : {
+						"Updatable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:deletable" : "false",
+					"Org.OData.Capabilities.V1.DeleteRestrictions" : {
+						"Deletable" : {
+							"Bool" : "false"
+						}
+					},
 					"sap:pageable" : "false",
-					"sap:content-version" : "1"
+					"Org.OData.Capabilities.V1.SkipSupported" : {
+						"Bool" : "false"
+					},
+					"Org.OData.Capabilities.V1.TopSupported" : {
+						"Bool" : "false"
+					},
+					"sap:content-version" : "1",
+					"Org.OData.Capabilities.V1.SearchRestrictions" : {
+						"Searchable" : {
+							"Bool" : "false"
+						}
+					},
+					"Org.OData.Capabilities.V1.FilterRestrictions" : {
+						"NonFilterableProperties" : [{
+							"PropertyPath" : "Spras"
+						}, {
+							"PropertyPath" : "Sptxt"
+						}]
+					},
+					"Org.OData.Capabilities.V1.SortRestrictions" : {
+						"NonSortableProperties" : [{
+							"PropertyPath" : "Spras"
+						}, {
+							"PropertyPath" : "Sptxt"
+						}]
+					}
 				}],
 				"associationSet" : [{
 					"name" : "Assoc_VH_Language_Contacts_AssocSet",
@@ -5520,7 +6649,10 @@
 						"name" : "NoOfSalesOrders",
 						"type" : "Edm.Int32",
 						"mode" : "In"
-					}]
+					}],
+					"com.sap.vocabularies.Common.v1.IsActionCritical" : {
+						"Bool" : "true"
+					}
 				}, {
 					"name" : "SalesOrder_Confirm",
 					"returnType" : "GWSAMPLE_BASIC.SalesOrder",
@@ -5537,7 +6669,10 @@
 						"value" : "GWSAMPLE_BASIC.SalesOrder",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:action-for" : "GWSAMPLE_BASIC.SalesOrder"
+					"sap:action-for" : "GWSAMPLE_BASIC.SalesOrder",
+					"com.sap.vocabularies.Common.v1.IsActionCritical" : {
+						"Bool" : "false"
+					}
 				}, {
 					"name" : "SalesOrder_Cancel",
 					"returnType" : "GWSAMPLE_BASIC.SalesOrder",
@@ -5554,7 +6689,8 @@
 						"value" : "GWSAMPLE_BASIC.SalesOrder",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
-					"sap:action-for" : "GWSAMPLE_BASIC.SalesOrder"
+					"sap:action-for" : "GWSAMPLE_BASIC.SalesOrder",
+					"com.sap.vocabularies.Common.v1.IsActionCritical" : {}
 				}, {
 					"name" : "SalesOrder_InvoiceCreated",
 					"returnType" : "GWSAMPLE_BASIC.SalesOrder",
@@ -5592,36 +6728,44 @@
 				}],
 				"$path" : "/dataServices/schema/0/entityContainer/0"
 			}],
-			"extensions" : [{
+			"extensions" : [
+					{
 						"name" : "lang",
 						"value" : "en",
 						"namespace" : "http://www.w3.org/XML/1998/namespace"
-					}, {
+					},
+					{
 						"name" : "schema-version",
 						"value" : "0000",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
-					}, {
+					},
+					{
 						"name" : "link",
 						"value" : null,
-						"attributes" : [{
+						"attributes" : [
+								{
 									"name" : "rel",
 									"value" : "self",
 									"namespace" : null
-								}, {
+								},
+								{
 									"name" : "href",
 									"value" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata",
 									"namespace" : null
 								}],
 						"children" : [],
 						"namespace" : "http://www.w3.org/2005/Atom"
-					}, {
+					},
+					{
 						"name" : "link",
 						"value" : null,
-						"attributes" : [{
+						"attributes" : [
+								{
 									"name" : "rel",
 									"value" : "latest-version",
 									"namespace" : null
-								}, {
+								},
+								{
 									"name" : "href",
 									"value" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata",
 									"namespace" : null

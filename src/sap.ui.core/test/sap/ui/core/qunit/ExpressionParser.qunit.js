@@ -5,6 +5,7 @@
 	"use strict";
 
 	jQuery.sap.require("sap.ui.base.ExpressionParser");
+	jQuery.sap.require("sap.ui.model.odata.ODataUtils");
 
 	/**
 	 * Checks the string result of an expression binding when bound to a control property of type
@@ -317,12 +318,9 @@
 	});
 
 	//*********************************************************************************************
-	checkFixtures("odata functions", [{
+	checkFixtures("odata fillUriTemplate", [{
 		expression: "{=odata.fillUriTemplate('http://foo.com/{p1,p2}', {'p1': 'v1', 'p2': 'v2'})}",
 		result: "http://foo.com/v1,v2"
-	}, {
-		expression: "{=odata.uriEncode('foo', 'Edm.String')}",
-		result: "'foo'"
 	}]);
 
 	//*********************************************************************************************
@@ -411,4 +409,32 @@
 		{ expression: "'PI' in Math", result: "true" },
 		{ expression: "'foo' in {}", result: "false" }
 	]);
+
+	//*********************************************************************************************
+	test("Warning for global identifier with value undefined", function () {
+		this.mock(jQuery.sap.log).expects("warning")
+			.withExactArgs(
+				"Unsupported global identifier 'foo' in expression parser input '{=42 === foo}'",
+				undefined, "sap.ui.base.ExpressionParser");
+
+		check("{=42 === foo}", "false");
+	});
+
+	//*********************************************************************************************
+	test("odata.compare", function () {
+		this.mock(jQuery.sap).expects("require").withExactArgs("sap.ui.model.odata.ODataUtils");
+		this.mock(sap.ui.model.odata.ODataUtils).expects("compare")
+			.withExactArgs(2, 3).returns("-1");
+
+		check("{=odata.compare(2,3)}", "-1");
+	});
+
+	//*********************************************************************************************
+	test("odata.uriEncode", function () {
+		this.mock(jQuery.sap).expects("require").withExactArgs("sap.ui.model.odata.ODataUtils");
+		this.mock(sap.ui.model.odata.ODataUtils).expects("formatValue")
+			.withExactArgs("foo", "Edm.String").returns("'foo'");
+
+		check("{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
+	});
 } ());

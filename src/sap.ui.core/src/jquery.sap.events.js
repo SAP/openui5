@@ -1237,7 +1237,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 			if ( parent !== element ) {
 				isMouseEnterLeave = true;
 			}
-		} catch (e) { }
+		} catch (e) {
+			//escape eslint check for empty block
+		}
 
 		return isMouseEnterLeave;
 	};

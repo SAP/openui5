@@ -287,5 +287,92 @@
         "references": []
       }
     ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "fd43cf91366d9b09346ff2b1ca20a73c6cc01690",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Table: Cozy mode added",
+        "references": []
+      },
+      {
+        "id": "8125edf782272b94b3a533863c24c6969994f60a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table.js - Rendering of \u0027select all\u0027 icon corrected",
+        "references": []
+      },
+      {
+        "id": "e414db8a85f8d2893d15509583eeb14bda157591",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable/ODataTreeBinding: Respect application filter corrected",
+        "references": []
+      },
+      {
+        "id": "765ce9e126076401bb07e829abba27cf60ad07db",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table: Last line no longer toggles visibility",
+        "references": []
+      },
+      {
+        "id": "5699cab8f6031b16a12c4a50a971a53ddee798ee",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table: MultiHeader column menu opening DomRef corrected",
+        "references": []
+      },
+      {
+        "id": "88445cc1c7aef9d8afab2fa445d94a0942502263",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table: _setBusy in createRows function",
+        "references": []
+      },
+      {
+        "id": "da0d8b8ae63cac403b50e92c2b2ecc8667121295",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table: Text view creation in sap.m context corrected",
+        "references": []
+      },
+      {
+        "id": "25da3994db8f2fd11058f8692c064b2147b2438c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable: attachSelectionChanged for client tree bindings corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "c022a84f2924fcdfeb64522d62b15fe84e77692c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixed scrollbar flickering",
+        "references": []
+      },
+      {
+        "id": "e58c3eae23f00b825c1abd67a36a09e3393e62dc",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: When call is applied, second parameter must be an argument",
+        "references": []
+      }
+    ]
   }
 }

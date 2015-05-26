@@ -7,6 +7,7 @@
 		binding="{/ProductCollection/5}"
 		icon="{ProductPicUrl}"
 		iconDensityAware="false"
+		iconAlt="{Name}"
 		title="{Name}"
 		number="{Price}"
 		numberUnit="{CurrencyCode}" >

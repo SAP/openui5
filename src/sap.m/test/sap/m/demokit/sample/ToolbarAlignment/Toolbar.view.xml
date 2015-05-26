@@ -4,28 +4,27 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page>
-		<Text text="Left and Right aligned content." class="sapUiExploredInfo"/>
-		<Toolbar>
+		<Toolbar class="sapUiMediumMarginTop">
 			<Button text="Reject" type="Reject"/>
 			<ToolbarSpacer/>
 			<Button text="Accept" type="Accept"/>
 		</Toolbar>
+		<MessageStrip text="Left and Right aligned content." class="sapUiTinyMargin"/>
 		
-		<Text text="Centered content" class="sapUiExploredInfo"/>
-		<Toolbar>
+		<Toolbar class="sapUiMediumMarginTop">
 			<ToolbarSpacer/>
 			<Button text="Centered content" type="Accept"/>
 			<ToolbarSpacer/>
 		</Toolbar>
+		<MessageStrip text="Centered content" class="sapUiTinyMargin"/>
 		
-		<Text text="Right Aligned Content" class="sapUiExploredInfo"/>
-		<Toolbar>
+		<Toolbar class="sapUiMediumMarginTop">
 			<ToolbarSpacer/>
 			<Button text="Right Aligned Content" type="Accept"/>
 		</Toolbar>
+		<MessageStrip text="Right Aligned Content" class="sapUiTinyMargin"/>
 		
-		<Text text="You can have as many sections as you want with ToolbarSpacer" class="sapUiExploredInfo"/>
-		<Toolbar>
+		<Toolbar class="sapUiMediumMarginTop">
 			<Button text="Accept" type="Accept"/>
 			<ToolbarSpacer/>
 			<CheckBox text="CheckBox"/>
@@ -36,18 +35,18 @@
 			<ToolbarSpacer/>
 			<Button text="Reject" type="Reject"/>
 		</Toolbar>
+		<MessageStrip text="You can have as many sections as you want with ToolbarSpacer" class="sapUiTinyMargin"/>
 		
-		<Text text="Flexible ToolbarSpacers share the horizontal spaces. So the content centering is not exact centering like in the Bar." class="sapUiExploredInfo"/>
-		<Toolbar>
+		<Toolbar class="sapUiMediumMarginTop">
 			<Button text="This is a very long button text. This is a very long button text."/>
 			<ToolbarSpacer/>
 			<Button text="Centered Button"/>
 			<ToolbarSpacer/>
 			<Button text="Short Button"/>
 		</Toolbar>
+		<MessageStrip text="Flexible ToolbarSpacers share the horizontal spaces. So the content centering is not exact centering like in the Bar." class="sapUiTinyMargin"/>
 		
-		<Text text="ToolbarSpacer does not have to be flexible, we can give a fixed width to the ToolbarSpacer." class="sapUiExploredInfo"/>
-		<Toolbar>
+		<Toolbar class="sapUiMediumMarginTop">
 			<Input width="100px" placeholder="First Name"/>
 			<Input width="100px" placeholder="Last Name"/>
 			<ToolbarSpacer width="40px"/>
@@ -56,5 +55,6 @@
 			<ToolbarSpacer/>
 			<Button text="Submit" type="Accept"/>
 		</Toolbar>
+		<MessageStrip text="ToolbarSpacer does not have to be flexible, we can give a fixed width to the ToolbarSpacer." class="sapUiTinyMargin"/>
 	</Page>
 </mvc:View>

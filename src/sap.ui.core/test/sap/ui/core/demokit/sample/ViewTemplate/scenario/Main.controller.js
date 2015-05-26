@@ -26,10 +26,11 @@ sap.ui.define([
 		},
 
 		onBeforeRendering: function () {
-			var oUiModel = new JSONModel({
+			var bIsRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
+				oUiModel = new JSONModel({
 					bindTexts : false,
-					icon: jQuery.sap.getUriParameters().get("realOData") === "true" ?
-							"sap-icon://building" : "sap-icon://record"
+					icon :  bIsRealOData ? "sap-icon://building" : "sap-icon://record",
+					iconTooltip : bIsRealOData ? "real OData service" : "mock OData service"
 				}),
 				oMetaModel = this.getView().getModel().getMetaModel(),
 				aEntitySets = oMetaModel.getODataEntityContainer().entitySet;

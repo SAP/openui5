@@ -3,8 +3,8 @@
  */
 
 // Provides the OData model implementation of a tree binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/CountMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataUtils'],
-	function(jQuery, TreeBinding, CountMode, ChangeReason, ODataUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/CountMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/TreeBindingUtils'],
+	function(jQuery, TreeBinding, CountMode, ChangeReason, ODataUtils, TreeBindingUtils) {
 	"use strict";
 
 
@@ -436,48 +436,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			return this.oLengths[oContext.getPath() + "/" + this._getNavPath(oContext.getPath())];
 		}
 	};
-
-	/**
-	 * Merges together oNewSection into a set of other sections (aSections)
-	 * The array/objects are not modified, the function returns a new section array.
-	 * @param {object[]} aSections the sections into which oNewSection will be merged
-	 * @param {objec} oNewSection the section which should be merged into aNewSections
-	 * @return {object[]} a new array containing all sections from aSections merged with oNewSection
-	 * @private
-	 */
-	ODataTreeBinding.prototype._mergeSections = function (aSections, oNewSection) {
-
-		// Iterate over all known/loaded sections of the node
-		var aNewSections = [];
-		for (var i = 0; i < aSections.length; i++) {
-
-			var oCurrentSection = aSections[i];
-			var iCurrentSectionEndIndex = oCurrentSection.startIndex + oCurrentSection.length;
-			var iNewSectionEndIndex = oNewSection.startIndex + oNewSection.length;
-
-			if (oNewSection.startIndex <= iCurrentSectionEndIndex && iNewSectionEndIndex >= iCurrentSectionEndIndex
-				&& oNewSection.startIndex >= oCurrentSection.startIndex) {
-				//new section expands to the left
-				oNewSection.startIndex = oCurrentSection.startIndex;
-				oNewSection.length = iNewSectionEndIndex - oCurrentSection.startIndex;
-			} else if (oNewSection.startIndex <= oCurrentSection.startIndex && iNewSectionEndIndex >= oCurrentSection.startIndex
-				&& iNewSectionEndIndex <= iCurrentSectionEndIndex) {
-				//new section expands to the right
-				oNewSection.length = iCurrentSectionEndIndex - oNewSection.startIndex;
-			} else if (oNewSection.startIndex >= oCurrentSection.startIndex && iNewSectionEndIndex <= iCurrentSectionEndIndex) {
-				//new section is contained in old one
-				oNewSection.startIndex = oCurrentSection.startIndex;
-				oNewSection.length = oCurrentSection.length;
-			} else if (iNewSectionEndIndex < oCurrentSection.startIndex || oNewSection.startIndex > iCurrentSectionEndIndex) {
-				//old and new sections do not overlap, either the new section is completely left or right from the old one
-				aNewSections.push(oCurrentSection);
-			}
-		}
-
-		aNewSections.push(oNewSection);
-
-		return aNewSections;
-	};
 	
 	/**
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
@@ -542,7 +500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				sKey = this.oKeys[sNodeId][i];
 				if (!sKey) {
 					if (!fnFindInLoadedSections(i)) {
-						aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: 1});
+						aMissingSections = TreeBindingUtils.mergeSections(aMissingSections, {startIndex: i, length: 1});
 					}
 				}
 
@@ -569,7 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 					var sKey = this.oKeys[sNodeId][i];
 					if (!sKey) {
 						if (!fnFindInLoadedSections(i)) {
-							aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: 1});
+							aMissingSections = TreeBindingUtils.mergeSections(aMissingSections, {startIndex: i, length: 1});
 						}
 					}
 				}
@@ -581,7 +539,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 					var sKey = this.oKeys[sNodeId][i];
 					if (!sKey) {
 						if (!fnFindInLoadedSections(i)) {
-							aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: 1});
+							aMissingSections = TreeBindingUtils.mergeSections(aMissingSections, {startIndex: i, length: 1});
 						}
 					}
 				}
@@ -592,7 +550,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				// "i" is our shifted forward startIndex for the "negative" thresholding
 				// in this case i is always smaller than iStartIndex, but minimum is 0
 				var iLengthShift = iStartIndex - i;
-				aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: iLength + iLengthShift + iThreshold});
+				aMissingSections = TreeBindingUtils.mergeSections(aMissingSections, {startIndex: i, length: iLength + iLengthShift + iThreshold});
 			}
 		}
 
@@ -622,7 +580,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 
 				for (i = 0; i < aMissingSections.length; i++) {
 					var oRequestedSection = aMissingSections[i];
-					this._mLoadedSections[sNodeId] = this._mergeSections(this._mLoadedSections[sNodeId], {startIndex: oRequestedSection.startIndex, length: oRequestedSection.length});
+					this._mLoadedSections[sNodeId] = TreeBindingUtils.mergeSections(this._mLoadedSections[sNodeId], {startIndex: oRequestedSection.startIndex, length: oRequestedSection.length});
 					this._loadSubNodes(sNodeId, oRequestedSection.startIndex, oRequestedSection.length, 0, aParams, mRequestParameters, oRequestedSection);
 				}
 			}
@@ -817,8 +775,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				if (oRequestedSection.startIndex >= oCurrentSection.startIndex && oRequestedSection.startIndex + oRequestedSection.length <= oCurrentSection.startIndex + oCurrentSection.length) {
 					// remove the section interval and maintain adapted sections. If start index and length are the same, ignore the section
 					if (oRequestedSection.startIndex !== oCurrentSection.startIndex && oRequestedSection.length !== oCurrentSection.length) {
-						aLoadedSections = that._mergeSections(aLoadedSections, {startIndex: oCurrentSection.startIndex, length: oRequestedSection.startIndex - oCurrentSection.startIndex});
-						aLoadedSections = that._mergeSections(aLoadedSections, {startIndex: oRequestedSection.startIndex + oRequestedSection.length, length: (oCurrentSection.startIndex + oCurrentSection.length) - (oRequestedSection.startIndex + oRequestedSection.length)});
+						aLoadedSections = TreeBindingUtils.mergeSections(aLoadedSections, {startIndex: oCurrentSection.startIndex, length: oRequestedSection.startIndex - oCurrentSection.startIndex});
+						aLoadedSections = TreeBindingUtils.mergeSections(aLoadedSections, {startIndex: oRequestedSection.startIndex + oRequestedSection.length, length: (oCurrentSection.startIndex + oCurrentSection.length) - (oRequestedSection.startIndex + oRequestedSection.length)});
 					}
 
 				} else {

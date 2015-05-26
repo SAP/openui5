@@ -72,6 +72,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
+			 * Object header icon alternative text that is displayed in case the Image is not available, or cannot be displayed.
+			 */
+			iconAlt : {type : "string", group : "Accessibility", defaultValue : null},
+
+			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
 			 *
 			 * If bandwidth is the key for the application, set this value to false.
@@ -181,9 +186,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * The list of Object Attributes
+			 * The list of Object sap.ui.core.Control. It will only allow sap.m.ObjectAttribute and sap.ui.comp.navpopover.SmartLink controls.
 			 */
-			attributes : {type : "sap.m.ObjectAttribute", multiple : true, singularName : "attribute"},
+			attributes : {type : "sap.ui.core.Control", multiple : true, singularName : "attribute"},
 
 			/**
 			 * First status shown on the right side of the attributes above the second status.
@@ -670,6 +675,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			height : sHeight,
 			width : sWidth,
 			size : sSize,
+			alt: this.getIconAlt(),
 			densityAware : this.getIconDensityAware()
 		};
 

@@ -1,0 +1,18 @@
+{
+	"config": {
+		"sample": {
+			"files": [
+				"Component.js",
+				"Main.view.xml",
+				"ValueHelp.js",
+				"data/metadata.xml",
+				"data/VL_SH_DEBID.json",
+				"data/VL_SH_H_T001.json"
+			]
+		}
+	},
+	"dependencies": [],
+	"description": "Component for separate value list loading sample",
+	"name": "sap.ui.core.demokit.sample.ViewTemplate.valuelist",
+	"version": "1.29.1-SNAPSHOT"
+}

@@ -136,7 +136,15 @@ xhr.onCreate = function(request) {
 				break;			
 				
 			case "fakeService://testdata/odata/simple-values-2.xml":
-				sAnswer = sSimpleValuesTest2	;
+				sAnswer = sSimpleValuesTest2;
+				break;
+				
+			case "fakeService://testdata/odata/if-in-apply.xml":
+				sAnswer = sIfInApply;
+				break;
+				
+			case "fakeService://testdata/odata/labeledelement-other-values.xml":
+				sAnswer = sLabeledElementOtherValues;
 				break;
 				
 			default:
@@ -4045,6 +4053,102 @@ var sSimpleValuesTest2 = '\
 					<Int>2</Int>\
 					<Int>3</Int>\
 					<Int>4</Int>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sIfInApply = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="IfInApply">\
+				<Annotation Term="Test.Data">\
+					<Record>\
+						<PropertyValue Property="Value">\
+							<Apply Function="odata.concat">\
+								<If>\
+									<Eq>\
+										<Path>Sex</Path>\
+										<String>M</String>\
+									</Eq>\
+									<String>Mr. </String>\
+									<If>\
+										<Eq>\
+											<Path>Sex</Path>\
+											<String>F</String>\
+										</Eq>\
+										<String>Mrs. </String>\
+										<String></String>\
+									</If>\
+								</If>\
+								<Path>FirstName</Path>\
+								<String/>\
+								<Path>LastName</Path>\
+							</Apply>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sLabeledElementOtherValues = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="LabeledElement">\
+				<Annotation Term="Test.Data">\
+					<Record Type="Test.Data.DataFieldWithUrl">\
+						<PropertyValue Property="Url">\
+							<UrlRef>\
+								<Apply Function="odata.fillUriTemplate">\
+									<String><![CDATA[#{Bool}/{Date}/{DateTimeOffset}/{Decimal}/{Float}/{Guid}/{Int}/{Path}/{String}/{TimeOfDay}]]></String>\
+									<LabeledElement Name="Bool">\
+										<Bool>true</Bool>\
+									</LabeledElement>\
+									<LabeledElement Name="Date">\
+										<Date>2015-03-24</Date>\
+									</LabeledElement>\
+									<LabeledElement Name="DateTimeOffset">\
+										<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+									</LabeledElement>\
+									<LabeledElement Name="Decimal">\
+										<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+									</LabeledElement>\
+									<LabeledElement Name="Float">\
+										<Float>-7.4503e-36</Float>\
+									</LabeledElement>\
+									<LabeledElement Name="Guid">\
+										<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+									</LabeledElement>\
+									<LabeledElement Name="Int">\
+										<Int>9007199254740992</Int>\
+									</LabeledElement>\
+									<LabeledElement Name="Path">\
+										<Path>BusinessPartnerID</Path>\
+									</LabeledElement>\
+									<LabeledElement Name="String">\
+										<String>hello, world</String>\
+									</LabeledElement>\
+									<LabeledElement Name="TimeOfDay">\
+										<TimeOfDay>13:57:06</TimeOfDay>\
+									</LabeledElement>\
+								</Apply>\
+							</UrlRef>\
+						</PropertyValue>\
+					</Record>\
 				</Annotation>\
 			</Annotations>\
 		</Schema>\

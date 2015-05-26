@@ -27,6 +27,7 @@
 
 	sap.ui.require([
 		"jquery.sap.global",
+		"sap/ui/thirdparty/URI",
 		"sap/ui/thirdparty/qunit",
 		"sap/ui/qunit/qunit-junit",
 		"sap/ui/qunit/QUnitUtils",
@@ -40,7 +41,7 @@
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/test/v2models/CustomModel"
 	],
-	function(jQuery) {
+	function(jQuery, URI) {
 
 		QUnit.module('default', {
 			mockModels: function() {
@@ -100,7 +101,7 @@
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
 				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1', '/path/to/odata/annotations/2' ],
+				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/path/to/local/odata/annotations/2' ],
 				useBatch: false,
 				refreshAfterChange: false,
 				json: true
@@ -113,7 +114,7 @@
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/2', '/path/to/odata/annotations/1' ]
+				annotationURI: [ 'v2models/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ]
 			});
 
 			// model: "old-uri-syntax"
@@ -141,13 +142,16 @@
 
 
 			// sap.ui.model.json.JSONModel
-			sinon.assert.callCount(this.modelSpy.json, 2);
+			sinon.assert.callCount(this.modelSpy.json, 3);
 
 			// model: "json"
 			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
 
 			// model: "json-relative"
 			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/path/to/local/data.json?sap-client=foo&sap-server=bar');
+
+			// model: "json-relative-2"
+			sinon.assert.calledWithExactly(this.modelSpy.json, '../path/to/other/data.json?sap-client=foo&sap-server=bar');
 
 
 			// sap.ui.model.xml.XMLModel
@@ -230,6 +234,7 @@
 				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
 				"json": sap.ui.model.json.JSONModel,
 				"json-relative": sap.ui.model.json.JSONModel,
+				"json-relative-2": sap.ui.model.json.JSONModel,
 				"xml": sap.ui.model.xml.XMLModel,
 				"xml-relative": sap.ui.model.xml.XMLModel,
 				"resourceBundle-name": sap.ui.model.resource.ResourceModel,

@@ -1410,9 +1410,21 @@
 		"dayPeriods-standAlone-wide": [
 			"priekšpusdienā",
 			"pēcpusdienā"
-		]
+		],
+		"era-wide": {
+			"0": "pirms mūsu ēras",
+			"1": "mūsu ērā"
+		},
+		"era-abbreviated": {
+			"0": "p.m.ē.",
+			"1": "m.ē."
+		},
+		"era-narrow": {
+			"0": "p.m.ē.",
+			"1": "m.ē."
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "EEEE, y. 'gada' d. MMMM G",
 		"dateFormat-long": "y. 'gada' d. MMMM G",
 		"dateFormat-medium": "y. 'gada' d. MMM G",
@@ -1687,284 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"priekšpusdienā",
 			"pēcpusdienā"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "EEEE, y. 'gada' d. MMMM G",
-		"dateFormat-long": "y. 'gada' d. MMMM G",
-		"dateFormat-medium": "y. 'gada' d. MMM G",
-		"dateFormat-short": "dd.MM.y GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} 'plkst.' {0}",
-		"dateTimeFormat-long": "{1} 'plkst.' {0}",
-		"dateTimeFormat-medium": "{1}, {0}",
-		"dateTimeFormat-short": "{1}, {0}",
-		"intervalFormatFallback": "{0}–{1}",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-MEd-M": "E, dd.MM–E, dd.MM",
-		"intervalFormat-MEd-d": "E, dd.MM–E, dd.MM",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMEd-M": "E, d. MMM–E, d. MMM",
-		"intervalFormat-MMMEd-d": "E, d. MMM–E, d. MMM",
-		"intervalFormat-MMMd-M": "d. MMM–d. MMM",
-		"intervalFormat-MMMd-d": "d.–d. MMM",
-		"intervalFormat-Md-M": "dd.MM–dd.MM",
-		"intervalFormat-Md-d": "dd.MM.–dd.MM.",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-y-y": "y.–y. G",
-		"intervalFormat-yM-M": "MM.y.–MM.y. GGGGG",
-		"intervalFormat-yM-y": "MM.y.–MM.y. GGGGG",
-		"intervalFormat-yMEd-M": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-d": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-y": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMMM-M": "y. 'gada' MMM–MMM G",
-		"intervalFormat-yMMM-y": "y. 'gada' MMM–y. 'gada' MMM G",
-		"intervalFormat-yMMMEd-M": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-d": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-y": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMM-M": "y. 'gada' MMMM–MMMM G",
-		"intervalFormat-yMMMM-y": "y. 'gada' MMMM–y. 'gada' MMMM G",
-		"intervalFormat-yMMMd-M": "y. 'gada' d. MMM–d. MMM G",
-		"intervalFormat-yMMMd-d": "y. 'gada' d.–d. MMM G",
-		"intervalFormat-yMMMd-y": "y. 'gada' d. MMM–y. 'gada' d. MMM G",
-		"intervalFormat-yMd-M": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMd-d": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMd-y": "dd.MM.y.–dd.MM.y. GGGGG",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"muharams",
-			"safars",
-			"1. rabī",
-			"2. rabī",
-			"1. džumādā",
-			"2. džumādā",
-			"radžabs",
-			"šabans",
-			"ramadāns",
-			"šauvals",
-			"du al-kidā",
-			"du al-hidžā"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"muharams",
-			"safars",
-			"1. rabī",
-			"2. rabī",
-			"1. džumādā",
-			"2. džumādā",
-			"radžabs",
-			"šabans",
-			"ramadāns",
-			"šauvals",
-			"du al-kidā",
-			"du al-hidžā"
-		],
-		"days-format-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-wide": [
-			"svētdiena",
-			"pirmdiena",
-			"otrdiena",
-			"trešdiena",
-			"ceturtdiena",
-			"piektdiena",
-			"sestdiena"
-		],
-		"days-standAlone-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-standAlone-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-wide": [
-			"Svētdiena",
-			"Pirmdiena",
-			"Otrdiena",
-			"Trešdiena",
-			"Ceturtdiena",
-			"Piektdiena",
-			"Sestdiena"
-		],
-		"quarters-format-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"priekšpusdienā",
-			"pēcpusdienā"
-		],
-		"dayPeriods-format-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-format-wide": [
-			"priekšpusdienā",
-			"pēcpusdienā"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"priekšpusdienā",
-			"pēcpusdienā"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-standAlone-wide": [
-			"priekšpusdienā",
-			"pēcpusdienā"
-		]
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Gads",
 	"dateField-year-relative--1": "pagājušajā gadā",

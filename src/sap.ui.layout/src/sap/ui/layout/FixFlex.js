@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 		 *
 		 * In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.
 		 *
-		 * Warning: Avoid nesting FixFlex in FixFlex. Otherwise contents may be not accessible or multiple scrollbars can appear.
+		 * Warning: Avoid nesting FixFlex in other flexbox based layout controls (FixFlex, FlexBox, Hbox, Vbox). Otherwise contents may be not accessible or multiple scrollbars can appear.
 		 *
 		 * Note: If the child control of the flex or the fix container has width/height bigger than the container itself, the child control will be cropped in the view. If minFlexSize is set, then a scrollbar is shown in the flexible part, depending on the vertical property.
 		 * @extends sap.ui.core.Control
@@ -115,6 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 				ResizeHandler.deregister(this.sResizeListenerNoFlexBoxSupportId);
 				this.sResizeListenerNoFlexBoxSupportId = null;
 			}
+
 			// Deregister resize event for Fixed part
 			if (this.sResizeListenerNoFlexBoxSupportFixedId) {
 				ResizeHandler.deregister(this.sResizeListenerNoFlexBoxSupportFixedId);
@@ -126,6 +127,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 				ResizeHandler.deregister(this.sResizeListenerFixFlexScroll);
 				this.sResizeListenerFixFlexScroll = null;
 			}
+
+			// Deregister resize event for FixFlex scrolling for Flex part
+			if (this.sResizeListenerFixFlexScrollFlexPart) {
+				ResizeHandler.deregister(this.sResizeListenerFixFlexScrollFlexPart);
+				this.sResizeListenerFixFlexScrollFlexPart = null;
+			}
 		};
 
 		/**
@@ -135,7 +142,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 		FixFlex.prototype._changeScrolling = function () {
 			var nFlexSize,
 				sDirection,
-				$this = this.$();
+				$this = this.$(),
+				nMinFlexSize = this.getMinFlexSize();
 
 			if (this.getVertical() === true) {
 				nFlexSize = this.$().height() - this.$('Fixed').height();
@@ -147,25 +155,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 
 			// Add scrolling inside Flexible container
 			if (nFlexSize < parseInt(this.getMinFlexSize(), 10)) {
-				if ($this.hasClass('sapUiFixFlexScrolling')) {
-					return;
-				}
-
 				$this.addClass('sapUiFixFlexScrolling');
 				$this.removeClass('sapUiFixFlexInnerScrolling');
-				this.$('Flexible').attr('style', 'min-' + sDirection + ':' + this.getMinFlexSize() + 'px');
-				this.$('FlexibleContainer').removeAttr('style');
 
-			} else { // Add scrolling for entire FixFlex
-				if ($this.hasClass('sapUiFixFlexInnerScrolling')) {
-					return;
+				// BCP Incident-ID: 1570246771
+				if (this.$('FlexibleContainer').children().height() > nMinFlexSize) {
+					this.$('Flexible').attr('style', 'min-' + sDirection + ':' + nMinFlexSize + 'px');
+				} else {
+					// If the child control is smaller then the content,
+					// the flexible part need to have set height/width, else the child control can't resize to max
+					this.$('Flexible').attr('style', sDirection + ':' + nMinFlexSize + 'px');
 				}
 
+			} else { // Add scrolling for entire FixFlex
 				$this.addClass('sapUiFixFlexInnerScrolling');
 				$this.removeClass('sapUiFixFlexScrolling');
 				this.$('Flexible').removeAttr('style');
-				this.$('FlexibleContainer').attr('style', 'min-' + sDirection + ':' + this.getMinFlexSize() + 'px');
-
 			}
 		};
 
@@ -188,6 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			// Add handler for FixFlex scrolling option
 			if (this.getMinFlexSize() !== 0) {
 				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._changeScrolling, this));
+				this.sResizeListenerFixFlexScrollFlexPart = ResizeHandler.register(this.getDomRef('Fixed'), jQuery.proxy(this._changeScrolling, this));
 			}
 		};
 

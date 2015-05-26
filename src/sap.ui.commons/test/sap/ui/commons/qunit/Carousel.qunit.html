@@ -15,132 +15,336 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script language="javascript">
 
-			var oCarousel = new sap.ui.commons.Carousel();
-			oCarousel.setHeight("400px");
-			oCarousel.setOrientation("vertical");
+			function createCarousel(sOrientation) {
+				var oCarousel = new sap.ui.commons.Carousel();
+				oCarousel.setHeight("400px");
+				oCarousel.setOrientation(sOrientation);
 
-			oCarousel.addContent(new sap.ui.commons.Image("IMG1", {
-				src : "../images/carousel/img1.jpg",
-				alt : "sample image",
-				width : "200px",
-				height : "150px"
-			}));
+				oCarousel.addContent(new sap.ui.commons.Image("IMG1", {
+					src : "../images/carousel/img1.jpg",
+					alt : "sample image",
+					width : "200px",
+					height : "150px"
+				}));
 
-			oCarousel.addContent(new sap.ui.commons.Image("IMG2", {
-				src : "../images/carousel/img2.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+				oCarousel.addContent(new sap.ui.commons.Image("IMG2", {
+					src : "../images/carousel/img2.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			oCarousel.addContent(new sap.ui.commons.Image("IMG3", {
-				src : "../images/carousel/img3.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+				oCarousel.addContent(new sap.ui.commons.Image("IMG3", {
+					src : "../images/carousel/img3.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			oCarousel.addContent(new sap.ui.commons.Image("IMG4", {
-				src : "../images/carousel/img4.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+				oCarousel.addContent(new sap.ui.commons.Image("IMG4", {
+					src : "../images/carousel/img4.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			oCarousel.addContent(new sap.ui.commons.Image("IMG5", {
-				src : "../images/carousel/img5.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+				oCarousel.addContent(new sap.ui.commons.Image("IMG5", {
+					src : "../images/carousel/img5.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			oCarousel.addContent(new sap.ui.commons.Image("IMG6", {
-				src : "../images/carousel/img6.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+				oCarousel.addContent(new sap.ui.commons.Image("IMG6", {
+					src : "../images/carousel/img6.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			oCarousel.placeAt("uiArea1");
+				oCarousel.placeAt("uiArea1");
 
-			var oCarousel2 = new sap.ui.commons.Carousel();
-			oCarousel2.setWidth("900px");
+				return oCarousel;
+			}
 
-			oCarousel2.addContent(new sap.ui.commons.Image("IMG8", {
-				src : "../images/carousel/img1.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+			function createCarousel2() {
+				var oCarousel2 = new sap.ui.commons.Carousel();
+				oCarousel2.setWidth("900px");
 
-			oCarousel2.addContent(new sap.ui.commons.Image("IMG9", {
-				src : "../images/carousel/img2.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+				oCarousel2.addContent(new sap.ui.commons.Image("IMG8", {
+					src : "../images/carousel/img1.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			oCarousel2.addContent(new sap.ui.commons.Image("IMG10", {
-				src : "../images/carousel/img3.jpg",
-				alt : "sample image",
-				width : "100%",
-				height : "100%"
-			}));
+				oCarousel2.addContent(new sap.ui.commons.Image("IMG9", {
+					src : "../images/carousel/img2.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			oCarousel2.placeAt("uiArea2");
+				oCarousel2.addContent(new sap.ui.commons.Image("IMG10", {
+					src : "../images/carousel/img3.jpg",
+					alt : "sample image",
+					width : "100%",
+					height : "100%"
+				}));
 
-			module("Control Test - sap.ui.commons.Carousel");
+				oCarousel2.placeAt("uiArea2");
+				return oCarousel2;
+			}
 
-			asyncTest("Navigation Next", function() {
-				oCarousel.showNext();
-				oCarousel2.showNext();
+
+
+			module("Control Test - sap.ui.commons.Carousel API", {
+				setup : function () {
+					this.oCarousel1 = createCarousel("vertical");
+					this.oCarousel2 = createCarousel2();
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oCarousel1.destroy();
+					this.oCarousel1 = null;
+					this.oCarousel2.destroy();
+					this.oCarousel2 = null;
+				}
+			});
+
+			asyncTest("Navigation Next Test", function() {
+				this.oCarousel1.showNext();
+				this.oCarousel2.showNext();
+				var that = this;
 				setTimeout(
 					function() {
-						equal(jQuery.sap.byId(oCarousel.getId() + '-scrolllist')
-							.find('li:first')[0], jQuery.sap.byId(oCarousel
-							.getId()
-							+ '-item-IMG2')[0],
+						strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
+								jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
 							"Image 2 should be at first position.");
-						equal(jQuery.sap.byId(oCarousel2.getId() + '-scrolllist')
-							.find('li:first')[0], jQuery.sap.byId(oCarousel2
-							.getId()
-							+ '-item-IMG9')[0],
+						strictEqual(jQuery.sap.byId(that.oCarousel2.getId() + '-scrolllist').find('li:first')[0],
+								jQuery.sap.byId(that.oCarousel2.getId() + '-item-IMG9')[0],
 							"Image 9 should be at first position.");
 						start();
-					}, Math.max(oCarousel.getAnimationDuration(), oCarousel2
-							.getAnimationDuration()) + 750);
+					}, Math.max(this.oCarousel1.getAnimationDuration(), this.oCarousel2.getAnimationDuration()) + 750);
 			});
 
 			asyncTest("Navigation Previous", function() {
-				oCarousel.showPrevious();
-				oCarousel2.showPrevious();
+				this.oCarousel1.showPrevious();
+				this.oCarousel2.showPrevious();
+				var that = this;
 				setTimeout(
 					function() {
-						equal(jQuery.sap.byId(oCarousel.getId() + '-scrolllist')
-							.find('li:first')[0], jQuery.sap.byId(oCarousel
-							.getId()
-							+ '-item-IMG1')[0],
-							"Image 1 should be at first position.");
-						equal(jQuery.sap.byId(oCarousel2.getId() + '-scrolllist')
-							.find('li:first')[0], jQuery.sap.byId(oCarousel2
-							.getId()
-							+ '-item-IMG8')[0],
-							"Image 8 should be at first position.");
+						strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
+								jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG6')[0],
+							"Image 6 should be at first position.");
+						strictEqual(jQuery.sap.byId(that.oCarousel2.getId() + '-scrolllist') .find('li:first')[0],
+								jQuery.sap.byId(that.oCarousel2.getId() + '-item-IMG10')[0],
+							"Image 10 should be at first position.");
 						start();
-					}, Math.max(oCarousel.getAnimationDuration(), oCarousel2
-					.getAnimationDuration()) + 750);
+					}, Math.max(this.oCarousel1.getAnimationDuration(), this.oCarousel2.getAnimationDuration()) + 750);
 			});
 
-			test("Navigation ByID", function() {
-				oCarousel.showElementWithId('IMG4');
-				equal(jQuery.sap.byId(oCarousel.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(oCarousel.getId() + '-item-IMG4')[0], "Image 4 should be at first position.");
-				oCarousel2.showElementWithId('IMG10');
-				equal(jQuery.sap.byId(oCarousel2.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(oCarousel2.getId() + '-item-IMG10')[0], "Image 10 should be at first position.");
+			test("Navigation ByID - test showElementWithId()", function() {
+				this.oCarousel1.showElementWithId('IMG4');
+				strictEqual(jQuery.sap.byId(this.oCarousel1.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel1.getId() + '-item-IMG4')[0], "Image 4 should be at first position.");
+				this.oCarousel2.showElementWithId('IMG10');
+				strictEqual(jQuery.sap.byId(this.oCarousel2.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel2.getId() + '-item-IMG10')[0], "Image 10 should be at first position.");
 			});
+
+			test("Test properties defaults as they are like a contract and part of API", function() {
+				var oCarousel = new sap.ui.commons.Carousel();
+				strictEqual(oCarousel.getOrientation(), sap.ui.commons.enums.Orientation.horizontal, "Default orientation should be horizontal.");
+				strictEqual(oCarousel.getWidth(), "", "Default Width should be null.");
+				strictEqual(oCarousel.getHeight(), "", "Default Height should be null.");
+				strictEqual(oCarousel.getDefaultItemHeight(), 150, "Default Height should be 150.");
+				strictEqual(oCarousel.getDefaultItemWidth(), 150, "Default Width should be 150.");
+				strictEqual(oCarousel.getAnimationDuration(), 500, "Default Animation should be 500.");
+				strictEqual(oCarousel.getVisibleItems(), 0, "Default VisibleItems should be null.");
+				strictEqual(oCarousel.getHandleSize(), 22, "Default HandleSize should be 22.");
+				strictEqual(oCarousel.getFirstVisibleIndex(), 0, "Default FirstVisibleItem should be 0.");
+
+				oCarousel.destroy();
+				oCarousel = null;
+
+			});
+
+			test("Test setFirstVisibleIndex ", function() {
+
+				this.oCarousel1.setFirstVisibleIndex(7);  // invalid value
+				sap.ui.getCore().applyChanges();
+				strictEqual(jQuery.sap.byId(this.oCarousel1.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel1.getId() + '-item-IMG1')[0], "Image 1 should be at first position, as 7 is not valid.");
+				strictEqual(this.oCarousel1.getFirstVisibleIndex(), 0, "The default value should be 0, as 7 is not valid value");
+
+				this.oCarousel1.setFirstVisibleIndex(5);  // the last element
+				sap.ui.getCore().applyChanges();
+				strictEqual(jQuery.sap.byId(this.oCarousel1.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel1.getId() + '-item-IMG6')[0], "Image 6 should be at first position.");
+
+			});
+
+			test("Test Navigation with empty list ", function() {
+				this.oCarousel1.destroyAggregation("content");
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.oCarousel1.getContent().length, 0, "Content size should be 0");
+				this.oCarousel1.showNext();
+				strictEqual(this.oCarousel1.getFirstVisibleIndex(), 0, "The value should be default 0, as content is empty");
+
+				this.oCarousel1.showPrevious();
+				strictEqual(this.oCarousel1.getFirstVisibleIndex(),0 , "The value should be default 0, as content is empty");
+			});
+
+
+			module("sap.ui.commons.Carousel Events testing", {
+				setup : function () {
+					this.oCarousel1 = createCarousel("vertical");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oCarousel1.destroy();
+					this.oCarousel1 = null;
+				}
+			});
+
+			asyncTest("Test click on the control - Previous btn", function() {
+				strictEqual(this.oCarousel1.$().length, 1 ,"Control is rendered...");
+				var oPrevButton = this.oCarousel1.$("prevbutton");
+				strictEqual(oPrevButton.length, 1 ,"Previous element is rendered...");
+				var oEvent = {
+					target: jQuery.sap.byId(this.oCarousel1.getId() + '-prevbutton')[0]
+				}
+				this.oCarousel1.onclick(oEvent);
+//				oPrevButton.trigger("tap");
+				var that = this;
+				setTimeout(
+						function() {
+							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
+									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG6')[0],
+									"Image 6 should be at first position.");
+							start();
+						}, this.oCarousel1.getAnimationDuration() + 750);
+			});
+
+			asyncTest("Test click on the control - Next btn", function() {
+				strictEqual(this.oCarousel1.$().length, 1 ,"Control is rendered...");
+				var oNextButton = this.oCarousel1.$("nextbutton");
+				strictEqual(oNextButton.length, 1 ,"Next element is rendered...");
+				var oEvent = {
+					target: jQuery.sap.byId(this.oCarousel1.getId() + '-nextbutton')[0]
+				}
+				this.oCarousel1.onclick(oEvent);
+				var that = this;
+				setTimeout(
+						function() {
+							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
+									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
+									"Image 2 should be at first position.");
+							start();
+						}, this.oCarousel1.getAnimationDuration() + 750);
+			});
+
+			asyncTest("Test click on the control - Invalid btn", function() {
+				strictEqual(this.oCarousel1.$().length, 1 ,"Control is rendered...");
+
+				var oEvent = {
+					target: jQuery.sap.byId(this.oCarousel1.getId() + '-alabala')[0]
+				}
+				this.oCarousel1.onclick(oEvent);
+				var that = this;
+				setTimeout(
+						function() {
+							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
+									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG1')[0],
+									"Image 1 should be at first position.");
+							start();
+						}, this.oCarousel1.getAnimationDuration() + 750);
+			});
+
+			module("sap.ui.commons.Carousel Keyboard handling", {
+				setup : function () {
+					this.oCarousel1 = createCarousel("vertical");
+					this.oCarousel1.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oCarousel1.destroy();
+					this.oCarousel1 = null;
+				}
+			});
+
+			asyncTest("Test keydown and Action mode ", function() {
+				var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.F2
+				}
+				// Action mode should be false
+				strictEqual(this.oCarousel1._bActionMode, undefined, "Action mode should be false by default");
+				this.oCarousel1._oItemNavigation.setFocusedIndex(0);
+				var $item = this.oCarousel1._oItemNavigation.getFocusedDomRef();
+				sap.ui.test.qunit.triggerKeydown($item, jQuery.sap.KeyCodes.F2); // trigger F2 in order to start the mode
+				sap.ui.test.qunit.triggerKeydown($item, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger arrow down in order to move to the next el.
+				var that = this;
+
+				setTimeout(
+						function() {
+
+							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
+									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
+									"Image 2 should be at first position.");
+							start();
+
+						}, this.oCarousel1.getAnimationDuration() + 750);
+			});
+
+			asyncTest("Test Arrow Up and Action mode ", function() {
+
+				// Action mode should be undefined
+				strictEqual(this.oCarousel1._bActionMode, undefined, "Action mode should be undefined by default");
+				this.oCarousel1._oItemNavigation.setFocusedIndex(0);
+				var $item = this.oCarousel1._oItemNavigation.getFocusedDomRef();
+				sap.ui.test.qunit.triggerKeydown($item, jQuery.sap.KeyCodes.F2); // trigger F2 in order to start the mode
+				sap.ui.test.qunit.triggerKeydown($item, jQuery.sap.KeyCodes.ARROW_UP); // trigger arrow up in order to move to the previous el.
+				var that = this;
+				var oEvent = {
+					target: this.oCarousel1.$().find(".sapUiCrslScl").lastFocusableDomRef(),
+					preventDefault: function() {
+						ok(true, "preventDefault is executed");
+					},
+					stopPropagation: function() {
+						ok(true, "stopPropagation is executed")
+					}
+				}
+
+				setTimeout(
+						function() {
+
+							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
+									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG6')[0],
+									"Image 6 should be at first position.");
+//
+							that.oCarousel1._enterActionMode($item);
+							strictEqual(that.oCarousel1._bActionMode, true, "Action mode should be true ");
+
+							that.oCarousel1.onsaptabnext(oEvent);
+
+							that.oCarousel1._leaveActionMode({});
+							strictEqual(that.oCarousel1._bActionMode, false, "Action mode should be false ");
+							// press Escape - should leave the action mode
+							sap.ui.test.qunit.triggerKeydown($item, jQuery.sap.KeyCodes.ESCAPE);
+							strictEqual(that.oCarousel1._bActionMode, false, "Action mode should be false ");
+
+							// remove from DOM and execute onresize test
+							that.oCarousel1.$().remove();
+							that.oCarousel1.onresize();
+							strictEqual(that.oCarousel1.sResizeListenerId, null, "Resize listener Id should be null ");
+
+							start();
+
+						}, this.oCarousel1.getAnimationDuration() + 750);
+			});
+
 
 		</script>
 
@@ -154,5 +358,6 @@
 		<ol id="qunit-tests"></ol>
 		<div id="uiArea1"></div>
 		<div id="uiArea2"></div>
+		<div id="qunit-fixture"></div>
 	</body>
 </html>

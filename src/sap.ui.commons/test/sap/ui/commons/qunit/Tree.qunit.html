@@ -137,7 +137,58 @@
 			});		
 			return oTree;
 		}
-			
+
+		function createBoundTreeNamedModel () {
+			var oModel = new sap.ui.model.json.JSONModel({
+				tree: {
+					title: "Root",
+					children: [
+						{
+							title: "Node 1",
+							children: [
+								{
+									title: "Node 1.1"
+								},
+								{
+									title: "Node 1.2"
+								},
+								{
+									title: "Node 1.3"
+								}
+							]
+						},
+						{
+							title: "Node 2"
+						},
+						{
+							title: "Node 3"
+						}
+					]
+				}
+			})
+			var oTree = new sap.ui.commons.Tree("tree4", {
+				title:"Tree with data binding", 
+				width:"200px",
+				height:"300px", 
+				showHorizontalScrollbar:false, 
+				showHeader:false,
+				nodes: {
+					path: "model>/tree",
+					template: new sap.ui.commons.TreeNode({
+						text: "{model>title}"
+					}),
+					parameters: {
+						arrayNames: ["children"]
+					}
+				},
+				models: {
+					model: oModel
+				}
+			});		
+			return oTree;
+		}
+		
+		
 		var oStandardTree = createStandardTree();
 		oStandardTree.placeAt("target1");
 		
@@ -146,6 +197,9 @@
 		
 		var oBoundTree = createBoundTree();
 		oBoundTree.placeAt("target3");
+		
+		var oBoundTreeNamedModel = createBoundTreeNamedModel();
+		oBoundTreeNamedModel.placeAt("target4");
 		
 		function checkSelectedNodes(aNodes, aExpectedIds) {
 			var iIndex;
@@ -268,6 +322,71 @@
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 		});
 		
+		test("Node selection legacy with context", function() {
+			var oModel = new sap.ui.model.json.JSONModel({}),
+				oContext = oModel.createBindingContext("/");
+		
+			oStandardTree.setBindingContext(oContext);
+			oStandardTree.expandAll();
+			var initialSelection = sap.ui.getCore().getControl("node13");
+			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			
+			var newSelection = sap.ui.getCore().getControl("node14");
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			
+			initialSelection.setIsSelected(true);
+			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
+			oStandardTree.setBindingContext(null);
+		});
+
+		test("Node selection single with context", function() {
+			var oModel = new sap.ui.model.json.JSONModel({}),
+				oContext = oModel.createBindingContext("/");
+	
+			oStandardTree.setBindingContext(oContext);
+			oStandardTree.expandAll();
+			oStandardTree.setSelectionMode("Single");
+			
+			var initialSelection = sap.ui.getCore().getControl("node13");
+			initialSelection.select();
+			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			
+			var newSelection = sap.ui.getCore().getControl("node14");
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			
+			initialSelection.setIsSelected(true);
+			ok( !newSelection.getIsSelected(), "Node 1.3 is not selected anymore");
+			ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
+			oStandardTree.setBindingContext(null);
+		});
+		
+		test("Node selection multi with context", function() {
+			var oModel = new sap.ui.model.json.JSONModel({}),
+				oContext = oModel.createBindingContext("/");
+	
+			oStandardTree.setBindingContext(oContext);
+			oStandardTree.expandAll();
+			oStandardTree.setSelectionMode("Multi");
+			var initialSelection = sap.ui.getCore().getControl("node13");
+			initialSelection.select();
+			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			
+			var newSelection = sap.ui.getCore().getControl("node14");
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			
+			initialSelection.setIsSelected(true);
+			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
+			oStandardTree.setBindingContext(null);
+		});
+		
 		test("Node selection single databinding", function() {
 			oBoundTree.expandAll();
 			oBoundTree.setSelectionMode("Single");
@@ -290,6 +409,12 @@
 			newSelection = oBoundTree.getNodes()[1];
 			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
 			ok( !newSelection.getIsSelected(), "Node 2 is not selected after refresh");
+
+			oBoundTree.getBinding("nodes").refresh();
+			initialSelection = oBoundTree.getNodes()[0];
+			newSelection = oBoundTree.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
 		});
 		
 		test("Node selection multi databinding", function() {
@@ -313,6 +438,72 @@
 			newSelection = oBoundTree.getNodes()[1];
 			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
 			ok( newSelection.getIsSelected(), "Node 2 is selected after refresh");
+
+			oBoundTree.getBinding("nodes").refresh();
+			initialSelection = oBoundTree.getNodes()[0];
+			newSelection = oBoundTree.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
+		
+		});
+		
+		test("Node selection single databinding with named model", function() {
+			oBoundTreeNamedModel.expandAll();
+			oBoundTreeNamedModel.setSelectionMode("Single");
+			
+			var initialSelection = oBoundTreeNamedModel.getNodes()[0];
+			initialSelection.select();
+			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			
+			var newSelection = oBoundTreeNamedModel.getNodes()[1];
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			
+			initialSelection.setIsSelected(true);
+			ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
+			ok( initialSelection.getIsSelected(), "Node 1 is selected again");
+			
+			oBoundTreeNamedModel.getBinding("nodes").refresh();
+			initialSelection = oBoundTreeNamedModel.getNodes()[0];
+			newSelection = oBoundTreeNamedModel.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			ok( !newSelection.getIsSelected(), "Node 2 is not selected after refresh");
+
+			oBoundTreeNamedModel.getBinding("nodes").refresh();
+			initialSelection = oBoundTreeNamedModel.getNodes()[0];
+			newSelection = oBoundTreeNamedModel.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
+		});
+		
+		test("Node selection multi databinding with named model", function() {
+			oBoundTreeNamedModel.expandAll();
+			oBoundTreeNamedModel.setSelectionMode("Multi");
+			var initialSelection = oBoundTreeNamedModel.getNodes()[0];
+			initialSelection.select();
+			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			
+			var newSelection = oBoundTreeNamedModel.getNodes()[1];
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			
+			initialSelection.setIsSelected(true);
+			ok( newSelection.getIsSelected(), "Node 1 is now selected");
+			ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
+
+			oBoundTreeNamedModel.getBinding("nodes").refresh();
+			initialSelection = oBoundTreeNamedModel.getNodes()[0];
+			newSelection = oBoundTreeNamedModel.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			ok( newSelection.getIsSelected(), "Node 2 is selected after refresh");
+
+			oBoundTreeNamedModel.getBinding("nodes").refresh();
+			initialSelection = oBoundTreeNamedModel.getNodes()[0];
+			newSelection = oBoundTreeNamedModel.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
 		
 		});
 		
@@ -602,5 +793,6 @@
 		<div id="target1"></div>
 		<div id="target2"></div>
 		<div id="target3"></div>
+		<div id="target4"></div>
 	</body>
 </html>

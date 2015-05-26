@@ -819,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						sCheckIndices += "," + aDefaultSections[i];
 
 						//only one section should be opened at once, so return after the first is set
-						return;
+						//return;
 					} else {
 						sCheckIndices = aDefaultSections[i];
 					}

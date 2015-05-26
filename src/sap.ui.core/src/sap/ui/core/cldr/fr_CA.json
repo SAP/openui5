@@ -1412,9 +1412,21 @@
 		"dayPeriods-standAlone-wide": [
 			"avant-midi",
 			"après-midi"
-		]
+		],
+		"era-wide": {
+			"0": "avant Jésus-Christ",
+			"1": "après Jésus-Christ"
+		},
+		"era-abbreviated": {
+			"0": "av. J.-C.",
+			"1": "ap. J.-C."
+		},
+		"era-narrow": {
+			"0": "av. J.-C.",
+			"1": "ap. J.-C."
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "EEEE d MMMM y G",
 		"dateFormat-long": "d MMMM y G",
 		"dateFormat-medium": "d MMM y G",
@@ -1689,284 +1701,16 @@
 		"dayPeriods-standAlone-wide": [
 			"avant-midi",
 			"après-midi"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "EEEE d MMMM y G",
-		"dateFormat-long": "d MMMM y G",
-		"dateFormat-medium": "d MMM y G",
-		"dateFormat-short": "y-MM-dd GGGGG",
-		"timeFormat-full": "HH 'h' mm 'min' ss 's' zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} 'à' {0}",
-		"dateTimeFormat-long": "{1} 'à' {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-MEd-M": "E MM-dd – E MM-dd",
-		"intervalFormat-MEd-d": "E MM-dd – E MM-dd",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMEd-M": "E d MMM – E d MMM",
-		"intervalFormat-MMMEd-d": "E d – E d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMd-d": "d–d MMM",
-		"intervalFormat-Md-M": "MM-dd – MM-dd",
-		"intervalFormat-Md-d": "MM-dd – MM-dd",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-y-y": "G y–y",
-		"intervalFormat-yM-M": "G y-MM – y-MM",
-		"intervalFormat-yM-y": "G y-MM – y-MM",
-		"intervalFormat-yMEd-M": "'du' E y-MM-dd 'au' E y-MM-dd G",
-		"intervalFormat-yMEd-d": "'du' E y-MM-dd 'au' E y-MM-dd G",
-		"intervalFormat-yMEd-y": "'du' E y-MM-dd 'au' E y-MM-dd G",
-		"intervalFormat-yMMM-M": "MMM–MMM y G",
-		"intervalFormat-yMMM-y": "'de' MMM y 'à' MMM y G",
-		"intervalFormat-yMMMEd-M": "'du' E d MMM 'au' E d MMM y G",
-		"intervalFormat-yMMMEd-d": "'du' E d 'au' E d MMM y G",
-		"intervalFormat-yMMMEd-y": "'du' E d MMM y 'au' E d MMM y G",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM y G",
-		"intervalFormat-yMMMM-y": "MMMM y – MMMM y G",
-		"intervalFormat-yMMMd-M": "'du' d MMM 'au' d MMM y G",
-		"intervalFormat-yMMMd-d": "d–d MMM y G",
-		"intervalFormat-yMMMd-y": "'du' d MMM y 'au' d MMM y G",
-		"intervalFormat-yMd-M": "G y-MM-dd – y-MM-dd",
-		"intervalFormat-yMd-d": "G y-MM-dd – y-MM-dd",
-		"intervalFormat-yMd-y": "G y-MM-dd – y-MM-dd",
-		"months-format-abbreviated": [
-			"mouh.",
-			"saf.",
-			"rab. aw.",
-			"rab. th.",
-			"joum. oul.",
-			"joum. tha.",
-			"raj.",
-			"chaa.",
-			"ram.",
-			"chaw.",
-			"dhou. q.",
-			"dhou. h."
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"mouharram",
-			"safar",
-			"rabia al awal",
-			"rabia ath-thani",
-			"joumada al oula",
-			"joumada ath-thania",
-			"rajab",
-			"chaabane",
-			"ramadan",
-			"chawwal",
-			"dhou al qi`da",
-			"dhou al-hijja"
-		],
-		"months-standAlone-abbreviated": [
-			"mouh.",
-			"saf.",
-			"rab. aw.",
-			"rab. th.",
-			"joum. ou.",
-			"joum. th.",
-			"raj.",
-			"chaa.",
-			"ram.",
-			"chaw.",
-			"dhou. qi.",
-			"dhou. hi."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"mouharram",
-			"safar",
-			"rabia al awal",
-			"rabia ath-thani",
-			"joumada al oula",
-			"joumada ath-thania",
-			"rajab",
-			"chaabane",
-			"ramadan",
-			"chawwal",
-			"dhou al qi`da",
-			"dhou al-hijja"
-		],
-		"days-format-abbreviated": [
-			"dim.",
-			"lun.",
-			"mar.",
-			"mer.",
-			"jeu.",
-			"ven.",
-			"sam."
-		],
-		"days-format-narrow": [
-			"D",
-			"L",
-			"M",
-			"M",
-			"J",
-			"V",
-			"S"
-		],
-		"days-format-short": [
-			"di",
-			"lu",
-			"ma",
-			"me",
-			"je",
-			"ve",
-			"sa"
-		],
-		"days-format-wide": [
-			"dimanche",
-			"lundi",
-			"mardi",
-			"mercredi",
-			"jeudi",
-			"vendredi",
-			"samedi"
-		],
-		"days-standAlone-abbreviated": [
-			"dim.",
-			"lun.",
-			"mar.",
-			"mer.",
-			"jeu.",
-			"ven.",
-			"sam."
-		],
-		"days-standAlone-narrow": [
-			"D",
-			"L",
-			"M",
-			"M",
-			"J",
-			"V",
-			"S"
-		],
-		"days-standAlone-short": [
-			"dim.",
-			"lun.",
-			"mar.",
-			"mer.",
-			"jeu.",
-			"ven.",
-			"sam."
-		],
-		"days-standAlone-wide": [
-			"dimanche",
-			"lundi",
-			"mardi",
-			"mercredi",
-			"jeudi",
-			"vendredi",
-			"samedi"
-		],
-		"quarters-format-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1er trimestre",
-			"2e trimestre",
-			"3e trimestre",
-			"4e trimestre"
-		],
-		"quarters-standAlone-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1er trimestre",
-			"2e trimestre",
-			"3e trimestre",
-			"4e trimestre"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"av.m.",
-			"ap.m."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-standAlone-wide": [
-			"avant-midi",
-			"après-midi"
-		]
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "année",
 	"dateField-year-relative--1": "l’année dernière",

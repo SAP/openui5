@@ -267,7 +267,7 @@ sap.ui.define([
 	 * 
 	 * @private
 	 */
-	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, fCallbackCancel, aFailedPanelTypes) {
+	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, aFailedPanelTypes) {
 		var sMessageText = "";
 		aFailedPanelTypes.forEach(function(sPanelType) {
 			switch (sPanelType) {
@@ -292,8 +292,6 @@ sap.ui.define([
 				// leave the current panel. Delete incorrect condition set.
 				if (oAction === sap.m.MessageBox.Action.OK) {
 					fCallbackOK();
-				} else if (oAction === sap.m.MessageBox.Action.OK) {
-					fCallbackCancel();
 				}
 			},
 			styleClass: !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
@@ -340,7 +338,7 @@ sap.ui.define([
 			// }
 			// that._switchPanel(oButtonClicked);
 			// };
-			// this.showValidationDialog(fCallbackOK, null, [
+			// this.showValidationDialog(fCallbackOK, [
 			// oPanelVisible.getType()
 			// ]);
 			// }
@@ -583,7 +581,7 @@ sap.ui.define([
 				});
 				if (aFailedPanelTypes.length) {
 					// In case of invalid panels show the dialog
-					that.showValidationDialog(fCallbackOK, null, aFailedPanelTypes);
+					that.showValidationDialog(fCallbackOK, aFailedPanelTypes);
 				} else {
 					fFireOK();
 				}

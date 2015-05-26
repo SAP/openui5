@@ -20,18 +20,7 @@
 
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
 
-				// Applications
-
-				// Worklist
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/worklist/test/testsuite.worklistDemokit.qunit.html");
-
-				// MD - Template
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/master-detail/test/unit/unitTestsDemokit.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/master-detail/test/integration/opaTestsDemokit.qunit.html");
-
-				// tdg
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Navigation.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Filter.qunit.html");
+				// Cart Application
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/test/BuyProductJourney.qunit.html");
 
 				// ActionSelect
@@ -335,6 +324,10 @@
 
 				// Tokenizer
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Tokenizer.qunit.html");
+
+				// UploadCollection
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/UploadCollection.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/UploadCollectionItem.qunit.html");
 
 				// VBox
 				if (!ie9) {

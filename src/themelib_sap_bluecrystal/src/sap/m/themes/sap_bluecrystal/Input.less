@@ -32,7 +32,7 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelpInner { /* override .sapMIcon d
 }
 
 html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right in input */
-	background-color: @sapUiInputBaseBG;
+	background-color: @sapUiFieldBackground;
 }
 
 .sapMInputBaseState .sapMInputValHelp{
@@ -98,9 +98,9 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 .sapMInputIE9 .sapMInputValHelp {
-	color: @sapUiInputBaseText;
-	background-color: @sapUiInputBaseBG;
-	border:	0.0625rem solid @sapUiInputBaseBorder;
+	color: @sapUiFieldtextColor;
+	background-color: @sapUiFieldBackground;
+	border:	0.0625rem solid @sapUiFieldBorderColor;
 	border-left: none;
 	margin:  0;
 	line-height: normal;
@@ -120,10 +120,13 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 .sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):focus  + .sapMInputValHelp,
+.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):focus  + span > .sapMInputValHelp {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
 .sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):hover  + .sapMInputValHelp,
-.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):focus  + span > .sapMInputValHelp,
-.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):hover  + span > .sapMInputValHelp{
-	border-color: @sapUiInputBaseFocus;
+.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):hover  + span > .sapMInputValHelp {
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 .sapMInputIE9.sapMInputBaseState .sapMInputValHelp {
@@ -132,15 +135,15 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 .sapMInputIE9.sapMInputBaseWarning .sapMInputValHelp {
-	border-color: @sapUiInputBaseWarning;
+	border-color: @sapUiFieldWarningColor;
 }
 
 .sapMInputIE9.sapMInputBaseError .sapMInputValHelp {
-	border-color: @sapUiInputBaseError;
+	border-color: @sapUiFieldInvalidColor;
 }
 
 .sapMInputIE9.sapMInputBaseSuccess .sapMInputValHelp {
-	border-color: @sapUiInputBaseSuccess;
+	border-color: @sapUiFieldSuccessColor;
 }
 
 

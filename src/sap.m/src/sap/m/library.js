@@ -55,6 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.PageBackgroundDesign",
 			"sap.m.PlacementType",
 			"sap.m.PopinDisplay",
+			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
 			"sap.m.SelectType",
@@ -138,6 +139,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Popover",
 			"sap.m.ProgressIndicator",
 			"sap.m.PullToRefresh",
+			"sap.m.QuickView",
+			"sap.m.QuickViewCard",
+			"sap.m.QuickViewGroup",
+			"sap.m.QuickViewGroupElement",
 			"sap.m.RadioButton",
 			"sap.m.RadioButtonGroup",
 			"sap.m.RatingIndicator",
@@ -190,6 +195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
 			"sap.m.ViewSettingsCustomItem",
+			"sap.m.ViewSettingsCustomTab",
 			"sap.m.ViewSettingsFilterItem",
 			"sap.m.ViewSettingsItem",
 			"sap.m.semantic.SemanticButton",
@@ -1236,6 +1242,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 * @public
 		 */
 		Auto : "Auto"
+
+	};
+
+	/**
+	 * QuickViewGroupElement is a combination of one label and another control (Link or Text) associated to this label
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.QuickViewGroupElementType = {
+
+		/**
+		 * Displays a phone number link for direct dialing
+		 * @public
+		 */
+		phone : "phone",
+
+		/**
+		 * Displays a phone number link for direct dialing and an icon for sending a text message
+		 * @public
+		 */
+		mobile : "mobile",
+
+		/**
+		 * Displays an e-mail link
+		 * @public
+		 */
+		email : "email",
+
+		/**
+		 * Displayes a regular HTML link
+		 * @public
+		 */
+		link : "link",
+
+		/**
+		 * Dislpays text
+		 * @public
+		 */
+		text : "text",
+
+		/**
+		 * Dislpays a link for navigating to another QuickViewCard
+		 * @public
+		 */
+		cardLink : "cardLink"
 
 	};
 

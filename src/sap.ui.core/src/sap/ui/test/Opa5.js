@@ -14,8 +14,7 @@ sap.ui.define(['jquery.sap.global',
 			'./matchers/PropertyStrictEquals',
 			'./matchers/Properties',
 			'./matchers/Ancestor',
-			'./matchers/AggregationContainsPropertyEqual',
-			'./everyPolyfill'],
+			'./matchers/AggregationContainsPropertyEqual'],
 	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
@@ -354,12 +353,23 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Waits until all waitFor calls are done
-		 * see {@link sap.ui.test.Opa5#waitFor} for the description
+		 * see {@link sap.ui.test.Opa#.emptyQueue} for the description
 		 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 		 * @public
 		 * @function
 		 */
 		Opa5.emptyQueue = Opa.emptyQueue;
+
+		/**
+		 * Gives access to a singleton object you can save values in.
+		 * see {@link sap.ui.test.Opa#.getContext} for the description
+		 * @since 1.29.0
+		 * @returns {object} the context object
+		 * @public
+		 * @function
+		 */
+		Opa5.getContext = Opa.getContext;
+
 
 		//Dont document these as public they are just for backwards compatibility
 		Opa5.matchers = {};

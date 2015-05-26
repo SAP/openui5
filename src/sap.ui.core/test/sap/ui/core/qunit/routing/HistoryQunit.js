@@ -348,12 +348,14 @@
 		var oHistory = new sap.ui.core.routing.History(oHashChanger);
 
 		// Make the History think the history length is very small to make the test independent from the actual history of the browser
-		oHistory._iHistoryLength = -1;
+		oHistory._iHistoryLength = history.length -1;
 
 		// Act -> fire hash changed to simulate a browser forward or backwards button
+		oHashChanger.fireEvent("hashSet", "foo");
 		oHashChanger.fireHashChanged("foo");
 
 		//Assert
 		assert.strictEqual(oHistory.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should detect a forward navigation");
+		assert.strictEqual(oHistory._iHistoryLength, history.length, "should detect a forward navigation");
 	});
 }());

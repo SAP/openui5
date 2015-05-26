@@ -4,8 +4,8 @@
 
 // Provides control sap.m.MessageStrip.
 sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/MessageStripUtilities",
-				"sap/m/Text", "sap/ui/core/InvisibleText"],
-	function (jQuery, library, Control, MSUtils, Text, InvisibleText) {
+				"sap/m/Text", "sap/m/Link"],
+	function (jQuery, library, Control, MSUtils, Text, Link) {
 	"use strict";
 
 	/**
@@ -24,6 +24,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 	 *
 	 * @constructor
 	 * @public
+	 * @since 1.30
 	 * @alias sap.m.MessageStrip
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -72,12 +73,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 				/**
 				 * Hidden aggregation which is used to transform the string message into sap.m.Text control.
 				 */
-				_text: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
-
-				/**
-				 * Hidden aggration for labelling the control with text corresponding to the current type.
-				 */
-				_ariaTypeText: { type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden" }
+				_text: { type: "sap.m.Text", multiple: false, visibility: "hidden" }
 			},
 			events: {
 
@@ -92,7 +88,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 	MessageStrip.prototype.init = function() {
 		this.data("sap-ui-fastnavgroup", "true", true);
 		this.setAggregation("_text", new Text());
-		this.setAggregation("_ariaTypeText", new InvisibleText());
 	};
 
 	/**
@@ -123,9 +118,17 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 		return this.setProperty("type", sType);
 	};
 
+	MessageStrip.prototype.setAggregation = function (sName, oControl, bSupressInvalidate) {
+		if (sName === "link" && oControl instanceof Link) {
+			oControl.addAriaLabelledBy(this.getId());
+		}
+
+		Control.prototype.setAggregation.call(this, sName, oControl, bSupressInvalidate);
+		return this;
+	};
+
 	MessageStrip.prototype.onBeforeRendering = function () {
 		MSUtils.setIconIfVisible.call(this);
-		MSUtils.setAriaTypeText.call(this);
 	};
 
 	/**

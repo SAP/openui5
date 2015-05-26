@@ -19,9 +19,7 @@ sap.ui.define(['jquery.sap.global',
 				'sap/ui/core/routing/HashChanger',
 				'sap/ui/base/Object',
 				'sap/ui/core/mvc/View',
-				'./matchers/Ancestor',
-				'./mapPolyfill',
-				'./filterPolyfill'],
+				'./matchers/Ancestor'],
 	function ($, HashChanger, UI5Object, View, Ancestor) {
 		/**
 		 * @class A Plugin to search UI5 controls.

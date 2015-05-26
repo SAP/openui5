@@ -8,6 +8,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
@@ -66,6 +67,8 @@
 				"hh 'o''clock' a, zzzz": "12 o'clock PM, Pacific Daylight Time",
 				"K:mm a, z": "0:08 PM, PDT",
 				"yyyyy.MMMMM.dd GGG hh:mm aaa": "02001.July.04 AD 12:08 PM",
+				"yyyy.MMMMM.dd GGGG hh:mm aaa": "2001.July.04 Anno Domini 12:08 PM",
+				"yyyy.MMMMM.dd GGGGG hh:mm:ss aaa": "2001.July.04 A 12:08:56 PM",
 				"EEE, d MMM yyyy HH:mm:ss Z": "Wed, 4 Jul 2001 12:08:56 +0700",
 				"yyMMddHHmmssZ": "010704120856+0700",
 				"yyyy-MM-dd'T'HH:mm:ss.SSSZ": "2001-07-04T12:08:56.235+0700",
@@ -114,30 +117,18 @@
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
 			sTargetDate = oFormat.format(new Date(iTarget))+"",
 			iDays = Math.abs(iDiff),
-			aRange = oFormatOptions.relativeRange || [-6, 6];
+			aRange = oFormatOptions.relativeRange || [-6, 6],
+			oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale(sLocale));
 
 		if (iDiff < aRange[0] || iDiff > aRange[1]) {
 			return [sTargetDate, sTargetDate];
 		}
 
-		switch(iDiff){
-			case 0:
-				return [sLocale == "en" ? "today" : "heute", sTargetDate];
-			case 1:
-				return [sLocale == "en" ? "tomorrow" : "morgen", sTargetDate];
-			case -1:
-				return [sLocale == "en" ? "yesterday" : "gestern", sTargetDate];
-			default:
-				if(iDiff < -1){
-					return [sLocale == "en" ? iDays + " days ago" : "vor " + iDays + " Tagen", sTargetDate];
-				}else{
-					return [sLocale == "en" ? "in " + iDays + " days" : "in " + iDays + " Tagen", sTargetDate];
-				}
-		}
+		return [oLocaleData.getRelativeDay(iDiff).replace("{0}", iDays), sTargetDate];
 	}
 
 	function doTestRelative(bFormat, oFormatOptions, sLocale, sTestInfo){
-		var oFormat1 = sap.ui.core.format.DateFormat.getDateInstance(jQuery.extend({relative: bFormat ? true : false}, oFormatOptions), new sap.ui.core.Locale(sLocale)),
+		var oFormat1 = sap.ui.core.format.DateFormat.getDateInstance(jQuery.extend({relative: bFormat}, oFormatOptions), new sap.ui.core.Locale(sLocale)),
 			oFormat2 = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
 			oToday = new Date(),
 			iToday = oToday.getTime(),
@@ -151,7 +142,7 @@
 			}else{
 				equal(oFormat2.format(oFormat1.parse(aExpected[0]))+"", aExpected[1], sTestInfo+" ----------- "+aExpected[0]+" -> Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[1]);
 			}
-
+;
 		}
 	}
 
@@ -229,6 +220,7 @@
 
 		var oCustomDatePatterns = {
 			"yyyy.MM.dd 'at' HH:mm:ss z": ["2001.07.04 at 12:08:56 GMT+02:00", 994241336000],
+			"yyyy.MM.dd GGGG 'at' HH:mm:ss z": ["2001.07.04 Anno Domini at 12:08:56 GMT+02:00", 994241336000],
 			"EEE, MMM d, ''yy Z": ["Wed, Jul 4, '01 +0200", 994197600000],
 			"h:mm a z": ["12:08 PM Z", 43680000],
 			"hh 'o''clock' a, X": ["12 o'clock PM, +07:00", 18000000],
@@ -239,6 +231,7 @@
 			"yyMMddHHmms": ["010704120856", inclTimezoneOffset(994248536000)],
 			"yyyy-MM-dd'T'HH:mm:ss.SSS": ["2001-07-04T12:08:56.235", inclTimezoneOffset(994248536235)],
 			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2001-07-04T12:08:56.235Z", 994248536235],
+			"yyyy-MM-dd GGG 'T'HH:mm:ss.SSSX": ["2001-07-04 AD T12:08:56.235Z", 994248536235],
 			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000-09:00", 946774800000]
 		};
 
@@ -331,6 +324,87 @@
 		equal(oInfo.locale, "en-US", "Origin Info: locale")
 		equal(oInfo.style, "medium", "Origin Info: style")
 		equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern")
+	});
+
+	module("Islamic Date in locale en");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	test("format date to Islamic type with locale en", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Islamic
+			});
+
+		equal(oDateFormat.format(oDate), "Rab. II 12, 1422 AH", "Date is formatted in Islamic calendar");
+	});
+
+	test("format date to Islamic type with relative and locale en", function() {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Islamic}, "en", "yyyy-MM-dd, default range, en with calendar type Islamic");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "default style, range [-9, 0], en with calendar type Islamic");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "style long, range [1, 5], en with calendar type Islamic");
+	});
+
+	test("parse date to Islamic type with locale en", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Islamic
+			});
+
+		var oDate = oDateFormat.parse("Rab. II 12, 1422 AH");
+		ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		equal(oDate.getFullYear(), 2001, "Year 2011");
+		equal(oDate.getMonth(), 6, "Month July");
+		equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	test("parse date to Islamic type with relative and locale en", function() {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Islamic}, "en", "yyyy-MM-dd, default range, en with calendar type Islamic");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "default style, range [-9, 0], en with calendar type Islamic");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "style long, range [1, 5], en with calendar type Islamic");
+	});
+
+	var aResultLocal = [
+		"12 ربيع الآخر، 1422 هـ",
+		"12‏ ربيع الآخر‏، 1422 ‏هـ",
+		"12 ربيع الآخر، 1422 هـ",
+		"12 ברביע ב׳ 1422 שנת היג׳רה"
+	];
+
+	module("Islamic Date in other locales", {
+		setup: function() {
+			sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
+		},
+		teardown: function() {
+			sap.ui.getCore().getConfiguration().setCalendarType(null);
+		}
+	});
+
+	["ar", "ar_EG", "ar_SA", "he"].forEach(function(sLocale, index) {
+		test("format Islamic date " + sLocale, function() {
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance(new sap.ui.core.Locale(sLocale));
+			equal(oDateFormat.format(oDate), aResultLocal[index], "Date is formatted to Islamic Date in " + sLocale + " locale");
+		});
+
+		test("format Islamic date relative " + sLocale, function() {
+			doTestRelative(true, {pattern: "yyyy-MM-dd"}, sLocale, "yyyy-MM-dd, default range, " + sLocale);
+			doTestRelative(true, {relativeRange: [-9, 0]}, sLocale, "default style, range [-9, 0], " + sLocale);
+			doTestRelative(true, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
+		});
+
+		test("parse Islamic date " + sLocale, function() {
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance(new sap.ui.core.Locale(sLocale));
+
+			var oDate = oDateFormat.parse(aResultLocal[index]);
+			ok(oDate instanceof Date, "Date is parsed always as instance of Javascript Date");
+			equal(oDate.getFullYear(), 2001, "Year 2001");
+			equal(oDate.getMonth(), 6, "Month July");
+			equal(oDate.getDate(), 4, "Day 4th");
+		});
+
+		test("parse Islamic date relative " + sLocale, function() {
+			doTestRelative(false, {pattern: "yyyy-MM-dd"}, sLocale, "yyyy-MM-dd, default range, " + sLocale);
+			doTestRelative(false, {relativeRange: [-9, 0]}, sLocale, "default style, range [-9, 0], " + sLocale);
+			doTestRelative(false, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
+		});
 	});
 </script>
 

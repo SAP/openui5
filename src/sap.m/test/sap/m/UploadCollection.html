@@ -27,19 +27,13 @@
 				"key": "All",
 				"text": "sap.m.ListSeparators.All"
 			},
-
-			{
-				"key": "Inner",
-				"text": "sap.m.ListSeparators.Inner"
-			},
-
 			{
 				"key": "None",
 				"text": "sap.m.ListSeparators.None"
 			}
 		],
 
-		"selected": "None"
+		"selected": "All"
 	};
 
 	oModelCB.setData(mDataCB);
@@ -88,7 +82,7 @@
 				"mimeType" : "image/jpg",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-07-30",
-				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg",
+			//	"url" : "",
 				"attributes" : [{
 					"title" : "Co-author",
 					"text" : "Martin Silver"
@@ -173,7 +167,7 @@
 					"text" : "Jane Burns"
 				}, {
 					"title" : "Third attribute with a very long text",
-					"text" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+					"text" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 				}]
 			}, {
 				// item with a long attribute's title and aggregation statuses
@@ -191,7 +185,7 @@
 					"title" : "Contributor",
 					"text" : "John Blacksmith Henderson"
 				}, {
-					"title" : "This attribute's title is as long as the story about The Wind and the Sun starting with 'One day, the boastful wind declared to the sun, ‘You know that I am the strongest and most effective of all the weather!’ ...'",
+					"title" : "This attribute's title is as long as the story about The Wind and the Sun",
 					"text" : "no value"
 				}],
 				"statuses" : [{
@@ -239,7 +233,7 @@
 				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9d1",
 				"enableEdit" : true,
 				"enableDelete" : true,
-				"fileName" : "Screenshot2.jpg",
+				"fileName" : "Screenshot2.JPEG",
 				"fileSize" : 20,
 				"mimeType" : "image/jpg",
 				"thumbnailUrl" : "",
@@ -490,7 +484,7 @@
 				"mimeType" : "",
 				"thumbnailUrl" : "",
 				"uploadedDate" : fnCurrentDate(),
-				"url" : "myUrl"
+				"url" : ""
 			};
 			oData.items.unshift(oItem);
 			oModel.setData(oData);

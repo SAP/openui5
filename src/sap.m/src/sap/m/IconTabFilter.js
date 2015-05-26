@@ -135,11 +135,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		var oIconTabHeader = this.getParent(),
 			oIconTabBar;
 
-		// invalidate the whole IconTabBar
+		// invalidate the whole IconTabBar or the ObjectHeader
 		if (oIconTabHeader instanceof sap.m.IconTabHeader &&
 			oIconTabHeader.getParent() instanceof sap.m.IconTabBar) {
 			oIconTabBar = oIconTabHeader.getParent();
-			oIconTabBar.invalidate();
+
+			if (oIconTabBar.getParent() instanceof sap.m.ObjectHeader) {
+				// invalidate the object header to re-render IconTabBar content and header
+				var oObjectHeader = oIconTabBar.getParent();
+				oObjectHeader.invalidate();
+			} else {
+				oIconTabBar.invalidate();
+			}
 		}
 	};
 
@@ -148,6 +155,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		// invalidate only the IconTabHeader if a property change
 		// doesn't affect the IconTabBar content
 		switch (sPropertyName) {
+			case 'text':
 			case 'count':
 			case 'showAll':
 			case 'icon':

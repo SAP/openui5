@@ -4,10 +4,6 @@
 /* HCB Theme                                                                             */
 /* ===================================================================================== */
 
-
-/* ************************************************************************************* */
-/* Cozy Form Factor                                                                      */
-/* ************************************************************************************* */
 /* List Header */
 .sapMTB.sapMUCListHeader {
 	background-color:		@sapHCStandardBG;
@@ -17,13 +13,7 @@
 	font-weight:			@sapUiFontHeaderWeight;
 	color:					@sapHCStandardFG;
 	text-shadow:			none;
-}
-
-.sapMLIB.sapMUCListSingleItem,
-.sapMLIB.sapMUCListFirstItem,
-.sapMLIB.sapMUCListLastItem,
-.sapMLIB.sapMUCListItem {
-	border-bottom-color:	@sapHCReducedAltFG;
+	box-sizing:				border-box;
 }
 
 /* Item Icon */
@@ -31,57 +21,45 @@
 	color:					@sapHCStandardFG;
 }
 
-/* Buttons */
-.sapMBtn.sapMUCEditBtn,
-.sapMBtn.sapMUCDeleteBtn,
-.sapMBtn.sapMUCCancelBtn,
-.sapMBtn.sapMUCOkBtn {
-	margin-left:		0.25rem;
+/*if no image is provided a placeholder camera is displayed */
+.sapMUCItemPlaceholder {
+	background-color: @sapHCStandardBG;
+	box-sizing: border-box;
+	border-width: 0.0625rem;
+	border-style: solid;
+	border-color: @sapHCReducedAltFG;
+	border-radius: 0;
+}
+
+/*pictogram color for the placeholder */
+.sapMUCItemPlaceholder.sapUiIcon::before {
+	color: @sapHCReducedAltFG;
+}
+/*padding between buttons */
+.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+	padding-right:		0.5rem;
 }
 
 
-/* Text: Filename */
-.sapMUCFileName.sapMLnk {
-	font-size:			@sapMFontLargeSize;
-}
-
-/* Text: Description (/Progress) */
-.sapMUCDescriptionHL .sapMLabel{
+/* Text: Description (Progress) */
+.sapMLabel.sapMUCProgress {
 	font-size:				@sapMFontMediumSize;
 	color:					@sapHCStandardFG;
 }
 
-/* ************************************************************************************* */
-/* Borderless Design (Cozy Form Factor)                                                  */
-/* ************************************************************************************* */
-.sapMUC .sapMListShowSeparatorsNone {
-	.sapMUCFileName.sapMLnk {
-		font-size:			@sapMFontLargeSize;
-	}
-
-	/* ----------------------------------*/
-	/* Last List Item in Compact Mode    */
-	/* ----------------------------------*/
-	.sapMLIB.sapMUCListLastItem {
-		padding-bottom:		1rem;
-	}
+/* Text: Filename */
+.sapMUCFileName.sapMLnk {
+	font-size: 			@sapMFontLargeSize; // it cannot be moved to base as the LESS constant is not known there
 }
 
-
-
-/* ************************************************************************************* */
-/* Compact Form Factor                                                                   */
-/* ************************************************************************************* */
-.sapUiSizeCompact .sapMUC {
-	/* Text: Filename */
-	.sapMUCFileName.sapMLnk {
-	margin-top:			0.25rem;
-	font-size:			@sapMFontMediumSize;
-	}
+.sapMUCAttrContainer, .sapMUCStatusContainer {
+	font-size: @sapMFontMediumSize; // it cannot be moved to base as the LESS constant is not known there
 }
 
-
-
+/*if no link is provided the file name is displayed as an disabled link */
+.sapMLnkDsbl.sapMUCFileName {
+	color: @sapHCStandardFG;
+}
 
 /* ************************************************************************************* */
 /* local fixes: should be done by used simple controls

@@ -2,24 +2,18 @@
 <html>
 
 <!--
-	Tested classes: sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller
-	Author: d046011,d049080
+	Tested classes: sap.ui.core.mvc.JSONView
 -->
 
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for async sap.ui.core.mvc.XMLView</title>
+<title>qUnit Page for async sap.ui.core.mvc.JSONView</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons"
 	>
-</script>
-
-<script>
-	// save the 'setTimeout' function since sinon will override it
-	window._setTimeout = window.setTimeout;
 </script>
 
 <link rel="stylesheet"
@@ -33,151 +27,39 @@
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script type="text/javascript" src="AnyViewAsync.qunit.js"></script>
 
 <script>
 
-// FIXME: the following tests will fail with PhantomJS => check how to renable them
-if (!sap.ui.Device.browser.phantomJS) {
-
-var sUrl = "test-resources/sap/ui/core/qunit/testdata/";
-jQuery.sap.registerModulePath("testdata", "../../../../../" + sUrl);
-
-var sJson;
-jQuery.ajax({
-	url : "testdata/mvc/Async.view.json",
-	success : function(data) {
-		sJson = JSON.stringify(data);
+// setup test config with generic factory
+var oConfig = {
+	type : "JSON",
+	factory : function(bAsync) {
+		return sap.ui.view({
+			type : "JSON",
+			viewName : "testdata.mvc.Async",
+			async : bAsync
+		});
 	},
-	async : false
-});
-
-var xhr = sinon.useFakeXMLHttpRequest();
-xhr.useFilters = true;
-xhr.addFilter(function(method, url) {
-	return url.indexOf("testdata/mvc/Async.view.json") == -1;
-});
-
-var iDelay = 100;
-xhr.onCreate = function(request) {
-	request.onSend = function() {
-		if(!request.async) {
-			request.respond(200,  { "Content-Type" : "application/json" }, sJson);
-		} else {
-			_setTimeout(function() {
-				request.respond(200,  { "Content-Type" : "application/json" }, sJson);
-			}, iDelay);
-		}
-	};
+	receiveSource : function(source) {
+		return JSON.stringify(source);
+	}
 };
+asyncTestsuite("Generic View Factory", oConfig);
 
-module("Sync pre-stuff", {
-	teardown : function() {
-		var oView = sap.ui.getCore().byId("syncView");
-		if (oView) {
-			oView.destroy();
-		}
-	}
-});
-test("Synchronous loading", function() {
-	expect(1);
-
-	ok(sJson != null, "View content was loaded synchronously");
-});
-
-test("Synchronous rendering", function() {
-	expect(1);
-
-	sap.ui.view({type: sap.ui.core.mvc.ViewType.JSON, id:"syncView", viewName:"testdata.mvc.Async"}).placeAt("content");
-	sap.ui.getCore().applyChanges();
-
-	var oView = sap.ui.getCore().byId("syncView");
-	ok(oView.$().children().length, "View content was rendered synchronously");
-});
-
-
-module("Async Rendering", {
-	teardown : function() {
-		var oView = sap.ui.getCore().byId("asyncView");
-		if (oView) {
-			oView.destroy();
-		}
-	}
-});
-asyncTest("Render with delayed load request", function() {
-	expect(3);
-
-	sap.ui.view({type: sap.ui.core.mvc.ViewType.JSON, id:"asyncView", viewName:"testdata.mvc.Async", async: true}).placeAt("content");
-
-	sap.ui.getCore().applyChanges();
-	var oView = sap.ui.getCore().byId("asyncView");
-	ok(oView.$().length, "View was rendered empty");
-	ok(!oView.$().children().length, "View content is not rendered yet");
-
-	oView.attachAfterInit(function() {
-		sap.ui.getCore().applyChanges();
-		ok(oView.$().children().length, "View content was rendered");
-		start();
-	});
-});
-
-module("JSView#loaded", {
-	setup : function() {
-		oAfterInitSpy = sinon.spy(sap.ui.core.mvc.View.prototype, "fireAfterInit");
-	},
-	teardown : function() {
-		oAfterInitSpy.restore();
-		var oView = sap.ui.getCore().byId("promiseView");
-		if (oView) {
-			oView.destroy();
-		}
-	}
-});
-
-asyncTest("Retrieve promise for sync view", function() {
-	expect(3);
-
-	var oView = sap.ui.view({
-		type: sap.ui.core.mvc.ViewType.JSON,
-		id : "promiseView",
-		viewName : "testdata.mvc.Async"
-	});
-
-	var oPromise = oView.loaded();
-	ok(oPromise instanceof Promise, "Promise returned");
-
-	oPromise.then(function(oViewLoaded) {
-		sinon.assert.calledOnce(oAfterInitSpy, "AfterInit Event fired before resolving");
-		deepEqual(oView, oViewLoaded, "Views equal deeply");
-		start();
-	});
-});
-
-asyncTest("Retrieve promise for async view", function() {
-	expect(3);
-
-	var oView = sap.ui.view({
-		type: sap.ui.core.mvc.ViewType.JSON,
-		id : "view",
+// switch factory function
+oConfig.factory = function(bAsync) {
+	return sap.ui.jsonview({
 		viewName : "testdata.mvc.Async",
-		async : true
+		async : bAsync
 	});
-
-	var oPromise = oView.loaded();
-	ok(oPromise instanceof Promise, "Promise returned");
-
-	oView.loaded().then(function(oViewLoaded) {
-		sinon.assert.calledOnce(oAfterInitSpy, "AfterInit Event fired before resolving");
-		deepEqual(oView, oViewLoaded, "Views equal deeply");
-		start();
-	});
-});
-
-} // FIXME
+};
+asyncTestsuite("JSONView Factory", oConfig);
 
 </script>
 </head>
 <body>
-<h1 id="qunit-header">qUnit Page for async sap.ui.core.mvc.XMLView</h1>
+<h1 id="qunit-header">qUnit Page for async sap.ui.core.mvc.JSONView</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>

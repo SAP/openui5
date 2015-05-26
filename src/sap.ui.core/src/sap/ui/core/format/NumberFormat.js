@@ -693,16 +693,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	/**
 	 * Parse a string which is formatted according to the given format options.
 	 *
-	 * @param {string} sValue the string containing a formatted numeric value
+	 * @param {string} sValue the string containing a formatted numeric value. 0 is parsed when empty string is given.
 	 * @return {number|array} the parsed value or an array which contains the parsed value and the currency code (symbol) when the NumberFormat is a currency instance
 	 * @public
 	 */
 	NumberFormat.prototype.parse = function(sValue) {
+		// empty string should be parsed as 0
+		if (sValue === "") {
+			sValue = "0";
+		}
+
 		var oOptions = this.oFormatOptions,
-			sRegExpFloat = "^\\s*([+-]?(?:[0-9\\" + oOptions.groupingSeparator + "]+|[0-9\\" + oOptions.groupingSeparator + "]*\\" + oOptions.decimalSeparator + "[0-9]+)(?:[eE][+-][0-9]+)?)\\s*$",
-			sRegExpInt = "^\\s*([+-]?[0-9\\" + oOptions.groupingSeparator + "]+)\\s*$",
-			oGroupingRegExp = new RegExp("\\" + oOptions.groupingSeparator, "g"),
-			oDecimalRegExp = new RegExp("\\" + oOptions.decimalSeparator, "g"),
+			sPlusMinusSigns = quote(oOptions.plusSign + oOptions.minusSign),
+			sGroupingSeparator = quote(oOptions.groupingSeparator),
+			sDecimalSeparator = quote(oOptions.decimalSeparator),
+			sRegExpFloat = "^\\s*([" + sPlusMinusSigns + "]?(?:[0-9" + sGroupingSeparator + "]+|[0-9" + sGroupingSeparator + "]*" + sDecimalSeparator + "[0-9]*)(?:[eE][+-][0-9]+)?)\\s*$",
+			sRegExpInt = "^\\s*([" + sPlusMinusSigns + "]?[0-9" + sGroupingSeparator + "]+)\\s*$",
+			oGroupingRegExp = new RegExp(sGroupingSeparator, "g"),
+			oDecimalRegExp = new RegExp(sDecimalSeparator, "g"),
 			sPercentPattern = this.oLocaleData.getPercentPattern(),
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
 			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sCurrencyMeasure,
@@ -759,6 +767,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// Remove grouping separator and replace locale dependant decimal separator,
 		// before calling parseInt/parseFloat
 		sValue = sValue.replace(oGroupingRegExp, "");
+		sValue = sValue.replace(oOptions.plusSign, "+");
+		sValue = sValue.replace(oOptions.minusSign, "-");
 
 		// Remove the leading "+" sign because when "parseAsString" is set to true the "parseInt" or "parseFloat" isn't called and the leading "+" has to be moved manually
 		sValue = sValue.replace(/^\+/, "");
@@ -1075,6 +1085,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		}
 
 		return fValue;
+	}
+
+	function quote(sRegex) {
+		return sRegex.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
 	}
 
 	return NumberFormat;

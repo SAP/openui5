@@ -10,7 +10,8 @@
 	jQuery.sap.require("jquery.sap.xml");
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 
-	var iOldLogLevel = jQuery.sap.log.getLevel();
+	var sComponent = "sap.ui.core.util.XMLPreprocessor",
+		iOldLogLevel = jQuery.sap.log.getLevel();
 
 	/**
 	 * Creates an <mvc:View> tag with namespace definitions.
@@ -44,8 +45,9 @@
 			// Note: browsers differ in whitespace for empty HTML(!) tags
 			.replace(/ \/>/g, '/>');
 		if (sap.ui.Device.browser.msie) {
-			// IE shuffles attribute order, a core:Fragment's type is the only relevant example
-			sXml = sXml.replace(/ type="XML"/g, "");
+			// IE shuffles attribute order
+			// remove helper, type and var, then no tag should have more that one attribute
+			sXml = sXml.replace(/ (helper|type|var)=".*?"/g, "")
 		}
 		return sXml;
 	}
@@ -152,6 +154,22 @@
 	}
 
 	/**
+	 * Creates a Sinon matcher that compares after normalizing the contained XML.
+	 *
+	 * @param {string|object} vExpected
+	 *   either an expected string or already a Sinon matcher
+	 * @returns {boolean}
+	 */
+	function matchArg(vExpected) {
+		if (typeof vExpected === "string") {
+			return sinon.match(function (sActual) {
+				return normalizeXml(vExpected) === normalizeXml(sActual);
+			}, vExpected);
+		}
+		return vExpected;
+	}
+
+	/**
 	 * Expects a warning with the given message for the given log mock.
 	 *
 	 * @param {object} oLogMock
@@ -161,9 +179,8 @@
 	 */
 	function warn(oLogMock, sExpectedWarning, vDetails) {
 		return oLogMock.expects("warning")
-			.withExactArgs(sinon.match(function (sActualWarning) {
-				return normalizeXml(sExpectedWarning) === normalizeXml(sActualWarning);
-			}, sExpectedWarning), vDetails || null, "sap.ui.core.util.XMLPreprocessor");
+			.withExactArgs(matchArg(sExpectedWarning), vDetails || null,
+				"sap.ui.core.util.XMLPreprocessor");
 	}
 
 	/**
@@ -182,7 +199,7 @@
 	 *   a regular expression which is expected to match the serialized original view content.
 	 */
 	function check(aViewContent, mSettings, vExpected) {
-		var oLogMock = this && this.mock && this.mock(jQuery.sap.log),
+		var oLogMock,
 			oViewContent = xml(aViewContent),
 			i;
 
@@ -202,6 +219,14 @@
 			if (vExpected.length === 2) {
 				// expect just a single empty tag
 				vExpected = ['<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'];
+			}
+		}
+		// 'this' may be: null, window (IE9 w/o proper strict mode), oLogMock or the Sinon sandbox
+		if (this) {
+			if (this.expects) {
+				oLogMock = this;
+			} else if (this.mock) {
+				oLogMock = this.mock(jQuery.sap.log);
 			}
 		}
 		if (oLogMock) {
@@ -244,8 +269,58 @@
 			process(oViewContent, mSettings);
 			ok(false);
 		} catch (ex) {
-			strictEqual(ex.message, "qux: " + sExpectedMessage.replace("{0}", sOffender));
+			strictEqual(
+				normalizeXml(ex.message),
+				normalizeXml("qux: " + sExpectedMessage.replace("{0}", sOffender))
+			);
 		}
+	}
+
+	/**
+	 * Checks that the XMLPreprocessor works as expected on the given view content and that the
+	 * tracing works as expected. The view content is automatically searched for constant test
+	 * conditions and appropriate warnings are expected; log output is stubbed in order to keep
+	 * console clean.
+	 *
+	 * BEWARE: Call via <code>checkTracing.call(this, ...)</code> so that <code>this</code> is a
+	 * Sinon sandbox!
+	 *
+	 * @param {boolean} bDebug
+	 *   whether debug output is accepted and expected (sets the log level accordingly)
+	 * @param {object[]} aExpectedMessages
+	 *   a array of expected debug messages with the message in <code>m</code>, optional details in
+	 *   <code>d</code> and an optional count in <code>c</code> (default is 1). <code>m</code> may
+	 *   also contain a Sinon matcher, <code>d</code> a number which is interpreted as index into
+	 *   <code>aViewContent</code>.
+	 * @param {string[]} aViewContent
+	 *   the original view content
+	 * @param {object} [mSettings={}]
+	 *   a settings object for the preprocessor
+	 * @param {string[]|RegExp} [vExpected]
+	 *   the expected content as string array, with root element omitted; if missing, the
+	 *   expectation is derived from the original view content by smart filtering. Alternatively
+	 *   a regular expression which is expected to match the serialized original view content.
+	 */
+	function checkTracing(bDebug, aExpectedMessages, aViewContent, mSettings, vExpected) {
+		var oLogMock = this.mock(jQuery.sap.log),
+			sName;
+
+		if (bDebug) {
+			aExpectedMessages.forEach(function (oExpectedMessage) {
+				var vExpectedDetail = oExpectedMessage.d;
+				if (typeof vExpectedDetail === "number") {
+					vExpectedDetail = matchArg(aViewContent[vExpectedDetail]);
+				}
+				oLogMock.expects("debug")
+					.exactly(oExpectedMessage.c || 1)
+					.withExactArgs(matchArg(oExpectedMessage.m), vExpectedDetail, sComponent);
+			});
+		} else {
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
+			oLogMock.expects("debug").never();
+		}
+
+		check.call(oLogMock, aViewContent, mSettings, vExpected);
 	}
 
 	/**
@@ -933,21 +1008,27 @@
 				other: other
 			}
 		};
-		this.mock(jQuery.sap.log).expects("debug").never();
 
-		check([
+		checkTracing.call(this, true, [
+			{m: "[ 0] Start processing qux"},
+			{m: "[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"},
+			{m: "[ 0] text = ", d: 1},
+			{m: "[ 0] text = Customer", d: 2},
+			{m: "[ 0] text = Value: {CustomerName}", d: 3},
+			{m: "[ 0] text = Customer: {CustomerName}", d: 4},
+			{m: "[ 0] Finished processing qux"}
+		], [
 			mvcView(),
-			'<template:with'
-				+ ' path="/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo">',
 			'<Text text="{formatter: \'foo.Helper.other\', path: \'Title/Label\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}"/>',
 			'<Text text="Value: {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
 				+ ': {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
-			'</template:with>',
 			'</mvc:View>'
 		], {
 			models: oModel,
+			bindingContexts: oModel.createBindingContext(
+					"/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"),
 			bindTexts: true
 		}, [
 			'<Text text="undefined"/>',
@@ -960,17 +1041,8 @@
 	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
 		test("binding resolution, exception in formatter, debug = " + bIsLoggable, function () {
-			var oError = new Error("deliberate failure"),
-				oLogMock = this.mock(jQuery.sap.log);
+			var oError = new Error("deliberate failure");
 
-			if (!bIsLoggable) {
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
-			}
-			oLogMock.expects("debug")
-				.exactly(bIsLoggable ? 2 : 0) // do not construct arguments in vain!
-				.withExactArgs(
-					sinon.match(/qux: Error in formatter of <In text=".*"\/>/),
-					oError, "sap.ui.core.util.XMLPreprocessor");
 			window.foo = {
 					Helper: {
 						fail: function (oRawValue) {
@@ -979,7 +1051,11 @@
 					}
 				};
 
-			check([
+			checkTracing.call(this, bIsLoggable, [
+				{m: "[ 0] Start processing qux"},
+				{m: sinon.match(/qux: Error in formatter of <In text=".*"\/>/), d: oError, c: 2},
+				{m: "[ 0] Finished processing qux"}
+			], [
 				mvcView(),
 				'<In text="{formatter: \'foo.Helper.fail\','
 					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
@@ -1539,10 +1615,9 @@
 				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
 				'</mvc:View>'
 			],
-			{},
-			new RegExp('<Fragment (fragmentName="nonXMLFragment" type="JS"'
-				+ '|type="JS" fragmentName="nonXMLFragment")\/>')
-			);
+			{}, [
+				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
+			]);
 		oXMLTemplateProcessorMock.expects("loadTemplate").never();
 	});
 
@@ -1624,5 +1699,96 @@
 		);
 
 		check.call(this, aViewContent);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bIsLoggable) {
+		test("tracing, debug=" + bIsLoggable, function () {
+			var oBarModel = new sap.ui.model.json.JSONModel({
+					"com.sap.vocabularies.UI.v1.HeaderInfo": {
+						"Title": {
+							"Label": {
+								"String": "Customer"
+							},
+							"Value": {
+								"Path": "CustomerName"
+							}
+						}
+					},
+					"com.sap.vocabularies.UI.v1.Identification": [{
+						Value: { Path: "A"},
+					}, {
+						Value: { Path: "B"},
+					}, {
+						Value: { Path: "C"},
+					}]
+				}),
+				oBazModel = new sap.ui.model.json.JSONModel({}),
+				aDebugMessages,
+				aViewContent = [
+					mvcView("t"),
+					'<t:with path="bar>Label" var="foo">',
+					'<t:if test="false">',
+					'<t:then>',
+					'<Out />',
+					'</t:then>',
+					'<t:elseif test="{bar>Label}">',
+					'<In />',
+					'<Fragment fragmentName="myFragment" type="XML"/>',
+					'</t:elseif>',
+					'</t:if>',
+					'</t:with>',
+					'<t:repeat list="{bar>/com.sap.vocabularies.UI.v1.Identification}" var="foo">',
+					'<In src="{foo>Value/Path}"/>',
+					'</t:repeat>',
+					'<t:if test="{bar>/com.sap.vocabularies.UI.v1.Identification}"/>',
+					'<t:if test="{bar>/qux}"/>',
+					'</mvc:View>'
+				];
+
+			this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+				.returns(xml(['<FragmentDefinition xmlns="sap.ui.core">',
+					'<In src="fragment"/>',
+					'</FragmentDefinition>']));
+
+			checkTracing.call(this, bIsLoggable, [
+				{m: "[ 0] Start processing qux"},
+				{m: "[ 0] bar = /com.sap.vocabularies.UI.v1.HeaderInfo/Title"},
+				{m: "[ 0] baz = /"},
+				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label", d: 1},
+				{m: "[ 2] test == \"false\" --> false", d: 2},
+				{m: "[ 2] test == [object Object] --> true", d: 6},
+				{m: "[ 3] fragmentName = myFragment", d: 8},
+				{m: "[ 3] Finished", d: "</Fragment>"},
+				{m: "[ 2] Finished", d: 10},
+				{m: "[ 1] Finished", d: 11},
+				{m: "[ 1] Starting", d: 12},
+				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/0", d: 12},
+				{m: "[ 1] src = A", d: 13},
+				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/1", d: 12},
+				{m: "[ 1] src = B", d: 13},
+				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/2", d: 12},
+				{m: "[ 1] src = C", d: 13},
+				{m: "[ 1] Finished", d: 14},
+				{m: "[ 1] test == [object Array] --> true", d: 15},
+				{m: "[ 1] Finished", d: "</t:if>"},
+				{m: "[ 1] test == undefined --> false", d: 16},
+				{m: "[ 1] Finished", d: "</t:if>"},
+				{m: "[ 0] Finished processing qux"}
+			], aViewContent, {
+				models: { bar: oBarModel, baz: oBazModel },
+				bindingContexts: {
+					bar: oBarModel.createBindingContext(
+							"/com.sap.vocabularies.UI.v1.HeaderInfo/Title"),
+					baz: oBazModel.createBindingContext("/"),
+				}
+			}, [
+				'<In />',
+				'<In src="fragment"/>',
+				'<In src="A"/>',
+				'<In src="B"/>',
+				'<In src="C"/>',
+			]);
+		});
 	});
 } ());

@@ -1413,9 +1413,21 @@
 		"dayPeriods-standAlone-wide": [
 			"午前",
 			"午後"
-		]
+		],
+		"era-wide": {
+			"0": "紀元前",
+			"1": "西暦"
+		},
+		"era-abbreviated": {
+			"0": "紀元前",
+			"1": "西暦"
+		},
+		"era-narrow": {
+			"0": "BC",
+			"1": "AD"
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "Gy年M月d日EEEE",
 		"dateFormat-long": "Gy年M月d日",
 		"dateFormat-medium": "Gy/MM/dd",
@@ -1691,285 +1703,16 @@
 		"dayPeriods-standAlone-wide": [
 			"午前",
 			"午後"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "Gy年M月d日EEEE",
-		"dateFormat-long": "Gy年M月d日",
-		"dateFormat-medium": "Gy/MM/dd",
-		"dateFormat-short": "Gy/MM/dd",
-		"timeFormat-full": "H時mm分ss秒 zzzz",
-		"timeFormat-long": "H:mm:ss z",
-		"timeFormat-medium": "H:mm:ss",
-		"timeFormat-short": "H:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0}～{1}",
-		"intervalFormat-H-H": "H時～H時",
-		"intervalFormat-Hm-H": "H時mm分～H時mm分",
-		"intervalFormat-Hm-m": "H時mm分～H時mm分",
-		"intervalFormat-Hmv-H": "H時mm分～H時mm分(v)",
-		"intervalFormat-Hmv-m": "H時mm分～H時mm分(v)",
-		"intervalFormat-Hv-H": "H時～H時(v)",
-		"intervalFormat-M-M": "M月～M月",
-		"intervalFormat-MEd-M": "MM/dd(E)～MM/dd(E)",
-		"intervalFormat-MEd-d": "MM/dd(E)～MM/dd(E)",
-		"intervalFormat-MMM-M": "M月～M月",
-		"intervalFormat-MMMEd-M": "M月d日(E)～M月d日(E)",
-		"intervalFormat-MMMEd-d": "M月d日(E)～d日(E)",
-		"intervalFormat-MMMM-M": "M月～M月",
-		"intervalFormat-MMMd-M": "M月d日～M月d日",
-		"intervalFormat-MMMd-d": "M月d日～d日",
-		"intervalFormat-Md-M": "MM/dd～MM/dd",
-		"intervalFormat-Md-d": "MM/dd～MM/dd",
-		"intervalFormat-d-d": "d日～d日",
-		"intervalFormat-h-a": "aK時～aK時",
-		"intervalFormat-h-h": "aK時～K時",
-		"intervalFormat-hm-a": "aK時mm分～aK時mm分",
-		"intervalFormat-hm-h": "aK時mm分～K時mm分",
-		"intervalFormat-hm-m": "aK時mm分～K時mm分",
-		"intervalFormat-hmv-a": "aK時mm分～aK時mm分(v)",
-		"intervalFormat-hmv-h": "aK時mm分～K時mm分(v)",
-		"intervalFormat-hmv-m": "aK時mm分～K時mm分(v)",
-		"intervalFormat-hv-a": "aK時～aK時(v)",
-		"intervalFormat-hv-h": "aK時～K時(v)",
-		"intervalFormat-y-y": "Gy年～y年",
-		"intervalFormat-yM-M": "Gy/MM～y/MM",
-		"intervalFormat-yM-y": "Gy/MM～y/MM",
-		"intervalFormat-yMEd-M": "Gy/MM/dd(E)～y/MM/dd(E)",
-		"intervalFormat-yMEd-d": "Gy/MM/dd(E)～y/MM/dd(E)",
-		"intervalFormat-yMEd-y": "Gy/MM/dd(E)～y/MM/dd(E)",
-		"intervalFormat-yMMM-M": "Gy年M月～M月",
-		"intervalFormat-yMMM-y": "Gy年M月～y年M月",
-		"intervalFormat-yMMMEd-M": "Gy年M月d日(E)～M月d日(E)",
-		"intervalFormat-yMMMEd-d": "Gy年M月d日(E)～d日(E)",
-		"intervalFormat-yMMMEd-y": "Gy年M月d日(E)～y年M月d日(E)",
-		"intervalFormat-yMMMM-M": "Gy年M月～M月",
-		"intervalFormat-yMMMM-y": "Gy年M月～y年M月",
-		"intervalFormat-yMMMd-M": "Gy年M月d日～M月d日",
-		"intervalFormat-yMMMd-d": "Gy年M月d日～d日",
-		"intervalFormat-yMMMd-y": "Gy年M月d日～y年M月d日",
-		"intervalFormat-yMd-M": "Gy/MM/dd～y/MM/dd",
-		"intervalFormat-yMd-d": "Gy/MM/dd～y/MM/dd",
-		"intervalFormat-yMd-y": "Gy/MM/dd～y/MM/dd",
-		"months-format-abbreviated": [
-			"ムハッラム",
-			"サフアル",
-			"ラビー・ウル・アウワル",
-			"ラビー・ウッ・サーニー",
-			"ジュマーダル・アウワル",
-			"ジュマーダッサーニー",
-			"ラジャブ",
-			"シャアバーン",
-			"ラマダーン",
-			"シャウワール",
-			"ズル・カイダ",
-			"ズル・ヒッジャ"
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"ムハッラム",
-			"サフアル",
-			"ラビー・ウル・アウワル",
-			"ラビー・ウッ・サーニー",
-			"ジュマーダル・アウワル",
-			"ジュマーダッサーニー",
-			"ラジャブ",
-			"シャアバーン",
-			"ラマダーン",
-			"シャウワール",
-			"ズル・カイダ",
-			"ズル・ヒッジャ"
-		],
-		"months-standAlone-abbreviated": [
-			"ムハッラム",
-			"サフアル",
-			"ラビー・ウル・アウワル",
-			"ラビー・ウッ・サーニー",
-			"ジュマーダル・アウワル",
-			"ジュマーダッサーニー",
-			"ラジャブ",
-			"シャアバーン",
-			"ラマダーン",
-			"シャウワール",
-			"ズル・カイダ",
-			"ズル・ヒッジャ"
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"ムハッラム",
-			"サフアル",
-			"ラビー・ウル・アウワル",
-			"ラビー・ウッ・サーニー",
-			"ジュマーダル・アウワル",
-			"ジュマーダッサーニー",
-			"ラジャブ",
-			"シャアバーン",
-			"ラマダーン",
-			"シャウワール",
-			"ズル・カイダ",
-			"ズル・ヒッジャ"
-		],
-		"days-format-abbreviated": [
-			"日",
-			"月",
-			"火",
-			"水",
-			"木",
-			"金",
-			"土"
-		],
-		"days-format-narrow": [
-			"日",
-			"月",
-			"火",
-			"水",
-			"木",
-			"金",
-			"土"
-		],
-		"days-format-short": [
-			"日",
-			"月",
-			"火",
-			"水",
-			"木",
-			"金",
-			"土"
-		],
-		"days-format-wide": [
-			"日曜日",
-			"月曜日",
-			"火曜日",
-			"水曜日",
-			"木曜日",
-			"金曜日",
-			"土曜日"
-		],
-		"days-standAlone-abbreviated": [
-			"日",
-			"月",
-			"火",
-			"水",
-			"木",
-			"金",
-			"土"
-		],
-		"days-standAlone-narrow": [
-			"日",
-			"月",
-			"火",
-			"水",
-			"木",
-			"金",
-			"土"
-		],
-		"days-standAlone-short": [
-			"日",
-			"月",
-			"火",
-			"水",
-			"木",
-			"金",
-			"土"
-		],
-		"days-standAlone-wide": [
-			"日曜日",
-			"月曜日",
-			"火曜日",
-			"水曜日",
-			"木曜日",
-			"金曜日",
-			"土曜日"
-		],
-		"quarters-format-abbreviated": [
-			"Q1",
-			"Q2",
-			"Q3",
-			"Q4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"第1四半期",
-			"第2四半期",
-			"第3四半期",
-			"第4四半期"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Q1",
-			"Q2",
-			"Q3",
-			"Q4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"第1四半期",
-			"第2四半期",
-			"第3四半期",
-			"第4四半期"
-		],
-		"dayPeriods-format-abbreviated": [
-			"午前",
-			"午後"
-		],
-		"dayPeriods-format-narrow": [
-			"午前",
-			"午後"
-		],
-		"dayPeriods-format-wide": [
-			"午前",
-			"午後"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"午前",
-			"午後"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"午前",
-			"午後"
-		],
-		"dayPeriods-standAlone-wide": [
-			"午前",
-			"午後"
-		]
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "年",
 	"dateField-year-relative--1": "昨年",

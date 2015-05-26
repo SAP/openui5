@@ -762,6 +762,21 @@
 					equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 				});
 				
+				test("Title Image has aria-labelledby", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						icon: "../images/SAPUI5.jpg",
+						iconAlt: "test image"
+					});
+					
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					var $sImg = oObjectHeader.$("img"); 
+					ok($sImg.attr("aria-label"), "image has attribute aria-label");
+				});
+				
 		</script>
 		
 	</head>

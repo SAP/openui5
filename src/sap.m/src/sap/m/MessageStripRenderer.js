@@ -20,6 +20,7 @@ sap.ui.define(["sap/m/MessageStripUtilities"],
 	 */
 	MessageStripRenderer.render = function(oRm, oControl) {
 		this.startMessageStrip(oRm, oControl);
+		this.renderAriaTypeText(oRm, oControl);
 
 		if (oControl.getShowIcon()) {
 			this.renderIcon(oRm, oControl);
@@ -44,6 +45,12 @@ sap.ui.define(["sap/m/MessageStripUtilities"],
 		oRm.writeAttribute(MSUtils.ATTRIBUTES.CLOSABLE, oControl.getShowCloseButton());
 		oRm.writeAccessibilityState(oControl, MSUtils.getAccessibilityState.call(oControl));
 		oRm.write(">");
+	};
+
+	MessageStripRenderer.renderAriaTypeText = function (oRm, oControl) {
+		oRm.write("<span class='sapUiPseudoInvisibleText'>");
+		oRm.write(MSUtils.getAriaTypeText.call(oControl));
+		oRm.write("</span>");
 	};
 
 	MessageStripRenderer.renderIcon = function (oRm, oControl) {

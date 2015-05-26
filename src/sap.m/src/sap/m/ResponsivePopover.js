@@ -240,10 +240,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				that.fireAfterOpen({openBy: oEvent.getParameter('openBy')});
 			},
 			beforeClose: function(oEvent){
-				that.fireBeforeClose({openBy: oEvent.getParameter('openBy')});
+				that.fireBeforeClose({openBy: oEvent.getParameter('openBy'), origin: oEvent.getParameter('origin')});
 			},
 			afterClose: function(oEvent){
-				that.fireAfterClose({openBy: oEvent.getParameter('openBy')});
+				that.fireAfterClose({openBy: oEvent.getParameter('openBy'), origin: oEvent.getParameter('origin')});
 			}
 		};
 		if (sap.ui.Device.system.phone) {
@@ -542,7 +542,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	// forward the other necessary methods to the inner instance, but do not check the existence of generated methods like (addItem)
 	["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass",
-		"setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "getDomRef"].forEach(function(sName){
+		"setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "getDomRef", "clone"].forEach(function(sName){
 			ResponsivePopover.prototype[sName] = function() {
 				if (this._oControl && this._oControl[sName]) {
 					var res = this._oControl[sName].apply(this._oControl ,arguments);

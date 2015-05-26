@@ -496,6 +496,7 @@
 @sapUiChartMainTitleFontSize: @sapMFontLargeSize;                   // 16px
 @sapUiChartAxisTitleFontSize: @sapMFontMediumSize;                  // 14px
 @sapUiChartTitleFontWeight: bold;
+@sapUiChartLightText: @sapUiExtraLightText;                         // #707070
 
 @sapUiChartDataPointBorderColor: @sapUiLightestBorder;                                 // #ffffff
 @sapUiChartDataPointBorderHoverSelectedColor: darken(@sapUiDarkBorder,35);
@@ -674,13 +675,16 @@
 @sapUiSegmentedButtonSelectedBackground: @sapUiButtonActiveBackground;
 @sapUiSegmentedButtonSelectedTextColor: contrast(@sapUiSegmentedButtonSelectedBackground, @sapUiSegmentedButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonSelectedHoverBackground: darken(@sapUiSegmentedButtonSelectedBackground, 5);
-@sapUiSegmentedButtonSelectedHoverBorderColor: sapUiSegmentedButtonSelectedHoverBackground;
+@sapUiSegmentedButtonSelectedHoverBorderColor: @sapUiSegmentedButtonSelectedHoverBackground;
 @sapUiSegmentedButtonIconColor: contrast(@sapUiSegmentedButtonBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonActiveIconColor: contrast(@sapUiSegmentedButtonActiveBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonSelectedIconColor: contrast(@sapUiSegmentedButtonSelectedBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonFooterBorderColor: contrast(@sapUiFooterBG, darken(@sapUiFooterBG, 10), lighten(@sapUiFooterBG, 20));
 @sapUiSegmentedButtonFooterHoverBackground: fade(darken(@sapUiButtonBackground, 5), 10);
 @sapUiFooterButtonHoverColor: contrast(@sapUiFooterOnDesktopBG, darken(@sapUiFooterOnDesktopBG, 3), lighten(@sapUiFooterOnDesktopBG, 6));
+
+@sapUiFieldtextColor: @sapUiBaseText;
+@sapUiFieldPlaceholderTextColor: @sapUiExtraLightText;
 
 @sapUiCalendarColorToday: #ffc51c;
 

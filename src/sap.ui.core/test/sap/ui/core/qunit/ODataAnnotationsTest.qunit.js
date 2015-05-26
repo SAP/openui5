@@ -28,6 +28,8 @@ function deepContains(oValue, oExpected, sMessage) {
 	}
 }
 
+QUnit.config.testTimeout = 6000;
+
 /* eslint-disable no-unused-vars */
 function runODataAnnotationTests() {
 /* eslint-enable no-unused-vars */
@@ -229,6 +231,24 @@ function runODataAnnotationTests() {
 			serviceValid     : true,
 			annotationsValid : "all"
 		},
+		"If in Apply": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/if-in-apply.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"Other Elements in LabeledElement": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/labeledelement-other-values.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"Annotated Metadata": {
+			service          : "fakeService://testdata/odata/northwind-annotated/",
+			annotations      : null,
+			serviceValid     : true,
+			annotationsValid : "metadata",
+		}
 	};
 
 
@@ -266,12 +286,12 @@ function runODataAnnotationTests() {
 				} else {
 					// Service Metadata should be there, annotations should not be loaded
 					ok(oMetadata, "Metadata is available.");
-					ok(Object.keys(oAnnotations).length === 0, "Annotations are not available.");
+					ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Annotations are not available.");
 				}
 			} else {
 				// Service is invalid, so both should not be there
 				ok(!oMetadata, "Metadata is not available.");
-				ok(Object.keys(oAnnotations).length === 0, "Metadata is not available.");
+				ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Metadata is not available.");
 			}
 		};
 	};
@@ -394,7 +414,7 @@ function runODataAnnotationTests() {
 						jQuery.sap.log.debug("metadata promise failed");
 						ok(false, 'Metadata promise rejected');
 					}); 
-			} else if (bServiceValid && sAnnotationsValid === "none"){
+			} else if (bServiceValid && (sAnnotationsValid === "none" || sAnnotationsValid === "metadata")){
 				jQuery.when(metadataDfd).done(function(e){
 					jQuery.sap.log.debug("metadata promise fulfilled");
 					//make sure annotations really don't load an we're not just too quick
@@ -537,7 +557,7 @@ function runODataAnnotationTests() {
 						jQuery.sap.log.debug("metadata promise failed");
 						ok(false, 'Metadata promise rejected');
 					});
-			} else if (bServiceValid && sAnnotationsValid === "none"){
+			} else if (bServiceValid && (sAnnotationsValid === "none" || sAnnotationsValid === "metadata")){
 				jQuery.when(metadataDfd).done(function(e){
 					jQuery.sap.log.debug("metadata promise fulfilled");
 					//make sure annotations really don't load an we're not just too quick
@@ -561,6 +581,7 @@ function runODataAnnotationTests() {
 		sServiceURI = mService.service;
 		mModelOptions = {
 			annotationURI : mService.annotations,
+			skipMetadataAnnotationParsing: true,
 			json : true
 		};
 		bServiceValid     = mService.serviceValid;
@@ -611,7 +632,7 @@ function runODataAnnotationTests() {
 				switch (sWhat) {
 
 					case "InternalMetadata":
-						ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+						// ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
 					break;
 
 					case "Metadata":
@@ -685,7 +706,7 @@ function runODataAnnotationTests() {
 				bAnnotationsLoaded = true;
 			});
 
-			if (bServiceValid && (sAnnotationsValid === "some" || sAnnotationsValid === "all")){
+			if (bServiceValid && (sAnnotationsValid === "some" || sAnnotationsValid === "all" || sAnnotationsValid === "metadata")){
 				jQuery.when(metadataDfd).done(function(e){
 					jQuery.sap.log.debug("metadata promise fulfilled");
 					fnOnLoaded("Both");
@@ -763,7 +784,7 @@ function runODataAnnotationTests() {
 				switch (sWhat) {
 
 					case "InternalMetadata":
-						ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+					//	ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
 					break;
 
 					case "Metadata":
@@ -845,6 +866,10 @@ function runODataAnnotationTests() {
 				jQuery.sap.log.debug("metadata promise failed");
 				ok(false, 'Metadata promise rejected');
 			}); 
+		} else if (bServiceValid && sAnnotationsValid === "metadata") {
+			jQuery.when(internalMetadataDfd).done(function(){
+				fnOnLoaded("Both");
+			});
 		} else if (bServiceValid && sAnnotationsValid === "none"){
 				//internal metadata needs to be sucessful prior to the failed annotations
 				jQuery.when(internalMetadataDfd).done(function(){
@@ -866,6 +891,7 @@ function runODataAnnotationTests() {
 		sServiceURI = mService.service;
 		mModelOptions = {
 			annotationURI : mService.annotations,
+			skipMetadataAnnotationParsing: true,
 			json : true
 		};
 		bServiceValid     = mService.serviceValid;
@@ -1021,7 +1047,8 @@ function runODataAnnotationTests() {
 			var oAnnotations = oModel3.getServiceAnnotations();
 			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-			ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+			var sMerged = oAnnotations.UnitTest["Test.Merged"][0].Value.Path;
+			ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
 			asyncStart();
 		});
 
@@ -1041,7 +1068,8 @@ function runODataAnnotationTests() {
 			var oAnnotations = oModel4.getServiceAnnotations();
 			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-			ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+			var sMerged = oAnnotations.UnitTest["Test.Merged"][0].Value.Path;
+			ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
 			asyncStart();
 		});
 
@@ -1164,6 +1192,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -1353,6 +1382,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -1513,7 +1543,8 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
-			loadMetadataAsync: false
+			loadMetadataAsync: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -1643,6 +1674,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -1709,7 +1741,8 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
-			loadMetadataAsync: false
+			loadMetadataAsync: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
@@ -1773,7 +1806,8 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
-			loadMetadataAsync: false
+			loadMetadataAsync: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -2042,6 +2076,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -2321,6 +2356,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: false,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -2614,6 +2650,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: true,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -2859,6 +2896,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: true,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -2922,6 +2960,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: true,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -3072,6 +3111,7 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations,
 			json : true,
 			loadAnnotationsJoined: true,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -3190,7 +3230,8 @@ function runODataAnnotationTests() {
 			annotationURI : mTest.annotations[0],
 			json : true,
 			loadAnnotationsJoined: false,
-			loadMetadataAsync: true
+			loadMetadataAsync: true,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -3260,7 +3301,8 @@ function runODataAnnotationTests() {
 			annotationURI : null,
 			json : true,
 			loadAnnotationsJoined: false,
-			loadMetadataAsync: true
+			loadMetadataAsync: true,
+			skipMetadataAnnotationParsing: true
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
@@ -3543,4 +3585,252 @@ function runODataAnnotationTests() {
 			"Multiple String values as array: SimpleValues"
 		);
 	});
+	
+	
+	asyncTest("If in Apply", function() {
+		expect(57);
+		var mTest = mAdditionalTestsServices["If in Apply"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: true
+		};
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+	
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["IfInApply"],
+				{
+					"com.sap.vocabularies.Test.v1.Data": {
+						"Value": {
+							"Apply": {
+								"Parameters": [{
+									"Type": "If",
+									"Value": [{
+										"Eq": [
+											{"Path":"Sex"},
+											{"String":"M"}
+										]
+									}, {
+										"String": "Mr. "
+									}, {
+										"If": [{
+											"Eq": [{
+												"Path": "Sex"
+											}, {
+												"String": "F"
+											}]
+										}, {
+											"String": "Mrs. "
+										}, {
+											"String": ""
+										}]
+									}]
+								}, {
+									"Type": "Path",
+									"Value": "FirstName"
+								}, {
+									"Type": "String",
+									"Value": ""
+								}, {
+									"Type": "Path",
+									"Value": "LastName"
+								}]
+							}
+						}
+					}
+				},
+				"IfInApply"
+			);
+			
+			start();
+		});
+	});
+	
+	
+	
+	asyncTest("Other Elements in LabeledElement", function() {
+		expect(113);
+		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: true
+		};
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+	
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["LabeledElement"], 
+				{
+					"com.sap.vocabularies.Test.v1.Data": {
+						"Url": {
+							"UrlRef": {
+								"Apply": {
+									"Name": "odata.fillUriTemplate",
+									"Parameters": [{
+										"Type": "String",
+										"Value":"#{Bool}/{Date}/{DateTimeOffset}/{Decimal}/{Float}/{Guid}/{Int}/{Path}/{String}/{TimeOfDay}"
+									}, {
+										"Type":"LabeledElement",
+										"Name":"Bool",
+										"Value": {
+											"Name": "Bool",
+											"Bool": "true"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Date",
+										"Value": {
+											"Name": "Date",
+											"Date": "2015-03-24"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "DateTimeOffset",
+										"Value": {
+											"Name": "DateTimeOffset",
+											"DateTimeOffset": "2015-03-24T14:03:27Z"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Decimal",
+										"Value": {
+											"Name":"Decimal",
+											"Decimal": "-123456789012345678901234567890.1234567890"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Float",
+										"Value": {
+											"Name": "Float",
+											"Float": "-7.4503e-36"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Guid",
+										"Value": {
+											"Name": "Guid",
+											"Guid": "0050568D-393C-1ED4-9D97-E65F0F3FCC23"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Int",
+										"Value": {
+											"Name": "Int",
+											"Int": "9007199254740992"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Path",
+										"Value": {
+											"Path": "BusinessPartnerID"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "String",
+										"Value": {
+											"String": "hello, world"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "TimeOfDay",
+										"Value": {
+											"Name": "TimeOfDay",
+											"TimeOfDay": "13:57:06"
+										}
+									}]
+								}
+							}
+						},
+						"RecordType": "com.sap.vocabularies.Test.v1.Data.DataFieldWithUrl"
+					},
+				},
+				"LabeledElement"
+			);
+
+			start();
+		});
+	});
+	
+	asyncTest("V2 only: Annotated Metadata - Automated Parsing", function() {
+		expect(16);
+
+		var fnAsyncStart = function() {
+			if (!fnAsyncStart.count) {
+				fnAsyncStart.count = 0;
+			}
+			++fnAsyncStart.count;
+			
+			if (fnAsyncStart.count == 2) {
+				start();
+			}
+		}
+
+		var mTest = mAdditionalTestsServices["Annotated Metadata"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			skipMetadataAnnotationParsing: false,
+			loadAnnotationsJoined: true
+		});
+		
+		var oModel2 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI : "fakeService://testdata/odata/northwind-annotations-normal.xml",
+			skipMetadataAnnotationParsing: true,
+			loadAnnotationsJoined: true
+		});
+		
+
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			ok(oAnnotations["UnitTest"], "Annotation namespace available");
+			ok(!oAnnotations["UnitTest"]["Test.FromAnnotations"],                                "Annotation from correct source - Metadata (1/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromMetadata"],                                    "Annotation from correct source - Metadata (2/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromMetadata"][0],                                 "Annotation from correct source - Metadata (3/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromMetadata"][0]["Value"],                        "Annotation from correct source - Metadata (4/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromMetadata"][0]["Value"]["Path"] === "Metadata", "Annotation from correct source - Metadata (5/5)");
+			
+			fnAsyncStart();
+		});
+
+
+		oModel2.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel2.getServiceMetadata();
+			var oAnnotations = oModel2.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			ok(oAnnotations["UnitTest"], "Annotation namespace available");
+			ok(!oAnnotations["UnitTest"]["Test.FromMetadata"],                                         "Annotation from correct source - Annotations (1/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"],                                       "Annotation from correct source - Annotations (2/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"][0],                                    "Annotation from correct source - Annotations (3/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"][0]["Value"],                           "Annotation from correct source - Annotations (4/5)");
+			ok(oAnnotations["UnitTest"]["Test.FromAnnotations"][0]["Value"]["Path"] === "Annotations", "Annotation from correct source - Annotations (5/5)");
+			
+			fnAsyncStart();
+		});
+		
+
+	});
+
 }

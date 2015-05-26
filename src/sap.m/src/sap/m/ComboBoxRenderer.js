@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, InputBaseRenderer, Renderer) {
+sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
+	function(jQuery, ComboBoxBaseRenderer, Renderer) {
 		"use strict";
 
 		/**
@@ -27,8 +27,8 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
+			ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
 			var CSS_CLASS = ComboBoxRenderer.CSS_CLASS;
-			sap.m.ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
 			oRm.addClass(CSS_CLASS);
 			oRm.addClass(CSS_CLASS + "Input");
 		};
@@ -40,8 +40,20 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
-			sap.m.ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
+			ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
 			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "InputInner");
+		};
+
+		/**
+		 * Add CSS classes to the combo box arrow button, using the provided {@link sap.ui.core.RenderManager}.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		ComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
+			ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
+			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "Arrow");
 		};
 
 		return ComboBoxRenderer;

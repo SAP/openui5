@@ -10,6 +10,7 @@ Argument | Description                                                          
 -------- | ------------------------------------------------------------------------------ | -------
 mode     | `src` uses source files, `target` uses built files (see build task)            | `src`
 port     | Network port to use                                                            | `8080`
+hostname | Network hostname to use (e.g. `127.0.0.1` for local access only)               | `*`
 watch    | `boolean` whether to enable watch / livereload (only possible with mode `src`) | `false`
 libs     | Library name(s) to watch (comma-separated). Can reduce CPU usage!              | All libraries
 
@@ -20,14 +21,15 @@ Maps folders of all libraries
 - test -> /test-resources
 
 ```
-grunt serve[:<mode>] [--port=<port>] [--watch] [--libs=<library-1>,<library-n>]
+grunt serve[:<mode>] [--port=<port>] [--hostname=<hostname>] [--watch] [--libs=<library-1>,<library-n>]
 
 # examples
-#  grunt serve --port=3000                 # mode=src, port=3000, watch=false
-#  grunt serve:src                         # mode=src, port=8080, watch=false
-#  grunt serve:src --watch                 # mode=src, port=8080, watch=true, watched libs=All
-#  grunt serve --watch=true --libs=sap.m   # mode=src, port=8080, watch=true, watched libs=sap.m
-#  grunt serve:target --port=80            # mode=target, port=80, watch=false
+#  grunt serve --port=3000                       # mode=src, port=3000, hostname=*, watch=false
+#  grunt serve --port=3000 --hostname=127.0.0.1  # mode=src, port=3000, hostname=127.0.0.1, watch=false
+#  grunt serve:src                               # mode=src, port=8080, hostname=*, watch=false
+#  grunt serve:src --watch                       # mode=src, port=8080, hostname=*, watch=true, watched libs=All
+#  grunt serve --watch=true --libs=sap.m         # mode=src, port=8080, hostname=*, watch=true, watched libs=sap.m
+#  grunt serve:target --port=80                  # mode=target, port=80, hostname=*, watch=false
 ```
 
 ## lint

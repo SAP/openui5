@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			this.mContainers = {}; //association of container to panel and Grid
 			this.oDummyLayoutData = new GridData(this.getId() + "--Dummy");
-			this.SPANPATTERN = /^([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
+			this.SPANPATTERN = /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
 
 		};
 
@@ -847,16 +847,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		function _createMainGrid( oLayout, oForm ) {
 
 			var aContainers = oForm.getFormContainers();
+			var aVisibleContainers = [];
 			var oContainer;
 			var iLength = 0;
 			var iContentLenght = 0;
 			var i = 0;
+			var j = 0;
 
 			// count only visible containers
 			for ( i = 0; i < aContainers.length; i++) {
 				oContainer = aContainers[i];
 				if (oContainer.getVisible()) {
 					iLength++;
+					aVisibleContainers.push(oContainer);
 				}
 			}
 
@@ -900,6 +903,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 							oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
 						}
 						if (oContainer && oContainer.getVisible()) {
+							var oVisibleContainer = aVisibleContainers[j];
+							if (oContainer != oVisibleContainer) {
+								// order of containers has changed
+								bExchangeContent = true;
+								break;
+							}
+
 							var aContainerContent = oLayout.mContainers[oContainer.getId()];
 							if (aContainerContent[0] && aContainerContent[0] != oContentElement) {
 								// container uses panel but panel not the same element in content
@@ -911,6 +921,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								bExchangeContent = true;
 								break;
 							}
+							j++;
 						} else {
 							// no container exits for content -> just remove this content
 							oLayout._mainGrid.removeContent(oContentElement);
@@ -928,7 +939,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 				if (iContentLenght < iLength) {
 					// new containers added
-					for ( i = 0; i < aContainers.length; i++) {
+					var iStartIndex = 0;
+					if (iContentLenght > 0) {
+						iStartIndex = iContentLenght--;
+					}
+					for ( i = iStartIndex; i < aContainers.length; i++) {
 						oContainer = aContainers[i];
 						if (oContainer.getVisible()) {
 							var sContainerId = oContainer.getId();

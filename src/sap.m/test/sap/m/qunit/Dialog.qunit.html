@@ -37,8 +37,8 @@
 
 			sap.ui.test.qunit.delayTestStart();
 
-			function overwriteAnimationIE9(oDialog) {
-				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+			function overwriteAnimationIE(oDialog) {
+				if (sap.ui.Device.browser.msie) {
 					// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
 					// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no
 					// animation when runs in IE9
@@ -610,7 +610,7 @@
 					initialFocus: oInput2
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				// Act
 				oDialog.open();
@@ -632,7 +632,7 @@
 					content: [ oInput1, oInput2 ]
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				// Act
 				oDialog.open();
@@ -650,15 +650,15 @@
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
-				var oDialog = new sap.m.Dialog({
+				var oDialogInitialFocus = new sap.m.Dialog({
 					beginButton: oButton1,
 					endButton: oButton2
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialogInitialFocus);
 
 				// Act
-				oDialog.open();
+				oDialogInitialFocus.open();
 				this.clock.tick(500);
 
 				// Assert
@@ -666,7 +666,7 @@
 				strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");
 
 				// Clean up
-				oDialog.destroy();
+				oDialogInitialFocus.destroy();
 			});
 
 			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function() {
@@ -678,7 +678,7 @@
 					endButton: oButton2
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				// Act
 				oDialog.open();
@@ -700,7 +700,7 @@
 					buttons: [oButton1, oButton2]
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				// Act
 				oDialog.open();
@@ -722,7 +722,7 @@
 					buttons: [oButton1, oButton2]
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				// Act
 				oDialog.open();
@@ -739,7 +739,7 @@
 			test("No interactive elements or buttons", function() {
 				// Arrange
 				var oDialog = new sap.m.Dialog();
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				// Act
 				oDialog.open();
@@ -783,7 +783,7 @@
 					initialFocus: "inputWantsFocus"
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				oDialog.open();
 				this.clock.tick(300);
@@ -814,7 +814,7 @@
 					initialFocus: "initialFocusButton"
 				});
 
-				overwriteAnimationIE9(oDialog);
+				overwriteAnimationIE(oDialog);
 
 				oDialog.open();
 				this.clock.tick(400);

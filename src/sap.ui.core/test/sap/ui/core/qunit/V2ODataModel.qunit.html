@@ -50,9 +50,9 @@
 		oMockServer.stop();
 	}
 	
-	function initModel(bJSON) {
+	function initModel(bJSON, sUpdateMethod) {
 		bJSON = bJSON !== false;
-		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON});
+		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON, defaultUpdateMethod : sUpdateMethod});
 	}
 
 	function removeSharedMetadata() {
@@ -1452,7 +1452,7 @@
 			}
 		});
 	});
-	
+		
 	asyncTest("test oDataModel two Way MERGE delta change batch on", function() {
 		var iCount = 0;
 		var bRead = false;
@@ -1745,12 +1745,93 @@
 			}
 		});
 	});
+	
+	asyncTest("test oDataModel two Way submitChanges with defaultUpdateMethod= PUT option and batch on", function() {
+		var iCount = 0;
+		var bRead = false;
+		var bRead2 = false;
+		var bSetProp = false;
+		var bSuccess = false;
+
+		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		
+		oModel.read("/ProductSet('HT-1000')", {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+				bRead = true;
+				oModel.setDeferredBatchGroups(["myId"]);
+				oModel.setChangeBatchGroups({
+					"Product" : {
+						batchGroupId : "myId",
+						changeSetId : "Test",
+						single : true
+					}
+				});
+				bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
+				bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Price", "4445.6");
+				oModel.read("/ProductSet('HT-1000')", {
+					batchGroupId : "myId",
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+						bRead2 = true;
+
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					}
+				});
+				spy = sinon.spy(oModel, "_processChange");
+				oModel.submitChanges({
+					success : function(oData, oResponse) {
+						equal(spy.callCount, 1, "processChange call count");
+						var oRequest = spy.returnValues[0];
+						equal(oRequest.method, "PUT", "request method");
+						ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+						equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+						equal(oRequest.data.Name, "xy", "request payload name");
+						equal(oRequest.data.Price, "4445.6", "request payload price");
+						equal(oRequest.data.CurrencyCode, "EUR",
+								"request payload currency code should be there and not changed!!!");
+						var iCount = 0;
+						jQuery.each(oRequest.data, function(iIndex, oValue) {
+							iCount++;
+						});
+						equal(iCount, 22, "request payload number of properties");
+						spy.restore();
+						bSuccess = true;
+					},
+					error : function(oError) {
+						spy.restore();
+						ok(false, "request failed");
+					}
+				});
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
+				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
+				spy.restore();
+				start();
+			}
+		});
+	});
 
 	asyncTest("test oDataModel two Way submitChanges with PUT option and batch off", function() {
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
 		var bSuccess = false;
+		oModel = initModel();
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -1798,6 +1879,350 @@
 					iCount2++;
 				});
 				equal(iCount2, 22, "request payload number of properties ");
+				spy.restore();
+				start();
+			}
+		});
+	});
+	
+	asyncTest("test oDataModel two Way submitChanges with defaultUpdateMethod = PUT option and batch off", function() {
+		var iCount = 0;
+		var bRead = false;
+		var bSetProp = false;
+		var bSuccess = false;
+		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.PUT);
+		oModel.setUseBatch(false);
+
+		oModel.read("/ProductSet('HT-1000')", {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+				bRead = true;
+
+				bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
+				bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Price", "4445.8");
+				spy = sinon.spy(oModel, "_processChange");
+				oModel.submitChanges({
+					success : function(oData, oResponse) {
+						ok(false, "should not be called if batch off");
+						spy.restore();
+					},
+					error : function(oError) {
+						spy.restore();
+						ok(false, "should not be called if batch off");
+					},
+					merge : false
+				});
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bSetProp && bRead) {
+				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				equal(spy.callCount, 1, "processChange call count");
+				var oRequest = spy.returnValues[0];
+				equal(oRequest.method, "PUT", "request method");
+				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				equal(oRequest.data.Name, "xy", "request payload name");
+				equal(oRequest.data.Price, "4445.8", "request payload price");
+				equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
+				var iCount2 = 0;
+				jQuery.each(oRequest.data, function(iIndex, oValue) {
+					iCount2++;
+				});
+				equal(iCount2, 22, "request payload number of properties ");
+				spy.restore();
+				start();
+			}
+		});
+	});
+	
+	asyncTest("test oDataModel update with defaultUpdateMethod= MERGE option and batch on", function() {
+		var iCount = 0;
+		var bRead = false;
+		var bRead2 = false;
+		var bSetProp = false;
+		var bSuccess = false;
+
+		oModel = initModel(true); // default should be merge
+		
+		oModel.read("/ProductSet('HT-1000')", {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+				bRead = true;
+				oModel.setDeferredBatchGroups(["myId"]);
+				oModel.setChangeBatchGroups({
+					"Product" : {
+						batchGroupId : "myId",
+						changeSetId : "Test",
+						single : true
+					}
+				});
+				oModel.update("/ProductSet('HT-1000')", {
+					Name : "Test"
+				    }, {
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					},
+					eTag: "*",
+					batchGroupId: "myId"
+				});
+				oModel.read("/ProductSet('HT-1000')", {
+					batchGroupId : "myId",
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+						bRead2 = true;
+
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					}
+				});
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.submitChanges({
+					success : function(oData, oResponse) {
+						equal(spy.callCount, 1, "processChange call count");
+						var oRequest = spy.args[0][1][0][0].request;
+						equal(oRequest.method, "MERGE", "request method");
+						ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+						equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+						equal(oRequest.data.Name, "Test", "request payload name");
+						var iCount = 0;
+						jQuery.each(oRequest.data, function(iIndex, oValue) {
+							iCount++;
+						});
+						equal(iCount, 1, "request payload number of properties");
+						spy.restore();
+						bSuccess = true;
+					},
+					error : function(oError) {
+						spy.restore();
+						ok(false, "request failed");
+					}
+				});
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bRead && bRead2 && bSuccess) {
+				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
+				spy.restore();
+				start();
+			}
+		});
+	});
+	
+	asyncTest("test oDataModel update with defaultUpdateMethod= PUT option and batch on", function() {
+		var iCount = 0;
+		var bRead = false;
+		var bRead2 = false;
+		var bSuccess = false;
+
+		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		
+		oModel.read("/ProductSet('HT-1000')", {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+				bRead = true;
+				oModel.setDeferredBatchGroups(["myId"]);
+				oModel.setChangeBatchGroups({
+					"Product" : {
+						batchGroupId : "myId",
+						changeSetId : "Test",
+						single : true
+					}
+				});
+				oModel.update("/ProductSet('HT-1000')", {
+					Name : "Test"
+				    }, {
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					},
+					eTag: "*",
+					batchGroupId: "myId"
+				});
+				oModel.read("/ProductSet('HT-1000')", {
+					batchGroupId : "myId",
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+						bRead2 = true;
+
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					}
+				});
+				spy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.submitChanges({
+					success : function(oData, oResponse) {
+						equal(spy.callCount, 1, "processChange call count");
+						var oRequest = spy.args[0][1][0][0].request;
+						equal(oRequest.method, "PUT", "request method");
+						ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+						equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+						equal(oRequest.data.Name, "Test", "request payload name");
+						var iCount = 0;
+						jQuery.each(oRequest.data, function(iIndex, oValue) {
+							iCount++;
+						});
+						equal(iCount, 1, "request payload number of properties");
+						spy.restore();
+						bSuccess = true;
+					},
+					error : function(oError) {
+						spy.restore();
+						ok(false, "request failed");
+					}
+				});
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bRead && bRead2 && bSuccess) {
+				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
+				spy.restore();
+				start();
+			}
+		});
+	});
+	
+	asyncTest("test oDataModel update with defaultUpdateMethod = MERGE option and batch off", function() {
+		var iCount = 0;
+		var bRead = false;
+		var bSuccess = false;
+		var bUpdate = false;
+		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Merge);
+		oModel.setUseBatch(false);
+
+		oModel.read("/ProductSet('HT-1000')", {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+				bRead = true;
+
+				spy = sinon.spy(oModel, "_submitSingleRequest");
+				oModel.update("/ProductSet('HT-1000')", {
+					Name : "Test3"
+				    }, {
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+						bUpdate = true;
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					},
+					eTag: "*",
+					batchGroupId: "myId"
+				});
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bUpdate && bRead) {
+				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				equal(spy.callCount, 1, "call count");
+				var oRequest = spy.args[0][0];
+				equal(oRequest.method, "POST", "request method");
+				ok(oRequest.headers['x-http-method'] === "MERGE", "request method header should not be present");
+				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				equal(oRequest.data.Name, "Test3", "request payload name");
+				var iCount2 = 0;
+				jQuery.each(oRequest.data, function(iIndex, oValue) {
+					iCount2++;
+				});
+				equal(iCount2, 1, "request payload number of properties ");
+				spy.restore();
+				start();
+			}
+		});
+	});
+	
+	asyncTest("test oDataModel update with defaultUpdateMethod = PUT option and batch off", function() {
+		var iCount = 0;
+		var bRead = false;
+		var bSetProp = false;
+		var bUpdate = false;
+		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		oModel.setUseBatch(false);
+
+		oModel.read("/ProductSet('HT-1000')", {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+				equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+				bRead = true;
+
+				spy = sinon.spy(oModel, "_submitSingleRequest");
+				oModel.update("/ProductSet('HT-1000')", {
+					Name : "Test2"
+				    }, {
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+						bUpdate = true;
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					},
+					eTag: "*",
+					batchGroupId: "myId"
+				});
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bUpdate && bRead) {
+				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				equal(spy.callCount, 1, "call count");
+				var oRequest = spy.args[0][0];
+				equal(oRequest.method, "PUT", "request method");
+				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				equal(oRequest.data.Name, "Test2", "request payload name");
+				var iCount2 = 0;
+				jQuery.each(oRequest.data, function(iIndex, oValue) {
+					iCount2++;
+				});
+				equal(iCount2, 1, "request payload number of properties ");
 				spy.restore();
 				start();
 			}
@@ -1978,6 +2403,89 @@
 		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			ok(false, "should not land here");
+		});
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	
+	asyncTest("test oDataModel 2 times createEntry and one deleteCreatedEntry", function() {
+		var oContext, oContext2;
+		
+		oModel.setDeferredBatchGroups(["myId"]);
+		oModel.setChangeBatchGroups({
+			"Product": {
+				batchGroupId: "myId",  
+				changeSetId: "Test",
+				single: true
+			}
+		});
+		
+		var fnTest = function(){
+			oContext = oModel.createEntry("/ProductSet", {properties: {
+					"ProductID":"AD-1234",
+					"TypeCode":"AD",
+					"Category":"Computer system accessories",
+					"Name":"TestEntry",
+					"NameLanguage":"E",
+					"Description":"Flyer for our product palette",
+					"DescriptionLanguage":"E",
+					"SupplierID":"0100000015",
+					"SupplierName":"Robert Brown Entertainment",
+					"TaxTarifCode":1,
+					"MeasureUnit":"EA",
+					"WeightMeasure":"0.01",
+					"WeightUnit":"KG",
+					"CurrencyCode":"CAD",
+					"Price":"0.0",
+					"Width":"0.46",
+					"Depth":"0.3",
+					"Height":"0.03",
+					"DimUnit":"M"
+			}, batchGroupId: "myId"});
+	
+			oModel.deleteCreatedEntry(oContext);
+			
+			oContext2 = oModel.createEntry("/ProductSet", {properties: {
+				"ProductID":"AD-1235",
+				"TypeCode":"AD",
+				"Category":"Computer system accessories",
+				"Name":"TestEntry",
+				"NameLanguage":"E",
+				"Description":"Flyer for our product palette",
+				"DescriptionLanguage":"E",
+				"SupplierID":"0100000015",
+				"SupplierName":"Robert Brown Entertainment",
+				"TaxTarifCode":1,
+				"MeasureUnit":"EA",
+				"WeightMeasure":"0.01",
+				"WeightUnit":"KG",
+				"CurrencyCode":"CAD",
+				"Price":"0.0",
+				"Width":"0.46",
+				"Depth":"0.3",
+				"Height":"0.03",
+				"DimUnit":"M"
+		}, batchGroupId: "myId"});
+			
+			oModel.submitChanges({
+				success : function(oData, oResponse) {
+					ok(true, "should land here");
+				},
+				error : function(oError) {
+					ok(false, "should not land here");
+				}
+			});
+
+		};
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(true, "should land here");
+			var aRequests = oEvent.getParameter('requests');
+			equal(aRequests.length, 1, "should contain one request");
+			equal(aRequests[0].success, true, "request successful");
+			equal(aRequests[0].url, "ProductSet", "request successful");
+			equal(aRequests[0].response.statusCode, "201", "response code");
+			start();
 		});
 		oModel.attachMetadataLoaded(this, function() {
 			fnTest();

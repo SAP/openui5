@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
 
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -50,7 +50,7 @@ for (var i = 0; i < 9; i++) {
 }
 
 for (var i = 0, l = aData.length; i < l; i++) {
-	aData[i].lastName += " - " + i;
+	aData[i].lastName += " - " + (i + 1);
 	aData[i].birthdayDate = new Date(aData[i].birthday);
 }
 
@@ -59,7 +59,7 @@ var oSelectTableStyleLabel = new sap.m.Label({text: "Select Table Style"});
 var oSelectTableStyle = new sap.m.Select({
 	items: [
 		new sap.ui.core.Item({
-			key: "",
+			key: "sapUiSizeCozy",
 			text: "Cozy"
 		}),
 		new sap.ui.core.Item({
@@ -176,7 +176,7 @@ oControl = new sap.m.MultiComboBox({items: [
 	new sap.ui.core.Item({key: "v4", text: "Value 4"})
 ]
 });
-oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.ComboBox"}), template: oControl, width: "250px"});
+oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.MultiComboBox"}), template: oControl, width: "250px"});
 oTable.addColumn(oColumn);
 
 // sap.m.Checkbox
@@ -202,10 +202,13 @@ oTable.bindRows("/modelData");
 
 oTable.placeAt("content");
 
+var oButtonAfterTable = new sap.m.Button({text: "Just a Button after the Table"});
+oButtonAfterTable.placeAt("content");
+
 </script>
 </head>
-<body class="sapUiBody" role="application">
-<div id="configuration" style="padding-bottom: 40px;"></div>
+<body class="sapUiBody sapUiSizeCozy" role="application">
+<div id="configuration" style="padding-bottom: 40px; display: none;"></div>
 <h1 id="header">Test Page for <code>sap.ui.table.Table</code> with <code>sap.m</code> library</h1>
 <div id="content"></div>
 <p>

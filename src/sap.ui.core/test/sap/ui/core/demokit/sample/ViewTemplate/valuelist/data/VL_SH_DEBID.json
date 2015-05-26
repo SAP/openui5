@@ -1,0 +1,155 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ELENA',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='ELENA%20R.',KUNNR='ER_1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ELENA',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='ELENA%20R.',KUNNR='ER_1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "ELENA",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "ELENA R.",
+					"KUNNR" : "ER_1",
+					"BUKRS" : "0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WILZBACH',PSTLZ='69191',MCOD3='HEIDELBERG',MCOD1='GABRIELA%20WILZBACH%20DIVKOVI',KUNNR='WILZBACH',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WILZBACH',PSTLZ='69191',MCOD3='HEIDELBERG',MCOD1='GABRIELA%20WILZBACH%20DIVKOVI',KUNNR='WILZBACH',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "WILZBACH",
+					"LAND1" : "DE",
+					"PSTLZ" : "69191",
+					"MCOD3" : "HEIDELBERG",
+					"MCOD1" : "GABRIELA WILZBACH DIVKOVI",
+					"KUNNR" : "WILZBACH",
+					"BUKRS" : "0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='FJSD',PSTLZ='69226',MCOD3='NUSSLOCH',MCOD1='FJSD',KUNNR='FJSD',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='FJSD',PSTLZ='69226',MCOD3='NUSSLOCH',MCOD1='FJSD',KUNNR='FJSD',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "FJSD",
+					"LAND1" : "DE",
+					"PSTLZ" : "69226",
+					"MCOD3" : "NUSSLOCH",
+					"MCOD1" : "FJSD",
+					"KUNNR" : "FJSD",
+					"BUKRS" : "0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WERNERF',PSTLZ='69168',MCOD3='WIESLOCH',MCOD1='FRANK%20WERNER',KUNNR='FW_1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WERNERF',PSTLZ='69168',MCOD3='WIESLOCH',MCOD1='FRANK%20WERNER',KUNNR='FW_1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "WERNERF",
+					"LAND1" : "DE",
+					"PSTLZ" : "69168",
+					"MCOD3" : "WIESLOCH",
+					"MCOD1" : "FRANK WERNER",
+					"KUNNR" : "FW_1",
+					"BUKRS" : "0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MG',PSTLZ='69257',MCOD3='WIESENBACH',MCOD1='GR%C3%9CNEWALD%20%26%20FRIENDS',KUNNR='MG001',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MG',PSTLZ='69257',MCOD3='WIESENBACH',MCOD1='GR%C3%9CNEWALD%20%26%20FRIENDS',KUNNR='MG001',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "MG",
+					"LAND1" : "DE",
+					"PSTLZ" : "69257",
+					"MCOD3" : "WIESENBACH",
+					"MCOD1" : "GRÜNEWALD & FRIENDS",
+					"KUNNR" : "MG001",
+					"BUKRS" : "0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ASCUST1',PSTLZ='12345',MCOD3='STADT',MCOD1='ANDR%C3%89S%20KUNDE%20EINS',KUNNR='ASCUST1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ASCUST1',PSTLZ='12345',MCOD3='STADT',MCOD1='ANDR%C3%89S%20KUNDE%20EINS',KUNNR='ASCUST1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "ASCUST1",
+					"LAND1" : "DE",
+					"PSTLZ" : "12345",
+					"MCOD3" : "STADT",
+					"MCOD1" : "ANDRÉS KUNDE EINS",
+					"KUNNR" : "ASCUST1",
+					"BUKRS" : "0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "EB1",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "EB1_CUSTOMER",
+					"KUNNR" : "1",
+					"BUKRS" : "0001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BOHR UND H",
+					"LAND1" : "DE",
+					"PSTLZ" : "10117",
+					"MCOD3" : "BERLIN",
+					"MCOD1" : "BOHR UND HAMMER GMBH",
+					"KUNNR" : "C0001",
+					"BUKRS" : "F001"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='CN01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='CN01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "EB1",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "EB1_CUSTOMER",
+					"KUNNR" : "1",
+					"BUKRS" : "CN01"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='CN01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='CN01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BOHR UND H",
+					"LAND1" : "DE",
+					"PSTLZ" : "10117",
+					"MCOD3" : "BERLIN",
+					"MCOD1" : "BOHR UND HAMMER GMBH",
+					"KUNNR" : "C0001",
+					"BUKRS" : "CN01"
+				}]
+	}
+}

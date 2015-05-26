@@ -46,6 +46,11 @@
 			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
+			"control": "sap.m.FeedListItem",
+			"url": "../FeedListItem.html",
+			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
 			"control": "sap.m.IconTabBar",
 			"url": "../IconTabBar.html",
 			"appComponent": "CA-UI5-CTR-SOF"
@@ -119,6 +124,11 @@
 		{
 			"control": "sap.m.ProgressIndicator",
 			"url": "../ProgressIndicator.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.PullToRefresh",
+			"url": "../PullToRefresh.html",
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{

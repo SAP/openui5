@@ -1410,9 +1410,21 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "př. n. l.",
+			"1": "n. l."
+		},
+		"era-abbreviated": {
+			"0": "př. n. l.",
+			"1": "n. l."
+		},
+		"era-narrow": {
+			"0": "př.n.l.",
+			"1": "n.l."
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "EEEE d. MMMM y G",
 		"dateFormat-long": "d. MMMM y G",
 		"dateFormat-medium": "d. M. y G",
@@ -1687,284 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "EEEE d. MMMM y G",
-		"dateFormat-long": "d. MMMM y G",
-		"dateFormat-medium": "d. M. y G",
-		"dateFormat-short": "dd.MM.yy GGGGG",
-		"timeFormat-full": "H:mm:ss zzzz",
-		"timeFormat-long": "H:mm:ss z",
-		"timeFormat-medium": "H:mm:ss",
-		"timeFormat-short": "H:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-H-H": "H–H",
-		"intervalFormat-Hm-H": "H:mm–H:mm",
-		"intervalFormat-Hm-m": "H:mm–H:mm",
-		"intervalFormat-Hmv-H": "H:mm–H:mm v",
-		"intervalFormat-Hmv-m": "H:mm–H:mm v",
-		"intervalFormat-Hv-H": "H–H v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-MEd-M": "E d. M. – E d. M.",
-		"intervalFormat-MEd-d": "E d. M. – E d. M.",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMEd-M": "E d. M. – E d. M.",
-		"intervalFormat-MMMEd-d": "E d. M. – E d. M.",
-		"intervalFormat-MMMd-M": "d. M. – d. M.",
-		"intervalFormat-MMMd-d": "d.–d. M.",
-		"intervalFormat-Md-M": "d. M. – d. M.",
-		"intervalFormat-Md-d": "d. M. – d. M.",
-		"intervalFormat-d-d": "d.–d.",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "M/y – M/y G",
-		"intervalFormat-yM-y": "M/y – M/y G",
-		"intervalFormat-yMEd-M": "E dd.MM.y – E dd.MM.y G",
-		"intervalFormat-yMEd-d": "E dd.MM.y – E dd.MM.y G",
-		"intervalFormat-yMEd-y": "E dd.MM.y – E dd.MM.y G",
-		"intervalFormat-yMMM-M": "MMM–MMM y G",
-		"intervalFormat-yMMM-y": "MMM y – MMM y G",
-		"intervalFormat-yMMMEd-M": "E d. M. – E d. M. y G",
-		"intervalFormat-yMMMEd-d": "E d. M. – E d. M. y G",
-		"intervalFormat-yMMMEd-y": "E d. M. y – E d. M. y G",
-		"intervalFormat-yMMMM-M": "LLLL–LLLL y G",
-		"intervalFormat-yMMMM-y": "LLLL y – LLLL y G",
-		"intervalFormat-yMMMd-M": "d. M. – d. M. y G",
-		"intervalFormat-yMMMd-d": "d.–d. M. y G",
-		"intervalFormat-yMMMd-y": "d. M. y – d. M. y G",
-		"intervalFormat-yMd-M": "dd.MM.y – dd.MM.y G",
-		"intervalFormat-yMd-d": "dd.MM.y – dd.MM.y G",
-		"intervalFormat-yMd-y": "dd.MM.y – dd.MM.y G",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"days-format-abbreviated": [
-			"ne",
-			"po",
-			"út",
-			"st",
-			"čt",
-			"pá",
-			"so"
-		],
-		"days-format-narrow": [
-			"N",
-			"P",
-			"Ú",
-			"S",
-			"Č",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"ne",
-			"po",
-			"út",
-			"st",
-			"čt",
-			"pá",
-			"so"
-		],
-		"days-format-wide": [
-			"neděle",
-			"pondělí",
-			"úterý",
-			"středa",
-			"čtvrtek",
-			"pátek",
-			"sobota"
-		],
-		"days-standAlone-abbreviated": [
-			"ne",
-			"po",
-			"út",
-			"st",
-			"čt",
-			"pá",
-			"so"
-		],
-		"days-standAlone-narrow": [
-			"N",
-			"P",
-			"Ú",
-			"S",
-			"Č",
-			"P",
-			"S"
-		],
-		"days-standAlone-short": [
-			"ne",
-			"po",
-			"út",
-			"st",
-			"čt",
-			"pá",
-			"so"
-		],
-		"days-standAlone-wide": [
-			"neděle",
-			"pondělí",
-			"úterý",
-			"středa",
-			"čtvrtek",
-			"pátek",
-			"sobota"
-		],
-		"quarters-format-abbreviated": [
-			"Q1",
-			"Q2",
-			"Q3",
-			"Q4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1. čtvrtletí",
-			"2. čtvrtletí",
-			"3. čtvrtletí",
-			"4. čtvrtletí"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Q1",
-			"Q2",
-			"Q3",
-			"Q4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1. čtvrtletí",
-			"2. čtvrtletí",
-			"3. čtvrtletí",
-			"4. čtvrtletí"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-wide": [
-			"AM",
-			"PM"
-		]
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Rok",
 	"dateField-year-relative--1": "minulý rok",

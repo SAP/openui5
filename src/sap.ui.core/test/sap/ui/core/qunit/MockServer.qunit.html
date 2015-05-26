@@ -70,7 +70,7 @@
 
 	test("Basic", 11, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -102,7 +102,7 @@
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -114,7 +114,7 @@
 		oMockServer.stop();
 		ok(!oMockServer.isStarted(), "Mock server is stopped");
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Response not faked");
@@ -122,7 +122,7 @@
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started again");
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -135,12 +135,37 @@
 	});
 	
 	
+	test("Test URL parameters with ampersand in value", 3, function() {
+
+        var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+
+ 		var oResponse = jQuery.sap.sjax({
+ 			url : "/myservice/FlightCollection?$filter=startswith(flightDetails,'Smartphones&$Tab&lets')",
+ 			dataType : "json"
+ 		});
+		
+ 		ok(!oResponse.success, "Mock server responded well");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?key1=1&key2=22&key3='h&m'&key4='42\" tv'",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded well");
+		oMockServer.destroy();
+	});	
 
 	
 
 	test("Path with RegExp Pattern", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)",
@@ -156,7 +181,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -167,7 +192,7 @@
 
 	test("Path with placeholder", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -183,7 +208,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -194,7 +219,7 @@
 
 	test("Test assertion: Missing method", 1, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				path : "/projects2/(.*)",
 				response : function(oXhr, id) {
@@ -213,7 +238,7 @@
 
 	test("Test assertion: Missing path", 1, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				response : function(oXhr, id) {
@@ -232,7 +257,7 @@
 
 	test("Test assertion: Missing response", 1, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)"
@@ -247,7 +272,7 @@
 
 	test("Two server", 10, function() {
 		var oMockServer1 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -268,7 +293,7 @@
 		});
 
 		var oMockServer2 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)",
@@ -286,7 +311,7 @@
 		ok(oMockServer2.isStarted(), "Mock server 2 is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -296,7 +321,7 @@
 		} ], "Response is right");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -306,7 +331,7 @@
 		ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Response is not faked");
@@ -320,7 +345,7 @@
 
 	test("Clean up", 15, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -379,7 +404,7 @@
 
 	test("Start / Stop / Destroy all", 8, function() {
 		var oMockServer1 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -400,7 +425,7 @@
 		});
 
 		var oMockServer2 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)",
@@ -435,7 +460,7 @@
 		})
 
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -452,7 +477,7 @@
 
 		var iBefore = new Date().getTime();
 		var oResponse = jQuery.ajax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json",
 			success : function() {
 				start();
@@ -477,7 +502,7 @@
 		})
 
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -493,7 +518,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.ajax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json",
 			success : function() {
 				start();
@@ -512,7 +537,7 @@
 
 	test("xhr.respondJSON", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -526,7 +551,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -541,7 +566,7 @@
 
 	test("xhr.respondXML", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -555,7 +580,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -566,7 +591,7 @@
 
 	test("xhr.respondFile", 5, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -586,14 +611,14 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
 		equal(oResponse.data.test, "works", "JSON: Response is right")
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");

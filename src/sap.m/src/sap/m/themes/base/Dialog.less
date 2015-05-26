@@ -8,8 +8,6 @@
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
 .sapMDialogSection {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -80,6 +78,9 @@
   -webkit-transition-duration: 0.3s;
   -moz-transition-duration: 0.3s;
   transition-duration: 0.3s;
+  -webkit-transition-property: -webkit-transform;
+  -moz-transition-property: -webkit-transform;
+  transition-property: transform;
 }
 
 .sapMDialogBlockLayer {
@@ -118,8 +119,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
 /* messagedialog always has content padding */
 .sapMMessageDialog .sapMDialogScrollCont {
   padding: 1rem;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -244,16 +243,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
 .sapUiContainerContentPadding(~".sapMDialog", ~"> section > .sapMDialogScroll > .sapMDialogScrollCont");
 
 /* ====================================================== */
-
-.sapMDialogPhone {
-  opacity: 1;
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-transition-property: -webkit-transform;
-  -moz-transition-property: -webkit-transform;
-  transition-property: transform;
-}
 
 .sapMDialog.sapMMessageDialog {
   font-size: 0.875rem;

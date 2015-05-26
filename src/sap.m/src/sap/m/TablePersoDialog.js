@@ -125,6 +125,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		this._oButtonUp = new Button({
 						icon: "sap-icon://arrow-top",
 						enabled: false,
+						tooltip: that._oRb.getText('PERSODIALOG_UP'),
 						press: function(oEvent) {
 							that._moveItem(-1);
 						}
@@ -133,6 +134,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		this._oButtonDown = new Button({
 						icon: "sap-icon://arrow-bottom",
 						enabled: false,
+						tooltip: that._oRb.getText('PERSODIALOG_DOWN'),
 						press: function(oEvent) {
 							  that._moveItem(1);
 						}
@@ -181,9 +183,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			that._oButtonDown.setEnabled(bButtonDownEnabled);
 		};
 
-		this._fnAfterListRendering = function(oEvent) {
+		this._fnListUpdateFinished = function() {
 			// Find all checkboxes in the list
-			var aItems = oEvent.srcControl.$().find('.sapMCb'),
+			var aItems = this.$().find('.sapMCb'),
 				iItemsLength = aItems.length;
 			// 'forEach' does not work
 			for (var i = 0; i < iItemsLength; i++) {
@@ -201,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			if (that._sLastSelectedItemId) {
 				var aItems = that._oList.getItems(),
 					fnItemMatches = function (oListItem) {
-						var bResult = (oListItem.getBindingContext('Personalization') && 
+						var bResult = (oListItem.getBindingContext('Personalization') &&
 								oListItem.getBindingContext('Personalization').getProperty('id') === that._sLastSelectedItemId);
 						if (bResult) {
 							that._oList.setSelectedItem(oListItem);
@@ -232,15 +234,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			// Scroll container gets focused in Firefox
 			that._oScrollContainer.$().attr('tabindex', '-1');
 		};
-		
+
 		this._oList =  new List({
 			includeItemInSelection: true,
 			noDataText: this._oRb.getText('PERSODIALOG_NO_DATA'),
 			mode: sap.m.ListMode.SingleSelectMaster,
-			selectionChange: this._fnUpdateArrowButtons
+			selectionChange: this._fnUpdateArrowButtons,
+			updateFinished: this._fnListUpdateFinished
 		});
-		
-		this._oList.addDelegate({onAfterRendering : this._fnAfterListRendering});
+
+		//this._oList.addDelegate({onAfterRendering : this._fnAfterListRendering});
 
 		this._oSearchField = new sap.m.SearchField(this.getId() + "-searchField", {
 			width: "100%",
@@ -469,9 +472,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			// Remember last selected row, so it can be selected again after
 			// reset all is done
 			var oLastSelectedItem = this._oList.getSelectedItem();
-			this._sLastSelectedItemId = oLastSelectedItem && 
-				oLastSelectedItem.getBindingContext('Personalization') && 
-				oLastSelectedItem.getBindingContext('Personalization').getProperty('id'); 
+			this._sLastSelectedItemId = oLastSelectedItem &&
+				oLastSelectedItem.getBindingContext('Personalization') &&
+				oLastSelectedItem.getBindingContext('Personalization').getProperty('id');
 
 			// CSN 0120061532 0001380609 2014
 			// Make sure that captions are not replaced by column id's. This my be the case if

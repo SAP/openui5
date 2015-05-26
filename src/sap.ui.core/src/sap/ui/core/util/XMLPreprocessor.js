@@ -275,7 +275,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * @private
 			 */
 			process : function(oRootElement, oViewInfo, mSettings) {
-				var sCaller;
+				var sCaller,
+					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
+					iNestingLevel = 0,
+					sName;
+
+				/*
+				 * Outputs a debug message with the given nesting level; takes care not to
+				 * construct the message or serialize XML in vain.
+				 *
+				 * @param {Element} [oElement]
+				 *   a DOM element which is serialized to the details
+				 * @param {string...} aTexts
+				 *   the main text of the message is constructed from the rest of the arguments by
+				 *   joining them separated by single spaces
+				 */
+				function debug(oElement) {
+					if (bDebug) {
+						jQuery.sap.log.debug((iNestingLevel < 10 ? "[ " : "[") + iNestingLevel
+							+ "] " + Array.prototype.slice.call(arguments, 1).join(" "),
+							oElement && serializeSingleElement(oElement),
+							"sap.ui.core.util.XMLPreprocessor");
+					}
+				}
+
+				/**
+				 * Outputs a debug message "Finished" with the given nesting level; takes care not
+				 * to serialize XML in vain.
+				 *
+				 * @param {Element} oElement
+				 *   a DOM element which is serialized to the details
+				 */
+				function debugFinished(oElement) {
+					if (bDebug) {
+						jQuery.sap.log.debug((iNestingLevel < 10 ? "[ " : "[") + iNestingLevel
+							+ "] Finished", "</" + oElement.nodeName + ">",
+							"sap.ui.core.util.XMLPreprocessor");
+					}
+				}
 
 				/**
 				 * Throws an error with the given message, prefixing it with the caller
@@ -414,7 +451,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				function performTest(oElement, oWithControl) {
 					// constant test conditions are suspicious, but useful during development
 					var fnCallIfConstant
-						= warn.bind(null, 'Constant test condition in ', oElement, null),
+							= warn.bind(null, 'Constant test condition in ', oElement, null),
+						bResult,
 						sTest = oElement.getAttribute("test"),
 						vTest;
 
@@ -428,7 +466,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						warn('Error in formatter of ', oElement, ex);
 						vTest = false;
 					}
-					return vTest && vTest !== "false";
+					bResult = !!vTest && vTest !== "false";
+					if (bDebug) {
+						if (typeof vTest === "string") {
+							vTest = JSON.stringify(vTest);
+						} else if (vTest === undefined) {
+							vTest = "undefined";
+						} else if (Array.isArray(vTest)) {
+							vTest = "[object Array]";
+						}
+						debug(oElement, "test ==", vTest, "-->", bResult);
+					}
+					return bResult;
 				}
 
 				/**
@@ -449,11 +498,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					try {
 						vValue = getResolvedBinding(sValue, oElement, oWithControl, false);
 						if (vValue !== oUNBOUND) {
+							if (bDebug && vValue !== oAttribute.value) {
+								debug(oElement, oAttribute.name, "=", vValue);
+							}
 							oAttribute.value = vValue;
 						}
 					} catch (ex) {
 						// just don't replace XML attribute value
-						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
+						if (bDebug) {
 							jQuery.sap.log.debug(
 								sCaller + ': Error in formatter of '
 									+ serializeSingleElement(oElement),
@@ -499,6 +551,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							return;
 						}
 
+						iNestingLevel++;
+						debug(oElement, "fragmentName =", sFragmentName);
 						oWithControl.$mFragmentContexts[sFragmentName] = true;
 
 						if (localName(oFragmentElement) === "FragmentDefinition" &&
@@ -509,7 +563,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							liftChildNodes(oElement, oWithControl);
 						}
 						oElement.parentNode.removeChild(oElement);
+
 						oWithControl.$mFragmentContexts[sFragmentName] = false;
+						debugFinished(oElement);
+						iNestingLevel--;
 					}
 
 					try {
@@ -539,6 +596,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						// the element to run the test on (may be <if> or <elseif>)
 						oTestElement;
 
+					iNestingLevel++;
 					if (aChildren) {
 						oTestElement = oIfElement; // initially the <if>
 						oSelectedElement = aChildren.shift(); // initially the <then>
@@ -557,6 +615,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						liftChildNodes(oSelectedElement, oWithControl, oIfElement);
 					}
 					oIfElement.parentNode.removeChild(oIfElement);
+					debugFinished(oIfElement);
+					iNestingLevel--;
 				}
 
 				/**
@@ -604,6 +664,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					oNewWithControl.setModel(oListBinding.getModel(), sVar);
 
 					// the actual loop
+					iNestingLevel++;
+					debug(oElement, "Starting");
 					aContexts.forEach(function (oContext, i) {
 						var oSourceNode = (i === aContexts.length - 1) ?
 							oElement : oElement.cloneNode(true);
@@ -611,8 +673,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						// is OK to use sModelName's context for sVar as well (the name is not part
 						// of the context!)
 						oNewWithControl.setBindingContext(oContext, sVar);
+						debug(oElement, sVar, "=", oContext.getPath());
 						liftChildNodes(oSourceNode, oNewWithControl, oElement);
 					});
+					debugFinished(oElement);
+					iNestingLevel--;
 
 					oElement.parentNode.removeChild(oElement);
 				}
@@ -642,17 +707,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
 
-					//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
 					oBindingInfo = BindingParser.simpleParser("{" + sPath + "}");
 					sVar = sVar || oBindingInfo.model; // default variable is same model name
 
-					//TODO Simplify code once named contexts are supported by the core
 					if (sHelper || sVar) { // create a "named context"
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
 							error("Missing model '" + oBindingInfo.model + "' in ", oElement);
 						}
-						//TODO any trick to avoid explicit resolution of relative paths here?
 						sResolvedPath = oModel.resolve(oBindingInfo.path,
 							oWithControl.getBindingContext(oBindingInfo.model));
 						if (!sResolvedPath) {
@@ -676,7 +738,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							}
 						}
 						oNewWithControl.setModel(oModel, sVar);
-						oNewWithControl.bindObject({ //TODO setBindingContext?!
+						oNewWithControl.bindObject({
 							model : sVar,
 							path : sResolvedPath
 						});
@@ -684,6 +746,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						oNewWithControl.bindObject(sPath);
 					}
 
+					iNestingLevel++;
+					debug(oElement, sVar, "=", sResolvedPath);
 					if (oNewWithControl.getBindingContext(sVar)
 							=== oWithControl.getBindingContext(sVar)) {
 						// Warn and ignore the new "with" control when its binding context is
@@ -695,6 +759,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					liftChildNodes(oElement, oNewWithControl);
 					oElement.parentNode.removeChild(oElement);
+					debugFinished(oElement);
+					iNestingLevel--;
 				}
 
 				/**
@@ -796,10 +862,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					sCaller = oViewInfo.caller;
 				}
 				mSettings = mSettings || {};
+				if (bDebug) {
+					debug(undefined, "Start processing", sCaller);
+					if (mSettings.bindingContexts instanceof Context)  {
+						debug(undefined, "undefined =", mSettings.bindingContexts);
+					} else {
+						for (sName in mSettings.bindingContexts) {
+							debug(undefined, sName, "=", mSettings.bindingContexts[sName]);
+						}
+					}
+				}
 				visitNode(oRootElement, new With({
 					models : mSettings.models,
 					bindingContexts : mSettings.bindingContexts
 				}));
+				debug(undefined, "Finished processing", sCaller);
 				return oRootElement;
 			}
 		};

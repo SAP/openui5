@@ -37,9 +37,7 @@
 
 .sapMPanelExpandableIcon {
 	color: @sapUiElement;
-}
-
-.sapMPanelExpandableIcon:focus {
-	outline: 1px dotted @sapUiFocus;
-	outline-offset: -0.75rem;
+	&:focus::after {
+		border: 1px dotted @sapUiFocus;
+	}
 }

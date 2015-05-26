@@ -97,7 +97,7 @@
         "id": "7f1abafa3ab5254102228c8878b4f5006dceccb2",
         "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
         "type": "FIX",
-        "text": "TreeTable.js: Removed "undefined" function call",
+        "text": "TreeTable.js: Removed 'undefined' function call",
         "references": []
       },
       {

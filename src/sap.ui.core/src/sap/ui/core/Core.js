@@ -3,8 +3,8 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', './Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', './RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './tmpl/Template', './message/MessageManager', 'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
-	function(jQuery, Device, Global, DataType, EventProvider, Component, Configuration, Control, Element, ElementMetadata, FocusHandler, RenderManager, ResizeHandler, ThemeCheck, UIArea, Template, MessageManager/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object', './Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', './RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './tmpl/Template', './message/MessageManager', 'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
+	function(jQuery, Device, Global, DataType, EventProvider, BaseObject, Component, Configuration, Control, Element, ElementMetadata, FocusHandler, RenderManager, ResizeHandler, ThemeCheck, UIArea, Template, MessageManager/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
 	"use strict";
 
 	/*global Promise */
@@ -17,6 +17,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 */
 	var mLoadedLibraries = {};
 
+	/**
+	 * EventProvider instance, EventProvider is no longer extended
+	 * @private
+	 */
+	var _oEventProvider;		
+		
 	/**
 	 * @class Core Class of the SAP UI Library.
 	 *
@@ -36,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * It registers the Browser Eventing.
 	 *
-	 * @extends sap.ui.base.EventProvider
+	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
 	 * @version ${version}
@@ -44,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @alias sap.ui.core.Core
 	 * @public
 	 */
-	var Core = EventProvider.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
+	var Core = BaseObject.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
 		constructor : function() {
 
 			//make this class only available once
@@ -56,8 +62,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				log = jQuery.sap.log,
 				METHOD = "sap.ui.core.Core";
 
-			//inheritance to be able to fire internal events
-			EventProvider.apply(this);
+			BaseObject.call(this);
+			
+			_oEventProvider = new EventProvider();
+
+			// Generate all functions from EventProvider for backward compatibility
+			["attachEvent", "detachEvent", "getEventingParent"].forEach(function(sFuncName) {
+				Core.prototype[sFuncName] = _oEventProvider[sFuncName].bind(_oEventProvider);
+			});
 
 			/**
 			 * Whether the core has been booted
@@ -193,6 +205,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			};
 			Element.prototype.deregister = function() {
 				that.deregisterElement(this);
+			};
+			
+			// grant Element "friend" access to Core / FocusHandler to update the given elements focus info
+			Element._updateFocusInfo = function(oElement) {
+				if (that.oFocusHandler) {
+					that.oFocusHandler.updateControlFocusInfo(oElement);
+				}
 			};
 
 			// grant Component "friend" access to Core for (de-)registration
@@ -1638,15 +1657,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 */
 
 	Core.prototype.attachUIUpdated = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.UIUpdated, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.UIUpdated, fnFunction, oListener);
 	};
 
 	Core.prototype.detachUIUpdated = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.UIUpdated, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.UIUpdated, fnFunction, oListener);
 	};
 
 	Core.prototype.fireUIUpdated = function(mParameters) {
-		this.fireEvent(Core.M_EVENTS.UIUpdated, mParameters);
+		_oEventProvider.fireEvent(Core.M_EVENTS.UIUpdated, mParameters);
 	};
 
 	/**
@@ -1657,11 +1676,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 */
 
 	Core.prototype.attachThemeChanged = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
 	};
 
 	Core.prototype.detachThemeChanged = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
 	};
 
 	Core.prototype.fireThemeChanged = function(mParameters) {
@@ -1684,7 +1703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		jQuery.sap.act.refresh();
 
 		// notify the listeners via a control event
-		this.fireEvent(sEventId, mParameters);
+		_oEventProvider.fireEvent(sEventId, mParameters);
 	};
 
 	/**
@@ -1719,7 +1738,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.attachLocalizationChanged = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
 	};
 
 	/**
@@ -1733,7 +1752,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.detachLocalizationChanged = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
 	};
 
 	/**
@@ -1797,7 +1816,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		});
 
 		// notify registered Core listeners
-		this.fireEvent(sEventId, {changes : mChanges});
+		_oEventProvider.fireEvent(sEventId, {changes : mChanges});
 	};
 
 	/**
@@ -1827,14 +1846,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Register a listener for the {@link sap.ui.core.Core#event:libraryChanged} event.
 	 */
 	Core.prototype.attachLibraryChanged = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
 	};
 
 	/**
 	 * Unregister a listener from the {@link sap.ui.core.Core#event:libraryChanged} event.
 	 */
 	Core.prototype.detachLibraryChanged = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
 	};
 
 	/**
@@ -1842,7 +1861,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 */
 	Core.prototype.fireLibraryChanged = function(oParams) {
 		// notify registered Core listeners
-		this.fireEvent(Core.M_EVENTS.LibraryChanged, oParams);
+		_oEventProvider.fireEvent(Core.M_EVENTS.LibraryChanged, oParams);
 	};
 
 	/**
@@ -2162,7 +2181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.attachControlEvent = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
 	};
 
 	/**
@@ -2176,7 +2195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.detachControlEvent = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
 	};
 
 	/**
@@ -2185,7 +2204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @private
 	 */
 	Core.prototype.fireControlEvent = function(mParameters) {
-		this.fireEvent(Core.M_EVENTS.ControlEvent, mParameters);
+		_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, mParameters);
 	};
 
 	/**
@@ -2433,7 +2452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			fnFunction = oData;
 			oData = undefined;
 		}
-		this.attachEvent(Core.M_EVENTS.ValidationError, oData, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.ValidationError, oData, fnFunction, oListener);
 		return this;
 	};
 
@@ -2450,7 +2469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.detachValidationError = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.ValidationError, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.ValidationError, fnFunction, oListener);
 		return this;
 	};
 
@@ -2475,7 +2494,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			fnFunction = oData;
 			oData = undefined;
 		}
-		this.attachEvent(Core.M_EVENTS.ParseError, oData, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.ParseError, oData, fnFunction, oListener);
 		return this;
 	};
 
@@ -2492,7 +2511,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.detachParseError = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.ParseError, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.ParseError, fnFunction, oListener);
 		return this;
 	};
 
@@ -2515,7 +2534,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			fnFunction = oData;
 			oData = undefined;
 		}
-		this.attachEvent(Core.M_EVENTS.FormatError, oData, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.FormatError, oData, fnFunction, oListener);
 		return this;
 	};
 
@@ -2532,7 +2551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.detachFormatError = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.FormatError, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.FormatError, fnFunction, oListener);
 		return this;
 	};
 
@@ -2557,7 +2576,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			fnFunction = oData;
 			oData = undefined;
 		}
-		this.attachEvent(Core.M_EVENTS.ValidationSuccess, oData, fnFunction, oListener);
+		_oEventProvider.attachEvent(Core.M_EVENTS.ValidationSuccess, oData, fnFunction, oListener);
 		return this;
 	};
 
@@ -2574,7 +2593,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.detachValidationSuccess = function(fnFunction, oListener) {
-		this.detachEvent(Core.M_EVENTS.ValidationSuccess, fnFunction, oListener);
+		_oEventProvider.detachEvent(Core.M_EVENTS.ValidationSuccess, fnFunction, oListener);
 		return this;
 	};
 
@@ -2597,7 +2616,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @protected
 	 */
 	Core.prototype.fireParseError = function(mArguments) {
-		this.fireEvent(Core.M_EVENTS.ParseError, mArguments);
+		_oEventProvider.fireEvent(Core.M_EVENTS.ParseError, mArguments);
 		return this;
 	};
 
@@ -2637,7 +2656,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @protected
 	 */
 	Core.prototype.fireValidationError = function(mArguments) {
-		this.fireEvent(Core.M_EVENTS.ValidationError, mArguments);
+		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationError, mArguments);
 		return this;
 	};
 
@@ -2677,7 +2696,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @protected
 	 */
 	Core.prototype.fireFormatError = function(mArguments) {
-		this.fireEvent(Core.M_EVENTS.FormatError, mArguments);
+		_oEventProvider.fireEvent(Core.M_EVENTS.FormatError, mArguments);
 		return this;
 	};
 
@@ -2716,7 +2735,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @protected
 	 */
 	Core.prototype.fireValidationSuccess = function(mArguments) {
-		this.fireEvent(Core.M_EVENTS.ValidationSuccess, mArguments);
+		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationSuccess, mArguments);
 		return this;
 	};
 
@@ -2745,6 +2764,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	Core.prototype.isMobile = function() {
 		return Device.browser.mobile;
 	};
+
+	/**
+	 * Friendly function to access the provider from outside the core
+	 * This is needed for UIArea to set the core as the top level eventing parent
+	 * @returns {*}
+	 * @private
+	 */
+	Core.prototype._getEventProvider = function() {
+		return _oEventProvider;
+	};
+		
+	Core.prototype.destroy = function() {
+		_oEventProvider.destroy();
+		BaseObject.prototype.destroy.call(this);
+	};		
 
 	/**
 	 * @name sap.ui.core.CorePlugin

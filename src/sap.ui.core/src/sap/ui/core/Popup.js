@@ -649,6 +649,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		var _oPosition;
 		if (my || at || of || offset || collision) {
 			_oPosition = this._createPosition(my, at, of, offset, collision);
+			// position object has to be set accordingly otherwise "oPosition.of" of a DOM-reference
+			// would be the "document" even if a proper "of" was provided
+			this._oPosition = _oPosition;
 		} else {
 			_oPosition = this._oPosition;
 		}
@@ -1030,6 +1033,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				this._oBottomShieldLayer = null;
 				this._iBottomShieldRemoveTimer = null;
 			});
+		}
+
+		// Check if this instance is a child Popup. If true de-register this from
+		// the parent
+		if (this.isInPopup(this._oLastPosition.of)) {
+			var sParentId = this.getParentPopupId(this._oLastPosition.of);
+			var sChildId = "";
+
+			var oContent = this.getContent();
+			if (oContent instanceof sap.ui.core.Element) {
+				sChildId = oContent.getId();
+			} else if (typeof oContent === "object") {
+				sChildId = oContent.id;
+			}
+
+			this.removeChildFromPopup(sParentId, sChildId);
+			this.removeChildFromPopup(sParentId, this._popupUID);
 		}
 
 		var fnClosed = function() { // the function to call when the popup closing animation has completed
@@ -2155,10 +2175,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of),
 				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 
+			// it's not possible to check for the width/height because the "of" could be window.document and the
+			// document doesn't have a height/width
 			if (!oCurrentOfRect) {
-				// Docking not possibe due to missing opener.
 				this.close();
 				return;
+			} else if (oCurrentOfRect.left === 0 && oCurrentOfRect.top === 0 &&
+					oCurrentOfRect.height === 0 && oCurrentOfRect.height === 0 &&
+					this._oLastPosition.of.id) {
+				// sometimes the "of" was rerendered and therefore the new DOM-reference must be used for the checks.
+				// An id is only ensured for controls and only those can be re-rendered
+				this._oLastPosition.of = jQuery.sap.domById(this._oLastPosition.of.id);
+				oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
+				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+
+				if (!oCurrentOfRect) {
+					this.close();
+					return;
+				}
 			}
 
 			// Check if the current 'of' dom element is removed from the dom tree which indicates that it

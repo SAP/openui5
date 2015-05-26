@@ -8,8 +8,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	function(ODataType, FormatException, ParseException, NumberFormat, ValidateException) {
 	"use strict";
 
-	var rInteger = /^[-+]?(\d+)$/,
-		rInt64Input = /^0*(\d+)$/, // user input for an Int64 w/o the sign
+	var rInteger = /^[-+]?(\d+)$/, // user input for an Int64 w/o the sign
 		// The number range of an Int64
 		oRange = {minimum: "-9223372036854775808", maximum: "9223372036854775807"},
 		// The values Number.MIN_SAFE_INTEGER and Number.MAX_SAFE_INTEGER are the largest integer
@@ -62,6 +61,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 
 		if (!oType.oFormat) {
 			oFormatOptions = jQuery.extend({groupingEnabled: true}, oType.oFormatOptions);
+			oFormatOptions.parseAsString = true;
 			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
 		}
 		return oType.oFormat;
@@ -215,14 +215,6 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	 * Parses the given value, which is expected to be of the given type, to an Int64 in
 	 * <code>string</code> representation.
 	 *
-	 * If certain format options are defined and you parse a value with <code>sSourceType</code>
-	 * "string", floating point numbers are used internally.
-	 * This may cause a loss of precision (e.g.
-	 * "1,234,567,890,123,456,789" is parsed to "1234567890123456800"). The following options
-	 * do not cause this effect: decimals, decimalSeparator, groupingEnabled, groupingSeparator,
-	 * maxFractionDigits, maxIntegerDigits, minFractionDigits, minIntegerDigits, minusSign and
-	 * plusSign.
-	 *
 	 * @param {string|number} vValue
 	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
@@ -245,8 +237,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		}
 		switch (sSourceType) {
 		case "string":
-			sResult = ODataType.normalizeNumber(this.oFormatOptions, getFormatter(this), vValue,
-				rInt64Input);
+			sResult = getFormatter(this).parse(vValue);
 			if (!sResult) {
 				throw new ParseException(getText("EnterInt"));
 			}
@@ -285,7 +276,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		if (typeof sValue === "string") {
 			sErrorText = checkValueRange(this, sValue, oRange);
 			if (sErrorText) {
-				throw new ValidateException(sErrorText)
+				throw new ValidateException(sErrorText);
 			}
 			return;
 		}

@@ -1410,9 +1410,21 @@
 		"dayPeriods-standAlone-wide": [
 			"de.",
 			"du."
-		]
+		],
+		"era-wide": {
+			"0": "időszámításunk előtt",
+			"1": "időszámításunk szerint"
+		},
+		"era-abbreviated": {
+			"0": "i. e.",
+			"1": "i. sz."
+		},
+		"era-narrow": {
+			"0": "ie.",
+			"1": "isz."
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "G y. MMMM d., EEEE",
 		"dateFormat-long": "G y. MMMM d.",
 		"dateFormat-medium": "G y. MMM d.",
@@ -1687,284 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"de.",
 			"du."
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "G y. MMMM d., EEEE",
-		"dateFormat-long": "G y. MMMM d.",
-		"dateFormat-medium": "G y. MMM d.",
-		"dateFormat-short": "GGGGG y. M. d.",
-		"timeFormat-full": "H:mm:ss zzzz",
-		"timeFormat-long": "H:mm:ss z",
-		"timeFormat-medium": "H:mm:ss",
-		"timeFormat-short": "H:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-H-H": "H-H",
-		"intervalFormat-Hm-H": "H:mm-H:mm",
-		"intervalFormat-Hm-m": "H:mm-H:mm",
-		"intervalFormat-Hmv-H": "H:mm-H:mm v",
-		"intervalFormat-Hmv-m": "H:mm-H:mm v",
-		"intervalFormat-Hv-H": "H-H v",
-		"intervalFormat-M-M": "M–M.",
-		"intervalFormat-MEd-M": "MM. dd., E – MM. dd., E",
-		"intervalFormat-MEd-d": "MM. dd., E – MM. dd., E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMEd-M": "MMM d., E – MMM d., E",
-		"intervalFormat-MMMEd-d": "MMM d., E – d., E",
-		"intervalFormat-MMMd-M": "MMM d. – MMM d.",
-		"intervalFormat-MMMd-d": "MMM d–d.",
-		"intervalFormat-Md-M": "MM. dd. – MM. dd.",
-		"intervalFormat-Md-d": "MM. dd–dd.",
-		"intervalFormat-d-d": "d–d.",
-		"intervalFormat-h-a": "a h – a h",
-		"intervalFormat-h-h": "a h–h",
-		"intervalFormat-hm-a": "a h:mm – a h:mm",
-		"intervalFormat-hm-h": "a h:mm–h:mm",
-		"intervalFormat-hm-m": "a h:mm–h:mm",
-		"intervalFormat-hmv-a": "a h:mm – a h:mm v",
-		"intervalFormat-hmv-h": "a h:mm–h:mm v",
-		"intervalFormat-hmv-m": "a h:mm–h:mm v",
-		"intervalFormat-hv-a": "a h – a h v",
-		"intervalFormat-hv-h": "a h–h v",
-		"intervalFormat-y-y": "G y–y.",
-		"intervalFormat-yM-M": "G y. MM–MM.",
-		"intervalFormat-yM-y": "G y. MM. – y. MM.",
-		"intervalFormat-yMEd-M": "G y. MM. dd., E – MM. dd., E",
-		"intervalFormat-yMEd-d": "G y. MM. dd., E – dd., E",
-		"intervalFormat-yMEd-y": "G y. MM. dd., E – y. MM. dd., E",
-		"intervalFormat-yMMM-M": "G y. MMM–MMM",
-		"intervalFormat-yMMM-y": "G y. MMM – y. MMM",
-		"intervalFormat-yMMMEd-M": "G y. MMM d., E – MMM d., E",
-		"intervalFormat-yMMMEd-d": "G y. MMM d., E – MMM d., E",
-		"intervalFormat-yMMMEd-y": "G y. MMM d., E – y. MMM d., E",
-		"intervalFormat-yMMMM-M": "G y. MMMM–MMMM",
-		"intervalFormat-yMMMM-y": "G y. MMMM – y. MMMM",
-		"intervalFormat-yMMMd-M": "G y. MMM d. – MMM d.",
-		"intervalFormat-yMMMd-d": "G y. MMM d–d.",
-		"intervalFormat-yMMMd-y": "G y. MMM d. – y. MMM d.",
-		"intervalFormat-yMd-M": "G y. MM. dd. – MM. dd.",
-		"intervalFormat-yMd-d": "G y. MM. dd–dd.",
-		"intervalFormat-yMd-y": "G y. MM. dd. – y. MM. dd.",
-		"months-format-abbreviated": [
-			"Moh.",
-			"Saf.",
-			"Rébi I",
-			"Rébi II",
-			"Dsem. I",
-			"Dsem. II",
-			"Red.",
-			"Sab.",
-			"Ram.",
-			"Sev.",
-			"Dsül k.",
-			"Dsül h."
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Moharrem",
-			"Safar",
-			"Rébi el avvel",
-			"Rébi el accher",
-			"Dsemádi el avvel",
-			"Dsemádi el accher",
-			"Redseb",
-			"Sabán",
-			"Ramadán",
-			"Sevvál",
-			"Dsül kade",
-			"Dsül hedse"
-		],
-		"months-standAlone-abbreviated": [
-			"Moh.",
-			"Saf.",
-			"Rébi I",
-			"Rébi II",
-			"Dsem. I",
-			"Dsem. II",
-			"Red.",
-			"Sab.",
-			"Ram.",
-			"Sev.",
-			"Dsül k.",
-			"Dsül h."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Moharrem",
-			"Safar",
-			"Rébi I",
-			"Rébi II",
-			"Dsemádi I",
-			"Dsemádi II",
-			"Redseb",
-			"Sabán",
-			"Ramadán",
-			"Sevvál",
-			"Dsül kade",
-			"Dsül hedse"
-		],
-		"days-format-abbreviated": [
-			"V",
-			"H",
-			"K",
-			"Sze",
-			"Cs",
-			"P",
-			"Szo"
-		],
-		"days-format-narrow": [
-			"V",
-			"H",
-			"K",
-			"Sz",
-			"Cs",
-			"P",
-			"Sz"
-		],
-		"days-format-short": [
-			"V",
-			"H",
-			"K",
-			"Sze",
-			"Cs",
-			"P",
-			"Szo"
-		],
-		"days-format-wide": [
-			"vasárnap",
-			"hétfő",
-			"kedd",
-			"szerda",
-			"csütörtök",
-			"péntek",
-			"szombat"
-		],
-		"days-standAlone-abbreviated": [
-			"V",
-			"H",
-			"K",
-			"Sze",
-			"Cs",
-			"P",
-			"Szo"
-		],
-		"days-standAlone-narrow": [
-			"V",
-			"H",
-			"K",
-			"Sz",
-			"Cs",
-			"P",
-			"Sz"
-		],
-		"days-standAlone-short": [
-			"V",
-			"H",
-			"K",
-			"Sze",
-			"Cs",
-			"P",
-			"Szo"
-		],
-		"days-standAlone-wide": [
-			"vasárnap",
-			"hétfő",
-			"kedd",
-			"szerda",
-			"csütörtök",
-			"péntek",
-			"szombat"
-		],
-		"quarters-format-abbreviated": [
-			"N1",
-			"N2",
-			"N3",
-			"N4"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"I. negyedév",
-			"II. negyedév",
-			"III. negyedév",
-			"IV. negyedév"
-		],
-		"quarters-standAlone-abbreviated": [
-			"N1",
-			"N2",
-			"N3",
-			"N4"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. negyedév",
-			"2. negyedév",
-			"3. negyedév",
-			"4. negyedév"
-		],
-		"dayPeriods-format-abbreviated": [
-			"de.",
-			"du."
-		],
-		"dayPeriods-format-narrow": [
-			"de.",
-			"du."
-		],
-		"dayPeriods-format-wide": [
-			"de.",
-			"du."
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"de.",
-			"du."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"de.",
-			"du."
-		],
-		"dayPeriods-standAlone-wide": [
-			"de.",
-			"du."
-		]
+		"era-wide": {
+			"0": "MF"
+		},
+		"era-abbreviated": {
+			"0": "MF"
+		},
+		"era-narrow": {
+			"0": "MF"
+		}
 	},
 	"dateField-year-displayName": "év",
 	"dateField-year-relative--1": "előző év",

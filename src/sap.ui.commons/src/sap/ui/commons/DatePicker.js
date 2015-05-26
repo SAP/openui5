@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.DatePicker.
-sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/type/Date'],
-	function(jQuery, TextField, library, Date1) {
+sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library'],
+	function(jQuery, TextField, Date1, UniversalDate, library) {
 	"use strict";
 
 	/**
@@ -41,6 +41,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 			/**
 			 * Defines the date as a "yyyymmdd" string, independent from the format used. The inherited textField "value" attribute uses the date format as configured via the locale.
+			 * The date is interpreted as gregorian date
 			 */
 			yyyymmdd : {type : "string", group : "Misc", defaultValue : null}
 		}
@@ -48,21 +49,22 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 
 	(function() {
+		/* eslint-disable no-lonely-if */
 
 		DatePicker.prototype.init = function(){
 
 			TextField.prototype.init.apply(this, arguments);
 
-			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", strictParsing: true});
+			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", strictParsing: true, calendarType: sap.ui.core.CalendarType.Gregorian});
 
-			if (sap.ui.Device.browser.mobile) {
+			if (!sap.ui.Device.system.desktop) {
 				this._bMobile = true;
-				this._oFormatMobile = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", strictParsing: true});
+				this._oFormatMobile = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", strictParsing: true, calendarType: sap.ui.core.CalendarType.Gregorian});
 			}
 
-			this._oMinDate = new Date(1, 0, 1);
+			this._oMinDate = new UniversalDate(1, 0, 1);
 			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
-			this._oMaxDate = new Date(9999, 11, 31);
+			this._oMaxDate = new UniversalDate(9999, 11, 31);
 
 		};
 
@@ -507,10 +509,12 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 			var bRelative = false;
 			var oBinding = oThis.getBinding("value");
 			var oLocale;
+			var sCalendarType;
 
 			if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
 				sPattern = oBinding.oType.getOutputPattern();
 				bRelative = !!oBinding.oType.oOutputFormat.oFormatOptions.relative;
+				sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
 			}
 
 			if (!sPattern) {
@@ -518,15 +522,17 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 				oLocale = _getUsedLocale(oThis);
 				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 				sPattern = oLocaleData.getDatePattern("medium");
+				sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 			}
 
-			if (sPattern != oThis._sUsedPattern) {
+			if (sPattern != oThis._sUsedPattern || sCalendarType != oThis._sUsedCalendarType) {
 				oThis._sUsedPattern = sPattern;
+				oThis._sUsedCalendarType = sCalendarType;
 
 				if (sPattern == "short" || sPattern == "medium" || sPattern == "long") {
-					oThis._oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, relative: bRelative}, oLocale);
+					oThis._oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType}, oLocale);
 				} else {
-					oThis._oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, relative: bRelative}, oLocale);
+					oThis._oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType}, oLocale);
 				}
 			}
 
@@ -686,7 +692,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 			if (oOldDate && oThis.getEditable() && oThis.getEnabled()) {
 				// use a new date object to have a real updated property
-				var oDate = new Date(oOldDate.getTime());
+				var oDate = new UniversalDate(oOldDate.getTime());
+				oOldDate = new UniversalDate(oOldDate.getTime());
 				var $Input = jQuery(oThis.getInputDomRef());
 				var iPos = $Input.cursorPos();
 
@@ -718,15 +725,15 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 				}
 
 				if (oDate.getTime() < oThis._oMinDate.getTime()) {
-					oDate = new Date(oThis._oMinDate.getTime());
+					oDate = new UniversalDate(oThis._oMinDate.getTime());
 				}else if (oDate.getTime() > oThis._oMaxDate.getTime()){
-					oDate = new Date(oThis._oMaxDate.getTime());
+					oDate = new UniversalDate(oThis._oMaxDate.getTime());
 				}
 
-				oThis._oDate = oDate;
+				oThis._oDate = new Date(oDate.getTime());
 
 				// update value in input field
-				var sOutputValue = oThis._formatValue(oDate);
+				var sOutputValue = oThis._formatValue(oThis._oDate);
 				$Input.val(sOutputValue);
 				$Input.cursorPos(iPos);
 

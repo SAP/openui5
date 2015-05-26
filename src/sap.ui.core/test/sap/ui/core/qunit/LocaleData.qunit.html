@@ -124,6 +124,9 @@
 			equal(typeof oLocaleData.getDateTimePattern("medium", aCalendarTypes[i]), "string", "getTimePattern(\"medium\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getDateTimePattern("long", aCalendarTypes[i]), "string", "getTimePattern(\"long\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getDateTimePattern("full", aCalendarTypes[i]), "string", "getTimePattern(\"full\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("wide", aCalendarTypes[i]), "string", "getEra(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("abbreviated", aCalendarTypes[i]), "string", "getEra(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("narrow", aCalendarTypes[i]), "string", "getEra(\"narrow\", \"" + aCalendarTypes[i] + "\")");
 		}
 
 		equal(typeof oLocaleData.getNumberSymbol("decimal"), "string", "getNumberSymbol(\"decimal\")");
@@ -136,6 +139,7 @@
 		ok(oLocaleData.getWeekendStart() >= 0 && oLocaleData.getWeekendStart() <7, "getWeekendStart()");
 		equal(typeof oLocaleData.getWeekendEnd(), "number", "getWeekendEnd()");
 		ok(oLocaleData.getWeekendEnd() >= 0 && oLocaleData.getWeekendEnd() <7, "getWeekendEnd()");
+		ok(oLocaleData.getPreferredCalendarType() in sap.ui.core.CalendarType, "getPreferredCalendar()");
 
 		// there's no currency symbol defined for EUR and USD in 'es_MX' locale in CLDR data version 26
 		if (sLocale !== "xx_XX" /*&& sLocale !== "es_MX"*/) {
@@ -203,6 +207,8 @@
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+		equal(oLocaleData.getEra("abbreviated"), "AD", "Abbreviated Era Name");
+		equal(oLocaleData.getEra("abbreviated", 0), "BC", "Abbreviated Era Name");
 	}
 	
 	function customTests_en_ZA(oLocaleData) {
@@ -288,8 +294,43 @@
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
-	
-	
+
+	test("Calendar type should use the value set in configuration when getting calendar related values", function() {
+		sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
+
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
+
+		deepEqual(oLocaleData.getMonths("narrow"), oLocaleData.getMonths("narrow", sap.ui.core.CalendarType.Islamic), "getMonths uses calendar type in configuration");
+		deepEqual(oLocaleData.getDays("narrow"), oLocaleData.getDays("narrow", sap.ui.core.CalendarType.Islamic), "getDays uses calendar type in configuration");
+		deepEqual(oLocaleData.getQuarters("narrow"), oLocaleData.getQuarters("narrow", sap.ui.core.CalendarType.Islamic), "getQuarters uses calendar type in configuration");
+		deepEqual(oLocaleData.getDayPeriods("narrow"), oLocaleData.getDayPeriods("narrow", sap.ui.core.CalendarType.Islamic), "getDayPeriods uses calendar type in configuration");
+		deepEqual(oLocaleData.getDatePattern("short"), oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "getDatePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getTimePattern("short"), oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "getTimePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getDateTimePattern("short"), oLocaleData.getDateTimePattern("short", sap.ui.core.CalendarType.Islamic), "getDateTimePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getEra("narrow"), oLocaleData.getEra("narrow", sap.ui.core.CalendarType.Islamic), "getEra uses calendar type in configuration");
+
+		sap.ui.getCore().getConfiguration().setCalendarType(null);
+	});
+
+	test("Locale data with customization from format settings in configuration", function() {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+
+		oFormatSettings.setLegacyDateFormat("3");
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(oFormatSettings.getFormatLocale());
+		equal(oLocaleData.getDatePattern("short"), "MM-dd-yyyy", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("medium"), "MM-dd-yyyy", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "M/d/y GGGGG", "short pattern for Islamic calendar type should be fetched from locale data");
+
+		oFormatSettings.setLegacyTimeFormat("0");
+		equal(oLocaleData.getTimePattern("short"), "HH:mm", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "h:mm a", "short pattern for Islamic calendar type should be fetched from locale data");
+
+		oFormatSettings.setLegacyDateFormat("A");
+		equal(oLocaleData.getDatePattern("short"), "yyyy/MM/dd", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
+	});
 </script>
 
 </head>

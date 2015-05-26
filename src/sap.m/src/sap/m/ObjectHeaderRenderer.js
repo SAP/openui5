@@ -271,7 +271,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		for (var j = 0; j < aAttribs.length; j++) {
 			if (aAttribs[j].getVisible()) {
-				aVisibleAttribs.push(aAttribs[j]);
+				if (aAttribs[j] instanceof sap.m.ObjectAttribute || aAttribs[j] instanceof sap.m.Link) {
+					aVisibleAttribs.push(aAttribs[j]);
+				} else {
+					jQuery.sap.log.warning("Only sap.m.ObjectAttribute or instance of sap.m.Link (including sap.ui.comp.navpopover.SmartLink are allowed in \"sap.m.ObjectHeader.attributes\" aggregation." + " Current object is "
+							+ aAttribs[j].constructor.getMetadata().getName() + " with id \"" + aAttribs[j].getId() + "\"");
+				}
+				
 			}
 		}
 
@@ -635,8 +641,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 */
 	ObjectHeaderRenderer.render = function(oRM, oOH) {
 
-		this._computeChildControlsToBeRendered(oOH);
-
 		// render responsive OH
 		if (oOH.getResponsive()) {
 			this._renderResponsive(oRM, oOH);
@@ -681,38 +685,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("</div>"); // End Main container\
 
-		this._cleanupNotRenderedChildControls(oRM, oOH);
-	};
-
-
-	/**
-	 * Get all controls that should be rendered
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
-	 * @private
-	 */
-	ObjectHeaderRenderer._computeChildControlsToBeRendered = function(oOH){
-		oOH.__controlsToBeRendered = {};
-		var aChildren = oOH.getAttributes();
-		for (var i = 0; i < aChildren.length; i++) {
-			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
-		}
-		aChildren = oOH.getStatuses();
-		for (var j = 0; j < aChildren.length; j++) {
-			oOH.__controlsToBeRendered[aChildren[j].getId()] = aChildren[j];
-		}
-		var oChild = oOH.getFirstStatus();
-		if (oChild) {
-			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
-		}
-		oChild = oOH.getSecondStatus();
-		if (oChild) {
-			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
-		}
-		oChild = oOH.getAggregation("_objectNumber");
-		if (oChild) {
-			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
-		}
 	};
 
 	/**
@@ -728,22 +700,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 **/
 	ObjectHeaderRenderer._renderChildControl = function(oRM, oOH, oControl){
 		oRM.renderControl(oControl);
-	};
-
-	/**
-	 * Clean not rendered controls
-	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
-	 * @private
-	 **/
-	ObjectHeaderRenderer._cleanupNotRenderedChildControls = function(oRM, oOH){
-		for (var sId in oOH.__controlsToBeRendered) {
-			oRM.cleanupControlWithoutRendering(oOH.__controlsToBeRendered[sId]);
-		}
-		delete oOH.__controlsToBeRendered;
 	};
 
 	/**
@@ -809,8 +765,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		oRM.write("</div>"); // end outer div
-
-		this._cleanupNotRenderedChildControls(oRM, oOH);
 
 		if (!oOH.getTitle()) {
 			 //if value is set through data binding, there is time delay and fake warning will be logged, so set warning only if not data binding

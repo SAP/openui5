@@ -15,9 +15,7 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
@@ -25,6 +23,7 @@
 
 	jQuery.sap.require("sap.ui.test.Opa5");
 	var Opa5 = sap.ui.test.Opa5;
+	var Opa = sap.ui.test.Opa;
 
 	module("iframe");
 
@@ -678,6 +677,21 @@
 			QUnit.start();
 		});
 	});
+
+	QUnit.module("Context");
+
+	QUnit.test("Should share a context in OPA and OPA5", function (assert) {
+		// Arrange
+		var oOpaContext = Opa.getContext();
+		var oOpaInstanceContext = new Opa().getContext();
+		var oOpa5Context = Opa5.getContext();
+		var oOpa5InstanceContext = new Opa5().getContext();
+
+		assert.strictEqual(oOpaContext, oOpaInstanceContext, "Opa and Opa instance share a context");
+		assert.strictEqual(oOpaContext, oOpa5Context, "Opa and Opa5 share a context");
+		assert.strictEqual(oOpaContext, oOpa5InstanceContext, "Opa and Opa5 instance share a context");
+	});
+
 })();
 
 </script>

@@ -332,6 +332,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.updateItems = function(sReason) {
 			SelectList.prototype.updateItems.apply(this, arguments);
+
+			// note: after the items are recreated, the selected item association
+			// points to the new item
+			this._oSelectionOnFocus = this.getSelectedItem();
 		};
 
 		/**
@@ -644,6 +648,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.onBeforeRendering = function() {
+			this._oSelectionOnFocus = this.getSelectedItem();
 			this.synchronizeSelection();
 		};
 
@@ -1416,6 +1421,37 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this.setSelection(null);
 		};
 
+		/**
+		 * Handle properties changes of items in the aggregation named <code>items</code>.
+		 *
+		 * @private
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @since 1.30
+		 */
+		Select.prototype.onItemChange = function(oControlEvent) {
+			var sSelectedItemId = this.getAssociation("selectedItem"),
+				sNewValue = oControlEvent.getParameter("newValue"),
+				sProperty = oControlEvent.getParameter("name");
+
+			// if the selected item has not changed, no synchronization is needed
+			if (sSelectedItemId !== oControlEvent.getParameter("id")) {
+				return;
+			}
+
+			// synchronize properties
+			switch (sProperty) {
+				case "text":
+					this.setValue(sNewValue);
+					break;
+
+				case "key":
+					this.setSelectedKey(sNewValue);
+					break;
+
+				// no default
+			}
+		};
+
 		Select.prototype.fireChange = function(mParameters) {
 			this._oSelectionOnFocus = mParameters.selectedItem;
 			return this.fireEvent("change", mParameters);
@@ -1514,6 +1550,44 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
+
+		/**
+		 * Adds a item to the aggregation named <code>items</code>.
+		 *
+		 * @param {sap.ui.core.Item} oItem The item to add; if empty, nothing is inserted.
+		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @public
+		 */
+		Select.prototype.addItem = function(oItem) {
+			this.addAggregation("items", oItem);
+
+			if (oItem) {
+				oItem.attachEvent("_change", this.onItemChange, this);
+			}
+
+			return this;
+		};
+
+		/**
+		 * Inserts a item into the aggregation named <code>items</code>.
+		 *
+		 * @param {sap.ui.core.Item} oItem The item to insert; if empty, nothing is inserted.
+		 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
+		 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
+		 *             greater than the current size of the aggregation, the item is inserted at
+		 *             the last position.
+		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @public
+		 */
+		Select.prototype.insertItem = function(oItem, iIndex) {
+			this.insertAggregation("items", oItem, iIndex);
+
+			if (oItem) {
+				oItem.attachEvent("_change", this.onItemChange, this);
+			}
+
+			return this;
+		};
 
 		Select.prototype.findAggregatedObjects = function() {
 			var oList = this.getList();
@@ -1808,6 +1882,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				this.setValue("");
 			}
 
+			if (vItem) {
+				vItem.detachEvent("_change", this.onItemChange, this);
+			}
+
 			return vItem;
 		};
 
@@ -1827,6 +1905,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			if (!this.isInvalidateSuppressed()) {
 				this.invalidate();
+			}
+
+			for (var i = 0; i < aItems.length; i++) {
+				aItems[i].detachEvent("_change", this.onItemChange, this);
 			}
 
 			return aItems;

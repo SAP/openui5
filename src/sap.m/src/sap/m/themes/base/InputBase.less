@@ -7,8 +7,6 @@
 .sapMInputBase,
 .sapMInputBaseInner,
 .sapMInputBasePlaceholder {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -66,11 +64,14 @@
 	padding: 0.3125rem;
 	background: @sapMInputBaseMsgBG;
 	display: inline-block;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
 .sapMInputBaseMessageText {
 	width: 100%;
+}
+
+.sapMInputBaseInner:invalid{
+	/* disable native browser input validation visualization e.g. for type email or number */
+	box-shadow: none;
 }

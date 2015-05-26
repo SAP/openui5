@@ -164,7 +164,7 @@
 			oRadioButton2.destroy();
 		});
 		
-		test("setSelected() should check RadioButton and uncheck all other RadioButtons from the same group", function () {
+		test("Triggering tap should check RadioButton and uncheck all other RadioButtons from the same group", function () {
 			expect(5);
 			
 			// arrange
@@ -198,6 +198,28 @@
 			oRadioButton3.destroy();
 			oRadioButton4.destroy();
 			oRadioButton5.destroy();
+		});
+
+		QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton(),
+				oRadioButton2 = new sap.m.RadioButton();
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+
+			// act
+			oRadioButton1.setSelected(true);
+			oRadioButton2.setSelected(true);
+
+			// assert
+			assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
+			assert.ok(oRadioButton2.getSelected(), "RadioButton should be selected");
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
 		});
 
 		/* ------------------------------ */
@@ -357,10 +379,40 @@
 			sap.ui.getCore().applyChanges();
 			
 			// assertions
-			strictEqual(oRadioButton1.$('label').css("text-align"), "left", "Text Align should be left");
+			strictEqual(oRadioButton1.$("label").css("text-align"), "left", "Text Align should be left");
 			
 			// cleanup
 			oRadioButton1.destroy();
+		});
+
+		QUnit.test("setGroupName", function (assert) {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton();
+			var oRadioButton2 = new sap.m.RadioButton();
+			var oRadioButton3 = new sap.m.RadioButton();
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRadioButton1.setGroupName("test");
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+			// assert
+			assert.strictEqual(oRadioButton1.getSelected(), true, "RadioButton1 should be selected");
+			assert.strictEqual(oRadioButton2.getSelected(), false, "RadioButton2 should not be selected");
+			assert.strictEqual(oRadioButton3.getSelected(), true, "RadioButton3 should be selected");
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
 		});
 		
 		/* ------------------------------ */

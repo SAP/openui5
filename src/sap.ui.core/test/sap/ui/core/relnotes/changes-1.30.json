@@ -202,7 +202,7 @@
         "id": "524fc043763690ed758b06e5730637c134764be2",
         "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "ClientListBinding: Includeed "null" values for filters",
+        "text": "ClientListBinding: Includeed 'null' values for filters",
         "references": []
       },
       {
@@ -349,7 +349,7 @@
         "id": "d219ffedf6ee23e13dadf5e6617ed5d25130c00d",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "NumberFormat: new option "parseAsString" added",
+        "text": "NumberFormat: new option 'parseAsString' added",
         "references": []
       },
       {
@@ -550,7 +550,7 @@
         "id": "a9837bc4978617ce970d5324bc4fcab3fa7f10b4",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
-        "text": "core.Popup: Saving of "_followOfHandler" fixed",
+        "text": "core.Popup: Saving of '_followOfHandler' fixed",
         "references": []
       },
       {
@@ -634,7 +634,7 @@
         "id": "0bd6ee92e6a0fd83867893e21bdff96ebed4a9de",
         "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.core.Icon: Fixed rendering issue with "src" values without protocol",
+        "text": "sap.ui.core.Icon: Fixed rendering issue with 'src' values without protocol",
         "references": []
       },
       {

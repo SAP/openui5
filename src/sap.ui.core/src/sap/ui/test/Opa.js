@@ -15,10 +15,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		context = {};
 
 	function internalWait (fnCallback, oOptions, oDeferred) {
-		
+
 		// Increase the wait timeout in debug mode, to allow debugging the waitFor without getting timeouts
 		if (window["sap-ui-debug"]){
-			oOptions.timeout = 300; 
+			oOptions.timeout = 300;
 		}
 
 		var startTime = new Date(),
@@ -118,116 +118,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	 * @class One Page Acceptance testing.
 	 * This class will help you write acceptance tests in one page or single page applications.
 	 * You can wait for certain conditions to be met.
-	 * 
+	 *
 	 * @public
 	 * @alias sap.ui.test.Opa
 	 * @author SAP SE
 	 * @since 1.22
-	 * 
+	 *
 	 * @param extensionObject An object containing properties and functions. The newly created Opa will be extended by these properties and functions - see jQuery.extend.
 	 */
 	var Opa = function(extensionObject) {
-
 		this.and = this;
 		$.extend(this, extensionObject);
-
 	};
 
-	Opa.prototype = {
 
-		/**
-		 * Gives access to a singleton object you can save values in.
-		 *
-		 * @returns {object} the context object
-		 * @public
-		 */
-		getContext : function () {
-			return context;
-		},
-
-		/**
-		 * Waits for a check condition to return true. Then a success function will be called.
-		 * If check does not return true until timeout is reached, an error function will be called.
-		 *
-		 * @public
-		 * @param {object} options containing check, success and error function;
-		 * properties:
-		 * <ul>
-		 * 	<li>timeout: default 15 (seconds) specifies how long the waitFor function polls before it fails</li>
-		 * 	<li>pollingInterval: default 400 (milliseconds) specifies how often the waitFor function polls</li>
-		 * 	<li>check: function will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop</li>
-		 * 	<li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements</li>
-		 * 	<li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
-		 * </ul>
-		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 */
-		waitFor : function (options) {
-			var deferred = $.Deferred();
-			options = $.extend({},
-				Opa.config,
-				options);
-
-			options._stack = createStack(1 + options._stackDropCount);
-			delete options._stackDropCount;
-
-			deferred.promise(this);
-
-			queue.push({
-				callback : jQuery.proxy(function () {
-					var bResult = true;
-					
-					//no check - all ok
-					if (options.check) {
-						bResult = options.check.apply(this, arguments);
-					}
-
-					if (bResult) {
-						if (options.success) {
-							try {
-								var iCurrentQueueLength = queue.length;
-								options.success.apply(this, arguments);
-							} finally {
-								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength, options);
-								deferred.resolve();
-							}
-						} else {
-							deferred.resolve();
-						}
-
-						return { result : true, arguments : arguments };
-					}
-	
-					return {result : false, arguments : arguments };
-				}, this),
-				options : options
-			});
-
-			return this;
-		},
-		
-		/**
-		 * Calls the static extendConfig function in the Opa namespace
-		 * @returns
-		 * @public
-		 */
-		extendConfig : function() {
-			return Opa.extendConfig.apply(this, arguments);
-		},
-
-		/**
-		 * Calls the static emptyQueue function in the Opa namespace
-		 * @returns
-		 * @public
-		 */
-		emptyQueue : function() {
-			return Opa.emptyQueue.apply(this, arguments);
-		}
-	};
+	/**
+	 * the global configuration of Opa.
+	 * All of the global values can be overwritten in an individual waitFor call.
+	 * defaults are :
+	 * <ul>
+	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
+	 * 		<li>pollingIntervall: 400 milliseconds</li>
+	 * </ul>
+	 * @public
+	 */
+	Opa.config = {};
 
 	/**
 	 * Extends and overwrites default values of the Opa.config
 	 *
-	 * @param {object} options the values to be added to the existion config
+	 * @param {object} options the values to be added to the existing config
 	 * @public
 	 */
 	Opa.extendConfig = function (options) {
@@ -242,14 +162,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	 */
 	Opa.resetConfig = function () {
 		Opa.config = {
-				arrangements : new Opa(),
-				actions : new Opa(),
-				assertions : new Opa(),
-				timeout : 15,
-				pollingInterval : 400,
-				_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging
+			arrangements : new Opa(),
+			actions : new Opa(),
+			assertions : new Opa(),
+			timeout : 15,
+			pollingInterval : 400,
+			_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging
 		};
 	};
+
+	/**
+	 * Gives access to a singleton object you can save values in.
+	 * same as {@link sap.ui.test.Opa#getContext}
+	 * @since 1.29.0
+	 * @returns {object} the context object
+	 * @public
+	 * @function
+	 */
+	Opa.getContext = function () {
+		return context;
+	};
+
 	/**
 	 * Waits until all waitFor calls are done
 	 *
@@ -271,11 +204,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			}
 			return sResult;
 		}
-		
+
 		var deferred = $.Deferred();
 
 		internalEmpty(deferred);
-		
+
 		return deferred.promise().fail(function(oOptions){
 			oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
 			oOptions.errorMessage += addStacks(oOptions);
@@ -283,18 +216,95 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		});
 	};
 
-	/**
-	 * the global configuration of Opa.
-	 * All of the global values can be overwritten in an individual waitFor call.
-	 * defaults are :
-	 * <ul>
-	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
-	 * 		<li>pollingIntervall: 400 milliseconds</li>
-	 * </ul>
-	 * @public
-	 */
 	//create the default config
 	Opa.resetConfig();
+
+	Opa.prototype = {
+
+		/**
+		 * Gives access to a singleton object you can save values in.
+		 *
+		 * @returns {object} the context object
+		 * @public
+		 * @function
+		 */
+		getContext : Opa.getContext,
+
+		/**
+		 * Waits for a check condition to return true. Then a success function will be called.
+		 * If check does not return true until timeout is reached, an error function will be called.
+		 *
+		 * @public
+		 * @param {object} options containing check, success and error function;
+		 * properties:
+		 * <ul>
+		 * 	<li>timeout: default 15 (seconds) specifies how long the waitFor function polls before it fails</li>
+		 * 	<li>pollingInterval: default 400 (milliseconds) specifies how often the waitFor function polls</li>
+		 * 	<li>check: function will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop</li>
+		 * 	<li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements</li>
+		 * 	<li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
+		 * </ul>
+		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 */
+		waitFor : function (options) {
+			var deferred = $.Deferred();
+				options = $.extend({},
+				Opa.config,
+				options);
+
+			options._stack = createStack(1 + options._stackDropCount);
+			delete options._stackDropCount;
+
+			deferred.promise(this);
+
+			queue.push({
+				callback : jQuery.proxy(function () {
+					var bResult = true;
+
+					//no check - all ok
+					if (options.check) {
+						bResult = options.check.apply(this, arguments);
+					}
+
+					if (bResult) {
+						if (options.success) {
+							try {
+								var iCurrentQueueLength = queue.length;
+								options.success.apply(this, arguments);
+							} finally {
+								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength, options);
+								deferred.resolve();
+							}
+						} else {
+							deferred.resolve();
+						}
+
+						return { result : true, arguments : arguments };
+					}
+
+					return {result : false, arguments : arguments };
+				}, this),
+				options : options
+			});
+
+			return this;
+		},
+
+		/**
+		 * Calls the static extendConfig function in the Opa namespace
+		 * @public
+		 * @function
+		 */
+		extendConfig : Opa.extendConfig,
+
+		/**
+		 * Calls the static emptyQueue function in the Opa namespace
+		 * @public
+		 * @function
+		 */
+		emptyQueue : Opa.emptyQueue
+	};
+
 
 	return Opa;
 },  /* export= */ true);

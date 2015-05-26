@@ -187,6 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @private
 	 */
 	ColumnMenu.prototype._addMenuItems = function() {
+		// when you add or remove menu items here, remember to update the hasItems function
 		if (this._oColumn) {
 			this._addSortMenuItem(false);
 			this._addSortMenuItem(true);
@@ -196,8 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 			this._addColumnVisibilityMenuItem();
 		}
 	};
-	
-	
+
 	/**
 	 * Adds the sort menu item to the menu.
 	 * @param {boolean} bDesc the sort direction. <code>true</code> for descending.

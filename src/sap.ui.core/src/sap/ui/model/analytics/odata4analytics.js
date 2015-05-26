@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 	 *            oModelReference An instance of ReferenceByURI, ReferenceByModel or
 	 *            ReferenceWithWorkaround for locating the OData service.
 	 * @param {object}
-	 * 	          mParameter? Additional parameters for controlling the model construction. Currently supported are:
+	 * 	          [mParameter] Additional parameters for controlling the model construction. Currently supported are:
 	 *            <li> sAnnotationJSONDoc - A JSON document providing extra annotations to the elements of the 
 	 *                 structure of the given service
 	 *            </li>
@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 */
 		_init : function(oModelReference, mParameter) {
 			if (typeof mParameter == "string") {
-				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead"
+				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead";
 			}
 			this._mParameter = mParameter;
 			

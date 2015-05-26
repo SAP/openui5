@@ -1421,9 +1421,21 @@
 		"dayPeriods-standAlone-wide": [
 			"priešpiet",
 			"popiet"
-		]
+		],
+		"era-wide": {
+			"0": "prieš Kristų",
+			"1": "po Kristaus"
+		},
+		"era-abbreviated": {
+			"0": "pr. Kr.",
+			"1": "po Kr."
+		},
+		"era-narrow": {
+			"0": "pr. Kr.",
+			"1": "po Kr."
+		}
 	},
-	"ca-islamic-umalqura": {
+	"ca-islamic": {
 		"dateFormat-full": "y MMMM d G, EEEE",
 		"dateFormat-long": "y MMMM d G",
 		"dateFormat-medium": "y MMM d G",
@@ -1698,284 +1710,16 @@
 		"dayPeriods-standAlone-wide": [
 			"priešpiet",
 			"popiet"
-		]
-	},
-	"ca-islamic-civil": {
-		"dateFormat-full": "y MMMM d G, EEEE",
-		"dateFormat-long": "y MMMM d G",
-		"dateFormat-medium": "y MMM d G",
-		"dateFormat-short": "y-MM-dd G",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-MEd-M": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MEd-d": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMEd-M": "MMM d, E – MMM d, E",
-		"intervalFormat-MMMEd-d": "MMM d, E – MMM d, E",
-		"intervalFormat-MMMd-M": "MMM d–MMM d",
-		"intervalFormat-MMMd-d": "MMM d–d",
-		"intervalFormat-Md-M": "MM-dd–MM-dd",
-		"intervalFormat-Md-d": "MM-dd–MM-dd",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a–h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-hm-a": "hh:mm a–hh:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-hmv-a": "hh:mm a–hh:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-hv-a": "h a–h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "y-MM – y-MM G",
-		"intervalFormat-yM-y": "y-MM – y-MM G",
-		"intervalFormat-yMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMM-M": "y MMM–MMM G",
-		"intervalFormat-yMMM-y": "y-MM – y-MM G",
-		"intervalFormat-yMMMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMM-M": "y LLLL – y LLLL G",
-		"intervalFormat-yMMMM-y": "y LLLL – y LLLL G",
-		"intervalFormat-yMMMd-M": "y-MM-dd – MM-d G",
-		"intervalFormat-yMMMd-d": "y 'm'. MMM d 'd'.–d 'd'. G",
-		"intervalFormat-yMMMd-y": "y-MM-dd – y-MM-dd G",
-		"intervalFormat-yMd-M": "y-MM-dd– y-MM-dd G",
-		"intervalFormat-yMd-d": "y-MM-dd–y-MM-dd G",
-		"intervalFormat-yMd-y": "y-MM-dd – y-MM-dd G",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
 		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"days-format-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-format-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-format-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"days-standAlone-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-standAlone-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-standAlone-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"quarters-format-abbreviated": [
-			"I k.",
-			"II k.",
-			"III k.",
-			"IV k."
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"I ketv.",
-			"II ketv.",
-			"III ketv.",
-			"IV ketv."
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"pr.p.",
-			"pop."
-		],
-		"dayPeriods-format-narrow": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-format-wide": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"pr.p.",
-			"pop."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-wide": [
-			"priešpiet",
-			"popiet"
-		]
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Metai",
 	"dateField-year-relative--1": "praėjusiais metais",

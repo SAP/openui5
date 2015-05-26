@@ -151,8 +151,10 @@
 			QUnit.module("ARIA Support", {
 				setup: function () {
 					this.sIconName = "alert";
+					this.sTooltip = "tooltip";
 					this.oAriaIcon = new sap.ui.core.Icon({
-						src: sap.ui.core.IconPool.getIconURI(this.sIconName)
+						src: sap.ui.core.IconPool.getIconURI(this.sIconName),
+						tooltip: this.sTooltip
 					});
 
 					this.oAriaIcon.placeAt("qunit-fixture");
@@ -168,6 +170,7 @@
 				var $icon = this.oAriaIcon.$();
 
 				assert.strictEqual($icon.attr("role"), "presentation", "role should be set to presentation");
+				assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
 			});
 
 			QUnit.test("When decorative is set to false", function (assert) {
@@ -177,6 +180,7 @@
 				var $icon = this.oAriaIcon.$();
 
 				assert.strictEqual($icon.attr("role"), "button", "role should be set to button");
+				assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
 			});
 
 			QUnit.test("When ariaLabelledBy is NOT set", function (assert) {

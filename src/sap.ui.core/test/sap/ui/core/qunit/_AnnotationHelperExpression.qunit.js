@@ -21,10 +21,12 @@ sap.ui.require([
 			values: ["foo", "not false", "trueish"]},
 
 		{constant: "Date", type: "Edm.Date",
-			values: ["2000-01-01", "-0006-12-24"]},
+			values: ["2000-01-01"]},
 		{constant: "Date", error: true,
 			values: ["20000101", "2000-01-01T16:00:00Z",
-				"2000-00-01", "2000-13-01", "2000-01-00", "2000-01-32", "-6-12-24"]},
+				"2000-00-01", "2000-13-01", "2000-01-00", "2000-01-32",
+				// Note: negative year values not supported at SAP
+				"-0006-12-24", "-6-12-24"]},
 
 		{constant: "DateTimeOffset", type: "Edm.DateTimeOffset",
 			values: [
@@ -33,9 +35,8 @@ sap.ui.require([
 				"2000-01-01T16:00:00.0Z",
 				"2000-01-01T16:00:00.000Z",
 				"2000-01-02T01:00:00.000+09:00",
-				"2000-01-01T16:00:00.000+14:00", // http://www.w3.org/TR/xmlschema11-2/#nt-tzFrag
-				"2000-01-01T16:00:00.000456789012Z",
-				"-0006-12-24T00:00:00Z"
+				"2000-01-02T06:00:00.000+14:00", // http://www.w3.org/TR/xmlschema11-2/#nt-tzFrag
+				"2000-01-01T16:00:00.000456789012Z"
 			]},
 		{constant: "DateTimeOffset", error: true,
 			values: [
@@ -46,6 +47,8 @@ sap.ui.require([
 				"2000-01-01T16:00:00.000+00:60",
 				"2000-01-01T16:00:00.000~00:00",
 				"2000-01-01T16:00:00.Z",
+				// Note: negative year values not supported at SAP
+				"-0006-12-24T00:00:00Z",
 				"-6-12-24T16:00:00Z"]},
 
 		{constant: "Decimal", type: "Edm.Decimal", values: ["+1.1", "+123.123", "-123.1", "+123.1",
@@ -126,7 +129,9 @@ sap.ui.require([
 
 						if (oFixture.constant === "String") {
 							deepEqual(oResult, {
+								ignoreTypeInPath: true,
 								result: "binding",
+								type: "Edm.String",
 								value: "/##" + oConstantPathValue.path
 							}, "bindTexts");
 						} else {
@@ -382,6 +387,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["And", "Eq", "Ge", "Gt", "Le", "Lt", "Ne", "Or"
+	].forEach(function (sOperator) {
+		var oDirect = {},
+			oOperatorValue = {};
+
+		function testOperator(oRawValue, sProperty) {
+			test("expression: " + JSON.stringify(oRawValue), function () {
+				var oInterface = {},
+					oPathValue = {path: "/my/path", value: oRawValue},
+					oSubPathValue = {path: "/my/path/" + sProperty, value: oOperatorValue},
+					oResult = {};
+
+				this.mock(Expression).expects("operator")
+					.withExactArgs(oInterface, oSubPathValue, sOperator).returns(oResult);
+
+				strictEqual(Expression.expression(oInterface, oPathValue, false), oResult);
+			});
+		}
+
+		oDirect[sOperator] = oOperatorValue;
+		testOperator(oDirect, sOperator);
+		testOperator({Type: sOperator, Value: oOperatorValue}, "Value");
+	});
+
+	//*********************************************************************************************
+	(function () {
+		var oOperatorValue = {};
+
+		function testNot(oRawValue, sProperty) {
+			test("expression: " + JSON.stringify(oRawValue), function () {
+				var oInterface = {},
+					oPathValue = {path: "/my/path", value: oRawValue},
+					oSubPathValue = {path: "/my/path/" + sProperty, value: oOperatorValue},
+					oResult = {};
+
+				this.mock(Expression).expects("not")
+					.withExactArgs(oInterface, oSubPathValue).returns(oResult);
+
+				strictEqual(Expression.expression(oInterface, oPathValue, false), oResult);
+			});
+		}
+
+		testNot({Not: oOperatorValue}, "Not");
+		testNot({Type: "Not", Value: oOperatorValue}, "Value");
+	}());
+
+	//*********************************************************************************************
 	test("expression: unknown", function () {
 		var oPathValue = {value: {}};
 
@@ -452,6 +504,122 @@ sap.ui.require([
 		deepEqual(Expression.uriEncode(oInterface, oPathValue), {
 			result: "expression",
 			value: "odata.uriEncode(${path},'Edm.Double')",
+			type: "Edm.String"
+		});
+	});
+
+	//*********************************************************************************************
+	test("wrapExpression", function () {
+		deepEqual(Expression.wrapExpression({result: "binding", value: "path"}),
+				{result: "binding", value: "path"});
+		deepEqual(Expression.wrapExpression({result: "composite", value: "{a}{b}"}),
+				{result: "composite", value: "{a}{b}"});
+		deepEqual(Expression.wrapExpression({result: "constant", value: "42"}),
+				{result: "constant", value: "42"});
+		deepEqual(Expression.wrapExpression({result: "expression", value: "${test)?-1:1"}),
+				{result: "expression", value: "(${test)?-1:1)"});
+	});
+
+	//*********************************************************************************************
+	test("conditional", function () {
+		var oBasics = this.mock(Basics),
+			oExpression = this.mock(Expression),
+			oInterface = {},
+			oPathValue = {},
+			oParameter0 = {result: "expression", value: "A"},
+			oParameter1 = {result: "expression", value: "B", type: "foo"},
+			oParameter2 = {result: "expression", value: "C", type: "foo"},
+			oWrappedParameter0 = {result: "expression", value: "(A)"},
+			oWrappedParameter1 = {result: "expression", value: "(B)", type: "foo"},
+			oWrappedParameter2 = {result: "expression", value: "(C)", type: "foo"};
+
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean").returns(oParameter0);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 1).returns(oParameter1);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 2).returns(oParameter2);
+
+		oExpression.expects("wrapExpression")
+			.withExactArgs(oParameter0).returns(oWrappedParameter0);
+		oExpression.expects("wrapExpression")
+			.withExactArgs(oParameter1).returns(oWrappedParameter1);
+		oExpression.expects("wrapExpression")
+			.withExactArgs(oParameter2).returns(oWrappedParameter2);
+
+		oBasics.expects("resultToString").withExactArgs(oWrappedParameter0, true).returns("(A)");
+		oBasics.expects("resultToString").withExactArgs(oWrappedParameter1, true).returns("(B)");
+		oBasics.expects("resultToString").withExactArgs(oWrappedParameter2, true).returns("(C)");
+
+		deepEqual(Expression.conditional(oInterface, oPathValue), {
+			result: "expression",
+			value: "(A)?(B):(C)",
+			type: "foo"
+		});
+	});
+
+	//*********************************************************************************************
+	test("conditional: w/ incorrect types", function () {
+		var oExpression = this.mock(Expression),
+			oInterface = {},
+			oPathValue = {},
+			oParameter0 = {},
+			oParameter1 = {type: "foo"},
+			oParameter2 = {type: "bar"};
+
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean").returns(oParameter0);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 1).returns(oParameter1);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 2).returns(oParameter2);
+
+		this.mock(Basics).expects("error")
+			.withExactArgs(oPathValue,
+				"Expected same type for second and third parameter, types are 'foo' and 'bar'")
+			.throws(new SyntaxError());
+
+		throws(function () {
+			Expression.conditional(oInterface, oPathValue);
+		}, SyntaxError);
+	});
+
+	//*********************************************************************************************
+	test("uriEncode edm:Date constant", function () {
+		var oInterface = {},
+			oPathValue = {};
+
+		this.mock(Expression).expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0)
+			.returns({
+				result: "constant",
+				value: "2015-03-24",
+				type: "Edm.Date"
+			});
+
+		deepEqual(Expression.uriEncode(oInterface, oPathValue), {
+			result: "expression",
+			value: "odata.uriEncode('2015-03-24T00:00:00Z','Edm.DateTime')",
+			type: "Edm.String"
+		});
+	});
+
+	//*********************************************************************************************
+	test("uriEncode edm:TimeOfDay constant", function () {
+		var oInterface = {},
+			oPathValue = {};
+
+		this.mock(Expression).expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0)
+			.returns({
+				result: "constant",
+				value: "13:57:06.123456789012",
+				type: "Edm.TimeOfDay"
+			});
+
+		deepEqual(Expression.uriEncode(oInterface, oPathValue), {
+			result: "expression",
+			value: "odata.uriEncode('PT13H57M06S','Edm.Time')", //TODO split seconds
 			type: "Edm.String"
 		});
 	});
@@ -601,6 +769,293 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[{
+		parameter: {result: "binding", value: "path", type: "Edm.Boolean"},
+		value: "!${path}"
+	}, {
+		parameter: {result: "expression", value: "!${path}", type: "Edm.Boolean"},
+		value: "!(!${path})"
+	}].forEach(function (oFixture) {
+		test("Not", function () {
+			var oInterface = {},
+				oPathValue = {},
+				oExpectedResult = {
+					result: "expression",
+					type: "Edm.Boolean",
+					value: oFixture.value
+				};
+
+			this.mock(Expression).expects("expression")
+				.withExactArgs(oInterface, oPathValue, true)
+				.returns(oFixture.parameter);
+
+			deepEqual(Expression.not(oInterface, oPathValue), oExpectedResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{i: {result: "binding", category: "boolean", value: "foo"}, o: "{foo}"},
+		{i: {result: "constant", category: "string", value: "foo"}, o: "foo"},
+	].forEach(function (oFixture) {
+		[false, true].forEach(function (bWrap) {
+			test("formatOperand: " + JSON.stringify(oFixture) + ", bWrap = " + bWrap, function () {
+				if (bWrap) {
+					this.mock(Expression).expects("wrapExpression")
+						.withExactArgs(oFixture.i).returns(oFixture.i);
+				}
+				this.mock(Basics).expects("resultToString")
+					.withExactArgs(oFixture.i, true).returns(oFixture.o);
+
+				strictEqual(Expression.formatOperand({}, 42, oFixture.i, bWrap), oFixture.o);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("formatOperand: simple constants", function () {
+		strictEqual(Expression.formatOperand({}, 42, {
+			result: "constant",
+			category: "boolean",
+			value: "true"}, true), "true");
+		strictEqual(Expression.formatOperand({}, 42, {
+			result: "constant",
+			category: "number",
+			value: "42"}, true), "42");
+	});
+
+	//*********************************************************************************************
+	test("formatOperand: date", function () {
+		var iDate = Date.UTC(2015, 3, 15),
+			oResult = {result: "constant", category: "date", value: "2015-04-15"};
+
+		this.mock(Expression).expects("parseDate")
+			.withExactArgs(oResult.value).returns(new Date(iDate));
+
+		strictEqual(Expression.formatOperand({}, 42, oResult, true), String(iDate));
+	});
+
+	//*********************************************************************************************
+	test("formatOperand: wrong date ", function () {
+		var oPathValue = {path: "/my/path", value: [{}]},
+			oResult = {result: "constant", category: "date", value: "2015-02-30"};
+
+		this.mock(Expression).expects("parseDate")
+			.withExactArgs(oResult.value).returns(undefined);
+		this.mock(Basics).expects("error")
+			.withExactArgs({path: "/my/path/0", value: oPathValue.value[0]},
+				"Invalid Date 2015-02-30")
+			.throws(new SyntaxError());
+
+		throws(function () {
+			Expression.formatOperand(oPathValue, 0, oResult, true);
+		}, SyntaxError);
+	});
+
+	//*********************************************************************************************
+	test("formatOperand: datetime", function () {
+		var iDate = Date.UTC(2015, 3, 15, 13, 12, 11),
+			oResult = {result: "constant", category: "datetime", value: "2014-04-15T13:12:11Z"};
+
+		this.mock(Expression).expects("parseDateTimeOffset")
+			.withExactArgs(oResult.value).returns(new Date(iDate));
+
+		strictEqual(Expression.formatOperand({}, 42, oResult, true), String(iDate));
+	});
+
+	//*********************************************************************************************
+	test("formatOperand: wrong datetime ", function () {
+		var oPathValue = {path: "/my/path", value: [{}]},
+			oResult = {result: "constant", category: "datetime", value: "2015-02-30T13:12:11Z"};
+
+		this.mock(Expression).expects("parseDateTimeOffset")
+			.withExactArgs(oResult.value).returns(undefined);
+		this.mock(Basics).expects("error")
+			.withExactArgs({path: "/my/path/0", value: oPathValue.value[0]},
+				"Invalid DateTime 2015-02-30T13:12:11Z")
+			.throws(new SyntaxError());
+
+		throws(function () {
+			Expression.formatOperand(oPathValue, 0, oResult, true);
+		}, SyntaxError);
+	});
+
+	//*********************************************************************************************
+	test("formatOperand: time", function () {
+		var iDate = Date.UTC(1970, 0, 1, 23, 59, 59, 123),
+			oResult = {result: "constant", category: "time", value: "23:59:59.123"};
+
+		this.mock(Expression).expects("parseTimeOfDay")
+			.withExactArgs(oResult.value).returns(new Date(iDate));
+
+		strictEqual(Expression.formatOperand({}, 42, oResult, true), String(iDate));
+	});
+
+	//*********************************************************************************************
+	test("adjustOperands", function () {
+		var oP11 = {result: "binding", category: "number", type: "Edm.Int32"},
+			oP12 = {result: "constant", category: "decimal", type: "Edm.Int64"},
+			oP21 = {result: "constant", category: "date", type: "Edm.Date"},
+			oP22 = {result: "binding", category: "datetime", type: "Edm.DateTime"},
+			aTypes = ["Edm.Date", "Edm.DateTime", "Edm.Decimal", "Edm.Int32", "Edm.Int64",
+				"Edm.String"],
+			aCategories = ["date", "datetime", "decimal", "number", "decimal", "string"],
+			aResults = ["binding", "constant"];
+
+		function isActiveCase(o1, o2) {
+			return (jQuery.sap.equal(o1, oP11) && jQuery.sap.equal(o2, oP12))
+				|| (jQuery.sap.equal(o1, oP21) && jQuery.sap.equal(o2, oP22));
+		}
+
+		aResults.forEach(function (sResult1) {
+			aResults.forEach(function (sResult2) {
+				aTypes.forEach(function (sType1, i1) {
+					aTypes.forEach(function (sType2, i2) {
+						var oParameter1 =
+								{result: sResult1, type: sType1, category: aCategories[i1]},
+							oParameter2 =
+								{result: sResult2, type: sType2, category: aCategories[i2]},
+							oExpected =
+								{result: sResult2, type: sType2, category: aCategories[i2]};
+
+						if (!isActiveCase(oParameter1, oParameter2)) {
+							Expression.adjustOperands(oParameter1, oParameter2);
+							deepEqual(oParameter2, oExpected, JSON.stringify(oParameter1));
+						}
+					});
+				});
+			});
+		});
+
+		Expression.adjustOperands(oP11, oP12);
+		deepEqual(oP12, {result: "constant", type: "Edm.Int64", category: "number"});
+
+		Expression.adjustOperands(oP21, oP22);
+		deepEqual(oP22, {result: "binding", type: "Edm.DateTime", category: "date"});
+	});
+
+	//*********************************************************************************************
+	[
+		{text: "And", operator: "&&", type: "Edm.Boolean"},
+		{text: "Eq", operator: "==="},
+		{text: "Ge", operator: ">="},
+		{text: "Gt", operator: ">"},
+		{text: "Le", operator: "<="},
+		{text: "Lt", operator: "<"},
+		{text: "Ne", operator: "!=="},
+		{text: "Or", operator: "||", type: "Edm.Boolean"}
+	].forEach(function (oFixture) {
+		test("operator " + oFixture.text, function () {
+			var oInterface = {},
+				oPathValue = {},
+				oParameter0 = {result: "binding", value: "path1",
+					type: oFixture.type || "Edm.String"},
+				oParameter1 = {result: "expression", value: "!${path2}",
+					type: oFixture.type || "Edm.String"},
+				oExpectedResult = {
+					result: "expression",
+					value: "${path1}" + oFixture.operator + "(!${path2})",
+					type: "Edm.Boolean"
+				},
+				oExpression = this.mock(Expression);
+
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 0, oFixture.type)
+				.returns(oParameter0);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 1, oFixture.type)
+				.returns(oParameter1);
+
+			deepEqual(Expression.operator(oInterface, oPathValue, oFixture.text), oExpectedResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{type: "Edm.Boolean", category: "boolean", compare: false},
+		{type: "Edm.Byte", category: "number", compare: false},
+		{type: "Edm.Date", category: "date", compare: true},
+		{type: "Edm.DateTime", category: "datetime", compare: true},
+		{type: "Edm.DateTimeOffset", category: "datetime", compare: true},
+		{type: "Edm.Decimal", category: "decimal", compare: true},
+		{type: "Edm.Double", category: "number", compare: false},
+		{type: "Edm.Float", category: "number", compare: false},
+		{type: "Edm.Guid", category: "string", compare: false},
+		{type: "Edm.Int16", category: "number", compare: false},
+		{type: "Edm.Int32", category: "number", compare: false},
+		{type: "Edm.Int64", category: "decimal", compare: true},
+		{type: "Edm.SByte", category: "number", compare: false},
+		{type: "Edm.Single", category: "number", compare: false},
+		{type: "Edm.String", category: "string", compare: false},
+		{type: "Edm.Time", category: "time", compare: true},
+		{type: "Edm.TimeOfDay", category: "time", compare: true},
+	].forEach(function (oFixture) {
+		test("operator Eq on " + oFixture.type, function () {
+			var oExpression = this.mock(Expression),
+				oInterface = {},
+				oPathValue = {},
+				oParameter0 = {type: oFixture.type},
+				oParameter1 = {type: oFixture.type},
+				sExpectedResult = oFixture.compare ? "odata.compare(p0,p1)===0" : "p0===p1";
+
+			if (oFixture.category === "decimal") {
+				sExpectedResult = "odata.compare(p0,p1,true)===0";
+			}
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 0, undefined)
+				.returns(oParameter0);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 1, undefined)
+				.returns(oParameter1);
+
+			oExpression.expects("adjustOperands").withExactArgs(oParameter0, oParameter1);
+			oExpression.expects("adjustOperands").withExactArgs(oParameter1, oParameter0);
+
+			oExpression.expects("formatOperand")
+				.withExactArgs(oPathValue, 0, oParameter0, !oFixture.compare)
+				.returns("p0");
+			oExpression.expects("formatOperand")
+				.withExactArgs(oPathValue, 1, oParameter1, !oFixture.compare)
+				.returns("p1");
+
+			deepEqual(Expression.operator(oInterface, oPathValue, "Eq"),
+				{result: "expression", type: "Edm.Boolean", value: sExpectedResult});
+
+			strictEqual(oParameter0.category, oFixture.category);
+			strictEqual(oParameter1.category, oFixture.category);
+		});
+	});
+
+	//*********************************************************************************************
+	test("operator: mixed types", function () {
+			var oExpression = this.mock(Expression),
+				oInterface = {},
+				oPathValue = {},
+				oParameter0 = {type: "Edm.String"},
+				oParameter1 = {type: "Edm.Boolean"};
+
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 0, undefined)
+				.returns(oParameter0);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 1, undefined)
+				.returns(oParameter1);
+
+			oExpression.expects("adjustOperands").withExactArgs(oParameter0, oParameter1);
+			oExpression.expects("adjustOperands").withExactArgs(oParameter1, oParameter0);
+
+			this.mock(Basics).expects("error")
+				.withExactArgs(oPathValue, "Expected two comparable parameters but instead saw "
+					+ "Edm.String and Edm.Boolean")
+				.throws(new SyntaxError());
+
+			throws(function () {
+				Expression.operator(oInterface, oPathValue, "Eq");
+			}, SyntaxError);
+	});
+	// TODO learn about operator precedence and avoid unnecessary "()" around expressions
+
+	//*********************************************************************************************
 	test("parameter: w/o type expectation", function () {
 		var oInterface = {},
 			oRawValue = [{}],
@@ -695,5 +1150,25 @@ sap.ui.require([
 		throws(function () {
 			Expression.getExpression(oInterface, {}, false);
 		}, /deliberate failure/, "error falls through");
+	});
+
+	//*********************************************************************************************
+	test("parseDate", function () {
+		strictEqual(Expression.parseDate("2015-03-08").getTime(), Date.UTC(2015, 2, 8));
+		strictEqual(Expression.parseDate("2015-02-30"), null);
+	});
+
+	//*********************************************************************************************
+	test("parseDateTimeOffset", function () {
+		strictEqual(
+			Expression.parseDateTimeOffset("2015-03-08T19:32:56.123456789012+02:00").getTime(),
+			Date.UTC(2015, 2, 8, 17, 32, 56, 123));
+		strictEqual(Expression.parseDateTimeOffset("2015-02-30T17:32:56.123456789012"), null);
+	});
+
+	//*********************************************************************************************
+	test("parseTimeOfDay", function () {
+		strictEqual(Expression.parseTimeOfDay("23:59:59.123456789012").getTime(),
+			Date.UTC(1970, 0, 1, 23, 59, 59, 123));
 	});
 });

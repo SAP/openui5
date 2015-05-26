@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new mvc/HTMLView.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -29,12 +29,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core"
 	}});
-	
-	
-	
+
+
+
 		/**
 		 * Defines or creates an instance of a declarative HTML view.
 		 *
@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		 *
 		 * @param {string} [sId] id of the newly created view, only allowed for instance creation
 		 * @param {string | object} vView name or implementation of the view.
+		 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 		 * @public
 		 * @static
 		 * @return {sap.ui.core.mvc.HTMLView | undefined} the created HTMLView instance in the creation case, otherwise undefined
@@ -59,27 +60,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		sap.ui.htmlview = function(sId, vView) {
 			return sap.ui.view(sId, vView, sap.ui.core.mvc.ViewType.HTML);
 		};
-		
+
 		/**
-		 * The type of the view used for the <code>sap.ui.view</code> factory 
-		 * function. This property is used by the parsers to define the specific 
+		 * The type of the view used for the <code>sap.ui.view</code> factory
+		 * function. This property is used by the parsers to define the specific
 		 * view type.
 		 * @private
 		 */
 		HTMLView._sType = sap.ui.core.mvc.ViewType.HTML;
-		
+
+		/**
+		 * Flag for feature detection of asynchronous loading/rendering
+		 * @public
+		 * @since 1.30
+		 */
+		HTMLView.asyncSupport = true;
+
 		/**
 		 * The template cache. Templates are only loaded once.
-		 * 
+		 *
 		 * @private
 		 * @static
 		 */
 		HTMLView._mTemplates = {};
-	
-	
+
+
 		/**
 		 * A map with the allowed settings for the view.
-		 * 
+		 *
 		 * @private
 		 * @static
 		 */
@@ -93,31 +101,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				"resourceBundleLocale" : true,
 				"resourceBundleAlias" : true
 		};
-		
-		
+
+
 		/**
 		 * Loads and returns a template for the given template name. Templates are only loaded once {@link sap.ui.core.mvc.HTMLView._mTemplates}.
-		 * 
+		 *
 		 * @param {string} sTemplateName The name of the template
-		 * @return {string} the template data
+		 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
+		 * @return {string|Promise} the template data, or a Promise resolving with it when async
 		 * @private
 		 * @static
 		 */
-		HTMLView._getTemplate = function(sTemplateName) {
+		HTMLView._getTemplate = function(sTemplateName, mOptions) {
 			var sUrl = this._getViewUrl(sTemplateName);
 			var sHTML = this._mTemplates[sUrl];
-			
+
 			if (!sHTML) {
-				sHTML = this._loadTemplate(sTemplateName);
-				// TODO discuss 
+				sHTML = this._loadTemplate(sTemplateName, mOptions);
+				// TODO discuss
 				// a) why caching at all (more precise: why for HTMLView although we refused to do it for other view types - risk of a memory leak!)
 				// b) why cached via URL instead of via name? Any special scenario in mind?
-				this._mTemplates[sUrl] = sHTML;
+				if (mOptions && mOptions.async) {
+					var that = this;
+					return sHTML.then(function(_sHTML) {
+						that._mTemplates[sUrl] = _sHTML;
+						return Promise.resolve(_sHTML);
+					});
+				} else {
+					this._mTemplates[sUrl] = sHTML;
+				}
 			}
-			return sHTML;
+			return mOptions.async ? Promise.resolve(sHTML) : sHTML;
 		};
-	
-	
+
+
 		/**
 		 * Abstract method implementation. Returns the name of the controller.
 		 * @return {string} the name of the set controller. Returns undefined when no controller is set.
@@ -126,11 +143,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		HTMLView.prototype.getControllerName = function() {
 			return this._controllerName;
 		};
-	
-	
+
+
 		/**
 		 * Returns the view URL for a given template name in respect of the module path.
-		 * 
+		 *
 		 * @param {string} sTemplateName The name of the template
 		 * @return {string} the view url
 		 * @private
@@ -139,100 +156,119 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		HTMLView._getViewUrl = function(sTemplateName) {
 			return jQuery.sap.getModulePath(sTemplateName, ".view.html");
 		};
-	
-	
+
+
 		/**
 		 * Loads and returns the template from a given URL.
-		 * 
+		 *
 		 * @param {string} sTemplateName The name of the template
-		 * @return {string} the template data
+		 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
+		 * @return {string|Promise} the template data, or a Promise resolving with it when async
 		 * @private
 		 * @static
 		 */
-		HTMLView._loadTemplate = function(sTemplateName) {
+		HTMLView._loadTemplate = function(sTemplateName, mOptions) {
 			var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.html");
-			return jQuery.sap.loadResource(sResourceName);
+			return jQuery.sap.loadResource(sResourceName, mOptions);
 		};
-	
-	
+
+
 		/**
 		 * Abstract method implementation.
-		 * 
+		 *
 		 * @see sap.ui.core.mvc.View#initViewSettings
-		 * 
+		 *
 		 * @private
 		 */
 		HTMLView.prototype.initViewSettings = function (mSettings) {
 			if (!mSettings) {
 				throw new Error("mSettings must be given");
 			}
-	
+
 			// View template handling - no JSON template given
 			if (mSettings.viewName && mSettings.viewContent) {
 				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
 			} else if (!mSettings.viewName && !mSettings.viewContent) {
 				throw new Error("Neither view name nor view content is given. One of them is required.");
 			}
-	
-			var vHTML = mSettings.viewContent || HTMLView._getTemplate(mSettings.viewName);
-			this._oTemplate = document.createElement("div");
-	
-			if (typeof vHTML === "string") {
-				this._oTemplate.innerHTML = vHTML;
-			} else {
-				var oNodeList = vHTML;
-				var oFragment = document.createDocumentFragment();
-				for (var i = 0; i < oNodeList.length;i++) {
-					oFragment.appendChild(oNodeList.item(i));
-				}
-				this._oTemplate.appendChild(oFragment);
-			}
-	
-			var oMetaElement = this._oTemplate.getElementsByTagName("template")[0];
-			var oProperties = this.getMetadata().getAllProperties();
-	
-			if (oMetaElement) {
-				var that = this;
-				var DeclarativeSupport = DeclarativeSupport1;
-				jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
-					var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
-					var sValue = oAttr.value;
-					var oProperty = oProperties[sName];
-					if (!mSettings[sName]) {
-						if (oProperty) {
-							mSettings[sName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
-						} else if (HTMLView._mAllowedSettings[sName]) {
-							mSettings[sName] = sValue;
-						}
+
+			var that = this;
+			function fnInitViewSettings() {
+				that._oTemplate = document.createElement("div");
+
+				if (typeof vHTML === "string") {
+					that._oTemplate.innerHTML = vHTML;
+				} else {
+					var oNodeList = vHTML;
+					var oFragment = document.createDocumentFragment();
+					for (var i = 0; i < oNodeList.length;i++) {
+						oFragment.appendChild(oNodeList.item(i));
 					}
-				});
-				this._oTemplate = oMetaElement;
+					that._oTemplate.appendChild(oFragment);
+				}
+
+				var oMetaElement = that._oTemplate.getElementsByTagName("template")[0];
+				var oProperties = that.getMetadata().getAllProperties();
+
+				if (oMetaElement) {
+					var DeclarativeSupport = DeclarativeSupport1;
+					jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
+						var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
+						var sValue = oAttr.value;
+						var oProperty = oProperties[sName];
+						if (!mSettings[sName]) {
+							if (oProperty) {
+								mSettings[sName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
+							} else if (HTMLView._mAllowedSettings[sName]) {
+								mSettings[sName] = sValue;
+							}
+						}
+					});
+					that._oTemplate = oMetaElement;
+				}
+
+				// that is a fix for browsers that support web components
+				if (that._oTemplate.content) {
+					var oFragment = that._oTemplate.content;
+					// Create a new template, as innerHTML would be empty for TemplateElements when the fragment is appended directly
+					that._oTemplate = document.createElement("div");
+					// Make the shadow DOM available in the DOM
+					that._oTemplate.appendChild(oFragment);
+				}
+
+				if (mSettings.controllerName) {
+				  that._controllerName = mSettings.controllerName;
+				}
+				if ((mSettings.resourceBundleName || mSettings.resourceBundleUrl) && (!mSettings.models || !mSettings.models[mSettings.resourceBundleAlias])) {
+					var model = new sap.ui.model.resource.ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
+					that.setModel(model, mSettings.resourceBundleAlias);
+				}
 			}
-	
-			// This is a fix for browsers that support web components
-			if (this._oTemplate.content) {
-				var oFragment = this._oTemplate.content;
-				// Create a new template, as innerHTML would be empty for TemplateElements when the fragment is appended directly
-				this._oTemplate = document.createElement("div");
-				// Make the shadow DOM available in the DOM
-				this._oTemplate.appendChild(oFragment);
+
+			var vHTML = mSettings.viewContent;
+
+			if (!vHTML) {
+				// vHTML could be a promise if {async: true}
+				vHTML = HTMLView._getTemplate(mSettings.viewName, {async: mSettings.async});
 			}
-	
-			if (mSettings.controllerName) {
-			  this._controllerName = mSettings.controllerName;
+
+			if (mSettings.async) {
+				// return the promise
+				return vHTML.then(function(_vHTML) {
+						vHTML = _vHTML;
+						fnInitViewSettings();
+					});
 			}
-			if ((mSettings.resourceBundleName || mSettings.resourceBundleUrl) && (!mSettings.models || !mSettings.models[mSettings.resourceBundleAlias])) {
-				var model = new sap.ui.model.resource.ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
-				this.setModel(model, mSettings.resourceBundleAlias);
-			}
+
+			fnInitViewSettings();
 		};
-	
-		
+
+
 		/**
 		 * Abstract method implementation.
-		 * 
+		 *
 		 * @see sap.ui.core.mvc.View#onControllerConnected
-		 * 
+		 *
 		 * @private
 		 */
 		HTMLView.prototype.onControllerConnected = function(oController) {
@@ -244,8 +280,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				settings: this._fnSettingsPreprocessor
 			});
 		};
-		
-		
+
+
 		/**
 		 * Called when the control is destroyed. Use this one to free resources and finalize activities.
 		 */
@@ -260,10 +296,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				this._connectedControls = null;
 			}
 		};
-	
-	
+
+
 		/**
-		 * Internal method to connect unassociated controls to the view. All controls will be destroyed when the view is destroyed. 
+		 * Internal method to connect unassociated controls to the view. All controls will be destroyed when the view is destroyed.
 		 *
 		 * @param {sap.ui.core.Control} oControl reference to a Control
 		 * @private
@@ -272,7 +308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 			this._connectedControls = this._connectedControls || [];
 			this._connectedControls.push(oControl);
 		};
-	
+
 
 	return HTMLView;
 

@@ -111,15 +111,12 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		);
 	}
 
-	if (aMessages.length > 0) {
-		if (!this._processor) {
-			// In case no message processor is attached, at least log to console.
-			// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
-			this._outputMesages(aMessages);
-		}
-
-		this._propagateMessages(aMessages, oResponse, oRequest, mGetEntities, mChangeEntities);
+	if (!this._processor) {
+		// In case no message processor is attached, at least log to console.
+		// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
+		this._outputMesages(aMessages);
 	}
+	this._propagateMessages(aMessages, sRequestUri, mGetEntities, mChangeEntities);
 };
 
 
@@ -128,34 +125,56 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 
 ////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
+
+ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
+	var mAffectedTargets = jQuery.extend({
+		"": true // Allow global messages by default
+	}, mGetEntities, mChangeEntities);
+
+
+	// Get EntitySet for Requested resource
+	var sRequestTarget = stripURI(sRequestUri);
+	if (sRequestTarget.indexOf(this._serviceUrl) === 0) {
+		// This is an absolute URL, remove the service part at the front
+		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
+	}
+	
+	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
+	if (mEntitySet) {
+		mAffectedTargets[mEntitySet.name] = true;
+	}
+	
+	
+	// Get the EntitySet for every single target
+	for (var i = 0; i < aMessages.length; ++i) {
+		var sTarget = aMessages[i].getTarget();
+
+		if (sTarget) {
+			mEntitySet = this._metadata._getEntitySetByPath(sTarget);
+			if (mEntitySet) {
+				mAffectedTargets[mEntitySet.name] = true;
+			}
+		}
+	}
+	
+	return mAffectedTargets;
+};
+
 /**
  * This method calculates the message delta and gives it to the MessageProcessor (fires the
  * messageChange-event) based on the entities belonging to this request.
  *
  * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
- * @param {object} oResponse - The response from the back-end
- * @param {object} oRequest - The request that lead to this response
+ * @param {string} sRequestUri - The request URL
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @return {void}
  */
-ODataMessageParser.prototype._propagateMessages = function(aMessages, oResponse, oRequest, mGetEntities, mChangeEntities) {
+ODataMessageParser.prototype._propagateMessages = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
 	var i, sTarget;
 
-	var mAffectedTargets = jQuery.extend({
-		"": true // Allow global messages by default
-	}, mGetEntities, mChangeEntities);
-
-	// Add parent EntitySet to accepted targets
-	sTarget = aMessages[0].getTarget();
-
-	if (sTarget) {
-		var mEntitySet = this._metadata._getEntitySetByPath(sTarget);
-		if (mEntitySet) {
-			mAffectedTargets[mEntitySet.name] = true;
-		}
-	}
-
+	var mAffectedTargets = this._getAffectedTargets(aMessages, sRequestUri, mGetEntities, mChangeEntities);
+	
 	// All messages with targets are part of the changed targets by definition. All Messages that
 	// come back from the server belong to affected entities/sets
 	// TODO: Check if this is necessary, since only messages for requested entities/sets should be returned from the service...
@@ -207,7 +226,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, oResponse,
  * Creates a sap.ui.core.message.Message from the given JavaScript object
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {object} oResponse - The response from the back-end
+ * @param {string} sRequestUri - The request URL
  * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
  * @return {sap.ui.core.message.Message} The message for the given error
  */
@@ -224,12 +243,15 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestU
 		? oMessageObject["message"]["value"]
 		: oMessageObject["message"];
 
+	var sDescriptionUrl = oMessageObject.longtextUrl ? oMessageObject.longtextUrl : "";
+
 	var sTarget = this._createTarget(oMessageObject, sRequestUri);
 
 	return new Message({
 		type:      sType,
 		code:      sCode,
 		message:   sText,
+		descriptionUrl: sDescriptionUrl,
 		target:    sTarget,
 		processor: this._processor,
 		technical: bIsTechnical
@@ -243,7 +265,7 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestU
  * URI and appends the target if the target was not specified as absolute path (with leading "/")
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {object} oResponse - The response from the back-end
+ * @param {string} sRequestUri - The request URL
  * @return {string} The actual target string
  * @private
  */
@@ -290,7 +312,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, sRequestUr
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the headers property map will be used
- *
+ * @param {string} sRequestUri - The request URL
  */
 ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, sRequestUri) {
 	var sField = this.getHeaderField();
@@ -324,12 +346,13 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
+ * @param {string} sRequestUri - The request URL
  */
 ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse, sRequestUri) {
 	// TODO: The main error object does not support "target". Find out how to proceed with the main error information (ignore/add without target/add to all other errors)
 
 	var sContentType = getContentType(oResponse);
-	if (sContentType.indexOf("xml") > -1) {
+	if (sContentType && sContentType.indexOf("xml") > -1) {
 		// XML response
 		this._parseBodyXML(/* ref: */ aMessages, oResponse, sRequestUri, sContentType);
 	} else {
@@ -344,6 +367,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
+ * @param {string} sRequestUri - The request URL
  * @param {string} sContentType - The content type of the response (for the XML parser)
  * @return {void}
  */
@@ -401,6 +425,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
+ * @param {string} sRequestUri - The request URL
  * @return {void}
  */
 ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse, sRequestUri) {

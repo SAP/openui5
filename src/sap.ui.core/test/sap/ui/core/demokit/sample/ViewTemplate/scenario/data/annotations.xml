@@ -175,7 +175,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Dimensions">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Dimensions"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -374,7 +374,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Note">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Order Note"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -514,7 +514,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Note">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Order Note"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -674,24 +674,6 @@
 				</Annotation>
 			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.Contact">
-				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
-					<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
-						<PropertyValue Property="TypeName" String="Contact"/>
-						<PropertyValue Property="TypeNamePlural" String="Contacts"/>
-						<PropertyValue Property="Title">
-							<Record Type="com.sap.vocabularies.UI.v1.DataField">
-								<PropertyValue Property="Label" String="Name"/>
-								<PropertyValue Property="Value">
-									<Apply Function="odata.concat">
-										<Path>FirstName</Path>
-										<String/>
-										<Path>LastName</Path>
-									</Apply>
-								</PropertyValue>
-							</Record>
-						</PropertyValue>
-					</Record>
-				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.Badge">
 					<Record Type="com.sap.vocabularies.UI.v1.BadgeType">
 						<PropertyValue Property="HeadLine" Path="ToBusinessPartner/CompanyName"/>
@@ -842,6 +824,15 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsActionCritical" Bool="true"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Confirm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsActionCritical" Bool="false"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Cancel">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsActionCritical"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

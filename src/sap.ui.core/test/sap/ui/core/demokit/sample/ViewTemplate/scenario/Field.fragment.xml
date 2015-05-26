@@ -5,11 +5,13 @@
 	<HBox>
 		<template:if test="{field>Value}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataField -->
 			<template:with path="field>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
-				<template:if test="{= ${target>sap:semantics} === 'email'}" >
-					<core:Icon src="sap-icon://email" />
+				<!--  check that IsEmailAddress annotaion is available and that it has value true -->
+				<template:if test="{= ${target>com.sap.vocabularies.Communication.v1.IsEmailAddress} &amp;&amp; ${target>com.sap.vocabularies.Communication.v1.IsEmailAddress}.Bool}" >
+					<core:Icon src="sap-icon://email" tooltip="Email" />
 				</template:if>
-				<template:if test="{= ${target>sap:semantics} === 'tel'}" >
-					<core:Icon src="sap-icon://phone" />
+				<!--  check only the availability of the annotation -->
+				<template:if test="{target>com.sap.vocabularies.Communication.v1.IsPhoneNumber}" >
+					<core:Icon src="sap-icon://phone" tooltip="Phone" />
 				</template:if>
 			</template:with>
 			<template:if test="{field>Url}">

@@ -134,6 +134,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oPopup.setShadow(false);
 		this._oPopup.setModal(true, 'sapMDialogBLyInit');
 		this._oPopup.setAnimations(this.openAnimation, this.closeAnimation);
+		this._oPopup.setInitialFocusId(this.getId());
 	
 		//the orientationchange event listener
 		this._fOrientationChange = jQuery.proxy(this._reposition, this);

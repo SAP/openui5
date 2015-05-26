@@ -141,6 +141,23 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	};
 	
 	/**
+	 * Sets the selection mode. The current selection is lost.
+	 * @param {string} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
+	 * @public
+	 * @return a reference on the table for chaining
+	 */
+	TreeTable.prototype.setSelectionMode = function (sSelectionMode) {
+		var oBinding = this.getBinding("rows");
+		if (oBinding && oBinding.clearSelection) {
+			oBinding.clearSelection();
+			this.setProperty("selectionMode", sSelectionMode);
+		} else {
+			Table.prototype.setSelectionMode.call(this, sSelectionMode);
+		}
+		return this;
+	};
+	
+	/**
 	 * refresh rows
 	 * @private
 	 */
@@ -192,7 +209,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		if (sName === "rows") {
 			return true;
 		}
-		return sap.ui.core.Element.prototype.isTreeBinding.apply(this, sName);
+		return sap.ui.core.Element.prototype.isTreeBinding.apply(this, arguments);
 	};
 
 	TreeTable.prototype.getBinding = function(sName) {
@@ -380,6 +397,9 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 					attachSelectionChanged: function() {
 						// for compatibility reasons (OData Tree Binding)
 						return undefined;
+					},
+					clearSelection: function () {
+						that._oSelection.clearSelection();
 					},
 					attachSort: function() {},
 					detachSort: function() {}

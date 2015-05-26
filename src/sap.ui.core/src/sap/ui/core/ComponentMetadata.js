@@ -356,11 +356,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		// exclude abstract base classes and legacy metadata
 		if (!this.isAbstract() && this._oStaticInfo.__metadataVersion === 2) {
 
-			// URI should be resolved relative to the component, not html page
-			var sComponentBaseDir = jQuery.sap.getModulePath(this.getComponentName()) + "/";
+			var that = this;
 
 			// read out i18n URI, defaults to i18n/i18n.properties
-			var sComponentRelativeI18nUrl = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties";
+			var sComponentRelativeI18nUri = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties";
 
 			var oResourceBundle;
 
@@ -368,9 +367,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 				oObject[sKey] = vValue.replace(rManifestTemplate, function(sMatch, s1) {
 					// only create a resource bundle if there is something to replace
 					if (!oResourceBundle) {
-						var sI18nUrl = new URI(sComponentRelativeI18nUrl, sComponentBaseDir).toString();
 						oResourceBundle = jQuery.sap.resources({
-							url: sI18nUrl
+							url: that._resolveUri(new URI(sComponentRelativeI18nUri))
 						});
 					}
 					return oResourceBundle.getText(s1);
@@ -734,7 +732,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			for (var j = 0; j < aCSSResources.length; j++) {
 				var oCSSResource = aCSSResources[j];
 				if (oCSSResource.uri) {
-					var sCssUrl = sap.ui.resource(sComponentName, oCSSResource.uri);
+					var sCssUrl = this._resolveUri(new URI(oCSSResource.uri)).toString();
 					jQuery.sap.log.info("Component \"" + this.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
 					jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
 				}
@@ -896,6 +894,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			}
 		}
 		
+	};
+
+	/**
+	 * Resolves the given URI relative to the component.
+	 *
+	 * @private
+	 * @param {URI} oUri URI to resolve
+	 * @return {URI} resolved URI
+	 * @since 1.29.1
+	 */
+	ComponentMetadata.prototype._resolveUri = function(oUri) {
+		return ComponentMetadata._resolveUriRelativeTo(oUri, new URI(jQuery.sap.getModulePath(this.getComponentName()) + "/"));
+	};
+
+	/**
+	 * Resolves the given URI relative to the given base URI.
+	 *
+	 * @private
+	 * @param {URI} oUri URI to resolve
+	 * @param {URI} oBase base URI
+	 * @return {URI} resolved URI
+	 * @since 1.29.1
+	 */
+	ComponentMetadata._resolveUriRelativeTo = function(oUri, oBase) {
+		if (oUri.is("absolute") || (oUri.path() && oUri.path()[0] === "/")) {
+			return oUri;
+		}
+		var oPageBase = new URI().search("");
+		oBase = oBase.absoluteTo(oPageBase);
+		return oUri.absoluteTo(oBase).relativeTo(oPageBase);
 	};
 
 	return ComponentMetadata;
