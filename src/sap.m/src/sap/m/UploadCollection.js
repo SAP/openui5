@@ -837,7 +837,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._getFileNameControl = function(oItem, that) {
-		var bEnabled, oFileName, oFile, sFileName, sFileNameLong, sItemId, sStatus, iMaxLength, sValueState, bShowValueStateMessage, oFileNameEditBox;
+		var bEnabled, oFileName, oFile, sFileName, sFileNameLong, sItemId, sStatus, iMaxLength, sValueState, bShowValueStateMessage, oFileNameEditBox, sValueStateText;
 
 		sFileNameLong = oItem.getFileName();
 		sItemId = oItem.getId();
@@ -875,15 +875,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				bShowValueStateMessage = true;
 				sValueState = "Error";
 				sFileName = oItem.changedFileName;
+				if (sFileName.length === 0) {
+					sValueStateText = this._oRb.getText("UPLOADCOLLECTION_TYPE_FILENAME");
+				} else {
+					sValueStateText = this._oRb.getText("UPLOADCOLLECTION_EXISTS");
+				}
 			}
 
 			oFileNameEditBox = sap.ui.getCore().byId(sItemId + "-ta_editFileName");
+
 			if (!oFileNameEditBox) {
 				oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
 					type : sap.m.InputType.Text,
 					fieldWidth: "60%",
 					valueState : sValueState,
-					valueStateText : this._oRb.getText("UPLOADCOLLECTION_EXISTS"),
+					valueStateText : sValueStateText,
 					showValueStateMessage: bShowValueStateMessage,
 					value : sFileName,
 					description: oFile.extension
@@ -891,7 +897,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			} else {
 				oFileNameEditBox.setValueState(sValueState);
 				oFileNameEditBox.setFieldWidth("60%");
-				oFileNameEditBox.setValueStateText(this._oRb.getText("UPLOADCOLLECTION_EXISTS"));
+				oFileNameEditBox.setValueStateText(sValueStateText);
 				oFileNameEditBox.setValue(sFileName);
 				oFileNameEditBox.setDescription(oFile.extension);
 				oFileNameEditBox.setShowValueStateMessage(bShowValueStateMessage);
@@ -1378,6 +1384,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var bTriggerOk = true;
 		var oEditbox = document.getElementById(sSourceId + "-ta_editFileName-inner");
 		var sNewFileName;
+		var iSourceLine = sSourceId.split("-").pop();
+		var sOrigFullFileName = oContext.aItems[iSourceLine].getProperty("fileName");
+		var oFile = UploadCollection.prototype._splitFilename(sOrigFullFileName);
+		var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
+		var sErrorStateBefore = oContext.aItems[iSourceLine].errorState;
+		var sChangedNameBefore = oContext.aItems[iSourceLine].changedFileName;
+
 		// get new/changed file name and remove potential leading spaces
 		if (oEditbox !== null) {
 			sNewFileName = oEditbox.value.replace(/^\s+/,"");
@@ -1389,27 +1402,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		oContext.sFocusId = aSrcIdElements.join("-") + "-cli";
 
 		if ( sNewFileName && (sNewFileName.length > 0)) {
-			var iSourceLine = sSourceId.split("-").pop();
 			oContext.aItems[iSourceLine]._status = UploadCollection._displayStatus;
-			// get original file name
-			var sOrigFullFileName = oContext.aItems[iSourceLine].getProperty("fileName");
-			var oFile = UploadCollection.prototype._splitFilename(sOrigFullFileName);
 			// in case there is a difference, additional activities are necessary
-			if (oFile.name != sNewFileName) {
+			if (oFile.name !== sNewFileName) {
 				// here we have to check possible double items if it's necessary
 				if (!oContext.getSameFilenameAllowed()) {
-					var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
 					// Check double file name
 					if (sap.m.UploadCollection.prototype._checkDoubleFileName(sNewFileName + oFile.extension, oContext.aItems)) {
-						var sErrorStateBefore = oContext.aItems[iSourceLine].errorState;
-						var sChangedNameBefore = oContext.aItems[iSourceLine].changedFileName;
 						oInput.setProperty("valueState", "Error", true);
 						oContext.aItems[iSourceLine]._status = "Edit";
 						oContext.aItems[iSourceLine].errorState = "Error";
 						oContext.aItems[iSourceLine].changedFileName = sNewFileName;
 						oContext.sErrorState = "Error";
 						bTriggerOk = false;
-						if (sErrorStateBefore != "Error" || sChangedNameBefore != sNewFileName){
+						if (sErrorStateBefore !== "Error" || sChangedNameBefore !== sNewFileName){
 							oContext.invalidate();
 						}
 					} else {
@@ -1435,6 +1441,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				if (bTriggerRenderer) {
 					oContext.invalidate();
 				}
+			}
+		} else {
+			// no new file name provided
+			oContext.aItems[iSourceLine]._status = "Edit";
+			oContext.aItems[iSourceLine].errorState = "Error";
+			oContext.aItems[iSourceLine].changedFileName = sNewFileName;
+			oContext.sErrorState = "Error";
+			if (sErrorStateBefore !== "Error" || sChangedNameBefore !== sNewFileName){
+				oContext.aItems[iSourceLine].invalidate();
 			}
 		}
 	};
