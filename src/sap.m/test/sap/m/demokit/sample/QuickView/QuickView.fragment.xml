@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<QuickView id="quickView" cards="{/cards}">
-		<QuickViewCard
-				cardId="{cardId}"
+	<QuickView id="quickView" pages="{/pages}">
+		<QuickViewPage
+				pageId="{pageId}"
 				header="{header}"
 				icon="{icon}"
 				title="{title}"
@@ -14,12 +14,12 @@
 						value="{value}"
 						url="{url}"
 						type="{elementType}"
-						cardLinkId="{cardLinkId}"
+						pageLinkId="{pageLinkId}"
 						emailSubject="{emailSubject}"
 						target="{target}"
 						>
 				</QuickViewGroupElement>
 			</QuickViewGroup>
-		</QuickViewCard>
+		</QuickViewPage>
 	</QuickView>
 </core:FragmentDefinition>

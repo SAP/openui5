@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ProgressIndicator",
 			"sap.m.PullToRefresh",
 			"sap.m.QuickView",
-			"sap.m.QuickViewCard",
+			"sap.m.QuickViewPage",
 			"sap.m.QuickViewGroup",
 			"sap.m.QuickViewGroupElement",
 			"sap.m.RadioButton",
@@ -1285,10 +1285,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		text : "text",
 
 		/**
-		 * Dislpays a link for navigating to another QuickViewCard
+		 * Dislpays a link for navigating to another QuickViewPage
 		 * @public
 		 */
-		cardLink : "cardLink"
+		pageLink : "pageLink"
 
 	};
 

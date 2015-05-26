@@ -15,9 +15,9 @@ sap.ui.define([
 		onInit: function () {
 			// JSON sample data
 			var mCompanyData = {
-				cards: [
+				pages: [
 					{
-						cardId: "companyCardId",
+						pageId: "companyPageId",
 						header: "Company info",
 						title: "Adventure Company",
 						titleUrl: "http://sap.com",
@@ -45,8 +45,8 @@ sap.ui.define([
 									{
 										label: "Name",
 										value: "John Doe",
-										elementType: sap.m.QuickViewGroupElementType.cardLink,
-										cardLinkId: "companyEmployeeCardId"
+										elementType: sap.m.QuickViewGroupElementType.pageLink,
+										pageLinkId: "companyEmployeePageId"
 									},
 									{
 										label: "Mobile",
@@ -69,7 +69,7 @@ sap.ui.define([
 						]
 					},
 					{
-						cardId: "companyEmployeeCardId",
+						pageId: "companyEmployeePageId",
 						header: "Employee Info",
 						title: "John Doe",
 						icon: "sap-icon://person-placeholder",
@@ -116,9 +116,9 @@ sap.ui.define([
 			};
 
 			var mEmployeeData = {
-				cards: [
+				pages: [
 					{
-						cardId: "employeeCardId",
+						pageId: "employeePageId",
 						header: "Employee Info",
 						icon: "test-resources/sap/ui/demokit/explored/img/johnDoe.png",
 						title: "Michael Muller",
@@ -166,9 +166,9 @@ sap.ui.define([
 			};
 
 			var mGenericData = {
-				cards: [
+				pages: [
 					{
-						cardId: "genericCardId",
+						pageId: "genericPageId",
 						header: "Process",
 						title: "Inventarisation",
 						titleUrl: "http://de.wikipedia.org/wiki/Inventarisation",

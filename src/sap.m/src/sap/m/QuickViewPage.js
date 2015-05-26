@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 
-// Provides control sap.m.QuickViewCard
+// Provides control sap.m.QuickViewPage
 sap.ui.define([
 			'jquery.sap.global', './library', 'sap/ui/core/Control',
 				'sap/ui/core/IconPool', 'sap/ui/layout/form/SimpleForm',
@@ -23,21 +23,21 @@ sap.ui.define([
 			"use strict";
 
 			/**
-			 * Constructor for a new QuickViewCard.
+			 * Constructor for a new QuickViewPage.
 			 *
 			 * @param {string} [sId] id for the new control, generated automatically if no id is given
 			 * @param {object} [mSettings] initial settings for the new control
-			 * @class QuickViewCard consists of  a page header, an object icon or image,
+			 * @class QuickViewPage consists of  a page header, an object icon or image,
 			 * an object name with short description, and an object information divided in groups.
 			 * The control uses the sap.m.SimpleForm control to display information.
 			 * @extends sap.ui.core.Control
 			 * @author SAP SE
 			 * @constructor
 			 * @public
-			 * @alias sap.m.QuickViewCard
+			 * @alias sap.m.QuickViewPage
 			 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 			 */
-			var QuickViewCard = Control.extend("sap.m.QuickViewCard",
+			var QuickViewPage = Control.extend("sap.m.QuickViewPage",
 					{
 						metadata: {
 
@@ -45,9 +45,9 @@ sap.ui.define([
 							properties: {
 
 								/**
-								 * Card id
+								 * Page id
 								 */
-								cardId: {
+								pageId: {
 									type: "string",
 									group: "Misc",
 									defaultValue: ""
@@ -81,7 +81,7 @@ sap.ui.define([
 								},
 
 								/**
-								 * The application provides target and param configuration  for cross-application navigation from the 'card header'.
+								 * The application provides target and param configuration  for cross-application navigation from the 'page header'.
 								 */
 								crossAppNavCallback : {
 									type: "object",
@@ -123,7 +123,7 @@ sap.ui.define([
 					});
 
 
-			QuickViewCard.prototype.init =  function() {
+			QuickViewPage.prototype.init =  function() {
 				this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 				try {
@@ -140,20 +140,20 @@ sap.ui.define([
 
 			};
 
-			QuickViewCard.prototype._createCard = function () {
+			QuickViewPage.prototype._createPage = function () {
 				var oForm = this._createForm(),
 					that = this,
-					oHeaderContent = this._getCardHeaderContent(),
+					oHeaderContent = this._getPageHeaderContent(),
 					aContent = [];
 
 				aContent.push(oHeaderContent, oForm);
 
-				var oCard = new Page(this.getCardId(), {
+				var oPage = new Page(this.getPageId(), {
 					content : aContent,
 					customHeader : new Bar()
 				});
 
-				var oCustomHeader = oCard.getCustomHeader();
+				var oCustomHeader = oPage.getCustomHeader();
 
 				oCustomHeader.addContentMiddle(
 					new Title({
@@ -188,22 +188,22 @@ sap.ui.define([
 					);
 				}
 
-				oCard.addStyleClass('sapMQuickViewCard');
+				oPage.addStyleClass('sapMQuickViewPage');
 
-				return oCard;
+				return oPage;
 			};
 
-			QuickViewCard.prototype._createCardContent = function () {
+			QuickViewPage.prototype._createPageContent = function () {
 
-				var mCardContent = {};
+				var mPageContent = {};
 
-				mCardContent.form = this._createForm();
-				mCardContent.header = this._getCardHeaderContent();
+				mPageContent.form = this._createForm();
+				mPageContent.header = this._getPageHeaderContent();
 
-				return mCardContent;
+				return mPageContent;
 			};
 
-			QuickViewCard.prototype._createForm = function () {
+			QuickViewPage.prototype._createForm = function () {
 				var aGroups = this.getAggregation("groups"),
 				    oForm = new SimpleForm({
 						maxContainerCols: 1,
@@ -220,7 +220,7 @@ sap.ui.define([
 				return oForm;
 			};
 
-			QuickViewCard.prototype._getCardHeaderContent = function() {
+			QuickViewPage.prototype._getPageHeaderContent = function() {
 				var oIcon,
 					oVLayout = new VerticalLayout(),
 					oHLayout = new HorizontalLayout();
@@ -276,7 +276,7 @@ sap.ui.define([
 				return oHLayout;
 			};
 
-			QuickViewCard.prototype._renderGroup = function(oGroup, oForm) {
+			QuickViewPage.prototype._renderGroup = function(oGroup, oForm) {
 				var aElements = oGroup.getAggregation("elements");
 
 				var oCurrentGroupElement,
@@ -313,7 +313,7 @@ sap.ui.define([
 
 					oForm.addContent(oLabel);
 
-					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.cardLink) {
+					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.pageLink) {
 						oCurrentGroupElementValue.attachPress(this._attachPressLink(this));
 					}
 
@@ -337,7 +337,7 @@ sap.ui.define([
 				}
 			};
 
-			QuickViewCard.prototype._crossApplicationNavigation = function (that) {
+			QuickViewPage.prototype._crossApplicationNavigation = function (that) {
 				return function () {
 					if (that.getCrossAppNavCallback() && that.oCrossAppNavigator) {
 						var targetConfig = that.getCrossAppNavCallback();
@@ -359,25 +359,25 @@ sap.ui.define([
 				};
 			};
 
-			QuickViewCard.prototype.exit = function() {
+			QuickViewPage.prototype.exit = function() {
 				this._oResourceBundle = null;
 			};
 
-			QuickViewCard.prototype._attachPressLink = function (that) {
+			QuickViewPage.prototype._attachPressLink = function (that) {
 				return function (e) {
 					e.preventDefault();
-					var sCardId = this.getCustomData()[0].getValue();
-					if (that._oNavContainer && sCardId) {
-						that._oNavContainer.to(sCardId);
+					var sPageId = this.getCustomData()[0].getValue();
+					if (that._oNavContainer && sPageId) {
+						that._oNavContainer.to(sPageId);
 					}
 				};
 			};
 
-			QuickViewCard.prototype._mobilePress = function () {
+			QuickViewPage.prototype._mobilePress = function () {
 				var sms = "sms://" + jQuery.sap.encodeURL(this.getCustomData()[0].getValue());
 				window.location.replace(sms);
 			};
 
-			return QuickViewCard;
+			return QuickViewPage;
 
 		}, /* bExport= */true);
