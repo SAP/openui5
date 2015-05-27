@@ -21,14 +21,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		var bFontFaceInserted = false;
 		
 		/**
-		 * Constructor for IconPool - must not be used: all of the methods that are under IconPool are static methods.
+		 * Constructor for IconPool - must not be used: all of the methods that are under 
+		 * IconPool are static methods.
 		 *
 		 * @class
 		 * The IconPool is a static class for retrieving or registering icons.
 		 * It also provides helping methods for easier consumption of icons.
-		 * There are already icons registered in IconPool, please follow this link and find the name of the icon:
-		 * 1. If you use the icon inside existing control, please call sap.ui.core.IconPool.getIconURI and assign the URI to controls which support icon.
-		 * 2. If you want to support icon and standard image in your own control, please call createControlByURI by giving the URI and a constructor when URI isn't a icon URI. Icon instance or instance created by calling the given constructor is returned.
+		 * There are already icons registered in IconPool, please use the Demo App named 
+		 * "Icon Explorer" to find the name of the icon.
+		 * 
+		 * In order to use the icon inside an existing control, please call 
+		 * sap.ui.core.IconPool.getIconURI and assign the URI to the control's property
+		 * which supports icons.
+		 * If you want to support icons and standard images in your own control, please use
+		 * the static method sap.ui.core.IconPool.createControlByURI to create an Icon in
+		 * case the first argument is an icon-URL or another control which you define by 
+		 * providing it as the second argument.
 		 * 
 		 * @public
 		 * @alias sap.ui.core.IconPool
@@ -82,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @param {string} collectionName the name of icon collection. The built in icons are with empty collectionName, so if additional icons need to be registered in IconPool, the collectionName can't be empty.  
 		 * @param {object} iconInfo the icon info which contains the following properties:
 		 * @param {string} iconInfo.fontFamily is the name of the font when importing the font using @font-face in CSS
-		 * @param {string} iconInfo.content is the special code without the prefix, for example "e000"
+		 * @param {string|string[]} iconInfo.content is the special hexadecimal code without the prefix, for example "e000" or several of them
 		 * @param {boolean} [iconInfo.overWrite=false] indicates if already registered icons should be overwritten when the same name and collection are given. The built in icons can never be overwritten.
 		 * @param {boolean} [iconInfo.suppressMirroring=false] indicates whether this icon should NOT be mirrored in RTL (right to left) mode.
 		 * 
@@ -120,12 +128,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				path: collectionName ? iconName : undefined
 			};
 			
+			if (!Array.isArray(iconInfo.content)) {
+				iconInfo.content = [ iconInfo.content ];
+			}
+			var sContent = "";
+			for (var i = 0; i < iconInfo.content.length; ++i) {
+				sContent += String.fromCharCode(parseInt(iconInfo.content[i], 16));
+			}
+			
 			icon = {
 				name: iconName,
 				collection: collectionName,
 				uri: window.URI.build(parts),
 				fontFamily: iconInfo.fontFamily,
-				content: String.fromCharCode(parseInt(iconInfo.content, 16)),
+				content: sContent,
 				suppressMirroring: iconInfo.suppressMirroring,
 				//keep compatibility with old name
 				skipMirroring: iconInfo.suppressMirroring
