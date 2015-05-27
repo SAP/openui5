@@ -1208,10 +1208,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var that = this;
 				window.setTimeout(function(){ // iPhone seems to need a zero timeout here, otherwise the to page is black (and may suddenly become visible when the DOM is touched)
 
-					var isAndroid23 = (sap.ui.Device.os.android && sap.ui.Device.os.version === 2.3);
-
-					// if not Android2.3 then add perspective styles to NavContainer
-					!isAndroid23 && that.$().addClass("sapMNavFlip");
+					that.$().addClass("sapMNavFlip");
 
 					// set the style classes that represent the initial state
 					oToPage.addStyleClass("sapMNavItemFlipNext");     // the page to navigate to should be placed just right of the visible area
@@ -1233,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 								bTransitionEndPending = false;
 								oToPage.removeStyleClass("sapMNavItemFlipping");
 								oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipPrevious");
-								!isAndroid23 && that.$().removeClass("sapMNavFlip");
+								that.$().removeClass("sapMNavFlip");
 
 								// notify the NavContainer that the animation is complete
 								fCallback();
@@ -1259,11 +1256,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 
 			back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-				var that = this,
-					isAndroid23 = (sap.ui.Device.os.android && sap.ui.Device.os.version === 2.3);
+				var that = this;
 
-				// if not Android2.3 then add perspective styles to NavContainer
-				!isAndroid23 && that.$().addClass("sapMNavFlip");
+				that.$().addClass("sapMNavFlip");
 
 				// set the style classes that represent the initial state
 				oToPage.addStyleClass("sapMNavItemFlipPrevious");     // the page to navigate back to should be placed just left of the visible area
@@ -1285,7 +1280,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 							bTransitionEndPending = false;
 							oToPage.removeStyleClass("sapMNavItemFlipping");
 							oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipNext");
-							!isAndroid23 && that.$().removeClass("sapMNavFlip");
+							that.$().removeClass("sapMNavFlip");
 
 							// notify the NavContainer that the animation is complete
 							fCallback();
@@ -1324,10 +1319,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var that = this;
 				window.setTimeout(function(){ // iPhone seems to need a zero timeout here, otherwise the to page is black (and may suddenly become visible when the DOM is touched)
 
-					var isAndroid23 = (sap.ui.Device.os.android && sap.ui.Device.os.version === 2.3);
-
-					// if not Android2.3 then add perspective styles to NavContainer
-					!isAndroid23 && that.$().addClass("sapMNavDoor");
+					that.$().addClass("sapMNavDoor");
 
 					// set the style classes that represent the initial state
 					oToPage.addStyleClass("sapMNavItemDoorInNext");     // the page to navigate to should be placed just right of the visible area
@@ -1349,7 +1341,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 								bTransitionEndPending = false;
 								oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorInNext");
 								oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorInPrevious");
-								!isAndroid23 && that.$().removeClass("sapMNavDoor");
+								that.$().removeClass("sapMNavDoor");
 
 								// notify the NavContainer that the animation is complete
 								fCallback();
@@ -1375,11 +1367,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 
 			back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-				var that = this,
-					isAndroid23 = (sap.ui.Device.os.android && sap.ui.Device.os.version === 2.3);
+				var that = this;
 
-				// if not Android2.3 then add perspective styles to NavContainer
-				!isAndroid23 && that.$().addClass("sapMNavDoor");
+				that.$().addClass("sapMNavDoor");
 
 				// set the style classes that represent the initial state
 				oToPage.addStyleClass("sapMNavItemDoorOutNext");     // the page to navigate back to should be placed just left of the visible area
@@ -1401,7 +1391,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 							bTransitionEndPending = false;
 							oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorOutNext");
 							oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorOutPrevious");
-							!isAndroid23 && that.$().removeClass("sapMNavDoor");
+							that.$().removeClass("sapMNavDoor");
 
 							// notify the NavContainer that the animation is complete
 							fCallback();
