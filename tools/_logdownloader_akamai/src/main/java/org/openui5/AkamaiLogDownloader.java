@@ -714,6 +714,7 @@ public class AkamaiLogDownloader {
 		Calendar today = Calendar.getInstance();
 		Calendar fileDate = Calendar.getInstance();
 		Map<String,Integer> uaMap = new HashMap<String, Integer>();
+		Map<String,Integer> referrerMap = new HashMap<String, Integer>();
 
 		try {
 			for (int i = 0; i < anonymizedLogFiles.size(); i++) {
@@ -722,7 +723,7 @@ public class AkamaiLogDownloader {
 				List<AnonymousLogLine> logLines = readLogFile(anonymizedLogFiles.get(i).file);
 
 				if (logLines.size() > 0) {
-					Collection<LogFileData> datas = handleLogLinesFromFile(logLines, uaMap); // one object per day contained in the log file
+					Collection<LogFileData> datas = handleLogLinesFromFile(logLines, uaMap, referrerMap); // one object per day contained in the log file
 
 					for (LogFileData data : datas) {
 						fileDate.setTime(data.getDate());
@@ -742,6 +743,14 @@ public class AkamaiLogDownloader {
 			BufferedWriter out = new BufferedWriter(new FileWriter(uaFile)); 
 			for (String ua : uaMap.keySet()) {
 				out.write("\"" + ua/*.replaceAll("\t", " ")*/ + "\";" + uaMap.get(ua) + "\n");
+			}
+			out.close();
+			
+			// write the referrers file
+			File refFile = new File(directory + File.separator + "referrers-from-analysis-" + date + ".csv");
+			out = new BufferedWriter(new FileWriter(refFile)); 
+			for (String ref : referrerMap.keySet()) {
+				out.write("\"" + ref + "\";" + referrerMap.get(ref) + "\n");
 			}
 			out.close();
 			
@@ -847,13 +856,17 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Takes parsed log lines, does some filtering on the HTTP codes and reports the aggregated results per day
+	 * Takes parsed log lines, does some filtering on the HTTP codes and reports the aggregated results per day.
+	 * Ignores robots/crawlers.
+	 * Also fills the user-agent strings and interesting referrers into the given maps (not per-day)
 	 * 
 	 * @param logLines
+	 * @param uaStrings
+	 * @param referrers
 	 * @throws IOException
 	 * @private
 	 */
-	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines, Map<String, Integer> uaStrings) throws IOException {
+	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines, Map<String, Integer> uaStrings, Map<String, Integer> referrers) throws IOException {
 		Map<String,LogFileData> fileDataMap = new HashMap<String, LogFileData>(4);
 		Set<String> knownIps = new HashSet<String>(512);
 		int ipCounter = 0;
@@ -889,6 +902,16 @@ public class AkamaiLogDownloader {
 					uaCount = 0;
 				}
 				uaStrings.put(ua, ++uaCount);
+			}
+
+			// save interesting referrers
+			String ref = logLine.getReferrerIfInteresting();
+			if (ref != null) {
+				Integer refCount = referrers.get(ref);
+				if (refCount == null) {
+					refCount = 0;
+				}
+				referrers.put(ref, ++refCount);
 			}
 
 			// keep track of how many unique IPs have been encountered - this does not currently work
@@ -954,7 +977,7 @@ public class AkamaiLogDownloader {
 				}
 
 			} else {
-				if (logLine.getCode() != 206 && logLine.getCode() != 0) {
+				if (logLine.getCode() != 206 && logLine.getCode() != 302 && logLine.getCode() != 0) {
 					warn("logline with status code " + logLine.getCode() + " url: " + logLine.getUrl());
 				}
 			}

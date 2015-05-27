@@ -306,4 +306,22 @@ public class AnonymousLogLine {
 		}
 		return false;
 	}
+
+	public String getReferrerIfInteresting() {
+		String ref = this.referrer;
+		
+		if (ref.equals("-")
+				|| ref.startsWith("http://openui5.org")
+				|| ref.startsWith("http://sap.github.io")
+				|| ref.startsWith("http://openui5.tumblr.com")
+				|| ref.startsWith("https://sap.github.io")
+				|| ref.startsWith("https://github.com/SAP/openui5")
+				|| ref.startsWith("http://openui5picks.tumblr.com")
+				|| ref.startsWith("http://openui5.hana.ondemand.com")
+				|| ref.startsWith("https://openui5.hana.ondemand.com")) {
+			return null;
+		}
+		
+		return ref;
+	}
 }
