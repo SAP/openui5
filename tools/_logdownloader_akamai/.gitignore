@@ -1,0 +1,6 @@
+logBackup*
+http_*
+lib
+*.csv
+data_*
+knownLogFiles_*

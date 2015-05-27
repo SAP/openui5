@@ -3,15 +3,17 @@ package org.openui5;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,32 +24,54 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPHTTPClient;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AkamaiLogDownloader {
 
-	private static final String FTP_URL = "ftp://saphcp.upload.akamai.com/341459/333580/";
+	//private static final ApplicationConfig test_config = new ApplicationConfig("test", "ftp.suse.de", "/");
+	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "saphcp.upload.akamai.com", "/341459/333580");
+	
+	private static final ApplicationConfig[] APPLICATION_CONFIGS = {
+		//test_config,
+		openui5_config
+	};
+	
 	private static String USER = null;
 	private static String PASSWORD = null;
 	private static final String DEFAULT_USER = "openui5";
-	private static final String DEFAULT_PASSWORD = "phoenix@sap5";
 	
 	private static final String DATA_FILE_NAME = "data";
-	
-	private static final boolean DEV_MODE = false;
+	private static final String KNOWN_FILES_FILE_NAME = "knownLogFiles";
 
 	// global consts
-	private static final String PROXY = "C:\\git\\sapui5.misc\\tools\\_logdownloader_akamai\\target\\setProxy.bat & ";
 	private static final String BACKUP_FOLDER_NAME = "logBackup";
 
 	// member variables
 	private final File directory;
 	private final File exportDir;
+	
+	// dev/debugging mode
+	private final boolean DEV_MODE = false;
+	// the following array can contain file names to use or folder names (to use all files inside)
+	/*
+	private final String[] debugFilesOrDirectories = {
+		"C:\\temp\\akamai\\analysis1104\\openui5_333580.esw3c_S.201504110000-2400-0",
+		"C:\\temp\\akamai\\analysis1104\\openui5_333580.esw3c_S.201504110000-2400-1",
+		"C:\\temp\\akamai\\analysis1104\\openui5_333580.esw3c_S.201504120000-2400-0"
+	};
+	*/
+	
+	private final String[] debugFilesOrDirectories = {
+		"C:\\temp\\akamai"
+	};
+
 
 
 
@@ -75,7 +99,7 @@ public class AkamaiLogDownloader {
 				} else if (paramName.equals("--export")) {
 					exportDirString =  paramValue.replaceAll("^\"|\"$", "").replaceAll("^'|\'$", "");
 				} else {
-					error("Unknown commandline parameter '" + paramName + "'. Supported are: --user, --password, --neobat, --dir, --export");
+					error("Unknown commandline parameter '" + paramName + "'. Supported are: --user, --password, --dir, --export");
 				}
 			}
 		} else {
@@ -88,20 +112,14 @@ public class AkamaiLogDownloader {
 			log("          default is the current directory");
 			log("   --export: the directory where the JSON file(s) with the aggregated results should be copied to;");
 			log("             this file can be used as data source for apps; by default the JSON file is not copied anywhere");
-			if (!DEV_MODE) {
-				error("No commandline arguments received. At least user name and password need to be given!");
-			}
+			error("No commandline arguments received. At least user name and password need to be given!");
 		}
 		
 		if (USER == null) {
 			USER = DEFAULT_USER;
 		}
 		if (PASSWORD == null) {
-			if (DEV_MODE) {
-				PASSWORD = DEFAULT_PASSWORD;
-			} else {
-				error("Password was not given, use the '--password' parameter.");
-			}
+			error("Password was not given, use the '--password' parameter.");
 		}
 
 		// setup working directory
@@ -128,7 +146,9 @@ public class AkamaiLogDownloader {
 		AkamaiLogDownloader ld = new AkamaiLogDownloader(logDir, exportDir);
 
 		// ...for all required applications
-		ld.handleLogFiles();
+		for (int i = 0; i < APPLICATION_CONFIGS.length; i++) {
+			ld.handleLogFiles(APPLICATION_CONFIGS[i]);
+		}
 	}
 
 	
@@ -148,176 +168,338 @@ public class AkamaiLogDownloader {
 	 * 
 	 * @param applicationConfig
 	 */
-	public void handleLogFiles() {
-		
-		log("\nStarting log download process for application '" + applicationConfig.getApplication() + "'...\n\n");
+	public void handleLogFiles(ApplicationConfig applicationConfig) {
+		List<File> rawLogFiles = new ArrayList<File>();; // these will be the downloaded+unzipped log files that need to be parsed
+		final String knownFilesFileName = directory + File.separator + KNOWN_FILES_FILE_NAME + "_" + applicationConfig.getApplication() + ".json";
+		final File knownFilesFile = new File(knownFilesFileName);
+		JSONObject knownFiles;
 
-		List<LogFileData> listOfDataSetsFromAllServers = new ArrayList<LogFileData>();
 
-		// log file downloading and parsing needs to be done for all servers where this application is deployed
-		for (int i = 0; i < applicationConfig.getServers().length; i++) {
-			String server = applicationConfig.getServers()[i];
+
+		if (!DEV_MODE) { // = normal mode, accessing the Akamai FTP server (dev mode works with local files)
+
+			log("\nStarting log download process for application '" + applicationConfig.getApplication() + "'...\n\n");
+
+			// Step 1: get all log files from the server (would be better to interactively check which ones we need, but as I can't get the Java FTP client to work, we use the windows commandline client)
+			log("Accessing Akamai FTP server to get list of available log files...");
+			List<String> availableLogFileNames = this.getLogFileNames(applicationConfig.getFtpServer(), applicationConfig.getFtpPath());
+			log("...available list of " + availableLogFileNames.size() + " Akamai log files downloaded (ftpUrl: " + applicationConfig.getFtpUrl() + ").\n");
+	
+	
+			/*
+			 * Now we know which log files are available for downloading. But as they reach back a couple of days, and this tool may have been executed a day (or minute) ago,
+			 * many of them might already be processed, so we now want to know which log files have already been processed in the past.
+			 */
+	
+	
+			// STEP 2: find out which log files we have already processed in the past
+			log("Loading local list of known log files (" + knownFilesFileName + ")...");
+			knownFiles = this.loadJsonFromFile(knownFilesFile);
+			List<String> knownLogFileNames = getKnownLogFilesFromJson(knownFiles);
+			log("...list of " + knownLogFileNames.size() + " known log files loaded.\n");
+	
+	
+			// Step 3: find out which log files are new and need to be downloaded
+			log("Checking which log files are new and need to be downloaded...");
+			List<String> neededLogFileNames = calcNeededLogFiles(availableLogFileNames, knownLogFileNames);
+			log("...found " + neededLogFileNames.size() + " log files which are not known yet.\n");
+	
+	
+			/*
+			 * Now we also know which files have already been processed in the past, so they do not need to be downloaded and processed again.
+			 */
+	
+	
+			// Step 4: download all new log files
+			log("Downloading log files from Akamai FTP server...");
+			List<File> downloadedFiles = downloadLogFiles(applicationConfig.getFtpServer(), applicationConfig.getFtpPath(), neededLogFileNames);
+			log("..." + downloadedFiles.size() + " log files downloaded.\n");
 			
-			// Step 1: get the list of log files from the cloud server
-			JSONObject json = this.getLogList(applicationConfig.getAccount(), applicationConfig.getApplication(), server);
-			log("...log list downloaded (server: " + server + ").\n");
-	
-	
-			// Step 2: extract the actual HTTP log file names by parsing the log list
-			String commandOutput= json.has("commandOutput") ? json.getString("commandOutput") : "";
-			List<String> logFileNames = this.parseCommandOutput(commandOutput);
-	
-			if (logFileNames.size() < 1 && applicationConfig.getApplication().equals("openui5")) { // no logs?
-				error("no log files could be extracted from JSON");
-			} else {
-				log("..." + logFileNames.size() + " log file names found (server: " + server + ").\n");
-			}
-	
-	
-			// Step 3: download the HTTP log files
-			List<File> rawLogFiles = this.downloadLogFiles(logFileNames, applicationConfig.getAccount(), applicationConfig.getApplication(), server);
-			if (rawLogFiles.size() != logFileNames.size()) {
-				error(logFileNames.size() + " log file names known, but " + rawLogFiles.size() + " files downloaded.");
-			} else {
-				log("..." + rawLogFiles.size() + " log files downloaded (server: " + server + ").\n");
-			}
-	
-	
-			// Step 4: anonymize the log files
-			List<FileWithDate> anonymizedLogFiles = this.anonymizeLogFiles(rawLogFiles);
-			if (anonymizedLogFiles.size() != logFileNames.size()) {
-				error(logFileNames.size() + " log file names known, but " + anonymizedLogFiles.size() + "files anonymized.");
-			} else {
-				log("..." + anonymizedLogFiles.size() + " log files anonymized (server: " + server + ").\n");
-			}
-	
-	
-			// Step 5: extract data from log files and backup the completed log files
-			listOfDataSetsFromAllServers.addAll(this.parseLogs(anonymizedLogFiles, applicationConfig.getAccount(), applicationConfig.getApplication(), server));
-			log("...log files parsed (server: " + server + ").\n");
+			
+			// Step 5: unzip the downloaded files (and delete the compressed ones)
+			log("Unzipping log files...");
+			rawLogFiles = unzipLogFiles(downloadedFiles);
+			log("..." + rawLogFiles.size() + " log files unzipped.\n");
 
+		} // end of normal mode (not DEV_MODE)
+
+
+
+		// DEV_MODE
+		else { // only in DEV_MODE! Avoid any online stuff, work with local files.
+			warn("Working in DEV_MODE!");
+			knownFiles = new JSONObject("{data:[]}");
+			for (int i = 0; i < debugFilesOrDirectories.length; i++) { // the array can contain file names to use or folder names (to use all files inside)
+				File f = new File(debugFilesOrDirectories[i]);
+				if (f.isFile()) {
+					rawLogFiles.add(f);
+				} else { // directory
+					File[] listOfFiles = f.listFiles();
+
+					for (int j = 0; j < listOfFiles.length; j++) {
+						if (listOfFiles[j].isFile()) {
+							rawLogFiles.add(listOfFiles[j]);
+						}
+					}
+				}
+			}
+		}
+		// end of DEV_MODE
+
+
+
+		/*
+		 * At this time, rawLogFiles is the list of all log files which are currently stored at Akamai and have been downloaded.
+		 * The files have names like "openui5_333580.esw3c_S.201505020000-2400-0"
+		 * Even though each file has a date in its name, there will be log data from one or two (or more) previous days! This means the statistics for
+		 * any given day are not complete until a couple of days have passed.
+		 * There might also be multiple files stored at each day if the log size exceeds a certain threshold. They appear to be stored at the same time, though.
+		 */
+
+		// Step 4: anonymize the log files
+		log("Anonymizing log files...");
+		List<FileWithDate> anonymizedLogFiles = this.anonymizeLogFiles(rawLogFiles);
+		if (anonymizedLogFiles.size() != rawLogFiles.size()) {
+			error(rawLogFiles.size() + " log file names known, but " + anonymizedLogFiles.size() + "files anonymized.");
+		} else {
+			log("..." + anonymizedLogFiles.size() + " log files anonymized.\n");
 		}
 
 
-		// Step 5b: merge the data sets coming from different servers into one aggregated list with one entry per day
-		log("Aggregating " + listOfDataSetsFromAllServers.size() + " datasets from all servers...");
-		List<LogFileData> mergedDataSetsFromAllServers = mergeDataSets(listOfDataSetsFromAllServers);
-		log("...aggregated into " + mergedDataSetsFromAllServers.size() + " datasets.\n");
+		/*
+		 * Now we have files like "http_log_2015-05-02.txt" in our working directory, which have all IP addresses replaced by a counter. 
+		 * They are much smaller in size than the original log files because they only contain the relevant entries.
+		 * When there were multiple files for one day, the additional anonymized files have underscores appended to the file name.
+		 */
 
 
-		// Step 6: load previous data from file
-		JSONObject allData = this.loadDataFile(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".json"));
-		log("...data file loaded.\n");
+		// Step 5: extract data from log files
+		log("Parsing log files...");
+		List<LogFileData> listOfNewDataSets = this.parseLogs(anonymizedLogFiles, applicationConfig);
+		log("...log files parsed, result are " + listOfNewDataSets.size() + " datasets.\n");
 
 
-		// Step 7: merge new data
-		allData = this.addToJson(allData, mergedDataSetsFromAllServers);
-		log("...new data added.\n");
+		/* 
+		 * Now we have a list of dates with the corresponding statistics. This list contains ALL data from the currently handled log files.
+		 * Future log files may add more data to some of the days that are already covered here.
+		 */
 
 
-		// Step 8: save data file
+		// Step 6: backup the anonymized log files
+		log("Backing up anonymized log files...");
+		this.backupAnonymizedFiles(anonymizedLogFiles, applicationConfig);
+		log("...log files backed up.\n");
+
+
+		// Step 7: load previous data from file
+		File dataFile = new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".json");
+		log("Loading known data sets from " + dataFile.getAbsolutePath() + "...");
+		List<LogFileData> listOfOldDataSets = this.loadFileLogDataFromJson(dataFile);
+		log("..." + listOfOldDataSets.size() + " data sets loaded from data file.\n");
+
+
+		/*
+		 * Now we have ALL old data in the "allData" object and all new data in the "listOfDataSets".
+		 * It's time to merge them. Important: we cannot just append the new data because some of the new data may be late data for days that are already
+		 * contained in the old data. So we need a real merge.
+		 */
+
+
+		// Step 8: merge new data
+		log("Merging " + listOfNewDataSets.size() + " new data sets to " + listOfOldDataSets.size() + " known data sets...");
+		listOfOldDataSets.addAll(listOfNewDataSets);
+		List<LogFileData> mergedCurrentDataSets = mergeDataSets(listOfOldDataSets);
+		log("...new data merged, new count of data sets is: " + mergedCurrentDataSets.size() + " (may be lower than the sum of above).\n");
+
+
+		/*
+		 * mergedCurrentDataSets is now the complete merged data as available right now. Ready to be saved.
+		 */
+
+
+		// Step 9: save data file
 		File jsonDataFile = new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".json");
-		this.saveDataFile(jsonDataFile, allData);
+		log("Saving data file " + jsonDataFile + "...");
+		JSONObject allData = convertToJson(mergedCurrentDataSets);
+		this.saveJsonFile(jsonDataFile, allData);
 		log("...data file saved.\n");
 
 
-		// Step 9: store Excel/CSV data
-		this.exportAsCSV(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".csv"), allData);
-		log("...CSV file exported.\n");
+		// Step 10: save file that lists the known log file names
+		knownFiles = addknownFilesToJson(knownFiles, rawLogFiles);
+		log("Saving list of known log files to " + knownFilesFile + "...");
+		this.saveJsonFile(knownFilesFile, knownFiles);
+		log("...list of known log files saved.\n");
+
 		
-		// Step 10:
+		/*
+		 * Now everything important is done: the data is saved as well as the list of files that have already been handled.
+		 * The following steps are for easier consumption of the data in Excel and in web apps. 
+		 */
+
+		// Step 11: store Excel/CSV data
+		File csvFile = new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".csv");
+		log("Exporting CSV file " + csvFile + "...");
+		this.exportAsCSV(csvFile, allData);
+		log("...CSV file exported.\n");
+
+
+		// Step 12: optionally save a JSON file containing all data, e.g. for consumption in a web app
 		this.exportJsonToWeb(jsonDataFile);
+
+		log("\nDONE!\n");
 	}
 
 
 
 
 
+
+
+
+
 	/**
-	 * Returns a JSONObject containing the result of the list-logs API call
+	 * Uncompresses and deletes the given list of gzip-compressed files (they need to end with ".gz").
+	 * Returns the list of uncompressed files.
 	 * 
-	 * @param account like openui5 or appdesigner
-	 * @param application like openui5 or openui5beta
-	 * @param server like hana.ondemand.com
+	 * @param downloadedFiles
 	 * @return
 	 */
-	private JSONObject getLogList(String account, String application, String server) {
-		JSONObject result = null;
-
-		final String listLogsCommand = " list-logs --user " + USER + " -p " + PASSWORD + " --output json --account " + account 
-				+ " --application " + application + " --host https://" + server + "/ ";
-
-		String commandline = "cmd /c " + PROXY + NEO_PATH + listLogsCommand;
-		log("Retrieving list of log files...");
-		log("Using commandline " + commandline.replace(PASSWORD, "***"));
-
+	private List<File> unzipLogFiles(List<File> gzFiles) {
+		List<File> unzippedFiles = new ArrayList<File>();
+		byte[] buffer = new byte[1024];
+		
 		try {
-			Runtime rt = Runtime.getRuntime();
-
-			// execute the commandline tool
-			Process p = rt.exec(commandline);
-
-			// read the result string
-			final InputStream in = p.getInputStream();
-			String resultString = IOUtils.toString(in, "UTF-8");
-
-			// don't continue unless finished
-			p.waitFor();
-			
-			// parse the JSON data
-			Exception ex = null;
-			try {
-				result = new JSONObject(resultString);
-			} catch (JSONException e) {
-				ex = e; // delay reporting this error, otherwise we would loose the error reported from the server
-			}
-			
-			// check for errors
-			if (result != null && result.getInt("exitCode") != 0) { // error in API call?
-				if (application.equals("openui5")) {
-					error(result.getString("errorMsg") + "\n\nresult json is: " + result + "\n\ncommandline was:\n" + commandline.replace(PASSWORD, "***"));
-				} else {
-					warn(result.getString("errorMsg") + "\n\nresult json is: " + result + "\n\ncommandline was:\n" + commandline.replace(PASSWORD, "***"));
-					return new JSONObject();
+			for (File gzFile : gzFiles) {
+				int indexOfGz = gzFile.getName().lastIndexOf(".gz");
+				if (indexOfGz < 8) {
+					throw new RuntimeException("Unexpected log file name (not compressed?): " + gzFile.getName());
 				}
+				
+				String unzippedFileName = gzFile.getName().substring(0, indexOfGz);
+				File unzippedFile = new File(directory.getAbsolutePath() + File.separator + unzippedFileName);
+				unzippedFile.deleteOnExit();
+				
+				FileInputStream in = new FileInputStream(gzFile);
+				GZIPInputStream gzInputStream = new GZIPInputStream(in);
+				FileOutputStream out = new FileOutputStream(unzippedFile);
+				
+				int bytes_read;
+				while ((bytes_read = gzInputStream.read(buffer)) > 0) {
+					out.write(buffer, 0, bytes_read);
+				}
+				gzInputStream.close();
+				out.close();
+				gzFile.delete();
+				
+				unzippedFiles.add(unzippedFile);
 			}
 			
-			// now check for JSON parsing error
-			if (ex != null) {
-				error("No valid JSON recived: " + resultString);
-				throw new RuntimeException(ex);
-			}
-
 		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
+			// probably no space on disk... the uncompressed log files can be quite large, more than one gigabyte
+			
+			// clean up
+			for (File file : gzFiles) {
+				file.delete();
+			}
+			for (File file : unzippedFiles) {
+				file.delete();
+			}
+			
 			throw new RuntimeException(e);
 		}
-
-		return result;
+		
+		return unzippedFiles;
 	}
 
 
 	/**
-	 * Takes the "commandOutput" string from the JSONObject returned by the list-logs call and extracts the names of the listed HTTP log files
+	 * Returns a list of those log file names that are available, but not already known.
+	 * (Basically just checks which strings from the first list are not in the second list.)
 	 * 
-	 * @param commandOutput
+	 * @param availableLogFileNames
+	 * @param knownLogFileNames
 	 * @return
 	 */
-	private List<String> parseCommandOutput(String commandOutput) {
+	private List<String> calcNeededLogFiles(List<String> availableLogFileNames, List<String> knownLogFileNames) {
+		List<String> neededFileNames = new ArrayList<String>(availableLogFileNames);
+		neededFileNames.removeAll(knownLogFileNames);
+		return neededFileNames;
+	}
+
+
+
+	/**
+	 * From the given JSON object, which has an array in the "data" property at its root, this function returns all array entries.
+	 * 
+	 * @param knownFiles
+	 * @return
+	 */
+	private List<String> getKnownLogFilesFromJson(JSONObject knownFiles) {
+		JSONArray knownArray = knownFiles.getJSONArray("data");
+		List<String> fileNames = new ArrayList<String>();
+
+		for (int i = 0; i < knownArray.length(); i++) {
+			fileNames.add(knownArray.getString(i));
+		}
+		
+		return fileNames;
+	}
+
+
+
+	/**
+	 * Loads log data from the given file (JSON, which has an array in the "data" property at its root - the array entries are the log lines per day)
+	 * 
+	 * @param file
+	 * @return
+	 */
+	private List<LogFileData> loadFileLogDataFromJson(File file) {
+		List<LogFileData> loadedLogFileData = new ArrayList<LogFileData>();
+		
+		JSONObject json = this.loadJsonFromFile(file);
+		JSONArray dataArray = json.getJSONArray("data");
+
+		for (int i = 0; i < dataArray.length(); i++) {
+			JSONObject obj = dataArray.getJSONObject(i);
+			LogFileData data = LogFileData.fromJson(obj);
+			loadedLogFileData.add(data);
+		}
+		
+		return loadedLogFileData;
+	}
+
+
+
+	/**
+	 * Returns the list of available log file names from the server
+	 * 
+	 * @param ftpServer
+	 * @param ftpPath
+	 * @return
+	 */
+	private List<String> getLogFileNames(String ftpServer, String ftpPath) {
 		List<String> result = new ArrayList<String>();
-		final Pattern LINE_PATTERN = Pattern.compile("^\\d.* (http_[^\\s]+.log)$");
 
-		log("Parsing log list...");
+		FTPClient ftpClient = new FTPHTTPClient("proxy", 8080); // need to connect to the SAP proxy, using the Akamai credentials (and Akamai server appended to username)
+		ftpClient = new FTPClient();
+				
+		try {
+			ftpClient.connect("proxy", 21);
+			ftpClient.login(USER + "@" + ftpServer, PASSWORD);
+			ftpClient.pasv();
+			ftpClient.enterLocalPassiveMode();
+			
+			// lists files and directories in the current working directory
+			FTPFile[] files = ftpClient.listFiles(ftpPath);
 
-		String[] lines = commandOutput.split("\n");
-
-		for (int i = 0; i < lines.length; i++) {
-			String line = lines[i];
-			Matcher m = LINE_PATTERN.matcher(line);
-			if (m.matches()) {
-				result.add(m.group(1));
+			for (FTPFile file : files) {
+				result.add(file.getName());
 			}
+			
+			ftpClient.quit();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 
 		return result;
@@ -325,92 +507,66 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Takes a list of log file names and downloads them from the server
+	 * Downloads the files with the given names from the given FTP location. Connects through proxy:8080.
 	 * 
-	 * @param logFileNames
-	 * @param account like openui5 or appdesigner
-	 * @param application like openui5 or openui5beta
-	 * @param server like hana.ondemand.com
-	 * 
-	 * @return locally downloaded log files
+	 * @param ftpServer
+	 * @param ftpPath
+	 * @param fileNames
+	 * @return
 	 */
-	private List<File> downloadLogFiles(List<String> logFileNames, String account, String application, String server) {
-		final String getLogCommand = " get-log  --user " + USER + "  -p " + PASSWORD + "  --account " + account + "  --application " + application 
-				+ "  --host https://" + server + "/  --output json  --directory \"" + directory.getAbsolutePath() + "\"";
-		String commandline = "cmd /c " + PROXY + NEO_PATH + getLogCommand;
-		Runtime rt = Runtime.getRuntime();
-		JSONObject json;
+	private List<File> downloadLogFiles(String ftpServer, String ftpPath, List<String> fileNames) {
+		List<File> downloadedFiles = new ArrayList<File>();
 
-		List<File> logFiles = new ArrayList<File>();
-
-		log("Downloading log files...");
-
+		FTPClient ftpClient = new FTPHTTPClient("proxy", 8080); // need to connect to the SAP proxy, using the Akamai credentials (and Akamai server appended to username)
+		ftpClient = new FTPClient();
+				
 		try {
-
-			for (int i = 0; i < logFileNames.size(); i++) {
-				String fileName = logFileNames.get(i);
-				File logFile = new File(directory + File.separator + fileName);
-
-				log(" - " + logFile.getAbsolutePath());
-
-				// delete file if it already exists
-				if (logFile.exists()) {
-					logFile.delete();
-				}
-
-				// execute the commandline tool
-				Process p = rt.exec(commandline + " --file " + fileName);
-
-				// read the result string
-				final InputStream in = p.getInputStream();
-				String resultString = IOUtils.toString(in, "UTF-8");
-
-				// don't continue unless finished
-				p.waitFor();
-
-				// parse the JSON data
-				json = new JSONObject(resultString);
-
-				// detect errors
-				if (json.getInt("exitCode") != 0) { // error in API call?
-					error(json.getString("errorMsg"));
-				}
-
-				// check downloaded file
-				if (!logFile.exists()) {
-					error("File " + logFile + " was not downloaded successfully");
-				} else if (logFile.length() < 1000) {
-					warn("File " + logFile + " is too small to be good: " + logFile.length() + " bytes");  // TODO: turn this into an error case again once AP1 and US1 also get traffic (don't add/delete the logfile then anymore)
-					logFiles.add(logFile);
-					logFile.deleteOnExit();
-				} else {
-					logFiles.add(logFile);
-					logFile.deleteOnExit();
-				}
+			ftpClient.connect("proxy", 21);
+			ftpClient.login(USER + "@" + ftpServer, PASSWORD);
+			ftpClient.pasv();
+			ftpClient.enterLocalPassiveMode();
+			
+			ftpClient.changeWorkingDirectory(ftpPath);
+			
+			for (String fileName : fileNames) {
+				File localFile = new File(directory + File.separator + fileName);
+				
+				log("   ...'" + fileName + "' to " + localFile.getAbsolutePath() + "...");
+				
+				OutputStream output = new FileOutputStream(localFile);
+				// get the file from the remote system
+				ftpClient.retrieveFile(fileName, output);
+				output.close();
+				
+				localFile.deleteOnExit();
+				downloadedFiles.add(localFile);
 			}
-
+			
+			ftpClient.quit();
+			
 		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
 
-		return logFiles;
+		return downloadedFiles;
 	}
 
 
 	/**
 	 * Anonymizes the given log files by removing the IP addresses (substituting them with a unique number per IP).
 	 * Deletes the original log files and returns the new anonymized log files along with the corresponding date (as yyyy-mm-dd string).
+	 * These new log files only contain the lines that are considered relevant to our statistics! (downloads or accesses to the most relevant HTML pages or
+	 * the 1x1 pixel gif, which is used to track GitHub page accesses)
 	 * 
 	 * @param rawLogFiles
+	 * @private
 	 * @return
 	 */
 	private List<FileWithDate> anonymizeLogFiles(List<File> rawLogFiles) {
 		List<FileWithDate> anonymizedLogFiles = new ArrayList<FileWithDate>();
 		Set<String> usedFileNames = new HashSet<String>();
 
-		final Pattern FILE_DATE_PATTERN = Pattern.compile(".*(\\d\\d\\d\\d-\\d\\d-\\d\\d).*"); // to get the date from the log file name
+		final Pattern FILE_DATE_PATTERN = Pattern.compile(".*S\\.(\\d\\d\\d\\d)(\\d\\d)(\\d\\d)0000-.*"); // to get the date from the log file name
 
 		log("Anonymizing log files...");
 
@@ -424,7 +580,7 @@ public class AkamaiLogDownloader {
 				String dateText = file.getName();
 				Matcher m = FILE_DATE_PATTERN.matcher(file.getName());
 				if (m.matches()) {
-					dateText = m.group(1);
+					dateText = m.group(1) + "-" + m.group(2) + "-" + m.group(3);
 				} else {
 					error("date could not be parsed from file name, using entire file name: " + file.getName());
 				}
@@ -464,35 +620,47 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Reads a given file and returns the parsed and anonymized logLines for the relevant log entries
+	 * Reads a given file and returns the parsed and anonymized logLines, but ONLY for the relevant log entries
 	 * 
 	 * @param logFile
+	 * @private
 	 * @return
 	 */
 	private List<String> readAndAnonymizeFile(File logFile) {
-		List<String> logLines = new ArrayList<String>(2048);
-		Map<String,Integer> ipAddressAnonymizer = new HashMap<String,Integer>(256);
+		List<String> logLines = new ArrayList<String>(65536);
+		Map<String,Integer> ipAddressAnonymizer = new HashMap<String,Integer>(1024);
 
 		// these strings mark relevant log entries
-		final String ANY_DOWNLOAD_FRAGMENT_STRING = " /downloads/openui5-";
-		final String ANY_GITHUB_PAGE_FRAGMENT_STRING = " /resources/sap/ui/core/themes/base/img/1x1.gif?page=";
-		final String DEMOKIT_PAGE_FRAGMENT_STRING = "GET / ";
+		final String ANY_DOWNLOAD_FRAGMENT_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/downloads/openui5-";    // GET	/openui5.eu1.hana.ondemand.com/downloads/openui5-runtime-1.26.7.zip
+		final String ANY_DOWNLOAD_FRAGMENT_STRING_US = "GET	/openui5.us1.hana.ondemand.com/downloads/openui5-";
+		final String ANY_DOWNLOAD_FRAGMENT_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/downloads/openui5-";
+		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page="; // GET	/openui5.eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif
+		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_US = "GET	/openui5.us1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
+		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
+		final String DEMOKIT_PAGE_FRAGMENT_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/	";                  // GET	/openui5.eu1.hana.ondemand.com/	
+		final String DEMOKIT_PAGE_FRAGMENT_STRING_US = "GET	/openui5.us1.hana.ondemand.com/	";
+		final String DEMOKIT_PAGE_FRAGMENT_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/	";
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(logFile));
 			String line;
 			while ((line = br.readLine()) != null) {
 
-				if (line.contains(ANY_DOWNLOAD_FRAGMENT_STRING)
-						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING)
-						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING)) { // only handle interesting lines
+				if (line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_EU)		// TODO: nine "contains" or three regex?
+						|| line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_US)
+						|| line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_AP)
+						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_EU)
+						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_US)
+						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_AP)
+						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_EU)
+						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_US)
+						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_AP)) { // only handle interesting lines
 
-					String[] parts = line.split("\\(");
-					String[] innerParts = parts[1].split("\\)");
-					String ipList = innerParts[0]; // ipList is the part between the braces, containing any IP addresses
+					String[] parts = line.split("\\t");
+					String ip = parts[2];
 
 					// now replace the IP addresses by a number, starting from 1
-					Integer anonIp = ipAddressAnonymizer.get(ipList);
+					Integer anonIp = ipAddressAnonymizer.get(ip);
 
 					if (anonIp == null) { // new IP address string, anonymize it
 						Integer previous = ipAddressAnonymizer.get("latest");
@@ -503,12 +671,12 @@ public class AkamaiLogDownloader {
 							prevInt = previous.intValue();
 						}
 						int current = prevInt + 1;
-						ipAddressAnonymizer.put(ipList, new Integer(current));
+						ipAddressAnonymizer.put(ip, new Integer(current));
 						ipAddressAnonymizer.put("latest", new Integer(current));
 						anonIp = current;
 					}
 
-					line = String.valueOf(anonIp) + " " + line.substring(line.indexOf("["));
+					line = line.replace(ip, String.valueOf(anonIp));
 
 					logLines.add(line); // remember this (modified) line to write it to the anonymized log
 				}
@@ -528,17 +696,12 @@ public class AkamaiLogDownloader {
 	 * Multiple log files containing data for the same day are handled properly, the result list data is aggregated, so each day is only once in the result.
 	 * 
 	 * @param anonymizedLogFiles
-	 * @param account like openui5 or appdesigner
-	 * @param application like openui5 or openui5beta
-	 * @param server like hana.ondemand.com
-	 * 
+	 * @param config the application config
+	 * @private
 	 * @return a sorted list of data sets where each day is only present once
 	 */
-	private List<LogFileData> parseLogs(List<FileWithDate> anonymizedLogFiles, String account, String application, String server) {
+	private List<LogFileData> parseLogs(List<FileWithDate> anonymizedLogFiles, ApplicationConfig config) {
 		List<LogFileData> dataSets = new ArrayList<LogFileData>();
-		List<File> completeLogFiles = new ArrayList<File>(); // those we want to back up
-		
-		log("Parsing log files...");
 
 		Calendar today = Calendar.getInstance();
 		Calendar fileDate = Calendar.getInstance();
@@ -550,14 +713,16 @@ public class AkamaiLogDownloader {
 				List<AnonymousLogLine> logLines = readLogFile(anonymizedLogFiles.get(i).file);
 
 				if (logLines.size() > 0) {
-					LogFileData data = handleLogLinesFromFile(logLines);
+					Collection<LogFileData> datas = handleLogLinesFromFile(logLines); // one object per day contained in the log file
 
-					fileDate.setTime(data.getDate());
-					if (!sameDay(fileDate, today)) { // ignore today's log because it is incomplete
-						dataSets.add(data);
-						warn(data.toString());
-						completeLogFiles.add(anonymizedLogFiles.get(i).file);
+					for (LogFileData data : datas) {
+						fileDate.setTime(data.getDate());
+						if (!sameDay(fileDate, today)) { // ignore today's log because it is incomplete
+							dataSets.add(data);
+							warn(data.toString());
+						}
 					}
+					
 				} else {
 					// TODO: nothing relevant in the log. Do anything?
 				}
@@ -567,7 +732,7 @@ public class AkamaiLogDownloader {
 		}
 
 
-		// there can be multiple log files per day (one per process), aggregate numbers per day now...
+		// there can be multiple log files per day, aggregate numbers per day now...
 		List<LogFileData> aggregatedDataSets = mergeDataSets(dataSets);
 
 		// sort the data sets ascending by day
@@ -578,9 +743,6 @@ public class AkamaiLogDownloader {
 				return d1.getYYYYMMDD_WithDashes().compareTo(d2.getYYYYMMDD_WithDashes());
 			}
 		});
-		
-		// backup the anonymized log files
-		this.backupAnonymizedFiles(completeLogFiles, account, application, server);
 
 		return aggregatedDataSets;
 	}
@@ -591,9 +753,10 @@ public class AkamaiLogDownloader {
 	 * with the numbers added up. 
 	 * 
 	 * @param dataSets
+	 * @private
 	 * @return
 	 */
-	private List<LogFileData> mergeDataSets(List<LogFileData> dataSets) {
+	private static List<LogFileData> mergeDataSets(List<LogFileData> dataSets) {
 		List<LogFileData> aggregatedDataSets = new ArrayList<LogFileData>();
 		Set<Integer> handledIndices = new HashSet<Integer>();
 
@@ -626,6 +789,7 @@ public class AkamaiLogDownloader {
 	 * 
 	 * @param c1
 	 * @param c2
+	 * @private
 	 * @return
 	 */
 	private boolean sameDay(Calendar c1, Calendar c2) {
@@ -640,10 +804,11 @@ public class AkamaiLogDownloader {
 	 * Reads a given file and returns the parsed logLines for the relevant log entries
 	 * 
 	 * @param logFile
+	 * @private
 	 * @return
 	 */
 	private List<AnonymousLogLine> readLogFile(File logFile) {
-		List<AnonymousLogLine> logLines = new ArrayList<AnonymousLogLine>(512);
+		List<AnonymousLogLine> logLines = new ArrayList<AnonymousLogLine>(4096);
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(logFile));
@@ -664,27 +829,16 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Takes parsed log lines, does some filtering on the HTTP codes and reports the aggregated results for this file to outputLines
+	 * Takes parsed log lines, does some filtering on the HTTP codes and reports the aggregated results per day
 	 * 
 	 * @param logLines
 	 * @throws IOException
+	 * @private
 	 */
-	private LogFileData handleLogLinesFromFile(List<AnonymousLogLine> logLines) throws IOException {
-		Date date = logLines.get(Math.min(logLines.size()-1, 500)).getDate(); // use the date of the 500th line because the first lines might be from the date before (only happened once in 100 days for the very first line, so this distance seems safe)
-
-		Calendar c1 = Calendar.getInstance();
-		c1.setTime(date);
-
+	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines) throws IOException {
+		Map<String,LogFileData> fileDataMap = new HashMap<String, LogFileData>(4);
 		Set<String> knownIps = new HashSet<String>(512);
-
-		int runtimeDownloads = 0;
-		int mobileDownloads = 0;
-		int sdkDownloads = 0;
-		int githubHits = 0;
-		int blogHits = 0;
-		int demokitHits = 0;
 		int ipCounter = 0;
-
 
 		boolean handleThis206Line; // whether a line with HTTP 206 status code should be counted; those originate from download managers which load multiple chunks in parallel, so there are several requests but only one actual download
 		for (AnonymousLogLine logLine : logLines) {
@@ -692,18 +846,38 @@ public class AkamaiLogDownloader {
 
 			if (logLine.getCode() == 206) {
 				if (knownIps.contains(logLine.getIpCounter() + "-" + logLine.getUrl())) {
-					//System.out.println("Discarding line of type " + logLine.getType()); // rule of thumb: if same file was already downloaded the same day, this 206 request is a different chunk of the same download
+					//System.out.println("Discarding line of type " + logLine.getType()); 
+					// rule of thumb: if same file was already downloaded the same day, this 206 request is a different chunk of the same download
 				} else {
 					handleThis206Line = true;
+					knownIps.add(logLine.getIpCounter() + "-" + logLine.getUrl()); // handled once is enough
+				}
+			} else if (logLine.getCode() == 200) {
+				if (!knownIps.contains(logLine.getIpCounter() + "-" + logLine.getUrl())) {
+					// this IP-URL combination will be handled below, so make sure it is not handled again
+					knownIps.add(logLine.getIpCounter() + "-" + logLine.getUrl());
 				}
 			}
 
-			knownIps.add(logLine.getIpCounter() + "-" + logLine.getUrl());
+			
 
 			// keep track of how many unique IPs have been encountered
 			ipCounter = Math.max(Integer.parseInt(logLine.getIpCounter()), ipCounter);
+			
 
 			if (logLine.getCode() == 200 || (logLine.getCode() == 206 && handleThis206Line)) {
+				
+				Date date = logLine.getDate();
+				Calendar c1 = Calendar.getInstance();
+				c1.setTime(date);
+				
+				int runtimeDownloads = 0;
+				int mobileDownloads = 0;
+				int sdkDownloads = 0;
+				int githubHits = 0;
+				int blogHits = 0;
+				int demokitHits = 0;
+				
 				switch (logLine.getType()) {
 				case GITHUB_PAGE:
 					githubHits++;
@@ -726,6 +900,16 @@ public class AkamaiLogDownloader {
 				default:
 					System.out.println("ERROR: unknown case");
 				}
+				
+				// merge to previous data for same day or create new data in case of new day
+				String thisDay = ""+c1.get(Calendar.YEAR) + (c1.get(Calendar.MONTH)+1) + c1.get(Calendar.DAY_OF_MONTH);
+				LogFileData existingLogLine = fileDataMap.get(thisDay);
+				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, demokitHits, 0); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
+				if (existingLogLine != null) {
+					existingLogLine.addData(newData);
+				} else {
+					fileDataMap.put(thisDay, newData);
+				}
 
 			} else {
 				if (logLine.getCode() != 206) {
@@ -734,9 +918,7 @@ public class AkamaiLogDownloader {
 			}
 		}
 
-		LogFileData data = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, demokitHits, ipCounter);
-
-		return data;
+		return fileDataMap.values();
 	}
 
 
@@ -744,18 +926,18 @@ public class AkamaiLogDownloader {
 	 * Moves the given files to a backup directory below the working directoy
 	 * 
 	 * @param anonymizedLogFiles
-	 * @param account like openui5 or appdesigner
-	 * @param application like openui5 or openui5beta
-	 * @param server like hana.ondemand.com
+	 * @param config the app config
+	 * @private
 	 */
-	private void backupAnonymizedFiles(List<File> anonymizedLogFiles, String account, String application, String server) {
-		File backupDir = new File(directory + File.separator + BACKUP_FOLDER_NAME + "_" + application + "_" + server);
+	private void backupAnonymizedFiles(List<FileWithDate> anonymizedLogFiles, ApplicationConfig config) {
+		File backupDir = new File(directory + File.separator + BACKUP_FOLDER_NAME + "_" + config.getApplication());
 		if (!backupDir.exists()) {
 			backupDir.mkdir();
 		}
+		log("   ... to " + backupDir.getAbsolutePath() + "...");
 
 		for (int i = 0; i < anonymizedLogFiles.size(); i++) {
-			File logFile = anonymizedLogFiles.get(i);
+			File logFile = anonymizedLogFiles.get(i).file;
 			File targetFile = new File(backupDir + File.separator + logFile.getName());
 			if (!targetFile.exists()) {
 				logFile.renameTo(targetFile);
@@ -765,14 +947,15 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Loads the given data file into a JSON object after doing some sanity checks; creates an empty data file if the given file does not exist
+	 * Loads the given file into a JSON object after doing some sanity checks; creates an empty data file if the given file does not exist.
+	 * The JSON object has a "data" property at its root, which points to an array.
 	 * 
 	 * @param file
+	 * @private
 	 * @return
 	 */
-	private JSONObject loadDataFile(File file) {
+	private JSONObject loadJsonFromFile(File file) {
 		JSONObject json;
-		log("Loading data file " + file + "...");
 
 		if (file.isDirectory()) {
 			error("Data file " + file + " is a directory.");
@@ -789,11 +972,11 @@ public class AkamaiLogDownloader {
 		return json;
 	}
 
-
 	/**
 	 * Loads the given data file into a JSON object. The file must exist.
 	 * 
 	 * @param file
+	 * @private
 	 * @return
 	 */
 	private JSONObject readJsonFile(File file) {
@@ -820,11 +1003,11 @@ public class AkamaiLogDownloader {
 	 * 
 	 * @param file
 	 * @param json
+	 * @private
 	 */
-	private void saveDataFile(File file, JSONObject json) {
+	private void saveJsonFile(File file, JSONObject json) {
 		String jsonString = json.toString(2);
 		PrintWriter out = null;
-		log("Saving data file " + file + "...");
 
 		try {
 			if (file.exists()) {
@@ -851,59 +1034,72 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Adds the given data sets to the given JSON object. Only adds data for days that are not contained yet.
+	 * Converts the given data sets to a JSON object. Assumes dataSets to have no duplicate days.
 	 * 
-	 * @param json a data object that needs to hold an array of data sets in the "data" node on root level
 	 * @param dataSets
+	 * @private
 	 * @return
 	 */
-	private JSONObject addToJson(JSONObject json, List<LogFileData> dataSets) {
+	private JSONObject convertToJson(List<LogFileData> dataSets) {
+		JSONObject json = new JSONObject("{data:[]}");
 		JSONArray dataArray = json.getJSONArray("data");
-		Set<String> existingDates = new HashSet<String>();
-		log("Adding new data to JSON...");
-
-		// get a list of all dates that already exist
-		for (int i = 0; i < dataArray.length(); i++) {
-			JSONObject dataObject = dataArray.getJSONObject(i);
-			existingDates.add(dataObject.getString("date"));
-		}
 
 		for (int i = 0; i < dataSets.size(); i++) {
 			LogFileData data = dataSets.get(i);
 
-			// check whether the data is already there
-			String currentDateString = data.getYYYYMMDD_WithDashes();
+			JSONObject o = new JSONObject();
+			//			o.put("year", data.year);
+			//			o.put("month", data.month);
+			//			o.put("day", data.day);
+			o.put("date", data.getYYYYMMDD_WithDashes());
+			o.put("csvDate", data.getDDMMYYYY_WithDots()); // csv date understood by Excel
+			o.put("runtime", data.runtimeDownloads);
+			o.put("mobile", data.mobileDownloads);
+			o.put("sdk", data.sdkDownloads);
+			o.put("githubHits", data.githubHits);
+			o.put("blogHits", data.blogHits);
+			o.put("demokitHits", data.demokitHits);
+			o.put("ipCounter", data.ipCounter);
 
-			if (existingDates.contains(currentDateString)) {
-				// this data set does not need to be stored, it's already there
-
-			} else { // new data, add it
-				JSONObject o = new JSONObject();
-				//			o.put("year", data.year);
-				//			o.put("month", data.month);
-				//			o.put("day", data.day);
-				o.put("date", data.getYYYYMMDD_WithDashes());
-				o.put("csvDate", data.getDDMMYYYY_WithDots()); // csv date understood by Excel
-				o.put("runtime", data.runtimeDownloads);
-				o.put("mobile", data.mobileDownloads);
-				o.put("sdk", data.sdkDownloads);
-				o.put("githubHits", data.githubHits);
-				o.put("blogHits", data.blogHits);
-				o.put("demokitHits", data.demokitHits);
-				o.put("ipCounter", data.ipCounter);
-
-				dataArray.put(o);
-			}
+			dataArray.put(o);
 		}
 
 		return json;
 	}
 
 
-	
+	/**
+	 * Adds the given log file names to the given JSON object.
+	 * 
+	 * @param json a data object that needs to hold an array of file names in the "data" node on root level
+	 * @param dataSets
+	 * @private
+	 * @return
+	 */
+	private JSONObject addknownFilesToJson(JSONObject json, List<File> newFiles) {
+		JSONArray dataArray = json.getJSONArray("data");
+
+		for (File file : newFiles) {
+			String fileName = file.getName();
+			if (fileName.indexOf(".gz") > 0) {
+				// not expected, should look into this
+				throw new RuntimeException("Error while saving new known log file names: these should be the unzipped files, but one of the files contains the substring '.gz', which is suspicious: " + fileName);
+			}
+			dataArray.put(fileName + ".gz");
+		}
+		return json;
+	}
+
+
+	/**
+	 * Writes all given data to a CSV file for easy consumption in Excel
+	 * 
+	 * @param file
+	 * @param allData
+	 * @private
+	 */
 	private void exportAsCSV(File file, JSONObject allData) {
 		JSONArray dataArray = allData.getJSONArray("data");
-		log("Exporting CSV file " + file + "...");
 
 		BufferedWriter bw = null;
 		try {
@@ -923,8 +1119,8 @@ public class AkamaiLogDownloader {
 				int mobileDownloads = dataSet.getInt("mobile");
 				int sdkDownloads = dataSet.getInt("sdk");
 				int githubHits = dataSet.getInt("githubHits");
-				int blogHits = dataSet.getInt("blogHits");
 				int demokitHits = dataSet.getInt("demokitHits");
+				int blogHits = dataSet.getInt("blogHits");
 				int ipCounter = dataSet.getInt("ipCounter");
 
 				// the result string for a line in the CSV file
@@ -947,8 +1143,10 @@ public class AkamaiLogDownloader {
 	
 	/**
 	 * Copies the given file to the file named by the EXPORT commandline parameter (if that one is set)
+	 * This is meant to export a JSON file to a server location to be used inside a web app.
 	 * 
 	 * @param originalFile
+	 * @private
 	 */
 	private void exportJsonToWeb(File originalFile) {
 		if (exportDir != null) {

@@ -1,5 +1,13 @@
 
-This app downloads the OpenUI5 log files from Hana Cloud.
+This app downloads the OpenUI5 log files from Akamai.
+
+
+
+
+
+
+The rest below is outdated:
+
 See http://vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5/attachment/wiki/OpenUI5/LogStatistics
 
  1. Import into Eclipse as "Existing Maven Project"
