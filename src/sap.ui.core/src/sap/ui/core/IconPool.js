@@ -183,7 +183,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			
 			collection = mRegistry[sParsedCollectionName];
 			
-			return collection && collection[sParsedIconName];
+			var oIconInfo = collection && collection[sParsedIconName];
+			if (oIconInfo) {
+				// TODO: use messageBundle to retrieve i18n text
+				oIconInfo.text = oIconInfo.name;
+			}
+			
+			return oIconInfo;
 		};
 		
 		/**

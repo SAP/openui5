@@ -202,6 +202,51 @@
 				assert.strictEqual($icon.attr("aria-label"), undefined, "aria-label should be undefined");
 				assert.strictEqual($icon.attr("aria-labelledby"), sId, "aria-labelledby should be " + sId);
 			});
+
+			QUnit.module("Property 'useIconTooltip'", {
+				createIcon: function(mSettings) {
+					this.oIcon = new sap.ui.core.Icon(mSettings).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown: function() {
+					if (this.oIcon) {
+						this.oIcon.destroy();
+						this.oIcon = null;
+					}
+				}
+			});
+			QUnit.test("useIconTooltip = true (default) / without tooltip", function (assert) {
+				this.createIcon({
+					src: sap.ui.core.IconPool.getIconURI("alert")
+				});
+				assert.equal(this.oIcon.getUseIconTooltip(), true, "Default value of property 'useIconTooltip' should be 'true'");
+				assert.notEqual(this.oIcon.$().attr("title"), undefined, "Tooltip should not be empty");
+			});
+			QUnit.test("useIconTooltip = true (default) / with tooltip", function (assert) {
+				var sTooltip = "this is a tooltip";
+				this.createIcon({
+					src: sap.ui.core.IconPool.getIconURI("alert"),
+					tooltip: sTooltip
+				});
+				assert.equal(this.oIcon.$().attr("title"), sTooltip, "Tooltip should be set");
+			});
+			QUnit.test("useIconTooltip = false / without tooltip", function (assert) {
+				this.createIcon({
+					src: sap.ui.core.IconPool.getIconURI("alert"),
+					useIconTooltip: false
+				});
+				assert.equal(this.oIcon.$().attr("title"), undefined, "Tooltip should be empty");
+			});
+			QUnit.test("useIconTooltip = false / with tooltip", function (assert) {
+				var sTooltip = "this is a tooltip";
+				this.createIcon({
+					src: sap.ui.core.IconPool.getIconURI("alert"),
+					useIconTooltip: false,
+					tooltip: sTooltip
+				});
+				assert.equal(this.oIcon.$().attr("title"), sTooltip, "Tooltip should be set");
+			});
+
 		</script>
 	</head>
 	<body>
