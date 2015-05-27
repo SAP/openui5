@@ -70,7 +70,7 @@ public class AkamaiLogDownloader {
 	*/
 	
 	private final String[] debugFilesOrDirectories = {
-		"C:\\temp\\akamai\\one"
+		"C:\\temp\\akamai"
 	};
 
 
@@ -877,6 +877,7 @@ public class AkamaiLogDownloader {
 				int blogHits = 0;
 				int referencesHits = 0;
 				int featuresHits = 0;
+				int getstartedHits = 0;
 				int demokitHits = 0;
 				
 				switch (logLine.getType()) {
@@ -891,6 +892,9 @@ public class AkamaiLogDownloader {
 					break;
 				case FEATURES_PAGE:
 					featuresHits++;
+					break;
+				case GETSTARTED_PAGE:
+					getstartedHits++;
 					break;
 				case DEMOKIT_PAGE:
 					demokitHits++;
@@ -911,7 +915,7 @@ public class AkamaiLogDownloader {
 				// merge to previous data for same day or create new data in case of new day
 				String thisDay = ""+c1.get(Calendar.YEAR) + (c1.get(Calendar.MONTH)+1) + c1.get(Calendar.DAY_OF_MONTH);
 				LogFileData existingLogLine = fileDataMap.get(thisDay);
-				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, featuresHits, demokitHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
+				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, featuresHits, getstartedHits, demokitHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
 				if (existingLogLine != null) {
 					existingLogLine.addData(newData);
 				} else {
@@ -1067,6 +1071,7 @@ public class AkamaiLogDownloader {
 			o.put("blogHits", data.blogHits);
 			o.put("referencesHits", data.referencesHits);
 			o.put("featuresHits", data.featuresHits);
+			o.put("getstartedHits", data.getstartedHits);
 			o.put("demokitHits", data.demokitHits);
 			o.put("ipCounter", data.ipCounter);
 
@@ -1120,7 +1125,7 @@ public class AkamaiLogDownloader {
 			FileOutputStream fos = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
-			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits\n";
+			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits;GetStarted Hits\n";
 			bw.write(outFileText);
 
 			for (int i = 0; i < dataArray.length(); i++) {
@@ -1145,10 +1150,16 @@ public class AkamaiLogDownloader {
 				} catch (JSONException e) {
 					featuresHits = 0;
 				}
+				int getstartedHits;
+				try {
+					getstartedHits = dataSet.getInt("getstartedHits");
+				} catch (JSONException e) {
+					getstartedHits = 0;
+				}
 				int ipCounter = dataSet.getInt("ipCounter");
 
 				// the result string for a line in the CSV file
-				outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits+ ";" + featuresHits + "\n";
+				outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + "\n";
 				bw.write(outFileText);
 			}
 
