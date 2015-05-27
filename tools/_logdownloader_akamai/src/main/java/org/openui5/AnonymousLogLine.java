@@ -1,10 +1,16 @@
 package org.openui5;
 
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.sf.uadetector.ReadableUserAgent;
+import net.sf.uadetector.UserAgentStringParser;
+import net.sf.uadetector.UserAgentType;
+import net.sf.uadetector.service.UADetectorServiceFactory;
 
 /**
  * Represents one HTTP log file line, but an anonymized one (not containing any IP address, but just a number instead)
@@ -69,6 +75,11 @@ public class AnonymousLogLine {
 	private static final String GETSTARTED_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted";
 	private static final String DEMOKIT_PAGE_STRING = "/";
 
+	// this bot list only extends the used library
+	private static final String[] USERAGENT_BOT_SUBSTRINGS_ARRAY = {"SMTBot/","Twitterbot/","DuckDuckGo-Favicons-Bot/",
+		"Cliqzbot/","TweetmemeBot/","Findxbot/","TweetedTimes Bot/","Traackr.com Bot","Applebot/",
+		"linkdexbot/","Spiderbot/","OpenHoseBot/","+https://api.slack.com/robots","Googlebot/","occbot/index","Domnutch-Bot/","yoozBot/","AOLbot/",
+		"HaosouSpider","YisouSpider","ExpertSearchSpider","+http://megaindex.com/crawler","Gluten Free Crawler/","+http://www.netseer.com/crawler.html"};
 
 	private Date date;
 	private String ipCounter;
@@ -266,5 +277,33 @@ public class AnonymousLogLine {
 		}
 		
 		return numberString;
+	}
+
+	public boolean isBotLine(UserAgentStringParser parser) {
+		
+		// filter by user-agent
+		String ua = this.getUserAgent();
+		if (parser == null) {
+			parser = UADetectorServiceFactory.getResourceModuleParser();
+		}
+		ReadableUserAgent agent = parser.parse(ua);
+		
+		UserAgentType type = agent.getType();
+		if (type.equals(UserAgentType.ROBOT) || containsBotFragment(ua)) {
+			//System.out.println("ROBOT:\t" + ua);
+			return true;
+		} else {
+			//System.out.println("normal:\t" + ua);
+			return false;
+		}
+	}
+	
+	private boolean containsBotFragment(String ua) {
+		for (int i = 0; i < USERAGENT_BOT_SUBSTRINGS_ARRAY.length; i++) {
+			if (ua.contains(USERAGENT_BOT_SUBSTRINGS_ARRAY[i])) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

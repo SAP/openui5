@@ -26,6 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+import net.sf.uadetector.UserAgentStringParser;
+import net.sf.uadetector.service.UADetectorServiceFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -639,6 +642,9 @@ public class AkamaiLogDownloader {
 		final String DEMOKIT_PAGE_FRAGMENT_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/	";                  // GET	/openui5.eu1.hana.ondemand.com/	
 		final String DEMOKIT_PAGE_FRAGMENT_STRING_US = "GET	/openui5.us1.hana.ondemand.com/	";
 		final String DEMOKIT_PAGE_FRAGMENT_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/	";
+		final String DEMOKIT_ROBOTS_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/robots.txt	"; // robots requests are interesting, so we can filter out bots later
+		final String DEMOKIT_ROBOTS_STRING_US = "GET	/openui5.us1.hana.ondemand.com/robots.txt	";
+		final String DEMOKIT_ROBOTS_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/robots.txt	";
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(logFile));
@@ -653,7 +659,10 @@ public class AkamaiLogDownloader {
 						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_AP)
 						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_EU)
 						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_US)
-						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_AP)) { // only handle interesting lines
+						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_AP)
+						|| line.contains(DEMOKIT_ROBOTS_STRING_EU)
+						|| line.contains(DEMOKIT_ROBOTS_STRING_US)
+						|| line.contains(DEMOKIT_ROBOTS_STRING_AP)) { // only handle interesting lines
 
 					String[] parts = line.split("\\t");
 					String ip = parts[2];
@@ -704,6 +713,7 @@ public class AkamaiLogDownloader {
 
 		Calendar today = Calendar.getInstance();
 		Calendar fileDate = Calendar.getInstance();
+		Map<String,Integer> uaMap = new HashMap<String, Integer>();
 
 		try {
 			for (int i = 0; i < anonymizedLogFiles.size(); i++) {
@@ -712,13 +722,12 @@ public class AkamaiLogDownloader {
 				List<AnonymousLogLine> logLines = readLogFile(anonymizedLogFiles.get(i).file);
 
 				if (logLines.size() > 0) {
-					Collection<LogFileData> datas = handleLogLinesFromFile(logLines); // one object per day contained in the log file
+					Collection<LogFileData> datas = handleLogLinesFromFile(logLines, uaMap); // one object per day contained in the log file
 
 					for (LogFileData data : datas) {
 						fileDate.setTime(data.getDate());
 						if (!sameDay(fileDate, today)) { // ignore today's log because it is incomplete
 							dataSets.add(data);
-							//warn(data.toString());
 						}
 					}
 					
@@ -726,6 +735,16 @@ public class AkamaiLogDownloader {
 					// TODO: nothing relevant in the log. Do anything?
 				}
 			}
+			
+			// write the UA file
+			String date = today.get(Calendar.YEAR) + "-" + today.get(Calendar.MONTH) + "-" + today.get(Calendar.DAY_OF_MONTH) + "_" + today.get(Calendar.HOUR) + "-" + today.get(Calendar.MINUTE);
+			File uaFile = new File(directory + File.separator + "user-agents-from-analysis-" + date + ".csv");
+			BufferedWriter out = new BufferedWriter(new FileWriter(uaFile)); 
+			for (String ua : uaMap.keySet()) {
+				out.write("\"" + ua/*.replaceAll("\t", " ")*/ + "\";" + uaMap.get(ua) + "\n");
+			}
+			out.close();
+			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -834,11 +853,12 @@ public class AkamaiLogDownloader {
 	 * @throws IOException
 	 * @private
 	 */
-	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines) throws IOException {
+	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines, Map<String, Integer> uaStrings) throws IOException {
 		Map<String,LogFileData> fileDataMap = new HashMap<String, LogFileData>(4);
 		Set<String> knownIps = new HashSet<String>(512);
 		int ipCounter = 0;
 
+		UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
 		boolean handleThis206Line; // whether a line with HTTP 206 status code should be counted; those originate from download managers which load multiple chunks in parallel, so there are several requests but only one actual download
 		for (AnonymousLogLine logLine : logLines) {
 			handleThis206Line = false;
@@ -858,11 +878,22 @@ public class AkamaiLogDownloader {
 				}
 			}
 
-			
+			// bot / user-agent handling
+			if (logLine.isBotLine(parser)) {
+				continue; // do not count bots/spiders/crawlers
+			} else {
+				// save user-agents of non-bots, 1) for statistics/curiosity and 2) to detect unknown bots
+				String ua = logLine.getUserAgent();
+				Integer uaCount = uaStrings.get(ua);
+				if (uaCount == null) {
+					uaCount = 0;
+				}
+				uaStrings.put(ua, ++uaCount);
+			}
 
-			// keep track of how many unique IPs have been encountered
+			// keep track of how many unique IPs have been encountered - this does not currently work
 			ipCounter = Math.max(Integer.parseInt(logLine.getIpCounter()), ipCounter);
-			
+
 
 			if (logLine.getCode() == 200 || (logLine.getCode() == 206 && handleThis206Line)) {
 				
@@ -923,7 +954,7 @@ public class AkamaiLogDownloader {
 				}
 
 			} else {
-				if (logLine.getCode() != 206) {
+				if (logLine.getCode() != 206 && logLine.getCode() != 0) {
 					warn("logline with status code " + logLine.getCode() + " url: " + logLine.getUrl());
 				}
 			}
