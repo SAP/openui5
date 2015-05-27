@@ -17,7 +17,10 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 		<script>
+			sinon.config.useFakeTimers = true;
+
 			var oPage = new sap.m.Page("page1", {
 				title: "Mobile Switch Control",
 				content: [
@@ -182,7 +185,6 @@
 
 				// system under test
 				var oSwitch = new sap.m.Switch({
-					id: "switch-id",
 					state: false
 				});
 
@@ -192,8 +194,6 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
-				strictEqual(oSwitch.getDomRef("texton").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-textoff");
 
 				// cleanup
 				oSwitch.destroy();
@@ -203,7 +203,6 @@
 
 				// system under test
 				var oSwitch = new sap.m.Switch({
-					id: "switch-id",
 					state: true
 				});
 
@@ -213,8 +212,6 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
-				strictEqual(oSwitch.getDomRef("textoff").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-texton");
 
 				// cleanup
 				oSwitch.destroy();
@@ -223,9 +220,7 @@
 			test("setState() test case 3", function() {
 
 				// system under test
-				var oSwitch = new sap.m.Switch({
-					id: "switch-id"
-				});
+				var oSwitch = new sap.m.Switch();
 
 				// arrange
 				oSwitch.placeAt("content");
@@ -236,8 +231,6 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
-				strictEqual(oSwitch.getDomRef("textoff").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-texton");
 
 				// cleanup
 				oSwitch.destroy();
@@ -246,9 +239,7 @@
 			test("setState() test case 4", function() {
 
 				// system under test
-				var oSwitch = new sap.m.Switch({
-					id: "switch-id"
-				});
+				var oSwitch = new sap.m.Switch();
 
 				// arrange
 				oSwitch.placeAt("content");
@@ -259,8 +250,6 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
-				strictEqual(oSwitch.getDomRef("texton").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-textoff");
 
 				// cleanup
 				oSwitch.destroy();
@@ -270,16 +259,14 @@
 			/* ariaLabelledBy()               */
 			/* ------------------------------ */
 
-			test("ariaLabelledBy() test case 1", function() {
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 1)", function() {
 
 				// system under test
 				var oLabel = new sap.m.Label({
-					id: "label-id",
-					text: "label"
+					id: "label"
 				});
 
 				var oSwitch = new sap.m.Switch({
-					id: "switch-id",
 					state: false,
 					ariaLabelledBy: oLabel
 				});
@@ -288,26 +275,25 @@
 				oLabel.placeAt("content");
 				oSwitch.placeAt("content");
 				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 				// assert
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-textoff");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
 
 				// cleanup
 				oSwitch.destroy();
 				oLabel.destroy();
 			});
 
-			test("ariaLabelledBy() test case 2", function() {
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 2)", function() {
 
 				// system under test
 				var oSwitch = new sap.m.Switch({
-					id: "switch-id",
 					state: true
 				});
 
 				var oLabel = new sap.m.Label({
-					id: "label-id",
-					text: "label",
+					id: "label",
 					labelFor: oSwitch
 				});
 
@@ -315,13 +301,38 @@
 				oLabel.placeAt("content");
 				oSwitch.placeAt("content");
 				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 				// assert
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-texton");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
 
 				// cleanup
 				oSwitch.destroy();
 				oLabel.destroy();
+			});
+
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 3)", function() {
+
+				// system under test
+				var oLabel = new sap.m.Label({
+					id: "label"
+				});
+
+				var oSwitch = new sap.m.Switch({
+					type: sap.m.SwitchType.AcceptReject,
+					ariaLabelledBy: oLabel
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
+
+				// assert
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSwitch.destroy();
 			});
 
 			/* =========================================================== */
@@ -338,7 +349,7 @@
 				oPage.getContent().forEach(function(oSwitch) {
 					var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-					// assertions
+					// assert
 					ok(oSwitch.$().length, "The switch container html div element exists");
 					ok(mDomRefs.$Swt.length, "The switch first-child html div element exists");
 					ok(mDomRefs.$SwtInner.length, "The switch first-child html div inner element exists");
@@ -346,7 +357,7 @@
 					ok(mDomRefs.$SwtTextOff.length, "The switch html div text element exists");
 					ok(mDomRefs.$SwtSpanOn.length, "The switch html span inner element exists");
 					ok(mDomRefs.$SwtSpanOff.length, "The switch html span inner element exists");
-					strictEqual(oSwitch.getDomRef().getAttribute("aria-live"), "assertive", "The switch is a live region");
+					strictEqual(oSwitch.getDomRef("switch").getAttribute("aria-hidden"), "true");
 
 					if (mDomRefs.oSwitch.getName()) {
 						ok(mDomRefs.$Checkbox.length, 'The checkbox html input element exists');
@@ -356,7 +367,7 @@
 				});
 			});
 
-			test("A Switch control type of AcceptReject should render invisible elements with the corresponding text nodes for screen reader announcement", function() {
+			test("it should render the invisible element with the corresponding text nodes for screen reader announcement", function() {
 
 				// system under test
 				var oSwitch = new sap.m.Switch({
@@ -368,8 +379,9 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSwitch.getDomRef("texton").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
-				strictEqual(oSwitch.getDomRef("textoff").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
+				strictEqual(oSwitch.getDomRef("invisible").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
+				strictEqual(getComputedStyle(oSwitch.getDomRef("invisible")).getPropertyValue("display"), "none");
+				strictEqual(oSwitch.getDomRef("invisible").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSwitch.destroy();
@@ -392,7 +404,7 @@
 			function testSwitchON(oSwitch) {
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
+				// assert
 				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch first-child html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOn"), 'The switch first-child html element "must have" the css class "sapMSwtOn"');
@@ -422,7 +434,7 @@
 				// arrange
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
+				// assert
 				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOff"), 'The switch html element "must have" the css class "sapMSwtOff"');
@@ -445,7 +457,7 @@
 				// arrange
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
+				// assert
 				if (oSwitch.getEnabled()) {
 					ok(!oSwitch.$().hasClass("sapMSwtContDisabled"), 'The switch container html element "must not have" the css class "sapMSwtContDisabled"');
 					ok(!mDomRefs.$Swt.hasClass("sapMSwtDisabled"), 'The switch first-child html element "must not have" the css class "sapMSwtDisabled"');
@@ -467,7 +479,7 @@
 				// arrange
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				testSwitchOFF(oSwitch7);
 			});
 
@@ -480,7 +492,7 @@
 				// arrange
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				testSwitchOFF(oSwitch7);
 				strictEqual(jQuery(oSwitch7.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute not set');
 			});
@@ -833,7 +845,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 				this.clock.tick(1000);
 
-				// assertion
+				// assert
 				strictEqual(oSwitch.getState(), true, "After the space key is pressed, the switch state must change");
 				strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 
@@ -857,7 +869,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 				this.clock.tick(1000);
 
-				// assertion
+				// assert
 				strictEqual(oSwitch.getState(), false, "After the enter key is pressed, the switch state must change");
 				strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 
