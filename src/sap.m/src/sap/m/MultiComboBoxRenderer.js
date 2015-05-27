@@ -37,6 +37,9 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 	MultiComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 		sap.m.ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
 		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS);
+		if (oControl._hasTokens()) {
+			oRm.addClass("sapMMultiComboBoxHasToken");
+		}
 	};
 	
 	/**
