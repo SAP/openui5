@@ -65,6 +65,7 @@ public class AnonymousLogLine {
 	private static final String GITHUB_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=index";
 	private static final String BLOG_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=blog";
 	private static final String REFERENCES_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=whoUsesUI5";
+	private static final String FEATURES_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=features";
 	private static final String DEMOKIT_PAGE_STRING = "/";
 
 
@@ -231,6 +232,9 @@ public class AnonymousLogLine {
 		}
 		if (REFERENCES_PAGE_STRING.equals(url)) {
 			return Resource.REFERENCES_PAGE;
+		}
+		if (FEATURES_PAGE_STRING.equals(url)) {
+			return Resource.FEATURES_PAGE;
 		}
 		if (DEMOKIT_PAGE_STRING.equals(url)) {
 			return Resource.DEMOKIT_PAGE;

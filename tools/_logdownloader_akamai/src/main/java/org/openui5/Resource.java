@@ -7,5 +7,6 @@ public enum Resource {
 	GITHUB_PAGE,
 	BLOG_PAGE,
 	REFERENCES_PAGE,
+	FEATURES_PAGE,
 	DEMOKIT_PAGE
 }
