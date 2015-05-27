@@ -343,7 +343,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				id: sImgId,
 				src : sSrc,
 				activeSrc : sActiveSrc,
-				densityAware : bIconDensityAware
+				densityAware : bIconDensityAware,
+
+				// do not use default tootip in icon as the button renders it's own tooltip
+				useIconTooltip: false
+
 			}, sap.m.Image).addStyleClass("sapMBtnCustomIcon").setParent(this, null, true);
 		}
 

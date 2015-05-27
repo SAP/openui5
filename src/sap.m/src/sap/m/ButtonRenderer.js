@@ -95,9 +95,12 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 
+		// get icon-font info. will return null if the icon is a image
+		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
+
 		// add tooltip if available
-		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+		if (sTooltip || (oIconInfo && !oButton.getText())) {
+			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
 		}
 
 		oRm.writeClasses();
