@@ -693,16 +693,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	/**
 	 * Parse a string which is formatted according to the given format options.
 	 *
-	 * @param {string} sValue the string containing a formatted numeric value. 0 is parsed when empty string is given.
+	 * @param {string} sValue the string containing a formatted numeric value
 	 * @return {number|array} the parsed value or an array which contains the parsed value and the currency code (symbol) when the NumberFormat is a currency instance
 	 * @public
 	 */
 	NumberFormat.prototype.parse = function(sValue) {
-		// empty string should be parsed as 0
-		if (sValue === "") {
-			sValue = "0";
-		}
-
 		var oOptions = this.oFormatOptions,
 			sPlusMinusSigns = quote(oOptions.plusSign + oOptions.minusSign),
 			sGroupingSeparator = quote(oOptions.groupingSeparator),
