@@ -1033,7 +1033,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 			return true;
 		};
 
-		Plugin.prototype.getSelectedControlId = function() {
+		ControlTree.prototype.getSelectedControlId = function() {
 			var $sret = this.$().find(".sapUiSupportControlTreeSelected");
 			if ($sret.length === 0) {
 				return undefined;
