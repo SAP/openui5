@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Accordion.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/thirdparty/jqueryui/jquery-ui-core', 'sap/ui/thirdparty/jqueryui/jquery-ui-widget', 'sap/ui/thirdparty/jqueryui/jquery-ui-mouse', 'sap/ui/thirdparty/jqueryui/jquery-ui-sortable'],
-	function(jQuery, library, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/thirdparty/jqueryui/jquery-ui-core', 'sap/ui/thirdparty/jqueryui/jquery-ui-widget', 'sap/ui/thirdparty/jqueryui/jquery-ui-mouse', 'sap/ui/thirdparty/jqueryui/jquery-ui-sortable'],
+	function(jQuery, library, Control) {
 	"use strict";
 
 
@@ -120,11 +120,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	//***************************************************
 	Accordion.CARD_1   = 1;
 	Accordion.CARD_0_1 = 2;
-	Accordion.CARD_0_N = 3;
-	Accordion.CARD_1_N = 4;
-	Accordion.KEY_TIMEOUT = 500;
 
-	Accordion.aAccordionsToReplace = [];
 	Accordion.aAccordions = [];
 
 	//***************************************************
@@ -216,7 +212,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Beware that these shortcuts are used by FF3.6 to navigate between opened TABS in the browsers.
 	 * So this is declared as a limitation, but behaves as expected in Safari 5
 	 * Opens the previous section and focuses the header of this opened section
-	 * @param [jQuery.Event} oEvent Browser event
+	 * @param {jQuery.Event} oEvent Browser event
 	 * @private
 	 */
 	Accordion.prototype.onsappageupmodifiers = function(oEvent){
@@ -259,13 +255,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oDomSection = aParents[aParents.length - 1];
 
 		// Is the section if the first one. if so, no up possible!
-		if (this.__idxOfSec(oDomSection.id) == 0) {
+		if (this.__idxOfSec(oDomSection.id) === 0) {
 			return;
 		}
 
 		var oDomTargetSection = jQuery(oDomSection).prev().first()[0];
 		var bInsertFirst = false;
-		if (this.__idxOfSec(oDomTargetSection.id) == 0) {
+		if (this.__idxOfSec(oDomTargetSection.id) === 0) {
 			bInsertFirst = true;
 		}
 
@@ -303,7 +299,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Called when the user presses the UP arrow key
-	 * @param oEvent The event triggered by the user
+	 * @param {jQuery.Event} oEvent The event triggered by the user
 	 * @private
 	 */
 	Accordion.prototype.onsapprevious = function(oEvent){
@@ -317,11 +313,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oEvent.stopPropagation();
 
 		//Get the current section
-		var oCurrentSection = this.getCurrentSection(oEvent.target);
+		var oCurrentSection = this.getCurrentSection(oEvent.target),
+			oNextFocusableElement = null;
 
 		//Extra check to see of we are on the first section, if yes, set the focus on this one
 		if (oCurrentSection.id == this.getSections()[0].getId()) {
-			var oNextFocusableElement = jQuery(oCurrentSection).find("div.sapUiAcdSectionHdr");
+			oNextFocusableElement = jQuery(oCurrentSection).find("div.sapUiAcdSectionHdr");
 			if (oNextFocusableElement) {
 				oNextFocusableElement.focus();
 			}
@@ -336,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oPreviousSection = jQuery(oPreviousSection).prev();
 			}
 			if (oPreviousSection) {
-				var oNextFocusableElement = jQuery(oPreviousSection).find("div.sapUiAcdSectionHdr");
+				oNextFocusableElement = jQuery(oPreviousSection).find("div.sapUiAcdSectionHdr");
 				if (oNextFocusableElement) {
 					oNextFocusableElement.focus();
 				}
@@ -383,7 +380,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Called when the user presses the home key
-	 * @param oEvent The event triggered by the user
+	 * @param {jQuery.Event} oEvent The event triggered by the user
 	 * @private
 	 */
 	Accordion.prototype.onsaphome = function(oEvent){
@@ -415,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Called when the user presses the end key
-	 * @param oEvent The event triggered by the user
+	 * @param {jQuery.Event} oEvent The event triggered by the user
 	 * @private
 	 */
 	Accordion.prototype.onsapend = function(oEvent){
@@ -449,6 +446,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Utility to get the current section
 	 * @param {Element} oDomElement The current DOM element from which an event is triggered
+	 * @return The current AccordionSection as an object
 	 * @private
 	 */
 	Accordion.prototype.getCurrentSection = function(oDomElement){
@@ -556,8 +554,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/***********************************************************************************
-	 * FUNCTIONALITIES
-	 * Available functionalities in the Accordion are the following:
+	 * Public control API
+	 * Available API in the Accordion is the following:
 	 * - Open a section
 	 * - Close a section
 	 ***********************************************************************************/
@@ -598,12 +596,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		//If the section is closed, open it
-		if (oEvent.srcControl && oEvent.srcControl.getCollapsed() == true) {
+		if (oEvent.srcControl.getCollapsed()) {
 			this.openSection(oDomSection.id);
-		} else { //If it is opened, close it
-			if (oEvent.srcControl) {
-				this.closeSection(oDomSection.id);
-			}
+		} else {
+			this.closeSection(oDomSection.id);
 		}
 
 		//Stop the event here
@@ -623,7 +619,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *         Id of the section that shall be opened
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) design time meta model
 	 */
 	Accordion.prototype.openSection = function(sSectionId){
 
@@ -631,11 +627,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var iIndex = this.__idxOfSec(sSectionId);
 
 		//Get all accordion's sections
-		var aSections = this.getSections();
+		var aSections = this.getSections(),
+			aClosedSections = [];
 
 		//Close all sections currently opened
 		if (this.activationMode == Accordion.CARD_0_1 || this.activationMode == Accordion.CARD_1) {
-		  var aClosedSections = this.closeOpenedSections();
+		  aClosedSections = this.closeOpenedSections();
 		}
 
 		//Open the section with the index retrieved from the importing section ID
@@ -653,7 +650,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *         Id of the section that shall be closed
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) design time meta model
 	 */
 	Accordion.prototype.closeSection = function(sSectionId){
 
@@ -665,10 +662,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		//Close the given section
 		aSections[iIndex]._setCollapsed(true);
-		//If there is no section opened and at least one is required to be, we open the default one to respect activationMode
-		//if ((this.activationMode == sap.ui.commons.Accordion.CARD_1_N || this.activationMode == sap.ui.commons.Accordion.CARD_1) && this.getNumberOfOpenedSections() == 0){
-		//this.openDefaultSections();
-		//}
 
 		//Trigger event for application to react
 		this.fireSectionClose({closeSectionId:sSectionId});
@@ -677,6 +670,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Closes all opened sections
+	 * @return {Array} Returns an array of all closed sections
 	 * @private
 	 */
 	Accordion.prototype.closeOpenedSections = function(){
@@ -686,7 +680,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		//Simply loop and close the sections already opened
 		for (var i = 0;i < aSections.length;i++) {
-			if ( aSections[i].getCollapsed() == false ) {
+			if (!aSections[i].getCollapsed()) {
 				aSections[i]._setCollapsed(true);
 				aClosedSections.push(aSections[i].getId());
 			}
@@ -718,7 +712,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Returns the number of currently opened sections
-	 * @return The number of currently opened sections
+	 * @return {int} The number of currently opened sections
 	 * @private
 	 */
 	Accordion.prototype.getNumberOfOpenedSections = function(){
@@ -727,7 +721,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var openedSections  = 0;
 
 		//Get all accordion's sections
-		var aSections		= this.getSections();
+		var aSections = this.getSections();
 
 		//Loop and sum up all opened sections
 		for (var i = 0;i < aSections.length;i++) {
@@ -759,6 +753,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Returns the index of the given section or Id of a section.
+	 * @param {sap.ui.commons.AccordionSection} oSection . The current section being processed
+	 * @return The index of the given section
 	 * @private
 	 */
 	Accordion.prototype.__idxOfSec = function(oSection){
@@ -868,18 +864,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Accordion.prototype.isLastSection = function(oSection) {
-
-		//Get all accordion's sections
 		var aSections = this.getSections();
-
 		//Simply check in our internal array containing all titles
-		/*if(aSections.indexOf(oSection) == aSections.length-1 ){*/
-		if (jQuery.inArray(oSection,aSections) == aSections.length - 1 ) {
-			return true;
-		} else {
-			return false;
-		}
-
+		return (jQuery.inArray(oSection, aSections) === aSections.length - 1);
 	};
 
 	/**
@@ -893,7 +880,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var accordion = this.getDomRef();
 		var leftBorder = "0px";
 		var rightBorder = "0px";
-		//neccessary to make sure IE8 does not deliver medium if no border width is set
+		//need to make sure IE8 does not deliver medium if no border width is set
 		if (jQuery(accordion).css("borderLeftStyle") !== "none") {
 			leftBorder = jQuery(accordion).css("border-left-width");
 		}
