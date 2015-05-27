@@ -10,6 +10,7 @@
 			type="image/png"
 			href="images/favicon.ico">
 		<title>OpenUI5 - Google Analytics Disclaimer</title>
+		
 		<script>
   			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -34,7 +35,7 @@
 						<span class="headertitle"><a href="index.html">Intro</a></span>
 						
 						<span class="headertitle"><a href="features.html">Key Features</a></span>
-                        
+						
 						<span class="headertitle"><a href="getstarted.html">Get Started</a></span>
 						
 						<span class="headertitle"><a href="download.html">Download</a></span>
@@ -100,7 +101,11 @@
 			<div class="wrap_ie9">
 				<div class="inner">
 					<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
-					<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=ga_disclaimer" style="width:1px;height:1px" alt="counter">
+					<script>
+						var ref = encodeURIComponent(document.referrer);
+						document.write('<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=ga_disclaimer&ref=' + ref + '" style="width:1px;height:1px" alt="counter">');
+					</script>
+					<noscript><img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=ga_disclaimer" style="width:1px;height:1px" alt="counter"></noscript>
 					<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
 					<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
 					<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>

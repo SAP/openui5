@@ -21,10 +21,7 @@
   			ga('send', 'pageview');
 		</script>
 	</head>
-	<body data-twttr-rendered="true" cz-shortcut-listen="true">
-		<!-- Fork me on GitHub -->
-		<a href="https://github.com/SAP/openui5/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme_fiori.png" alt="Fork me on GitHub"></a>
-		
+	<body>
 		<!-- HEADER -->
 		<div id="header_wrap" class="outer">
 			<div class="wrap_ie9">
@@ -38,7 +35,7 @@
 						<span class="headertitle"><a href="index.html">Intro</a></span>
 						
 						<span class="headertitle"><a href="features.html">Key Features</a></span>
-                        
+						
 						<span class="headertitle"><a href="getstarted.html">Get Started</a></span>
 						
 						<span class="headertitle"><a href="download.html">Download</a></span>
@@ -54,7 +51,11 @@
 				</div>
 			</div>
 		</div>
-		<!-- Teasser Feature Content -->
+		
+		<!-- Fork me on GitHub -->
+		<a href="https://github.com/SAP/openui5/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme_fiori.png" alt="Fork me on GitHub"></a>
+		
+		<!-- MAIN CONTENT -->
 		<div id="main_content_wrap" class="outer">
 			<div class="faq-container">
 				<div class="inner">
@@ -202,11 +203,16 @@
 			</div>
 
 		</div>
+		<!-- FOOTER  -->
 		<div id="footer_wrap" class="outer">
-					<div class="wrap_ie9">
+			<div class="wrap_ie9">
 				<div class="inner">
 					<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
-					<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=faq" style="width:1px;height:1px" alt="counter">
+					<script>
+						var ref = encodeURIComponent(document.referrer);
+						document.write('<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=faq&ref=' + ref + '" style="width:1px;height:1px" alt="counter">');
+					</script>
+					<noscript><img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=faq" style="width:1px;height:1px" alt="counter"></noscript>
 					<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
 					<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
 					<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
@@ -215,5 +221,5 @@
 				</div>
 			</div>
 		</div>
-
-</body></html>
+	</body>
+</html>
