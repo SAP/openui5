@@ -27,17 +27,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
-			var CSS_CLASS = ComboBoxRenderer.CSS_CLASS,
-				sValueState = oControl.getValueState();
-
-			sap.m.ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
+			ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
+			var CSS_CLASS = ComboBoxRenderer.CSS_CLASS;
 			oRm.addClass(CSS_CLASS);
 			oRm.addClass(CSS_CLASS + "Input");
-
-			if (sValueState !== sap.ui.core.ValueState.None) {
-				oRm.addClass(CSS_CLASS + "State");
-				oRm.addClass(CSS_CLASS + sValueState);
-			}
 		};
 
 		/**
@@ -47,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
-			sap.m.ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
+			ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
 			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "InputInner");
 		};
 
@@ -59,7 +52,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
-			sap.m.ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
+			ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
 			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "Arrow");
 		};
 

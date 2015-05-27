@@ -37,8 +37,16 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 	width: 2.5rem;
 	height: 2.375rem;
 	line-height: 2.375rem;
-	top: 0.3125rem;
 	right: 0.0625rem;
+
+	/* note: add a non-transparent background because the input field text overflows arrow button in IE10 */
+	background: @sapUiLightestBG;
+}
+
+.sapMComboBoxBaseState .sapMComboBoxBaseArrow {
+	height: 2.25rem;
+	line-height: 2.25rem;
+	right: 0.125rem;
 }
 
 /* hover */
@@ -181,11 +189,14 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	width: 2rem;
 	height: 1.5rem;
 	line-height: 1.5rem;
-	top: 0.25rem;
+}
+
+.sapUiSizeCompact .sapMComboBoxBaseState .sapMComboBoxBaseArrow {
+	height: 1.375rem;
+	line-height: 1.375rem;
 }
 
 .sapUiSizeCondensed .sapMComboBoxBaseArrow {
-	top: 0;
 	right: 0;
 }
 
