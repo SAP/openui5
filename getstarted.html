@@ -28,6 +28,7 @@
 			type="image/png"
 			href="images/favicon.ico">
 		<title>OpenUI5 - Get Started</title>
+		
 		<script id='sap-ui-bootstrap' type='text/javascript'
 			src='https://openui5.hana.ondemand.com/resources/sap-ui-core.js'
 			data-sap-ui-theme='sap_bluecrystal'
@@ -71,7 +72,7 @@
 						<span class="headertitle"><a href="index.html">Intro</a></span>
 						
 						<span class="headertitle"><a href="features.html">Key Features</a></span>
-                        
+						
 						<span class="headertitle">Get Started</span>
 						
 						<span class="headertitle"><a href="download.html">Download</a></span>
@@ -99,7 +100,7 @@
 					You can use OpenUI5 in any HTML file by including the following bootstrap script tag (make sure that you have put the UI5 runtime download in your application folder, if you reference it like in this example):
 				</p>
 				<pre class="codeblock">
-<span class="shTag">&lt;script</span><span class="shAttr"> id</span>=<sspan class="shString">"sap-ui-bootstrap"</span>
+<span class="shTag">&lt;script</span><span class="shAttr"> id</span>=<span class="shString">"sap-ui-bootstrap"</span>
    <span class="shAttr">src</span>=<span class="shString">"resources/sap-ui-core.js"</span>
    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">"sap_bluecrystal"</span>
    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">"sap.m"</span><span class="shTag">&gt;
@@ -114,7 +115,7 @@
 				<pre class="codeblock">
 <span class="shTag">&lt;!DOCTYPE html&gt;</span>
 <span class="shTag">&lt;html&gt;&lt;head&gt;</span>
-<span class="shTag">&lt;meta </span><span class="shAttr">http-equiv</span>=<span class="shString">'X-UA-Compatible'</span> <spa class="shAttr">content</spa>=<span class="shString">'IE=edge'</span> <span class="shTag">/&gt;</span>
+<span class="shTag">&lt;meta </span><span class="shAttr">http-equiv</span>=<span class="shString">'X-UA-Compatible'</span> <span class="shAttr">content</span>=<span class="shString">'IE=edge'</span> <span class="shTag">/&gt;</span>
 <span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
 
 <span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
@@ -186,17 +187,18 @@ btn.placeAt(<span class="shString">'content'</span>);
 				</div>
 
 				<h3>MVC in UI5</h3>
-				<p></p>While the code above is indeed already a very small UI5 application, you would probably expect a more sophisticated way to get your content on screen.
+				<p>While the code above is indeed already a very small UI5 application, you would probably expect a more sophisticated way to get your content on screen.
 				Let’s see how we could replace the simple control with a view, and find out how to use MVC in UI5.
 				We'll start with an XML view, which you'd usually define as a separate file to your index page.</p>
 				<p>Here’s the code for the view:</p>
-				<pre class="codeblock"><span class="shTag">&lt;mvc:View <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> xmlns</span>=<span class="shString">"sap.m"</span> 
-		controllerName</span>=<span class="shString">"getStarted"</span> xmlns:html</span>=<span class="shString">"http://www.w3.org/1999/xhtml"</span>&gt;</span>
+				<pre class="codeblock">
+<span class="shTag">&lt;mvc:View</span> <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> <span class="shAttr">xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> <span class="shAttr">xmlns</span>=<span class="shString">"sap.m"</span> 
+		<span class="shAttr">controllerName</span>=<span class="shString">"getStarted"</span> <span class="shAttr">xmlns:html</span>=<span class="shString">"http://www.w3.org/1999/xhtml"</span>&gt;
 	
-	Get started with MVC<span class="shTag">&lthtml:br/<span class="shTag">&gt;</span></span>
-	<span class="shTag">&lt;Panel</span> <span class="shAttr">text</span>=<span class="shString">"Hello World"</span><span class="shTag">&gt;</span></span>
-		<span class="shTag">&lt;Button</span> <span class="shAttr">text</span>=<span class="shString">"{/actionName}"</span> <span class="shAttr">press</span>=<span class="shString">"doSomething"</span><span class="shTag">/&gt;</span></span>
-		<span class="shTag">&lt;html:table</span> <span class="shAttr">border</span>="5"<span class="shTag"><span class="shTag">&gt;</span></span>
+	Get started with MVC<span class="shTag">&lt;html:br/&gt;</span>
+	<span class="shTag">&lt;Panel</span> <span class="shAttr">text</span>=<span class="shString">"Hello World"</span><span class="shTag">&gt;</span>
+		<span class="shTag">&lt;Button</span> <span class="shAttr">text</span>=<span class="shString">"{/actionName}"</span> <span class="shAttr">press</span>=<span class="shString">"doSomething"</span><span class="shTag">/&gt;</span>
+		<span class="shTag">&lt;html:table</span> <span class="shAttr">border</span>="5"<span class="shTag">&gt;</span>
 			<span class="shTag">&lt;html:tr&gt;</span>
 				<span class="shTag">&lt;html:td&gt;</span>An<span class="shTag">&lt;/html:td&gt;</span>
 				<span class="shTag">&lt;html:td&gt;</span>HTML Table<span class="shTag">&lt;/html:td&gt;</span>
@@ -253,15 +255,15 @@ btn.placeAt(<span class="shString">'content'</span>);
 
 				<p>As you can see, here we've created a small JSON model (which would again come from a separate resource in a real application) with one node inside it, which happens to be the attribute our Button text is bound against.
 				Next, we're instantiating our view and then placing it within a div tag that has the id “content” on our page, using the placeAt method you already know from earlier.</p>
-				<p>If you want to see this example in action and start modifying it, check out the following JSBin:<br/>
-					<div class="corset"> <!-- for Ipad -->
-						<a class="jsbin-embed" href="http://jsbin.com/cizoqo/6/embed?html,output&height=600px&width=1000px">UI5 MVC example with XML view</a>
-						<script src="http://static.jsbin.com/js/embed.js"></script>
-					</div>
-				</p>
-				<p>This link lets you open the JSBin example in a separate window::</p>
+				<p>If you want to see this example in action and start modifying it, check out the following JSBin:</p>
+				<div class="corset"> <!-- for Ipad -->
+					<a class="jsbin-embed" href="http://jsbin.com/cizoqo/6/embed?html,output&height=600px&width=1000px">UI5 MVC example with XML view</a>
+					<script src="http://static.jsbin.com/js/embed.js"></script>
+				</div>
+				
+				<p>This link lets you open the JSBin example in a separate window:</p>
 				<a href="http://jsbin.com/cizoqo/6/edit?html,output" target="_blank">UI5 MVC example with XML view</a>
-				</p>
+
 				<p>Note that in the JSBin examples, we had to use a little workaround for the sake of making all of the code available. JSBin does not have an option to combine several files, so we had to tweak the code a bit to show you the view, the controller and the code from the actual page.</p>
 				<p>If you want to find out more about the different view types available in UI5, check the documentation <a href="https://openui5.hana.ondemand.com/#docs/guide/91f27e3e6f4d1014b6dd926db0e91070.html" target="_blank">here</a> or try an example with a JSView:<br/>
 						<a target="_blank" href="http://jsbin.com/cosoqa/2/edit?html,output">Another UI5 MVC example with JS view</a>
@@ -278,7 +280,7 @@ btn.placeAt(<span class="shString">'content'</span>);
 
 				<h3>Wiring the Elements – Data Binding in UI5</h3>
 				<p>Databinding in UI5 is simple yet powerful - check out a more complex control like our Table bound to a JSON model here:</p>
-				<a href="http://jsbin.com/fohizi/2/edit?html,output" target="_blank">JSBin sample - UI5 table example with local JSON model</a></p>
+				<a href="http://jsbin.com/fohizi/2/edit?html,output" target="_blank">JSBin sample - UI5 table example with local JSON model</a>
 				<p>(As these examples are now getting more complex, open the JSBin code in a separate window - that way there's more space available, and you can start modifying straight away while reading the code explanations below.)</p>
 				<p>Like in the previous example, this example also features a JSON model, but UI5 also supports other models as well of course – you can easily connect your application to an OData service, for instance.</p>
 				<p>We start by creating an instance of a Table control:</p>
@@ -332,7 +334,7 @@ oTable.setModel(oModel);</pre>
 				<p>Now that we know which properties our control has, let’s create the <code>renderer</code>. Each control has a renderer function which defines what is displayed on screen. 
 				The renderer method is responsible for creating the HTML structure that makes up the control. 
 				It is different from the other methods, as it is a static one, so the this keyword is not available. 
-				Instead, a control instance and a <code><a href="https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.core.RenderManager.html" target"_blank">RenderManager</a></code> instance are given to the method, as shown below.</p>
+				Instead, a control instance and a <code><a href="https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.core.RenderManager.html" target="_blank">RenderManager</a></code> instance are given to the method, as shown below.</p>
 					<pre class="codeblock">	// the part creating the HTML:
 	 <span class="shAttr">renderer</span> :  <span class="sh-js-keyword">function</span>(oRM, oControl) { // static function, so use the given "oControl" instance instead of "this"
 		oRM.write(<span class="shString">"&lt;div"</span>); 
@@ -371,35 +373,35 @@ myControl.placeAt(<span class="shString">"content"</span>);
 					<a href="https://openui5.hana.ondemand.com/#docs/guide/Documentation.html">Developer Guide</a> and refer to the
 					<a href="https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html">API Reference</a>
 				</p>
-				<p>Watch training videos on our <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube channel</a>
-				<p>Discuss about OpenUI5 on <a href="http://scn.sap.com/community/developer-center/front-end/content">SCN</a> and <a href="http://stackoverflow.com/questions/tagged/sapui5%20or%20openui5">StackOverflow</a>
-					<p>
-						or look into more examples on jsbin.com:
-						<ul class="download">
-							<li>
-								<a target="_blank" href="http://jsbin.com/openui5-mobile-list-databinding/2/edit?html,output">UI5 mobile list with databinding</a>
-							</li>
-							<li>
-								<a target="_blank" href="http://jsbin.com/openui5-custom-d3-chart-and-table/1/edit">A sample of using D3.js wrapped as a UI5 control with a synced table</a>
-							</li>
-						</ul>
-					</p>
-				</div>
-
-			</div>
+				<p>Watch training videos on our <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube channel</a></p>
+				<p>Discuss about OpenUI5 on <a href="http://scn.sap.com/community/developer-center/front-end/content">SCN</a> and <a href="http://stackoverflow.com/questions/tagged/sapui5%20or%20openui5">StackOverflow</a></p>
+				<p>or look into more examples on jsbin.com:</p>
+				<ul class="download">
+					<li>
+						<a target="_blank" href="http://jsbin.com/openui5-mobile-list-databinding/2/edit?html,output">UI5 mobile list with databinding</a>
+					</li>
+					<li>
+						<a target="_blank" href="http://jsbin.com/openui5-custom-d3-chart-and-table/1/edit">A sample of using D3.js wrapped as a UI5 control with a synced table</a>
+					</li>
+				</ul>
+			</div> <!-- closes main_content -->
 			
 			<p id="twitter_section" class="inner">
 					<a href="https://twitter.com/OpenUI5" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @OpenUI5</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 			</p>
-			<a href="
-		</div>
+
+		</div> <!-- closes main_content_wrap -->
 		<!-- FOOTER  -->
 		<div id="footer_wrap" class="outer">
 			<div class="wrap_ie9">
 				<div class="inner">
 					<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
-					<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px"  alt="counter">
+					<script>
+						var ref = encodeURIComponent(document.referrer);
+						document.write('<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted&ref=' + ref + '" style="width:1px;height:1px" alt="counter">');
+					</script>
+					<noscript><img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px" alt="counter"></noscript>
 					<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
 					<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
 					<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>

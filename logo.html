@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 		<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/main.css">
 		<link rel="icon"
@@ -49,7 +49,6 @@
 						<span class="header_headline">Run on any device.</span>
 					</h1>
 					<h2 id="project_tagline">
-
 						<span class="headertitle"><a href="index.html">Intro</a></span>
 						
 						<span class="headertitle"><a href="features.html">Key Features</a></span>
@@ -65,7 +64,6 @@
 						<span class="headertitle"><a href="faq.html">FAQ</a></span>
 						
 						<span class="headertitle"><a href="whoUsesUI5.html">Who Uses UI5?</a></span>
-
 					</h2>
 				</div>
 			</div>
@@ -74,7 +72,7 @@
 		<!-- Fork me on GitHub -->
 		<a href="https://github.com/SAP/openui5/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme_fiori.png" alt="Fork me on GitHub"></a>
 
-		<!-- Main Content -->
+		<!-- MAIN CONTENT -->
 		<div id="main_content_wrap" class="outer">
 			<div id="main_content" class="inner" >
 				<div class="inner">
@@ -182,7 +180,11 @@
 			<div class="wrap_ie9">
 				<div class="inner">
 					<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
-					<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=logo" style="width:1px;height:1px" alt="counter">
+					<script>
+						var ref = encodeURIComponent(document.referrer);
+						document.write('<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=logo&ref=' + ref + '" style="width:1px;height:1px" alt="counter">');
+					</script>
+					<noscript><img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=logo" style="width:1px;height:1px" alt="counter"></noscript>
 					<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
 					<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
 					<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
