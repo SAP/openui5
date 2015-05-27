@@ -64,6 +64,7 @@ public class AnonymousLogLine {
 	private static final Pattern SDK_PATTERN = Pattern.compile("^/downloads/openui5-sdk-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
 	private static final String GITHUB_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=index";
 	private static final String BLOG_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=blog";
+	private static final String REFERENCES_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=whoUsesUI5";
 	private static final String DEMOKIT_PAGE_STRING = "/";
 
 
@@ -227,6 +228,9 @@ public class AnonymousLogLine {
 		}
 		if (BLOG_PAGE_STRING.equals(url)) {
 			return Resource.BLOG_PAGE;
+		}
+		if (REFERENCES_PAGE_STRING.equals(url)) {
+			return Resource.REFERENCES_PAGE;
 		}
 		if (DEMOKIT_PAGE_STRING.equals(url)) {
 			return Resource.DEMOKIT_PAGE;

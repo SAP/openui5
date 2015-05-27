@@ -31,6 +31,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPHTTPClient;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AkamaiLogDownloader {
@@ -531,7 +532,7 @@ public class AkamaiLogDownloader {
 			for (String fileName : fileNames) {
 				File localFile = new File(directory + File.separator + fileName);
 				
-				log("   ...'" + fileName + "' to " + localFile.getAbsolutePath() + "...");
+				log("   ..." + localFile.getAbsolutePath() + "...");
 				
 				OutputStream output = new FileOutputStream(localFile);
 				// get the file from the remote system
@@ -567,8 +568,6 @@ public class AkamaiLogDownloader {
 		Set<String> usedFileNames = new HashSet<String>();
 
 		final Pattern FILE_DATE_PATTERN = Pattern.compile(".*S\\.(\\d\\d\\d\\d)(\\d\\d)(\\d\\d)0000-.*"); // to get the date from the log file name
-
-		log("Anonymizing log files...");
 
 		try {
 			for (int i = 0; i < rawLogFiles.size(); i++) {
@@ -876,6 +875,7 @@ public class AkamaiLogDownloader {
 				int sdkDownloads = 0;
 				int githubHits = 0;
 				int blogHits = 0;
+				int referencesHits = 0;
 				int demokitHits = 0;
 				
 				switch (logLine.getType()) {
@@ -884,6 +884,9 @@ public class AkamaiLogDownloader {
 					break;
 				case BLOG_PAGE:
 					blogHits++;
+					break;
+				case REFERENCES_PAGE:
+					referencesHits++;
 					break;
 				case DEMOKIT_PAGE:
 					demokitHits++;
@@ -904,7 +907,7 @@ public class AkamaiLogDownloader {
 				// merge to previous data for same day or create new data in case of new day
 				String thisDay = ""+c1.get(Calendar.YEAR) + (c1.get(Calendar.MONTH)+1) + c1.get(Calendar.DAY_OF_MONTH);
 				LogFileData existingLogLine = fileDataMap.get(thisDay);
-				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, demokitHits, 0); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
+				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, demokitHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
 				if (existingLogLine != null) {
 					existingLogLine.addData(newData);
 				} else {
@@ -1058,6 +1061,7 @@ public class AkamaiLogDownloader {
 			o.put("sdk", data.sdkDownloads);
 			o.put("githubHits", data.githubHits);
 			o.put("blogHits", data.blogHits);
+			o.put("referencesHits", data.referencesHits);
 			o.put("demokitHits", data.demokitHits);
 			o.put("ipCounter", data.ipCounter);
 
@@ -1121,10 +1125,16 @@ public class AkamaiLogDownloader {
 				int githubHits = dataSet.getInt("githubHits");
 				int demokitHits = dataSet.getInt("demokitHits");
 				int blogHits = dataSet.getInt("blogHits");
+				int referencesHits;
+				try {
+					referencesHits = dataSet.getInt("referencesHits");
+				} catch (JSONException e) {
+					referencesHits = 0;
+				}
 				int ipCounter = dataSet.getInt("ipCounter");
 
 				// the result string for a line in the CSV file
-				String outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + "\n";
+				String outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + "\n";
 				bw.write(outFileText);
 			}
 
