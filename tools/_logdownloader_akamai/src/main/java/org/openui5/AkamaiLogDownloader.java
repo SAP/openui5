@@ -70,7 +70,7 @@ public class AkamaiLogDownloader {
 	*/
 	
 	private final String[] debugFilesOrDirectories = {
-		"C:\\temp\\akamai"
+		"C:\\temp\\akamai\\one"
 	};
 
 
@@ -645,7 +645,7 @@ public class AkamaiLogDownloader {
 			String line;
 			while ((line = br.readLine()) != null) {
 
-				if (line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_EU)		// TODO: nine "contains" or three regex?
+				if (line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_EU)		// TODO: performance: nine "contains" or three regex?
 						|| line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_US)
 						|| line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_AP)
 						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_EU)
@@ -718,7 +718,7 @@ public class AkamaiLogDownloader {
 						fileDate.setTime(data.getDate());
 						if (!sameDay(fileDate, today)) { // ignore today's log because it is incomplete
 							dataSets.add(data);
-							warn(data.toString());
+							//warn(data.toString());
 						}
 					}
 					
@@ -876,6 +876,7 @@ public class AkamaiLogDownloader {
 				int githubHits = 0;
 				int blogHits = 0;
 				int referencesHits = 0;
+				int featuresHits = 0;
 				int demokitHits = 0;
 				
 				switch (logLine.getType()) {
@@ -887,6 +888,9 @@ public class AkamaiLogDownloader {
 					break;
 				case REFERENCES_PAGE:
 					referencesHits++;
+					break;
+				case FEATURES_PAGE:
+					featuresHits++;
 					break;
 				case DEMOKIT_PAGE:
 					demokitHits++;
@@ -907,7 +911,7 @@ public class AkamaiLogDownloader {
 				// merge to previous data for same day or create new data in case of new day
 				String thisDay = ""+c1.get(Calendar.YEAR) + (c1.get(Calendar.MONTH)+1) + c1.get(Calendar.DAY_OF_MONTH);
 				LogFileData existingLogLine = fileDataMap.get(thisDay);
-				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, demokitHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
+				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, featuresHits, demokitHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
 				if (existingLogLine != null) {
 					existingLogLine.addData(newData);
 				} else {
@@ -1062,6 +1066,7 @@ public class AkamaiLogDownloader {
 			o.put("githubHits", data.githubHits);
 			o.put("blogHits", data.blogHits);
 			o.put("referencesHits", data.referencesHits);
+			o.put("featuresHits", data.featuresHits);
 			o.put("demokitHits", data.demokitHits);
 			o.put("ipCounter", data.ipCounter);
 
@@ -1114,6 +1119,9 @@ public class AkamaiLogDownloader {
 
 			FileOutputStream fos = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
+			
+			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits\n";
+			bw.write(outFileText);
 
 			for (int i = 0; i < dataArray.length(); i++) {
 				JSONObject dataSet = dataArray.getJSONObject(i);
@@ -1131,10 +1139,16 @@ public class AkamaiLogDownloader {
 				} catch (JSONException e) {
 					referencesHits = 0;
 				}
+				int featuresHits;
+				try {
+					featuresHits = dataSet.getInt("featuresHits");
+				} catch (JSONException e) {
+					featuresHits = 0;
+				}
 				int ipCounter = dataSet.getInt("ipCounter");
 
 				// the result string for a line in the CSV file
-				String outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + "\n";
+				outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits+ ";" + featuresHits + "\n";
 				bw.write(outFileText);
 			}
 
