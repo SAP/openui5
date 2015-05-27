@@ -826,7 +826,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		mOptions.item.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token", oToken);
 		this._oTokenizer.addToken(oToken);
 	
-		this.addStyleClass("sapMMultiComboBoxHasToken");
+		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 	
 		this.setValue('');
 	
@@ -889,9 +889,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			this._oTokenizer.removeToken(oToken);
 		}
 	
-		if (!this._hasTokens()) {
-			this.removeStyleClass("sapMMultiComboBoxHasToken");
-		}
+		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 	
 		if (mOptions.fireChangeEvent) {
 			// fire the change event
