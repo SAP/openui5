@@ -1796,6 +1796,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					fileName : oEvent.getParameter("fileName"),
 					responseRaw : oEvent.getParameter("responseRaw"),
 					reponse : oEvent.getParameter("response"),
+					status : oEvent.getParameter("status"),
 					headers : oEvent.getParameter("headers")
 				}]
 			});
