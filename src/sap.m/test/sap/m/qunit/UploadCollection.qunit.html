@@ -409,11 +409,7 @@
 			headers : {
 				"headerOne" : "headerValueOne",
 				"headerTwo" : "headerValueTwo",
-			},
-			requestHeaders : {
-				"headerOne" : "headerValueOne",
-				"headerTwo" : "headerValueTwo",
-			} 
+			}
 		};
 		function uploadComplete(oEvent) {
 			// Deprecated
@@ -424,6 +420,7 @@
 			// check for properly provided parameters
 			assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "Correct file1 name in complete event");
 			assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "Correct response in complete event");
+			assert.equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event");
 			assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "Correct raw response in complete event");
 			assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "Correct headers in complete event");
 		}
