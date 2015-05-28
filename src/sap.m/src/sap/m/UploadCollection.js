@@ -620,7 +620,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			oInputExtensionHL,
 			oTextVL,
 			oListItem,
-			sButton;
+			sButton,
+			sValueStateText;
 
 		if (sStatus === UploadCollection._uploadingStatus) {
 			oBusyIndicator = new sap.m.BusyIndicator(sItemId + "-ia_indicator", {
@@ -729,6 +730,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				bShowValueStateMessage = true;
 				sValueState = "Error";
 				sFileName = oItem.changedFileName;
+				if (sFileName.length === 0) {
+					sValueStateText = this._oRb.getText("UPLOADCOLLECTION_TYPE_FILENAME");
+				} else {
+					sValueStateText = this._oRb.getText("UPLOADCOLLECTION_EXISTS");
+				}
 			}
 
 			// filename
@@ -736,7 +742,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				type : sap.m.InputType.Text,
 				fieldWidth: "76%",
 				valueState : sValueState,
-				valueStateText : this._oRb.getText("UPLOADCOLLECTION_EXISTS"),
+				valueStateText : sValueStateText,
 				showValueStateMessage: bShowValueStateMessage,
 				value : sFileName,
 				description: oFile.extension
@@ -1110,6 +1116,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var bTriggerOk = true;
 		var oEditbox = document.getElementById(sSourceId + "-ta_editFileName-inner");
 		var sNewFileName;
+		var iSourceLine = sSourceId.split("-").pop();
+		var sOrigFullFileName = oContext.aItems[iSourceLine].getProperty("fileName");
+		var oFile = UploadCollection.prototype._splitFilename(sOrigFullFileName);
+		var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
+		var sErrorStateBefore = oContext.aItems[iSourceLine].errorState;
+		var sChangedNameBefore = oContext.aItems[iSourceLine].changedFileName;
+
 		// get new/changed file name and remove possible leading spaces
 		if (oEditbox !== null) {
 			sNewFileName = oEditbox.value.replace(/^\s+/,"");
@@ -1127,7 +1140,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			var sOrigFullFileName = oContext.aItems[iSourceLine].getProperty("fileName");
 			var oFile = UploadCollection.prototype._splitFilename(sOrigFullFileName);
 			// in case there is a difference additional activities are necessary
-			if (oFile.name != sNewFileName) {
+			if (oFile.name !== sNewFileName) {
 				// here we have to check possible double items if it's necessary
 				if (!oContext.getSameFilenameAllowed()) {
 					var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
@@ -1141,7 +1154,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 						oContext.aItems[iSourceLine].changedFileName = sNewFileName;
 						oContext.sErrorState = "Error";
 						bTriggerOk = false;
-						if (sErrorStateBefore != "Error" || sChangedNameBefore != sNewFileName){
+						if (sErrorStateBefore !== "Error" || sChangedNameBefore !== sNewFileName){
 							oContext.invalidate();
 						}
 					} else {
@@ -1167,6 +1180,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				if (bTriggerRenderer) {
 					oContext.invalidate();
 				}
+			}
+		} else {
+			// no new file name provided
+			oContext.aItems[iSourceLine]._status = "Edit";
+			oContext.aItems[iSourceLine].errorState = "Error";
+			oContext.aItems[iSourceLine].changedFileName = sNewFileName;
+			oContext.sErrorState = "Error";
+			if (sErrorStateBefore !== "Error" || sChangedNameBefore !== sNewFileName) {
+				oContext.aItems[iSourceLine].invalidate();
 			}
 		}
 	};
@@ -1515,6 +1537,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					fileName : oEvent.getParameter("fileName"),
 					responseRaw : oEvent.getParameter("responseRaw"),
 					reponse : oEvent.getParameter("response"),
+					status : oEvent.getParameter("status"),
 					headers : oEvent.getParameter("headers")
 				}]
 			});
