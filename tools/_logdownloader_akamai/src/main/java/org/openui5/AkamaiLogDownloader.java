@@ -39,13 +39,10 @@ import org.json.JSONObject;
 
 public class AkamaiLogDownloader {
 
-	//private static final ApplicationConfig test_config = new ApplicationConfig("test", "ftp.suse.de", "/");
+	// this is the Akamai server+path to use
 	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "saphcp.upload.akamai.com", "/341459/333580");
 	
-	private static final ApplicationConfig[] APPLICATION_CONFIGS = {
-		//test_config,
-		openui5_config
-	};
+	private static final ApplicationConfig[] APPLICATION_CONFIGS = { openui5_config };
 	
 	private static String USER = null;
 	private static String PASSWORD = null;
@@ -60,6 +57,10 @@ public class AkamaiLogDownloader {
 	// member variables
 	private final File directory;
 	private final File exportDir;
+	private final File logFile;
+	private BufferedWriter logFileOut;
+	private Calendar startTime;
+	private final String timestamp;
 	
 	// dev/debugging mode
 	private final boolean DEV_MODE = false;
@@ -87,7 +88,7 @@ public class AkamaiLogDownloader {
 		// parse commandline arguments
 		if (args.length > 0) {
 			if (args.length % 2 != 0) {
-				error("There are " + args.length + " arguments, but this tool needs name-value pairs.");
+				staticError("There are " + args.length + " arguments, but this tool needs name-value pairs.");
 			}
 			
 			for (int i = 0; i < args.length; i += 2) {
@@ -103,33 +104,36 @@ public class AkamaiLogDownloader {
 				} else if (paramName.equals("--export")) {
 					exportDirString =  paramValue.replaceAll("^\"|\"$", "").replaceAll("^'|\'$", "");
 				} else {
-					error("Unknown commandline parameter '" + paramName + "'. Supported are: --user, --password, --dir, --export");
+					staticError("Unknown commandline parameter '" + paramName + "'. Supported are: --user, --password, --dir, --export");
 				}
 			}
 		} else {
-			log("Usage:  java -Xms128m -Xmx1024m org.openui5.AkamaiLogDownloader --user openui5 --password .....");
-			log("   At least password is required.");
-			log("   Supported parameters:");
-			log("   --user: the user name");
-			log("   --password: the password");
-			log("   --dir: the directory in which the log data should be stored (an archive directory will be created below); ");
-			log("          default is the current directory");
-			log("   --export: the directory where the JSON file(s) with the aggregated results should be copied to;");
-			log("             this file can be used as data source for apps; by default the JSON file is not copied anywhere");
-			error("No commandline arguments received. At least user name and password need to be given!");
+			staticLog("Usage:  java -Xms128m -Xmx1024m org.openui5.AkamaiLogDownloader --user openui5 --password .....");
+			staticLog("   At least password is required.");
+			staticLog("   Supported parameters:");
+			staticLog("   --user: the user name");
+			staticLog("   --password: the password");
+			staticLog("   --dir: the directory in which the log data should be stored (an archive directory will be created below); ");
+			staticLog("          default is the current directory");
+			staticLog("   --export: the directory where the JSON file(s) with the aggregated results should be copied to;");
+			staticLog("             this file can be used as data source for apps; by default the JSON file is not copied anywhere");
+			staticError("No commandline arguments received. At least user name and password need to be given!");
 		}
 		
 		if (USER == null) {
 			USER = DEFAULT_USER;
 		}
 		if (PASSWORD == null) {
-			error("Password was not given, use the '--password' parameter.");
+			staticError("Password was not given, use the '--password' parameter.");
 		}
 
 		// setup working directory
 		File logDir = new File(folderToScan);
+		if (!logDir.exists()) {
+			logDir.mkdirs();
+		}
 		if (!logDir.exists() || !logDir.isDirectory()) {
-			error("Working directory " + logDir.getAbsolutePath() + " does not exist or is no directory.");
+			staticError("Working directory " + logDir.getAbsolutePath() + " is not a directory or could not be created.");
 			return;
 		}
 		
@@ -141,7 +145,7 @@ public class AkamaiLogDownloader {
 				if (exportDir.isDirectory()) {
 					// ok
 				} else {
-					error("Export directory " + exportDirString + " is a file");
+					staticError("Export directory " + exportDirString + " is a file");
 				}
 			}
 		}
@@ -153,6 +157,8 @@ public class AkamaiLogDownloader {
 		for (int i = 0; i < APPLICATION_CONFIGS.length; i++) {
 			ld.handleLogFiles(APPLICATION_CONFIGS[i]);
 		}
+		
+		ld.shutdown();
 	}
 
 	
@@ -164,6 +170,46 @@ public class AkamaiLogDownloader {
 	public AkamaiLogDownloader(File directory, File exportDirectory) {
 		this.directory = directory;
 		this.exportDir = exportDirectory;
+
+		Calendar now = Calendar.getInstance();
+		this.startTime = now;
+		this.timestamp = now.get(Calendar.YEAR) + "-" + pad(now.get(Calendar.MONTH) + 1) + "-" + pad(now.get(Calendar.DAY_OF_MONTH)) 
+				+ "_" + pad(now.get(Calendar.HOUR)) + "-" + pad(now.get(Calendar.MINUTE)) + "-" + pad(now.get(Calendar.SECOND));
+
+		this.logFile = new File(directory + File.separator + "analysis_" + this.timestamp + ".log");
+		try {
+			this.logFileOut = new BufferedWriter(new FileWriter(this.logFile));
+		} catch (IOException e) {
+			error("Cannot create log file " + this.logFile.getAbsolutePath());
+		}
+	}
+	
+	/**
+	 * Prepares this instance for no more being used (closes log file)
+	 */
+	void shutdown() {
+		Calendar now = Calendar.getInstance();
+		long millis = now.getTimeInMillis() - this.startTime.getTimeInMillis();
+				
+		log("\nDONE!   (in " + (millis/1000) + " seconds)\n");
+		
+		if (this.logFileOut != null) {
+			try {
+				this.logFileOut.close();
+			} catch (IOException e) {
+				// no need to spam stdout
+			}
+		}
+	}
+	
+	/**
+	 * Helper function to add padding to the given number (one or two digits), so it has two digits in the end.
+	 * 
+	 * @param number
+	 * @return
+	 */
+	private String pad(int number) {
+		return (number < 10 ? "0" : "") + number;
 	}
 
 
@@ -231,7 +277,7 @@ public class AkamaiLogDownloader {
 
 		// DEV_MODE
 		else { // only in DEV_MODE! Avoid any online stuff, work with local files.
-			warn("Working in DEV_MODE!");
+			warn("\nWorking in DEV_MODE!\n\n");
 			knownFiles = new JSONObject("{data:[]}");
 			for (int i = 0; i < debugFilesOrDirectories.length; i++) { // the array can contain file names to use or folder names (to use all files inside)
 				File f = new File(debugFilesOrDirectories[i]);
@@ -351,7 +397,6 @@ public class AkamaiLogDownloader {
 		// Step 12: optionally save a JSON file containing all data, e.g. for consumption in a web app
 		this.exportJsonToWeb(jsonDataFile);
 
-		log("\nDONE!\n");
 	}
 
 
@@ -738,8 +783,7 @@ public class AkamaiLogDownloader {
 			}
 			
 			// write the UA file
-			String date = today.get(Calendar.YEAR) + "-" + today.get(Calendar.MONTH) + "-" + today.get(Calendar.DAY_OF_MONTH) + "_" + today.get(Calendar.HOUR) + "-" + today.get(Calendar.MINUTE);
-			File uaFile = new File(directory + File.separator + "user-agents-from-analysis-" + date + ".csv");
+			File uaFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_user-agents.csv");
 			BufferedWriter out = new BufferedWriter(new FileWriter(uaFile)); 
 			for (String ua : uaMap.keySet()) {
 				out.write("\"" + ua/*.replaceAll("\t", " ")*/ + "\";" + uaMap.get(ua) + "\n");
@@ -747,7 +791,7 @@ public class AkamaiLogDownloader {
 			out.close();
 			
 			// write the referrers file
-			File refFile = new File(directory + File.separator + "referrers-from-analysis-" + date + ".csv");
+			File refFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_referrers.csv");
 			out = new BufferedWriter(new FileWriter(refFile)); 
 			for (String ref : referrerMap.keySet()) {
 				out.write("\"" + ref + "\";" + referrerMap.get(ref) + "\n");
@@ -1272,13 +1316,33 @@ public class AkamaiLogDownloader {
 
 	// utility methods
 
-	private static void error(String message) {
+	private static void staticError(String message) {
 		throw new RuntimeException(message);
 	}
-	private static void warn(String message) {
-		System.out.println("    WARNING: " + message);
-	}
-	private static void log(String message) {
+	private static void staticLog(String message) {
 		System.out.println(message);
+	}
+	
+	private void error(String message) {
+		logToFile("   ERROR: " + message);
+		throw new RuntimeException(message);
+	}
+	private void warn(String message) {
+		System.out.println("   WARNING: " + message);
+		logToFile("   WARNING: " + message);
+	}
+	private void log(String message) {
+		System.out.println(message);
+		logToFile(message);
+	}
+	
+	private void logToFile(String message) {
+		if (this.logFileOut != null) {
+			try {
+				this.logFileOut.write(message + "\n");
+			} catch (IOException e) {
+				// no need to spam stdout
+			}
+		}
 	}
 }
