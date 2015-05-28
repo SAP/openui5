@@ -1,9 +1,7 @@
 package org.openui5;
 
-import java.util.Arrays;
+import java.net.URLDecoder;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -179,12 +177,25 @@ public class AnonymousLogLine {
 				return null; // not found, not modified
 			}
 
-			Resource type = getResourceType(m.group(13));
+			String url = m.group(13);
+			Resource type = getResourceType(url);
 			if (type == null) {
 				if (line.indexOf("openui5-runtime") > -1 || line.indexOf("openui5-sdk") > -1) {
 					System.out.println("WARNING: did we not match a valid file? " + line);
 				}
 				return null; // none of the interesting resources
+			}
+			
+			String referrer = m.group(18);
+			if (type == Resource.GITHUB_PAGE
+				|| type == Resource.BLOG_PAGE
+				|| type == Resource.REFERENCES_PAGE
+				|| type == Resource.FEATURES_PAGE
+				|| type == Resource.GETSTARTED_PAGE) {
+				int pos = url.lastIndexOf("&ref=");
+				if (pos > -1 && pos < url.length() - 7) {
+					referrer = URLDecoder.decode(url.substring(pos + 5));
+				}
 			}
 
 			// now the line seems to be one of the interesting resources
@@ -213,10 +224,10 @@ public class AnonymousLogLine {
 							ipCounter,
 							type,
 							code,
-							m.group(13), // url
+							url, // url
 							Integer.parseInt(m.group(14)), // first number
 							Integer.parseInt(m.group(15)),// second number
-							m.group(18), // url
+							referrer, // referrer url
 							region, // region
 							m.group(19) // user-agent
 					);
@@ -236,19 +247,19 @@ public class AnonymousLogLine {
 
 
 	private static Resource getResourceType(String url) {
-		if (GITHUB_PAGE_STRING.equals(url)) {
+		if (url.startsWith(GITHUB_PAGE_STRING)) {
 			return Resource.GITHUB_PAGE;
 		}
-		if (BLOG_PAGE_STRING.equals(url)) {
+		if (url.startsWith(BLOG_PAGE_STRING)) {
 			return Resource.BLOG_PAGE;
 		}
-		if (REFERENCES_PAGE_STRING.equals(url)) {
+		if (url.startsWith(REFERENCES_PAGE_STRING)) {
 			return Resource.REFERENCES_PAGE;
 		}
-		if (FEATURES_PAGE_STRING.equals(url)) {
+		if (url.startsWith(FEATURES_PAGE_STRING)) {
 			return Resource.FEATURES_PAGE;
 		}
-		if (GETSTARTED_PAGE_STRING.equals(url)) {
+		if (url.startsWith(GETSTARTED_PAGE_STRING)) {
 			return Resource.GETSTARTED_PAGE;
 		}
 		if (DEMOKIT_PAGE_STRING.equals(url)) {
