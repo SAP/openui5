@@ -2560,8 +2560,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			jQuery.each(oPayload, function(sPropName, oPropValue) {
 				if (sPropName !== '__metadata') {
 					// remove unmodified properties and keep only modified properties for delta MERGE
-					// Compare whether last data is completely contained in current data and to a maximum depth of 3, to cover complex types.
-					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue, 3, true)) {
+					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue)) {
 						delete oPayload[sPropName];
 					}
 				}
