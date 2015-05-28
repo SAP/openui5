@@ -60,7 +60,7 @@
 				"fileName" : "Picture of a woman.png",
 				"fileSize" : 70,
 				"mimeType" : "image/png",
-				"thumbnailUrl" : "/test-resources/sap/m/images/Woman_04.png",
+				"thumbnailUrl" : "../images/Woman_04.png",
 				"uploadedDate" : "2014-07-25",
 				"url" : "/pathToTheFile/Woman_04.png"
 			}]
@@ -102,6 +102,7 @@
 	});
 
 	QUnit.test("Basic tests", function(assert) {
+		assert.expect(4);
 		assert.ok(this.oUploadCollection, "UploadCollection instantiated");
 		assert.ok(jQuery.sap.domById("uploadCollection-list"), "Item list is rendered");
 		assert.ok(jQuery.sap.domById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
