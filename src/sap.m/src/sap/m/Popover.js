@@ -1473,9 +1473,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 	Popover.prototype._openAnimation = function($Ref, iRealDuration, fnOpened){
 		var that = this;
-		if (Popover._bIE9 || (sap.ui.Device.os.android && sap.ui.Device.os.version < 2.4)) {
+		if (Popover._bIE9) {
 			//no animation in ie9 transition not supported
-			//no animation in android 2.3.x, because it looks laggy.
 			fnOpened();
 		} else {
 			var bOpenedCalled = false,
@@ -1505,8 +1504,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	Popover.prototype._closeAnimation = function($Ref, iRealDuration, fnClose){
-		if (Popover._bIE9 || (sap.ui.Device.os.android && sap.ui.Device.os.version < 2.4)) {
-			//no animation in android 2.3.x, because it looks laggy.
+		if (Popover._bIE9) {
 			fnClose();
 		} else {
 			var bClosedCalled = false,
