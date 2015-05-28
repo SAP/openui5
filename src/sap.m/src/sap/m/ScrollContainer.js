@@ -61,9 +61,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			vertical : {type : "boolean", group : "Behavior", defaultValue : false},
 			
 			/**
-			 * Whether the scroll container can be focused.
-			 * 
-			 * Note that it should be set to "true" when there are no focusable elements inside or when keyboard interaction  requires an additional tab stop on the container.
+			 * Whether the scroll container can be focused.
+			 *
+			 * Note that it should be set to "true" when there are no focusable elements inside or when keyboard interaction requires an additional tab stop on the container.
 			 */
 			focusable : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
