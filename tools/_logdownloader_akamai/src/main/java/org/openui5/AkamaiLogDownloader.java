@@ -277,7 +277,7 @@ public class AkamaiLogDownloader {
 
 		// DEV_MODE
 		else { // only in DEV_MODE! Avoid any online stuff, work with local files.
-			warn("\nWorking in DEV_MODE!\n\n");
+			warn("Working in DEV_MODE!\n\n");
 			knownFiles = new JSONObject("{data:[]}");
 			for (int i = 0; i < debugFilesOrDirectories.length; i++) { // the array can contain file names to use or folder names (to use all files inside)
 				File f = new File(debugFilesOrDirectories[i]);
@@ -814,7 +814,12 @@ public class AkamaiLogDownloader {
 				return d1.getYYYYMMDD_WithDashes().compareTo(d2.getYYYYMMDD_WithDashes());
 			}
 		});
-
+		
+		log("...Results from all processed log files:");
+		for (LogFileData data : aggregatedDataSets) {
+			log("   - " + data);
+		}
+		
 		return aggregatedDataSets;
 	}
 
