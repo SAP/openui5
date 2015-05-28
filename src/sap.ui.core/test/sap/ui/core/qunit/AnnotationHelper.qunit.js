@@ -329,6 +329,23 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 						<PropertyValue Property="Action" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData"/>\
 					</Record>\
 				</PropertyValue>\
+				<PropertyValue Property="ImageUrl">\
+					<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
+						<UrlRef>\
+							<If>\
+								<Ne>\
+									<Path>EmailAddress</Path>\
+									<Null/>\
+								</Ne>\
+								<Apply Function="odata.concat">\
+									<String>mailto:</String>\
+									<Path>EmailAddress</Path>\
+								</Apply>\
+								<Null/>\
+							</If>\
+						</UrlRef>\
+					</Record>\
+				</PropertyValue>\
 			</Record>\
 		</Annotation>\
 	</Annotations>\
@@ -1275,6 +1292,18 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			testBinding(oCurrentContext, "Mr. ", {Sex: "M"});
 			testBinding(oCurrentContext, "Mrs. ", {Sex: "F"});
 			testBinding(oCurrentContext, "", {Sex: ""});
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.10 Expression edm:Null", function () {
+		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+			var sMetaPath = sPath2Contact
+					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/UrlRef",
+				oCurrentContext = oMetaModel.getContext(sMetaPath);
+
+			testBinding(oCurrentContext, undefined, {EmailAddress: null});
+			testBinding(oCurrentContext, "mailto:foo@bar.com", {EmailAddress: "foo@bar.com"});
 		});
 	});
 

@@ -263,9 +263,11 @@
 			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/BillingStatus">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="BillingStatusDescription"/>
 			</Annotations>
+<!--
 			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/DeliveryStatus">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="DeliveryStatusDescription"/>
 			</Annotations>
+-->
 			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/CreatedAt">
 				<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
 			</Annotations>
