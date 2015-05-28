@@ -736,9 +736,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 					jQuery.each(this.aLastContexts, function(iIndex, oContext) {
 						oLastData = that.oLastContextData[oContext.getPath()];
 						oCurrentData = aContexts[iIndex].getObject();
-						// Compare whether last data is completely contained in current data (so broader $select
-						// or $expand doesn't trigger a change) and to a maximum depth of 3, to cover complex types.
-						if (!jQuery.sap.equal(oLastData, oCurrentData, 3, true)) {
+						// Compare whether last data is completely contained in current data 
+						if (!jQuery.sap.equal(oLastData, oCurrentData, true)) {
 							bChangeDetected = true;
 							return false;
 						}
