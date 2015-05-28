@@ -2838,7 +2838,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		// if aggregation is already bound, unbind it first
 		if (this.isBound(sName)) {
-			this.unbindAggregation(sName, true);
+			this.unbindAggregation(sName);
 		}
 
 		// check whether a template has been provided, which is required for proper processing of the binding
