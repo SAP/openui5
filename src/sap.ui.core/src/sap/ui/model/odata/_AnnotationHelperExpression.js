@@ -301,7 +301,8 @@ sap.ui.define([
 				oSubPathValue = Basics.descend(oPathValue, "Value");
 			} else {
 				["And", "Apply", "Bool", "Date", "DateTimeOffset", "Decimal", "Float", "Eq", "Ge",
-					"Gt", "Guid", "If", "Int", "Le", "Lt", "Ne", "Not", "Or", "Path", "String",
+					"Gt", "Guid", "If", "Int", "Le", "Lt", "Ne", "Not", "Or", "Path",
+					"PropertyPath", "String",
 					"TimeOfDay"
 				].forEach(function (sProperty) {
 					if (oRawValue.hasOwnProperty(sProperty)) {
@@ -317,6 +318,7 @@ sap.ui.define([
 				case "If": // 14.5.6 Expression edm:If
 					return Expression.conditional(oInterface, oSubPathValue);
 				case "Path": // 14.5.12 Expression edm:Path
+				case "PropertyPath": // 14.5.13 Expression edm:PropertyPath
 					return Expression.path(oInterface, oSubPathValue);
 				case "Bool": // 14.4.2 Expression edm:Bool
 				case "Date": // 14.4.3 Expression edm:Date
@@ -617,7 +619,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handling of "14.5.12 Expression edm:Path".
+		 * Handling of "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath".
 		 *
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
