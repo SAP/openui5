@@ -729,7 +729,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			$scrollArea = $content.children(".sapMPopoverScroll"),
 			oContentStyle = $content[0].style,
 			oScrollAreaStyle = $scrollArea[0].style,
-			bSAreaPosAbs = $scrollArea.css("position") === "absolute",
 			sContentWidth = this.getContentWidth(),
 			sContentHeight = this.getContentHeight(),
 			$arrow = this.$("arrow"),
@@ -746,8 +745,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			sContentHeight = sap.m.PopupHelper.calcPercentageSize(sContentHeight, iWindowHeight);
 		}
 
-		oContentStyle.width = sContentWidth || (bSAreaPosAbs ? $scrollArea.outerWidth(true) + "px" : "");
-		oContentStyle.height = sContentHeight || (bSAreaPosAbs ? $scrollArea.outerHeight(true) + "px" : "");
+		oContentStyle.width = sContentWidth || "";
+		oContentStyle.height = sContentHeight || "";
 		oContentStyle.maxWidth = "";
 		oContentStyle.maxHeight = "";
 
@@ -1225,10 +1224,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			iHeight = $this.outerHeight(),
 			$content = this.$("cont"),
 			$scrollArea = $content.children(".sapMPopoverScroll"),
-			bSAreaPosAbs = $scrollArea.css("position") === "absolute",
 			oContentComputedStyle = window.getComputedStyle($content[0]),
-			fContentMarginLeft = window.parseFloat(oContentComputedStyle.marginLeft, 10),
-			fContentMarginRight = window.parseFloat(oContentComputedStyle.marginRight, 10),
 			fContentMarginTop = window.parseFloat(oContentComputedStyle.marginTop, 10),
 			fContentMarginBottom = window.parseFloat(oContentComputedStyle.marginBottom, 10),
 			$header = $this.children(".sapMPopoverHeader"),
@@ -1346,10 +1342,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		iMaxContentWidth = iDocumentWidth - iMarginLeft - iMarginRight - fPopoverBorderLeft - fPopoverBorderRight;
 
-		if (bSAreaPosAbs) {
-			iMaxContentWidth -= (fContentMarginLeft + fContentMarginRight);
-		}
-
 		//adapt the height to screen
 		iMaxContentHeight = iDocumentHeight - iMarginTop - iMarginBottom - iHeaderHeight - iSubHeaderHeight - iFooterHeight - fContentMarginTop - fContentMarginBottom - fPopoverBorderTop - fPopoverBorderBottom;
 		//make sure iMaxContentHeight is NEVER less than 0
@@ -1359,7 +1351,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		// When Popover can fit into the current screen size, don't set the height on the content div.
 		// This can fix the flashing scroll bar problem when content size gets bigger after it's opened.
 		// When position: absolute is used on the scroller div, the height has to be kept otherwise content div has 0 height.
-		if (this.getContentHeight() || bSAreaPosAbs || ($content.height() > iMaxContentHeight)) {
+		if (this.getContentHeight() || ($content.height() > iMaxContentHeight)) {
 			oCSS["height"] = Math.min(iMaxContentHeight, $content.height()) + "px";
 		} else {
 			oCSS["height"] = "";
