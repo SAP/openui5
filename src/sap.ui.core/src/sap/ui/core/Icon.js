@@ -450,6 +450,8 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	Icon.prototype._getAccessibilityAttributes = function() {
 		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
 			alabelledBy = this.getAriaLabelledBy(),
+			sTooltip = this.getTooltip_AsString(),
+			bUseIconTooltip = this.getUseIconTooltip(),
 			mAccAttributes = {};
 
 		if (this.getDecorative()) {
@@ -461,9 +463,8 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 
 		if (alabelledBy.length > 0) {
 			mAccAttributes.labelledby = alabelledBy.join(" ");
-		} else if (oIconInfo) {
-			// TODO: should the tooltip property be used here as well?
-			mAccAttributes.label = oIconInfo.text;
+		} else if (sTooltip || (bUseIconTooltip && oIconInfo)) {
+			mAccAttributes.label = sTooltip || oIconInfo.text;
 		}
 
 		return mAccAttributes;
