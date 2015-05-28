@@ -5,3 +5,4 @@ lib
 data_*
 knownLogFiles_*
 *.lnk
+*.log
