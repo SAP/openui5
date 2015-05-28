@@ -489,11 +489,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 				this._sScrollerId = $Content.parent().attr("id");
 
-				// Fix for displaced edit box overlay on scrolled pages in Android 4.x and 2.3.4 browsers:
+				// Fix for displaced edit box overlay on scrolled pages in Android 4.x browser:
 				var bDontUseTransform = (
 						!!sap.ui.Device.os.android &&
 						!sap.ui.Device.browser.chrome &&
-						(sap.ui.Device.os.version == 4 || !sap.ui.Device.os.versionStr.indexOf("2.3.4")) &&
+						(sap.ui.Device.os.version == 4) &&
 						$Content.find("input,textarea").length
 					);
 
