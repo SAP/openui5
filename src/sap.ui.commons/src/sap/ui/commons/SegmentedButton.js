@@ -3,16 +3,16 @@
  */
 
 // Provides control sap.ui.commons.SegmentedButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
+	function(jQuery, Control, ItemNavigation) {
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new SegmentedButton.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -27,40 +27,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SegmentedButton = Control.extend("sap.ui.commons.SegmentedButton", /** @lends sap.ui.commons.SegmentedButton.prototype */ { metadata : {
-	
+
 		interfaces : [
 			"sap.ui.commons.ToolbarItem"
 		],
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * enabled
 			 */
 			enabled : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Buttons
 			 */
 			buttons : {type : "sap.ui.commons.Button", multiple : true, singularName : "button"}
 		},
 		associations : {
-	
+
 			/**
 			 * Selected Button
 			 */
 			selectedButton : {type : "sap.ui.commons.Button", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Event fired when button selected
 			 */
 			select : {
 				parameters : {
-	
+
 					/**
 					 * Id of selected ToggleButton
 					 */
@@ -69,13 +69,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
+
 	/* This file defines behavior for the SegmentedButton control */
-	
-	
+
+
 	/**
 	 * Initialization hook for the SegmentedButton.
-	 * 
+	 *
 	 * @private
 	 */
 	SegmentedButton.prototype.init = function() {
@@ -86,25 +86,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		this._oButtonDelegate = {oSegmentedButton: this, onAfterRendering: this._buttonOnAfterRendering};
 	};
-	
+
 	SegmentedButton.prototype.exit = function() {
-	
+
 		if (this._oItemNavigation) {
 			this.removeDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
 			delete this._oItemNavigation;
 		}
-	
+
 	};
-	
+
 	/**
-	 * AfterRendering hook for the SegmentedButton. Create ItemNavigation here. 
+	 * AfterRendering hook for the SegmentedButton. Create ItemNavigation here.
 	 *
 	 * @private
 	 */
 	SegmentedButton.prototype.onAfterRendering = function() {
 		this._setItemNavigation(true);
-	
+
 	};
 	/**
 	 * @private
@@ -112,10 +112,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SegmentedButton.prototype._buttonSelected = function(oEvent) {
 		var oOldButtonSelection = sap.ui.getCore().byId(this.getSelectedButton()),
 			oNewButtonSelection = oEvent.getSource();
-	
+
 		if (oNewButtonSelection !== oOldButtonSelection) {
 			this.setSelectedButton(oNewButtonSelection);
-			this.fireSelect({selectedButtonId:oNewButtonSelection.getId()});
+			this.fireSelect({selectedButtonId: oNewButtonSelection.getId()});
 		}
 	};
 	/**
@@ -150,30 +150,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SegmentedButton.prototype._setAriaInfo = function(oButton, i) {
 		var $button = jQuery(oButton.getDomRef()),
 			length = this.getButtons().length;
-	
-		$button.attr("aria-posinset",i);
-		$button.attr("aria-setsize",length);
+
+		$button.attr("aria-posinset", i);
+		$button.attr("aria-setsize", length);
 		$button.attr("role", "radio");
 		if (oButton.getId() === this.getSelectedButton()) {
 			$button.attr("aria-checked", "true");
 			$button.removeAttr("aria-describedby");
 		} else {
 			$button.removeAttr("aria-checked");
-			$button.attr("aria-describedby",this.getId() + "-label");
+			$button.attr("aria-describedby", this.getId() + "-label");
 		}
 	};
-	
+
 	/**
 	 * OnAfterRendering of Button
 	 *
 	 * @private
 	*/
 	SegmentedButton.prototype._buttonOnAfterRendering = function() {
-	
+
 		this.oSegmentedButton._setItemNavigation();
-	
+
 	};
-	
+
 	/**
 	 * Rerendering of the Buttons
 	 *
@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			rm.destroy();
 		}
 	};
-	
+
 	/* Override API methods */
 	SegmentedButton.prototype.addButton = function(oButton) {
 		this.addAggregation("buttons",oButton, true);
@@ -197,13 +197,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	SegmentedButton.prototype.insertButton = function(oButton, iIndex) {
-		this.insertAggregation("buttons",oButton, iIndex, true);
+		this.insertAggregation("buttons", oButton, iIndex, true);
 		oButton.attachPress(this._buttonSelected, this);
 		this._rerenderButtons();
 		return this;
 	};
 	SegmentedButton.prototype.removeButton = function(oButton) {
-		var result = this.removeAggregation("buttons",oButton, true);
+		var result = this.removeAggregation("buttons", oButton, true);
 		if (result) {
 			result.detachPress(this._buttonSelected, this);
 			result.removeDelegate(this._oButtonDelegate);
@@ -224,10 +224,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oButton, oButtonOld = sap.ui.getCore().byId(this.getSelectedButton());
 		this.setAssociation("selectedButton", vButton, true);
 		oButton = sap.ui.getCore().byId(this.getSelectedButton());
-		
+
 		// Make sure Aria info is correct after changing button state
 		this._setItemNavigation();
-		
+
 		var aButtons = this.getButtons();
 		for (var i = 0; i < aButtons.length; i++) {
 			if (aButtons[i] === oButton) {
@@ -251,9 +251,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oButton.addStyleClass("sapUiSegButtonSelected");
 		}
 	};
-	
+
 	SegmentedButton.prototype.setEnabled = function(bEnabled) {
-		jQuery.each(this.getButtons(),function(i,oButton) {
+		jQuery.each(this.getButtons(), function(i, oButton) {
 			oButton.setEnabled(bEnabled);
 		});
 		// remove itemNavigation if buttons are disabled
@@ -262,34 +262,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			this.addDelegate(this._oItemNavigation);
 		}
-		this.setProperty("enabled",bEnabled);
+		this.setProperty("enabled", bEnabled);
 	};
-	
+
 	/*
 	 * before cloning buttons deregister events and register it after cloning again.
 	 */
-	SegmentedButton.prototype.clone = function(sIdSuffix, aLocalIds) {
-	
-		var aButtons = this.getButtons();
-		for ( var i = 0; i < aButtons.length; i++) {
-			var oButton = aButtons[i];
+	SegmentedButton.prototype.clone = function(sIdSuffix) {
+
+		var aButtons = this.getButtons(),
+			oButton,
+			i = 0;
+		for (; i < aButtons.length; i++) {
+			oButton = aButtons[i];
 			oButton.detachPress(this._buttonSelected, this);
 		}
-	
+
 		var oClone = sap.ui.core.Element.prototype.clone.apply(this, arguments);
-	
-		for ( var i = 0; i < aButtons.length; i++) {
-			var oButton = aButtons[i];
+
+		for (i = 0; i < aButtons.length; i++) {
+			oButton = aButtons[i];
 			oButton.attachPress(this._buttonSelected, this);
 		}
-	
+
 		return oClone;
 	};
-	
+
 	SegmentedButton.prototype.getFocusDomRef = function() {
-	
+
 		return this.getDomRef("radiogroup") || null;
-	
+
 	};
 
 	return SegmentedButton;
