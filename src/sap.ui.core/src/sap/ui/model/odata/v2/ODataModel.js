@@ -3325,7 +3325,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			that = this;
 
 		jQuery.each(aUrls, function(i, sUrl) {
-			if (sUrl.indexOf("/$metadata") >= 0) {
+			var iIndex = sUrl.indexOf("$metadata");
+			if (iIndex >= 0) {
+				//add serviceUrl for relative metadata urls
+				if (iIndex == 0) {
+					sUrl = that.sServiceUrl + '/' + sUrl;
+				}
 				aMetadataUrls.push(sUrl);
 			} else {
 				aAnnotationUrls.push(sUrl);
