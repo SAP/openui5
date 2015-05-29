@@ -1396,6 +1396,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		navigationPath : "",
 		resolvedPath : undefined
 	}, {
+		// navigation property path
+		NavigationPropertyPath : "ToBusinessPartner",
+		metaPath : sPath2Contact + "/com.sap.vocabularies.UI.v1.LineItem/0/Target",
+		entitySet : "BusinessPartnerSet",
+		isMultiple : false,
+		navigationPath : "ToBusinessPartner",
+		resolvedPath : sPath2BusinessPartner
+	}, {
 		// structural property
 		Path : "Address",
 		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
@@ -1425,6 +1433,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		} else if (oFixture.hasOwnProperty("PropertyPath")) {
 			sPath = oFixture.PropertyPath;
 			sTitle = "14.5.13 Expression edm:PropertyPath: " + sPath;
+		} else if (oFixture.hasOwnProperty("NavigationPropertyPath")) {
+			sPath = oFixture.NavigationPropertyPath;
+			sTitle = "14.5.11 Expression edm:NavigationPropertyPath: " + sPath;
 		}
 
 		if (oFixture.navigationPath === "") {
@@ -1443,12 +1454,16 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					// evil, test code only: write into ODataMetaModel
 					delete oRawValue.AnnotationPath;
 					delete oRawValue.Path;
+					delete oRawValue.PropertyPath;
+					delete oRawValue.NavigationPropertyPath;
 					if (oFixture.hasOwnProperty("AnnotationPath")) {
 						oRawValue.AnnotationPath = oFixture.AnnotationPath;
 					} else if (oFixture.hasOwnProperty("Path")) {
 						oRawValue.Path = oFixture.Path;
 					} else if (oFixture.hasOwnProperty("PropertyPath")) {
 						oRawValue.PropertyPath = oFixture.PropertyPath;
+					} else if (oFixture.hasOwnProperty("NavigationPropertyPath")) {
+						oRawValue.NavigationPropertyPath = oFixture.NavigationPropertyPath;
 					}
 				}
 

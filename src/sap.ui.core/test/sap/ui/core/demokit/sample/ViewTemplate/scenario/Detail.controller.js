@@ -14,9 +14,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 
 			this.getView().bindElement(oSelectedListItem.getBindingContext().getPath());
 			//TODO keep drop-down selection in sync!
+		},
+
+		// show identification details
+		onDetailsPressed: function (oEvent) {
+			oEvent.getSource().getDependents()[0].openBy(oEvent.getSource());
 		}
 	});
-
 
 	return DetailController;
 

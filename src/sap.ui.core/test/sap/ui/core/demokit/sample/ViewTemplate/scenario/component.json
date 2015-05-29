@@ -9,6 +9,7 @@
 				"Facets.fragment.xml",
 				"Field.fragment.xml",
 				"FormFacet.fragment.xml",
+				"Identification.fragment.xml",
 				"Main.controller.js",
 				"Main.view.xml",
 				"ODataMetaModel.json",
