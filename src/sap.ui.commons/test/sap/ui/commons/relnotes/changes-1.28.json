@@ -704,5 +704,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "d85fe1ce1b15c2adc9542b868a76eb81415a797b",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Element: Added additional documentation for event delegates",
+        "references": []
+      },
+      {
+        "id": "5dbbfd271bb9304f0980dc658913364e4fea1e59",
+        "author": "Martin Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButton: Selecting more than one RadioButton in the same group fixed",
+        "references": []
+      },
+      {
+        "id": "f4c28646f79e4396de5da58fb8072c41f6ccf20a",
+        "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Opening the overflow popup is not causing a toolbar resize when the toolbar is nested inside sap.ui.layout.HorizontalLayout.",
+        "references": []
+      }
+    ]
   }
 }

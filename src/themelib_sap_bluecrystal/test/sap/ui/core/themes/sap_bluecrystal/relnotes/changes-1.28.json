@@ -567,5 +567,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "1d3dcf2bbe0e8e503cee432425ce996cf5ea818a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Fixed scrolling the whole page when ran on Android stock browser",
+        "references": []
+      },
+      {
+        "id": "20b991a50de7cb42bc14468f9a2525ed086ba481",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Focus outline drawn on mobile devices fixed",
+        "references": []
+      },
+      {
+        "id": "1dc0bdda5cdaa7c9f185f8342223066857fdf839",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Arrow button height fixed (downport)",
+        "references": []
+      },
+      {
+        "id": "3c91ec404cd177ff806e91a1eea96663ebc25086",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Text tabs drop shadow is changed from 50% opacity to 70% opacity",
+        "references": []
+      }
+    ]
   }
 }
