@@ -757,6 +757,42 @@
 		equal(f("1e-79", 71), "0.00000001", "1e-79 -> (71) = 0.00000001");
 	});
 
+	test("Format option 'emptyString'", function() {
+		var aMethods = ["getIntegerInstance", "getFloatInstance", "getPercentInstance", "getCurrencyInstance"],
+			aValues = [undefined, null, 0],
+			aCompareValues = [NaN, null, 0];
+
+		aMethods.forEach(function(sMethod, index) {
+			aValues.forEach(function(nValue, index1) {
+				var oFormatOptions = {
+						emptyString: nValue
+					},
+					oFormat = sap.ui.core.format.NumberFormat[sMethod](oFormatOptions),
+					nCompareValue = aCompareValues[index1],
+					nParsed,
+					aParsed;
+
+				// format
+				strictEqual(oFormat.format(nCompareValue), "", nCompareValue + " is formatted to empty string");
+
+				// parse
+				if (sMethod === "getCurrencyInstance") {
+					aParsed = oFormat.parse("");
+					nParsed = aParsed[0];
+					strictEqual(aParsed[1], undefined, "currency code is parse as undefined");
+				} else {
+					nParsed = oFormat.parse("");
+				}
+
+				if (nParsed !== nParsed) {
+					ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
+				} else {
+					strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index1]);
+				}
+			});
+		});
+	});
+
 	</script>
 
 </head>
