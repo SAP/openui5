@@ -423,11 +423,7 @@
 			headers : {
 				"headerOne" : "headerValueOne",
 				"headerTwo" : "headerValueTwo",
-			},
-			requestHeaders : {
-				"headerOne" : "headerValueOne",
-				"headerTwo" : "headerValueTwo",
-			} 
+			}
 		};
 		function uploadComplete(oEvent) {
 			// Deprecated
@@ -439,6 +435,7 @@
 			equal(oEvent.getParameter("files")[0].fileName, "file1", "correct file1 name in complete event");
 			equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "correct response in complete event");
 			equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "correct raw response in complete event");
+			equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event");
 			equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "correct headers in complete event");
 		}
 		this.oUploadCollection.attachUploadComplete(uploadComplete);
@@ -514,7 +511,7 @@
 		sap.ui.getCore().applyChanges();
 		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'ok' as expected in Line 2");
 
-		//check chnaged file name after save
+		//check changed file name after save
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
 		equal("NewDocument.txt", sFileNameField, "Changed filename (NewDocument) is correct saved");
 
@@ -557,6 +554,30 @@
 		equal(oEditButton1.getEnabled(), true, "Edit button is enabled");
 		equal(oDeleteButton0.getEnabled(), true, "Delete button is enabled");
 		equal(oDeleteButton1.getEnabled(), true, "Delete button is enabled");
+	});
+
+	test("Delete the file name in edit", function() {
+		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
+		sap.ui.getCore().byId(sEditButtonId).firePress();
+		sap.ui.getCore().applyChanges();
+		this.oUploadCollection.aItems[1].setFileName("");
+		var oInputField4 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
+		sap.ui.getCore().applyChanges();
+		var oObj = {};
+		oObj.target = {};
+		oObj.oSource = {};
+		oObj.oSource.getId = function() {
+			return this.sId;
+		}
+		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-okButton";
+		oObj.oSource.sId = this.oUploadCollection.aItems[1].sId;
+		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
+		sap.ui.getCore().applyChanges();
+		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getShowValueStateMessage();
+		var sValueState = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getValueState();
+		equal(bShowValueStateMessage, true, "Error message has to be shown, because no file name entered");
+		equal(sValueState, "Error", "Error value state set");
+		equal(this.oUploadCollection.sErrorState, "Error", "Error state is set on UploadCOllection control");
 	});
 
 	module("Display tests", {
