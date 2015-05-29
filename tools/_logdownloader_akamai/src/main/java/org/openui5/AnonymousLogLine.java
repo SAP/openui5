@@ -90,6 +90,7 @@ public class AnonymousLogLine {
 	private String referrer;
 	private Region region;
 	private String userAgent;
+	private String csvUserAgent; // a specially formatted and enriched user-agent string with browser information; only set when isBotLine was called (performance)
 
 	private AnonymousLogLine(Date date, String ipCounter, Resource type, int code, String url, int firstNumber, int secondNumber, String referrer, Region region, String userAgent) {
 		super();
@@ -158,6 +159,13 @@ public class AnonymousLogLine {
 	
 	public String getUserAgent() {
 		return userAgent;
+	}
+	
+	/*
+	 * Enriched user-agent info with multiple columns in CSV format; only available after isBotLine has been called (to do user-agent analysis only once)
+	 */
+	public String getCsvUserAgent() {
+		return csvUserAgent;
 	}
 
 
@@ -298,6 +306,9 @@ public class AnonymousLogLine {
 			parser = UADetectorServiceFactory.getResourceModuleParser();
 		}
 		ReadableUserAgent agent = parser.parse(ua);
+		
+		// remember some more user agent information, while we are at it...
+		this.csvUserAgent = "\"" + this.userAgent + "\";" + agent.getName() + ";" + agent.getVersionNumber().getMajor() + ";" + agent.getOperatingSystem().getName() + ";" + agent.getDeviceCategory().getName();
 		
 		UserAgentType type = agent.getType();
 		if (type.equals(UserAgentType.ROBOT) || containsBotFragment(ua)) {

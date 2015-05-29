@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -49,7 +51,7 @@ public class AkamaiLogDownloader {
 	private static final String DEFAULT_USER = "openui5";
 	
 	private static final String DATA_FILE_NAME = "data";
-	private static final String KNOWN_FILES_FILE_NAME = "knownLogFiles";
+	private static final String KNOWN_FILES_FILE_NAME = "data_knownLogFiles";
 
 	// global consts
 	private static final String BACKUP_FOLDER_NAME = "logBackup";
@@ -62,9 +64,12 @@ public class AkamaiLogDownloader {
 	private Calendar startTime;
 	private final String timestamp;
 	
+	
 	// dev/debugging mode
 	private final boolean DEV_MODE = false;
+	
 	// the following array can contain file names to use or folder names (to use all files inside)
+	// the list of already processed log files is then ignored, but results keep adding up if the same log file is processed multiple times, so delete data_openui5.json to get real numbers again
 	/*
 	private final String[] debugFilesOrDirectories = {
 		"C:\\temp\\akamai\\analysis1104\\openui5_333580.esw3c_S.201504110000-2400-0",
@@ -783,18 +788,20 @@ public class AkamaiLogDownloader {
 			}
 			
 			// write the UA file
+			SortedMap<String,Integer> sortedUas = sortMap(uaMap);
 			File uaFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_user-agents.csv");
 			BufferedWriter out = new BufferedWriter(new FileWriter(uaFile)); 
-			for (String ua : uaMap.keySet()) {
-				out.write("\"" + ua/*.replaceAll("\t", " ")*/ + "\";" + uaMap.get(ua) + "\n");
+			for (String ua : sortedUas.keySet()) {
+				out.write(uaMap.get(ua) + ";" + ua + "\n");
 			}
 			out.close();
 			
 			// write the referrers file
+			SortedMap<String,Integer> sortedRefs = sortMap(referrerMap);
 			File refFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_referrers.csv");
 			out = new BufferedWriter(new FileWriter(refFile)); 
-			for (String ref : referrerMap.keySet()) {
-				out.write("\"" + ref + "\";" + referrerMap.get(ref) + "\n");
+			for (String ref : sortedRefs.keySet()) {
+				out.write(referrerMap.get(ref) + ";\"" + ref + "\"\n");
 			}
 			out.close();
 			
@@ -822,6 +829,26 @@ public class AkamaiLogDownloader {
 		
 		return aggregatedDataSets;
 	}
+
+
+	/**
+	 * Sorts the given map by the value and returns a new sorted map containing the result of this sorting.
+	 * 
+	 * @param map
+	 * @return
+	 */
+	private SortedMap<String, Integer> sortMap(final Map<String, Integer> map) {
+		SortedMap<String, Integer> result = new TreeMap<String, Integer>(new Comparator<String>() {
+			@Override
+			public int compare(String key1, String key2)
+			{
+				return map.get(key2) - map.get(key1);
+			}
+		});
+		result.putAll(map);
+		return result;
+	}
+
 
 
 	/**
@@ -917,7 +944,9 @@ public class AkamaiLogDownloader {
 	 */
 	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines, Map<String, Integer> uaStrings, Map<String, Integer> referrers) throws IOException {
 		Map<String,LogFileData> fileDataMap = new HashMap<String, LogFileData>(4);
-		Set<String> knownIps = new HashSet<String>(512);
+		Set<String> known206Ips = new HashSet<String>(512);
+		Set<String> knownIpUrlCombinations = new HashSet<String>(4096); // to avoid counting twice
+		
 		int ipCounter = 0;
 
 		UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
@@ -925,18 +954,19 @@ public class AkamaiLogDownloader {
 		for (AnonymousLogLine logLine : logLines) {
 			handleThis206Line = false;
 
+			String ipUrlCombination = logLine.getIpCounter() + "-" + logLine.getUrl();
 			if (logLine.getCode() == 206) {
-				if (knownIps.contains(logLine.getIpCounter() + "-" + logLine.getUrl())) {
+				if (known206Ips.contains(ipUrlCombination)) {
 					//System.out.println("Discarding line of type " + logLine.getType()); 
 					// rule of thumb: if same file was already downloaded the same day, this 206 request is a different chunk of the same download
 				} else {
 					handleThis206Line = true;
-					knownIps.add(logLine.getIpCounter() + "-" + logLine.getUrl()); // handled once is enough
+					known206Ips.add(ipUrlCombination); // handled once is enough
 				}
 			} else if (logLine.getCode() == 200) {
-				if (!knownIps.contains(logLine.getIpCounter() + "-" + logLine.getUrl())) {
+				if (!known206Ips.contains(ipUrlCombination)) {
 					// this IP-URL combination will be handled below, so make sure it is not handled again
-					knownIps.add(logLine.getIpCounter() + "-" + logLine.getUrl());
+					known206Ips.add(ipUrlCombination);
 				}
 			}
 
@@ -945,7 +975,7 @@ public class AkamaiLogDownloader {
 				continue; // do not count bots/spiders/crawlers
 			} else {
 				// save user-agents of non-bots, 1) for statistics/curiosity and 2) to detect unknown bots
-				String ua = logLine.getUserAgent();
+				String ua = logLine.getCsvUserAgent();
 				Integer uaCount = uaStrings.get(ua);
 				if (uaCount == null) {
 					uaCount = 0;
@@ -968,6 +998,13 @@ public class AkamaiLogDownloader {
 
 
 			if (logLine.getCode() == 200 || (logLine.getCode() == 206 && handleThis206Line)) {
+				
+				// now make sure that every URL will be counted only once per IP address (even though this filters out many users behind the same proxy)
+				if (knownIpUrlCombinations.contains(ipUrlCombination) && !handleThis206Line) {
+					continue;
+				} else {
+					knownIpUrlCombinations.add(ipUrlCombination);
+				}
 				
 				Date date = logLine.getDate();
 				Calendar c1 = Calendar.getInstance();
