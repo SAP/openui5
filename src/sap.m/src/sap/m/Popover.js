@@ -294,7 +294,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			if (!sap.ui.Device.system.desktop
 				|| (Math.abs(oLastRect.top - oRect.top) <= this._followOfTolerance && Math.abs(oLastRect.left - oRect.left) <= this._followOfTolerance)
 				|| (Math.abs(oLastRect.top + oLastRect.height - oRect.top - oRect.height) <= this._followOfTolerance && Math.abs(oLastRect.left + oLastRect.width - oRect.left - oRect.width) <= this._followOfTolerance)) {
-					this.oPopup._applyPosition(this.oPopup._oLastPosition);
+					this.oPopup._applyPosition(this.oPopup._oLastPosition, true);
 			} else {
 				this.close();
 			}
