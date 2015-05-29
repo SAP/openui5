@@ -859,6 +859,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype._updateTilePositions = function(){
 
+		var oContentDimension = this._getContainerDimension();
+
+		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
+			return;
+		}
+		
 		if (this.getTiles().length === 0) {	// no tiles
 			return;
 		}
@@ -1126,6 +1132,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype._applyPageStartIndex = function(iIndex) {
+		
+		var oContentDimension = this._getContainerDimension();
+
+		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
+			return;
+		}
+		
 		this._calculatePositions();
 		var iLength = this.getTiles().length;
 
