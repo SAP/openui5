@@ -27,6 +27,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
+		jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.Overlay");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
@@ -34,16 +35,20 @@
 			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
 
 			QUnit.module("Given that an Overlay is created for a control", {
-				beforeEach : function() {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
-					this.oOverlay = new sap.ui.dt.Overlay({
-						element : this.oButton
-					});
 					this.oButton.placeAt("content");
-					// Render Controls
-					sap.ui.getCore().applyChanges();
+					sap.ui.dt.Preloader.load(["sap.m.Button"]).then(function() {
+						that.oOverlay = new sap.ui.dt.Overlay({
+							element : that.oButton
+						});
+						done();
+						sap.ui.getCore().applyChanges();
+					});
 				},
 				afterEach : function() {
 					this.oButton.destroy();

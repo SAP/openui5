@@ -25,6 +25,8 @@
 		</script>
 
 		<script>
+			jQuery.sap.require("sap.ui.dt.Preloader");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			jQuery.sap.require("sap.ui.dt.DesignTimeNew");
 			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
 			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
@@ -38,12 +40,15 @@
 					draggableTypes : ["sap.m.Button", "sap.m.StandardListItem", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"]
 				});
 
-				var oDesignTime = new sap.ui.dt.DesignTimeNew({
-					rootElements : [oView],
-					plugins : [
-						oSelectionPlugin,
-						oDragPlugin
-					]
+				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(oView);
+				sap.ui.dt.Preloader.load(aElements).then(function() {
+					var oDesignTime = new sap.ui.dt.DesignTimeNew({
+						rootElements : [oView],
+						plugins : [
+							oSelectionPlugin,
+							oDragPlugin
+						]
+					});
 				});
 			});
 
