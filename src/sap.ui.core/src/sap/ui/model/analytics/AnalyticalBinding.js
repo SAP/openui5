@@ -633,8 +633,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * 
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.filter
-	 * @param {sap.ui.model.Filter[]}
-	 *            aFilter Array of sap.ui.model.Filter objects.
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter}
+	 *            aFilter an Array of sap.ui.model.Filter objects or a single Filter instance.
 	 * @param {sap.ui.model.FilterType} 
 	 *            [sFilterType=sap.ui.model.FilterType.Control] Type of the filter which should be adjusted.
 	 * @return {sap.ui.model.analytics.AnalyticalBinding} 
@@ -643,6 +643,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
  	 * @public
 	 */
 	AnalyticalBinding.prototype.filter = function(aFilter, sFilterType) {
+		//ensure at least an empty array, so the later validation of odata4analytics.js does not fail
+		if (!aFilter) {
+			aFilter = [];
+		}
+		// wrap filter argument in an array if it's a single instance
+		if (aFilter instanceof sap.ui.model.Filter) {
+			aFilter = [aFilter];
+		}
+		
 		aFilter = this._convertDeprecatedFilterObjects(aFilter);
 
 		if (sFilterType == sap.ui.model.FilterType.Application) {
