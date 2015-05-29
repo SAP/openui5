@@ -954,7 +954,11 @@ public class AkamaiLogDownloader {
 		for (AnonymousLogLine logLine : logLines) {
 			handleThis206Line = false;
 
-			String ipUrlCombination = logLine.getIpCounter() + "-" + logLine.getUrl();
+			// this is a kind of fingerprint combining IP address and user-agent (to detect distinct users, even behind a proxy), combined with a unique resource
+			// we don't want to count the same person twice, but we do want to count different users within a company network (we won't get all because they might have the same
+			// user-agent), but we might also count a person twice who downloads UI5 with different devices. So it cannot be 100% accurate, but the best guess...
+			String ipUrlCombination = logLine.getIpCounter() + "-" + logLine.getUrl() + "-" + logLine.getUserAgent();
+			
 			if (logLine.getCode() == 206) {
 				if (known206Ips.contains(ipUrlCombination)) {
 					//System.out.println("Discarding line of type " + logLine.getType()); 
