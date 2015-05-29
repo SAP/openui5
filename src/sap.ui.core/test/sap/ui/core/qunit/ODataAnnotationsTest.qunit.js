@@ -248,7 +248,14 @@ function runODataAnnotationTests() {
 			annotations      : null,
 			serviceValid     : true,
 			annotationsValid : "metadata",
+		},
+		"Apply in If": {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : "fakeService://testdata/odata/apply-in-if.xml",
+			serviceValid     : true,
+			annotationsValid : "all",
 		}
+		
 	};
 
 
@@ -3833,4 +3840,165 @@ function runODataAnnotationTests() {
 
 	});
 
+	asyncTest("Apply in If", function() {
+		expect(67);
+
+		var mTest = mAdditionalTestsServices["Apply in If"];
+
+		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+		});
+		
+
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["ApplyInIf"],			
+				{
+					"ui5.test.1": {
+						"Value": { 
+							"If": [{
+								"Ne": [{
+									"Path": "EmailAddress"
+								}, {
+									"Null": {}
+								}]
+							}, {
+								"Apply": {
+									"Name": "odata.concat",
+									"Parameters": [{
+										"Type": "String", 
+										"Value": "mailto:"
+									}, {
+										"Type": "Path",
+										"Value": "EmailAddress"
+									}]
+								}
+							}, {
+								"Null": {}
+							}]
+						},
+						"RecordType": "Value"
+					},
+					"ui5.test.2": {
+						"Url":{
+							"UrlRef": {
+								"If": [{
+									"Ne": [{
+										"Path":"EmailAddress"
+									}, {
+										"Null":{}
+									}]
+								}, {
+									"Apply": {
+										"Name": "odata.concat",
+										"Parameters": [{
+											"Type":"String",
+											"Value":"mailto:"
+										}, {
+											"Type":"Path",
+											"Value":"EmailAddress"
+										}]
+									}
+								}, {
+									"Null":{}
+								}]
+							}
+						},
+						"RecordType": "WithUrlRef"
+					}
+				},
+				"Correct values in ApplyInIf"
+			);
+			
+			start();
+		});
+	});
+
+	asyncTest("V2: Apply in If", function() {
+		expect(67);
+
+		var mTest = mAdditionalTestsServices["Apply in If"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: true,
+		});
+		
+
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["ApplyInIf"],			
+				{
+					"ui5.test.1": {
+						"Value": { 
+							"If": [{
+								"Ne": [{
+									"Path": "EmailAddress"
+								}, {
+									"Null": {}
+								}]
+							}, {
+								"Apply": {
+									"Name": "odata.concat",
+									"Parameters": [{
+										"Type": "String", 
+										"Value": "mailto:"
+									}, {
+										"Type": "Path",
+										"Value": "EmailAddress"
+									}]
+								}
+							}, {
+								"Null": {}
+							}]
+						},
+						"RecordType": "Value"
+					},
+					"ui5.test.2": {
+						"Url":{
+							"UrlRef": {
+								"If": [{
+									"Ne": [{
+										"Path":"EmailAddress"
+									}, {
+										"Null":{}
+									}]
+								}, {
+									"Apply": {
+										"Name": "odata.concat",
+										"Parameters": [{
+											"Type":"String",
+											"Value":"mailto:"
+										}, {
+											"Type":"Path",
+											"Value":"EmailAddress"
+										}]
+									}
+								}, {
+									"Null":{}
+								}]
+							}
+						},
+						"RecordType": "WithUrlRef"
+					}
+				},
+				"Correct values in ApplyInIf"
+			);
+			
+			start();
+		});
+	});
+	
 }

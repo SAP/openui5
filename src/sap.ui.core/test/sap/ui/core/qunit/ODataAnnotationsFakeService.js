@@ -109,7 +109,6 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/multiple-annotations-03.xml":
 				sAnswer = sMultipleTest03;
 				break;
-				
 
 			case "fakeService://testdata/odata/collection-with-namespace.xml":
 				sAnswer = sCollectionWithNamespace;
@@ -133,7 +132,7 @@ xhr.onCreate = function(request) {
 				
 			case "fakeService://testdata/odata/collections-with-simple-values.xml":
 				sAnswer= sCollectionsWithSimpleValuesTest;
-				break;			
+				break;
 				
 			case "fakeService://testdata/odata/simple-values-2.xml":
 				sAnswer = sSimpleValuesTest2;
@@ -147,6 +146,11 @@ xhr.onCreate = function(request) {
 				sAnswer = sLabeledElementOtherValues;
 				break;
 				
+			case "fakeService://testdata/odata/apply-in-if.xml":
+				sAnswer = sApplyInIf;
+				break;
+
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -4146,6 +4150,56 @@ var sLabeledElementOtherValues = '\
 										<TimeOfDay>13:57:06</TimeOfDay>\
 									</LabeledElement>\
 								</Apply>\
+							</UrlRef>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sApplyInIf = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="ApplyInIf">\
+				<Annotation Term="Test.1">\
+					<Record Type="Value">\
+						<PropertyValue Property="Value">\
+							<If>\
+								<Ne>\
+									<Path>EmailAddress</Path>\
+									<Null/>\
+								</Ne>\
+								<Apply Function="odata.concat">\
+									<String>mailto:</String>\
+									<Path>EmailAddress</Path>\
+								</Apply>\
+								<Null/>\
+							</If>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.2">\
+					<Record Type="WithUrlRef">\
+						<PropertyValue Property="Url">\
+							<UrlRef>\
+								<If>\
+									<Ne>\
+										<Path>EmailAddress</Path>\
+										<Null/>\
+									</Ne>\
+									<Apply Function="odata.concat">\
+										<String>mailto:</String>\
+										<Path>EmailAddress</Path>\
+									</Apply>\
+									<Null/>\
+								</If>\
 							</UrlRef>\
 						</PropertyValue>\
 					</Record>\
