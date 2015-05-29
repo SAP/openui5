@@ -1864,5 +1864,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "cbe1b61bc84a678a3f2826bbbbbb10c016e2abf9",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: BusyIndicator is now attached to Popup\u0027s open event",
+        "references": []
+      },
+      {
+        "id": "d85fe1ce1b15c2adc9542b868a76eb81415a797b",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Element: Added additional documentation for event delegates",
+        "references": []
+      },
+      {
+        "id": "df6995c5d3659ae061b5cf33bd50cde14553e93b",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: Manual count requests with filter fixed",
+        "references": []
+      },
+      {
+        "id": "85127ce8f7af6022748b11847153d767fdc8df46",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Promise: Synchronous then() execution in polyfill avoided",
+        "references": []
+      }
+    ]
   }
 }
