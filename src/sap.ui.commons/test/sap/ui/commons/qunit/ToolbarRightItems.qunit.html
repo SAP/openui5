@@ -88,11 +88,11 @@
 		    oToolbar.addItem(oTextField);
 
 		    // combo box for 2nd button's text
-		    var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb", 
+		    var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb",
 		      {
 		        items :
 		        [
-		          new sap.ui.core.ListItem({text : "#1"}), 
+		          new sap.ui.core.ListItem({text : "#1"}),
 		          new sap.ui.core.ListItem({text : "Do it"}),
 		          new sap.ui.core.ListItem({text : "Hello world"}),
 		          new sap.ui.core.ListItem({text : "Yet another stupid button text"})
@@ -126,13 +126,14 @@
 		// ========================================================
 		// test number of toolbar items on right and left sides
 		// ========================================================
-		asyncTest("VisibleItems calculation with images involved", function() {
+		test("VisibleItems calculation with images involved", function(assert) {
+			var done = assert.async();
 			expect(3);
 			setTimeout(function(){ // give the Toolbar some time to recognize the change
 				equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible on the left side (6 Buttons + 2 Separators)");
 				equal(oCtrl.iItemDomRefCount, 11, "There should be 11 items considered navigable by the ItemNavigation (6 Left items + 1 overflow button + 4 right items)");
 				equal(oCtrl.getRightItems().length, 6, "4 buttons + 2 Separators on the right side");
-				start();
+				done();
 			}, 500);
 		});
 
@@ -155,7 +156,8 @@
 			strictEqual(oCtrl.getWidth(), "490px");
 		});
 
-		asyncTest("VisibleItems calculation with item size change", function() {
+		test("VisibleItems calculation with item size change", function(assert) {
+			var done = assert.async();
 			expect(3);
 			strictEqual(oCtrl.getWidth(), "490px");
 			oCtrl.setWidth("350px");
@@ -163,7 +165,7 @@
 			setTimeout(function(){ // give the Toolbar some time to recognize the change
 				equal(oCtrl.getVisibleItemInfo().count, 5, "5 item should be considered visible on the left side");
 				equal(oCtrl.iItemDomRefCount, 9, "There should be 9 items considered navigable by the ItemNavigation (4 left items + 1 overflow button + 4 right items)");
-				start();
+				done();
 			}, 500);
 		});
 
@@ -202,7 +204,7 @@
 		<h2 id="qunit-banner"></h2>
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>	
+		<ol id="qunit-tests"></ol>
 		<div id="uiArea1"></div>
 	</body>
 </html>
