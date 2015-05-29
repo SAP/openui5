@@ -1209,7 +1209,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			nCutLen = 80;
 		}
 
+		oRM.write("<span"); // Start TitleArrow container
+		oRM.writeAttribute("id", oOH.getId() + "-title-arrow");
+		oRM.write(">");
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
+		oRM.write("</span>");
 
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
@@ -1234,7 +1238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var sId = oOH.getId();
 
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
-		oRM.flush(jQuery.sap.byId(sId + "-title"));
+		oRM.flush(jQuery.sap.byId(sId + "-title-arrow"));
 	};
 
 	/**
@@ -1342,6 +1346,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.write("</span>"); // end title arrow container
 		}
 		oRM.write("</h1>");
+
 	};
 
 	/**
