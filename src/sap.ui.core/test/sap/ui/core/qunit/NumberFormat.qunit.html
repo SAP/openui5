@@ -512,7 +512,6 @@
 		equal(oDefaultInteger.parse("123"), 123, "123");
 		equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
 		equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
-		equal(oDefaultInteger.parse(""), 0, "Empty string is parsed as 0");
 		equal(isNaN(oDefaultInteger.parse("123.00")), true, "123.00");
 		equal(isNaN(oDefaultInteger.parse("5e+3")), true, "5e+3");
 		equal(isNaN(oDefaultInteger.parse("a1b2c3")), true, "a1b2c3");
@@ -527,7 +526,6 @@
 		equal(oDefaultFloat.parse("5e-3"), 0.005, "5e-3");
 		equal(oDefaultFloat.parse(".5e-3"), 5e-4, ".5e-3");
 		equal(oDefaultFloat.parse("1."), 1, "1.");
-		equal(oDefaultFloat.parse(""), 0, "Empty string is parsed as 0");
 		equal(isNaN(oDefaultFloat.parse("123.x5")), true, "123.x5");
 		
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -659,12 +657,7 @@
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
-
-		aResult = oFormat.parse("");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], 0, "Number is parsed correctly");
-		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
-
+		
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false
 		});
@@ -684,11 +677,6 @@
 		aResult = oFormat.parse("1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
-
-		aResult = oFormat.parse("");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], 0, "Number is parsed correctly");
 		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
