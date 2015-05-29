@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.MessageBar.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup'],
-	function(jQuery, library, Control, Popup) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', './MessageToast', './MessageList'],
+	function(jQuery, library, Control, Popup, MessageToast, MessageList) {
 	"use strict";
 
 
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oList    = null; // Created only if opened by user.
 		// MessageBar does not come without Toasts:
 		var id        = this.getId();
-		this.oToast   = new sap.ui.commons.MessageToast(id + "__Toast", {anchorId:id + "__sums"});
+		this.oToast   = new MessageToast(id + "__Toast", {anchorId:id + "__sums"});
 		var that      = this; // For closure
 		this.oToast.attachNext(function(){that.checkForToast();});
 	
@@ -626,7 +626,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  // Creating the List, if not already done:
 	  if (!this.oList) {
 		var listId = this.getId() + "__List";
-		  this.oList = new sap.ui.commons.MessageList(listId, {anchorId:this.getId(), maxListed:this.getMaxListed()});
+		  this.oList = new MessageList(listId, {anchorId:this.getId(), maxListed:this.getMaxListed()});
 	  }
 	
 	  // Retrieving the List current Open/Close information:
