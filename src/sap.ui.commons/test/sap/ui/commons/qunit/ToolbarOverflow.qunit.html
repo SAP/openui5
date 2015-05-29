@@ -309,6 +309,62 @@
 				}, 500);
 			});
 
+			asyncTest("Check if a very long button is now getting out of the overflow popup (CSS 1570140661).", function(assert) {
+				var oCtrl = new sap.ui.commons.Toolbar({
+					id: 'Toolbar5',
+					width: '300px',
+					items: [
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({text: 'button'}),
+						new sap.ui.commons.Button({id: 'testButton' ,text: 'A long button label is causing the problem, let\'s see'})
+					]
+				});
+
+				oCtrl.placeAt('uiArea1');
+
+
+				setTimeout(function () {
+					oCtrl.getDomRef('mn').click();
+					setTimeout(function () {
+						checkTestButtonDoesNotExpandFromOverflowPopup(oCtrl, "testButton");
+						start();
+					}, 500);
+				}, 500);
+			});
+
+			function checkTestButtonDoesNotExpandFromOverflowPopup(oCtrl, buttonId) {
+				var oTestButton = jQuery('#' + buttonId);
+				var oPopup = jQuery(oCtrl.getDomRef('pu'));
+
+				var iButtonRightPosition = oTestButton.position().left + oTestButton.width();
+				var iToolbarRightPosition = oPopup.position().left + oPopup.width();
+				var bIsExpanding = (iButtonRightPosition) >= (iToolbarRightPosition);
+
+				equal(false, bIsExpanding, 'Button is not expanding from the overflow popup');
+			}
+			asyncTest("Overflow buttons with width less than popup default does not change popup's width", function(assert) {
+				var oCtrl = new sap.ui.commons.Toolbar({
+					id: 'Toolbar6',
+					width: '300px',
+					items: [
+						new sap.ui.commons.Button({text: 'button', width : "130px"}),
+						new sap.ui.commons.Button({text: 'button', width : "130px"}),
+						new sap.ui.commons.Button("testOverflowButton",{text: 'button', width : "130px"})
+					]
+				});
+				oCtrl.placeAt('uiArea1');
+				setTimeout(function () {
+					oCtrl.getDomRef('mn').click();
+					setTimeout(function () {
+						var oPopupParent = jQuery(oCtrl.getDomRef('pu').parentNode);
+						checkTestButtonDoesNotExpandFromOverflowPopup(oCtrl, "testOverflowButton");
+						equal(oPopupParent.width(), 222 /*Width in class sapUiTbDD */, "The width of the popup should not change.")
+						start();
+					}, 500);
+				}, 500);
+			});
+
 
 
 
