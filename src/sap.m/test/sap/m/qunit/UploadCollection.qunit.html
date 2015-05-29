@@ -14,6 +14,8 @@
 <script type="text/javascript"
 	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
 	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -805,7 +807,85 @@
 		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, bPropagateTrue);
 	});
 
+	QUnit.module("Binding", {
+		setup : function() {
+			var oData = {
+				"items" : [{
+					"contributor" : "Susan Baker",
+					"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+					"fileName" : "Screenshot.ico",
+					"fileSize" : 20,
+					"thumbnailUrl" : "",
+					"uploadedDate" : "2014-07-30",
+					"url" : ""
+				}]
+			};
+			this.oModel = new sap.ui.model.json.JSONModel(oData);
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			}).setModel(this.oModel);
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		 },
+		 teardown : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+			this.oModel.destroy();
+			this.oModel = null;
+		 }
+	});
 
+	test("Model refresh with empty data", function() {
+		this.oModel.setProperty("/items", null);
+		sap.ui.getCore().applyChanges();
+		strictEqual(this.oUploadCollection.getItems().length, 0);
+		strictEqual(this.oUploadCollection.aItems.length, 0);
+		strictEqual(this.oUploadCollection._oList.getItems().length, 0);
+	});
+
+	test("Model refresh with more data", function() {
+		this.oModel.setProperty("/items", [{
+			"contributor" : "Susan Baker",
+			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"fileName" : "Screenshot.ico",
+			"fileSize" : 20,
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-07-30",
+			"url" : ""
+		}, {
+			"contributor" : "Susan Baker",
+			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"fileName" : "Screenshot.ico",
+			"fileSize" : 20,
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-07-30",
+			"url" : ""
+		}]);
+		sap.ui.getCore().applyChanges();
+		strictEqual(this.oUploadCollection.getItems().length, 2);
+		strictEqual(this.oUploadCollection.aItems.length, 2);
+		strictEqual(this.oUploadCollection._oList.getItems().length, 2);
+	});
+
+	test("Model refresh like ODataModel - check number of list preparation", function() {
+		sinon.spy(this.oUploadCollection, "_fillList");
+		this.oModel.setProperty("/items", null);
+		this.oModel.setProperty("/items", [{
+			"contributor" : "Susan Baker",
+			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"fileName" : "Screenshot.ico",
+			"fileSize" : 20,
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-07-30",
+			"url" : ""
+		}]);
+		sap.ui.getCore().applyChanges();
+		ok(this.oUploadCollection._fillList.calledOnce);
+		this.oUploadCollection._fillList.restore();
+	});
 
 </script>
 
