@@ -158,6 +158,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this.scrollToItem(oItem);
 		}
 
+		Select.prototype._handleFocusout = function() {
+
+			if (this._bRenderingPhase) {
+				this._bFocusoutDueRendering = true;
+			} else {
+				this._bFocusoutDueRendering = false;
+				this._checkSelectionChange();
+			}
+		};
+
 		Select.prototype._checkSelectionChange = function() {
 			var oItem = this.getSelectedItem();
 
@@ -657,6 +667,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// rendering phase is started
 			this._bRenderingPhase = true;
+
+			// note: in IE11 and Firefox 38, the focusout event is not fired when the select is removed
+			if (this.getFocusDomRef() === document.activeElement) {
+				this._handleFocusout();
+			}
+
 			this.synchronizeSelection();
 		};
 
@@ -1051,14 +1067,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @name sap.m.Select#onfocusout
 		 * @function
 		 */
-		Select.prototype.onfocusout = function(oEvent) {
-
-			if (this._bRenderingPhase) {
-				this._bFocusoutDueRendering = true;
-			} else {
-				this._bFocusoutDueRendering = false;
-				this._checkSelectionChange();
-			}
+		Select.prototype.onfocusout = function() {
+			this._handleFocusout();
 		};
 
 		/**
