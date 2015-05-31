@@ -278,10 +278,11 @@
 							</artifactItems>
 						</configuration>
 					</plugin>
+					<!-- when adopting the plugin here please also adopt src/testsuite/pom.xml -->
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.7</version>
+						<version>0.1.8</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
