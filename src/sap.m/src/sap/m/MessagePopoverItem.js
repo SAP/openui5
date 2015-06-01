@@ -38,15 +38,35 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 						/**
 						 * Specifies the title of the message
 						 */
-						title: { type: "string", group: "Misc" },
+						title: { type: "string", group: "Appearance" },
 
 						/**
 						 * Specifies detailed description of the message
 						 */
-						description: { type: "string", group: "Misc" }
+						description: { type: "string", group: "Appearance" },
+
+						/**
+						 * Specifies if description should be interpreted as markup
+						 */
+						markupDescription: { type: "boolean", group: "Appearance", defaultValue: false },
+
+						/**
+						 * Specifies long text description location URL
+						 */
+						longtextUrl: { type: "sap.ui.core.URI", group: "Behavior", defaultValue: null }
 					}
 				}
 			});
+
+		MessagePopoverItem.prototype.setDescription = function(sDescription) {
+			if (this.getMarkupDescription()) {
+				this.setProperty("description", jQuery.sap._sanitizeHTML(sDescription), true);
+			} else {
+				this.setProperty("description", sDescription, true);
+			}
+
+			return this;
+		};
 
 		return MessagePopoverItem;
 
