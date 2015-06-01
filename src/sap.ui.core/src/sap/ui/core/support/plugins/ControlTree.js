@@ -1551,7 +1551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 							};
 							break;
 						}
-					} while ((oCurrentControl = oCurrentControl.getParent()) !== undefined);
+					} while ( (oCurrentControl = oCurrentControl.getParent()) );
 
 					mControlBindingInfos.contexts.push(mContext);
 				}
@@ -1594,7 +1594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 						};
 						break;
 					}
-				} while ((oCurrentControl = oCurrentControl.getParent()) !== undefined);
+				} while ( (oCurrentControl = oCurrentControl.getParent()) );
 
 				// check for core model if no model was found
 				if (!mModelInfo.location) {
