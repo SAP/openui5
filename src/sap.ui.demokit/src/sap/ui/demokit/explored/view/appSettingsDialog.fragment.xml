@@ -15,21 +15,21 @@
 					vSpacing="0.5"
 					defaultSpan="L6 M6 S10">
 				<l:content>
-					<Label text="Theme" design="Bold" id="ThemeLabel">
+					<Label text="Theme:" design="Standard" id="ThemeLabel">
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</Label>
 
-					<ComboBox id="ThemeButtons" width="100%">
+					<Select id="ThemeButtons" width="100%">
 						<core:Item key="sap_hcb" text="High Contrast Black"/>
 						<core:Item key="sap_bluecrystal" text="Blue Crystal"/>
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
-					</ComboBox>
+					</Select>
 
-					<Label id="CompactModeLabel" text="Compact Form Factor" design="Bold">
+					<Label id="CompactModeLabel" text="Compact Form Factor:" design="Standard">
 						<layoutData>
 							<l:GridData span="L8 M8 S8"/>
 						</layoutData>
@@ -40,7 +40,7 @@
 						</layoutData>
 					</Switch>
 
-					<Label id="RTLLabel" text="Right To Left Mode" design="Bold">
+					<Label id="RTLLabel" text="Right To Left Mode:" design="Standard">
 						<layoutData>
 							<l:GridData span="L8 M8 S8"/>
 						</layoutData>
