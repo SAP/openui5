@@ -94,11 +94,25 @@
 	padding: 0.875rem 1rem;
 }
 
-.sap-phone {
-	.sapMWizardProgressNav {
-		padding: 0.875rem 0.5rem;
-	}
+.sap-phone .sapMWizardProgressNav {
+	padding: 0.875rem 0.5rem;
+}
 
+@media screen and (max-width: 1024px) {
+	.sapMWizardProgressNav[data-sap-ui-wpn-step-count="7"],
+	.sapMWizardProgressNav[data-sap-ui-wpn-step-count="8"] {
+		.step-grouping;
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.sapMWizardProgressNav[data-sap-ui-wpn-step-count="5"],
+	.sapMWizardProgressNav[data-sap-ui-wpn-step-count="6"] {
+		.step-grouping;
+	}
+}
+
+.step-grouping {
 	/* we check the last two in case there is a separator as a last element */
 	.sapMWizardProgressNavStep:not(:nth-last-child(-n + 2)) {
 		width: @stepWidth - @stepOverlapOnPhone;

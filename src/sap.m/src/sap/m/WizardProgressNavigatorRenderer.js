@@ -21,6 +21,7 @@ sap.ui.define(function () {
 		oRm.write("<nav");
 		oRm.writeControlData(oControl);
 		oRm.writeAttribute("class", CLASSES.NAVIGATION);
+		oRm.writeAttribute(ATTRIBUTES.STEP_COUNT, oControl.getStepCount());
 		oRm.write(">");
 	};
 
