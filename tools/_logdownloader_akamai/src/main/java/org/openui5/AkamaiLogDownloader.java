@@ -22,8 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -771,6 +769,7 @@ public class AkamaiLogDownloader {
 		Calendar fileDate = Calendar.getInstance();
 		Map<String,Integer> uaMap = new HashMap<String, Integer>();
 		Map<String,Integer> referrerMap = new HashMap<String, Integer>();
+		Map<String,Integer> coreReferrerMap = new HashMap<String, Integer>();
 
 		try {
 			for (int i = 0; i < anonymizedLogFiles.size(); i++) {
@@ -779,7 +778,7 @@ public class AkamaiLogDownloader {
 				List<AnonymousLogLine> logLines = readLogFile(anonymizedLogFiles.get(i).file);
 
 				if (logLines.size() > 0) {
-					Collection<LogFileData> datas = handleLogLinesFromFile(logLines, uaMap, referrerMap); // one object per day contained in the log file
+					Collection<LogFileData> datas = handleLogLinesFromFile(logLines, uaMap, referrerMap, coreReferrerMap); // one object per day contained in the log file
 
 					for (LogFileData data : datas) {
 						fileDate.setTime(data.getDate());
@@ -794,20 +793,29 @@ public class AkamaiLogDownloader {
 			}
 			
 			// write the UA file
-			SortedMap<String,Integer> sortedUas = sortMap(uaMap);
+			List<String> sorted = flattenAndSortMap(uaMap);
 			File uaFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_user-agents.csv");
 			BufferedWriter out = new BufferedWriter(new FileWriter(uaFile)); 
-			for (String ua : sortedUas.keySet()) {
-				out.write(uaMap.get(ua) + ";" + ua + "\n");
+			for (String text : sorted) {
+				out.write(text);
 			}
 			out.close();
 			
 			// write the referrers file
-			SortedMap<String,Integer> sortedRefs = sortMap(referrerMap);
+			sorted = flattenAndSortMap(referrerMap);
 			File refFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_referrers.csv");
 			out = new BufferedWriter(new FileWriter(refFile)); 
-			for (String ref : sortedRefs.keySet()) {
-				out.write(referrerMap.get(ref) + ";\"" + ref + "\"\n");
+			for (String text : sorted) {
+				out.write(text);
+			}
+			out.close();
+			
+			// write the referrers file for the requests to the UI5 core
+			sorted = flattenAndSortMap(coreReferrerMap);
+			refFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_core_referrers.csv");
+			out = new BufferedWriter(new FileWriter(refFile)); 
+			for (String text : sorted) {
+				out.write(text);
 			}
 			out.close();
 			
@@ -843,15 +851,23 @@ public class AkamaiLogDownloader {
 	 * @param map
 	 * @return
 	 */
-	private SortedMap<String, Integer> sortMap(final Map<String, Integer> map) {
-		SortedMap<String, Integer> result = new TreeMap<String, Integer>(new Comparator<String>() {
+	private List<String> flattenAndSortMap(final Map<String, Integer> map) {
+		List<String> result = new ArrayList<String>();
+		
+		for (String key : map.keySet()) {
+			result.add(map.get(key) + ";\"" + key + "\"\n");
+		}
+		
+		Collections.sort(result, new Comparator<String>() { // sort lines by date
 			@Override
-			public int compare(String key1, String key2)
+			public int compare(String s1, String s2)
 			{
-				return map.get(key2) - map.get(key1);
+				int i1 = Integer.parseInt(s1.substring(0, s1.indexOf(";")));
+				int i2 = Integer.parseInt(s2.substring(0, s2.indexOf(";")));
+				return i2-i1;
 			}
 		});
-		result.putAll(map);
+
 		return result;
 	}
 
@@ -940,6 +956,7 @@ public class AkamaiLogDownloader {
 	/**
 	 * Takes parsed log lines, does some filtering on the HTTP codes and reports the aggregated results per day.
 	 * Ignores robots/crawlers.
+	 * This is also where unique visitors/hits are detected and multiple requests to the same file are discarded in most cases.
 	 * Also fills the user-agent strings and interesting referrers into the given maps (not per-day)
 	 * 
 	 * @param logLines
@@ -948,7 +965,8 @@ public class AkamaiLogDownloader {
 	 * @throws IOException
 	 * @private
 	 */
-	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines, Map<String, Integer> uaStrings, Map<String, Integer> referrers) throws IOException {
+	private Collection<LogFileData> handleLogLinesFromFile(List<AnonymousLogLine> logLines, Map<String, Integer> uaStrings, Map<String, Integer> referrers, 
+			Map<String, Integer> coreReferrers) throws IOException {
 		Map<String,LogFileData> fileDataMap = new HashMap<String, LogFileData>(4);
 		Set<String> known206Ips = new HashSet<String>(512);
 		Set<String> knownIpUrlCombinations = new HashSet<String>(4096); // to avoid counting twice
@@ -980,10 +998,37 @@ public class AkamaiLogDownloader {
 				}
 			}
 
-			// bot / user-agent handling
-			if (logLine.isBotLine(parser)) {
-				continue; // do not count bots/spiders/crawlers
-			} else {
+			// keep track of how many unique IPs have been encountered - FIXME: this does not currently work
+			ipCounter = Math.max(Integer.parseInt(logLine.getIpCounter()), ipCounter);
+
+
+			if (logLine.getCode() == 200 || (logLine.getCode() == 206 && handleThis206Line)) {
+				
+				// bot / user-agent handling: ignore!
+				if (logLine.isBotLine(parser)) {
+					continue; // do not count bots/spiders/crawlers
+				}
+				
+				// now make sure that every URL will be counted only once per IP address (even though this filters out many users behind the same proxy)
+				// exception: requests to sap-ui-core.js: we want to count every app startup! (well, duplicate startups are usually handled by)
+				if (knownIpUrlCombinations.contains(ipUrlCombination) && !handleThis206Line) {
+					continue;
+				} else {
+					knownIpUrlCombinations.add(ipUrlCombination);
+				}
+				
+				
+				// save interesting referrers
+				Map<String, Integer> referrerMapToUse = (logLine.getType().equals(Resource.CORE)) ? coreReferrers : referrers;
+				String ref = logLine.getReferrerIfInteresting();
+				if (ref != null) {
+					Integer refCount = referrerMapToUse.get(ref);
+					if (refCount == null) {
+						refCount = 0;
+					}
+					referrerMapToUse.put(ref, ++refCount);
+				}
+				
 				// save user-agents of non-bots, 1) for statistics/curiosity and 2) to detect unknown bots
 				String ua = logLine.getCsvUserAgent();
 				Integer uaCount = uaStrings.get(ua);
@@ -991,30 +1036,7 @@ public class AkamaiLogDownloader {
 					uaCount = 0;
 				}
 				uaStrings.put(ua, ++uaCount);
-			}
-
-			// save interesting referrers
-			String ref = logLine.getReferrerIfInteresting();
-			if (ref != null) {
-				Integer refCount = referrers.get(ref);
-				if (refCount == null) {
-					refCount = 0;
-				}
-				referrers.put(ref, ++refCount);
-			}
-
-			// keep track of how many unique IPs have been encountered - this does not currently work
-			ipCounter = Math.max(Integer.parseInt(logLine.getIpCounter()), ipCounter);
-
-
-			if (logLine.getCode() == 200 || (logLine.getCode() == 206 && handleThis206Line)) {
 				
-				// now make sure that every URL will be counted only once per IP address (even though this filters out many users behind the same proxy)
-				if (knownIpUrlCombinations.contains(ipUrlCombination) && !handleThis206Line) {
-					continue;
-				} else {
-					knownIpUrlCombinations.add(ipUrlCombination);
-				}
 				
 				Date date = logLine.getDate();
 				Calendar c1 = Calendar.getInstance();
