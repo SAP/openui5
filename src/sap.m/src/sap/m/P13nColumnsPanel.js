@@ -29,7 +29,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * This property is used to specify a threshold of visible items
+				 * Used to specify a threshold of visible items.
 				 * 
 				 * @since 1.26.7
 				 */
@@ -41,7 +41,7 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * list of columns that has been changed
+				 * List of columns that has been changed.
 				 * 
 				 * @since 1.26.0
 				 */
@@ -53,7 +53,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Content for the ConditionPanel. This property is not public!
+				 * Internal aggregation for the toolbar.
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -65,14 +65,14 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * event raised when a columnsItem shall be added
+				 * Event raised when a <code>columnsItem</code> is added.
 				 * 
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
 					parameters: {
 						/**
-						 * columnsItem that needs to be added in the model
+						 * <code>columnsItem</code> that needs to be added in the model.
 						 */
 						newItem: {
 							type: "sap.m.P13nColumnsItem"
@@ -80,20 +80,20 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * event raised when columnsItems shall be changed or new one needs to be created in model
+				 * Event raised if <code>columnsItems</code> is changed or new one needs to be created in the model.
 				 * 
 				 * @since 1.26.7
 				 */
 				changeColumnsItems: {
 					parameters: {
 						/**
-						 * contains columnsItems that needs to be created in the model
+						 * Contains <code>columnsItems</code> that needs to be created in the model.
 						 */
 						newItems: {
 							type: "sap.m.P13nColumnsItem[]"
 						},
 						/**
-						 * contains columnsItems that needs to be changed in the model
+						 * Contains <code>columnsItems</code> that needs to be changed in the model.
 						 */
 						existingItems: {
 							type: "sap.m.P13nColumnsItem[]"
@@ -101,8 +101,8 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * event raised when setData on model should be called; this event serves the purpose of minimizing such calls since these can be very
-				 * performance expensive
+				 * Event raised if <code>setData</code> is called in model. The event serves the purpose of minimizing such calls since they can
+				 * take up a lot of performance.
 				 * 
 				 * @since 1.26.7
 				 */
@@ -1495,6 +1495,11 @@ sap.ui.define([
 
 				});
 				that._handleItemVisibilityChanged(aTableItemsVisibilityChange);
+
+				var fValidate = that.getValidationExecutor();
+				if (fValidate) {
+					fValidate();
+				}
 
 				// Special logic to change _oSelectedItem ALSO then if ONLY the "selection" status has been changed from
 				// false to true

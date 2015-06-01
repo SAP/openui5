@@ -4,14 +4,14 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './P13nDialogRenderer', './library', 'sap/ui/core/EnabledPropagator', 'jquery.sap.xml'
-], function(jQuery, Dialog, IconTabBar, IconTabFilter, P13nDialogRenderer, library, EnabledPropagator/* , jQuerySap */) {
+	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './P13nDialogRenderer', './library', 'sap/ui/core/EnabledPropagator', 'jquery.sap.xml', 'sap/m/ButtonType'
+], function(jQuery, Dialog, IconTabBar, IconTabFilter, P13nDialogRenderer, library, EnabledPropagator, ButtonType) {
 	"use strict";
 
 	/**
 	 * Constructor for a new P13nDialog.
 	 * 
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nDialog control provides a dialog that contains one or more panels. On each of the panels, one or more changes with regards to a
 	 *        table can be processed. For example, a panel to set a column to invisible, change the order of the columns or a panel to sort or filter
@@ -33,7 +33,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * This property determines which panel is initially shown when dialog is opened. Due to extensibility reason the type should be
-				 * "string". So it is feasible to add a custom panel without expanding the type.
+				 * <code>string</code>. So it is feasible to add a custom panel without expanding the type.
 				 * 
 				 * @since 1.26.0
 				 */
@@ -45,7 +45,7 @@ sap.ui.define([
 
 				/**
 				 * This property determines whether the 'Reset' button is shown inside the dialog. If this property is set to true, clicking the
-				 * 'Reset' button will trigger the 'reset' event sending a notification that model data must be reset.
+				 * 'Reset' button will trigger the <code>reset</code> event sending a notification that model data must be reset.
 				 * 
 				 * @since 1.26.0
 				 */
@@ -53,6 +53,15 @@ sap.ui.define([
 					type: "boolean",
 					group: "Appearance",
 					defaultValue: false
+				},
+				/**
+				 * Calls the validation listener once all panel-relevant validation checks have been done. This callback function is called in order
+				 * to perform cross-model validation checks.
+				 */
+				validationExecutor: {
+					type: "object",
+					group: "Misc",
+					defaultValue: null
 				}
 			},
 			aggregations: {
@@ -102,6 +111,7 @@ sap.ui.define([
 		Dialog.prototype.init.apply(this, arguments);
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oResetButton = null;
+		this._mValidationListener = {};
 		this._createDialog();
 	};
 
@@ -192,7 +202,7 @@ sap.ui.define([
 			this.setCustomHeader(new sap.m.Bar({
 				contentLeft: new sap.m.Button({
 					visible: false,
-					type: sap.m.ButtonType.Back,
+					type: ButtonType.Back,
 					press: function(oEvent) {
 						that._backToList();
 					}
@@ -267,7 +277,7 @@ sap.ui.define([
 	 * 
 	 * @private
 	 */
-	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, aFailedPanelTypes) {
+	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, aFailedPanelTypes, aValidationResult) {
 		var sMessageText = "";
 		aFailedPanelTypes.forEach(function(sPanelType) {
 			switch (sPanelType) {
@@ -279,6 +289,10 @@ sap.ui.define([
 					break;
 			}
 		});
+		for ( var sType in aValidationResult) {
+			var oMessage = aValidationResult[sType];
+			sMessageText = "• " + oMessage.messageText + "\n" + sMessageText;
+		}
 		jQuery.sap.require("sap.m.MessageBox");
 		sap.m.MessageBox.show(sMessageText, {
 			icon: sap.m.MessageBox.Icon.WARNING,
@@ -319,7 +333,7 @@ sap.ui.define([
 			});
 		} else {
 			oNavigationItem = new sap.m.Button({
-				type: sap.m.ButtonType.Default,
+				type: ButtonType.Default,
 				text: oPanel.getBindingPath("title") ? "{" + oPanel.getBindingPath("title") + "}" : oPanel.getTitle()
 			});
 			// oNavigationItem.addDelegate({
@@ -338,13 +352,15 @@ sap.ui.define([
 			// }
 			// that._switchPanel(oButtonClicked);
 			// };
-			// this.showValidationDialog(fCallbackOK, [
+			// this._showValidationDialog(fCallbackOK, [
 			// oPanelVisible.getType()
 			// ]);
 			// }
 			// }
 			// }, true, this);
 		}
+		oPanel.setValidationExecutor(jQuery.proxy(this._callValidationExecutor, this));
+		oPanel.setValidationListener(jQuery.proxy(this._registerValidationListener, this));
 		oNavigationItem.setModel(oPanel.getModel());
 		return oNavigationItem;
 	};
@@ -546,6 +562,58 @@ sap.ui.define([
 	};
 
 	/**
+	 * Registers a listener in order to be notified about the validation result.
+	 * 
+	 * @param {sap.m.P13nPanel} oPanel - listener panel
+	 * @param {object} fCallback - callback method
+	 * @private
+	 */
+	P13nDialog.prototype._registerValidationListener = function(oPanel, fCallback) {
+		if (this.getPanels().indexOf(oPanel) && fCallback && this._mValidationListener[oPanel.getType()] === undefined) {
+			this._mValidationListener[oPanel.getType()] = fCallback;
+		}
+	};
+
+	/**
+	 * Calls the controller validation. Notifies the validation result to all registered panel listeners.
+     * @private
+	 */
+	P13nDialog.prototype._callValidationExecutor = function() {
+		var fValidate = this.getValidationExecutor();
+		if (fValidate && !jQuery.isEmptyObject(this._mValidationListener)) {
+			var oResultRaw = fValidate(this._getPayloadOfPanels());
+			var oResult = this._distributeValidationResult(oResultRaw);
+			// Publish the result to registered listeners
+			for ( var sType in this._mValidationListener) {
+				var fCallback = this._mValidationListener[sType];
+				fCallback(oResult[sType] || []);
+			}
+		}
+	};
+
+	/**
+	 * In case that validation has detected an issue belonging to some panels this issue is duplicated for them.
+	 * 
+	 * @param {object} aResult
+	 */
+	P13nDialog.prototype._distributeValidationResult = function(aResult) {
+		var oDuplicateResult = {};
+		aResult.forEach(function(oResult) {
+			oResult.panelTypes.forEach(function(sType) {
+				if (oDuplicateResult[sType] === undefined) {
+					oDuplicateResult[sType] = [];
+				}
+				oDuplicateResult[sType].push({
+					columnKey: oResult.columnKey,
+					messageType: oResult.messageType,
+					messageText: oResult.messageText
+				});
+			});
+		});
+		return oDuplicateResult;
+	};
+
+	/**
 	 * Creates and returns OK Button
 	 * 
 	 * @returns {sap.m.Button}
@@ -556,11 +624,8 @@ sap.ui.define([
 		return new sap.m.Button({
 			text: this._oResourceBundle.getText("P13NDIALOG_OK"),
 			press: function() {
+				var oPayload = that._getPayloadOfPanels();
 				var fFireOK = function() {
-					var oPayload = {};
-					that.getPanels().forEach(function(oPanel) {
-						oPayload[oPanel.getType()] = oPanel.getOkPayload();
-					});
 					that.fireOk({
 						payload: oPayload
 					});
@@ -574,14 +639,21 @@ sap.ui.define([
 					fFireOK();
 				};
 				var aFailedPanelTypes = [];
+				var aValidationResult = null;
+				// Execute validation of controller
+				var fValidate = that.getValidationExecutor();
+				if (fValidate) {
+					aValidationResult = fValidate(oPayload);
+				}
+				// Execute validation of panels
 				that.getPanels().forEach(function(oPanel) {
 					if (!oPanel.onBeforeNavigationFrom()) {
 						aFailedPanelTypes.push(oPanel.getType());
 					}
 				});
-				if (aFailedPanelTypes.length) {
-					// In case of invalid panels show the dialog
-					that.showValidationDialog(fCallbackOK, aFailedPanelTypes);
+				// In case of invalid panels show the dialog
+				if (aFailedPanelTypes.length || aValidationResult.length) {
+					that.showValidationDialog(fCallbackOK, aFailedPanelTypes, aValidationResult);
 				} else {
 					fFireOK();
 				}
@@ -626,6 +698,14 @@ sap.ui.define([
 				});
 			}
 		});
+	};
+
+	P13nDialog.prototype._getPayloadOfPanels = function() {
+		var oPayload = {};
+		this.getPanels().forEach(function(oPanel) {
+			oPayload[oPanel.getType()] = oPanel.getOkPayload();
+		});
+		return oPayload;
 	};
 
 	P13nDialog.prototype.exit = function() {
