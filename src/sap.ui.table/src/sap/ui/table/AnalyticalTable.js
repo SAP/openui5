@@ -213,11 +213,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return a reference on the table for chaining
 	 */
 	AnalyticalTable.prototype.setSelectionMode = function (sSelectionMode) {
+		// clear selection if the mode changes
 		var oBinding = this.getBinding("rows");
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
-			this.setProperty("selectionMode", sSelectionMode);
 		}
+		// set selection mode independet from clearing the selection
+		this.setProperty("selectionMode", sSelectionMode);
 		return this;
 	};
 	
