@@ -153,6 +153,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 					defaultValue : true
 				}
 			},
+
 			aggregations : {
 				/**
 				 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
@@ -185,6 +186,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				statuses : {
 					type : "sap.m.ObjectStatus",
 					multiple : true
+				}
+			},
+
+			associations : {
+				/**
+				 * ID of the FileUploader instance
+				 * since version 1.30
+				 */
+				fileUplaoder : {
+					type : "sap.ui.unified.FileUploader",
+					group : "misc",
+					multiple : false
 				}
 			}
 		}

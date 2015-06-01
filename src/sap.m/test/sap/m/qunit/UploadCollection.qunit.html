@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="UploadCollectionForPendingUpload.qunit.js"></script>
@@ -102,16 +103,15 @@
 	});
 
 	QUnit.test("Basic tests", function(assert) {
-		assert.expect(4);
+		assert.expect(5);
 		assert.ok(this.oUploadCollection, "UploadCollection instantiated");
 		assert.ok(jQuery.sap.domById("uploadCollection-list"), "Item list is rendered");
 		assert.ok(jQuery.sap.domById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
 		assert.ok(jQuery.sap.domById("uploadCollection-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
-	//TODO	assert.ok(jQuery.sap.domById("uploadCollection-uploader"), "FileUploader is rendered"); it can be adapted later after the ID for FileUploader is drawn from the length of the container( this._aPendingUploadItems.length)
+		assert.ok(jQuery.sap.domById(this.oUploadCollection.getId() + "-" + this.oUploadCollection._iFUCounter + "-uploader"), "FileUploader is rendered");
 	});
 
 
-	
 	/* --------------------------------------- */
 	/* Test methods                            */
 	/* --------------------------------------- */
