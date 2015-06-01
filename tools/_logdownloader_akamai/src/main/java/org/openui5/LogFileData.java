@@ -22,11 +22,12 @@ class LogFileData {
 	int featuresHits;
 	int getstartedHits;
 	int demokitHits;
+	int coreHits;
 	int ipCounter;
 
 	public LogFileData(Date date, int runtimeDownloads,
 			int mobileDownloads, int sdkDownloads, int githubHits,
-			int blogHits, int referencesHits, int featuresHits, int getstartedHits, int demokitHits, int ipCounter) {
+			int blogHits, int referencesHits, int featuresHits, int getstartedHits, int demokitHits, int coreHits, int ipCounter) {
 		super();
 
 		int day = date.getDate();
@@ -46,6 +47,7 @@ class LogFileData {
 		this.featuresHits = featuresHits;
 		this.getstartedHits = getstartedHits;
 		this.demokitHits = demokitHits;
+		this.coreHits = coreHits;
 		this.ipCounter = ipCounter;
 	}
 
@@ -80,7 +82,8 @@ class LogFileData {
 				obj.getInt("referencesHits"),
 				obj.getInt("featuresHits"),
 				obj.getInt("getstartedHits"),
-				obj.getInt("demokitHits"), 
+				obj.getInt("demokitHits"),
+				obj.getInt("coreHits"),
 				obj.getInt("ipCounter"));
 		return data;
 	}
@@ -116,6 +119,9 @@ class LogFileData {
 	public int getDemokitHits() {
 		return demokitHits;
 	}
+	public int getCoreHits() {
+		return coreHits;
+	}
 	public int getIpCounter() {
 		return ipCounter;
 	}
@@ -123,7 +129,7 @@ class LogFileData {
 	@Override
 	public String toString() {
 		// the result string for a line in the CSV file
-		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits;
+		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits;
 		return csvText;
 	}
 
@@ -141,6 +147,7 @@ class LogFileData {
 		this.featuresHits += other.featuresHits;
 		this.getstartedHits += other.getstartedHits;
 		this.demokitHits += other.demokitHits;
+		this.coreHits += other.coreHits;
 		this.ipCounter = Math.max(this.ipCounter, other.ipCounter);
 	}
 }

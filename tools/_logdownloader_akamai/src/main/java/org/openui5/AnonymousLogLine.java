@@ -71,6 +71,7 @@ public class AnonymousLogLine {
 	private static final String REFERENCES_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=whoUsesUI5";
 	private static final String FEATURES_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=features";
 	private static final String GETSTARTED_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted";
+	private static final String CORE_STRING = "/resources/sap-ui-core.js";
 	private static final String DEMOKIT_PAGE_STRING = "/";
 
 	// this bot list only extends the used library
@@ -272,6 +273,9 @@ public class AnonymousLogLine {
 		}
 		if (DEMOKIT_PAGE_STRING.equals(url)) {
 			return Resource.DEMOKIT_PAGE;
+		}
+		if (CORE_STRING.equals(url)) {
+			return Resource.CORE;
 		}
 		if (RUNTIME_PATTERN.matcher(url).matches()) {
 			return Resource.RUNTIME_DOWNLOAD;

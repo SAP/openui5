@@ -695,6 +695,9 @@ public class AkamaiLogDownloader {
 		final String DEMOKIT_ROBOTS_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/robots.txt	"; // robots requests are interesting, so we can filter out bots later
 		final String DEMOKIT_ROBOTS_STRING_US = "GET	/openui5.us1.hana.ondemand.com/robots.txt	";
 		final String DEMOKIT_ROBOTS_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/robots.txt	";
+		final String CORE_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/resources/sap-ui-core.js	";
+		final String CORE_STRING_US = "GET	/openui5.us1.hana.ondemand.com/resources/sap-ui-core.js	";
+		final String CORE_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/resources/sap-ui-core.js	";
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(logFile));
@@ -712,7 +715,10 @@ public class AkamaiLogDownloader {
 						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_AP)
 						|| line.contains(DEMOKIT_ROBOTS_STRING_EU)
 						|| line.contains(DEMOKIT_ROBOTS_STRING_US)
-						|| line.contains(DEMOKIT_ROBOTS_STRING_AP)) { // only handle interesting lines
+						|| line.contains(DEMOKIT_ROBOTS_STRING_AP)
+						|| line.contains(CORE_STRING_EU)
+						|| line.contains(CORE_STRING_US)
+						|| line.contains(CORE_STRING_AP)) { // only handle interesting lines
 
 					String[] parts = line.split("\\t");
 					String ip = parts[2];
@@ -1023,6 +1029,7 @@ public class AkamaiLogDownloader {
 				int featuresHits = 0;
 				int getstartedHits = 0;
 				int demokitHits = 0;
+				int coreHits = 0;
 				
 				switch (logLine.getType()) {
 				case GITHUB_PAGE:
@@ -1043,6 +1050,9 @@ public class AkamaiLogDownloader {
 				case DEMOKIT_PAGE:
 					demokitHits++;
 					break;
+				case CORE:
+					coreHits++;
+					break;
 				case RUNTIME_DOWNLOAD:
 					runtimeDownloads++;
 					break;
@@ -1059,7 +1069,7 @@ public class AkamaiLogDownloader {
 				// merge to previous data for same day or create new data in case of new day
 				String thisDay = ""+c1.get(Calendar.YEAR) + (c1.get(Calendar.MONTH)+1) + c1.get(Calendar.DAY_OF_MONTH);
 				LogFileData existingLogLine = fileDataMap.get(thisDay);
-				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, featuresHits, getstartedHits, demokitHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
+				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, featuresHits, getstartedHits, demokitHits, coreHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
 				if (existingLogLine != null) {
 					existingLogLine.addData(newData);
 				} else {
@@ -1217,6 +1227,7 @@ public class AkamaiLogDownloader {
 			o.put("featuresHits", data.featuresHits);
 			o.put("getstartedHits", data.getstartedHits);
 			o.put("demokitHits", data.demokitHits);
+			o.put("coreHits", data.coreHits);
 			o.put("ipCounter", data.ipCounter);
 
 			dataArray.put(o);
@@ -1269,7 +1280,7 @@ public class AkamaiLogDownloader {
 			FileOutputStream fos = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
-			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits;GetStarted Hits\n";
+			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits;GetStarted Hits;Core Hits\n";
 			bw.write(outFileText);
 
 			for (int i = 0; i < dataArray.length(); i++) {
@@ -1300,10 +1311,16 @@ public class AkamaiLogDownloader {
 				} catch (JSONException e) {
 					getstartedHits = 0;
 				}
+				int coreHits;
+				try {
+					coreHits = dataSet.getInt("coreHits");
+				} catch (JSONException e) {
+					coreHits = 0;
+				}
 				int ipCounter = dataSet.getInt("ipCounter");
 
 				// the result string for a line in the CSV file
-				outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + "\n";
+				outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits + "\n";
 				bw.write(outFileText);
 			}
 
