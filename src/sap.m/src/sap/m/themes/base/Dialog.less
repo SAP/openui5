@@ -31,6 +31,31 @@
 
 .sap-phone .sapMDialog {
   overflow: hidden;
+
+	footer {
+		display: -webkit-box;
+		display: -moz-box;
+		display: -ms-flexbox;
+		display: flex;
+		padding: 0 5px;
+
+		.sapMTBSpacer {
+			display: none;
+		}
+
+		.sapMBtn {
+			width: 100%;
+			-webkit-box-flex: 1;
+			-moz-box-flex: 1;
+			-ms-flex: auto;
+			flex: auto;
+			margin-top: 0;
+		}
+
+		.sapMBtn:last-child {
+			margin-right: 0 !important;
+		}
+	}
 }
 
 .sap-tablet .sapMDialog,
@@ -89,27 +114,6 @@
 
 .sapMDialogTransparent {
   opacity: 0;
-}
-
-.sapMDialogActions {
-  display: flex;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -moz-box;
-  width: 100%;
-}
-
-.sapMDialogActions > .sapMDialogAction {
-  flex: 1 1 0;
-  -webkit-box-flex: 1;
-  width: 0;
-  -ms-flex: 1 1 0;
-  -moz-box-flex: 1;
-}
-
-html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialogAction {
-  display: inline-block;
-  vertical-align: bottom;
 }
 
 .sapUiPopupWithPadding .sapMDialogScrollCont {
@@ -291,26 +295,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
   border-bottom: none;
 }
 
-.sapMDialog > footer.sapMDialogActions {
-  border-top: 1px fade(@sapUiExtraLightBorder, 20%) solid;
-}
-
-.sapMDialog > footer.sapMDialogActions > .sapMDialogAction {
-  box-sizing: border-box;
-  width: 50%;
-  padding: 0 0.25rem;
-}
-
-.sapMDialog > footer.sapMDialogActions > .sapMDialogAction:only-child {
-  width: 100%;
-}
-
-.sapMDialog > footer.sapMDialogActions > .sapMDialogAction > button.sapMDialogBtn {
-  width: 100%;
-  vertical-align: top;
-  border: none;
-}
-
 //for some reason buttons have offset of 1px when focused and not exactly in the verticle middle
 .sapMDialog > footer .sapMBtn {
   margin-top: -1px;
@@ -364,14 +348,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
       height: 1.5rem;
       width: 1rem;
       font-size: 1rem;
-    }
-
-    .sapMDialogActions {
-      /* footer with actions buttons */
-      width: auto;
-      height: 1.625rem;
-      line-height: 1.625rem;
-      padding: 0.1875rem 0.25rem;
     }
 
     &.sapMDialog > header:first-of-type.sapMHeader-CTX,
