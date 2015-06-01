@@ -19,6 +19,10 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
 			sinon.config.useFakeTimers = true;
+			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+			jQuery.now = function() {
+				return Date.now();
+			};
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 

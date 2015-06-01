@@ -229,8 +229,8 @@
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.7.0", "2.0.0") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.0; current version is " + jQuery.fn.jquery);
+	if ( !oJQVersion.inRange("1.7.0", "2.2.0") ) {
+		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2; current version is " + jQuery.fn.jquery);
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
@@ -2921,13 +2921,12 @@
 
 			function handleData(d, e) {
 				if ( d == null && mOptions.failOnError ) {
-					e = e || new Error("no data returned for " + sResourceName);
+					oError = e || new Error("no data returned for " + sResourceName);
 					if (mOptions.async) {
-						oDeferred.reject(e);
-						jQuery.sap.log.error(e);
-						return d;
+						oDeferred.reject(oError);
+						jQuery.sap.log.error(oError);
 					}
-					throw e;
+					return null;
 				}
 
 				if (mOptions.async) {
@@ -2982,7 +2981,15 @@
 
 			}
 
-			return mOptions.async ? window.Promise.resolve(oDeferred) : oData;
+			if ( mOptions.async ) {
+				return Promise.resolve(oDeferred);
+			}
+			
+			if ( oError != null && mOptions.failOnError ) {
+				throw oError;
+			}
+			
+			return oData;
 		};
 
 		/*
@@ -3493,7 +3500,7 @@
 	}
 
 	// *********** fixes for (pending) jQuery bugs **********
-	if (!jQuery.support.opacity) {
+	if ( jQuery.support.opacity === false ) { // TODO check wether this can be removed for all jquery versions now (assumption: only needed in IE8)
 		(function() {
 			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
 			var oldSet = jQuery.cssHooks.opacity.set;
