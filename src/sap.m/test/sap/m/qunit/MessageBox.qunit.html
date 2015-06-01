@@ -104,7 +104,7 @@
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
-			equal(oMessageBox.getTitle(), "Information", "The title should be Info");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_INFO"), "The title should be Info");
 			oMessageBox.destroy();
 		});
 
@@ -119,7 +119,7 @@
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
-			equal(oMessageBox.getTitle(), "Warning", "The title should be Warning");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_WARNING"), "The title should be Warning");
 			oMessageBox.destroy();
 		});
 
@@ -134,7 +134,7 @@
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
-			equal(oMessageBox.getTitle(), "Success", "The title should be Success");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_SUCCESS"), "The title should be Success");
 			oMessageBox.destroy();
 		});
 
