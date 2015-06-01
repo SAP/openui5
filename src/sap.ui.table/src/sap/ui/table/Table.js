@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', './Row', './library'],
-	function(jQuery, Control, IntervalTrigger, ScrollBar, ItemNavigation, Parameters, SelectionModel, Row, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', './Row', './library', 'sap/ui/core/IconPool'],
+	function(jQuery, Control, IntervalTrigger, ScrollBar, ItemNavigation, Parameters, SelectionModel, Row, library, IconPool) {
 	"use strict";
 
 
@@ -500,10 +500,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// basic selection model (by default the table uses multi selection)
 		this._initSelectionModel(sap.ui.model.SelectionModel.MULTI_SELECTION);
 
+		this._bTouchMode = ('ontouchstart' in document);
+		
 		// minimum width of a table column in pixel:
 		// should at least be larger than the paddings for cols and cells!
 		this._iColMinWidth = 20;
-
+		if (this._bTouchMode) {
+			this._iColMinWidth = 88;
+		}
+		
 		this._oCalcColumnWidths = [];
 
 		// columns to cells map
@@ -613,7 +618,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		var $this = this.$();
 
-		if (sap.ui.Device.system.tablet) {
+		if (this._bTouchMode) {
 			$this.addClass("sapUiTableTouch");
 		}
 
@@ -2293,7 +2298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				}
 			}
 			
-			var oColRsz = this.getDomRef().querySelector("#" + oVisibleColumn.getId() + "-rsz");
+			var oColRsz = document.getElementById(oVisibleColumn.getId() + "-rsz");
 			
 			mHeaders[iHeadColIndex] = {
 			   domRefColumnTh: oElement,
@@ -2303,7 +2308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			   rect: oRect,
 			   aHeaderWidths: aHeaderWidths
 			};
-		}.bind(this));
+		});
 		
 		// Map target column header divs to corresponding source table header.
 		var $cols = $colHeaderContainer.find(".sapUiTableCol");
@@ -2542,18 +2547,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onmousedown = function(oEvent) {
-
 		// only move on left click!
 		var bLeftButton = oEvent.button === (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8 ? 1 : 0);
 		if (bLeftButton) {
-
 			var $target = jQuery(oEvent.target);
+			
+			var bIsColumnMenuTarget = this._bTouchMode && ($target.hasClass("sapUiTableColDropDown") || $target.hasClass("sapUiTableColResizer"));
 
 			var $splitter = this.$("sb");
 			if (oEvent.target == $splitter[0]) {
 
 				// Fix for IE text selection while dragging
-				jQuery(document.body).bind("selectstart",jQuery.proxy(this._splitterSelectStart,this));
+				jQuery(document.body).bind("selectstart", jQuery.proxy(this._splitterSelectStart, this));
 
 				var offset = $splitter.offset();
 				var height = $splitter.height();
@@ -2568,8 +2573,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						"<div id=\"" + this.getId() + "-overlay\" style =\"left: 0px;" +
 								" right: 0px; bottom: 0px; top: 0px; position:absolute\" ></div>");
 
-				jQuery(document).bind("mouseup", jQuery.proxy(this._onGhostMouseRelease, this));
-				jQuery(document).bind("mousemove", jQuery.proxy(this._onGhostMouseMove, this));
+				if (this._bTouchMode) {
+					jQuery(document).bind("touchend", jQuery.proxy(this._onGhostMouseRelease, this));
+					jQuery(document).bind("touchmove", jQuery.proxy(this._onGhostMouseMove, this));
+				} else {
+					jQuery(document).bind("mouseup", jQuery.proxy(this._onGhostMouseRelease, this));
+					jQuery(document).bind("mousemove", jQuery.proxy(this._onGhostMouseMove, this));
+				}
+				
+				this._disableTextSelection();
+				
 				return;
 			}
 
@@ -2581,8 +2594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					this._bShowMenu = false;
 				});
 
-				if (this.getEnableColumnReordering()) {
-
+				if (this.getEnableColumnReordering() && !bIsColumnMenuTarget) {
 					var iIndex = parseInt($col.attr("data-sap-ui-colindex"), 10);
 					if (iIndex > this._iLastFixedColIndex) {
 
@@ -2591,9 +2603,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						this._sDelayedActionTimer = jQuery.sap.delayedCall(200, this, function() {
 							this._onColumnMoveStart(oColumn);
 						});
-
 					}
-
 				}
 			}
 
@@ -2603,7 +2613,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			if (!!sap.ui.Device.browser.firefox && bCtrl) {
 				oEvent.preventDefault();
 			}
-
 		}
 
 	};
@@ -2666,7 +2675,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype._oncellcontextmenu = function(mParams) {
 
-		if (this.getEnableCellFilter()) {
+		if (this.getEnableCellFilter() && !this._bTouchMode) {
 
 			// create the contextmenu instance the first time it is needed
 			if (!this._oContextMenu) {
@@ -2843,7 +2852,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (this._bShowMenu && $col.length === 1) {
 			var iIndex = parseInt($col.attr("data-sap-ui-colindex"), 10);
 			var oColumn = this.getColumns()[iIndex];
-			this._onColumnSelect(oColumn, $col[0]);
+			
+			if ($target.hasClass("sapUiTableColDropDown")) {
+				var bExecuteDefault = this.fireColumnSelect({
+					column: oColumn
+				});
+
+				if (bExecuteDefault) {
+					oColumn._openMenu($col[0]);
+				}
+			} else {
+				this._onColumnSelect(oColumn, $col[0]);
+			}
+			
 			return;
 		}
 
@@ -2973,6 +2994,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnSelect = function(oColumn, oDomRef) {
+		// On tablet open special column header menu
+		if (this._bTouchMode) {
+			var $ColumnHeader = jQuery(oDomRef);
+			var $ColumnCell = $ColumnHeader.find(".sapUiTableColCell");
+			
+			if ($ColumnHeader.find(".sapUiTableColCellMenu").length < 1) {
+				$ColumnCell.hide();
+				var $ColumnHeaderMenu = jQuery("<div class='sapUiTableColCellMenu'><div class='sapUiTableColDropDown'></div><div class='sapUiTableColResizer'></div></div>");
+				$ColumnHeader.append($ColumnHeaderMenu);
+				$ColumnHeader.bind("focusout", function() {
+					this.cell.show();
+					this.menu.remove();
+					this.self.unbind("focusout");
+				}.bind({
+					cell: $ColumnCell,
+					menu: $ColumnHeaderMenu,
+					self: $ColumnHeader
+				}));
+				
+				// listen to the resize handlers
+				$ColumnHeader.find(".sapUiTableColResizer").bind("touchstart", jQuery.proxy(this._onColumnResizeStart, this));
+			}
+			
+			return;
+		}
+		
 		// forward the event
 		var bExecuteDefault = this.fireColumnSelect({
 			column: oColumn
@@ -3033,12 +3080,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		});
 
 		this._$colGhost.appendTo(document.body);
-
-		jQuery(document.body).
-			mousemove(jQuery.proxy(this._onColumnMove, this)).
-			mouseup(jQuery.proxy(this._onColumnMoved, this));
-
-
+		
+		if (this._bTouchMode) {
+			jQuery(document.body).bind("touchmove",jQuery.proxy(this._onColumnMove, this)).bind("touchend",jQuery.proxy(this._onColumnMoved, this));
+		} else {
+			jQuery(document.body).mousemove(jQuery.proxy(this._onColumnMove, this)).mouseup(jQuery.proxy(this._onColumnMoved, this));
+		}
 	};
 
 	/**
@@ -3046,10 +3093,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnMove = function(oEvent) {
-
 		var $this = this.$();
+		
+		var iLocationX = oEvent.pageX;
+		var iLocationY = oEvent.pagey;
+		if (oEvent && oEvent.type === "touchmove") {
+			iLocationX = oEvent.targetTouches[0].pageX;
+			iLocationY = oEvent.targetTouches[0].pageY;
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
+		}
+		
 		var bRtl = this._bRtlMode;
-		var iRelX = oEvent.pageX - $this.offset().left;
+		var iRelX = iLocationX - $this.offset().left;
 		var iDnDColIndex = parseInt(this._$colGhost.attr("data-sap-ui-colindex"), 10);
 		var $DnDCol = this.getColumns()[iDnDColIndex].$();
 
@@ -3058,7 +3114,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._iNewColPos = iDnDColIndex;
 		var that = this;
 		$this.find(".sapUiTableCol").each(function(iIndex, oCol) {
-
 			var $col = jQuery(oCol);
 			var iColIndex = parseInt($col.attr("data-sap-ui-colindex"), 10);
 			var vHeaderSpans = sap.ui.getCore().byId($col.attr("data-sap-ui-colid")).getHeaderSpan();
@@ -3120,10 +3175,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		// update the ghost position
 		this._$colGhost.css({
-			"left": oEvent.pageX + 5,
-			"top": oEvent.pageY + 5
+			"left": iLocationX + 5,
+			"top": iLocationY + 5
 		});
-
 	};
 
 	/**
@@ -3165,7 +3219,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				}
 			}
 			$DnDCol.stop(true, true).animate({left: iOffsetLeft * (bRtl ? -1 : 1) + "px"});
-
 		}
 
 	};
@@ -3180,9 +3233,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var iDnDColIndex = parseInt(this._$colGhost.attr("data-sap-ui-colindex"), 10);
 		var oDnDCol = this.getColumns()[iDnDColIndex];
 
-		jQuery(document.body).
+		if (this._bTouchMode) {
+			jQuery(document.body).
+			unbind("touchmove", this._onColumnMove).
+			unbind("touchend", this._onColumnMoved);
+		} else {
+			jQuery(document.body).
 			unbind("mousemove", this._onColumnMove).
 			unbind("mouseup", this._onColumnMoved);
+		}
 
 		this._$colGhost.remove();
 		this._$colGhost = undefined;
@@ -3300,11 +3359,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnResizeStart = function(oEvent) {
-
+		if (oEvent && oEvent.type == "touchstart") {
+			this._iColumnResizeStart = oEvent.targetTouches[0].pageX;
+			this._disableTextSelection();
+			
+			var $Column = jQuery(oEvent.target).closest(".sapUiTableCol");
+			var oResizer = document.getElementById($Column.control(0).getId() + "-rsz");
+			this._$colResize = jQuery(oResizer);
+			
+			jQuery(document.body).bind("touchmove", jQuery.proxy(this._onColumnResize, this));
+			jQuery(document.body).bind("touchend", jQuery.proxy(this._onColumnResized, this));
+			
+			return;
+		}
+		
 		// only resize on left click!
 		var bLeftButton = oEvent.button === (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8 ? 1 : 0);
 		if (bLeftButton) {
-
 			this._iColumnResizeStart = oEvent.pageX;
 
 			this._disableTextSelection();
@@ -3313,9 +3384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			jQuery(document.body).
 				mousemove(jQuery.proxy(this._onColumnResize, this)).
 				mouseup(jQuery.proxy(this._onColumnResized, this));
-
 		}
-
 	};
 
 	/**
@@ -3323,13 +3392,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnResize = function(oEvent) {
-
-		if (this._iColumnResizeStart && oEvent.pageX < this._iColumnResizeStart + 3 && oEvent.pageX > this._iColumnResizeStart - 3) {
+		var iLocationX;
+		if (oEvent.type === "touchmove") {
+			iLocationX = oEvent.targetTouches[0].pageX;
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
+		} else {
+			iLocationX = oEvent.pageX;
+		}
+		
+		if (this._iColumnResizeStart && iLocationX < this._iColumnResizeStart + 3 && iLocationX > this._iColumnResizeStart - 3) {
 			return;
 		}
 
-		this._$colResize.addClass("sapUiTableColRszActive");
-		this._iColumnResizeStart = null;
+		if (this._bTouchMode) {
+			this._$colResize.addClass("sapUiTableColTouchRszActive");
+		} else {
+			this._$colResize.addClass("sapUiTableColRszActive");
+		}
 
 		var $this = this.$();
 
@@ -3357,7 +3437,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var iOffsetLeft = $this.find(".sapUiTableCtrlFirstCol > th:first").offset().left;
 
 			// relative left position within the table scroll container
-			var iRelLeft = oEvent.pageX - iOffsetLeft;
+			var iRelLeft = iLocationX - iOffsetLeft;
 
 			// calculate the new width
 			iWidth = iRelLeft - iColLeft;
@@ -3380,16 +3460,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 
 			//get the difference between where mouse was released and left side of the table
-			var iDiff = iColLeft - iScrollAreaScrollLeft - oEvent.pageX + $ScrollArea.offset().left;
+			var iDiff = iColLeft - iScrollAreaScrollLeft - iLocationX + $ScrollArea.offset().left;
 			iWidth = $col.outerWidth() + iDiff;
 		}
 
-		iWidth = Math.max(iWidth, /* oColumn.getMinWidth() || */ this._iColMinWidth);
-		//iWidth = Math.min(iWidth, oColumn.getMaxWidth() || iWidth);
+		iWidth = Math.max(iWidth, this._iColMinWidth);
 
 		// calculate and set the position of the resize handle
 		var iRszOffsetLeft = $this.find(".sapUiTableCnt").offset().left;
-		var iRszLeft = oEvent.pageX - iRszOffsetLeft;
+		
+		var iRszLeft = iLocationX - iRszOffsetLeft;
 		iRszLeft -= this._$colResize.width() / 2;
 		this._$colResize.css("left", iRszLeft);
 
@@ -3417,7 +3497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// if the resize has started and we have a new width for the column
 		// we apply it to the column object
 		var bResized = false;
-		if (!this._iColumnResizeStart && oColumn._iNewWidth) {
+		if (oColumn._iNewWidth) {
 			var sWidth;
 			var iAvailableSpace = this.$().find(".sapUiTableCtrl").width();
 			if (!this._checkPercentageColumnWidth()) {
@@ -3436,16 +3516,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 
 		// unbind the event handlers
-		jQuery(document.body).
+		if (oEvent && oEvent.type === "touchend") {
+			jQuery(document.body).
+			unbind("touchmove", this._onColumnResize).
+			unbind("touchend", this._onColumnResized);
+		} else {
+			jQuery(document.body).
 			unbind("mousemove", this._onColumnResize).
 			unbind("mouseup", this._onColumnResized);
+		}
 
 		// focus the column
 		oColumn.focus();
 
 		// hide the text selection
 		if (this._$colResize) {
-			this._$colResize.removeClass("sapUiTableColRszActive");
+			if (this._bTouchMode) {
+				this._$colResize.removeClass("sapUiTableColTouchRszActive");
+			} else {
+				this._$colResize.removeClass("sapUiTableColRszActive");
+			}
 			this._$colResize = undefined;
 		}
 		this._enableTextSelection();
@@ -5242,10 +5332,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * drops the splitter bar
 	 */
 	Table.prototype._onGhostMouseRelease = function(oEvent) {
-
 		var splitterBarGhost = this.getDomRef("ghost");
 
-		var iNewHeight = oEvent.pageY - this.$().offset().top;
+		var iLocationY = this._bTouchMode ? oEvent.changedTouches[0].pageY : oEvent.pageY;
+		var iNewHeight = iLocationY - this.$().offset().top;
 
 	    this.setVisibleRowCount(this._calculateRowsToDisplay(iNewHeight));
 
@@ -5253,17 +5343,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this.$("overlay").remove();
 
 		jQuery(document.body).unbind("selectstart", this._splitterSelectStart);
-		jQuery(document).unbind("mouseup", this._onGhostMouseRelease);
-		jQuery(document).unbind("mousemove", this._onGhostMouseMove);
-
+		
+		if (this._bTouchMode) {
+			jQuery(document).unbind("touchend", this._onGhostMouseRelease);
+			jQuery(document).unbind("touchmove", this._onGhostMouseMove);
+		} else {
+			jQuery(document).unbind("mouseup", this._onGhostMouseRelease);
+			jQuery(document).unbind("mousemove", this._onGhostMouseMove);
+		}
+		
+		this._enableTextSelection();
 	};
 
 	Table.prototype._onGhostMouseMove = function(oEvent) {
 		var splitterBarGhost = this.getDomRef("ghost");
 
+		var iLocationY = this._bTouchMode ? oEvent.targetTouches[0].pageY : oEvent.pageY;
 		var min = this.$().offset().top;
-		if (oEvent.pageY > min) {
-			jQuery(splitterBarGhost).css("top", oEvent.pageY + "px");
+		if (iLocationY > min) {
+			jQuery(splitterBarGhost).css("top", iLocationY + "px");
 		}
 	};
 
@@ -5510,7 +5608,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}).get());
 
 		jQuery(hiddenSizeDetector).remove();
-		return (minWidth > this._iColMinWidth) ? minWidth : this._iColMinWidth;
+		return Math.max(minWidth, this._iColMinWidth);
 	};
 
 	Table.prototype._onPersoApplied = function() {

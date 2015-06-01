@@ -391,6 +391,7 @@
 	});
 	
 	test("Resize", function(){
+		oTable._bTouchMode = false;
 		equals(oTable.getVisibleRowCount(), 10, "Row count of 10");
 
 		var barId = oTable.getId() + "-sb";
@@ -398,9 +399,10 @@
 		qutils.triggerMouseEvent(barId, "mousedown", 1, 1, -9950, -10000, 0 );
 		qutils.triggerMouseEvent(barId, "mousemove", 1, 1, -9950, -9500, 0 );
 		qutils.triggerMouseEvent(barId, "mouseup", 1, 1, -9950, -9500, 0 );
+		
 		sap.ui.getCore().applyChanges();
 
-		equals(oTable.getVisibleRowCount(), 16, "Row count of 20");
+		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
 	});
 
 	module("Keyboard navigation", {
