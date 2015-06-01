@@ -19,7 +19,7 @@
 					</template:with>
 				</Table>
 			</template:if>
-
+			<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.ChartAnnotation" type="XML"/>
 			<form:SimpleForm>
 				<form:title>
 					<core:Title text="HeaderInfo"/>
