@@ -1172,6 +1172,29 @@
 				oButton.destroy();
 			});
 
+			test("_applyPosition should be called with two parameters from check docking", function() {
+				var oPopover = new sap.m.Popover(),
+					oSpy = sinon.spy(oPopover.oPopup, "_applyPosition");
+
+				// Act
+				oPopover._fnFollowOf({
+					lastOfRect: {
+						top: 10,
+						left: 10
+					},
+					currentOfRect: {
+						top: 10,
+						left: 10
+					}
+				});
+
+				// Assert
+				equal(oSpy.callCount, 1, "_applyPosition is called once");
+				strictEqual(oSpy.getCall(0).args[1], true, "_applyPosition is called with the second parameter set to true");
+
+				oPopover.destroy();
+			});
+
 			module("Screen Reader");
 
 			test("ARIA role", function() {
