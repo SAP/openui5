@@ -163,5 +163,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "fcd53c5de409f0c47a80b9202519c07b8674a772",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: Vertical alignment issue in Safari fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -243,5 +243,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "2f42418cbb09919edc55d152cb5416b1ed929ece",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File-type check fixed",
+        "references": []
+      },
+      {
+        "id": "9950aaab94a3792aea26673a199d5db4532c74d9",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: sameFilenameAllowed fixed for multiple devices",
+        "references": []
+      },
+      {
+        "id": "10044ece65ae41cf6a60ef2339914a970acc38ac",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.calendar.MonthPicker:Browser dependent width rounding issues avoided",
+        "references": []
+      }
+    ]
   }
 }

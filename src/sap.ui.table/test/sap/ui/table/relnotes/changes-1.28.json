@@ -374,5 +374,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "4ea716a66e1568703a93efec0bb23051a0e40d3d",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable: Fixed collapseAll for ClientTreeBindings",
+        "references": []
+      }
+    ]
   }
 }
