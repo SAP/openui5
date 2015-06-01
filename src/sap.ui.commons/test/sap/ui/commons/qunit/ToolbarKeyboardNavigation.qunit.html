@@ -23,10 +23,12 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
 	<script type="text/javascript">
 
-		// Please bare in mind that keyboard navigation MUST NOT be debbuged via dev tool console, becuase once the focus goes into the debugger
+		// Please bare in mind that keyboard navigation MUST NOT be debuged via dev tool console, because once the focus goes into the debugger
 		// it get lost from the app. Use console.log instead.
+		// During text execution switching focus outside the browser may cause tests to fail.
 		// ==================================================
 		// test fixture for control properties and events
 		// ==================================================
@@ -137,21 +139,45 @@
 			}, 500);
 		});
 
-		test("Down arrow on overflow button opens the overflow popup", function(assert) {
+		test("Down arrow on overflow button opens the overflow popup", function (assert) {
 			var done = assert.async();
 			var sOriginalWidth = jQuery("#content").css("width");
 			oCtrl.setWidth("300px");
 
-			oCtrl.addItem(new sap.ui.commons.Button("testButton0", {"text":"Test","width":"200px"}));
-			oCtrl.addItem(new sap.ui.commons.Button("testButton1", {"text":"Test button into the overflow","width":"200px"}));
+			oCtrl.addItem(new sap.ui.commons.Button("testButton0", {"text": "Test", "width": "200px"}));
+			oCtrl.addItem(new sap.ui.commons.Button("testButton1", {
+				"text": "Test button into the overflow",
+				"width": "200px"
+			}));
 
 			var sOverflowButtonId = sToolbarId + "-mn";
 			clickDownArrow(sOverflowButtonId);
-			setTimeout(function() {
+			setTimeout(function () {
 				strictEqual(jQuery(getPopupDomRef()).css("visibility"), "visible", "Overflow popup should be visible");
 				jQuery("#content").css("width", sOriginalWidth);
 				done();
-			} ,100);
+			}, 100);
+		});
+
+		// BCP: 1580009795
+		test("Right item retain its tabindex attribute after visibility switch", function () {
+			var done = assert.async();
+			var oButtonRightItem = new sap.ui.commons.Button({text: 'Right Item'});
+			oCtrl.addRightItem(oButtonRightItem);
+
+			setTimeout(function () {
+				oButtonRightItem.$().focus();
+				assertFocusedElement(oButtonRightItem, "As prerequisite for the test, the right item button must have a focus.");
+				oCtrl.setVisible(false);
+				setTimeout(function () {
+					oCtrl.setVisible(true);
+					setTimeout(function () {
+						var iTabIndex = oCtrl.getRightItems()[0].$().attr("tabindex");
+						strictEqual(iTabIndex, '0', "After toggle toolbar visibility off->on, the right item must have tabindex='0'");
+						done();
+					}, 500);
+				}, 500);
+			}, 500);
 		});
 		//------------------------------------------
 		// helper functions
@@ -168,12 +194,11 @@
 			var oDomRef = typeof target == "string" ? document.getElementById(target) : target.getDomRef();
 			sap.ui.test.qunit.triggerKeydown(oDomRef, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
 		}
-
 		function assertFocusedElement(oExpectedFocusedControl, sMessage) {
 			var oExpectedElement = oExpectedFocusedControl.getFocusDomRef();
 			var oActiveElement = document.activeElement;
 
-			equal(oActiveElement.id + "(" + oActiveElement.innerText + ")", oExpectedElement.id + "(" + oExpectedElement.innerText + ")", sMessage);
+			equal("id=" + oActiveElement.id + ", text=" + oActiveElement.innerText, "id=" + oExpectedElement.id + ", text=" + oExpectedElement.innerText, sMessage);
 		}
 
 		function getPopupDomRef() {
