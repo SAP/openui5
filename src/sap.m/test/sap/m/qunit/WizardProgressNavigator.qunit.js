@@ -260,4 +260,89 @@
 		assert.strictEqual(stepChangedSpy.callCount, 1, "stepChanged event should be fired once");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 2, "currentStep should change to 2");
 	});
+
+	QUnit.module("sap.m.WizardProgressNavigator ARIA Support", {
+		setup: function () {
+			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+				stepCount: 5
+			});
+
+			this.oProgressNavigator.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oProgressNavigator.destroy();
+			this.oProgressNavigator = null;
+		}
+	});
+
+	QUnit.test("When rendered only the first anchor should NOT have aria-disabled=true", function(assert) {
+		var stepCount = this.oProgressNavigator.getStepCount(),
+			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+
+		assert.strictEqual($anchors.eq(0).attr("aria-disabled"), undefined,
+			"first anchor should NOT have aria-disabled=true attribute");
+
+		for (var i = 1; i < stepCount; i++) {
+			assert.strictEqual($anchors.eq(i).attr("aria-disabled"), "true",
+				"anchor should have aria-disabled=true attribute");
+		}
+	});
+
+	QUnit.test("After activating the second step aria-disabled should be removed", function(assert) {
+		this.oProgressNavigator.nextStep();
+
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+
+		assert.strictEqual($anchors.eq(1).attr("aria-disabled"), undefined,
+			"aria-disabled=true attribute should be removed from the second anchor");
+	});
+
+	QUnit.test("Current step should have aria-label=Selected", function(assert) {
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+
+		assert.strictEqual($anchors.eq(0).attr("aria-label"), "Selected",
+			"aria-label=Selected should be present on first anchor");
+	});
+
+	QUnit.test("Open steps should have aria-label=Processed", function(assert) {
+		this.oProgressNavigator.nextStep();
+
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+
+		assert.strictEqual($anchors.eq(0).attr("aria-label"), "Processed",
+			"aria-label=Processed should be present on first anchor");
+	});
+
+	QUnit.test("Discarding progress should add aria-disabled=true", function(assert) {
+		this.oProgressNavigator.nextStep().nextStep().nextStep();
+		this.oProgressNavigator.discardProgress(1);
+
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+
+		assert.strictEqual($anchors.eq(0).attr("aria-disabled"), undefined,
+			"first anchor should NOT have aria-disabled=true attribute");
+
+		assert.strictEqual($anchors.eq(1).attr("aria-disabled"), "true",
+			"second anchor should have aria-disabled=true attribute");
+
+		assert.strictEqual($anchors.eq(2).attr("aria-disabled"), "true",
+			"third anchor should have aria-disabled=true attribute");
+	});
+
+	QUnit.test("Discarding progress should remove aria-label", function(assert) {
+		this.oProgressNavigator.nextStep().nextStep().nextStep();
+		this.oProgressNavigator.discardProgress(1);
+
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+
+		assert.strictEqual($anchors.eq(0).attr("aria-label"), "Selected",
+			"first anchor should have aria-label=Selected");
+
+		assert.strictEqual($anchors.eq(1).attr("aria-label"), undefined,
+			"second anchor should NOT have aria-label attribute");
+
+		assert.strictEqual($anchors.eq(2).attr("aria-label"), undefined,
+			"third anchor should NOT have aria-label attribute");
+	});
 }());

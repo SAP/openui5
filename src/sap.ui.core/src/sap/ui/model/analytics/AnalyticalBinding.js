@@ -633,8 +633,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * 
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.filter
-	 * @param {sap.ui.model.Filter[]}
-	 *            aFilter Array of sap.ui.model.Filter objects.
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter}
+	 *            aFilter an Array of sap.ui.model.Filter objects or a single Filter instance.
 	 * @param {sap.ui.model.FilterType} 
 	 *            [sFilterType=sap.ui.model.FilterType.Control] Type of the filter which should be adjusted.
 	 * @return {sap.ui.model.analytics.AnalyticalBinding} 
@@ -643,6 +643,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
  	 * @public
 	 */
 	AnalyticalBinding.prototype.filter = function(aFilter, sFilterType) {
+		//ensure at least an empty array, so the later validation of odata4analytics.js does not fail
+		if (!aFilter) {
+			aFilter = [];
+		}
+		// wrap filter argument in an array if it's a single instance
+		if (aFilter instanceof sap.ui.model.Filter) {
+			aFilter = [aFilter];
+		}
+		
 		aFilter = this._convertDeprecatedFilterObjects(aFilter);
 
 		if (sFilterType == sap.ui.model.FilterType.Application) {
@@ -2054,15 +2063,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				oBatchRequestHandle = {
 					abort: function() {
 						//relay the abort call to all sub-requests created by v2.ODataModel.read()
-						for (var iRequestIndex = 0; iRequestIndex < aExecutedRequestDetails.length; iRequestIndex++) {
-							aExecutedRequestDetails[iRequestIndex].abort();
+						for (var iRequestIndex = 0; iRequestIndex < aBatchQueryRequest.length; iRequestIndex++) {
+							aBatchQueryRequest[iRequestIndex].abort();
 						}
 					}
 				};
 				// The response collector keeps track of all returned requests and
 				// calls the original success/error handlers after all batch responses have returned
 				oResponseCollector.setup({
-					executedRequests: aExecutedRequestDetails, 
+					executedRequests: aExecutedRequestDetails,
 					binding: this,
 					success: fnSuccess,
 					error: fnError
@@ -3312,6 +3321,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._deregisterHandleOfCompletedRequest = function(iRequestHandleId) {
+		if (jQuery.isEmptyObject(this.oPendingRequestHandle)) {
+			jQuery.sap.log.warning("No request handles to be cleared. Previous abort/resetData?");
+			return;
+		}
 		if (this.oPendingRequestHandle[iRequestHandleId] === undefined) {
 			jQuery.sap.log.fatal("no handle found for this request ID");
 		}
@@ -3425,6 +3438,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._deregisterCompletedRequest = function(sRequestId) {
+		// in case there are no pending request, log a warning. This might happen during a refresh call
+		// helps to keep track of timing issues / race conditions with already returned requests
+		if (jQuery.isEmptyObject(this.oPendingRequests)) {
+			jQuery.sap.log.warning("There are no pending requests which could be set to 'completed'.");
+			return;
+		}
+		
 		if (!this.oPendingRequests[sRequestId]) {
 			jQuery.sap.log.fatal("assertion failed: there is no pending request ID " + sRequestId);
 		}

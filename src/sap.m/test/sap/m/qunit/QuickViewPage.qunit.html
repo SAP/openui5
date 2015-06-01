@@ -81,17 +81,17 @@
 		sap.ui.getCore().setModel(oModel);
 
 		// create and add app
-		var oApp = new sap.m.App("myApp", {initialPage: "quickViewCard"});
+		var oApp = new sap.m.App("myApp", {initialPage: "quickViewPage"});
 		oApp.placeAt("qunit-fixture");
 
 		// create and add a page with icon tab bar
-		var oPage = new sap.m.Page("quickViewCard", {
-			title: "Quick View Card"
+		var oPage = new sap.m.Page("quickViewPage", {
+			title: "Quick View Page"
 		});
 		oApp.addPage(oPage);
 
-		function getQuickViewCard() {
-			return new sap.m.QuickViewCard({
+		function getQuickViewPage() {
+			return new sap.m.QuickViewPage({
 				header: "{/header}",
 				title: "{/title}",
 				icon: "{/icon}",
@@ -118,46 +118,46 @@
 
 		QUnit.module("Data binding", {
 			setup: function () {
-				this.oQuickViewCard = getQuickViewCard();
+				this.oQuickViewPage = getQuickViewPage();
 
-				this.oQuickViewCard.setModel(oModel);
-				oPage.addContent(this.oQuickViewCard);
+				this.oQuickViewPage.setModel(oModel);
+				oPage.addContent(this.oQuickViewPage);
 				sap.ui.getCore().applyChanges();
 			},
 			teardown: function () {
-				this.oQuickViewCard.destroy();
-				this.oQuickViewCard = null;
+				this.oQuickViewPage.destroy();
+				this.oQuickViewPage = null;
 			}
 		});
 
 		QUnit.test("When testing the binding of the control", function (assert) {
 			// Act
-			var fnSpyCreatePageContent = sinon.spy(this.oQuickViewCard, "_createCardContent");
-			var fnSpyCreateForm = sinon.spy(this.oQuickViewCard, "_createForm");
-			var fnSpyGetCard = sinon.spy(this.oQuickViewCard, "_getCardHeaderContent");
-			var fnSpyRenderGroup = sinon.spy(this.oQuickViewCard, "_renderGroup");
+			var fnSpyCreatePageContent = sinon.spy(this.oQuickViewPage, "_createPageContent");
+			var fnSpyCreateForm = sinon.spy(this.oQuickViewPage, "_createForm");
+			var fnSpyGetPage = sinon.spy(this.oQuickViewPage, "_getPageHeaderContent");
+			var fnSpyRenderGroup = sinon.spy(this.oQuickViewPage, "_renderGroup");
 
-			this.oQuickViewCard.setModel(oModel);
-			oPage.addContent(this.oQuickViewCard);
+			this.oQuickViewPage.setModel(oModel);
+			oPage.addContent(this.oQuickViewPage);
 			sap.ui.getCore().applyChanges();
 
 
 			// Assert
-			assert.strictEqual(fnSpyCreatePageContent.callCount, 1, "_createCardContent() should be called");
+			assert.strictEqual(fnSpyCreatePageContent.callCount, 1, "_createPageContent() should be called");
 			assert.strictEqual(fnSpyCreateForm.callCount, 1, "_createForm() should be called");
-			assert.strictEqual(fnSpyGetCard.callCount, 1, "__getCardHeaderContent should be called");
+			assert.strictEqual(fnSpyGetPage.callCount, 1, "__getPageHeaderContent should be called");
 			assert.strictEqual(fnSpyRenderGroup.callCount, 2, "_renderGroup() should be called twice");
 		});
 
-		QUnit.test("Card properties", function (assert) {
-			assert.strictEqual(this.oQuickViewCard.getHeader(), "Employee Info", "Header should be set correctly");
-			assert.strictEqual(this.oQuickViewCard.getTitle(), "John Doe", "Title should be set correctly");
-			assert.strictEqual(this.oQuickViewCard.getDescription(), "Department Manager1", "Description should be set correctly");
-			assert.strictEqual(this.oQuickViewCard.getIcon(), "sap-icon://person-placeholder", "Icon should be set correctly");
+		QUnit.test("Page properties", function (assert) {
+			assert.strictEqual(this.oQuickViewPage.getHeader(), "Employee Info", "Header should be set correctly");
+			assert.strictEqual(this.oQuickViewPage.getTitle(), "John Doe", "Title should be set correctly");
+			assert.strictEqual(this.oQuickViewPage.getDescription(), "Department Manager1", "Description should be set correctly");
+			assert.strictEqual(this.oQuickViewPage.getIcon(), "sap-icon://person-placeholder", "Icon should be set correctly");
 		});
 
 		QUnit.test("Group element properties", function (assert) {
-			var oGroup = this.oQuickViewCard.getGroups()[1];
+			var oGroup = this.oQuickViewPage.getGroups()[1];
 			var oElement = oGroup.getElements()[0];
 
 			assert.strictEqual(oElement.getLabel(), "Email", "Label should be set correctly");
@@ -170,26 +170,26 @@
 		});
 
 		QUnit.test("Element is not visible", function (assert) {
-			var $phoneLinks = this.oQuickViewCard.$().find('a[href*="tel"]');
+			var $phoneLinks = this.oQuickViewPage.$().find('a[href*="tel"]');
 			assert.strictEqual($phoneLinks.length, 1, "Second phone is not visible");
 		});
 
 		QUnit.module("Rendering", {
 			setup: function () {
-				this.oQuickViewCard = getQuickViewCard();
+				this.oQuickViewPage = getQuickViewPage();
 
-				this.oQuickViewCard.setModel(oModel);
-				oPage.addContent(this.oQuickViewCard);
+				this.oQuickViewPage.setModel(oModel);
+				oPage.addContent(this.oQuickViewPage);
 				sap.ui.getCore().applyChanges();
 			},
 			teardown: function () {
-				this.oQuickViewCard.destroy();
-				this.oQuickViewCard = null;
+				this.oQuickViewPage.destroy();
+				this.oQuickViewPage = null;
 			}
 		});
 
 		QUnit.test("Testing if the QuickView is created", function (assert) {
-			assert.strictEqual(this.oQuickViewCard.$().length, 1, "should render");
+			assert.strictEqual(this.oQuickViewPage.$().length, 1, "should render");
 		});
 
 

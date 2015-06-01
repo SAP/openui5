@@ -1,122 +1,129 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
-  Tested class: sap.ui.ux3.OverlayContainer
-  Author: d026828, d049080
--->
+	<!--
+	  Tested class: sap.ui.ux3.OverlayContainer
+	  Author: d026828, d049080
+	-->
 
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for sap.ui.ux3.OverlayContainer</title>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>qUnit Page for sap.ui.ux3.OverlayContainer</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
-	
-</script>
+		<script id="sap-ui-bootstrap" type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		</script>
+
+		<link rel="stylesheet"
+			  href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+			  media="screen"/>
+		<script type="text/javascript"
+				src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript"
+				src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript"
+				src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 
-<!-- Test help functions -->
-<script type="text/javascript">
-	function closeEventHandler(oEvent) {
-		ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
-	}
-	function openEventHandler(oEvent) {
-		ok(true, "open event handler has been executed."); // this test tests by just being counted in the respective test
-	}
-	function openNewEventHandler(oEvent) {
-		ok(true, "open new event handler has been executed."); // this test tests by just being counted in the respective test
-	}
-</script>
+		<!-- Test help functions -->
+		<script type="text/javascript">
+			function closeEventHandler(oEvent) {
+				ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
+			}
+			function openEventHandler(oEvent) {
+				ok(true, "open event handler has been executed."); // this test tests by just being counted in the respective test
+			}
+			function openNewEventHandler(oEvent) {
+				ok(true, "open new event handler has been executed."); // this test tests by just being counted in the respective test
+			}
+		</script>
 
-<!-- Control initialization -->
-<script type="text/javascript">
-	var oOverlayContainer;
-	oOverlayContainer = new sap.ui.ux3.OverlayContainer("myOverlayContainer", {
-		close : closeEventHandler,
-		open : openEventHandler,
-		openNew : openNewEventHandler
-	});
-	oOverlayContainer.addContent(new sap.ui.commons.Button(oOverlayContainer.getId() + "Button", {text: "Button for Content"}));
+		<!-- Control initialization -->
+		<script type="text/javascript">
+			var oOverlayContainer;
+			oOverlayContainer = new sap.ui.ux3.OverlayContainer("myOverlayContainer", {
+				close: closeEventHandler,
+				open: openEventHandler,
+				openNew: openNewEventHandler
+			});
+			oOverlayContainer.addContent(new sap.ui.commons.Button(oOverlayContainer.getId() + "Button", {text: "Button for Content"}));
 
-	oOverlayContainer.placeAt("uiArea1");
-	sap.ui.getCore().applyChanges();
-</script>
+			oOverlayContainer.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+		</script>
 
-<!-- Test functions -->
-<script type="text/javascript">
-	module("Appearance");
+		<!-- Test functions -->
+		<script type="text/javascript">
 
-	test("OverlayContainer exists", function() {
-		equals(true, true, "...");
-		var oDomRef = jQuery.sap.domById(oOverlayContainer.getId());
-		ok(oDomRef, "Rendered OverlayContainer should exist in the page");
-		equal(oDomRef.className, "sapUiUx3OC sapUiUx3Overlay", "Rendered OverlayContainer should have the classes 'sapUiUx3OC' and 'sapUiUx3Overlay'");
-	});
-	
-	module("Behaviour");
+			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			}
 
-	test("OpenNew Event", function() {
-		expect(1);
-		qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayContainer.getId() + "-openNew"), "click", 1, 1, 1, 1);
-	});
-	
-	test("OpenNew via Keyboard Event", function() {
-		expect(2);
-		qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
-	});
+			module("Appearance");
 
-	asyncTest("Open Method", function() {
-		expect(4);
-		ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
-		oOverlayContainer.open();
-		ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
-		setTimeout(
-				function() {
+			test("OverlayContainer exists", function () {
+				equals(true, true, "...");
+				var oDomRef = jQuery.sap.domById(oOverlayContainer.getId());
+				ok(oDomRef, "Rendered OverlayContainer should exist in the page");
+				equal(oDomRef.className, "sapUiUx3OC sapUiUx3Overlay", "Rendered OverlayContainer should have the classes 'sapUiUx3OC' and 'sapUiUx3Overlay'");
+			});
+
+			module("Behaviour");
+
+			test("OpenNew Event", function () {
+				expect(1);
+				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayContainer.getId() + "-openNew"), "click", 1, 1, 1, 1);
+			});
+
+			test("OpenNew via Keyboard Event", function () {
+				expect(2);
+				qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
+			});
+
+			asyncTest("Open Method", function () {
+				expect(4);
+				ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
+				oOverlayContainer.open();
+				ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
+				setTimeout(
+						function () {
+							start();
+							ok(jQuery.sap.domById(oOverlayContainer.getId() + "Button"), "Rendered Content should exist in the page");
+						}, 500);
+			});
+
+			// at the end close
+			asyncTest("Close Event", function () {
+				expect(3);
+				ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
+				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayContainer.getId() + "-close"), "click", 1, 1, 1, 1);
+				setTimeout(function () {
 					start();
-					ok(jQuery.sap.domById(oOverlayContainer.getId() + "Button"), "Rendered Content should exist in the page");
+					ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
 				}, 500);
-	});
-	
-	// at the end close
-	asyncTest("Close Event", function() {
-		expect(3);
-		ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
-		qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayContainer.getId() + "-close"), "click", 1, 1, 1, 1);
-		setTimeout(function() {
-			start();
-			ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
-		}, 500);
-	});
+			});
 
-	test("Destroy and remove control", function() {
-		oOverlayContainer.destroy();
-		sap.ui.getCore().applyChanges();
-		var oDomRef = jQuery.sap.domById(oOverlayContainer.getId());
-		ok(!oDomRef, "Rendered OverlayContainer should not exist in the page after destruction");
-	});
+			test("Destroy and remove control", function () {
+				oOverlayContainer.destroy();
+				sap.ui.getCore().applyChanges();
+				var oDomRef = jQuery.sap.domById(oOverlayContainer.getId());
+				ok(!oDomRef, "Rendered OverlayContainer should not exist in the page after destruction");
+			});
 
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.ux3.OverlayContainer</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for sap.ui.ux3.OverlayContainer</h1>
 
-	<div id="uiArea1"></div>
-</body>
+		<h2 id="qunit-banner"></h2>
+
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+
+		<div id="uiArea1"></div>
+	</body>
 </html>

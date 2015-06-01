@@ -652,6 +652,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		};
 
 		/*
+		 * Handle properties changes of items in the aggregation named <code>items</code>.
+		 * To be overwritten by subclasses.
+		 *
+		 * @protected
+		 * @experimental
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @since 1.30
+		 */
+		ComboBoxBase.prototype.onItemChange = function() {};
+
+		/*
 		 * Clear the selection.
 		 * To be overwritten by subclasses.
 		 *
@@ -696,6 +707,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		ComboBoxBase.prototype.addItem = function(oItem) {
 			this.addAggregation("items", oItem);
 
+			if (oItem) {
+				oItem.attachEvent("_change", this.onItemChange, this);
+			}
+
 			if (this.getList()) {
 				this.getList().addItem(this._mapItemToListItem(oItem));
 			}
@@ -716,6 +731,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 */
 		ComboBoxBase.prototype.insertItem = function(oItem, iIndex) {
 			this.insertAggregation("items", oItem, iIndex);
+
+			if (oItem) {
+				oItem.attachEvent("_change", this.onItemChange, this);
+			}
 
 			if (this.getList()) {
 				this.getList().insertItem(this._mapItemToListItem(oItem), iIndex);
@@ -831,6 +850,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			// remove the item from the aggregation items
 			vItem = this.removeAggregation("items", vItem);
 
+			if (vItem) {
+				vItem.detachEvent("_change", this.onItemChange, this);
+			}
+
 			// remove the corresponding mapped item from the List
 			if (this.getList()) {
 				this.getList().removeItem(this.getListItem(vItem));
@@ -852,6 +875,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 			// clear the selection
 			this.clearSelection();
+
+			for (var i = 0; i < aItems.length; i++) {
+				aItems[i].detachEvent("_change", this.onItemChange, this);
+			}
 
 			if (this.getList()) {
 				this.getList().removeAllItems();

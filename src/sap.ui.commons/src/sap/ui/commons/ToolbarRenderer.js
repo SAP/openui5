@@ -51,10 +51,11 @@ function(jQuery) {
 		var iRightItemsLength =  aRightItems.length;
 		var bHasRightItems = iRightItemsLength > 0;
 
+		var sInnerDiv = "<div class='sapUiTbInner' id='" + oToolbar.getId() + "-inner" + "'>";
 		if (bHasRightItems) {
-			rm.write("<div class='sapUiTbCont sapUiTbContLeft'><div class='sapUiTbInner' >");
+            rm.write("<div class='sapUiTbCont sapUiTbContLeft'>" + sInnerDiv);
 		} else {
-			rm.write("<div class='sapUiTbCont'><div class='sapUiTbInner'>");
+			rm.write("<div class='sapUiTbCont'>" + sInnerDiv);
 		}
 
 
@@ -139,23 +140,36 @@ function(jQuery) {
 			oPopupHolder = ToolbarRenderer.initOverflowPopup(oToolbar).firstChild;
 		}
 
-		// Move all invisible items from the second row of the toolbar to the popup
-		var iVisibleItems = oToolbar.getVisibleItemInfo().count;
-		var oToolbarCont = oToolbar.getDomRef().firstChild.firstChild;
-		var iPos = 0;
-		var oChild = oToolbarCont.firstChild;
-		var sOverflowButtonId = oToolbar.getId() + "-mn";
+		// Move all invisible (due to overflow) left items from the second row of the toolbar to the popup
+		//1. Obtaining all invisible due to overflow and due to API property visible=false
+		var $oPopupHolderParent = jQuery(oPopupHolder.parentNode),
+			iVisibleItems = oToolbar.getVisibleItemInfo(true).count,
+			oToolbarCont = oToolbar.getDomRef().firstChild.firstChild,
+			iPos = 0,
+			oChild = oToolbarCont.firstChild,
+			sOverflowButtonId = oToolbar.getId() + "-mn",
+			iPopupParentWidth = $oPopupHolderParent.width(),
+			iBiggestItemWidth = 0;
+
+		//2. Move all left items that are not visible due to the overflow
 		while (oChild) {
 			var nextChild = oChild.nextSibling;
 			if (iPos >= iVisibleItems) {
-				if (oChild.id == sOverflowButtonId) { // do not move overflow button and cover
+				if (oChild.id === sOverflowButtonId) { // do not move overflow button and cover
 					break;
 				}
-
+				// calculate biggest item width CSS: (1570140661)
+				iBiggestItemWidth = iBiggestItemWidth  < jQuery(oChild).outerWidth(true) ? jQuery(oChild).outerWidth(true) : iBiggestItemWidth;
 				oPopupHolder.appendChild(oChild);
 			}
 			oChild = nextChild;
 			iPos++;
+		}
+		// when there is an item with width bigger than the last opened popup width, set popup width
+		// to be equal to the biggest width among items (CSS: 1570140661)
+		if (iBiggestItemWidth > iPopupParentWidth) {
+			var iPaddingSpace = 12;//preserve space for left+right padding(.sapUiTbDD)
+			$oPopupHolderParent.width(iBiggestItemWidth + iPaddingSpace);
 		}
 	};
 

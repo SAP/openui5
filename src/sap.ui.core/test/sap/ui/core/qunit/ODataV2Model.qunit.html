@@ -2026,6 +2026,22 @@
 		});
 	});
 	
+	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.metadataLoaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				start();
+			});
+		});
+	});
+	
 	module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI);

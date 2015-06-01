@@ -76,7 +76,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * The type of the displayed information – phone number, mobile number, e-mail, link, text or a link to another QuickViewCard. Default value is ‘text’.
+						 * The type of the displayed information – phone number, mobile number, e-mail, link, text or a link to another QuickViewPage. Default value is ‘text’.
 						 */
 						type: {
 							type: "sap.m.QuickViewGroupElementType",
@@ -85,10 +85,10 @@ sap.ui.define([
 						},
 
 						/**
-						 * The id of the QuickViewCard, which is opened from the link in the QuickViewGroupElement.
+						 * The id of the QuickViewPage, which is opened from the link in the QuickViewGroupElement.
 						 * Works only with QuickViewGroupElement of type pageLink.
 						 */
-						cardLinkId: {
+						pageLinkId: {
 							type: "string",
 							group: "Misc",
 							defaultValue: ""
@@ -138,13 +138,13 @@ sap.ui.define([
 						text : this.getValue(),
 						target : this.getTarget()
 					});
-				case GroupElementType.cardLink:
+				case GroupElementType.pageLink:
 					return new Link({
 						href : "#",
 						text : this.getValue(),
 						customData : [new CustomData({
-							key : "cardNumber",
-							value : this.getCardLinkId()
+							key : "pageNumber",
+							value : this.getPageLinkId()
 						})]
 					});
 				default:

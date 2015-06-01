@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.commons.AccordionSection
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
 	var AccordionSection = Element.extend("sap.ui.commons.AccordionSection", /** @lends sap.ui.commons.AccordionSection.prototype */ { metadata : {
 	
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		aggregations : {
 	
 			/**
-			 * Aggregates the controls that are contained in the panel. Control layouting is browser-dependent. For a stable content layout, use a layout control as direct single child.
+			 * Aggregates the controls that are contained in the panel. Control layout is browser-dependent. For a stable content layout, use a layout control as direct single child.
 			 * When the panel dimensions are set, the child control may have width and height of 100%;
 			 * when the panel dimensions are not set, the child defines the panel size.
 			 */
@@ -96,7 +96,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @private
 	 */
 	AccordionSection.prototype.init = function(){
-	   this.bIgnoreScrollEvent = true; // do not fire a scroll event initially
 	   this.oScrollDomRef = null;      // points to the content area
 	   
 	   this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
@@ -212,7 +211,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	/**
 	 * Property setter for the "collapsed" state
 	 *
-	 * @param bCollapsed Whether the AccordionSection should be collapsed, or not
+	 * @param {boolean} bCollapsed Whether the AccordionSection should be collapsed, or not
 	 * @private
 	 */
 	AccordionSection.prototype._setCollapsed = function(bCollapsed) {
@@ -240,32 +239,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 		return this;
 	};
-	
-	
-	/**
-	 * Internal method for applying a "collapsed" state to the rendered HTML
-	 *
-	 * @param bCollapsed Whether the AccordionSection should be collapsed, or not
-	 * @private
-	 */
+
+
+		/**
+		 * Internal method for applying a "collapsed" state to the rendered HTML
+		 *
+		 * @param {boolean} bCollapsed Whether the AccordionSection should be collapsed, or not
+		 */
 	AccordionSection.prototype._setCollapsedState = function(bCollapsed) {
-	
+		var tb = this.getDomRef("tb"),
+			cont = this.getDomRef("cont"),
+			accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 		if (this.getDomRef()) {
 			// after AccordionSection has been rendered
 			if (bCollapsed) {
-				var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
-	
+
 				// collapsing
 				if (!this.getParent().getWidth()) {
 					this.getDomRef().style.width = this.getDomRef().offsetWidth + "px"; // maintain the current width
 				}
 				jQuery(this.getDomRef()).addClass("sapUiAcdSectionColl");
-				var tb = this.getDomRef("tb");
 				if (tb) {
 					tb.style.display = "none";
 				}
-	
-				var cont = this.getDomRef("cont");
+
 				if (cont) {
 					cont.style.display = "none";
 				}
@@ -278,18 +275,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	
 			} else {
 				// expanding
-				if (!this.getDomRef("cont")) {
+				if (!cont) {
 					// content has not been rendered yet, so render it now
-					this.invalidate(); // TODO: potentially restore focus to collapse icon/button
+					this.invalidate();
 				} else {
 					// content exists already, just make it visible again
 					jQuery(this.getDomRef()).removeClass("sapUiAcdSectionColl");
-					var tb = this.getDomRef("tb");
 					if (tb) {
 						tb.style.display = "block";
 					}
-	
-					var cont = this.getDomRef("cont");
+
 					cont.style.display = "block";
 					if (accessibility) {
 						cont.setAttribute("aria-expanded", "true");
@@ -301,7 +296,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				}
 			}
 		}
-	}
+	};
 	
 	
 	/**
@@ -309,11 +304,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * Returns "true" for absolute and relative sizes, returns "false" if "null", "inherit" or "auto" is given.
 	 *
 	 * @static
-	 * @param sCssSize A CSS size string which must be a valid CSS size, or null
+	 * @param {sap.ui.core.CSSSize} sCssSize A CSS size string which must be a valid CSS size, or null
+	 * @returns {boolean} Returns true when cssSize is not auto or inherit
 	 * @private
-	 */;
-	AccordionSection._isSizeSet = function(sCssSize) {
-		return (sCssSize && !(sCssSize == "auto") && !(sCssSize == "inherit"));
+	 */
+		AccordionSection._isSizeSet = function(sCssSize) {
+		return (sCssSize && !(sCssSize === "auto") && !(sCssSize === "inherit"));
 	}
 	
 	
@@ -322,7 +318,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	/**
 	 * Handles any "triggering" actions like click and space
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent . Current event which is processed
 	 * @private
 	 */;
 	AccordionSection.prototype._handleTrigger = function(oEvent) {
@@ -334,25 +330,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
-	};
-	
-	/**
-	 * Handles the scroll event of the browser
-	 *
-	 * @param {jQuery.Event} oEvent
-	 * @private
-	 */
-	AccordionSection.prototype.onscroll = function (oEvent) {
-		/**
-		if (this.bIgnoreScrollEvent) { // bIgnoreScrollEvent is set to "true" if the scrollbar is moved via API calls
-			this.bIgnoreScrollEvent = false;
-			return;
-		}
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			this.fireScroll(oDomRef.scrollTop, oDomRef.scrollLeft);
-		}
-		 */
 	};
 
 	return AccordionSection;

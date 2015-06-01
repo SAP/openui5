@@ -334,7 +334,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	[
 		{property: "Path", value: {Path: "foo"}},
-		{property: "Value", value: {Type: "Path", Value: "foo"}}
+		{property: "Value", value: {Type: "Path", Value: "foo"}},
+		{property: "PropertyPath", value: {PropertyPath: "foo"}},
+		{property: "Value", value: {Type: "PropertyPath", Value: "foo"}}
 	].forEach(function (oFixture) {
 		test("expression: " + JSON.stringify(oFixture.value), function () {
 			var oInterface = {},
@@ -345,7 +347,7 @@ sap.ui.require([
 
 			if (oFixture.value.Type) {
 				oBasics.expects("property")
-					.withExactArgs(oPathValue, "Type", "string").returns("Path");
+					.withExactArgs(oPathValue, "Type", "string").returns(oFixture.value.Type);
 			}
 			oBasics.expects("descend")
 				.withExactArgs(oPathValue, oFixture.property)

@@ -27,4 +27,5 @@ sap.ui.define([],
 		description: "{description}"
 	};
 	
+
 }, /* bExport= */ true);

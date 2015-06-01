@@ -14,7 +14,6 @@
      <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script> 
      <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-	   <!--<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>-->
 	   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 
@@ -23,10 +22,8 @@
 			function createAccordion(bNoSections) {
 				//Accordion 1 --> Constructor and setters to fill properties
 				var oAccordion1 = new sap.ui.commons.Accordion("accordion1");
-				//oAccordion1.setOpenedSectionsId("1");
-//				oAccordion1.setWidth("100px");
 
-				if (bNoSections === null || !bNoSections) {
+				if (!bNoSections) {
 					//Section 1
 					var oSection1 = new sap.ui.commons.AccordionSection( "section1" );
 					oSection1.setTitle("My section 1");
@@ -69,7 +66,7 @@
 
 				return oAccordion1;
 			}
-			
+
 	   		qutils.delayTestStart();
 
 			module("Accordion API and Properties", {
@@ -83,7 +80,7 @@
 				}
 			});
 
-			//OpenSectionsId property			
+			//OpenSectionsId property
 			test("OpenSectionsId Default value - the first added section", function() {
 				strictEqual(this.oAccordion1.getOpenedSectionsId(), "section1", "OpenSectionsId should be the first added section id.");
 			});
@@ -123,12 +120,6 @@
 			//Width property
 			test("Default Width value 200px", function() {
 				strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
-			});
-
-			test("WidthOk", function() {				
-				var sWIDTH = "100px";
-				this.oAccordion1.setWidth(sWIDTH);
-				strictEqual(this.oAccordion1.getWidth(), sWIDTH,"Width for accordion1 is correct set");
 			});
 
 			//sections aggregation
@@ -200,7 +191,7 @@
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
-				//set the property first
+				//set the property "enabled"
 				aSections[0].setEnabled(false);
 				strictEqual(aSections[0].$().hasClass( "sapUiAcdSectionDis" ), true, "The Section header has the disabled class applied");
 				strictEqual(aSections[0].getEnabled(), false, "The Section 1 is disabled");
@@ -231,12 +222,12 @@
 				jQuery("section4-minL").focus();
 				qutils.triggerEvent("click", "section4-minL");
 
-				//Check if default section is closed (1) and (4) is now opened
+				//Check if default section is closed (1) and (4) are now opened
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed : section.isCollapsed()");
-				strictEqual(aSections[1].getCollapsed(), true, "Section 2 is now closed : section.isCollapsed()");
-				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is now closed : section.isCollapsed()");
-				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open : section.isCollapsed()");
+				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed ");
+				strictEqual(aSections[1].getCollapsed(), true, "Section 2 is now closed ");
+				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is now closed ");
+				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open ");
 
 
 			});
@@ -279,10 +270,6 @@
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
 				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
 				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
-
-//				jQuery("section4-minL").focus();
-//				qutils.triggerEvent("click", "section4-minL");
-//				strictEqual(aSections[3].getCollapsed(), false, "Section 4 now is open");
 			
 			});
 

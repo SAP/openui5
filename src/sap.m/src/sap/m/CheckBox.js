@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	 */
 
 	CheckBox.prototype.addActiveState = function(oControl) {
-		if (sap.ui.Device.os.blackberry || (sap.ui.Device.os.android && (sap.ui.Device.os.versionStr.match(/[23]\./)))) {
+		if (sap.ui.Device.os.blackberry) {
 			oControl.addDelegate({
 				ontouchstart: function(oEvent){
 					jQuery(oControl.getDomRef()).addClass("sapMActive");

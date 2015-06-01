@@ -40,16 +40,16 @@ sap.ui.define([
 							defaultValue : PlacementType.Right
 						}
 					},
-					defaultAggregation: "cards",
+					defaultAggregation: "pages",
 					aggregations: {
 
 						/**
 						 * Displays a page header, object icon or image, object name with short description, and object information divided in groups
 						 */
-						cards: {
-							type: "sap.m.QuickViewCard",
+						pages: {
+							type: "sap.m.QuickViewPage",
 							multiple: true,
-							singularName: "card",
+							singularName: "page",
 							bindable: "bindable"
 						}
 					},
@@ -202,8 +202,8 @@ sap.ui.define([
 	};
 
 	QuickView.prototype.onBeforeRenderingPopover = function() {
-		var aCards = this.getAggregation("cards");
-		if (!aCards) {
+		var aPages = this.getAggregation("pages");
+		if (!aPages) {
 			return;
 		}
 
@@ -214,15 +214,15 @@ sap.ui.define([
 		oNavContainer.init();
 
 		// create
-		for (var i = 0; i < aCards.length; i++) {
-			var oQuickViewCard = aCards[i];
+		for (var i = 0; i < aPages.length; i++) {
+			var oQuickViewPage = aPages[i];
 
-			oQuickViewCard._hasBackButton = i > 0;
-			oQuickViewCard._oPopover = this._oPopover;
-			oQuickViewCard._oNavContainer = oNavContainer;
+			oQuickViewPage._hasBackButton = i > 0;
+			oQuickViewPage._oPopover = this._oPopover;
+			oQuickViewPage._oNavContainer = oNavContainer;
 
-			var oCard = oQuickViewCard._createCard();
-			this._oNavContainer.addPage(oCard);
+			var oPage = oQuickViewPage._createPage();
+			this._oNavContainer.addPage(oPage);
 		}
 	};
 
@@ -290,8 +290,8 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var cardPage = this._oNavContainer.getCurrentPage();
-		var button = cardPage.getCustomHeader().getContentRight()[0];
+		var page = this._oNavContainer.getCurrentPage();
+		var button = page.getCustomHeader().getContentRight()[0];
 
 		return button;
 	};

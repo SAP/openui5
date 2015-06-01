@@ -664,6 +664,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		//the initial size is set in the renderer when the dom is created
 
 		if (!bStretch) {
+			//set the size to the content
+			if (!this._oManuallySetSize) {
+				oStyles.width = this.getContentWidth() ||  undefined;
+				oStyles.height = this.getContentHeight() || undefined;
+			}
+
 			//set max height and width smaller that the screen
 			oStyles["max-width"] = bMessageType ? '480px' : iMaxWidth + 'px';
 			oStyles["max-height"] = iMaxHeight + 'px';

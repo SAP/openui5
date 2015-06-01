@@ -666,13 +666,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed
+	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed. 
+	 * Returns a new promise which can be resolved or rejected depending on the metadata loading state.
+	 *
+	 * @returns {Promise} returns a promise on metadata loaded state or null if metadata is not initialized or currently refreshed.
 	 *
 	 * @public
 	 */
 	ODataModel.prototype.refreshMetadata = function(){
 		if (this.oMetadata && this.oMetadata.refresh){
-			this.oMetadata.refresh();
+			return this.oMetadata.refresh();
 		}
 	};
 
@@ -2560,8 +2563,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			jQuery.each(oPayload, function(sPropName, oPropValue) {
 				if (sPropName !== '__metadata') {
 					// remove unmodified properties and keep only modified properties for delta MERGE
-					// Compare whether last data is completely contained in current data and to a maximum depth of 3, to cover complex types.
-					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue, 3, true)) {
+					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue)) {
 						delete oPayload[sPropName];
 					}
 				}
@@ -3214,13 +3216,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				aUrlParams.push(sSorterParams);
 			}
 
-			if (sPath.indexOf("$count") === -1){
-				sNormalizedPath = that._normalizePath(sPath, oContext);
-				oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
-				sFilterParams = ODataUtils.createFilterParams(aFilters, that.oMetadata, oEntityType);
-				if (sFilterParams) {
-					aUrlParams.push(sFilterParams);
-				}
+			var sTempPath = sPath;
+			var iIndex = sPath.indexOf("$count");
+			// check if we have a manual count request with filters. Then we have to manually adjust the path.
+			if (iIndex !== -1) {
+				sTempPath = sPath.substring(0, iIndex - 1);
+			}
+			
+			sNormalizedPath = that._normalizePath(sTempPath, oContext);
+			oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
+			sFilterParams = ODataUtils.createFilterParams(aFilters, that.oMetadata, oEntityType);
+			if (sFilterParams) {
+				aUrlParams.push(sFilterParams);
 			}
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
@@ -3266,7 +3273,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Returns a promise for the loaded state of the metadata
+	 * Returns a promise for the loaded state of the metadata. The promise won't get rejected in case the metadata loading failed but
+	 * is only resolved if the metadata is loaded successfully.
+	 * If <code>refreshMetadata</code> function is called after this promise is already resolved you should rely on the promise returned by
+	 * <code>refreshMetadata</code> to get information about the refreshed metadata loaded state.
 	 *
 	 * @public
 	 * @returns {Promise} returns a promise on metadata loaded state
@@ -3321,7 +3331,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			that = this;
 
 		jQuery.each(aUrls, function(i, sUrl) {
-			if (sUrl.indexOf("/$metadata") >= 0) {
+			var iIndex = sUrl.indexOf("$metadata");
+			if (iIndex >= 0) {
+				//add serviceUrl for relative metadata urls
+				if (iIndex == 0) {
+					sUrl = that.sServiceUrl + '/' + sUrl;
+				}
 				aMetadataUrls.push(sUrl);
 			} else {
 				aAnnotationUrls.push(sUrl);

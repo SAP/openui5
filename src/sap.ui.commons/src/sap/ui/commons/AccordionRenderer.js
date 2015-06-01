@@ -155,12 +155,12 @@ sap.ui.define(['jquery.sap.global'],
 			//Disabled --> Unavailable annoucement
 			if (oControl.getEnabled()) {
 				rm.writeAttribute("aria-disabled", "false");
-				if (!!!sap.ui.Device.browser.internet_explorer) {
+				if (!sap.ui.Device.browser.internet_explorer) {
 					rm.writeAttribute("aria-grabbed", "false");
 				}
 			} else {
 				rm.writeAttribute("aria-disabled", "true");
-				if (!!!sap.ui.Device.browser.internet_explorer) {
+				if (!sap.ui.Device.browser.internet_explorer) {
 					rm.writeAttribute("aria-grabbed", "");
 				}
 			}

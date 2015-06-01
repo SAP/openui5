@@ -1407,6 +1407,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
 		navigationPath : "",
 		resolvedPath : "/dataServices/schema/0/complexType/0/property/2"
+	}, {
+		// structural property of complex type
+		PropertyPath : "Address/Street",
+		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
+		navigationPath : "",
+		resolvedPath : "/dataServices/schema/0/complexType/0/property/2"
 	}].forEach(function (oFixture) {
 		var sPath, sTitle;
 
@@ -1416,6 +1422,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		} else if (oFixture.hasOwnProperty("Path")) {
 			sPath = oFixture.Path;
 			sTitle = "14.5.12 Expression edm:Path: " + sPath;
+		} else if (oFixture.hasOwnProperty("PropertyPath")) {
+			sPath = oFixture.PropertyPath;
+			sTitle = "14.5.13 Expression edm:PropertyPath: " + sPath;
 		}
 
 		if (oFixture.navigationPath === "") {
@@ -1438,6 +1447,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 						oRawValue.AnnotationPath = oFixture.AnnotationPath;
 					} else if (oFixture.hasOwnProperty("Path")) {
 						oRawValue.Path = oFixture.Path;
+					} else if (oFixture.hasOwnProperty("PropertyPath")) {
+						oRawValue.PropertyPath = oFixture.PropertyPath;
 					}
 				}
 

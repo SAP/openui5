@@ -94,7 +94,14 @@ function (library, Control, ItemNavigation) {
 		STEP: "data-sap-ui-wpn-step",
 		CURRENT_STEP: "data-sap-ui-wpn-step-current",
 		ACTIVE_STEP: "data-sap-ui-wpn-step-active",
-		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open"
+		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open",
+		ARIA_LABEL: "aria-label",
+		ARIA_DISABLED: "aria-disabled"
+	};
+
+	WizardProgressNavigator.TEXT = {
+		SELECTED: "WIZARD_PROG_NAV_SELECTED",
+		PROCESSED: "WIZARD_PROG_NAV_PROCESSED"
 	};
 
 	WizardProgressNavigator.prototype.init = function () {
@@ -102,6 +109,7 @@ function (library, Control, ItemNavigation) {
 		this._activeStep = 1;
 		this._cachedSteps = null;
 		this._cachedSeparators = null;
+		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._createAnchorNavigation();
 	};
 
@@ -112,9 +120,13 @@ function (library, Control, ItemNavigation) {
 		this._cacheDOMElements();
 		this._updateStepZIndex();
 		this._updateSeparatorsOpenAttribute();
+
 		this._updateAnchorNavigation(zeroBasedActiveStep);
 		this._updateStepActiveAttribute(zeroBasedActiveStep);
+		this._removeAnchorAriaDisabledAttribute(zeroBasedActiveStep);
+
 		this._updateStepCurrentAttribute(zeroBasedCurrentStep);
+		this._updateAnchorAriaLabelAttribute(zeroBasedCurrentStep);
 	};
 
 	/**
@@ -179,9 +191,12 @@ function (library, Control, ItemNavigation) {
 			return this;
 		}
 
-		this._updateStepActiveAttribute(index - 1, this._activeStep - 1);
 		this._updateCurrentStep(index, this._currentStep);
+
+		this._updateStepActiveAttribute(index - 1, this._activeStep - 1);
+		this._addAnchorAriaDisabledAttribute(index - 1);
 		this._updateAnchorNavigation(index - 1);
+
 		this._currentStep = index;
 		this._activeStep = index;
 	};
@@ -342,6 +357,56 @@ function (library, Control, ItemNavigation) {
 	};
 
 	/**
+	 * Adds aria-disabled attribute to all anchors after the specified index
+	 * @param {number} index - The index from which to add aria-disabled=true. Zero-based
+	 * @returns {undefined}
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._addAnchorAriaDisabledAttribute = function (index) {
+		var stepsLength = this._cachedSteps.length,
+			anchor;
+
+		for (var i = index + 1; i < stepsLength; i++) {
+			anchor = this._cachedSteps[i].children[0];
+
+			anchor.setAttribute(WizardProgressNavigator.ATTRIBUTES.ARIA_DISABLED, true);
+			anchor.removeAttribute(WizardProgressNavigator.ATTRIBUTES.ARIA_LABEL);
+		}
+	};
+
+	/**
+	 * Removes the anchor aria-disabled attribute from the DOM structure of the Control
+	 * @param {number} index - The index at which the attribute should be removed. Zero-based
+	 * @returns {undefined}
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._removeAnchorAriaDisabledAttribute = function (index) {
+		this._cachedSteps[index].children[0]
+			.removeAttribute(WizardProgressNavigator.ATTRIBUTES.ARIA_DISABLED);
+	};
+
+	/**
+	 * Updates the anchor aria-label attribute in the DOM structure of the Control
+	 * @param {number} newIndex - The new index at which the attribute should be set. Zero-based
+	 * @param {number} oldIndex - The old index at which the attribute was set. Zero-based
+	 * @returns {undefined}
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._updateAnchorAriaLabelAttribute = function (newIndex, oldIndex) {
+		if (oldIndex !== undefined) {
+			this._cachedSteps[oldIndex].children[0]
+				.setAttribute(
+					WizardProgressNavigator.ATTRIBUTES.ARIA_LABEL,
+					this._resourceBundle.getText(WizardProgressNavigator.TEXT.PROCESSED));
+		}
+
+		this._cachedSteps[newIndex].children[0]
+			.setAttribute(
+				WizardProgressNavigator.ATTRIBUTES.ARIA_LABEL,
+				this._resourceBundle.getText(WizardProgressNavigator.TEXT.SELECTED));
+	};
+
+	/**
 	 * Move to the specified step while updating the current step and active step
 	 * @param {number} newStep - The step number to which current step will be set. Non zero-based
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining
@@ -375,6 +440,7 @@ function (library, Control, ItemNavigation) {
 
 		this._activeStep = newStep;
 		this._updateAnchorNavigation(zeroBasedNewStep);
+		this._removeAnchorAriaDisabledAttribute(zeroBasedNewStep);
 		this._updateStepActiveAttribute(zeroBasedNewStep, zeroBasedOldStep);
 
 		return this.fireStepActivated({index: newStep});
@@ -389,12 +455,14 @@ function (library, Control, ItemNavigation) {
 	 */
 	WizardProgressNavigator.prototype._updateCurrentStep = function (newStep, oldStep) {
 		var zeroBasedNewStep = newStep - 1,
-			zeroBasedOldStep = (oldStep || this._activeStep) - 1;
+			zeroBasedOldStep = (oldStep || this.getCurrentStep()) - 1;
 
 		this._currentStep = newStep;
 		this._updateStepZIndex();
-		this._updateStepCurrentAttribute(zeroBasedNewStep, zeroBasedOldStep);
 		this._updateSeparatorsOpenAttribute();
+		this._updateStepCurrentAttribute(zeroBasedNewStep, zeroBasedOldStep);
+		this._updateAnchorAriaLabelAttribute(zeroBasedNewStep, zeroBasedOldStep);
+
 		return this.fireStepChanged({
 			previous: oldStep,
 			current: newStep

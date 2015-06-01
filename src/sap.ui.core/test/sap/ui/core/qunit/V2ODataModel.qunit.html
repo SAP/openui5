@@ -154,28 +154,173 @@
 		});
 	});
 	
-	test("test metadata promise", function() {
+	asyncTest("test metadata promise", function() {
 		oModel = initModel(true);
 		
 		var oPromise = oModel.metadataLoaded();
 		ok(oPromise, "promise exists");
 		oPromise.then(function(result){
 			ok(true, "Promise resolved");
+			start();
 		}, function(){
 			ok(false, "Promise rejected");
 		});
 	});
 	
-	test("test metadata promise rejected", function() {
-		oModel = new sap.ui.model.odata.v2.ODataModel("/doesnotwork");
+	asyncTest("test metadata promise and refresh", function() {
+		oModel = initModel(true);
 		
 		var oPromise = oModel.metadataLoaded();
 		ok(oPromise, "promise exists");
 		oPromise.then(function(result){
-			ok(false, "Promise resolved");
+			ok(true, "Promise resolved");
+			var oNewP = oModel.refreshMetadata();
+			ok(oNewP, "oNewP promise exists");
+			return oNewP;
 		}, function(){
-			ok(true, "Promise rejected");
+			ok(false, "Promise rejected");
+		})
+		.then(function(result){
+			ok(true, "oNewP Promise resolved");
+			var oNewP2 = oModel.refreshMetadata();
+			ok(oNewP2, "oNewP2 promise exists");
+			return oNewP2;
+		}, function(){
+			ok(false, "oNewP Promise rejected");
+		})
+		.then(function(result){
+			ok(true, "oNewP2 Promise resolved");
+			start();
+		}, function(){
+			ok(false, "oNewP2 Promise rejected");
 		});
+	});
+	
+	asyncTest("test metadata promise rejected refresh", function() {
+		
+		var sTempService = sServiceUri;
+		sServiceUri = "/doesnotWork/";
+		oModel = initModel();
+		var oPromise = oModel.metadataLoaded();
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(false, "Promise resolved which should not happen");
+		}, function(){
+			ok(false, "Promise rejected which should never happen");
+		});
+		
+		var oNewP = oModel.refreshMetadata();
+		ok(oNewP, "oNewP promise exists");
+		oNewP.then(function(result){
+			ok(false, "oNewP Promise resolved");
+		}, function(){
+			ok(true, "oNewP Promise rejected");
+			removeSharedMetadata();
+			sServiceUri = sTempService;
+			start();
+		});
+		
+	});
+	
+	asyncTest("test metadata promise rejected refresh and resolve", function() {
+		var sTempService = sServiceUri;
+		sServiceUri = "/doesnotWork/";
+		oModel = initModel();
+		
+		var oPromise = oModel.metadataLoaded();
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(true, "Promise resolved after metadata url is fixed");
+		}, function(){
+			ok(false, "Promise rejected which should never happen");
+		});
+		
+		var oNewP = oModel.refreshMetadata();
+		ok(oNewP, "oNewP promise exists");
+		oNewP.then(function(result){
+			ok(false, "oNewP Promise resolved");
+		}, function(){
+			ok(true, "oNewP Promise rejected");
+			// fix url
+			oModel.oMetadata.sUrl = sTempService + "$metadata";
+			var oNewP2 = oModel.refreshMetadata();
+			ok(oNewP2, "oNewP2 promise exists");
+			return oNewP2;
+		})	
+		.then(function(result){
+			ok(true, "oNewP2 Promise resolved");
+			removeSharedMetadata();		
+			sServiceUri = sTempService;
+			start();
+		}, function(){
+			ok(false, "oNewP2 Promise rejected");
+		});
+		
+	});
+	
+	asyncTest("test metadata promise ok then refresh failed", function() {
+		
+		oModel = initModel(true);
+
+		var sTempService = sServiceUri;
+		var oPromise = oModel.metadataLoaded();
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(true, "Promise resolved");
+			sServiceUri = "/doesnotWork/";
+			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
+			var oNewP = oModel.refreshMetadata();
+			ok(oNewP, "oNewP promise exists");
+			return oNewP;
+		}, function(){
+			ok(false, "Promise rejected which should never happen");
+		})
+		.then(function(result){
+			ok(false, "oNewP Promise resolved");
+		}, function(){
+			ok(true, "oNewP Promise rejected");
+			removeSharedMetadata();
+			sServiceUri = sTempService;
+			start();
+		});
+	});
+	
+	asyncTest("test metadata promise ok then refresh failed then refresh ok", function() {
+		
+		oModel = initModel(true);
+
+		var oPromise = oModel.metadataLoaded();
+		var sTempService = sServiceUri;
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(true, "Promise resolved");
+			sServiceUri = "/doesnotWork/";
+			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
+			var oNewP = oModel.refreshMetadata();
+			ok(oNewP, "oNewP promise exists");
+			return oNewP;
+		}, function(){
+			ok(false, "Promise rejected which should never happen");
+		})
+		.then(function(result){
+			ok(false, "oNewP Promise resolved");
+		}, function(){
+			ok(true, "oNewP Promise rejected");
+			// fix url
+			oModel.oMetadata.sUrl = sTempService + "$metadata";
+			var oNewP2 = oModel.refreshMetadata();
+			ok(oNewP2, "oNewP promise exists");
+			return oNewP2;
+		})
+		.then(function(result){
+			ok(true, "oNewP2 Promise resolved");
+			removeSharedMetadata();
+			sServiceUri = sTempService;
+			start();
+		}, function(){
+			ok(false, "oNewP2 Promise rejected");
+		});
+
 	});
 
 	asyncTest("test oDataModel read filter test", function() {
@@ -187,6 +332,20 @@
 				var oP = oModel.getProperty("/ProductSet('HT-1000')");
 				ok(oP, "one entry loaded");
 				ok(oP.Name === "Notebook Basic 15", "one entry loaded");
+				start();
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+	});
+	
+	asyncTest("test oDataModel read count request with filter test", function() {
+		oModel.read("/ProductSet/$count", {
+			filters : [ new sap.ui.model.Filter("ProductID", "EQ",
+					"HT-1000") ],
+			success : function(oData, oResponse) {
+				ok(oData === "1", "length check");
 				start();
 			},
 			error : function(oError) {

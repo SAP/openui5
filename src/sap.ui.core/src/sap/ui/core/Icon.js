@@ -89,7 +89,14 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Decorative icons don't have tab stop.
 			 * @since 1.16.4
 			 */
-			decorative : {type : "boolean", group : "Accessibility", defaultValue : true}
+			decorative : {type : "boolean", group : "Accessibility", defaultValue : true},
+
+			/**
+			 * Decides whether a default Icon tooltip should be used if no tooltip is set.
+			 * @since 1.30.0
+			 */
+			useIconTooltip : {type : "boolean", group : "Accessibility", defaultValue : true}
+
 		},
 		associations : {
 
@@ -455,7 +462,8 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 		if (alabelledBy.length > 0) {
 			mAccAttributes.labelledby = alabelledBy.join(" ");
 		} else if (oIconInfo) {
-			mAccAttributes.label = oIconInfo.name;
+			// TODO: should the tooltip property be used here as well?
+			mAccAttributes.label = oIconInfo.text;
 		}
 
 		return mAccAttributes;

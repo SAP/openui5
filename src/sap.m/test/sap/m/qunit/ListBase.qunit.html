@@ -856,7 +856,7 @@
 			sText = "";
 			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
 			sap.ui.getCore().applyChanges();
-			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), "More", 'The dom element has the text "' + sText + '" on ' + oList);
+			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), oRB.getText("LOAD_MORE_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
 
 			// standard setter tests
 			strictEqual(oList.setGrowingTriggerText(""), oList, 'Method returns this pointer on ' + oList);

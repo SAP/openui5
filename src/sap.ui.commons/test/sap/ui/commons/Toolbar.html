@@ -1,158 +1,158 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <title>Toolbar - sap.ui.commons</title>
-		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Toolbar.gif">
+	<title>Toolbar - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Toolbar.gif">
 
-    <script id="sap-ui-bootstrap" type="text/javascript"
-            src="../../../../resources/sap-ui-core.js"
-            data-sap-ui-libs="sap.ui.commons"
-            data-sap-ui-theme="sap_goldreflection"
-            data-sap-ui-trace="false"></script>
+	<script id="sap-ui-bootstrap" type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="false"></script>
 
- 	<style type="text/css">
- 	.testBlink{
- 		background-color: blue;
- 		color: white;
- 	}
- 	</style>
-    <script type="text/javascript">
+	<style type="text/css">
+		.testBlink{
+			background-color: blue;
+			color: white;
+		}
+	</style>
+	<script type="text/javascript">
 
-    function onTextfieldChange(oEvent) {
-      var sText = oEvent.getParameter("newValue");
-      oHelper.alert("You typed following string: " + sText);
-    }
+		function onTextfieldChange(oEvent) {
+			var sText = oEvent.getParameter("newValue");
+			oHelper.alert("You typed following string: " + sText);
+		}
 
-    function onComboChange(oEvent) {
-      var sText = oEvent.getParameter("newValue");
-      oHelper.alert("You selected following value: " + sText);
-    }
+		function onComboChange(oEvent) {
+			var sText = oEvent.getParameter("newValue");
+			oHelper.alert("You selected following value: " + sText);
+		}
 
-    var oHelper = {
-    	alert: function (sMsg) {
-    		jQuery.sap.domById("targetForOutput").innerHTML = sMsg;
-    	}
-    };
-    function onPress(oEvent) {
-      var oButton = oEvent.getSource();
-      oHelper.alert("You pressed button '" + oButton.getId() + "' with label: '" + oButton.getText() + "'");
-    }
+		var oHelper = {
+			alert: function (sMsg) {
+				jQuery.sap.domById("targetForOutput").innerHTML = sMsg;
+			}
+		};
+		function onPress(oEvent) {
+			var oButton = oEvent.getSource();
+			oHelper.alert("You pressed button '" + oButton.getId() + "' with label: '" + oButton.getText() + "'");
+		}
 
-    function openDialog() {
-    	oDialog1.open();
-    }
-    function closeDialog() {
-		oDialog1.close();
-    }
+		function openDialog() {
+			oDialog1.open();
+		}
+		function closeDialog() {
+			oDialog1.close();
+		}
 
-	function addManyItems(oToolbar) {
-		var id = oToolbar.getId();
-		
-	    // 10 buttons
-	    var aIcons =
-	      [
-	        "images/new.png",
-	        "images/open.png",
-	        "images/save.png",
-	        "images/cut.png",
-	        "images/copy.png",
-	        "images/paste2.png",
-	        null,
-	        null,
-	        null,
-	        null
-	      ];
-	    var aLabels =
-		  [
-			  "",
-			  "",
-			  "",
-			  "",
-			  "",
-			  "Paste",
-			  "Forward",
-			  "Process",
-			  "View All",
-			  "Approve"
-	     ];
-	    var aTooltips = 
-			  [
-				  "New Document",
-				  "Open Document",
-				  "Save Document",
-				  "Cut",
-				  "Copy",
-				  "Paste",
-				  "Forward Document",
-				  "Process Document",
-				  "View All Document Contents",
-				  "Approve Document"
-		     ];
+		function addManyItems(oToolbar) {
+			var id = oToolbar.getId();
 
-	   // create ten buttons
-	    for (var i = 0; i < 10; ++i) {
-	      var oButton = new sap.ui.commons.Button(id + "_b_" + i, {text : aLabels[i], tooltip : aTooltips[i], press : onPress});
-	      if (aIcons[i]) {
-	    	  oButton.setIcon(aIcons[i]);
-	      }
+			// 10 buttons
+			var aIcons =
+					[
+						"images/new.png",
+						"images/open.png",
+						"images/save.png",
+						"images/cut.png",
+						"images/copy.png",
+						"images/paste2.png",
+						null,
+						null,
+						null,
+						null
+					];
+			var aLabels =
+					[
+						"",
+						"",
+						"",
+						"",
+						"",
+						"Paste",
+						"Forward",
+						"Process",
+						"View All",
+						"Approve"
+					];
+			var aTooltips =
+					[
+						"New Document",
+						"Open Document",
+						"Save Document",
+						"Cut",
+						"Copy",
+						"Paste",
+						"Forward Document",
+						"Process Document",
+						"View All Document Contents",
+						"Approve Document"
+					];
 
-	      // add separators at various positions
-	      if (i==2) {
-	    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.FullHeight}));
-	      } else if (i==5) {
-	    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
-	      } else if (i==8) {
-	    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"displayVisualSeparator":false}));
-	      }
+			// create ten buttons
+			for (var i = 0; i < 10; ++i) {
+				var oButton = new sap.ui.commons.Button(id + "_b_" + i, {text : aLabels[i], tooltip : aTooltips[i], press : onPress});
+				if (aIcons[i]) {
+					oButton.setIcon(aIcons[i]);
+				}
 
-	      oToolbar.addItem(oButton);
-	    }
+				// add separators at various positions
+				if (i==2) {
+					oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.FullHeight}));
+				} else if (i==5) {
+					oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
+				} else if (i==8) {
+					oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"displayVisualSeparator":false}));
+				}
 
-	    // input field
-	    var oTextField = new sap.ui.commons.TextField(id + "_tf",
-		  {
-		    value : "#0",
-			change : onTextfieldChange
-		  });
-	    oToolbar.addItem(oTextField);
+				oToolbar.addItem(oButton);
+			}
 
-	    oToolbar.addItem(new sap.ui.commons.Label({text:"Select:", labelFor: id + "_cmb"}));
-	    
-	    // combo box for 2nd button's text
-	    var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb", 
-	      {
-	        change : onComboChange, 
-	        items :
-	        [
-	          new sap.ui.core.ListItem({text : "#1"}), 
-	          new sap.ui.core.ListItem({text : "Do it!"}),
-	          new sap.ui.core.ListItem({text : "Hello world!"}),
-	          new sap.ui.core.ListItem({text : "Yet another stupid button text"})
-	        ]
-	      });
-	    oToolbar.addItem(oComboBox);
-	}
+			// input field
+			var oTextField = new sap.ui.commons.TextField(id + "_tf",
+					{
+						value : "#0",
+						change : onTextfieldChange
+					});
+			oToolbar.addItem(oTextField);
 
-	// create the standalone toolbars
-    var oToolbar = new sap.ui.commons.Toolbar("tb1");
-    
-    oToolbar.setDesign(sap.ui.commons.ToolbarDesign.Standard);
-    addManyItems(oToolbar);
-    var oToolbar2 = new sap.ui.commons.Toolbar("tb2");
-    oToolbar2.setDesign(sap.ui.commons.ToolbarDesign.Flat);
-    addManyItems(oToolbar2);
-    var oToolbar3 = new sap.ui.commons.Toolbar("tb3");
-    oToolbar3.setDesign(sap.ui.commons.ToolbarDesign.Transparent);
-    addManyItems(oToolbar3);
+			oToolbar.addItem(new sap.ui.commons.Label({text:"Select:", labelFor: id + "_cmb"}));
+
+			// combo box for 2nd button's text
+			var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb",
+					{
+						change : onComboChange,
+						items :
+								[
+									new sap.ui.core.ListItem({text : "#1"}),
+									new sap.ui.core.ListItem({text : "Do it!"}),
+									new sap.ui.core.ListItem({text : "Hello world!"}),
+									new sap.ui.core.ListItem({text : "Yet another stupid button text"})
+								]
+					});
+			oToolbar.addItem(oComboBox);
+		}
+
+		// create the standalone toolbars
+		var oToolbar = new sap.ui.commons.Toolbar("tb1");
+
+		oToolbar.setDesign(sap.ui.commons.ToolbarDesign.Standard);
+		addManyItems(oToolbar);
+		var oToolbar2 = new sap.ui.commons.Toolbar("tb2");
+		oToolbar2.setDesign(sap.ui.commons.ToolbarDesign.Flat);
+		addManyItems(oToolbar2);
+		var oToolbar3 = new sap.ui.commons.Toolbar("tb3");
+		oToolbar3.setDesign(sap.ui.commons.ToolbarDesign.Transparent);
+		addManyItems(oToolbar3);
 
 
-    // Toolbar within Dialog
-    var oToolbar4 = new sap.ui.commons.Toolbar("dlgTb");
-    oToolbar4.setDesign(sap.ui.commons.ToolbarDesign.Flat);
-    addManyItems(oToolbar4);
+		// Toolbar within Dialog
+		var oToolbar4 = new sap.ui.commons.Toolbar("dlgTb");
+		oToolbar4.setDesign(sap.ui.commons.ToolbarDesign.Flat);
+		addManyItems(oToolbar4);
 
 		// the dialog itself
 		var oDialog1 = new sap.ui.commons.Dialog("myDialog1");
@@ -187,17 +187,17 @@
 
 		// the 3 non-standalone toolbars
 		var oToolbar5 = new sap.ui.commons.Toolbar("tb6");
-    oToolbar5.setDesign(sap.ui.commons.ToolbarDesign.Standard);
-    addManyItems(oToolbar5);
-    oToolbar5.setStandalone(false);
-    var oToolbar6 = new sap.ui.commons.Toolbar("tb7");
-    oToolbar6.setDesign(sap.ui.commons.ToolbarDesign.Flat);
-    addManyItems(oToolbar6);
-    oToolbar6.setStandalone(false);
-    var oToolbar7 = new sap.ui.commons.Toolbar("tb8");
-    oToolbar7.setDesign(sap.ui.commons.ToolbarDesign.Transparent);
-    addManyItems(oToolbar7);
-    oToolbar7.setStandalone(false);
+		oToolbar5.setDesign(sap.ui.commons.ToolbarDesign.Standard);
+		addManyItems(oToolbar5);
+		oToolbar5.setStandalone(false);
+		var oToolbar6 = new sap.ui.commons.Toolbar("tb7");
+		oToolbar6.setDesign(sap.ui.commons.ToolbarDesign.Flat);
+		addManyItems(oToolbar6);
+		oToolbar6.setStandalone(false);
+		var oToolbar7 = new sap.ui.commons.Toolbar("tb8");
+		oToolbar7.setDesign(sap.ui.commons.ToolbarDesign.Transparent);
+		addManyItems(oToolbar7);
+		oToolbar7.setStandalone(false);
 
 		function changeButtons(oEvent) {
 			if (oEvent.getParameter("pressed")){
@@ -214,56 +214,56 @@
 		var oToolbar8 = new sap.ui.commons.Toolbar("tb9", {
 			design: sap.ui.commons.ToolbarDesign.Standard,
 			items: [ new sap.ui.commons.ToggleButton("tb9_b1", {text: "Click me", press: changeButtons}),
-			         new sap.ui.commons.Button("tb9_b2", {text: "Test1", press: onPress}),
-			         new sap.ui.commons.Button("tb9_b3", {text: "Test2", press: onPress}),
-			         new sap.ui.commons.Button("tb9_b4", {text: "Test3", press: onPress}),
-			         new sap.ui.commons.Button("tb9_b5", {text: "Test4", press: onPress})]
+				new sap.ui.commons.Button("tb9_b2", {text: "Test1", press: onPress}),
+				new sap.ui.commons.Button("tb9_b3", {text: "Test2", press: onPress}),
+				new sap.ui.commons.Button("tb9_b4", {text: "Test3", press: onPress}),
+				new sap.ui.commons.Button("tb9_b5", {text: "Test4", press: onPress})]
 		});
 
 		var oToolbar9 = new sap.ui.commons.Toolbar("tb10", {
 			design: sap.ui.commons.ToolbarDesign.Standard,
 			items: [ new sap.ui.commons.Button("tb10_b1", {text: "Test1"}),
-			         new sap.ui.commons.SegmentedButton("tb10_sb1",{
-			        	 buttons: [ new sap.ui.commons.Button("sb1_b1",{text:"A"}),
-			        	            new sap.ui.commons.Button("sb1_b2",{text:"B"}),
-			        	            new sap.ui.commons.Button("sb1_b3",{text:"C"})]}),
-			         new sap.ui.commons.TextField("tb10_tf1", {value: "Test"})]
+				new sap.ui.commons.SegmentedButton("tb10_sb1",{
+					buttons: [ new sap.ui.commons.Button("sb1_b1",{text:"A"}),
+						new sap.ui.commons.Button("sb1_b2",{text:"B"}),
+						new sap.ui.commons.Button("sb1_b3",{text:"C"})]}),
+				new sap.ui.commons.TextField("tb10_tf1", {value: "Test"})]
 		});
 
 		var sText = sap.ui.getCore().getConfiguration().getRTL() ? "שלום שלום" : "Hello Hello";
 		var oToolbar10 = new sap.ui.commons.Toolbar("tb11", {
 			design: sap.ui.commons.ToolbarDesign.Standard,
 			items: [
-			  new sap.ui.commons.Label({text: "Label", labelFor: "TF11"}),
+				new sap.ui.commons.Label({text: "Label", labelFor: "TF11"}),
 				new sap.ui.commons.TextField("TF11", {
-				    value : sText
+					value : sText
 				}),
 				new sap.ui.commons.ComboBox({
 					value : sText,
 					items : [
-					         new sap.ui.core.ListItem({text: sText}),
-					         new sap.ui.core.ListItem({text: sText+" 1"}),
-					         new sap.ui.core.ListItem({text: sText+" 2"})
+						new sap.ui.core.ListItem({text: sText}),
+						new sap.ui.core.ListItem({text: sText+" 1"}),
+						new sap.ui.core.ListItem({text: sText+" 2"})
 					]
 				}),
 				new sap.ui.commons.DropdownBox({
 					value : "Hello Hello",
 					items : [
-					         new sap.ui.core.ListItem({text: sText}),
-					         new sap.ui.core.ListItem({text: sText+" 1"}),
-					         new sap.ui.core.ListItem({text: sText+" 2"})
+						new sap.ui.core.ListItem({text: sText}),
+						new sap.ui.core.ListItem({text: sText+" 1"}),
+						new sap.ui.core.ListItem({text: sText+" 2"})
 					]
 				}),
 				new sap.ui.commons.ValueHelpField({
-				    value : sText
+					value : sText
 				}),
 				new sap.ui.commons.SearchField({
-				    value : sText,
-				    enableListSuggest: false
+					value : sText,
+					enableListSuggest: false
 				}),
 				new sap.ui.commons.SearchField({
-				    value : sText,
-				    suggest: function(oEvent){
+					value : sText,
+					suggest: function(oEvent){
 						var sVal = oEvent.getParameter("value");
 						var aSuggestions = [];
 						for(var i=0; i<10; i++){
@@ -278,66 +278,115 @@
 			]
 		});
 
+		var oButtonA = new sap.ui.commons.Button({text: "A", width: "50px"});
+		var oButtonB = new sap.ui.commons.Button({text: "B", width: "50px", enabled: false});
+		var oButtonC = new sap.ui.commons.Button({text: "C", width: "50px", visible: false, enabled: false});
+		var oButtonD = new sap.ui.commons.Button({text: "D", width: "50px"});
+		var oButtonE = new sap.ui.commons.Button({text: "E", width: "50px", enabled: false});
+		var oButtonF = new sap.ui.commons.Button({text: "F", width: "50px"});
+		var oButtonG = new sap.ui.commons.Button({text: "G", width: "50px", visible: false});
+
+		var oToolbar11 = new sap.ui.commons.Toolbar({
+			items: [oButtonA, oButtonB, oButtonC],
+			rightItems: [oButtonD, oButtonE, oButtonF, oButtonG]
+		});
+		oToolbar11.setWidth("400px");
+
+
+		oButtonA = new sap.ui.commons.Button({text: "A", width: "50px"});
+		oButtonB = new sap.ui.commons.Button({text: "B", width: "50px", visible: false});
+		oButtonC = new sap.ui.commons.Button({text: "C", width: "50px", visible: false});
+		oButtonD = new sap.ui.commons.Button({text: "D", width: "50px"});
+		oButtonE = new sap.ui.commons.Button({text: "E", width: "50px", visible: false});
+		oButtonF = new sap.ui.commons.Button({text: "F", width: "50px"});
+
+		var oToolbar12 = new sap.ui.commons.Toolbar({
+			items: [oButtonA, oButtonB, oButtonC, oButtonD, oButtonE, oButtonF],
+			width:"145px"
+		});
+
+		var oToolbar13 = new sap.ui.commons.Toolbar({
+			width: '300px',
+			items: [
+				new sap.ui.commons.ToolbarSeparator({design: sap.ui.commons.ToolbarSeparatorDesign.FullHeight}),
+				new sap.ui.commons.Button({icon: "sap-icon://competitor"}),
+				new sap.ui.commons.Button({icon: "sap-icon://delete", visible: false})
+			]
+		});
+
 		// all the UiAreas...
-    oToolbar.placeAt("uiArea");
-    oToolbar2.placeAt("uiArea2");
-    oToolbar3.placeAt("uiArea3");
-    oToolbarWidth.placeAt("uiAreaWidth");
-    oToolbarWidth2.placeAt("uiAreaWidth2");
-    oToolbar5.placeAt("uiArea5");
-    oToolbar6.placeAt("uiArea6");
-    oToolbar7.placeAt("uiArea7");
-    oToolbar8.placeAt("uiArea8");
-    oToolbar9.placeAt("uiArea9");
-    oToolbar10.placeAt("uiAreaTextFields");
-    </script>
+		oToolbar.placeAt("uiArea");
+		oToolbar2.placeAt("uiArea2");
+		oToolbar3.placeAt("uiArea3");
+		oToolbarWidth.placeAt("uiAreaWidth");
+		oToolbarWidth2.placeAt("uiAreaWidth2");
+		oToolbar5.placeAt("uiArea5");
+		oToolbar6.placeAt("uiArea6");
+		oToolbar7.placeAt("uiArea7");
+		oToolbar8.placeAt("uiArea8");
+		oToolbar9.placeAt("uiArea9");
+		oToolbar10.placeAt("uiAreaTextFields");
+		oToolbar11.placeAt("uiAreaToolbarWithInvisibleItems");
+		oToolbar12.placeAt("uiAreaToolbarWithInvisibleItemsWithOverflow");
+		oToolbar13.placeAt("uiAreaToolbarWithFirstItemSeparator");
+	</script>
 </head>
 <body class="sapUiBody" role="application">
-	<h1>Test Page for sap.ui.commons.Toolbar</h1>
+<h1>Test Page for sap.ui.commons.Toolbar</h1>
 
-    <b>Standalone Toolbars (having a border):</b>
-    <div id="uiArea"></div>
+<b>Standalone Toolbars (having a border):</b>
+<div id="uiArea"></div>
 
-    <br>
-    <div id="uiArea2"></div>
+<br>
+<div id="uiArea2"></div>
 
-    <br>
-    <div id="uiArea3"></div>
-    
-    <br>
-    <div id="uiAreaTextFields"></div>
+<br>
+<div id="uiArea3"></div>
 
-
-    <br>
-    <b>Toolbar in Dialog (click to open):</b> 
-    <span id="uiAreaBtn"></span>
+<br>
+<div id="uiAreaTextFields"></div>
 
 
-    <br> <br>
-    <b>Toolbars with width set to 300px:</b>
-    <span id="uiAreaWidth"></span>
-    <img src="images/test-ruler.png" style="height: 20px;border:0;margin:0;padding:0;">
-	 <span id="uiAreaWidth2"></span>    
+<br>
+<b>Toolbar in Dialog (click to open):</b>
+<span id="uiAreaBtn"></span>
 
 
-    <br> <b>Embedded Toolbars (red border is drawn to simulate the embedder):</b>
-    <div id="uiArea5" style="border: 1px solid red"></div>
-
-    <br>
-    <div id="uiArea6" style="border: 1px solid red"></div>
-
-    <br>
-    <div id="uiArea7" style="border: 1px solid red"></div>
+<br> <br>
+<b>Toolbars with width set to 300px:</b>
+<span id="uiAreaWidth"></span>
+<img src="images/test-ruler.png" style="height: 20px;border:0;margin:0;padding:0;">
+<span id="uiAreaWidth2"></span>
 
 
-    <br> Test if ItemNavigation is updated when items are re-rendered. Just click first button
-    <div id="uiArea8"></div>
+<br> <b>Embedded Toolbars (red border is drawn to simulate the embedder):</b>
+<div id="uiArea5" style="border: 1px solid red"></div>
 
-    <br> Toolbar with Segmented Button for navigation test
-    <div id="uiArea9"></div>
+<br>
+<div id="uiArea6" style="border: 1px solid red"></div>
 
-	<p>
+<br>
+<div id="uiArea7" style="border: 1px solid red"></div>
+
+
+<br><b> Test if ItemNavigation is updated when items are re-rendered. Just click first button</b>
+<div id="uiArea8"></div>
+
+<br> <b>Toolbar with Segmented Button for navigation test</b>
+<div id="uiArea9"></div>
+
+<br> <b>Toolbar (400px width) with some invisible (visible = false), disabled (enabled = false) items in left and right side for navigation test</b>
+<div id="uiAreaToolbarWithInvisibleItems"></div>
+
+<br> <b>Toolbar (145px width) with 3 invisible (visible = false) and 3 visible items (all with width 50px).
+As there is no space for the 3th visible item, it goes into the overflow</b>
+<div id="uiAreaToolbarWithInvisibleItemsWithOverflow"></div>
+
+<br> <b>Toolbar (300px width) with ToolbarSeparator as first item and an invisible item as last</b>
+<div id="uiAreaToolbarWithFirstItemSeparator"></div>
+
+<p>
 	<span id="targetForOutput"></span>
-	</p>
+</p>
 </body>
 </html>
