@@ -1,0 +1,27 @@
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputDatabinding.Page"
+	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+<Label text="token databinding in single-line multiinput" />
+<MultiInput id="multiinput1" 
+	tokens="{
+				path: '/ProductCollection',
+                sorter: { path: 'Name' }
+            }">
+    <tokens>
+    	<Token key="{ProductId}" text="{Name}" />
+    </tokens>    
+</MultiInput>
+
+<Label text="toekn databinding in multi-line multiinput" />
+<MultiInput enableMultiLineMode="true" id="multiinput2" 
+	tokens="{
+				path: '/ProductCollection',
+                sorter: { path: 'Name' }
+            }">
+	<tokens>            
+    	<Token key="{ProductId}" text="{Name}" />
+    </tokens>    
+</MultiInput>
+
+</mvc:View>
