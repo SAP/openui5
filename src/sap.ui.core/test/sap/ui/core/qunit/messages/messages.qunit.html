@@ -93,7 +93,7 @@
 		ok(oMessageManager, 'MessageManager instance created');
 		var oMessageModel = oMessageManager.getMessageModel();
 		ok(oMessageModel instanceof sap.ui.model.message.MessageModel, 'MessageModel created');
-		ok(jQuery.isPlainObject(oMessageModel.getObject('/')), 'No Messages');
+		equal(oMessageModel.getObject('/').length, 0, 'No Messages');
 	});
 	
 	asyncTest("addMessage", function() {

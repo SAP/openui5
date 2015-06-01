@@ -182,15 +182,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	MessageManager.prototype._updateMessageModel = function() {
 		var aMessages = [];
 		
-		if (!this.oMessageModel) {
-			this.oMessageModel = new MessageModel(this);
-		}
+		var oMessageModel = this.getMessageModel();
+		
 		jQuery.each(this.mMessages, function(sProcessorId, mMessages) {
 			jQuery.each(mMessages, function(sKey, vMessages){
 				aMessages = jQuery.merge(aMessages, vMessages);
 			});
 		});
-		this.oMessageModel.setData(aMessages);
+		oMessageModel.setData(aMessages);
 		this._pushMessages();
 	};
 	
@@ -365,6 +364,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	MessageManager.prototype.getMessageModel = function() {
 		if (!this.oMessageModel) {
 			this.oMessageModel = new MessageModel(this);
+			this.oMessageModel.setData([]);
 		}
 		return this.oMessageModel;
 	};
