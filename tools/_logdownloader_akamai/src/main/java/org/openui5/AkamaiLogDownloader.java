@@ -793,7 +793,7 @@ public class AkamaiLogDownloader {
 			}
 			
 			// write the UA file
-			List<String> sorted = flattenAndSortMap(uaMap);
+			List<String> sorted = flattenAndSortMap(uaMap, "");
 			File uaFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_user-agents.csv");
 			BufferedWriter out = new BufferedWriter(new FileWriter(uaFile)); 
 			for (String text : sorted) {
@@ -802,7 +802,7 @@ public class AkamaiLogDownloader {
 			out.close();
 			
 			// write the referrers file
-			sorted = flattenAndSortMap(referrerMap);
+			sorted = flattenAndSortMap(referrerMap, "\"");
 			File refFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_referrers.csv");
 			out = new BufferedWriter(new FileWriter(refFile)); 
 			for (String text : sorted) {
@@ -811,7 +811,7 @@ public class AkamaiLogDownloader {
 			out.close();
 			
 			// write the referrers file for the requests to the UI5 core
-			sorted = flattenAndSortMap(coreReferrerMap);
+			sorted = flattenAndSortMap(coreReferrerMap, "\"");
 			refFile = new File(directory + File.separator + "analysis_" + this.timestamp + "_core_referrers.csv");
 			out = new BufferedWriter(new FileWriter(refFile)); 
 			for (String text : sorted) {
@@ -849,13 +849,14 @@ public class AkamaiLogDownloader {
 	 * Sorts the given map by the value and returns a new sorted map containing the result of this sorting.
 	 * 
 	 * @param map
+	 * @param quotes a string that is added before and after the map values
 	 * @return
 	 */
-	private List<String> flattenAndSortMap(final Map<String, Integer> map) {
+	private List<String> flattenAndSortMap(final Map<String, Integer> map, String quotes) {
 		List<String> result = new ArrayList<String>();
 		
 		for (String key : map.keySet()) {
-			result.add(map.get(key) + ";\"" + key + "\"\n");
+			result.add(map.get(key) + ";" + quotes + key + quotes + "\n");
 		}
 		
 		Collections.sort(result, new Comparator<String>() { // sort lines by date

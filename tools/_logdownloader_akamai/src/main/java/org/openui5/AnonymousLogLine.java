@@ -344,9 +344,13 @@ public class AnonymousLogLine {
 				|| ref.startsWith("https://github.com/SAP/openui5")
 				|| ref.startsWith("http://openui5picks.tumblr.com")
 				|| ref.startsWith("http://openui5.hana.ondemand.com")
-				|| ref.startsWith("https://openui5.hana.ondemand.com")) {
+				|| ref.startsWith("https://openui5.hana.ondemand.com")
+				|| ref.startsWith("")) {
 			return null;
 		}
+		
+		
+		ref = ref.replaceAll("(?i)id=[^&]+", "id=x");
 		
 		return ref;
 	}
