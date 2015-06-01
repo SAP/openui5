@@ -23,6 +23,7 @@
 		#content {
 			padding-left: 0; /* overrides the padding of demokit */
 		}
+
 		#busyIndicator {
 			margin-top: 8em;
 			text-align: center;
@@ -30,11 +31,15 @@
 		}
 
 		#CompactModeLabel, #RTLLabel {
-			padding-top:1rem
+			padding-top:1rem;
+		}
+
+		html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
+			float:left;
 		}
 
 		#CompactModeButtons, #RTLButtons {
-			float:right
+			float:right;
 		}
 	</style>
 
