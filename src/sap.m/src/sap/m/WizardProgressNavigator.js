@@ -92,6 +92,7 @@ function (library, Control, ItemNavigation) {
 
 	WizardProgressNavigator.ATTRIBUTES = {
 		STEP: "data-sap-ui-wpn-step",
+		STEP_COUNT: "data-sap-ui-wpn-step-count",
 		CURRENT_STEP: "data-sap-ui-wpn-step-current",
 		ACTIVE_STEP: "data-sap-ui-wpn-step-active",
 		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open",
