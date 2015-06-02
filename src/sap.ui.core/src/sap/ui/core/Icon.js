@@ -95,8 +95,13 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			 * Decides whether a default Icon tooltip should be used if no tooltip is set.
 			 * @since 1.30.0
 			 */
-			useIconTooltip : {type : "boolean", group : "Accessibility", defaultValue : true}
+			useIconTooltip : {type : "boolean", group : "Accessibility", defaultValue : true},
 
+			/**
+			 * This defines the alternative text which is used for outputting the aria-label attribute on the DOM.
+			 * @since 1.30.0
+			 */
+			alt : {type : "string", group : "Accessibility", defaultValue : null}
 		},
 		associations : {
 
@@ -432,17 +437,31 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 
 	Icon.prototype.attachPress = function() {
 		var aMyArgs = Array.prototype.slice.apply(arguments);
-		aMyArgs.splice(0, 0, "press");
-		this.$().css("cursor", "pointer");
-		return Control.prototype.attachEvent.apply(this, aMyArgs);
+		aMyArgs.unshift("press");
+
+		Control.prototype.attachEvent.apply(this, aMyArgs);
+
+		if (this.hasListeners("press")) {
+			this.$().css("cursor", "pointer").attr({
+				role: "button",
+				tabindex: 0
+			});
+		}
+
+		return this;
 	};
 
 	Icon.prototype.detachPress = function() {
 		var aMyArgs = Array.prototype.slice.apply(arguments);
-		aMyArgs.splice(0, 0, "press");
+		aMyArgs.unshift("press");
+
 		Control.prototype.detachEvent.apply(this, aMyArgs);
+
 		if (!this.hasListeners("press")) {
-			this.$().css("cursor", "default");
+			this.$().css("cursor", "default").attr({
+				role: this.getDecorative() ? "presentation" : "img",
+				tabindex: -1
+			});
 		}
 		return this;
 	};
@@ -451,6 +470,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
 			alabelledBy = this.getAriaLabelledBy(),
 			sTooltip = this.getTooltip_AsString(),
+			sAlt = this.getAlt(),
 			bUseIconTooltip = this.getUseIconTooltip(),
 			mAccAttributes = {};
 
@@ -458,13 +478,17 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			mAccAttributes.role = "presentation";
 			mAccAttributes.hidden = "true";
 		} else {
-			mAccAttributes.role = "button";
+			if (this.hasListeners("press")) {
+				mAccAttributes.role = "button";
+			} else {
+				mAccAttributes.role = "img";
+			}
 		}
 
 		if (alabelledBy.length > 0) {
 			mAccAttributes.labelledby = alabelledBy.join(" ");
-		} else if (sTooltip || (bUseIconTooltip && oIconInfo)) {
-			mAccAttributes.label = sTooltip || oIconInfo.text;
+		} else if (sAlt || sTooltip || (bUseIconTooltip && oIconInfo)) {
+			mAccAttributes.label = sAlt || sTooltip || oIconInfo.text;
 		}
 
 		return mAccAttributes;

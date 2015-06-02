@@ -152,9 +152,9 @@
 				setup: function () {
 					this.sIconName = "alert";
 					this.sTooltip = "tooltip";
+					this.sAlt = "alt";
 					this.oAriaIcon = new sap.ui.core.Icon({
-						src: sap.ui.core.IconPool.getIconURI(this.sIconName),
-						tooltip: this.sTooltip
+						src: sap.ui.core.IconPool.getIconURI(this.sIconName)
 					});
 
 					this.oAriaIcon.placeAt("qunit-fixture");
@@ -170,7 +170,15 @@
 				var $icon = this.oAriaIcon.$();
 
 				assert.strictEqual($icon.attr("role"), "presentation", "role should be set to presentation");
+				assert.strictEqual($icon.attr("tabindex"), "-1", "tabindex is set to -1");
+				assert.strictEqual($icon.attr("aria-label"), this.sIconName, "aria-label is output using icon text");
+
+				this.oAriaIcon.setTooltip(this.sTooltip);
+				sap.ui.getCore().applyChanges();
+
+				$icon = this.oAriaIcon.$();
 				assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
+				assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label is output using tooltip");
 			});
 
 			QUnit.test("When decorative is set to false", function (assert) {
@@ -179,14 +187,32 @@
 
 				var $icon = this.oAriaIcon.$();
 
-				assert.strictEqual($icon.attr("role"), "button", "role should be set to button");
-				assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
+				assert.strictEqual($icon.attr("role"), "img", "role should be set to img");
+				assert.strictEqual($icon.attr("title"), this.sIconName, "title is rendered with property 'tooltip'");
+				assert.strictEqual($icon.attr("tabindex"), "-1", "tabindex is set to -1");
 			});
 
-			QUnit.test("When ariaLabelledBy is NOT set", function (assert) {
-				var $icon = this.oAriaIcon.$();
+			QUnit.test("press handler and accessbility", function(assert) {
+				var fnPressHandler = function() {};
 
-				assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label should be " + this.sTooltip);
+				this.oAriaIcon.attachPress(fnPressHandler);
+
+				var $icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("role"), "button", "role is set to button");
+				assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
+
+				this.oAriaIcon.detachPress(fnPressHandler);
+				assert.strictEqual($icon.attr("role"), "presentation", "role is set back to presentation");
+				assert.strictEqual($icon.attr("tabindex"), "-1", "tabindex is set back to -1");
+			});
+
+			QUnit.test("alt and accessbility", function(assert) {
+				this.oAriaIcon.setAlt(this.sAlt);
+				this.oAriaIcon.setTooltip(this.sTooltip);
+				sap.ui.getCore().applyChanges();
+
+				var $icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("aria-label"), this.sAlt, "aria-label is output using alt property");
 			});
 
 			QUnit.test("When ariaLabelledBy IS set", function (assert) {
@@ -215,12 +241,15 @@
 				}
 			});
 			QUnit.test("useIconTooltip = true (default) / without tooltip", function (assert) {
+				var oIconInfo = sap.ui.core.IconPool.getIconInfo("alert");
+
 				this.createIcon({
-					src: sap.ui.core.IconPool.getIconURI("alert")
+					src: oIconInfo.uri
 				});
+
 				assert.equal(this.oIcon.getUseIconTooltip(), true, "Default value of property 'useIconTooltip' should be 'true'");
 				assert.notEqual(this.oIcon.$().attr("title"), undefined, "title should not be empty");
-				assert.notEqual(this.oIcon.$().attr("aria-label"), undefined, "aria-label should not be empty");
+				assert.equal(this.oIcon.$().attr("aria-label"), oIconInfo.text, "aria-label should be set by using the icon's text");
 				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
 			QUnit.test("useIconTooltip = true (default) / with tooltip", function (assert) {
