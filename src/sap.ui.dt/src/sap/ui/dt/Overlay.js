@@ -22,14 +22,14 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	var oOverlayContainer;
 
 	/**
-	 * Constructor for a new Overlay.
+	 * Constructor for an Overlay.
 	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The Overlay allows to create an absolute positioned DIV above the associated
-	 * control / element.
+	 * The Overlay allows to create an absolute positioned DIV above the associated element.
+	 * It also creates AggregationOverlays for every public aggregation of the associated element.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -49,46 +49,70 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				// we redefine the "visible" property so that the RenderManager won't render invisible placeholder
+				/** 
+				 * Wheather the overlay and it's descendants should be visible on a screen
+				 * We are overriding Control's property to prevent RenderManager from rendering of an invisible placeholder
+				 */	
 				visible : {
 					type : "boolean",
 					defaultValue : true
 				},
+				/** 
+				 * Whether the Overlay is selected
+				 */					
 				selected : {
 					type : "boolean",
 					defaultValue : false
 				},
+				/** 
+				 * Whether the Overlay is selectable
+				 */
 				selectable : {
 					type : "boolean",
 					defaultValue : true
 				},
+				/** 
+				 * Whether the Overlay is draggable
+				 */
 				draggable : {
 					type : "boolean"
-				},
-				offset : {
-					type : "object"
 				}
 			},
 			associations : {
+				/** 
+				 * An Element to create the Overlay for
+				 */
 				element : {
 					type : "sap.ui.core.Element"
 				}
 			},
 			aggregations : {
+				/**
+				 * AggregationOverlays for the public aggregations of the associated Element
+				 */
 				_aggregationOverlays : {
 					type : "sap.ui.dt.AggregationOverlay",
 					multiple : true,
 					visibility : "hidden"
 				},
+				/**
+				 * DesignTime metadata for the associated Element
+				 */
 				designTimeMetadata : {
 					type : "sap.ui.dt.DesignTimeMetadata",
 					multiple : false
 				}
 			},
 			events : {
+				/**
+				 * Event fired when the Overlay is destroyed
+				 */
 				destroyed : {
 					parameters : {}
 				},
+				/**
+				 * Event fired when the property "Selection" is changed
+				 */
 				selectionChange : {
 					parameters : {
 						selected : {
@@ -96,6 +120,9 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 						}
 					}
 				},
+				/**
+				 * Event fired when the property "Draggable" is changed
+				 */
 				draggableChange : {
 					parameters : {
 						selected : {
@@ -103,6 +130,9 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 						}
 					}
 				},
+				/**
+				 * Event fired when the associated Element is modified
+				 */
 				elementModified : {
 					parameters : {
 						type : "string",
@@ -116,8 +146,10 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	});
 
 	/** 
+	 * Creates and/or returns an overlay container element, where all Overlays should be rendered (initially)
+	 * @return {Element} overlay container
 	 * @static
-	*/
+	 */
 	Overlay.getOverlayContainer = function() {
 		if (!oOverlayContainer) {
 			oOverlayContainer = jQuery("#" + sOverlayContainerId);
@@ -130,6 +162,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
+	 * Removes an overlay container element from DOM
 	 * @static
 	 */
 	Overlay.removeOverlayContainer = function() {
@@ -141,7 +174,8 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * @private
+	 * Called when the Overlay is initialized		
+	 * @protected
 	 */
 	Overlay.prototype.init = function() {
 		this._oDefaultDesignTimeMetadata = null;
@@ -149,9 +183,9 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		this._bVisible = null;
 	};
 
-
 	/** 
-	 * @private
+	 * Called when the AggregationOverlay is destroyed	
+	 * @protected
 	 */
 	Overlay.prototype.exit = function() {
 		this._destroyDefaultDesignTimeMetadata();
@@ -176,14 +210,8 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * @override
-	 */
-	Overlay.prototype.getDomRef = function() {
-		return this._oDomRef || Control.prototype.getDomRef.apply(this, arguments);
-	};
-
-	/** 
-	 * @override
+	 * Called after Overlay rendering phase
+	 * @protected
 	 */
 	Overlay.prototype.onAfterRendering = function() {
 		this._oDomRef = this.getDomRef();
@@ -195,13 +223,198 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * @public
+	 * @return {Element} The Element's DOM Element sub DOM Element or null	
+	 * @override
 	 */
-	Overlay.prototype.getAssociatedDomRef = function() {
-		return ElementUtil.getDomRef(this.getElementInstance());
-	};	
+	Overlay.prototype.getDomRef = function() {
+		return this._oDomRef || Control.prototype.getDomRef.apply(this, arguments);
+	};
 
 	/** 
+	 * Sets an associated Element to create an overlay for
+	 * @param {String|sap.ui.core.Element} vElement element or element's id
+	 * @returns {sap.ui.dt.Overlay} returns this
+	 * @public
+	 */
+	Overlay.prototype.setElement = function(vElement) {
+		var oOldElement = this.getElementInstance();
+		if (oOldElement instanceof sap.ui.core.Element) {
+			OverlayRegistry.deregister(oOldElement);
+			this._unobserve(oOldElement);
+		}
+
+		this.destroyAggregation("_aggregationOverlays");
+		this._destroyDefaultDesignTimeMetadata();
+		delete this._elementId;
+		
+		this.setAssociation("element", vElement);
+		this._createAggregationOverlays();
+
+		var oElement = this.getElementInstance();
+
+		this._elementId = oElement.getId();
+		OverlayRegistry.register(oElement, this);
+		this._observe(oElement);
+
+		var oParentOverlay = OverlayUtil.getClosestOverlayFor(oElement);
+		if (oParentOverlay) {
+			oParentOverlay.sync();
+		}
+
+		return this;
+	};		
+
+	/**
+	 * Returns wether the Overlay is visible
+	 * @return {boolean} if the Overlay is visible
+	 * @public
+	 */
+	Overlay.prototype.getVisible = function() {
+		if (this._bVisible === null) {
+			return this.getDesignTimeMetadata().isVisible();
+		} else {
+			return this.getProperty("visible");
+		}
+	};
+
+	/**
+	 * Sets wether the Overlay is visible
+	 * @param {boolean} bVisible if the Overlay is visible
+	 * @returns {sap.ui.dt.Overlay} returns this	 
+	 * @public
+	 */
+	Overlay.prototype.setVisible = function(bVisible) {
+		this.setProperty("visible", bVisible);
+		this._bVisible = bVisible;
+
+		return this;
+	};	
+
+	/**
+	 * Sets wether the Overlay is selectable
+	 * @param {boolean} bSelectable if the Overlay is selectable
+	 * @returns {sap.ui.dt.Overlay} returns this	 
+	 * @public
+	 */
+	Overlay.prototype.setSelectable = function(bSelectable) {
+		if (!bSelectable) {
+			this.setSelected(false);
+		}
+
+		this.setProperty("selectable", bSelectable);
+
+		return this;
+	};
+	
+	/**
+	 * Sets wether the Overlay is selected and toggles corresponding css class
+	 * @param {boolean} bSelected if the Overlay is selected
+	 * @param {boolean} bSuppressEvent (internal use only) supress firing "selectionChange" event
+	 * @returns {sap.ui.dt.Overlay} returns this	 	 
+	 * @public
+	 */
+	Overlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
+		if (this.isSelectable() && bSelected !== this.isSelected()) {
+			this.setProperty("selected", bSelected);
+			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
+
+			if (!bSuppressEvent) {
+				this.fireSelectionChange({
+					selected : bSelected
+				});	
+			}
+		}
+
+		return this;
+	};
+
+	/** 
+	 * Sets wether the Overlay is draggable and toggles corresponding css class
+	 * @param {boolean} bDraggable if the Overlay is draggable
+	 * @returns {sap.ui.dt.Overlay} returns this	 	 
+	 * @public
+	 */
+	Overlay.prototype.setDraggable = function(bDraggable) {
+		if (this.getDraggable() !== bDraggable) {
+			this.fireDraggableChange({draggable : bDraggable});
+			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
+			
+			this.setProperty("draggable", bDraggable);
+		}
+
+		return this;
+	};	
+
+	/**
+	 * Returns the DesignTime metadata of this Overlay, if no DT metadata exists, creates and returns the default DT metadata object
+	 * @return {sap.ui.DesignTimeMetadata} DT metadata of the Overlay
+	 * @public
+	 */
+	Overlay.prototype.getDesignTimeMetadata = function() {
+		var oDesignTimeMetdata = this.getAggregation("designTimeMetadata");
+		if (!oDesignTimeMetdata && !this._oDefaultDesignTimeMetadata) {
+			this._oDefaultDesignTimeMetadata = new DesignTimeMetadata({
+				data : this._getElementDesignTimeMetadata()
+			});
+		}
+		return oDesignTimeMetdata || this._oDefaultDesignTimeMetadata;
+	};
+
+	/**
+	 * Syncs all AggregationOverlays children of this Overlay
+	 * To sync an AggregationOverlay means to find all Overlays registered for public children of the associated aggregation
+	 * and to add them inside of the AggregationOverlay
+	 * @public
+	 */
+	Overlay.prototype.sync = function() {
+		var that = this;
+		var aAggregationOverlays = this.getAggregationOverlays();
+		aAggregationOverlays.forEach(function(oAggregationOverlay) {
+			that._syncAggregationOverlay(oAggregationOverlay);
+		});
+	};
+
+	/**
+	 * Calculate and update CSS styles for the Overlay's DOM
+	 * The calculation is based on original associated DOM state and parent overlays
+	 * This method also calls "applyStyles" method for every child AggregationOverlay of this Overlay (cascade)
+	 * @public
+	 */
+	Overlay.prototype.applyStyles = function() {
+		var oElementGeometry = this.getGeometry();
+
+		if (oElementGeometry) {
+			var oOverlayParent = OverlayUtil.getClosestScrollable(this) || this.getParent();
+			var mParentOffset = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().offset() : null;
+			var iScrollOffsetLeft = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().scrollLeft() : null;
+			var iScrollOffsetTop = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().scrollTop() : null;
+			var mPosition = DOMUtil.getOffsetFromParent(oElementGeometry.position, mParentOffset, iScrollOffsetTop, iScrollOffsetLeft);
+
+			var iZIndex = DOMUtil.getZIndex(oElementGeometry.domRef);
+
+			var $overlay = this.$();
+			var mSize = oElementGeometry.size;
+
+			$overlay.css("width", mSize.width + "px");
+			$overlay.css("height", mSize.height + "px");
+			$overlay.css("top", mPosition.top + "px");
+			$overlay.css("left", mPosition.left + "px");
+			if (iZIndex) {
+				$overlay.css("z-index", iZIndex);
+			}
+
+			this.getAggregationOverlays().forEach(function(oAggregationOverlay) {
+				oAggregationOverlay.applyStyles();
+			});
+		}
+	};
+
+	/** 
+	 * Returns an object, which describes the DOM geometry of the element associated with this overlay or null if it can't be found
+	 * The geometry is calculated based on the associated element's DOM reference, if it exists or based on it's public children
+	 * Object may contain following fields: position - absolute position of Element in DOM; size - absolute size of Element in DOM
+	 * Object may contain domRef field, when the associated Element's DOM can be found
+	 * @return {object} geometry object describing the DOM of the Element associated with this Overlay 
 	 * @public
 	 */
 	Overlay.prototype.getGeometry = function() {
@@ -246,70 +459,6 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		
 	};
 
-
-	Overlay.prototype.applyStyles = function() {
-		var oElementGeometry = this.getGeometry();
-
-		if (oElementGeometry) {
-			var oOverlayParent = OverlayUtil.getClosestScrollable(this) || this.getParent();
-			var mParentOffset = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().offset() : null;
-			var iScrollOffsetLeft = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().scrollLeft() : null;
-			var iScrollOffsetTop = (oOverlayParent && oOverlayParent instanceof AggregationOverlay) ? oOverlayParent.$().scrollTop() : null;
-			var mPosition = DOMUtil.getOffsetFromParent(oElementGeometry.position, mParentOffset, iScrollOffsetTop, iScrollOffsetLeft);
-
-			var iZIndex = DOMUtil.getZIndex(oElementGeometry.domRef);
-
-			var $overlay = this.$();
-			var mSize = oElementGeometry.size;
-
-			$overlay.css("width", mSize.width + "px");
-			$overlay.css("height", mSize.height + "px");
-			$overlay.css("top", mPosition.top + "px");
-			$overlay.css("left", mPosition.left + "px");
-			if (iZIndex) {
-				$overlay.css("z-index", iZIndex);
-			}
-
-			this.getAggregationOverlays().forEach(function(oAggregationOverlay) {
-				oAggregationOverlay.applyStyles();
-			});
-		}
-	};
-
-	/** 
-	 * @public
-	 * @param {String|sap.ui.core.Element} element or element's id
-	 * @returns {sap.ui.dt.Overlay} returns itself
-	 */
-	Overlay.prototype.setElement = function(vElement) {
-		var oOldElement = this.getElementInstance();
-		if (oOldElement instanceof sap.ui.core.Element) {
-			OverlayRegistry.deregister(oOldElement);
-			this._unobserve(oOldElement);
-		}
-
-		this.destroyAggregation("_aggregationOverlays");
-		this._destroyDefaultDesignTimeMetadata();
-		delete this._elementId;
-		
-		this.setAssociation("element", vElement);
-		this._createAggregationOverlays();
-
-		var oElement = this.getElementInstance();
-
-		this._elementId = oElement.getId();
-		OverlayRegistry.register(oElement, this);
-		this._observe(oElement);
-
-		var oParentOverlay = OverlayUtil.getClosestOverlayFor(oElement);
-		if (oParentOverlay) {
-			oParentOverlay.sync();
-		}
-
-		return this;
-	};
-
-
 	/** 
 	 * @private
 	 */
@@ -332,85 +481,6 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			});
 		}
 	};
-
-	/**
-	 * @public
-	 */
-	Overlay.prototype.setSelectable = function(bSelectable) {
-		if (!bSelectable) {
-			this.setSelected(false);
-		}
-
-		this.setProperty("selectable", bSelectable);
-
-		return this;
-	};
-	
-	/**
-	 * @param {boolean} bSelected
-	 * @param {boolean} bSuppressEvent internal use only, supress firing selectionChange event
-	 * @public
-	 */
-	Overlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
-		if (this.isSelectable() && bSelected !== this.isSelected()) {
-			this.setProperty("selected", bSelected);
-			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
-
-			if (!bSuppressEvent) {
-				this.fireSelectionChange({
-					selected : bSelected
-				});	
-			}
-		}
-
-		return this;
-	};
-
-	/**
-	 * @public
-	 */
-	Overlay.prototype.getVisible = function() {
-		if (this._bVisible === null) {
-			return this.getDesignTimeMetadata().isVisible();
-		} else {
-			return this.getProperty("visible");
-		}
-	};
-
-	/**
-	 * @public
-	 */
-	Overlay.prototype.setVisible = function(bVisible) {
-		this.setProperty("visible", bVisible);
-		this._bVisible = bVisible;
-	};
-
-	/** 
-	 * @public
-	 */
-	Overlay.prototype.setDraggable = function(bDraggable) {
-		if (this.getDraggable() !== bDraggable) {
-			this.fireDraggableChange({draggable : bDraggable});
-			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
-			
-			// TODO: canceleable
-			this.setProperty("draggable", bDraggable);
-		}
-	};	
-
-	/**
-	 * @public
-	 */
-	Overlay.prototype.getDesignTimeMetadata = function() {
-		var oDesignTimeMetdata = this.getAggregation("designTimeMetadata");
-		if (!oDesignTimeMetdata && !this._oDefaultDesignTimeMetadata) {
-			this._oDefaultDesignTimeMetadata = new DesignTimeMetadata({
-				data : this._getElementDesignTimeMetadata()
-			});
-		}
-		return oDesignTimeMetdata || this._oDefaultDesignTimeMetadata;
-	};
-
 
 	/**
 	 * @private
@@ -466,6 +536,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay to sync
 	 * @private
 	 */
 	Overlay.prototype._syncAggregationOverlay = function(oAggregationOverlay) {
@@ -481,17 +552,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
-	 * @public
-	 */
-	Overlay.prototype.sync = function() {
-		var that = this;
-		var aAggregationOverlays = this.getAggregationOverlays();
-		aAggregationOverlays.forEach(function(oAggregationOverlay) {
-			that._syncAggregationOverlay(oAggregationOverlay);
-		});
-	};
-
-	/**
+	 * @param {sap.ui.baseEvent} oEvent event object	
 	 * @private
 	 */
 	Overlay.prototype._onElementModified = function(oEvent) {
@@ -515,21 +576,36 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
+	 * Returns an instance of the Element, which is associated with this Overlay
+	 * @return {sap.ui.Element} associated Element
 	 * @public
 	 */
 	Overlay.prototype.getElementInstance = function() {
 		return sap.ui.getCore().byId(this.getElement());
 	};
 
+	/** 
+	 * Returns a DOM reference for the associated Element or null, if it can't be found
+	 * @return {Element} DOM element or null
+	 * @public
+	 */
+	Overlay.prototype.getAssociatedDomRef = function() {
+		return ElementUtil.getDomRef(this.getElementInstance());
+	};
+
 	/**
+	 * Returns AggregationOverlays created for the public aggregations of the associated Element
+	 * @return {sap.ui.dt.AggregationOverlay[]} array of the AggregationOverlays
 	 * @public
 	 */
 	Overlay.prototype.getAggregationOverlays = function() {
 		return this.getAggregation("_aggregationOverlays") || [];
 	};
 
-
 	/**
+	 * Returns AggregationOverlay the public aggregations of the associated Element by aggregation name
+	 * @param {string} sAggregationName name of the aggregation
+	 * @return {sap.ui.dt.AggregationOverlay} AggregationOverlays for the aggregation
 	 * @public
 	 */
 	Overlay.prototype.getAggregationOverlay = function(sAggregationName) {
@@ -542,34 +618,8 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
-	 * @public
-	 */
-	Overlay.prototype.isSelected = function() {
-		return this.getSelected();
-	};
-
-	/**
-	 * @public
-	 */
-	Overlay.prototype.isSelectable = function() {
-		return this.getSelectable();
-	};
-
-	/**
-	 * @public
-	 */
-	Overlay.prototype.isDraggable = function() {
-		return this.getDraggable();
-	};
-
-	/**
-	 * @public
-	 */
-	Overlay.prototype.isVisible = function() {
-		return this.getVisible();
-	};
-
-	/**
+	 * Returns closest Overlay ancestor of this Overlay or undefined, if no parent Overlay exists
+	 * @return {sap.ui.dt.Overlay} Overlay parent
 	 * @public
 	 */
 	Overlay.prototype.getParentOverlay = function() {
@@ -580,11 +630,49 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
+	 * Returns closest AggregationOverlay ancestor of this Overlay or null, if no parent AggregationOverlay exists
+	 * @return {sap.ui.dt.AggregationOverlay} AggregationOverlay parent, which contains this Overlay
 	 * @public
 	 */
 	Overlay.prototype.getParentAggregationOverlay = function() {
 		var oParentAggregationOverlay = this.getParent();
 		return oParentAggregationOverlay instanceof sap.ui.dt.AggregationOverlay ? oParentAggregationOverlay : null;
+	};
+
+	/** 
+	 * Returns if the Overlay is selected
+	 * @public
+	 * @return {boolean} if the Overlay is selected
+	 */
+	Overlay.prototype.isSelected = function() {
+		return this.getSelected();
+	};
+
+	/** 
+	 * Returns if the Overlay is selectable
+	 * @public
+	 * @return {boolean} if the Overlay is selectable
+	 */
+	Overlay.prototype.isSelectable = function() {
+		return this.getSelectable();
+	};
+
+	/** 
+	 * Returns if the Overlay is draggable
+	 * @public
+	 * @return {boolean} if the Overlay is draggable
+	 */
+	Overlay.prototype.isDraggable = function() {
+		return this.getDraggable();
+	};
+
+	/** 
+	 * Returns if the Overlay is visible
+	 * @public
+	 * @return {boolean} if the Overlay is visible
+	 */
+	Overlay.prototype.isVisible = function() {
+		return this.getVisible();
 	};
 
 	return Overlay;

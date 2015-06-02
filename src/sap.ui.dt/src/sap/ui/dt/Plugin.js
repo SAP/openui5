@@ -16,22 +16,20 @@ function(ManagedObject) {
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The Plugin allows to create a set of Overlays above the root elements and
-	 * theire public children and manage their events.
+	 * The Plugin allows to handle the overlays and aggregation overlays from the DesignTime
+	 * The Plugin should be overriden by the real plugin implementations, which define some actions through events attached to an overlays
 	 * @extends sap.ui.core.ManagedObject
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.Plugin
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
-	 // TODO : jsdocs for abstract methods 
-	 // registerOverlay(oOverlay), deregisterOverlay(oOverlay), registerAggregationOverlay(oOverlay), deregisterAggregationOverlay(oOverlay)
 	var Plugin = ManagedObject.extend("sap.ui.dt.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {		
 		metadata : {
 			"abstract" : true,
@@ -40,7 +38,10 @@ function(ManagedObject) {
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				"designTime" : { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
+				/**
+				 * DesignTime where this plugin will be used
+				 */
+				designTime : { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
 					type : "sap.ui.dt.DesignTimeNew",
 					multiple : false
 				}
@@ -52,21 +53,64 @@ function(ManagedObject) {
 		}
 	});
 
-	/*
-	 * @private
+	/**
+	 * Called when the Plugin is initialized
+	 * @protected
 	 */
-	Plugin.prototype.init = function() {
+	Plugin.prototype.init = function() {};	
 
-	};
-
-	/*
-	 * @private
+	/**
+	 * Called when the Plugin is destroyed
+	 * @protected
 	 */
 	Plugin.prototype.exit = function() {
 		this.setDesignTime(null);
 	};	
 
-	/*
+	/**
+	 * Function is called initially for every overlay in the DesignTime and then when any new overlay is created inside of the DesignTime
+	 * This function should be overriden by the plugins to handle the overlays (attach events and etc.)
+	 * @function
+	 * @name sap.ui.dt.Plugin.prototype.registerOverlay
+	 * @param {sap.ui.dt.Overlay} an Overlay which should be registered
+	 * @protected
+	 */
+	//Plugin.prototype.registerOverlay = function(oOverlay) {};
+
+	/**
+	 * Function is called for every overlay in the DesignTime when the Plugin is deactivated.
+	 * This function should be overriden by the plugins to rollback the registration and cleanup attached event etc.
+	 * @function
+	 * @name sap.ui.dt.Plugin.prototype.deregisterOverlay
+	 * @param {sap.ui.dt.Overlay} an Overlay which should be deregistered
+	 * @protected
+	 */
+	//Plugin.prototype.deregisterOverlay = function(oOverlay) {};
+
+	/**
+	 * Function is called initially for every aggregation overlay in the DesignTime and then when any new aggregation overlay is created inside of the DesignTime
+	 * This function should be overriden by the plugins to handle the aggregation overlays (attach events and etc.)
+	 * @function
+	 * @name sap.ui.dt.Plugin.prototype.registerAggregationOverlay
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay which should be registered
+	 * @protected
+	 */
+	//Plugin.prototype.registerAggregationOverlay = function(oAggregationOverlay) {};
+
+	/**
+	 * Function is called for every aggregation overlay in the DesignTime when the Plugin is deactivated.
+	 * This function should be overriden by the plugins to rollback the registration and cleanup attached event etc.
+	 * @function
+	 * @name sap.ui.dt.Plugin.prototype.deregisterAggregationOverlay
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay which should be deregistered
+	 * @protected
+	 */
+	//Plugin.prototype.deregisterAggregationOverlay = function(oAggregationOverlay) {};
+
+	/**
+	 * Sets a DesignTime, where the plugin should be used. Automatically called by "addPlugin" into DesignTime
+	 * @param {sap.ui.dt.DesignTime} oDesignTime to set
+	 * @return {sap.ui.dt.Plugin} returns this
 	 * @public
 	 */
 	Plugin.prototype.setDesignTime = function(oDesignTime) {
@@ -83,9 +127,12 @@ function(ManagedObject) {
 		}
 
 		this.setProperty("designTime", oDesignTime);
+
+		return this;
 	};
 
 	/** 
+	 * @param {sap.ui.dt.DesignTime} oDesignTime to register overlays for
 	 * @private
 	 */
 	Plugin.prototype._registerOverlays = function(oDesignTime) {
@@ -96,6 +143,18 @@ function(ManagedObject) {
 	};
 
 	/** 
+	 * @param {sap.ui.dt.DesignTime} oDesignTime to register overlays for
+	 * @private
+	 */
+	Plugin.prototype._deregisterOverlays = function(oDesignTime) {
+		if (this.deregisterOverlay || this.deregisterAggregationOverlay) {
+			var aOverlays = oDesignTime.getOverlays();
+			aOverlays.forEach(this._callOverlayDeregestrationMethods.bind(this));
+		}
+	};
+
+	/** 
+	 * @param {sap.ui.dt.Overlay} oOverlay to call registration methods for
 	 * @private
 	 */
 	Plugin.prototype._callOverlayRegistrationMethods = function(oOverlay) {
@@ -109,18 +168,8 @@ function(ManagedObject) {
 		}
 	};
 
-
 	/** 
-	 * @private
-	 */
-	Plugin.prototype._deregisterOverlays = function(oDesignTime) {
-		if (this.deregisterOverlay || this.deregisterAggregationOverlay) {
-			var aOverlays = oDesignTime.getOverlays();
-			aOverlays.forEach(this._callOverlayDeregestrationMethods.bind(this));
-		}
-	};
-
-	/** 
+	 * @param {sap.ui.dt.Overlay} oOverlay to callde registration methods for
 	 * @private
 	 */
 	Plugin.prototype._callOverlayDeregestrationMethods = function(oOverlay) {
@@ -135,6 +184,7 @@ function(ManagedObject) {
 	};
 
 	/** 
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
 	Plugin.prototype._onOverlayCreated = function(oEvent) {

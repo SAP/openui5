@@ -25,7 +25,7 @@ function(jQuery, ManagedObject) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
@@ -38,6 +38,9 @@ function(jQuery, ManagedObject) {
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
+				/**
+				 * Data to be used as DT metadata
+				 */
 				data : {
 					type : "object"
 				}
@@ -45,6 +48,22 @@ function(jQuery, ManagedObject) {
 		}
 	});
 
+	/**
+	 * Sets the data as DT metadata, uses default settings, if some fields are not defined in oData
+	 * @param {object} oData to set
+	 * @return {sap.ui.dt.DesignTimeMetadata} returns this
+	 * @protected
+	 */
+	DesignTimeMetadata.prototype.setData = function(oData) {
+		this.setProperty("data", this._ensureProperties(oData));
+		return this;
+	};
+
+	/**
+	 * @param {object} oData to set
+	 * @return {object} data to use as a DT metadata
+	 * @private
+	 */
 	DesignTimeMetadata.prototype._ensureProperties = function(oData) {
 		return jQuery.extend(true, {
 			defaultSettings : {},
@@ -80,37 +99,71 @@ function(jQuery, ManagedObject) {
 			visible : true,
 			needDelegateFromParent : false
 		}, oData);
-	};
+	};	
 
-	DesignTimeMetadata.prototype.setData = function(oData) {
-		this.setProperty("data", this._ensureProperties(oData));
-		return this;
-	};
-
+	/**
+	 * Returns a name defined in the DT metadata
+	 * @return {string} returns DT metadata field "name"
+	 * @public
+	 */
 	DesignTimeMetadata.prototype.getName = function() {
 		return this.getData().name;
 	};
 
-	DesignTimeMetadata.prototype.hasAggregation = function(sAggregation) {
-		return !!this.getAggregations()[sAggregation];
+	/**
+	 * Returns if the DT metadata for an aggregation name exists
+	 * @param {string} sAggregationName an aggregation name
+	 * @return {boolean} returns if the field for an aggregation with a given name exists in DT metadata
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.hasAggregation = function(sAggregationName) {
+		return !!this.getAggregations()[sAggregationName];
 	};
 
-	DesignTimeMetadata.prototype.getAggregation = function(sAggregation) {
-		return this.getAggregations()[sAggregation] || {};
+	/**
+	 * Returns the DT metadata for an aggregation name
+	 * @param {string} sAggregationName an aggregation name
+	 * @return {object} returns the DT metadata for an aggregation with a given name
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.getAggregation = function(sAggregationName) {
+		return this.getAggregations()[sAggregationName] || {};
 	};
 
+	/**
+	 * Returns the DT metadata for all aggregations
+	 * @return {map} returns the DT metadata for all aggregations
+	 * @public
+	 */
 	DesignTimeMetadata.prototype.getAggregations = function() {
 		return this.getData().aggregations;
 	};
 
+	/**
+	 * Returns property "visible" of the DT metadata
+	 * @return {boolean} if is visible
+	 * @public
+	 */
 	DesignTimeMetadata.prototype.isVisible = function() {
 		return this.getData().visible !== false;
 	};
 
+	/**
+	 * Returns property "visible" of the aggregation DT metadata for the given aggregation name
+	 * @param {string} sAggregationName an aggregation name
+	 * @return {boolean} if an aggregation is visible
+	 * @public
+	 */
 	DesignTimeMetadata.prototype.isAggregationVisible = function(sAggregationName) {
 		return this.getAggregation(sAggregationName).visible !== false;
 	};
 
+	/**
+	 * Returns property "domRef" of the aggregation DT metadata for the given aggregation name
+	 * @param {string} sAggregationName an aggregation name
+	 * @return {object|string|function} domRef for the aggregation
+	 * @public
+	 */
 	DesignTimeMetadata.prototype.getAggregationDomRef = function(sAggregationName) {
 		return this.getAggregation(sAggregationName).domRef;
 	};	

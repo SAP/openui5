@@ -12,15 +12,15 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	"use strict";
 
 	/**
-	 * Class for OverlayUtil.
+	 * Class for Overlay Util.
 	 * 
 	 * @class
-	 * Utility functionality to work with controls, e.g. iterate through aggregations, find parents, ...
+	 * Utility functionality to work with overlays
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @public
+	 * @private
 	 * @static
 	 * @since 1.30
 	 * @alias sap.ui.dt.OverlayUtil
@@ -29,6 +29,9 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 
 	var OverlayUtil = {};
 
+	/**
+	 * 
+	 */
 	OverlayUtil.getClosestOverlayFor = function(oElement) {
 		var oParent = oElement.getParent();
 		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
@@ -40,6 +43,9 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		return oParentOverlay;
 	};
 
+	/**
+	 * 
+	 */
 	OverlayUtil.getGeometry = function(aGeometry) {
 		var minLeft, maxRight, minTop, maxBottom;
 		aGeometry.forEach(function(oElementGeometry) {
@@ -74,8 +80,11 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 				}
 			};
 		}		
-	};	
+	};
 
+	/**
+	 * 
+	 */
 	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
 		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElementInstance(), sType)) {
 			oOverlay = oOverlay.getParentOverlay();
@@ -84,6 +93,9 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		return oOverlay;
 	};
 
+	/**
+	 * 
+	 */
 	OverlayUtil.getClosestScrollable = function(oOverlay) {
 		oOverlay = oOverlay.getParent();
 		while (oOverlay && oOverlay.isScrollable && !oOverlay.isScrollable()) {

@@ -24,7 +24,7 @@ function(ManagedObject) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be modified in future.
@@ -40,12 +40,18 @@ function(ManagedObject) {
 				
 			},
 			associations : {
-				"target" : {
-					"type" : "sap.ui.base.ManagedObject"
+				/**
+				 * target ManagedObject to observe
+				 */
+				target : {
+					type : "sap.ui.base.ManagedObject"
 				}
 			},
 			events : {
-				"modified" : {
+				/**
+				 *  Event fired when the observed object is modified
+				 */
+				modified : {
 					parameters : {
 						type : "string",
 						value : "any",
@@ -53,22 +59,20 @@ function(ManagedObject) {
 						target : "sap.ui.core.Element"
 					}
 				},
-				"destroyed" : {}
+				destroyed : {}
 			}
 		}
 	});
 
 	/**
+	 * Called when the ManagedObjectObserver is created
 	 * @protected
-	 * @override
 	 */
-	ManagedObjectObserver.prototype.init = function() {
-		
-	};
+	ManagedObjectObserver.prototype.init = function() {};
 
 	/**
+	 * Called when the ManagedObjectObserver is destroyed
 	 * @protected
-	 * @override
 	 */
 	ManagedObjectObserver.prototype.exit = function() {
 		var oTarget = this.getTargetInstance();
@@ -77,6 +81,11 @@ function(ManagedObject) {
 		}
 	};
 
+	/**
+	 * Sets a target ManagedObject to observe
+	 * @param {string|sap.ui.base.ManagedObject} vTarget id or managed object to set
+	 * @return {sap.ui.dt.ManagedObjectObserver} returns this
+	 */
 	ManagedObjectObserver.prototype.setTarget = function(vTarget) {
 		var oOldTarget = this.getTargetInstance();
 		if (oOldTarget) {
@@ -95,7 +104,6 @@ function(ManagedObject) {
 
 	/**
 	 * Starts observing the target object. Override this method in classes wich extend ManagedObjectObserver.
-	 * 
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to observe
 	 * @protected
 	 */
@@ -236,7 +244,6 @@ function(ManagedObject) {
 
 	/**
 	 * Stops observing the target object. Override this method in classes wich extend ManagedObjectObserver.
-	 * 
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to unobserve
 	 * @protected
 	 */
