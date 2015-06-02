@@ -19,7 +19,27 @@
 			<cells>
 				<template:repeat list="{target>}" var="field">
 					<template:if test="{field>Value}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataField -->
-						<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+						<template:if test="{field>Target}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataFieldWithNavigationPath -->
+							<template:then>
+								<template:with path="field>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="targetType">
+									<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" press="onDetailsPressed">
+										<dependents>
+											<template:with path="targetType>com.sap.vocabularies.UI.v1.HeaderInfo" var="headerInfo">
+												<Popover binding="{path: 'field>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}"
+														title="{path: 'headerInfo>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
+													<template:with path="targetType>" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="entityType">
+														<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Identification" type="XML"/>
+													</template:with>
+												</Popover>
+											</template:with>
+										</dependents>
+									</Link>
+								</template:with>
+							</template:then>
+							<template:else>
+								<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+							</template:else>
+						</template:if>
 					</template:if>
 				</template:repeat>
 			</cells>

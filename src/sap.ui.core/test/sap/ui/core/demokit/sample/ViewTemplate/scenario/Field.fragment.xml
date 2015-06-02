@@ -17,6 +17,7 @@
 			<template:if test="{field>Url}">
 				<template:then>
 					<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+						target="_blank"
 						href="{path: 'field>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				</template:then>
 				<template:else>

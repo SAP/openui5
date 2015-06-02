@@ -62,6 +62,8 @@ sap.ui.define([
 				sPath = vRawValue.Path;
 			} else if (vRawValue && vRawValue.hasOwnProperty("PropertyPath")) {
 				sPath = vRawValue.PropertyPath;
+			} else if (vRawValue && vRawValue.hasOwnProperty("NavigationPropertyPath")) {
+				sPath = vRawValue.NavigationPropertyPath;
 			} else {
 				return undefined; // some unsupported case
 			}
@@ -191,9 +193,16 @@ sap.ui.define([
 
 			/**
 			 * A formatter function to be used in a complex binding inside an XML template view
-			 * in order to interpret OData v4 annotations. It knows about the dynamic
-			 * "14.5.2 Expression edm:AnnotationPath" and returns a binding expression for a
-			 * navigation path in an OData model, starting at an entity.
+			 * in order to interpret OData v4 annotations. It knows about the following dynamic
+			 * expressions:
+			 * <ul>
+			 * <li>"14.5.2 Expression edm:AnnotationPath"</li>
+			 * <li>"14.5.11 Expression edm:NavigationPropertyPath"</li>
+			 * <li>"14.5.12 Expression edm:Path"</li>
+			 * <li>"14.5.13 Expression edm:PropertyPath"</li>
+			 * </ul>
+			 * It returns a binding expression for a navigation path in an OData model, starting at
+			 * an entity.
 			 * Currently supports navigation properties. Term casts and annotations of
 			 * navigation properties terminate the navigation path.
 			 *
@@ -227,10 +236,15 @@ sap.ui.define([
 			},
 
 			/**
-			 * Helper function for a <code>template:with</code> instruction that goes to the
-			 * entity set with the given name or to the one determined by the last navigation
-			 * property of a dynamic "14.5.2 Expression edm:AnnotationPath", depending on how it
-			 * is called.
+			 * Helper function for a <code>template:with</code> instruction that depending on how
+			 * it is called goes to the entity set with the given name or to the one determined
+			 * by the last navigation property of one of the following dynamic expressions:
+			 * <ul>
+			 * <li>"14.5.2 Expression edm:AnnotationPath"</li>
+			 * <li>"14.5.11 Expression edm:NavigationPropertyPath"</li>
+			 * <li>"14.5.12 Expression edm:Path"</li>
+			 * <li>"14.5.13 Expression edm:PropertyPath"</li>
+			 * </ul>
 			 *
 			 * Example:
 			 * <pre>
@@ -240,7 +254,9 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.model.Context} oContext
 			 *   a context which must point to a simple string or to an annotation (or annotation
-			 *   property) of type <code>Edm.AnnotationPath</code>, embedded within an entity type;
+			 *   property) of type <code>Edm.AnnotationPath</code>,
+			 *   <code>Edm.NaviagtionPropertyPath</code>, <code>Edm.Path</code>, or
+			 *   <code>Edm.PropertyPath</code> embedded within an entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
 			 *   the path to the entity set, or <code>undefined</code> if no such set is found
@@ -320,11 +336,17 @@ sap.ui.define([
 
 			/**
 			 * A formatter function to be used in a complex binding inside an XML template view
-			 * in order to interpret OData v4 annotations. It knows about the dynamic
-			 * "14.5.2 Expression edm:AnnotationPath" and returns whether the navigation path
-			 * ends with an association end with multiplicity "*". It throws an error if the
-			 * navigation path has an association end with multiplicity "*" which is not the last
-			 * one.
+			 * in order to interpret OData v4 annotations. It knows about the following dynamic
+			 * expressions:
+			 * <ul>
+			 * <li>"14.5.2 Expression edm:AnnotationPath"</li>
+			 * <li>"14.5.11 Expression edm:NavigationPropertyPath"</li>
+			 * <li>"14.5.12 Expression edm:Path"</li>
+			 * <li>"14.5.13 Expression edm:PropertyPath"</li>
+			 * </ul>
+			 * It returns the information whether the navigation path ends with an association end
+			 * with multiplicity "*". It throws an error if the navigation path has an association
+			 * end with multiplicity "*" which is not the last one.
 			 * Currently supports navigation properties. Term casts and annotations of
 			 * navigation properties terminate the navigation path.
 			 *
@@ -366,7 +388,8 @@ sap.ui.define([
 
 			/**
 			 * Helper function for a <code>template:with</code> instruction that resolves a dynamic
-			 * "14.5.2 Expression edm:AnnotationPath", "14.5.12 Expression edm:Path" or
+			 * "14.5.2 Expression edm:AnnotationPath",
+			 * "14.5.11 Expression edm:NavigationPropertyPath", "14.5.12 Expression edm:Path" or
 			 * "14.5.13 Expression edm:PropertyPath".
 			 * Currently supports navigation properties and term casts.
 			 *
@@ -377,8 +400,9 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.model.Context} oContext
 			 *   a context which must point to an annotation or annotation property of type
-			 *   <code>Edm.AnnotationPath</code>, <code>Edm.Path</code> or
-			 *   <code>Edm.PropertyPath</code>, embedded within an entity type;
+			 *   <code>Edm.AnnotationPath</code>, <code>Edm.NavigationPropertyPath</code>,
+			 *   <code>Edm.Path</code> or <code>Edm.PropertyPath</code>, embedded within an entity
+			 *   type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
 			 *   the path to the target, or <code>undefined</code> in case the path cannot be
