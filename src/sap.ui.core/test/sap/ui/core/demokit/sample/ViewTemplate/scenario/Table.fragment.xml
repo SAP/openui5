@@ -12,6 +12,11 @@
 					<Text text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 				</Column>
 			</template:if>
+			<template:if test="{field>Action}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataFieldForAction -->
+				<Column>
+					<Text text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				</Column>
+			</template:if>
 		</template:repeat>
 	</columns>
 	<items>
@@ -40,6 +45,20 @@
 								<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 							</template:else>
 						</template:if>
+					</template:if>
+					<template:if test="{field>Action}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataFieldForAction -->
+						<template:with path="field>Action" helper="sap.ui.model.odata.AnnotationHelper.gotoFunctionImport" var="function">
+							<template:if test="{function>com.sap.vocabularies.Common.v1.IsActionCritical}">
+								<template:then>
+									<!-- IsActionCritical defaults to true -->
+									<Button text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+										icon="{= ${function>com.sap.vocabularies.Common.v1.IsActionCritical/Bool} !== 'false' ? 'sap-icon://notification' : ''}" />
+								</template:then>
+								<template:else>
+									<Button text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+								</template:else>
+							</template:if>
+						</template:with>
 					</template:if>
 				</template:repeat>
 			</cells>
