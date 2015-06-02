@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 		var sWidth = "";
 
 		// header
-		if (oDatesRow.getShowHeader()) {
+		if (oDatesRow._getShowHeader()) {
 			oRm.write("<div id=\"" + sId + "-Head\">");
 			this.renderHeaderLine(oRm, oDatesRow, oLocaleData, oDate);
 			oRm.write("</div>");

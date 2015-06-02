@@ -51,7 +51,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * on phones always only one month is displayed
 			 * @since 1.28.0
 			 */
-			months : {type : "int", group : "Misc", defaultValue : 1}
+			months : {type : "int", group : "Misc", defaultValue : 1},
+
+			/**
+			 * If set, the first day of the displayed week is this day. Valid values are 0 to 6.
+			 * If not a valid value is set, the default of the used locale is used.
+			 * @since 1.28.9
+			 */
+			firstDayOfWeek : {type : "int", group : "Misc", defaultValue : -1},
+
+			/**
+			 * If set, the provided weekdays are displayed as non-working days.
+			 * Valid values inside the array are 0 to 6.
+			 * If not set, the weekend defined in the locale settings is displayed as non-working days.
+			 * @since 1.28.9
+			 */
+			nonWorkingDays : {type : "int[]", group : "Misc", defaultValue : null}
 		},
 		aggregations : {
 

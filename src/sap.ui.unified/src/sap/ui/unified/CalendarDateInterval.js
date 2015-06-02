@@ -214,6 +214,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		/**
+		 * Setter for property <code>firstDayOfWeek</code>.
+		 *
+		 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.CalendarDateInterval</code> control.
+		 *
+		 * @protected
+		 * @param {int} [iFirstDayOfWeek] first day of the week
+		 * @name sap.ui.unified.CalendarDateInterval#setFirstDayOfWeek
+		 * @function
+		 */
+		CalendarDateInterval.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
+
+			if (iFirstDayOfWeek == -1) {
+				this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
+			} else {
+				throw new Error("Property firstDayOfWeek not supported " + this);
+			}
+
+		};
+
 		CalendarDateInterval.prototype.focusDate = function(oDate){
 
 			var oDatesRow = this.getAggregation("month")[0];

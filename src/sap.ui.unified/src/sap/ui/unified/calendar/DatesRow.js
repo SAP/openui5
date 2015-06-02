@@ -147,6 +147,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		/**
+		 * Setter for property <code>firstDayOfWeek</code>.
+		 *
+		 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.calendar.DatesRow</code> control.
+		 *
+		 * @protected
+		 * @param {int} [iFirstDayOfWeek] first day of the week
+		 * @name sap.ui.unified.calendar.DatesRow#setFirstDayOfWeek
+		 * @function
+		 */
+		DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
+
+			if (iFirstDayOfWeek == -1) {
+				this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
+			} else {
+				throw new Error("Property firstDayOfWeek not supported " + this);
+			}
+
+		};
+
 		DatesRow.prototype._handleBorderReached = function(oControlEvent){
 
 			var oEvent = oControlEvent.getParameter("event");
@@ -238,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				$WeekHeader.attr("aria-label", aWeekDaysWide[(i + iStartDay) % 7]);
 			}
 
-			if (this.getShowHeader()) {
+			if (this._getShowHeader()) {
 				var $Container = this.$("Head");
 
 				if ($Container.length > 0) {
@@ -248,6 +268,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oRm.destroy();
 				}
 			}
+
+		};
+
+		/*
+		 * returns the first displayed week day. Needed to change week days if too long
+		 */
+		DatesRow.prototype._getFirstWeekDay = function(){
+
+			var oStartDate = this._getStartDate();
+			return oStartDate.getUTCDay();
 
 		};
 
