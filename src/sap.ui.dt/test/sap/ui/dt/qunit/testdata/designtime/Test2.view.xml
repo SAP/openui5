@@ -34,7 +34,7 @@
                     <f:ResponsiveGridLayout />
                 </f:layout>
                 <f:formContainers>
-                    <f:FormContainer>
+                    <f:FormContainer title="Form Container With Title">
                         <f:formElements>
                             <f:FormElement label="Name">
                                 <f:fields>
