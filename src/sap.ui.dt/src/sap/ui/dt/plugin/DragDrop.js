@@ -17,15 +17,15 @@ function(Plugin, DOMUtil) {
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The DragDrop allows to create a set of Overlays above the root elements and
-	 * theire public children and manage their events.
-	 * @extends sap.ui.core.ManagedObject
+	 * The DragDrop plugin is an abstract plugin to enable drag and drop functionallity of the Overlays
+	 * This Plugin should be overriden by the D&D plugin implementations, the abstract functions should be ussed to performe actions
+	 * @extends sap.ui.dt.plugin.Plugin
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.plugin.DragDrop
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
@@ -66,8 +66,9 @@ function(Plugin, DOMUtil) {
 	// 	// var aOverlays = this.oDesignTime
 	// };
 
-	/*
+	/**
 	 * @override
+	 * @param {sap.ui.dt.Overlay} an Overlay which should be registered
 	 */
 	DragDrop.prototype.registerOverlay = function(oOverlay) {
 		oOverlay.addEventDelegate(this._oOverlayDelegate, this);
@@ -81,14 +82,14 @@ function(Plugin, DOMUtil) {
 		oOverlay.attachBrowserEvent("dragenter", this._onDragEnter, this);
 	};
 
-	/*
+	/**
 	 * @override
 	 */
 	DragDrop.prototype.registerAggregationOverlay = function(oAggregationOverlay) {
 		oAggregationOverlay.attachDroppableChange(this._onAggregationDroppableChange, this);
 	};
 
-	/*
+	/**
 	 * @override
 	 */
 	DragDrop.prototype.deregisterOverlay = function(oOverlay) {
@@ -102,66 +103,66 @@ function(Plugin, DOMUtil) {
 
 	};	
 
-	/*
+	/**
 	 * @override
 	 */
 	DragDrop.prototype.deregisterAggregationOverlay = function(oAggregationOverlay) {
 		oAggregationOverlay.detachDroppableChange(this._onAggregationDroppableChange, this);
 	};
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onDraggableChange = function(oEvent) { };
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onDragStart = function(oDraggedOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onDragEnd = function(oDraggedOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onDrag = function(oDraggedOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
 	DragDrop.prototype.onDragEnter = function(oOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
 	DragDrop.prototype.onDragOver = function(oOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDragOver = function(oAggregationOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDragLeave = function(oAggregationOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDrop = function(oAggregationOverlay, oEvent) { };
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._checkDraggable = function(oEvent) {
@@ -171,7 +172,7 @@ function(Plugin, DOMUtil) {
 		}
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onDraggableChange = function(oEvent) {
@@ -179,7 +180,7 @@ function(Plugin, DOMUtil) {
 		this.onDraggableChange(oOverlay, oEvent);
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onDragStart = function(oEvent) {
@@ -189,7 +190,7 @@ function(Plugin, DOMUtil) {
 		oEvent.stopPropagation();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onDragEnd = function(oEvent) {
@@ -199,7 +200,7 @@ function(Plugin, DOMUtil) {
 		oEvent.stopPropagation();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onDrag = function(oEvent) {
@@ -209,7 +210,7 @@ function(Plugin, DOMUtil) {
 		oEvent.stopPropagation();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onDragEnter = function(oEvent) {
@@ -226,7 +227,7 @@ function(Plugin, DOMUtil) {
 		oEvent.preventDefault();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onDragOver = function(oEvent) {
@@ -243,7 +244,7 @@ function(Plugin, DOMUtil) {
 		oEvent.preventDefault();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onAggregationDroppableChange = function(oEvent) {
@@ -258,7 +259,7 @@ function(Plugin, DOMUtil) {
 
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._attachAggregationOverlayEvents = function(oAggregationOverlay) {
@@ -268,7 +269,7 @@ function(Plugin, DOMUtil) {
 		oAggregationOverlay.attachBrowserEvent("drop", this._onAggregationDrop, this);
 	};		
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._detachAggregationOverlayEvents = function(oAggregationOverlay) {
@@ -279,7 +280,7 @@ function(Plugin, DOMUtil) {
 	};		
 
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onAggregationDragEnter = function(oEvent) {
@@ -290,7 +291,7 @@ function(Plugin, DOMUtil) {
 		oEvent.stopPropagation();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onAggregationDragOver = function(oEvent) {
@@ -301,7 +302,7 @@ function(Plugin, DOMUtil) {
 		oEvent.stopPropagation();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onAggregationDragLeave = function(oEvent) {
@@ -312,7 +313,7 @@ function(Plugin, DOMUtil) {
 		oEvent.stopPropagation();
 	};
 
-	/*
+	/**
 	 * @private
 	 */
 	DragDrop.prototype._onAggregationDrop = function(oEvent) {

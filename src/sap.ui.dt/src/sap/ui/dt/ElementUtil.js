@@ -13,12 +13,12 @@ function(jQuery) {
 	 * Class for ElementUtil.
 	 * 
 	 * @class
-	 * Utility functionality to work with controls, e.g. iterate through aggregations, find parents, ...
+	 * Utility functionality to work with élements, e.g. iterate through aggregations, find parents, ...
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @public
+	 * @private
 	 * @static
 	 * @since 1.30
 	 * @alias sap.ui.dt.ElementUtil
@@ -27,10 +27,9 @@ function(jQuery) {
 
 	var ElementUtil = {};
 
-	ElementUtil.getControlFilter = function() {
-		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout" ];
-	};
-
+	/**
+	 * 
+	 */
 	ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback) {
 		var mAggregations = oElement.getMetadata().getAllAggregations();
 		if (!mAggregations) {
@@ -44,6 +43,9 @@ function(jQuery) {
 		}
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.getElementInstance = function(vElement) {
 		if (typeof vElement === "string") {
 			return sap.ui.getCore().byId(vElement);
@@ -52,6 +54,9 @@ function(jQuery) {
 		}
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
 		var oParent = oElement;
 		while (oParent && oParent !== oAncestor) {
@@ -61,6 +66,9 @@ function(jQuery) {
 		return !!oParent;
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.findAllPublicElements = function(oElement) {
 		var aFoundElements = [];
 		var that = this;
@@ -93,22 +101,25 @@ function(jQuery) {
 
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.getDomRef = function(oElement) {
-		var oDomRef;
-		if (!oElement) { 
-			return;
+		if (oElement) { 
+			var oDomRef;
+			if (oElement.getDomRef) {
+				oDomRef = oElement.getDomRef();
+			}
+			if (!oDomRef && oElement.getRenderedDomRef) {
+				oDomRef = oElement.getRenderedDomRef();
+			}
+			return oDomRef;
 		}
-		
-		if (oElement.getDomRef) {
-			oDomRef = oElement.getDomRef();
-		}
-		if (!oDomRef && oElement.getRenderedDomRef) {
-			oDomRef = oElement.getRenderedDomRef();
-		}
-
-		return oDomRef;
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.findAllPublicChildren = function(oElement) {
 		var aFoundElements = this.findAllPublicElements(oElement);
 		var iIndex = aFoundElements.indexOf(oElement);
@@ -119,6 +130,9 @@ function(jQuery) {
 
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.isElementFiltered = function(oControl, aType) {
 		var that = this;
 
@@ -135,6 +149,9 @@ function(jQuery) {
 		return bFiltered;
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.getAggregationMutators = function(oElement, sAggregationName) {
 		var oMetadata = oElement.getMetadata();
 		oMetadata.getJSONKeys();
@@ -147,6 +164,9 @@ function(jQuery) {
 		};
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.getAggregation = function(oElement, sAggregationName) {
 		var sGetMutator = this.getAggregationMutators(oElement, sAggregationName).get;
 		var oValue = oElement[sGetMutator]();
@@ -161,16 +181,25 @@ function(jQuery) {
 		return oValue;
 	};
 	
+	/**
+	 * 
+	 */
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
 		var sAggregationAddMutator = this.getAggregationMutators(oParent, sAggregationName).add;
 		oParent[sAggregationAddMutator](oElement);
 	};
 	
+	/**
+	 * 
+	 */
 	ElementUtil.removeAggregation = function(oParent, sAggregationName, oElement) {
 		var sAggregationRemoveMutator = this.getAggregationMutators(oParent, sAggregationName).remove;
 		oParent[sAggregationRemoveMutator](oElement);
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
 		if (this.getAggregation(oParent, sAggregationName).indexOf(oElement) !== -1) {
 			// ManagedObject.insertAggregation won't reposition element, if it's already inside of same aggregation
@@ -187,6 +216,9 @@ function(jQuery) {
 		oParent[sAggregationInsertMutator](oElement, iIndex);
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.isValidForAggregation = function(oParent, sAggregationName, oElement) {
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
 
@@ -194,6 +226,9 @@ function(jQuery) {
 		return this.isInstanceOf(oElement, oAggregationMetadata.type);
 	};
 
+	/**
+	 * 
+	 */
 	ElementUtil.isInstanceOf = function(oElement, sType) {
 		var oInstance = jQuery.sap.getObject(sType);
 		if (typeof oInstance === "function") {

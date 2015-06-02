@@ -17,15 +17,14 @@ function(DragDrop, ElementUtil) {
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The ControlDragDrop allows to create a set of Overlays above the root elements and
-	 * theire public children and manage their events.
-	 * @extends sap.ui.core.ManagedObject
+	 * The ControlDragDrop enables D&D functionallity for the overlays based on aggregation types
+	 * @extends sap.ui.dt.plugin.DragDrop"
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.plugin.ControlDragDrop
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.

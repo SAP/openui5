@@ -25,7 +25,7 @@ function(jQuery, ManagedObjectObserver) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
@@ -41,10 +41,16 @@ function(jQuery, ManagedObjectObserver) {
 				
 			},
 			associations : {
+				/**
+				 * target Control to observe
+				 */
 				"target" : {
 					"type" : "sap.ui.core.Control"
 				}
 			},
+			/**
+			 * Fired when the DOM of the observed control is changed
+			 */
 			events : {
 				"domChanged" : {}
 			}
@@ -53,7 +59,6 @@ function(jQuery, ManagedObjectObserver) {
 
 	/**
 	 * @protected
-	 * @override
 	 */
 	ControlObserver.prototype.init = function() {
 		ManagedObjectObserver.prototype.init.apply(this, arguments);
@@ -65,7 +70,8 @@ function(jQuery, ManagedObjectObserver) {
 	};
 
 	/**
-	 * @protected
+	 * Starts observing the target control.
+	 * @param {sap.ui.core.Control} oControl The target to observe	
 	 * @override
 	 */
 	ControlObserver.prototype.observe = function(oControl) {
@@ -76,7 +82,8 @@ function(jQuery, ManagedObjectObserver) {
 	};
 
 	/**
-	 * @protected
+	 * Stops observing the target control.
+	 * @param {sap.ui.core.Control} oControl The target to unobserve	
 	 * @override
 	 */
 	ControlObserver.prototype.unobserve = function(oControl) {
@@ -89,7 +96,7 @@ function(jQuery, ManagedObjectObserver) {
 	/**
 	 * @private
 	 */
-	ControlObserver.prototype._startMutationObserver = function(oControl) {
+	ControlObserver.prototype._startMutationObserver = function() {
 		var that = this;
 		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 		var oDomRef = this.getTargetInstance().getDomRef();
@@ -108,7 +115,7 @@ function(jQuery, ManagedObjectObserver) {
 	/**
 	 * @private
 	 */
-	ControlObserver.prototype._stopMutationObserver = function(oControl) {
+	ControlObserver.prototype._stopMutationObserver = function() {
 		if (this.oMutationObserver) {
 			this.oMutationObserver.disconnect();
 			this.oMutationObserver = null;

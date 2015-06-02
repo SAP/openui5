@@ -13,7 +13,7 @@ function(Element) {
 	 * Class for OverlayRegistry.
 	 * 
 	 * @class
-	 * Registry for Overlays
+	 * Static registry for Overlays
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,21 +29,43 @@ function(Element) {
 
 	var mOverlays = {};
 
+	/**
+	 * Returns a registered Overlay by element instance or id
+	 * @param {string|sap.ui.core.Element} vElementOrId element instance or id
+	 * @return {sap.ui.dt.Overlay} found overlay or undefined
+	 * @public
+	 */
 	OverlayRegistry.getOverlay = function(vElementOrId) {
 		var sId = getElementId(vElementOrId);
 		return mOverlays[sId];
 	};
 
+	/**
+	 * Registers an overlay for the element or element's id
+	 * @param {string|sap.ui.core.Element} vElementOrId element instance or id
+	 * @param {sap.ui.dt.Overlay} oOverlay overlay to register
+	 * @public
+	 */
 	OverlayRegistry.register = function(vElementOrId, oOverlay) {
 		var sId = getElementId(vElementOrId);
 		mOverlays[sId] = oOverlay;
 	};
 
+	/**
+	 * Deregisters an overlay for the given element or element's id
+	 * @param {string|sap.ui.core.Element} vElementOrId element instance or id
+	 * @public
+	 */
 	OverlayRegistry.deregister = function(vElementOrId) {
 		var sId = getElementId(vElementOrId);
 		delete mOverlays[sId];
 	};
 
+	/**
+	 * Returns wether any overlay is registered in registry
+	 * @return {boolean} wether any overlay is registered in registry
+	 * @public
+	 */
 	OverlayRegistry.hasOverlays = function() {
 		return !jQuery.isEmptyObject(mOverlays);
 	};

@@ -19,7 +19,7 @@ function(jQuery, ElementUtil) {
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @public
+	 * @private
 	 * @static
 	 * @since 1.30
 	 * @alias sap.ui.dt.DOMUtil
@@ -28,6 +28,9 @@ function(jQuery, ElementUtil) {
 
 	var DOMUtil = {};
 
+	/**
+	 * 
+	 */
 	DOMUtil.getSize = function(oDomRef) {
 		return {
 			width : oDomRef.offsetWidth,
@@ -35,6 +38,9 @@ function(jQuery, ElementUtil) {
 		};
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset, scrollTop, scrollLeft) {
 		var mOffset = {
 			left : oPosition.left,
@@ -48,6 +54,9 @@ function(jQuery, ElementUtil) {
 		return mOffset;
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.getZIndex = function(oDomRef) {
 		var zIndex;
 		var $ElementDomRef = jQuery(oDomRef);
@@ -57,6 +66,9 @@ function(jQuery, ElementUtil) {
 		return zIndex;
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.getOverflows = function(oDomRef) {
 		var oOverflows;
 		var $ElementDomRef = jQuery(oDomRef);
@@ -68,6 +80,9 @@ function(jQuery, ElementUtil) {
 		return oOverflows;
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.getGeometry = function(oDomRef) {
 		if (oDomRef) {
 			return {
@@ -78,6 +93,9 @@ function(jQuery, ElementUtil) {
 		}
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.syncScroll = function(oSourceDom, oTargetDom) {
 		var $target = jQuery(oTargetDom);
 		var oTargetScrollTop = $target.scrollTop();
@@ -95,6 +113,9 @@ function(jQuery, ElementUtil) {
 		}
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.getDomRefForCSSSelector = function(oDomRef, sCSSSelector) {
 		if (!sCSSSelector) {
 			return false;
@@ -110,10 +131,16 @@ function(jQuery, ElementUtil) {
 		return oDomRef ? oDomRef.querySelector(sCSSSelector) : undefined;
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.getEscapedString = function(sString) {
 		return sString.replace(/([;&,\.\+\*\~':"\!\^#$%@\[\]\(\)=>\|])/g, '\\$1');
 	};
 
+	/**
+	 * 
+	 */
 	DOMUtil.setDraggable = function($element, bValue) {
 		$element.attr("draggable", bValue);
 	};
