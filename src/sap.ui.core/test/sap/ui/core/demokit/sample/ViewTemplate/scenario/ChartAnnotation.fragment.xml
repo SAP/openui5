@@ -3,8 +3,8 @@
 	xmlns:core="sap.ui.core"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<HBox>
-		<template:if test="{entityType>com.sap.vocabularies.UI.v1.Chart}">
-			<template:with path="entityType>com.sap.vocabularies.UI.v1.Chart" var="chart">
+		<template:with path="entityType>com.sap.vocabularies.UI.v1.Chart#Dimensions" var="chart">
+			<template:if test="{chart>}">
 				<Table headerText="{path: 'chart>Title', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
 					items="{= '{path:\'/' + ${meta>name} + '\', length: 3}' }">
 					<columns>
@@ -32,7 +32,7 @@
 						</ColumnListItem>
 					</items>
 				</Table>
-			</template:with>
-		</template:if>
+			</template:if>
+		</template:with>
 	</HBox>
 </core:FragmentDefinition>

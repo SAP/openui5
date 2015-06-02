@@ -873,7 +873,7 @@
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
 							"com.sap.vocabularies.Common.v1.Label" : {
-								"String" : "Dimensions"
+								"String" : "Width"
 							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
@@ -895,7 +895,7 @@
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
 							"com.sap.vocabularies.Common.v1.Label" : {
-								"String" : "Dimensions"
+								"String" : "Depth"
 							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
@@ -917,7 +917,7 @@
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
 							"com.sap.vocabularies.Common.v1.Label" : {
-								"String" : "Dimensions"
+								"String" : "Height"
 							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
@@ -1271,6 +1271,18 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.Decimal"
+							}]
+						},
+						"com.sap.vocabularies.UI.v1.Chart#Dimensions" : {
+							"Dimensions" : [{
+								"PropertyPath" : "ProductID"
+							}],
+							"Measures" : [{
+								"PropertyPath" : "Depth"
+							}, {
+								"PropertyPath" : "Height"
+							}, {
+								"PropertyPath" : "Width"
 							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
@@ -1742,10 +1754,18 @@
 							},
 							"com.sap.vocabularies.Common.v1.Text" : {
 								"If" : [{
-									"Eq" : [{
-										"Path" : "DeliveryStatus"
+									"Or" : [{
+										"Eq" : [{
+											"Path" : "DeliveryStatus"
+										}, {
+											"String" : ""
+										}]
 									}, {
-										"String" : ""
+										"Eq" : [{
+											"Path" : "DeliveryStatus"
+										}, {
+											"Null" : {}
+										}]
 									}]
 								}, {
 									"String" : "Not delivered"
@@ -2071,6 +2091,22 @@
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 							"EdmType" : "Edm.DateTime"
+						}, {
+							"Label" : {
+								"String" : "Cancel Sales Order"
+							},
+							"Action" : {
+								"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Cancel"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldForAction"
+						}, {
+							"Label" : {
+								"String" : "Confirm Sales Order"
+							},
+							"Action" : {
+								"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Confirm"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldForAction"
 						}],
 						"com.sap.vocabularies.UI.v1.StatusInfo" : [{
 							"Label" : {
@@ -3254,7 +3290,10 @@
 									}]
 								}
 							},
-							"RecordType" : "com.sap.vocabularies.UI.v1.DataField"
+							"Target" : {
+								"NavigationPropertyPath" : "ToBusinessPartner"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldWithNavigationPath"
 						}, {
 							"Label" : {
 								"String" : "Company Name"
@@ -5155,6 +5194,18 @@
 						}, {
 							"PropertyPath" : "DescriptionLanguage"
 						}]
+					},
+					"com.sap.vocabularies.UI.v1.DataPoint" : {
+						"Title" : {
+							"String" : "Price"
+						},
+						"Description" : {
+							"Path" : "Name"
+						},
+						"Value" : {
+							"Path" : "Price"
+						},
+						"RecordType" : "com.sap.vocabularies.UI.v1.DataPointType"
 					}
 				}, {
 					"name" : "SalesOrderSet",

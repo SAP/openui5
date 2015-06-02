@@ -23,8 +23,8 @@
   </edmx:Reference>
   <edmx:DataServices>
     <Schema Namespace="zanno4sample_anno_mdl.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <Annotations Target="GWSAMPLE_BASIC.Product">
-        <!--<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
+      <!--Annotations Target="GWSAMPLE_BASIC.Product">
+        <Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
           <Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
             <PropertyValue Property="TypeName" String="Product"/>
             <PropertyValue Property="TypeNamePlural" String="Products"/>
@@ -164,25 +164,8 @@
               </Collection>
             </PropertyValue>
           </Record>
-        </Annotation-->
-        <Annotation Term="com.sap.vocabularies.UI.v1.Chart">
-          <Record>
-            <PropertyValue Property="Title" String="Product Dimensions"/>
-            <PropertyValue Property="Dimensions">
-              <Collection>
-                <PropertyPath>ProductID</PropertyPath>
-              </Collection>
-            </PropertyValue>
-            <PropertyValue Property="Measures">
-              <Collection>
-                <PropertyPath>Depth</PropertyPath>
-                <PropertyPath>Height</PropertyPath>
-                <PropertyPath>Width</PropertyPath>
-              </Collection>
-            </PropertyValue>
-          </Record>
         </Annotation>
-        <!--<Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+        <Annotation Term="com.sap.vocabularies.UI.v1.Facets">
           <Collection>
             <Record Type="com.sap.vocabularies.UI.v1.CollectionFacet">
               <PropertyValue Property="Label" String="Supplier"/>
@@ -204,8 +187,8 @@
               <PropertyValue AnnotationPath="@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions" Property="Target"/>
             </Record>
           </Collection>
-        </Annotation-->
-      </Annotations>
+        </Annotation>
+      </Annotations-->
       <!--Annotations Target="GWSAMPLE_BASIC.SalesOrder/GrossAmount">
         <Annotation Path="CurrencyCode" Term="Org.OData.Measures.V1.ISOCurrency"/>
       </Annotations>
@@ -227,10 +210,16 @@
       <Annotations Target="GWSAMPLE_BASIC.SalesOrder/DeliveryStatus">
         <Annotation Term="com.sap.vocabularies.Common.v1.Text">
           <If>
-            <Eq>
-              <Path>DeliveryStatus</Path>
-              <String/>
-            </Eq>
+            <Or>
+              <Eq>
+                <Path>DeliveryStatus</Path>
+                <String/>
+              </Eq>
+              <Eq>
+                <Path>DeliveryStatus</Path>
+                <Null/>
+              </Eq>
+            </Or>
             <String>Not delivered</String>
             <Path>DeliveryStatusDescription</Path>
           </If>
@@ -401,8 +390,8 @@
             </Record>
           </Collection>
         </Annotation>
-      </Annotations>
-      <Annotations Target="GWSAMPLE_BASIC.SalesOrderLineItem/GrossAmount">
+      </Annotations-->
+      <!--Annotations Target="GWSAMPLE_BASIC.SalesOrderLineItem/GrossAmount">
         <Annotation Path="CurrencyCode" Term="Org.OData.Measures.V1.ISOCurrency"/>
       </Annotations>
       <Annotations Target="GWSAMPLE_BASIC.SalesOrderLineItem/NetAmount">

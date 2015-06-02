@@ -893,7 +893,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat", function () {
 		return withGwsampleModel(function (oMetaModel) {
-			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
+			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.Badge/Title/Value",
 				oRawValue = oMetaModel.getObject(sPath);
 
 			//TODO remove this workaround to fix whitespace issue
