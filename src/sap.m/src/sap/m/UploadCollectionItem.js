@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				 * ID of the FileUploader instance
 				 * since version 1.30
 				 */
-				fileUplaoder : {
+				fileUploader : {
 					type : "sap.ui.unified.FileUploader",
 					group : "misc",
 					multiple : false
