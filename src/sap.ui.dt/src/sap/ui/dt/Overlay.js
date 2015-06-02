@@ -50,7 +50,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			library : "sap.ui.dt",
 			properties : {
 				/** 
-				 * Wheather the overlay and it's descendants should be visible on a screen
+				 * Whether the overlay and it's descendants should be visible on a screen
 				 * We are overriding Control's property to prevent RenderManager from rendering of an invisible placeholder
 				 */	
 				visible : {
@@ -75,7 +75,8 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 * Whether the Overlay is draggable
 				 */
 				draggable : {
-					type : "boolean"
+					type : "boolean",
+					defaultValue : false
 				}
 			},
 			associations : {

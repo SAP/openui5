@@ -280,7 +280,9 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 		this._iterateAllElements(function(oElement) {
 			var oOverlay = OverlayRegistry.getOverlay(oElement);
 			if (oOverlay) {
-				aOverlays.push(oOverlay);
+				if (aOverlays.indexOf(oOverlay) === -1) {
+					aOverlays.push(oOverlay);
+				}
 			}
 		});
 
