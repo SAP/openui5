@@ -195,7 +195,7 @@ function(jQuery, BaseObject, Widget, Utils) {
 			if (!oControl.__patchedOnBeforeRendering) {
 				oControl.__patchedOnBeforeRendering = true;
 				if (oControl.__widget) {
-					var aChildren = Utils.findAllPublicControls(oControl, this.oScope.getWindow().sap.ui.core);
+					var aChildren = Utils.findAllPublicElements(oControl, this.oScope.getWindow().sap.ui.core);
 					for (var i = aChildren.length - 1; i >= 0; i--) {
 						if (!aChildren[i].__widget) {
 							this.createWYSIWYGControl(aChildren[i]);
@@ -220,7 +220,7 @@ function(jQuery, BaseObject, Widget, Utils) {
 	 * @private
 	 */
 	LibraryManager.prototype._findAllAccessableControls = function(oControl) {
-		return Utils.findAllPublicControls(oControl, this.oScope.getWindow().sap.ui.core);
+		return Utils.findAllPublicElements(oControl, this.oScope.getWindow().sap.ui.core);
 	};
 
 	/*

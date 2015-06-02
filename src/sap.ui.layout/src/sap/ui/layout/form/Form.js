@@ -72,7 +72,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			 * @since 1.28.0
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		}
+		},
+		designTime : true
 	}});
 
 	/**

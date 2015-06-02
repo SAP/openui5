@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.ControlObserver</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.ControlObserver");
+
+			QUnit.module("Given that a Button is observed", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button();
+					this.oControlObserver = new sap.ui.dt.ControlObserver({
+						target : this.oButton
+					});
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oControlObserver.destroy();
+					this.oButton.destroy();
+				}
+			});
+
+			QUnit.test("when the property of the Button is changed", function(assert) {
+				var done = assert.async();
+
+				this.oControlObserver.attachDomChanged(function(oEvent) {
+					assert.ok(oEvent, 'DomChanged event is fired');
+					done();
+				});
+
+				this.oButton.rerender();
+				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("when window is resized", function(assert) {
+				var done = assert.async();
+
+				this.oControlObserver.attachDomChanged(function(oEvent) {
+					assert.ok(oEvent, 'DomChanged event is fired');
+					done();
+				});
+				jQuery(window).trigger("resize");
+			});
+
+			QUnit.test("when the property of the Button is modified", function(assert) {
+				var done = assert.async();
+
+				this.oControlObserver.attachEventOnce("modified", function(oEvent) {
+					assert.ok(oEvent, 'then a "Changed" event is fired because of the property change');
+					done();
+				});
+				
+				this.oButton.setText("test");
+				sap.ui.getCore().applyChanges();
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.ControlObserver</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

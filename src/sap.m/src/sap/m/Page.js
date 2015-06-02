@@ -156,7 +156,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.12.2
 			 */
 			navButtonPress : {}
-		}
+		},
+		designTime : true
 	}});
 
 

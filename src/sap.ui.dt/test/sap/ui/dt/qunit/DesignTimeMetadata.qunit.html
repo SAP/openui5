@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.DesignTimeMetadata</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuerH.sap.require("sap.ui.dt.DesignTimeMetadata");
+			jQuery.sap.require("sap.ui.layout.VerticalLayout");
+
+			QUnit.module("Given that an DesignTimeMetadata is created for a control", {
+				beforeEach : function() {
+					this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
+						data : sap.ui.layout.VerticalLayout.getMetadata().getDesignTime()
+					});
+				},
+				afterEach : function() {
+					this.oDesignTimeMetadata.destroy();
+				}
+			});
+			QUnit.test("when the DesignTimeMetadata is initialized", 2, function(assert) {
+				assert.equal(this.oDesignTimeMetadata.getName(), "{name}", "then the name is returned right");
+				assert.deepEqual(this.oDesignTimeMetadata.getAggregation("content"), {
+					cssSelector : ":sap-domref"
+				}, "and the aggregation is returned right");
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.DesignTimeMetadata</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>
