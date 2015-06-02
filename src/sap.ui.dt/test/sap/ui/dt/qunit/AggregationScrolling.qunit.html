@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.DesignTime and scrolling of aggregation overlays</title>
+
+		<style>
+			#content {
+				position: absolute;
+				top: 0px;
+				z-index: 1000;
+				width: 700px;
+				height: 300px;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.Preloader");
+
+			QUnit.module("Given that overlay is created for a m.Page with Panels", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+					this.aPanels = [];
+					this.aPanelOverlays = [];
+					for (var i = 0; i < 10; i++) {
+						var oPanel = new sap.m.Panel();
+						this.aPanels.push(oPanel);
+						var oPanelOverlay =  new sap.ui.dt.Overlay({
+							element : oPanel
+						});
+						this.aPanelOverlays.push(oPanelOverlay);
+					}
+
+					this.oPage = new sap.m.Page({
+						content: this.aPanels
+					}).placeAt("content");
+
+					sap.ui.dt.Preloader.load(["sap.m.Page"]).then(function() {
+						that.oPageOverlay = new sap.ui.dt.Overlay({
+							element : that.oPage 
+						});
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+
+
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oPageOverlay.destroy();
+					for (var i = 0; i < 10; i++) {
+						this.aPanels[i].destroy();
+						this.aPanelOverlays[i].destroy();
+					}
+				}
+			});
+
+
+			QUnit.test("styles for page content overlay are similar to aggregation's and scroll is propagated to the original content's DOM", function(assert) {
+				var done = assert.async();
+				var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
+				var $PageContentOverlay = jQuery(oPageContentOverlay.getDomRef());
+				strictEqual($PageContentOverlay.length, 1, "page content overlay is rendered");
+
+				var $PageContent = jQuery(oPageContentOverlay.getGeometry().domRef);
+				strictEqual($PageContent.scrollTop(), $PageContentOverlay.scrollTop(), "initial scroll position is equal");
+
+				$PageContentOverlay.scrollTop(20);
+				$PageContent.on("scroll", function() {
+					strictEqual($PageContent.scrollTop(), 20, "page content is scrolled to position 20");
+					done();
+				});
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and scrolling of aggregation overlays</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

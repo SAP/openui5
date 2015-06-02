@@ -28,11 +28,34 @@ function(jQuery) {
 	var Utils = {};
 
 	Utils.getAggregationFilter = function() {
-		return [ "tooltip", "customData", "layoutData" ];
+		return [ "tooltip", "customData", "dependents", "layoutData", "layout" ];
 	};
 
 	Utils.getControlFilter = function() {
-		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout"  ];
+		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout" ];
+	};
+
+	Utils.getAggregationValue = function(sAggregationName, oControl) {
+		var mAggregations = oControl.getMetadata().getAllAggregations();
+		var oAggregation = mAggregations[sAggregationName];
+		var oValue;
+		if (!oAggregation._sGetter && !oControl.__calledJSONKeys) {
+			oControl.getMetadata().getJSONKeys();
+			// Performance optimization
+			oControl.__calledJSONKeys = true;
+		}
+		if (oAggregation._sGetter) {
+			oValue = oControl[oAggregation._sGetter]();
+			//ATTENTION:
+			//under some unknown circumstances the return oValue looks like an Array but jQuery.isArray() returned undefined => false
+			//that is why we use array ducktyping with a null check!
+			//In Watt reproducible with Windows and Chrome (currently 35), when creating a project and opening WYSIWYG editor afterwards on any file
+			//sap.m.Panel.prototype.getHeaderToolbar() returns a single object but an array
+			/*eslint-disable no-nested-ternary */
+			oValue = oValue && oValue.splice ? oValue : (oValue ? [oValue] : []);
+			/*eslint-enable no-nested-ternary */
+		}
+		return oValue;
 	};
 
 	Utils.getSupportedControlBlocks = function() {
@@ -58,30 +81,16 @@ function(jQuery) {
 				continue;
 			}
 			var oAggregation = mAggregations[sName];
-			if (!oAggregation._sGetter && !oControl.__calledJSONKeys) {
-				oControl.getMetadata().getJSONKeys();
-				// Performance optimization
-				oControl.__calledJSONKeys = true;
-			}
-			if (oAggregation._sGetter) {
-				var oValue = oControl[oAggregation._sGetter]();
+			var oValue = this.getAggregationValue(sName, oControl);
 
-				//ATTENTION:
-				//under some unknown circumstances the return oValue looks like an Array but jQuery.isArray() returned undefined => false
-				//that is why we use array ducktyping with a null check!
-				//In Watt reproducible with Windows and Chrome (currently 35), when creating a project and opening WYSIWYG editor afterwards on any file
-				//sap.m.Panel.prototype.getHeaderToolbar() returns a single object but an array
-				/*eslint-disable no-nested-ternary */
-				oValue = oValue && oValue.splice ? oValue : (oValue ? [oValue] : []);
-				/*eslint-enable no-nested-ternary */
-				oRes = fnCallback(oAggregation, oValue);
-				if (window.Q && window.Q.isPromise(oRes)) {
-					aPromises.push(oRes);
-				}
-				if (fnBreakCondition && fnBreakCondition(oAggregation, oValue)) {
-					break;
-				}
+			oRes = fnCallback(oAggregation, oValue);
+			if (window.Q && window.Q.isPromise(oRes)) {
+				aPromises.push(oRes);
 			}
+			if (fnBreakCondition && fnBreakCondition(oAggregation, oValue)) {
+				break;
+			}
+			
 		}
 
 		if (window.Q && aPromises.length) {
@@ -103,38 +112,68 @@ function(jQuery) {
 		return oParent;
 	};
 
-	Utils.findAllPublicControls = function(oControl, oCore) {
-		var aFoundControls = [];
-		var that = this;
+	Utils.getElementInstance = function(vElement) {
+		if (typeof vElement === "string") {
+			return sap.ui.getCore().byId(vElement);
+		} else {
+			return vElement;
+		}
+	};
 
-		function internalFind(oControl) {
-			if (oControl.getMetadata().getClass() === oCore.UIArea) {
-				var aContent = oControl.getContent();
+	Utils.hasAncestor = function(oElement, oAncestor) {
+		var oParent = oElement;
+		while (oParent && oParent !== oAncestor) {
+			oParent = oParent.getParent();
+		}
+
+		return !!oParent;
+	};
+
+	Utils.findAllPublicElements = function(oElement) {
+		var aFoundElements = [];
+		var that = this;
+		var oCore = sap.ui.core;
+
+		function internalFind(oElement) {
+			if (!(oElement instanceof oCore.Element) || that.isElementFiltered(oElement)) {
+				return;
+			}
+
+			//check if needed
+			if (oElement.getMetadata().getClass() === oCore.UIArea) {
+				var aContent = oElement.getContent();
 				for (var i = 0; i < aContent.length; i++) {
 					internalFind(aContent[i]);
 				}
-			} else if (oControl.getMetadata().getClass() === oCore.ComponentContainer) {
-				internalFind(oControl.getComponentInstance().getAggregation("rootControl"));
+			} else if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
+				internalFind(oElement.getComponentInstance().getAggregation("rootControl"));
 			} else {
-				oControl.__publicControl = true;
-				aFoundControls.push(oControl);
-				that.iterateOverAllPublicAggregations(oControl, function(oAggregation, aControls) {
-					if (aControls && aControls.length) { // TODO: ARRAY CHECK
-						for (var k = 0; k < aControls.length; k++) {
-							var oObj = aControls[k];
-							if (oObj instanceof oCore.Element) {
-								internalFind(oObj);
-							}
+				aFoundElements.push(oElement);
+				that.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
+					if (vElements && vElements.length) {
+						for (var k = 0; k < vElements.length; k++) {
+							var oObj = vElements[k];
+							internalFind(oObj);
 						}
-					} else if (aControls instanceof oCore.Element) {
-						internalFind(aControls);
+					} else if (vElements instanceof oCore.Element) {
+						internalFind(vElements);
 					}
 				}, null, sap.ui.dt.Utils.getAggregationFilter());
 			}
 		}
-		internalFind(oControl);
+		internalFind(oElement);
 
-		return aFoundControls;
+		return aFoundElements;
+
+	};
+
+	Utils.findAllPublicChildren = function(oElement) {
+		var aFoundElements = this.findAllPublicElements(oElement);
+		var iIndex = aFoundElements.indexOf(oElement);
+		if (iIndex > -1) {
+			aFoundElements.splice(iIndex, 1);
+		}
+		return aFoundElements;
 
 	};
 
@@ -172,7 +211,7 @@ function(jQuery) {
 				return false;
 			}
 			if (oParent.__publicControl) {
-				var aList = that.findAllPublicControls(oParent, oCore).filter(function(oSingleControl) {
+				var aList = that.findAllPublicElements(oParent, oCore).filter(function(oSingleControl) {
 					return oSingleControl.getId() === oControl.getId();
 				});
 				return aList.length > 0;
@@ -188,9 +227,25 @@ function(jQuery) {
 		var oControlContentMetaData = oControl.getContent && oControl.getContent() ? oControl.getContent()[0] : undefined;
 		oControlContentMetaData = oControlContentMetaData ? oControlContentMetaData.getMetadata() : undefined;
 
-		return ((oControl.getMetadata()._sClassName === "sap.ui.core.UIArea")
-				|| (oControlContentMetaData && oControlContentMetaData._sClassName === "sap.m.Page") ? true
+		return ((oControl.getMetadata()._sClassName === "sap.ui.core.UIArea") ||
+				(oControlContentMetaData && oControlContentMetaData._sClassName === "sap.m.Page") ? true
 				: this.isTypeOf(oControl.getMetadata(), aType));
+	};
+
+	Utils.isElementFiltered = function(oControl, aType) {
+		var that = this;
+
+		aType = aType || this.getControlFilter();
+		var bFiltered = false;
+
+		aType.forEach(function(sType) {
+			bFiltered = that.isInstance(oControl, sType);
+			if (bFiltered) {
+				return false;
+			}
+		});
+
+		return bFiltered;
 	};
 	
 	Utils.isTypeOf = function(oMetadata, aType) {
@@ -198,6 +253,46 @@ function(jQuery) {
 			return true;
 		} else if (oMetadata.getParent().getName() !== "sap.ui.base.Object") {
 			return this.isTypeOf(oMetadata.getParent(), aType);
+		} else {
+			return false;
+		}
+	};
+
+	Utils.getAggregationMutators = function(oElement, sAggregationName) {
+		var oAggregationMetadata = oElement.getMetadata().getAggregation(sAggregationName);
+		return {
+			add : oAggregationMetadata._sMutator,
+			remove : oAggregationMetadata._sRemoveMutator,
+			insert : oAggregationMetadata._sInsertMutator
+		};
+	};
+	
+	Utils.addAggregation = function(oParent, sAggregationName, oElement) {
+		var sAggregationAddMutator = this.getAggregationMutators(oParent, sAggregationName).add;
+		oParent[sAggregationAddMutator](oElement);
+	};
+	
+	Utils.removeAggregation = function(oParent, sAggregationName, oElement) {
+		var sAggregationRemoveMutator = this.getAggregationMutators(oParent, sAggregationName).remove;
+		oParent[sAggregationRemoveMutator](oElement);
+	};
+
+	Utils.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
+		var sAggregationInsertMutator = this.getAggregationMutators(oParent, sAggregationName).insert;
+		oParent[sAggregationInsertMutator](oElement, iIndex);
+	};
+
+	Utils.isValidForAggregation = function(oParent, sAggregationName, oElement) {
+		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
+
+		// TODO : test altTypes
+		return this.isInstance(oElement, oAggregationMetadata.type);
+	};
+
+	Utils.isInstance = function(oElement, sType) {
+		var oInstance = jQuery.sap.getObject(sType);
+		if (typeof oInstance === "function") {
+			return oElement instanceof oInstance;
 		} else {
 			return false;
 		}
@@ -282,8 +377,7 @@ function(jQuery) {
 		if (oExpectedLayoutData) {
 			return getHiddenLayoutData(oControl)[oExpectedLayoutData.getMetadata().getName()];
 		}
-	}
-		
+	}		
 
 	return Utils;
 }, /* bExport= */ true);
