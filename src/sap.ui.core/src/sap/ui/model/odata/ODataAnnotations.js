@@ -1196,8 +1196,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			if (oParameterNode.nodeName === "Apply") {
 				mParameter.Value = this.getApplyFunctions(xmlDoc, oParameterNode);
 			} else if (oParameterNode.nodeName === "LabeledElement") {
-				mParameter.Name = oParameterNode.getAttribute("Name");
 				mParameter.Value = this.getPropertyValue(xmlDoc, oParameterNode, mAlias);
+				
+				// Move the name attribute up one level to keep compatibility with earlier implementation
+				mParameter.Name = mParameter.Value.Name;
+				delete mParameter.Value.Name;
 			} else if (mMultipleArgumentDynamicExpressions[oParameterNode.nodeName]) {
 				mParameter.Value = this.getPropertyValue(xmlDoc, oParameterNode, mAlias);
 			} else {

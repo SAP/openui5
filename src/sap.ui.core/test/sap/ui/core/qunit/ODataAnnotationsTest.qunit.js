@@ -2994,7 +2994,7 @@ function runODataAnnotationTests() {
 	});
 
 	test("UrlRef", function() {
-		expect(74);
+		expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
 		var sServiceURI = mTest.service;
@@ -3015,102 +3015,82 @@ function runODataAnnotationTests() {
 
 		ok(!!oAnnotations["UrlTest"], "Main entry exists");
 
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"], "Main entry exists");
-
-		ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"]), "Main entry is an array");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0], "First entry exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Label"], "First entry Label exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Label"]["String"], "First entry Label String exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Label"]["String"], "ID", "First entry Label String has correct value");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Value"], "First entry Value exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Value"]["Path"], "First entry Value String exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Value"]["Path"], "BusinessPartnerID", "First entry Value BusinessPartnerID has correct value");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["RecordType"], "First entry RecordType exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["RecordType"], "com.sap.vocabularies.UI.v1.DataField", "First entry RecordType has correct value");
-
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1], "Second entry exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Label"], "Second entry Label exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Label"]["String"], "Second entry Label String exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Label"]["String"], "Address", "Second entry Label String has correct value");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Target"], "Second entry Target exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Target"]["AnnotationPath"], "Second entry Target AnnotationPath exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Target"]["AnnotationPath"], "@com.sap.vocabularies.Communication.v1.Address", "Second entry Target AnnotationPath has correct value");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["RecordType"], "Second entry RecordType exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["RecordType"], "com.sap.vocabularies.UI.v1.DataFieldForAnnotation", "Second entry RecordType has correct value");
-
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2], "Third entry exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Label"], "Third entry Label exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Label"]["String"], "Third entry Label String exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Label"]["String"], "Link to", "Third entry Label String has correct value");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Value"], "Third entry Value exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Value"]["String"], "Third entry Value String exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Value"]["String"], "Google Maps", "Third entry Value String has correct value");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["RecordType"], "Third entry RecordType exists");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["RecordType"], "com.sap.vocabularies.UI.v1.DataFieldWithUrl", "Third entry RecordType has correct value");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2], "Third entry exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"], "Third entry Url exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"], "Third entry Url UrlRef exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"], "Third entry Url UrlRef Apply exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Name"], "Third entry Url UrlRef Apply Name exists");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"], "Third entry Url UrlRef Apply Parameters exists");
-		ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"]), "Third entry Url UrlRef Apply Parameters is an array");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"].length, 3, "Third entry Url UrlRef Apply Parameters is an array with 3 entries");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Type"], "Third entry Url UrlRef Apply First Parameter has Type");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Type"], "String", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Value"], "Third entry Url UrlRef Apply First Parameter has Value");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Value"], "https://www.google.de/maps/place/{street},{city}", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Type"], "Third entry Url UrlRef Apply First Parameter has Type");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Type"], "LabeledElement", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Name"], "Third entry Url UrlRef Apply First Parameter has Name");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Name"], "street", "Third entry Url UrlRef Apply First Parameter Name has correct value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"], "Third entry Url UrlRef Apply First Parameter has Value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"], "Third entry Url UrlRef Apply First Parameter Value Apply");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Name"], "Third entry Url UrlRef Apply First Parameter Value Apply Name");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Name"], "odata.uriEncode", "Third entry Url UrlRef Apply First Parameter Value Apply Name has correct value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters");
-		ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"]), "Third entry Url UrlRef Apply First Parameter Value Apply Parameters is array");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"].length, 1, "Third entry Url UrlRef Apply First Parameter Value Apply has one Parameter");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Type"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Type");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Type"], "Path", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Type is Path");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Value"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Value");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Value"], "Address/Street", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Value is Address/Street");
-
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Type"], "Third entry Url UrlRef Apply First Parameter has Type");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Type"], "LabeledElement", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "Third entry Url UrlRef Apply First Parameter has Name");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Third entry Url UrlRef Apply First Parameter Name has correct value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"], "Third entry Url UrlRef Apply First Parameter has Value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"], "Third entry Url UrlRef Apply First Parameter Value Apply");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Name"], "Third entry Url UrlRef Apply First Parameter Value Apply Name");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Name"], "odata.uriEncode", "Third entry Url UrlRef Apply First Parameter Value Apply Name has correct value");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters");
-		ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"]), "Third entry Url UrlRef Apply First Parameter Value Apply Parameters is array");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"].length, 1, "Third entry Url UrlRef Apply First Parameter Value Apply has one Parameter");
-
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Type"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Type");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Type"], "Path", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Type is Path");
-		ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Value"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Value");
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Value"], "Address/City", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Value is Address/City");
+		deepContains(
+			oAnnotations["UrlTest"],
+			{
+				"com.sap.vocabularies.UI.v1.Identification": [{
+					"Label": {
+						"String": "ID"
+					},
+					"Value": {
+						"Path": "BusinessPartnerID"
+					},
+					"RecordType": "com.sap.vocabularies.UI.v1.DataField"
+				}, {
+					"Label": {
+						"String":"Address"
+					},
+					"Target": {
+						"AnnotationPath": "@com.sap.vocabularies.Communication.v1.Address"
+					},
+					"RecordType": "com.sap.vocabularies.UI.v1.DataFieldForAnnotation"
+				}, {
+					"Label": {
+						"String":"Link to"
+					},
+					"Value": {
+						"String": "Google Maps"
+					},
+					"Url": {
+						"UrlRef": {
+							"Apply": {
+								"Name": "odata.fillUriTemplate",
+								"Parameters": [{
+									"Type": "String",
+									"Value": "https://www.google.de/maps/place/{street},{city}"
+								}, {
+									"Type": "LabeledElement",
+									"Value": {
+										"Apply": {
+											"Name": "odata.uriEncode",
+											"Parameters": [{
+												"Type": "Path",
+												"Value": "Address/Street"
+											}]
+										}
+									},
+									"Name": "street"
+								}, {
+									"Type": "LabeledElement",
+									"Value": {
+										"Apply": {
+											"Name": "odata.uriEncode",
+											"Parameters": [{
+												"Type": "Path",
+												"Value": "Address/City"
+											}]
+										}
+									},
+									"Name": "city"
+								}]
+							}
+						}
+					},
+					"RecordType":"com.sap.vocabularies.UI.v1.DataFieldWithUrl"
+				}]
+			},
+			"Correct values for UrlTest"
+		);
+		
+		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Name is correctly set for labeled element");
+		ok(!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Name"], "Name is not set for labeled element Value");
+		
+		
 	});
 
 
 	asyncTest("V2: UrlRef", function() {
-		expect(74);
+		expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
 		var sServiceURI = mTest.service;
@@ -3132,97 +3112,76 @@ function runODataAnnotationTests() {
 
 			ok(!!oAnnotations["UrlTest"], "Main entry exists");
 
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"], "Main entry exists");
-
-			ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"]), "Main entry is an array");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0], "First entry exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Label"], "First entry Label exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Label"]["String"], "First entry Label String exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Label"]["String"], "ID", "First entry Label String has correct value");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Value"], "First entry Value exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Value"]["Path"], "First entry Value String exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["Value"]["Path"], "BusinessPartnerID", "First entry Value BusinessPartnerID has correct value");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["RecordType"], "First entry RecordType exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][0]["RecordType"], "com.sap.vocabularies.UI.v1.DataField", "First entry RecordType has correct value");
-
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1], "Second entry exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Label"], "Second entry Label exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Label"]["String"], "Second entry Label String exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Label"]["String"], "Address", "Second entry Label String has correct value");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Target"], "Second entry Target exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Target"]["AnnotationPath"], "Second entry Target AnnotationPath exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["Target"]["AnnotationPath"], "@com.sap.vocabularies.Communication.v1.Address", "Second entry Target AnnotationPath has correct value");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["RecordType"], "Second entry RecordType exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][1]["RecordType"], "com.sap.vocabularies.UI.v1.DataFieldForAnnotation", "Second entry RecordType has correct value");
-
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2], "Third entry exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Label"], "Third entry Label exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Label"]["String"], "Third entry Label String exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Label"]["String"], "Link to", "Third entry Label String has correct value");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Value"], "Third entry Value exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Value"]["String"], "Third entry Value String exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Value"]["String"], "Google Maps", "Third entry Value String has correct value");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["RecordType"], "Third entry RecordType exists");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["RecordType"], "com.sap.vocabularies.UI.v1.DataFieldWithUrl", "Third entry RecordType has correct value");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2], "Third entry exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"], "Third entry Url exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"], "Third entry Url UrlRef exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"], "Third entry Url UrlRef Apply exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Name"], "Third entry Url UrlRef Apply Name exists");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"], "Third entry Url UrlRef Apply Parameters exists");
-			ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"]), "Third entry Url UrlRef Apply Parameters is an array");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"].length, 3, "Third entry Url UrlRef Apply Parameters is an array with 3 entries");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Type"], "Third entry Url UrlRef Apply First Parameter has Type");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Type"], "String", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Value"], "Third entry Url UrlRef Apply First Parameter has Value");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][0]["Value"], "https://www.google.de/maps/place/{street},{city}", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Type"], "Third entry Url UrlRef Apply First Parameter has Type");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Type"], "LabeledElement", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Name"], "Third entry Url UrlRef Apply First Parameter has Name");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Name"], "street", "Third entry Url UrlRef Apply First Parameter Name has correct value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"], "Third entry Url UrlRef Apply First Parameter has Value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"], "Third entry Url UrlRef Apply First Parameter Value Apply");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Name"], "Third entry Url UrlRef Apply First Parameter Value Apply Name");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Name"], "odata.uriEncode", "Third entry Url UrlRef Apply First Parameter Value Apply Name has correct value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters");
-			ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"]), "Third entry Url UrlRef Apply First Parameter Value Apply Parameters is array");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"].length, 1, "Third entry Url UrlRef Apply First Parameter Value Apply has one Parameter");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Type"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Type");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Type"], "Path", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Type is Path");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Value"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Value");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][1]["Value"]["Apply"]["Parameters"][0]["Value"], "Address/Street", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Value is Address/Street");
-
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Type"], "Third entry Url UrlRef Apply First Parameter has Type");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Type"], "LabeledElement", "Third entry Url UrlRef Apply First Parameter Type has correct value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "Third entry Url UrlRef Apply First Parameter has Name");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Third entry Url UrlRef Apply First Parameter Name has correct value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"], "Third entry Url UrlRef Apply First Parameter has Value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"], "Third entry Url UrlRef Apply First Parameter Value Apply");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Name"], "Third entry Url UrlRef Apply First Parameter Value Apply Name");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Name"], "odata.uriEncode", "Third entry Url UrlRef Apply First Parameter Value Apply Name has correct value");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters");
-			ok(jQuery.isArray(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"]), "Third entry Url UrlRef Apply First Parameter Value Apply Parameters is array");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"].length, 1, "Third entry Url UrlRef Apply First Parameter Value Apply has one Parameter");
-
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Type"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Type");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Type"], "Path", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Type is Path");
-			ok(!!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Value"], "Third entry Url UrlRef Apply First Parameter Value Apply Parameters has Value");
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Apply"]["Parameters"][0]["Value"], "Address/City", "Third entry Url UrlRef Apply First Parameter Value Apply Parameters Value is Address/City");
+			deepContains(
+				oAnnotations["UrlTest"],
+				{
+					"com.sap.vocabularies.UI.v1.Identification": [{
+						"Label": {
+							"String": "ID"
+						},
+						"Value": {
+							"Path": "BusinessPartnerID"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField"
+					}, {
+						"Label": {
+							"String":"Address"
+						},
+						"Target": {
+							"AnnotationPath": "@com.sap.vocabularies.Communication.v1.Address"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataFieldForAnnotation"
+					}, {
+						"Label": {
+							"String":"Link to"
+						},
+						"Value": {
+							"String": "Google Maps"
+						},
+						"Url": {
+							"UrlRef": {
+								"Apply": {
+									"Name": "odata.fillUriTemplate",
+									"Parameters": [{
+										"Type": "String",
+										"Value": "https://www.google.de/maps/place/{street},{city}"
+									}, {
+										"Type": "LabeledElement",
+										"Value": {
+											"Apply": {
+												"Name": "odata.uriEncode",
+												"Parameters": [{
+													"Type": "Path",
+													"Value": "Address/Street"
+												}]
+											}
+										},
+										"Name": "street"
+									}, {
+										"Type": "LabeledElement",
+										"Value": {
+											"Apply": {
+												"Name": "odata.uriEncode",
+												"Parameters": [{
+													"Type": "Path",
+													"Value": "Address/City"
+												}]
+											}
+										},
+										"Name": "city"
+									}]
+								}
+							}
+						},
+						"RecordType":"com.sap.vocabularies.UI.v1.DataFieldWithUrl"
+					}]
+				},
+				"Correct values for UrlTest"
+			);
+			
+			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Name is correctly set for labeled element");
+			ok(!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Name"], "Name is not set for labeled element Value");
+			
 			start();
 		});
 	});
@@ -3664,7 +3623,7 @@ function runODataAnnotationTests() {
 	
 	
 	asyncTest("Other Elements in LabeledElement", function() {
-		expect(113);
+		expect(97);
 		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -3696,49 +3655,42 @@ function runODataAnnotationTests() {
 										"Type":"LabeledElement",
 										"Name":"Bool",
 										"Value": {
-											"Name": "Bool",
 											"Bool": "true"
 										}
 									}, {
 										"Type": "LabeledElement",
 										"Name": "Date",
 										"Value": {
-											"Name": "Date",
 											"Date": "2015-03-24"
 										}
 									}, {
 										"Type": "LabeledElement",
 										"Name": "DateTimeOffset",
 										"Value": {
-											"Name": "DateTimeOffset",
 											"DateTimeOffset": "2015-03-24T14:03:27Z"
 										}
 									}, {
 										"Type": "LabeledElement",
 										"Name": "Decimal",
 										"Value": {
-											"Name":"Decimal",
 											"Decimal": "-123456789012345678901234567890.1234567890"
 										}
 									}, {
 										"Type": "LabeledElement",
 										"Name": "Float",
 										"Value": {
-											"Name": "Float",
 											"Float": "-7.4503e-36"
 										}
 									}, {
 										"Type": "LabeledElement",
 										"Name": "Guid",
 										"Value": {
-											"Name": "Guid",
 											"Guid": "0050568D-393C-1ED4-9D97-E65F0F3FCC23"
 										}
 									}, {
 										"Type": "LabeledElement",
 										"Name": "Int",
 										"Value": {
-											"Name": "Int",
 											"Int": "9007199254740992"
 										}
 									}, {
@@ -3757,7 +3709,6 @@ function runODataAnnotationTests() {
 										"Type": "LabeledElement",
 										"Name": "TimeOfDay",
 										"Value": {
-											"Name": "TimeOfDay",
 											"TimeOfDay": "13:57:06"
 										}
 									}]
