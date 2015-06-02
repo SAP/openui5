@@ -255,3 +255,75 @@ QUnit.test("test Upload", function(assert) {
 	assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 	assert.ok(fnFUUpload2.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 });
+
+QUnit.module("Delete PendingUpload Item", {
+	setup : function() {
+		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
+			instantUpload : false
+		});
+		this.oUploadCollection.placeAt("uiArea");
+		sap.ui.getCore().applyChanges();
+	},
+	teardown : function() {
+		this.oUploadCollection.destroy();
+		this.oUploadCollection = null;
+	}
+});
+
+QUnit.test("Check file list", function(assert) {
+	var oFile0 = {
+			name : "Screenshot.ico",
+	};
+	var oFile1 = {
+			name : "Notes.txt",
+	};
+	var oFile2 = {
+			name : "Document.txt",
+	};
+	var oFile3 = {
+			name : "Picture of a woman.png",
+	};
+	var aFiles = [oFile0];
+	var oFileUploader = this.oUploadCollection._getFileUploader();
+	oFileUploader.fireChange({files: aFiles});
+	sap.ui.getCore().applyChanges();
+	aFiles = [oFile1];
+	oFileUploader.fireChange({files: aFiles});
+	sap.ui.getCore().applyChanges();
+	aFiles = [oFile2];
+	oFileUploader.fireChange({files: aFiles});
+	sap.ui.getCore().applyChanges();
+	aFiles = [oFile3];
+	oFileUploader.fireChange({files: aFiles});
+	sap.ui.getCore().applyChanges();
+
+	var fnTestHandleDelete = function(oEvent, oContext) {
+		assert.ok(true, "Function '_handleDelete' was called");
+	};
+	//check the call of _handleDelete
+	var fnBaseHandleDelete = this.oUploadCollection._handleDelete;
+	sap.m.UploadCollection.prototype._handleDelete = fnTestHandleDelete;
+	var sDeleteButtonId = this.oUploadCollection.aItems[0].getId() + "-deleteButton";
+	var oDeleteButton = sap.ui.getCore().byId(sDeleteButtonId);
+	oDeleteButton.firePress();
+	sap.ui.getCore().applyChanges();
+	sap.m.UploadCollection.prototype._handleDelete = fnBaseHandleDelete;
+
+	//check the number of list items
+	var iLengthBeforeDeletion = this.oUploadCollection.getItems().length;
+	var sNameBeforeDeletion = this.oUploadCollection.getItems()[0].getFileName();
+	assert.equal(iLengthBeforeDeletion, 4, "4 list items available");
+
+	this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[0];
+	this.oUploadCollection._oItemForDelete._iLineNumber = 0;
+	this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+	sap.ui.getCore().applyChanges();
+
+	//check the deleted item by comparison of the name before and after the deletion
+	var sNameAfterDeletion = this.oUploadCollection.getItems()[0].getFileName();
+	assert.notEqual(sNameBeforeDeletion, sNameAfterDeletion, "Item was deleted, checked by different names!");
+
+	//check the deleted item by comparison of the number of list items before and after the deletion
+	var iLengthAfterDeletion = this.oUploadCollection.getItems().length;
+	assert.notEqual(iLengthBeforeDeletion, iLengthAfterDeletion, "Item was deleted, checked by different number of items!");
+});

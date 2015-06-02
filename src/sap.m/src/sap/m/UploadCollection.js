@@ -1241,6 +1241,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", sFileName);
 			}
 			oContext._oItemForDelete = aItems[index];
+			oContext._oItemForDelete._iLineNumber = index;
 			sap.m.MessageBox.show(sMessageText, {
 				title : this._oRb.getText("UPLOADCOLLECTION_DELETE_TITLE"),
 				actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
@@ -1257,14 +1258,31 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._onCloseMessageBoxDeleteItem = function (oAction) {
+		var iCounter, i = 0;
 		if (oAction === sap.m.MessageBox.Action.OK) {
-			// fire event
-			this.fireFileDeleted({
-				// deprecated
-				documentId : this._oItemForDelete.getDocumentId(),
-				// new
-				item : this._oItemForDelete
-			});
+			if (this.getInstantUpload()) {
+				// fire event
+				this.fireFileDeleted({
+					// deprecated
+					documentId : this._oItemForDelete.getDocumentId(),
+					// new
+					item : this._oItemForDelete
+				});
+			} else {
+				this.aItems.splice(this._oItemForDelete._iLineNumber, 1);
+
+				iCounter = this._aFileUploadersForPendingUpload.length;
+				var sAssociation = this._oItemForDelete.getAssociation("fileUploader");
+				for (i = 0; i < iCounter; i++) {
+					if (sAssociation === this._aFileUploadersForPendingUpload[i].getId()) {
+						this._aFileUploadersForPendingUpload[i].destroy();
+						this._aFileUploadersForPendingUpload[i] = null;
+						this._aFileUploadersForPendingUpload.splice(i, 1);
+						break;
+					}
+				}
+				this.removeAggregation("items", this._oItemForDelete, false);
+			}
 		} 
 		delete this._oItemForDelete;
 	};
