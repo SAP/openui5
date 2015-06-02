@@ -1062,6 +1062,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (this.getSameFilenameAllowed()) {
 			this.setValue("", true);
 		}
+		//refocus the Button, except bSupressFocus is set
+		if (this.oBrowse.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
+			this.oBrowse.focus();
+		}
 	};
 
 	//
