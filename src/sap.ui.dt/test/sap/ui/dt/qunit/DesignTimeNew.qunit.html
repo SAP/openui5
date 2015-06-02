@@ -28,7 +28,8 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
-		jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");			
 			jQuery.sap.require("sap.ui.dt.DesignTimeNew");
 
 			QUnit.module("Given that an DesignTimeNew is created for a root control", {
@@ -57,19 +58,26 @@
 			QUnit.test("... and new control without overlay is added to a root control aggregation", function(assertasync) {
 				var done = assert.async();
 
-				var oButton3 = new sap.m.Button();
+				var oButton = new sap.m.Button();
+				var oLayout = new sap.ui.layout.VerticalLayout({content : [oButton]});
 
-				this.oDesignTime.attachEventOnce("overlayCreated", function(oEvent) {
-					var oOverlay = oEvent.getParameter("overlay");
-					assert.ok(oOverlay.getElementInstance() === oButton3, "event overlay created is triggered with an overlay for button3");
-					assert.ok(isOverlayForElementInDesignTime(oButton3, this.oDesignTime), "overlay for button3 exists");
+				var aOverlay = [];
 
-					done();
-					// cleanup
-					oButton3.destroy();
+				this.oDesignTime.attachEvent("overlayCreated", function(oEvent) {
+
+					aOverlay.push(oEvent.getParameter("overlay"));
+
+					if (aOverlay.length >= 2) {
+						ok(sap.ui.dt.OverlayRegistry.getOverlay(oButton), "overlay for the button exists");
+						ok(sap.ui.dt.OverlayRegistry.getOverlay(oLayout), "overlay for the layout exists");
+
+						done();
+						// cleanup
+						oLayout.destroy();
+					}
 				}, this);
 
-				this.oOuterLayout.addContent(oButton3);
+				this.oOuterLayout.addContent(oLayout);
 			});
 
 			QUnit.test("... and the control is moved inside of root element", function(assert) {
