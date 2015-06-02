@@ -202,6 +202,8 @@
 				intervalSelection: false,
 				singleSelection: false,
 				showHeader: true,
+				firstDayOfWeek: 2,
+				nonWorkingDays: [3, 5],
 				select: function(oEvent){
 					var oLB = sap.ui.getCore().byId("LB");
 					var oMonth = oEvent.oSource;
@@ -263,7 +265,7 @@
 		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
-		<div>multiple day Selection</div>
+		<div>multiple day Selection (with custom weekend and weekstart)</div>
 		<br>
 		<div>
 		<div id="sample3" style="display:inline-block;"></div>

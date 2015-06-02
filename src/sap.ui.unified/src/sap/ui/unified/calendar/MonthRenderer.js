@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		if (oMonth.getShowHeader()) {
+		if (oMonth._getShowHeader()) {
 			oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
 		}
 
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	MonthRenderer.renderHeader = function(oRm, oMonth, oDate){
 
 		var oLocaleData = oMonth._getLocaleData();
-		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+		var iFirstDayOfWeek = oMonth._getFirstDayOfWeek();
 		var sId = oMonth.getId();
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	MonthRenderer.renderHeaderLine = function(oRm, oMonth, oLocaleData, oDate){
 
-		if (oMonth.getShowHeader()) {
+		if (oMonth._getShowHeader()) {
 			var sId = oMonth.getId();
 			var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
 			oRm.write("<div id=\"" + sId + "-Head\"class=\"sapUiCalMonthHead\" >");
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	MonthRenderer.renderDayNames = function(oRm, oMonth, oLocaleData, iStartDay, iDays, bDayNumberAsId, sWidth){
 
-		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+		var iFirstDayOfWeek = oMonth._getFirstDayOfWeek();
 		var sId = oMonth.getId();
 		var sDayId = "";
 
@@ -224,9 +224,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oHelper.oLocaleData = oMonth._getLocaleData();
 		oHelper.iMonth = oDate.getUTCMonth();
 		oHelper.iYear = oDate.getUTCFullYear();
-		oHelper.iFirstDayOfWeek = oHelper.oLocaleData.getFirstDayOfWeek();
+		oHelper.iFirstDayOfWeek = oMonth._getFirstDayOfWeek();
 		oHelper.iWeekendStart = oHelper.oLocaleData.getWeekendStart();
 		oHelper.iWeekendEnd = oHelper.oLocaleData.getWeekendEnd();
+		oHelper.aNonWorkingDays = oMonth._getNonWorkingDays();
 		oHelper.sToday = oHelper.oLocaleData.getRelativeDay(0);
 		oHelper.oToday = new UniversalDate();
 		oHelper.sId = oMonth.getId();
@@ -305,7 +306,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			}
 		}
 
-		if ((iWeekDay >= oHelper.iWeekendStart && iWeekDay <= oHelper.iWeekendEnd) ||
+		if (oHelper.aNonWorkingDays) {
+			for (var i = 0; i < oHelper.aNonWorkingDays.length; i++) {
+				if (iWeekDay == oHelper.aNonWorkingDays[i]) {
+					oRm.addClass("sapUiCalDayWeekEnd");
+					break;
+				}
+			}
+		}else	if ((iWeekDay >= oHelper.iWeekendStart && iWeekDay <= oHelper.iWeekendEnd) ||
 				( oHelper.iWeekendEnd < oHelper.iWeekendStart && ( iWeekDay >= oHelper.iWeekendStart || iWeekDay <= oHelper.iWeekendEnd))) {
 			oRm.addClass("sapUiCalDayWeekEnd");
 		}

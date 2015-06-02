@@ -56,6 +56,8 @@
 
 			var oCal3 = new sap.ui.unified.Calendar("Cal3",{
 				months: 2,
+				firstDayOfWeek: 2,
+				nonWorkingDays: [3, 5],
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "0", "5")})],
 			}).placeAt("uiArea3");
 			oCal3.setLocale("de-DE");
@@ -71,9 +73,14 @@
 				var aWeekHeaders = $Month.find(".sapUiCalWH");
 				equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
 				equal(jQuery(aWeekHeaders[0]).text(), "Sun", "Sunday ist first weekday for en-US");
+
 				$Month = sap.ui.getCore().byId("Cal2").getAggregation("month")[0].$();
 				var aWeekHeaders = $Month.find(".sapUiCalWH");
 				equal(jQuery(aWeekHeaders[0]).text(), "Mo", "Monday ist first weekday for de-DE");
+
+				$Month = sap.ui.getCore().byId("Cal3").getAggregation("month")[0].$();
+				var aWeekHeaders = $Month.find(".sapUiCalWH");
+				equal(jQuery(aWeekHeaders[0]).text(), "Di", "Thuesday ist first weekday for custom setting");
 			});
 
 			test("rendered month", function() {
@@ -104,6 +111,17 @@
 				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110206", "last displayed day");
 				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is in other month");
+				var bOK = false;
+				if(!jQuery(aDays[0]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[1]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[2]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[3]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[4]).hasClass("sapUiCalDayWeekEnd") &&
+				   jQuery(aDays[5]).hasClass("sapUiCalDayWeekEnd") &&
+				   jQuery(aDays[6]).hasClass("sapUiCalDayWeekEnd")){
+					bOK = true;
+				}
+				ok(bOK, "Only Saturday and Sunday are Weekend");
 
 				equal(jQuery("#Cal3--Head-B1").text(), "Januar - Februar", "January - Februar shown");
 				equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown");
@@ -113,6 +131,18 @@
 				equal($FocusedDay.attr("data-sap-day"), "20150105", "first Month: day 2015-01-05 has tabindex 0");
 				$FocusedDay = jQuery(jQuery("#Cal3--Month1-days").find("[tabindex='0']"));
 				equal($FocusedDay.attr("data-sap-day"), "20150201", "second Month: day 2015-02-01 has tabindex 0");
+				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalDay");
+				bOK = false;
+				if(!jQuery(aDays[0]).hasClass("sapUiCalDayWeekEnd") &&
+				   jQuery(aDays[1]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[2]).hasClass("sapUiCalDayWeekEnd") &&
+				   jQuery(aDays[3]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[4]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[5]).hasClass("sapUiCalDayWeekEnd") &&
+				   !jQuery(aDays[6]).hasClass("sapUiCalDayWeekEnd")){
+					bOK = true;
+				}
+				ok(bOK, "Custom weekend used");
 			});
 
 			test("focusDate method", function() {
@@ -210,16 +240,16 @@
 				equal(jQuery("#Cal3--Head-B1").text(), "November - Dezember", "November - December shown");
 				equal(jQuery("#Cal3--Head-B2").text(), "2014", "year 2014 shown");
 				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalDay");
-				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141027", "first displayed day");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141028", "first displayed day");
 				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalDay");
-				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150104", "last displayed day");
+				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150105", "last displayed day");
 				qutils.triggerEvent("click", "Cal3--Head-next");
 				equal(jQuery("#Cal3--Head-B1").text(), "Januar - Februar", "january - february shown again");
 				equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown again");
 				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalDay");
-				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141229", "first displayed day");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141230", "first displayed day");
 				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalDay");
-				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150301", "last displayed day");
+				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150302", "last displayed day");
 
 			});
 
