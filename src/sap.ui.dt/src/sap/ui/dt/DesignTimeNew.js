@@ -223,7 +223,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	DesignTimeNew.prototype.addRootElement = function(vRootElement) {
 		this.addAssociation("rootElements", vRootElement);
 
-		this._createOverlaysForRootElement(ElementUtil.getElementInstance(vRootElement));
+		this._createOverlaysForElement(ElementUtil.getElementInstance(vRootElement));
 
 		return this;		
 	};
@@ -237,7 +237,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	DesignTimeNew.prototype.removeRootElement = function(vRootElement) {
 		this.removeAssociation("rootElements", vRootElement);
 
-		this._destroyOverlaysForRootElement(ElementUtil.getElementInstance(vRootElement));
+		this._destroyOverlaysForElement(ElementUtil.getElementInstance(vRootElement));
 
 		return this;			
 	}; 	
@@ -292,21 +292,23 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 * @private
 	 */
 	DesignTimeNew.prototype._createOverlay = function(oElement) {
-		//if (this.fireBeforeCreateOverlay())
+		// check if overlay for the element already exists before creating the new one
+		// (can happen when two aggregations returning the same elements)
+		if (!OverlayRegistry.getOverlay(oElement)) {
+			var oOverlay = this.createOverlay(oElement);
+			oOverlay.attachEvent("elementModified", this._onElementModified, this);
+			oOverlay.attachEvent("destroyed", this._onOverlayDestroyed, this);
+			oOverlay.attachEvent("selectionChange", this._onOverlaySelectionChange, this);
 
-		var oOverlay = this.createOverlay(oElement);
-		oOverlay.attachEvent("elementModified", this._onElementModified, this);
-		oOverlay.attachEvent("destroyed", this._onOverlayDestroyed, this);
-		oOverlay.attachEvent("selectionChange", this._onOverlaySelectionChange, this);
-
-		this.fireOverlayCreated({overlay : oOverlay});
+			this.fireOverlayCreated({overlay : oOverlay});
+		}
 	};
 
 	/**
 	 * @param {sap.ui.core.Element} oRootElement element
 	 * @private
 	 */
-	DesignTimeNew.prototype._createOverlaysForRootElement = function(oRootElement) {
+	DesignTimeNew.prototype._createOverlaysForElement = function(oRootElement) {
 		var that = this;
 
 		this._iterateRootElementPublicChildren(oRootElement, function(oElement) {
@@ -318,7 +320,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 * @param {sap.ui.core.Element} oRootElement element
 	 * @private
 	 */
-	DesignTimeNew.prototype._destroyOverlaysForRootElement = function(oRootElement) {
+	DesignTimeNew.prototype._destroyOverlaysForElement = function(oRootElement) {
 		this._iterateRootElementPublicChildren(oRootElement, function(oElement) {
 			var oOverlay = OverlayRegistry.getOverlay(oElement);
 			if (oOverlay) {
@@ -334,7 +336,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 		var that = this;
 
 		this._iterateRootElements(function(oRootElement) {
-			that._destroyOverlaysForRootElement(oRootElement);			
+			that._destroyOverlaysForElement(oRootElement);			
 		});
 	};
 
@@ -379,8 +381,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	DesignTimeNew.prototype._onOverlayElementAddAggregation = function(oElement) {
 		var oOverlay = OverlayRegistry.getOverlay(oElement);
 		if (!oOverlay) {
-			// TODO : create overlays for all descendants
-			this._createOverlay(oElement);
+			this._createOverlaysForElement(oElement);
 		}
 	};
 
