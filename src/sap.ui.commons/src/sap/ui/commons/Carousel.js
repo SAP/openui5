@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		switch (oEvent.target) {
 		case jQuery.sap.byId(sCarouselId + '-prevbutton')[0]:
 			this.showPrevious();
-			break;		
+			break;
 		case jQuery.sap.byId(sCarouselId + '-nextbutton')[0]:
 			this.showNext();
 			break;
@@ -664,7 +664,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Carousel.prototype._showAllItems = function() {
 		var $ContentArea = this.$("contentarea");
-		$ContentArea.find('.sapUiCrslItm').show();
+		$ContentArea.find('.sapUiCrslItm').show().css("display", "inline-block");
 	};
 
 	/**
