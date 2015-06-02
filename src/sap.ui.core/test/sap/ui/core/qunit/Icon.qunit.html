@@ -184,10 +184,9 @@
 			});
 
 			QUnit.test("When ariaLabelledBy is NOT set", function (assert) {
-				var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.sIconName),
-					$icon = this.oAriaIcon.$();
+				var $icon = this.oAriaIcon.$();
 
-				assert.strictEqual($icon.attr("aria-label"), oIconInfo.name, "aria-label should be " + oIconInfo.name);
+				assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label should be " + this.sTooltip);
 			});
 
 			QUnit.test("When ariaLabelledBy IS set", function (assert) {
@@ -220,7 +219,9 @@
 					src: sap.ui.core.IconPool.getIconURI("alert")
 				});
 				assert.equal(this.oIcon.getUseIconTooltip(), true, "Default value of property 'useIconTooltip' should be 'true'");
-				assert.notEqual(this.oIcon.$().attr("title"), undefined, "Tooltip should not be empty");
+				assert.notEqual(this.oIcon.$().attr("title"), undefined, "title should not be empty");
+				assert.notEqual(this.oIcon.$().attr("aria-label"), undefined, "aria-label should not be empty");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
 			QUnit.test("useIconTooltip = true (default) / with tooltip", function (assert) {
 				var sTooltip = "this is a tooltip";
@@ -228,14 +229,18 @@
 					src: sap.ui.core.IconPool.getIconURI("alert"),
 					tooltip: sTooltip
 				});
-				assert.equal(this.oIcon.$().attr("title"), sTooltip, "Tooltip should be set");
+				assert.equal(this.oIcon.$().attr("title"), sTooltip, "title should be set");
+				assert.equal(this.oIcon.$().attr("aria-label"), sTooltip, "aria-label should be set");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
 			QUnit.test("useIconTooltip = false / without tooltip", function (assert) {
 				this.createIcon({
 					src: sap.ui.core.IconPool.getIconURI("alert"),
 					useIconTooltip: false
 				});
-				assert.equal(this.oIcon.$().attr("title"), undefined, "Tooltip should be empty");
+				assert.equal(this.oIcon.$().attr("title"), undefined, "title should be undefined");
+				assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
 			QUnit.test("useIconTooltip = false / with tooltip", function (assert) {
 				var sTooltip = "this is a tooltip";
@@ -244,7 +249,9 @@
 					useIconTooltip: false,
 					tooltip: sTooltip
 				});
-				assert.equal(this.oIcon.$().attr("title"), sTooltip, "Tooltip should be set");
+				assert.equal(this.oIcon.$().attr("title"), sTooltip, "title should be set");
+				assert.equal(this.oIcon.$().attr("aria-label"), sTooltip, "aria-label should be set");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
 
 		</script>
