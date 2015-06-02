@@ -925,15 +925,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			if (arguments.length > 1) {
 				// arguments[0] = iDuration
 				var sAutoclose = arguments[1];
-				var oDomRef = this._$().get(0);
+
 				/*
 				 * If coming from the delayedCall from the autoclose mechanism
 				 * but the active element is still in the Popup -> events messed up somehow.
 				 * This is especially needed for the IE because it messes up focus and blur
 				 * events if using a scroll-bar within a Popup
 				 */
-				if ((typeof (sAutoclose) == "string" && sAutoclose == "autocloseBlur") &&
-				     (oDomRef && jQuery.sap.containsOrEquals(oDomRef, document.activeElement))) {
+				if (typeof sAutoclose == "string" && sAutoclose == "autocloseBlur" && this._isFocusInsidePopup()) {
 					return;
 				}
 			}
@@ -2139,6 +2138,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			// Allow scrolling again in HTML page only if there is no BlockLayer left
 			jQuery("html").removeClass("sapUiBLyBack");
 		}
+	};
+
+	/**
+	 * Check if the focused element is still inside the Popup
+	 *
+	 * @returns {boolean} true if the focused element is still inside the Popup, otherwise returns false
+	 * @private
+	 */
+	Popup.prototype._isFocusInsidePopup = function () {
+		var oDomRef = this._$(false).get(0);
+
+		if (oDomRef && jQuery.sap.containsOrEquals(oDomRef, document.activeElement)) {
+			return true;
+		}
+
+		return false;
 	};
 
 	//****************************************************
