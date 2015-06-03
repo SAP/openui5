@@ -299,7 +299,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oRm.addClass("sapUiCalDaySelEnd"); // interval end
 		}
 
-		if (oType) {
+		if (oType && oType != sap.ui.unified.CalendarDayType.None) {
 			oRm.addClass("sapUiCalDay" + oType.type);
 			if (oType.tooltip) {
 				oRm.writeAttributeEscaped('title', oType.tooltip);
