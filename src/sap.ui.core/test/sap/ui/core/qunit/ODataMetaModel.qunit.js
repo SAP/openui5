@@ -758,6 +758,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("_getObject: caching queries", function () {
+		return withMetaModel(function (oMetaModel) {
+			var sPath = "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='Product']",
+				oResult = oMetaModel._getObject(sPath);
+
+			oGlobalSandbox.mock(oMetaModel.oResolver).expects("bindProperty").never();
+
+			strictEqual(oMetaModel._getObject(sPath), oResult);
+		});
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
 		test("_getObject: warning w/o context, log = " + bIsLoggable, function () {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
