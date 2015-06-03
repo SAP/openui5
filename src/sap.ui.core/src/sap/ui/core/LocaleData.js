@@ -564,6 +564,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Returns the defined pattern for representing the calendar week number.
+		 *
+		 * @param {string} sStyle the style of the pattern. It can only be either "wide" or "narrow".
+		 * @param {number} iWeekNumber the week number
+		 * @return {string} the week number string
+		 *
+		 * @public
+		 * @since 1.32.0
+		 */
+		getCalendarWeek : function(sStyle, iWeekNumber) {
+			jQuery.sap.assert(sStyle == "wide" || sStyle == "narrow" , "sStyle must be wide or narrow");
+
+			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
+				sKey = "date.week.calendarweek." + sStyle;
+
+			return oMessageBundle.getText(sKey, iWeekNumber);
+		},
+
+		/**
 		 * Returns the preferred calendar type for the current locale which exists in {@link sap.ui.core.CalendarType}
 		 *
 		 * returns {sap.ui.core.CalendarType} the preferred calendar type
