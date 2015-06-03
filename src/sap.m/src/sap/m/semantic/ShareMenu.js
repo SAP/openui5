@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 			var that = this;
 
-			this._oShareMenuBtn = new sap.m.Button({
+			this._oShareMenuBtn = new sap.m.Button(this._oActionSheet.getParent().getId() + "-shareButton", {
 				icon: "sap-icon://action",
 				layoutData: new OverflowToolbarLayoutData({
 					moveToOverflow: false,

@@ -83,13 +83,14 @@
 
 			var oConfig = {
 						customShareMenuContent: [
+							new sap.m.Button({text: "button1"}),
 							new sap.m.Button({text: "button1"})
 						]
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
-			strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
-			strictEqual(oSemanticPage._getPage().getFooter().getContent().length, 2, "ShareMenu button is in the DOM");
+			strictEqual(oSemanticPage.$("footer").length, 1, "Footer is in the DOM");
+			strictEqual(oSemanticPage.$("shareButton").length, 1, "shareButton is in the DOM");
 
 			oSemanticPage.destroy();
 		});

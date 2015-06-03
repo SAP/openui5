@@ -669,7 +669,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 		if (!this._oWrappedFooter) {
 
-			var oFooter = new OverflowToolbar();
+			var oFooter = new OverflowToolbar(this.getId() + "-footer");
 			this._getPage().setFooter(oFooter);
 
 			this._oWrappedFooter = new SegmentedContainer(oFooter);
