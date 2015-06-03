@@ -19,8 +19,7 @@
 
 	<script>
 
-		jQuery.sap.require("sap.m.semantic.SemanticPage");
-		jQuery.sap.require("sap.m.semantic.SemanticButton");
+		jQuery.sap.require("sap.m.semantic.SortSelect");
 		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 
@@ -54,14 +53,13 @@
 						key: "{key}"
 					}),
 					bChangeEventHasFired = false,
-					oSemanticSelect = new sap.m.semantic.SemanticSelect({
+					oSemanticSelect = new sap.m.semantic.SortSelect({
 						items: {
 							path: "/",
 							template: oItemTemplate
 						}, change: function () {
 							bChangeEventHasFired = true;
-						},
-						type: sap.m.semantic.SemanticType.Sort
+						}
 					});
 
 			sap.ui.getCore().applyChanges();
@@ -103,7 +101,7 @@
 	</script>
 </head>
 <body id="body" class="sapUiBody">
-<h1 id="qunit-header">QUnit tests: sap.m.semantic.SemanticPage</h1>
+<h1 id="qunit-header">QUnit tests: sap.m.semantic.SemanticSelect</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <!--<div id="qunit-testrunner-toolbar"></div>-->

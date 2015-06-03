@@ -18,6 +18,28 @@
 	</script>
 
 	<script type="text/javascript">
+		jQuery.sap.require("sap.m.semantic.MultiSelectAction");
+		jQuery.sap.require("sap.m.semantic.MainAction");
+		jQuery.sap.require("sap.m.semantic.PositiveAction");
+		jQuery.sap.require("sap.m.semantic.NegativeAction");
+		jQuery.sap.require("sap.m.semantic.AddAction");
+		jQuery.sap.require("sap.m.semantic.EditAction");
+		jQuery.sap.require("sap.m.semantic.SaveAction");
+		jQuery.sap.require("sap.m.semantic.ForwardAction");
+		jQuery.sap.require("sap.m.semantic.CancelAction");
+		jQuery.sap.require("sap.m.semantic.SortAction");
+		jQuery.sap.require("sap.m.semantic.FilterAction");
+		jQuery.sap.require("sap.m.semantic.GroupAction");
+		jQuery.sap.require("sap.m.semantic.MessagesIndicator");
+		jQuery.sap.require("sap.m.semantic.FlagAction");
+		jQuery.sap.require("sap.m.semantic.FavoriteAction");
+		jQuery.sap.require("sap.m.semantic.OpenInAction");
+		jQuery.sap.require("sap.m.semantic.DiscussInJamAction");
+		jQuery.sap.require("sap.m.semantic.SendEmailAction");
+		jQuery.sap.require("sap.m.semantic.SendMessageAction");
+		jQuery.sap.require("sap.m.semantic.ShareInJamAction");
+		jQuery.sap.require("sap.m.semantic.PrintAction");
+		jQuery.sap.require("sap.m.semantic.SortSelect");
 		var app = new sap.m.SplitApp("myApp");
 		var oModelMessages = new sap.ui.model.json.JSONModel({});
 
@@ -78,7 +100,7 @@
 
 		var oStatusLabel = new sap.m.Text({id: "statusLabel",
 			text: "{status>/lastAction}"});
-
+		/*
 		var oAddWarningButton = new sap.m.Button({
 			text: "add Warning",
 			press: function () {
@@ -174,8 +196,8 @@
 				selectedKey: "{status>/selectedCustomControl/className}",
 				items: [ new sap.ui.core.Item({key: "Button", text: "Button"}),
 						new sap.ui.core.Item({key: "OverflowToolbarButton", text: "OverflowToolbarButton"}),
-						new sap.ui.core.Item({key: "Select", text: "Select"})/*,
-						new sap.ui.core.Item({key: "Link", text: "Link"})*/]
+						new sap.ui.core.Item({key: "Select", text: "Select"})*//*,
+						new sap.ui.core.Item({key: "Link", text: "Link"})*//*]
 			});
 		}
 
@@ -414,13 +436,13 @@
 				]
 			});
 		}
-		
+
 		function createRemoveSemanticContentForm() {
-			
+
 			var oPageSelect = createPageSelect();
 			var oContentSelect = createSemanticContentSelect();
-			
-			
+
+
 			var oForm = new sap.ui.layout.form.SimpleForm({
 				maxContainerCols: 2,
 				editable: true,
@@ -431,15 +453,15 @@
 				          oContentSelect
 				]
 			});
-			
+
 			oPageSelect.attachChange(function() {
 				oForm.removeContent(oContentSelect);
 				oContentSelect = createSemanticContentSelect();
 				oForm.addContent(oContentSelect);
 			});
-			
+
 			return oForm;
-		}
+		}*/
 
 
 		/**
@@ -449,12 +471,15 @@
 		 */
 
 		function onSemanticBtnPress(oEvent) {
-			var oType = oEvent.oSource.getType();
+			var oType = oEvent.oSource.getMetadata().getName();
+			oType = oType.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+
 			oStatusModel.setData({lastAction: oType}, true);
 		}
 
 		function onSemanticSelectChange(oEvent, oData) {
-			var oType = oEvent.oSource.getType();
+			var oType = oEvent.oSource.getMetadata().getName();
+			oType = oType.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
 			var oStatusText = oType + " by " + oEvent.oSource.getSelectedItem().getText();
 			oStatusModel.setData({lastAction: oStatusText}, true);
 		}
@@ -463,7 +488,7 @@
 			oStatusModel.setData({lastAction: "customButton press"}, true);
 		}
 
-		var fnCreateSemanticContent = function() {
+		/*var fnCreateSemanticContent = function() {
 			var oControlType = oStatusModel.getData().selectedSemanticControl.className;
 			var oSemanticType = oStatusModel.getData().selectedSemanticControl.type;
 			var oControl;
@@ -535,11 +560,11 @@
 			return oControl;
 		};
 
-		/**
+		*//**
 		 *
 		 * DIALOGS
 		 *
-		 */
+		 *//*
 
 		var oAddSemanticContentDialog = new sap.m.Dialog({
 			title: "Create semantic content",
@@ -939,11 +964,11 @@
 			]
 		});
 
-		/**
+		*//**
 		 *
 		 * Layout
 		 * @type {sap.m.VBox}
-		 */
+		 *//*
 
 		var oModifySemanticContentBox = new sap.m.VBox({
 			items: [
@@ -1044,26 +1069,23 @@
 					]
 				})
 			]
-		});
+		});*/
 
 		var page1 = new sap.m.semantic.MasterPage("master", {
 			title: "{status>/master/title}",
 			showNavButton: "{status>/master/showNavButton}",
 			subHeader: new sap.m.Bar({contentMiddle: [new sap.m.SearchField()]}),
-			semanticControls: [
-				new sap.m.semantic.SemanticSelect({
-					items: {
-						path: "testData>/sortItems",
-						template: oItemTemplate
-					},
-					type: sap.m.semantic.SemanticType.Sort,
-					change: onSemanticSelectChange
-				}),
-				new sap.m.semantic.SemanticButton("groupButton", {type: sap.m.semantic.SemanticType.Group, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Filter, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Add, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Multiselect, press: onSemanticBtnPress})
-			]
+			multiSelectAction: new sap.m.semantic.MultiSelectAction({press: onSemanticBtnPress}),
+			addAction: new sap.m.semantic.AddAction({press: onSemanticBtnPress}),
+			group: new sap.m.semantic.GroupAction("groupButton", {press: onSemanticBtnPress}),
+			sort: new sap.m.semantic.SortSelect({
+				items: {
+					path: "testData>/sortItems",
+					template: oItemTemplate
+				},
+				change: onSemanticSelectChange
+			}),
+			filter: new sap.m.semantic.FilterAction({press: onSemanticBtnPress})
 		});
 
 		var page2 = new sap.m.semantic.DetailPage("detail", {
@@ -1075,27 +1097,27 @@
 				new sap.m.OverflowToolbarButton({icon : "sap-icon://settings", text: "CustomBtnRight2", press: onCustomBtnPress}),
 				new sap.m.OverflowToolbarButton({icon : "sap-icon://video", text: "CustomBtnRight3", press: onCustomBtnPress})],
 			customShareMenuContent : [
-				new sap.m.Button({icon : "sap-icon://video", text: "test", press: onCustomBtnPress}),
+				new sap.m.Button({icon : "sap-icon://video", text: "test", press: onCustomBtnPress})
 			],
-			semanticControls: [
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.MessagesIndicator}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Edit, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Flag, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Favorite, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Save, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Cancel, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Approve, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Forward, press: onSemanticBtnPress}),
-				new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.SendMessage, press: onSemanticBtnPress})
-			]
+			messagesIndicator: new sap.m.semantic.MessagesIndicator(),
+			positiveAction: new sap.m.semantic.PositiveAction({text: "Positive", press: onSemanticBtnPress}),
+			mainAction: new sap.m.semantic.MainAction({text: "Main", press: onSemanticBtnPress}),
+			negativeAction: new sap.m.semantic.NegativeAction({text: "Negative", press: onSemanticBtnPress}),
+			editAction: new sap.m.semantic.EditAction({press: onSemanticBtnPress}),
+			flagAction: new sap.m.semantic.FlagAction({press: onSemanticBtnPress, pressed: true}),
+			favoriteAction: new sap.m.semantic.FavoriteAction({press: onSemanticBtnPress}),
+			saveAction: new sap.m.semantic.SaveAction({press: onSemanticBtnPress}),
+			cancelAction: new sap.m.semantic.CancelAction({press: onSemanticBtnPress}),
+			forwardAction: new sap.m.semantic.ForwardAction({press: onSemanticBtnPress}),
+			sendMessageAction: new sap.m.semantic.SendMessageAction({press: onSemanticBtnPress}),
+			saveAsTileAction: new sap.m.Button({icon: "sap-icon://add-favorite", text: "Save as Tile"})
 		});
-
 		var oSplitContainer = new sap.m.SplitContainer();
 
 		oSplitContainer.addMasterPage(page1);
 		oSplitContainer.addDetailPage(page2);
 
-		app.addMasterPage(oMenuPage);
+		//app.addMasterPage(oMenuPage);
 		app.addDetailPage(oSplitContainer);
 
 		app.placeAt("body");

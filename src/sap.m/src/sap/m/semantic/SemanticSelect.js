@@ -79,6 +79,18 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 		}
 	});
 
+	SemanticSelect.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
+
+		if (!this.getMetadata().getProperties()[sPropertyName]
+				&& !SemanticSelect.getMetadata().getProperties()[sPropertyName]
+				&& !SemanticControl.getMetadata().getProperties()[sPropertyName]) {
+
+			jQuery.sap.log.error("unknown property: " + sPropertyName, this);
+			return this;
+		}
+		SemanticControl.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
+	};
+
 	SemanticSelect.prototype.getSelectedItem = function () {
 		return this._getControl().getSelectedItem();
 	};
@@ -99,11 +111,10 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 			this.setAggregation('_control',
 					new Select({
 						id: this.getId() + "-select",
-						type: "IconOnly", //TODO: more generic way to specify Fiori-specific init SELECT properties
-						autoAdjustWidth: true,
 						change: jQuery.proxy(this.fireChange, this)
 					}), true); //TODO: check bSuppressInvalidate needed?
 			oControl = this.getAggregation('_control');
+			oControl.applySettings(this._getConfiguration().getSettings());
 		}
 
 		return oControl;

@@ -64,12 +64,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.ToolbarDesign",
-			"sap.m.VerticalPlacementType",
-			"sap.m.semantic.SemanticType"
+			"sap.m.VerticalPlacementType"
 		],
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IconTab",
+			"sap.m.semantic.IGroup",
+			"sap.m.semantic.IFilter",
+			"sap.m.semantic.ISort",
 			"sap.m.ObjectHeaderContainer"
 		],
 		controls: [
@@ -792,6 +794,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
+	 *
+	 *   Marker interface for controls which are suitable as items of the group aggregation of sap.m.Semantic.MasterPage.
+	 *
+	 *
+	 * @name sap.m.semantic.IGroup
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+
+	/**
+	 *
+	 *   Marker interface for controls which are suitable as items of the filter aggregation of sap.m.Semantic.MasterPage.
+	 *
+	 *
+	 * @name sap.m.semantic.IFilter
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+
+	/**
+	 *
+	 *   Marker interface for controls which are suitable as items of the sort aggregation of sap.m.Semantic.MasterPage.
+	 *
+	 *
+	 * @name sap.m.semantic.ISort
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+
+		/**
 	 * Available Filter Item Design.
 	 *
 	 * @enum {string}
@@ -1631,143 +1669,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		Solid : "Solid"
 
-	};
-
-	/**
-	 * Types of the Semantic Controls in Semantic Page
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.30.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.semantic.SemanticType = {
-		/**
-		 * Semantic icon-only Add button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Add : "Add",
-		/**
-		 * Semantic text-only Approve button of {@link sap.m.ButtonType.Positive} button type
-		 * @public
-		 * @since 1.30.0
-		 */
-		Approve : "Approve",
-		/**
-		 * Semantic text-only Reject button of {@link sap.m.ButtonType.Negative} button type
-		 * @public
-		 * @since 1.30.0
-		 */
-		Reject : "Reject",
-		/**
-		 * Semantic icon-only Multiselect toggle button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Multiselect : "Multiselect",
-		/**
-		 * Semantic text-only Cancel button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Cancel : "Cancel",
-		/**
-		 * Semantic icon-only Filter button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Filter : "Filter",
-		/**
-		 * Semantic icon-only Sort button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Sort : "Sort",
-		/**
-		 * Semantic icon-only Group button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Group : "Group",
-		/**
-		 * Semantic button that indicates
-		 * @public
-		 * @since 1.30.0
-		 */
-		MessagesIndicator : "MessagesIndicator",
-		/**
-		 * Semantic icon-only Flag button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Flag : "Flag",
-		/**
-		 * Semantic icon-only Favorite button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Favorite : "Favorite",
-		/**
-		 * Semantic Forward button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Forward : "Forward",
-		/**
-		 * The semantic text-only Edit button of {@link sap.m.ButtonType.Emphasized}
-		 * @public
-		 * @since 1.30.0
-		 */
-		Edit : "Edit",
-		/**
-		 * The semantic text-only Save button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Save : "Save",
-		/**
-		 * The semantic Send Email button
-		 * @public
-		 * @since 1.30.0
-		 */
-		SendEmail: "SendEmail",
-		/**
-		 * The semantic Discuss in Jam button
-		 * @public
-		 * @since 1.30.0
-		 */
-		DiscussInJam: "DiscussInJam",
-		/**
-		 * The semantic Save as tile button
-		 * @public
-		 * @since 1.30.0
-		 */
-		SaveAsTile: "SaveAsTile",
-		/**
-		 * The semantic Share in Jam button
-		 * @public
-		 * @since 1.30.0
-		 */
-		ShareInJam: "ShareInJam",
-		/**
-		 * The semantic Send Message button
-		 * @public
-		 * @since 1.30.0
-		 */
-		SendMessage: "SendMessage",
-		/**
-		 * The semantic Print button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Print: "Print",
-		/**
-		 * The semantic Open in button
-		 * @public
-		 * @since 1.30.0
-		 */
-		OpenIn: "OpenIn"
 	};
 	/*global Element: true */
 
