@@ -105,8 +105,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 			/*** require view definition if not yet done... ***/
 			if (!mRegistry[mSettings.viewName] && mSettings.async) {
 				oPromise = new Promise(function(resolve) {
-					jQuery.sap.require({modName: mSettings.viewName, type: "view"});
-					resolve();
+					var sModuleName = jQuery.sap.getResourceName(mSettings.viewName, ".view");
+					sap.ui.require([sModuleName], resolve);
 				});
 			} else if (!mRegistry[mSettings.viewName]) {
 				jQuery.sap.require({modName: mSettings.viewName, type: "view"});
