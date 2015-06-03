@@ -26,6 +26,15 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 		this._component.getEventBus().publish("app", "selectEntity", {id: sType});
 	},
 
+	onIntroLinkPress: function (oEvt) {
+		// remove explored.html from URL
+		var aParts = document.location.pathname.split("/"),
+			sBaseLink = document.location.origin + aParts.splice(0, aParts.length - 1).join("/") + "/";
+
+		// open a relative documentation window
+		window.open(sBaseLink + this.getView().getModel().getProperty("/docuLink"), "_blank");
+	},
+
 	onTabSelect : function (oEvt) {
 		// update URL without updating history
 		var sTab = oEvt.getParameter("key");
@@ -216,6 +225,12 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			oData.shortDescription = oEntity.description;
 		}
 
+		// make intro text active if a documentation link is set
+		if (oEntity.docuLink) {
+			oData.show.introLink = true;
+			oData.docuLink = oEntity.docuLink;
+		}
+
 		// apply entity related stuff
 		oData.show.samples = (oEntity) ? oEntity.samples.length > 0 : false;
 		oData.count.samples = (oEntity) ? oEntity.samples.length : 0;
@@ -236,6 +251,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			baseTypeNav : (oDoc) ? this._formatTypeNav(oDoc.baseType) : null,
 			shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 			description : (oDoc) ? oDoc.doc : null,
+			docuLink: null,
 			properties : [],
 			events : [],
 			methods : [],
@@ -251,7 +267,8 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 				methods : false,
 				aggregations : false,
 				associations : false,
-				values : false
+				values: false,
+				introActive: false
 			},
 			count : {
 				properties : 0,
