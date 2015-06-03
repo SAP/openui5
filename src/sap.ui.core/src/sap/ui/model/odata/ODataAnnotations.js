@@ -602,21 +602,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {object} oXMLDocument The XML document to parse for annotations
 	 * @param {string} sXMLContent The XML content as string to parse for annotations
-	 * @param {map} mOptions Additional options
-	 * @param {fuction} mOptions.success Success callback gets an objec as argument with the
+	 * @param {map} [mOptions] Additional options
+	 * @param {fuction} [mOptions.success] Success callback gets an objec as argument with the
 	 *                  properties "annotations" containing the parsed annotations and "xmlDoc"
 	 *                  containing the XML-Document that was returned by the request.
-	 * @param {fuction} mOptions.error Error callback gets an objec as argument with the
+	 * @param {fuction} [mOptions.error] Error callback gets an objec as argument with the
 	 *                  property "xmlDoc" containing the XML-Document that was returned by the
 	 *                  request and could not be correctly parsed.
+	 * @param {boolean} [mOptions.fireEvents] If this option is set to true, events are fired as if the annotations
+	 *                  were loaded from a URL
 	 * @return {boolean} Whether or not parsing was successful
 	 * @public
 	 */
 	ODataAnnotations.prototype.setXML = function(oXMLDocument, sXMLContent, mOptions) {
 		// Make sure there are always callable handlers
 		var mDefaultOptions = {
-			success : function() {},
-			error   : function() {}
+			success:    function() {},
+			error:      function() {},
+			fireEvents: false
 		};
 		mOptions = jQuery.extend({}, mDefaultOptions, mOptions);
 
@@ -638,21 +641,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		var fnParseDocument = function(oXMLDoc) {
+			var mResult = {
+				xmlDoc : oXMLDoc
+			};
+
 			var oAnnotations = this.parse(oXMLDoc);
+
 			if (oAnnotations) {
 				if (!this.oAnnotations) {
 					this.oAnnotations = {};
 				}
 				jQuery.extend(true, this.oAnnotations, oAnnotations);
 
-				mOptions.success({
-					annotations: this.oAnnotations,
-					xmlDoc : oXMLDoc
-				});
+				mResult.annotations = this.oAnnotations;
+
+				this.bLoaded = true;
+				
+				mOptions.success(mResult);
+				if (mOptions.fireEvents) {
+					this.fireLoaded(mResult);
+				}
 			} else {
-				mOptions.error({
-					xmlDoc : oXMLDoc
-				});
+				
+				mOptions.error(mResult);
+				if (mOptions.fireEvents) {
+					this.fireFailed(mResult);
+				}
 			}
 		}.bind(this, oXMLDoc);
 
@@ -674,7 +688,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		} else {
 			// Check if Metadata is loaded on the model. We need the Metadata to parse the annotations
 
-			if (jQuery.isEmptyObject(this.oMetadata.getServiceMetadata())) {
+			var oMetadata = this.oMetadata.getServiceMetadata();
+			if (!oMetadata || jQuery.isEmptyObject(oMetadata)) {
 				// Metadata is not loaded, wait for it before trying to parse
 				this.oMetadata.attachLoaded(fnParseDocument);
 			} else {
@@ -800,7 +815,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			var fnSuccess = function(sData, sStatusText, oJQXHR) {
 				that.setXML(oJQXHR.responseXML, oJQXHR.responseText, {
 					success: function(mData) {
-						that.bLoaded = true;
 						fnResolve({
 							type:			"success",
 							url: 			sUrl,
