@@ -323,7 +323,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			"name" : "Task",
 			"property" : aTaskProperties
 		},
-		oDataContact = {
+		oDataSchema = {
 			"version" : "1.0" ,
 			"dataServices" : {
 				"dataServiceVersion" : "2.0" ,
@@ -342,7 +342,18 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 						"name" : "CT_Task",
 						"property" : aTaskProperties
 					}],
-					"entityType" : [oContactType, oEventType, oMessageType, oTaskType],
+					"entityType" : [oContactType, oEventType, oMessageType, oTaskType, {
+						"name" : "Product",
+						"property" : [{
+							"name" : "Foo", "type" : "Edm.DateTime",
+							"extensions" : [{
+								"name" : "filter-restriction" , "value" : "interval",
+								"namespace" : sNamespace
+							}]
+						}, {
+							"name" : "Bar", "type" : "Edm.Byte"
+						}]
+					}],
 					"entityContainer" : [{
 						"name" : "GWSAMPLE_BASIC_Entities",
 						"isDefaultEntityContainer" : "true",
@@ -370,6 +381,9 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 								"value" : "Updatable2",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}]
+						}, {
+							"name" : "ProductSet",
+							"entityType" : "GWSAMPLE_BASIC.Product"
 						}],
 						"associationSet" : [],
 						"functionImport" : [],
@@ -640,7 +654,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	test("convertEntitySetAnnotations", function () {
-		var oData = clone(oDataContact),
+		var oData = clone(oDataSchema),
 			aSchema = oData.dataServices.schema,
 			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
 			oEntitySet2 = aSchema[0].entityContainer[0].entitySet[1],
@@ -680,7 +694,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	test("convertEntitySetAnnotations no overwrite", function () {
-		var oData = clone(oDataContact),
+		var oData = clone(oDataSchema),
 		aSchema = oData.dataServices.schema,
 		oEntitySet = aSchema[0].entityContainer[0].entitySet[0];
 
@@ -713,7 +727,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		expectedComplexTypeAnnotations: oContactAnnotationFromV2
 	}].forEach(function (oFixture) {
 		test("merge: addSapSemantics called " + oFixture.test, function () {
-			var oData = clone(oDataContact),
+			var oData = clone(oDataSchema),
 				oContact = oData.dataServices.schema[0].entityType[0],
 				oCTContact = oData.dataServices.schema[0].complexType[0];
 
@@ -728,7 +742,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			deepEqual(oCTContact["com.sap.vocabularies.Communication.v1.Contact"],
 				oFixture.expectedComplexTypeAnnotations, "Contact annotations for ComplexType");
 
-			equals(Utils.addSapSemantics.callCount, 8);
+			equals(Utils.addSapSemantics.callCount, 9); // 4 complex + 5 entity types
 			ok(Utils.addSapSemantics.calledWithExactly(oCTContact),
 				"called addSapSemantics with ComplexType");
 			ok(Utils.addSapSemantics.calledWithExactly(oContact),
@@ -742,6 +756,142 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 					.property[20/*Tel*/]["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
 				{ "Bool" : (oFixture.annotations ? "false" : "true") });
 		});
+	});
+
+	//*********************************************************************************************
+	test("addFilterRestriction: adding valid filter-restrictions", function () {
+		var aFilterRestrictions,
+			oLogMock = this.mock(jQuery.sap.log),
+			oEntitySet = {},
+			oProperty;
+
+		oLogMock.expects("warning").never();
+
+		[
+			{i: "single-value", o: "SingleValue"},
+			{i: "multi-value", o: "MultiValue"},
+			{i: "interval", o: "SingleInterval"}
+		].forEach(function (oFixture, i) {
+			// prepare Property
+			oProperty = {
+				"name" : "Foo" + i,
+				"sap:filter-restriction" : oFixture.i
+			};
+
+			//code under test
+			Utils.addFilterRestriction(oProperty, oEntitySet);
+
+			// check result
+			aFilterRestrictions =
+				oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"]
+
+			ok(aFilterRestrictions, "FilterExpressionRestrictions are available");
+			ok(Array.isArray(aFilterRestrictions), "FilterExpressionRestrictions is an array");
+			deepEqual(aFilterRestrictions[i], {
+				"Property" : { "PropertyPath" : "Foo" + i},
+				"AllowedExpressions" : {
+					"EnumMember" : "com.sap.vocabularies.Common.v1.FilterExpressionType/"
+						+ oFixture.o
+				}
+			}, oFixture.i + " properly converted");
+		});
+	});
+
+	//*********************************************************************************************
+	test("addFilterRestriction: unsupported sap:filter-restriction", function () {
+		var oLogMock = this.mock(jQuery.sap.log),
+			oEntitySet = { entityType : "Baz" },
+			oProperty = {
+				"name" : "Foo",
+				"sap:filter-restriction" : "Bar"
+			};
+
+		oLogMock.expects("warning").once().withExactArgs("Unsupported sap:filter-restriction: "
+				+ "Bar", "Baz.Foo",
+			"sap.ui.model.odata._ODataMetaModelUtils");
+
+		// code under test
+		Utils.addFilterRestriction(oProperty, oEntitySet);
+
+		deepEqual(oEntitySet, { entityType : "Baz" },
+			"No v4 annotation created in case of unsupported value")
+	});
+
+	//*********************************************************************************************
+	test("calculateEntitySetAnnotations: call addFilterRestriction", function () {
+		var aSchemas = clone(oDataSchema).dataServices.schema,
+			oEntitySet = aSchemas[0].entityContainer[0].entitySet[2], // ProductSet
+			oProperty = aSchemas[0].entityType[4].property[0]; // Product.Foo
+
+		// prepare test data
+		aSchemas[0].entityType.forEach(function (oEntityType) {
+			Utils.liftSAPData(oEntityType);
+			oEntityType.property.forEach(function (oProperty) {
+				Utils.liftSAPData(oProperty);
+			});
+		});
+
+		// Define expectations
+		this.mock(Utils).expects("addFilterRestriction").once()
+			.withExactArgs(oProperty, oEntitySet).returns("");
+
+		// run code under test
+		Utils.calculateEntitySetAnnotations(aSchemas, oEntitySet);
+	});
+
+	//*********************************************************************************************
+	test("merge: addFilterRestriction called", function () {
+		var oAnnotations = {
+				"EntityContainer" : { "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities" : {
+					"ProductSet" : {
+						"com.sap.vocabularies.Common.v1.FilterExpressionRestrictions" : [{
+							"Property" : { "PropertyPath" : "Foo"},
+							"AllowedExpressions" : {
+								"EnumMember" : "com.sap.vocabularies.Common.v1." +
+									"FilterExpressionType/MultiValue"
+							}
+						}, {
+							"Property" : { "PropertyPath" : "Bar"},
+							"AllowedExpressions" : {
+								"EnumMember" : "com.sap.vocabularies.Common.v1." +
+									"FilterExpressionType/SingleValue"
+							}
+						}]
+					}
+				}}
+			},
+			oData = clone(oDataSchema),
+			oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[2];
+
+		// code under test
+		Utils.merge({}, oData);
+
+		// verify results
+		deepEqual(oProductSet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
+			[{
+				"Property" : { "PropertyPath" : "Foo"},
+				"AllowedExpressions" : {
+					"EnumMember" : "com.sap.vocabularies.Common.v1.FilterExpressionType/"
+						+ "SingleInterval"
+				}
+			}],
+			"no additional v4 annotations"
+		);
+
+		// with annotations
+		oData = clone(oDataSchema),
+		oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[2];
+
+		// code under test
+		Utils.merge(oAnnotations, oData);
+
+		// verify results
+		deepEqual(oProductSet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
+			oAnnotations["EntityContainer"]["GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"]["ProductSet"]
+				["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
+			"with additional v4 annotations"
+		);
+
 	});
 
 });

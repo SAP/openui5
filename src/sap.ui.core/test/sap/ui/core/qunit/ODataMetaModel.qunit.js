@@ -43,9 +43,10 @@ sap.ui.require([
 		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en"\
 			sap:schema-version="0000">\
 			<EntityType Name="BusinessPartner" sap:content-version="1">\
-				<Property Name="BusinessPartnerID" Type="Edm.String"\
-					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID"\
-					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false" \
+				<Property Name="BusinessPartnerID" Type="Edm.String" \
+					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID" \
+					sap:creatable="false" sap:filter-restriction="multi-value" \
+					sap:text="AnyProperty" sap:updatable="false" \
 					sap:sortable="false" sap:required-in-filter ="true" \
 					sap:display-format="UpperCase" >\
 				</Property>\
@@ -61,14 +62,15 @@ sap.ui.require([
 			</EntityType>\
 			<EntityType Name="Product">\
 				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" \
-					sap:precision="PriceScale" sap:unit="CurrencyCode"/>\
+					sap:filter-restriction="interval" sap:precision="PriceScale" \
+					sap:unit="CurrencyCode"/>\
 				<Property Name="PriceScale" Type="Edm.Byte"/>\
 				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13" Scale="3" \
 					sap:unit="WeightUnit" sap:visible="true" />\
 				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" \
 					sap:semantics="unit-of-measure" sap:visible="false" />\
 				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" \
-					sap:semantics="currency-code"/>\
+					sap:filter-restriction="single-value" sap:semantics="currency-code"/>\
 			</EntityType>\
 			<EntityType Name="Contact">\
 				<Property Name="FirstName" Type="Edm.String" sap:semantics="givenname"/>\
@@ -83,6 +85,7 @@ sap.ui.require([
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
 					sap:deletable-path="Deletable" sap:topable="false" sap:requires-filter="true"\
 					sap:updatable-path="Updatable" sap:content-version="1" />\
+				<EntitySet Name="ProductSet" EntityType="GWSAMPLE_BASIC.Product"/>\
 				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex" \
 					sap:creatable="false" sap:updatable="false" sap:deletable="false" \
 					sap:pageable="false" sap:searchable="true" sap:content-version="1"/> \
@@ -217,6 +220,18 @@ sap.ui.require([
 			</Record>\
 		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.TopSupported" Bool="false" />\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ProductSet">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.FilterExpressionRestrictions">\
+			<Collection>\
+				<Record>\
+					<PropertyValue Property="Property" PropertyPath="CurrencyCode"/>\
+					<PropertyValue Property="AllowedExpressions" \
+						EnumMember="com.sap.vocabularies.Common.v1.FilterExpressionType/MultiValue"\
+					/>\
+				</Record>\
+			</Collection>\
+		</Annotation>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_SexSet">\
 		<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">\
@@ -871,14 +886,16 @@ sap.ui.require([
 					oFunctionImport = oEntityContainer.functionImport[0],
 					oNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oParameter = oFunctionImport.parameter[0],
+					sPrefix,
 					oProduct = oGWSampleBasic.entityType[2],
 					oProductCurrencyCode =  oProduct.property[4],
 					oProductPrice = oProduct.property[0],
+					oProductSet = oEntityContainer.entitySet[1],
 					oProductWeightMeasure =  oProduct.property[2],
 					oProductWeightUnit =  oProduct.property[3],
 					sSAPData = "http://www.sap.com/Protocols/SAPData",
 					oVHSex = oGWSampleBasic.entityType[1],
-					oVHSexSet = oEntityContainer.entitySet[1];
+					oVHSexSet = oEntityContainer.entitySet[2];
 
 				function checkCapabilities(sExtension) {
 					var sCapability, sProperty, oExpected;
@@ -1342,6 +1359,58 @@ sap.ui.require([
 						"Path" : (i === 0 ? "Updatable" : "UpdatableAnnotation")},
 					"updatable-path");
 				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"];
+
+				// sap:filter-restriction (Property)
+				deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
+				delete oBusinessPartnerId["sap:filter-restriction"];
+				deepEqual(oProductPrice["sap:filter-restriction"], "interval");
+				delete oProductPrice["sap:filter-restriction"];
+				deepEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
+				delete oProductCurrencyCode["sap:filter-restriction"];
+
+				sPrefix = "com.sap.vocabularies.Common.v1.";
+				deepEqual(oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"],
+					[
+						{
+							"Property" : { "PropertyPath" : "BusinessPartnerID" },
+							"AllowedExpressions" :
+								{
+									"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
+								}
+						}
+					],
+					"filter-restriction at BusinessPartnerSet");
+				delete oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"];
+				deepEqual(oProductSet[sPrefix + "FilterExpressionRestrictions"],
+					(i === 0
+						? [
+							{
+								"Property" : { "PropertyPath" : "Price" },
+								"AllowedExpressions" :
+									{
+										"EnumMember" : sPrefix +
+											"FilterExpressionType/SingleInterval"
+									}
+							},
+							{
+								"Property" : { "PropertyPath" : "CurrencyCode" },
+								"AllowedExpressions" :
+									{
+										"EnumMember" : sPrefix + "FilterExpressionType/SingleValue"
+									}
+							}
+						]
+						: [
+							{
+								"Property" : { "PropertyPath" : "CurrencyCode" },
+								"AllowedExpressions" :
+									{
+										"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
+									}
+							},
+						]),
+					"filter-restriction at ProductSet");
+				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			});
