@@ -277,10 +277,39 @@ sap.ui.define([
 		};
 
 		QuickViewBase.prototype._navigate = function(oEvent) {
+			var oToPage = oEvent.getParameter('to');
+			var oFromPage = oEvent.getParameter('from');
+
+			var sToPageId = oEvent.getParameter('toId');
+			var sFromPageId = oEvent.getParameter('fromId');
+
+			var iFromPageIndex = jQuery('#' + sFromPageId).index();
+			var iToPageIndex = jQuery('#' + sToPageId).index();
+
+			if (iToPageIndex == -1 || iToPageIndex > iFromPageIndex) {
+				oToPage.addStyleClass('sapMNavItemOffset');
+			} else {
+				oFromPage.addStyleClass('sapMNavItemOffset');
+			}
+
 			this.fireNavigate(oEvent.getParameters());
 		};
 
 		QuickViewBase.prototype._afterNavigate = function(oEvent) {
+			var oToPage = oEvent.getParameter('to');
+			var oFromPage = oEvent.getParameter('from');
+
+			var sToPageId = oEvent.getParameter('toId');
+			var sFromPageId = oEvent.getParameter('fromId');
+
+			var iFromPageIndex = jQuery('#' + sFromPageId).index();
+			var iToPageIndex = jQuery('#' + sToPageId).index();
+
+			if (iToPageIndex > iFromPageIndex) {
+				oToPage.removeStyleClass('sapMNavItemOffset');
+			} else {
+				oFromPage.removeStyleClass('sapMNavItemOffset');
+			}
 
 			var mParams = oEvent.getParameters();
 			mParams.isTopPage = this._oNavContainer.currentPageIsTopPage();

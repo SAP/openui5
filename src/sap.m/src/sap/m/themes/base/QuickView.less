@@ -2,6 +2,24 @@
 /* CSS for control sap.m.QuickView */
 /* ================================================= */
 
+.sapMQuickView .sapMNav,
+.sapMQuickViewCard .sapMNav {
+	white-space: nowrap;
+}
+
+.sapMQuickViewPage.sapMNavItem {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.sapMQuickViewPage.sapMNavItem.sapMNavItemHidden {
+	display: none;
+}
+
+.sapMQuickViewPage.sapMNavItem.sapMNavItemOffset {
+	left: -100%;
+}
+
 .sap-desktop .sapMQuickViewPage .sapUiFormResGrid > div,
 .sap-tablet .sapMQuickViewPage .sapUiFormResGrid > div {
 	padding: 0;
@@ -11,7 +29,7 @@
 .sap-tablet .sapMQuickViewPage.sapMNavItem.sapMScrollContScroll,
 .sap-desktop .sapMQuickViewPage.sapMNavItem.sapMPage,
 .sap-tablet .sapMQuickViewPage.sapMNavItem.sapMPage {
-	position: static;
+	position: relative;
 	height: 100%;
 	box-sizing: content-box;
 }

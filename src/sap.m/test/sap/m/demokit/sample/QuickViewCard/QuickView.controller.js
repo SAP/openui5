@@ -119,6 +119,11 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
+		onBeforeRendering: function() {
+			var oButton = this.getView().byId('buttonBack');
+			oButton.setEnabled(false);
+		},
+
 		onButtonBackClick : function() {
 			var oQuickViewCard = this.getView().byId('quickViewCard');
 			oQuickViewCard.navigateBack();
