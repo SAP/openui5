@@ -2,12 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
-		'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONListBinding',
-		'sap/ui/model/json/JSONPropertyBinding', 'sap/ui/model/json/JSONTreeBinding',
-		'sap/ui/model/MetaModel', './_ODataMetaModelUtils'],
-	function (BindingMode, ClientContextBinding, FilterProcessor, JSONListBinding,
-		JSONPropertyBinding, JSONTreeBinding, MetaModel, Utils) {
+sap.ui.define([
+   'sap/ui/model/BindingMode', 'sap/ui/base/BindingParser', 'sap/ui/model/Context',
+   'sap/ui/base/ManagedObject', 'sap/ui/model/ClientContextBinding',
+   'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONModel',
+   'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONPropertyBinding',
+   'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel', './_ODataMetaModelUtils'
+], function (BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
+		FilterProcessor, JSONModel, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
+		MetaModel, Utils) {
 	"use strict";
 
 	/**
@@ -23,7 +26,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @extends sap.ui.model.json.JSONListBinding
 	 * @private
 	 */
-	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding");
+	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding"),
+		Resolver = ManagedObject.extend("sap.ui.model.odata._resolver", {
+			metadata: {
+				properties: {
+					any: "any"
+				}
+			}
+		});
 
 	/**
 	 * @inheritdoc
@@ -161,9 +171,16 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @private
 	 */
 	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
-		var i, oNode = oContext, aParts, sResolvedPath = sPath || "";
+		var oBaseNode = oContext,
+			oBinding,
+			i,
+			iEnd,
+			oNode,
+			vPart,
+			sProcessedPath,
+			sResolvedPath = sPath || "";
 
-		if (!oContext || oContext instanceof sap.ui.model.Context){
+		if (!oContext || oContext instanceof Context) {
 			sResolvedPath = this.resolve(sPath || "", oContext);
 			if (!sResolvedPath) {
 				jQuery.sap.log.error("Invalid relative path w/o context", sPath,
@@ -173,25 +190,80 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		}
 
 		if (sResolvedPath.charAt(0) === "/") {
-			oNode = this.oModel._getObject("/");
+			oBaseNode = this.oModel._getObject("/");
 			sResolvedPath = sResolvedPath.slice(1);
 		}
 
-		if (sResolvedPath) {
-			aParts = sResolvedPath.split("/");
-			for (i = 0; i < aParts.length; i += 1) {
-				if (!oNode) {
-					if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-						jQuery.sap.log.warning("Invalid part: " + aParts[i],
-							"path: " + sPath + ", context: "
-							+ (oContext instanceof sap.ui.model.Context ?
-								oContext.getPath() : oContext),
-							"sap.ui.model.odata.ODataMetaModel");
-					}
-					break;
+		sProcessedPath = "/";
+		oNode = oBaseNode;
+		while (sResolvedPath) {
+			vPart = undefined;
+			oBinding = undefined;
+			if (sResolvedPath.charAt(0) === '[') {
+				iEnd = sResolvedPath.indexOf(']');
+				if (iEnd >= 0 && (sResolvedPath.length === iEnd + 1
+						|| sResolvedPath.charAt(iEnd + 1) === '/')) {
+					// TODO this fails if the expression contains ']'
+					// Let the expression parser search the end, when this becomes possible. Keep
+					// the feature undocumented yet.
+					// TODO handle syntax errors in expressions
+					oBinding = BindingParser.complexParser("{=" + sResolvedPath.slice(1, iEnd)
+						+ "}", null, false);
+					vPart = sResolvedPath.slice(1, iEnd);
+					sResolvedPath = sResolvedPath.slice(iEnd + 2);
 				}
-				oNode = oNode[aParts[i]];
 			}
+			if (vPart === undefined) {
+				// No query or unsuccessful query, simply take the next part until '/'
+				iEnd = sResolvedPath.indexOf("/");
+				if (iEnd < 0) {
+					vPart = sResolvedPath;
+					sResolvedPath = "";
+				} else {
+					vPart = sResolvedPath.slice(0, iEnd);
+					sResolvedPath = sResolvedPath.slice(iEnd + 1);
+				}
+			}
+			if (!oNode) {
+				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+					jQuery.sap.log.warning("Invalid part: " + vPart,
+						"path: " + sPath + ", context: "
+						+ (oContext instanceof sap.ui.model.Context ?
+							oContext.getPath() : oContext),
+						"sap.ui.model.odata.ODataMetaModel");
+				}
+				break;
+			}
+			if (oBinding) {
+				if (oBaseNode === oContext) {
+					jQuery.sap.log.error(
+						"A query is not allowed when an object context has been given", sPath,
+						"sap.ui.model.odata.ODataMetaModel");
+					return null;
+				}
+				if (!Array.isArray(oNode)) {
+					jQuery.sap.log.error(
+						"Invalid query: '" + sProcessedPath + "' does not point to an array",
+						sPath, "sap.ui.model.odata.ODataMetaModel");
+					return null;
+				}
+				// TODO A simple cache sProcessedPath + vPart -> i significantly improves speed
+
+				// Set the resolver on the internal JSON model, so that resolving does not use
+				// this._getObject itself.
+				this.oResolver = this.oResolver || new Resolver({models: this.oModel});
+				this.oResolver.bindProperty("any", oBinding);
+				for (i = 0; i < oNode.length; i++) {
+					this.oResolver.bindObject(sProcessedPath + i);
+					// TODO test truthy
+					if (this.oResolver.getAny() === true) {
+						vPart = i;
+						break;
+					}
+				}
+			}
+			oNode = oNode[vPart];
+			sProcessedPath = sProcessedPath + vPart + "/";
 		}
 		return oNode;
 	};

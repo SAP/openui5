@@ -742,7 +742,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
-			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
+			deepEqual(oSingleBindingInfo, {
+				path : "/##/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					// "$\{name}" to avoid that Maven replaces "${name}"
+					+ "[$\{name}==='Product']/com.sap.vocabularies.UI.v1.FieldGroup"
+					+ "#Dimensions/Data/[${Value/Path}==='Width']/Label/String"
+			});
 
 			// ensure that the formatted value does not contain double quotes
 			ok(AnnotationHelper.format(oCurrentContext, oRawValue).indexOf('"') < 0);
@@ -759,7 +764,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
-			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
+			deepEqual(oSingleBindingInfo, {
+				path : "/##/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='Product']/foo{Dimensions}/Data/[${Value/Path}==='Width']"
+					+ "/Label/String"
+			});
 		});
 	});
 
@@ -982,8 +991,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			// test that the binding still works with bindTexts
 			// testBinding cannot be used because it uses a JSONModel w/o meta model
 			oContext.getSetting = function (sSetting) { return sSetting === "bindTexts"};
-			strictEqual(format(oContext.getObject(), oContext), "{=odata.fillUriTemplate(${/##"
-				+ sMetaPath + "/Apply/Parameters/0/Value},{'ID1':${BusinessPartnerID}})}")
+			strictEqual(format(oContext.getObject(), oContext), "{=odata.fillUriTemplate(${path:"
+				+ "'/##/dataServices/schema/[${namespace}===\\'GWSAMPLE_BASIC\\']/entityType/"
+				+ "[$\{name}===\\'BusinessPartner\\']/com.sap.vocabularies.UI.v1.Identification/"
+				+ "0/Url/UrlRef/Apply/Parameters/0/Value'},{'ID1':${BusinessPartnerID}})}")
 		});
 	});
 

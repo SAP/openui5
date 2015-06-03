@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
-	'sap/ui/base/BindingParser', 'sap/ui/model/odata/_AnnotationHelperBasics',
-	'sap/ui/model/odata/_AnnotationHelperExpression',
-], function(BindingParser, Basics, Expression) {
+	'sap/ui/base/BindingParser', 'sap/ui/model/json/JSONModel',
+	'sap/ui/model/odata/_AnnotationHelperBasics', 'sap/ui/model/odata/_AnnotationHelperExpression',
+], function(BindingParser, JSONModel, Basics, Expression) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
@@ -83,7 +83,10 @@ sap.ui.require([
 
 			function testIt(oRawValue, sProperty, sConstantValue) {
 				test("14.4.x Constant Expression: " + JSON.stringify(oRawValue), function () {
-					var oInterface = {},
+					var oModel = {},
+						oInterface = {
+							getModel: function () { return oModel; }
+						},
 						oPathValue = {
 							path: "/my/path",
 							value: oRawValue
@@ -125,6 +128,11 @@ sap.ui.require([
 							return true;
 						};
 
+						if (oFixture.constant === "String") {
+							this.mock(Expression).expects("replaceIndexes")
+								.withExactArgs(oModel, oConstantPathValue.path)
+								.returns("/replaced")
+						}
 						oResult = Expression.expression(oInterface, oPathValue, false);
 
 						if (oFixture.constant === "String") {
@@ -132,7 +140,7 @@ sap.ui.require([
 								ignoreTypeInPath: true,
 								result: "binding",
 								type: "Edm.String",
-								value: "/##" + oConstantPathValue.path
+								value: "/##/replaced"
 							}, "bindTexts");
 						} else {
 							deepEqual(oResult, oExpectedResult, "bindTexts: true");
@@ -1103,6 +1111,93 @@ sap.ui.require([
 		throws(function () {
 			Expression.parameter(oInterface, oPathValue, 0, "Edm.String");
 		}, SyntaxError);
+	});
+
+	//*********************************************************************************************
+	test("replaceIndexes", function () {
+		var oModel = new JSONModel({
+				dataServices: {
+					schema: [{
+						namespace: "myschema",
+						entityType: [{
+							name: "Contact",
+							property: [{
+								name: "FirstName"
+							}],
+							"com.sap.vocabularies.UI.v1.FieldGroup": {
+								Data: [{
+									Value: {Path: "Width"},
+									RecordType: "com.sap.vocabularies.UI.v1.DataField"
+								}, {
+									Value: {Path: "Url"},
+									RecordType: "com.sap.vocabularies.UI.v1.DataFieldWithUrl"
+								}, {
+									Action: {String: "Save"},
+									RecordType: "com.sap.vocabularies.UI.v1.DataFieldForAction"
+								}, {
+									Target: {
+										AnnotationPath:
+											"@com.sap.vocabularies.Communication.v1.Address"
+									},
+									RecordType: "com.sap.vocabularies.UI.v1.DataFieldForAnnotation"
+								}]
+							},
+							schema: [{
+								namespace: "bar",
+								Value: {Path: "foo"}
+							}]
+						}]
+					}, {
+						namespace: "weird'name"
+					}]
+				}
+			});
+
+		[
+			"",
+			"/dataServices/schema",
+			"/dataServices/schema/0a",
+			"/dataServices/schema/2/entityType/5"
+		].forEach(function (sPath) {
+			strictEqual(Expression.replaceIndexes(oModel, sPath), sPath, sPath);
+		});
+
+		[{
+			i: "/dataServices/schema/0",
+			o: "/dataServices/schema/[${namespace}==='myschema']"
+		}, {
+			i: "/dataServices/schema/0/entityType/0/property/0",
+			// "$\{name}" to avoid that Maven replaces "${name}"
+			o: "/dataServices/schema/[${namespace}==='myschema']/entityType/[$\{name}==='Contact']"
+				+ "/property/[$\{name}==='FirstName']"
+		}, { // replace 'namespace' only for the real schema
+			// ignore 'Value/Path' in the second 'schema' because there is no record type
+			i: "/dataServices/schema/0/entityType/0/schema/0",
+			o: "/dataServices/schema/[${namespace}==='myschema']/entityType/[$\{name}==='Contact']"
+				+ "/schema/0"
+		}, {
+			i: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.FieldGroup/Data/0",
+			o: "/dataServices/schema/[${namespace}==='myschema']/entityType/[$\{name}==='Contact']"
+				+ "/com.sap.vocabularies.UI.v1.FieldGroup/Data/[${Value/Path}==='Width']"
+		}, {
+			i: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.FieldGroup/Data/1",
+			o: "/dataServices/schema/[${namespace}==='myschema']/entityType/[$\{name}==='Contact']"
+				+ "/com.sap.vocabularies.UI.v1.FieldGroup/Data/[${Value/Path}==='Url']"
+		}, {
+			i: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.FieldGroup/Data/2",
+			o: "/dataServices/schema/[${namespace}==='myschema']/entityType/[$\{name}==='Contact']"
+				+ "/com.sap.vocabularies.UI.v1.FieldGroup/Data/[${Action/String}==='Save']"
+		}, {
+			i: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.FieldGroup/Data/3",
+			o: "/dataServices/schema/[${namespace}==='myschema']/entityType/[$\{name}==='Contact']"
+				+ "/com.sap.vocabularies.UI.v1.FieldGroup/Data/[${Target/AnnotationPath}==="
+				+ "'@com.sap.vocabularies.Communication.v1.Address']"
+		}, {
+			i: "/dataServices/schema/1",
+			o: "/dataServices/schema/[${namespace}==='weird\\'name']"
+		},].forEach(function (oFixture) {
+			strictEqual(Expression.replaceIndexes(oModel, oFixture.i), oFixture.o, oFixture.o);
+		});
 	});
 
 	//*********************************************************************************************
