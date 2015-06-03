@@ -7,10 +7,10 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class QuickViewPage renderer.
+		 * @class QuickViewCard renderer.
 		 * @static
 		 */
-		var QuickViewPageRenderer = {};
+		var QuickViewCardRenderer = {};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -20,24 +20,19 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control}
 		 *          oQuickView an object representation of the control that should be rendered
 		 */
-		QuickViewPageRenderer.render = function(oRm, oQuickViewPage) {
+		QuickViewCardRenderer.render = function(oRm, oQuickViewCard) {
 
-			var mPageContent = oQuickViewPage._createPageContent();
+			var oContent = oQuickViewCard.getNavContainer();
 
 			oRm.write("<div");
-			oRm.addClass("sapMQuickViewPage");
-			oRm.writeControlData(oQuickViewPage);
+			oRm.addClass("sapMQuickViewCard");
+			oRm.writeControlData(oQuickViewCard);
 			oRm.writeClasses();
 			oRm.write(">");
-
-			if (mPageContent.header) {
-				oRm.renderControl(mPageContent.header);
-			}
-
-			oRm.renderControl(mPageContent.form);
+			oRm.renderControl(oContent);
 			oRm.write("</div>");
 		};
 
-		return QuickViewPageRenderer;
+		return QuickViewCardRenderer;
 
 	}, /* bExport= */ true);

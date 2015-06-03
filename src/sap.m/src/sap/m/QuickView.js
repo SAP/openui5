@@ -4,9 +4,12 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', './ResponsivePopover', './NavContainer',
-			'./PlacementType', './Page'],
-	function(jQuery, library, Control, ResponsivePopover, NavContainer, PlacementType, Page) {
+	'jquery.sap.global', './library', 'sap/ui/core/Control',
+		'./QuickViewBase', './ResponsivePopover', './NavContainer',
+		'./PlacementType', './Page'],
+	function(jQuery, library, Control,
+			QuickViewBase, ResponsivePopover, NavContainer,
+			PlacementType, Page) {
 	"use strict";
 
 	/**
@@ -18,14 +21,14 @@ sap.ui.define([
 	 * and displays information of an object in a business-card format. It also allows this object to be linked to
 	 * another object using one of the links in the responsive popover. Clicking that link updates the information in the
 	 * popover with the data of the linked object. Unlimited number of objects can be linked.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.m.QuickViewBase
 	 * @author SAP SE
 	 * @constructor
 	 * @public
 	 * @alias sap.m.QuickView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var QuickView = Control.extend("sap.m.QuickView",
+	var QuickView = QuickViewBase.extend("sap.m.QuickView",
 			{
 				metadata: {
 
@@ -38,20 +41,17 @@ sap.ui.define([
 							type : "sap.m.PlacementType",
 							group : "Misc",
 							defaultValue : PlacementType.Right
+						},
+						/**
+						 * The width of the QuickView.
+						 */
+						width : {
+							type : 'sap.ui.core.CSSSize',
+							group : 'Dimension',
+							defaultValue : '320px'
 						}
 					},
-					defaultAggregation: "pages",
 					aggregations: {
-
-						/**
-						 * Displays a page header, object icon or image, object name with short description, and object information divided in groups
-						 */
-						pages: {
-							type: "sap.m.QuickViewPage",
-							multiple: true,
-							singularName: "page",
-							bindable: "bindable"
-						}
 					},
 					events: {
 						/**
@@ -140,11 +140,12 @@ sap.ui.define([
 
 		var oNavConfig = {
 			pages: [new Page()],
+			navigate: this._navigate.bind(this),
 			afterNavigate: this._afterNavigate.bind(this)
 		};
 
 		if (!sap.ui.Device.system.phone) {
-			oNavConfig.width = "320px";
+			oNavConfig.width = this.getWidth();
 		}
 
 		this._oNavContainer = new NavContainer(oNavConfig);
@@ -202,28 +203,7 @@ sap.ui.define([
 	};
 
 	QuickView.prototype.onBeforeRenderingPopover = function() {
-		var aPages = this.getAggregation("pages");
-		if (!aPages) {
-			return;
-		}
-
-		var oNavContainer = this._oNavContainer;
-
-		// clear nav container
-		oNavContainer.destroyPages();
-		oNavContainer.init();
-
-		// create
-		for (var i = 0; i < aPages.length; i++) {
-			var oQuickViewPage = aPages[i];
-
-			oQuickViewPage._hasBackButton = i > 0;
-			oQuickViewPage._oPopover = this._oPopover;
-			oQuickViewPage._oNavContainer = oNavContainer;
-
-			var oPage = oQuickViewPage._createPage();
-			this._oNavContainer.addPage(oPage);
-		}
+		this._initPages();
 	};
 
 	QuickView.prototype.exit = function() {
@@ -232,15 +212,12 @@ sap.ui.define([
 		}
 	};
 
+	QuickView.prototype._createPage = function(oQuickViewPage) {
+		return oQuickViewPage._createPage();
+	};
+
 	QuickView.prototype._onPopupKeyDown = function(oEvent) {
-		if (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.ENTER) {
-
-			if (!this._oNavContainer.currentPageIsTopPage()) {
-				this._oNavContainer.back();
-			}
-
-			oEvent.preventDefault();
-		}
+		this._processKeyboard(oEvent);
 	};
 
 	QuickView.prototype._afterOpen = function(oEvent) {
@@ -258,28 +235,6 @@ sap.ui.define([
 		}
 	};
 
-	QuickView.prototype._afterNavigate = function(oEvent) {
-
-		// Just wait for the next tick to apply the focus
-		jQuery.sap.delayedCall(0, this, this._restoreFocus);
-	};
-
-	QuickView.prototype._restoreFocus = function() {
-		var oPage = this._oNavContainer.getCurrentPage();
-		var oFocusDomRef = this._oNavContainer._mFocusObject[oPage.getId()];
-
-		if (!oFocusDomRef) {
-			var oContent = oPage.getContent();
-			if (oContent && oContent.length > 1) {
-				oFocusDomRef = oContent[1].$().firstFocusableDomRef();
-			}
-		}
-
-		if (oFocusDomRef) {
-			jQuery.sap.focus(oFocusDomRef);
-		}
-	};
-
 	/**
 	 * Returns this button, which closes the QuickView.
 	 * On desktop or tablet, this method returns undefined.
@@ -290,10 +245,10 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var page = this._oNavContainer.getCurrentPage();
-		var button = page.getCustomHeader().getContentRight()[0];
+		var oPage = this._oNavContainer.getCurrentPage();
+		var oButton = oPage.getCustomHeader().getContentRight()[0];
 
-		return button;
+		return oButton;
 	};
 
 	/**

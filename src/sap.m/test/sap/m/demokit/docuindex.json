@@ -374,12 +374,19 @@
 		{
 		  "id": "sap.m.QuickView",
 		  "name": "Quick View",
+		  "category": "Popup",
+		  "since": "1.30",
+		  "samples": [
+			"sap.m.sample.QuickView"
+		  ]
+		},
+		{
+		  "id": "sap.m.QuickViewCard",
+		  "name": "Quick View Card",
 		  "category": "Container",
 		  "since": "1.30",
 		  "samples": [
-			"sap.m.sample.QuickView",
-			"sap.m.sample.QuickViewStandAlone",
-			"sap.m.sample.QuickViewSpecialCase"
+			"sap.m.sample.QuickViewCard"
 		  ]
 		},
 		{
@@ -918,14 +925,9 @@
 		  "description": "QuickView embedded in popover"
 		},
 		{
-		  "id": "sap.m.sample.QuickViewStandAlone",
-		  "name": "QuickView - card",
+		  "id": "sap.m.sample.QuickViewCard",
+		  "name": "QuickViewCard",
 		  "description": "QuickView embedded in container"
-		},
-		{
-		  "id": "sap.m.sample.QuickViewSpecialCase",
-		  "name": "QuickView - main contact data",
-		  "description": "QuickView with minimum information"
 		},
 		{
 		  "id": "sap.m.sample.ResponsivePopover",
