@@ -881,7 +881,8 @@
 			start();
 
 			oTPRect = oTPMaxHeight.$().rect();
-			bTest = oTPRect.width === 120;
+			// IE10, 11 are adding some fractions to the calculation in some cases
+			bTest = parseInt(oTPRect.width, 10) === 120;
 			ok(bTest, "ToolPopup's width of 120px");
 		};
 
