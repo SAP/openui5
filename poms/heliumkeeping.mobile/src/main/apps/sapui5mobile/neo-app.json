@@ -1,10 +1,10 @@
 {
     "maven": {
-        "groupId": "${sapui5.groupId}",
-        "artifactId": "${sapui5.artifactId}",
-        "version": "${sapui5.version}",
-        "classifier": "${sapui5.classifier}",
-        "type": "${sapui5.type}"
+        "groupId": "${deployable.groupId}",
+        "artifactId": "${deployable.artifactId}",
+        "version": "${deployable.version}",
+        "classifier": "${deployable.classifier}",
+        "type": "${deployable.type}"
     },
     "authenticationMethod": "none",
     "cacheControl": [{
