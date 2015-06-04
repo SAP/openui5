@@ -65,6 +65,7 @@
 		<!-- application to deploy -->
 		<application>sapui5mobile</application>
 		<application.dir>${application}</application.dir>
+		<application.fileName>sapui5-mobile</application.fileName>
 		
 		<!-- deployable --> 
 		<deployable.groupId>com.sap.ui5.dist</deployable.groupId>
@@ -297,7 +298,7 @@
 											<version>${deployable.version}</version>
 											<classifier>${deployable.classifier}</classifier>
 											<type>${deployable.type}</type>
-											<destFileName>${deployable.artifactId}.${deployable.type}</destFileName>
+											<destFileName>${application.fileName}.${deployable.type}</destFileName>
 										</artifactItem>
 									</artifactItems>
 									<outputDirectory>${project.build.directory}/${application}</outputDirectory>
