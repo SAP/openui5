@@ -182,6 +182,8 @@ sap.ui.define([
 			}
 		});
 
+		this._oPopover.addStyleClass('sapMQuickView');
+
 		var oPopupControl = this._oPopover.getAggregation("_popup");
 		oPopupControl.addEventDelegate({
 			onBeforeRendering: this.onBeforeRenderingPopover,
