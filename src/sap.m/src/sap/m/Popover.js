@@ -735,8 +735,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			iWindowWidth = this._$window.width(),
 			iWindowHeight = this._$window.height();
 
-		oStyle.overflow = "";
-
 		if (sContentWidth.indexOf("%") > 0) {
 			sContentWidth = sap.m.PopupHelper.calcPercentageSize(sContentWidth, iWindowWidth);
 		}
