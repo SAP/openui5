@@ -168,7 +168,7 @@
 	var toolbarContent4 = [
 
 		new sap.m.Label({
-			text : "Nothing on this toolbar can overflow"
+			text : "The ComboBox control can overflow"
 		}),
 		new sap.m.ToolbarSpacer(),
 		new sap.m.ComboBox({
@@ -271,7 +271,12 @@
 					text : "Left Button"
 				}),
 				new sap.m.Button({
-					text : "Middle Button"
+					icon: sNotesIconURI,
+					tooltip: "Notes"
+				}),
+				new sap.m.Button({
+					text : "Disabled Button",
+					enabled: false
 				}),
 				new sap.m.Button({
 					text : "Right Button"

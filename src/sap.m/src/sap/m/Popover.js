@@ -866,7 +866,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	Popover.prototype._getSingleNavContent = function(){
-		var aContent = this.getContent();
+		var aContent = this._getAllContent();
 
 		while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
 			aContent = aContent[0].getContent();
@@ -880,7 +880,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	Popover.prototype._getSinglePageContent = function(){
-		var aContent = this.getContent();
+		var aContent = this._getAllContent();
 
 		while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
 			aContent = aContent[0].getContent();
@@ -898,7 +898,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 * If there is, sapMPopoverPage style class will be added to the root node of the control in order to apply some special css styles to the inner dom nodes.
 	 */
 	Popover.prototype._hasSinglePageContent = function(){
-		var aContent = this.getContent();
+		var aContent = this._getAllContent();
 
 		while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
 			aContent = aContent[0].getContent();
@@ -918,7 +918,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 * If more than one scrollable control is added to popover, the scrolling needs to be disabled manually.
 	 */
 	Popover.prototype._hasSingleScrollableContent = function(){
-		var aContent = this.getContent(), i;
+		var aContent = this._getAllContent(), i;
 
 		while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
 			aContent = aContent[0].getContent();
@@ -1955,8 +1955,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		}
 		Control.prototype.addAggregation.apply(this, arguments);
 	};
-
-
+		
+	/**
+	 * A hook for controls that extend popover to determine how the controls array is formed
+	 * @returns {sap.ui.core.Control[]}
+	 * @private
+	 */
+	Popover.prototype._getAllContent = function() {
+		return this.getContent();
+	};
+		
 	return Popover;
 
 }, /* bExport= */ true);

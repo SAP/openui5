@@ -7,29 +7,37 @@
 
 	<Page
         showHeader="false"
+        enableScrolling="false"
 		class="sapUiContentPadding"
 		showNavButton="false" >
-        
+
 		<content>
 			<VBox>
-				<Label text="Use this slider to shrink the toolbars and observe their behavior."/>
-                <Label text="Note: the icon buttons display text only when in the overflow area."/>
+                <MessageStrip
+                    text="Use this slider to shrink the toolbars and observe their behavior. Note: the icon buttons display text only when in the overflow area."
+                    type="Information"
+                    showIcon="true">
+                </MessageStrip>
 
 				<Slider value="100" liveChange="onSliderMoved"></Slider>
 			</VBox>
 
+            <OverflowToolbar id="otbSubheader">
+                <ToolbarSpacer/>
+                <SearchField id="maxPrice" liveChange="onFilter">
+                    <layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true"/></layoutData>
+                </SearchField>
+                <Button text="Reset" type="Transparent" press="onReset"/>
+                <OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
+                <OverflowToolbarButton type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>
+            </OverflowToolbar>
+
+            <Label/>
+
             <Table id="idProductsTable"
                    items="{/ProductCollection}">
                 <headerToolbar>
-                    <OverflowToolbar id="otbSubheader">
-                        <ToolbarSpacer/>
-                        <SearchField id="maxPrice" liveChange="onFilter">
-                            <layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true"/></layoutData>
-                        </SearchField>
-                        <Button text="Reset" type="Transparent" press="onReset"/>
-                        <OverflowToolbarButton text="Sort" icon="sap-icon://sort" press="onSort"/>
-                        <OverflowToolbarButton text="Group" icon="sap-icon://group-2" press="onGroup"/>
-                    </OverflowToolbar>
+
                 </headerToolbar>
                 <columns>
                     <Column width="12em"><Text text="Product" /></Column>
@@ -64,7 +72,7 @@
                 <OverflowToolbarButton text="Delete" icon="sap-icon://delete"/>
                 <OverflowToolbarButton text="Edit" icon="sap-icon://edit"/>
                 <OverflowToolbarButton text="Add" icon="sap-icon://add"/>
-                <OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>                
+                <OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>
                 <OverflowToolbarButton text="Flag" icon="sap-icon://flag"/>
 
             </OverflowToolbar>
