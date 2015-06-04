@@ -3027,5 +3027,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "6c3d62f58d65395e92f21c15121aba5287776d1f",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Should open dialog on tap.",
+        "references": []
+      },
+      {
+        "id": "0f712ccc0dec1bca5c30a76c1359c5f317bd95ec",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase: Active state should not be affected from list mode.",
+        "references": []
+      },
+      {
+        "id": "9eeca7135d2d9a88c4c27d139460dc9efd0e4a58",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectHeader and IconTabBar 2-Way-Binding issue fixed",
+        "references": []
+      }
+    ]
   }
 }

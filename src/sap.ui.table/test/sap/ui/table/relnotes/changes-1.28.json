@@ -386,5 +386,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "0ec66232543c31b609219fc20a5f25a1917ea77e",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: ColumnResizeHandler can overlay scrollbar",
+        "references": []
+      }
+    ]
   }
 }

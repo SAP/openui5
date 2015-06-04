@@ -1897,5 +1897,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "cab84139c4a3f2409743fc62ed72363de2589c87",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Support Tool: Control-Tree \"Binding\" Tab",
+        "references": []
+      }
+    ]
   }
 }

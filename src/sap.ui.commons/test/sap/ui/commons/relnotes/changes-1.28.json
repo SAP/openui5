@@ -730,5 +730,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "06355ec6bef54ba91c9f583e3149d86c0baf3701",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Keyboard navigation when invisible item(s) exist is now supported.",
+        "references": []
+      }
+    ]
   }
 }
