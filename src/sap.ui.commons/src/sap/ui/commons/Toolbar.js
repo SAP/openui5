@@ -329,14 +329,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						$Item.attr("tabIndex", -1);
 					}
 				}
-
-				for (var i = 0; i < aRightItems.length; i++) {
-					var oDomRef = aRightItems[i].getFocusDomRef();
-					var $Item = jQuery(oDomRef);
-					if (oDomRef && ($Item.attr("tabindex") == "0")) { // set tabindex to -1 only if already set to 0
-						$Item.attr("tabIndex", -1);
-					}
-				}
 			}
 		};
 
