@@ -69,7 +69,7 @@ sap.ui.define([
 
 			var mContent = oQuickViewPage._createPageContent();
 
-			var oContainer = new ScrollContainer(oQuickViewPage.getPageId(), {
+			var oContainer = new ScrollContainer(this.getId() + '-' + oQuickViewPage.getPageId(), {
 				horizontal : false,
 				vertical : false
 			});

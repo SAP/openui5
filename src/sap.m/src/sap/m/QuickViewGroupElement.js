@@ -112,7 +112,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		GroupElement.prototype._getGroupElementValue = function() {
+		GroupElement.prototype._getGroupElementValue = function(sQuickViewId) {
 			switch (this.getType()) {
 				case GroupElementType.email:
 
@@ -144,7 +144,7 @@ sap.ui.define([
 						text : this.getValue(),
 						customData : [new CustomData({
 							key : "pageNumber",
-							value : this.getPageLinkId()
+							value : sQuickViewId + '-' + this.getPageLinkId()
 						})]
 					});
 				default:

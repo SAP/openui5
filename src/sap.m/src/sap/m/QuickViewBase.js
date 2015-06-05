@@ -250,13 +250,21 @@ sap.ui.define([
 			oNavContainer.destroyPages();
 			oNavContainer.init();
 
+			var sId = this.getId();
+
 			// create pages
 			for (var i = 0; i < aPages.length; i++) {
 				var oQuickViewPage = aPages[i];
 
-				oQuickViewPage._hasBackButton = i > 0;
-				oQuickViewPage._oPopover = this._oPopover;
-				oQuickViewPage._oNavContainer = oNavContainer;
+				// create and set navigation information to the page
+				var mNavContext = {
+					hasBackButton : i > 0,
+					popover : this._oPopover,
+					navContainer : oNavContainer,
+					quickViewId : sId
+				};
+
+				oQuickViewPage.setNavContext(mNavContext);
 
 				var oPage = this._createPage(oQuickViewPage);
 				this._oNavContainer.addPage(oPage);

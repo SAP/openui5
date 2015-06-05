@@ -140,12 +140,29 @@ sap.ui.define([
 
 			};
 
+			/**
+			 * Sets context containing navigation information.
+			 * @private
+			 */
+			QuickViewPage.prototype.setNavContext = function (context) {
+				this._mNavContext = context;
+			};
+
+			/**
+			 * Returns context containing navigation information.
+			 * @private
+			 */
+			QuickViewPage.prototype.getNavContext = function () {
+				return this._mNavContext;
+			};
+
 			QuickViewPage.prototype._createPage = function () {
 				var oForm = this._createForm(),
-					that = this,
 					oHeaderContent = this._getPageHeaderContent();
 
-				var oPage = new Page(this.getPageId(), {
+				var mNavContext = this.getNavContext();
+
+				var oPage = new Page(mNavContext.quickViewId + '-' + this.getPageId(), {
 					customHeader : new Bar()
 				});
 
@@ -163,26 +180,26 @@ sap.ui.define([
 					})
 				);
 
-				if (this._hasBackButton) {
+				if (mNavContext.hasBackButton) {
 					oCustomHeader.addContentLeft(
 						new Button({
 							type : ButtonType.Back,
 							tooltip : this._oResourceBundle.getText("PAGE_NAVBUTTON_TEXT"),
 							press : function() {
-								if (that._oNavContainer) {
-									that._oNavContainer.back();
+								if (mNavContext.navContainer) {
+									mNavContext.navContainer.back();
 								}
 							}
 						})
 					);
 				}
 
-				if (that._oPopover && sap.ui.Device.system.phone) {
+				if (mNavContext.popover && sap.ui.Device.system.phone) {
 					oCustomHeader.addContentRight(
 						new Button({
 							icon : "sap-icon://decline",
 							press : function() {
-								that._oPopover.close();
+								mNavContext.popover.close();
 							}
 						})
 					);
@@ -304,6 +321,8 @@ sap.ui.define([
 					return;
 				}
 
+				var mNavContext = this.getNavContext();
+
 				for (var k = 0; k < aElements.length; k++) {
 					oCurrentGroupElement = aElements[k];
 
@@ -315,7 +334,7 @@ sap.ui.define([
 						text: oCurrentGroupElement.getLabel()
 					});
 
-					oCurrentGroupElementValue = oCurrentGroupElement._getGroupElementValue();
+					oCurrentGroupElementValue = oCurrentGroupElement._getGroupElementValue(mNavContext.quickViewId);
 
 					if (oCurrentGroupElementValue instanceof Link) {
 						oCurrentGroupElementValue.addAriaLabelledBy(oCurrentGroupElementValue);
@@ -374,11 +393,14 @@ sap.ui.define([
 			};
 
 			QuickViewPage.prototype._attachPressLink = function (that) {
+
+				var mNavContext = that.getNavContext();
+
 				return function (e) {
 					e.preventDefault();
 					var sPageId = this.getCustomData()[0].getValue();
-					if (that._oNavContainer && sPageId) {
-						that._oNavContainer.to(sPageId);
+					if (mNavContext.navContainer && sPageId) {
+						mNavContext.navContainer.to(sPageId);
 					}
 				};
 			};
