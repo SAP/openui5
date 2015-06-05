@@ -427,7 +427,7 @@
 
 			sap.ui.getCore().applyChanges();
 			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-			deepEqual(oMessageBox.$().find('textarea')[0].textContent, sDetails);
+			deepEqual(oMessageBox.$().find('textarea')[0].value, sDetails);
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});
@@ -495,7 +495,7 @@
 
 			sap.ui.getCore().applyChanges();
 			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-			deepEqual(oMessageBox.$().find('textarea')[0].textContent, JSON.stringify(oJSON, null,'\t'));
+			deepEqual(oMessageBox.$().find('textarea')[0].value, JSON.stringify(oJSON, null,'\t'));
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});
@@ -528,7 +528,7 @@
 
 			sap.ui.getCore().applyChanges();
 			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-			deepEqual(oMessageBox.$().find('textarea')[0].textContent, JSON.stringify(oJSON, null, '\t'));
+			deepEqual(oMessageBox.$().find('textarea')[0].value, JSON.stringify(oJSON, null, '\t'));
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});
