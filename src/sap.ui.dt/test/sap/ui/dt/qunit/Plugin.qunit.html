@@ -28,7 +28,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
-		jQuery.sap.require("sap.ui.dt.DesignTimeNew");
+		jQuery.sap.require("sap.ui.dt.DesignTime");
 		jQuery.sap.require("sap.ui.dt.Plugin");
 
 		QUnit.module("Given that an Plugin is initialized with register methods", {
@@ -40,7 +40,7 @@
 					]
 				});
 
-				this.oDesignTime = new sap.ui.dt.DesignTimeNew({
+				this.oDesignTime = new sap.ui.dt.DesignTime({
 					rootElements : [this.oLayout]
 				});
 

@@ -42,7 +42,7 @@ function(ManagedObject) {
 				 * DesignTime where this plugin will be used
 				 */
 				designTime : { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
-					type : "sap.ui.dt.DesignTimeNew",
+					type : "sap.ui.dt.DesignTime",
 					multiple : false
 				}
 			},
