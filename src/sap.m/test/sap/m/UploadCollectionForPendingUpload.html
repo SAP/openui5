@@ -47,10 +47,12 @@
 	function fnUploadComplete(oEvent) {
 		sap.m.MessageToast.show("Event uploadComplete triggered");
 	}
+
 	function fnUpload(oEvent) {
 		oUploadCollection.upload();
 		sap.m.MessageToast.show("Method Upload is called");
 	}
+
 	// create instance of UploadCollection and set model
 	var oUploadCollection = new sap.m.UploadCollection({
 		maximumFilenameLength : 55,
