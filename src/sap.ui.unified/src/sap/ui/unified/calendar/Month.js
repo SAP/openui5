@@ -55,7 +55,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * If set, a header with the month name is shown
 			 */
-			showHeader : {type : "boolean", group : "Misc", defaultValue : false}
+			showHeader : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * If set, the first day of the displayed week is this day. Valid values are 0 to 6.
+			 * If not a valid value is set, the default of the used locale is used.
+			 * @since 1.28.9
+			 */
+			firstDayOfWeek : {type : "int", group : "Misc", defaultValue : -1},
+
+			/**
+			 * If set, the provided weekdays are displayed as non-working days.
+			 * Valid values inside the array are 0 to 6.
+			 * If not set, the weekend defined in the locale settings is displayed as non-working days.
+			 * @since 1.28.9
+			 */
+			nonWorkingDays : {type : "int[]", group : "Misc", defaultValue : null}
 		},
 		aggregations : {
 
@@ -355,7 +370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 * if used inside Calendar get the value from the parent
 		 * To don't have sync issues...
 		 */
-		Month.prototype.getShowHeader = function(){
+		Month.prototype._getShowHeader = function(){
 
 			var oParent = this.getParent();
 
@@ -380,6 +395,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			} else {
 				return this.getAssociation("ariaLabelledBy", []);
 			}
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 * If not a valid day, use LocaleData
+		 */
+		Month.prototype._getFirstDayOfWeek = function(){
+
+			var oParent = this.getParent();
+			var iFirstDayOfWeek = 0;
+
+			if (oParent && oParent.getFirstDayOfWeek) {
+				iFirstDayOfWeek = oParent.getFirstDayOfWeek();
+			} else {
+				iFirstDayOfWeek = this.getProperty("firstDayOfWeek");
+			}
+
+			if (iFirstDayOfWeek < 0 || iFirstDayOfWeek > 6) {
+				var oLocaleData = this._getLocaleData();
+				iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+			}
+
+			return iFirstDayOfWeek;
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 * If not a valid day, use LocaleData
+		 */
+		Month.prototype._getNonWorkingDays = function(){
+
+			var oParent = this.getParent();
+			var aNonWorkingDays;
+
+			if (oParent && oParent.getNonWorkingDays) {
+				aNonWorkingDays = oParent.getNonWorkingDays();
+			} else {
+				aNonWorkingDays = this.getProperty("nonWorkingDays");
+			}
+
+			if (aNonWorkingDays && !jQuery.isArray(aNonWorkingDays)) {
+				aNonWorkingDays = [];
+			}
+
+			return aNonWorkingDays;
 
 		};
 
@@ -696,11 +760,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._bLongWeekDays = undefined;
 			var aWeekHeaders = this.$().find(".sapUiCalWH");
 			var oLocaleData = this._getLocaleData();
-			var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+			var iStartDay = this._getFirstWeekDay();
 			var aDayNames = oLocaleData.getDaysStandAlone("abbreviated");
-			for (var i = 0; i < aDayNames.length; i++) {
+			for (var i = 0; i < aWeekHeaders.length; i++) {
 				var oWeekDay = aWeekHeaders[i];
-				jQuery(oWeekDay).text(aDayNames[(i + iFirstDayOfWeek) % 7]);
+				jQuery(oWeekDay).text(aDayNames[(i + iStartDay) % 7]);
 			}
 
 			var that = this;
@@ -806,12 +870,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Month.prototype._renderHeader = function(){
 
-			if (this.getShowHeader()) {
+			if (this._getShowHeader()) {
 				var oDate = this._getDate();
 				var oLocaleData = this._getLocaleData();
 				var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
 				this.$("Head").text(aMonthNames[oDate.getUTCMonth()]);
 			}
+
+		};
+
+		/*
+		 * returns the first displayed week day. Needed to change week days if too long
+		 */
+		Month.prototype._getFirstWeekDay = function(){
+
+			var oLocaleData = this._getLocaleData();
+			return oLocaleData.getFirstDayOfWeek();
 
 		};
 
@@ -1284,7 +1358,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				for (i = 0; i < aWeekHeaders.length; i++) {
 					oWeekDay = aWeekHeaders[i];
-					if (oWeekDay.clientWidth < oWeekDay.scrollWidth) {
+					if (Math.abs(oWeekDay.clientWidth - oWeekDay.scrollWidth) > 1) {
 						bTooLong = true;
 						break;
 					}
@@ -1293,11 +1367,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (bTooLong) {
 					oThis._bLongWeekDays = false;
 					var oLocaleData = oThis._getLocaleData();
-					var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+					var iStartDay = oThis._getFirstWeekDay();
 					var aDayNames = oLocaleData.getDaysStandAlone("narrow");
-					for ( i = 0; i < aDayNames.length; i++) {
+					for ( i = 0; i < aWeekHeaders.length; i++) {
 						oWeekDay = aWeekHeaders[i];
-						jQuery(oWeekDay).text(aDayNames[(i + iFirstDayOfWeek) % 7]);
+						jQuery(oWeekDay).text(aDayNames[(i + iStartDay) % 7]);
 					}
 				} else {
 					oThis._bLongWeekDays = true;
