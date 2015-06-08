@@ -602,6 +602,32 @@
 
 				oSC.destroy();
 			});
+
+			test("restore the overwritten methods on pages when page is moved from splitcontainer to navcontainer", function() {
+				var oDetailPage = new sap.m.Page(),
+					oSplitContainer = new sap.m.SplitContainer({
+						detailPages: oDetailPage
+					}),
+					oNavContainer = new sap.m.NavContainer();
+
+				notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is already overwritten");
+				notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already overwritten");
+
+
+				oNavContainer.addPage(oDetailPage);
+
+				strictEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButtton is already restored");
+				strictEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already restored");
+
+
+				oSplitContainer.addDetailPage(oDetailPage);
+
+				notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is overwritten again");
+				notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is overwritten again");
+
+				oNavContainer.destroy();
+				oSplitContainer.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
