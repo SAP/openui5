@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.AnalyticalTable.
-sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTable', './library', 'sap/ui/model/analytics/ODataModelAdapter'],
-	function(jQuery, AnalyticalColumn, Table, TreeTable, library, ODataModelAdapter) {
+sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTable', './library', 'sap/ui/model/analytics/ODataModelAdapter', 'sap/ui/core/IconPool'],
+	function(jQuery, AnalyticalColumn, Table, TreeTable, library, ODataModelAdapter, IconPool) {
 	"use strict";
 
 
@@ -474,8 +474,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					$row.addClass("sapUiTableRowHidden");
 					$rowHdr.addClass("sapUiTableRowHidden");
 				}
-
-				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>");
+				
+				var sGroupHeaderMenuButton = "";
+				if (sap.ui.Device.system.tablet) {
+					sGroupHeaderMenuButton = "<div class='sapUiTableGroupMenuButton'></div>";
+				}
+				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
 				
 				$row.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$rowHdr.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
@@ -521,6 +525,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$rowHdr.data("sap-ui-level", iLevel);
 			
 			$rowHdr.find(".sapUiTableGroupIcon").width(iRowHdrWidth + "px");
+			
+			if (sap.ui.Device.system.tablet) {
+				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
+				
+				if (this._bRtlMode) {
+					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - 20) + "px");
+				} else {
+					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - 20) + "px");
+				}
+			}
 
 			// show or hide the totals if not enabled - needs to be done by Table
 			// control since the model could be reused and thus the values cannot
@@ -546,10 +560,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype.onclick = function(oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
+		var $EventTarget = jQuery(oEvent.target);
+		if ($EventTarget.hasClass("sapUiTableGroupIcon")) {
 			this._onNodeSelect(oEvent);
-		} else if (jQuery(oEvent.target).hasClass("sapUiAnalyticalTableSum")) {
+		} else if ($EventTarget.hasClass("sapUiAnalyticalTableSum")) {
 			// Sums cannot be selected
+			oEvent.preventDefault();
+			return;
+		} else if ($EventTarget.hasClass("sapUiTableGroupMenuButton")) {
+			this._onContextMenu(oEvent);
 			oEvent.preventDefault();
 			return;
 		} else {
@@ -601,7 +620,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._iGroupedLevel = jQuery(oEvent.target).closest('[data-sap-ui-level]').data('sap-ui-level');
 			var oMenu = this._getGroupHeaderMenu();
 			var eDock = sap.ui.core.Popup.Dock;
-			oMenu.open(false, oEvent.target, eDock.LeftTop, eDock.LeftTop, document, (oEvent.pageX - 2) + " " + (oEvent.pageY - 2));
+			
+			var iLocationX = oEvent.pageX || oEvent.clientX;
+			var iLocationY = oEvent.pageY || oEvent.clientY;
+			oMenu.open(false, oEvent.target, eDock.LeftTop, eDock.LeftTop, document, (iLocationX - 2) + " " + (iLocationY - 2));
 
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
