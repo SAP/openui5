@@ -1711,7 +1711,27 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 			jQuery.sap.handleF6GroupNavigation(oEvent, null);
 		});
     });
-	
+
+	/**
+	 * Whether the current browser fires mouse events after touch events with long delay (~300ms)
+	 *
+	 * Mobile browsers fire mouse events after touch events with a delay (~300ms)
+	 * Some modern mobile browsers already removed the delay under some condition. Those browsers are:
+	 *  1. iOS Safari in iOS 8.
+	 *  2. Chrome on Android from version 32 (exclude the Samsung stock browser which also uses Chrome kernel)
+	 *
+	 * @private
+	 * @since 1.30.0
+	 */
+	jQuery.sap.isMouseEventDelayed =
+		(sap.ui.Device.browser.mobile
+			&& !(
+				(sap.ui.Device.os.ios && sap.ui.Device.os.version >= 8 && sap.ui.Device.browser.safari)
+				|| (sap.ui.Device.browser.chrome && !/SAMSUNG/.test(navigator.userAgent) && sap.ui.Device.browser.version >= 32)
+			)
+		);
+
+
 	/* ************************************************ */
 
 
