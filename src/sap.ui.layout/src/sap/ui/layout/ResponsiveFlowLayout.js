@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			this._bIsRegistered = false;
 			this._proxyComputeWidths = jQuery.proxy(computeWidths, this);
 	
-			this.oRm = new sap.ui.core.RenderManager();
+			this.oRm = sap.ui.getCore().createRenderManager();
 			this.oRm.writeStylesAndClasses = function() {
 				this.writeStyles();
 				this.writeClasses();
