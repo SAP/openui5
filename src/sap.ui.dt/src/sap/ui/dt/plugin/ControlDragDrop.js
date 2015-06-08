@@ -104,6 +104,7 @@ function(DragDrop, ElementUtil) {
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragStart = function(oOverlay) {
+		delete this._previousTarget;
 		// TODO : register on draggable
 		if (oOverlay.isDraggable()) {
 			this._oDraggedOverlay = oOverlay;
@@ -133,7 +134,8 @@ function(DragDrop, ElementUtil) {
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
-		if (oTargetOverlay.getElementInstance() !== this._oDraggedOverlay.getElementInstance() ) {
+		if (oTargetOverlay.getElementInstance() !== this._oDraggedOverlay.getElementInstance() && oTargetOverlay !== this._previousTarget) {
+			this._previousTarget = oTargetOverlay;
 			this._repositionOn(oTargetOverlay);
 		}
 	};
@@ -142,6 +144,8 @@ function(DragDrop, ElementUtil) {
 	 * @override
 	 */
 	ControlDragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay) {
+		delete this._previousTarget;
+
 		var oParentElement = oAggregationOverlay.getElementInstance();
 
 		var oDraggedElement = this._oDraggedOverlay.getElementInstance();
