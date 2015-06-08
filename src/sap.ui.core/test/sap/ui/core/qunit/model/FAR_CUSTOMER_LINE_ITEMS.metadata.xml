@@ -21,8 +21,13 @@
 				<!-- property with sap:value-list but no value list provided in separate load -->
 				<Property Name="Invalid" Type="Edm.String" sap:value-list="standard"/>
 			</EntityType>
+			<EntityType Name="Foo">
+				<!-- property with sap:value-list but no value list provided in separate load -->
+				<Property Name="Invalid" Type="Edm.String" sap:value-list="standard"/>
+			</EntityType>
 		<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
 				<EntitySet Name="Items" EntityType="FAR_CUSTOMER_LINE_ITEMS.Item" sap:label="Item" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="Foos" EntityType="FAR_CUSTOMER_LINE_ITEMS.Foo"/>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

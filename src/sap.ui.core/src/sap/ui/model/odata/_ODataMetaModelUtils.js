@@ -409,14 +409,12 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 * For example all properties with "sap:sortable=false" are collected in
 		 * annotation Org.OData.Capabilities.V1.SortRestrictions/NonSortableProperties.
 		 *
-		 * @param {object[]} aSchemas
-		 *   Array of OData data service schemas
 		 * @param {object} oEntitySet
 		 *   the entity set
+		 * @param {object} oEntityType
+		 *   the corresponding entity type
 		 */
-		calculateEntitySetAnnotations: function (aSchemas, oEntitySet) {
-			var oEntityType = Utils.getObject(aSchemas, "entityType", oEntitySet.entityType);
-
+		calculateEntitySetAnnotations: function (oEntitySet, oEntityType) {
 			if (oEntityType.property) {
 				oEntityType.property.forEach(function (oProperty) {
 					if (oProperty["sap:filterable"] === "false") {
@@ -441,19 +439,17 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 * com.sap.vocabularies.Common.v1.Deletable and com.sap.vocabularies.Common.v1.Updatable
 		 * at entity type.
 		 *
-		 * @param {object[]} aSchemas
-		 *   array of OData data service schemas
 		 * @param {object} oEntitySet
 		 *   the entity set
+		 * @param {object} oEntityType
+		 *   the corresponding entity type
 		 */
-		convertEntitySetAnnotations: function (aSchemas, oEntitySet) {
+		convertEntitySetAnnotations: function (oEntitySet, oEntityType) {
 			var sDeletablePath = oEntitySet["sap:deletable-path"],
 				sUpdatablePath = oEntitySet["sap:updatable-path"],
-				sEntitySetName = oEntitySet.name,
-				oEntityType;
+				sEntitySetName = oEntitySet.name;
 
 			if (sUpdatablePath || sDeletablePath) {
-				oEntityType = Utils.getObject(aSchemas, "entityType", oEntitySet.entityType);
 				Utils.setDeletableOrUpdatable(oEntityType, "Deletable", sDeletablePath,
 					sEntitySetName);
 				Utils.setDeletableOrUpdatable(oEntityType, "Updatable", sUpdatablePath,
@@ -579,8 +575,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		getObject: function (vModel, sArrayName, sQualifiedName, bAsPath) {
 			var aArray,
 				vResult = bAsPath ? undefined : null,
-				aSchemas = Array.isArray(vModel) ? vModel
-					: (vModel.getObject("/dataServices/schema") || []),
+				oSchema,
 				iSeparatorPos,
 				sNamespace,
 				sName;
@@ -589,22 +584,46 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			iSeparatorPos = sQualifiedName.lastIndexOf(".");
 			sNamespace = sQualifiedName.slice(0, iSeparatorPos);
 			sName = sQualifiedName.slice(iSeparatorPos + 1);
-			aSchemas.forEach(function (oSchema) {
-				if (oSchema.namespace === sNamespace) {
-					aArray = oSchema[sArrayName];
-					if (aArray) {
-						aArray.forEach(function (oThing) {
-							if (oThing.name === sName) {
-								vResult = bAsPath ? oThing.$path : oThing;
-								return false; // break
-							}
-						});
-					}
+			oSchema = Utils.getSchema(vModel, sNamespace);
+			if (oSchema) {
+				aArray = oSchema[sArrayName];
+				if (aArray) {
+					aArray.forEach(function (oThing) {
+						if (oThing.name === sName) {
+							vResult = bAsPath ? oThing.$path : oThing;
+							return false; // break
+						}
+					});
+				}
+			}
+
+			return vResult;
+		},
+
+		/**
+		 * Returns the schema with the given namespace.
+		 *
+		 * @param {sap.ui.model.Model|object[]} vModel
+		 *   either a model or an array of schemas
+		 * @param {string} sNamespace
+		 *   a namespace, e.g. "ACME"
+		 * @returns {object}
+		 *   the schema with the given namespace; <code>null</code> if no such schema is found
+		 */
+		getSchema: function (vModel, sNamespace) {
+			var oSchema = null,
+				aSchemas = Array.isArray(vModel)
+					? vModel
+					: (vModel.getObject("/dataServices/schema") || []);
+
+			aSchemas.forEach(function (o) {
+				if (o.namespace === sNamespace) {
+					oSchema = o;
 					return false; // break
 				}
 			});
 
-			return vResult;
+			return oSchema;
 		},
 
 		/**
@@ -643,6 +662,28 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 				});
 			}
 			return aResult.join(" ");
+		},
+
+		/**
+		 * Returns the map representing the <code>com.sap.vocabularies.Common.v1.ValueList</code>
+		 * annotations of the given property.
+		 *
+		 * @param {object} oProperty the property
+		 * @returns {object} map of ValueList annotations contained in oProperty
+		 */
+		getValueLists: function (oProperty) {
+			var sName,
+				sQualifier,
+				mValueLists = {};
+
+			for (sName in oProperty) {
+				if (jQuery.sap.startsWith(sName, "com.sap.vocabularies.Common.v1.ValueList")) {
+					sQualifier = sName.split("#")[1] || "";
+					mValueLists[sQualifier] = oProperty[sName];
+				}
+			}
+
+			return mValueLists;
 		},
 
 		/**
@@ -702,43 +743,34 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			var aSchemas = oData.dataServices.schema || [];
 			aSchemas.forEach(function (oSchema, i) {
 				Utils.liftSAPData(oSchema);
+				oSchema.$path = "/dataServices/schema/" + i;
 				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
 
-				Utils.visitParents(oSchema, i, oAnnotations, "association", false,
+				Utils.visitParents(oSchema, oAnnotations, "association",
 					function (oAssociation, mChildAnnotations) {
-						Utils.visitChildren(aSchemas, oAssociation.end, mChildAnnotations);
-				});
+						Utils.visitChildren(oAssociation.end, mChildAnnotations);
+					});
 
-				Utils.visitParents(oSchema, i, oAnnotations, "complexType", false,
+				Utils.visitParents(oSchema, oAnnotations, "complexType",
 					function (oComplexType, mChildAnnotations) {
-						Utils.visitChildren(aSchemas, oComplexType.property, mChildAnnotations,
-							"Property");
+						Utils.visitChildren(oComplexType.property, mChildAnnotations, "Property");
 						Utils.addSapSemantics(oComplexType);
-				});
+					});
 
 				// visit all entity types before visiting the entity sets to ensure that v2
 				// annotations are already lifted up and can be used for calculating entity
 				// set annotations which are based on v2 annotations on entity properties
-				Utils.visitParents(oSchema, i, oAnnotations, "entityType", false,
-					function (oEntityType, mChildAnnotations) {
-						Utils.visitChildren(aSchemas,
-							oEntityType.property, mChildAnnotations, "Property");
-						Utils.visitChildren(aSchemas, oEntityType.navigationProperty,
-							mChildAnnotations);
-						Utils.addSapSemantics(oEntityType);
-				});
+				Utils.visitParents(oSchema, oAnnotations, "entityType", Utils.visitEntityType);
 
-				Utils.visitParents(oSchema, i, oAnnotations, "entityContainer", true,
+				Utils.visitParents(oSchema, oAnnotations, "entityContainer",
 					function (oEntityContainer, mChildAnnotations) {
-						Utils.visitChildren(aSchemas, oEntityContainer.associationSet,
-							mChildAnnotations);
-						Utils.visitChildren(aSchemas, oEntityContainer.entitySet,
-							mChildAnnotations, "EntitySet");
-						Utils.visitChildren(aSchemas, oEntityContainer.functionImport,
-							mChildAnnotations, undefined, Utils.visitParameters.bind(this,
+						Utils.visitChildren(oEntityContainer.associationSet, mChildAnnotations);
+						Utils.visitChildren(oEntityContainer.entitySet, mChildAnnotations,
+							"EntitySet", aSchemas);
+						Utils.visitChildren(oEntityContainer.functionImport, mChildAnnotations,
+							"", null, Utils.visitParameters.bind(this,
 								oAnnotations, oSchema, oEntityContainer));
-					}
-				);
+					});
 			});
 		},
 
@@ -782,42 +814,65 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 * Visits all children inside the given array, lifts "SAPData" extensions and
 		 * inlines OData v4 annotations for each child.
 		 *
-		 * @param {object[]} aSchemas
-		 *   Array of OData data service schemas
 		 * @param {object[]} aChildren
 		 *   any array of children
 		 * @param {object} mChildAnnotations
 		 *   map from child name (or role) to annotations
-		 * @param {string} sTypeClass
+		 * @param {string} [sTypeClass]
 		 *   the type class of the given children; supported type classes are "Property"
 		 *   and "EntitySet"
+		 * @param {object[]} [aSchemas]
+		 *   Array of OData data service schemas (needed only for type class "EntitySet")
 		 * @param {function} [fnCallback]
 		 *   optional callback for each child
+		 * @param {number} [iStartIndex=0]
+		 *   optional start index in the given array
 		 */
-		visitChildren: function (aSchemas, aChildren, mChildAnnotations, sTypeClass, fnCallback) {
+		visitChildren: function (aChildren, mChildAnnotations, sTypeClass, aSchemas, fnCallback,
+				iStartIndex) {
 			if (!aChildren) {
 				return;
+			}
+			if (iStartIndex) {
+				aChildren = aChildren.slice(iStartIndex);
 			}
 			aChildren.forEach(function (oChild) {
 				// lift SAP data for easy access to SAP Annotations for OData V 2.0
 				Utils.liftSAPData(oChild, sTypeClass);
 			});
 			aChildren.forEach(function (oChild) {
+				var oEntityType;
+
 				if (sTypeClass === "Property" && oChild["sap:unit"]) {
 					Utils.addUnitAnnotation(oChild, aChildren);
 				} else if (sTypeClass === "EntitySet") {
 					// calculated entity set annotations need to be added before v4
 					// annotations are merged
-					Utils.calculateEntitySetAnnotations(aSchemas, oChild);
-					Utils.convertEntitySetAnnotations(aSchemas, oChild);
+					oEntityType = Utils.getObject(aSchemas, "entityType", oChild.entityType);
+					Utils.calculateEntitySetAnnotations(oChild, oEntityType);
+					Utils.convertEntitySetAnnotations(oChild, oEntityType);
 				}
 
-				// mix-in external v4 annotations
-				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
 				if (fnCallback) {
 					fnCallback(oChild);
 				}
+				// merge v4 annotations after child annotations are processed
+				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
 			});
+		},
+
+		/**
+		 * Visits the given entity type and its (structural or navigation) properties.
+		 *
+		 * @param {object} oEntityType
+		 *   the entity type
+		 * @param {object} mChildAnnotations
+		 *   map from child name (or role) to annotations
+		 */
+		visitEntityType: function (oEntityType, mChildAnnotations) {
+			Utils.visitChildren(oEntityType.property, mChildAnnotations, "Property");
+			Utils.visitChildren(oEntityType.navigationProperty, mChildAnnotations);
+			Utils.addSapSemantics(oEntityType);
 		},
 
 		/**
@@ -833,15 +888,13 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 *   a function import's v2 meta data object
 		 */
 		visitParameters: function (oAnnotations, oSchema, oEntityContainer, oFunctionImport) {
-			var sQualifiedName = oSchema.namespace + "." +
-					oEntityContainer.name,
-				mAnnotations = oAnnotations.EntityContainer
-					&& oAnnotations.EntityContainer[sQualifiedName]
-					|| {};
+			var mAnnotations;
 
 			if (!oFunctionImport.parameter) {
 				return;
 			}
+			mAnnotations = Utils.getChildAnnotations(oAnnotations,
+				oSchema.namespace + "." + oEntityContainer.name, true);
 			oFunctionImport.parameter.forEach(
 				function (oParam) {
 					Utils.liftSAPData(oParam);
@@ -852,42 +905,47 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
-		 * Visits all parents inside the current schema's array of given name,
-		 * lifts "SAPData" extensions, inlines OData v4 annotations,
-		 * and adds <code>$path</code> for each parent.
+		 * Visits all parents (or a single parent) inside the current schema's array of given name,
+		 * lifts "SAPData" extensions, inlines OData v4 annotations, and adds <code>$path</code>
+		 * for each parent.
 		 *
 		 * @param {object} oSchema
 		 *   OData data service schema
-		 * @param {number} i
-		 *   the i-th data service schema
 		 * @param {object} oAnnotations
 		 *   annotations "JSON"
 		 * @param {string} sArrayName
 		 *   name of array of parents
-		 * @param {boolean} bInContainer
-		 *   whether the parents live inside the entity container (or beside it)
 		 * @param {function} fnCallback
 		 *   mandatory callback for each parent, child annotations are passed in
+		 * @param {number} [iIndex]
+		 *   optional index of a single parent to visit; default is to visit all
 		 */
-		visitParents: function (oSchema, i, oAnnotations, sArrayName, bInContainer, fnCallback) {
+		visitParents: function (oSchema, oAnnotations, sArrayName, fnCallback, iIndex) {
 			var aParents = oSchema[sArrayName];
 
-			if (!aParents) {
-				return;
-			}
-			aParents.forEach(function (oParent, j) {
+			function visitParent(oParent, j) {
 				var sQualifiedName = oSchema.namespace + "." + oParent.name,
-					mChildAnnotations = Utils.getChildAnnotations(oAnnotations,
-						sQualifiedName, bInContainer);
+					mChildAnnotations = Utils.getChildAnnotations(oAnnotations, sQualifiedName,
+						sArrayName === "entityContainer");
 
 				Utils.liftSAPData(oParent);
-				oParent.$path = "/dataServices/schema/" + i + "/" + sArrayName + "/"
-					+ j;
+				// @see sap.ui.model.odata.ODataMetadata#_getEntityTypeByName
+				oParent.namespace = oSchema.namespace;
+				oParent.$path = oSchema.$path + "/" + sArrayName + "/" + j;
 
 				fnCallback(oParent, mChildAnnotations);
 				// merge v4 annotations after child annotations are processed
 				jQuery.extend(oParent, oAnnotations[sQualifiedName]);
-			});
+			}
+
+			if (!aParents) {
+				return;
+			}
+			if (iIndex !== undefined) {
+				visitParent(aParents[iIndex], iIndex);
+			} else {
+				aParents.forEach(visitParent);
+			}
 		}
 	};
 

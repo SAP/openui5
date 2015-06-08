@@ -31,6 +31,7 @@ sap.ui.define([
 
 			if (oUriParameters.get("realOData") !== "true") {
 				oMockServer = new MockServer({rootUri : sServiceUri});
+				//TODO "metadata.xml" vs. "metadata_none.xml" depending on "sap-value-list"?
 				oMockServer.simulate(sMockServerBaseUri + "metadata.xml", {
 					sMockdataBaseUrl : sMockServerBaseUri,
 					bGenerateMissingMockData : false
@@ -49,11 +50,9 @@ sap.ui.define([
 						valueList : "none",
 						response : "metadata_none.xml"
 					}, {
-						valueList : "FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer",
-						response : "metadata_ItemCustomer.xml"
-					}, {
-						valueList : "FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode",
-						response : "metadata_ItemCompanyCode.xml"
+						valueList : "FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode"
+							+ ",FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer",
+						response : "metadata_ItemCompanyCode_ItemCustomer.xml"
 					}].map(function (oMockData) {
 						return {
 							method : "GET",

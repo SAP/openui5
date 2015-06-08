@@ -13,7 +13,8 @@ sap.ui.define([
 		MetaModel, Utils) {
 	"use strict";
 
-	var rSchemaPath = /\/dataServices\/schema\/\d+/;
+	// path to an entity type's property ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
+	var rPropertyPath = /^((\/dataServices\/schema\/\d+)\/entityType\/\d+)\/property\/\d+$/;
 
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
@@ -64,8 +65,8 @@ sap.ui.define([
 	 *   the private interface object of the OData model which provides friend access to
 	 *   selected methods
 	 * @param {function} [oODataModelInterface.addAnnotationUrl]
-	 *   the {@link sap.ui.model.odata.ODataModel#addAnnotationUrl} method of the OData model, in
-	 *   case this feature is supported
+	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl} method of the OData model,
+	 *   in case this feature is supported
 	 * @param {Promise} oODataModelInterface.annotationsLoadedPromise
 	 *   a promise which is resolved by the OData model once meta data and annotations have been
 	 *   fully loaded
@@ -178,7 +179,13 @@ sap.ui.define([
 				var that = this;
 
 				MetaModel.apply(this); // no arguments to pass!
+				// map path of property to promise for loading its value list
+				this.mContext2Promise = {};
+				this.oODataModelInterface = oODataModelInterface;
 				this.sDefaultBindingMode = BindingMode.OneTime;
+				this.oMetadata = oMetadata;
+				// map qualified property name to internal "promise interface" for request bundling
+				this.mQName2PendingRequest = {};
 				this.mSupportedBindingModes = {"OneTime" : true};
 				this.oModel = null; // not yet available!
 				this.oODataModelInterface = oODataModelInterface;
@@ -315,6 +322,97 @@ sap.ui.define([
 			sProcessedPath = sProcessedPath + vPart + "/";
 		}
 		return oNode;
+	};
+
+	/**
+	 * Merges metadata retrieved via <code>this.oODataModelInterface.addAnnotationUrl</code>.
+	 *
+	 * @param {object} oResponse response from addAnnotationUrl.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype._mergeMetadata = function (oResponse) {
+		var oEntityContainer = this.getODataEntityContainer(),
+			mChildAnnotations = Utils.getChildAnnotations(oResponse.annotations,
+				oEntityContainer.namespace + "." + oEntityContainer.name, true),
+			iFirstNewEntitySet = oEntityContainer.entitySet.length,
+			aSchemas = this.oModel.getObject("/dataServices/schema"),
+			that = this;
+
+		// merge meta data for entity sets/types
+		oResponse.entitySets.forEach(function (oEntitySet) {
+			var oEntityType,
+				oSchema,
+				sTypeName = oEntitySet.entityType,
+				// Note: namespaces may contain dots themselves!
+				sNamespace = sTypeName.slice(0, sTypeName.lastIndexOf("."));
+
+			if (!that.getODataEntitySet(oEntitySet.name)) {
+				oEntityContainer.entitySet.push(JSON.parse(JSON.stringify(oEntitySet)));
+
+				if (!that.getODataEntityType(sTypeName)) {
+					oEntityType = that.oMetadata._getEntityTypeByName(sTypeName);
+					oSchema = Utils.getSchema(aSchemas, sNamespace);
+					oSchema.entityType.push(JSON.parse(JSON.stringify(oEntityType)));
+
+					// visit all entity types before visiting the entity sets to ensure that v2
+					// annotations are already lifted up and can be used for calculating entity
+					// set annotations which are based on v2 annotations on entity properties
+					Utils.visitParents(oSchema, oResponse.annotations,
+						"entityType", Utils.visitEntityType,
+						oSchema.entityType.length - 1);
+				}
+			}
+		});
+
+		Utils.visitChildren(oEntityContainer.entitySet, mChildAnnotations, "EntitySet", aSchemas,
+			/*fnCallback*/null, iFirstNewEntitySet);
+	};
+
+
+	/**
+	 * Send all currently pending value list requests as a single bundle.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype._sendBundledRequest = function () {
+		var mQName2PendingRequest = this.mQName2PendingRequest, // remember current state
+			aQualifiedPropertyNames = Object.keys(mQName2PendingRequest),
+			that = this;
+
+		if (!aQualifiedPropertyNames.length) {
+			return; // nothing to do
+		}
+
+		this.mQName2PendingRequest = {}; // clear pending requests for next bundle
+
+		// normalize URL to be browser cache friendly with value list request
+		aQualifiedPropertyNames = aQualifiedPropertyNames.sort();
+		aQualifiedPropertyNames.forEach(function (sQualifiedPropertyName, i) {
+			aQualifiedPropertyNames[i] = encodeURIComponent(sQualifiedPropertyName);
+		});
+
+		this.oODataModelInterface
+			.addAnnotationUrl("$metadata?sap-value-list=" + aQualifiedPropertyNames.join(","))
+			.then(
+				function (oResponse) {
+					var sQualifiedPropertyName;
+					that._mergeMetadata(oResponse);
+					for (sQualifiedPropertyName in mQName2PendingRequest) {
+						try {
+							mQName2PendingRequest[sQualifiedPropertyName].resolve(oResponse);
+						} catch (oError) {
+							mQName2PendingRequest[sQualifiedPropertyName].reject(oError);
+						}
+					}
+				},
+				function (oError) {
+					var sQualifiedPropertyName;
+					for (sQualifiedPropertyName in mQName2PendingRequest) {
+						mQName2PendingRequest[sQualifiedPropertyName].reject(oError);
+					}
+				}
+			);
 	};
 
 	/**
@@ -543,7 +641,7 @@ sap.ui.define([
 	 * @param {string} sName
 	 *   a simple name, e.g. "ProductSet"
 	 * @param {boolean} [bAsPath=false]
-	 *   determines whether the entity type is returned as a path or as an object
+	 *   determines whether the entity set is returned as a path or as an object
 	 * @returns {object|string}
 	 *   (the path to) the entity set with the given simple name; <code>undefined</code> (for a
 	 *   path) or <code>null</code> (for an object) if no such set is found
@@ -689,7 +787,8 @@ sap.ui.define([
 	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
 	 *
 	 * @param {sap.ui.model.Context} oPropertyContext
-	 *   a model context for a property as returned by {@link #getMetaContext getMetaContext}
+	 *   a model context for a structural property of an entity type, as returned by
+	 *   {@link #getMetaContext getMetaContext}
 	 * @returns {Promise}
 	 *   a Promise that gets resolved as soon as the value lists as well as the required model
 	 *   elements have been loaded
@@ -698,74 +797,50 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.getODataValueLists = function (oPropertyContext) {
 		var bCachePromise = false, // cache only promises which trigger a request
+			aMatches,
 			sPropertyPath = oPropertyContext.getPath(),
 			oPromise = this.mContext2Promise[sPropertyPath],
 			that = this;
-
-		/**
-		 * Returns the map representing the <code>com.sap.vocabularies.Common.v1.ValueList</code>
-		 * annotations of the given property.
-		 *
-		 * @param {object} oProperty the property
-		 * @returns {object} map of ValueList annotations contained in oProperty
-		 */
-		function getValueLists(oProperty) {
-			var sName,
-				sQualifier,
-				mValueLists = {};
-
-			for (sName in oProperty) {
-				if (jQuery.sap.startsWith(sName, "com.sap.vocabularies.Common.v1.ValueList")) {
-					sQualifier = sName.split("#")[1] || "";
-					mValueLists[sQualifier] = oProperty[sName];
-				}
-			}
-
-			return mValueLists;
-		}
 
 		if (oPromise) {
 			return oPromise;
 		}
 
+		aMatches = rPropertyPath.exec(sPropertyPath);
+		if (!aMatches) {
+			throw new Error("Unsupported property context with path " + sPropertyPath);
+		}
+
 		oPromise = new Promise(function (fnResolve, fnReject) {
-			var sAnnotationUrl,
-				sSchemaPath = oPropertyContext.getPath().match(rSchemaPath)[0],
-				sNamespace = that.oModel.getObject(sSchemaPath).namespace,
-				oProperty = oPropertyContext.getObject(),
-				sTypeName,
-				mValueLists = getValueLists(oProperty);
+			var oProperty = oPropertyContext.getObject(),
+				sQualifiedTypeName,
+				mValueLists = Utils.getValueLists(oProperty);
 
 			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]) {
-				//property with value help which is not yet loaded
+				// property with value list which is not yet loaded
 				bCachePromise = true;
-				//TODO combine slice/lastIndexOf with rSchemaPath
-				sTypeName = that.oModel.getObject(
-					sPropertyPath.slice(0, sPropertyPath.lastIndexOf("/property"))).name;
-				sAnnotationUrl = "$metadata?sap-value-list="
-					+ encodeURIComponent(sNamespace + "." + sTypeName + "/" + oProperty.name);
-
-				that.oODataModelInterface.addAnnotationUrl(sAnnotationUrl).then(
-					function (oResponse) {
-						var mValueLists;
-
-						// enhance property by annotations from response to get ValueLists
+				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
+					+ "." + that.oModel.getObject(aMatches[1]).name;
+				that.mQName2PendingRequest[sQualifiedTypeName + "/" + oProperty.name] = {
+					resolve : function (oResponse) {
+						// enhance property by annotations from response to get value lists
 						jQuery.extend(oProperty,
-							//TODO use jQuery.sap.getObject? to test for undefined properties
-							oResponse.annotations.propertyAnnotations
-								[sNamespace + "." + sTypeName][oProperty.name]
+							((oResponse.annotations.propertyAnnotations || {})
+								[sQualifiedTypeName] || {})
+									[oProperty.name]
 						);
-						mValueLists = getValueLists(oProperty);
+						mValueLists = Utils.getValueLists(oProperty);
 						if (jQuery.isEmptyObject(mValueLists)) {
-							fnReject(
-								new Error("No value lists returned for " + sPropertyPath));
+							fnReject(new Error("No value lists returned for " + sPropertyPath));
 						} else {
 							delete that.mContext2Promise[sPropertyPath];
 							fnResolve(mValueLists);
 						}
 					},
-					fnReject
-				);
+					reject : fnReject
+				};
+				// send bundled value list request once after multiple synchronous API calls
+				setTimeout(that._sendBundledRequest.bind(that), 0);
 			} else {
 				fnResolve(mValueLists);
 			}
