@@ -3,8 +3,17 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object', './Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', './RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './tmpl/Template', './message/MessageManager', 'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
-	function(jQuery, Device, Global, DataType, EventProvider, BaseObject, Component, Configuration, Control, Element, ElementMetadata, FocusHandler, RenderManager, ResizeHandler, ThemeCheck, UIArea, Template, MessageManager/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 
+		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object', 
+		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', 
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 
+		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
+	function(jQuery, Device, Global, 
+		DataType, EventProvider, BaseObject, 
+		Component, Configuration, Control, Element, ElementMetadata, FocusHandler, 
+		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
+		/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
+
 	"use strict";
 
 	/*global Promise */
@@ -196,7 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				sap.ui.base.BindingParser._keepBindingStrings = true;
 			}
 
-			// let Element, Component, Template get friend access to the respective register/deregister methods
+			// let Element and Component get friend access to the respective register/deregister methods
 			this._grantFriendAccess();
 
 			// handle modules
@@ -390,13 +399,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			that.deregisterObject(this);
 		};
 
-		// grant Template "friend" access to Core for (de-)registration
-		Template.prototype.register = function() {
-			that.registerObject(this);
-		};
-		Template.prototype.deregister = function() {
-			that.deregisterObject(this);
-		};
 	};
 
 	/**
@@ -2189,9 +2191,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the template for the given id
 	 * @public
+	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead. 
 	 */
 	Core.prototype.getTemplate = function(sId) {
-		return this.getObject("template", sId);
+		jQuery.sap.require("sap.ui.core.tmpl.Template");
+		return sap.ui.core.tmpl.Template.byId(sId);
 	};
 
 	/**

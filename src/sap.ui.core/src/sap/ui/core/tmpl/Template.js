@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	"use strict";
 
 
-	
 	/**
 	 * Creates and initializes a new template with the given <code>sId</code> and
 	 * settings.
@@ -62,7 +61,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		}
 	
 	});
+
+	var mTemplates = {};
 	
+	/**
+	 * @private
+	 */
+	Template.prototype.register = function() {
+		var sId = this.getId(),
+			oOldTemplate = mTemplates[sId],
+			sMsg;
+
+		if ( oOldTemplate && this !== oOldTemplate ) {
+			sMsg = "adding template with duplicate id '" + sId + "'";
+			jQuery.sap.log.error(sMsg);
+			throw new Error("Error: " + sMsg);
+		}
+		
+		mTemplates[sId] = this;
+	};
+	
+	/**
+	 * @private
+	 */
+	Template.prototype.deregister = function() {
+		delete mTemplates[this.getId()];
+	};
+
+	/**
+	 * Returns the registered template for the given id, if any.
+	 * @param {string} sId
+	 * @return {sap.ui.core.tmpl.Template} the template for the given id
+	 * @public
+	 */
+	Template.byId = function(sId) {
+		return mTemplates[sId];
+	};
 	
 	/**
 	 * @see sap.ui.base.Object#getInterface
