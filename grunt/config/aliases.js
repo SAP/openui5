@@ -244,27 +244,28 @@ module.exports = function(grunt, config) {
 			}, this.async());
 
 		},
-		
+
 		'cldr': function() {
 			var done = this.async();
-			
+
 			var baseFolder = path.join(__dirname, "../../");
-			
+
 			var zipPath = grunt.option("zip"),
 				tempFolder = grunt.option("tmp") || "temp",
 				dryRun = grunt.option("dryrun"),
 				outputFolder = grunt.option("output"),
 				download = grunt.option("download"),
-				fileName = grunt.option("file");
-					
+				fileName = grunt.option("file"),
+				prettyPrint = grunt.option("prettyPrint") || grunt.option("prettyprint");
+
 			if (typeof dryRun !== "boolean") {
 				dryRun = true;
 			}
-					
+
 			if (!dryRun && !outputFolder) {
 				outputFolder = path.join(baseFolder, "src/sap.ui.core/src/sap/ui/core/cldr");
 			}
-			
+
 			if (zipPath && download) {
 				grunt.fail.warn("Parameter 'zip' and 'download' can't be given at the same time. If you have the zip file on hand, use 'zip' otherwise use download with the version of CLDR zip file.");
 			}
@@ -275,7 +276,8 @@ module.exports = function(grunt, config) {
 					tmp: tempFolder,
 					output: outputFolder,
 					download: download,
-					file: fileName
+					file: fileName,
+					prettyPrint: prettyPrint
 				}).on("download", function(url) {
 					grunt.log.ok("Downloading CLDR zip file from", url);
 				}).on("downloaded", function() {
@@ -294,7 +296,7 @@ module.exports = function(grunt, config) {
 				}).start();
 			} else {
 				grunt.fail.fatal("grunt cldr requires 'zip' and 'output' options");
-			}	
+			}
 		},
 
 		// Default task (called when just running "grunt")
