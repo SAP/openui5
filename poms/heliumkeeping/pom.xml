@@ -334,8 +334,45 @@
 				<versionAlias>${timestamp}</versionAlias>
 				<skipPrepare>false</skipPrepare>
 				<skipCopy>false</skipCopy>
+				<skipUnpack>false</skipUnpack>
 				<skipMultiVersion>false</skipMultiVersion>
 			</properties>
+			<build>
+				<plugins>
+					
+					<!-- unpack the application content in the Git workspace (from deployable) -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack-neo-app.json</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${deployable.groupId}</groupId>
+											<artifactId>${deployable.artifactId}</artifactId>
+											<version>${deployable.version}</version>
+											<classifier>${deployable.classifier}</classifier>
+											<type>${deployable.type}</type>
+										</artifactItem>
+									</artifactItems>
+									<includes>neo-app.json</includes>
+									<outputDirectory>${project.build.directory}/${application}</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+									<skip>${skipUnpack}</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+				</plugins>
+			</build>
 		</profile>
 	
 	</profiles>
