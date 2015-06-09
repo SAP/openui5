@@ -61,20 +61,23 @@
 /* make labels right aligned if left from fields*/
 .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12),
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12),
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) {
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12),
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanXL12){
 	padding-right: 0.5rem;
 }
 
 .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanS12,
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanM12,
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanL12{
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanL12,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanXL12{
 	padding-bottom: 0.125rem;
 }
 
 /* on last row no padding-bottom on container content */
 .sapUiRespGridMedia-Std-Phone > .sapUiFormResGridLastRowM:last-child > .sapUiRGLContainer > .sapUiRGLContainerCont,
 .sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridLastRowM > .sapUiRGLContainer > .sapUiRGLContainerCont,
-.sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL > .sapUiRGLContainer > .sapUiRGLContainerCont{
+.sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL > .sapUiRGLContainer > .sapUiRGLContainerCont,
+.sapUiRespGridMedia-Std-LargeDesktop > .sapUiFormResGridLastRowL > .sapUiRGLContainer > .sapUiRGLContainerCont{
 	padding-bottom: 0;
 }
 
@@ -83,14 +86,16 @@
 /* ============================ */
 /* add paddings between containers */
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridMain > div:not(.sapUiRespGridSpanM12):not(.sapUiFormResGridLastContM),
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridMain > div:not(.sapUiRespGridSpanL12):not(.sapUiFormResGridLastContL){
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridMain > div:not(.sapUiRespGridSpanL12):not(.sapUiFormResGridLastContL),
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridMain > div:not(.sapUiRespGridSpanXL12):not(.sapUiFormResGridLastContL){
 	padding-right: 0.75rem; /* because fields have 0.25rem padding on left and right */
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
 }
 
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridMain > div:not(.sapUiRespGridBreakM):not(.sapUiRespGridSpanM12),
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridMain > div:not(.sapUiRespGridBreakL):not(.sapUiRespGridSpanL12){
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridMain > div:not(.sapUiRespGridBreakL):not(.sapUiRespGridSpanL12),
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridMain > div:not(.sapUiRespGridBreakXL):not(.sapUiRespGridSpanXL12){
 	padding-left: 0.75rem; /* because fields have 0.25rem padding on left and right */
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
