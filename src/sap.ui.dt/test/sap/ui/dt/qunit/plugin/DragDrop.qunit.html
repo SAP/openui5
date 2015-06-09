@@ -41,6 +41,7 @@
 				this.oLayoutOverlay = new sap.ui.dt.Overlay({element : this.oLayout});
 				this.oAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
 				this.oButtonOverlay = new sap.ui.dt.Overlay({element : this.oButton});
+				this.oButtonOverlay.setDraggable(true);
 				
 				sap.ui.getCore().applyChanges();
 				this.oDragDrop = new sap.ui.dt.plugin.DragDrop();

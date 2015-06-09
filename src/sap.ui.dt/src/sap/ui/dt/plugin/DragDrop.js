@@ -32,7 +32,7 @@ function(Plugin, DOMUtil) {
 	 */
 	var DragDrop = Plugin.extend("sap.ui.dt.plugin.DragDrop", /** @lends sap.ui.dt.plugin.DragDrop.prototype */ {		
 		metadata : {
-			"abstract" : true,
+			abstract : true,
 			// ---- object ----
 
 			// ---- control specific ----
@@ -75,9 +75,12 @@ function(Plugin, DOMUtil) {
 
 		oOverlay.attachEvent("draggableChange", this._onDraggableChange, this);
 
-		oOverlay.attachBrowserEvent("dragstart", this._onDragStart, this);
-		oOverlay.attachBrowserEvent("dragend", this._onDragEnd, this);
-		oOverlay.attachBrowserEvent("drag", this._onDrag, this);
+		if (oOverlay.isDraggable()) {
+			oOverlay.attachBrowserEvent("dragstart", this._onDragStart, this);
+			oOverlay.attachBrowserEvent("dragend", this._onDragEnd, this);
+			oOverlay.attachBrowserEvent("drag", this._onDrag, this);			
+		}
+
 		oOverlay.attachBrowserEvent("dragover", this._onDragOver, this);
 		oOverlay.attachBrowserEvent("dragenter", this._onDragEnter, this);
 	};
@@ -177,6 +180,16 @@ function(Plugin, DOMUtil) {
 	 */
 	DragDrop.prototype._onDraggableChange = function(oEvent) {
 		var oOverlay = oEvent.getSource();
+		if (oOverlay.isDraggable()) {
+			oOverlay.attachBrowserEvent("dragstart", this._onDragStart, this);
+			oOverlay.attachBrowserEvent("dragend", this._onDragEnd, this);
+			oOverlay.attachBrowserEvent("drag", this._onDrag, this);	
+		} else {
+			oOverlay.detachBrowserEvent("dragstart", this._onDragStart, this);
+			oOverlay.detachBrowserEvent("dragend", this._onDragEnd, this);
+			oOverlay.detachBrowserEvent("drag", this._onDrag, this);	
+		}
+
 		this.onDraggableChange(oOverlay, oEvent);
 	};
 
