@@ -1345,9 +1345,9 @@ sap.ui.define([
 			this._createAndUpdateValueFields(oTargetGrid, oConditionGrid);
 
 			this._changeOperation(oTargetGrid, oConditionGrid);
-
-			this._changeField(oConditionGrid);
 		}
+
+		this._changeField(oConditionGrid);
 
 		if (this.getAutoReduceKeyFieldItems()) {
 			this._updateKeyFieldItems(oTargetGrid, false);
