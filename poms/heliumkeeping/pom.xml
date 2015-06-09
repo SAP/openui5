@@ -70,7 +70,7 @@
 		<deployable.groupId>com.sap.ui5.dist</deployable.groupId>
 		<deployable.artifactId>sapui5-dist-helium</deployable.artifactId>
 		<deployable.version>${version}</deployable.version>
-		<deployable.classifier>sapui5sdk</deployable.classifier>
+		<deployable.classifier>sapui5</deployable.classifier>
 		<deployable.type>zip</deployable.type>
 		
 	</properties>
@@ -317,7 +317,6 @@
 				<application.dir>${application}-master</application.dir>
 				<skipPrepare>false</skipPrepare>
 				<skipCopy>false</skipCopy>
-				<skipUnpack>false</skipUnpack>
 			</properties>
 		</profile>
 	
