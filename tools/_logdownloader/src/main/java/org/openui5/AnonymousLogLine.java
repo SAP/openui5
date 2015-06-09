@@ -202,13 +202,13 @@ public class AnonymousLogLine {
 
 
 	private static Resource getResourceType(String url) {
-		if (GITHUB_PAGE_STRING.equals(url)) {
+		if (url.startsWith(GITHUB_PAGE_STRING)) {
 			return Resource.GITHUB_PAGE;
 		}
-		if (BLOG_PAGE_STRING.equals(url)) {
+		if (url.startsWith(BLOG_PAGE_STRING)) {
 			return Resource.BLOG_PAGE;
 		}
-		if (REFERENCES_PAGE_STRING.equals(url)) {
+		if (url.startsWith(REFERENCES_PAGE_STRING)) {
 			return Resource.REFERENCES_PAGE;
 		}
 		if (DEMOKIT_PAGE_STRING.equals(url)) {

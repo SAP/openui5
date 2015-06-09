@@ -41,6 +41,7 @@ public class AkamaiLogDownloader {
 
 	// this is the Akamai server+path to use
 	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "saphcp.upload.akamai.com", "/341459/333580");
+	private static final ApplicationConfig sapui5_config = new ApplicationConfig("sapui5", "saphcp.upload.akamai.com", "/341459/333584");
 	
 	private static final ApplicationConfig[] APPLICATION_CONFIGS = { openui5_config };
 	
@@ -177,7 +178,7 @@ public class AkamaiLogDownloader {
 		Calendar now = Calendar.getInstance();
 		this.startTime = now;
 		this.timestamp = now.get(Calendar.YEAR) + "-" + pad(now.get(Calendar.MONTH) + 1) + "-" + pad(now.get(Calendar.DAY_OF_MONTH)) 
-				+ "_" + pad(now.get(Calendar.HOUR)) + "-" + pad(now.get(Calendar.MINUTE)) + "-" + pad(now.get(Calendar.SECOND));
+				+ "_" + pad(now.get(Calendar.HOUR_OF_DAY)) + "-" + pad(now.get(Calendar.MINUTE)) + "-" + pad(now.get(Calendar.SECOND));
 
 		this.logFile = new File(directory + File.separator + "analysis_" + this.timestamp + ".log");
 		try {
