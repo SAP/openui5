@@ -348,12 +348,14 @@ sap.ui.define([
 				this._oIncludePanel.setHeaderText(null);
 				this._oIncludePanel.setExpandable(false);
 				this._oIncludePanel.addStyleClass("panelTopMargin");
+				this._oIncludePanel.addStyleClass("panelNoHeader");
 			}
 		}
 
 		if (iMaxExcludes === 0) {
 			this._oExcludePanel.setHeaderText(null);
 			this._oExcludePanel.setExpandable(false);
+			this._oExcludePanel.addStyleClass("panelNoHeader");
 		}
 
 	};

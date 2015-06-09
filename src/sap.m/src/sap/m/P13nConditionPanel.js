@@ -871,35 +871,28 @@ sap.ui.define([
 
 				case "ComboBox":
 					if (field["ID"] === "keyField") {
-						var bUseText = false;
+						oControl = new sap.m.ComboBox({  // before we used the new sap.m.Select control 
+							selectedKey: field["SelectedKey"],
+							width: "100%"
+						});
 
-						if (bUseText) {
-							oControl = new sap.m.Text();
-						} else {
-							// oControl = new sap.m.Select({
-							oControl = new sap.m.ComboBox({
-								selectedKey: field["SelectedKey"],
-								width: "100%"
-							});
+						var fOriginalKey = jQuery.proxy(oControl.setSelectedKey, oControl);
+						oControl.setSelectedKey = function(sKey) {
+							fOriginalKey(sKey);
+							var fValidate = that.getValidationExecutor();
+							if (fValidate) {
+								fValidate();
+							}
+						};
 
-							var fOriginalKey = jQuery.proxy(oControl.setSelectedKey, oControl);
-							oControl.setSelectedKey = function(sKey) {
-								fOriginalKey(sKey);
-								var fValidate = that.getValidationExecutor();
-								if (fValidate) {
-									fValidate();
-								}
-							};
-
-							var fOriginalItem = jQuery.proxy(oControl.setSelectedItem, oControl);
-							oControl.setSelectedItem = function(oItem) {
-								fOriginalItem(oItem);
-								var fValidate = that.getValidationExecutor();
-								if (fValidate) {
-									fValidate();
-								}
-							};
-						}
+						var fOriginalItem = jQuery.proxy(oControl.setSelectedItem, oControl);
+						oControl.setSelectedItem = function(oItem) {
+							fOriginalItem(oItem);
+							var fValidate = that.getValidationExecutor();
+							if (fValidate) {
+								fValidate();
+							}
+						};
 
 						oControl.setLayoutData(new sap.ui.layout.GridData({
 							span: field["Span" + this._sConditionType]
@@ -976,9 +969,9 @@ sap.ui.define([
 							that._handleChangeOnOperationField(oTargetGrid, oConditionGrid);
 						});
 
-// oControl.attachSelectionChange(function() {
-// that._handleChangeOnOperationField(oTargetGrid, oConditionGrid);
-// });
+						// oControl.attachSelectionChange(function() {
+						// that._handleChangeOnOperationField(oTargetGrid, oConditionGrid);
+						// });
 
 						// fill some operations to the control to be able to set the selected items
 						oConditionGrid[field["ID"]] = oControl;
@@ -1310,14 +1303,6 @@ sap.ui.define([
 	 * @param {array} aItems array of keyfields
 	 */
 	P13nConditionPanel.prototype._fillKeyFieldListItems = function(oCtrl, aItems) {
-		if (!oCtrl.removeAllItems) { // TODO
-			// in case the oSelect is a simple Text control we only set the Text
-			if (aItems.length > 0) {
-				oCtrl.setText(aItems[0].text);
-			}
-			return;
-		}
-
 		oCtrl.removeAllItems();
 		for ( var iItem in aItems) {
 			var oItem = aItems[iItem];
@@ -1327,6 +1312,9 @@ sap.ui.define([
 				tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
 			}));
 		}
+		
+		// if we only have a single Keyfield we set the ComboBox control to editable = false   
+		// TODO only for testing oCtrl.setEditable(aItems.length !== 1);		
 	};
 
 	/**
@@ -1350,14 +1338,16 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._handleChangeOnKeyField = function(oTargetGrid, oConditionGrid) {
 
-		this._updateOperation(oTargetGrid, oConditionGrid);
+		if (this._sConditionType === "Filter") {
+			this._updateOperation(oTargetGrid, oConditionGrid);
 
-		// update the value fields for the KeyField
-		this._createAndUpdateValueFields(oTargetGrid, oConditionGrid);
+			// update the value fields for the KeyField
+			this._createAndUpdateValueFields(oTargetGrid, oConditionGrid);
 
-		this._changeOperation(oTargetGrid, oConditionGrid);
+			this._changeOperation(oTargetGrid, oConditionGrid);
 
-		this._changeField(oConditionGrid);
+			this._changeField(oConditionGrid);
+		}
 
 		if (this.getAutoReduceKeyFieldItems()) {
 			this._updateKeyFieldItems(oTargetGrid, false);
@@ -1488,16 +1478,6 @@ sap.ui.define([
 	P13nConditionPanel.prototype._updateKeyFieldItems = function(oTargetGrid, bFillAll, bAppendLast) {
 		var n = oTargetGrid.getContent().length;
 		var i;
-
-		if (!oTargetGrid.getContent()[0].keyField.getSelectedItem) { // TODO
-			// update the text in case the keField is a simple text control
-			for (i = 0; i < n; i++) {
-				var oKeyField = oTargetGrid.getContent()[i].keyField;
-				oKeyField.setText(this._aKeyFields[0].text);
-			}
-
-			return;
-		}
 
 		// collect all used Keyfields
 		var oUsedItems = {};
