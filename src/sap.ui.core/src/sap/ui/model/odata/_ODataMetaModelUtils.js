@@ -9,6 +9,12 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
+		// maps v2 filter-restriction value to corresponding v4 FilterExpressionType enum value
+		mFilterRestrictions = {
+			"interval" : "SingleInterval",
+			"multi-value" : "MultiValue",
+			"single-value" : "SingleValue"
+		},
 		// maps v2 sap semantics annotations to a v4 annotations relative to
 		// com.sap.vocabularies.Communication.v1.
 		mSemanticsToV4AnnotationPath = {
@@ -166,6 +172,41 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 					jQuery.extend(o, mV2ToV4[oExtension.name]);
 				}
 			}
+		},
+
+		/**
+		 * Adds corresponding v4 annotation for v2 <code>sap:filter-restriction</code> to the given
+		 * entity set.
+		 *
+		 * @param {object} oProperty
+		 *   the property of the entity
+		 * @param {object} oEntitySet
+		 *   the entity set to which the corresponding v4 annotations needs to be added
+		 */
+		addFilterRestriction: function (oProperty, oEntitySet) {
+			var aFilterRestrictions,
+				sFilterRestrictionValue = mFilterRestrictions[oProperty["sap:filter-restriction"]];
+
+			if (!sFilterRestrictionValue) {
+				jQuery.sap.log.warning("Unsupported sap:filter-restriction: "
+						+ oProperty["sap:filter-restriction"],
+						oEntitySet.entityType + "." + oProperty.name,
+						"sap.ui.model.odata._ODataMetaModelUtils");
+				return;
+			}
+
+			aFilterRestrictions =
+				oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"] || [];
+
+			aFilterRestrictions.push({
+				"Property": { "PropertyPath": oProperty.name},
+				"AllowedExpressions": {
+					"EnumMember": "com.sap.vocabularies.Common.v1.FilterExpressionType/"
+						+ sFilterRestrictionValue
+				}
+			});
+			oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"] =
+				aFilterRestrictions;
 		},
 
 		/**
@@ -387,6 +428,9 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 					}
 					if (oProperty["sap:sortable"] === "false") {
 						Utils.addPropertyToAnnotation("sap:sortable", oEntitySet, oProperty);
+					}
+					if (oProperty["sap:filter-restriction"]) {
+						Utils.addFilterRestriction(oProperty, oEntitySet);
 					}
 				});
 			}
