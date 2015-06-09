@@ -701,7 +701,7 @@
 		},
 		{
 		  "id": "sap.m.Table",
-		  "name": "Table",
+		  "name": "Responsive Table",
 		  "category": "List",
 		  "since": "1.12",
 		  "samples": [
