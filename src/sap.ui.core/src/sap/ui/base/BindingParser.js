@@ -132,59 +132,51 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 	}
 
 	/**
-	 * @static
-	 * @namespace
-	 * @alias sap.ui.base.BindingParser
+	 * Determines the binding info for the given string sInput starting at the given iStart and
+	 * returns an object with the corresponding binding info as <code>result</code> and the
+	 * position where to continue parsing as <code>at</code> property.
+	 *
+	 * @param {object} oEnv
+	 *   the "environment"
+	 * @param {object} oEnv.oContext
+	 *   the context object from complexBinding
+	 * @param {boolean} oEnv.bTolerateFunctionsNotFound
+	 *   if <code>true</code>, unknown functions are gathered in aFunctionsNotFound, otherwise an
+	 *   error is logged
+	 * @param {string[]} oEnv.aFunctionsNotFound
+	 *   a list of functions that could not be found if oEnv.bTolerateFunctionsNotFound is true
+	 * @param {boolean} oEnv.bNotJustSimple
+	 *   whether oBindingInfo.parts contains s.th. other than just simple binding infos
+	 * @param {boolean} oEnv.bMoreThanExpression
+	 *   whether oBindingInfo.parts contains s.th. more complicated than an expression binding
+	 * @param {string} sInput
+	 *   The input string from which to resolve an embedded binding
+	 * @param {number} iStart
+	 *   The start index for binding resolution in the input string
+	 * @returns {object}
+	 *   An object with the following properties:
+	 *   result: The binding info for the embedded binding
+	 *   at: The position after the last character for the embedded binding in the input string
 	 */
-	var BindingParser = {};
-	
-	BindingParser._keepBindingStrings = false;
-	
-	BindingParser.simpleParser = function(sString, oContext) {
-
-		if ( jQuery.sap.startsWith(sString, "{") && jQuery.sap.endsWith(sString, "}") ) {
-			return makeSimpleBindingInfo(sString.slice(1, -1));
-		}
-	
-	};
-	
-	BindingParser.simpleParser.escape = function(sValue) {
-		// there was no escaping defined for the simple parser
-		return sValue;
-	};
-	
-	/*
-	 * @param {boolean} [bTolerateFunctionsNotFound=false]
-	 *   if true, function names which cannot be resolved to a reference are reported via the
-	 *   string array <code>functionsNotFound</code> of the result object; else they are logged
-	 *   as errors
-	 */
-	BindingParser.complexParser = function(sString, oContext, bUnescape, bTolerateFunctionsNotFound) {
+	function resolveEmbeddedBinding(oEnv, sInput, iStart) {
 		var parseObject = jQuery.sap.parseJS,
-			oBindingInfo = {parts:[]},
-			aFragments = [],
-			aFunctionsNotFound,
-			// whether oBindingInfo.parts contains s.th. more complicated than an expression binding
-			bMoreThanExpression,
-			// whether oBindingInfo.parts contains s.th. other than just simple binding infos
-			bNotJustSimple,
-			bUnescaped,
-			p = 0,
-			m,
-			oEmbeddedBinding;
+			oParseResult,
+			iEnd,
+			sName;
 
 		function resolveRef(o,sProp) {
 			if ( typeof o[sProp] === "string" ) {
 				var sName = o[sProp];
 				if ( jQuery.sap.startsWith(o[sProp], ".") ) {
-					o[sProp] = jQuery.proxy(jQuery.sap.getObject(o[sProp].slice(1), undefined, oContext), oContext);
+					o[sProp] = jQuery.proxy(jQuery.sap.getObject(o[sProp].slice(1), undefined,
+						oEnv.oContext), oEnv.oContext);
 				} else {
 					o[sProp] = jQuery.sap.getObject(o[sProp]);
 				}
 				if (typeof (o[sProp]) !== "function") {
-					if (bTolerateFunctionsNotFound) {
-						aFunctionsNotFound = aFunctionsNotFound || [];
-						aFunctionsNotFound.push(sName);
+					if (oEnv.bTolerateFunctionsNotFound) {
+						oEnv.aFunctionsNotFound = oEnv.aFunctionsNotFound || [];
+						oEnv.aFunctionsNotFound.push(sName);
 					} else {
 						jQuery.sap.log.error(sProp + " function " + sName + " not found!");
 					}
@@ -194,9 +186,9 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 
 		function resolveType(o,sProp) {
 			var FNType;
-			if ( typeof o[sProp] === "string" ) {
-				if ( jQuery.sap.startsWith(o[sProp], ".") ) {
-					FNType = jQuery.sap.getObject(o[sProp].slice(1), undefined, oContext);
+			if (typeof o[sProp] === "string" ) {
+				if (jQuery.sap.startsWith(o[sProp], ".") ) {
+					FNType = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
 				} else {
 					FNType = jQuery.sap.getObject(o[sProp]);
 				}
@@ -242,50 +234,79 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			}
 		}
 
-		/**
-		 * Determines the binding info for the given string sInput starting at the given iStart and
-		 * returns an object with the corresponding binding info as <code>result</code> and the
-		 * position where to continue parsing as <code>at</code> property.
-		 *
-		 * @param {string} sInput The input string from which to resolve an embedded binding
-		 * @param {number} iStart The start index for binding resolution in the input string
-		 * @returns {object} An object with the following properties:
-		 *   result: The binding info for the embedded binding
-		 *   at: The position after the last character for the embedded binding in the input string
-		 */
-		function resolveEmbeddedBinding(sInput, iStart) {
-			var oParseResult,
-				iEnd,
-				sName;
-			// an embedded binding: check for a property name that would indicate a complex object
-			if ( rObject.test(sInput.slice(iStart)) ) {
-				oParseResult = parseObject(sInput, iStart);
-				resolveType(oParseResult.result,'type');
-				resolveObject(oParseResult.result,'filters');
-				resolveObject(oParseResult.result,'sorter');
-				resolveEvents(oParseResult.result,'events');
-				resolveRef(oParseResult.result,'formatter');
-				resolveRef(oParseResult.result,'factory'); // list binding
-				resolveRef(oParseResult.result,'groupHeaderFactory');
-				bNotJustSimple = true;
-				for (sName in oParseResult.result) {
-					if (sName !== "formatter" && sName !== "parts") {
-						bMoreThanExpression = true;
-						break;
-					}
+		// an embedded binding: check for a property name that would indicate a complex object
+		if ( rObject.test(sInput.slice(iStart)) ) {
+			oParseResult = parseObject(sInput, iStart);
+			resolveType(oParseResult.result,'type');
+			resolveObject(oParseResult.result,'filters');
+			resolveObject(oParseResult.result,'sorter');
+			resolveEvents(oParseResult.result,'events');
+			resolveRef(oParseResult.result,'formatter');
+			resolveRef(oParseResult.result,'factory'); // list binding
+			resolveRef(oParseResult.result,'groupHeaderFactory');
+			oEnv.bNotJustSimple = true;
+			for (sName in oParseResult.result) {
+				if (sName !== "formatter" && sName !== "parts") {
+					oEnv.bMoreThanExpression = true;
+					break;
 				}
-				return oParseResult;
 			}
-			// otherwise it must be a simple binding (path only)
-			iEnd = sInput.indexOf('}', iStart);
-			if ( iEnd < iStart ) {
-				throw new SyntaxError("no closing braces found in '" + sInput + "' after pos:" + iStart);
-			}
-			return {
-				result: makeSimpleBindingInfo(sInput.slice(iStart + 1, iEnd)),
-				at: iEnd + 1
-			};
+			return oParseResult;
 		}
+		// otherwise it must be a simple binding (path only)
+		iEnd = sInput.indexOf('}', iStart);
+		if ( iEnd < iStart ) {
+			throw new SyntaxError("no closing braces found in '" + sInput + "' after pos:" + iStart);
+		}
+		return {
+			result: makeSimpleBindingInfo(sInput.slice(iStart + 1, iEnd)),
+			at: iEnd + 1
+		};
+	}
+
+	/**
+	 * @static
+	 * @namespace
+	 * @alias sap.ui.base.BindingParser
+	 */
+	var BindingParser = {};
+	
+	BindingParser._keepBindingStrings = false;
+	
+	BindingParser.simpleParser = function(sString, oContext) {
+
+		if ( jQuery.sap.startsWith(sString, "{") && jQuery.sap.endsWith(sString, "}") ) {
+			return makeSimpleBindingInfo(sString.slice(1, -1));
+		}
+	
+	};
+	
+	BindingParser.simpleParser.escape = function(sValue) {
+		// there was no escaping defined for the simple parser
+		return sValue;
+	};
+	
+	/*
+	 * @param {boolean} [bTolerateFunctionsNotFound=false]
+	 *   if true, function names which cannot be resolved to a reference are reported via the
+	 *   string array <code>functionsNotFound</code> of the result object; else they are logged
+	 *   as errors
+	 */
+	BindingParser.complexParser = function(sString, oContext, bUnescape, bTolerateFunctionsNotFound) {
+		var oBindingInfo = {parts:[]},
+			oEnv = {
+				oContext: oContext,
+				bTolerateFunctionsNotFound: bTolerateFunctionsNotFound,
+				// whether oBindingInfo.parts contains s.th. more complicated than an expression binding
+				bMoreThanExpression: false,
+				// whether oBindingInfo.parts contains s.th. other than just simple binding infos
+				bNotJustSimple: false
+			},
+			aFragments = [],
+			bUnescaped,
+			p = 0,
+			m,
+			oEmbeddedBinding;
 
 		rFragments.lastIndex = 0; //previous parse call may have thrown an Error: reset lastIndex
 		while ( (m = rFragments.exec(sString)) !== null ) {
@@ -305,8 +326,9 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			} else {
 				aFragments.push(oBindingInfo.parts.length);
 				if (sString.charAt(m.index + 1) === "=") { //expression
-					oEmbeddedBinding = ExpressionParser.parse(resolveEmbeddedBinding, sString,
-						m.index + 2);
+					oEmbeddedBinding = ExpressionParser.parse(
+						resolveEmbeddedBinding.bind(null, oEnv),
+						sString, m.index + 2);
 					if (sString.charAt(oEmbeddedBinding.at) !== "}") {
 						throw new SyntaxError("Expected '}' and instead saw '"
 							+ sString.charAt(oEmbeddedBinding.at)
@@ -317,13 +339,13 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 					}
 					oEmbeddedBinding.at += 1;
 					if (oEmbeddedBinding.result) {
-						bNotJustSimple = true;
+						oEnv.bNotJustSimple = true;
 					} else {
 						aFragments[aFragments.length - 1] = String(oEmbeddedBinding.constant);
 						bUnescaped = true;
 					}
 				} else {
-					oEmbeddedBinding = resolveEmbeddedBinding(sString, m.index);
+					oEmbeddedBinding = resolveEmbeddedBinding(oEnv, sString, m.index);
 				}
 				if (oEmbeddedBinding.result) {
 					oBindingInfo.parts.push(oEmbeddedBinding.result);
@@ -346,7 +368,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			if ( aFragments.length === 1 /* implies: && typeof aFragments[0] === "number" */ ) {
 				// special case: a single binding only
 				oBindingInfo = oBindingInfo.parts[0];
-			} else if (bNotJustSimple && !bMoreThanExpression) {
+			} else if (oEnv.bNotJustSimple && !oEnv.bMoreThanExpression) {
 				mergeParts(oBindingInfo, aFragments);
 			} else { //TODO bNotJustSimple && bMoreThanExpression --> error in ManagedObject!
 				// create the formatter function from the fragments
@@ -355,8 +377,8 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			if (BindingParser._keepBindingStrings) {
 				oBindingInfo.bindingString = sString;
 			}
-			if (aFunctionsNotFound) {
-				oBindingInfo.functionsNotFound = aFunctionsNotFound;
+			if (oEnv.aFunctionsNotFound) {
+				oBindingInfo.functionsNotFound = oEnv.aFunctionsNotFound;
 			}
 			return oBindingInfo;
 		} else if ( bUnescape && bUnescaped ) {
@@ -368,7 +390,34 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 	BindingParser.complexParser.escape = function(sValue) {
 		return sValue.replace(rBindingChars, "\\$1");
 	};
-	
+
+	/**
+	 * Parses a string <code>sInput</code> with an expression. The input string is parsed starting
+	 * at the index <code>iStart</code> and the return value contains the index after the last
+	 * character belonging to the expression.
+	 *
+	 * @param {string} sInput
+	 *   the string to be parsed
+	 * @param {number} iStart
+	 *   the index to start parsing
+	 * @returns {object}
+	 *   the parse result with the following properties
+	 *   <ul>
+	 *    <li><code>result</code>: the binding info as an object with the properties
+	 *     <code>formatter</code> (the formatter function to evaluate the expression) and
+	 *     <code>parts</code> (an array of the referenced bindings)</li>
+	 *    <li><code>at</code>: the index of the first character after the expression in
+	 *     <code>sInput</code></li>
+	 *   </ul>
+	 * @throws SyntaxError
+	 *   If the expression string is invalid or unsupported. The at property of
+	 *   the error contains the position where parsing failed.
+	 * @private
+	 */
+	BindingParser.parseExpression = function (sInput, iStart) {
+		return ExpressionParser.parse(resolveEmbeddedBinding.bind(null, {}), sInput, iStart);
+	};
+
 	return BindingParser;
 
 }, /* bExport= */ true);
