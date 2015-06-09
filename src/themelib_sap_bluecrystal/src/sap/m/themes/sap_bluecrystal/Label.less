@@ -131,6 +131,7 @@
 .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapMLabel:after,
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapMLabel:after,
 .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel:after,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel:after,
 .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapUiForm .sapMLabel:after {
 	position: absolute;
 	right: 0;
@@ -167,20 +168,23 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-ch
 /* ================================ */
 .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel {
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
 	text-align: end !important; /* to overwrite style set on element */
 	float: none; /* as label has 100% width not needed (will bring wrong alignments on iPad) */
 }
 
 html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
 html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel {
+html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
 	text-align: right !important; /* to overwrite style set on element */
 }
 
 html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
 html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel {
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
 	text-align: left !important; /* to overwrite style set on element */
 }
 
