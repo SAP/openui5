@@ -449,6 +449,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	};
 	
 	Column.prototype.setVisible = function(bVisible) {
+		if (bVisible == this.getVisible()) {
+			return this;
+		}
+		
 		var oParent = this.getParent(),
 			oTableDomRef = oParent && oParent.getTableDomRef && oParent.getTableDomRef(),
 			bSupressInvalidate = oTableDomRef && this._index >= 0;
