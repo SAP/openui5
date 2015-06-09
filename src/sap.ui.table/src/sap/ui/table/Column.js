@@ -574,6 +574,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 	};
 
+	function getHTML(oImage) {
+		var oRenderManager = sap.ui.getCore().createRenderManager(),
+			sHTML = oRenderManager.getHTML(oImage);
+		oRenderManager.destroy();
+		return sHTML;
+	}
+
 	Column.prototype._renderSortIcon = function() {
 
 		var oTable = this.getParent();
@@ -591,8 +598,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 				}
 
 				// apply the image and aria property to the column
-				var oRenderManager = new RenderManager();
-				var htmlImage = oRenderManager.getHTML(oImage);
+				var htmlImage = getHTML(oImage);
 				this.$().find(".sapUiTableColIconsOrder").remove();
 				jQuery(htmlImage).prependTo(this.getDomRef("icons"));
 				this.$().attr("aria-sort", this.getSortOrder() === sap.ui.table.SortOrder.Ascending ? "ascending" : "descending");
@@ -772,8 +778,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			oImage.addStyleClass("sapUiTableColIconsFilter");
 			if (this.getFiltered()) {
 				oImage.setSrc(sap.ui.resource("sap.ui.table", "themes/" + sCurrentTheme + "/img/ico12_filter.gif"));
-				var oRenderManager = new RenderManager();
-				var htmlImage = oRenderManager.getHTML(oImage);
+				var htmlImage = getHTML(oImage);
 				jQuery(htmlImage).prependTo(this.getDomRef("icons"));
 				this.$().find(".sapUiTableColCell").addClass("sapUiTableColFiltered");
 			} else {

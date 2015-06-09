@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			try {
 				oRM.oFocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
-				jQuery.sap.log.warning("Problems while restore focus after rendering: " + e, null, oRM);
+				jQuery.sap.log.warning("Problems while restoring the focus after rendering: " + e, null, oRM);
 			}
 
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)

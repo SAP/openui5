@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		$ghostButton.text(sText);
 
 		if (sIcon.length > 0) {
-			oRm = new sap.ui.core.RenderManager();
+			oRm = sap.ui.getCore().createRenderManager();
 			oImage = oButton._getImage(null, oButton.getIcon());
 
 			if (oImage instanceof sap.m.Image) {
@@ -178,6 +178,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				sHtml = oRm.getHTML(oIcon);
 				$ghostButton.prepend(sHtml);
 			}
+			oRm.destroy();
 		}
 
 		if (oButton.getWidth().length === 0) {
