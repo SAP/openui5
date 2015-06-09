@@ -27,10 +27,7 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 			jQuery.sap.log.error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
 		}
 
-		this._oHashChanger = oHashChanger;
-		this._oHashChanger.attachEvent("hashChanged", this._onHashChange, this);
-		this._oHashChanger.attachEvent("hashReplaced", this._hashReplaced, this);
-		this._oHashChanger.attachEvent("hashSet", this._hashSet, this);
+		this._setHashChanger(oHashChanger);
 
 		this._reset();
 	};
@@ -39,11 +36,7 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	 * Detaches all events and cleans up this instance
 	 */
 	History.prototype.destroy = function(sNewHash) {
-		this._oHashChanger.detachEvent("hashChanged", this._onHashChange, this);
-		this._oHashChanger.detachEvent("hashReplaced", this._hashReplaced, this);
-		this._oHashChanger.detachEvent("hashSet", this._hashSet, this);
-
-		this._oHashChanger = null;
+		this._unRegisterHashChanger();
 	};
 
 	/**
@@ -77,7 +70,27 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 		return this.aHistory[this.iHistoryPosition - 1];
 	};
 
-	/**
+	History.prototype._setHashChanger = function(oHashChanger) {
+		if (this._oHashChanger) {
+			this._unRegisterHashChanger();
+		}
+
+		this._oHashChanger = oHashChanger;
+		this._oHashChanger.attachEvent("hashChanged", this._onHashChange, this);
+		this._oHashChanger.attachEvent("hashReplaced", this._hashReplaced, this);
+		this._oHashChanger.attachEvent("hashSet", this._hashSet, this);
+	};
+
+	History.prototype._unRegisterHashChanger = function() {
+		this._oHashChanger.detachEvent("hashChanged", this._onHashChange, this);
+		this._oHashChanger.detachEvent("hashReplaced", this._hashReplaced, this);
+		this._oHashChanger.detachEvent("hashSet", this._hashSet, this);
+
+		this._oHashChanger = null;
+	};
+
+
+		/**
 	 * Empties the history array, and sets the instance back to the unknown state.
 	 * @private
 	 */
