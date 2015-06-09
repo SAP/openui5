@@ -43,12 +43,6 @@
 	});
 	oAnnotationMockServer.simulate("model/metadata_odtbmd.xml", "model/odtbmd/");
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	}
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
-
 	/**
 	 * Clean-Up Hierarchy Annotation Mockdata/Metadata
 	 * This is necessary because, the V1 ODataTreeBinding implements routines not conform to the Hierarchy Annotation Spec.
@@ -58,6 +52,29 @@
 		//convert string based level properties (NUMC fields) to real numbers
 		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
 	}
+	
+	//MockServer for use with annotated tree -> guids instead of strings as IDs
+	var oAnnotationMockServerGUID = new sap.ui.core.util.MockServer({
+		rootUri: '/metadata_guid/'
+	});
+	oAnnotationMockServerGUID.simulate("model/metadata_odtbmd_guid.xml", "model/odtbmd/");
+
+	/**
+	 * Same as above, but for the GUID based mockdata
+	 */
+	var aAnnotationsMockdataGUID = oAnnotationMockServerGUID._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
+	for (var i = 0; i < aAnnotationsMockdataGUID.length; i++) {
+		//convert string based level properties (NUMC fields) to real numbers
+		aAnnotationsMockdataGUID[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdataGUID[i].FinStatementHierarchyLevelVal, 10);
+	}
+	
+	// create a dummy AMD fdefine to check if shim works for datajs
+	window.define = function() {
+		throw Error("define should not be called");
+	}
+	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
+
+
 	
 	var oModel, oBinding;
 
@@ -1382,6 +1399,105 @@
 		});
 	});
 
+	/*
+	// This test will not run, until the MockServer supports filtering on properties of type Edm.Guid!
+	// Related Changes: 
+	//    https://git.wdf.sap.corp/#/c/973006/
+	//    https://git.wdf.sap.corp/#/c/973224/
+
+	module("ODataTreeBinding with annotations - Edm Type support", {
+		setup: function() {
+			oAnnotationMockServerGUID.start();
+			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata_guid/', {useBatch:false});
+		},
+		teardown: function() {
+			oAnnotationMockServerGUID.stop();
+			delete oModel;
+		}
+	});
+	
+	asyncTest("Paging", function() {
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			var iHandleCounter = 0;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
+				rootLevel: 2
+			});
+	
+			var handler1 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts(1, 4);
+	
+				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
+	
+				oBinding.detachChange(handler1);
+	
+				oContext = aContexts[0];
+				oBinding.attachChange(handler2);
+				oBinding.getNodeContexts(oContext, 2, 3);
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext, 2, 3);
+	
+				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
+
+				oBinding.detachChange(handler2);
+				start();
+			}
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(1, 4);
+		});
+	});
+	*/
 	</script>
 
 </head>
