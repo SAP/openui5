@@ -233,7 +233,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 
 	/** 
 	 * Sets an associated Element to create an overlay for
-	 * @param {String|sap.ui.core.Element} vElement element or element's id
+	 * @param {string|sap.ui.core.Element} vElement element or element's id
 	 * @returns {sap.ui.dt.Overlay} returns this
 	 * @public
 	 */

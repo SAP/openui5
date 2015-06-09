@@ -15,7 +15,7 @@ function(Element) {
 	 * Class for Preloader.
 	 * 
 	 * @class
-	 * Preloader for DT metadata
+	 * Preloader for design time metadata.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,15 +29,22 @@ function(Element) {
 
 	var Preloader = {};
 
-	Preloader.load = function(aClasses) {
+	/**
+	 * Loads the design time metadata for a given list of elements.
+	 *
+	 * @param {string[]|sap.ui.core.Element[]} aElements list of elements for which the design time metadata should be loaded. The list entry can be the class name or the control instance.
+	 * @return {Promise} resolved when the design time is loaded for each element
+	 * @public
+	 */
+	Preloader.load = function(aElements) {
 		var aQueue = [];
-		aClasses.forEach(function(vClass) {
-			var oClass = vClass;
-			if (typeof oClass === "string") {
-				oClass = jQuery.sap.getObject(oClass);
+		aElements.forEach(function(vElement) {
+			var oElement = vElement;
+			if (typeof oElement === "string") {
+				oElement = jQuery.sap.getObject(oElement);
 			}
-			if (oClass && oClass.getMetadata) {
-				var oMetadata = oClass.getMetadata();
+			if (oElement && oElement.getMetadata) {
+				var oMetadata = oElement.getMetadata();
 				if (oMetadata.loadDesignTime) {
 					aQueue.push(oMetadata.loadDesignTime());
 				}
@@ -46,19 +53,32 @@ function(Element) {
 		return Promise.all(aQueue);
 	};
 
-	Preloader.loadLibraries = function(aLibNames) {
+	/**
+	 * Loads the design time metadata for each element in the given list of libraries.
+	 *
+	 * @param {string[]} aLibraryNames list of libraries for which the design time metadata should be loaded
+	 * @return {Promise} resolved when the design time is loaded for each given library
+	 * @public
+	 */
+	Preloader.loadLibraries = function(aLibraryNames) {
 		var aControlsToLoad = [];
-		aLibNames.forEach(function(sLibName) {
-			var mLib = jQuery.sap.getObject(sLibName);
+		aLibraryNames.forEach(function(sLibraryName) {
+			var mLib = jQuery.sap.getObject(sLibraryName);
 			for (var sClassName in mLib) {
 				if (mLib.hasOwnProperty(sClassName)) {
-					aControlsToLoad.push(sLibName + "." + sClassName);
+					aControlsToLoad.push(sLibraryName + "." + sClassName);
 				}
 			}	
 		});
 		return this.load(aControlsToLoad);
 	};
 
+	/**
+	 * Loads the design time metadata for each element of all loaded libraries.
+	 *
+	 * @return {Promise} resolved when the design time is loaded for each library
+	 * @public
+	 */
 	Preloader.loadAllLibraries = function() {
 		var aLibrariesToLoad = [];
 		var mLibs = sap.ui.getCore().getLoadedLibraries();

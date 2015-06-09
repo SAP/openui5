@@ -216,7 +216,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 
 	/**
 	 * Adds a root element to the DesignTime and creates overlays for it and it's public descendants
-	 * @param {String|sap.ui.core.Element} vRootElement element or elemet's id
+	 * @param {string|sap.ui.core.Element} vRootElement element or elemet's id
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
@@ -244,7 +244,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 
 	/**
 	 * Removes all root elements from the DesignTime and destroys overlays for them and theire public descendants
-	 * @param {String|sap.ui.core.Element} element or elemet's id
+	 * @param {string|sap.ui.core.Element} element or elemet's id
 	 * @return {sap.ui.dt.DesignTime} this	 
 	 * @protected
 	 */
@@ -259,7 +259,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 
 	/**
 	 * Creates and returns the created instance of Overlay for an element
-	 * @param {String|sap.ui.core.Element} oElement to create overlay for
+	 * @param {string|sap.ui.core.Element} oElement to create overlay for
 	 * @return {sap.ui.dt.Overlay} created overlay
 	 * @protected
 	 */
