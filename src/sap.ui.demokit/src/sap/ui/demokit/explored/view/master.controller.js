@@ -214,7 +214,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			this._oVSDialog.setSelectedFilterKeys(aFilterKeys);
 			this._oVSDialog.setSelectedGroupItem(this._oViewSettings.groupProperty);
 			this._oVSDialog.setGroupDescending(this._oViewSettings.groupDescending);
-			jQuery('body').toggleClass("sapUiSizeCompact", this._oViewSettings.compactOn);
+			jQuery('body').toggleClass("sapUiSizeCompact", this._oViewSettings.compactOn).toggleClass("sapUiSizeCozy", !this._oViewSettings.compactOn);
 
 			// open
 			this._oVSDialog.open();
