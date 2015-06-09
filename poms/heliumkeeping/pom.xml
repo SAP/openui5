@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>com.sap.ui5</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.5</version>
 	</parent>
 
 
@@ -68,9 +68,9 @@
 		
 		<!-- deployable --> 
 		<deployable.groupId>com.sap.ui5.dist</deployable.groupId>
-		<deployable.artifactId>sapui5-sdk-dist</deployable.artifactId>
+		<deployable.artifactId>sapui5-dist-helium</deployable.artifactId>
 		<deployable.version>${version}</deployable.version>
-		<deployable.classifier>static</deployable.classifier>
+		<deployable.classifier>sapui5sdk</deployable.classifier>
 		<deployable.type>zip</deployable.type>
 		
 	</properties>
@@ -287,28 +287,6 @@
 											<version>${deployable.version}</version>
 											<classifier>${deployable.classifier}</classifier>
 											<type>${deployable.type}</type>
-											<excludes>
-												.index/**,
-												resources/testsuite/**,
-												resources/sap-ui5.js,
-												resources/sap-ui5-dbg.js,
-												resources/sap-ui-core-lean.js,
-												resources/sap-ui-core-lean-dbg.js,
-												resources/sap-ui-testenv.js,
-												resources/sap-ui-testenv-dbg.js,
-												resources/jquery-*.js,
-												resources/*-all.js,
-												resources/*-all-dbg.js,
-												resources/**/library.dependencies.json,
-												resources/**/library.dependencies.xml,
-												resources/**/library.properties,
-												resources/**/library-all.js,
-												resources/**/library-all-dbg.js,
-												resources/**/themes/base/img-RTL/**, <!-- base images are necessary for Fiori Launchpad icons -->
-												resources/**/themes/sap_platinum/**,
-												resources/**/themes/sap_ux/**,
-												resources/**/*.type.off
-											</excludes>
 										</artifactItem>
 									</artifactItems>
 									<outputDirectory>${project.build.directory}/${application}</outputDirectory>
