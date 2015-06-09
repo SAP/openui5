@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.ui.commons.layout.HorizontalLayout
   Author: d046011
 -->
@@ -10,66 +10,111 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.ui.commons.layout.HorizontalLayout</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.commons">
 		</script>
-    
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script language="javascript">
-			
+
 		var oLayout1 = new sap.ui.commons.layout.HorizontalLayout("Layout1", {
 			content: [new sap.ui.commons.Button("B1",{text:"X", tooltip:"Button tooltip"}),
 			          new sap.ui.commons.TextField("TF1",{value:"Test",width:"50px"}),
 			          new sap.ui.commons.Button("B2",{text:"Y", tooltip:"Button tooltip"})]
 		});
 		oLayout1.placeAt("uiArea1");
-		
-		
+
+
 		test("Children Rendered", function() {
 			ok(jQuery.sap.domById('B1'), "Button should be rendered");
 			ok(jQuery.sap.domById('TF1'), "TextField should be rendered");
 			ok(jQuery.sap.domById('B2'), "Second button should be rendered");
 		});
-		
+
 		test("Layout", function() {
 			var oButton = jQuery.sap.byId('B1');
 			var oText = jQuery.sap.byId('TF1');
 			var oImage = jQuery.sap.byId('B2');
 			ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
 			ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
-			
+
 			// offset() returns fractional numbers on Firefox Mac, so use offsetLeft instead
 			equal(oText[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "TextField should be exactly right of Button");
 		});
-		
+
 		test("NoWrap", function() {
 			sap.ui.getCore().byId("TF1").setWidth("5000px");
 			sap.ui.getCore().applyChanges();
-			
+
 			var oButton = jQuery.sap.byId('B1');
 			var oText = jQuery.sap.byId('TF1');
 			var oImage = jQuery.sap.byId('B2');
 			ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
 			ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
 		});
-		
+
 		test("Wrapping", function() {
 			oLayout1.setAllowWrapping(true);
 			sap.ui.getCore().applyChanges();
-			
+
 			var oButton = jQuery.sap.byId('B1');
 			var oText = jQuery.sap.byId('TF1');
 			var oImage = jQuery.sap.byId('B2');
 			equal(oText.offset().left, oButton.offset().left, "Left offset of Button == TextField");
 			equal(oImage.offset().left, oText.offset().left, "Left offset of TextField == Second button");
+		});
+
+		test("Container Padding Classes", function () {
+			// System under Test + Act
+			var oContainer = new sap.ui.layout.HorizontalLayout(),
+					sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
+					aResponsiveSize = sResponsiveSize.split(" "),
+					$container,
+					$containerContent;
+
+			// Act
+			oContainer.placeAt("uiArea1");
+
+			sap.ui.getCore().applyChanges();
+			oContainer.addStyleClass("sapUiNoContentPadding");
+			$containerContent = oContainer.$();
+
+			// Assert
+			strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
+			strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
+			strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
+			strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+
+			// Act
+			oContainer.removeStyleClass("sapUiNoContentPadding");
+			oContainer.addStyleClass("sapUiContentPadding");
+
+			// Assert
+			strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
+			strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
+			strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
+			strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+
+			// Act
+			oContainer.removeStyleClass("sapUiContentPadding");
+			oContainer.addStyleClass("sapUiResponsiveContentPadding");
+
+			// Assert
+			strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+
+			// Cleanup
+			oContainer.destroy();
 		});
 
     </script>
@@ -79,9 +124,9 @@
     <h2 id="qunit-banner"></h2>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests"></ol>
-    
+
     <hr>
-    
+
     <div id="uiArea1"></div>
 	</body>
 </html>
