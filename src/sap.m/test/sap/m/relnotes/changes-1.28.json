@@ -2945,5 +2945,87 @@
         "references": []
       }
     ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "1d3dcf2bbe0e8e503cee432425ce996cf5ea818a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "ActionSheet: It is now possible to scroll the whole page when running on Android stock browser",
+        "references": []
+      },
+      {
+        "id": "20b991a50de7cb42bc14468f9a2525ed086ba481",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "Button: Focus outline drawn on mobile devices corrected",
+        "references": []
+      },
+      {
+        "id": "e9116bb293c17dbe152c55e18b3c386591f5a3ec",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "Button: Press event is no longer fired after the focusin event",
+        "references": []
+      },
+      {
+        "id": "bb0ee856bc3b8f88acc9a24d3505f5d9c0206591",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComboBox: BlackBerry 10 typeahead issue solved (browser bug)",
+        "references": []
+      },
+      {
+        "id": "1dc0bdda5cdaa7c9f185f8342223066857fdf839",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComboBox: Arrow button height corrected (downport)",
+        "references": []
+      },
+      {
+        "id": "8fbaf893b81f2f2e03708631c07109dd3cee103c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComboBox: Picker and input widths on resize event are now synchronized",
+        "references": []
+      },
+      {
+        "id": "d8d77b5baedc58a96b9d323b1639ecc734fc02e2",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "IconTabBar: Scrolling arrows are now updated properly when using keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "0ef0ab99ef5e4231d534ae8b8ba17a73c658d31b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "MultiComboBox: Placeholder is no longer visible when tokens are chosen",
+        "references": []
+      },
+      {
+        "id": "539f3dffcc427c810007b1869a1a975dd5e88ed2",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "Panel: Header is now displayed even without text specified",
+        "references": []
+      },
+      {
+        "id": "f6eb800e58bb597c73ec9598125f5eae8a2a7fe7",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "UploadCollection: Correct icon preview is displayed in case of capitalized file extensions",
+        "references": []
+      },
+      {
+        "id": "1f386d60e555742d3f7506d2bd2ed9082fbaa759",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "UploadCollection: Event _onUploadComplete, rename improved",
+        "references": []
+      }
+    ]
   }
 }
