@@ -109,7 +109,7 @@ sap.ui.define([
 			}
 
 			this._saveInitialValidatedState();
-			this._addNextButton();
+			this._initNextButton();
 		};
 
 		Wizard.prototype.onAfterRendering = function () {
@@ -201,20 +201,21 @@ sap.ui.define([
 
 		/**
 		 * Returns the last activated step in the Wizard
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * @returns {sap.m.WizardStep} Pointer to the control instance for chaining
 		 * @public
 		 */
 		Wizard.prototype.getProgressStep = function () {
 			return this._getWizardStep(this.getProgress() - 1);
 		};
 
-		/*
+		/**
 		 * Goes to the given step
-		 * @step {number} index - The step to go to.
+		 * @param {sap.m.WizardStep} step - The step to go to.
+		 * @param {boolean} focusFirstStepElement - Defines whether the focus should be changed to the first element
 		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
 		 * @public
 		 */
-		Wizard.prototype.goToStep = function (step) {
+		Wizard.prototype.goToStep = function (step, focusFirstStepElement) {
 			this._scrollLocked = true;
 			this._getPage().scrollToElement(step, Wizard.CONSTANTS.ANIMATION_TIME);
 			jQuery.sap.delayedCall(Wizard.CONSTANTS.LOCK_TIME, this, function () {
@@ -227,6 +228,9 @@ sap.ui.define([
 
 				progressNavigator._updateCurrentStep(this._getStepIndex(step) + 1);
 				this._scrollLocked = false;
+				if (focusFirstStepElement || focusFirstStepElement === undefined) {
+					this._focusFirstStepElement(step);
+				}
 			});
 			return this;
 		};
@@ -352,6 +356,10 @@ sap.ui.define([
 
 		/**************************************** PRIVATE METHODS ***************************************/
 
+		/**
+		 * Creates the internal page aggregation of the Wizard
+		 * @private
+		 */
 		Wizard.prototype._initPage = function () {
 			var page = new Page({
 				showHeader: false,
@@ -365,14 +373,31 @@ sap.ui.define([
 			this.setAggregation("_page", page);
 		};
 
+		/**
+		 * Auto step locking is an experimental feature of the Wizard control
+		 * it is supposed to lock the step after its completion (press of next button)
+		 * It still hasn't been approved by the designers
+		 * @param {boolean} enabled - enables the locking mechanism
+		 * @private
+		 */
 		Wizard.prototype._setAutoStepLock = function (enabled)  {
 			this._autoStepLock = enabled;
 		};
 
+		/**
+		 * Returns the status of the step locking mechanism
+		 * @returns {boolean}
+		 * @private
+		 */
 		Wizard.prototype._getAutoStepLock = function () {
 			return this._autoStepLock;
 		};
 
+		/**
+		 * Creates the page subheader, and places a WizardProgressNavigator inside it
+		 * @returns {Toolbar}
+		 * @private
+		 */
 		Wizard.prototype._createSubHeader = function () {
 			var that = this,
 				progressNavigator = new WizardProgressNavigator({
@@ -381,12 +406,10 @@ sap.ui.define([
 				});
 
 			progressNavigator._setOnEnter(function (event, stepIndex) {
-				var $step = that._getWizardStep(stepIndex).$();
-				if ($step.firstFocusableDomRef()) {
-					jQuery.sap.delayedCall(Wizard.CONSTANTS.ANIMATION_TIME, this, function () {
-						$step.firstFocusableDomRef().focus();
-					});
-				}
+				var step = that._getWizardStep(stepIndex);
+				jQuery.sap.delayedCall(Wizard.CONSTANTS.ANIMATION_TIME, this, function () {
+					this._focusFirstStepElement(step);
+				});
 			});
 
 			return new Toolbar({
@@ -395,6 +418,23 @@ sap.ui.define([
 			});
 		};
 
+		/**
+		 * Focuses the first focusable element of a given step
+		 * @param {sap.m.WizardStep} step - the step to be focused
+		 * @private
+		 */
+		Wizard.prototype._focusFirstStepElement = function (step) {
+			var $step = step.$();
+			if ($step.firstFocusableDomRef()) {
+				$step.firstFocusableDomRef().focus();
+			}
+		};
+
+		/**
+		 * Handler for the stepChanged event. The event comes from the WizardProgressNavigator
+		 * @param {jQuery.Event} event
+		 * @private
+		 */
 		Wizard.prototype._handleStepChanged = function (event) {
 			if (this._scrollLocked) {
 				return;
@@ -402,9 +442,14 @@ sap.ui.define([
 
 			var currentStepIndex = event.getParameter("current");
 			var currentStep = this._getWizardStep(currentStepIndex - 1);
-			this.goToStep(currentStep);
+			this.goToStep(currentStep, false);
 		};
 
+		/**
+		 * Handler for the stepActivated event. The event comes from the WizardProgressNavigator
+		 * @param {jQuery.Event} event
+		 * @private
+		 */
 		Wizard.prototype._handleStepActivated = function (event) {
 			var index = event.getParameter("index"),
 				steps = this.getSteps();
@@ -415,41 +460,77 @@ sap.ui.define([
 			this._setNextButtonPosition();
 		};
 
+		/**
+		 * @returns The internal Page aggregation
+		 * @private
+		 */
 		Wizard.prototype._getPage = function () {
 			return this.getAggregation("_page");
 		};
 
+		/**
+		 * Checks whether the maximum step count is reached
+		 * @returns {boolean}
+		 * @private
+		 */
 		Wizard.prototype._isMaxStepCountExceeded = function () {
 			var stepCount = this._getStepCount();
 
 			return stepCount >= Wizard.CONSTANTS.MAXIMUM_STEPS;
 		};
 
+		/**
+		 * Checks whether the minimum step count is reached
+		 * @returns {boolean}
+		 * @private
+		 */
 		Wizard.prototype._isMinStepCountReached = function () {
 			var stepCount = this._getStepCount();
 
 			return stepCount >= Wizard.CONSTANTS.MINIMUM_STEPS;
 		};
 
+		/**
+		 * Returns the number of steps in the wizard
+		 * @returns {number} the number of steps
+		 * @private
+		 */
 		Wizard.prototype._getStepCount = function () {
 			return this._stepCount;
 		};
 
+		/**
+		 * Increases the internal step count, and the step count in the progress navigator
+		 * @private
+		 */
 		Wizard.prototype._incrementStepCount = function () {
 			this._stepCount += 1;
 			this._getProgressNavigator().setStepCount(this._getStepCount());
 		};
 
+		/**
+		 * Decreases the internal step count, and the step count in the progress navigator
+		 * @private
+		 */
 		Wizard.prototype._decrementStepCount = function () {
 			this._stepCount -= 1;
 			this._getProgressNavigator().setStepCount(this._getStepCount());
 		};
 
+		/**
+		 * Sets the internal step count to 0, and the step count of the progress navigator to 0
+		 * @private
+		 */
 		Wizard.prototype._resetStepCount = function () {
 			this._stepCount = 0;
 			this._getProgressNavigator().setStepCount(this._getStepCount());
 		};
 
+		/**
+		 * Returns the progress navigator element of the wizard
+		 * @returns {*}
+		 * @private
+		 */
 		Wizard.prototype._getProgressNavigator = function () {
 			var page = this._getPage();
 			if (!page) {
@@ -459,6 +540,10 @@ sap.ui.define([
 			return page.getSubHeader().getContent()[0];
 		};
 
+		/**
+		 * Saves the initial valdiated state of the steps
+		 * @private
+		 */
 		Wizard.prototype._saveInitialValidatedState = function ()  {
 			var steps = this.getSteps();
 
@@ -472,6 +557,11 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Restores the initial validated state of the steps, starting from the given index
+		 * @param {number} index - the index to start the restoring from
+		 * @private
+		 */
 		Wizard.prototype._restoreInitialValidatedState = function (index) {
 			var steps = this.getSteps();
 			for (var i = index; i < steps.length; i++) {
@@ -480,16 +570,24 @@ sap.ui.define([
 			}
 		};
 
-		Wizard.prototype._addNextButton = function () {
+		/**
+		 * Initializes the next button
+		 * @private
+		 */
+		Wizard.prototype._initNextButton = function () {
 			if (this._getNextButton()) {
 				return;
 			}
 
 			this.setAggregation("_nextButton", this._createNextButton());
 			this._setNextButtonPosition();
-			//this._updateNextButtonState();
 		};
 
+		/**
+		 * Creates the next button, and adds onAfterRendering delegate
+		 * @returns {Button}
+		 * @private
+		 */
 		Wizard.prototype._createNextButton = function () {
 			var firstStep = this._getWizardStep(0),
 				isStepValidated = (firstStep) ? firstStep.getValidated() : true,
@@ -510,6 +608,10 @@ sap.ui.define([
 			return nextButton;
 		};
 
+		/**
+		 * Handler for the next button press, and updates the button state
+		 * @private
+		 */
 		Wizard.prototype._handleNextButtonPress = function () {
 			var progressNavigator = this._getProgressNavigator(),
 				progressAchieved = progressNavigator.getProgress(),
@@ -524,6 +626,10 @@ sap.ui.define([
 			this._updateNextButtonState();
 		};
 
+		/**
+		 * Toggles the next button visibility
+		 * @private
+		 */
 		Wizard.prototype._toggleNextButtonVisibility = function () {
 			jQuery.sap.delayedCall(0, this, function () {
 				if (this._getNextButton().getEnabled()) {
@@ -534,6 +640,10 @@ sap.ui.define([
 			});
 		};
 
+		/**
+		 * Sets the next button position. The position is different depending on the used device.
+		 * @private
+		 */
 		Wizard.prototype._setNextButtonPosition = function () {
 			if (sap.ui.Device.system.phone) {
 				return;
@@ -548,6 +658,11 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Updates the next button state, changing the enablement, and changing the text,
+		 * depending on the validation of the progress step
+		 * @private
+		 */
 		Wizard.prototype._updateNextButtonState = function () {
 			var stepCount = this._getStepCount(),
 				nextButton = this._getNextButton(),
@@ -562,21 +677,40 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Returns a reference to the next button
+		 * @returns {sap.m.Button}
+		 * @private
+		 */
 		Wizard.prototype._getNextButton = function () {
 			return this._nextButton;
 		};
 
+		/**
+		 * Returns a reference to the step at the given index
+		 * @param index - the index of the step
+		 * @returns {sap.m.WizardStep} Pointer to the control *instance for chaining
+		 * @private
+		 */
 		Wizard.prototype._getWizardStep = function (index) {
 			return this.getSteps()[index];
 		};
 
+		/**
+		 * Attaches the wizard scroll handler directly to the container element of the page aggregation
+		 * @private
+		 */
 		Wizard.prototype._attachScrollHandler = function () {
 			var page = this._getPage(),
 				contentDOM = page.getDomRef("cont");
-
 			contentDOM.onscroll = this._scrollHandler.bind(this);
 		};
 
+		/**
+		 * Handles the scroll event of the page container
+		 * @param {jQuery.Event} event
+		 * @private
+		 */
 		Wizard.prototype._scrollHandler = function (event) {
 			if (this._scrollLocked) {
 				return;

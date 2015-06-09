@@ -5,65 +5,66 @@
 
 	.sapMPageHeader::before {
 		content: none;
-  	}
+	}
 
-  	.sapMPageSubHeader {
+	.sapMPageSubHeader {
 		border: none;
-  	}
+	}
 
-  	.sapMWizardProgressNav {
+	.sapMWizardProgressNav {
 		width: 100%;
- 	}
+	}
 
-  	.sapMPage > .sapMPageSubHeader + section {
+	.sapMPage > .sapMPageSubHeader + section {
 		top: 4rem;
-  	}
+	}
 
-  	.sapMPage > section {
+	.sapMPage > section {
 		box-sizing: border-box;
 		padding: 1rem;
-  	}
+		transform: translateZ(0);
+	}
 
-  	.sapMWizardLastActivatedStep {
+	.sapMWizardLastActivatedStep {
 		min-height: 100%;
-  	}
+	}
 
 	.sapMWizardStepTitle::before {
 		counter-increment: steps-counter;
 		content: counter(steps-counter) ". ";
 	}
 
-  	.sapMWizardStep  {
+	.sapMWizardStep  {
 		position: relative;
 		box-sizing: border-box;
 		padding-bottom: 2rem;
 		display: none;
 
-	.sapMWizardStepTitle {
-		border-width: 0.0625rem;
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: normal;
-		border: none;
-	  	margin-top: 0;
-		margin-bottom: 1rem;
+		.sapMWizardStepTitle {
+			border-width: 0.0625rem;
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: normal;
+			border: none;
+			margin-top: 0;
+			margin-bottom: 1rem;
 
-	.sapMBtn  {
-		position: absolute;
-		right : 0;
-		top : -0.5rem;
-	  		}
+			.sapMBtn  {
+				position: absolute;
+				right : 0;
+				top : -0.5rem;
+			}
 		}
-  	}
+	}
 
 
 
-  	.sapUiFormResLayout > div {
+	.sapUiFormResLayout > div {
 		background-color: inherit;
-  	}
+	}
 
- 	.sapMWizardStepActivated {
+	.sapMWizardStepActivated {
 		display: block;
-  	}
+	}
 }
 
 .sap-desktop .sapMWizard .sapMWizardNextButton {
@@ -82,10 +83,10 @@
 		transition: 0.4s linear;
 		bottom: 0rem;
 		opacity: 0;
-  	}
+	}
 
- 	.sapMWizard .sapMWizardNextButtonVisible {
+	.sapMWizard .sapMWizardNextButtonVisible {
 		bottom: 0.5rem;
 		opacity: 1;
-  	}
+	}
 }
