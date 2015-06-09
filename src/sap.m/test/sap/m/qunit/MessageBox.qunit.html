@@ -89,7 +89,7 @@
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_CLOSE") , "Default action Cancel is set");
-			equal(oMessageBox.getTitle(), "Error", "The title should be Error");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_ERROR"), "The title should be Error");
 			oMessageBox.destroy();
 		});
 
