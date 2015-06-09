@@ -15,6 +15,10 @@ xhr.onCreate = function(request) {
 			[200, oMetaDataHeaders, sMetaData1],
 		"$metadata?sap-value-list=all": 
 			[200, oMetaDataHeaders, sMetaData2],
+		"$metadata?sap-value-list=Test": 
+				[200, oMetaDataHeaders, sMetaData2],
+		"$metadata?sap-value-list=Test2": 
+			[200, oMetaDataHeaders, sMetaData2],
 		"$metadata?test=x": 
 			[200, oMetaDataHeaders, sMetaData],
 		"$metadata?test=x&sap-language=en&test2=xx": 
