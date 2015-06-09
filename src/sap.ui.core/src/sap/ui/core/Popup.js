@@ -656,8 +656,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		var that = this;
 
-		// shield layer is needs for iOS devices to prevent the delayed mouse events from reaching the dom element in popup while it's being open.
-		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
+		//  to prevent the delayed mouse events from reaching the dom element in popup while it's being open.
+		if (jQuery.sap.isMouseEventDelayed) {
 			if (this._oTopShieldLayer) {
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
 				// reuse the same shieldlayer and clear the timeout
@@ -977,8 +978,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		var that = this;
 
-		// shield layer is needs for iOS devices to prevent the delayed mouse events from reaching the underneath dom element.
-		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
+		//  to prevent the delayed mouse events from reaching the underneath dom element.
+		if (jQuery.sap.isMouseEventDelayed) {
 			if (this._oBottomShieldLayer) {
 
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
