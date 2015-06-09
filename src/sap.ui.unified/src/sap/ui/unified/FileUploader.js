@@ -979,22 +979,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 							//several xhr requests for every file
 							var iFiles = aFiles.length;
 						}
-						var aXhr = [];
+						this._aXhr = [];
 						for (var j = 0; j < iFiles; j++) {
 							//keep a reference on the current upload xhr
 							this._uploadXHR = new window.XMLHttpRequest();
-							aXhr[j] = {
+							this._aXhr.push({
 								xhr: this._uploadXHR,
 								requestHeaders: []
-							};
-							aXhr[j].xhr.open("POST", this.getUploadUrl(), true);
+							});
+							this._aXhr[j].xhr.open("POST", this.getUploadUrl(), true);
 							if (this.getHeaderParameters()) {
 								var oHeaderParams = this.getHeaderParameters();
 								for (var i = 0; i < oHeaderParams.length; i++) {
 									var sHeader = oHeaderParams[i].getName();
 									var sValue = oHeaderParams[i].getValue();
-									aXhr[j].xhr.setRequestHeader(sHeader, sValue);
-									aXhr[j].requestHeaders.push({name: sHeader, value: sValue});
+									this._aXhr[j].xhr.setRequestHeader(sHeader, sValue);
+									this._aXhr[j].requestHeaders.push({name: sHeader, value: sValue});
 								}
 							}
 						}
@@ -1020,9 +1020,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 									formData.append(sName, sValue);
 								}
 							}
-							this.sendFiles(aXhr, [formData], 0);
+							this.sendFiles(this._aXhr, [formData], 0);
 						} else {
-							this.sendFiles(aXhr, aFiles, 0);
+							this.sendFiles(this._aXhr, aFiles, 0);
 						}
 						this._bUploading = false;
 					}
@@ -1047,8 +1047,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @since 1.24.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FileUploader.prototype.abort = function() {
-		if (this._uploadXHR && this._uploadXHR.abort) {
+	FileUploader.prototype.abort = function(sHeaderCheck, sValueCheck) {
+		if (!this.getUseMultipart()) {
+			for (var i = 0; i < this._aXhr.length; i++) {
+				for (var j = 0; j < this._aXhr[i].requestHeaders.length; j++) {
+					var sHeader = this._aXhr[i].requestHeaders[j].name;
+					var sValue = this._aXhr[i].requestHeaders[j].value;
+					if (sHeader == sHeaderCheck && sValue == sValueCheck) {
+						this._aXhr[i].xhr.abort();
+					}
+				}
+			}
+		} else if (this._uploadXHR && this._uploadXHR.abort) {
 			//fires a progress event 'abort' on the _uploadXHR
 			this._uploadXHR.abort();
 		}
