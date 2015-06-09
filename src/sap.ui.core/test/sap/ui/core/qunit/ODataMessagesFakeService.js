@@ -62,7 +62,7 @@ xhr.onCreate = function(request) {
 		// 	sUrl = sUrl.substr(0, iParamStart);
 		// }
 		
-		var bJson = request.url.indexOf("$format=json") > -1 || request.requestHeaders["Accept"] == "application/json";
+		var bJson = request.url.indexOf("$format=json") > -1 || request.requestHeaders["Accept"].indexOf("application/json") > -1;
 		
 		var sRandomServiceUrl = null;
 		var iResponseDelay = 200;
@@ -73,7 +73,7 @@ xhr.onCreate = function(request) {
 		switch (sUrl) {
 			case "fakeservice://testdata/odata/function-imports/":
 				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaders["xml"]);
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		"999",
 					"message":	"This is a server wide test message",
@@ -86,13 +86,13 @@ xhr.onCreate = function(request) {
 			
 			case "fakeservice://testdata/odata/function-imports/$metadata":
 				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaders["xml"]);
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
 				sAnswer = sFunctionImportMetadata;
 				break;
 
 			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000001'":
 				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaders["atom"]);
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		"999",
 					"message":	"This is FunctionImport specific test message",
@@ -106,7 +106,7 @@ xhr.onCreate = function(request) {
 			
 			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
 				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaders["atom"]);
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		"999",
 					"message":	"This is FunctionImport specific test message",
@@ -119,7 +119,7 @@ xhr.onCreate = function(request) {
 				
 			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'30000000-0000-0000-0000-000000000003'":
 				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaders["atom"]);
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		"999",
 					"message":	"This is FunctionImport specific test message",
@@ -128,8 +128,36 @@ xhr.onCreate = function(request) {
 				});
 				sAnswer = sFunctionImportProduct1;
 				break;
-				
 			
+			case "fakeservice://testdata/odata/technical-errors/Error(400)":
+				iStatus = 400;
+				sAnswer = bJson ? sTechnicalError400Json : sTechnicalError400Xml;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+				break;
+			
+			case "fakeservice://testdata/odata/technical-errors/Error(500)":
+				iStatus = 500;
+				sAnswer = bJson ? sTechnicalError500Json : sTechnicalError500Xml;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+				break;
+				
+			case "fakeservice://testdata/odata/technical-errors/Error(900)":
+				iStatus = 900;
+				sAnswer = bJson ? sTechnicalError900Json : sTechnicalError900Xml;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+				break;
+
+			case "fakeservice://testdata/odata/technical-errors/$metadata":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
+				sAnswer = sFunctionImportMetadata;
+				break;
+			
+			case "fakeservice://testdata/odata/technical-errors/Error2(400)":
+				iStatus = 400;
+				sAnswer = bJson ? sTechnicalError400Json2 : sTechnicalError400Xml2;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+				break;
 				
 			default:
 				if (sUrl.startsWith(mServiceData["serviceUrl"])) {
@@ -176,7 +204,7 @@ function ODataRandomService(oServiceConfig) {
 	this._serviceUrl = this._config["serviceUrl"];
 }
 
-var mHeaders = {
+var mHeaderTypes = {
 	xml: {
 		"Content-Type" : "application/xml;charset=utf-8",
 		"DataServiceVersion" : "1.0;"
@@ -270,7 +298,7 @@ ODataRandomService.prototype._answerError = function(iStatus, mHeaders, sAnswer)
 	var sType = this._useJson ? "json" : "atom";
 	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "error");
 
-	this._answer(200, mHeaders[sType], sAnswer);
+	this._answer(200, mHeaderTypes[sType], sAnswer);
 };
 
 ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
@@ -338,7 +366,7 @@ ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
 };
 
 ODataRandomService.prototype._answerMetadata = function() {
-	this._answer(200, mHeaders["xml"], sNorthwindMetadata);
+	this._answer(200, mHeaderTypes["xml"], sNorthwindMetadata);
 }
 
 ODataRandomService.prototype._answerService = function(oServiceData) {
@@ -351,7 +379,7 @@ ODataRandomService.prototype._answerService = function(oServiceData) {
 	var sType = this._useJson ? "json" : "atom";
 	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "service");
 
-	this._answer(200, mHeaders[sType], sAnswer);
+	this._answer(200, mHeaderTypes[sType], sAnswer);
 }
 
 ODataRandomService.prototype._answerCollectionCount = function(oColData) {
@@ -410,7 +438,7 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 	var sType = this._useJson ? "json" : "atom";
 	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
 
-	var mHead = jQuery.extend({}, mHeaders[sType]);
+	var mHead = jQuery.extend({}, mHeaderTypes[sType]);
 	mHead["sap-message"] = this._createMessageHeader(aMessages);
 	
 	this._answer(200, mHead, sAnswer);
@@ -2776,3 +2804,181 @@ var sFunctionImportProduct1 = '\
 		</m:properties>\
 	</content>\
 </entry>';
+
+
+var sTechnicalError400Xml = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
+	<code>/BOBF/FRW_COMMON/118</code>\
+	<message xml:lang="en">Field "SALESORDERID" cannot be changed since it is read only</message>\
+	<innererror>\
+		<transactionid>55025622675C2E69E10000000A4450F0</transactionid>\
+		<timestamp>20150318080838.2106030</timestamp>\
+		<Error_Resolution>\
+			<SAP_Transaction>Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details</SAP_Transaction>\
+			<SAP_Note>See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)</SAP_Note>\
+			<Batch_SAP_Note>See SAP Note 1869434 for details about working with $batch (https://service.sap.com/sap/support/notes/1869434)</Batch_SAP_Note>\
+		</Error_Resolution>\
+		<errordetails>\
+			<errordetail>\
+				<code>/BOBF/FRW_COMMON/118</code>\
+				<message>Field "SALESORDERID" cannot be changed since it is read only</message>\
+				<propertyref></propertyref>\
+				<severity>error</severity>\
+				<target></target>\
+				<longtext_url>/sap/opu/odata/iwbep/message_text;o=G1Y_400_BEP/T100_longtexts(MSGID=\'%2FIWBEP%2FCM_TEA\',MSGNO=\'010\',MESSAGE_V1=\'RAISE_BUSI_EXCEPTION_DETAILS\',MESSAGE_V2=\'\',MESSAGE_V3=\'\',MESSAGE_V4=\'\')/$value</longtext_url>\
+			</errordetail>\
+			<errordetail>\
+				<code>/IWBEP/CX_MGW_BUSI_EXCEPTION</code>\
+				<message>Some other error</message>\
+				<propertyref></propertyref>\
+				<severity>error</severity>\
+				<target></target>\
+				<longtext_url>/sap/opu/odata/iwbep/message_text;o=G1Y_400_BEP/T100_longtexts(MSGID=\'%2FIWBEP%2FCM_TEA\',MSGNO=\'010\',MESSAGE_V1=\'RAISE_BUSI_EXCEPTION_DETAILS\',MESSAGE_V2=\'\',MESSAGE_V3=\'\',MESSAGE_V4=\'\')/$value</longtext_url>\
+			</errordetail>\
+		</errordetails>\
+	</innererror>\
+</error>';
+
+
+var sTechnicalError500Xml = sTechnicalError900Xml = sTechnicalError400Xml;
+
+var sTechnicalError400Json = '\
+{\
+	"error": {\
+		"code": "/BOBF/FRW_COMMON/118",\
+		"message": {\
+			"lang": "en",\
+			"value": "Field \\"SALESORDERID\\" cannot be changed since it is read only"\
+		},\
+		"innererror": {\
+			"transactionid": "55025622675C2E69E10000000A4450F0",\
+			"timestamp": "20150318080838.2106030",\
+			"Error_Resolution": {\
+				"SAP_Transaction": "Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details",\
+				"SAP_Note": "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)",\
+				"Batch_SAP_Note": "See SAP Note 1869434 for details about working with $batch (https://service.sap.com/sap/support/notes/1869434)"\
+			},\
+			"errordetails": [{\
+				"code": "/BOBF/FRW_COMMON/118",\
+				"message": "Field \\"SALESORDERID\\" cannot be changed since it is read only",\
+				"propertyref": "",\
+				"severity": "error",\
+				"target": "",\
+				"longtext_url": "/sap/opu/odata/iwbep/message_text;o=G1Y_400_BEP/T100_longtexts(MSGID=\'%2FIWBEP%2FCM_TEA\',MSGNO=\'010\',MESSAGE_V1=\'RAISE_BUSI_EXCEPTION_DETAILS\',MESSAGE_V2=\'\',MESSAGE_V3=\'\',MESSAGE_V4=\'\')/$value"\
+			}, {\
+				"code": "/IWBEP/CX_MGW_BUSI_EXCEPTION",\
+				"message": "Some other error",\
+				"propertyref": "",\
+				"severity": "error",\
+				"target": "",\
+				"longtext_url": "/sap/opu/odata/iwbep/message_text;o=G1Y_400_BEP/T100_longtexts(MSGID=\'%2FIWBEP%2FCM_TEA\',MSGNO=\'010\',MESSAGE_V1=\'RAISE_BUSI_EXCEPTION_DETAILS\',MESSAGE_V2=\'\',MESSAGE_V3=\'\',MESSAGE_V4=\'\')/$value"\
+			}]\
+		}\
+	}\
+}';
+
+var sTechnicalError500Json = sTechnicalError900Json = sTechnicalError400Json;
+
+var sTechnicalError400Json2 = '\
+{\
+	"error": {\
+		"code": "SY/530",\
+		"message": {\
+			"lang": "en",\
+			"value": "Warning"\
+		},\
+		"innererror": {\
+			"transactionid": "5570DDCFC85D6352E10000000A445279",\
+			"timestamp": "20150610070411.9523060",\
+			"Error_Resolution": {\
+				"SAP_Transaction": "Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details",\
+				"SAP_Note": "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)",\
+				"Batch_SAP_Note": "See SAP Note 1869434 for details about working with $batch (https://service.sap.com/sap/support/notes/1869434)"\
+			},\
+			"errordetails": [{\
+				"code": "",\
+				"message": "Multiple error/warning messages",\
+				"propertyref": "",\
+				"severity": "error",\
+				"target": "Property"\
+			}, {\
+				"code": "",\
+				"message": "Inner error",\
+				"propertyref": "",\
+				"severity": "error",\
+				"target": "Message"\
+			}, {\
+				"code": "",\
+				"message": "Inner error 2",\
+				"propertyref": "",\
+				"severity": "error",\
+				"target": "Type"\
+			}, {\
+				"code": "",\
+				"message": "Warning",\
+				"propertyref": "",\
+				"severity": "warning",\
+				"target": "Type"\
+			},{\
+				"code": "/IWBEP/CX_MGW_BUSI_EXCEPTION",\
+				"message": "Business Error with details in TEA application",\
+				"propertyref": "",\
+				"severity": "error",\
+				"target":""\
+			}]\
+		}\
+	}\
+}';
+
+var sTechnicalError400Xml2 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
+	<code>SY/530</code>\
+	<message xml:lang="en">Warning</message>\
+	<innererror>\
+		<transactionid>55755400750A3A92E10000000A445279</transactionid>\
+		<timestamp>20150610072313.5174130</timestamp>\
+		<Error_Resolution>\
+			<SAP_Transaction>Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details</SAP_Transaction>\
+			<SAP_Note>See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)</SAP_Note>\
+		</Error_Resolution>\
+		<errordetails>\
+			<errordetail>\
+				<code/>\
+				<message>Multiple error/warning messages</message>\
+				<propertyref/>\
+				<severity>error</severity>\
+				<target>Property</target>\
+			</errordetail>\
+			<errordetail>\
+				<code/>\
+				<message>Inner error</message>\
+				<propertyref/>\
+				<severity>error</severity>\
+				<target>Message</target>\
+			</errordetail>\
+			<errordetail>\
+				<code/>\
+				<message>Inner error 2</message>\
+				<propertyref/>\
+				<severity>error</severity>\
+				<target>Type</target>\
+			</errordetail>\
+			<errordetail>\
+				<code/>\
+				<message>Warning</message>\
+				<propertyref/>\
+				<severity>warning</severity>\
+				<target>Type</target>\
+			</errordetail>\
+			<errordetail>\
+				<code>/IWBEP/CX_MGW_BUSI_EXCEPTION</code>\
+				<message>Business Error with details in TEA application</message>\
+				<propertyref/>\
+				<severity>error</severity>\
+				<target/>\
+			</errordetail>\
+		</errordetails>\
+	</innererror>\
+</error>';

@@ -146,12 +146,13 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		);
 	}
 
-	if (!this._processor) {
+	if (this._processor) {
+		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
+	} else {
 		// In case no message processor is attached, at least log to console.
 		// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
 		this._outputMesages(aMessages);
 	}
-	this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
 };
 
 
@@ -174,7 +175,6 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 	var mAffectedTargets = jQuery.extend({
 		"": true // Allow global messages by default
 	}, mGetEntities, mChangeEntities);
-
 
 	// Get EntitySet for Requested resource
 	var sRequestTarget = this._parseUrl(sRequestUri).url;
@@ -222,7 +222,10 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	var aRemovedMessages = [];
 	var aKeptMessages = [];
 	for (i = 0; i < this._lastMessages.length; ++i) {
-		sTarget = this._lastMessages[i].getTarget();
+		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must 
+		// be trimmed here
+		sTarget = this._lastMessages[i].getTarget().trim("/");
+		
 		if (mAffectedTargets[sTarget]) {
 			// Message belongs to targets handled/requested by this request
 			aRemovedMessages.push(this._lastMessages[i]);
@@ -261,7 +264,7 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		? oMessageObject["message"]["value"]
 		: oMessageObject["message"];
 
-	var sDescriptionUrl = oMessageObject.longtextUrl ? oMessageObject.longtextUrl : "";
+	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
 
 	var sTarget = this._createTarget(oMessageObject, mRequestInfo);
 
@@ -320,12 +323,14 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 				}
 			} else {
 				// Build ID string from keys
+				var aKeys = [];
 				for (var i = 0; i < mEntityType.key.propertyRef.length; ++i) {
 					sParam = mEntityType.key.propertyRef[i].name;
 					if (mRequestInfo.parameters[sParam]) {
-						sId += sParam + "=" + mRequestInfo.parameters[sParam];
+						aKeys.push(sParam + "=" + mRequestInfo.parameters[sParam]);
 					}
 				}
+				sId = aKeys.join(",");
 			}
 
 			sTarget = "/" + mFunctionInfo.entitySet + "(" + sId + ")";
@@ -460,6 +465,19 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 		// JSON response
 		this._parseBodyJSON(/* ref: */ aMessages, oResponse, mRequestInfo);
 	}
+	
+	// Messages from an error response should contain duplicate messages - the main error should be the
+	// same as the first errordetail error. If this is the case, remove the first one.
+	// TODO: Check if this is actually correct, and if so, check if the below check can be improved
+	if (aMessages.length > 1) {
+		if (
+			aMessages[0].getCode()    == aMessages[1].getCode()    &&
+			aMessages[0].getMessage() == aMessages[1].getMessage() &&
+			aMessages[0].getTarget()  == aMessages[1].getTarget()
+		) {
+			aMessages.shift();
+		}
+	}
 };
 
 
@@ -497,7 +515,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 				var oChildNode = oNode.childNodes[n];
 				var sChildName = oChildNode.nodeName;
 
-				if (sChildName === "errordetails" || sChildName === "details" || sChildName === "innererror") {
+				if (sChildName === "errordetails" || sChildName === "details" || sChildName === "innererror" || sChildName === "#text") {
 					// Ignore known children that contain other errors
 					continue;
 				}
@@ -616,21 +634,23 @@ ODataMessageParser.prototype._parseUrl = function(sUrl) {
  */
 ODataMessageParser.prototype._outputMesages = function(aMessages) {
 	for (var i = 0; i < aMessages.length; ++i) {
-		var sOutput = "[OData Message] " + aMessages.getMessage() + " - " + aMessages.getDexcription() + " (" + aMessages.getTarget() + ")";
-		switch (aMessages[i].getSeverity()) {
-			case "error":
+		var oMessage = aMessages[i];
+		var sOutput = "[OData Message] " + oMessage.getMessage() + " - " + oMessage.getDescription() + " (" + oMessage.getTarget() + ")";
+		switch (aMessages[i].getType()) {
+			case sap.ui.core.MessageType.Error:
 				jQuery.sap.log.error(sOutput);
 				break;
 
-			case "warning":
+			case sap.ui.core.MessageType.Warning:
 				jQuery.sap.log.warning(sOutput);
 				break;
 
-			case "success":
+			case sap.ui.core.MessageType.Success:
 				jQuery.sap.log.debug(sOutput);
 				break;
 
-			case "info":
+			case sap.ui.core.MessageType.Information:
+			case sap.ui.core.MessageType.None:
 			default:
 				jQuery.sap.log.info(sOutput);
 				break;
@@ -653,7 +673,7 @@ function getContentType(oResponse) {
 	if (oResponse && oResponse.headers) {
 		for (var sHeader in oResponse.headers) {
 			if (sHeader.toLowerCase() === "content-type") {
-				return oResponse.headers[sHeader];
+				return oResponse.headers[sHeader].replace(/([^;]*);.*/, "$1");
 			}
 		}
 	}
