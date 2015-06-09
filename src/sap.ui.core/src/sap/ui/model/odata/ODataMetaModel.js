@@ -150,6 +150,8 @@ sap.ui.define([
 				this.mSupportedBindingModes = {"OneTime" : true};
 				this.oModel = null; // not yet available!
 				this.oLoadedPromise = Utils.load(this, oMetadata, oAnnotations);
+				this.oResolver = undefined;
+				this.mQueryCache = {};
 			},
 
 			metadata : {
@@ -173,6 +175,7 @@ sap.ui.define([
 	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
 		var oBaseNode = oContext,
 			oBinding,
+			sCacheKey,
 			i,
 			iEnd,
 			oNode,
@@ -209,7 +212,7 @@ sap.ui.define([
 					// TODO handle syntax errors in expressions
 					oBinding = BindingParser.complexParser("{=" + sResolvedPath.slice(1, iEnd)
 						+ "}", null, false);
-					vPart = sResolvedPath.slice(1, iEnd);
+					vPart = sResolvedPath.slice(0, iEnd + 1);
 					sResolvedPath = sResolvedPath.slice(iEnd + 2);
 				}
 			}
@@ -247,18 +250,20 @@ sap.ui.define([
 						sPath, "sap.ui.model.odata.ODataMetaModel");
 					return null;
 				}
-				// TODO A simple cache sProcessedPath + vPart -> i significantly improves speed
-
-				// Set the resolver on the internal JSON model, so that resolving does not use
-				// this._getObject itself.
-				this.oResolver = this.oResolver || new Resolver({models: this.oModel});
-				this.oResolver.bindProperty("any", oBinding);
-				for (i = 0; i < oNode.length; i++) {
-					this.oResolver.bindObject(sProcessedPath + i);
-					// TODO test truthy
-					if (this.oResolver.getAny() === true) {
-						vPart = i;
-						break;
+				sCacheKey = sProcessedPath + vPart;
+				vPart = this.mQueryCache[sCacheKey];
+				if (vPart === undefined) {
+					// Set the resolver on the internal JSON model, so that resolving does not use
+					// this._getObject itself.
+					this.oResolver = this.oResolver || new Resolver({models: this.oModel});
+					this.oResolver.bindProperty("any", oBinding);
+					for (i = 0; i < oNode.length; i++) {
+						this.oResolver.bindObject(sProcessedPath + i);
+						// TODO test truthy
+						if (this.oResolver.getAny() === true) {
+							this.mQueryCache[sCacheKey] = vPart = i;
+							break;
+						}
 					}
 				}
 			}

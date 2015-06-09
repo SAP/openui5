@@ -100,7 +100,7 @@ sap.ui.define([
 		},
 
 		_showDetails: function (sPath) {
-			var oDetailView, sMetadataPath, oMetaModel;
+			var oDetailBox, oDetailView, sMetadataPath, oMetaModel, iStart;
 
 			oMetaModel = this.getView().getModel().getMetaModel();
 			sMetadataPath = oMetaModel.getODataEntitySet(this._getSelectedSet(), true);
@@ -121,7 +121,12 @@ sap.ui.define([
 			});
 
 			oDetailView.bindElement(sPath);
-			this.getView().byId("detailBox").destroyContent().addContent(oDetailView);
+			oDetailBox = this.getView().byId("detailBox");
+			oDetailBox.destroyContent();
+			iStart = Date.now();
+			oDetailBox.addContent(oDetailView);
+			jQuery.sap.log.info("addContent took " + (Date.now() - iStart) + " ms", null,
+				"sap.ui.core.sample.ViewTemplate.scenario.Main");
 			this.onSourceCode();
 		}
 	});
