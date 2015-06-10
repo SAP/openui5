@@ -4217,7 +4217,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.getMetaModel = function() {
 		var that = this;
 		if (!this.oMetaModel) {
-			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations);
+			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations, {
+				addAnnotationUrl : this.addAnnotationUrl.bind(this)
+			});
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;

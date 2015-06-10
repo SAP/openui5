@@ -13,6 +13,8 @@ sap.ui.define([
 		MetaModel, Utils) {
 	"use strict";
 
+	var rSchemaPath = /\/dataServices\/schema\/\d+/;
+
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
 	 * the virtual property "@sapui.name" (which refers back to the name of the object in
@@ -58,6 +60,11 @@ sap.ui.define([
 	 *   the OData model's meta data object
 	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
 	 *   the OData model's annotations object
+	 * @param {object} oODataModelInterface
+	 *   the private interface object of the OData model which provides friend access to
+	 *   selected methods
+	 * @param {function} oODataModelInterface.addAnnotationUrl
+	 *   the {@link sap.ui.model.odata.ODataModel#addAnnotationUrl} method of the OData model
 	 *
 	 * @class Implementation of an OData meta model which offers a unified access to both OData v2
 	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
@@ -144,11 +151,14 @@ sap.ui.define([
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
 			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
 
-			constructor : function (oMetadata, oAnnotations) {
+			constructor : function (oMetadata, oAnnotations, oODataModelInterface) {
 				MetaModel.apply(this); // no arguments to pass!
 				this.sDefaultBindingMode = BindingMode.OneTime;
 				this.mSupportedBindingModes = {"OneTime" : true};
 				this.oModel = null; // not yet available!
+				this.oODataModelInterface = oODataModelInterface;
+				// map path of property to promise for loading its value help
+				this.mContext2Promise = {};
 				this.oLoadedPromise = Utils.load(this, oMetadata, oAnnotations);
 				this.oResolver = undefined;
 				this.mQueryCache = {};
@@ -644,33 +654,93 @@ sap.ui.define([
 	 * the annotation. The map is empty if the property has no
 	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
 	 *
-	 * @param {object} oProperty
-	 *   a property of an OData entity type or complex type as returned by
-	 *   {@link #getODataProperty getODataProperty}
+	 * @param {sap.ui.model.Context} oPropertyContext
+	 *   a model context for a property as returned by {@link #getMetaContext getMetaContext}
 	 * @returns {Promise}
 	 *   a Promise that gets resolved as soon as the value lists as well as the required model
 	 *   elements have been loaded
-	 * @throws {Error} if <code>oProperty</code> is <code>null</code> or not an object
 	 * @since 1.29.1
 	 * @public
 	 */
-	ODataMetaModel.prototype.getODataValueLists = function (oProperty) {
-		if (oProperty === null || typeof oProperty !== "object") {
-			throw new Error("Given property " + oProperty + " is not an object");
-		}
-		return new Promise(function (fnResolve, fnReject) {
-			var mValueLists = {};
+	ODataMetaModel.prototype.getODataValueLists = function (oPropertyContext) {
+		var bCachePromise = false, // cache only promises which trigger a request
+			sPropertyPath = oPropertyContext.getPath(),
+			oPromise = this.mContext2Promise[sPropertyPath],
+			that = this;
 
-			jQuery.each(oProperty, function (sName, oValue) {
-				var sQualifier;
+		/**
+		 * Returns the map representing the <code>com.sap.vocabularies.Common.v1.ValueList</code>
+		 * annotations of the given property.
+		 *
+		 * @param {object} oProperty the property
+		 * @returns {object} map of ValueList annotations contained in oProperty
+		 */
+		function getValueLists(oProperty) {
+			var sName,
+				sQualifier,
+				mValueLists = {};
 
+			for (sName in oProperty) {
 				if (jQuery.sap.startsWith(sName, "com.sap.vocabularies.Common.v1.ValueList")) {
-					sQualifier = sName.split("#")[1];
-					mValueLists[sQualifier ? sQualifier : ""] = oValue;
+					sQualifier = sName.split("#")[1] || "";
+					mValueLists[sQualifier] = oProperty[sName];
 				}
-			});
-			fnResolve(mValueLists);
+			}
+
+			return mValueLists;
+		}
+
+		if (oPromise) {
+			return oPromise;
+		}
+
+		oPromise = new Promise(function (fnResolve, fnReject) {
+			var sAnnotationUrl,
+				sSchemaPath = oPropertyContext.getPath().match(rSchemaPath)[0],
+				sNamespace = that.oModel.getObject(sSchemaPath).namespace,
+				oProperty = oPropertyContext.getObject(),
+				sTypeName,
+				mValueLists = getValueLists(oProperty);
+
+			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]) {
+				//property with value help which is not yet loaded
+				bCachePromise = true;
+				//TODO combine slice/lastIndexOf with rSchemaPath
+				sTypeName = that.oModel.getObject(
+					sPropertyPath.slice(0, sPropertyPath.lastIndexOf("/property"))).name;
+				sAnnotationUrl = "$metadata?sap-value-list="
+					+ encodeURIComponent(sNamespace + "." + sTypeName + "/" + oProperty.name);
+
+				that.oODataModelInterface.addAnnotationUrl(sAnnotationUrl).then(
+					function (oResponse) {
+						var mValueLists;
+
+						// enhance property by annotations from response to get ValueLists
+						jQuery.extend(oProperty,
+							//TODO use jQuery.sap.getObject? to test for undefined properties
+							oResponse.annotations.propertyAnnotations
+								[sNamespace + "." + sTypeName][oProperty.name]
+						);
+						mValueLists = getValueLists(oProperty);
+						if (jQuery.isEmptyObject(mValueLists)) {
+							fnReject(
+								new Error("No value lists returned for " + sPropertyPath));
+						} else {
+							delete that.mContext2Promise[sPropertyPath];
+							fnResolve(mValueLists);
+						}
+					},
+					fnReject
+				);
+			} else {
+				fnResolve(mValueLists);
+			}
 		});
+		if (bCachePromise) {
+			this.mContext2Promise[sPropertyPath] = oPromise;
+		}
+
+		return oPromise;
 	};
 
 	/**
