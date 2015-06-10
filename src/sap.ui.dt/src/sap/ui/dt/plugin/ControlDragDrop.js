@@ -103,14 +103,15 @@ function(DragDrop, ElementUtil) {
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.onDragStart = function(oOverlay) {
+	ControlDragDrop.prototype.onDragStart = function(oOverlay, oEvent) {
 		delete this._previousTarget;
-		// TODO : register on draggable
-		if (oOverlay.isDraggable()) {
-			this._oDraggedOverlay = oOverlay;
+		this._oDraggedOverlay = oOverlay;
 
-			this._activateAllValidDroppables();
-			
+		this._activateAllValidDroppables();
+
+		var oGhost = oOverlay.getAssociatedDomRef();
+		if (oGhost && oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer) {
+			oEvent.originalEvent.dataTransfer.setDragImage(oGhost, 0, 0);
 		}
 	};
 
@@ -134,8 +135,8 @@ function(DragDrop, ElementUtil) {
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
-		if (oTargetOverlay.getElementInstance() !== this._oDraggedOverlay.getElementInstance() && oTargetOverlay !== this._previousTarget) {
-			this._previousTarget = oTargetOverlay;
+		if (oTargetOverlay.getElementInstance() !== this._oDraggedOverlay.getElementInstance() && oTargetOverlay.getDomRef().outerHTML !== this._previousTarget) {
+			this._previousTarget = oTargetOverlay.getDomRef().outerHTML;
 			this._repositionOn(oTargetOverlay);
 		}
 	};

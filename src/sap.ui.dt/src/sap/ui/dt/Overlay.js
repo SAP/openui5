@@ -337,10 +337,10 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 */
 	Overlay.prototype.setDraggable = function(bDraggable) {
 		if (this.getDraggable() !== bDraggable) {
-			this.fireDraggableChange({draggable : bDraggable});
 			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
 			
 			this.setProperty("draggable", bDraggable);
+			this.fireDraggableChange({draggable : bDraggable});
 		}
 
 		return this;
