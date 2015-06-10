@@ -972,7 +972,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (!sap.ui.Device.system.phone) {
 				// Setting custom header to the page replaces the internal header completely, therefore the button which shows the master area has to be inserted to the custom header when it's set.
-				oRealPage._setCustomHeaderInSC = oRealPage.setCustomHeader;
+				if (!oRealPage._setCustomHeaderInSC) {
+					oRealPage._setCustomHeaderInSC = oRealPage.setCustomHeader;
+				}
 				oRealPage.setCustomHeader = function(oHeader) {
 					this._setCustomHeaderInSC.apply(this, arguments);
 					if (oHeader && that._needShowMasterButton()) {
@@ -981,7 +983,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					return this;
 				};
 
-				oRealPage._setShowNavButtonInSC = oRealPage.setShowNavButton;
+				if (!oRealPage._setShowNavButtonInSC) {
+					oRealPage._setShowNavButtonInSC = oRealPage.setShowNavButton;
+				}
 				oRealPage.setShowNavButton = function(bShow) {
 					this._setShowNavButtonInSC.apply(this, arguments);
 					if (!bShow && that._needShowMasterButton()) {
@@ -1050,11 +1054,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (oRealPage) {
 			// Since page is removed from SplitContainer, the patched version setCustomHeader and setShowNavButton needs to be deleted.
-			oRealPage.setCustomHeader = oRealPage._setCustomHeaderInSC;
-			delete oRealPage._setCustomHeaderInSC;
+			// This method may be called several times therefore the existence of stored functions needs to be checked
+			if (oRealPage._setCustomHeaderInSC) {
+				oRealPage.setCustomHeader = oRealPage._setCustomHeaderInSC;
+				delete oRealPage._setCustomHeaderInSC;
+			}
 
-			oRealPage.setShowNavButton = oRealPage._setShowNavButtonInSC;
-			delete oRealPage._setShowNavButtonInSC;
+			if (oRealPage._setShowNavButtonInSC) {
+				oRealPage.setShowNavButton = oRealPage._setShowNavButtonInSC;
+				delete oRealPage._setShowNavButtonInSC;
+			}
 		}
 	};
 
@@ -1571,6 +1580,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var iIndex = jQuery.inArray(oPage, aPageArray);
 		if (iIndex != -1) {
 			aPageArray.splice(iIndex, 1);
+			if (aPageArray === this._aDetailPages) {
+				this._restoreMethodsInPage(oPage);
+			}
 		}
 	};
 	
