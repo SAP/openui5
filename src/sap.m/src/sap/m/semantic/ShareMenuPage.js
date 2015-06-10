@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPageRenderer", "sap/m/semantic/SemanticPageSegmentedContainer", "sap/m/semantic/ShareMenu", "sap/m/ActionSheet", "sap/m/OverflowToolbarLayoutData", "sap/m/Button"], function(jQuery, SemanticPage, SemanticType, SemanticPageRenderer, SegmentedContainer, ShareMenu, ActionSheet, OverflowToolbarLayoutData, Button) {
+sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/semantic/SemanticPageSegmentedContainer", "sap/m/semantic/ShareMenu", "sap/m/ActionSheet", "sap/m/Button"],
+		function(jQuery, SemanticPage, SemanticConfiguration, SemanticPageRenderer, SegmentedContainer, ShareMenu, ActionSheet, Button) {
 	"use strict";
 
 	/**
@@ -53,13 +54,11 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 		renderer: SemanticPageRenderer.render
 	});
 
-	ShareMenuPage.prototype._PositionInPage = jQuery.extend({ shareMenu: "shareMenu" }, SemanticPage.prototype._PositionInPage);
-
 	ShareMenuPage.prototype._getSemanticPositionsMap = function (oControl, oConfig) {
 
 		if (!this._oPositionsMap) {
 			this._oPositionsMap = SemanticPage.prototype._getSemanticPositionsMap.apply(this, arguments);
-			this._oPositionsMap[ShareMenuPage.prototype._PositionInPage.shareMenu] = {
+			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.shareMenu] = {
 				oContainer: this._getSegmentedShareMenu().getSection("semantic"),
 				sAggregation: "content"
 			};

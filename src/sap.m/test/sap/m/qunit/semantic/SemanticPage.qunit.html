@@ -21,7 +21,10 @@
 
 		jQuery.sap.require("sap.m.semantic.SemanticPage");
 		jQuery.sap.require("sap.m.semantic.SemanticButton");
-		jQuery.sap.require("sap.m.semantic.SemanticType");
+		jQuery.sap.require("sap.m.semantic.PositiveAction");
+		jQuery.sap.require("sap.m.semantic.FlagAction");
+		jQuery.sap.require("sap.m.semantic.FavoriteAction");
+		jQuery.sap.require("sap.m.semantic.EditAction");
 		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		var _SemanticPageTypes = {
@@ -229,7 +232,7 @@
 			oSemanticPage.setSubHeader(oBar);
 			strictEqual(oSemanticPage.getAggregation("_page").getSubHeader(), oBar, "Subheader is set to Bar");
 
-			//TODO: check how restrictions of type re imposed
+			//TODO: check how restrictions of type are imposed
 			//oSemanticPage.setSubHeader(oTitle);
 			//ok(!(oSemanticPage.getAggregation("_page").getSubHeader() instanceof sap.m.Title), "Subheader content should not allow adding components that does not implement IBar interface");
 
@@ -542,23 +545,195 @@
 			oPage.destroy();
 		});
 
+
+		test("add positiveAction", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPositiveAction = new sap.m.semantic.PositiveAction();
+
+			//act
+			oPage.setPositiveAction(oPositiveAction);
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+
+			notEqual(oPage.getPositiveAction(), null, "page has positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("remove positiveAction via set to null", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPositiveAction = new sap.m.semantic.PositiveAction();
+
+			oPage.setPositiveAction(oPositiveAction);
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+
+			equal(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+
+			//act
+			oPage.setPositiveAction(null);
+			var oRevievedAction = oPage.getPositiveAction();
+			equal(oRevievedAction, null, "page has no positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("remove positiveAction via set to undefined", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPositiveAction = new sap.m.semantic.PositiveAction();
+
+			oPage.setPositiveAction(oPositiveAction);
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+
+			equal(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+
+			//act
+			oPage.setPositiveAction(undefined);
+			var oRevievedAction = oPage.getPositiveAction();
+			equal(oRevievedAction, null, "page has no positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("destroy positiveAction", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPositiveAction = new sap.m.semantic.PositiveAction();
+
+			oPage.setPositiveAction(oPositiveAction);
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+
+			equal(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+
+			//act
+			oPage.destroyPositiveAction(undefined);
+			var oRevievedAction = oPage.getPositiveAction();
+			equal(oRevievedAction, null, "page has no positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
+			strictEqual(oPositiveAction.bIsDestroyed, true, "action is destroyed");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("add saveAsTileAction", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oSaveAsTileAction = new sap.m.Button({text: "Save as tile"});
+
+			//act
+			oPage.setSaveAsTileAction(oSaveAsTileAction);
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+
+			var oRetrievedAction = oPage.getSaveAsTileAction();
+			equal(oRetrievedAction, oSaveAsTileAction, "page has saveAsTile action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length"); //save as tile has replaced shareButton
+			strictEqual(oPage._getPage().getFooter().getContent()[1], oSaveAsTileAction, "footer contains saveAsTile button");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("remove saveAsTileAction by setting it to null", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oSaveAsTileAction = new sap.m.Button({text: "Save as tile"});
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+			oPage.setSaveAsTileAction(oSaveAsTileAction);
+			equal(oPage.getSaveAsTileAction(), oSaveAsTileAction, "page has saveAsTile action");
+
+			//act
+			oPage.setSaveAsTileAction(null);
+
+			//check
+			equal(oPage.getSaveAsTileAction(), null, "page no longer has saveAsTile action");
+			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
+			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("remove saveAsTileAction by setting it to undefined", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oSaveAsTileAction = new sap.m.Button({text: "Save as tile"});
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+			oPage.setSaveAsTileAction(oSaveAsTileAction);
+			equal(oPage.getSaveAsTileAction(), oSaveAsTileAction, "page has saveAsTile action");
+
+			//act
+			oPage.setSaveAsTileAction(undefined);
+
+			//check
+			equal(oPage.getSaveAsTileAction(), null, "page no longer has saveAsTile action");
+			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
+			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("destroy saveAsTileAction", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oSaveAsTileAction = new sap.m.Button({text: "Save as tile"});
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+			oPage.setSaveAsTileAction(oSaveAsTileAction);
+			equal(oPage.getSaveAsTileAction(), oSaveAsTileAction, "page has saveAsTile action");
+
+			//act
+			oPage.destroySaveAsTileAction();
+
+			//check
+			equal(oPage.getSaveAsTileAction(), null, "page no longer has saveAsTile action");
+			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
+			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+			strictEqual(oSaveAsTileAction.bIsDestroyed, true, "button is destroyed");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+
+		/*
+		//TODO: verity this test is probably not relevant anymore because we do not have multiple element semantic aggregations anymore
+
 		test("SemanticControls binding", function () {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
 					tooltip: "Martin",
-					buttonType: "Reject"
+					text: "Positive"
 				}
 				]
 			});
 
 			var oPage = new sap.m.semantic.DetailPage({
-				semanticControls: {
+				positiveAction: {
 					path: "/data",
-					template: new sap.m.semantic.SemanticButton({
-								type: sap.m.semantic.SemanticType.Approve,
+					template: new sap.m.semantic.PositiveAction({
 								tooltip: "{tooltip}",
-								buttonType: "{buttonType}"
+								text: "{text}"
 							}
 					)
 				}
@@ -568,16 +743,16 @@
 
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
-			strictEqual(oPage.getSemanticControls().length, 1, "page has semantic content");
+			notEqual(oPage.getPositiveAction(), null, "page has semantic content");
 			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
 
-			var oButton = oPage.getSemanticControls()[0];
-			strictEqual(oButton.getButtonType(), "Reject", "content has correct button type");
-			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			var oButton = oPage.getPositiveAction();
+			//strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			//strictEqual(oButton.getText(), "Positive", "content has correct tooltip");
 
 			// Clean up
 			oPage.destroy();
-		});
+		}); */
 
 		module("Semantic Share Button should behave correctly", {
 			setUp: function () {
@@ -593,11 +768,10 @@
 			var oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {
 						customShareMenuContent: [new sap.m.Button("customBtnId", {text: "custom"})]
 					}),
-					oFlagButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Flag}),
-					oFavorite = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Favorite}),
+					oFlagButton = new sap.m.semantic.FlagAction(),
+					oFavorite = new sap.m.semantic.FavoriteAction(),
 					iFooterContentLength = oDetailPage._getPage().getFooter().getContent().length,
 					oExpectedButton = oDetailPage._getPage().getFooter().getContent()[iFooterContentLength-1];
-
 
 			function _getActualButton() {
 				var content = oDetailPage._getPage().getFooter().getContent();
@@ -608,14 +782,14 @@
 			strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last by default");
 
 			// Act
-			oDetailPage.addSemanticControl(oFlagButton);
+			oDetailPage.setFlagAction(oFlagButton);
 
 			// Assert
 			strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is added");
 
 			// Act
 			var content = oDetailPage._getPage().getFooter().getContent();
-			oDetailPage.insertSemanticControl(oFavorite, content.length - 1);
+			oDetailPage.setFavoriteAction(oFavorite);
 
 			// Assert
 			strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is inserted at the last index");
@@ -658,7 +832,7 @@
 			var oLabel = new sap.m.Label({text: "CustomLblRight"}),
 					oSecondLabel = new sap.m.Label({text: "CustomLbl2"}),
 					oButton = new sap.m.Button({text: "CustomBtnRight"}),
-					oSemanticButton = new sap.m.semantic.SemanticButton({type: sap.m.semantic.SemanticType.Edit}),
+					oSemanticButton = new sap.m.semantic.EditAction(),
 					oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {
 						customFooterContent: [oLabel, oButton]
 					});
@@ -689,7 +863,7 @@
 
 		module("SemanticControls positioning");
 
-		test("SemanticControls are positioned in the correct inner aggregation", function () {
+		/*test("SemanticControls are positioned in the correct inner aggregation", function () {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{ type: sap.m.semantic.SemanticType.Edit },
@@ -824,7 +998,7 @@
 
 			// Clean up
 			oPage.destroy();
-		});
+		});*/
 
 		module("Construction/Destruction", {
 			setUp: function () {

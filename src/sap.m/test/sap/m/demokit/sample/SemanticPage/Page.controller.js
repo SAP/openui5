@@ -26,14 +26,21 @@ sap.ui.define([
 		);
 	},
 	onPress: function (evt) {
+
 		sap.m.MessageToast.show("Pressed custom button " + evt.getSource().getId());
 	},
-	onSemanticButtonPress: function (evt) {
-		sap.m.MessageToast.show("Pressed: " + evt.getSource().getType());
+	onSemanticButtonPress: function (oEvent) {
+
+		var sAction = oEvent.oSource.getMetadata().getName();
+		sAction = sAction.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+
+		sap.m.MessageToast.show("Pressed: " + sAction);
 	},
 	onSemanticSelectChange: function (oEvent, oData) {
-		var sType = oEvent.oSource.getType();
-		var sStatusText = sType + " by " + oEvent.oSource.getSelectedItem().getText();
+		var sAction = oEvent.oSource.getMetadata().getName();
+		sAction = sAction.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+
+		var sStatusText = sAction + " by " + oEvent.oSource.getSelectedItem().getText();
 		sap.m.MessageToast.show("Selected: " + sStatusText);
 	},
 	onNavButtonPress: function (evt) {
