@@ -777,16 +777,86 @@
 		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, true, assert);
 	});
 
-	QUnit.module("Properties", {
+	QUnit.module("Binding", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection();
+			var oData = {
+				"items" : [{
+					"contributor" : "Susan Baker",
+					"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+					"fileName" : "Screenshot.ico",
+					"fileSize" : 20,
+					"thumbnailUrl" : "",
+					"uploadedDate" : "2014-07-30",
+					"url" : ""
+				}]
+			};
+			this.oModel = new sap.ui.model.json.JSONModel(oData);
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			}).setModel(this.oModel);
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+			this.oModel.destroy();
+			this.oModel = null;
 		}
 	});
+
+	QUnit.test("Model refresh with empty data", function(assert) {
+		this.oModel.setProperty("/items", null);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(this.oUploadCollection.getItems().length, 0);
+		assert.strictEqual(this.oUploadCollection.aItems.length, 0);
+		assert.strictEqual(this.oUploadCollection._oList.getItems().length, 0);
+	});
+
+	QUnit.test("Model refresh with more data", function(assert) {
+		this.oModel.setProperty("/items", [{
+			"contributor" : "Susan Baker",
+			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"fileName" : "Screenshot.ico",
+			"fileSize" : 20,
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-07-30",
+			"url" : ""
+		}, {
+			"contributor" : "Susan Baker",
+			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"fileName" : "Screenshot.ico",
+			"fileSize" : 20,
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-07-30",
+			"url" : ""
+		}]);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(this.oUploadCollection.getItems().length, 2);
+		assert.strictEqual(this.oUploadCollection.aItems.length, 2);
+		assert.strictEqual(this.oUploadCollection._oList.getItems().length, 2);
+	});
+
+	QUnit.test("Model refresh like ODataModel - check number of list preparation", function(assert) {
+		sinon.spy(this.oUploadCollection, "_fillList");
+		this.oModel.setProperty("/items", null);
+		this.oModel.setProperty("/items", [{
+			"contributor" : "Susan Baker",
+			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"fileName" : "Screenshot.ico",
+			"fileSize" : 20,
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-07-30",
+			"url" : ""
+		}]);
+		sap.ui.getCore().applyChanges();
+		assert.ok(this.oUploadCollection._fillList.calledOnce);
+		this.oUploadCollection._fillList.restore();
+	});
+
 </script>
 
 </head>
