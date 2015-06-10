@@ -257,10 +257,11 @@
 			strictEqual(typeof sap.ui.base.ExpressionParser.parse.args[0][0], "function");
 			strictEqual(sap.ui.base.ExpressionParser.parse.args[0][1], oFixture.expression);
 			strictEqual(sap.ui.base.ExpressionParser.parse.args[0][2], 2);
-			deepEqual(oBindingInfo, {formatter: oParseResult.result.formatter,
-					parts: oFixture.parts
-				},
-				"binding info in success case");
+			deepEqual(oBindingInfo, {
+				formatter: oParseResult.result.formatter,
+				mode: sap.ui.model.BindingMode.OneWay,
+				parts: oFixture.parts
+			}, "binding info in success case");
 		});
 	});
 
@@ -383,6 +384,21 @@
 
 		oModel.setProperty("/blue", true);
 		strictEqual(oIcon.getColor(), "blue");
+	});
+
+	test("Expression binding: one time binding", function () {
+		var oIcon = new sap.ui.core.Icon(),
+			oModel = new sap.ui.model.json.JSONModel({blue: false});
+
+		oIcon.setModel(oModel);
+		oIcon.bindProperty("color", parse("{:= ${/blue} ? 'blue' : 'red' }"));
+		strictEqual(oIcon.getColor(), "red");
+
+		oModel.setProperty("/blue", true);
+		strictEqual(oIcon.getColor(), "red", "one time binding -> value unchanged");
+
+		oIcon.bindProperty("color", parse("{/blue} {:= 'green' }"));
+		strictEqual(oIcon.getColor(), "true green");
 	});
 
 	</script>

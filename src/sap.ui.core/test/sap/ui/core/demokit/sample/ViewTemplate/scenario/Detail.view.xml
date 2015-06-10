@@ -13,7 +13,7 @@
 			<template:if test="{entityType>com.sap.vocabularies.UI.v1.LineItem}">
 				<!-- Note: this limits the data shown to 5 rows! -->
 				<Table includeItemInSelection="true" mode="SingleSelectMaster" selectionChange="onSelectionChange"
-						items="{= '{path:\'/' + ${meta>name} + '\', length: 5}' }">
+						items="{:= '{path:\'/' + ${meta>name} + '\', length: 5}' }">
 					<template:with path="entityType>com.sap.vocabularies.UI.v1.LineItem" var="target">
 						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
 					</template:with>

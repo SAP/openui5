@@ -3,8 +3,9 @@
  */
 
 // Provides static class sap.ui.base.BindingParser
-sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
-	function(jQuery, ExpressionParser/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingMode',
+		'jquery.sap.script'],
+	function(jQuery, ExpressionParser, BindingMode/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -308,6 +309,38 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			m,
 			oEmbeddedBinding;
 
+		/**
+		 * Parses an expression. Sets the flags accordingly.
+		 *
+		 * @param {string} sInput The input string to parse from
+		 * @param {number} iStart The start index
+		 * @param {sap.ui.model.BindingMode} oBindingMode the binding mode
+		 * @returns {object} a result object with the binding in <code>result</code> and the index
+		 * after the last character belonging to the expression in <code>at</code>
+		 * @throws SyntaxError if the expression string is invalid
+		 */
+		function expression(sInput, iStart, oBindingMode) {
+			var oBinding = ExpressionParser.parse(resolveEmbeddedBinding.bind(null, oEnv), sString,
+					iStart);
+			if (sInput.charAt(oBinding.at) !== "}") {
+				throw new SyntaxError("Expected '}' and instead saw '"
+					+ sInput.charAt(oBinding.at)
+					+ "' in expression binding "
+					+ sInput
+					+ " at position "
+					+ oBinding.at);
+			}
+			oBinding.at += 1;
+			if (oBinding.result) {
+				oEnv.bNotJustSimple = true;
+				oBinding.result.mode = oBindingMode;
+			} else {
+				aFragments[aFragments.length - 1] = String(oBinding.constant);
+				bUnescaped = true;
+			}
+			return oBinding;
+		}
+
 		rFragments.lastIndex = 0; //previous parse call may have thrown an Error: reset lastIndex
 		while ( (m = rFragments.exec(sString)) !== null ) {
 			
@@ -325,25 +358,10 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 				
 			} else {
 				aFragments.push(oBindingInfo.parts.length);
-				if (sString.charAt(m.index + 1) === "=") { //expression
-					oEmbeddedBinding = ExpressionParser.parse(
-						resolveEmbeddedBinding.bind(null, oEnv),
-						sString, m.index + 2);
-					if (sString.charAt(oEmbeddedBinding.at) !== "}") {
-						throw new SyntaxError("Expected '}' and instead saw '"
-							+ sString.charAt(oEmbeddedBinding.at)
-							+ "' in expression binding "
-							+ sString
-							+ " at position "
-							+ oEmbeddedBinding.at);
-					}
-					oEmbeddedBinding.at += 1;
-					if (oEmbeddedBinding.result) {
-						oEnv.bNotJustSimple = true;
-					} else {
-						aFragments[aFragments.length - 1] = String(oEmbeddedBinding.constant);
-						bUnescaped = true;
-					}
+				if (sString.indexOf(":=", m.index) === m.index + 1) {
+					oEmbeddedBinding = expression(sString, m.index + 3, BindingMode.OneTime);
+				} else if (sString.charAt(m.index + 1) === "=") { //expression
+					oEmbeddedBinding = expression(sString, m.index + 2, BindingMode.OneWay);
 				} else {
 					oEmbeddedBinding = resolveEmbeddedBinding(oEnv, sString, m.index);
 				}

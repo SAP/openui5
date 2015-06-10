@@ -6,7 +6,7 @@
 		<template:with path="entityType>com.sap.vocabularies.UI.v1.Chart#Dimensions" var="chart">
 			<template:if test="{chart>}">
 				<Table headerText="{path: 'chart>Title', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
-					items="{= '{path:\'/' + ${meta>name} + '\', length: 3}' }">
+					items="{:= '{path:\'/' + ${meta>name} + '\', length: 3}' }">
 					<columns>
 						<Column> <!--  Empty cell in upper left corner --> </Column>
 						<template:repeat list="{chart>Measures}" var="column">
