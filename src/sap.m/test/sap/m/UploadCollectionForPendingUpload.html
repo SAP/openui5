@@ -47,6 +47,10 @@
 	function fnUploadComplete(oEvent) {
 		sap.m.MessageToast.show("Event uploadComplete triggered");
 	}
+	function fnUpload(oEvent) {
+		oUploadCollection.upload();
+		sap.m.MessageToast.show("Method Upload is called");
+	}
 	// create instance of UploadCollection and set model
 	var oUploadCollection = new sap.m.UploadCollection({
 		maximumFilenameLength : 55,
@@ -64,12 +68,16 @@
 		uploadComplete : fnUploadComplete,
 		});
 
+	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
+
 /* =========================================================== */
 /* Create Page                   */
 /* =========================================================== */
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection with Pending Uploading Files",
-		content : oUploadCollection
+		content : oUploadCollection,
+		footer : new sap.m.Bar({
+			contentMiddle: oButton })
 		});
 // create a mobile App embedding the page and place the App into the HTML document
 	var app = new sap.m.App("myApp", {

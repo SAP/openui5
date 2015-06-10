@@ -65,7 +65,8 @@ QUnit.test("Container for FileUploader instances is created and destroyed when e
 
 QUnit.test("Test for method '_getFileUploader' for instantUpload = false", function(assert) {
 	var oUploadCollection = new sap.m.UploadCollection({
-		instantUpload : false
+		instantUpload : false,
+		multiple : true
 	});
 	var oFileUploader1 = oUploadCollection._getFileUploader();
 	var oFileUploader2 = oUploadCollection._getFileUploader();
@@ -74,6 +75,7 @@ QUnit.test("Test for method '_getFileUploader' for instantUpload = false", funct
 	oUploadCollection._aFileUploadersForPendingUpload.push(oFileUploader2);
 	oUploadCollection.exit();
 	assert.ok(!oUploadCollection._aFileUploadersForPendingUpload, "Array oUploadCollection._aFileUploadersForPendingUpload should not exist any longer after exit");
+	assert.ok(!oFileUploader1.getMultiple(), "FileUploader should be initialized for the time being with multiple = false even if UploadCollection.multiple = true");
 });
 
 QUnit.test("Test for method _onChange for instantUpload = false", function(assert) {
@@ -87,7 +89,7 @@ QUnit.test("Test for method _onChange for instantUpload = false", function(asser
 	var oFileUploader = oUploadCollection._getFileUploader();
 	oFileUploader.fireChange({files: aFiles});
 	assert.deepEqual(oFileUploader, oUploadCollection._aFileUploadersForPendingUpload[0], "Array _aFileUploadersForPendingUpload should contain the FileUploader instance on which Change Event was fired");
-	assert.equal(oFileUploader.getId(), oUploadCollection.getItems()[0].getAssociation("fileUploader"), "Association fileUploader should contain the FileUploader ID with which the Change event was fired");
+	assert.deepEqual(oFileUploader, sap.ui.getCore().byId(oUploadCollection.getItems()[0].getAssociation("fileUploader")), "Association fileUploader should contain the FileUploader instance with which the Change event was fired");
 	assert.equal(oUploadCollection.getItems()[0]._status, sap.m.UploadCollection._pendingUploadStatus, "Item should have the 'pendingUploadStatus'");
 });
 
@@ -189,10 +191,6 @@ QUnit.module("Rendering of an item with instantUpload = false ", {
 
 	setup : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("uploadCollection1", {
-			items : {
-				path : "/items",
-				template : oItemTemplate
-			},
 			instantUpload : false
 		});
 		this.oUploadCollection.placeAt("uiArea");

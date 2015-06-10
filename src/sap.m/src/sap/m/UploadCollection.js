@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.UploadCollection.
-sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library', 'sap/ui/core/Control', 'sap/ui/unified/library'],
-	function(jQuery, MessageBox, MessageToast, library, Control, library1) {
+sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library', 'sap/ui/core/Control', 'sap/ui/unified/library', 'sap/ui/core/format/FileSizeFormat', 'sap/m/ObjectAttribute'],
+	function(jQuery, MessageBox, MessageToast, library, Control, library1, FileSizeFormat, ObjectAttribute) {
 	"use strict";
 
 	/**
@@ -42,6 +42,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				Control.apply(this, arguments);
 				if (bInstantUpload === false) {
 					this.setProperty("instantUpload", bInstantUpload, true);
+					this._oFormatDecimal = FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 1, maxIntegerDigits: 3});
 				}
 			} catch (e) {
 				this.destroy();
@@ -1544,7 +1545,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._onChange = function(oEvent) {
 		if (oEvent) {
 			var that = this;
-			var sRequestValue, iCountFiles, i, sFileName;
+			var sRequestValue, iCountFiles, i, sFileName, oItem, sStatus, sFileSizeFormated, oAttr;
 			this._cAddItems = 0;
 			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 				// FileUploader does not support files parameter for IE9 for the time being
@@ -1621,7 +1622,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				});
 			}
 
-			var oItem, sStatus;
 			if (!this.getInstantUpload()) {
 				sStatus = UploadCollection._pendingUploadStatus;
 			} else {
@@ -1652,8 +1652,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					oItem._requestIdName = sRequestValue;
 					if (!this.getInstantUpload()) {
 						oItem.setAssociation("fileUploader",this._oFileUploader, true);
-						oItem.setFileSize(oEvent.getParameter("files")[i].size);
-						oItem._updateDeprecatedProperties();
+						sFileSizeFormated =  this._oFormatDecimal.format(oEvent.getParameter("files")[i].size);
+						oAttr = new ObjectAttribute({text: sFileSizeFormated});
+						oItem.insertAggregation("attributes", oAttr, true);
 						this.insertItem(oItem);
 						this._aFileUploadersForPendingUpload.push(this._oFileUploader);
 					} else {
