@@ -39,8 +39,6 @@ sap.ui.define(["jquery.sap.global"],
 
 		if (oControl.hasListeners("press")) {
 			oRm.writeAttribute("tabindex", 0);
-		} else {
-			oRm.writeAttribute("tabindex", -1);
 		}
 
 		if (oIconInfo) {

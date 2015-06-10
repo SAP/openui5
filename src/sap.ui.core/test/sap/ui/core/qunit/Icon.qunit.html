@@ -170,7 +170,7 @@
 				var $icon = this.oAriaIcon.$();
 
 				assert.strictEqual($icon.attr("role"), "presentation", "role should be set to presentation");
-				assert.strictEqual($icon.attr("tabindex"), "-1", "tabindex is set to -1");
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
 				assert.strictEqual($icon.attr("aria-label"), this.sIconName, "aria-label is output using icon text");
 
 				this.oAriaIcon.setTooltip(this.sTooltip);
@@ -189,7 +189,7 @@
 
 				assert.strictEqual($icon.attr("role"), "img", "role should be set to img");
 				assert.strictEqual($icon.attr("title"), this.sIconName, "title is rendered with property 'tooltip'");
-				assert.strictEqual($icon.attr("tabindex"), "-1", "tabindex is set to -1");
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
 			});
 
 			QUnit.test("press handler and accessbility", function(assert) {
@@ -203,7 +203,7 @@
 
 				this.oAriaIcon.detachPress(fnPressHandler);
 				assert.strictEqual($icon.attr("role"), "presentation", "role is set back to presentation");
-				assert.strictEqual($icon.attr("tabindex"), "-1", "tabindex is set back to -1");
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is output");
 			});
 
 			QUnit.test("alt and accessbility", function(assert) {

@@ -459,9 +459,8 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 
 		if (!this.hasListeners("press")) {
 			this.$().css("cursor", "default").attr({
-				role: this.getDecorative() ? "presentation" : "img",
-				tabindex: -1
-			});
+				role: this.getDecorative() ? "presentation" : "img"
+			}).removeAttr("tabindex");
 		}
 		return this;
 	};
