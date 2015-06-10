@@ -61,7 +61,7 @@ public class AnonymousLogLine {
 	 * 18: referrer if available
 	 * 19: user-agent
 	 */
-	private static final Pattern ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/openui5\\.(\\w\\w)\\d\\.hana\\.ondemand.com(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
+	private static Pattern ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/sapui5\\.(\\w\\w)\\d\\.hana\\.ondemand.com(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
 	
 	private static final Pattern RUNTIME_PATTERN = Pattern.compile("^/downloads/openui5-runtime-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
 	private static final Pattern MOBILE_PATTERN = Pattern.compile("^/downloads/openui5-runtime-mobile-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
@@ -93,6 +93,11 @@ public class AnonymousLogLine {
 	private String userAgent;
 	private String csvUserAgent; // a specially formatted and enriched user-agent string with browser information; only set when isBotLine was called (performance)
 
+	public static void initializeClass(String applicationName) {
+		ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d\\.hana\\.ondemand.com(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
+	}
+	
+	
 	private AnonymousLogLine(Date date, String ipCounter, Resource type, int code, String url, int firstNumber, int secondNumber, String referrer, Region region, String userAgent) {
 		super();
 		this.date = date;

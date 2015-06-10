@@ -223,6 +223,7 @@ public class AkamaiLogDownloader {
 	 * @param applicationConfig
 	 */
 	public void handleLogFiles(ApplicationConfig applicationConfig) {
+		AnonymousLogLine.initializeClass(applicationConfig.getApplication());
 		List<File> rawLogFiles = new ArrayList<File>();; // these will be the downloaded+unzipped log files that need to be parsed
 		final String knownFilesFileName = directory + File.separator + KNOWN_FILES_FILE_NAME + "_" + applicationConfig.getApplication() + ".json";
 		final File knownFilesFile = new File(knownFilesFileName);
@@ -312,7 +313,7 @@ public class AkamaiLogDownloader {
 
 		// Step 4: anonymize the log files
 		log("Anonymizing log files...");
-		List<FileWithDate> anonymizedLogFiles = this.anonymizeLogFiles(rawLogFiles);
+		List<FileWithDate> anonymizedLogFiles = this.anonymizeLogFiles(rawLogFiles, applicationConfig.getApplication());
 		if (anonymizedLogFiles.size() != rawLogFiles.size()) {
 			error(rawLogFiles.size() + " log file names known, but " + anonymizedLogFiles.size() + "files anonymized.");
 		} else {
@@ -612,10 +613,11 @@ public class AkamaiLogDownloader {
 	 * the 1x1 pixel gif, which is used to track GitHub page accesses)
 	 * 
 	 * @param rawLogFiles
+	 * @param applicationName
 	 * @private
 	 * @return
 	 */
-	private List<FileWithDate> anonymizeLogFiles(List<File> rawLogFiles) {
+	private List<FileWithDate> anonymizeLogFiles(List<File> rawLogFiles, String applicationName) {
 		List<FileWithDate> anonymizedLogFiles = new ArrayList<FileWithDate>();
 		Set<String> usedFileNames = new HashSet<String>();
 
@@ -626,7 +628,7 @@ public class AkamaiLogDownloader {
 				File file = rawLogFiles.get(i);
 
 				log(" - " + file.getName());
-				List<String> logLines = readAndAnonymizeFile(file);
+				List<String> logLines = readAndAnonymizeFile(file, applicationName);
 
 				String dateText = file.getName();
 				Matcher m = FILE_DATE_PATTERN.matcher(file.getName());
@@ -677,26 +679,26 @@ public class AkamaiLogDownloader {
 	 * @private
 	 * @return
 	 */
-	private List<String> readAndAnonymizeFile(File logFile) {
+	private List<String> readAndAnonymizeFile(File logFile, String applicationName) {
 		List<String> logLines = new ArrayList<String>(65536);
 		Map<String,Integer> ipAddressAnonymizer = new HashMap<String,Integer>(1024);
-
+		
 		// these strings mark relevant log entries
-		final String ANY_DOWNLOAD_FRAGMENT_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/downloads/openui5-";    // GET	/openui5.eu1.hana.ondemand.com/downloads/openui5-runtime-1.26.7.zip
-		final String ANY_DOWNLOAD_FRAGMENT_STRING_US = "GET	/openui5.us1.hana.ondemand.com/downloads/openui5-";
-		final String ANY_DOWNLOAD_FRAGMENT_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/downloads/openui5-";
-		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page="; // GET	/openui5.eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif
-		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_US = "GET	/openui5.us1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
-		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
-		final String DEMOKIT_PAGE_FRAGMENT_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/	";                  // GET	/openui5.eu1.hana.ondemand.com/	
-		final String DEMOKIT_PAGE_FRAGMENT_STRING_US = "GET	/openui5.us1.hana.ondemand.com/	";
-		final String DEMOKIT_PAGE_FRAGMENT_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/	";
-		final String DEMOKIT_ROBOTS_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/robots.txt	"; // robots requests are interesting, so we can filter out bots later
-		final String DEMOKIT_ROBOTS_STRING_US = "GET	/openui5.us1.hana.ondemand.com/robots.txt	";
-		final String DEMOKIT_ROBOTS_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/robots.txt	";
-		final String CORE_STRING_EU = "GET	/openui5.eu1.hana.ondemand.com/resources/sap-ui-core.js	";
-		final String CORE_STRING_US = "GET	/openui5.us1.hana.ondemand.com/resources/sap-ui-core.js	";
-		final String CORE_STRING_AP = "GET	/openui5.ap1.hana.ondemand.com/resources/sap-ui-core.js	";
+		final String ANY_DOWNLOAD_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/downloads/" + applicationName + "-";    // GET	/openui5.eu1.hana.ondemand.com/downloads/openui5-runtime-1.26.7.zip
+		final String ANY_DOWNLOAD_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/downloads/" + applicationName + "-";
+		final String ANY_DOWNLOAD_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/downloads/" + applicationName + "-";
+		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page="; // GET	/openui5.eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif
+		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
+		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
+		final String DEMOKIT_PAGE_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/	";                  // GET	/openui5.eu1.hana.ondemand.com/	
+		final String DEMOKIT_PAGE_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/	";
+		final String DEMOKIT_PAGE_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/	";
+		final String DEMOKIT_ROBOTS_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/robots.txt	"; // robots requests are interesting, so we can filter out bots later
+		final String DEMOKIT_ROBOTS_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/robots.txt	";
+		final String DEMOKIT_ROBOTS_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/robots.txt	";
+		final String CORE_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/resources/sap-ui-core.js	";
+		final String CORE_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/resources/sap-ui-core.js	";
+		final String CORE_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/resources/sap-ui-core.js	";
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(logFile));
