@@ -1,0 +1,119 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.Filtering.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				selectionMode="MultiToggle"
+				rows="{/ProductCollection}"
+				visibleRowCount="7"
+				enableCellFilter="{ui>/cellFilterOn}"
+				filter="filterPrice">
+				<toolbar>
+					<m:Toolbar>
+						<m:Title text="Products"></m:Title>
+						<m:ToolbarSpacer/>
+						<m:ToggleButton
+							icon="sap-icon://complete"
+							tooltip="Show available products only"
+							press="toggleAvailabilityFilter"
+							pressed="{ui>/availabilityFilterOn}"/>
+						<m:ToggleButton
+							icon="sap-icon://grid"
+							tooltip="Enable / Disable Cell Filter Functionality"
+							pressed="{ui>/cellFilterOn}"/>
+						<m:Button
+							icon="sap-icon://decline"
+							tooltip="Clear all filters"
+							press="clearAllFilters"/>
+						<m:ToolbarSeparator/>
+						<m:SearchField
+							placeholder="Filter"
+							value="{ui>/globalFilter}"
+							search="filterGlobally"
+							width="15rem"/>
+					</m:Toolbar>
+				</toolbar>
+				<columns>
+					<Column
+						width="11rem"
+						filterProperty="Name">
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}"/>
+						</template>
+					</Column>
+					<Column
+						width="11rem"
+						filterProperty="Category"
+						defaultFilterOperator="StartsWith">
+						<m:Label text="Category" />
+						<template>
+							<m:Text text="{Category}"/>
+						</template>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Image" />
+						<template>
+							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</template>
+					</Column>
+					<Column
+						id="availability"
+						width="9rem"
+						filterProperty="Available"
+						showFilterMenuEntry="false"
+						defaultFilterOperator="EQ"
+						filterType="sap.ui.model.type.Boolean">
+						<m:Label text="Status" />
+						<template>
+							<m:ObjectStatus text="{Status}" state="{
+								path: 'Available',
+								formatter: 'sap.ui.table.sample.TableExampleUtils.formatAvailableToObjectState'
+							}"/>
+						</template>
+					</Column>
+					<Column
+						id="price"
+						width="9rem"
+						filterProperty="Price">
+						<m:Label text="Price" />
+						<template>
+							<u:Currency value="{Price}" currency="{CurrencyCode}"/>
+						</template>
+					</Column>
+					<Column
+						width="6rem"
+						hAlign="End"
+						filterProperty="Quantity"
+						filterType="sap.ui.model.type.Integer">
+						<m:Label text="Quantity" />
+						<template>
+							<m:Label text="{
+								path: 'Quantity',
+								type: 'sap.ui.model.type.Integer'
+							}" />
+						</template>
+					</Column>
+				</columns>
+				<footer>
+					<m:Toolbar>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://hint"
+							tooltip="Show information"
+							press="showInfo"/>
+					</m:Toolbar>
+				</footer>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>
