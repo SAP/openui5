@@ -152,6 +152,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			if (_oHashChanger && oHashChanger) {
 				extendHashChangerEvents(oHashChanger);
 				_oHashChanger.destroy();
+
+				var fnGetHistoryInstance = jQuery.sap.getObject("sap.ui.core.routing.History.getInstance"),
+					oHistory;
+
+				// check if the history got loaded yet - if not there is no need to replace its hashchanger since it will ask for the global one
+				if (fnGetHistoryInstance) {
+					oHistory = fnGetHistoryInstance();
+					oHistory._setHashChanger(oHashChanger);
+				}
 			}
 
 			_oHashChanger = oHashChanger;

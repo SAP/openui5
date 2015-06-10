@@ -358,4 +358,31 @@
 		assert.strictEqual(oHistory.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should detect a forward navigation");
 		assert.strictEqual(oHistory._iHistoryLength, history.length, "should detect a forward navigation");
 	});
+
+	QUnit.test("Should set the hashChanger", function (assert) {
+		//System under Test + Arrange
+		var oInitialHashChanger = new sap.ui.core.routing.HashChanger();
+		var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+		oInitialHashChanger.init();
+		oSecondHashChanger.init();
+		var oHistory = new sap.ui.core.routing.History(oInitialHashChanger);
+
+		oInitialHashChanger.setHash("foo");
+
+		// Act
+		oHistory._setHashChanger(oSecondHashChanger);
+		assert.strictEqual(oHistory.aHistory[1], "foo", "should reflect changes of the first hashchanger");
+
+		// Should not be added to the hisotry
+		oInitialHashChanger.fireHashChanged("bar");
+		assert.strictEqual(oHistory.aHistory.length, 2, "should still have 2 entries in the history");
+
+		// Should be added
+		oSecondHashChanger.setHash("bar");
+
+		//Assert
+		assert.strictEqual(oHistory.aHistory.length, 3, "should have 3 entries in the history");
+		assert.strictEqual(oHistory.aHistory[2], "bar", "Did add an entry bar to the history");
+
+	});
 }());
