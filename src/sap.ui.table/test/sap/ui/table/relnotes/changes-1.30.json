@@ -97,7 +97,7 @@
         "id": "7f1abafa3ab5254102228c8878b4f5006dceccb2",
         "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
         "type": "FIX",
-        "text": "TreeTable.js: Removed 'undefined' function call",
+        "text": "TreeTable.js: Removed \u0027undefined\u0027 function call",
         "references": []
       },
       {
@@ -168,6 +168,104 @@
         "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.table.Table:  Focus indicator for table parts fixed",
+        "references": []
+      },
+      {
+        "id": "de8533f0bd08d8f27a3d9e307555d409dbbf4ec9",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "ClientTreeBindings: Sorting supported",
+        "references": []
+      },
+      {
+        "id": "485a8c23de277e54a319537b28ab7b0308ed57eb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.*: Screen reader for JAWS 16 implemented",
+        "references": []
+      },
+      {
+        "id": "02498bc028dd15be8e799b929321022098f0e035",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table.js: Auto busy indicator - removed doubled contexts",
+        "references": []
+      },
+      {
+        "id": "f2db9e55e242dfb25af23387ad84e412ce077fe9",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Screen reader for JAWS 16 implemented",
+        "references": []
+      },
+      {
+        "id": "fa470f8617529a507c6fd431df3a0fb9f2e6558a",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: GroupHeader no longer truncated",
+        "references": []
+      },
+      {
+        "id": "45fc94bfe0162f7d83b50dab19bccbd1cbd8a32c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Selection model issues when no binding is present fixed",
+        "references": []
+      },
+      {
+        "id": "97e08053500d9af285fb756b5d9392454ed51180",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Scrollbar flickering fixed",
+        "references": []
+      },
+      {
+        "id": "9e93c89e6cee6414e3137f76df59669b49053f9c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Last line toggles visibility",
+        "references": []
+      },
+      {
+        "id": "4a3b934adfbfdeefa93b06bb8ae904ffc74d4928",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: MultiHeader column menu opens DomRef",
+        "references": []
+      },
+      {
+        "id": "02daf76cb744293416d3b9c4bb7b2973d162e169",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: _setBusy in createRows function fixed",
+        "references": []
+      },
+      {
+        "id": "095890fc5ab5130479e4ae39204c7c6c89c9f438",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Problem with non-resizable columns fixed",
+        "references": []
+      },
+      {
+        "id": "a4c2ec2c4a3c639f5b1fd3d514d81fb4abd8dda6",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: text view creation in sap.m context",
+        "references": []
+      },
+      {
+        "id": "fcc8b402aa7d664ba54e17ca143e12e93e18ee7b",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: attachSelectionChanged for client tree bindings implemented",
+        "references": []
+      },
+      {
+        "id": "c4369f794e92d2e77d17234f7542f58e28c36f38",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Apply call when second parameter must be an argument",
         "references": []
       }
     ]

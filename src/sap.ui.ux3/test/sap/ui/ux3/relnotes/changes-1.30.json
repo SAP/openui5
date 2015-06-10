@@ -17,13 +17,6 @@
         "references": []
       },
       {
-        "id": "bc1774c796f57d0923c836a84d548592e680f77a",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
-        "type": "INTERNAL",
-        "text": "Fix JSDoc issues as reported during nightly build",
-        "references": []
-      },
-      {
         "id": "925f97fe87ecb1d52d992de8becebed26966812a",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
@@ -63,6 +56,20 @@
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "ux3.ToolPopup: Fixed popup position after changing its size",
+        "references": []
+      },
+      {
+        "id": "144726d39fecbb39ad7f00e2f9a94e973f952214",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: Overflow when ToolPopup exceeds window fixed",
+        "references": []
+      },
+      {
+        "id": "d53dc0e325b7a183a7852d2fe482a8fb2f283490",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: ToolPopup made aware when content re-renders",
         "references": []
       }
     ]

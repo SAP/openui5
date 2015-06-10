@@ -181,7 +181,7 @@
         "id": "9a57a5cbd63df5fd92a7391bb0775595c0b1a4bb",
         "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ToggleButton: Fixed the custom button's outline - CSS issue (Internet Explorer)",
+        "text": "sap.m.ToggleButton: Fixed the custom button\u0027s outline - CSS issue (Internet Explorer)",
         "references": []
       },
       {
@@ -224,6 +224,111 @@
         "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.unified.Menu/sap.ui.commons.Menu: Internet Explorer 8 support removed",
+        "references": []
+      },
+      {
+        "id": "32fd527969248a8ac58ab56154cc4ef513e670ae",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.QuickView: New control added",
+        "references": []
+      },
+      {
+        "id": "c6b392760505cc3bb94b3b71260746c414f34cca",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Theming: Background customizing fixed for UShell control (Lauchpad)",
+        "references": []
+      },
+      {
+        "id": "4d8c6a6806f1fde33ea176dfa6ec6b8995f82a05",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Scrollbars in 100% height containers avoided",
+        "references": []
+      },
+      {
+        "id": "f045bd4968a9b061f4dd5c74cee111b4285148cb",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Fixed the height of ActionSheet on phones",
+        "references": []
+      },
+      {
+        "id": "39569d341dfae15af03565c41c73e4dcb826bd68",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar: Fixed search field value in sub header bar",
+        "references": []
+      },
+      {
+        "id": "f7d2503e9d66b2f0588f4e7f70158c5d8883e7fe",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Focus outline drawn on mobile devices fixed",
+        "references": []
+      },
+      {
+        "id": "ec0561e7a5c6b3a771c39574afa53ffa249f7564",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Height and line-height of the arrow button fixed",
+        "references": []
+      },
+      {
+        "id": "889d2abf966217701d0576e4df193e7644e704ae",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Input field text no longer overflows in arrow button in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "4d9ae607aa6338527679ee176f8cc7825d72b26b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Long text no longer covers picker icon in Internet Explorer 9/10",
+        "references": []
+      },
+      {
+        "id": "e10fbe9daecb4df7a33fa422408fc722680f2958",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Value no longer used for tokenizer indicator",
+        "references": []
+      },
+      {
+        "id": "4cefa44f8c01c5bdbce28de8bf7868a15546ee83",
+        "author": "Borislav Yovchev \u003cborislav.yovchev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Font size in tables aligned with design spec",
+        "references": []
+      },
+      {
+        "id": "1505951ec6a8d8b5aca05f7768b501432aa8bc10",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: Focused icon now has proper border placement",
+        "references": []
+      },
+      {
+        "id": "ffb87b5a66ceeb7899080ebf3ec867e0c8b2f3bb",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Arrow color corrected when NavContainer has a header",
+        "references": []
+      },
+      {
+        "id": "a6d577a062abf4db234d9abfe9e3dd0c5eefe954",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Firefox bugs with buttons and file name corrected",
+        "references": []
+      },
+      {
+        "id": "8ccdb3d0119cf91bff89b6cffbf61814cced86da",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
         "references": []
       }
     ]

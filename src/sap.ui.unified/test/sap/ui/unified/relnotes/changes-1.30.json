@@ -120,6 +120,41 @@
         "type": "FIX",
         "text": "sap.ui.unified.FileUploader: Width for buttonOnly mode fixed",
         "references": []
+      },
+      {
+        "id": "119415e1724fa3aa01f0701f1841c07c0a7abff6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar, sap.m.DatePicker: Added support for Islamic calendar",
+        "references": []
+      },
+      {
+        "id": "b016147a55b84ff1898cdfdf2bff8dedf94970ab",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.FileUploader: uploadStart event introduced",
+        "references": []
+      },
+      {
+        "id": "aeb2c3e3fd988252e4f17d584989b2ef6b68fb93",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unifiedFileUploader:  ARIA support added",
+        "references": []
+      },
+      {
+        "id": "87a99241ce98d28e0b0ebba26a07ca50802f38af",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Fileuploader is now vertically aligned with other sap.m controls",
+        "references": []
+      },
+      {
+        "id": "2c2d2f5709c15279300439938decb48d46c4a4bf",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setTooltip() fixed",
+        "references": []
       }
     ]
   }

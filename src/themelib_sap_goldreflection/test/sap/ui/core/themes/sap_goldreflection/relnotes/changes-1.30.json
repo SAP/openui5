@@ -22,6 +22,13 @@
         "type": "FIX",
         "text": "sap.ui.unified.Menu/sap.ui.commons.Menu: Internet Explorer 8 support removed",
         "references": []
+      },
+      {
+        "id": "4d8c6a6806f1fde33ea176dfa6ec6b8995f82a05",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Scrollbars in 100% height containers avoided",
+        "references": []
       }
     ]
   }

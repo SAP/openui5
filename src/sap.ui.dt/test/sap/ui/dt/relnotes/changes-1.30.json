@@ -50,6 +50,13 @@
         "type": "FIX",
         "text": "sap.ui.dt : Fixed bNestedView handling and unsupported badge",
         "references": []
+      },
+      {
+        "id": "d0d084de1a767ef9c6d330977fe9f320ab440857",
+        "author": "Marius Augenstein \u003cmarius.augenstein@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.dt: Added utility function to find the next parent block",
+        "references": []
       }
     ]
   }
