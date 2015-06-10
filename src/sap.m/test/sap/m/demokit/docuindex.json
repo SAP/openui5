@@ -867,7 +867,8 @@
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5",
+		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5.",
+		  "docuLink": "#docs/guide/3da5f4be63264db99f2e5b04c5e853db.html",
 		  "samplesAsSteps": [
 			"Hello World!",
 			"Bootstrap",

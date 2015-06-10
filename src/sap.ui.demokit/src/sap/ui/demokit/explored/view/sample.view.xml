@@ -9,14 +9,14 @@
 		<headerContent>
 			<Button
 				id="prevSample"
-				icon="sap-icon://up"
+				icon="sap-icon://navigation-up-arrow"
 				class="sapUiHideOnPhone"
 				tooltip="{i18n>samplePreviousTooltip}"
 				enabled="{= ${/previousSampleId} !== undefined }"
 				press="onPreviousSample"/>
 			<Button
 				id="nextSample"
-				icon="sap-icon://down"
+				icon="sap-icon://navigation-down-arrow"
 				class="sapUiHideOnPhone"
 				tooltip="{i18n>sampleNextTooltip}"
 				enabled="{= ${/nextSampleId} !== undefined }"
