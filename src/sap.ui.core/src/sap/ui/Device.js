@@ -663,7 +663,7 @@ if (typeof window.sap.ui !== "object") {
 				mobile: false // TODO: really?
 			};
 		} else if ( b.edge ) {
-			jQuery.sap.log.warning("New MS Edge browser detected. Be aware that is an experimental detection as the user agent may still change.", _ua);
+			logger.log(WARNING, "New MS Edge browser detected. Be aware that is an experimental detection as the user agent may still change.", _ua);
 			var version = version = parseFloat(b.version);
 			return {
 				name: BROWSER.EDGE,
