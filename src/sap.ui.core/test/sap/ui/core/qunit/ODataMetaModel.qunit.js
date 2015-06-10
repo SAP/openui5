@@ -2,15 +2,15 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/model/BindingMode", "sap/ui/model/ClientContextBinding", "sap/ui/model/Context",
-	"sap/ui/model/FilterProcessor",
+	"sap/ui/base/BindingParser", "sap/ui/model/BindingMode", "sap/ui/model/ClientContextBinding",
+	"sap/ui/model/Context", "sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/MetaModel", "sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel"
-], function(BindingMode, ClientContextBinding, Context, FilterProcessor, JSONListBinding,
-	JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel, ODataModel,
-	ODataModel2) {
+], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
+	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel,
+	ODataModel, ODataModel2) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
@@ -775,6 +775,9 @@ sap.ui.require([
 			.withExactArgs("Invalid query: '/dataServices/' does not point to an array",
 				"/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
 				"sap.ui.model.odata.ODataMetaModel");
+		oLogMock.expects("error")
+			.withExactArgs("no closing braces found in '[${namespace==='GWSAMPLE_BASIC']/"
+				+ "entityType' after pos:2", undefined, "sap.ui.base.ExpressionParser");
 
 		return withMetaModel(function (oMetaModel) {
 			[{
@@ -822,10 +825,32 @@ sap.ui.require([
 			}, { // query on non-array
 				i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
 				o: null,
+			}, { // stupid query with [], but returning true
+				i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]/entityType",
+				o: "/dataServices/schema/0/entityType",
+			}, { // syntax error in query
+				i: "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
+				o: undefined,
+			}, { // search for the first property having a maxLength
+				i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
+				o: "/dataServices/schema/0/entityType/0/property/1",
 			}].forEach(function (oFixture) {
 				strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c),
 					oFixture.o ? oMetaModel.oModel.getObject(oFixture.o) : oFixture.o, oFixture.i);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("_getObject: some error in parseExpression (not SyntaxError)", function () {
+		var oError = new Error();
+
+		this.mock(BindingParser).expects("parseExpression").throws(oError);
+
+		return withMetaModel(function (oMetaModel) {
+			throws(function () {
+				oMetaModel.getObject("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']");
+			}, oError);
 		});
 	});
 
