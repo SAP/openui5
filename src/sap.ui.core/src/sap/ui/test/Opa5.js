@@ -73,6 +73,11 @@ sap.ui.define(['jquery.sap.global',
 			}
 
 			return this.waitFor({
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false,
 				check : function () {
 					if (!bFrameLoaded) {
 						return;
@@ -80,7 +85,7 @@ sap.ui.define(['jquery.sap.global',
 
 					return checkForUI5ScriptLoaded();
 				},
-				timeout : iTimeout || 90,
+				timeout : iTimeout || 80,
 				errorMessage : "unable to load the iframe with the url: " + sSource
 			});
 		}
