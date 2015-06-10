@@ -256,7 +256,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		Calendar.prototype.removeAllSpecialDates = function() {
 
 			this._bDateRangeChanged = true;
-			var aRemoved = this.removeAllAggregation("selectedDates");
+			var aRemoved = this.removeAllAggregation("specialDates");
 			return aRemoved;
 
 		};
@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		Calendar.prototype.destroySpecialDates = function() {
 
 			this._bDateRangeChanged = true;
-			var oDestroyed = this.destroyAggregation("selectedDates");
+			var oDestroyed = this.destroyAggregation("specialDates");
 			return oDestroyed;
 
 		};
