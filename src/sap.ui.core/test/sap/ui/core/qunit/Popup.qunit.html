@@ -390,6 +390,32 @@
 			}, 200);
 		});
 
+		asyncTest("Check if focus is inside the Popup", function() {
+			// arrange
+			var oPopupDomRef = jQuery.sap.domById("popup"),
+				oPopup = new sap.ui.core.Popup(oPopupDomRef),
+				oButtonInside = jQuery.sap.domById("popupcontent"),
+				oButtonOustide = jQuery.sap.domById("focusableElement");
+
+			// act
+			oPopup.open();
+			oButtonInside.focus();
+
+			// assert
+			ok(oPopup._isFocusInsidePopup(), "Focus is inside the Popup");
+
+			// act
+			oButtonOustide.focus();
+
+			// assert
+			ok(!oPopup._isFocusInsidePopup(), "Focus is outside of the Popup");
+
+			setTimeout(function () {
+				oPopup.destroy();
+				start();
+			});
+		});
+
 		/* Utilities */
 
 		var lastEvent = null;
