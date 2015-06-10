@@ -369,7 +369,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		sap.ui.core.Control.prototype.detachEvent.apply(this, arguments);
 
 		if (!this.hasListeners("press")) {
-			this.$().attr("tabindex", "-1");
+			this.$().removeAttr("tabindex");
 			if (this.getDecorative()) {
 				this.$().attr("role", "presentation");
 			} else {

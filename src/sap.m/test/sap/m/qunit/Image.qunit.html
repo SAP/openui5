@@ -359,7 +359,7 @@
 			equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.detachPress(fn2);
-			equal($Image.attr("tabindex"), "-1", "tabindex -1 is still output");
+			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
 			equal($Image.attr("role"), "presentation", "role is set to presentation");
 
 			oImage.attachPress(fn2);
@@ -371,7 +371,7 @@
 			equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.detachPress(fn2);
-			equal($Image.attr("tabindex"), "-1", "tabindex -1 is still output");
+			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
 			ok(!$Image.attr("role"), "role is removed");
 
 			oImage.destroy();

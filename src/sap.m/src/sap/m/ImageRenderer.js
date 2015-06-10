@@ -26,7 +26,6 @@ sap.ui.define(['jquery.sap.global'],
 		var sMode = oImage.getMode(),
 			alt = oImage.getAlt(),
 			tooltip = oImage.getTooltip_AsString(),
-			myTabIndex = 0,
 			bHasPressHandlers = oImage.hasListeners("press");
 
 		// Open the DOM element tag. The 'img' tag is used for mode sap.m.ImageMode.Image and 'span' tag is used for sap.m.ImageMode.Background
@@ -84,10 +83,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (bHasPressHandlers) {
 			rm.writeAttribute("role", "button");
-		} else {
-			myTabIndex = -1;
+			rm.writeAttribute("tabIndex", 0);
 		}
-		rm.writeAttribute("tabIndex", myTabIndex);
 
 		// Dimensions
 		if (oImage.getWidth() && oImage.getWidth() != '') {
