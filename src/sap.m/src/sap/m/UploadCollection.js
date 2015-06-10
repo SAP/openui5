@@ -1871,12 +1871,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					that._onUploadComplete(oEvent);
 				},
 				uploadProgress : function(oEvent) { // only supported with property sendXHR set to true
-					that._onUploadProgress(oEvent);
+					if (that.getInstantUpload()) {
+						that._onUploadProgress(oEvent);
+					}
 				}
 			});
 			var sTooltip = this._oFileUploader.getTooltip();
 			if (!sTooltip && !sap.ui.Device.browser.msie) {
-				// in case the tooltip is NOT overwritten, the default tooltip should NOT be chosen!
 				this._oFileUploader.setTooltip(" ");
 			}
 		}
