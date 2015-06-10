@@ -871,11 +871,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		var oRequestHeaders = oXhr.requestHeaders;
 
-		that.fireUploadStart({
-			"fileName": sFilename,
-			"requestHeaders": oRequestHeaders
-		});
-
 		var fnProgressListener = function(oProgressEvent) {
 			var oProgressData = {
 				lengthComputable: !!oProgressEvent.lengthComputable,
@@ -948,7 +943,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 			that._bUploading = false;
 		};
-		oXhr.xhr.send(aFiles[iIndex]);
+		if (oXhr.xhr.readyState == 0){
+			iIndex++;
+			that.sendFiles(aXhr, aFiles, iIndex);
+		} else {
+			oXhr.xhr.send(aFiles[iIndex]);			
+		}
 	};
 
 
@@ -997,6 +997,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 									this._aXhr[j].requestHeaders.push({name: sHeader, value: sValue});
 								}
 							}
+							var sFilename = aFiles[j].name;
+							var oRequestHeaders = this._aXhr[j].requestHeaders;
+							this.fireUploadStart({
+								"fileName": sFilename,
+								"requestHeaders": oRequestHeaders
+							});
 						}
 						if (this.getUseMultipart()) {
 							var formData = new window.FormData();
