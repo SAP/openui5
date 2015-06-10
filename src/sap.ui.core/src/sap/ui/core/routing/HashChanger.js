@@ -161,9 +161,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					oHistory = fnGetHistoryInstance();
 					oHistory._setHashChanger(oHashChanger);
 				}
-
-				_oHashChanger = oHashChanger;
 			}
+
+			_oHashChanger = oHashChanger;
 		};
 
 	}());
