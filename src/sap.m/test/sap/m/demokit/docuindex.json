@@ -245,7 +245,10 @@
 		  "name": "Upload Collection",
 		  "category": "Action",
 		  "since": "1.26",
-		  "samples": ["sap.m.sample.UploadCollection"]
+		  "samples": [
+		    "sap.m.sample.UploadCollection",
+		    "sap.m.sample.UploadCollectionForPendingUpload"
+		  ]
 		},
 		{
 		  "id": "sap.m.IconTabBar",
@@ -1757,7 +1760,12 @@
 		{
 		  "id": "sap.m.sample.UploadCollection",
 		  "name": "Upload Collection",
-		  "description": "This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application."
+		  "description": "This control allows users to upload single or multiple files from their devices (desktop PC, tablet, or smartphone) and attach them to the application immediately. The selection and upload process is completed in one step and is automatically triggered by the UploadCollection control."
+		},
+		{
+		  "id": "sap.m.sample.UploadCollectionForPendingUpload",
+		  "name": "Upload Collection - Upload Pending",
+		  "description": "With the UploadCollection for a pending upload, you can first select several attachments and then upload them in a separate step. An application triggers the upload with an event."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
