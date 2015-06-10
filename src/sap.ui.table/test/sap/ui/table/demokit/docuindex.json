@@ -1,0 +1,29 @@
+{
+	"explored": {
+		"entitiesDefaults": {
+			"formFactors": "ML"
+		},
+		"samplesRef": {
+			"namespace": "sap.ui.table.sample",
+			"ref": "test-resources/sap/ui/table/demokit/sample"
+		},
+		"entities": [
+			{
+				"id": "sap.ui.table.Table",
+				"name": "Table",
+				"category": "List",
+				"since": "1.0",
+				"samples": [
+					"sap.ui.table.sample.Basic"
+				]
+			}
+		],
+		"samples": [
+			{
+				"id": "sap.ui.table.sample.Basic",
+				"name": "Basic",
+				"description": "Basic example showing nearly all controls which are intended to be used inside a table."
+			}
+		]
+	}
+}
