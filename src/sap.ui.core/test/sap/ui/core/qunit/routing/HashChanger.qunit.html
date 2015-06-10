@@ -23,6 +23,22 @@
 			jQuery.sap.require("sap.ui.thirdparty.signals");
 			jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
+
+			// NEEDS TO BE THE FIRST TEST - tests the initial state of a global singleton in a closure
+			test("Should always overwrite the hashchanger", function () {
+				// this function must not be called before this test is executed so it acutally tests something
+				// sap.ui.core.routing.HashChanger.getInstance()
+
+				// System under Test
+				var oHashChanger = new sap.ui.core.routing.HashChanger();
+
+				// Act
+				sap.ui.core.routing.HashChanger.replaceHashChanger(oHashChanger);
+
+				// Assert
+				strictEqual(oHashChanger, sap.ui.core.routing.HashChanger.getInstance(), "did change the hashCHanger");
+			});
+
 			test("ShouldInitAndDestroyCorrectly", function () {
 				//Arrange
 				var calls = [],
