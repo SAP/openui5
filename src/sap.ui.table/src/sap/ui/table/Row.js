@@ -40,17 +40,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	
 	
 	/**
-	 * Returns the index of the row in the table or -1 if not added to a table.
+	 * Returns the index of the row in the table or -1 if not added to a table. This
+	 * function considers the scroll position of the table and also takes fixed rows and
+	 * fixed bottom rows into account.
 	 *
-	 * @return {int}
+	 * @return {int} index of the row (considers scroll position and fixed rows)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Row.prototype.getIndex = function() {
 		var oTable = this.getParent();
 		if (oTable) {
-			var iFirstRow = oTable.getFirstVisibleRow();
+			// get the index of the row in the aggregation
 			var iRowIndex = oTable.indexOfRow(this);
+
+			// check for fixed rows. In this case the index of the context is the same like the index of the row in the aggregation
+			var iNumberOfFixedRows = oTable.getFixedRowCount();
+			if (iNumberOfFixedRows > 0 && iRowIndex < iNumberOfFixedRows) {
+				return iRowIndex;
+			}
+
+			// check for fixed bottom rows
+			var iNumberOfFixedBottomRows = oTable.getFixedBottomRowCount();
+			var iVisibleRowCount = oTable.getVisibleRowCount();
+			if (iNumberOfFixedBottomRows > 0 && iRowIndex >= iVisibleRowCount - iNumberOfFixedBottomRows) {
+				var oBinding = oTable.getBinding("rows");
+				if (oBinding && oBinding.getLength() >= iVisibleRowCount) {
+					return oBinding.getLength() - (iVisibleRowCount - iRowIndex);
+				} else {
+					return iRowIndex;
+				}
+			}
+
+			var iFirstRow = oTable.getFirstVisibleRow();
 			return iFirstRow + iRowIndex;
 		}
 		return -1;
