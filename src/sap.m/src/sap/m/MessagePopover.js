@@ -750,20 +750,24 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					attrs.push("id");
 					attrs.push("sap-ui-" + that.getId() + "-link-under-validation-" + oValidation.id);
 
-					oValidation.then(function (result) {
-						// Update link in output
-						var $link = jQuery("#" + "sap-ui-" + that.getId() + "-link-under-validation-" + result.id);
+					oValidation
+						.then(function (result) {
+							// Update link in output
+							var $link = jQuery("#" + "sap-ui-" + that.getId() + "-link-under-validation-" + result.id);
 
-						if (result.allowed) {
-							jQuery.sap.log.info("Allow link " + href);
-						} else {
-							jQuery.sap.log.info("Disallow link " + href);
-						}
+							if (result.allowed) {
+								jQuery.sap.log.info("Allow link " + href);
+							} else {
+								jQuery.sap.log.info("Disallow link " + href);
+							}
 
-						// Adapt the link style
-						$link.removeClass('sapMMsgPopoverItemPendingLink');
-						$link.toggleClass('sapMMsgPopoverItemDisabledLink', !result.allowed);
-					});
+							// Adapt the link style
+							$link.removeClass('sapMMsgPopoverItemPendingLink');
+							$link.toggleClass('sapMMsgPopoverItemDisabledLink', !result.allowed);
+						})
+						.catch(function () {
+							jQuery.sap.log.warning("Async URL validation could not be performed.");
+						});
 				}
 
 				return attrs;
@@ -829,10 +833,19 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					oPromiseArgument.reject = reject;
 				});
 
-				oPromise.then(function () {
+				var proceed = function () {
 					this._detailsPage.setBusy(false);
 					loadAndNavigateToDetailsPage(true);
-				}.bind(this));
+				};
+
+				oPromise
+					.then(function () {
+						proceed();
+					})
+					.catch(function () {
+						jQuery.sap.log.warning("Async description loading could not be performed.");
+						proceed();
+					});
 
 				this._navContainer.to(this._detailsPage);
 
