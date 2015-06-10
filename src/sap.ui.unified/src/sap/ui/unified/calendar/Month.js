@@ -137,8 +137,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				delete this._oItemNavigation;
 			}
 
-			if (this._sRenderMonth) {
-				jQuery.sap.clearDelayedCall(this._sRenderMonth);
+			if (this._sInvalidateMonth) {
+				jQuery.sap.clearDelayedCall(this._sInvalidateMonth);
 			}
 
 		};
@@ -159,13 +159,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
 				Control.prototype.invalidate.apply(this, arguments);
-			} else if (this.getDomRef() && !this._sRenderMonth) {
+			} else if (this.getDomRef() && !this._sInvalidateMonth) {
 				// DateRange changed -> only rerender days
 				// do this only once if more DateRanges / Special days are changed
 				var that = this;
-				this._sRenderMonth = jQuery.sap.delayedCall(0, this, _renderMonth, [that, this._bNoFocus]);
-				this._bDateRangeChanged = undefined;
-				this._bNoFocus = undefined; // set in Calendar to prevent focus flickering for multiple months
+				if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
+					_invalidateMonth(that);
+				} else {
+					this._sInvalidateMonth = jQuery.sap.delayedCall(0, that, _invalidateMonth, [that]);
+				}
 			}
 
 		};
@@ -1080,8 +1082,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _renderMonth(oThis, bNoFocus){
 
-			oThis._sRenderMonth = undefined; // initialize delayed call
-
 			var oDate = oThis.getRenderer().getStartDate(oThis);
 			var $Container = oThis.$("days");
 
@@ -1379,6 +1379,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				oThis._bNamesLengthChecked = true;
 			}
+
+		}
+
+		function _invalidateMonth(oThis){
+
+			oThis._sInvalidateMonth = undefined;
+
+			_renderMonth(oThis, oThis._bNoFocus);
+			oThis._bDateRangeChanged = undefined;
+			oThis._bNoFocus = undefined; // set in Calendar to prevent focus flickering for multiple months
 
 		}
 
