@@ -1,4 +1,3 @@
-{
   "1.30.0": {
     "date": "April 2015",
     "notes": [
@@ -21,13 +20,6 @@
         "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "Ensured existence of namespace during Core.initLibrary()",
-        "references": []
-      },
-      {
-        "id": "bc1774c796f57d0923c836a84d548592e680f77a",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
-        "type": "INTERNAL",
-        "text": "Fix JSDoc issues as reported during nightly build",
         "references": []
       },
       {
@@ -56,20 +48,6 @@
         "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
         "type": "FIX",
         "text": "Tree: Selection restored after model change",
-        "references": []
-      },
-      {
-        "id": "968a1e537f33ce2943da4c6191697af1b1752ee0",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
-        "type": "INTERNAL",
-        "text": "Yet another minor JSDoc fix.",
-        "references": []
-      },
-      {
-        "id": "eafeb299927a838990deeea83f374e608146c7ad",
-        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
-        "type": "FIX",
-        "text": "Focus-Test from qUnit test removed",
         "references": []
       },
       {
@@ -285,6 +263,55 @@
         "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.commons.Toolbar: Items in the overflow popup are now properly removed upon re-rendering while the popup is open.",
+        "references": []
+      },
+      {
+        "id": "db1d2fc8a12b1dc0fbc319a99b77065fdbb06d5c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Element: Additional documentation for event delegates provided",
+        "references": []
+      },
+      {
+        "id": "77554d36ae0e82228826efa8515adaf0cef3cff3",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Carousel: Rendering of horizontal carousel items when navigating left and right is now fixed",
+        "references": []
+      },
+      {
+        "id": "8179c3c2db4b8319a651b13bdb8c60c57fef05cf",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ProgressIndicator: Screen Reader improved",
+        "references": []
+      },
+      {
+        "id": "cc85eb9b1485f93c0e7b1aabcc12808f4a90335b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "SearchField: Suggestion event in case of empty value and startSuggestion\u003d0 corrected",
+        "references": []
+      },
+      {
+        "id": "b7bda34e8482fff66f4deb06c0ab70d53ad5f56a",
+        "author": "I057508 \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar: Keyboard navigation when invisible item(s) exist is now supported",
+        "references": []
+      },
+      {
+        "id": "a4c8e13b16959e13318c602dfb4e1fde0e0033c0",
+        "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar: Opening the overflow popup is not causing a toolbar resize when the toolbar is nested inside sap.ui.layout.HorizontalLayout",
+        "references": []
+      },
+      {
+        "id": "b7fd99a5202fcff9e27c20a3752924528ccade0b",
+        "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar: Tab indexes on the right toolbar items are now correctly retained upon updating item navigation",
         "references": []
       }
     ]

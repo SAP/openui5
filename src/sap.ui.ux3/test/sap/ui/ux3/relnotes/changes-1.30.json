@@ -17,13 +17,6 @@
         "references": []
       },
       {
-        "id": "925f97fe87ecb1d52d992de8becebed26966812a",
-        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
-        "type": "FIX",
-        "text": "ToolPopup: Deactivated Sinon fakeTimers for qUnit",
-        "references": []
-      },
-      {
         "id": "49d3529654d39bc33d77bb5bc71fd92d56bb8bf6",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
@@ -34,28 +27,28 @@
         "id": "b31b7d60e1c851e54d2f3aad3c55137a20da55f8",
         "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FIX",
-        "text": "ux3.Overlay: Focus restored correctly when closing Overlay",
+        "text": "Overlay: Focus restored correctly when closing Overlay",
         "references": []
       },
       {
         "id": "411b70dee72ebfd3454c1571f97ab52536ad77a3",
         "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FIX",
-        "text": "ux3.ThingViewer: Added ellipsis for long subtitle in header (Internet Explorer)",
+        "text": "ThingViewer: Added ellipsis for long subtitle in header (Internet Explorer)",
         "references": []
       },
       {
         "id": "ef0aecdb5517ea77a077b88cb3a6803d3adcc495",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
-        "text": "ux3.ToolPopup commons.Dialog: Fixed focusable elements",
+        "text": "ToolPopup commons.Dialog: Fixed focusable elements",
         "references": []
       },
       {
         "id": "b0165489c41d4081ddf11ed44fe956919702c9cc",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
-        "text": "ux3.ToolPopup: Fixed popup position after changing its size",
+        "text": "ToolPopup: Fixed popup position after changing its size",
         "references": []
       },
       {
@@ -69,7 +62,21 @@
         "id": "d53dc0e325b7a183a7852d2fe482a8fb2f283490",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
-        "text": "ux3.ToolPopup: ToolPopup made aware when content re-renders",
+        "text": "ToolPopup: ToolPopup made aware when content re-renders",
+        "references": []
+      },
+      {
+        "id": "52b7ce3039e0a5669755969419d9998d4e09dda7",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: Constant increase in height for the control triggered by first resize corrected",
+        "references": []
+      },
+      {
+        "id": "7cb4cb4d1defd0ec6f398e05f1831e238592ebc3",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataSetSimpleView: View update suppressed if not rendered",
         "references": []
       }
     ]

@@ -155,6 +155,69 @@
         "type": "FIX",
         "text": "sap.ui.unified.FileUploader: setTooltip() fixed",
         "references": []
+      },
+      {
+        "id": "cc9464eaf90ef2f5e703d8584ffd4a95b96e542f",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Calendar: New properties added to set weekend and first weekday",
+        "references": []
+      },
+      {
+        "id": "444f05a9ac6e31e6c939940b742ca91371927346",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "CalendarLegend: Specify type of an item is allowed",
+        "references": []
+      },
+      {
+        "id": "273867df0bf7e398717b1b95540bb2af68bd17a4",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "FileUploader: Abort function improved",
+        "references": []
+      },
+      {
+        "id": "c92f44fa7fcdf8bb4508484c366f370362765e66",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: Focus issues after change of selectedDates corrected",
+        "references": []
+      },
+      {
+        "id": "f11b8d79cb0a6f6ed68426b8ba22b83dfe7930bd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: specialDates can not be removed",
+        "references": []
+      },
+      {
+        "id": "d65defdb36c4bb57a191b30ea96c10554aebd6eb",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: m styling corrected",
+        "references": []
+      },
+      {
+        "id": "ca1e4e142c1456990a3b35379600db80d5f5ebbc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: sameFilenameAllowed fixed for multiple",
+        "references": []
+      },
+      {
+        "id": "0675e0411b02b55cb7ee3877d7cccd50de0b2610",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Menu: Open Popup before Menu state is set to opened",
+        "references": []
+      },
+      {
+        "id": "5ec685b71babb6323d04b30d04e82187aa69a19c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "calendar.MonthPicker: Avoid browser dependent width rounding issues",
+        "references": []
       }
     ]
   }

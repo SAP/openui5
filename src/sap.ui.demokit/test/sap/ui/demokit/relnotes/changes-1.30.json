@@ -29,6 +29,13 @@
         "type": "FIX",
         "text": "Explored App: Fixed CSS paths (Component includes)",
         "references": []
+      },
+      {
+        "id": "efcc58e1ee1a6bf6665eaff1e28a180f48c06043",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Explored sample for asynchronous views implemented",
+        "references": []
       }
     ]
   }
