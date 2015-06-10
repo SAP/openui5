@@ -500,10 +500,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * @param {sap.ui.model.Context} [oCurrentContext]
 	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
 	 *   the custom formatter function to call
+	 * @param {boolean} [bSkipRawValue=false]
+	 *   do not pass raw value to format function
 	 * @returns {string}
 	 *   a binding string
 	 */
-	function format(vValue, oCurrentContext, fnMethod) {
+	function format(vValue, oCurrentContext, fnMethod, bSkipRawValue) {
 		var sResult;
 
 		if (typeof oCurrentContext === "function") { // allow oCurrentContext to be omitted
@@ -512,7 +514,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		}
 		fnMethod = fnMethod || AnnotationHelper.format;
 		return fnMethod.requiresIContext === true
-			? fnMethod(oCurrentContext, vValue)
+			? (bSkipRawValue ? fnMethod(oCurrentContext) : fnMethod(oCurrentContext, vValue))
 			: fnMethod(vValue);
 	}
 
@@ -535,13 +537,15 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 *
 	 * @param {any} vValue
 	 * @param {sap.ui.model.Context} [oCurrentContext]
-	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 * @param {function} [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
 	 *   the custom formatter function to call
+	 * @param {boolean} [bSkipRawValue=false]
+	 *   do not pass raw value to format function
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
-	function formatAndParse(vValue, oCurrentContext, fnMethod) {
-		return parse(format(vValue, oCurrentContext, fnMethod));
+	function formatAndParse(vValue, oCurrentContext, fnMethod, bSkipRawValue) {
+		return parse(format(vValue, oCurrentContext, fnMethod, bSkipRawValue));
 	}
 
 	/**
@@ -695,15 +699,30 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	module("sap.ui.model.odata.AnnotationHelper.format");
 
 	//*********************************************************************************************
-	test("forward to getExpression", function () {
-		var oInterface = {},
-			oRawValue = {},
-			sResult = {};
+	[true, false].forEach(function (bWithRawValue) {
+		test("forward to getExpression: with RawValue " + bWithRawValue, function () {
+			var oInterface = {
+					getObject: function () {/* will be overwritten by mock*/}
+				},
+				oRawValue = {},
+				sResult = {},
+				oGetObjectMock = this.mock(oInterface).expects("getObject");
 
-		this.mock(Expression).expects("getExpression")
-			.withExactArgs(oInterface, oRawValue, true).returns(sResult);
+			this.mock(Expression).expects("getExpression")
+				.withExactArgs(oInterface, oRawValue, true).returns(sResult);
 
-		strictEqual(AnnotationHelper.format(oInterface, oRawValue), sResult, "result");
+			if (bWithRawValue) {
+				oGetObjectMock.never();
+
+				// code under test
+				strictEqual(AnnotationHelper.format(oInterface, oRawValue), sResult, "result");
+			} else {
+				oGetObjectMock.withExactArgs("").returns(oRawValue);
+
+				// code under test
+				strictEqual(AnnotationHelper.format(oInterface), sResult, "result");
+			}
+		});
 	});
 
 	//*********************************************************************************************
@@ -720,6 +739,23 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 				strictEqual(formatAndParse(oRawValue, oCurrentContext), sString);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("forward to getExpression: raw value automatically determined", function () {
+		var that = this;
+		return withGwsampleModel(function (oMetaModel) {
+			var sMetaPath = sPath2Product
+				+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
+			oCurrentContext = oMetaModel.getContext(sMetaPath),
+			sString = "{path : 'foo'}",
+			oRawValue = oMetaModel.getProperty(sMetaPath);
+
+			that.mock(Expression).expects("getExpression")
+				.withExactArgs(oCurrentContext, oRawValue, true).returns(sString);
+
+			AnnotationHelper.format(oCurrentContext);
 		});
 	});
 
@@ -1282,15 +1318,30 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	module("sap.ui.model.odata.AnnotationHelper.simplePath");
 
 	//*********************************************************************************************
-	test("forward to getExpression", function () {
-		var oInterface = {},
-			oRawValue = {},
-			sResult = {};
+	[true, false].forEach(function (bWithRawValue) {
+		test("forward to getExpression: with RawValue " + bWithRawValue, function () {
+			var oInterface = {
+					getObject: function () {/* will be overwritten by mock*/}
+				},
+				oRawValue = {},
+				sResult = {},
+				oGetObjectMock = this.mock(oInterface).expects("getObject");
 
-		this.mock(Expression).expects("getExpression")
-			.withExactArgs(oInterface, oRawValue, false).returns(sResult);
+			this.mock(Expression).expects("getExpression")
+				.withExactArgs(oInterface, oRawValue, false).returns(sResult);
 
-		strictEqual(AnnotationHelper.simplePath(oInterface, oRawValue), sResult, "result");
+			if (bWithRawValue) {
+				oGetObjectMock.never();
+
+				// code under test
+				strictEqual(AnnotationHelper.simplePath(oInterface, oRawValue), sResult, "result");
+			} else {
+				oGetObjectMock.withExactArgs("").returns(oRawValue);
+
+				// code under test
+				strictEqual(AnnotationHelper.simplePath(oInterface), sResult, "result");
+			}
+		});
 	});
 
 	//*********************************************************************************************
@@ -1479,13 +1530,18 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				}
 
 				// getNavigationPath
-				oSingleBindingInfo
-					= formatAndParse(oRawValue, oContext, fnGetNavigationPath);
+				[false, true].forEach(function (bSkipRawValue) {
+					oSingleBindingInfo
+						= formatAndParse(oRawValue, oContext, fnGetNavigationPath, bSkipRawValue);
 
-				strictEqual(typeof oSingleBindingInfo, "object",
-					"getNavigationPath: got a binding info");
-				strictEqual(oSingleBindingInfo.path, oFixture.navigationPath, "getNavigationPath");
-				strictEqual(oSingleBindingInfo.type, undefined, "getNavigationPath: no type");
+					strictEqual(typeof oSingleBindingInfo, "object",
+						"getNavigationPath: got a binding info; skip raw value: "
+							+ bSkipRawValue);
+					strictEqual(oSingleBindingInfo.path, oFixture.navigationPath,
+						"getNavigationPath; skip raw value: " + bSkipRawValue);
+					strictEqual(oSingleBindingInfo.type, undefined,
+						"getNavigationPath: no type; skip raw value: " + bSkipRawValue);
+				});
 
 				// gotoEntitySet
 				strictEqual(AnnotationHelper.gotoEntitySet(oContext),
@@ -1495,18 +1551,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					"gotoEntitySet");
 
 				// isMultiple
-				if (oFixture.isMultiple === Error) {
-					try {
-						formatAndParse(oRawValue, oContext, fnIsMultiple);
-						ok(false, "Exception expected");
-					} catch (e) {
-						strictEqual(e.message,
-							'Association end with multiplicity "*" is not the last one: ' + sPath);
+				[false, true].forEach(function (bSkipRawValue) {
+					if (oFixture.isMultiple === Error) {
+						try {
+							formatAndParse(oRawValue, oContext, fnIsMultiple, bSkipRawValue);
+							ok(false, "Exception expected");
+						} catch (e) {
+							strictEqual(e.message,
+								'Association end with multiplicity "*" is not the last one: ' + sPath);
+						}
+					} else {
+						strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple,
+							bSkipRawValue), String(oFixture.isMultiple), "isMultiple");
 					}
-				} else {
-					strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple),
-						String(oFixture.isMultiple), "isMultiple");
-				}
+				});
 
 				// resolvePath
 				strictEqual(AnnotationHelper.resolvePath(oContext), oFixture.resolvedPath,

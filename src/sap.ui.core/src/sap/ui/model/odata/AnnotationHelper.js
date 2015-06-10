@@ -181,13 +181,24 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
-			 * @param {any} vRawValue
-			 *   the raw value from the meta model
+			 * @param {any} [vRawValue]
+			 *   the raw value from the meta model:
+			 *   <ul>
+			 *   <li>if this function is used as formatter the value
+			 *   is provided by the framework</li>
+			 *   <li>if this function is called directly, provide the parameter only if it is
+			 *   already calculated</li>
+			 *   <li>if the parameter is omitted, it is calculated automatically through
+			 *   <code>oInterface.getObject("")</code></li>
+			 *   </ul>
 			 * @returns {string}
 			 *   the resulting string value to write into the processed XML
 			 * @public
 			 */
 			format : function (oInterface, vRawValue) {
+				if (arguments.length === 1) {
+					vRawValue = oInterface.getObject("");
+				}
 				return Expression.getExpression(oInterface, vRawValue, true);
 			},
 
@@ -215,11 +226,19 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
-			 * @param {any} vRawValue
+			 * @param {any} [vRawValue]
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
 			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
-			 *   embedded within an entity type
+			 *   embedded within an entity type;
+			 *   <ul>
+			 *   <li>if this function is used as formatter the value
+			 *   is provided by the framework</li>
+			 *   <li>if this function is called directly, provide the parameter only if it is
+			 *   already calculated</li>
+			 *   <li>if the parameter is omitted, it is calculated automatically through
+			 *   <code>oInterface.getObject("")</code></li>
+			 *   </ul>
 			 * @returns {string}
 			 *   the resulting string value to write into the processed XML, e.g. "{ToSupplier}"
 			 *   or "{}" (in case no navigation is needed); returns "" in case the navigation path
@@ -228,6 +247,9 @@ sap.ui.define([
 			 * @public
 			 */
 			getNavigationPath : function (oInterface, vRawValue) {
+				if (arguments.length === 1) {
+					vRawValue = oInterface.getObject("");
+				}
 				var oResult = followPath(oInterface, vRawValue);
 
 				return oResult
@@ -357,11 +379,19 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
-			 * @param {any} vRawValue
+			 * @param {any} [vRawValue]
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
 			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
-			 *   embedded within an entity type
+			 *   embedded within an entity type;
+			 *   <ul>
+			 *   <li>if this function is used as formatter the value
+			 *   is provided by the framework</li>
+			 *   <li>if this function is called directly, provide the parameter only if it is
+			 *   already calculated</li>
+			 *   <li>if the parameter is omitted, it is calculated automatically through
+			 *   <code>oInterface.getObject("")</code></li>
+			 *   </ul>
 			 * @returns {string}
 			 *    <code>"true"</code> if the navigation path ends with an association end with
 			 *    multiplicity "*", <code>""</code> in case the navigation path cannot be
@@ -373,6 +403,9 @@ sap.ui.define([
 			 * @public
 			 */
 			isMultiple : function (oInterface, vRawValue) {
+				if (arguments.length === 1) {
+					vRawValue = oInterface.getObject("");
+				}
 				var oResult = followPath(oInterface, vRawValue);
 
 				if (oResult) {
@@ -435,13 +468,24 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
-			 * @param {any} vRawValue
-			 *   the raw value from the meta model
+			 * @param {any} [vRawValue]
+			 *   the raw value from the meta model:
+			 *   <ul>
+			 *   <li>if this function is used as formatter the value
+			 *   is provided by the framework</li>
+			 *   <li>if this function is called directly, provide the parameter only if it is
+			 *   already calculated</li>
+			 *   <li>if the parameter is omitted, it is calculated automatically through
+			 *   <code>oInterface.getObject("")</code></li>
+			 *   </ul>
 			 * @returns {string}
 			 *   the resulting string value to write into the processed XML
 			 * @public
 			 */
 			simplePath : function (oInterface, vRawValue) {
+				if (arguments.length === 1) {
+					vRawValue = oInterface.getObject("");
+				}
 				return Expression.getExpression(oInterface, vRawValue, false);
 			}
 		};
