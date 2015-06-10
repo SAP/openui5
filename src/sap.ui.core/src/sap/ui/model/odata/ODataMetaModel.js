@@ -63,8 +63,12 @@ sap.ui.define([
 	 * @param {object} oODataModelInterface
 	 *   the private interface object of the OData model which provides friend access to
 	 *   selected methods
-	 * @param {function} oODataModelInterface.addAnnotationUrl
-	 *   the {@link sap.ui.model.odata.ODataModel#addAnnotationUrl} method of the OData model
+	 * @param {function} [oODataModelInterface.addAnnotationUrl]
+	 *   the {@link sap.ui.model.odata.ODataModel#addAnnotationUrl} method of the OData model, in
+	 *   case this feature is supported
+	 * @param {Promise} oODataModelInterface.annotationsLoadedPromise
+	 *   a promise which is resolved by the OData model once meta data and annotations have been
+	 *   fully loaded
 	 *
 	 * @class Implementation of an OData meta model which offers a unified access to both OData v2
 	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
@@ -152,6 +156,8 @@ sap.ui.define([
 			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
 
 			constructor : function (oMetadata, oAnnotations, oODataModelInterface) {
+				var that = this;
+
 				MetaModel.apply(this); // no arguments to pass!
 				this.sDefaultBindingMode = BindingMode.OneTime;
 				this.mSupportedBindingModes = {"OneTime" : true};
@@ -159,7 +165,13 @@ sap.ui.define([
 				this.oODataModelInterface = oODataModelInterface;
 				// map path of property to promise for loading its value help
 				this.mContext2Promise = {};
-				this.oLoadedPromise = Utils.load(this, oMetadata, oAnnotations);
+				this.oLoadedPromise = oODataModelInterface.annotationsLoadedPromise
+					.then(function () {
+						var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
+						Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
+						that.oModel = new JSONModel(oData);
+						that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
+					});
 				this.oResolver = undefined;
 				this.mQueryCache = {};
 			},
@@ -759,8 +771,6 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise which is fulfilled once the meta model data is loaded and can be used.
-	 * It is rejected with a corresponding <code>Error</code> object in case of errors, such as
-	 * failure to load meta data or annotations.
 	 *
 	 * @public
 	 * @returns {Promise} a Promise

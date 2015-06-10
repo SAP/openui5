@@ -171,6 +171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 									{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
 			}
 			this.oMetadata = this.oServiceData.oMetadata;
+			this.pAnnotationsLoaded = this.oMetadata.loaded();
 
 			if (mServiceUrlParams) {
 				// new URL params used -> add to ones from sServiceUrl
@@ -203,6 +204,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				this.oAnnotations.attachLoaded(function(oEvent) {
 					that.fireAnnotationsLoaded(oEvent.getParameters());
 				});
+				this.pAnnotationsLoaded = Promise.all([
+					this.pAnnotationsLoaded,
+					new Promise(function (resolve, reject) {
+						if (that.oAnnotations.isLoaded()) {
+							resolve();
+						} else if (that.oAnnotations.isFailed()) {
+							reject(that.oAnnotations.oError);
+						} else {
+							that.oAnnotations.attachLoaded(resolve);
+							that.oAnnotations.attachFailed(reject); //TODO reject with instanceof Error?
+						}
+					})
+				]);
 			}
 
 			if (this.oMetadata.isLoaded()) {
@@ -3255,7 +3269,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	ODataModel.prototype.getMetaModel = function() {
 		var that = this;
 		if (!this.oMetaModel) {
-			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations);
+			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations, {
+				addAnnotationUrl : null, // not supported by this model!
+				annotationsLoadedPromise : this.pAnnotationsLoaded
+			});
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
