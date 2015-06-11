@@ -32,10 +32,37 @@ sap.ui.require([
 		ok(false, "Failed to load: " + JSON.stringify(oParameters));
 	}
 
-	var mMetaModels = {}, //cached meta models keyed by annotation URLs, see withMetaModel
-		mMetaModel2JSON = {}, //map meta model to copy of meta model JSON to restore after test
-		oFakeServerSandbox, // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
-		sMetadata = '\
+	/**
+	 * Test-Function to be used in place of deepEquals which only tests for the existence of the given
+	 * values, not the absence of others.
+	 *
+	 * @param {object} oValue - The value to be tested
+	 * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
+	 * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
+	 * @returns {void}
+	 *
+	 * TODO move to test utils?
+	 * TODO do we really want hundreds of assertions?
+	 */
+	function deepContains(oValue, oExpected, sMessage) {
+		for (var sKey in oExpected) {
+			ok(typeof oExpected[sKey] === typeof oValue[sKey], sMessage + "/" + sKey + " have same type");
+
+			if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
+				equal(oExpected[sKey].length, oValue[sKey].length, sMessage + "/" + sKey + " length matches");
+			}
+
+			if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+				// Go deeper
+				deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+			} else {
+				// Compare directly
+				equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
+			}
+		}
+	}
+
+	var sMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
@@ -355,10 +382,31 @@ sap.ui.require([
 		',
 		sFARMetadata = jQuery.sap.syncGetText(
 			"model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml", "", null),
+		sFARMetadataCompanyCode = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml", "", null),
+		sFARMetadataCompanyCode_Customer = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml", "", null),
 		sFARMetadataCustomer = jQuery.sap.syncGetText(
-			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_Item_Customer.xml", "", null),
-		sFARMetadataCompanyCodeCustomer = jQuery.sap.syncGetText(
-			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_Item_CompanyCode_Item_Customer.xml", "", null),
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml", "", null),
+		sFARMetadataInvalid = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<!-- fictitious empty response for /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=Item/Invalid -->\
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>\
+	</edmx:Reference>\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="FAR_CUSTOMER_LINE_ITEMS" xml:lang="en" sap:schema-version="0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<EntityType Name="FOO" sap:content-version="1"/><!-- TODO remove this! -->\
+			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">\
+			</EntityContainer>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		',
 		sGWAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
 		sGWMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
 		sMultipleValueListAnnotations = '\
@@ -418,12 +466,19 @@ sap.ui.require([
 			"/fake/multipleValueLists" : [200, mHeaders, sMultipleValueListAnnotations],
 			"/fake/valueListMetadata/$metadata" : [200, mHeaders, sValueListMetadata],
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" : [200, mHeaders, sFARMetadata],
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" :
+				[200, mHeaders, sFARMetadataCompanyCode],
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode,FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
+				[200, mHeaders, sFARMetadataCompanyCode_Customer],
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
 				[200, mHeaders, sFARMetadataCustomer],
-			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode,Item%2FCustomer" :
-				[200, mHeaders, sFARMetadataCompanyCodeCustomer],
+			// Note: Gateway says
+			// "Value-List FAR_CUSTOMER_LINE_ITEMS.Item/Invalid not found in Metadata", but we want
+			// to make our code more robust against empty responses
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FInvalid" :
-				[200, mHeaders, sFARMetadataCustomer],
+				[200, mHeaders, sFARMetadataInvalid], // no annotations at all
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Foo%2FInvalid" :
+				[200, mHeaders, sFARMetadataCompanyCode], // annotations for a different type
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
 			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sGWAnnotations]
 		},
@@ -456,139 +511,106 @@ sap.ui.require([
 	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
 	 * "/GWSAMPLE_BASIC" and annotation URL "/GWSAMPLE_BASIC/annotations".
 	 */
-	function withMetaModel(fnCodeUnderTest, bImmediately) {
-		return withGivenMetaModel("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations",
-				fnCodeUnderTest, bImmediately);
+	function withMetaModel(fnCodeUnderTest) {
+		return withGivenService("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations", fnCodeUnderTest);
 	}
 
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
 	 * "/GWSAMPLE_BASIC" and (array of) annotation URLs.
 	 */
-	function withGivenAnnotations(vAnnotationUrl, fnCodeUnderTest, bImmediately) {
-		return withGivenMetaModel("/GWSAMPLE_BASIC", vAnnotationUrl, fnCodeUnderTest,
-			bImmediately);
+	function withGivenAnnotations(vAnnotationUrl, fnCodeUnderTest) {
+		return withGivenService("/GWSAMPLE_BASIC", vAnnotationUrl, fnCodeUnderTest);
 	}
 
 	/**
-	 * Runs the given code under test with an <code>ODataMetaModel</code> for the given service
-	 * and (array of) annotation URLs.
+	 * Runs the given code under test with an <code>ODataMetaModel</code> (and an
+	 * <code>ODataModel</code>) for the given service and (array of) annotation URLs.
 	 *
 	 * @param {string} sServiceUrl
 	 *   the service URL
 	 * @param {string|string[]} vAnnotationUrl
 	 *   the (array of) annotation URLs
 	 * @param {function} fnCodeUnderTest
-	 * @param {boolean} [bImmediately]
-	 *   whether to run the test immediately instead of waiting for the meta model to be loaded
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withGivenMetaModel(sServiceUrl, vAnnotationUrl, fnCodeUnderTest, bImmediately) {
-		var sCacheKey,
-			oModel;
-
-		/*
-		 * Call the given "code under test" the given OData meta model,
-		 * making sure that no changes to the model are kept in the cached meta model.
-		 */
-		function call(fnCodeUnderTest, sKey) {
-			var oMetaModel = mMetaModels[sKey];
-
-			//TODO withGivenMetaModel should wait for Promise returned by test function and
-			//  do cleanup itself
-			mMetaModel2JSON[sKey] = oMetaModel.oModel.getJSON(); //for cleanup in afterEach
-			return fnCodeUnderTest(oMetaModel);
-		}
-
-		//sandbox is required by code under test
-		oFakeServerSandbox = sinon.sandbox.create();
-		setupSandbox(oFakeServerSandbox);
-
-		sCacheKey = Array.isArray(vAnnotationUrl) ? vAnnotationUrl.join(",") : vAnnotationUrl;
-		sCacheKey = sServiceUrl + "," + sCacheKey;
-		// Note: bImmediately requires a fresh instance
-		if (mMetaModels[sCacheKey] && !bImmediately) {
-			return call(fnCodeUnderTest, sCacheKey);
-		}
-
+	function withGivenService(sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
 		// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-		oModel = new ODataModel2(sServiceUrl, {
-			annotationURI : vAnnotationUrl,
-			json : true,
-			loadMetadataAsync : true
-		});
+		var oModel = new ODataModel2(sServiceUrl, {
+				annotationURI : vAnnotationUrl,
+				json : true,
+				loadMetadataAsync : true
+			});
 		oModel.attachMetadataFailed(onFailed);
 		oModel.attachAnnotationsFailed(onFailed);
 
-		if (bImmediately) {
-			// no caching, no undo of modifications!
-			return fnCodeUnderTest(oModel.getMetaModel());
-		} else {
-			// calls the code under test once the meta model has loaded
-			mMetaModels[sCacheKey] = oModel.getMetaModel();
-			return mMetaModels[sCacheKey].loaded().then(function () {
-				ok(typeof mMetaModels[sCacheKey].oODataModelInterface.addAnnotationUrl
-					=== "function", "model interface");
-				return call(fnCodeUnderTest, sCacheKey);
-			});
-		}
+		// calls the code under test once the meta model has loaded
+		return oModel.getMetaModel().loaded().then(function () {
+			return fnCodeUnderTest(oModel.getMetaModel(), oModel);
+		});
 	}
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.ODataMetaModel", {
 		beforeEach : function () {
 			oGlobalSandbox = sinon.sandbox.create();
+			setupSandbox(oGlobalSandbox);
 		},
 		afterEach : function () {
-			var sKey;
-
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
-			oFakeServerSandbox.restore();
 			ODataModel2.mServiceData = {}; // clear cache
-			for (sKey in mMetaModel2JSON) { //restore cached metamodel data
-				mMetaModels[sKey].oModel.setJSON(mMetaModel2JSON[sKey]);
-			}
-			mMetaModel2JSON = {};
 		}
 	});
 
 	//*********************************************************************************************
 	test("functions using 'this.oModel' directly", function () {
-		return withMetaModel(function (oMetaModel) {
-			// call functions before loaded() promise has been resolved
-			throws(function () {
-				oMetaModel._getObject("/");
-			}, "_getObject")
-			throws(function () {
-				oMetaModel.destroy();
-			}, "destroy")
-			throws(function () {
-				oMetaModel.getODataAssociationEnd({
-					"navigationProperty" : [{
-						"name" : "ToSalesOrders",
-						"relationship" : "GWSAMPLE_BASIC.Assoc_BusinessPartner_SalesOrders",
-						"fromRole" : "FromRole_Assoc_BusinessPartner_SalesOrders",
-						"toRole" : "ToRole_Assoc_BusinessPartner_SalesOrders"
-					}]
-				}, "ToSalesOrders");
-			}, "getODataAssociationEnd")
-			throws(function () {
-				oMetaModel.getODataComplexType("don't care");
-			}, "getODataComplexType")
-			throws(function () {
-				oMetaModel.getODataEntityContainer();
-			}, "getODataEntityContainer")
-			throws(function () {
-				oMetaModel.getODataEntityType("don't care");
-			}, "getODataEntityType")
-			throws(function () {
-				oMetaModel.isList();
-			}, "isList")
+		var oModel = new ODataModel2("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel = oModel.getMetaModel();
 
-			return oMetaModel.loaded();
-		}, true);
+		oModel.attachMetadataFailed(onFailed);
+		oModel.attachAnnotationsFailed(onFailed);
+
+		ok(oMetaModel instanceof ODataMetaModel);
+		strictEqual(typeof oMetaModel.oODataModelInterface.addAnnotationUrl, "function",
+			"function addAnnotationUrl");
+
+		// call functions before loaded() promise has been resolved
+		throws(function () {
+			oMetaModel._getObject("/");
+		}, "_getObject")
+		throws(function () {
+			oMetaModel.destroy();
+		}, "destroy")
+		throws(function () {
+			oMetaModel.getODataAssociationEnd({
+				"navigationProperty" : [{
+					"name" : "ToSalesOrders",
+					"relationship" : "GWSAMPLE_BASIC.Assoc_BusinessPartner_SalesOrders",
+					"fromRole" : "FromRole_Assoc_BusinessPartner_SalesOrders",
+					"toRole" : "ToRole_Assoc_BusinessPartner_SalesOrders"
+				}]
+			}, "ToSalesOrders");
+		}, "getODataAssociationEnd")
+		throws(function () {
+			oMetaModel.getODataComplexType("don't care");
+		}, "getODataComplexType")
+		throws(function () {
+			oMetaModel.getODataEntityContainer();
+		}, "getODataEntityContainer")
+		throws(function () {
+			oMetaModel.getODataEntityType("don't care");
+		}, "getODataEntityType")
+		throws(function () {
+			oMetaModel.isList();
+		}, "isList")
+
+		return oMetaModel.loaded();
 	});
 
 	//*********************************************************************************************
@@ -603,6 +625,9 @@ sap.ui.require([
 			var oMetaModelMock = oGlobalSandbox.mock(oMetaModel),
 				oModelMock = oGlobalSandbox.mock(oMetaModel.oModel),
 				oResult = {};
+
+			strictEqual(arguments.length, 1, "almost no args");
+			deepEqual(arguments[0], undefined, "almost no args");
 
 			oGlobalSandbox.mock(Model.prototype).expects("destroy").once();
 			// do not mock/stub this or else "destroy" will not bubble up!
@@ -693,10 +718,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("bindList", function () {
-		var that = this;
-
 		return withMetaModel(function (oMetaModel) {
-			var fnApply = that.mock(FilterProcessor).expects("apply"),
+			var fnApply = oGlobalSandbox.mock(FilterProcessor).expects("apply"),
 				oBinding,
 				oContext = oMetaModel.createBindingContext("/"),
 				aFilters = [],
@@ -718,7 +741,7 @@ sap.ui.require([
 			strictEqual(oBinding.iLength, oBinding.aIndices.length);
 
 			fnGetValue = fnApply.args[0][2];
-			that.mock(oMetaModel).expects("getProperty").once()
+			oGlobalSandbox.mock(oMetaModel).expects("getProperty").once()
 				.withExactArgs("0/namespace", oBinding.oList["schema"])
 				.returns("foo");
 
@@ -846,7 +869,7 @@ sap.ui.require([
 	test("_getObject: some error in parseExpression (not SyntaxError)", function () {
 		var oError = new Error();
 
-		this.mock(BindingParser).expects("parseExpression").throws(oError);
+		oGlobalSandbox.mock(BindingParser).expects("parseExpression").throws(oError);
 
 		return withMetaModel(function (oMetaModel) {
 			throws(function () {
@@ -947,23 +970,9 @@ sap.ui.require([
 		title : "multiple annotation files"
 	}].forEach(function (oFixture, i) {
 		test("ODataMetaModel loaded: " + oFixture.title, function () {
-			var oMetaModel, oModel;
-
-			setupSandbox(this.sandbox);
-			oModel = new ODataModel2("/fake/service", {
-				annotationURI : oFixture.annotationURI,
-				json : true,
-				loadMetadataAsync : true
-			});
-			oModel.attachMetadataFailed(onFailed);
-			oModel.attachAnnotationsFailed(onFailed);
-
-			oMetaModel = oModel.getMetaModel();
-			ok(oMetaModel instanceof ODataMetaModel);
-
-			return oMetaModel.loaded().then(function () {
-				var oAnnotations = oModel.getServiceAnnotations(),
-					oMetadata = oModel.getServiceMetadata(),
+			return withGivenService("/fake/service", oFixture.annotationURI, function (oMetaModel,
+				oModel) {
+				var oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
 					oEntityContainer = oGWSampleBasic.entityContainer[0],
@@ -1022,31 +1031,43 @@ sap.ui.require([
 				strictEqual(oBusinessPartner.name, "BusinessPartner");
 				strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
 
-				strictEqual(arguments.length, 1, "almost no args");
-				deepEqual(arguments[0], undefined, "almost no args");
 				ok(oMetadata, "metadata is loaded");
 
+				strictEqual(oBusinessPartner.namespace, "GWSAMPLE_BASIC");
+				delete oBusinessPartner.namespace;
 				strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0");
 				delete oBusinessPartner.$path;
+				strictEqual(oVHSex.namespace, "GWSAMPLE_BASIC");
+				delete oVHSex.namespace;
 				strictEqual(oVHSex.$path, "/dataServices/schema/0/entityType/1");
 				delete oVHSex.$path;
+				strictEqual(oProduct.namespace, "GWSAMPLE_BASIC");
+				delete oProduct.namespace;
 				strictEqual(oProduct.$path, "/dataServices/schema/0/entityType/2");
 				delete oProduct.$path;
+				strictEqual(oContact.namespace, "GWSAMPLE_BASIC");
+				delete oContact.namespace;
 				strictEqual(oContact.$path, "/dataServices/schema/0/entityType/3");
 				delete oContact.$path;
 
+				strictEqual(oGWSampleBasic.$path, "/dataServices/schema/0");
+				delete oGWSampleBasic.$path;
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
 
 				deepEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];
 
+				strictEqual(oCTAddress.namespace, "GWSAMPLE_BASIC");
+				delete oCTAddress.namespace;
 				strictEqual(oCTAddress.$path, "/dataServices/schema/0/complexType/0", "$path");
 				delete oCTAddress.$path;
 
 				deepEqual(oAssociation["sap:content-version"], "1");
 				delete oAssociation["sap:content-version"];
 
+				strictEqual(oAssociation.namespace, "GWSAMPLE_BASIC");
+				delete oAssociation.namespace;
 				strictEqual(oAssociation.$path, "/dataServices/schema/0/association/0");
 				delete oAssociation.$path;
 
@@ -1059,6 +1080,8 @@ sap.ui.require([
 				deepEqual(oEntityContainer["sap:use-batch"], "false");
 				delete oEntityContainer["sap:use-batch"];
 
+				strictEqual(oEntityContainer.namespace, "GWSAMPLE_BASIC");
+				delete oEntityContainer.namespace;
 				strictEqual(oEntityContainer.$path, "/dataServices/schema/0/entityContainer/0");
 				delete oEntityContainer.$path;
 
@@ -1074,8 +1097,6 @@ sap.ui.require([
 				delete oVHSexSet["sap:content-version"];
 
 				if (i > 0) {
-					ok(oAnnotations, "annotations are also loaded");
-
 					deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Label"], {
 						"String" : "Label via external annotation: Business Partner"
 					});
@@ -1491,6 +1512,7 @@ sap.ui.require([
 				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
+				notStrictEqual(oMetaModelData, oMetadata, "is clone");
 			});
 		});
 	});
@@ -1504,7 +1526,6 @@ sap.ui.require([
 			oModel;
 
 		oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
-		setupSandbox(this.sandbox);
 		oModel = new ODataModel2("/fake/service", {
 			annotationURI : "",
 			json : true
@@ -1523,10 +1544,10 @@ sap.ui.require([
 		["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"].forEach(
 
 			function (sPath) {
-				test(sAnnotation + ", " + sPath, function () {
+				test("check that no errors happen for empty/missing structures:"
+						+ sAnnotation + ", " + sPath, function () {
 					var oMetaModel, oModel;
 
-					setupSandbox(this.sandbox);
 					oModel = new ODataModel2("/fake/" + sPath, {
 						// annotations are mandatory for this test case
 						annotationURI : "/fake/" + sAnnotation,
@@ -1535,8 +1556,8 @@ sap.ui.require([
 
 					// code under test
 					oMetaModel = oModel.getMetaModel();
+
 					return oMetaModel.loaded().then(function () {
-						// check that no errors happen for empty/missing structures
 						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
 							null, "getODataEntityType");
 						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
@@ -1923,7 +1944,7 @@ sap.ui.require([
 				oPromise,
 				oProperty = oMetaModel.getODataProperty(oEntityType, "Category");
 
-			oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function() {
+			oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
 				return Promise.reject(new Error("Unexpected call to addAnnotationUrl"));
 			});
 
@@ -1935,7 +1956,6 @@ sap.ui.require([
 				deepEqual(mValueLists,
 					{"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"]});
 			});
-			oInterface.addAnnotationUrl.restore();
 			return oPromise;
 		});
 	});
@@ -1975,8 +1995,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("getODataValueLists: Metadata loaded w/o annot., separate value list load", function () {
-		return withGivenMetaModel("/FAR_CUSTOMER_LINE_ITEMS", undefined, function (oMetaModel) {
-			var i,
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oContextNoValueList = oMetaModel.getMetaContext("/Items('foo')/GeneratedID"),
 				oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item"),
 				oExpectedVL = { //value list with no qualifier
 					"CollectionPath" : {"String":"VL_SH_DEBIA"},
@@ -1996,78 +2017,283 @@ sap.ui.require([
 				},
 				oInterface = oMetaModel.oODataModelInterface,
 				oProperty = oMetaModel.getODataProperty(oEntityType, "Customer"),
-				oContext = oMetaModel.getMetaContext("/Items(foo)/Customer"),
-				oContextNoValueList = oMetaModel.getMetaContext("/Items(foo)/GeneratedID"),
 				oPromise;
 
-			//TODO understand cleaning up of local sandbox by QUnit and remove global sandbox
 			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
 
-			for (i = 0; i < 2; i += 1) { //test *one* promise for multiple calls with same context
-				oPromise = oMetaModel.getODataValueLists(oContext);
-				oPromise.then(function (mValueLists) {
-					deepEqual(mValueLists, {
-						"" : oExpectedVL,
-						"DEBID" : oExpectedVL_DEBID
-					});
-					ok(jQuery.isEmptyObject(oMetaModel.mContext2Promise),
-						"resolved promises deleted from cache");
-				});
-			}
-
-			ok(oInterface.addAnnotationUrl.calledWithExactly(
-				"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer"),
-				"addAnnotationUrl arguments");
-			strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl called once");
-
-			oInterface.addAnnotationUrl.reset();
+			// no sap:value-list => no request
 			oMetaModel.getODataValueLists(oContextNoValueList);
 			strictEqual(oInterface.addAnnotationUrl.callCount, 0);
 
-			return oPromise;
+			// separate value list load
+			oPromise = oMetaModel.getODataValueLists(oContext);
+			strictEqual(oMetaModel.getODataValueLists(oContext), oPromise, "promise is cached");
+			return oPromise.then(function (mValueLists) {
+				deepEqual(mValueLists, {
+					"" : oExpectedVL,
+					"DEBID" : oExpectedVL_DEBID
+				});
+
+				strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
+				ok(oInterface.addAnnotationUrl.calledWithExactly(
+					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer"),
+					"addAnnotationUrl arguments");
+
+				notStrictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
+					"resolved promises deleted from cache");
+			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: Metadata loaded w/o annot., addAnnotationUrl rejects",
-		function () {
-			return withGivenMetaModel("/FAR_CUSTOMER_LINE_ITEMS", undefined, function(oMetaModel) {
-				var oInterface = oMetaModel.oODataModelInterface,
-					oContext = oMetaModel.getMetaContext("/Items(foo)/Customer"),
-					oMyError = new Error(),
-					oPromise;
+	test("getODataValueLists: addAnnotationUrl rejects", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oInterface = oMetaModel.oODataModelInterface,
+				oMyError = new Error(),
+				oPromise;
 
-				oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
-					return Promise.reject(oMyError);
-				});
-
-				oPromise = oMetaModel.getODataValueLists(oContext);
-				return oPromise.then(function () {
-					throw new Error("Unexpected success");
-				}, function (oError) {
-					strictEqual(oError, oMyError, "error propagated");
-					strictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
-						"rejected promises are cached");
-				});
+			oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
+				return Promise.reject(oMyError);
 			});
-	});
 
-	//*********************************************************************************************
-	test("getODataValueLists: Metadata loaded w/o annot., reject invalid response", function () {
-		return withGivenMetaModel("/FAR_CUSTOMER_LINE_ITEMS", undefined, function (oMetaModel) {
-			var oContext = oMetaModel.getMetaContext("/Items(foo)/Invalid");
-
-			return oMetaModel.getODataValueLists(oContext).then(function () {
+			oPromise = oMetaModel.getODataValueLists(oContext);
+			return oPromise.then(function () {
 				throw new Error("Unexpected success");
 			}, function (oError) {
-				strictEqual(oError.message, "No value lists returned for " + oContext.getPath());
+				strictEqual(oError, oMyError, "error propagated");
+				strictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
+					"rejected promises are cached");
 			});
 		});
 	});
 
-	//TODO request bundling for all properties
-	//TODO integration test green: only one request for all properties
-	//TODO merge new entity types and entity sets contained in ODataMetadata after call to model.addAnnotationUrl
+	//*********************************************************************************************
+	["/Items('foo')/Invalid", "/Foos('foo')/Invalid"].forEach(function (sPath) {
+		test("getODataValueLists: reject invalid response for " + sPath, function () {
+			return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+				var oContext = oMetaModel.getMetaContext(sPath);
+
+				return oMetaModel.getODataValueLists(oContext).then(function () {
+					throw new Error("Unexpected success");
+				}, function (oError) {
+					strictEqual(oError.message,
+						"No value lists returned for " + oContext.getPath());
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: reject unsupported path", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')");
+
+			raises(function () {
+				oMetaModel.getODataValueLists(oContext);
+			}, /Unsupported property context with path \/dataServices\/schema\/0\/entityType\/0/);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: request bundling", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oCompanyCode = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
+				oCustomer = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oInterface = oMetaModel.oODataModelInterface,
+				oPromiseCompanyCode,
+				oPromiseCustomer;
+
+			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+
+			// Note: "wrong" alphabetic order of calls to check that property names will be sorted!
+			oPromiseCustomer = oMetaModel.getODataValueLists(oCustomer);
+			oPromiseCompanyCode = oMetaModel.getODataValueLists(oCompanyCode);
+
+			// check caching of pending requests
+			strictEqual(oMetaModel.getODataValueLists(oCompanyCode), oPromiseCompanyCode);
+			strictEqual(oMetaModel.getODataValueLists(oCustomer), oPromiseCustomer);
+
+			return Promise.all([oPromiseCustomer, oPromiseCompanyCode]).then(function () {
+				// check bundling
+				strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
+				strictEqual(oInterface.addAnnotationUrl.args[0][0],
+					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" +
+					",FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer",
+					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+			});
+		});
+	});
+	// Note: there is no need to avoid setTimeout() calls because the handler is so cheap
+	//TODO is there no need to clear timeouts in destroy()? is it better to resolve the promises?
+	// Note: different cache keys (property path vs. qualified property name) should be OK
+	//TODO call _sendBundledRequest with timeout > 0 to allow more API calls to "get on the bus"?
+	// --> use a single timeout in this case and clear the old one every time a new API call comes,
+	//     i.e. "bus leaves" only after some idle time!
+
+	//*********************************************************************************************
+	test("_sendBundledRequest", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oError = new Error(),
+				fnBarReject = sinon.spy(),
+				fnBarResolve = sinon.stub().throws(oError),
+				fnFooResolve = sinon.spy(),
+				oInterface = oMetaModel.oODataModelInterface,
+				oPromise,
+				oResponse = {
+					annotations : {},
+					entitySets : []
+				};
+
+			oGlobalSandbox.stub(oInterface, "addAnnotationUrl")
+				.returns(new Promise(function (fnResolve, fnReject) {
+					fnResolve(oResponse);
+				}));
+
+			oMetaModel.mQName2PendingRequest = {
+				"BAR" : {
+					resolve : fnBarResolve,
+					reject : fnBarReject
+				},
+				"FOO" : {
+					resolve : fnFooResolve,
+					reject : function (oError) {
+						ok(false, oError);
+					}
+				}
+			};
+
+			oMetaModel._sendBundledRequest();
+
+			// check bundling
+			strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
+			strictEqual(oInterface.addAnnotationUrl.args[0][0],
+				"$metadata?sap-value-list=BAR,FOO",
+				oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+			deepEqual(Object.keys(oMetaModel.mQName2PendingRequest), [], "nothing pending");
+
+			oPromise = oInterface.addAnnotationUrl.returnValues[0];
+			return oPromise.then(function (oResponse0) {
+				strictEqual(oResponse0, oResponse);
+				// technical test: oResponse is delivered to all pending requests, regardless of
+				// errors thrown
+				ok(fnBarResolve.calledWithExactly(oResponse), fnBarResolve.printf("%C"));
+				ok(fnFooResolve.calledWithExactly(oResponse), fnFooResolve.printf("%C"));
+				// if "resolve" handler throws, "reject" handler is called
+				ok(fnBarReject.calledWithExactly(oError), fnBarReject.printf("%C"));
+			});
+		});
+	});
+	// Note: rejecting a promise in _sendBundledRequest() cannot realistically throw errors
+
+	//*********************************************************************************************
+	test("getODataValueLists: Merge metadata with separate value list load", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oItemSetLabel = oMetaModel.getODataEntitySet("Items")
+					["com.sap.vocabularies.Common.v1.Label"],
+				oItemTypeLabel = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item")
+					["com.sap.vocabularies.Common.v1.Label"];
+
+			ok(!oMetaModel.getODataEntitySet("VL_SH_DEBIA"));
+			ok(!oMetaModel.getODataEntitySet("VL_SH_DEBID"));
+			ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"));
+			ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"));
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				var oODataMetadataSchema
+						= oMetaModel.oMetadata.getServiceMetadata().dataServices.schema[0],
+					oSet_DEBIA = oODataMetadataSchema.entityContainer[0].entitySet[2],
+					oSet_DEBID = oODataMetadataSchema.entityContainer[0].entitySet[3],
+					oType_DEBIA = oODataMetadataSchema.entityType[2],
+					oType_DEBID = oODataMetadataSchema.entityType[3],
+					oClonedSet_DEBIA = oMetaModel.getODataEntitySet("VL_SH_DEBIA"),
+					oClonedSet_DEBID = oMetaModel.getODataEntitySet("VL_SH_DEBID"),
+					oClonedType_DEBIA = oMetaModel.getODataEntityType(
+						"FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"),
+					oClonedType_DEBID = oMetaModel.getODataEntityType(
+						"FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID");
+
+				deepContains(oClonedSet_DEBIA, oSet_DEBIA);
+				notStrictEqual(oClonedSet_DEBIA, oSet_DEBIA);
+				deepContains(oClonedSet_DEBID, oSet_DEBID);
+				notStrictEqual(oClonedSet_DEBID, oSet_DEBID);
+
+				deepContains(oClonedType_DEBIA, oType_DEBIA);
+				notStrictEqual(oClonedType_DEBIA, oType_DEBIA);
+				deepContains(oClonedType_DEBID, oType_DEBID);
+				notStrictEqual(oClonedType_DEBID, oType_DEBID);
+
+				strictEqual(
+					oMetaModel.getODataEntitySet("Items")["com.sap.vocabularies.Common.v1.Label"],
+					oItemSetLabel,
+					"existing sets remain unchanged, as reference");
+				strictEqual(
+					oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item")
+						["com.sap.vocabularies.Common.v1.Label"],
+					oItemTypeLabel,
+					"existing types remain unchanged, as reference");
+
+				// check that v4 annotations are properly merged and that v2 ones are lifted etc.
+				strictEqual(
+					oClonedType_DEBIA.property[2/*LAND1*/]
+						["com.sap.vocabularies.Common.v1.ValueList"].CollectionPath.String,
+					"VL_SH_FARP_T005");
+				strictEqual(oClonedType_DEBIA.property[2/*LAND1*/]["sap:label"], "Country");
+				strictEqual(
+					oClonedType_DEBIA.property[2/*LAND1*/]
+						["com.sap.vocabularies.Common.v1.Label"].String,
+					"Country");
+
+				strictEqual(oClonedSet_DEBIA["sap:creatable"], "false");
+				strictEqual(oClonedSet_DEBIA["sap:deletable"], "false");
+				deepEqual(
+					oClonedSet_DEBIA["Org.OData.Capabilities.V1.InsertRestrictions"],
+					{Insertable : {Bool : "false"}}, "v2 --> v4");
+				deepEqual(
+					oClonedSet_DEBIA["Org.OData.Capabilities.V1.DeleteRestrictions"],
+					{Deletable : {Bool : "true"}}, "v4 wins");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Merge metadata with existing entity set", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
+				aEntitySet = oMetaModel.getObject(
+					"/dataServices/schema/0/entityContainer/0/entitySet"),
+				iOriginalLength;
+
+			// preparation: add dummy entity set with same name
+			aEntitySet.push({name : "VL_SH_H_T001"});
+			iOriginalLength = aEntitySet.length;
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				strictEqual(aEntitySet.length, iOriginalLength, "set not added twice");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Merge metadata with existing entity type", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
+				aEntityType = oMetaModel.getObject("/dataServices/schema/0/entityType"),
+				iOriginalLength;
+
+			// preparation: add dummy entity type with same name
+			aEntityType.push({name : "VL_SH_H_T001"});
+			iOriginalLength = aEntityType.length;
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				strictEqual(aEntityType.length, iOriginalLength, "type not added twice");
+				ok(oMetaModel.getODataEntitySet("VL_SH_H_T001"), "set is added");
+			});
+		});
+	});
+
+	//TODO is getODataValueLists also supported for properties of complex types?
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?
 
 	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path

@@ -654,10 +654,10 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	test("convertEntitySetAnnotations", function () {
-		var oData = clone(oDataSchema),
-			aSchema = oData.dataServices.schema,
+		var aSchema = clone(oDataSchema).dataServices.schema,
 			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
 			oEntitySet2 = aSchema[0].entityContainer[0].entitySet[1],
+			oEntityType = aSchema[0].entityType[0],
 			oLogMock = this.mock(jQuery.sap.log);
 
 		//Prepare data
@@ -680,13 +680,13 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"sap.ui.model.odata._ODataMetaModelUtils");
 
 		// code under test
-		Utils.convertEntitySetAnnotations(aSchema, oEntitySet);
-		Utils.convertEntitySetAnnotations(aSchema, oEntitySet2);
+		Utils.convertEntitySetAnnotations(oEntitySet, oEntityType);
+		Utils.convertEntitySetAnnotations(oEntitySet2, oEntityType);
 
 		//verify results
-		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Deletable"],
+		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Deletable"],
 				{"Path" : "Deletable"}, "deletable-path");
-		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Updatable"],
+		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Updatable"],
 				{"Path" : "Updatable"}, "updatable-path");
 
 
@@ -694,22 +694,22 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	test("convertEntitySetAnnotations no overwrite", function () {
-		var oData = clone(oDataSchema),
-		aSchema = oData.dataServices.schema,
-		oEntitySet = aSchema[0].entityContainer[0].entitySet[0];
+		var aSchema = clone(oDataSchema).dataServices.schema,
+			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
+			oEntityType = aSchema[0].entityType[0];
 
 		//Prepare data
 		Utils.liftSAPData(oEntitySet, "EntitySet");
-		aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Deletable"] = {"Path" : "bar"};
-		aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Updatable"] = {"Path" : "foo"};
+		oEntityType["com.sap.vocabularies.Common.v1.Deletable"] = {"Path" : "bar"};
+		oEntityType["com.sap.vocabularies.Common.v1.Updatable"] = {"Path" : "foo"};
 
 		// code under test
-		Utils.convertEntitySetAnnotations(aSchema, oEntitySet);
+		Utils.convertEntitySetAnnotations(oEntitySet, oEntityType);
 
 		//verify results
-		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Deletable"],
+		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Deletable"],
 				{"Path" : "bar"}, "deletable-path not overwritten");
-		deepEqual(aSchema[0].entityType[0]["com.sap.vocabularies.Common.v1.Updatable"],
+		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Updatable"],
 				{"Path" : "foo"}, "updatable-path not overwritten");
 
 	});
@@ -821,7 +821,8 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	test("calculateEntitySetAnnotations: call addFilterRestriction", function () {
 		var aSchemas = clone(oDataSchema).dataServices.schema,
 			oEntitySet = aSchemas[0].entityContainer[0].entitySet[2], // ProductSet
-			oProperty = aSchemas[0].entityType[4].property[0]; // Product.Foo
+			oEntityType = aSchemas[0].entityType[4], // Product
+			oProperty = oEntityType.property[0]; // Product.Foo
 
 		// prepare test data
 		aSchemas[0].entityType.forEach(function (oEntityType) {
@@ -836,7 +837,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			.withExactArgs(oProperty, oEntitySet).returns("");
 
 		// run code under test
-		Utils.calculateEntitySetAnnotations(aSchemas, oEntitySet);
+		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);
 	});
 
 	//*********************************************************************************************

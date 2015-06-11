@@ -18,54 +18,8 @@
 				<Property Name="Customer" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="CustomerName" sap:label="Customer" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
 				<Property Name="GeneratedID" Type="Edm.String" Nullable="false" sap:aggregation-role="dimension" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
 			</EntityType>
-			<EntityType Name="VL_SH_H_T001" sap:value-list="true" sap:content-version="1">
-				<Key>
-					<PropertyRef Name="BUKRS"/>
-				</Key>
-				<Property Name="BUKRS" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:text="BUTXT" sap:label="Company Code"/>
-				<Property Name="BUTXT" Type="Edm.String" MaxLength="25" sap:label="Company Name"/>
-				<Property Name="ORT01" Type="Edm.String" MaxLength="25" sap:label="City"/>
-				<Property Name="WAERS" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency" sap:semantics="currency-code"/>
-			</EntityType>
-			<EntityType Name="VL_SH_DEBIA" sap:value-list="true" sap:content-version="1">
-				<Key>
-					<PropertyRef Name="SORTL"/>
-					<PropertyRef Name="PSTLZ"/>
-					<PropertyRef Name="MCOD3"/>
-					<PropertyRef Name="MCOD1"/>
-					<PropertyRef Name="KUNNR"/>
-				</Key>
-				<Property Name="BEGRU" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Authorization" sap:filterable="false"/>
-				<Property Name="SORTL" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term"/>
-				<Property Name="LAND1" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country"/>
-				<Property Name="PSTLZ" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code"/>
-				<Property Name="MCOD3" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="City"/>
-				<Property Name="MCOD1" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name"/>
-				<Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="MCOD1" sap:label="Customer"/>
-			</EntityType>
-			<EntityType Name="VL_SH_DEBID" sap:value-list="true" sap:content-version="1">
-				<Key>
-					<PropertyRef Name="SORTL"/>
-					<PropertyRef Name="PSTLZ"/>
-					<PropertyRef Name="MCOD3"/>
-					<PropertyRef Name="MCOD1"/>
-					<PropertyRef Name="KUNNR"/>
-					<PropertyRef Name="BUKRS"/>
-				</Key>
-				<Property Name="BEGRU" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Authorization" sap:filterable="false"/>
-				<Property Name="SORTL" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term"/>
-				<Property Name="LAND1" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country"/>
-				<Property Name="PSTLZ" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code"/>
-				<Property Name="MCOD3" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="City"/>
-				<Property Name="MCOD1" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name"/>
-				<Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="MCOD1" sap:label="Customer"/>
-				<Property Name="BUKRS" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code"/>
-			</EntityType>
 			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
 				<EntitySet Name="Items" EntityType="FAR_CUSTOMER_LINE_ITEMS.Item" sap:label="Item" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
-				<EntitySet Name="VL_SH_H_T001" EntityType="FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1" sap:countable="false"/>
-				<EntitySet Name="VL_SH_DEBIA" EntityType="FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1" sap:countable="false"/>
-				<EntitySet Name="VL_SH_DEBID" EntityType="FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1" sap:countable="false"/>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

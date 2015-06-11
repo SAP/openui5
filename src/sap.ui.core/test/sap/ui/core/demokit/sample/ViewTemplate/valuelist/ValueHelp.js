@@ -1,13 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-		'sap/m/List',
+sap.ui.define(['sap/m/Column',
+		'sap/m/ColumnListItem',
 		'sap/m/MessageBox',
 		'sap/m/Popover',
-		'sap/m/StandardListItem',
+		'sap/m/Table',
+		'sap/m/Text',
 		'sap/ui/commons/ValueHelpField'
-	], function(List, MessageBox, Popover, StandardListItem, ValueHelpField) {
+	], function(Column, ColumnListItem, MessageBox, Popover, Table, Text, ValueHelpField) {
 	"use strict";
 
 	return ValueHelpField.extend(
@@ -56,7 +57,7 @@ sap.ui.define([
 					});
 				}, function (oError) {
 					MessageBox.alert(oError.message, {
-						icon: sap.m.MessageBox.Icon.ERROR,
+						icon: MessageBox.Icon.ERROR,
 						title: "Error"});
 				});
 			},
@@ -64,22 +65,35 @@ sap.ui.define([
 			renderer : "sap.ui.commons.ValueHelpFieldRenderer",
 
 			_onValueHelp : function (oEvent) {
-				var oControl = oEvent.getSource(),
-					oBinding = oControl.getBinding("value"),
-					oList = new List(),
+				var oColumnListItem = new ColumnListItem(),
+					oControl = oEvent.getSource(),
 					oPopover = new Popover(),
+					oTable = new Table(),
 					aVHTitle = [];
 
-				oPopover.setTitle("Value Help: " + oBinding.getPath());
-				oList.setModel(oBinding.getModel());
-				oControl._parameters.forEach(function (sParameterPath) {
-					aVHTitle.push(sParameterPath + ":{" + sParameterPath + "}");
-				});
-				oList.bindItems({
+				function createText(sPropertyPath) {
+					var oMetaModel = oControl.getModel().getMetaModel(),
+						oEntityType = oMetaModel.getODataEntityType(oMetaModel.getODataEntitySet(
+							oControl._collectionPath).entityType);
+					return new Text({text: oMetaModel.getODataProperty(oEntityType,
+						sPropertyPath)["sap:label"]});
+				}
+
+				oPopover.setTitle("Value Help: " + oControl.getBinding("value").getPath());
+				oTable.setModel(oControl.getModel());
+				oTable.bindItems({
 					path : "/" + oControl._collectionPath,
-					template : new StandardListItem({title : aVHTitle.join(",")})
+					template : oColumnListItem
 				});
-				oPopover.addContent(oList);
+				oControl._parameters.forEach(function (sParameterPath) {
+					oTable.addColumn(new Column(
+						{header: createText(sParameterPath)}
+					));
+					oColumnListItem.addCell(
+						new Text({text: "{" + sParameterPath + "}"})
+					);
+				});
+				oPopover.addContent(oTable);
 				oPopover.openBy(oControl);
 			}
 	});
