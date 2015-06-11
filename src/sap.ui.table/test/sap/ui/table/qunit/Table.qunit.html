@@ -425,12 +425,12 @@
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
 
 		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
+		equal($focused.attr('id'), oTable.getId() + "-rows-row0-rowsel", "The correct cell has the focus");
 
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
 
 		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
+		equal($focused.attr('id'), oTable.getId() + "-rows-row0-rowsel", "The correct cell has the focus");
 
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_UP", false, false, false);
 
@@ -498,7 +498,7 @@
 		qutils.triggerKeyboardEvent($focused[0], "HOME", false, false, false);
 		$focused = jQuery(document.activeElement);
 
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
+		equal($focused.attr('id'), oTable.getId() + "-rows-row0-rowsel", "The correct cell has the focus");
 
 		qutils.triggerKeyboardEvent($focused[0], "END", false, false, false);
 		$focused = jQuery(document.activeElement);

@@ -697,9 +697,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	TreeTable.prototype.isIndexSelected = function (iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		//when using the treebindingadapter, check if the node is selected
-		if (oBinding && oBinding.findNode) {
-			var oNode = oBinding.findNode(iRowIndex);
-			return oNode && oNode.nodeState && oNode.nodeState.selected;
+		if (oBinding && oBinding.isIndexSelected) {
+			return oBinding.isIndexSelected(iRowIndex);
 		} else {
 			return Table.prototype.isIndexSelected.call(this, iRowIndex);
 		}
