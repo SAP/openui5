@@ -8,6 +8,13 @@
 	<description>Planet OpenUI5 - http://openui5.org/</description>
 
 <item>
+	<title>Demos: Why initializing properties on prototypes can have nasty side effects in SAPUI5</title>
+	<guid>http://openui5picks.tumblr.com/post/121254537550</guid>
+	<link>http://openui5picks.tumblr.com/post/121254537550</link>
+	<description>&lt;img src=&quot;https://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</description>
+	<pubDate>Sun, 31 May 2015 11:36:00 +0000</pubDate>
+</item>
+<item>
 	<title>Demos: Rounded Tiles in UI5</title>
 	<guid>http://openui5picks.tumblr.com/post/116631893405</guid>
 	<link>http://openui5picks.tumblr.com/post/116631893405</link>
@@ -65,16 +72,6 @@
 	<link>http://openui5picks.tumblr.com/post/98138078515</link>
 	<description>&lt;img src=&quot;https://31.media.tumblr.com/e3f5044854c1337926274cf2bc9bdf55/tumblr_inline_ncawc3i6eG1sb8vfp.jpg&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;After the first part of tutorial, we have created and run oData service that can write/read data to SAP database table. In this part, I will explain how frontend openUI5 application works. Whole...</description>
 	<pubDate>Tue, 22 Jul 2014 11:30:00 +0000</pubDate>
-</item>
-<item>
-	<title>Demos: Soccer App built with OpenUI5</title>
-	<guid>http://openui5picks.tumblr.com/post/89849494395</guid>
-	<link>http://openui5picks.tumblr.com/post/89849494395</link>
-	<description>&lt;img src=&quot;https://31.media.tumblr.com/d165a06948b8688771813f6efd9cfb1f/tumblr_inline_n7pzstrZff1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
-
-Have a look at this great world cup prediction game app built with OpenUI5. It shows your game predictions and infos on the stadiums as well.
-</description>
-	<pubDate>Wed, 25 Jun 2014 10:26:00 +0000</pubDate>
 </item>
 <item>
 	<title>Demos: Analysing UK Road Traffic Accident data with HANA and SAPUI5</title>

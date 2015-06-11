@@ -5,8 +5,26 @@
 	<link rel="self" href="http://openui5.org/atom.xml"/>
 	<link href="http://openui5.org/"/>
 	<id>http://openui5.org/atom.xml</id>
-	<updated>2015-06-10T20:00:07+00:00</updated>
+	<updated>2015-06-11T08:00:06+00:00</updated>
 	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
+
+	<entry>
+		<title type="html">Why initializing properties on prototypes can have nasty side effects in SAPUI5</title>
+		<link href="http://openui5picks.tumblr.com/post/121254537550"/>
+		<id>http://openui5picks.tumblr.com/post/121254537550</id>
+		<updated>2015-05-31T11:36:00+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2015-06-11T08:00:06+00:00</updated>
+		</source>
+	</entry>
 
 	<entry>
 		<title type="html">Rounded Tiles in UI5</title>
@@ -22,7 +40,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -40,7 +58,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -58,7 +76,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -76,7 +94,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -94,7 +112,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -112,7 +130,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -133,7 +151,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -151,28 +169,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
-		</source>
-	</entry>
-
-	<entry>
-		<title type="html">Soccer App built with OpenUI5</title>
-		<link href="http://openui5picks.tumblr.com/post/89849494395"/>
-		<id>http://openui5picks.tumblr.com/post/89849494395</id>
-		<updated>2014-06-25T10:26:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/d165a06948b8688771813f6efd9cfb1f/tumblr_inline_n7pzstrZff1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
-
-Have a look at this great world cup prediction game app built with OpenUI5. It shows your game predictions and infos on the stadiums as well.
-</content>
-		<author>
-			<name>Demos</name>
-			<uri>http://openui5picks.tumblr.com/</uri>
-		</author>
-		<source>
-			<title type="html">openui5picks</title>
-			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
-			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
@@ -192,7 +189,7 @@ This blog demonstrates how to load, transform and analyse UK road traffic accide
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-06-10T20:00:07+00:00</updated>
+			<updated>2015-06-11T08:00:06+00:00</updated>
 		</source>
 	</entry>
 
