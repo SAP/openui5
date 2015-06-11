@@ -298,13 +298,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 
 		setItemToggleState(this, true);
 
-		this.bOpen = true;
+		
 		this.oOpenerRef = oOpenerRef;
 		this.bIgnoreOpenerDOMRef = false;
 
 		// Open the sap.ui.core.Popup
 		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", true);
-
+		this.bOpen = true;
+		
 		// Set the tab index of the menu and focus
 		var oDomRef = this.getDomRef();
 		jQuery(oDomRef).attr("tabIndex", 0).focus();
