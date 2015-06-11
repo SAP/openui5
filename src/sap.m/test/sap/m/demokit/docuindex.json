@@ -863,7 +863,7 @@
 		},
 		{
 		  "id": "sap.m.tutorial.walkthrough",
-		  "name": "SAPUI5 Walkthrough",
+		  "name": "Walkthrough",
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
