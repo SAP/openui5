@@ -30,7 +30,7 @@
 					<semantic:AddAction press="onSemanticButtonPress"/>
 				</semantic:addAction>
 				<semantic:multiSelectAction>
-					<semantic:MultiSelectAction press="onSemanticButtonPress"/>
+					<semantic:MultiSelectAction press="onMultiSelectPress"/>
 				</semantic:multiSelectAction>
 			</semantic:MasterPage>
 		</masterPages>

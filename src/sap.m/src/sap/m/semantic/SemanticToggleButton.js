@@ -52,17 +52,16 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/ButtonType', 'sap/ui/base
 	SemanticToggleButton.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
 		if ((sPropertyName === 'pressed') && (oValue !== this.getPressed())) {
-
-			var oButtonType = oValue ? ButtonType.Emphasized : ButtonType.Default;
-			this._getControl().setType(oButtonType);
+			this._setPressed(oValue, bSuppressInvalidate);
 			return this;
 		}
 		return SemanticButton.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
 	};
 
 	SemanticToggleButton.prototype.getProperty = function(sPropertyName) {
+
 		if (sPropertyName === 'pressed') {
-			return this._getControl().getType() === ButtonType.Emphasized;
+			return this._getPressed();
 		}
 		return SemanticButton.prototype.getProperty.call(this, sPropertyName);
 	};
@@ -93,6 +92,25 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/ButtonType', 'sap/ui/base
 		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
 			this._onTap(oEvent);
 		}
+	};
+
+	/**
+	 * Gets the 'pressed' property value.
+	 * Can be overwritten in child classes to apply semantic-specific logic
+	 * @private
+	 */
+	SemanticToggleButton.prototype._getPressed = function() {
+		return this._getControl().getType() === ButtonType.Emphasized;
+	};
+
+	/**
+	 * Sets the 'pressed' property value.
+	 * Can be overwritten in child classes to apply semantic-specific logic
+	 * @private
+	 */
+	SemanticToggleButton.prototype._setPressed = function(bPressed, bSuppressInvalidate) {
+		var oButtonType = bPressed ? ButtonType.Emphasized : ButtonType.Default;
+		this._getControl().setType(oButtonType, bSuppressInvalidate);
 	};
 
 	return SemanticToggleButton;
