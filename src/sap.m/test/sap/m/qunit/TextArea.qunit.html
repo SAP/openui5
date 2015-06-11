@@ -399,6 +399,19 @@
 
 		oTA.destroy();
 	});
+	
+	module("Encoding");
+	test("carriage return should be converted correctly during rendering", function() {
+		var sValue = "\ntest\ntest\n\n";
+		var oTA = new sap.m.TextArea({
+			value : sValue
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+	
+		oTA.focus();
+		strictEqual(oTA.getValue(), sValue, "API value is correct");
+		oTA.destroy();
+	});
 
 })(jQuery, sap.ui.getCore());
 
