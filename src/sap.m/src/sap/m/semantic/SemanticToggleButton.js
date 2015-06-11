@@ -23,7 +23,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/ButtonType', 'sap/ui/base
 	 * @constructor
 	 * @public
 	 * @since 1.30.0
-	 * @alias sap.m.semantic.SemanticButton
+	 * @alias sap.m.semantic.SemanticToggleButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
