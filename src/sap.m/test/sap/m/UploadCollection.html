@@ -78,7 +78,7 @@
 				"enableEdit" : true,
 				"enableDelete" : true,
 				"visibleEdit" : false,
-				"visibleDelete" : false,
+				"visibleDelete" : true,
 				"fileName" : "Screenshot.jpg",
 				"fileSize" : 20,
 				"mimeType" : "image/jpg",
@@ -89,7 +89,7 @@
 				"contributor" : "John Smith",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
 				"enableEdit" : true,
-				"enableDelete" : false,
+				"enableDelete" : true,
 				"fileName" : "Notes.txt",
 				"fileSize" : 10,
 				"mimeType" : "text/plain",
@@ -267,44 +267,27 @@
 
 	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
 
-	// get current date
-	var fnCurrentDate = function() {
-		var date = new Date();
-		var day = date.getDate();
-		var month = date.getMonth() + 1;
-		var year = date.getFullYear();
-
-		if (day < 10) {
-			day = '0' + day
-		};
-		if (month < 10) {
-			month = '0' + month
-		}
-		return year + '-' + month + '-' + day;
-	};
-
 	/* =========================================================== */
 	/* Handle UploadCollection events                              */
 	/* =========================================================== */
 	var fnChange = function(oEvent){
-		sap.m.MessageToast.show("Change event triggered");
+		sap.m.MessageToast.show("Change event triggered.");
 	};
 
 	var fnFileDeleted = function(oEvent) {
-		var oData = oModel.getData();
-		var aItems = oData.items;
+		var oData = oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
 		var sDocumentId = oEvent.getParameter("documentId");
-		var bSetData = false;
 
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems.splice(index, 1);
-				bSetData = true;
 			};
 		});
-		if (bSetData === true) {
-			oModel.setData(oData);
-		};
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("FileDeleted event triggered.");
 	};
 
 	var fnfilenameLengthExceed = function(oEvent){
@@ -312,7 +295,8 @@
 	}
 
 	var fnFileRenamed = function(oEvent) {
-		var aItems = oModel.getData().items;
+		var oData =  oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
 		var sDocumentId = oEvent.getParameter("documentId");
 
 		jQuery.each(aItems, function(index) {
@@ -320,41 +304,44 @@
 				aItems[index].fileName = oEvent.getParameter("item").getFileName();
 			};
 		});
-		oModel.setData(oData);
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("FileRenamed event triggered.");
 	};
 
 	var fnFileSizeExceed = function(oEvent) {
-		sap.m.MessageToast.show("File size exceeded");
+		sap.m.MessageToast.show("FileSizeExceed event triggered.");
 	};
 
 	var fnTypeMissmatch = function(oEvent) {
-		sap.m.MessageToast.show("File type mismatch");
+		sap.m.MessageToast.show("TypeMissmatch event triggered.");
 	};
 	var fnUploadComplete = function(oEvent) {
-		if (oEvent) {
-			var oData = oModel.getData();
-			var oItem = {};
-			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
-			// at the moment parameter fileName is not set in IE9
-			if (!sUploadedFile) {
-				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
-				sUploadedFile = aUploadedFile[0];
-			}
-			var nDocId = jQuery.now(); // generate Id
-			oItem = {
-					"contributor" : "You",
-					"documentId" : nDocId.toString(),
-					"fileName" : sUploadedFile,
-					"fileSize" : 10, // TODO get file size
-					"mimeType" : "",
-					"thumbnailUrl" : "",
-					"uploadedDate" : fnCurrentDate(),
-					"url" : "myUrl"
-				};
-				oData.items.unshift(oItem);
-			oModel.setData(oData);
-			sap.m.MessageToast.show("Upload successful");
+		var oData = oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
+		var oItem = {};
+		var sUploadedFile = oEvent.getParameter("files")[0].fileName;
+		// at the moment parameter fileName is not set in IE9
+		if (!sUploadedFile) {
+			var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
+			sUploadedFile = aUploadedFile[0];
 		}
+		oItem = {
+				"contributor" : "You",
+				"documentId" : jQuery.now().toString(), // generate Id
+				"fileName" : sUploadedFile,
+				"fileSize" : 10, // TODO get file size
+				"mimeType" : "",
+				"thumbnailUrl" : "",
+				"uploadedDate" : new Date(jQuery.now()).toLocaleDateString(),
+				"url" : "myUrl"
+			};
+		aItems.unshift(oItem);
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("UploadComplete event triggered.");
 	};
 
 	var oItemTemplate = new sap.m.UploadCollectionItem({
