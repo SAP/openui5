@@ -621,8 +621,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			return fnLeft;
 		}
 
-		//TODO allow short read by passing 0 (do it if iStart is provided below)
-		fnFormatter = expression(-1); // -1 = "greedy read"
+		fnFormatter = expression(0);
 		return {
 			at: current() ? current().start : undefined,
 			formatter: fnFormatter
@@ -643,9 +642,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 		 * If a start index <code>iStart</code> for parsing is provided, the input string is parsed
 		 * starting from this index and the return value contains the index after the last
 		 * character belonging to the expression.
-		 *
-		 * If <code>iStart</code> is undefined the complete string is parsed; in this case
-		 * a <code>SyntaxError</code> is thrown if it does not comply to the expression syntax.
 		 *
 		 * The expression syntax is a subset of JavaScript expression syntax with the
 		 * enhancement that the only "variable" parts in an expression are bindings.

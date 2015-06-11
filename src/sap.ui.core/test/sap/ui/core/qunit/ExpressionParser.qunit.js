@@ -160,9 +160,7 @@
 	//*********************************************************************************************
 	[
 		//parser error
-		{binding: "{='foo' 'bar'}", message: "Unexpected CONSTANT: 'bar'", at: 9},
 		{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4},
-		{binding: "{='foo' ${bar}}", message: "Unexpected BINDING: ${bar}", at: 9}
 	].forEach(function(oFixture) {
 		test("Invalid binding: " + oFixture.binding, function () {
 			checkError(function () {
@@ -265,10 +263,7 @@
 			message: "Expected IDENTIFIER but instead saw end of input" },
 		{ binding: "{={true: 'bar'}}", message: "Expected IDENTIFIER but instead saw true",
 			token: "true" },
-		{ binding: "{=odata foo}", message: "Unexpected IDENTIFIER: foo", token: "foo" },
-		{ binding: "{=odata.fillUriTemplate )}", message: "Unexpected )", token: ")" },
 		{ binding: "{=, 'foo'}", message: "Unexpected ,", token: "," },
-		{ binding: "{='foo' , 'bar'}", message: "Unexpected ,", token: "," },
 		{ binding: "{='foo' ! 'bar'}", message: "Unexpected !", token: "!" },
 		{ binding: "{='foo' typeof 'bar'}", message: "Unexpected typeof", token: "typeof" },
 		{ binding: "{=odata.}", message: "Expected IDENTIFIER but instead saw }", token: "}" },
@@ -292,6 +287,24 @@
 				oFixture.binding,
 				oFixture.at || (oFixture.token
 					? oFixture.binding.lastIndexOf(oFixture.token) + 1 : undefined));
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{binding: "{='foo' 'bar'}", at: 8},
+		{binding: "{='foo' ${bar}}", at: 8},
+		{binding: "{=odata foo}", at: 8},
+		{binding: "{=odata.fillUriTemplate )}", at: 24},
+		{binding: "{='foo' , 'bar'}", at: 8},
+	].forEach(function(oFixture) {
+		test("Error handling: excess tokens: " + oFixture.binding, function () {
+			throws(function () {
+				sap.ui.base.BindingParser.complexParser(oFixture.binding);
+			}, new SyntaxError("Expected '}' and instead saw '"
+					+ oFixture.binding.charAt(oFixture.at) + "' in expression binding "
+					+ oFixture.binding + " at position " + oFixture.at)
+			);
 		});
 	});
 

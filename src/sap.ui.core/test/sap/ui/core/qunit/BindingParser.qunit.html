@@ -26,6 +26,7 @@
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
 
+	jQuery.sap.require("sap.ui.base.ExpressionParser");
 	jQuery.sap.require("sap.ui.model.odata.Filter");
 	jQuery.sap.require("sap.ui.model.type.Currency");
 
@@ -358,11 +359,38 @@
 		ok(oBindingInfo.parts[0].type instanceof sap.ui.model.type.Currency);
 	});
 
+	test("parseExpression: uses Expression.parse", function () {
+		var sInput = "foo",
+			iStart = 0,
+			oResult = {};
+
+		this.mock(sap.ui.base.ExpressionParser).expects("parse")
+			.withExactArgs(sinon.match.func, sInput, iStart).returns(oResult);
+
+		strictEqual(sap.ui.base.BindingParser.parseExpression(sInput, iStart), oResult);
+	});
+
+	test("parseExpression: resolving", function () {
+		var sExpression = "[${/blue}?'blue':'red']",
+			oIcon = new sap.ui.core.Icon(),
+			oResult = sap.ui.base.BindingParser.parseExpression(sExpression, 1),
+			oModel = new sap.ui.model.json.JSONModel({blue: false});
+
+		strictEqual(oResult.at, sExpression.length - 1);
+		oIcon.setModel(oModel);
+		oIcon.bindProperty("color", oResult.result);
+		strictEqual(oIcon.getColor(), "red");
+
+		oModel.setProperty("/blue", true);
+		strictEqual(oIcon.getColor(), "blue");
+	});
+
 	</script>
 
+	<title>QUnit tests: Data binding Calculated Fields</title>
 </head>
 <body>
-<h1 id="qunit-header">QUnit tests: Data binding Calculated Fields</h1>
+<h1 id="qunit-header"></h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>
