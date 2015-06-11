@@ -151,6 +151,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Carousel._RIGHTMOST_CLASS = "sapMCrslRightmost";
 	Carousel._LATERAL_CLASSES = "sapMCrslLeftmost sapMCrslRightmost";
 	Carousel._bIE9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10);
+	Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING = 10; // The number 10 is by keyboard specification
 
 	/**
 	 * Initialize member variables which are needed later on.
@@ -365,8 +366,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.firePageChanged( { oldActivePageId: sOldActivePageId,
 			newActivePageId: sNewActivePageId});
 	};
-
-
 
 	/**
 	 * Sets HUD control's visibility after page has changed
@@ -645,110 +644,263 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return result;
 	};
 
+	 //================================================================================
+	 // Keyboard handling
+	 //================================================================================
+
 	/**
 	 * Handler for 'tab previous' key event.
 	 *
-	 * @param oEvent - key event
+	 * @param {Object} oEvent - key event
 	 * @private
 	 *
 	 */
 	Carousel.prototype.onsaptabprevious = function(oEvent) {
-		this._fnOnTabPress(oEvent, false);
+		this._bDirection = false;
+		this._fnOnTabPress(oEvent);
 	};
 
 	/**
 	 * Handler for 'tab next' key event.
 	 *
-	 * @param oEvent - key event
+	 * @param {Object} oEvent - key event
 	 * @private
 	 *
 	 */
 	Carousel.prototype.onsaptabnext = function(oEvent) {
-		this._fnOnTabPress(oEvent, true);
+		this._bDirection = true;
+		this._fnOnTabPress(oEvent);
 	};
 
 	/**
-	 * This method is called when pressing tab or shift+tab. Perform logic depending
-	 * on the current focused element.
+	 * Handler for focus event
 	 *
-	 * @param oEvent - key event
-	 * @param { bDirection } serving as a reference for the Carousel slide direction
+	 * @param {Object} oEvent - The event object
+	 */
+	Carousel.prototype.onfocusin = function(oEvent) {
+		// Save focus reference
+		this.saveLastFocusReference(oEvent);
+		// Reset the reference for future use
+		this._bDirection = undefined;
+	};
+
+	/**
+	 * Handler for F6
+	 *
+	 * @param {Object} oEvent - The event object
+	 */
+	Carousel.prototype.onsapskipforward = function(oEvent) {
+		oEvent.preventDefault();
+		this._handleGroupNavigation(oEvent, false);
+	};
+
+	/**
+	 * Handler for Shift + F6
+	 *
+	 * @param {Object} oEvent - The event object
+	 */
+	Carousel.prototype.onsapskipback = function(oEvent) {
+		oEvent.preventDefault();
+		this._handleGroupNavigation(oEvent, true);
+	};
+
+	/**
+	 * Handler for key down
+	 *
+	 * @param {Object} oEvent - key object
+	 */
+	Carousel.prototype.onkeydown = function(oEvent) {
+		switch (oEvent.keyCode) {
+			// F7 key
+			case jQuery.sap.KeyCodes.F7:
+				this._handleF7Key(oEvent);
+				break;
+
+			// Minus keys
+			// TODO  jQuery.sap.KeyCodes.MINUS is not returning 189
+			case 189:
+			case jQuery.sap.KeyCodes.NUMPAD_MINUS:
+				this._fnSkipToIndex(oEvent, -1);
+				break;
+
+			// Plus keys
+			case jQuery.sap.KeyCodes.PLUS:
+			case jQuery.sap.KeyCodes.NUMPAD_PLUS:
+				this._fnSkipToIndex(oEvent, 1);
+				break;
+		}
+	};
+
+	/**
+	 * Set carousel back to the first position it had.
+	 *
+	 * @param {Object} oEvent - key event
 	 * @private
 	 */
-	Carousel.prototype._fnOnTabPress = function(oEvent, bDirection) {
-		var oSourceDomRef = oEvent.target;
-		var $activePage = this.$().find('.sapMCrslItem.sapMCrslActive');
+	Carousel.prototype.onsapescape = function(oEvent) {
+		var lastActivePageNumber;
 
+		if (oEvent.target === this.$()[0] && this._lastActivePageNumber) {
+			lastActivePageNumber = this._lastActivePageNumber + 1;
+
+			this._oMobifyCarousel.move(lastActivePageNumber);
+			this._changePage(lastActivePageNumber);
+		}
+	};
+
+	/**
+	 * Move focus to the next item. If focus is on the last item, do nothing.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapright = function(oEvent) {
+		this._fnSkipToIndex(oEvent, 1);
+	};
+
+	/**
+	 * Move focus to the next item. If focus is on the last item, do nothing.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapup = function(oEvent) {
+		this._fnSkipToIndex(oEvent, 1);
+	};
+
+	/**
+	 * Move focus to the previous item. If focus is on the first item, do nothing.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapleft = function(oEvent) {
+		this._fnSkipToIndex(oEvent, -1);
+	};
+
+	/**
+	 * Move focus to the previous item. If focus is on the first item, do nothing.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapdown = function(oEvent) {
+		this._fnSkipToIndex(oEvent, -1);
+	};
+
+	/**
+	 * Move focus to the first item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsaphome = function(oEvent) {
+		this._fnSkipToIndex(oEvent, 0);
+	};
+
+	/**
+	 * Move focus to the last item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapend = function(oEvent) {
+		this._fnSkipToIndex(oEvent, this.getPages().length);
+	};
+
+	/**
+	 * Move focus 10 items to the right. If there are less than 10 items right, move
+	 * focus to last item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsaprightmodifiers = function(oEvent) {
+		if (oEvent.ctrlKey) {
+			this._fnSkipToIndex(oEvent, Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING);
+		}
+	};
+
+	/**
+	 * Move focus 10 items to the right. If there are less than 10 items right, move
+	 * focus to last item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapupmodifiers = function(oEvent) {
+		if (oEvent.ctrlKey) {
+			this._fnSkipToIndex(oEvent, Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING);
+		}
+	};
+
+	/**
+	 * Move focus 10 items to the right. If there are less than 10 items right, move
+	 * focus to last item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsappageup = function(oEvent) {
+		this._fnSkipToIndex(oEvent, Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING);
+	};
+
+	/**
+	 * Move focus 10 items to the left. If there are less than 10 items left, move
+	 * focus to first item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapleftmodifiers = function(oEvent) {
+		if (oEvent.ctrlKey) {
+			this._fnSkipToIndex(oEvent, -Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING);
+		}
+	};
+
+	/**
+	 * Move focus 10 items to the left. If there are less than 10 items left, move
+	 * focus to first item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsapdownmodifiers = function(oEvent) {
+		if (oEvent.ctrlKey) {
+			this._fnSkipToIndex(oEvent, -Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING);
+		}
+	};
+
+	/**
+	 * Move focus 10 items to the left. If there are less than 10 items left, move
+	 * focus to first item.
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype.onsappagedown = function(oEvent) {
+		this._fnSkipToIndex(oEvent, -Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING);
+	};
+
+	/**
+	 * Called on tab or shift+tab key press
+	 *
+	 * @param {Object} oEvent - key event
+	 * @private
+	 */
+	Carousel.prototype._fnOnTabPress = function(oEvent) {
 		// Check if the focus is received form the Carousel
-		if (oSourceDomRef === this.$()[0]) {
-			this._fnOnCarouselEnter(oEvent, bDirection);
-			return;
+		if (oEvent.target === this.$()[0]) {
+			// Save reference for [ESC]
+			this._lastActivePageNumber = this._getPageNumber(this.getActivePage());
 		}
-
-		if (bDirection === true) {
-			// If the event is from the last focusable element
-			// focus the next focusable control after the Carousel
-			if (oSourceDomRef === $activePage.lastFocusableDomRef()) {
-				this._handleGroupNavigation(oEvent, false);
-			}
-		} else {
-			// If the event is from the first focusable element
-			// focus the Carousel
-			if (oSourceDomRef === $activePage.firstFocusableDomRef()) {
-				oEvent.preventDefault();
-				this.$().focus();
-			}
-		}
-
-		// keep a reference to the current active carousel page
-		this._iLastActivePage = this._getPageNumber(this.getActivePage());
-
-		// keep a reference to the current focused element
-		this._oLastFocusedElement = oSourceDomRef;
-	};
-
-	/**
-	 * Checks which time the user is entering the Carousel
-	 *
-	 * @param {jQuery.EventObject}
-	 * @param { bDirection } serving as a reference for the carousel slide direction
-	 * @private
-	 */
-	Carousel.prototype._fnOnCarouselEnter = function(oEvent, bDirection) {
-		var $activePage = this.$().find('.sapMCrslItem.sapMCrslActive');
-
-		// First time entering
-		if (this._bIsTabUsed === undefined) {
-			this._bIsTabUsed = true;
-			oEvent.preventDefault();
-
-			if ($activePage.firstFocusableDomRef() !== null) {
-				$activePage.firstFocusableDomRef().focus();
-			} else {
-				// If there is no focusable element if the page,
-				// focus the next focusable control after the Carousel
-				this._handleGroupNavigation(oEvent, false);
-			}
-
-			return;
-		}
-
-		// Entering any consecutive time
-		if (this._iLastActivePage === this._getPageNumber(this.getActivePage()) && this._oLastFocusedElement) {
-			// Checks if the last focused element is child of the current active page
-			if ($activePage.has(this._oLastFocusedElement).length && bDirection === true) {
-				oEvent.preventDefault();
-				this._oLastFocusedElement.focus();
-			}
-		}
-
 	};
 
 	/**
 	 * Handler for F6 and Shift + F6 group navigation
 	 *
-	 * @param oEvent {jQuery.EventObject}
-	 * @param bShiftKey serving as a reference if shift is used
+	 * @param {Object} oEvent - The event object
+	 * @param {boolean} bShiftKey serving as a reference if shift is used
 	 * @private
 	 */
 	Carousel.prototype._handleGroupNavigation = function(oEvent, bShiftKey) {
@@ -766,11 +918,41 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Save reference of the last focused element for each page
+	 *
+	 * @param {Object} oEvent - The event object
+	 * @private
+	 */
+	Carousel.prototype.saveLastFocusReference = function(oEvent) {
+		// Don't save focus references triggered from the mouse
+		if (this._bDirection === undefined) {
+			return;
+		}
+
+		if (this._lastFocusablePageElement === undefined) {
+			this._lastFocusablePageElement = {};
+		}
+
+		this._lastFocusablePageElement[this.getActivePage()] = oEvent.target;
+	};
+
+	/**
+	 * Returns the last element that has been focus in the curent active page
+	 * @returns {Element || undefined}  HTML DOM or undefined
+	 * @private
+	 */
+	Carousel.prototype._getActivePageLastFocusedElement = function() {
+		if (this._lastFocusablePageElement) {
+			return this._lastFocusablePageElement[this.getActivePage()];
+		}
+	};
+
+	/**
 	 * Change Carousel Active Page from given page index.
 	 *
-	 * @param oEvent - The event object
-	 * @param nIndex - The index of the page that need to be shown.
-	 *	If the index is 0 the next shown page will be the first in the Carousel
+	 * @param {Object} oEvent - The event object
+	 * @param {number} nIndex - The index of the page that need to be shown.
+	 *	  If the index is 0 the next shown page will be the first in the Carousel
 	 * @private
 	 */
 	Carousel.prototype._fnSkipToIndex = function(oEvent, nIndex) {
@@ -795,269 +977,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handler for focus event
-	 *
-	 * @param oEvent - The event object
+	 * Handler for F7 key
+	 * @param {Object} oEvent - key object
 	 * @private
-	 *
 	 */
-	Carousel.prototype.onfocusin = function(oEvent) {
-		var $activePage = this.$().find('.sapMCrslItem.sapMCrslActive');
+	Carousel.prototype._handleF7Key = function (oEvent) {
+		var oActivePageLastFocusedElement;
 
-		// Create the property if it is not defined before
-		// The property is used as a reference to the first active page when the focus is received
-		if (this.nFirstActivePageIndex === undefined) {
-			this.nFirstActivePageIndex = this._getPageNumber(this.getActivePage());
-		}
-
-		// Check if the event target is the last focusable element in the Carousel
-		// If the current active page is different from the parent page of the last focusable element in the Carousel,
-		// the event is from the keyboard and should be overwritten
-		if (oEvent.target === this.$().lastFocusableDomRef() && oEvent.target.parentNode !== $activePage[0]){
-			oEvent.preventDefault();
-
-			if (this._iLastActivePage === this._getPageNumber(this.getActivePage()) && this._oLastFocusedElement) {
-				this._oLastFocusedElement.focus();
-				return;
-			}
-
-			if ($activePage.lastFocusableDomRef() !== null){
-				$activePage.lastFocusableDomRef().focus();
-			} else {
-				this.$().focus();
-			}
-		}
-
-	};
-
-	/**
-	 * Handler for F6
-	 *
-	 * @param oEvent - The event object
-	 */
-	Carousel.prototype.onsapskipforward = function(oEvent) {
+		// Needed for IE
 		oEvent.preventDefault();
 
-		// keep a reference to the current active carousel page
-		this._iLastActivePage = this._getPageNumber(this.getActivePage());
+		oActivePageLastFocusedElement = this._getActivePageLastFocusedElement();
 
-		// keep a reference to the current focused element
-		this._oLastFocusedElement = oEvent.target;
-
-		this._handleGroupNavigation(oEvent, false);
-	};
-
-	/**
-	 * Handler for Shift + F6
-	 *
-	 * @param oEvent - The event object
-	 */
-	Carousel.prototype.onsapskipback = function(oEvent) {
-		oEvent.preventDefault();
-
-		// keep a reference to the current active carousel page
-		this._iLastActivePage = this._getPageNumber(this.getActivePage());
-
-		// keep a reference to the current focused element
-		this._oLastFocusedElement = oEvent.target;
-
-		this._handleGroupNavigation(oEvent, true);
-	};
-
-	/**
-	 * Handler for key down
-	 *
-	 * @param oEvent - The event object
-	 */
-	Carousel.prototype.onkeydown = function(oEvent) {
-		var $activePage;
-
-		// Filter F7 key down
-		if (oEvent.keyCode ===  jQuery.sap.KeyCodes.F7){
-			// Needed for IE
-			oEvent.preventDefault();
-
-			$activePage = this.$().find('.sapMCrslItem.sapMCrslActive');
-
-			// Focus the Carousel if the F7 is from item level
-			if (this._oLastFocusedElementFromF7 === undefined){
-				this.$().focus();
-				this._oLastFocusedElementFromF7 = oEvent.target;
-				return;
-			}
-
-			// Check if F7 is used on the current page
-			if ($activePage.has(this._oLastFocusedElementFromF7).length > 0){
-				// Focus the element from which F7 was accrued
-				this._oLastFocusedElementFromF7.focus();
-				this._oLastFocusedElementFromF7 = undefined;
-			} else {
-				// Focus the Carousel
-				this.$().focus();
-				this._oLastFocusedElementFromF7 = oEvent.target;
-			}
-		}
-
-		// Filter minus key down
-		if (oEvent.keyCode ===  jQuery.sap.KeyCodes.MINUS || oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_MINUS){
-			this._fnSkipToIndex(oEvent, -1);
-		}
-
-		// Filter plus key down
-		if (oEvent.keyCode ===  jQuery.sap.KeyCodes.PLUS || oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_PLUS){
-			this._fnSkipToIndex(oEvent, 1);
+		// If focus is on an interactive element inside a page, move focus to the Carousel.
+		// As long as the focus remains on the Carousel, a consecutive press on [F7]
+		// moves the focus back to the interactive element which had the focus before.
+		if (oEvent.target === this.$()[0] && oActivePageLastFocusedElement) {
+			oActivePageLastFocusedElement.focus();
+		} else {
+			this.$().focus();
 		}
 	};
 
-	/**
-	 * Set carousel back to the first position it had.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapescape = function(oEvent) {
-		if (this.nFirstActivePageIndex) {
-			this._oMobifyCarousel.move(this.nFirstActivePageIndex + 1);
-			this._changePage(this.nFirstActivePageIndex + 1);
-		}
-	};
-
-	/**
-	 * Move focus to the next item. If focus is on the last item, do nothing.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapright = function(oEvent) {
-		this._fnSkipToIndex(oEvent, 1);
-	};
-
-	/**
-	 * Move focus to the next item. If focus is on the last item, do nothing.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapup = function(oEvent) {
-		this._fnSkipToIndex(oEvent, 1);
-	};
-
-	/**
-	 * Move focus to the previous item. If focus is on the first item, do nothing.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapleft = function(oEvent) {
-		this._fnSkipToIndex(oEvent, -1);
-	};
-
-	/**
-	 * Move focus to the previous item. If focus is on the first item, do nothing.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapdown = function(oEvent) {
-		this._fnSkipToIndex(oEvent, -1);
-	};
-
-	/**
-	 * Move focus to the first item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsaphome = function(oEvent) {
-		this._fnSkipToIndex(oEvent, 0);
-	};
-
-	/**
-	 * Move focus to the last item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapend = function(oEvent) {
-		this._fnSkipToIndex(oEvent, this.getPages().length);
-	};
-
-	/**
-	 * Move focus 10 items to the right. If there are less than 10 items right, move
-	 * focus to last item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsaprightmodifiers = function(oEvent) {
-		if (oEvent.ctrlKey) {
-			this._fnSkipToIndex(oEvent, 10);
-		}
-	};
-
-	/**
-	 * Move focus 10 items to the right. If there are less than 10 items right, move
-	 * focus to last item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapupmodifiers = function(oEvent) {
-		if (oEvent.ctrlKey) {
-			this._fnSkipToIndex(oEvent, 10);
-		}
-	};
-
-	/**
-	 * Move focus 10 items to the right. If there are less than 10 items right, move
-	 * focus to last item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsappageup = function(oEvent) {
-		this._fnSkipToIndex(oEvent, 10);
-	};
-
-	/**
-	 * Move focus 10 items to the left. If there are less than 10 items left, move
-	 * focus to first item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapleftmodifiers = function(oEvent) {
-		if (oEvent.ctrlKey) {
-			this._fnSkipToIndex(oEvent, -10);
-		}
-	};
-
-	/**
-	 * Move focus 10 items to the left. If there are less than 10 items left, move
-	 * focus to first item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapdownmodifiers = function(oEvent) {
-		if (oEvent.ctrlKey) {
-			this._fnSkipToIndex(oEvent, -10);
-		}
-	};
-
-	/**
-	 * Move focus 10 items to the left. If there are less than 10 items left, move
-	 * focus to first item.
-	 *
-	 * @param oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsappagedown = function(oEvent) {
-		this._fnSkipToIndex(oEvent, -10);
-	};
-
-	//DEPRECATED METHODS
-
+	//================================================================================
+	// DEPRECATED METHODS
+	//================================================================================
 
 	/*
 	 * API method to set whether the carousel should display the busy indicators.
@@ -1095,7 +1039,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-
 	/*
 	 * API method to retrieve the carousel's busy indicator size.
 	 * This property has been deprecated since 1.18.6. Always returns an empty string.
@@ -1107,7 +1050,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		jQuery.sap.log.warning("sap.m.Carousel: Deprecated function 'getBusyIndicatorSize' called. Does nothing.");
 		return "";
 	};
-
 
 	return Carousel;
 
