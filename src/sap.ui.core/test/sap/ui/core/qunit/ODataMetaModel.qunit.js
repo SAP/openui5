@@ -594,18 +594,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	test("basics", function () {
 		var oMetaModel = new ODataMetaModel({
-				getServiceMetadata : function () { return {dataServices : {}}; },
-				isLoaded : function () { return true; }
+				getServiceMetadata : function () { return {dataServices : {}}; }
+			}, null, {
+				annotationsLoadedPromise : Promise.resolve()
 			});
 
-		return oMetaModel.loaded().then(sinon.test(function () {
-			var oMetaModelMock = this.mock(oMetaModel),
-				oModelMock = this.mock(oMetaModel.oModel),
+		return oMetaModel.loaded().then(function () {
+			var oMetaModelMock = oGlobalSandbox.mock(oMetaModel),
+				oModelMock = oGlobalSandbox.mock(oMetaModel.oModel),
 				oResult = {};
 
-			this.mock(Model.prototype).expects("destroy").once();
+			oGlobalSandbox.mock(Model.prototype).expects("destroy").once();
 			// do not mock/stub this or else "destroy" will not bubble up!
-			this.spy(MetaModel.prototype, "destroy");
+			oGlobalSandbox.spy(MetaModel.prototype, "destroy");
 
 			// generic dispatching
 			["destroy", "isList"].forEach(function (sName) {
@@ -639,7 +640,7 @@ sap.ui.require([
 			throws(function () {
 				oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
 			});
-		}).apply({/*give Sinon a "this" to enrich*/}));
+		});
 	});
 
 	//*********************************************************************************************
@@ -1514,33 +1515,6 @@ sap.ui.require([
 			throw new Error("Unexpected success");
 		}, function (ex) {
 			strictEqual(ex, oError, ex.message);
-		});
-	});
-
-	//*********************************************************************************************
-	[false, true, false, true].forEach(function (bAsync, i) {
-		test("Error loading" + (i < 2 ? " meta data" : " annotations" )
-				+ ", async: " + bAsync, function () {
-			var oModel,
-				sMetadataURL = i < 2 ? "/invalid/service" : "/fake/service",
-				sAnnotationsURL = i < 2 ? "" : "/invalid/annotations",
-				fnConstructor = bAsync
-					? ODataModel2
-					: ODataModel;
-
-			setupSandbox(this.sandbox);
-			oModel = new fnConstructor(sMetadataURL, {
-				annotationURI : sAnnotationsURL,
-				json : true
-			});
-
-			// code under test
-			return oModel.getMetaModel().loaded().then(function () {
-				throw new Error("Unexpected success");
-			}, function (ex) {
-				ok(ex instanceof Error);
-				ok(/Error loading meta model/.test(ex.message), ex.message);
-			});
 		});
 	});
 

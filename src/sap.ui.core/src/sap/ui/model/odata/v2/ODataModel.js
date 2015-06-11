@@ -181,19 +181,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			} else {
 				this.oMetadata = this.oServiceData.oMetadata;
 			}
+			this.pAnnotationsLoaded = this.oMetadata.loaded();
 
 			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
 				// Make sure the annotation parser object is already created and can be used by the MetaModel
 				var oAnnotations = this._getAnnotationParser();
 				
 				if (!this.bSkipMetadataAnnotationParsing) {
-					this.oMetadata.loaded().then(function(mParams) {
+					this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(mParams) {
 						return that.addAnnotationXML(mParams["metadataString"]);
 					});
 				}
 				
 				if (this.sAnnotationURI) {
-					oAnnotations.addUrl(this.sAnnotationURI);
+					this.pAnnotationsLoaded = Promise.all([
+						this.pAnnotationsLoaded,
+						oAnnotations.addUrl(this.sAnnotationURI)
+					]);
 				}
 			}
 
@@ -4216,7 +4220,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var that = this;
 		if (!this.oMetaModel) {
 			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations, {
-				addAnnotationUrl : this.addAnnotationUrl.bind(this)
+				addAnnotationUrl : this.addAnnotationUrl.bind(this),
+				annotationsLoadedPromise : this.pAnnotationsLoaded
 			});
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {

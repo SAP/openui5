@@ -690,63 +690,6 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
-		 * Waits until the given OData meta data and annotations are fully loaded and merges them
-		 * into a new JSON model. Returns the promise used by {@link #loaded}.
-		 *
-		 * @param {sap.ui.model.odata.ODataMetaModel} that
-		 *    the ODataMetaModel
-		 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
-		 *    the OData meta data
-		 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
-		 *    the OData annotations
-		 * @returns {Promise}
-		 *    Returns a Promise that gets resolved as soon as metadata and annotations are loaded.
-		 */
-		load: function (that, oMetadata, oAnnotations) {
-			return new Promise(function (fnResolve, fnReject) {
-				Utils.loaded(oMetadata, function () {
-					Utils.loaded(oAnnotations, function () {
-						try {
-							var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
-							Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {},
-								oData);
-							that.oModel = new JSONModel(oData);
-							that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
-							fnResolve();
-						} catch (ex) {
-							fnReject(ex);
-						}
-					}, fnReject);
-				}, fnReject);
-			});
-		},
-
-		/**
-		 * Calls the given success handler as soon as the given object is "loaded".
-		 * Calls the given error handler as soon as the given object is "failed".
-		 *
-		 * @param {object} o
-		 *    the OData metadata or the OData annotations to be loaded
-		 * @param {function(void)} fnSuccess
-		 *    the success handler
-		 * @param {function(Error)} fnError
-		 *    the error handler
-		 */
-		loaded: function (o, fnSuccess, fnError) {
-			if (!o || o.isLoaded()) {
-				fnSuccess();
-			} else if (o.isFailed()) {
-				fnError(new Error("Error loading meta model"));
-			} else {
-				o.attachLoaded(fnSuccess);
-				o.attachFailed(function (oEvent) {
-					fnError(new Error("Error loading meta model: "
-						+ oEvent.getParameter("message")));
-				});
-			}
-		},
-
-		/**
 		 * Merges the given annotation data into the given meta data and lifts SAPData
 		 * extensions.
 		 *
