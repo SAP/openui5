@@ -1900,8 +1900,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				}
 			}
 
-			that._handleError(oError);
-
 			if (fnError) {
 				fnError(oError);
 			}

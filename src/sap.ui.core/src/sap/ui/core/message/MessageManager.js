@@ -216,9 +216,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 		var that = this;
 		if (!vMessages || (jQuery.isArray(vMessages) && vMessages.length == 0)) {
 			return;
-		}else if (jQuery.isArray(vMessages)) {
-			for (var i = 0; i < vMessages.length; i++) {
-				that._removeMessage(vMessages[i]);
+		} else if (jQuery.isArray(vMessages)) {
+			// We need to work on a copy since the messages reference is changed by _removeMessage()
+			var vOriginalMessages = vMessages.slice(0);
+			for (var i = 0; i < vOriginalMessages.length; i++) {
+				that._removeMessage(vOriginalMessages[i]);
 			}
 		} else if (vMessages instanceof sap.ui.core.message.Message){
 			that._removeMessage(vMessages);
@@ -250,6 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 				var oMsg = aMessages[i];
 				if (jQuery.sap.equal(oMsg, oMessage) && !oMsg.getPersistent()) {
 					aMessages.splice(i,1);
+					--i; // Decrease counter as one element has been removed
 				}
 			}
 		}
