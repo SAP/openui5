@@ -1771,8 +1771,7 @@
 									"String" : "Not delivered"
 								}, {
 									"Path" : "DeliveryStatusDescription"
-								}],
-								"Path" : "DeliveryStatusDescription"
+								}]
 							}
 						}, {
 							"name" : "DeliveryStatusDescription",

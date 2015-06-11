@@ -207,16 +207,19 @@ sap.ui.define([
 		conditional: function (oInterface, oPathValue) {
 			var oCondition = Expression.parameter(oInterface, oPathValue, 0, "Edm.Boolean"),
 				oThen = Expression.parameter(oInterface, oPathValue, 1),
-				oElse = Expression.parameter(oInterface, oPathValue, 2);
+				oElse = Expression.parameter(oInterface, oPathValue, 2),
+				sType = oThen.type;
 
-			if (oThen.type !== oElse.type) {
+			if (oThen.type === "edm:Null") {
+				sType = oElse.type;
+			} else if (oElse.type !== "edm:Null" && oThen.type !== oElse.type) {
 				Basics.error(oPathValue,
 					"Expected same type for second and third parameter, types are '" + oThen.type
 					+ "' and '" + oElse.type + "'");
 			}
 			return {
 				result: "expression",
-				type: oThen.type,
+				type: sType,
 				value: Basics.resultToString(Expression.wrapExpression(oCondition), true)
 					+ "?" + Basics.resultToString(Expression.wrapExpression(oThen), true)
 					+ ":" + Basics.resultToString(Expression.wrapExpression(oElse), true)
@@ -304,9 +307,8 @@ sap.ui.define([
 				oSubPathValue = Basics.descend(oPathValue, "Value");
 			} else {
 				["And", "Apply", "Bool", "Date", "DateTimeOffset", "Decimal", "Float", "Eq", "Ge",
-					"Gt", "Guid", "If", "Int", "Le", "Lt", "Ne", "Not", "Or", "Path",
-					"PropertyPath", "String",
-					"TimeOfDay"
+					"Gt", "Guid", "If", "Int", "Le", "Lt", "Ne", "Not", "Null", "Or", "Path",
+					"PropertyPath", "String", "TimeOfDay"
 				].forEach(function (sProperty) {
 					if (oRawValue.hasOwnProperty(sProperty)) {
 						sType = sProperty;
@@ -346,6 +348,13 @@ sap.ui.define([
 				case "Not":
 					// 14.5.1 Comparison and Logical Operators
 					return Expression.not(oInterface, oSubPathValue);
+				case "Null":
+					// 14.5.10 Expression edm:Null
+					return {
+						result: "constant",
+						value: "null",
+						type: "edm:Null"
+					};
 				default:
 					Basics.error(oPathValue, "Unsupported OData expression");
 			}
@@ -509,18 +518,20 @@ sap.ui.define([
 				sValue0,
 				sValue1;
 
-			oParameter0.category = mType2Category[oParameter0.type];
-			oParameter1.category = mType2Category[oParameter1.type];
-			Expression.adjustOperands(oParameter0, oParameter1);
-			Expression.adjustOperands(oParameter1, oParameter0);
+			if (oParameter0.type !== "edm:Null" && oParameter1.type !== "edm:Null") {
+				oParameter0.category = mType2Category[oParameter0.type];
+				oParameter1.category = mType2Category[oParameter1.type];
+				Expression.adjustOperands(oParameter0, oParameter1);
+				Expression.adjustOperands(oParameter1, oParameter0);
 
-			if (oParameter0.category !== oParameter1.category) {
-				Basics.error(oPathValue,
-					"Expected two comparable parameters but instead saw " + oParameter0.type
-					+ " and " + oParameter1.type);
+				if (oParameter0.category !== oParameter1.category) {
+					Basics.error(oPathValue,
+						"Expected two comparable parameters but instead saw " + oParameter0.type
+						+ " and " + oParameter1.type);
+				}
+				sTypeInfo = oParameter0.category === "decimal" ? ",true" : "";
+				bNeedsCompare = mTypeCategoryNeedsCompare[oParameter0.category];
 			}
-			sTypeInfo = oParameter0.category === "decimal" ? ",true" : "";
-			bNeedsCompare = mTypeCategoryNeedsCompare[oParameter0.category];
 			sValue0 = Expression.formatOperand(oPathValue, 0, oParameter0, !bNeedsCompare);
 			sValue1 = Expression.formatOperand(oPathValue, 1, oParameter1, !bNeedsCompare);
 			return {

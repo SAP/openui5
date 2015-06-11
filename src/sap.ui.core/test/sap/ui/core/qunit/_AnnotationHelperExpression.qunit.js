@@ -444,6 +444,28 @@ sap.ui.require([
 	}());
 
 	//*********************************************************************************************
+	(function () {
+		var oNullValue = {};
+
+		function testNull(oRawValue, sProperty) {
+			test("expression: " + JSON.stringify(oRawValue), function () {
+				var oInterface = {},
+					oPathValue = {path: "/my/path", value: oRawValue},
+					oSubPathValue = {path: "/my/path/" + sProperty, value: oNullValue};
+
+				deepEqual(Expression.expression(oInterface, oPathValue, false), {
+					result: "constant",
+					value: "null",
+					type: "edm:Null"
+				});
+			});
+		}
+
+		testNull({Null: oNullValue}, "Null");
+		testNull({Type: "Null", Value: oNullValue}, "Value");
+	}());
+
+	//*********************************************************************************************
 	test("expression: unknown", function () {
 		var oPathValue = {value: {}};
 
@@ -531,42 +553,57 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("conditional", function () {
-		var oBasics = this.mock(Basics),
-			oExpression = this.mock(Expression),
-			oInterface = {},
-			oPathValue = {},
-			oParameter0 = {result: "expression", value: "A"},
-			oParameter1 = {result: "expression", value: "B", type: "foo"},
-			oParameter2 = {result: "expression", value: "C", type: "foo"},
-			oWrappedParameter0 = {result: "expression", value: "(A)"},
-			oWrappedParameter1 = {result: "expression", value: "(B)", type: "foo"},
-			oWrappedParameter2 = {result: "expression", value: "(C)", type: "foo"};
+	function conditional(bP1isNull, bP2isNull, sType) {
+		test("conditional:" + bP1isNull + ", " + bP2isNull, function () {
+			var oBasics = this.mock(Basics),
+				oExpression = this.mock(Expression),
+				oInterface = {},
+				oPathValue = {},
+				oNullParameter = {result: "constant", value: "null", type: "edm:Null"},
+				oParameter0 = {result: "expression", value: "A"},
+				oParameter1 = bP1isNull ? oNullParameter
+					: {result: "expression", value: "B", type: "foo"},
+				oParameter2 = bP2isNull ? oNullParameter
+					: {result: "expression", value: "C", type: "foo"},
+				oWrappedParameter0 = {result: "expression", value: "(A)"},
+				oWrappedParameter1 = bP1isNull ? oNullParameter
+					: {result: "expression", value: "(B)", type: "foo"},
+				oWrappedParameter2 = bP2isNull ? oNullParameter
+					: {result: "expression", value: "(C)", type: "foo"};
 
-		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean").returns(oParameter0);
-		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 1).returns(oParameter1);
-		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 2).returns(oParameter2);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean").returns(oParameter0);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 1).returns(oParameter1);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 2).returns(oParameter2);
 
-		oExpression.expects("wrapExpression")
-			.withExactArgs(oParameter0).returns(oWrappedParameter0);
-		oExpression.expects("wrapExpression")
-			.withExactArgs(oParameter1).returns(oWrappedParameter1);
-		oExpression.expects("wrapExpression")
-			.withExactArgs(oParameter2).returns(oWrappedParameter2);
+			oExpression.expects("wrapExpression")
+				.withExactArgs(oParameter0).returns(oWrappedParameter0);
+			oExpression.expects("wrapExpression")
+				.withExactArgs(oParameter1).returns(oWrappedParameter1);
+			oExpression.expects("wrapExpression")
+				.withExactArgs(oParameter2).returns(oWrappedParameter2);
 
-		oBasics.expects("resultToString").withExactArgs(oWrappedParameter0, true).returns("(A)");
-		oBasics.expects("resultToString").withExactArgs(oWrappedParameter1, true).returns("(B)");
-		oBasics.expects("resultToString").withExactArgs(oWrappedParameter2, true).returns("(C)");
+			oBasics.expects("resultToString").withExactArgs(oWrappedParameter0, true)
+				.returns("(A)");
+			oBasics.expects("resultToString").withExactArgs(oWrappedParameter1, true)
+				.returns(oWrappedParameter1.value);
+			oBasics.expects("resultToString").withExactArgs(oWrappedParameter2, true)
+				.returns(oWrappedParameter2.value);
 
-		deepEqual(Expression.conditional(oInterface, oPathValue), {
-			result: "expression",
-			value: "(A)?(B):(C)",
-			type: "foo"
+			deepEqual(Expression.conditional(oInterface, oPathValue), {
+				result: "expression",
+				value: "(A)?" + oWrappedParameter1.value + ":" + oWrappedParameter2.value,
+				type: sType || "foo"
+			});
 		});
-	});
+	}
+
+	conditional(false, false);
+	conditional(true, false);
+	conditional(false, true);
+	conditional(true, true, "edm:Null");
 
 	//*********************************************************************************************
 	test("conditional: w/ incorrect types", function () {
@@ -1038,11 +1075,42 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("operator: mixed types", function () {
+		var oExpression = this.mock(Expression),
+			oInterface = {},
+			oPathValue = {},
+			oParameter0 = {type: "Edm.String"},
+			oParameter1 = {type: "Edm.Boolean"};
+
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, undefined)
+			.returns(oParameter0);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 1, undefined)
+			.returns(oParameter1);
+
+		oExpression.expects("adjustOperands").withExactArgs(oParameter0, oParameter1);
+		oExpression.expects("adjustOperands").withExactArgs(oParameter1, oParameter0);
+
+		this.mock(Basics).expects("error")
+			.withExactArgs(oPathValue, "Expected two comparable parameters but instead saw "
+				+ "Edm.String and Edm.Boolean")
+			.throws(new SyntaxError());
+
+		throws(function () {
+			Expression.operator(oInterface, oPathValue, "Eq");
+		}, SyntaxError);
+	});
+
+	//*********************************************************************************************
+	function compareWithNull(sType0, sType1, sResult0, sResult1) {
+		var sResult = sResult0 + "===" + sResult1;
+
+		test("operator: " + sResult, function () {
 			var oExpression = this.mock(Expression),
-				oInterface = {},
-				oPathValue = {},
-				oParameter0 = {type: "Edm.String"},
-				oParameter1 = {type: "Edm.Boolean"};
+			oInterface = {},
+			oPathValue = {},
+			oParameter0 = {type: sType0},
+			oParameter1 = {type: sType1};
 
 			oExpression.expects("parameter")
 				.withExactArgs(oInterface, oPathValue, 0, undefined)
@@ -1051,18 +1119,22 @@ sap.ui.require([
 				.withExactArgs(oInterface, oPathValue, 1, undefined)
 				.returns(oParameter1);
 
-			oExpression.expects("adjustOperands").withExactArgs(oParameter0, oParameter1);
-			oExpression.expects("adjustOperands").withExactArgs(oParameter1, oParameter0);
+			oExpression.expects("adjustOperands").never();
 
-			this.mock(Basics).expects("error")
-				.withExactArgs(oPathValue, "Expected two comparable parameters but instead saw "
-					+ "Edm.String and Edm.Boolean")
-				.throws(new SyntaxError());
+			oExpression.expects("formatOperand")
+				.withExactArgs(oPathValue, 0, oParameter0, true)
+				.returns(sResult0);
+			oExpression.expects("formatOperand")
+				.withExactArgs(oPathValue, 1, oParameter1, true)
+				.returns(sResult1);
 
-			throws(function () {
-				Expression.operator(oInterface, oPathValue, "Eq");
-			}, SyntaxError);
-	});
+			deepEqual(Expression.operator(oInterface, oPathValue, "Eq"),
+				{result: "expression", type: "Edm.Boolean", value: sResult});
+		});
+	}
+
+	compareWithNull("Edm.String	", "edm:Null", "p0", "null");
+	compareWithNull("edm:Null", "Edm.String", "null", "p1");
 	// TODO learn about operator precedence and avoid unnecessary "()" around expressions
 
 	//*********************************************************************************************
