@@ -3,8 +3,8 @@
  */
 
 // Main class for Demokit-like applications
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/Label', 'sap/ui/commons/Splitter', 'sap/ui/commons/layout/AbsoluteLayout', 'sap/ui/core/ListItem', 'sap/ui/core/search/OpenSearchProvider', './Tag', './TagCloud', './library', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell'],
-	function(jQuery, DropdownBox, Label, Splitter, AbsoluteLayout, ListItem, OpenSearchProvider, Tag, TagCloud, library, NavigationItem, Shell) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/TextView', 'sap/ui/commons/Link', 'sap/ui/commons/Splitter', 'sap/ui/commons/layout/AbsoluteLayout', 'sap/ui/core/ListItem', 'sap/ui/core/search/OpenSearchProvider', './Tag', './TagCloud', './library', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell'],
+	function(jQuery, DropdownBox, TextView, Link, Splitter, AbsoluteLayout, ListItem, OpenSearchProvider, Tag, TagCloud, library, NavigationItem, Shell) {
 	"use strict";
 
 
@@ -363,7 +363,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 		// TODO oSidePanelLayout.addContent(oDemokit._aTopLevelNavItems[0]._oTree, {top:"0", bottom:"0", left:"0", right:"0"});
 		sap.ui.Device.os.name == sap.ui.Device.os.OS.IOS ? bShowScrollBars = true : bShowScrollBars = false;
 	
-		var oVersionInfo = new sap.ui.commons.Link({
+		// Display a warning in the demokit header in case we have a dev version (either with "SNAPSHOT" in the version string or an odd minor version number)
+		var oDevWarning;
+		if (!this._sVersionStr
+				|| (this._sVersionStr.indexOf("SNAPSHOT") > -1)
+				|| (this._sVersionStr.split(".").length > 1 && parseInt(this._sVersionStr.split(".")[1], 10) % 2 === 1)) {
+			oDevWarning = new TextView({
+				text: "Development version! Work in Progress!",
+				semanticColor: sap.ui.commons.TextViewColor.Negative,
+				design: sap.ui.commons.TextViewDesign.Bold
+			});
+		}
+		
+		var oVersionInfo = new Link({
 			text: this._sVersionStr,
 			tooltip: "Open Version Info",
 			press: function() {
@@ -408,7 +420,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					showScrollBars:bShowScrollBars
 				})
 			],
-			headerItems:[oVersionInfo]
+			headerItems:oDevWarning ? [oDevWarning, oVersionInfo] : [oVersionInfo]
 		});
 	
 		this._oShell.addStyleClass("sapDkShell");
