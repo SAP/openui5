@@ -7,24 +7,24 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			metadata: {
 				config: {
 					sample: {
-						iframe: "src/index.html",
+						iframe: "webapp/index.html",
 						stretch: true,
 						files: [
-							"src/controller/App.controller.js",
-							"src/controller/HelloDialog.js",
-							"src/controller/HelloPanel.controller.js",
-							"src/controller/InvoiceList.controller.js",
-							"src/css/style.css",
-							"src/i18n/i18n.properties",
-							"src/model/formatter.js",
-							"src/view/App.view.xml",
-							"src/view/HelloDialog.fragment.xml",
-							"src/view/HelloPanel.view.xml",
-							"src/view/InvoiceList.view.xml",
-							"src/Component.js",
-							"src/index.html",
-							"src/Invoices.json",
-							"src/manifest.json"
+							"webapp/controller/App.controller.js",
+							"webapp/controller/HelloDialog.js",
+							"webapp/controller/HelloPanel.controller.js",
+							"webapp/controller/InvoiceList.controller.js",
+							"webapp/css/style.css",
+							"webapp/i18n/i18n.properties",
+							"webapp/model/formatter.js",
+							"webapp/view/App.view.xml",
+							"webapp/view/HelloDialog.fragment.xml",
+							"webapp/view/HelloPanel.view.xml",
+							"webapp/view/InvoiceList.view.xml",
+							"webapp/Component.js",
+							"webapp/index.html",
+							"webapp/Invoices.json",
+							"webapp/manifest.json"
 						]
 					}
 				}
