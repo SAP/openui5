@@ -236,6 +236,33 @@
 				strictEqual(fnHashChanged.callCount, 1, "did add a call");
 			});
 
+			test("Should not duplicate History events", function (assert) {
+				jQuery.sap.require("sap.ui.core.routing.History");
+				// Arrange
+				var oHistory = sap.ui.core.routing.History.getInstance(),
+					oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
+					fnHashChanged = this.spy(),
+					oHistoryChangeStub = this.stub(oHistory, "_hashChange");
+
+				// Check if the history gut the current hashchanger
+				oFirstHashCHanger.fireHashChanged("one");
+				assert.strictEqual(oHistoryChangeStub.callCount, 1, "History is connected to the first hashchanger");
+
+				// System under Test
+				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+
+				// Act
+				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+
+				// the stub should be called a second time
+				oSecondHashChanger.fireHashChanged("two");
+				assert.strictEqual(oHistoryChangeStub.callCount, 2, "History is connected to the second hashchanger");
+
+
+				oFirstHashCHanger.fireHashChanged("one");
+				assert.strictEqual(oHistoryChangeStub.callCount, 2, "History is disconnected from the first hashchanger");
+			});
+
 			module("Synchronous hash setting");
 
 			asyncTest("Should not omit a history entry when hash is set again in a handler", function () {
