@@ -44,7 +44,7 @@ sap.ui.define([
 				if (!sap.ui.Device.support.touch) {
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
-					this._sContentDensityClass = "sapUiSizeCozy"; // needed for desktop-first controls like sap.ui.table.Table
+					this._sContentDensityClass = "sapUiSizeCozy";
 				}
 			}
 			return this._sContentDensityClass;
