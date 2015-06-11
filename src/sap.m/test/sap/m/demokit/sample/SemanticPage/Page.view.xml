@@ -68,7 +68,7 @@
 					<semantic:PrintAction press="onSemanticButtonPress"/>
 				</semantic:printAction>
 				<semantic:messagesIndicator>
-					<semantic:MessagesIndicator/>
+					<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 				</semantic:messagesIndicator>
 
 				<semantic:customFooterContent>

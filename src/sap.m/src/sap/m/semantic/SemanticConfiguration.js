@@ -10,8 +10,8 @@
  */
 
 // Provides class sap.m.semantic.SemanticPageSegment
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText", "sap/m/MessagePopover", "sap/m/MessagePopoverItem"],
-	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText, MessagePopover, MessagePopoverItem) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText"],
+	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText) {
 	"use strict";
 
 	/**
@@ -417,14 +417,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			constraints: "IconOnly"
 		};
 
-		oTypeConfigs["sap.m.semantic.SendEmailAction"] = {
+		oTypeConfigs["saveAsTileAction"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://email",
-					text: oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"),
-					ariaLabelledBy: _ensureInvisibleText("SendEmailAction", oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"))
+					icon: "sap-icon://add-favorite",
+					text: oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"),
+					ariaLabelledBy: _ensureInvisibleText("SaveAsTileAction", oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"))
 				};
 			},
 			order: 0
@@ -469,14 +469,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			order: 3
 		};
 
-		oTypeConfigs["saveAsTileAction"] = {
+		oTypeConfigs["sap.m.semantic.SendEmailAction"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://add-favorite",
-					text: oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"),
-					ariaLabelledBy: _ensureInvisibleText("SaveAsTileAction", oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"))
+					icon: "sap-icon://email",
+					text: oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"),
+					ariaLabelledBy: _ensureInvisibleText("SendEmailAction", oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"))
 				};
 			},
 			order: 4
@@ -509,13 +509,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
 					ariaLabelledBy: _ensureInvisibleText("MessagesIndicator", oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR")),
 					type: sap.m.ButtonType.Emphasized,
-					press: function () {
-						if (!this._messagePopover) {
-							this._messagePopover = SemanticConfiguration.prototype._createMessagePopover();
-							this.addDependent(this._messagePopover);
-						}
-						this._messagePopover.toggle(this);
-					},
 					visible: {
 						path: "message>/",
 						formatter: function (aMessages) {
@@ -529,19 +522,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			}
-		};
-
-		SemanticConfiguration.prototype._createMessagePopover = function () {
-			return new MessagePopover({
-				items: {
-					path: "message>/",
-					template: new MessagePopoverItem({
-						description: "{message>description}",
-						type: "{message>type}",
-						title: "{message>message}"
-					})
-				}
-			});
 		};
 
 		return oTypeConfigs;

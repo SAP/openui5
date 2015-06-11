@@ -1,8 +1,10 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessagePopover',
+		'sap/m/MessagePopoverItem'
+	], function(jQuery, Controller, JSONModel, MessagePopover, MessagePopoverItem) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.SemanticPage.Page", {
@@ -25,9 +27,9 @@ sap.ui.define([
 				})
 		);
 	},
-	onPress: function (evt) {
+	onPress: function (oEvent) {
 
-		sap.m.MessageToast.show("Pressed custom button " + evt.getSource().getId());
+		sap.m.MessageToast.show("Pressed custom button " + oEvent.getSource().getId());
 	},
 	onSemanticButtonPress: function (oEvent) {
 
@@ -43,8 +45,26 @@ sap.ui.define([
 		var sStatusText = sAction + " by " + oEvent.oSource.getSelectedItem().getText();
 		sap.m.MessageToast.show("Selected: " + sStatusText);
 	},
-	onNavButtonPress: function (evt) {
+	onNavButtonPress: function () {
 		sap.m.MessageToast.show("Pressed navigation button");
+	},
+	onMessagesButtonPress: function(oEvent) {
+
+		var oMessagesButton = oEvent.oSource;
+		if (!this._messagePopover) {
+			this._messagePopover = new MessagePopover({
+				items: {
+					path: "message>/",
+					template: new MessagePopoverItem({
+						description: "{message>description}",
+						type: "{message>type}",
+						title: "{message>message}"
+					})
+				}
+			});
+			oMessagesButton.addDependent(this._messagePopover);
+		}
+		this._messagePopover.toggle(oMessagesButton);
 	}
 });
 

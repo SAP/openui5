@@ -17,9 +17,6 @@
 					<semantic:editAction>
 						<semantic:EditAction press="onSemanticButtonPress"/>
 					</semantic:editAction>
-					<semantic:editAction>
-						<semantic:EditAction press="onSemanticButtonPress"/>
-					</semantic:editAction>
 					<semantic:flagAction>
 						<semantic:FlagAction press="onSemanticButtonPress"/>
 					</semantic:flagAction>
@@ -42,7 +39,7 @@
 						<semantic:PrintAction press="onSemanticButtonPress"/>
 					</semantic:printAction>
 					<semantic:messagesIndicator>
-						<semantic:MessagesIndicator/>
+						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 					</semantic:messagesIndicator>
 
 					<semantic:customFooterContent>
