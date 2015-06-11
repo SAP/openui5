@@ -863,7 +863,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var oXhr = aXhr[iIndex];
 		var sFilename = aFiles[iIndex].name;
 
-		if (sap.ui.Device.browser.internet_explorer && aFiles[iIndex].type) {
+		if (sap.ui.Device.browser.internet_explorer && aFiles[iIndex].type && oXhr.xhr.readyState != 0) {
 			var sContentType = aFiles[iIndex].type;
 			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
 			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
@@ -947,7 +947,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			iIndex++;
 			that.sendFiles(aXhr, aFiles, iIndex);
 		} else {
-			oXhr.xhr.send(aFiles[iIndex]);			
+			oXhr.xhr.send(aFiles[iIndex]);
 		}
 	};
 
@@ -1056,12 +1056,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	FileUploader.prototype.abort = function(sHeaderCheck, sValueCheck) {
 		if (!this.getUseMultipart()) {
 			for (var i = 0; i < this._aXhr.length; i++) {
-				for (var j = 0; j < this._aXhr[i].requestHeaders.length; j++) {
-					var sHeader = this._aXhr[i].requestHeaders[j].name;
-					var sValue = this._aXhr[i].requestHeaders[j].value;
-					if (sHeader == sHeaderCheck && sValue == sValueCheck) {
-						this._aXhr[i].xhr.abort();
+				if (sHeaderCheck && sValueCheck) {
+					for (var j = 0; j < this._aXhr[i].requestHeaders.length; j++) {
+						var sHeader = this._aXhr[i].requestHeaders[j].name;
+						var sValue = this._aXhr[i].requestHeaders[j].value;
+						if (sHeader == sHeaderCheck && sValue == sValueCheck) {
+							this._aXhr[i].xhr.abort();
+						}
 					}
+				} else {
+					this._aXhr[i].xhr.abort();
 				}
 			}
 		} else if (this._uploadXHR && this._uploadXHR.abort) {
