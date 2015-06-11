@@ -138,6 +138,25 @@ sap.ui.define([
 	 * {@link sap.ui.model.Model#event:requestFailed requestFailed},
 	 * {@link sap.ui.model.Model#event:requestSent requestSent}) are fired!
 	 *
+	 * Within the meta model, the objects are arranged in arrays.
+	 * <code>/dataServices/schema</code>, for example, is an array of schemas where each schema has
+	 * an <code>entityType</code> property with an array of entity types, and so on. So,
+	 * <code>/dataServices/schema/0/entityType/16</code> can be the path to the entity type with
+	 * name "Order" in the schema with namespace "MySchema". However, these paths are not stable:
+	 * If an entity type with lower index is removed from the schema, the path to
+	 * <code>Order</code> changes to <code>/dataServices/schema/0/entityType/15</code>.
+	 *
+	 * To avoid problems with changing indexes, {@link sap.ui.model.Model#getObject getObject} and
+	 * {@link sap.ui.model.Model#getProperty getProperty} support XPath-like queries for the
+	 * indexes (since 1.29.1). Each index can be replaced by a query in square brackets. You can,
+	 * for example, address the schema using the path
+	 * <code>/dataServices/schema/[${namespace}==='MySchema']</code> or the entity using
+	 * <code>/dataServices/schema/[${namespace}==='MySchema']/entityType/[${name}==='Order']</code>.
+	 *
+	 * The syntax inside the square brackets is the same as in expression binding. The query is
+	 * executed for each object in the array until the result is true (truthy) for the first time.
+	 * This object is then chosen.
+	 *
 	 * <b>BEWARE:</b> Access to this OData meta model will fail before the promise returned by
 	 * {@link #loaded loaded} has been resolved!
 	 *
@@ -191,7 +210,8 @@ sap.ui.define([
 			oNode,
 			vPart,
 			sProcessedPath,
-			sResolvedPath = sPath || "";
+			sResolvedPath = sPath || "",
+			oResult;
 
 		if (!oContext || oContext instanceof Context) {
 			sResolvedPath = this.resolve(sPath || "", oContext);
@@ -213,17 +233,20 @@ sap.ui.define([
 			vPart = undefined;
 			oBinding = undefined;
 			if (sResolvedPath.charAt(0) === '[') {
-				iEnd = sResolvedPath.indexOf(']');
-				if (iEnd >= 0 && (sResolvedPath.length === iEnd + 1
-						|| sResolvedPath.charAt(iEnd + 1) === '/')) {
-					// TODO this fails if the expression contains ']'
-					// Let the expression parser search the end, when this becomes possible. Keep
-					// the feature undocumented yet.
-					// TODO handle syntax errors in expressions
-					oBinding = BindingParser.complexParser("{=" + sResolvedPath.slice(1, iEnd)
-						+ "}", null, false);
-					vPart = sResolvedPath.slice(0, iEnd + 1);
-					sResolvedPath = sResolvedPath.slice(iEnd + 2);
+				try {
+					oResult = BindingParser.parseExpression(sResolvedPath, 1);
+					iEnd = oResult.at;
+					if (iEnd >= 0 && (sResolvedPath.length === iEnd + 1
+							|| sResolvedPath.charAt(iEnd + 1) === '/')) {
+						oBinding = oResult.result;
+						vPart = sResolvedPath.slice(0, iEnd + 1);
+						sResolvedPath = sResolvedPath.slice(iEnd + 2);
+					}
+				} catch (ex) {
+					if (!(ex instanceof SyntaxError)) {
+						throw ex;
+					}
+					// do nothing, syntax error is logged already
 				}
 			}
 			if (vPart === undefined) {
@@ -269,8 +292,7 @@ sap.ui.define([
 					this.oResolver.bindProperty("any", oBinding);
 					for (i = 0; i < oNode.length; i++) {
 						this.oResolver.bindObject(sProcessedPath + i);
-						// TODO test truthy
-						if (this.oResolver.getAny() === true) {
+						if (this.oResolver.getAny()) {
 							this.mQueryCache[sCacheKey] = vPart = i;
 							break;
 						}
