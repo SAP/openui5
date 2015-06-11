@@ -315,6 +315,16 @@ Mobify.UI.Carousel = (function($, Utils) {
     }
 
     Carousel.prototype.touchmove = function(e) {
+    	// SAP MODIFICATION START
+    	var bTargetCarouselPage  = jQuery(e.target).hasClass('sapMCrslItemTableCell');
+    	// Remove swipe animation on desktop devices,
+    	// if the event is from a child control
+    	// BCP: 1570454937
+    	if (sap.ui.Device.system.desktop && bTargetCarouselPage === false) {
+    	    return;
+    	}
+    	// SAP MODIFICATION END
+
     	if(this._fnDrag) {
     		this._fnDrag.call(this, e);
     	} else {
