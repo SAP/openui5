@@ -13,58 +13,44 @@
 			<Table
 				rows="{/ProductCollection}"
 				title="Products"
+				selectionMode="MultiToggle"
 				visibleRowCount="7">
 				<columns>
-					<Column width="11rem"
-						sortProperty="Name"
-						filterProperty="Name"
-					>
-						<label>
-							<m:Label text="Product Name" />
-						</label>
+					<Column width="11rem">
+						<m:Label text="Product Name" />
 						<template>
 							<m:Text text="{Name}"/>
 						</template>
 					</Column>
 					<Column width="11rem">
-						<label>
-							<m:Label text="Product Id" />
-						</label>
+						<m:Label text="Product Id" />
 						<template>
 							<m:Input value="{ProductId}"/>
 						</template>
 					</Column>
 					<Column width="6rem" hAlign="End">
-						<label>
-							<m:Label text="Quantity" />
-						</label>
+						<m:Label text="Quantity" />
 						<template>
 							<m:Label text="{Quantity}" />
 						</template>
 					</Column>
 					<Column width="9rem">
-						<label>
-							<m:Label text="Status" />
-						</label>
+						<m:Label text="Status" />
 						<template>
 							<m:ObjectStatus text="{Status}" state="{
-								path: 'Status',
-								formatter: '.formatStatus'
+								path: 'Available',
+								formatter: 'sap.ui.table.sample.TableExampleUtils.formatAvailableToObjectState'
 							}"/>
 						</template>
 					</Column>
 					<Column width="9rem">
-						<label>
-							<m:Label text="Price" />
-						</label>
+						<m:Label text="Price" />
 						<template>
 							<u:Currency value="{Price}" currency="{CurrencyCode}"/>
 						</template>
 					</Column>
 					<Column width="12rem">
-						<label>
-							<m:Label text="Supplier" />
-						</label>
+						<m:Label text="Supplier" />
 						<template>
 							<m:ComboBox value="{SupplierName}" items="{/Suppliers}">
 								<c:Item text="{Name}"/>
@@ -72,36 +58,28 @@
 						</template>
 					</Column>
 					<Column width="9rem">
-						<label>
-							<m:Label text="Image" />
-						</label>
+						<m:Label text="Image" />
 						<template>
 							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
 						</template>
 					</Column>
 					<Column width="9rem">
-						<label>
-							<m:Label text="Details" />
-						</label>
+						<m:Label text="Details" />
 						<template>
 							<m:Button text="Show Details" press="handleDetailsPress"/>
 						</template>
 					</Column>
 					<Column width="7rem">
-						<label>
-							<m:Label text="Heavy Weight" />
-						</label>
+						<m:Label text="Heavy Weight" />
 						<template>
 							<m:CheckBox selected="{
-								path: 'WeightMeasure',
-								formatter: '.formatWeight'
+								path: 'Heavy',
+								type: 'sap.ui.model.type.String'
 							}"/>
 						</template>
 					</Column>
 					<Column width="12rem">
-						<label>
-							<m:Label text="Category" />
-						</label>
+						<m:Label text="Category" />
 						<template>
 							<m:Select selectedKey="{Category}" items="{/Categories}">
 								<c:Item text="{Name}" key="{Name}"/>
@@ -109,22 +87,22 @@
 						</template>
 					</Column>
 					<Column width="6rem" hAlign="Center">
-						<label>
-							<m:Label text="Status" />
-						</label>
+						<m:Label text="Status" />
 						<template>
 							<c:Icon src="{
-								path: 'Status',
-								formatter: '.formatStatusIcon'
+								path: 'Available',
+								formatter: 'sap.ui.table.sample.TableExampleUtils.formatAvailableToIcon'
 							}"/>
 						</template>
 					</Column>
 					<Column width="11rem" hAlign="Center">
-						<label>
-							<m:Label text="Delivery Date" />
-						</label>
+						<m:Label text="Delivery Date" />
 						<template>
-							<m:Datepicker dateValue="{DeliveryDate}"/>
+							<m:Datepicker value="{
+								path: 'DeliveryDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'timestamp'}}
+							}"/>
 						</template>
 					</Column>
 				</columns>
