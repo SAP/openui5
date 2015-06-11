@@ -1439,47 +1439,29 @@ sap.ui.require([
 				delete oProductCurrencyCode["sap:filter-restriction"];
 
 				sPrefix = "com.sap.vocabularies.Common.v1.";
-				deepEqual(oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"],
-					[
-						{
-							"Property" : { "PropertyPath" : "BusinessPartnerID" },
-							"AllowedExpressions" :
-								{
-									"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
-								}
+				deepEqual(oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"], [{
+						"Property" : { "PropertyPath" : "BusinessPartnerID" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
 						}
-					],
-					"filter-restriction at BusinessPartnerSet");
+					}], "filter-restriction at BusinessPartnerSet");
 				delete oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"];
-				deepEqual(oProductSet[sPrefix + "FilterExpressionRestrictions"],
-					(i === 0
-						? [
-							{
-								"Property" : { "PropertyPath" : "Price" },
-								"AllowedExpressions" :
-									{
-										"EnumMember" : sPrefix +
-											"FilterExpressionType/SingleInterval"
-									}
-							},
-							{
-								"Property" : { "PropertyPath" : "CurrencyCode" },
-								"AllowedExpressions" :
-									{
-										"EnumMember" : sPrefix + "FilterExpressionType/SingleValue"
-									}
-							}
-						]
-						: [
-							{
-								"Property" : { "PropertyPath" : "CurrencyCode" },
-								"AllowedExpressions" :
-									{
-										"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
-									}
-							},
-						]),
-					"filter-restriction at ProductSet");
+				deepEqual(oProductSet[sPrefix + "FilterExpressionRestrictions"], (i === 0 ? [{
+						"Property" : { "PropertyPath" : "Price" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/SingleInterval"
+						}
+					}, {
+						"Property" : { "PropertyPath" : "CurrencyCode" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/SingleValue"
+						}
+					}] : [{
+						"Property" : { "PropertyPath" : "CurrencyCode" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
+						}
+					}]), "filter-restriction at ProductSet");
 				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");

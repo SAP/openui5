@@ -800,6 +800,42 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
+		 * Helper for setting com.sap.vocabularies.Common.v1.Deletable or
+		 * com.sap.vocabularies.Common.v1.Updatable at the given entity type.
+		 * If the annotation is already contained and the paths differ, log a warning.
+		 *
+		 * @param {object} oEntityType
+		 *    the entity type that needs to be annotated
+		 * @param {string} sV4Name
+		 *    either "Deletable" or "Updatable"
+		 * @param {string} sNewPath
+		 *    the path value for the v4 annotation
+		 * @param {object} sEntitySetName
+		 *    the name of the entity set, used only for logging
+		 */
+		setDeletableOrUpdatable: function (oEntityType, sV4Name, sNewPath, sEntitySetName) {
+			var oAnnotation, sV4Term;
+
+			if (!sNewPath) {
+				return;
+			}
+			sV4Term = "com.sap.vocabularies.Common.v1." + sV4Name;
+			oAnnotation = oEntityType[sV4Term];
+			if (!oAnnotation) {
+				oEntityType[sV4Term] = { "Path" : sNewPath };
+			} else if (sNewPath !== oAnnotation.Path) {
+				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+					jQuery.sap.log.warning("Ignored 'sap:" + sV4Name.toLowerCase() + "-path'"
+							+ " annotation (" + sNewPath + ") of " + sEntitySetName,
+						"The entity type " + oEntityType.name + " contains a"
+							+ " '" + sV4Term + "' annotation with different path ("
+							+ oAnnotation.Path + ")",
+						"sap.ui.model.odata._ODataMetaModelUtils");
+				}
+			}
+		},
+
+		/**
 		 * Visits all children inside the given array, lifts "SAPData" extensions and
 		 * inlines OData v4 annotations for each child.
 		 *
@@ -909,44 +945,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 				// merge v4 annotations after child annotations are processed
 				jQuery.extend(oParent, oAnnotations[sQualifiedName]);
 			});
-		},
-
-		/**
-		 * Helper for setting com.sap.vocabularies.Common.v1.Deletable or
-		 * com.sap.vocabularies.Common.v1.Updatable at the given entity type.
-		 * If the annotation is already contained and the paths differ, log a warning.
-		 *
-		 * @param {object} oEntityType
-		 *    the entity type that needs to be annotated
-		 * @param {string} sV4Name
-		 *    either "Deletable" or "Updatable"
-		 * @param {string} sNewPath
-		 *    the path value for the v4 annotation
-		 * @param {object} sEntitySetName
-		 *    the name of the entity set, used only for logging
-		 */
-		setDeletableOrUpdatable: function (oEntityType, sV4Name, sNewPath, sEntitySetName) {
-			var oAnnotation, sV4Term;
-
-			if (!sNewPath) {
-				return;
-			}
-			sV4Term = "com.sap.vocabularies.Common.v1." + sV4Name;
-			oAnnotation = oEntityType[sV4Term];
-			if (!oAnnotation) {
-				oEntityType[sV4Term] = { "Path" : sNewPath };
-			} else if (sNewPath !== oAnnotation.Path) {
-				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-					jQuery.sap.log.warning("Ignored 'sap:" + sV4Name.toLowerCase() + "-path'"
-							+ " annotation (" + sNewPath + ") of " + sEntitySetName,
-						"The entity type " + oEntityType.name + " contains a"
-							+ " '" + sV4Term + "' annotation with different path ("
-							+ oAnnotation.Path + ")",
-						"sap.ui.model.odata._ODataMetaModelUtils");
-				}
-			}
 		}
-
 	};
 
 	return Utils;
