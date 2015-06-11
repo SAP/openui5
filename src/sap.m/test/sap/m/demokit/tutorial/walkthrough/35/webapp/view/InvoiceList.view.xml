@@ -29,7 +29,7 @@
 				<Text text="{i18n>columnQuantity}"/>
 			</Column>
 			<Column
-				width="20em">
+				>
 				<Text text="{i18n>columnName}"/>
 			</Column>
 			<Column
