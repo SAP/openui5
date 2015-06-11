@@ -2718,6 +2718,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
+	 * Returns the ETag for a given binding path/context or data object
+	 *
+	 * @param {string} [sPath] The binding path
+	 * @param {sap.ui.model.Context} [oContext] The binding context
+	 * @param {object} [oEntity] The entity data
+	 *
+	 * @returns {string} The found ETag (or null if none could be found)
+	 * @public
+	 */
+	ODataModel.prototype.getETag = function(sPath, oContext, oEntity) {
+		if (typeof sPath == "object") {
+			oEntity = sPath;
+			sPath = "";
+		}
+		return this._getETag(sPath, oContext, oEntity);
+	};
+	
+	/**
 	 * Returns the ETag for a given url, binding path/context or data object
 	 *
 	 * @param {string} sPath The binding path

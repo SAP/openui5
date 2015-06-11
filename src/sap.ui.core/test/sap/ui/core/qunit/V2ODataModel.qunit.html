@@ -3643,6 +3643,25 @@
 			start();	
 		});
 	});
+	
+	asyncTest("test getETag", 3, function(){
+		oInput = new sap.m.Input();
+		oInput.setModel(oModel);
+		oInput.bindElement("/ProductSet('AD-1000')");
+		var fnHandler = function() {
+			var oContext = oInput.getBindingContext();
+			//as mockServer does not provide an ETag we fake one
+			oContext.getObject().__metadata.etag = "someEtag";
+			ok(oContext, "Context exists");
+			ok(oModel.getETag(oContext.getObject()), "eTag exists");
+			ok(oModel.getETag(oContext.getPath()), "eTag exists");
+			oInput.getElementBinding().detachChange(fnHandler);
+			oInput.unbindElement();
+			oInput.setBindingContext(null);
+			start();
+		}
+		oInput.getElementBinding().attachChange(fnHandler);
+	});
 	</script>
 
 </head>
