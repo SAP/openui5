@@ -15,7 +15,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.app", {
 
 	onAfterRendering : function () {
 		if (this.hasOwnProperty("_compactOn")) {
-			jQuery('body').toggleClass("sapUiSizeCompact", this._compactOn);
+			jQuery('body').toggleClass("sapUiSizeCompact", this._compactOn).toggleClass("sapUiSizeCozy", !this._compactOn);
 		}
 		if (this.hasOwnProperty("_themeActive") && !jQuery.sap.getUriParameters().get("sap-theme")) {
 			sap.ui.getCore().applyTheme(this._themeActive);
@@ -28,7 +28,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.app", {
 			//handle themeChange
 			sap.ui.getCore().applyTheme(oData.themeActive);
 			//handle compact mode
-			jQuery('body').toggleClass("sapUiSizeCompact", oData.compactOn);
+			jQuery('body').toggleClass("sapUiSizeCompact", oData.compactOn).toggleClass("sapUiSizeCozy", !oData.compactOn);
 		} else {
 			this._themeActive = oData.themeActive;
 			this._compactOn = oData.compactOn;
