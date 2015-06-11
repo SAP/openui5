@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	
 	
 	/**
-	 * Inititalization function called each time the support mode is started
+	 * Initialization function called each time the support mode is started
 	 * (support popup is opened).
 	 * 
 	 * @param {sap.ui.core.support.Support} oSupportStub the support stub
