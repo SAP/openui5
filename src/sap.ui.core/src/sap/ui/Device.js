@@ -295,16 +295,18 @@ if (typeof window.sap.ui !== "object") {
 			if (pf.indexOf("Win") != -1 ) {
 				// userAgent in windows 7 contains: windows NT 6.1
 				// userAgent in windows 8 contains: windows NT 6.2 or higher
-				// TODO: update this after windows 9 is released
-				var rVersion = /windows NT 6.(\d)/i;
+				// userAgent since windows 10: Windows NT 10[...]
+				var rVersion = /Windows NT (\d+).(\d)/i;
 				var uaResult = userAgent.match(rVersion);
 				var sVersionStr = "";
-				if (uaResult) {
+				if (uaResult[1] == "6") {
 					if (uaResult[1] == 1) {
 						sVersionStr = "7";
 					} else if (uaResult[1] > 1) {
 						sVersionStr = "8";
 					}
+				} else {
+					sVersionStr = uaResult[1];
 				}
 				return {"name": OS.WINDOWS, "versionStr": sVersionStr};
 			} else if (pf.indexOf("Mac") != -1) {
