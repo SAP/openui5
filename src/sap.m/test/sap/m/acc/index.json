@@ -1,6 +1,11 @@
 {
 	"tests" : [
 		{
+			"control": "sap.m.ActionSelect",
+			"url": "../ActionSelect.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Bar",
 			"url": "../Bar.html",
 			"appComponent": "CA-UI5-CTR-SOF"
@@ -90,6 +95,11 @@
 			"control": "sap.m.MessageToast",
 			"url": "../MessageToast.html",
 			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.MultiInput",
+			"url": "../MultiInput.html",
+			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
