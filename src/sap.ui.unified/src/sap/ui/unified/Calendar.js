@@ -163,6 +163,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Calendar.prototype.exit = function(){
 
+			if (this._sInvalidateMonth) {
+				jQuery.sap.clearDelayedCall(this._sInvalidateMonth);
+			}
+
 		};
 
 		Calendar.prototype._createMonth = function(sId){
@@ -214,24 +218,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
 				Control.prototype.invalidate.apply(this, arguments);
-			} else if (this.getDomRef() && this._iMode == 0) {
+			} else if (this.getDomRef() && this._iMode == 0 && !this._sInvalidateMonth) {
 				// DateRange changed -> only rerender days
-				var aMonths = this.getAggregation("month");
-				for (var i = 0; i < aMonths.length; i++) {
-					var oMonth = aMonths[i];
-					oMonth._bDateRangeChanged = true;
-					if (aMonths.length > 1) {
-						oMonth._bNoFocus = true;
-					}
-					oMonth.invalidate(oOrigin);
-				}
-
-				if (aMonths.length > 1) {
-					// restore focus delayed as Months are re-rendered delayed
-					var that = this;
-					jQuery.sap.delayedCall(0, this, _focusDate, [that, that._getFocusedDate(), true]);
-				}
-				this._bDateRangeChanged = undefined;
+				// do this only once if more DateRanges / Special days are changed
+				var that = this;
+				this._sInvalidateMonth = jQuery.sap.delayedCall(0, that, _invalidateMonth, [that]);
 			}
 
 		};
@@ -1249,6 +1240,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			_focusDate(that, oFocusedDate, true);
 
 			_hideYearPicker(that);
+
+		}
+
+		function _invalidateMonth(oThis){
+
+			oThis._sInvalidateMonth = undefined;
+
+			var aMonths = oThis.getAggregation("month");
+			for (var i = 0; i < aMonths.length; i++) {
+				var oMonth = aMonths[i];
+				oMonth._bDateRangeChanged = true;
+				oMonth._bInvalidateSync = true;
+				if (aMonths.length > 1) {
+					oMonth._bNoFocus = true;
+				}
+				oMonth.invalidate();
+				oMonth._bInvalidateSync = undefined;
+			}
+
+			if (aMonths.length > 1) {
+				// restore focus
+				_focusDate(oThis, oThis._getFocusedDate(), true);
+			}
+			oThis._bDateRangeChanged = undefined;
 
 		}
 
