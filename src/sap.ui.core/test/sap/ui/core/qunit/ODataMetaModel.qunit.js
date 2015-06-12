@@ -10,57 +10,15 @@ sap.ui.require([
 	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel"
 ], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
 	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel,
-	ODataModel, ODataModel2) {
+	ODataModel1, ODataModel) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.thirdparty.datajs");
-
-	//no fake server for each sinon sandbox to avoid too early restore of XMLHttpRequest
-	sinon.config.useFakeServer = false;
 	//TODO remove this workaround in IE9 for
 	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
 	sinon.xhr.supportsCORS = true;
-
-	function onFailed(oEvent) {
-		var oParameters = oEvent.getParameters();
-		while (oParameters.getParameters) { // drill down to avoid circular structure
-			oParameters = oParameters.getParameters();
-		}
-		ok(false, "Failed to load: " + JSON.stringify(oParameters));
-	}
-
-	/**
-	 * Test-Function to be used in place of deepEquals which only tests for the existence of the given
-	 * values, not the absence of others.
-	 *
-	 * @param {object} oValue - The value to be tested
-	 * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
-	 * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
-	 * @returns {void}
-	 *
-	 * TODO move to test utils?
-	 * TODO do we really want hundreds of assertions?
-	 */
-	function deepContains(oValue, oExpected, sMessage) {
-		for (var sKey in oExpected) {
-			ok(typeof oExpected[sKey] === typeof oValue[sKey], sMessage + "/" + sKey + " have same type");
-
-			if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-				equal(oExpected[sKey].length, oValue[sKey].length, sMessage + "/" + sKey + " length matches");
-			}
-
-			if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
-				// Go deeper
-				deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
-			} else {
-				// Compare directly
-				equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
-			}
-		}
-	}
 
 	var sMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
@@ -485,6 +443,36 @@ sap.ui.require([
 		oGlobalSandbox; // global sandbox for async tests
 
 	/**
+	 * Test-Function to be used in place of deepEquals which only tests for the existence of the given
+	 * values, not the absence of others.
+	 *
+	 * @param {object} oValue - The value to be tested
+	 * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
+	 * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
+	 * @returns {void}
+	 *
+	 * TODO move to test utils?
+	 * TODO do we really want hundreds of assertions?
+	 */
+	function deepContains(oValue, oExpected, sMessage) {
+		for (var sKey in oExpected) {
+			ok(typeof oExpected[sKey] === typeof oValue[sKey], sMessage + "/" + sKey + " have same type");
+
+			if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
+				equal(oExpected[sKey].length, oValue[sKey].length, sMessage + "/" + sKey + " length matches");
+			}
+
+			if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+				// Go deeper
+				deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+			} else {
+				// Compare directly
+				equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
+			}
+		}
+	}
+
+	/**
 	 * Sets up the given sandbox in order to use the URLs and responses defined in mFixture;
 	 * leaves unknown URLs alone.
 	 *
@@ -537,11 +525,19 @@ sap.ui.require([
 	 */
 	function withGivenService(sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
 		// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-		var oModel = new ODataModel2(sServiceUrl, {
+		var oModel = new ODataModel(sServiceUrl, {
 				annotationURI : vAnnotationUrl,
 				json : true,
 				loadMetadataAsync : true
 			});
+
+		function onFailed(oEvent) {
+			var oParameters = oEvent.getParameters();
+			while (oParameters.getParameters) { // drill down to avoid circular structure
+				oParameters = oParameters.getParameters();
+			}
+			ok(false, "Failed to load: " + JSON.stringify(oParameters));
+		}
 		oModel.attachMetadataFailed(onFailed);
 		oModel.attachAnnotationsFailed(onFailed);
 
@@ -558,15 +554,15 @@ sap.ui.require([
 			setupSandbox(oGlobalSandbox);
 		},
 		afterEach : function () {
+			ODataModel.mServiceData = {}; // clear cache
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
-			ODataModel2.mServiceData = {}; // clear cache
 		}
 	});
 
 	//*********************************************************************************************
 	test("compatibility with synchronous ODataModel", function () {
-		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
+		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
 				loadMetadataAsync : false
@@ -595,7 +591,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("compatibility with asynchronous old ODataModel", function () {
-		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
+		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
 				loadMetadataAsync : true
@@ -624,15 +620,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("functions using 'this.oModel' directly", function () {
-		var oModel = new ODataModel2("/GWSAMPLE_BASIC", {
+		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
 				loadMetadataAsync : true
 			}),
 			oMetaModel = oModel.getMetaModel();
-
-		oModel.attachMetadataFailed(onFailed);
-		oModel.attachAnnotationsFailed(onFailed);
 
 		ok(oMetaModel instanceof ODataMetaModel);
 		strictEqual(typeof oMetaModel.oODataModelInterface.addAnnotationUrl, "function",
@@ -1584,7 +1577,7 @@ sap.ui.require([
 			oModel;
 
 		oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
-		oModel = new ODataModel2("/fake/service", {
+		oModel = new ODataModel("/fake/service", {
 			annotationURI : "",
 			json : true
 		});
@@ -1606,7 +1599,7 @@ sap.ui.require([
 						+ sAnnotation + ", " + sPath, function () {
 					var oMetaModel, oModel;
 
-					oModel = new ODataModel2("/fake/" + sPath, {
+					oModel = new ODataModel("/fake/" + sPath, {
 						// annotations are mandatory for this test case
 						annotationURI : "/fake/" + sAnnotation,
 						json : true
