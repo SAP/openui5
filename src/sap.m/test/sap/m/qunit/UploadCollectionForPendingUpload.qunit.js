@@ -317,6 +317,30 @@ QUnit.test("Creation of a new FileUploader Instance during rerendering" , functi
 	assert.deepEqual(oFileUploader4, this.oUploadCollection._oFileUploader, "After an item has been deleted from the list no new FileUploader instance should be created, thus the current one should be used for the next upload");
 });
 
+
+QUnit.test("uploadComplete", function(assert) {
+	var oFileUploaderEventMock = {
+		fileName : "file1",
+		reponse : { "propertyOne" : "ValueOne" },
+		readyStateXHR : 4,
+		status : 200,
+		responseRaw : '{ "propertyOne" : "ValueOne" }',
+		headers : {
+			"headerOne" : "headerValueOne",
+			"headerTwo" : "headerValueTwo",
+		}
+	};
+	function uploadComplete(oEvent) {
+		assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "Correct file1 name in complete event of pending upload");
+		assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "Correct response in complete event of pending upload");
+		assert.equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event of pending upload");
+		assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "Correct raw response in complete event of pending upload");
+		assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "Correct headers in complete event of pending upload");
+	}
+	this.oUploadCollection.attachUploadComplete(uploadComplete);
+	this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
+});
+
 QUnit.module("Delete PendingUpload Item", {
 	setup : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
