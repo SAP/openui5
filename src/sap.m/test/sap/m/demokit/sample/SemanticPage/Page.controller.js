@@ -65,6 +65,13 @@ sap.ui.define([
 			oMessagesButton.addDependent(this._messagePopover);
 		}
 		this._messagePopover.toggle(oMessagesButton);
+	},
+	onMultiSelectPress: function(oEvent) {
+		if (oEvent.getSource().getPressed()) {
+			sap.m.MessageToast.show("MultiSelect Pressed");
+		} else {
+			sap.m.MessageToast.show("MultiSelect Unpressed");
+		};
 	}
 });
 

@@ -108,39 +108,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 
 		oTypeConfigs["sap.m.semantic.MultiSelectAction"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.headerRight,
-
-			triggers: [{
-				inState: SemanticConfiguration._PageMode.display,
-				triggers: SemanticConfiguration._PageMode.multimode
-			},
-
-				{
-					inState: SemanticConfiguration._PageMode.multimode,
-					triggers: SemanticConfiguration._PageMode.display
-				},
-
-				{
-					inState: SemanticConfiguration._PageMode.edit,
-					triggers: SemanticConfiguration._PageMode.multimode
-				}],
-
 			getSettings: function() {
 				return {
 					icon: "sap-icon://multi-select",
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MULTI_SELECT"),
 					ariaLabelledBy: _ensureInvisibleText("MultiSelectAction", oBundle.getText("SEMANTIC_CONTROL_MULTI_SELECT"))
 				};
-			},
-
-			states: {
-
-				"display": {
-					icon: "sap-icon://multi-select"
-				},
-
-				"multimode": {
-					icon: "sap-icon://sys-cancel"
-				}
 			}
 		};
 
