@@ -153,16 +153,16 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 	MessageStrip.prototype.onsapspace = MSUtils.handleMSCloseButtonInteraction;
 
 	/**
-	* Close the MessageStrip.
-	*
-	* @type void
-	* @public
-	* @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	*/
+	 * Closes the MessageStrip.
+	 * This method sets the visible property of the MessageStrip to false.
+	 * The MessageStrip can be shown again by setting the visible property to true.
+	 * @type void
+	 * @public
+	 */
 	MessageStrip.prototype.close = function () {
 		var fnClosed = function () {
 			this.fireClose();
-			this.destroy();
+			this.setVisible(false);
 		}.bind(this);
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
