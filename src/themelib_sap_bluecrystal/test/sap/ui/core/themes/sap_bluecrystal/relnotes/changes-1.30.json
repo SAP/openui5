@@ -330,6 +330,97 @@
         "type": "FIX",
         "text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
         "references": []
+      },
+      {
+        "id": "123b4c58adb96a399cbac685c12816c9f8bd1e1a",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.OverflowToolbar: Additional controls can move to the overflow",
+        "references": []
+      },
+      {
+        "id": "e81d98e678b3655a80e2733c138b6fc31680de45",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Wizard: New control implemented",
+        "references": []
+      },
+      {
+        "id": "8c2e01b63f73573f163d649be879ae7ce326f879",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.AnalyticalTable: GroupHeader made touch-ready",
+        "references": []
+      },
+      {
+        "id": "91d5cfe224472170e0c50b5cc5651cca74efb384",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Added a column header menu for a touch device",
+        "references": []
+      },
+      {
+        "id": "444f05a9ac6e31e6c939940b742ca91371927346",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.CalendarLegend: Allowed to specify type of an item",
+        "references": []
+      },
+      {
+        "id": "8b2180193d56a43aab4991eca28b1bbaeb88f622",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Text tabs drop shadow is changed from 50% opacity to 70% opacity",
+        "references": []
+      },
+      {
+        "id": "e83df6183f1ff1fe7a565ec49a26a6636b9da082",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Improved rendering",
+        "references": []
+      },
+      {
+        "id": "4f71e5986ff818941160f0b71b480166069b9ed3",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Text is now displayed on 100% if no title is set",
+        "references": []
+      },
+      {
+        "id": "d083c75b53db7d62cad7bb564c0644b58f93f59c",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Colors for pressed warning/error radio button corrected",
+        "references": []
+      },
+      {
+        "id": "5e7cac06956f889ce549765205343c60387a82cd",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Removed the thin blue line between master and detail when it\u0027s rendered in Launchpad shell",
+        "references": []
+      },
+      {
+        "id": "8b5644e2d5c7dfd0ce26376e1639dce4c8a7c28c",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button: Emphasized button with hover and focus color fixed",
+        "references": []
+      },
+      {
+        "id": "6ccabe3dc0c283e52a6ce91e1c29462acef4fae1",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Icon no longer gets a different color only when it\u0027s directly under sap.m.Toolbar",
+        "references": []
+      },
+      {
+        "id": "d65defdb36c4bb57a191b30ea96c10554aebd6eb",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Improved m styling",
+        "references": []
       }
     ]
   }

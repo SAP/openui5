@@ -230,7 +230,7 @@
         "id": "4a3b934adfbfdeefa93b06bb8ae904ffc74d4928",
         "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.table.Table: MultiHeader column menu opens DomRef",
+        "text": "sap.ui.table.Table: MultiHeader Column Menu Opening DomRef",
         "references": []
       },
       {
@@ -266,6 +266,41 @@
         "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.table.TreeTable: Apply call when second parameter must be an argument",
+        "references": []
+      },
+      {
+        "id": "8c2e01b63f73573f163d649be879ae7ce326f879",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "AnalyticalTable: GroupHeader is made touch-ready",
+        "references": []
+      },
+      {
+        "id": "91d5cfe224472170e0c50b5cc5651cca74efb384",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Table: Column header menu for touch device added",
+        "references": []
+      },
+      {
+        "id": "826c494a454ea86b7635835608dae90fdd1d0667",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Table: Explored sample infrastructure prepared and basic example provided",
+        "references": []
+      },
+      {
+        "id": "02e35c41a2ba7b3db9b4e72ccf8b6209dbc093fc",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable.js - collapseAll for ClientTreeBindings corrected",
+        "references": []
+      },
+      {
+        "id": "1344183420940c575cf4b10bea3d5f1eb332439b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table: ColumnResizeHandler can overlay scrollbar",
         "references": []
       }
     ]

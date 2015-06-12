@@ -34,14 +34,14 @@
         "id": "3bffba21fc70c54384dcbfb1b498e2c32ef037d9",
         "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
         "type": "FIX",
-        "text": "Splitter: enable autoresize on bar move end",
+        "text": "Splitter: Enable autoresize on bar move end",
         "references": []
       },
       {
         "id": "9d470d9ad55075783219f6fa7444370a964ef863",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.layout.form.Form: keyboard navigation issues",
+        "text": "sap.ui.layout.form.Form: Keyboard navigation issues",
         "references": []
       },
       {
@@ -63,6 +63,13 @@
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
+        "references": []
+      },
+      {
+        "id": "95760e3c740f95a163e3dd9db5ffad3553d08302",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "VerticalLayout: Vertical alignment issue in Safari resolved",
         "references": []
       }
     ]
