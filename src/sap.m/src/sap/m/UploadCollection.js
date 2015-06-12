@@ -1182,11 +1182,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				if (iCountFiles === 0) {
 					return;
 				}
-				this._oFileUploader.removeAllHeaderParameters();
-				this.removeAggregation("headerParameters", true);
+				this._oFileUploader.removeAllAggregation("headerParameters", true);
+				this.removeAllAggregation("headerParameters", true);
 			}
-			this._oFileUploader.removeAllParameters();
-			this.removeAllParameters();
+			this._oFileUploader.removeAllAggregation("parameters", true);
+			this.removeAllAggregation("parameters", true);
 
 			// IE9
 			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
