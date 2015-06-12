@@ -20,7 +20,7 @@ function(jQuery) {
 	 * @name sap.ui.dt
 	 * @author SAP SE
 	 * @version ${version}
-	 * @public
+	 * @private
 	 */
 	
 	// delegate further initialization of this library to the Core

@@ -25,7 +25,7 @@ function(ManagedObject) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.Selection
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.

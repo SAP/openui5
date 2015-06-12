@@ -20,7 +20,7 @@ function(Element) {
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @public
+	 * @private
 	 * @static
 	 * @since 1.30
 	 * @alias sap.ui.dt.Preloader
