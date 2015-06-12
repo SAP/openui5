@@ -1038,7 +1038,7 @@ sap.ui.define([
 		// create a hLayout container for the remove and add buttons
 		oButtonContainer = new sap.ui.layout.HorizontalLayout({
 			layoutData: new sap.ui.layout.GridData({
-				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : "L1 M2 S2"
+				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : "L2 M2 S2"
 			})
 		});
 		oConditionGrid.addContent(oButtonContainer);
@@ -1359,12 +1359,13 @@ sap.ui.define([
 			var oConditionGrid = oCtrl.getParent();
 			var sOldValue = oCtrl.getValue();
 
+			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);			
 			oConditionGrid.removeContent(oCtrl);
 			//delete oConditionGrid.value1;
 			var fieldInfo = this._aConditionsFields[index];
 			oCtrl = this._createField(oCurrentKeyField, fieldInfo, oConditionGrid);
 			oConditionGrid[fieldInfo["ID"]] = oCtrl;
-			oConditionGrid.insertContent(oCtrl, index);
+			oConditionGrid.insertContent(oCtrl, ctrlIndex);
 
 			var oValue, sValue;
 			if (oConditionGrid.oFormatter && sOldValue) {
