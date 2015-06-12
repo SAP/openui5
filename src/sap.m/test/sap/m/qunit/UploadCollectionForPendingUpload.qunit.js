@@ -48,7 +48,7 @@ QUnit.test("API method 'upload' exists and reacts depending on usages.", functio
 		instantUpload : false
 	});
 	oUploadCollection.upload();
-	assert.ok(jQuery.sap.log.error.calledOnce, "No Error should be logged, because of valid API call.");
+	assert.ok(jQuery.sap.log.error.calledOnce, "No error should be logged, because of valid API call.");
 	jQuery.sap.log.error.restore();
 });
 
@@ -187,7 +187,7 @@ QUnit.test("Test for method setUploadUrl", function(assert) {
 	assert.equal(this.oUploadCollection.getUploadUrl(), sUploadUrl, "UploadUrl property should not be overwritten at runtime if instantUpload is false.");
 });
 
-QUnit.module("Rendering of an item with instantUpload = false ", {
+QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
 
 	setup : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("uploadCollection1", {
@@ -195,6 +195,8 @@ QUnit.module("Rendering of an item with instantUpload = false ", {
 		});
 		this.oUploadCollection.placeAt("uiArea");
 		sap.ui.getCore().applyChanges();
+		var oFile = {name: "file1"};
+		this.aFiles = [oFile];
 	},
 	teardown : function() {
 		this.oUploadCollection.destroy();
@@ -209,26 +211,60 @@ QUnit.test("Rendering after initial load", function(assert) {
 });
 
 QUnit.test("Rendering of an item after change event", function(assert) {
-	var oFile1 = {
-			name: "file1"
-		};
-		var aFiles = [oFile1];
-		var oFileUploader = this.oUploadCollection._getFileUploader();
-		oFileUploader.fireChange({files: aFiles});
-		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() +  "-ta_filenameHL"), "FileName is rendered");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId()+ "-ta_editFileName"), "No input field should be rendered if instantUpload = false ");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-okButton"), "No OK Button should be rendered if instantUpload = false");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-cancelButton"), "No Cancel Button should be rendered if instantUpload = false");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-editButton"), "No Edit Button should be rendered if instantUpload = false");
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-deleteButton"), "Delete Button should be rendered if instantUpload = false");
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL"), "Icon should be rendered if instantUpload = false");
+	var oFileUploader = this.oUploadCollection._getFileUploader();
+	oFileUploader.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges();
+	assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() +  "-ta_filenameHL"), "FileName is rendered");
+	assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId()+ "-ta_editFileName"), "No input field should be rendered if instantUpload = false ");
+	assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-okButton"), "No OK button should be rendered if instantUpload = false");
+	assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-cancelButton"), "No Cancel button should be rendered if instantUpload = false");
+	assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-editButton"), "No Edit button should be rendered if instantUpload = false");
+	assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-deleteButton"), "Delete button should be rendered if instantUpload = false");
+	assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL"), "Icon should be rendered if instantUpload = false");
+});
+
+QUnit.test("Setting of 'hidden' property on FileUploader instances", function(assert) {
+	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
+	oFileUploader1.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges(); // it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
+	assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(':hidden'), "The first FileUploader instance should be set to hidden after the second instance has been created");
+	var oFileUploader2 = this.oUploadCollection._oFileUploader; // take the current FU instance
+	assert.ok(!jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(':hidden'), "The current FileUploader instance should not be hidden");
+	oFileUploader2.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
+	assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(':hidden'), "The first FileUploader instance should be still hidden");
+	assert.ok(jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(':hidden'), "The second  FileUploader instance should be hidden now");
+	var oFileUploader3 = this.oUploadCollection._oFileUploader;
+	assert.ok(!jQuery(jQuery.sap.domById(oFileUploader3.getId())).is(':hidden'), "The current  FileUploader instance should not be hidden");
+	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[2], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
+	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
+	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[4], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
+});
+
+
+QUnit.test("Positions of the FileUploader instances in the toolbar", function(assert) {
+	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
+	oFileUploader1.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges(); // it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
+	var oFileUploader2 = this.oUploadCollection._oFileUploader; // take the current FU instance
+	oFileUploader2.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
+	var oFileUploader3 = this.oUploadCollection._oFileUploader;
+	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[2], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
+	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
+	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[4], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
 });
 
 QUnit.module("PendingUpload",  {
 
 	setup : function() {
-		this.oUploadCollection = new sap.m.UploadCollection();
+		this.oUploadCollection = new sap.m.UploadCollection({instantUpload : false});
+		var oFile = {
+				name: "file1"
+			};
+		this.aFiles = [oFile];
+		this.oUploadCollection.placeAt("uiArea");
+		sap.ui.getCore().applyChanges();
 	},
 	teardown : function() {
 		this.oUploadCollection.destroy();
@@ -236,22 +272,49 @@ QUnit.module("PendingUpload",  {
 });
 
 QUnit.test("test Upload", function(assert) {
-	var oFile1 = {
-			name: "file1"
-		};
-	var aFiles = [oFile1];
-	var oUploadCollection = new sap.m.UploadCollection({
-		instantUpload : false
-	});
-	var oFileUploader1 = oUploadCollection._getFileUploader();
+	var oFileUploader1 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
-	oFileUploader1.fireChange({files: aFiles});
-	var oFileUploader2 = oUploadCollection._getFileUploader();
+	oFileUploader1.fireChange({files: this.aFiles});
+	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
-	oFileUploader2.fireChange({files: aFiles});
-	oUploadCollection.upload();
+	oFileUploader2.fireChange({files: this.aFiles});
+	this.oUploadCollection.upload();
 	assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 	assert.ok(fnFUUpload2.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
+});
+
+QUnit.test("Creation of a new FileUploader Instance during rerendering" , function(assert) {
+	var oFileUploader1 = this.oUploadCollection._oFileUploader;
+	oFileUploader1.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(oFileUploader1.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
+	oFileUploader1 = this.oUploadCollection._oFileUploader;
+	// delete the item
+	this.oUploadCollection._oItemForDelete = this.oUploadCollection.getAggregation("items")[0];
+	this.oUploadCollection._oItemForDelete._iLineNumber = 0;
+	this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+	sap.ui.getCore().applyChanges();
+	assert.deepEqual(oFileUploader1, this.oUploadCollection._oFileUploader, "After an item has been deleted from the list no new FileUploader instance should be created, thus the current one should be used for the next upload");
+	//create two more items
+	oFileUploader1 = this.oUploadCollection._oFileUploader;
+	oFileUploader1.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges();
+	var oFileUploader2 = this.oUploadCollection._oFileUploader;
+	oFileUploader2.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges();
+	var oFileUploader3 = this.oUploadCollection._oFileUploader;
+	oFileUploader3.fireChange({files: this.aFiles});
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(oFileUploader1.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
+	assert.notEqual(oFileUploader2.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
+	assert.notEqual(oFileUploader3.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
+	var oFileUploader4 = this.oUploadCollection._oFileUploader;
+	//delete an item in the middle of the list
+	this.oUploadCollection._oItemForDelete = this.oUploadCollection.getAggregation("items")[1];
+	this.oUploadCollection._oItemForDelete._iLineNumber = 1;
+	this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+	sap.ui.getCore().applyChanges();
+	assert.deepEqual(oFileUploader4, this.oUploadCollection._oFileUploader, "After an item has been deleted from the list no new FileUploader instance should be created, thus the current one should be used for the next upload");
 });
 
 QUnit.module("Delete PendingUpload Item", {

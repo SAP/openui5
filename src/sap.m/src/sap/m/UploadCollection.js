@@ -332,7 +332,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._requestIdName = "requestId";
 	UploadCollection.prototype._requestIdValue = 0;
 	UploadCollection._placeholderCamera = 'sap-icon://camera';
-	UploadCollection._pendingUploadStatus = "pendingUploadStatus"; // UploadCollection item has this status only if UploadCollection is used with the property 'instantUpload' = false
+	UploadCollection._pendingUploadStatus = "pendingUploadStatus"; // UploadCollectionItem has this status only if UploadCollection is used with the property 'instantUpload' = false
 	UploadCollection.prototype._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
 
 	/**
@@ -554,8 +554,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype.onAfterRendering = function() {
-		var that = this;
+		var that = this, iToolbarElements, i;
 		if (!this.getInstantUpload()) {
+			iToolbarElements = this.oHeaderToolbar.getContent().length;
+			// the first element of the toolbar is the label "Attachments", the second element is a spacer, the third one is a FileUploader instance
+			// there can be more FileUploader instances: in this case all FileUploader instances except for the last one should be set to "hidden"
+			if (this._aFileUploadersForPendingUpload.length) {
+				for (i = 2; i < iToolbarElements - 1; i++) {
+					this.oHeaderToolbar.getContent()[i].$().hide();
+				}
+			}
 			return;
 		}
 		for (var i = 0; i < this._oList.aDelegates.length; i++) {
@@ -632,28 +640,32 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._getListHeader = function(iItemNumber) {
+		var oFileUploader, oNumberOfAttachmentsLabel, iToolbarElements, i;
 		var oNumberOfAttachmentsLabel = this._getNumberOfAttachmentsLabel(iItemNumber);
 		if (!this.oHeaderToolbar) {
 			if (!!this._oFileUploader && !this.getInstantUpload()) {
 				this._oFileUploader.destroy();
 			}
-			var oFileUploader = this._getFileUploader();
+			oFileUploader = this._getFileUploader();
 			this.oHeaderToolbar = new sap.m.Toolbar(this.getId() + "-toolbar", {
 				content : [oNumberOfAttachmentsLabel, new sap.m.ToolbarSpacer(), oFileUploader]
 			});
+			this.oHeaderToolbar.addStyleClass("sapMUCListHeader");
 		} else {
-			var oToolbarSpacer = this.oHeaderToolbar.getContent()[1];
 			if (!this.getInstantUpload()) {
-				var oFileUploader = this._getFileUploader();
-			} else {
-				var oFileUploader = this.oHeaderToolbar.getContent()[2];
+				//create a new FU Instance only if the current FU instance has been used for selection of a file for the future upload.
+				//If the method is called after an item has been deleted from the list there is no need to create a new FU instance.
+				var iPendingUploadsNumber = this._aFileUploadersForPendingUpload.length;
+				for (i = iPendingUploadsNumber - 1; i >= 0; i--) {
+					if (this._aFileUploadersForPendingUpload[i].getId() == this._oFileUploader.getId()) {
+						oFileUploader = this._getFileUploader();
+						iToolbarElements = this.oHeaderToolbar.getContent().length;
+						this.oHeaderToolbar.insertAggregation("content", oFileUploader, iToolbarElements, true);
+						break;
+					}
+				}
 			}
-			this.oHeaderToolbar.removeAllAggregation("content", true);
-			this.oHeaderToolbar.insertAggregation("content", oNumberOfAttachmentsLabel, 0, true); // insert the label 'Attachments(n)'
-			this.oHeaderToolbar.insertAggregation("content", oToolbarSpacer, 1, true); // insert the toolbar spacer
-			this.oHeaderToolbar.insertAggregation("content", oFileUploader, 2, true);
 		}
-		this.oHeaderToolbar.addStyleClass("sapMUCListHeader");
 	};
 
 
@@ -1819,7 +1831,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype._getFileUploader = function() {
 	var that = this, bUploadOnChange = this.getInstantUpload();
-		if (!bUploadOnChange || !this._oFileUploader) { // in case of instantUpload = false always create a new FU instance and if instantUpload = true only if an FU instance does not exist yet
+		if (!bUploadOnChange || !this._oFileUploader) { // In case of instantUpload = false always create a new FU instance. In case of instantUpload = true only create a new FU instance if no FU instance exists yet
 			var bSendXHR = (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) ? false : true;
 			this._iFUCounter = this._iFUCounter + 1; // counter for FileUploader instances
 			var bMultiple = !bUploadOnChange ? false : this.getMultiple();
