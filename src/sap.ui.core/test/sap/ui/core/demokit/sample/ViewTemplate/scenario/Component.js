@@ -81,7 +81,8 @@ sap.ui.define([
 			oModel = new fnModel(sServiceUri, {
 				annotationURI : [sAnnotationUri, sAnnotationUri2],
 				json : true,
-				loadMetadataAsync : true
+				loadMetadataAsync : true,
+				skipMetadataAnnotationParsing : true
 			});
 
 			oModel.getMetaModel().loaded().then(function () {
