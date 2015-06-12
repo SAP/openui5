@@ -56,8 +56,11 @@
 	pointer-events: none; /* disable events */
 }
 
-.sapMInputBaseInner::-webkit-input-placeholder {
+.sapMInputBaseInner[placeholder] {
 	text-overflow: ellipsis;
+}
+.sapMInputBaseInner::-webkit-input-placeholder{
+	text-overflow: ellipsis !important; /* important is necessary to overwrite inline style of shadow dom */
 }
 
 .sapMInputBaseMessage {
