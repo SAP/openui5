@@ -624,15 +624,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					var aMonths = this.getAggregation("month");
 					var oMonthPicker = this.getAggregation("monthPicker");
 					var oYearPicker = this.getAggregation("yearPicker");
-					for (var i = 0; i < aMonths.length; i++) {
-						var oMonth = aMonths[i];
-						jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					}
-					if (oMonthPicker.getDomRef()) {
+					switch (this._iMode) {
+					case 0: // day picker
+						for (var i = 0; i < aMonths.length; i++) {
+							var oMonth = aMonths[i];
+							jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+						}
+						break;
+
+					case 1: // month picker
 						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					}
-					if (oYearPicker.getDomRef()) {
+						break;
+
+					case 2: // year picker
 						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+						break;
+						// no default
 					}
 				}
 			}
@@ -810,27 +817,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (!bFound) {
 				// date not found in existing months - render new ones
 				oFirstDate = new UniversalDate(oDate.getTime());
-			}
 
-			if (!bFound && aMonths.length > 1) {
-				oFirstDate.setUTCDate(1);
-				if (bInLastMonth) {
-					oFirstDate.setUTCMonth(oFirstDate.getUTCMonth() - aMonths.length + 1);
-				}
+				if (aMonths.length > 1) {
+					oFirstDate.setUTCDate(1);
+					if (bInLastMonth) {
+						oFirstDate.setUTCMonth(oFirstDate.getUTCMonth() - aMonths.length + 1);
+					}
 
-				for (i = 0; i < aMonths.length; i++) {
-					oMonth = aMonths[i];
-					oMonthDate = new UniversalDate(oFirstDate.getTime());
-					oMonthDate.setUTCMonth(oFirstDate.getUTCMonth() + i);
-					if (!bNoFocus && oMonthDate.getUTCFullYear() == oDate.getUTCFullYear() && oMonthDate.getUTCMonth() == oDate.getUTCMonth()) {
-						oMonth.setDate(CalendarUtils._createLocalDate(oDate));
-					}else {
-						oMonth.displayDate(CalendarUtils._createLocalDate(oMonthDate));
+					for (i = 0; i < aMonths.length; i++) {
+						oMonth = aMonths[i];
+						oMonthDate = new UniversalDate(oFirstDate.getTime());
+						oMonthDate.setUTCMonth(oFirstDate.getUTCMonth() + i);
+						if (!bNoFocus && oMonthDate.getUTCFullYear() == oDate.getUTCFullYear() && oMonthDate.getUTCMonth() == oDate.getUTCMonth()) {
+							oMonth.setDate(CalendarUtils._createLocalDate(oDate));
+						}else {
+							oMonth.displayDate(CalendarUtils._createLocalDate(oMonthDate));
+						}
 					}
 				}
-			}
 
-			if (!bFound) {
 				// change month and year
 				oThis._updateHeader(oFirstDate);
 			}
@@ -854,7 +859,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _showMonthPicker(oThis){
 
 			if (oThis._iMode == 2) {
-				_hideYearPicker(oThis);
+				_hideYearPicker(oThis, true);
 			}
 
 			var oDate = oThis._getFocusedDate();
@@ -872,13 +877,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oThis.$("contentOver").css("display", "");
 
 			oMonthPicker.setMonth(oDate.getUTCMonth());
+
+			if (oThis._iMode == 0) {
+				// remove tabindex from month
+				var aMonths = oThis.getAggregation("month");
+
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+			}
+
 			oThis._iMode = 1;
 
 			_togglePrevNext(oThis, oDate, false);
 
 		}
 
-		function _hideMonthPicker(oThis){
+		function _hideMonthPicker(oThis, bNoFocus){
 
 			oThis._iMode = 0;
 
@@ -886,14 +902,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oMonthPicker.$().css("display", "none");
 			oThis.$("contentOver").css("display", "none");
 
-			_renderMonth(oThis); // to focus date
+			if (!bNoFocus) {
+				_renderMonth(oThis); // to focus date
+
+				if (oThis.getMonths() > 1) {
+					// restore tabindex because if date not changed in _renderMonth only the focused date is updated
+					var aMonths = oThis.getAggregation("month");
+					for (var i = 0; i < aMonths.length; i++) {
+						var oMonth = aMonths[i];
+						jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+					}
+				}
+			}
 
 		}
 
 		function _showYearPicker(oThis){
 
 			if (oThis._iMode == 1) {
-				_hideMonthPicker(oThis);
+				_hideMonthPicker(oThis, true);
 			}
 
 			var oDate = oThis._getFocusedDate();
@@ -947,11 +974,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 			}
 
+			if (oThis._iMode == 0) {
+				// remove tabindex from month
+				var aMonths = oThis.getAggregation("month");
+
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+			}
+
 			oThis._iMode = 2;
 
 		}
 
-		function _hideYearPicker(oThis){
+		function _hideYearPicker(oThis, bNoFocus){
 
 			oThis._iMode = 0;
 
@@ -959,7 +996,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oYearPicker.$().css("display", "none");
 			oThis.$("contentOver").css("display", "none");
 
-			_renderMonth(oThis); // to focus date
+			if (!bNoFocus) {
+				_renderMonth(oThis); // to focus date
+
+				if (oThis.getMonths() > 1) {
+					// restore tabindex because if date not changed in _renderMonth only the focused date is updated
+					var aMonths = oThis.getAggregation("month");
+					for (var i = 0; i < aMonths.length; i++) {
+						var oMonth = aMonths[i];
+						jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+					}
+				}
+			}
 
 		}
 
