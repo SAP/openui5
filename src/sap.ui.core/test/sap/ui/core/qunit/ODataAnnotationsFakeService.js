@@ -127,6 +127,10 @@ xhr.onCreate = function(request) {
 				sAnswer = sLabeledElementOtherValues;
 				break;
 				
+			case "fakeService://testdata/odata/apply-parameters.xml":
+				sAnswer = sApplyParameters;
+				break;
+				
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -3908,6 +3912,31 @@ var sLabeledElementOtherValues = '\
 						</PropertyValue>\
 					</Record>\
 				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sApplyParameters = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="zht_cashmgr.v1">\
+			<Annotations Target="CatalogService.Annotation">\
+				<Annotation Term="UI.data" Path="MediaType" />\
+					<Annotation Term="UI.data2" Path="MediaType2" />\
+					<Annotation Term="UI.data3">\
+						<Apply Function="odata.concat">\
+							<String>Yes</String>\
+							<String>we</String>\
+							<String>can</String>\
+						</Apply>\
+					</Annotation>\
+				<Annotation Term="UI.meta" String="text" />\
 			</Annotations>\
 		</Schema>\
 	</edm:DataServices>\

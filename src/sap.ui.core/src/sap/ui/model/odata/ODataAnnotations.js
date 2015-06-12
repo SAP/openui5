@@ -1033,9 +1033,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 								for (var i = 0; i < aOtherNodes.length; i++) {
 									var oOtherNode = xPath.nextNode(aOtherNodes, i);
 									if (oOtherNode.nodeName !== "Annotation") {
-										var vValue = this.getPropertyValue(xmlDoc, oOtherNode, oAlias);
 										var sNodeName = oOtherNode.nodeName;
 										var sParentName = oOtherNode.parentNode.nodeName;
+										
+										var vValue;
+										if (sNodeName === "Apply") {
+											vValue = this.getApplyFunctions(xmlDoc, oOtherNode, oAlias);
+										} else {
+											vValue = this.getPropertyValue(xmlDoc, oOtherNode, oAlias);									
+										}
 										
 										// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
 										// their order within the document
@@ -1117,12 +1123,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				mParameter.Value = this.getApplyFunctions(xmlDoc, paraNode);
 				
 			} else if (paraNode.nodeName === "LabeledElement") {
-				mParameter.Name = paraNode.getAttribute("Name");
-				var vValue = this.getSimpleNodeValue(xmlDoc, paraNode, mAlias);
-				if (!vValue || Object.keys(vValue).length === 0) {
-					vValue = this.getPropertyValue(xmlDoc, paraNode, mAlias);
-				}				
+				var vValue = this.getPropertyValue(xmlDoc, paraNode, mAlias);
 				
+				mParameter.Name = vValue.Name;
+				delete vValue.Name;
 				mParameter.Value = vValue;
 				
 			} else if (mMultipleArgumentDynamicExpressions[paraNode.nodeName]) {
