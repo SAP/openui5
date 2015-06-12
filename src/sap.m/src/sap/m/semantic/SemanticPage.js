@@ -92,15 +92,6 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				},
 
 				/**
-				 * Semantic controls
-				 */
-				semanticControls: {
-					type: "sap.m.semantic.SemanticControl",
-					multiple: true,
-					singularName: "semanticControl"
-				},
-
-				/**
 				 * See {@link sap.m.Page#content}
 				 */
 				content: {
