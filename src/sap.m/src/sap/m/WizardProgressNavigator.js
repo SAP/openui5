@@ -102,7 +102,8 @@ function (library, Control, ItemNavigation) {
 
 	WizardProgressNavigator.TEXT = {
 		SELECTED: "WIZARD_PROG_NAV_SELECTED",
-		PROCESSED: "WIZARD_PROG_NAV_PROCESSED"
+		PROCESSED: "WIZARD_PROG_NAV_PROCESSED",
+		STEP: "WIZARD_PROG_NAV_STEP_TITLE"
 	};
 
 	WizardProgressNavigator.prototype.init = function () {
