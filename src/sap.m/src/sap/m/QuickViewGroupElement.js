@@ -139,12 +139,18 @@ sap.ui.define([
 						target : this.getTarget()
 					});
 				case GroupElementType.pageLink:
+
+					var linkValue = this.getPageLinkId();
+					if (sQuickViewId) {
+						linkValue = sQuickViewId + '-' + linkValue;
+					}
+
 					return new Link({
 						href : "#",
 						text : this.getValue(),
 						customData : [new CustomData({
 							key : "pageNumber",
-							value : sQuickViewId + '-' + this.getPageLinkId()
+							value : linkValue
 						})]
 					});
 				default:

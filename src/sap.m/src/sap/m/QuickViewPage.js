@@ -334,7 +334,12 @@ sap.ui.define([
 						text: oCurrentGroupElement.getLabel()
 					});
 
-					oCurrentGroupElementValue = oCurrentGroupElement._getGroupElementValue(mNavContext.quickViewId);
+					var sQuickViewId;
+					if (mNavContext) {
+						sQuickViewId = mNavContext.quickViewId;
+					}
+
+					oCurrentGroupElementValue = oCurrentGroupElement._getGroupElementValue(sQuickViewId);
 
 					if (oCurrentGroupElementValue instanceof Link) {
 						oCurrentGroupElementValue.addAriaLabelledBy(oCurrentGroupElementValue);
