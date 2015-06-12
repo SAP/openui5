@@ -29,7 +29,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.DesignTime
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
