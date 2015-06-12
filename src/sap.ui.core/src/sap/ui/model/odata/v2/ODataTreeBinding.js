@@ -35,6 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @param {int} [mParameters.rootLevel=0] The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
 	 *                                        Conforming to the "SAP Annotations for OData Version 2.0" Specification, the root level must start at 0. 
 	 *                                        Default value is thus 0.
+	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
 	 * @extends sap.ui.model.TreeBinding
@@ -47,6 +48,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			//make sure we have at least an empty parameter object
 			this.mParameters = this.mParameters || mParameters || {};
 			
+			this.sBatchGroupId;
+			this.sRefreshBatchGroupId;
 			this.oFinalLengths = {};
 			this.oLengths = {};
 			this.oKeys = {};
@@ -56,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.aSorters = aSorters || [];
 			this.sFilterParams = "";
 
-				// a queue containing all parallel running requests
+			// a queue containing all parallel running requests
 			// a request is identified by (node id, startindex, length)
 			this.mRequestHandles = {};
 			
@@ -67,8 +70,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			
 			if (mParameters && mParameters.countMode && mParameters.countMode !== CountMode.Inline) {
 				jQuery.log.fatal("ODataTreeBinding only supports CountMode.Inline!");
-			} else {
+			} else { 
 				this.sCountMode = CountMode.Inline;
+			}
+			if (mParameters) {
+				this.sBatchGroupId = mParameters.batchGroupId;
 			}
 			//this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			this.bInitial = true;
@@ -128,7 +134,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @private
 	 */
 	ODataTreeBinding.prototype._loadSingleRootByHierarchyNodeID = function (sRootNodeID, sRequestKey) {
-		var that = this;
+		var that = this,
+			sBatchGroupId;
 		
 		var _handleSuccess = function (oData) {
 			if (oData.results && oData.results.length > 0) {
@@ -173,11 +180,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.mRequestHandles[sRequestKey].abort();
 		}
 		this.fireDataRequested();
+		sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
 			urlParameters: aParams, 
 			success: _handleSuccess, 
 			error: _handleError,
-			sorters: this.aSorters
+			sorters: this.aSorters,
+			batchGroupId: sBatchGroupId
 		});
 	};
 	
@@ -187,13 +196,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @param {string} sRequestKey a key string used to store/clean-up request handles
 	 */
 	ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties = function (sNodeId, sRequestKey) {
-		var that = this;
+		var that = this,
+			sBatchGroupId;
 		
 		if (this.mRequestHandles[sRequestKey]) {
 			this.mRequestHandles[sRequestKey].abort();
 		}
-		
+		sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
 		this.mRequestHandles[sRequestKey] = this.oModel.read(sNodeId, {
+			batchGroupId: sBatchGroupId,
 			success: function (oData) {
 				var sNavPath = that._getNavPath(that.getPath());
 				
@@ -590,7 +601,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	};
 	
 	ODataTreeBinding.prototype._getCountForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mParameters) {
-		var that = this;
+		var that = this,
+			sBatchGroupId;
 		
 		// create a request object for the data request
 		var aParams = [];
@@ -623,11 +635,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	
 		// Only send request, if path is defined
 		if (sPath) {
+			sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
 			this.oModel.read(sPath + "/$count", {
 				urlParameters: aParams,
 				success: _handleSuccess,
 				error: _handleError,
-				sorters: this.aSorters
+				sorters: this.aSorters,
+				batchGroupId: sBatchGroupId
 			});
 		}
 	};
@@ -649,6 +663,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters, oRequestedSection) {
 		var that = this,
+			sBatchGroupId,
 			bInlineCountRequested = false;
 
 		if (iStartIndex || iLength) {
@@ -801,12 +816,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				
 				if (this.mRequestHandles[sRequestKey]) {
 					this.mRequestHandles[sRequestKey].abort();
-				} 
+				}
+				sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 					urlParameters: aParams,
 					success: fnSuccess,
 					error: fnError,
-					sorters: this.aSorters
+					sorters: this.aSorters,
+					batchGroupId: sBatchGroupId
 				});
 			}
 		}
@@ -848,12 +865,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * validation, please use the parameter bForceUpdate.
 	 * 
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
-	 * @param {object} [mChangedEntities]
-	 * @param {string} [mEntityTypes]
+	 * @param {string} [sBatchGroupId] The batch group Id for the refresh
 	 * 
 	 * @public
 	 */
-	ODataTreeBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
+	ODataTreeBinding.prototype.refresh = function(bForceUpdate, sBatchGroupId) {
+		if (typeof bForceUpdate === "string") {
+			sBatchGroupId = bForceUpdate;
+		}
+		this.sRefreshBatchGroup = sBatchGroupId;
+		this._refresh(bForceUpdate);
+		this.sRefreshBatchGroup = undefined;
+	};
+	
+	/**
+	 * Refreshes the binding, check whether the model data has been changed and fire change event
+	 * if this is the case. For server side models this should refetch the data from the server.
+	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
+	 * validation, please use the parameter bForceUpdate.
+	 * 
+	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
+	 * @param {object} [mChangedEntities]
+	 * @param {string} [mEntityTypes]
+	 * 
+	 * @private
+	 */
+	ODataTreeBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes){

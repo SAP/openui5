@@ -48,6 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
 			this.sBatchGroupId = undefined;
+			this.sRefreshBatchGroupId = undefined;
 			this.bLengthRequestd = false;
 			this.bUseExtendedChangeDetection = true;
 			this.bFaultTolerant = mParameters && mParameters.faultTolerant;
@@ -349,7 +350,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 						this.bLengthFinal = true;
 						this._fireChange();
 					} else {
-						this.refresh();
+						this._refresh();
 					}
 				}
 			}
@@ -368,7 +369,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	ODataListBinding.prototype.loadData = function(iStartIndex, iLength, bPretend) {
 
 		var that = this,
-		bInlineCountRequested = false;
+		bInlineCountRequested = false,
+		sBatchGroupId;
 
 		// create range parameters and store start index for sort/filter requests
 		if (iStartIndex || iLength) {
@@ -509,7 +511,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				// Execute the request and use the metadata if available
 				this.bPendingRequest = true;
 				this.fireDataRequested();
-				this.mRequestHandles[sPath] = this.oModel.read(sPath, {batchGroupId: this.sBatchGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
+				//if load is triggered by a refresh we have to check the refreshBatchGroup
+				sBatchGroupId = this.sRefreshBatchGroup ? this.sRefreshBatchGroup : this.sBatchGroupId;
+				this.mRequestHandles[sPath] = this.oModel.read(sPath, {batchGroupId: sBatchGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 			}
 		}
 
@@ -551,7 +555,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	ODataListBinding.prototype._getLength = function() {
 
 		var that = this;
-
+		var sBatchGroupId;
+		
 		if (this.sCountMode !== CountMode.Request && this.sCountMode !== CountMode.Both) {
 			return;
 		}
@@ -594,7 +599,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (sPath) {
 			// execute the request and use the metadata if available
 			sPath = sPath + "/$count";
-			this.mRequestHandles[sPath] = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, batchGroupId: this.sBatchGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError}); //;, undefined, undefined, this.oModel.getServiceMetadata());
+			//if load is triggered by a refresh we have to check the refreshBatchGroup
+			sBatchGroupId = this.sRefreshBatchGroup ? this.sRefreshBatchGroup : this.sBatchGroupId;
+			this.mRequestHandles[sPath] = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, batchGroupId: sBatchGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError}); //;, undefined, undefined, this.oModel.getServiceMetadata());
 		}
 	};
 
@@ -605,10 +612,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * validation, please use the parameter bForceUpdate.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
+	 * @param {string} [sBatchGroupId] The batch group Id for the refresh
 	 *
 	 * @public
 	 */
-	ODataListBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
+	ODataListBinding.prototype.refresh = function(bForceUpdate, sBatchGroupId) {
+		if (typeof bForceUpdate === "string") {
+			sBatchGroupId = bForceUpdate;
+			bForceUpdate = false;
+		}
+		this.sRefreshBatchGroup = sBatchGroupId;
+		this._refresh(bForceUpdate);
+		this.sRefreshBatchGroup = undefined;
+	};
+	
+	/**
+	 * @private
+	 */
+	ODataListBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
 
 		if (!bForceUpdate) {
@@ -706,7 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.aExpandRefs = oRef;
 			if (bRefChanged) {
 				if (this.aSorters.length > 0 || this.aFilters.length > 0) {
-					this.refresh();
+					this._refresh();
 					return false;
 				} else {
 					this.aKeys = oRef;
