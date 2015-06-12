@@ -634,7 +634,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 	TableRenderer.renderRowHdrRow = function(rm, oTable, oRow, iRowIndex) {
 		rm.write("<div");
-		rm.writeAttribute("id", oTable.getId() + "-rowsel" + iRowIndex);
+		rm.writeAttribute("id", oRow.getId() + "-rowsel"); // table ID included in row ID
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
 		rm.addClass("sapUiTableRowHdr");
 		if (oRow._bHidden) {
@@ -870,8 +870,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		
 		// render the table rows
 		var aRows = oTable.getRows();
+		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
+		var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
+
+		// check whether the row can be clicked to change the selection
+		var bSelectOnCellsAllowed = oTable._getSelectOnCellsAllowed();
 		for (var row = iStartRow, count = iEndRow; row < count; row++) {
-			this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bHasOnlyFixedColumns);
+			this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed);
 		}
 
 		rm.write("</tbody>");
@@ -890,7 +895,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		return mAriaAttributes;
 	};
 
-	TableRenderer.getAriaAttributesForRowTd = function(oTable, iRowIndex, aCells) {
+	TableRenderer.getAriaAttributesForRowTd = function(oTable, oRow, iRowIndex, aCells) {
 		var mAriaAttributes = {};
 
 		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None &&
@@ -903,7 +908,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 		mAriaAttributes["headers"] = {value: oTable.getId() + "_colsel"};
-		mAriaAttributes["aria-owns"] = {value: oTable.getId() + "-rowsel" + iRowIndex};
+		mAriaAttributes["aria-owns"] = {value: oRow.getId() + "-rowsel"};
 		mAriaAttributes["role"] = {value: "rowheader"};
 
 		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
@@ -913,7 +918,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		return mAriaAttributes;
 	};
 
-	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns) {
+	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed) {
 
 		rm.write("<tr");
 		rm.addClass("sapUiTableTr");
@@ -947,7 +952,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) ||
 			aCells.length === 0) {
 			rm.write("<td");
-			var mAriaAttributes = this.getAriaAttributesForRowTd(oTable, iRowIndex, aCells);
+			var mAriaAttributes = this.getAriaAttributesForRowTd(oTable, oRow, iRowIndex, aCells);
 			this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
 
 			rm.write(">");
@@ -957,7 +962,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				rm.addClass("sapUiTableAriaRowSel");
 				rm.writeClasses();
 				rm.write(">");
-				rm.write(oTable._oResBundle.getText("TBL_ROW_SELECT_KEY"));
 				rm.write("</div>");
 			}
 			rm.write("</td>");
@@ -970,6 +974,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.write("<td></td>");
 		}
 		rm.write("</tr>");
+
+		// because property changes of the table lead to re-rendering but the selection state might
+		// remain, it's required to update tooltips and aria description according to the selection.
+		// delay this call to make sure it happens when the DOM is rendered. Otherwise some elements
+		// might not be rendered yet.
+		jQuery.sap.delayedCall(0, this, function() {
+			oRow._updateSelection(oTable, mTooltipTexts, bSelectOnCellsAllowed);
+		});
 
 	};
 

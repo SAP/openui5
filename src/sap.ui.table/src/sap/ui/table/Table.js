@@ -3748,89 +3748,102 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	// SELECTION HANDLING
 	// =============================================================================
 
+	Table.prototype._getSelectOnCellsAllowed = function () {
+		var sSelectionBehavior = this.getSelectionBehavior();
+		var sSelectionMode = this.getSelectionMode();
+		return sSelectionMode !== sap.ui.table.SelectionMode.None && (sSelectionBehavior === sap.ui.table.SelectionBehavior.Row || sSelectionBehavior === sap.ui.table.SelectionBehavior.RowOnly);
+	};
+
+	/**
+	 * Retrieve Aria descriptions from resource bundle for a certain selection mode
+	 * @param {Boolean} [bConsiderSelectionState] set to true if the current selection state of the table shall be considered
+	 * @param {String} [sSelectionMode] optional parameter. If no selection mode is set, the current selection mode of the table is used
+	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}}
+	 * @private
+	 */
+	Table.prototype._getAriaTextsForSelectionMode = function (bConsiderSelectionState, sSelectionMode) {
+		if (!sSelectionMode) {
+			sSelectionMode = this.getSelectionMode();
+		}
+
+		var oResBundle = this._oResBundle;
+		var mTooltipTexts = {
+			mouse: {
+				rowSelect: "",
+				rowDeselect: ""
+			},
+			keyboard:{
+				rowSelect: "",
+				rowDeselect: ""
+			}};
+
+		if (sSelectionMode === sap.ui.table.SelectionMode.Single) {
+			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
+			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+		} else if (sSelectionMode === sap.ui.table.SelectionMode.Multi) {
+			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI");
+			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI");
+			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY");
+			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
+
+			if (bConsiderSelectionState === true) {
+				if (this.getSelectedIndices().length === 1) {
+					// in multi selection case, if there is only one row selected it's not required
+					// to press CTRL in order to only deselect this single row hence use the description text
+					// of the single de-selection.
+					// for selection it's different since the description for SHIFT/CTRL handling is required
+					mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+					mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+				} else if (this.getSelectedIndices().length === 0) {
+					// if there are no rows selected in multi selection mode, it's not required to press CTRL or SHIFT
+					// in order to enhance the selection.
+					mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
+					mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+				}
+			}
+
+		} else if (sSelectionMode === sap.ui.table.SelectionMode.MultiToggle) {
+			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE");
+			// text for de-select is the same like for single selection
+			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
+			// text for de-select is the same like for single selection
+			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+
+			if (bConsiderSelectionState === true && this.getSelectedIndices().length === 0) {
+				// if there is no row selected yet, the selection is like in single selection case
+				mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
+				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+			}
+		}
+
+		return mTooltipTexts;
+	};
+
 	/**
 	 * updates the visual selection in the HTML markup
 	 */
 	Table.prototype._updateSelection = function() {
 		if (this.getSelectionMode() === sap.ui.table.SelectionMode.None) {
+			// there is no selection which needs to be updated. With the switch of the
+			// selection mode the selection was cleared (and updated within that step)
 			return;
 		}
-		var $this = this.$();
-		var iFirstRow = this.getFirstVisibleRow();
-		var that = this;
-		var oResBundle = this._oResBundle;
-		var bMultiSelection = this.getSelectedIndices().length > 1;
-		// Only show "click to select"-tooltip on cell if it actually can be selected that way
-		var bSelectOnCell = this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowSelector;
-		var sRowSelect           = oResBundle.getText("TBL_ROW_SELECT");
-		var sRowSelectKey        = oResBundle.getText("TBL_ROW_SELECT_KEY");
-		var sRowDeSelect         = oResBundle.getText("TBL_ROW_DESELECT");
-		var sRowDeSelectKey      = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-		var sRowSelectMulti      = oResBundle.getText("TBL_ROW_SELECT_MULTI");
-		var sRowSelectMultiKey   = oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY");
-		var sRowDeSelectMulti    = oResBundle.getText("TBL_ROW_DESELECT_MULTI");
-		var sRowDeSelectMultiKey = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
 
+		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
+		var mTooltipTexts = this._getAriaTextsForSelectionMode(true);
 
-		$this.find(".sapUiTableRowHdr").each(function(iIndex, oElement) {
-			var $jqTR1 = jQuery($this.find(".sapUiTableCtrlFixed > tbody > tr").get(iIndex));
-			var $jqTR2 = jQuery($this.find(".sapUiTableCtrlScroll > tbody > tr").get(iIndex));
-			var $jqTR = $jqTR1.add($jqTR2);
-			var $jqDIV = jQuery(this);
-			var $jqRow = $jqDIV.add($jqTR);
-			if (!($jqRow.hasClass("sapUiAnalyticalTableSum") && $jqRow.hasClass("sapUiTableFixedBottomRow")) && that.isIndexSelected(iFirstRow + iIndex)) {
-				if (!jQuery(this).hasClass("sapUiTableRowSel")) {
-					jQuery(this).addClass("sapUiTableRowSel");
-					$jqTR.addClass("sapUiTableRowSel");
-					$jqRow.attr("aria-selected", "true");
-					$jqTR.children("td").attr("aria-selected", "true");
-				}
-				if (bMultiSelection) {
-					$jqTR.find(".sapUiTableAriaRowSel").text(sRowDeSelectMultiKey);
-					if (bSelectOnCell) {
-						$jqRow.attr("title", sRowDeSelectMulti).
-							attr("aria-label", sRowDeSelectMultiKey);
-						$jqTR.children("td").attr('aria-describedby', that.getId() + "-toggleedit " + that.getId() + "-deselectrowmulti");
-					}
-				} else {
-					$jqTR.find(".sapUiTableAriaRowSel").text(sRowDeSelectKey);
-					if (bSelectOnCell) {
-						$jqRow.attr("title", sRowDeSelect).
-							attr("aria-label", sRowDeSelectKey);
-						$jqTR.children("td").attr('aria-describedby', that.getId() + "-toggleedit " + that.getId() + "-deselectrow");
-					}
-				}
-			} else {
-				if (jQuery(this).hasClass("sapUiTableRowSel")) {
-					jQuery(this).removeClass("sapUiTableRowSel");
-					$jqTR.removeClass("sapUiTableRowSel");
-					if (that.getSelectionMode()  === sap.ui.table.SelectionMode.Multi ||
-					    that.getSelectionMode()  === sap.ui.table.SelectionMode.MultiToggle) {
-						$jqRow.attr("aria-selected", "false");
-						$jqTR.children("td").attr("aria-selected", "false");
-					} else {
-						$jqRow.removeAttr("aria-selected");
-						$jqTR.children("td").removeAttr("aria-selected");
-					}
-				}
-				if ((that.getSelectionMode() === sap.ui.table.SelectionMode.Multi ||
-				    that.getSelectionMode()  === sap.ui.table.SelectionMode.MultiToggle) && that.getSelectedIndices().length > 0) {
-					$jqTR.find(".sapUiTableAriaRowSel").text(sRowSelectMulti);
-					if (bSelectOnCell) {
-						$jqRow.attr("title", sRowSelectMulti).
-							attr("aria-label", sRowSelectMultiKey);
-						$jqTR.children("td").attr('aria-describedby', that.getId() + "-toggleedit " + that.getId() + "-selectrowmulti");
-					}
-				} else {
-					$jqTR.find(".sapUiTableAriaRowSel").text(sRowSelectKey);
-					if (bSelectOnCell) {
-						$jqRow.attr("title", sRowSelect).
-							attr("aria-label", sRowSelectKey);
-						$jqTR.children("td").attr('aria-describedby', that.getId() + "-toggleedit " + that.getId() + "-selectrow");
-					}
-				}
-			}
-		});
+		// check whether the row can be clicked to change the selection
+		var bSelectOnCellsAllowed = this._getSelectOnCellsAllowed();
+
+		// trigger the rows to update their selection
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			oRow._updateSelection(this, mTooltipTexts, bSelectOnCellsAllowed);
+		}
 		// update internal property to reflect the correct index
 		this.setProperty("selectedIndex", this.getSelectedIndex(), true);
 	};
@@ -4257,6 +4270,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 
 	Table.prototype.onsapselect = function() {
+		this._bEventSapSelect = true;
+	};
+
+	Table.prototype.onsapselectmodifiers = function() {
 		this._bEventSapSelect = true;
 	};
 
