@@ -242,7 +242,7 @@ sap.ui.define([
 	 * On desktop or tablet, this method returns undefined.
 	 * @private
 	 */
-	QuickView.prototype.getCloseButton = function() {
+		QuickView.prototype.getCloseButton = function() {
 		if (!sap.ui.Device.system.phone) {
 			return undefined;
 		}
@@ -266,6 +266,20 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * The method sets the width of the QuickView.
+	 *
+	 * @param {sap.ui.core.CSSSize} sWidth The new width of the QuickView
+	 * @returns {QuickView} this pointer for chaining
+	 */
+	QuickView.prototype.setWidth = function (sWidth) {
+		if (this._oNavContainer) {
+			this._oNavContainer.setWidth(sWidth);
+			this.setProperty('width', sWidth, true);
+		}
+
+		return this;
+	};
 	/**
 	 * Opens the QuickView
 	 *
