@@ -171,7 +171,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 									{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
 			}
 			this.oMetadata = this.oServiceData.oMetadata;
-			this.pAnnotationsLoaded = this.oMetadata.loaded();
+			this.pAnnotationsLoaded = this.oMetadata.isLoaded()
+				? null // stay synchronous
+				: this.oMetadata.loaded();
 
 			if (mServiceUrlParams) {
 				// new URL params used -> add to ones from sServiceUrl
@@ -204,18 +206,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				this.oAnnotations.attachLoaded(function(oEvent) {
 					that.fireAnnotationsLoaded(oEvent.getParameters());
 				});
-				this.pAnnotationsLoaded = Promise.all([
-					this.pAnnotationsLoaded,
-					new Promise(function (resolve, reject) {
-						if (that.oAnnotations.isLoaded()) {
-							resolve();
-						} else if (that.oAnnotations.isFailed()) {
-							reject(that.oAnnotations.oError);
-						} else {
-							that.oAnnotations.attachLoaded(resolve);
-							that.oAnnotations.attachFailed(reject); //TODO reject with instanceof Error?
-						}
-					})
+				this.pAnnotationsLoaded = this.oMetadata.isLoaded() && that.oAnnotations.isLoaded()
+					? null // stay synchronous
+					: Promise.all([
+						this.pAnnotationsLoaded,
+						new Promise(function (resolve, reject) {
+							if (that.oAnnotations.isLoaded()) {
+								resolve();
+							} else if (that.oAnnotations.isFailed()) {
+								reject(that.oAnnotations.oError);
+							} else {
+								that.oAnnotations.attachLoaded(resolve);
+								that.oAnnotations.attachFailed(reject);
+							}
+						})
 				]);
 			}
 
@@ -3261,8 +3265,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	};
 
 	/**
-	 * Returns the meta model of this ODataModel containing OData service metadata and annotations
-	 * in a merged fashion.
+	 * Returns an instance of an OData meta model which offers a unified access to both OData v2
+	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
+	 * as a foundation and merges v4 annotations from the existing
+	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.
+	 *
+	 * <b>BEWARE:</b> Access to this OData meta model will fail before the promise returned by
+	 * {@link sap.ui.model.odata.ODataMetaModel#loaded loaded} has been resolved!
+	 *
 	 * @public
 	 * @returns {sap.ui.model.odata.ODataMetaModel} The meta model for this ODataModel
 	 */

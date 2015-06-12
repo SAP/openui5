@@ -178,6 +178,13 @@ sap.ui.define([
 			constructor : function (oMetadata, oAnnotations, oODataModelInterface) {
 				var that = this;
 
+				function load() {
+					var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
+					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
+					that.oModel = new JSONModel(oData);
+					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
+				}
+
 				MetaModel.apply(this); // no arguments to pass!
 				// map path of property to promise for loading its value list
 				this.mContext2Promise = {};
@@ -192,12 +199,8 @@ sap.ui.define([
 				// map path of property to promise for loading its value help
 				this.mContext2Promise = {};
 				this.oLoadedPromise = oODataModelInterface.annotationsLoadedPromise
-					.then(function () {
-						var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
-						Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
-						that.oModel = new JSONModel(oData);
-						that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
-					});
+					? oODataModelInterface.annotationsLoadedPromise.then(load)
+					: Promise.resolve(load()); // call load() synchronously!
 				this.oResolver = undefined;
 				this.mQueryCache = {};
 			},
