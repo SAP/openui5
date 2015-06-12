@@ -943,7 +943,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var aButtons, oOkButton, oCancelButton, sButton, oDeleteButton, bEnabled, oEditButton;
 
 		aButtons = [];
-
+		if (!this.getInstantUpload()) { // in case of pending upload we always have only "delete" button (no "edit" button)
+			sButton = "deleteButton";
+			oDeleteButton = this._createDeleteButton(sItemId, sButton, oItem, this.sErrorState, that);
+			aButtons.push(oDeleteButton);
+			return aButtons;
+		}
 		if (sStatus === "Edit") {
 			oOkButton = sap.ui.getCore().byId(sItemId + "-okButton");
 			if (!oOkButton) {
@@ -966,11 +971,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			return aButtons;
 		} else if (sStatus === UploadCollection._uploadingStatus && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
 			sButton = "terminateButton";
-			oDeleteButton = this._createDeleteButton(sItemId, sButton, oItem, this.sErrorState, that);
-			aButtons.push(oDeleteButton);
-			return aButtons;
-		} else 	if (sStatus === UploadCollection._pendingUploadStatus) {
-			sButton = "deleteButton";
 			oDeleteButton = this._createDeleteButton(sItemId, sButton, oItem, this.sErrorState, that);
 			aButtons.push(oDeleteButton);
 			return aButtons;
