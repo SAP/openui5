@@ -25,13 +25,17 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment', 'sap/u
 	 */
 	var SegmentedContainer = Metadata.createClass("sap.m.semantic.SegmentedContainer", {
 
-		constructor : function(oContainer) {
+		constructor : function(oContainer, sContainerAggregationName) {
 			if (!oContainer) {
 				jQuery.sap.log.error("missing argumment: constructor expects a container reference", this);
 				return;
 			}
 
 			this._oContainer = oContainer;
+			
+			sContainerAggregationName || (sContainerAggregationName = "content");
+			
+			this._sContainerAggregationName = sContainerAggregationName;
 
 			this._aSegments = [];
 		}
@@ -48,11 +52,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment', 'sap/u
 			var iLength = aContent.length;
 
 			for (var i = 0; i < iLength; i++) {
-				this._oContainer.addContent(aContent[i]);
+				this._oContainer.addAggregation(this._sContainerAggregationName, aContent[i]);
 			}
 		}
 
-		var oSegment = new Segment(aContent, this._oContainer, options.fnSortFunction);
+		var oSegment = new Segment(aContent, this._oContainer, this._sContainerAggregationName, options.fnSortFunction);
 		oSegment.sTag = options.sTag;
 		var aSegments = this._aSegments;
 		oSegment.getStartIndex = function () {

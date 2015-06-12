@@ -1085,7 +1085,8 @@
 				},
 				change: onSemanticSelectChange
 			}),
-			filter: new sap.m.semantic.FilterAction({press: onSemanticBtnPress})
+			filter: new sap.m.semantic.FilterAction({press: onSemanticBtnPress}),
+			customHeaderContent: [new sap.m.Button({text: "Custom in header"})]
 		});
 
 		var page2 = new sap.m.semantic.DetailPage("detail", {

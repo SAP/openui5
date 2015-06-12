@@ -99,6 +99,15 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 					multiple: true,
 					singularName: "content"
 				},
+				
+				/**
+				 * Custom header buttons
+				 */
+				customHeaderContent: {
+					type: "sap.m.Button",
+					multiple: true,
+					singularName: "customHeaderContent"
+				},
 
 				/**
 				 * Custom footer buttons
@@ -312,6 +321,64 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 		return this;
 	};
+	
+	/*
+
+	 HEADER RIGHT (CUSTOM CONTENT)
+	 */
+
+	SemanticPage.prototype.getCustomHeaderContent = function () {
+		return this._getSegmentedHeader().getSection("customRight").getContent();
+	};
+
+	SemanticPage.prototype.addCustomHeaderContent = function (oControl, bSuppressInvalidate) {
+		this._getSegmentedHeader().getSection("customRight").addContent(oControl, bSuppressInvalidate);
+		return this;
+	};
+
+	SemanticPage.prototype.indexOfCustomHeaderContent = function (oControl) {
+		return this._getSegmentedHeader().getSection("customRight").indexOfContent(oControl);
+	};
+
+	SemanticPage.prototype.insertCustomHeaderContent = function (oControl, iIndex, bSuppressInvalidate) {
+		this._getSegmentedHeader().getSection("customRight").insertContent(oControl, iIndex, bSuppressInvalidate);
+		return this;
+	};
+
+	SemanticPage.prototype.removeCustomHeaderContent = function (oControl, bSuppressInvalidate) {
+		return this._getSegmentedHeader().getSection("customRight").removeContent(oControl, bSuppressInvalidate);
+	};
+
+	SemanticPage.prototype.removeAllCustomHeaderContent = function (bSuppressInvalidate) {
+		return this._getSegmentedHeader().getSection("customRight").removeAllContent(bSuppressInvalidate);
+	};
+
+	SemanticPage.prototype.destroyCustomHeaderContent = function (bSuppressInvalidate) {
+
+		var aChildren = this.getCustomHeaderContent();
+
+		if (!aChildren) {
+			return this;
+		}
+
+		// set suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate++;
+		}
+
+		this._getSegmentedHeader().getSection("customRight").destroy(bSuppressInvalidate);
+
+		if (!this.isInvalidateSuppressed()) {
+			this.invalidate();
+		}
+
+		// reset suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate--;
+		}
+
+		return this;
+	};
 
 	SemanticPage.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
@@ -468,8 +535,8 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 			};
 
 			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.headerRight] = {
-				oContainer: this._getInternalHeader(),
-				sAggregation: "contentRight"
+				oContainer: this._getSegmentedHeader().getSection("semanticRight"),
+				sAggregation: "content"
 			};
 
 			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.headerMiddle] = {
@@ -534,6 +601,33 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	 */
 	SemanticPage.prototype._getAnyHeader = function () {
 		return this._getInternalHeader();
+	};
+	
+	
+	/**
+	 * Returns the internal footer
+	 * @private
+	 * @returns {sap.m.semantic.SemanticPageSegmentedContainer}
+	 */
+	SemanticPage.prototype._getSegmentedHeader = function() {
+
+		if (!this._oWrappedHeader) {
+
+			var oHeader = this._getInternalHeader();
+			if (!oHeader) {
+				jQuery.sap.log.error("missing page header", this);
+				return null;
+			}
+
+			this._oWrappedHeader = new SegmentedContainer(oHeader, "contentRight");
+
+			this._oWrappedHeader.addSection({sTag: "customRight"});
+			this._oWrappedHeader.addSection({sTag: "semanticRight"});
+
+		}
+
+		return this._oWrappedHeader;
+
 	};
 
 	/**
