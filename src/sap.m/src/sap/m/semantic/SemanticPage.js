@@ -133,6 +133,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 		this._currentMode = SemanticConfiguration._PageMode.display;
 		this._getPage().setCustomHeader(this._getInternalHeader());
+		this._getPage().setFooter(new OverflowToolbar(this.getId() + "-footer"));
 	};
 
 	/**
@@ -343,7 +344,9 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 			var oObject = ManagedObject.prototype.getAggregation.call(this, sAggregationName);
 			if (oObject) {
 				this._stopMonitor(oObject);
-				this._removeFromInnerAggregation(oObject._getControl(), SemanticConfiguration.getPositionInPage(oAggregationInfo.type), bSuppressInvalidate);
+				if (!oObject._getControl().bIsDestroyed) {
+					this._removeFromInnerAggregation(oObject._getControl(), SemanticConfiguration.getPositionInPage(oAggregationInfo.type), bSuppressInvalidate);
+				}
 			}
 		}
 
@@ -365,18 +368,6 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 			});
 		}
 		return this._oNavButton;
-	};
-
-	SemanticPage.prototype._findBySemanticType = function (aContent, sType) {
-
-		if (aContent && sType) {
-			for (var i = 0; i < aContent.length; i++) {
-				var oContent = aContent[i];
-				if (oContent && (oContent.getType() === sType)) {
-					return oContent;
-				}
-			}
-		}
 	};
 
 	SemanticPage.prototype._initMonitor = function (oSemanticControl) {
@@ -554,8 +545,11 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 		if (!this._oWrappedFooter) {
 
-			var oFooter = new OverflowToolbar(this.getId() + "-footer");
-			this._getPage().setFooter(oFooter);
+			var oFooter = this._getPage().getFooter();
+			if (!oFooter) {
+				jQuery.sap.log.error("missing page footer", this);
+				return null;
+			}
 
 			this._oWrappedFooter = new SegmentedContainer(oFooter);
 
