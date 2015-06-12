@@ -16,6 +16,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/ButtonType', 'sap/ui/base
 	 * the semantic button is initialized with specific properties (text, icon etc.).
 	 *
 	 * @extends sap.m.semantic.SemanticButton
+	 * @abstract
 	 *
 	 * @author SAP SE
 	 * @version ${version}

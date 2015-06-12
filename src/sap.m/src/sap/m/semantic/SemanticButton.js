@@ -16,6 +16,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 	 * the semantic button is initialized with specific properties (text, icon etc.).
 	 *
 	 * @extends sap.m.semantic.SemanticControl
+	 * @abstract
 	 *
 	 * @author SAP SE
 	 * @version ${version}

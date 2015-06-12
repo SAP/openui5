@@ -15,6 +15,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	 * the semantic select is initialized with specific properties (icon etc.).
 	 *
 	 * @extends sap.m.semantic.SemanticControl
+	 * @abstract
 	 *
 	 * @author SAP SE
 	 * @version ${version}
