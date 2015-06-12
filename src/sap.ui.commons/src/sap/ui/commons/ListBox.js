@@ -183,16 +183,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		//FIXME Mapping from activeItems index to the id of it for item navigation purposes
 		this._aActiveItems = null;
-
-		if (sap.ui.Device.support.touch) {
-			jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
-			this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, this.getId() + "-list", {
-				   vertical: true,
-				   zynga: true,
-				   preventDefault: true
-			});
-		}
-
 	};
 
 
@@ -1319,11 +1309,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.removeDelegate(this.oItemNavigation);
 			this.oItemNavigation.destroy();
 			delete this.oItemNavigation;
-		}
-
-		if (this._oScroller) {
-			this._oScroller.destroy();
-			this._oScroller = null;
 		}
 
 		// No super.exit() to call
