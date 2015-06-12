@@ -383,7 +383,7 @@ ODataRandomService.prototype._answerService = function(oServiceData) {
 }
 
 ODataRandomService.prototype._answerCollectionCount = function(oColData) {
-	this._answer(200, mHeaders["text"], "" + oColData.count);
+	this._answer(200, mHeaderTypes["text"], "" + oColData.count);
 }
 
 ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
