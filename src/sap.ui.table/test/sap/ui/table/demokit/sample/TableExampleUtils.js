@@ -1,6 +1,9 @@
 sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
-	'sap/ui/model/json/JSONModel'
-], function (JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/Popover",
+	"sap/m/List",
+	"sap/m/FeedListItem"
+], function (JSONModel, Popover, List, FeedListItem) {
 	"use strict";
 	
 	var Utils = {};
@@ -44,14 +47,43 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		return oModel;
 	};
 	
-	Utils.formatAvailableToObjectState = function (bAvailable){
+	Utils.formatAvailableToObjectState = function (bAvailable) {
 		return bAvailable ? "Success" : "Error";
 	};
 	
 	Utils.formatAvailableToIcon = function(bAvailable) {
 		return bAvailable ? "sap-icon://message-success" : "sap-icon://error";
-	;}
+	};
 	
+	Utils.showInfo = function(aItems, oBy){
+		var oPopover = new Popover({
+			showHeader: false,
+			placement: "Auto",
+			afterClose: function(){
+				oPopover.destroy();
+			},
+			content: [
+				new List({
+					items: {
+						path: "/items",
+						template: new FeedListItem({
+							senderActive: false,
+							sender: "{title}",
+							showIcon: false,
+							text: "{text}"
+						})
+					}
+				})
+			]
+		});
+		
+		jQuery.sap.syncStyleClass("sapUiSizeCompact", oBy, oPopover);
+		jQuery.sap.syncStyleClass("sapUiSizeCozy", oBy, oPopover);
+		oPopover.setModel(new JSONModel({items: aItems}));
+		oPopover.openBy(oBy, true);
+	};
+	
+
 	return Utils;
 	
 }, true /* bExport */);
