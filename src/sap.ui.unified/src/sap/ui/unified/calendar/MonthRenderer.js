@@ -66,7 +66,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	MonthRenderer.getClass = function(){
 
-		return "sapUiCalMonthView";
+		var sClasses = "sapUiCalMonthView";
+		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+
+		if (sCalendarType == sap.ui.core.CalendarType.Islamic) {
+			// on Islamic calendar week numbers are not used
+			sClasses = sClasses + " sapUiCalNoWeekNum";
+		}
+
+		return sClasses;
 
 	};
 
