@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 * @param bJQuery Set to true to get jQuery object instead of DomRef
 	 * @returns {object} contains DomRefs or jQuery objects of the row
 	 */
-	Row.prototype.getDomRefs = function (bJQuery) {
+	Row.prototype.getDomRefs = function (oTable, bJQuery) {
 		var oDomRefs = {};
 		var fnAccess = jQuery.sap.domById;
 		if (bJQuery === true) {
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		// row domRef (the fixed part)
 		oDomRefs.rowFixedPart = fnAccess(this.getId() + "-fixed");
 		// row selector domRef
-		oDomRefs.rowSelector = fnAccess(this.getId() + "-rowsel");
+		oDomRefs.rowSelector = fnAccess(oTable.getId() + "-rowsel" + this.getIndex());
 		// row selector domRef
 		oDomRefs.rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
 
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 */
 	Row.prototype._updateSelection = function(oTable, mTooltipTexts, bSelectOnCellsAllowed) {
 		var bIsSelected = oTable.isIndexSelected(this.getIndex());
-		var $DomRefs = this.getDomRefs(true);
+		var $DomRefs = this.getDomRefs(oTable, true);
 
 		var sSelectReference = "rowSelect";
 		if (bIsSelected) {

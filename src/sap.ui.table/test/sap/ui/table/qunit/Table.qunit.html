@@ -8,6 +8,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.ui.table.Table</title>
 	<script id="sap-ui-bootstrap" 
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -425,12 +426,12 @@
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
 
 		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-rowsel", "The correct cell has the focus");
+		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
 
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
 
 		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-rowsel", "The correct cell has the focus");
+		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
 
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_UP", false, false, false);
 
@@ -498,7 +499,7 @@
 		qutils.triggerKeyboardEvent($focused[0], "HOME", false, false, false);
 		$focused = jQuery(document.activeElement);
 
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-rowsel", "The correct cell has the focus");
+		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
 
 		qutils.triggerKeyboardEvent($focused[0], "END", false, false, false);
 		$focused = jQuery(document.activeElement);

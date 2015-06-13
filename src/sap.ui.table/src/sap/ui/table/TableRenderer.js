@@ -634,7 +634,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 	TableRenderer.renderRowHdrRow = function(rm, oTable, oRow, iRowIndex) {
 		rm.write("<div");
-		rm.writeAttribute("id", oRow.getId() + "-rowsel"); // table ID included in row ID
+		rm.writeAttribute("id", oTable.getId() + "-rowsel" + iRowIndex);
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
 		rm.addClass("sapUiTableRowHdr");
 		if (oRow._bHidden) {
@@ -908,7 +908,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 		mAriaAttributes["headers"] = {value: oTable.getId() + "_colsel"};
-		mAriaAttributes["aria-owns"] = {value: oRow.getId() + "-rowsel"};
+		mAriaAttributes["aria-owns"] = {value: oTable.getId() + "-rowsel" + iRowIndex};
 		mAriaAttributes["role"] = {value: "rowheader"};
 
 		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
