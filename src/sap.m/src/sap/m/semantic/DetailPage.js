@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer) {
+sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/PagingButton"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer, PagingButton) {
 	"use strict";
 
 
@@ -157,6 +157,13 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 				saveAsTileAction: {
 					type: "sap.m.Button",
 					multiple: false
+				},
+				/**
+				 * Paging action
+				 */
+				pagingAction: {
+					type: "sap.m.PagingButton",
+					multiple: false
 				}
 			}
 		},
@@ -164,22 +171,25 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	});
 
 	/*
-	Overwrite to proxy saveAsTile content into the respective child control aggregation
+	Overwrite to proxy saveAsTile/pagingAction content into the respective child control aggregation
 	 */
 	DetailPage.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
-		if (sAggregationName === "saveAsTileAction") {
+		if ((sAggregationName === "saveAsTileAction") 
+				|| (sAggregationName === "pagingAction")) {
+			
+			var oPrivateReferenceName = '_' + sAggregationName;
 
 			if (oObject) {
 				this._addToInnerAggregation(oObject,
 						SemanticConfiguration.getPositionInPage(sAggregationName),
 						SemanticConfiguration.getSequenceOrderIndex(sAggregationName),
 						bSuppressInvalidate);
-				this._saveAsTileAction = oObject;
+				this[oPrivateReferenceName] = oObject;
 			} else {//removing
-				if (this._saveAsTileAction) {
-					this._removeFromInnerAggregation(oObject, SemanticConfiguration.getPositionInPage(sAggregationName), bSuppressInvalidate);
-					this._saveAsTileAction = null;
+				if (this[oPrivateReferenceName]) {
+					this._removeFromInnerAggregation(this[oPrivateReferenceName], SemanticConfiguration.getPositionInPage(sAggregationName), bSuppressInvalidate);
+					this[oPrivateReferenceName] = null;
 				}
 			}
 			return;
@@ -190,9 +200,10 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 
 	DetailPage.prototype.getAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
-		if (sAggregationName === "saveAsTileAction") {
+		if ((sAggregationName === "saveAsTileAction") 
+				|| (sAggregationName === "pagingAction")) {
 
-				return this._saveAsTileAction;
+				return this['_' + sAggregationName];
 		}
 
 		return ShareMenuPage.prototype.getAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
@@ -200,12 +211,15 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 
 	DetailPage.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 
-		if (sAggregationName === "saveAsTileAction") {
+		if ((sAggregationName === "saveAsTileAction") 
+			|| (sAggregationName === "pagingAction")) {
+			
+			var oPrivateReferenceName = '_' + sAggregationName;
 
-			if (this._saveAsTileAction) {
-				this._removeFromInnerAggregation(this._saveAsTileAction, SemanticConfiguration.getPositionInPage(sAggregationName), bSuppressInvalidate);
-				this._saveAsTileAction.destroy();
-				this._saveAsTileAction = null;
+			if (this[oPrivateReferenceName]) {
+				this._removeFromInnerAggregation(this[oPrivateReferenceName], SemanticConfiguration.getPositionInPage(sAggregationName), bSuppressInvalidate);
+				this[oPrivateReferenceName].destroy();
+				this[oPrivateReferenceName] = null;
 			}
 			return this;
 		}

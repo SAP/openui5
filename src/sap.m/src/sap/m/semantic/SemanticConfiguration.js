@@ -392,14 +392,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 
 		oTypeConfigs["saveAsTileAction"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
-			getSettings: function() {
-				return {
-					icon: "sap-icon://add-favorite",
-					text: oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"),
-					ariaLabelledBy: _ensureInvisibleText("SaveAsTileAction", oBundle.getText("SEMANTIC_CONTROL_SAVE_AS_TILE"))
-				};
-			},
+			order: 0
+		};
+
+		oTypeConfigs["pagingAction"] = {
+			position: SemanticConfiguration.prototype._PositionInPage.headerRight,
 			order: 0
 		};
 
