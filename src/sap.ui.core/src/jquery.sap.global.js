@@ -1769,6 +1769,35 @@
 			// return undefined;
 		}
 
+		/**
+		 * Resolves relative module imports that start with <code>./</code> or <code>../</code> to absolute imports.
+		 * E.g.: An import `../common/validation.js` defined in `sap/myapp/controller/mycontroller.controller.js`
+		 * may resolve to `sap/myapp/common/validation.js`.
+		 * @private
+		 */
+		function resolveModule(sStartPathAbsolute, sImportPath) {
+
+			//check whether it's a relative path - if not, just return the importPath as it is.
+			if (!(sImportPath.lastIndexOf('./') === 0 || sImportPath.lastIndexOf('../') === 0)) {
+				return sImportPath;
+			} else {
+				// resolve importPath relative to startPath.
+				var aResultPathComponents = sStartPathAbsolute.split('/');
+				sImportPath.split('/').forEach(function (sPathComponent) {
+					if (sPathComponent === '.' || sPathComponent === '') {
+						// ignore '.' as it's just a pointer to current directory. ignore '' as it results from double slashes.
+						return;
+					} else if (sPathComponent === '..') {
+						// move to parent directory
+						aResultPathComponents.pop();
+					} else {
+						aResultPathComponents.push(sPathComponent);
+					}
+				});
+				return aResultPathComponents.join('/');
+			}
+		}
+
 		function declareModule(sModuleName) {
 			var oModule;
 
@@ -2550,8 +2579,6 @@
 		 * <li><code>sap.ui.define</code> does <b>not</b> support the 'sugar' of requireJS where CommonJS
 		 * style dependency declarations using <code>sap.ui.require("something")</code> are automagically
 		 * converted into <code>sap.ui.define</code> dependencies before executing the factory function.</li>
-		 * <li><code>sap.ui.define</code> does not support the '../' prefix for module names. Only
-		 * relative names in the same package or in subpackages thereof are supported.</li>
 		 * </ul>
 		 *
 		 *
@@ -2583,7 +2610,7 @@
 		 *        is not used and if the asynchronous contract is respected, even Non-SAP code might use it.
 		 */
 		sap.ui.define = function(sModuleName, aDependencies, vFactory, bExport) {
-			var sResourceName, i;
+			var sResourceName;
 
 			// optional id
 			if ( typeof sModuleName === 'string' ) {
@@ -2607,12 +2634,9 @@
 				aDependencies = [];
 			} else {
 				// resolve relative module names
-				var sPackage = sResourceName.slice(0,1 + sResourceName.lastIndexOf('/'));
-				for (i = 0; i < aDependencies.length; i++) {
-					if ( /^\.\//.test(aDependencies[i]) ) {
-						aDependencies[i] = sPackage + aDependencies[i].slice(2); // 2 == length of './' prefix
-					}
-				}
+				var sStartPackage = sResourceName.slice(0,sResourceName.lastIndexOf('/'));
+
+				aDependencies = aDependencies.map(resolveModule.bind(null,sStartPackage));
 			}
 
 			if ( log.isLoggable() ) {
