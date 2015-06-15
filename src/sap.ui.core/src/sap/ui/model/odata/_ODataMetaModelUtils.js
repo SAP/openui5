@@ -742,6 +742,9 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		merge: function (oAnnotations, oData) {
 			var aSchemas = oData.dataServices.schema || [];
 			aSchemas.forEach(function (oSchema, i) {
+				// remove datajs artefact for inline annotations in $metadata
+				delete oSchema.annotations;
+
 				Utils.liftSAPData(oSchema);
 				oSchema.$path = "/dataServices/schema/" + i;
 				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
