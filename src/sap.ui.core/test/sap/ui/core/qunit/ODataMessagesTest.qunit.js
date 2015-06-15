@@ -438,11 +438,10 @@ function runODataMessagesTests() {
 		oMetadata.loaded().then(function() {
 			
 			// Get Messages sent to console
-			var fnError = console.error;
-			var fnWarn = console.warn;
-			var fnLog = console.log;
-			var fnDebug = console.debug;
-			var fnInfo = console.info;
+			var fnError = jQuery.sap.log.error;
+			var fnWarn = jQuery.sap.log.warning;
+			var fnDebug = jQuery.sap.log.debug;
+			var fnInfo = jQuery.sap.log.info;
 			
 			var iCounter = 0;
 			var fnCount = function(sMessage) {
@@ -525,12 +524,10 @@ function runODataMessagesTests() {
 			
 			
 			// Clean up
-			console.error = fnError;
-			console.warn = fnWarn;
-			console.info = fnInfo;
-			console.debug = fnDebug;
-			console.info = fnInfo;
-			console.log = fnLog;
+			jQuery.sap.log.info = fnInfo;
+			jQuery.sap.log.error = fnError;
+			jQuery.sap.log.warning = fnWarn;
+			jQuery.sap.log.debug = fnDebug;
 			
 			oMetadata.destroy();
 			oParser.destroy();
