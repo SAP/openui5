@@ -31,22 +31,41 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 	});
 
 	/**
-	 * Gets the 'pressed' property value.
-	 * Can be overwritten in child classes to apply semantic-specific logic
+	 * Defines the icon url for each state
+	 * @private
+	 */
+	MultiSelectAction.prototype._PRESSED_STATE_TO_ICON_MAP = {
+		"true": "sap-icon://sys-cancel",
+		"false": "sap-icon://multi-select"
+	};
+
+	/**
+	 * @Overwrites
+	 * Initializes the pressed state value
+	 */
+	MultiSelectAction.prototype.init = function() {
+		this._bPressed = false;
+	};
+
+	/**
+	 * Gets the 'pressed' state value.
+	 * @Overwrites
 	 * @private
 	 */
 	MultiSelectAction.prototype._getPressed = function() {
-		return this._getControl().getIcon() === "sap-icon://sys-cancel";
+		return this._bPressed;
 	};
 
 	/**
 	 * Sets the 'pressed' property value.
-	 * Can be overwritten in child classes to apply semantic-specific logic
+	 * Overwrites to apply semantic-specific logic
+	 * @Overwrites
 	 * @private
 	 */
 	MultiSelectAction.prototype._setPressed = function(bPressed, bSuppressInvalidate) {
 
-		var sIconUrl = bPressed ? "sap-icon://sys-cancel" : "sap-icon://multi-select";
+		this._bPressed = bPressed;
+		var sIconUrl = MultiSelectAction.prototype._PRESSED_STATE_TO_ICON_MAP[bPressed];
 		this._getControl().setIcon(sIconUrl);
 	};
 
