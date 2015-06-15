@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<Dialog
-		title="Hello {/recipient/name}">Description
+		title="Hello {/recipient/name}">
 		<content>
 			<core:Icon
 				src="sap-icon://hello-world"
