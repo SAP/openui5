@@ -175,6 +175,58 @@
 				"callback should be called with correct argument");
 		});
 
+		QUnit.test("addStyleClass should add class", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.addStyleClass("test");
+
+			assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+		});
+
+		QUnit.test("removeStyleClass should remove class", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.addStyleClass("test");
+
+			assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+
+			this.oMessagePopover.removeStyleClass("test");
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+		});
+
+		QUnit.test("toggleStyleClass should toggle class", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.toggleStyleClass("test");
+
+			assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+
+			this.oMessagePopover.toggleStyleClass("test");
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+		});
+
+		QUnit.test("hasStyleClass should check if class is added", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!this.oMessagePopover.hasStyleClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.addStyleClass("test");
+
+			assert.ok(this.oMessagePopover.hasStyleClass("test"), "should have 'test' class");
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
