@@ -26,20 +26,27 @@ sap.ui.define([
 		},
 
 		onBeforeRendering: function () {
-			var bIsRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
+			var aEntitySets,
+				bIsRealOData,
+				oMetaModel,
+				oUiModel,
+				oView = this.getView();
+
+			if (!oView.getModel("ui")) {
+				bIsRealOData = jQuery.sap.getUriParameters().get("realOData") === "true";
+				oMetaModel = oView.getModel().getMetaModel();
+				aEntitySets = oMetaModel.getODataEntityContainer().entitySet;
 				oUiModel = new JSONModel({
 					bindTexts : false,
-					icon :  bIsRealOData ? "sap-icon://building" : "sap-icon://record",
-					iconTooltip : bIsRealOData ? "real OData service" : "mock OData service"
-				}),
-				oMetaModel = this.getView().getModel().getMetaModel(),
-				aEntitySets = oMetaModel.getODataEntityContainer().entitySet;
+					entitySet : aEntitySets,
+					icon : bIsRealOData ? "sap-icon://building" : "sap-icon://record",
+					iconTooltip : bIsRealOData ? "real OData service" : "mock OData service",
+					selectedEntitySet : aEntitySets[0].name
+				});
+				oView.setModel(oUiModel, "ui");
 
-			oUiModel.setProperty("/entitySet", aEntitySets);
-			oUiModel.setProperty("/selectedEntitySet", aEntitySets[0].name);
-			this.getView().setModel(oUiModel, "ui");
-
-			this._bindSelectInstance();
+				this._bindSelectInstance();
+			}
 		},
 
 		onChangeType: function (oEvent) {
