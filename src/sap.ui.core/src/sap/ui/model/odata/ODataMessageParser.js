@@ -326,8 +326,8 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 				var aKeys = [];
 				for (var i = 0; i < mEntityType.key.propertyRef.length; ++i) {
 					sParam = mEntityType.key.propertyRef[i].name;
-					if (mRequestInfo.parameters[sParam]) {
-						aKeys.push(sParam + "=" + mRequestInfo.parameters[sParam]);
+					if (mUrlData.parameters[sParam]) {
+						aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
 					}
 				}
 				sId = aKeys.join(",");
