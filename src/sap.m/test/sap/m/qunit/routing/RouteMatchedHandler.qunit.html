@@ -8,7 +8,7 @@
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{"test": "./", "sap.ui.demo.app" : "../../webapp/"}'>
+		data-sap-ui-resourceroots='{"qunit": "../"}'>
 </script>
 
 <script>
@@ -29,7 +29,7 @@
 				"sap/ui/core/routing/History",
 				"sap/m/routing/TargetHandler",
 				"sap/m/InstanceManager",
-				"test/commonIntegrationTests"
+				"qunit/routing/commonIntegrationTests"
 			],
 			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests) {
 				"use strict";
