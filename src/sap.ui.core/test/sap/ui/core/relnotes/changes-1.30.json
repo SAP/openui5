@@ -1378,6 +1378,13 @@
         "type": "FIX",
         "text": "sap.ui.model.odata.ODataModel: Stay synchronous if possible in getMetaModel() to be compatible to legacy applications",
         "references": []
+      },
+      {
+        "id": "46817e98f016de4e924b8ea0f0bea67336c80e41",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Function imports with multiple keys",
+        "references": []
       }
     ]
   }
