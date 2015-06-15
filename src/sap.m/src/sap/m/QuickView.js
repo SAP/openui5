@@ -6,10 +6,10 @@
 sap.ui.define([
 	'jquery.sap.global', './library', 'sap/ui/core/Control',
 		'./QuickViewBase', './ResponsivePopover', './NavContainer',
-		'./PlacementType', './Page'],
+		'./PlacementType', './Page', './Bar', './Button'],
 	function(jQuery, library, Control,
 			QuickViewBase, ResponsivePopover, NavContainer,
-			PlacementType, Page) {
+			PlacementType, Page, Bar, Button) {
 	"use strict";
 
 	/**
@@ -206,6 +206,12 @@ sap.ui.define([
 
 	QuickView.prototype.onBeforeRenderingPopover = function() {
 		this._initPages();
+
+		// add a close button on phone devices when there are no pages
+		var aPages = this.getAggregation("pages");
+		if (!aPages && sap.ui.Device.system.phone) {
+			this._addEmptyPage();
+		}
 	};
 
 	QuickView.prototype.exit = function() {
@@ -226,6 +232,27 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			this._restoreFocus();
 		}
+	};
+
+	QuickView.prototype._addEmptyPage = function() {
+		var oPage = new Page({
+			customHeader : new Bar()
+		});
+
+		var that = this;
+
+		var oCustomHeader = oPage.getCustomHeader();
+		oCustomHeader.addContentRight(
+			new Button({
+				icon : "sap-icon://decline",
+				press : function() {
+					that._oPopover.close();
+				}
+			})
+		);
+
+		oPage.addStyleClass('sapMQuickViewPage');
+		this._oNavContainer.addPage(oPage);
 	};
 
 	QuickView.prototype._adjustContainerHeight = function() {

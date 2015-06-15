@@ -239,16 +239,17 @@ sap.ui.define([
 		 * @private
 		 */
 		QuickViewBase.prototype._initPages = function() {
-			var aPages = this.getAggregation("pages");
-			if (!aPages) {
-				return;
-			}
 
 			var oNavContainer = this._oNavContainer;
 
 			// clear nav container
 			oNavContainer.destroyPages();
 			oNavContainer.init();
+
+			var aPages = this.getAggregation("pages");
+			if (!aPages) {
+				return;
+			}
 
 			var sId = this.getId();
 
