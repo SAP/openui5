@@ -1322,6 +1322,62 @@
         "type": "FIX",
         "text": "v2.ODataModel: Annotations-object instantiated  earlier",
         "references": []
+      },
+      {
+        "id": "1b06ac18ba9d7fe51be3ade849f54ea9eee58779",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Allow rebooting apps with alternative UI5 version from any URL",
+        "references": []
+      },
+      {
+        "id": "08e05f88a7e15f19a9066d6960a7c760147dd55c",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Option to pass a batchGroupId  when refreshing a Binding implemented",
+        "references": []
+      },
+      {
+        "id": "3efd89464f5cf4123afb7968b23278edadc208ed",
+        "author": "Christian Theilemann \u003cchristian.theilemann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.define: Relative module names supported using \u0027../\u0027",
+        "references": []
+      },
+      {
+        "id": "3f0c7801542c15c1dad83f921c1e241825861dde",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: New getETag method implemented",
+        "references": []
+      },
+      {
+        "id": "b04fee8ea41b8bb037b74b57ba4a48a71f3e2b08",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Removed document.write for compatibility with Cordova in WP8.1",
+        "references": []
+      },
+      {
+        "id": "1e159063af98c174f268e70d064aa1d21bc9bd63",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: OS detection - support for future Windows versions added",
+        "references": []
+      },
+      {
+        "id": "d996184e0547457cbf37d0a473c574268617f1f0",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel: Resolved loaded() promise at the correct point in time",
+        "references": []
+      },
+      {
+        "id": "6e0570beafd2e9603275f43626dd4fac82145673",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataModel: Stay synchronous if possible in getMetaModel() to be compatible to legacy applications",
+        "references": []
       }
     ]
   }

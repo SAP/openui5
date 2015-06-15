@@ -218,6 +218,27 @@
         "type": "FIX",
         "text": "calendar.MonthPicker: Avoid browser dependent width rounding issues",
         "references": []
+      },
+      {
+        "id": "ee9fca67ac845813f0f54997a9a88f82c7bd2b68",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Calendar: All space in islamic case is now used",
+        "references": []
+      },
+      {
+        "id": "7819bdf389ea640d184d3b7d27051160c9a6dd5c",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "FileUploader: Function enhancement aborted",
+        "references": []
+      },
+      {
+        "id": "54c3b9a26a32372744376dbd3ec4c74a6d3d76ea",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: Focus lost on tab on year picker corrected",
+        "references": []
       }
     ]
   }

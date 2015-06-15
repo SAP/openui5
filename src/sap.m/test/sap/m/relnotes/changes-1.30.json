@@ -1574,6 +1574,27 @@
         "type": "FIX",
         "text": "FacetFilter: Translation issue resolved",
         "references": []
+      },
+      {
+        "id": "80dc7bd96b02630f560f7c2228585003701e19b5",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "MultiInput: Make expanded multi-line MultiInput working inside SimpleForm",
+        "references": []
+      },
+      {
+        "id": "290086b7da3a578977a9b845302aef5ec830c525",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "QuickView: Width setter corrected",
+        "references": []
+      },
+      {
+        "id": "7d9f81457840c43780f254350333b5b2eeb1e2ad",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "UploadCollection: Data is now displayed correctly when data binding is refreshed",
+        "references": []
       }
     ]
   }
