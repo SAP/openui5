@@ -836,7 +836,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				var proceed = function () {
 					this._detailsPage.setBusy(false);
 					loadAndNavigateToDetailsPage(true);
-				};
+				}.bind(this);
 
 				oPromise
 					.then(function () {
