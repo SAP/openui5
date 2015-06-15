@@ -81,6 +81,33 @@
 				longtextUrl: "{longtextUrl}"
 			});
 
+			jQuery.sap.require("sap.m.MessagePopover");
+
+			sap.m.MessagePopover.setDefaultHandlers({
+				asyncDescriptionHandler: function (config) {
+					// put async loading here
+					setTimeout(function () {
+						config.item.setDescription(mockMarkupDescription);
+						config.promise.resolve();
+					}, 1000 + 4000 * Math.random());
+				},
+				asyncURLHandler: function(config) {
+					// put async validation here
+					setTimeout(function() {
+						console.log('validate this url', config.url);
+
+						// simulated answer from whitelist service: relative URLs are fine
+						var allowed = config.url.lastIndexOf("http", 0) < 0;
+
+						config.promise.resolve({
+							allowed: allowed,
+							id: config.id
+						});
+
+					}, 1000 + 4000 * Math.random());
+				}
+			});
+
 			//list.bindAggregation("items", "/", oMessageTemplate);
 			var oMessagePopover = new sap.m.MessagePopover({
 				items: {
@@ -104,28 +131,6 @@
 				},
 				listSelect: function (oEvt) {
 					console.log("listSelected", oEvt.getParameters());
-				},
-				asyncDescriptionHandler: function (config) {
-					// put async loading here
-					setTimeout(function () {
-						config.item.setDescription(mockMarkupDescription);
-						config.promise.resolve();
-					}, 1000 + 4000 * Math.random());
-				},
-				asyncURLHandler: function(config) {
-					// put async validation here
-					setTimeout(function() {
-						console.log('validate this url', config.url);
-
-						// simulated answer from whitelist service: relative URLs are fine
-						var allowed = config.url.lastIndexOf("http", 0) < 0;
-
-						config.promise.resolve({
-							allowed: allowed,
-							id: config.id
-						});
-
-					}, 1000 + 4000 * Math.random());
 				}
 			});
 
