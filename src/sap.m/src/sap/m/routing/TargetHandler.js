@@ -65,8 +65,9 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			var aResultingNavigations = this._createResultingNavigations(oDirectionInfo.navigationIdentifier);
 
 			this._closeDialogs();
+			var bBack = this._getDirection(oDirectionInfo);
 			while (aResultingNavigations.length) {
-				this._applyNavigationResult(aResultingNavigations.shift().oParams, this._getDirection(oDirectionInfo));
+				this._applyNavigationResult(aResultingNavigations.shift().oParams, bBack);
 			}
 		};
 
