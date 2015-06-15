@@ -1,0 +1,27 @@
+[
+	{
+		"title" : "Initial sorting state",
+		"text"	: "The table is initially sorted ascendingly by product names."
+	},{
+		"title" : "Reset sorting state",
+		"text"	: "All sortings can be cleared via the button with the cross icon in the toolbar."
+	},{
+		"title" : "Multi Column Sorting",
+		"text"	: "Via a button in the toolbar the table can be sorted ascendingly by category (primary sorting) and product names (secondary sorting). The same can be done manually by the user by first sorting the 'Category' column followed by a sorting on the 'Product Name' column with press Ctrl key."
+	},{
+		"title" : "Column 'Product Name'",
+		"text"	: "Column 1 shows a standard sorting (string based)."
+	},{
+		"title" : "Column 'Category'",
+		"text"	: "The sort menu entries are disabled in on column 'Category'. Instead the sorting state is set calling the 'sort' function. The sorting can be toggled by the user with a button in the toolbar."
+	},{
+		"title" : "Column 'Image'",
+		"text"	: "The attribute 'sortProperty' is not set on the column. Therefore it is not sortable at all."
+	},{
+		"title" : "Column 'Quantity'",
+		"text"	: "Column Quantity shows like column 1 a standard sorting (based on integer type). Note: In client-side models (like JSONModel) sorting is based on the Javascript type of the data in the model. For example if numbers are represented as strings in the underlying JSON the numbers are sorted string based. See column 'Delivery Date' how to provide custom sorters in this case."
+	},{
+		"title" : "Column 'Delivery Date'",
+		"text"	: "For this column the sort event is used. The dates are repesented as strings in the underlying JSON (see also description of column 'Quantity'). Therefore a custom compare function is added to the sorter. Note: OData Models do a server-side sorting based on the metadata types. Do not use client-side compare functions in this case. Note: Currently multi-column sorting as described above is not supported in mixed scenarios (standard sorted columns together custom sorted columns)."
+	}
+]
