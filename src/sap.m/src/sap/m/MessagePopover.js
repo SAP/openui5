@@ -161,7 +161,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			}
 		});
 
-		var CSSCLASS = "sapMMsgPopover",
+		var CSS_CLASS = "sapMMsgPopover",
 			ICONS = {
 				back: IconPool.getIconURI("nav-back"),
 				close: IconPool.getIconURI("decline"),
@@ -170,7 +170,27 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				error: IconPool.getIconURI("message-error"),
 				success: IconPool.getIconURI("message-success")
 			},
-			LISTTYPES = ["all", "error", "warning", "success", "information"];
+			LIST_TYPES = ["all", "error", "warning", "success", "information"],
+			// Property names array
+			ASYNC_HANDLER_NAMES = ["asyncDescriptionHandler", "asyncURLHandler"],
+			// Private class variable used for static method below that sets default async handlers
+			DEFAULT_ASYNC_HANDLERS = {};
+
+		/**
+		 * Setter for default async handlers for all instances of MessagePopover
+		 * @static
+		 * @protected
+		 * @param {object} mDefaultHandlers
+		 * @param {function} [mDefaultHandlers.asyncDescriptionHandler]
+		 * @param {function} [mDefaultHandlers.asyncURLHandler]
+		 */
+		MessagePopover.setDefaultHandlers = function (mDefaultHandlers) {
+			ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
+				if (mDefaultHandlers.hasOwnProperty(sFuncName)) {
+					DEFAULT_ASYNC_HANDLERS[sFuncName] = mDefaultHandlers[sFuncName];
+				}
+			});
+		};
 
 		/**
 		 * Initializes the control
@@ -204,7 +224,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					that.fireBeforeClose({openBy: oEvent.getParameter("openBy")});
 				}
 			})
-				.addStyleClass(CSSCLASS);
+				.addStyleClass(CSS_CLASS);
 
 			this._createNavigationPages();
 			this._createLists();
@@ -222,6 +242,13 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					press: this.close.bind(this)
 				}));
 			}
+
+			// Check for default async handlers and set them appropriately
+			ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
+				if (DEFAULT_ASYNC_HANDLERS.hasOwnProperty(sFuncName)) {
+					that.setProperty(sFuncName, DEFAULT_ASYNC_HANDLERS[sFuncName]);
+				}
+			});
 		};
 
 		/**
@@ -335,7 +362,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				ariaLabelledBy: oCloseBtnARIAHiddenDescr,
 				tooltip: sCloseBtnDescr,
 				press: this.close.bind(this)
-			}).addStyleClass(CSSCLASS + "CloseBtn");
+			}).addStyleClass(CSS_CLASS + "CloseBtn");
 
 			this._oSegmentedButton = new SegmentedButton(this.getId() + "-segmented", {});
 
@@ -371,7 +398,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				ariaLabelledBy: oCloseBtnARIAHiddenDescr,
 				tooltip: sCloseBtnDescr,
 				press: this.close.bind(this)
-			}).addStyleClass(CSSCLASS + "CloseBtn");
+			}).addStyleClass(CSS_CLASS + "CloseBtn");
 
 			this._oBackButton = new Button({
 				icon: ICONS["back"],
@@ -390,7 +417,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Creates navigation pages
 		 *
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @private
 		 */
 		MessagePopover.prototype._createNavigationPages = function () {
@@ -434,13 +461,13 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Creates Lists of the MessagePopover
 		 *
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @private
 		 */
 		MessagePopover.prototype._createLists = function () {
 			this._oLists = {};
 
-			LISTTYPES.forEach(function (sListName) {
+			LIST_TYPES.forEach(function (sListName) {
 				this._oLists[sListName] = new List({
 					itemPress: this._fnHandleItemPress.bind(this),
 					visible: false
@@ -454,13 +481,13 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * Destroy items in the Messagepopover's Lists
+		 * Destroy items in the MessagePopover's Lists
 		 *
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @private
 		 */
 		MessagePopover.prototype._clearLists = function () {
-			LISTTYPES.forEach(function (sListName) {
+			LIST_TYPES.forEach(function (sListName) {
 				if (this._oLists[sListName]) {
 					this._oLists[sListName].destroyAggregation("items", true); // no re-rendering
 				}
@@ -475,7 +502,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._destroyLists = function () {
-			LISTTYPES.forEach(function (sListName) {
+			LIST_TYPES.forEach(function (sListName) {
 				this._oLists[sListName] = null;
 			}, this);
 
@@ -516,7 +543,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					title: oMessagePopoverItem.getTitle(),
 					icon: this._mapIcon(sType),
 					type: sap.m.ListType.Navigation
-				}).addStyleClass(CSSCLASS + "Item").addStyleClass(CSSCLASS + "Item" + sType);
+				}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
 
 			oListItem._oMessagePopoverItem = oMessagePopoverItem;
 
@@ -541,7 +568,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Destroy the buttons in the SegmentedButton
 		 *
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @private
 		 */
 		MessagePopover.prototype._clearSegmentedButton = function () {
@@ -555,7 +582,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Fill SegmentedButton with needed Buttons for filtering
 		 *
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @private
 		 */
 		MessagePopover.prototype._fillSegmentedButton = function () {
@@ -566,7 +593,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				};
 			};
 
-			LISTTYPES.forEach(function (sListName) {
+			LIST_TYPES.forEach(function (sListName) {
 				var oList = this._oLists[sListName],
 					iCount = oList.getItems().length,
 					oButton;
@@ -576,7 +603,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 						text: sListName == "all" ? this._oResourceBundle.getText("MESSAGEPOPOVER_ALL") : iCount,
 						icon: ICONS[sListName],
 						press: pressClosure(sListName)
-					}).addStyleClass(CSSCLASS + "Btn" + sListName.charAt(0).toUpperCase() + sListName.slice(1));
+					}).addStyleClass(CSS_CLASS + "Btn" + sListName.charAt(0).toUpperCase() + sListName.slice(1));
 
 					this._oSegmentedButton.addButton(oButton, true); // no re-rendering
 				}
@@ -586,7 +613,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				this._fnFilterList("all");
 			} else {
 				if (!this.getInitiallyExpanded()) {
-					this._oPopover.addStyleClass(CSSCLASS + "-init");
+					this._oPopover.addStyleClass(CSS_CLASS + "-init");
 					this._oSegmentedButton.setSelectedButton("none");
 				} else {
 					this._oPopover.setContentHeight(this._oPopover.getContentWidth());
@@ -604,11 +631,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._setIcon = function (oMessagePopoverItem, oListItem) {
-			this._previousIconTypeClass = CSSCLASS + "DescIcon" + oMessagePopoverItem.getType();
+			this._previousIconTypeClass = CSS_CLASS + "DescIcon" + oMessagePopoverItem.getType();
 			this._oMessageIcon = new Icon({
 				src: oListItem.getIcon()
 			})
-				.addStyleClass(CSSCLASS + "DescIcon")
+				.addStyleClass(CSS_CLASS + "DescIcon")
 				.addStyleClass(this._previousIconTypeClass);
 
 			this._detailsPage.addContent(this._oMessageIcon);
@@ -879,7 +906,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._fnFilterList = function (sCurrentListName) {
-			LISTTYPES.forEach(function (sListIterName) {
+			LIST_TYPES.forEach(function (sListIterName) {
 				if (sListIterName != sCurrentListName && this._oLists[sListIterName].getVisible()) {
 					// Hide Lists if they are visible and their name is not the same as current list name
 					this._oLists[sListIterName].setVisible(false);
@@ -891,7 +918,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 
 			this._oPopover
 				.setContentHeight(this._oPopover.getContentWidth())
-				.removeStyleClass(CSSCLASS + "-init");
+				.removeStyleClass(CSS_CLASS + "-init");
 
 			this.fireListSelect({messageTypeFilter: this._getCurrentMessageTypeFilter()});
 		};
@@ -954,7 +981,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			oPopover._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
 			oPopover._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
 
-			oPopover.addStyleClass(CSSCLASS + '-ModeToolbar');
+			oPopover.addStyleClass(CSS_CLASS + '-ModeToolbar');
 
 			oPopover._setArrowPosition = function () {
 			};
@@ -994,8 +1021,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * Opens the MessagePopover
 		 *
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @public
+		 * @ui5-metamodel
 		 */
 		MessagePopover.prototype.openBy = function (oControl) {
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup");
@@ -1016,7 +1044,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Closes the MessagePopover
 		 *
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @public
 		 */
 		MessagePopover.prototype.close = function () {
@@ -1043,7 +1071,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * oControl parameter is mandatory the same way as in 'openBy' method
 		 *
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 * @public
 		 */
 		MessagePopover.prototype.toggle = function (oControl) {
@@ -1061,7 +1089,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * sap.m.PlacementType.Top, sap.m.PlacementType.Bottom and sap.m.PlacementType.Vertical
 		 *
 		 * @param {sap.m.PlacementType} sPlacement Placement type
-		 * @returns {MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} this pointer for chaining
 		 */
 		MessagePopover.prototype.setPlacement = function (sPlacement) {
 			this.setProperty("placement", sPlacement, true); // no re-rendering
