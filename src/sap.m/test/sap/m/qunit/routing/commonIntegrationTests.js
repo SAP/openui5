@@ -1,23 +1,11 @@
 sap.ui.define(
 	[
 		"sap/m/NavContainer",
-		"sap/m/SplitContainer"
+		"sap/m/SplitContainer",
+		"qunit/routing/helpers"
 	],
-	function (NavContainer, SplitContainer) {
+	function (NavContainer, SplitContainer, helpers) {
 		"use strict";
-
-		function createViewAndController(sName) {
-			sap.ui.controller(sName, {});
-			sap.ui.jsview(sName, {
-				createContent: function () {
-				},
-				getController: function () {
-					return sap.ui.controller(sName);
-				}
-			});
-
-			return sap.ui.jsview(sName);
-		}
 
 		return {
 			start : function (oOptions) {
@@ -34,101 +22,103 @@ sap.ui.define(
 					}
 				});
 
-				QUnit.test("Should add one Navigation per detail and master aggregation for split app in desktop", function () {
+				QUnit.test("Should add one Navigation per detail and master aggregation for split app in desktop", function (assert) {
 					//Arrange
 					var oSplitContainer = new SplitContainer(),
-						oSplitContainerSpy = this.spy(oSplitContainer, "to"),
-						oRouter = fnSetup.call(this, {
-							"dummyMaster": {
-								targetControl: oSplitContainer.getId(),
-								view: "MasterDummy",
-								viewType: "JS",
-								targetAggregation: "masterPages",
-								subroutes: {
-									"dummyDetail": {
-										targetAggregation: "detailPages",
-										view: "DetailDummy",
-										viewType: "JS",
-										subroutes: {
-											"master": {
-												targetAggregation: "masterPages",
-												view: "Master",
-												viewType: "JS",
-												subroutes: {
-													"detail": {
-														pattern: "detail",
-														view: "Detail",
-														viewType: "JS",
-														targetAggregation: "detailPages"
-													}
+						oSplitContainerSpy = this.spy(oSplitContainer, "to");
+
+					fnSetup.call(this, {
+						"dummyMaster": {
+							targetControl: oSplitContainer.getId(),
+							view: "MasterDummy",
+							viewType: "JS",
+							targetAggregation: "masterPages",
+							subroutes: {
+								"dummyDetail": {
+									targetAggregation: "detailPages",
+									view: "DetailDummy",
+									viewType: "JS",
+									subroutes: {
+										"master": {
+											targetAggregation: "masterPages",
+											view: "Master",
+											viewType: "JS",
+											subroutes: {
+												"detail": {
+													pattern: "detail",
+													view: "Detail",
+													viewType: "JS",
+													targetAggregation: "detailPages"
 												}
 											}
 										}
 									}
 								}
 							}
-						});
+						}
+					});
 
 					this.stub(sap.ui.Device.system, "phone", false);
 
 					//views
-					createViewAndController("Detail");
-					createViewAndController("DetailDummy");
-					createViewAndController("Master");
-					createViewAndController("MasterDummy");
+					helpers.createViewAndController("Detail");
+					helpers.createViewAndController("DetailDummy");
+					helpers.createViewAndController("Master");
+					helpers.createViewAndController("MasterDummy");
 
 					//Act
 					fnAct.call(this, "detail");
 
 					//Assert
-					strictEqual(oSplitContainerSpy.callCount, 2, "did invoke add two navigations");
+					assert.strictEqual(oSplitContainerSpy.callCount, 2, "did invoke add two navigations");
 
 					var oCurrentDetail = oSplitContainer.getCurrentDetailPage();
 					var oCurrentMaster = oSplitContainer.getCurrentMasterPage();
-					strictEqual(oCurrentDetail.getViewName(), "Detail", "did navigate to the detail view");
-					strictEqual(oCurrentMaster.getViewName(), "Master", "did navigate to the master view");
+					assert.strictEqual(oCurrentDetail.getViewName(), "Detail", "did navigate to the detail view");
+					assert.strictEqual(oCurrentMaster.getViewName(), "Master", "did navigate to the master view");
 
 					var oFirstCall = oSplitContainerSpy.getCall(0);
 					var oSecondCall = oSplitContainerSpy.getCall(1);
 
-					strictEqual(oFirstCall.args[0], oCurrentMaster.getId(), "did invoke it with the master view");
-					strictEqual(oSecondCall.args[0], oCurrentDetail.getId(), "did invoke it with the detail view");
+					assert.strictEqual(oFirstCall.args[0], oCurrentMaster.getId(), "did invoke it with the master view");
+					assert.strictEqual(oSecondCall.args[0], oCurrentDetail.getId(), "did invoke it with the detail view");
 				});
 
-				QUnit.test("Should preserve the view that is currently in the master or detail if configured (splitapp desktop)", function () {
+				QUnit.test("Should preserve the view that is currently in the master or detail if configured (splitapp desktop)", function (assert) {
 					//Arrange
-					var oSplitContainer = new SplitContainer(),
-						oRouter =  fnSetup.call(this, {
-							"firstMaster": {
-								targetControl: oSplitContainer.getId(),
-								view: "FirstMaster",
-								viewType: "JS",
-								targetAggregation: "masterPages",
-								preservePageInSplitContainer: true,
-								subroutes: {
-									"detail": {
-										pattern: "detail",
-										targetAggregation: "detailPages",
-										view: "Detail",
-										viewType: "JS"
-									}
+					var oSplitContainer = new SplitContainer();
+
+					fnSetup.call(this, {
+						"firstMaster": {
+							targetControl: oSplitContainer.getId(),
+							view: "FirstMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages",
+							preservePageInSplitContainer: true,
+							subroutes: {
+								"detail": {
+									pattern: "detail",
+									targetAggregation: "detailPages",
+									view: "Detail",
+									viewType: "JS"
 								}
-							},
-							"secondMaster": {
-								targetControl: oSplitContainer.getId(),
-								pattern: "secondMaster",
-								view: "SecondMaster",
-								viewType: "JS",
-								targetAggregation: "masterPages"
 							}
-						});
+						},
+						"secondMaster": {
+							targetControl: oSplitContainer.getId(),
+							pattern: "secondMaster",
+							view: "SecondMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages"
+						}
+					});
 
 					this.stub(sap.ui.Device.system, "phone", false);
 
 					//views
-					createViewAndController("Detail");
-					createViewAndController("FirstMaster");
-					createViewAndController("SecondMaster");
+					helpers.createViewAndController("Detail");
+					helpers.createViewAndController("FirstMaster");
+					helpers.createViewAndController("SecondMaster");
 
 					//Act
 					fnAct.call(this, "secondMaster");
@@ -142,28 +132,29 @@ sap.ui.define(
 
 				QUnit.test("Should not preserve the view that is currently in the master or detail if it is matching the pattern", function (assert) {
 					//Arrange
-					var oSplitContainer = new SplitContainer(),
-						oRouter =  fnSetup.call(this, {
-							"firstMaster": {
-								targetControl: oSplitContainer.getId(),
-								pattern: "firstMaster",
-								view: "FirstMaster",
-								viewType: "JS",
-								targetAggregation: "masterPages",
-								preservePageInSplitContainer: true
-							},
-							"secondMaster": {
-								targetControl: oSplitContainer.getId(),
-								pattern: "secondMaster",
-								view: "SecondMaster",
-								viewType: "JS",
-								targetAggregation: "masterPages"
-							}
-						});
+					var oSplitContainer = new SplitContainer();
+
+					fnSetup.call(this, {
+						"firstMaster": {
+							targetControl: oSplitContainer.getId(),
+							pattern: "firstMaster",
+							view: "FirstMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages",
+							preservePageInSplitContainer: true
+						},
+						"secondMaster": {
+							targetControl: oSplitContainer.getId(),
+							pattern: "secondMaster",
+							view: "SecondMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages"
+						}
+					});
 
 					//views
-					createViewAndController("FirstMaster");
-					createViewAndController("SecondMaster");
+					helpers.createViewAndController("FirstMaster");
+					helpers.createViewAndController("SecondMaster");
 
 					//Act
 					fnAct.call(this, "secondMaster");
@@ -176,46 +167,47 @@ sap.ui.define(
 
 				QUnit.test("Should preserve the view that is currently in the master with multiple Masters", function (assert) {
 					//Arrange
-					var oSplitContainer = new SplitContainer(),
-						oRouter =  fnSetup.call(this, {
-								"firstMaster": {
-									targetControl: oSplitContainer.getId(),
-									view: "FirstMaster",
+					var oSplitContainer = new SplitContainer();
+
+					fnSetup.call(this, {
+						"firstMaster": {
+							targetControl: oSplitContainer.getId(),
+							view: "FirstMaster",
+							targetAggregation: "masterPages",
+							viewType: "JS",
+							subroutes: {
+								"secondMaster": {
+									view: "SecondMaster",
 									targetAggregation: "masterPages",
 									viewType: "JS",
 									subroutes: {
-										"secondMaster": {
-											view: "SecondMaster",
+										"thirdMaster": {
+											view: "ThirdMaster",
 											targetAggregation: "masterPages",
+											preservePageInSplitContainer: true,
 											viewType: "JS",
 											subroutes: {
-												"thirdMaster": {
-													view: "ThirdMaster",
-													targetAggregation: "masterPages",
-													preservePageInSplitContainer: true,
-													viewType: "JS",
-													subroutes: {
-														"detail": {
-															pattern: "detail",
-															targetAggregation: "detailPages",
-															view: "Detail",
-															viewType: "JS"
-														}
-													}
+												"detail": {
+													pattern: "detail",
+													targetAggregation: "detailPages",
+													view: "Detail",
+													viewType: "JS"
 												}
 											}
 										}
 									}
 								}
-							});
+							}
+						}
+					});
 
 					this.stub(sap.ui.Device.system, "phone", false);
 
 					//views
-					createViewAndController("Detail");
-					createViewAndController("FirstMaster");
-					createViewAndController("SecondMaster");
-					createViewAndController("ThirdMaster");
+					helpers.createViewAndController("Detail");
+					helpers.createViewAndController("FirstMaster");
+					helpers.createViewAndController("SecondMaster");
+					helpers.createViewAndController("ThirdMaster");
 
 
 					//Act
@@ -230,5 +222,4 @@ sap.ui.define(
 			}
 		};
 
-		}
-	,true);
+		});
