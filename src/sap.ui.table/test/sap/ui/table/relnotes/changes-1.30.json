@@ -302,6 +302,20 @@
         "type": "FIX",
         "text": "Table: ColumnResizeHandler can overlay scrollbar",
         "references": []
+      },
+      {
+        "id": "bc6b370087adbcdd9b0e36e0ca4989b5dc3fbc78",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Handling of aria texts and tooltips for row selection corrected",
+        "references": []
+      },
+      {
+        "id": "10a118320af990f851087a2b0a2b0c86dd348fcb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Row: getIndex function to return correct index for fixed rows corrected",
+        "references": []
       }
     ]
   }

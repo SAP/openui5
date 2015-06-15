@@ -71,6 +71,13 @@
         "type": "FIX",
         "text": "VerticalLayout: Vertical alignment issue in Safari resolved",
         "references": []
+      },
+      {
+        "id": "3dc1ac652605c469e1f38ac67b12f838cf9bab52",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "DynamicSideContent: New control implemented",
+        "references": []
       }
     ]
   }

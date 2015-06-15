@@ -1,4 +1,4 @@
- { 
+{
   "1.30.0": {
     "date": "April 2015",
     "notes": [
@@ -313,6 +313,13 @@
         "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
         "type": "FIX",
         "text": "Toolbar: Tab indexes on the right toolbar items are now correctly retained upon updating item navigation",
+        "references": []
+      },
+      {
+        "id": "f371b5a98b9b274b754214c1bacbcd797bf291f0",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ListBox: Native scrolling is now used on touch devices",
         "references": []
       }
     ]

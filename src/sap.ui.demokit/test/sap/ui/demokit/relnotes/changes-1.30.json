@@ -36,6 +36,20 @@
         "type": "FEATURE",
         "text": "Explored sample for asynchronous views implemented",
         "references": []
+      },
+      {
+        "id": "b4dbc69ee75fda2a5fa2bb42dfe583cef990d4bc",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit: Navigation tree changed and filter introduced",
+        "references": []
+      },
+      {
+        "id": "c2db0fe76abf3b1b342de3c24713eeae357664fd",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit/SDK: Warning is displayed in header for SNAPSHOT versions",
+        "references": []
       }
     ]
   }
