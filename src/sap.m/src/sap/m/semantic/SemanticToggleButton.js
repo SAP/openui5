@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/ButtonType', 'sap/ui/base/ManagedObject'], function(SemanticButton, ButtonType, ManagedObject) {
+sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/semantic/SemanticControl', 'sap/m/ButtonType', 'sap/ui/base/ManagedObject'], function(SemanticButton, SemanticControl, ButtonType, ManagedObject) {
 	"use strict";
 
 	/**
@@ -41,18 +41,13 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/ButtonType', 'sap/ui/base
 		}
 	});
 
-	SemanticToggleButton.prototype.init = function() {
-
-		this._getControl().addEventDelegate({
-			ontap: this._onTap,
-			onkeydown: this._onKeydown
-		}, this);
-	};
-
 	SemanticToggleButton.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
-		if ((sPropertyName === 'pressed') && (oValue !== this.getPressed())) {
-			this._setPressed(oValue, bSuppressInvalidate);
+		if (sPropertyName === 'pressed') {
+
+			if (oValue !== this.getPressed()) {
+				this._setPressed(oValue, bSuppressInvalidate);
+			}
 			return this;
 		}
 		return SemanticButton.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
@@ -111,6 +106,22 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/ButtonType', 'sap/ui/base
 	SemanticToggleButton.prototype._setPressed = function(bPressed, bSuppressInvalidate) {
 		var oButtonType = bPressed ? ButtonType.Emphasized : ButtonType.Default;
 		this._getControl().setType(oButtonType, bSuppressInvalidate);
+	};
+
+	/**
+	 * @Overwrites
+	 */
+	SemanticToggleButton.prototype._createInstance = function(oClass) {
+		var oInstance =  new oClass({
+			id: this.getId() + "-toggleButton"
+		});
+
+		oInstance.addEventDelegate({
+			ontap: this._onTap,
+			onkeydown: this._onKeydown
+		}, this);
+
+		return oInstance;
 	};
 
 	return SemanticToggleButton;
