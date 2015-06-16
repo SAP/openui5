@@ -674,4 +674,4 @@ sap.ui.define(['jquery.sap.global',
 		});
 
 		return Opa5;
-}, /* bExport= */ true);
+});

@@ -1520,8 +1520,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.sap.includeStyleSheet(cssPathAndName, "sap-ui-theme-" + sLibId);
 
 			// if parameters have been used, update them with the new style sheet
-			if (sap.ui.core.theming && sap.ui.core.theming.Parameters) {
-				sap.ui.core.theming.Parameters._addLibraryTheme(sLibId, cssPathAndName);
+			var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+			if (Parameters) {
+				Parameters._addLibraryTheme(sLibId, cssPathAndName);
 			}
 		}
 
@@ -1808,8 +1809,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
-		if (sap.ui.core.theming && sap.ui.core.theming.Parameters) {
-			sap.ui.core.theming.Parameters.reset(/* bOnlyWhenNecessary= */ true);
+		var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+		if (Parameters) {
+			Parameters.reset(/* bOnlyWhenNecessary= */ true);
 		}
 
 		// notify all elements/controls via a pseudo browser event
@@ -2979,4 +2981,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	return new Core().getInterface();
 
-}, /* bExport= */ false);
+});

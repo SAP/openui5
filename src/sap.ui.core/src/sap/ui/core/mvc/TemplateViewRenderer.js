@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for JSView
-sap.ui.define(['jquery.sap.global', './ViewRenderer'],
-	function(jQuery, ViewRenderer) {
+sap.ui.define(['./ViewRenderer'],
+	function(ViewRenderer) {
 	"use strict";
 
 

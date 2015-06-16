@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Component for all components
-sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './mvc/View'],
-	function(jQuery, Component, UIComponentMetadata, View) {
+sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './UIComponentMetadata', './mvc/View'],
+	function(jQuery, ManagedObject, Component, UIComponentMetadata, View) {
 	"use strict";
 
 
@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 
 		// create the content
 		this.runAsOwner(function() {
-			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
+			ManagedObject.runWithPreprocessors(function() {
 				that.setAggregation("rootControl", that.createContent());
 			}, oPreprocessors);
 		});
@@ -485,4 +485,4 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 
 	return UIComponent;
 
-}, /* bExport= */ true);
+});

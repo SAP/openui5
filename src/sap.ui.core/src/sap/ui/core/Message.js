@@ -3,12 +3,11 @@
  */
 
 // Provides control sap.ui.core.Message.
-sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Parameters'],
-	function(jQuery, Element, library, Parameters) {
+sap.ui.define(['jquery.sap.global', './Element', './library'],
+	function(jQuery, Element, library) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new Message.
 	 *
@@ -131,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Paramet
 	 * @public
 	 */
 	Message.prototype.compareByType = function(oOther) {
-		Message.compareByType(this, oOther);
+		return Message.compareByType(this, oOther);
 	};
 	
 	/**
@@ -192,4 +191,4 @@ sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Paramet
 
 	return Message;
 
-}, /* bExport= */ true);
+});

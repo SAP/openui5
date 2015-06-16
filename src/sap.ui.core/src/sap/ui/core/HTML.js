@@ -3,10 +3,12 @@
  */
 
 // Provides control sap.ui.core.HTML.
-sap.ui.define(['jquery.sap.global', './Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['jquery.sap.global', './Control', './RenderManager', './library'],
+	function(jQuery, Control, RenderManager, library) {
 	"use strict";
 
+	// local shortcut
+	var RenderPrefixes = library.RenderPrefixes;
 
 	/**
 	 * Constructor for a new HTML.
@@ -132,7 +134,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 */
 	HTML.prototype.getDomRef = function(sSuffix) {
 		var sId = sSuffix ? this.getId() + "-" + sSuffix : this.getId();
-		return jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + sId) || jQuery.sap.domById(sId);
+		return jQuery.sap.domById(RenderPrefixes.Dummy + sId) || jQuery.sap.domById(sId);
 	};
 	
 	HTML.prototype.setContent = function(sContent) {
@@ -183,8 +185,8 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	};
 	
 	HTML.prototype.onBeforeRendering = function() {
-		if (this.getPreferDOM() && this.getDomRef() && !sap.ui.core.RenderManager.isPreservedContent(this.getDomRef())) {
-			sap.ui.core.RenderManager.preserveContent(this.getDomRef(), /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
+		if (this.getPreferDOM() && this.getDomRef() && !RenderManager.isPreservedContent(this.getDomRef())) {
+			RenderManager.preserveContent(this.getDomRef(), /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
 		}
 	};
 	
@@ -198,8 +200,8 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			return;
 		}
 
-		var $placeholder = jQuery(jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + this.getId()));
-		var $oldContent = sap.ui.core.RenderManager.findPreservedContent(this.getId());
+		var $placeholder = jQuery(jQuery.sap.domById(RenderPrefixes.Dummy + this.getId()));
+		var $oldContent = RenderManager.findPreservedContent(this.getId());
 		var $newContent;
 		var isPreservedDOM = false;
 		if ( /*this.getContent() && */ (!this.getPreferDOM() || $oldContent.size() == 0) ) {
@@ -235,7 +237,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			}
 	
 			// set a marker that identifies all root nodes in $newContent as 'to-be-preserved'
-			sap.ui.core.RenderManager.markPreservableContent($newContent, this.getId());
+			RenderManager.markPreservableContent($newContent, this.getId());
 			// and if no node has the control id, search the first without an id and set it
 			if ( $newContent.find("#" + this.getId().replace(/(:|\.)/g,'\\$1')).length === 0 ) {
 				$newContent.filter(":not([id])").first().attr("id", this.getId());
@@ -260,7 +262,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			jQuery(this.getDomRef()).replaceWith($newContent);
 			this._postprocessNewContent($newContent);
 		} else {
-			$newContent.appendTo(sap.ui.core.RenderManager.getPreserveAreaRef());
+			$newContent.appendTo(RenderManager.getPreserveAreaRef());
 			if ( this.getUIArea() ) {
 				this.getUIArea().invalidate();
 			} // TODO fix issue with Control.rerender()
@@ -284,4 +286,4 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 
 	return HTML;
 
-}, /* bExport= */ true);
+});

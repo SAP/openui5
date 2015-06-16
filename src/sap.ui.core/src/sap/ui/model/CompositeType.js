@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', './FormatException', './ParseException', './SimpleType', './ValidateException'],
-	function(jQuery, FormatException, ParseException, SimpleType, ValidateException) {
+sap.ui.define(['./FormatException', './ParseException', './SimpleType', './ValidateException'],
+	function(FormatException, ParseException, SimpleType, ValidateException) {
 	"use strict";
 	
 	/**
@@ -101,4 +101,4 @@ sap.ui.define(['jquery.sap.global', './FormatException', './ParseException', './
 	
 	return CompositeType;
 
-}, /* bExport= */ true);
+});

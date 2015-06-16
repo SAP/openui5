@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip'],
-	function(jQuery, Plugin, ViewSerializer, JSZip) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip', 'sap/ui/core/Controller', 'sap/ui/core/Element', 'sap/ui/core/mvc/JSView'],
+	function(jQuery, Plugin, ViewSerializer, JSZip, Controller, Element, JSView) {
 	"use strict";
 
 
@@ -1259,7 +1259,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 								var aElements = $.isArray(oAggrElement) ? oAggrElement : [oAggrElement];
 								$.each(aElements, function(iIndex, oValue) {
 									// tooltips are also part of aggregations
-									if (oValue instanceof sap.ui.core.Element) {
+									if (oValue instanceof Element) {
 										var mChild = serializeElement(oValue);
 										mElement.aggregation.push(mChild);
 									}
@@ -1660,4 +1660,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 
 	return ControlTree;
 
-}, /* bExport= */ true);
+});

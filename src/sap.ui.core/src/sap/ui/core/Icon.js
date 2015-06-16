@@ -3,10 +3,9 @@
  */
 
 // Provides control sap.ui.core.Icon.
-sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
-	function(jQuery, Control, IconPool, library) {
+sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './library'],
+	function(jQuery, Device, Control, IconPool, library) {
 	"use strict";
-
 
 
 	/**
@@ -334,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 
 	Icon.prototype.setSrc = function(sSrc) {
 		var oIconInfo = IconPool.getIconInfo(sSrc),
-			bTextNeeded = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9,
+			bTextNeeded = Device.browser.internet_explorer && Device.browser.version < 9,
 			$Icon = this.$();
 
 		if (oIconInfo) {
@@ -495,4 +494,4 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 
 	return Icon;
 
-}, /* bExport= */ true);
+});

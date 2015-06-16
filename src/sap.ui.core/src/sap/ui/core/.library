@@ -103,7 +103,7 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
-        <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Element.js,sap/ui/core/UIArea.js,sap/ui/core/Control.js,sap/ui/core/Component.js" />
+        <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
       <all-in-one>
         <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->

@@ -4267,5 +4267,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	**/
 	return AnalyticalBinding;
 
-}, /* bExport= */ true);
+});
 

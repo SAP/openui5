@@ -82,4 +82,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 
 	return XMLTreeBinding;
 
-}, /* bExport= */ true);
+});

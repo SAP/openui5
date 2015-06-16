@@ -3,8 +3,8 @@
  */
 
 // Provides the concept of a sorter for list bindings
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/ui/base/Object'],
+	function(BaseObject) {
 	"use strict";
 
 
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 */
-	var Sorter = sap.ui.base.Object.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
+	var Sorter = BaseObject.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 		
 		constructor : function(sPath, bDescending, vGroup){
 			if (typeof sPath === "object") {
@@ -59,4 +59,4 @@ sap.ui.define(['jquery.sap.global'],
 
 	return Sorter;
 
-}, /* bExport= */ true);
+});

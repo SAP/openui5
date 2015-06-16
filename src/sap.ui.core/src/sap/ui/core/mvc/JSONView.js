@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.JSONView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
-	function(jQuery, library, View) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/library', './View'],
+	function(jQuery, ManagedObject, library, View) {
 	"use strict";
 
 
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 			var that = this;
 
 			// use preprocessors to fix IDs, associations and event handler references
-			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
+			ManagedObject.runWithPreprocessors(function() {
 					// parse
 					that.applySettings({ content : that._oJSONView.content});
 				},
@@ -202,4 +202,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 
 	return JSONView;
 
-}, /* bExport= */ true);
+});

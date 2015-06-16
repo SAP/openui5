@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.util.ExportCell
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
-	function(jQuery, Element) {
+sap.ui.define(['sap/ui/core/Element'],
+	function(Element) {
 	'use strict';
 
 	/**
@@ -38,4 +38,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
 
 	return ExportCell;
 
-}, /* bExport= */ true);
+});

@@ -335,4 +335,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 
 	return TechInfo;
 
-}, /* bExport= */ true);
+});

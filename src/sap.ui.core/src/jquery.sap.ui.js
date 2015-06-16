@@ -3,38 +3,9 @@
  */
 
 // A bridge between the jQuery.sap plugin and the SAPUI5 Core
-sap.ui.define(['jquery.sap.global', 'sap/ui/Global'],
-	function(jQuery, Global) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Global' /* cyclic: , 'sap/ui/core/Core'*/],
+	function(jQuery/*, Global*/) {
 	"use strict";
-
-//jQuery.sap.require("sap.ui.core.Core"); // cyclic
-	
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!
-	// !!     EXPERIMENTAL     !!
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!
-	
-	
-	// FIXME Too tough or just right?
-	if (!jQuery.sap) {
-		throw "Initialisation of jQuery.sap.ui failed. jQuery.sap plugin required!";
-	}
-	if (!window.sap || !window.sap.ui) {
-		jQuery.sap.fatal("Initialisation of jQuery.sap.ui failed. Global SAP UI namespace required!");
-	}
-
-	//ensure not to initialize twice
-	if (jQuery.sap.ui) {
-		return;
-	}
-
-//	/**
-//	 * Root Namespace for the jQuery UI-Layer plugin provided by SAP SE.
-//	 *
-//	 * @version ${version}
-//	 * @namespace
-//	 * @public
-//	 */
-//	jQuery.sap.ui = {};
 
 	function fUIAreaFilter(idx){
 		return sap.ui.getCore().getUIArea(this.id) != null;
@@ -158,8 +129,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global'],
 
 					// TODO: hack for Steffen; remove later
 					if (typeof oConfiguration == 'object' && typeof oConfiguration.press == 'function') {
-			  oConfiguration.press = jQuery.proxy(oConfiguration.press,this);
-			}
+						oConfiguration.press = jQuery.proxy(oConfiguration.press,this);
+					}
 
 					oControl = new (fnClass)(sId, oConfiguration); // sId might actually contain oConfiguration, the Element constructor will take care of this
 
@@ -175,4 +146,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global'],
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

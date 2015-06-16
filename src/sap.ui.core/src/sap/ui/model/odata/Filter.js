@@ -3,8 +3,8 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
-	function(jQuery, Filter, FilterOperator) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
+	function(BaseObject, Filter, FilterOperator) {
 	"use strict";
 
 
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @alias sap.ui.model.odata.Filter
 	 * @deprecated Since 1.22. Please use the sap.ui.model.Filter instead (@link: sap.ui.model.Filter).
 	 */
-	var ODataFilter = sap.ui.base.Object.extend("sap.ui.model.odata.Filter", /** @lends sap.ui.model.odata.Filter.prototype */ {
+	var ODataFilter = BaseObject.extend("sap.ui.model.odata.Filter", /** @lends sap.ui.model.odata.Filter.prototype */ {
 		
 		constructor : function(sPath, aValues, bAND){
 			if (typeof sPath === "object") {
@@ -75,4 +75,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 
 	return ODataFilter;
 
-}, /* bExport= */ true);
+});

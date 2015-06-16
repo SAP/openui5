@@ -262,22 +262,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 		},$.device.is);
 
 		// Windows Phone specific handling
-		if (sap.ui.Device.os.windows_phone) {
+		if (Device.os.windows_phone) {
 			var oTag;
 			// Disable grey highlights over tapped areas.
 			// This meta tag works since Windows 8.1.
 			// Write in-place, otherwise IE ignores it:
-		    oTag = document.createElement("meta");
-		    oTag.setAttribute("name", "msapplication-tap-highlight");
-		    oTag.setAttribute("content", "no");
-		    document.head.appendChild(oTag);
+			oTag = document.createElement("meta");
+			oTag.setAttribute("name", "msapplication-tap-highlight");
+			oTag.setAttribute("content", "no");
+			document.head.appendChild(oTag);
 
-		    // Style for correct viewport size and scale definition.
+			// Style for correct viewport size and scale definition.
 			// It works correctly since Windows 8.1.
 			// Older 8.0 patches return wrong device-width:
-		    oTag = document.createElement("style");
-		    oTag.appendChild(document.createTextNode('@-ms-viewport{width:device-width;}'));
-		    document.head.appendChild(oTag);
+			oTag = document.createElement("style");
+			oTag.appendChild(document.createTextNode('@-ms-viewport{width:device-width;}'));
+			document.head.appendChild(oTag);
 		}
 
 		var _bInitMobileTriggered = false;
@@ -548,4 +548,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 	
 	return jQuery;
 	
-}, /* bExport= */ false);
+});

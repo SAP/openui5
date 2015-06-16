@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTML', 'sap/ui/thirdparty/vkbeautify'],
-	function(jQuery, EventProvider, HTML, vkbeautify) {
+sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', 'sap/ui/thirdparty/vkbeautify'],
+	function(EventProvider, Serializer, HTML, vkbeautify) {
 	"use strict";
 
 
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 		};
 	
 		// create serializer
-		var oControlSerializer = new sap.ui.core.util.serializer.Serializer(
+		var oControlSerializer = new Serializer(
 			this._oView,
 			new HTML(
 				this._fnGetControlId,
@@ -76,4 +76,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 
 	return HTMLViewSerializer;
 
-}, /* bExport= */ true);
+});

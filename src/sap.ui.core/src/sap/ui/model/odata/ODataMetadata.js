@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @alias sap.ui.model.odata.ODataMetadata
 	 * @extends sap.ui.base.EventProvider
 	 */
-	var ODataMetadata = sap.ui.base.EventProvider.extend("sap.ui.model.odata.ODataMetadata", /** @lends sap.ui.model.odata.ODataMetadata.prototype */ {
+	var ODataMetadata = EventProvider.extend("sap.ui.model.odata.ODataMetadata", /** @lends sap.ui.model.odata.ODataMetadata.prototype */ {
 
 		constructor : function(sMetadataURI, mParams) {
 			EventProvider.apply(this, arguments);
@@ -846,7 +846,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			jQuery.sap.clearDelayedCall(this.oFailedEvent);
 		}
 
-		sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+		EventProvider.prototype.destroy.apply(this, arguments);
 	};
 
 	/**
@@ -975,4 +975,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 	return ODataMetadata;
 
-}, /* bExport= */ true);
+});

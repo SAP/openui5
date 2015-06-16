@@ -3,8 +3,7 @@
  */
 
 // Provides default renderer for View
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQuery, JSONModel) {
+sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	"use strict";
 
 	/*global Promise */

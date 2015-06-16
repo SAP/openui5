@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for model bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['sap/ui/base/Object'],
+	function(BaseObject) {
 	"use strict";
 
 
@@ -25,11 +25,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @public
 	 * @alias sap.ui.model.Context
 	 */
-	var Context = sap.ui.base.Object.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context.prototype */ {
+	var Context = BaseObject.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context.prototype */ {
 		
 		constructor : function(oModel, sPath){
 	
-			sap.ui.base.Object.apply(this);
+			BaseObject.apply(this);
 		
 			this.oModel = oModel;
 			this.sPath = sPath;
@@ -95,4 +95,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return Context;
 
-}, /* bExport= */ true);
+});
