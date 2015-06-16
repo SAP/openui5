@@ -177,6 +177,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Types of the DynamicSideContent Visibility options
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.30
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	sap.ui.layout.SideContentVisibility = {
 		/**
 		 * Show the side content on any breakpoint
@@ -205,6 +213,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		NeverShow: "NeverShow"
 	};
 
+	/**
+	 * Types of the DynamicSideContent FallDown options
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.30
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	sap.ui.layout.SideContentFallDown = {
 		/**
 		 * Side content falls down on breakpoints below XL
