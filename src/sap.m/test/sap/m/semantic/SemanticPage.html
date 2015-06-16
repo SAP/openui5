@@ -1094,9 +1094,11 @@
 			showNavButton: "{status>/detail/showNavButton}",
 			navButtonPress: function () { console.log("Nav button pressed, arguments are:", arguments);},
 			content: [],
+			customHeaderContent : [new sap.m.Button({text: "CH"})],
 			customFooterContent : [new sap.m.Button({text: "CustomBtnRight1", press: onCustomBtnPress}),
 				new sap.m.OverflowToolbarButton({icon : "sap-icon://settings", text: "CustomBtnRight2", press: onCustomBtnPress}),
-				new sap.m.OverflowToolbarButton({icon : "sap-icon://video", text: "CustomBtnRight3", press: onCustomBtnPress})],
+				new sap.m.OverflowToolbarButton({icon : "sap-icon://video", text: "CustomBtnRight3", press: onCustomBtnPress}),
+				new sap.m.PagingButton({count: 5})],
 			customShareMenuContent : [
 				new sap.m.Button({icon : "sap-icon://video", text: "test", press: onCustomBtnPress})
 			],
