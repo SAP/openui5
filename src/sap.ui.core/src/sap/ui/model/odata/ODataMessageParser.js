@@ -224,7 +224,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	for (i = 0; i < this._lastMessages.length; ++i) {
 		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must 
 		// be trimmed here
-		sTarget = this._lastMessages[i].getTarget().trim("/");
+		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
 		
 		if (mAffectedTargets[sTarget]) {
 			// Message belongs to targets handled/requested by this request
