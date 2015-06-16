@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-    
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
     
     
@@ -42,9 +41,6 @@
 	      // There is no "sap.ui.setRoot()", as the MessageBar positions itself!
 	      //sap.ui.setRoot("message", msgBar);
 	      msgBar.setAnchorID("uiArea1");
-	      msgBar.setRelativeAnchorPosition("0 0"); // Allows for fine corrections if needed...
-	      
-	      
     }catch(err){
     	// This should allow us to recognize environment context errors!
     	alert(err);
@@ -52,9 +48,8 @@
   
     qutils.delayTestStart();
     module("MessageBar Control");
-    test("1. Initial Conditions", function() {
+    test("Initial Conditions", function() {
     	equals(msgBar.getAnchorID()              ,"uiArea1","AnchorID");
-    	equals(msgBar.getRelativeAnchorPosition(),"0 0"    ,"RelativeAnchorPosition");
     	equals(msgBar.getVisible()               ,true     ,"Visible");
     	equals(msgBar.getMaxToasted()            ,3        ,"MaxToasted");
     	equals(msgBar.getMaxListed()             ,7        ,"MaxListed");
@@ -68,7 +63,7 @@
     	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
     });
     
-    test("2. Messages added", function() {
+    test("Messages added", function() {
     	// Injecting Messages:
 		msgBar.addMessages(aMeliMelos);  
   		// Anchor and Bar should be visible, but not the List:
@@ -85,7 +80,7 @@
 	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
     }); 
 
-    test("3. Messages removed", function() {
+    test("Messages removed", function() {
     	// Removing the previous Messages:
 		msgBar.deleteMessages(aMeliMeloIdsB);
   		// The "uiArea1" anchor should be visible, but not the Bar nor the List:
@@ -97,13 +92,41 @@
 	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
     }); 
 	
+	test("Delete all messages", function () {
+		msgBar.addMessages(aMeliMelos);
+		ok(msgBar.aErrors.length > 0, "The errors should be greater than 0");
+		ok(msgBar.aWarnings.length > 0, "The warnings should be greater than 0");
+		ok(msgBar.aSuccesses.length > 0, "The successes should be greater than 0");
+
+		msgBar.deleteAllMessages();
+		equals(msgBar.aErrors.length, 0, "The errors should be 0");
+		equals(msgBar.aWarnings.length, 0, "The warnings should be 0");
+		equals(msgBar.aSuccesses.length, 0, "The successes should be 0");
+	});
+
+	test("Toggle the list", function () {
+		msgBar.toggleList();
+		ok(msgBar.oList instanceof sap.ui.commons.MessageList, "The list should be an instance of sap.ui.commons.MessageList");
+		ok(msgBar.$().hasClass("sapUiMsgBarOpen"));
+		msgBar.toggleList();
+		ok(!msgBar.$().hasClass("sapUiMsgBarOpen"));
+	});
+
+	test("Hide the MessageBar", function () {
+		msgBar.setVisible(false);
+		equals(msgBar.oPopup.isOpen(), false, "The popup should be closed");
+	});
+
+	test("Destroy the MessageBar", function () {
+		msgBar.destroy();
+		equals(msgBar.oPopup, null, "The Popup should be destroyed");
+		equals(msgBar.oToast, null, "The Toast should be destroyed");
+		equals(msgBar.oList, null, "The List should be destroyed");
+	});
 	</script>
   </head>
   <body>
-    <h1 id="qunit-header">qUnit Page for sap.ui.commons.MessageBar</h1>
-    <h2 id="qunit-banner"></h2>
-    <h2 id="qunit-userAgent"></h2>
-    <ol id="qunit-tests"></ol>
+    <div id="qunit"></div>
     <div id="qunit-fixture">test markup, will be hidden</div>
     <div id="uiArea1"></div>    
     <div id="uiArea2"></div>    
