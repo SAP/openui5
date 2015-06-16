@@ -387,8 +387,7 @@ sap.ui.define([
 
 						sap.m.URLHelper.redirect(href);
 					} else if (that.getTitleUrl()) {
-						var oWindow = window.open(that.getTitleUrl(), "_blank");
-						oWindow.focus();
+						window.open(that.getTitleUrl(), "_blank");
 					}
 				};
 			};
