@@ -423,6 +423,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
+		 * Re-renders the control when the theme is changed
+		 *
+		 * @param oEvent
+		 */
+		Dialog.prototype.onThemeChanged = function (oEvent) {
+			this.invalidate();
+		};
+
+		/**
 		 * @private
 		 */
 		Dialog.prototype._handleOpened = function () {
@@ -547,7 +556,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bWasOpen) {
 				this.fireClosed(this._oRect);
 			}
-			
+
 			this.oPopup = null;
 			this._sDelayedCall = null;
 			delete this._mParameters;
