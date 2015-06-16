@@ -89,12 +89,9 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 		if (!oControl) {
 
 			var oClass = this._getConfiguration()
-					&& this._getConfiguration().constraints === "IconOnly" ? OverflowToolbarButton : Button;
+				&& this._getConfiguration().constraints === "IconOnly" ? OverflowToolbarButton : Button;
 
-			var oNewInstance = new oClass({
-				id: this.getId() + "-button",
-				press: jQuery.proxy(this.firePress, this)
-			});
+			var oNewInstance = this._createInstance(oClass);
 
 			oNewInstance.applySettings(this._getConfiguration().getSettings());
 
@@ -106,6 +103,13 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 		return oControl;
 	};
 
+	SemanticButton.prototype._createInstance = function(oClass) {
+
+		return new oClass({
+				id: this.getId() + "-button",
+				press: jQuery.proxy(this.firePress, this)
+			});
+	};
 
 	return SemanticButton;
 }, /* bExport= */ true);

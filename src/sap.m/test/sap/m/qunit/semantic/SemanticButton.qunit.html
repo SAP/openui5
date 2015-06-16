@@ -32,6 +32,8 @@
 		jQuery.sap.require("sap.m.semantic.NegativeAction");
 		jQuery.sap.require("sap.m.semantic.CancelAction");
 		jQuery.sap.require("sap.m.semantic.FlagAction");
+		jQuery.sap.require("sap.m.semantic.MultiSelectAction");
+
 		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -262,6 +264,7 @@
 		testPropertyInitValue(sap.m.semantic.AddAction, "enabled", true);
 		testPropertyInitValue(sap.m.semantic.AddAction, "visible", true);
 		testPropertyInitValue(sap.m.semantic.FlagAction, "pressed", false);
+		testPropertyInitValue(sap.m.semantic.MultiSelectAction, "pressed", false);
 		testAggregationInitValue(sap.m.semantic.EditAction, "tooltip", null);
 
 
@@ -286,6 +289,9 @@
 
 		testDataBinding(sap.m.semantic.FlagAction, "pressed", true);
 		testDataBindingAfterUnbind(sap.m.semantic.FlagAction, "pressed", true, false);
+
+		testDataBinding(sap.m.semantic.MultiSelectAction, "pressed", true);
+		testDataBindingAfterUnbind(sap.m.semantic.MultiSelectAction, "pressed", true, false);
 
 		module("inaccessible properties");
 
@@ -345,7 +351,7 @@
 			fnErrorStub.restore();
 		});
 
-		test("FlagAction pressed is metadata", function() {
+		test("FlagAction pressed in metadata", function() {
 			//setup
 			var oFlagAction = new sap.m.semantic.FlagAction({
 				pressed: true
@@ -357,6 +363,8 @@
 			//cleanup
 			oFlagAction.destroy();
 		});
+
+		module("domRef available");
 
  		test("Popover can be opened by a semantic button", function() {
 
@@ -416,6 +424,128 @@
 			oSemanticPage.destroy();
 
 		});
+
+		module("multiSelectAction");
+
+		test("MultiSelectAction has correct default value", function() {
+
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction();
+
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMultiSelectAction.getPressed(), false, "multiselect off by default");
+			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect off by default");
+
+			// Clean up
+			oSemanticPage.destroy();
+		});
+
+		test("MultiSelectAction has correct value when pressed", function() {
+
+			var oSpy = this.spy();
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
+
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
+
+			// Assert
+			strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
+			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://sys-cancel", "multiselect icon correct after press");
+			strictEqual(oSpy.callCount, 1, "press was called once");
+
+			// Clean up
+			oSemanticPage.destroy();
+		});
+
+		test("MultiSelectAction has correct value when unpressed", function() {
+
+			var oSpy = this.spy();
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
+
+
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
+			jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
+
+			// Assert
+			strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
+			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect icon correct after unpress");
+			strictEqual(oSpy.callCount, 2, "press was called twice");
+
+			// Clean up
+			oSemanticPage.destroy();
+		});
+
+		test("MultiSelectAction has correct value after pressed with keydown", function() {
+
+			var oSpy = this.spy();
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
+
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+			// Assert
+			strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
+			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://sys-cancel", "multiselect icon correct after press");
+			strictEqual(oSpy.callCount, 1, "press was called once");
+
+			// Clean up
+			oSemanticPage.destroy();
+		});
+
+		test("MultiSelectAction has correct value when unpressed with keydown", function() {
+
+			var oSpy = this.spy();
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
+
+
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+			qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+			// Assert
+			strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
+			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect icon correct after unpress");
+			strictEqual(oSpy.callCount, 2, "press was called twice");
+
+			// Clean up
+			oSemanticPage.destroy();
+		});
+
 
 	</script>
 </head>
