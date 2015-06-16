@@ -15,6 +15,7 @@
 				"since": "1.0",
 				"samples": [
 					"sap.ui.table.sample.Basic",
+					"sap.ui.table.sample.Selection",
 					"sap.ui.table.sample.Sorting",
 					"sap.ui.table.sample.Menus"
 				]
@@ -25,6 +26,10 @@
 				"id": "sap.ui.table.sample.Basic",
 				"name": "Basic",
 				"description": "Basic example showing most controls which are intended to be used inside a table."
+			},{
+				"id": "sap.ui.table.sample.Selection",
+				"name": "Selection",
+				"description": "Selection example showing selection modes and selection behaviors of table."
 			},{
 				"id": "sap.ui.table.sample.Sorting",
 				"name": "Sorting",
