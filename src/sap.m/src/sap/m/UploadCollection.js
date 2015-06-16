@@ -1310,8 +1310,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (this.sErrorState !== "Error") {
 			oItem._status = "Edit";
 			this.editModeItem = oEvent.getSource().getId().split("-editButton")[0];
+			this.invalidate();
 		}
-		this.invalidate();
 	};
 
 	/**
@@ -1406,7 +1406,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					oContext.invalidate();
 				}
 			}
-		} else {
+		} else if (oEditbox !== null) {
 			// no new file name provided
 			oContext.aItems[iSourceLine]._status = "Edit";
 			oContext.aItems[iSourceLine].errorState = "Error";
