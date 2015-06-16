@@ -300,9 +300,9 @@ if (typeof window.sap.ui !== "object") {
 				var uaResult = userAgent.match(rVersion);
 				var sVersionStr = "";
 				if (uaResult[1] == "6") {
-					if (uaResult[1] == 1) {
+					if (uaResult[2] == 1) {
 						sVersionStr = "7";
-					} else if (uaResult[1] > 1) {
+					} else if (uaResult[2] > 1) {
 						sVersionStr = "8";
 					}
 				} else {
