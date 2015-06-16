@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException', './ParseException', './Type', './ValidateException'],
-	function(jQuery, DataType, FormatException, ParseException, Type, ValidateException) {
+sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', './Type', './ValidateException'],
+	function(DataType, FormatException, ParseException, Type, ValidateException) {
 	"use strict";
 
 
@@ -126,4 +126,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 
 	return SimpleType;
 
-}, /* bExport= */ true);
+});

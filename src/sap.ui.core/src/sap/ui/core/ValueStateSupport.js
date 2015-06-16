@@ -3,8 +3,8 @@
  */
 
 // Provides helper class ValueStateSupport
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './Element'],
+	function(jQuery, Element) {
 	"use strict";
 
 
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * @function
 		 */
 		ValueStateSupport.enrichTooltip = function(oElement, sTooltipText) {
-			jQuery.sap.assert(oElement instanceof sap.ui.core.Element, "oElement must be an Element");
+			jQuery.sap.assert(oElement instanceof Element, "oElement must be an Element");
 	
 			if (!sTooltipText && oElement.getTooltip()) {
 				return undefined; // this means there is no tooltip text configured, but a tooltip object like a RichTooltip

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'],
+	function(jQuery, Device, EventProvider) {
 	"use strict";
 
 	/*global ActiveXObject */
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @alias sap.ui.model.odata.ODataAnnotations
 	 * @extends sap.ui.base.Object
 	 */
-	var ODataAnnotations = sap.ui.base.EventProvider.extend("sap.ui.model.odata.ODataAnnotations", /** @lends sap.ui.model.odata.ODataAnnotations.prototype */
+	var ODataAnnotations = EventProvider.extend("sap.ui.model.odata.ODataAnnotations", /** @lends sap.ui.model.odata.ODataAnnotations.prototype */
 	{
 
 		constructor : function(aAnnotationURI, oMetadata, mParams) {
@@ -513,7 +513,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	ODataAnnotations.prototype.getXPath = function() {
 		var xPath = {};
 
-		if (sap.ui.Device.browser.internet_explorer) {// old IE
+		if (Device.browser.internet_explorer) {// old IE
 			xPath = {
 				setNameSpace : function(outNode) {
 					outNode.setProperty("SelectionNamespaces",
@@ -624,7 +624,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		mOptions = jQuery.extend({}, mDefaultOptions, mOptions);
 
 		var oXMLDoc = null;
-		if (sap.ui.Device.browser.internet_explorer) {
+		if (Device.browser.internet_explorer) {
 			// IE creates an XML Document, but we cannot use it since it does not support the
 			// evaluate-method. So we have to create a new document from the XML string every time.
 			// This also leads to using a difference XPath implementation @see getXPath
@@ -1294,7 +1294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 		}
 
-		sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+		EventProvider.prototype.destroy.apply(this, arguments);
 		if (this.oLoadEvent) {
 			jQuery.sap.clearDelayedCall(this.oLoadEvent);
 		}
@@ -1306,4 +1306,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return ODataAnnotations;
 
-}, /* bExport= */ true);
+});

@@ -893,4 +893,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 	return UIArea;
 
-}, /* bExport= */ true);
+});

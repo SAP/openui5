@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.HTMLView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/RenderManager', 'sap/ui/core/library', './View'],
-	function(jQuery, DeclarativeSupport1, RenderManager, library, View) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', './View'],
+	function(jQuery, ManagedObject, DeclarativeSupport, library, View) {
 	"use strict";
 
 
@@ -211,7 +211,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				var oProperties = that.getMetadata().getAllProperties();
 
 				if (oMetaElement) {
-					var DeclarativeSupport = DeclarativeSupport1;
 					jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
 						var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
 						var sValue = oAttr.value;
@@ -274,8 +273,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		HTMLView.prototype.onControllerConnected = function(oController) {
 			// unset any preprocessors (e.g. from an enclosing HTML view)
 			var that = this;
-			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
-				DeclarativeSupport1.compile(that._oTemplate, that);
+			ManagedObject.runWithPreprocessors(function() {
+				DeclarativeSupport.compile(that._oTemplate, that);
 			}, {
 				settings: this._fnSettingsPreprocessor
 			});
@@ -312,4 +311,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 
 	return HTMLView;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Core', 'sap/ui/core/Element', 'jquery.sap.strings'],
-	function(jQuery, DataType, EventProvider, Core, Element/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'jquery.sap.strings'],
+	function(jQuery, DataType, EventProvider, Element/* , jQuerySap */) {
 	"use strict";
 
 
@@ -536,4 +536,4 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 
 	return PropertyList;
 
-}, /* bExport= */ true);
+});

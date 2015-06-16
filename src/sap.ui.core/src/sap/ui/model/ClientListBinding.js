@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterProcessor', './SorterProcessor'],
-	function(jQuery, FilterType, ListBinding, FilterProcessor, SorterProcessor) {
+sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType', './ListBinding', './FilterProcessor', './Sorter', './SorterProcessor'],
+	function(jQuery, ChangeReason, Filter, FilterType, ListBinding, FilterProcessor, Sorter, SorterProcessor) {
 	"use strict";
 	
 	/**
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterPr
 			this.oContext = oContext;
 			if (this.isRelative()) {
 				this.update();
-				this._fireChange({reason: sap.ui.model.ChangeReason.Context});
+				this._fireChange({reason: ChangeReason.Context});
 			}
 		}
 	};
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterPr
 			this.updateIndices();
 			this.applyFilter();
 		} else {
-			if (aSorters instanceof sap.ui.model.Sorter) {
+			if (aSorters instanceof Sorter) {
 				aSorters = [aSorters];
 			}
 			this.aSorters = aSorters;
@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterPr
 		
 		this.bIgnoreSuspend = true;
 		
-		this._fireChange({reason: sap.ui.model.ChangeReason.Sort});
+		this._fireChange({reason: ChangeReason.Sort});
 		// TODO remove this if the sorter event gets removed which is deprecated
 		this._fireSort({sorter: aSorters});
 		this.bIgnoreSuspend = false;
@@ -173,7 +173,7 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterPr
 	 */
 	ClientListBinding.prototype.filter = function(aFilters, sFilterType){
 		this.updateIndices();
-		if (aFilters instanceof sap.ui.model.Filter) {
+		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
 		if (sFilterType == FilterType.Application) {
@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterPr
 		
 		this.bIgnoreSuspend = true;
 		
-		this._fireChange({reason: sap.ui.model.ChangeReason.Filter});
+		this._fireChange({reason: ChangeReason.Filter});
 		// TODO remove this if the filter event gets removed which is deprecated
 		if (sFilterType == FilterType.Application) {
 			this._fireFilter({filters: this.aApplicationFilters});
@@ -259,4 +259,4 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterPr
 
 	return ClientListBinding;
 
-}, /* bExport= */ true);
+});

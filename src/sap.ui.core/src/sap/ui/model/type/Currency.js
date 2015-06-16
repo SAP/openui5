@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/CompositeType'],
-	function(jQuery, NumberFormat, CompositeType) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/CompositeType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, NumberFormat, CompositeType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			aValues = this.oInputFormat.parse(vValue);
 		}
 		if (!jQuery.isArray(aValues)) {
-			throw new sap.ui.model.FormatException("Cannot format currency: " + vValue + " has the wrong format");
+			throw new FormatException("Cannot format currency: " + vValue + " has the wrong format");
 		}	
 		if (aValues[0] == undefined || aValues[0] == null) {
 			return null;
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "float":
 			case "any":
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format currency to " + sInternalType);
+				throw new FormatException("Don't know how to format currency to " + sInternalType);
 		}
 	};
 
@@ -77,13 +77,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				vResult = this.oOutputFormat.parse(vValue);
 				if (!jQuery.isArray(vResult)) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new sap.ui.model.ParseException(oBundle.getText("Currency.Invalid", [vValue]));
+					throw new ParseException(oBundle.getText("Currency.Invalid", [vValue]));
 				}
 				break;
 			case "int":
 			case "float":
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse Currency from " + sInternalType);
+				throw new ParseException("Don't know how to parse Currency from " + sInternalType);
 		}
 		if (this.oInputFormat) {
 			vResult = this.oInputFormat.format(vResult);
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
@@ -158,4 +158,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	return Currency;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/UnicodeNormalizer'],
-	function(jQuery, FilterOperator, UnicodeNormalizer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 'sap/ui/core/util/UnicodeNormalizer'],
+	function(jQuery, BaseObject, FilterOperator, UnicodeNormalizer) {
 	"use strict";
 
 
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/Unicod
 	 * @public
 	 * @alias sap.ui.model.Filter
 	 */
-	var Filter = sap.ui.base.Object.extend("sap.ui.model.Filter", /** @lends sap.ui.model.Filter.prototype */ {
+	var Filter = BaseObject.extend("sap.ui.model.Filter", /** @lends sap.ui.model.Filter.prototype */ {
 		constructor : function(sPath, sOperator, oValue1, oValue2){
 			//There are two different ways of specifying a filter
 			//If can be passed in only one object or defined with parameters
@@ -121,4 +121,4 @@ sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/Unicod
 
 	return Filter;
 
-}, /* bExport= */ true);
+});

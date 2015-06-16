@@ -3,8 +3,8 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', './ControlTree', './Highlighter', './LogViewer', './PropertyList'],
-	function(jQuery, ControlTree, Highlighter, LogViewer, PropertyList) {
+sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', './ControlTree', './LogViewer', './PropertyList'],
+	function(jQuery, ControlTree, LogViewer, PropertyList) {
 	"use strict";
 
 

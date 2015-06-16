@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.tmpl.TemplateControl.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', './DOMAttribute', './DOMElement'],
-	function(jQuery, Control, DeclarativeSupport, library, DOMAttribute, DOMElement) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', './DOMElement'],
+	function(jQuery, Control, DeclarativeSupport, library, DOMElement) {
 	"use strict";
 
 
@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * get notified when the model changes, ...
 	 */
 	TemplateControl.prototype.updateBindings = function(bUpdateAll, sModelName) {
-		sap.ui.base.ManagedObject.prototype.updateBindings.apply(this, arguments);
+		Control.prototype.updateBindings.apply(this, arguments);
 		// invalidate once the element is rendered 
 		if (this.getDomRef()) {
 			this.invalidate();
@@ -370,4 +370,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 
 	return TemplateControl;
 
-}, /* bExport= */ true);
+});

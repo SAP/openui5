@@ -302,4 +302,4 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

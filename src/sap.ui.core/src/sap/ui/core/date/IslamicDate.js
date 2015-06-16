@@ -649,4 +649,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		}
 
 		return IslamicDate;
-	}, /* bExport= */ true);
+	});

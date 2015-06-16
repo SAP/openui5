@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', './Date'],
-	function(jQuery, Date) {
+sap.ui.define(['./Date', 'sap/ui/core/format/DateFormat'],
+	function(Date, DateFormat) {
 	"use strict";
 
 
@@ -42,12 +42,12 @@ sap.ui.define(['jquery.sap.global', './Date'],
 	 * @private
 	 */
 	Time.prototype._createFormats = function() {
-		this.oOutputFormat = sap.ui.core.format.DateFormat.getTimeInstance(this.oFormatOptions);
+		this.oOutputFormat = DateFormat.getTimeInstance(this.oFormatOptions);
 		if (this.oFormatOptions.source) {
-			this.oInputFormat = sap.ui.core.format.DateFormat.getTimeInstance(this.oFormatOptions.source);
+			this.oInputFormat = DateFormat.getTimeInstance(this.oFormatOptions.source);
 		}
 	};
 
 	return Time;
 
-}, /* bExport= */ true);
+});

@@ -940,4 +940,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 	return Component;
 
-}, /* bExport= */ true);
+});

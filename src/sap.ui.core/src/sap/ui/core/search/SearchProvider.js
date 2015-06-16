@@ -55,4 +55,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'
 
 	return SearchProvider;
 
-}, /* bExport= */ true);
+});

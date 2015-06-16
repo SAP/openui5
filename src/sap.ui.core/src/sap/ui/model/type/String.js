@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType'],
-	function(jQuery, NumberFormat, SimpleType) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, SimpleType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -59,13 +59,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "int":
 				var iResult = parseInt(sValue, 10);
 				if (isNaN(iResult)) {
-					throw new sap.ui.model.FormatException(sValue + " is not a valid int value");
+					throw new FormatException(sValue + " is not a valid int value");
 				}
 				return iResult;
 			case "float":
 				var fResult = parseFloat(sValue);
 				if (isNaN(fResult)) {
-					throw new sap.ui.model.FormatException(sValue + " is not a valid float value");
+					throw new FormatException(sValue + " is not a valid float value");
 				}
 				return fResult;
 			case "boolean":
@@ -75,9 +75,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				if (sValue.toLowerCase() == "false" || sValue == "") {
 					return false;
 				}
-				throw new sap.ui.model.FormatException(sValue + " is not a valid boolean value");
+				throw new FormatException(sValue + " is not a valid boolean value");
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format String to " + sInternalType);
+				throw new FormatException("Don't know how to format String to " + sInternalType);
 		}
 	};
 
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "float":
 				return oValue.toString();
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse String from " + sInternalType);
+				throw new ParseException("Don't know how to parse String from " + sInternalType);
 		}
 	};
 
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
@@ -173,4 +173,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	return StringType;
 
-}, /* bExport= */ true);
+});

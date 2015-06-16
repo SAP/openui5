@@ -824,4 +824,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 
 	return Model;
 
-}, /* bExport= */ true);
+});

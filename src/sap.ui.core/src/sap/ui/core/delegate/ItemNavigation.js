@@ -1401,4 +1401,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return ItemNavigation;
 
-}, /* bExport= */ true);
+});

@@ -184,4 +184,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 
 	return JSONListBinding;
 
-}, /* bExport= */ true);
+});
