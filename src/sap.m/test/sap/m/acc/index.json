@@ -102,6 +102,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.MultiComboBox",
+			"url": "../MultiComboBox.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.ObjectAttribute",
 			"url": "../ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-SOF"
