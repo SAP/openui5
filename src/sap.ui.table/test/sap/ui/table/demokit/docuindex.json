@@ -15,7 +15,8 @@
 				"since": "1.0",
 				"samples": [
 					"sap.ui.table.sample.Basic",
-					"sap.ui.table.sample.Sorting"
+					"sap.ui.table.sample.Sorting",
+					"sap.ui.table.sample.Menus"
 				]
 			}
 		],
@@ -28,6 +29,10 @@
 				"id": "sap.ui.table.sample.Sorting",
 				"name": "Sorting",
 				"description": "Example showing the different kinds of sorting capabilities."
+			},{
+				"id": "sap.ui.table.sample.Menus",
+				"name": "Table related Menus",
+				"description": "Example which focuses the handling of the table related Menus."
 			}
 		]
 	}
