@@ -50,7 +50,7 @@
 							<Button text="High Contrast Black" id="VSDsap_hcb" />
 							<Button text="Blue Crystal" id="VSDsap_bluecrystal" />
 						</SegmentedButton>
-						<Label text="Compact Form Factor" design="Bold" />
+						<Label text="Compact Content Density" design="Bold" />
 						<SegmentedButton
 								class="vsdSetting"
 								selectedButton="VSDcompactOn"

@@ -39,12 +39,12 @@ sap.ui.define(['jquery.sap.global'],
 				"Data Binding",
 				"Map"
 			];
-			var afilterProps = [ "namespace", "since", "category"]; // form factors are set manually
+			var afilterProps = [ "namespace", "since", "category"]; // content density are set manually
 			var oFilterSets = {
 				namespace : {},
 				since : {},
 				category : {},
-				formFactors : { // form factors are set manually
+				formFactors : { // content density are set manually
 					"Independent" : true,
 					"Condensed" : true,
 					"Compact" : true,
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global'],
 						return;
 					}
 
-					// convert form factors
+					// convert content density
 					if (!oEnt.formFactors)  {
 						jQuery.sap.log.error("explored: cannot register entity '" + oEnt.id + "'. missing 'formFactors'");
 						return;
