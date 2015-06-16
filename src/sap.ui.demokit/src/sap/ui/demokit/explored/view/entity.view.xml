@@ -47,7 +47,7 @@
 					</customData>
 				</ObjectAttribute>
 				<ObjectAttribute
-					title="Form Factors"
+					title="Content Density"
 					text="{entity>formFactors}" />
 				<ObjectAttribute
 					title="Category"

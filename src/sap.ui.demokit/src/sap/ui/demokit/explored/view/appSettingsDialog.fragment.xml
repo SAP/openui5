@@ -29,7 +29,7 @@
 						</layoutData>
 					</Select>
 
-					<Label id="CompactModeLabel" text="Compact Form Factor:" design="Standard">
+					<Label id="CompactModeLabel" text="Compact Content Density:" design="Standard">
 						<layoutData>
 							<l:GridData span="L8 M8 S8"/>
 						</layoutData>
