@@ -55,7 +55,7 @@ sap.ui.define([
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataMetaModel</code>,
-	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel} instead!
+	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel getMetaModel} instead!
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 *   the OData model's meta data object
@@ -65,8 +65,8 @@ sap.ui.define([
 	 *   the private interface object of the OData model which provides friend access to
 	 *   selected methods
 	 * @param {function} [oODataModelInterface.addAnnotationUrl]
-	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl} method of the OData model,
-	 *   in case this feature is supported
+	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl addAnnotationUrl} method
+	 *   of the OData model, in case this feature is supported
 	 * @param {Promise} [oODataModelInterface.annotationsLoadedPromise]
 	 *   a promise which is resolved by the OData model once meta data and annotations have been
 	 *   fully loaded
