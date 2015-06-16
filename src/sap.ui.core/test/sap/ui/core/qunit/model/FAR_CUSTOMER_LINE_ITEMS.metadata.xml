@@ -20,12 +20,17 @@
 				<Property Name="GeneratedID" Type="Edm.String" Nullable="false" sap:aggregation-role="dimension" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
 				<!-- property with sap:value-list but no value list provided in separate load -->
 				<Property Name="Invalid" Type="Edm.String" sap:value-list="standard"/>
+				<!-- property with ComplexType having a sap:value-list annotated property -->
+				<Property Name="Complex" Type="FAR_CUSTOMER_LINE_ITEMS.MyComplexType"/>
 			</EntityType>
 			<EntityType Name="Foo">
 				<!-- property with sap:value-list but no value list provided in separate load -->
 				<Property Name="Invalid" Type="Edm.String" sap:value-list="standard"/>
 			</EntityType>
-		<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+			<ComplexType Name="MyComplexType">
+				<Property Name="Customer" Type="Edm.String" sap:value-list="standard"/>
+			</ComplexType>
+			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
 				<EntitySet Name="Items" EntityType="FAR_CUSTOMER_LINE_ITEMS.Item" sap:label="Item" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
 				<EntitySet Name="Foos" EntityType="FAR_CUSTOMER_LINE_ITEMS.Foo"/>
 			</EntityContainer>
