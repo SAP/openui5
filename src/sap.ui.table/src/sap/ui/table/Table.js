@@ -1002,6 +1002,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		//       this API is used to update the rows afterwards
 		//if (iRowIndex !== this.getFirstVisibleRow()) {
 			// update the property
+
 			this.setProperty("firstVisibleRow", iRowIndex, true);
 			// update the bindings:
 			//  - prevent the rerendering
@@ -1011,7 +1012,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 
 			this._updateAriaRowOfRowsText(true);
-		//}
+
+		if (bOnScroll && !this._$AriaLiveDomRef && this._bAccMode) {
+			if (this._ariaLiveTimer) {
+				jQuery.sap.clearDelayedCall(this._ariaLiveTimer);
+			}
+
+			var fnSetAriaLive = function() {
+				this._$AriaLiveDomRef = jQuery(this._oItemNavigation.getFocusedDomRef()).attr("aria-live", "rude");
+				var oTable = this;
+				var fnRemoveAriaLive = function () {
+					if (oTable._$AriaLiveDomRef) {
+						oTable._$AriaLiveDomRef.removeAttr("aria-live");
+						delete oTable._$AriaLiveDomRef;
+					}
+				};
+				jQuery.sap.delayedCall(0, this, fnRemoveAriaLive);
+				delete this._ariaLiveTimer;
+			};
+
+			this._ariaLiveTimer = jQuery.sap.delayedCall(60, this, fnSetAriaLive);
+		}
+
 		return this;
 	};
 
