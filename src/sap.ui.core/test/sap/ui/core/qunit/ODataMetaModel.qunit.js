@@ -623,6 +623,51 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("compatibility with asynchronous old ODataModel: use after load", function (assert) {
+		var iCount = 0,
+			fnDone = assert.async(),
+			oModel = new ODataModel("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel;
+
+		function loaded() {
+			iCount += 1;
+			if (iCount === 2) {
+				// ...then get meta model and use immediately
+				oMetaModel = oModel.getMetaModel();
+
+				try {
+					strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+						"GWSAMPLE_BASIC", "meta data available");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+							+ "sap:label"),
+						"Bus. Part. ID", "SAPData is lifted");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+							+ "com.sap.vocabularies.Common.v1.Label/String"),
+						"Bus. Part. ID", "v2 --> v4");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
+							+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
+						"Business Partner", "v4 annotations available");
+				} catch (ex) {
+					ok(false, ex);
+				}
+
+				fnDone();
+			}
+		}
+
+		// wait for metadata and annotations to be loaded (but not via oMetaModel.loaded())...
+		oModel.attachAnnotationsLoaded(loaded);
+		oModel.attachMetadataLoaded(loaded);
+	});
+
+	//*********************************************************************************************
 	test("functions using 'this.oModel' directly", function () {
 		var oModel = new ODataModel2("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
