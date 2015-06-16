@@ -407,6 +407,8 @@ sap.ui.require([
 	</edmx:DataServices>\
 </edmx:Edmx>\
 		',
+		sFARMetadataMyComplexType_Customer = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml", "", null),
 		sGWAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
 		sGWMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
 		sMultipleValueListAnnotations = '\
@@ -479,6 +481,8 @@ sap.ui.require([
 				[200, mHeaders, sFARMetadataInvalid], // no annotations at all
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Foo%2FInvalid" :
 				[200, mHeaders, sFARMetadataCompanyCode], // annotations for a different type
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer" :
+				[200, mHeaders, sFARMetadataMyComplexType_Customer],
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
 			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sGWAnnotations]
 		},
@@ -2074,7 +2078,6 @@ sap.ui.require([
 					}]
 				},
 				oInterface = oMetaModel.oODataModelInterface,
-				oProperty = oMetaModel.getODataProperty(oEntityType, "Customer"),
 				oPromise;
 
 			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
@@ -2351,7 +2354,34 @@ sap.ui.require([
 		});
 	});
 
-	//TODO is getODataValueLists also supported for properties of complex types?
+	//*********************************************************************************************
+	test("getODataValueLists: ValueList on ComplexType", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Complex/Customer"),
+				oInterface = oMetaModel.oODataModelInterface;
+
+			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				deepEqual(mValueLists, {
+					"" : {
+						"CollectionPath" : {"String":"VL_SH_DEBIA"},
+						"Parameters" :[{
+							"LocalDataProperty" : {"PropertyPath":"Customer"},
+							"ValueListProperty" : {"String":"KUNNR"},
+							"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+						}]
+					}
+				});
+
+				ok(oInterface.addAnnotationUrl.calledWithExactly(
+					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer"),
+					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+			});
+		});
+	});
+
+	//TODO support getODataValueLists with reference to complex type property via entity type
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?
 
 	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path
