@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ListItemBase.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon'],
+	function(jQuery, library, Control, IconPool, Icon) {
 	"use strict";
 
 
@@ -100,6 +100,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			detailPress : {}
 		}
 	}});
+	
+	// icon URI configuration
+	ListItemBase.prototype.DetailIconURI = IconPool.getIconURI("edit");
+	ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI("sys-cancel");
+	ListItemBase.prototype.NavigationIconURI = IconPool.getIconURI("slim-arrow-right");
 	
 	// internal active state of the listitem
 	ListItemBase.prototype.init = function() {
@@ -210,9 +215,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return this._oDeleteControl;
 		}
 
-		this._oDeleteControl = new sap.ui.core.Icon({
-			id : this.getId() + "-imgDel",
-			src : sap.ui.core.IconPool.getIconURI("sys-cancel")
+		this._oDeleteControl = new Icon({
+			id: this.getId() + "-imgDel",
+			src: this.DeleteIconURI
 		}).setParent(this, null, true).addStyleClass("sapMLIBIconDel").attachPress(function(oEvent) {
 			this.informList("Delete");
 		}, this);
@@ -231,9 +236,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return this._oDetailControl;
 		}
 
-		this._oDetailControl = new sap.ui.core.Icon({
-			id : this.getId() + "-imgDet",
-			src : sap.ui.core.IconPool.getIconURI("edit")
+		this._oDetailControl = new Icon({
+			id: this.getId() + "-imgDet",
+			src: this.DetailIconURI
 		}).setParent(this, null, true).addStyleClass("sapMLIBType sapMLIBIconDet").attachPress(function() {
 			this.fireDetailTap();
 			this.fireDetailPress();
@@ -253,9 +258,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return this._oNavigationControl;
 		}
 
-		this._oNavigationControl = new sap.ui.core.Icon({
-			id : this.getId() + "-imgNav",
-			src : sap.ui.core.IconPool.getIconURI("slim-arrow-right")
+		this._oNavigationControl = new Icon({
+			id: this.getId() + "-imgNav",
+			src: this.NavigationIconURI
 		}).setParent(this, null, true).addStyleClass("sapMLIBType sapMLIBImgNav");
 		
 		return this._oNavigationControl;
@@ -269,7 +274,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ListItemBase.prototype.getSingleSelectControl = function() {
 		if (this._oSingleSelectControl) {
-			this._oSingleSelectControl.setSelected(this.getSelected());
 			return this._oSingleSelectControl;
 		}
 
@@ -295,7 +299,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ListItemBase.prototype.getMultiSelectControl = function() {
 		if (this._oMultiSelectControl) {
-			this._oMultiSelectControl.setSelected(this.getSelected());
 			return this._oMultiSelectControl;
 		}
 
@@ -318,7 +321,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @returns {sap.ui.core.Control}
 	 * @private
 	 */
-	ListItemBase.prototype.getModeControl = function() {
+	ListItemBase.prototype.getModeControl = function(bUpdate) {
 		var sMode = this.getMode(),
 			mListMode = sap.m.ListMode;
 			
@@ -330,11 +333,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return this.getDeleteControl();
 		}
 		
+		var oSelectionControl = null;
 		if (sMode == mListMode.MultiSelect) {
-			return this.getMultiSelectControl();
+			oSelectionControl = this.getMultiSelectControl();
+		} else {
+			oSelectionControl = this.getSingleSelectControl();
 		}
 		
-		return this.getSingleSelectControl();
+		if (oSelectionControl && bUpdate) {
+			oSelectionControl.setSelected(this.getSelected());
+		}
+		
+		return oSelectionControl;
 	};
 
 	/**
@@ -366,7 +376,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		aControls.forEach(function(sControl) {
 			sControl = "_o" + sControl + "Control";
 			if (this[sControl]) {
-				this[sControl].destroy();
+				this[sControl].destroy(true);
 				this[sControl] = null;
 			}
 		}, this);
