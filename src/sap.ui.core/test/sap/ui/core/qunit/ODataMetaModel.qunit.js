@@ -690,6 +690,24 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("compatibility with old ODataModel: no separate loading of value lists", function () {
+		var oModel = new ODataModel("/FAR_CUSTOMER_LINE_ITEMS", {
+				json : true,
+				loadMetadataAsync : false
+			}),
+			oMetaModel = oModel.getMetaModel(),
+			oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
+
+		return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+			deepEqual(mValueLists, {}, "no value lists");
+
+			// check robustness: no error even if interface is missing
+			oMetaModel = new ODataMetaModel(oMetaModel.oMetadata);
+			return oMetaModel.getODataValueLists(oContext);
+		});
+	});
+
+	//*********************************************************************************************
 	test("functions using 'this.oModel' directly", function () {
 		var oModel = new ODataModel2("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
@@ -742,8 +760,6 @@ sap.ui.require([
 	test("basics", function () {
 		var oMetaModel = new ODataMetaModel({
 				getServiceMetadata : function () { return {dataServices : {}}; }
-			}, null, {
-				annotationsLoadedPromise : Promise.resolve()
 			});
 
 		return oMetaModel.loaded().then(function () {

@@ -59,9 +59,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 *   the OData model's meta data object
-	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
+	 * @param {sap.ui.model.odata.ODataAnnotations} [oAnnotations]
 	 *   the OData model's annotations object
-	 * @param {object} oODataModelInterface
+	 * @param {object} [oODataModelInterface]
 	 *   the private interface object of the OData model which provides friend access to
 	 *   selected methods
 	 * @param {function} [oODataModelInterface.addAnnotationUrl]
@@ -185,24 +185,25 @@ sap.ui.define([
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
 				}
 
+				oODataModelInterface = oODataModelInterface || {};
+
 				MetaModel.apply(this); // no arguments to pass!
+				this.oModel = null; // not yet available!
+
 				// map path of property to promise for loading its value list
 				this.mContext2Promise = {};
-				this.oODataModelInterface = oODataModelInterface;
 				this.sDefaultBindingMode = BindingMode.OneTime;
-				this.oMetadata = oMetadata;
-				// map qualified property name to internal "promise interface" for request bundling
-				this.mQName2PendingRequest = {};
-				this.mSupportedBindingModes = {"OneTime" : true};
-				this.oModel = null; // not yet available!
-				this.oODataModelInterface = oODataModelInterface;
-				// map path of property to promise for loading its value help
-				this.mContext2Promise = {};
-				this.oLoadedPromise = oODataModelInterface.annotationsLoadedPromise
+				this.oLoadedPromise
+					= oODataModelInterface.annotationsLoadedPromise
 					? oODataModelInterface.annotationsLoadedPromise.then(load)
 					: Promise.resolve(load()); // call load() synchronously!
-				this.oResolver = undefined;
+				this.oMetadata = oMetadata;
+				this.oODataModelInterface = oODataModelInterface;
 				this.mQueryCache = {};
+				// map qualified property name to internal "promise interface" for request bundling
+				this.mQName2PendingRequest = {};
+				this.oResolver = undefined;
+				this.mSupportedBindingModes = {"OneTime" : true};
 			},
 
 			metadata : {
@@ -819,7 +820,8 @@ sap.ui.define([
 				sQualifiedTypeName,
 				mValueLists = Utils.getValueLists(oProperty);
 
-			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]) {
+			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]
+				&& that.oODataModelInterface.addAnnotationUrl) {
 				// property with value list which is not yet loaded
 				bCachePromise = true;
 				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
