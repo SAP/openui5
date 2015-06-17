@@ -628,6 +628,60 @@
 				oNavContainer.destroy();
 				oSplitContainer.destroy();
 			});
+
+			test("Switch between different modes", function() {
+				var oSplitContainer = new sap.m.SplitContainer({
+						masterPages: new sap.m.Page(),
+						detailPages: new sap.m.Page()
+					}),
+					oSystem = {
+						desktop: true,
+						tablet: false,
+						phone: false
+					},
+					oLandscape = {
+						landscape: true,
+						portrait: false
+					},
+					oPortrait = {
+						landscape: false,
+						portrait: true
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oLandscape);
+
+				equal(oSplitContainer.getMode(), sap.m.SplitAppMode.ShowHideMode, "The default mode is showhide mode");
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+				ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
+
+				oSplitContainer.setMode(sap.m.SplitAppMode.HideMode);
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+				ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
+
+				qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+				oSplitContainer._handleResize();
+
+				oSplitContainer.showMaster();
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+
+				oSplitContainer.setMode(sap.m.SplitAppMode.ShowHideMode);
+				qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+
+				oSplitContainer.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
