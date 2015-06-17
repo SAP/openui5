@@ -235,6 +235,16 @@
 			"control": "sap.m.Toolbar",
 			"url": "../Toolbar.html",
 			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.UploadCollection",
+			"url": "../UploadCollection.html",
+			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.UploadCollectionForPendingUpload",
+			"url": "../UploadCollectionForPendingUpload.html",
+			"appComponent": "CA-UI5-BS-FCW"
 		}
 	]
 }
