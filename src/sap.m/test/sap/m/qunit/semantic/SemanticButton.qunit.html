@@ -301,26 +301,27 @@
 					oRejectButton = new sap.m.semantic.NegativeAction(""),
 					testIcon = 'sap-icon://settings';
 
-			var fnErrorStub = this.stub(jQuery.sap.log, "error");
+			var iNumExceptions = 0;
 
 			// Act
-			oRejectButton.setProperty("icon", testIcon);
-
-			// Assert
-			equal(oRejectButton.getProperty("icon"), "", "the reject button icon value is correctly not modified");
+			try {
+				oRejectButton.setProperty("icon", testIcon);
+			} catch(e) {
+				iNumExceptions++;
+			}
 
 			// Act
-			oEditButton.setProperty("icon", testIcon);
+			try {
+				oEditButton.setProperty("icon", testIcon);
+			} catch(e) {
+				iNumExceptions++;
+			}
 
-			// Assert
-			equal(oEditButton.getProperty("icon"), "", "the edit button icon value is correctly not modified");
-
-			ok(fnErrorStub.calledTwice, "Two errors are generated, because the property icon does not exist");
+			ok(iNumExceptions === 2, "Two errors are generated, because the property icon does not exist");
 
 			// Clean up
 			oRejectButton.destroy();
 			oEditButton.destroy();
-			fnErrorStub.restore();
 		});
 
 		test("Semantic buttons should not allow setting text value to them", function () {
@@ -329,26 +330,27 @@
 					oCancelAction = new sap.m.semantic.CancelAction(),
 					testText = 'Test';
 
-			var fnErrorStub = this.stub(jQuery.sap.log, "error");
+			var iNumExceptions = 0;
 
 			// Act
-			oCancelAction.setProperty("text", testText);
-
-			// Assert
-			equal(oCancelAction.getProperty("text"), oBundle.getText("SEMANTIC_CONTROL_CANCEL"), "the reject button text value is not overwritten");
+			try {
+				oCancelAction.setProperty("text", testText);
+			} catch(e) {
+				iNumExceptions++;
+			}
 
 			// Act
-			oEditButton.setProperty("text", testText);
+			try {
+				oEditButton.setProperty("text", testText);
+			} catch(e) {
+				iNumExceptions++;
+			}
 
-			// Assert
-			equal(oEditButton.getProperty("text"), oBundle.getText("SEMANTIC_CONTROL_EDIT"), "the edit button text value is not overwritten");
-
-			ok(fnErrorStub.calledTwice, "Two errors are generated, because the property text does not exist");
+			ok(iNumExceptions === 2, "Two errors are generated, because the property text does not exist");
 
 			// Clean up
 			oCancelAction.destroy();
 			oEditButton.destroy();
-			fnErrorStub.restore();
 		});
 
 		test("FlagAction pressed in metadata", function() {
