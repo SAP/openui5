@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=Item/CompanyCode,Item/Customer -->
+<!-- /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode,FAR_CUSTOMER_LINE_ITEMS.Item/Customer -->
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
@@ -16,7 +16,7 @@
 				<Property Name="BUKRS" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:text="BUTXT" sap:label="Company Code"/>
 				<Property Name="BUTXT" Type="Edm.String" MaxLength="25" sap:label="Company Name"/>
 				<Property Name="ORT01" Type="Edm.String" MaxLength="25" sap:label="City"/>
-				<Property Name="WAERS" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency" sap:semantics="currency-code"/>
+				<Property Name="WAERS" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency" sap:value-list="standard" sap:semantics="currency-code"/>
 			</EntityType>
 			<EntityType Name="VL_SH_DEBIA" sap:value-list="true" sap:content-version="1">
 				<Key>
@@ -28,7 +28,7 @@
 				</Key>
 				<Property Name="BEGRU" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Authorization" sap:filterable="false"/>
 				<Property Name="SORTL" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term"/>
-				<Property Name="LAND1" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country"/>
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country" sap:value-list="standard"/>
 				<Property Name="PSTLZ" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code"/>
 				<Property Name="MCOD3" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="City"/>
 				<Property Name="MCOD1" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name"/>

@@ -31,8 +31,8 @@ sap.ui.define([
 
 			if (oUriParameters.get("realOData") !== "true") {
 				oMockServer = new MockServer({rootUri : sServiceUri});
-				//TODO "metadata.xml" vs. "metadata_none.xml" depending on "sap-value-list"?
-				oMockServer.simulate(sMockServerBaseUri + "metadata.xml", {
+				oMockServer.simulate(sMockServerBaseUri + (sValueList === "none" ?
+						"metadata_none.xml" : "metadata.xml"), {
 					sMockdataBaseUrl : sMockServerBaseUri,
 					bGenerateMissingMockData : false
 				});
@@ -44,6 +44,7 @@ sap.ui.define([
 					}
 				});
 				oMockServer.start();
+
 				// yet another mock server to handle value list requests
 				new MockServer({
 					requests : [{ // mock server responses for value list requests
@@ -53,19 +54,74 @@ sap.ui.define([
 						valueList : "FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode"
 							+ ",FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer",
 						response : "metadata_ItemCompanyCode_ItemCustomer.xml"
+					}, {
+						valueList : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA%2FLAND1",
+						response : "metadata_VL_SH_DEBIALAND1.xml"
+					}, {
+						valueList : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001%2FWAERS",
+						response : "metadata_VL_SH_H_T001WAERS.xml"
 					}].map(function (oMockData) {
 						return {
 							method : "GET",
-							//TODO have MockServer fixed and pass just the URL!
-							path : new RegExp(MockServer.prototype
+							//TODO: have MockServer fixed and pass just the URL!
+							path :  new RegExp(MockServer.prototype
 								._escapeStringForRegExp(sServiceUri + "$metadata?sap-value-list="
 									+ oMockData.valueList)),
 							response : function (oXHR) {
+								jQuery.sap.log.debug("Mocked response sent:" + oXHR.url, null,
+									"sap.ui.core.sample.ViewTemplate.valuelist.Component");
 								oXHR.respondFile(200, {}, sMockServerBaseUri + oMockData.response);
 							}
 						};
 					})
 				}).start();
+				if (sValueList === "none") {
+					// yet another mock server to handle value list data requests
+					new MockServer({
+						requests : [{
+							param : "VL_SH_H_T001/$count",
+						}, {
+							param : "VL_SH_H_T001?$skip=0&$top=100",
+							response : "VL_SH_H_T001.json"
+						}, {
+							param : "VL_SH_DEBIA/$count",
+						}, {
+							param : "VL_SH_DEBIA?$skip=0&$top=100",
+							response : "VL_SH_DEBIA.json"
+						}, {
+							param : "VL_SH_DEBID/$count",
+						}, {
+							param : "VL_SH_DEBID?$skip=0&$top=100",
+							response : "VL_SH_DEBID.json"
+						}, {
+							param : "VL_CT_TCURC/$count",
+						}, {
+							param : "VL_CT_TCURC?$skip=0&$top=100",
+							response : "VL_CT_TCURC.json"
+						}, {
+							param : "VL_SH_FARP_T005/$count",
+						}, {
+							param : "VL_SH_FARP_T005?$skip=0&$top=100",
+							response : "VL_SH_FARP_T005.json"
+						}].map(function (oMockData) {
+							return {
+								method : "GET",
+								path : new RegExp(MockServer.prototype
+									._escapeStringForRegExp(sServiceUri + oMockData.param)),
+								response : function (oXHR) {
+									jQuery.sap.log.debug("Mocked response sent:" + oXHR.url, null,
+										"sap.ui.core.sample.ViewTemplate.valuelist.Component");
+									if  (oMockData.response){
+										oXHR.respondFile(200, {}, sMockServerBaseUri +
+											oMockData.response);
+									} else {
+										oXHR.respond(204, {}, "100");
+									}
+								}
+							};
+						})
+					}).start();
+				}
 			} else {
 				if (sClient) {
 					sServiceUri += "?sap-client=" + sClient;
