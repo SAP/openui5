@@ -14,7 +14,8 @@
 				"category": "List",
 				"since": "1.0",
 				"samples": [
-					"sap.ui.table.sample.Basic"
+					"sap.ui.table.sample.Basic",
+					"sap.ui.table.sample.Sorting"
 				]
 			}
 		],
@@ -22,7 +23,11 @@
 			{
 				"id": "sap.ui.table.sample.Basic",
 				"name": "Basic",
-				"description": "Basic example showing nearly all controls which are intended to be used inside a table."
+				"description": "Basic example showing most controls which are intended to be used inside a table."
+			},{
+				"id": "sap.ui.table.sample.Sorting",
+				"name": "Sorting",
+				"description": "Example showing the different kinds of sorting capabilities."
 			}
 		]
 	}

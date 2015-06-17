@@ -2,8 +2,9 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Popover",
 	"sap/m/List",
-	"sap/m/FeedListItem"
-], function (JSONModel, Popover, List, FeedListItem) {
+	"sap/m/FeedListItem",
+	"sap/ui/core/format/DateFormat"
+], function (JSONModel, Popover, List, FeedListItem, DateFormat) {
 	"use strict";
 	
 	var Utils = {};
@@ -11,6 +12,8 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	// Access explored demo data, enrich it and return a JSONModel containing the data
 	Utils.initSampleDataModel = function() {
 		var oModel = new JSONModel();
+		
+		var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 		
 		jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
 			dataType: "json",
@@ -29,7 +32,8 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 						aTemp2.push(oProduct.Category);
 						aCategoryData.push({Name: oProduct.Category});
 					}
-					oProduct.DeliveryDate = (new Date()).getTime();
+					oProduct.DeliveryDate = (new Date()).getTime() - (i%10 * 4 * 24 * 60 * 60 * 1000);
+					oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
 					oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 					oProduct.Available = oProduct.Status == "Available" ? true : false;
 				}
@@ -55,7 +59,18 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		return bAvailable ? "sap-icon://message-success" : "sap-icon://error";
 	};
 	
-	Utils.showInfo = function(aItems, oBy){
+	Utils.showInfo = function(aItems, oBy) {
+		if (typeof(aItems) == "string") {
+			jQuery.ajax(aItems, {
+				dataType: "json",
+				sync: true,
+				success: function (oData) {
+					Utils.showInfo(oData, oBy);
+				}
+			});
+			return;
+		}
+		
 		var oPopover = new Popover({
 			showHeader: false,
 			placement: "Auto",
