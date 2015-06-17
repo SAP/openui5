@@ -30,7 +30,8 @@
 				"fileSize" : 20,
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-07-30",
-				"url" : ""
+				"url" : "",
+				"ariaLabelForPicture" : "textForIconOfItemSusanBaker"
 			},{
 				"contributor" : "John Smith",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
@@ -63,7 +64,8 @@
 				"mimeType" : "image/png",
 				"thumbnailUrl" : "../images/Woman_04.png",
 				"uploadedDate" : "2014-07-25",
-				"url" : "/pathToTheFile/Woman_04.png"
+				"url" : "/pathToTheFile/Woman_04.png",
+				"ariaLabelForPicture" : "textForImageOfItemKateBrown",
 			}]
 		};
 
@@ -77,7 +79,8 @@
 		mimeType : "{mimeType}",
 		thumbnailUrl : "{thumbnailUrl}",
 		uploadedDate : "{uploadedDate}",
-		url : "{url}"
+		url : "{url}",
+		ariaLabelForPicture : "{ariaLabelForPicture}"
 	});
 
 	var oModel = new sap.ui.model.json.JSONModel(oData);
@@ -857,6 +860,45 @@
 		this.oUploadCollection._fillList.restore();
 	});
 
+	QUnit.module("Screen Reader Support", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+
+	QUnit.test("Icon", function(assert) {
+		var oIcon = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		var $Icon = jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		assert.strictEqual(oIcon.getAlt(), "textForIconOfItemSusanBaker", "The icon has correct alt text");
+		assert.strictEqual($Icon.getAttribute("aria-label"), "textForIconOfItemSusanBaker", "The DOM object icon has correct tooltip");
+	});
+
+	QUnit.test("Image", function(assert) {
+		var oImage = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+		var $Image = jQuery.sap.domById(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+		assert.strictEqual(oImage.getAlt(), "textForImageOfItemKateBrown", "The image has correct alt text");
+		assert.strictEqual($Image.getAttribute("aria-label"), "textForImageOfItemKateBrown", "The DOM object image has correct tooltip");
+	});
+
+	QUnit.test("Edit Button", function(assert) {
+		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		assert.strictEqual(oEditButton.getTooltip(), "Edit", "The edit button has correct tooltip");
+	});
+
+	QUnit.test("Delete Button", function(assert) {
+		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		assert.strictEqual(oDeleteButton.getTooltip(), "Delete", "The delete button has correct tooltip");
+	});
 </script>
 
 </head>
