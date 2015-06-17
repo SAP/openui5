@@ -21,7 +21,7 @@
 }
 
 .sapMCbBg { /* check box itself */
-	background-color: @sapUiLightestBG;
+	background-color: @sapUiFieldBackground;
 	position: absolute;
 	left: 0.8125rem;
 	top: 0.8125rem;
@@ -32,7 +32,7 @@
 
 	text-align: center;
 
-	border: solid 0.125rem @sapUiCheckBoxUncheckedColor;
+	border: solid 0.125rem @sapUiFieldBorderColor;
 
 	// note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
 	// but does support the long-hand properties for each corner like "border-top-left-radius"
@@ -50,7 +50,7 @@
 .sapMCbBg.sapMCbMarkChecked:before {
 	content: "\e05b";
 	font-family: "SAP-icons";
-	color: @sapUiCheckBoxCheckedColor;
+	color: @sapUiSelected;
 }
 
 .sapMCbBg > input{
@@ -74,7 +74,7 @@
 
 .sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
 .sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus, { /* in IE clicking on checkbox input does not cause focus on checkbox wrapper div */
-	outline-color: @sapUiCheckBoxFocusColor;
+	outline-color: @sapUiFocus;
 	outline-width: 1px;
 	outline-style: dotted;
 }
@@ -87,15 +87,15 @@
 }
 
 .sapMLIBActive .sapMCbBg{
-	background-color: @sapUiLIActive;
+	background-color: @sapUiSelected;
 }
 
 .sapMCbHoverable:hover{
-	border-color: @sapUiCheckBoxCheckedColor;
+	border-color: @sapUiSelected;
 }
 
 .sapMCbBgDis {
-	opacity: 0.5;
+	opacity: @sapUiContentDisabledOpacity;
 }
 
 .sapMLIBActive .sapMActive .sapMCbBg.sapMCbActiveStateOff.sapMCbMarkChecked:before,
@@ -104,18 +104,18 @@
 .sapMLIBActive .sapMActive .sapMCbBg.sapMCbMarkChecked:before,
 .sapMLIBActive .sapMCbBg:active.sapMCbMarkChecked:before,
 .sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before{
-	color: @sapUiLITextInverted;
+	color: @sapUiTextInverted;
 }
 
 .sapMActive .sapMCbBg.sapMCbActiveStateOff.sapMCbMarkChecked:before,
 .sapMCbBg:active.sapMCbActiveStateOff.sapMCbMarkChecked:before,
 .sapMActive .sapMCbBg.sapMCbMarkChecked:before,
 .sapMCbBg:active.sapMCbMarkChecked:before {
-	color: @sapUiCheckBoxCheckedColor;
+	color: @sapUiSelected;
 }
 
 .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before {
-	color: fade(@sapUiCheckBoxCheckedColor, 25);
+	color: fade(@sapUiSelected, 25);
 }
 
 /* this needed for ie9 in multi select list */
@@ -125,8 +125,8 @@
 
 /* Read only */
 .sapMCbRo .sapMCbBg {
-	background-color: @sapBackgroundColor;
-	border-color: @sapUiDarkBorder;
+	background-color: @sapUiBaseBG;
+	border-color: @sapUiFieldBorderColor;
 }
 
 .sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {
