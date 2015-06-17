@@ -96,6 +96,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			$FixChild = this.$('Fixed');
 			$FlexChild = this.$('Flexible');
 
+			// Remove the style attribute from previous calculations
+			$FixChild.removeAttr('style');
+			$FlexChild.removeAttr('style');
+
 			if (this.getVertical()) {
 				$FlexChild.height(Math.floor($Control.height() - $FixChild.height()));
 			} else {
