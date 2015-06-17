@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 			return;
 		}
 		
-		var oModeControl = oLI.getModeControl();
+		var oModeControl = oLI.getModeControl(true);
 		if (oModeControl) {
 			this.renderModeContent(rm, oLI, oModeControl);
 		}

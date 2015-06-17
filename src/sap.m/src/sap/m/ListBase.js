@@ -745,7 +745,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		var aSelecteds = this.getSelectedItems();
 		if (aSelecteds.length > 1) {
 			// remove selection if there are more than one item is selected
-			// we cannot determine 
 			this.removeSelections(true);
 		} else if (sOldMode === sap.m.ListMode.MultiSelect) {
 			// if old mode is multi select then we need to remember selected item 
