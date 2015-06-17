@@ -1954,9 +1954,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 
 	Table.prototype.removeColumn = function (oColumn) {
-		this.removeAggregation('columns', oColumn);
+		var oOldColumn = this.removeAggregation('columns', oColumn);
 		this._bDetermineVisibleCols = true;
-		return this;
+		return oOldColumn;
 	};
 
 	Table.prototype.addColumn = function (oColumn) {
