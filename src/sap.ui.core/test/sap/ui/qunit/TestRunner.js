@@ -11,7 +11,7 @@
 	window.jsUnitTestSuite.prototype.addTestPage = function(sTestPage) {
 		this.aPages = this.aPages || [];
 		// in case of running in the root context the testsuites right now
-		// generate an invalid URL because it assumes that test-resources is 
+		// generate an invalid URL because it assumes that test-resources is
 		// the context path - this section makes sure to remove the duplicate
 		// test-resources segments in the path
 		if (sTestPage.indexOf("/test-resources/test-resources") === 0) {
@@ -19,7 +19,7 @@
 		}
 		this.aPages.push(sTestPage);
 	};
-	
+
 	/*
 	 * Template for test results
 	 */
@@ -46,7 +46,7 @@
 									"</ol>" +
 							"</div>" +
 						"{{/tests}}";
-	
+
 	/**
 	 * Utility class to find test pages and check them for being
 	 * a testsuite or a QUnit testpage - also it returns the coverage
@@ -56,20 +56,20 @@
 	window.sap.ui = window.sap.ui || {};
 	window.sap.ui.qunit = window.sap.ui.qunit || {};
 	window.sap.ui.qunit.TestRunner = {
-		
+
 		checkTestPage: function(sTestPage) {
-			
+
 			var oDeferred = jQuery.Deferred();
-			
+
 			if (typeof sTestPage !== "string") {
 				window.console.log("QUnit: invalid test page specified");
 				return;
 			}
-			
+
 			if (window.console && typeof window.console.log === "function") {
 				window.console.log("QUnit: checking test page: " + sTestPage);
 			}
-			
+
 			// check for an existing test page and check for test suite or page
 			var that = this;
 			jQuery.get(sTestPage).done(function(sData) {
@@ -94,25 +94,25 @@
 				}
 				oDeferred.resolve([]);
 			});
-			
+
 			return oDeferred.promise();
-			
+
 		},
-		
+
 		findTestPages: function(oIFrame) {
-			
+
 			var oDeferred = jQuery.Deferred();
 			try {
-				
+
 				var oSuite = oIFrame.contentWindow.suite();
 				var aPages = oSuite.getTestPages() || [];
-				
+
 				var aTestPagePromises = [];
 				for (var i = 0, l = aPages.length; i < l; i++) {
 					var sTestPage = aPages[i];
 					aTestPagePromises.push(this.checkTestPage(sTestPage));
 				}
-				
+
 				if (aTestPagePromises.length > 0) {
 					jQuery.when.apply(jQuery, aTestPagePromises).then(function() {
 						var aTestPages = [];
@@ -125,7 +125,7 @@
 				} else {
 					oDeferred.resolve([]);
 				}
-				
+
 			} catch (ex) {
 				if (window.console && typeof window.console.error === "function") {
 					window.console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n" + ex);
@@ -136,23 +136,23 @@
 				oDeferred.resolve([]);
 			}
 			return oDeferred.promise();
-			
+
 		},
-		
+
 		runTests: function(aTestPages, nBarStep, bInternal) {
-			
+
 			if (!bInternal) {
 				this._bStopped = false;
 			}
-			
+
 			// TODO: stop testing
-			
+
 			var sTestPage = aTestPages[0];
-			
+
 			aTestPages = aTestPages.slice(1);
-			
+
 			var oDeferred = jQuery.Deferred();
-			
+
 			var that = this;
 			if (sTestPage) {
 				this.runTest(sTestPage, true, that).then(function(oResult) {
@@ -171,32 +171,63 @@
 			} else {
 				oDeferred.resolve();
 			}
-			
+
 			return oDeferred.promise();
-			
+
 		},
-		
+
+		printTestResult : function (oInst, $frame, $framediv, oContext) {
+			var oCoverage = $frame[0].contentWindow._$blanket;
+
+			// in case of coverage either merge it or set it on the _$blanket object
+			if (oCoverage) {
+				window._$blanket = window._$blanket || {};
+				jQuery.each(oCoverage, function(sModule, aCoverageInfo) {
+					if (!window._$blanket[sModule]) {
+						window._$blanket[sModule] = aCoverageInfo;
+					} else {
+						jQuery.each(aCoverageInfo, function(iIndex, iCount) {
+							window._$blanket[sModule][iIndex] += iCount;
+						});
+					}
+				});
+			}
+
+			$frame[0].src = "about:blank";
+			$framediv.remove();
+
+			var fnTemplate = Handlebars.compile(sResultsTemplate);
+			var sHTML = fnTemplate(oContext);
+			var $testResult = jQuery(sHTML);
+			var $children = $testResult.children();
+			jQuery($children[0]).click(function() {
+				jQuery(this.nextSibling).toggle();
+			});
+			jQuery($children[1]).find("li.test > p").click(function() {
+				jQuery(this.parentElement.children[2]).toggle();
+			});
+			$testResult.appendTo("div.test-reporting");
+		},
+
 		runTest: function(sTestPage, bInternal, oInst) {
-
-
 			if (!bInternal) {
 				this._bStopped = false;
 			}
-			
+
 			var oDeferred = jQuery.Deferred();
-			
+
 			if (this._bStopped) {
-				
-				oDeferred.reject(); 
-				
+
+				oDeferred.reject();
+
 			} else {
-				
+
 				// we could make this configurable
 				var $frame = jQuery("<iframe>").css({
 					height: "1024px",
 					width: "1280px"
 				});
-				
+
 				$frame.attr("src", sTestPage);
 				var $framediv = jQuery("<div>").css({
 					height: "400px",
@@ -205,82 +236,100 @@
 				});
 				$frame.appendTo($framediv);
 				$framediv.appendTo("div.test-execution");
-				
+
 				var tBegin = new Date();
+				var oContext;
 				var fnCheckSuccess = function() {
 					var doc = $frame[0].contentWindow.document;
-					var oResult =doc.getElementById("qunit-testresult");
+					var sTestName = jQuery(doc).find("h1#qunit-header").text();
+					var $results = jQuery(doc).find("ol#qunit-tests > li");
+					var oResult = doc.getElementById("qunit-testresult");
 					if (oResult && jQuery(oResult).text().indexOf("completed") >= 0) {
-						
-						// extract the QUnit result
-						var $testName = jQuery(doc).find("h1#qunit-header").text();
-						var $results = jQuery(doc).find("ol#qunit-tests > li");
-						var oContext = oInst.fnGetTestResults($testName, $results);
-						var oCoverage = $frame[0].contentWindow._$blanket;
-						
-						// in case of coverage either merge it or set it on the _$blanket object
-						if (oCoverage) {
-							window._$blanket = window._$blanket || {};
-							jQuery.each(oCoverage, function(sModule, aCoverageInfo) {
-								if (!window._$blanket[sModule]) {
-									window._$blanket[sModule] = aCoverageInfo;
-								} else {
-									jQuery.each(aCoverageInfo, function(iIndex, iCount) {
-										window._$blanket[sModule][iIndex] += iCount;
-									});
-								}
-							});
-						}
 
-						$frame[0].src = "about:blank";
-						$framediv.remove();
+						oContext = oInst.fnGetTestResults(sTestName, $results);
+						this.printTestResult(oInst, $frame, $framediv, oContext);
 
-						var fnTemplate = Handlebars.compile(sResultsTemplate);
-						var sHTML = fnTemplate(oContext);
-						$testResult = jQuery(sHTML);
-						jQuery($testResult[0].children[0]).click(function() {
-							jQuery(this.nextSibling).toggle();
-						});
-						jQuery($testResult[0].children[1]).find("li.test > p").click(function() {
-							jQuery(this.parentElement.children[2]).toggle();
-						});
-						$testResult.appendTo("div.test-reporting");
-						
 						oDeferred.resolve();
 						return;
 					}
-					
+
 					if (new Date() - tBegin < 300000) {
 						setTimeout(fnCheckSuccess, 100);
 					} else {
-						$frame[0].src = "about:blank";
-						$framediv.remove();
+						var QUnit = $frame[0].contentWindow.QUnit;
+						if (QUnit) {
+							// push a failure and add the results that where run to the report
+							oContext = oInst.fnGetTestResults(sTestName, $results);
+							oContext.tests[0].header = "Testsuite was not completed after 5 minutes : " + sTestName;
+							oContext.tests[0].outcome = "fail";
+							oContext.tests[0].results.push(
+								{
+									result : {
+										TestName: "Timeout occured",
+										outcome: "fail",
+										Failed: "1",
+										Passed: "0",
+										All: "1",
+										rerunlink : $frame[0].contentWindow.location.href,
+										sLiClass: "fail",
+										testmessages: "no assertions"
+									}
+								}
+							);
+						} else {
+							// No qunit print error message
+							oContext = this.createFailContext($frame);
+						}
+						this.printTestResult(oInst, $frame, $framediv, oContext);
 						// TODO: set Test overview visible
 						oDeferred.resolve();
-						// TODO: error handling
 					}
-				};
-				
+				}.bind(this);
+
 				fnCheckSuccess();
-				
+
 			}
-			
+
 			return oDeferred.promise();
-			
+
 		},
-		
+
+		createFailContext : function ($frame) {
+			var sHref = $frame[0].contentWindow.location.href;
+			this.updateResultHeader("1", "0", "1");
+			return {
+				tests: [{
+					header: "Testsite did not load QUnit after 5 minutes : " + sHref,
+					outcome: "fail",
+					results:[
+						{
+							result: {
+								TestName: "No test where run",
+								Failed: "1",
+								Passed: "0",
+								All: "1",
+								rerunlink : sHref,
+								sLiClass: "fail",
+								testmessages: "no assertions"
+							}
+						}
+					]
+				}]
+			};
+		},
+
 		stopTests: function() {
 			this._bStopped = true;
 		},
-		
+
 		hasCoverage: function() {
 			return !!this.getCoverage();
 		},
-		
+
 		getCoverage: function() {
 			return window._$blanket;
 		},
-		
+
 		getTestPageUrl: function() {
 			var sTestPageUrl = this.getUrlParameter("testpage");
 			var sOrigin = window.location.origin ? window.location.origin : (window.location.protocol + "//" + window.location.host);
@@ -288,12 +337,12 @@
 			sContextPath = sContextPath.substring(0, sContextPath.indexOf("/test-resources/sap/ui/qunit/testrunner.html"));
 			return sTestPageUrl || sContextPath + "/test-resources/qunit/testsuite.qunit.html";
 		},
-		
+
 		getAutoStart: function() {
 			var sAutoStart = this.getUrlParameter("autostart");
 			return sAutoStart == "true";
 		},
-		
+
 		getUrlParameter: function(sName) {
 			var sTestPageUrlParam = window.location.search.substring(1),
 				aUrlParameters = sTestPageUrlParam.split("&"),
@@ -305,9 +354,23 @@
 				}
 			}
 		},
-		
+
+		updateResultHeader : function (sNumAll, sNumPassed, sNumFailed) {
+			var nTotalTests = parseInt(jQuery("div#reportingHeader span.total").text());
+			nTotalTests = nTotalTests + parseInt(sNumAll);
+			jQuery("div#reportingHeader span.total").text(nTotalTests);
+
+			var nPassedTests = parseInt(jQuery("div#reportingHeader span.passed").text());
+			nPassedTests = nPassedTests + parseInt(sNumPassed);
+			jQuery("div#reportingHeader span.passed").text(nPassedTests);
+
+			var nFailedTests = parseInt(jQuery("div#reportingHeader span.failed").text());
+			nFailedTests = nFailedTests + parseInt(sNumFailed);
+			jQuery("div#reportingHeader span.failed").text(nFailedTests);
+		},
+
 		fnGetTestResults: function(sTestName, aTestResults) {
-			
+
 			// build the context
 			var oContext = {
 				tests: [{
@@ -316,87 +379,95 @@
 					results:[]
 				}]
 			};
-			
-			for (var i= 0; i < aTestResults.length; i++) {
-				
+
+			for (var i = 0; i < aTestResults.length; i++) {
+
 				var $checkItems = jQuery(aTestResults[i]).find("ol > li");
 				var aTestMessages = [];
-				
+
 				for (var y = 0; y < $checkItems.length; y++) {
-					
+
 					var oTestMessage = {message: "", expected: "", actual: "", diff: "", source: "", classname: $checkItems[y].className};
-					
+
 					if($checkItems[y].className === "pass") {
 					oTestMessage.message = jQuery($checkItems[y]).text();
 					} else {
 						var $messageSpan = jQuery($checkItems[y]).find("span.test-message");
 						oTestMessage.message = jQuery($messageSpan[0]).text();
-						
+
 						var $testExpected = jQuery($checkItems[y]).find("tr.test-expected");
 						console.log($testExpected);
 						if( $testExpected.length > 0) {
 							oTestMessage.expected = jQuery($testExpected[0]).text();
 						}
-						
+
 						var $testActual = jQuery($checkItems[y]).find("tr.test-actual");
 						if( $testActual.length > 0) {
 							oTestMessage.actual = jQuery($testActual[0]).text();
 						}
-						
+
 						var $testDiff = jQuery($checkItems[y]).find("tr.test-diff");
 						if( $testDiff.length > 0) {
 							oTestMessage.diff = jQuery($testDiff[0]).text();
 						}
-						
+
 						var $testSource = jQuery($checkItems[y]).find("tr.test-source");
 						if( $testSource.length > 0) {
 							oTestMessage.source = jQuery($testSource[0]).text();
 						}
 					}
-					
+
 					aTestMessages.push(oTestMessage);
 				}
 
 				var $test = jQuery(aTestResults[i]);
 				var sTestSummary = $test.find("strong").text();
-				
+
 				var m = sTestSummary.match(/^(.*)\((\d+)(?:,\s*(\d+),\s*(\d+))?\)\s*$/);
-				var sTestName = m[1];
-				if ( m[3] || m[4] ) { 
-					var sNumFailed = m[2];
-					var sNumPassed = m[3];
-					var sNumAll = m[4];
+				var sTestName;
+				var sNumFailed;
+				var sNumPassed;
+				var sNumAll;
+				// test still running
+				if (!m) {
+					sTestName = sTestSummary + " - Timed out and did not run completely";
+					sNumFailed = "1";
 				} else {
-					var sNumPassed = sNumAll = m[2];
-					var sNumFailed = "0";
+					sTestName = m[1];
+					if ( m[3] || m[4] ) {
+						sNumFailed = m[2];
+						sNumPassed = m[3];
+						sNumAll = m[4];
+					} else {
+						sNumPassed = sNumAll = m[2];
+						sNumFailed = "0";
+					}
 				}
-				
+
 				var sRerunLink = $test.find("A").attr("href");
-				
+
 				var sLineItemClass = sNumFailed === "0" ? "pass" : "fail";
 				if(sLineItemClass === "fail") {
 					oContext.tests[0].outcome = sLineItemClass;
 				}
-				
-				oContext.tests[0].results.push({result:{TestName: sTestName[0], Failed: sNumFailed, Passed: sNumPassed, All: sNumAll, rerunlink: sRerunLink, sLiClass: sLineItemClass, testmessages: aTestMessages }});
-				
-				var ntotalTests = parseInt(jQuery("div#reportingHeader span.total").text());
-				ntotalTests = ntotalTests + parseInt(sNumAll);
-				jQuery("div#reportingHeader span.total").text(ntotalTests);
-				
-				var nPassedTests = parseInt(jQuery("div#reportingHeader span.passed").text());
-				nPassedTests = nPassedTests + parseInt(sNumPassed);
-				jQuery("div#reportingHeader span.passed").text(nPassedTests);
-				
-				var nFailedTests = parseInt(jQuery("div#reportingHeader span.failed").text());
-				nFailedTests = nFailedTests + parseInt(sNumFailed);
-				jQuery("div#reportingHeader span.failed").text(nFailedTests);
+
+				oContext.tests[0].results.push({result:{
+					TestName: sTestName,
+					Failed: sNumFailed,
+					Passed: sNumPassed,
+					All: sNumAll,
+					rerunlink: sRerunLink,
+					sLiClass: sLineItemClass,
+					testmessages: aTestMessages }
+				});
+
+				this.updateResultHeader(sNumAll, sNumPassed, sNumFailed);
 			}
 
 			return oContext;
-			
+
 		}
-		
+
 	};
 
 })(window);
