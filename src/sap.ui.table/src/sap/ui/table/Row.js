@@ -83,19 +83,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 * @param bJQuery Set to true to get jQuery object instead of DomRef
 	 * @returns {object} contains DomRefs or jQuery objects of the row
 	 */
-	Row.prototype.getDomRefs = function (oTable, bJQuery) {
+	Row.prototype.getDomRefs = function (bJQuery) {
 		var oDomRefs = {};
 		var fnAccess = jQuery.sap.domById;
 		if (bJQuery === true) {
 			fnAccess = jQuery.sap.byId;
 		}
 
+		var oTable = this.getParent();
+		if (oTable) {
+			var iRowIndex = oTable.indexOfRow(this);
+			// row selector domRef
+			oDomRefs.rowSelector = fnAccess(oTable.getId() + "-rowsel" + iRowIndex);
+		}
+
 		// row domRef
 		oDomRefs.rowScrollPart = fnAccess(this.getId());
 		// row domRef (the fixed part)
 		oDomRefs.rowFixedPart = fnAccess(this.getId() + "-fixed");
-		// row selector domRef
-		oDomRefs.rowSelector = fnAccess(oTable.getId() + "-rowsel" + this.getIndex());
 		// row selector domRef
 		oDomRefs.rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
 
@@ -121,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 */
 	Row.prototype._updateSelection = function(oTable, mTooltipTexts, bSelectOnCellsAllowed) {
 		var bIsSelected = oTable.isIndexSelected(this.getIndex());
-		var $DomRefs = this.getDomRefs(oTable, true);
+		var $DomRefs = this.getDomRefs(true);
 
 		var sSelectReference = "rowSelect";
 		if (bIsSelected) {
@@ -133,8 +138,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		$DomRefs.row.toggleClass("sapUiTableRowSel", bIsSelected);
 
 		// update tooltips and aria texts
-		$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
-		$DomRefs.rowSelector.attr("aria-label", mTooltipTexts.keyboard[sSelectReference]);
+		if ($DomRefs.rowSelector) {
+			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
+			$DomRefs.rowSelector.attr("aria-label", mTooltipTexts.keyboard[sSelectReference]);
+		}
+
 		$DomRefs.rowSelectorText.text(mTooltipTexts.keyboard[sSelectReference]);
 
 		var $Row = $DomRefs.rowFixedPart.add($DomRefs.rowScrollPart);
