@@ -37,6 +37,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 *                                        Default value is thus 0.
 	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
+	 * 
+	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
@@ -194,6 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * Retrieves the root node given through sNodeId
 	 * @param {string} sNodeId the ID od the root node which should be loaded (e.g. when bound to a single entity)
 	 * @param {string} sRequestKey a key string used to store/clean-up request handles
+	 * @private
 	 */
 	ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties = function (sNodeId, sRequestKey) {
 		var that = this,
@@ -247,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 *                  A higher threshold reduces the number of backend requests, yet these request blow up in size, since more data is loaded.
 	 * @return {sap.ui.model.Context[]} an array containing the contexts for the entities returned by the backend, might be fewer than requested 
 	 *                                  if the backend does not have enough data.
-	 * @protected
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength, iThreshold) {
 		
@@ -335,7 +338,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @param {integer} iLength the requested amount of contexts
 	 * @param {integer} iThreshold
 	 * @return {sap.ui.model.Context[]} the contexts array
-	 * @protected
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength, iThreshold) {
 		
@@ -600,6 +603,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		return aContexts;
 	};
 	
+	/**
+	 * Issues a $count request for the given node-id/odata-key
+	 * @private
+	 */
 	ODataTreeBinding.prototype._getCountForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mParameters) {
 		var that = this,
 			sBatchGroupId;
@@ -986,6 +993,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * 
 	 * @param {boolean} bForceUpdate
 	 * 
+	 * @private
 	 */
 	ODataTreeBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities){
 		var bChangeDetected = false;
@@ -1085,6 +1093,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * Checks the metadata for Hierarchy Tree Annotations.
 	 * The property mapping describing the tree will be placed in "this.oTreeProperties".
 	 * Also checks if clientside property mappings are given.
+	 * 
+	 * The extracted hierarchy informations will be stored in "this.oTreeProperties" (if any)
+	 * 
+	 * @private
 	 */
 	ODataTreeBinding.prototype._hasTreeAnnotations = function() {
 		var oModel = this.oModel,
@@ -1148,7 +1160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			return false;
 		}
 
-		//Check if all required proeprties are available
+		//Check if all required properties are available
 		jQuery.each(oEntityType.property, function(iIndex, oProperty) {
 			if (!oProperty.extensions) {
 				return true;
@@ -1170,7 +1182,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * Initialize binding. Fires a change if data is already available ($expand) or a refresh.
 	 * If metadata is not yet available, do nothing, method will be called again when
 	 * metadata is loaded.
-	 *  
+	 * 
+	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding} The binding instance
 	 * @public
 	 */
 	ODataTreeBinding.prototype.initialize = function() {
@@ -1239,7 +1252,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	
 	/**
 	 * Builds a download URL
+	 * TODO: Make this public as soon as the download URL feature is implemented correctly
 	 * @param {string} sFormat The format for the result data, when accessing the Download-URL
+	 * 
+	 * @private
 	 */
 	ODataTreeBinding.prototype.getDownloadUrl = function(sFormat) {
 		var aParams = [],
@@ -1304,7 +1320,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	/**
 	 * Sets the rootLevel
 	 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
+	 * This is only possible (and necessary) for OData services implementing the hierarchy annotation specification,
+	 * or when providing the annotation information locally as a binding parameter. See the constructor for API documentation on this.
 	 * @param {int} iRootLevel
+	 * 
+	 * @public
 	 */
 	ODataTreeBinding.prototype.setRootLevel = function(iRootLevel) {
 		iRootLevel = parseInt(iRootLevel || 0, 10);
@@ -1320,11 +1340,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	/**
 	 * Returns the rootLevel
 	 * @returns {int}
+	 * 
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getRootLevel = function() {
 		return this.iRootLevel;
 	};
 
+	/**
+	 * Retrieves the EntityType of the bindings path, resolved with the current context.
+	 * @private
+	 */
 	ODataTreeBinding.prototype._getEntityType = function(){
 		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
@@ -1337,6 +1363,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		return undefined;
 	};
 
+	/**
+	 * Retrieves a string concatenation of the filter parameters given in "this.aFilters".
+	 * Also sets the created filter-string to "this.sFilterParams".
+	 * Filters will be ANDed and ORed by the ODataUtils. 
+	 * @returns {string} the concatenated OData filters
+	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
 		if (this.aFilters && this.aFilters.length > 0) {
 			if (!this.sFilterParams) {
