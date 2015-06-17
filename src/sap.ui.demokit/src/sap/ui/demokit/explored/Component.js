@@ -39,6 +39,14 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 						targetAggregation : "detailPages"
 					},
 					{
+						pattern : "sample/{id}/code/{fileName}",
+						name : "code_file",
+						view : "code",
+						viewLevel : 6,
+						targetAggregation : "detailPages",
+						transition: "flip"
+					},
+					{
 						pattern : "sample/{id}/code",
 						name : "code",
 						view : "code",
