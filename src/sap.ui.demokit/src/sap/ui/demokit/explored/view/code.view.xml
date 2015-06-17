@@ -22,21 +22,15 @@
 				press="onDownload" />
 		</headerContent>
 		<content>
-			<IconTabBar
-				expandable="false"
-				selectedKey="{/selectedTab}"
-				items="{/files}"
-				class="sapUiResponsiveContentPadding">
-				<items>
-					<IconTabFilter
-						key="{name}"
-						text="{name}" >
-						<content>
-							<core:HTML content="{code}" />
-						</content>
-					</IconTabFilter>
-				</items>
-			</IconTabBar>
+			<OverflowToolbar content="{/files}">
+				<content>
+					<Button  text="{name}"
+							icon="{path: 'name', formatter: '.getButtonIconFormatter'}"
+							 type="{parts:[{path: '/fileName'}, {path: 'name'}], formatter:'.getButtonTypeFormatter'}"
+							 press="onViewCodePress"/>
+				</content>
+			</OverflowToolbar>
+			<core:HTML id="fileContent" />
 		</content>
 	</Page>
 </mvc:View>
