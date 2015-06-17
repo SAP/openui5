@@ -106,3 +106,14 @@ html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner {
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMCrsl", ~"> .sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll");
+
+
+
+/* Styles needed for keyboard handling
+   ========================================================================== */
+.sapMCrslItem {
+  visibility: hidden;
+}
+.sapMCrslActive {
+  visibility: visible;
+}
