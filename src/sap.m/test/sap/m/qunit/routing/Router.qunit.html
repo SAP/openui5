@@ -6,7 +6,7 @@
 
 		<script src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
-				data-sap-ui-resourceroots='{"test": "./", "sap.ui.demo.app" : "../../webapp/"}'>
+				data-sap-ui-resourceroots='{"qunit": "../"}'>
 		</script>
 
 		<script>
@@ -25,7 +25,7 @@
 							"sap/m/SplitContainer",
 							"sap/m/Page",
 							"sap/ui/core/routing/Views",
-							"test/commonIntegrationTests"
+							"qunit/routing/commonIntegrationTests"
 						],
 						function (Router, TargetHandler, NavContainer, SplitContainer, Page, Views, integrationTests) {
 							"use strict";
