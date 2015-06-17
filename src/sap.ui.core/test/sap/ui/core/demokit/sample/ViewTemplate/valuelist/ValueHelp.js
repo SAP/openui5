@@ -20,12 +20,10 @@ sap.ui.define(['sap/m/Column',
 			},
 
 			init : function () {
-				var that = this;
-
-				this.setEnabled(false);
+				this.setEditable(false);
 				this.attachValueHelpRequest(this._onValueHelp.bind(this));
 				this.setIconURL("sap-icon://value-help");
-				this.setTooltip("No value help loaded");
+				this.setTooltip("No value help");
 			},
 
 			onBeforeRendering : function () {
@@ -36,25 +34,32 @@ sap.ui.define(['sap/m/Column',
 					that = this;
 
 				oMetaModel.loaded().then(function () {
-					oMetaModel.getODataValueLists(oMetaModel.getMetaContext(sAbsolutePath))
-						.then(function (mValueList) {
-							var oValueList = mValueList[that.getQualifier()];
-							that._parameters = [];
-							oValueList.Parameters.forEach(function (oParameter) {
-								//put value help parameters written back to entity at the beginning
-								if (oParameter.LocalDataProperty) {
-									that._parameters.unshift(oParameter.ValueListProperty.String);
-								} else {
-									that._parameters.push(oParameter.ValueListProperty.String);
-								}
-							});
-							that._collectionPath = oValueList.CollectionPath.String;
-							that.setTooltip("ValueList"
-								+ (that.getQualifier() !== "" ? "#" + that.getQualifier(): "")
-								+ "\n"
-								+ JSON.stringify(oValueList, undefined, 2));
-							that.setEnabled(true);
-					});
+					var oContext = oMetaModel.getMetaContext(sAbsolutePath);
+					if (oContext.getProperty("sap:value-list")) {
+						oMetaModel.getODataValueLists(oContext)
+							.then(function (mValueList) {
+								var oValueList = mValueList[that.getQualifier()];
+								that._parameters = [];
+								oValueList.Parameters.forEach(function (oParameter) {
+									// put parameters written back to entity at the beginning
+									if (oParameter.LocalDataProperty) {
+										that._parameters.unshift(
+											oParameter.ValueListProperty.String);
+									} else {
+										that._parameters.push(oParameter.ValueListProperty.String);
+									}
+								});
+								that._collectionPath = oValueList.CollectionPath.String;
+								that._collectionLabel = oValueList.Label ? oValueList.Label.String
+										: that._collectionPath;
+								that.setTooltip("ValueList"
+									+ (that.getQualifier() !== "" ? "#" + that.getQualifier(): "")
+									+ "\n"
+									+ JSON.stringify(oValueList, undefined, 2));
+								that.setIconURL("sap-icon://value-help");
+								that.setEditable(true);
+						});
+					}
 				}, function (oError) {
 					MessageBox.alert(oError.message, {
 						icon: MessageBox.Icon.ERROR,
@@ -71,15 +76,19 @@ sap.ui.define(['sap/m/Column',
 					oTable = new Table(),
 					aVHTitle = [];
 
-				function createText(sPropertyPath) {
+				function createTextOrValueHelp(sPropertyPath, bAsColumnHeader) {
 					var oMetaModel = oControl.getModel().getMetaModel(),
 						oEntityType = oMetaModel.getODataEntityType(oMetaModel.getODataEntitySet(
 							oControl._collectionPath).entityType);
-					return new Text({text: oMetaModel.getODataProperty(oEntityType,
-						sPropertyPath)["sap:label"]});
+					if (bAsColumnHeader) {
+						return new Text({text: oMetaModel.getODataProperty(oEntityType,
+							sPropertyPath)["sap:label"]});
+					}
+						return new sap.ui.core.sample.ViewTemplate.valuelist.ValueHelp(
+							{value: "{" + sPropertyPath + "}"});
 				}
 
-				oPopover.setTitle("Value Help: " + oControl.getBinding("value").getPath());
+				oPopover.setTitle("Value Help: " + oControl._collectionLabel);
 				oTable.setModel(oControl.getModel());
 				oTable.bindItems({
 					path : "/" + oControl._collectionPath,
@@ -87,11 +96,9 @@ sap.ui.define(['sap/m/Column',
 				});
 				oControl._parameters.forEach(function (sParameterPath) {
 					oTable.addColumn(new Column(
-						{header: createText(sParameterPath)}
+						{header: createTextOrValueHelp(sParameterPath, true)}
 					));
-					oColumnListItem.addCell(
-						new Text({text: "{" + sParameterPath + "}"})
-					);
+					oColumnListItem.addCell(createTextOrValueHelp(sParameterPath));
 				});
 				oPopover.addContent(oTable);
 				oPopover.openBy(oControl);
