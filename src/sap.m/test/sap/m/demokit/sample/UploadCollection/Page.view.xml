@@ -51,7 +51,7 @@
 						<attributes>
 							<ObjectAttribute
 								title="{title}"
-								text="{text}"
+								text="{path : 'text', formatter : '.formatAttribute'}"
 								active="{active}"
 								textDirection="{textDirection}"/>
 						</attributes>
