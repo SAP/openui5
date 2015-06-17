@@ -92,6 +92,8 @@
 				if (window.console && typeof window.console.error === "function") {
 					window.console.error("QUnit: failed to load page '" + sTestPage + "': " + text);
 				}
+				var oContext = that.createFailContext(sTestPage, "Testsite could not be loaded");
+				that.printTestResult(oContext);
 				oDeferred.resolve([]);
 			});
 
@@ -176,7 +178,7 @@
 
 		},
 
-		printTestResult : function (oInst, $frame, $framediv, oContext) {
+		printTestResultAndRemoveFrame : function (oInst, $frame, $framediv, oContext) {
 			var oCoverage = $frame[0].contentWindow._$blanket;
 
 			// in case of coverage either merge it or set it on the _$blanket object
@@ -196,6 +198,10 @@
 			$frame[0].src = "about:blank";
 			$framediv.remove();
 
+			this.printTestResult(oContext);
+		},
+
+		printTestResult: function (oContext) {
 			var fnTemplate = Handlebars.compile(sResultsTemplate);
 			var sHTML = fnTemplate(oContext);
 			var $testResult = jQuery(sHTML);
@@ -247,7 +253,7 @@
 					if (oResult && jQuery(oResult).text().indexOf("completed") >= 0) {
 
 						oContext = oInst.fnGetTestResults(sTestName, $results);
-						this.printTestResult(oInst, $frame, $framediv, oContext);
+						this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);
 
 						oDeferred.resolve();
 						return;
@@ -278,9 +284,9 @@
 							);
 						} else {
 							// No qunit print error message
-							oContext = this.createFailContext($frame);
+							oContext = this.createFailContext($frame[0].contentWindow.location.href, "Testsite did not load QUnit after 5 minutes");
 						}
-						this.printTestResult(oInst, $frame, $framediv, oContext);
+						this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);
 						// TODO: set Test overview visible
 						oDeferred.resolve();
 					}
@@ -294,12 +300,11 @@
 
 		},
 
-		createFailContext : function ($frame) {
-			var sHref = $frame[0].contentWindow.location.href;
+		createFailContext : function (sHref, sHeaderMessage) {
 			this.updateResultHeader("1", "0", "1");
 			return {
 				tests: [{
-					header: "Testsite did not load QUnit after 5 minutes : " + sHref,
+					header: sHeaderMessage + " : " + sHref,
 					outcome: "fail",
 					results:[
 						{
