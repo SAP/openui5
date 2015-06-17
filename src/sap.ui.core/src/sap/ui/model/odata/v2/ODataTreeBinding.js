@@ -70,11 +70,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.iNumberOfExpandedLevels = (mParameters && mParameters.numberOfExpandedLevels) || 0;
 			this.iRootLevel =  (mParameters && mParameters.rootLevel) || 0;
 			
-			if (mParameters && mParameters.countMode && mParameters.countMode !== CountMode.Inline) {
-				jQuery.log.fatal("ODataTreeBinding only supports CountMode.Inline!");
-			} else { 
-				this.sCountMode = CountMode.Inline;
+			this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
+			if (this.sCountMode == CountMode.None) {
+				jQuery.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
 			}
+			
 			if (mParameters) {
 				this.sBatchGroupId = mParameters.batchGroupId;
 			}
@@ -466,8 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._getContextsForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mRequestParameters) {
 		var aContexts = [],
-			sKey,
-			iRootLevel;
+			sKey;
 		
 		// Set default values if startindex, threshold or length are not defined
 		iStartIndex = iStartIndex || 0;
@@ -478,13 +477,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this._mLoadedSections[sNodeId] = [];
 		}
 
-		if (this.bHasTreeAnnotations) {
-			//the ID of the root node must be defined via parameters in case we use an annotated service
-			if (sNodeId == null) {
-				iRootLevel = this.iRootLevel;
-			}
-		}
-	
 		// make sure we only request the maximum length available (length is known and final)
 		if (this.oFinalLengths[sNodeId] && this.oLengths[sNodeId] < iStartIndex + iLength) {
 			iLength = Math.max(this.oLengths[sNodeId] - iStartIndex, 0);
@@ -580,7 +572,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 					} else {
 						// no root node id is given: sNodeId === null
 						// in this case we use the root level
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + iRootLevel) + sFilterParams);
+						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel()) + sFilterParams);
 					}
 				}
 				/*else {
@@ -632,12 +624,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		}
 		
 		var sPath;
+		
+		var sFilterParams = this.getFilterParams() || "";
+		var sNodeFilter = "";
 		if (this.bHasTreeAnnotations) {
 			sPath = this.oModel.resolve(this.getPath(), this.getContext());
-			var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
-			aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
+			
+			// only filter for the parent node if the given node is not the root (null)
+			// if root and we $count the collection
+			if (sNodeId != null) {
+				sNodeFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'");
+			} else {
+				sNodeFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel());
+			}
+			
 		} else {
 			sPath = sNodeId;
+		}
+		
+		if (sNodeFilter || sFilterParams) {
+			var sAnd = "";
+			if (sNodeFilter && sFilterParams) {
+				sAnd = "%20and%20";
+			}
+			
+			sFilterParams = "$filter=" + sFilterParams + sAnd + sNodeFilter;
+			aParams.push(sFilterParams);
 		}
 	
 		// Only send request, if path is defined
@@ -677,9 +689,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			aParams.push("$skip=" + iStartIndex + "&$top=" + (iLength + iThreshold));
 		}
 		
-		if (!this.oFinalLengths[sNodeId] && (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.Both)) {
-			aParams.push("$inlinecount=allpages");
-			bInlineCountRequested = true;
+		//check if we already have a count
+		if (!this.oFinalLengths[sNodeId]) {
+			// issue $inlinecount
+			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.Both) {
+				aParams.push("$inlinecount=allpages");
+				bInlineCountRequested = true;
+			} else if (this.sCountMode == CountMode.Request) {
+				//... or $count request
+				that._getCountForNodeId(sNodeId);
+			}
 		}
 		
 		var sRequestKey = "" + sNodeId + "-" + iStartIndex + "-" + this._iPageSize + "-" + iThreshold;
@@ -717,22 +736,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 							if (bInlineCountRequested && oData.__count) {
 								that.oLengths[sEntryNodeId] = parseInt(oData.__count, 10);
 								that.oFinalLengths[sEntryNodeId] = true;
-							} else {
-								//calculate the number of children for this node/context
-								var iResultLength = parseInt(oData.results.length, 10);
-								that.oLengths[sEntryNodeId] = Math.max(that.oLengths[sEntryNodeId] || 0, iStartIndex + iResultLength);
-								
-								// if we received fewer items than requested, the length is final
-								if (iResultLength < iLength) {
-									that.oFinalLengths[sEntryNodeId] = true;
-								}
-								
-								//send an additional count request, in case no inline count was sent
-								if (!that.oFinalLengths[sEntryNodeId] && that.oModel.isCountSupported()) {
-									that._getCountForNodeId(sEntryNodeId);
-								}
 							}
-							
 						}
 						
 						that.oKeys[sEntryNodeId][mLastNodeIdIndices[sEntryNodeId]] = that.oModel._getKey(oEntry);
@@ -743,10 +747,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 					if (bInlineCountRequested && oData.__count) {
 						that.oLengths[sNodeId] = parseInt(oData.__count, 10);
 						that.oFinalLengths[sNodeId] = true;
-					} else {
-						if (that.oModel.isCountSupported()) {
-							that._getCountForNodeId(sNodeId);
-						}
 					}
 					
 					that.oKeys[sNodeId] = [];
