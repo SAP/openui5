@@ -379,6 +379,23 @@ sap.ui.require([
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
+		', sEmptySchemaWithAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	>\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en">\
+			<!-- mind the XML namespace! -->\
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
 		',
 		sFARMetadata = jQuery.sap.syncGetText(
 			"model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml", "", null),
@@ -459,6 +476,7 @@ sap.ui.require([
 			"/fake/emptyEntityType/$metadata" : [200, mHeaders, sEmptyEntityType],
 			"/fake/emptyMetadata/$metadata" : [200, mHeaders, sEmptyDataServices],
 			"/fake/emptySchema/$metadata" : [200, mHeaders, sEmptySchema],
+			"/fake/emptySchemaWithAnnotations/$metadata" : [200, mHeaders, sEmptySchemaWithAnnotations],
 			"/fake/service/$metadata" : [200, mHeaders, sMetadata],
 			"/fake/annotations" : [200, mHeaders, sAnnotations],
 			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
@@ -1058,6 +1076,15 @@ sap.ui.require([
 
 		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel._getObject("some/relative/path"), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("/dataServices/schema/<i>/annotations dropped", function () {
+		return withGivenService("/fake/emptySchemaWithAnnotations", "", function (oMetaModel) {
+			return oMetaModel.loaded().then(function () {
+				strictEqual(oMetaModel.getObject("/dataServices/schema/0/annotations"), undefined);
+			});
 		});
 	});
 
