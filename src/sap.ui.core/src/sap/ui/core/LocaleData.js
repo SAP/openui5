@@ -374,12 +374,72 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		_getRelative : function(sType, iDiff) {
+			var sPattern;
+
 			if (Math.abs(iDiff) <= 1) {
-				return this._get("dateField-" + sType + "-relative-" + iDiff);
+				sPattern = this._get("dateField-" + sType + "-relative-" + iDiff);
+				if (!sPattern) {
+					if (iDiff === 0) {
+						jQuery.sap.log.warning("sap.ui.core.LocaleData: there's no pattern defined for '" + sType + "' with 0 difference, please adjust the scale.");
+						return null;
+					} else {
+						sPattern = this._get("dateField-" + sType + "-relative-" + (iDiff < 0 ? "past" : "future") + "-one");
+					}
+				}
 			}
-			return this._get("dateField-" + sType + "-relative-" + (iDiff < 0 ? "past" : "future") + "-other");
+
+			if (!sPattern) {
+				sPattern = this._get("dateField-" + sType + "-relative-" + (iDiff < 0 ? "past" : "future") + "-other");
+			}
+
+			return sPattern;
 		},
-		
+
+		/**
+		 * Returns the relative resource pattern with unit 'second' (like now, "in {0} seconds", "{0} seconds ago" under locale 'en') based on the given
+		 * difference value (0 means now, positive value means in the future and negative value means in the past).
+		 *
+		 * @param {int} iDiff the difference in seconds
+		 * @returns {string} the relative resource pattern in unit 'second'
+		 * @public
+		 * @since 1.31.0
+		 */
+		getRelativeSecond : function(iDiff) {
+			return this._getRelative("second", iDiff);
+		},
+
+		/**
+		 * Returns the relative resource pattern with unit 'minute' (like "in {0} minute(s)", "{0} minute(s) ago" under locale 'en') based on the given
+		 * difference value (positive value means in the future and negative value means in the past).
+		 *
+		 * There's no pattern defined for 0 difference and the function returns null if 0 is given. In the 0 difference case, you can use the getRelativeSecond
+		 * function to format the difference using unit 'second'.
+		 *
+		 * @param {int} iDiff the difference in minutes
+		 * @returns {string|null} the relative resource pattern in unit 'minute'. The method returns null if 0 is given as parameter.
+		 * @public
+		 * @since 1.31.0
+		 */
+		getRelativeMinute : function(iDiff) {
+			return this._getRelative("minute", iDiff);
+		},
+
+		/**
+		 * Returns the relative resource pattern with unit 'hour' (like "in {0} hour(s)", "{0} hour(s) ago" under locale 'en') based on the given
+		 * difference value (positive value means in the future and negative value means in the past).
+		 *
+		 * There's no pattern defined for 0 difference and the function returns null if 0 is given. In the 0 difference case, you can use the getRelativeMinute or getRelativeSecond
+		 * function to format the difference using unit 'minute' or 'second'.
+		 *
+		 * @param {int} iDiff the difference in hours
+		 * @returns {string|null} the relative resource pattern in unit 'hour'. The method returns null if 0 is given as parameter.
+		 * @public
+		 * @since 1.31.0
+		 */
+		getRelativeHour : function(iDiff) {
+			return this._getRelative("hour", iDiff);
+		},
+
 		/**
 		 * Returns the relative day resource pattern (like "Today", "Yesterday", "{0} days ago") based on the given
 		 * difference of days (0 means today, 1 means tommorrow, -1 means yesterday, ...).
@@ -392,7 +452,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		getRelativeDay : function(iDiff) {
 			return this._getRelative("day", iDiff);
 		},
-		
+
+		/**
+		 * Returns the relative week resource pattern (like "This week", "Last week", "{0} weeks ago") based on the given
+		 * difference of weeks (0 means this week, 1 means next week, -1 means last week, ...).
+		 *
+		 * @param {int} iDiff the difference in weeks
+		 * @returns {string} the relative week resource pattern
+		 * @public
+		 * @since 1.31.0
+		 */
+		getRelativeWeek : function(iDiff) {
+			return this._getRelative("week", iDiff);
+		},
+
 		/**
 		 * Returns the relative month resource pattern (like "This month", "Last month", "{0} months ago") based on the given
 		 * difference of months (0 means this month, 1 means next month, -1 means last month, ...).
@@ -405,7 +478,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		getRelativeMonth : function(iDiff) {
 			return this._getRelative("month", iDiff);
 		},
-		
+
 		/**
 		 * Returns the relative year resource pattern (like "This year", "Last year", "{0} year ago") based on the given
 		 * difference of years (0 means this year, 1 means next year, -1 means last year, ...).
@@ -564,6 +637,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				"era-abbreviated":"AD",
 				"era-narrow":"A"
 			},
+			"dateField-year-displayName":"Year",
+			"dateField-year-relative--1":"last year",
+			"dateField-year-relative-0":"this year",
+			"dateField-year-relative-1":"next year",
+			"dateField-year-relative-future-one":"in {0} year",
+			"dateField-year-relative-future-other":"in {0} years",
+			"dateField-year-relative-past-one":"{0} year ago",
+			"dateField-year-relative-past-other":"{0} years ago",
+			"dateField-month-displayName":"Month",
+			"dateField-month-relative--1":"last month",
+			"dateField-month-relative-0":"this month",
+			"dateField-month-relative-1":"next month",
+			"dateField-month-relative-future-one":"in {0} month",
+			"dateField-month-relative-future-other":"in {0} months",
+			"dateField-month-relative-past-one":"{0} month ago",
+			"dateField-month-relative-past-other":"{0} months ago",
+			"dateField-week-displayName":"Week",
+			"dateField-week-relative--1":"last week",
+			"dateField-week-relative-0":"this week",
+			"dateField-week-relative-1":"next week",
+			"dateField-week-relative-future-one":"in {0} week",
+			"dateField-week-relative-future-other":"in {0} weeks",
+			"dateField-week-relative-past-one":"{0} week ago",
+			"dateField-week-relative-past-other":"{0} weeks ago",
+			"dateField-day-displayName":"Day",
+			"dateField-day-relative--1":"yesterday",
+			"dateField-day-relative-0":"today",
+			"dateField-day-relative-1":"tomorrow",
+			"dateField-day-relative-future-one":"in {0} day",
+			"dateField-day-relative-future-other":"in {0} days",
+			"dateField-day-relative-past-one":"{0} day ago",
+			"dateField-day-relative-past-other":"{0} days ago",
+			"dateField-hour-displayName":"Hour",
+			"dateField-hour-relative-future-one":"in {0} hour",
+			"dateField-hour-relative-future-other":"in {0} hours",
+			"dateField-hour-relative-past-one":"{0} hour ago",
+			"dateField-hour-relative-past-other":"{0} hours ago",
+			"dateField-minute-displayName":"Minute",
+			"dateField-minute-relative-future-one":"in {0} minute",
+			"dateField-minute-relative-future-other":"in {0} minutes",
+			"dateField-minute-relative-past-one":"{0} minute ago",
+			"dateField-minute-relative-past-other":"{0} minutes ago",
+			"dateField-second-displayName":"Second",
+			"dateField-second-relative-0":"now",
+			"dateField-second-relative-future-one":"in {0} second",
+			"dateField-second-relative-future-other":"in {0} seconds",
+			"dateField-second-relative-past-one":"{0} second ago",
+			"dateField-second-relative-past-other":"{0} seconds ago",
 			"decimalFormat": { "standard": "#,##0.###" },
 			"currencyFormat": { "standard": "¤#,##0.00"},
 			"percentFormat": { "standard": "#,##0%"},
