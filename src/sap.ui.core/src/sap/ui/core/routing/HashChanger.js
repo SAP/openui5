@@ -140,7 +140,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					}
 				}
 			}
-			_oHashChanger.destroy();
 		}
 
 		/**
@@ -150,15 +149,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		 */
 		HashChanger.replaceHashChanger = function(oHashChanger) {
 			if (_oHashChanger && oHashChanger) {
-				extendHashChangerEvents(oHashChanger);
-				_oHashChanger.destroy();
 
 				var fnGetHistoryInstance = jQuery.sap.getObject("sap.ui.core.routing.History.getInstance"),
 					oHistory;
 
-				// check if the history got loaded yet - if not there is no need to replace its hashchanger since it will ask for the global one
 				if (fnGetHistoryInstance) {
 					oHistory = fnGetHistoryInstance();
+					// unregister the hashChanger so the events don't get fired twice
+					oHistory._unRegisterHashChanger();
+				}
+
+				extendHashChangerEvents(oHashChanger);
+				_oHashChanger.destroy();
+
+				if (oHistory) {
+					// check if the history got loaded yet - if not there is no need to replace its hashchanger since it will ask for the global one
 					oHistory._setHashChanger(oHashChanger);
 				}
 			}
