@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell']
 	 */
 	var ExportColumn = ManagedObject.extend("sap.ui.core.util.ExportColumn", {
 		metadata: {
+			library: "sap.ui.core",
 			properties: {
 				/**
 				 * Column name.
