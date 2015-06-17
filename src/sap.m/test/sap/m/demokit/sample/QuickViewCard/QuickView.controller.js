@@ -105,7 +105,7 @@ sap.ui.define([
 									{
 										label: "Phone",
 										value: "+359 888 888 888",
-										elementType: sap.m.QuickViewGroupElementType.phone
+										elementType: sap.m.QuickViewGroupElementType.mobile
 									}
 								]
 							}
