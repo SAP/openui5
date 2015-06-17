@@ -7,10 +7,10 @@ sap.ui.require([
 	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/MetaModel", "sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
-	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils"
 ], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
 	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel,
-	ODataModel1, ODataModel) {
+	ODataModel1, ODataModel, TestUtils) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
@@ -461,36 +461,6 @@ sap.ui.require([
 		oGlobalSandbox; // global sandbox for async tests
 
 	/**
-	 * Test-Function to be used in place of deepEquals which only tests for the existence of the given
-	 * values, not the absence of others.
-	 *
-	 * @param {object} oValue - The value to be tested
-	 * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
-	 * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
-	 * @returns {void}
-	 *
-	 * TODO move to test utils?
-	 * TODO do we really want hundreds of assertions?
-	 */
-	function deepContains(oValue, oExpected, sMessage) {
-		for (var sKey in oExpected) {
-			ok(typeof oExpected[sKey] === typeof oValue[sKey], sMessage + "/" + sKey + " have same type");
-
-			if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-				equal(oExpected[sKey].length, oValue[sKey].length, sMessage + "/" + sKey + " length matches");
-			}
-
-			if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
-				// Go deeper
-				deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
-			} else {
-				// Compare directly
-				equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
-			}
-		}
-	}
-
-	/**
 	 * Sets up the given sandbox in order to use the URLs and responses defined in mFixture;
 	 * leaves unknown URLs alone.
 	 *
@@ -576,6 +546,26 @@ sap.ui.require([
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
 		}
+	});
+
+	//*********************************************************************************************
+	test("TestUtils.deepContains", function () {
+		TestUtils.notDeepContains(null, {}, "null");
+		TestUtils.notDeepContains(undefined, {}, "undefined");
+		TestUtils.notDeepContains({}, [], "not an array");
+		TestUtils.deepContains({}, {});
+		TestUtils.deepContains([], []);
+		TestUtils.deepContains([{}], []);
+		TestUtils.notDeepContains([], [{}]);
+
+		TestUtils.notDeepContains("foo", "bar");
+//TODO?		TestUtils.deepContains(0, new Number(0));
+
+		TestUtils.notDeepContains({}, {foo : "bar"});
+		TestUtils.deepContains({foo : "bar"}, {foo : "bar"});
+		TestUtils.deepContains({foo : "bar"}, {});
+
+		TestUtils.notDeepContains([{}, {}], [{foo : "bar"}]);
 	});
 
 	//*********************************************************************************************
@@ -2353,14 +2343,14 @@ sap.ui.require([
 					oClonedType_DEBID = oMetaModel.getODataEntityType(
 						"FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID");
 
-				deepContains(oClonedSet_DEBIA, oSet_DEBIA);
+				TestUtils.deepContains(oClonedSet_DEBIA, oSet_DEBIA);
 				notStrictEqual(oClonedSet_DEBIA, oSet_DEBIA);
-				deepContains(oClonedSet_DEBID, oSet_DEBID);
+				TestUtils.deepContains(oClonedSet_DEBID, oSet_DEBID);
 				notStrictEqual(oClonedSet_DEBID, oSet_DEBID);
 
-				deepContains(oClonedType_DEBIA, oType_DEBIA);
+				TestUtils.deepContains(oClonedType_DEBIA, oType_DEBIA);
 				notStrictEqual(oClonedType_DEBIA, oType_DEBIA);
-				deepContains(oClonedType_DEBID, oType_DEBID);
+				TestUtils.deepContains(oClonedType_DEBID, oType_DEBID);
 				notStrictEqual(oClonedType_DEBID, oType_DEBID);
 
 				strictEqual(
