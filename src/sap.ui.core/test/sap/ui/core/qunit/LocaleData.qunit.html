@@ -86,7 +86,7 @@
 	function genericTests(oLocaleData, sLocale) {
 		var aCalendarTypes = [undefined],
 				sCalendarType,
-				i;
+				i, j;
 
 		equal(typeof oLocaleData.getOrientation(), "string", "getOrientation()");
 		equal(typeof oLocaleData.getLanguages(), "object", "getLanguages()");
@@ -127,6 +127,20 @@
 			equal(typeof oLocaleData.getEra("wide", aCalendarTypes[i]), "string", "getEra(\"wide\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getEra("abbreviated", aCalendarTypes[i]), "string", "getEra(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getEra("narrow", aCalendarTypes[i]), "string", "getEra(\"narrow\", \"" + aCalendarTypes[i] + "\")");
+			for (j = -2 ; j <= 2 ; j++) {
+				equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + ")");
+				if (j === 0) {
+					strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + ")");
+					strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + ")");
+				} else {
+					equal(typeof oLocaleData.getRelativeMinute(j), "string", "getRelativeMinute(" + j + ")");
+					equal(typeof oLocaleData.getRelativeHour(j), "string", "getRelativeHour(" + j + ")");
+				}
+				equal(typeof oLocaleData.getRelativeDay(j), "string", "getRelativeDay(" + j + ")");
+				equal(typeof oLocaleData.getRelativeWeek(j), "string", "getRelativeWeek(" + j + ")");
+				equal(typeof oLocaleData.getRelativeMonth(j), "string", "getRelativeMonth(" + j + ")");
+				equal(typeof oLocaleData.getRelativeYear(j), "string", "getRelativeYear(" + j + ")");
+			}
 		}
 
 		equal(typeof oLocaleData.getNumberSymbol("decimal"), "string", "getNumberSymbol(\"decimal\")");
