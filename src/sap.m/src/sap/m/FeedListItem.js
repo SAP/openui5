@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new FeedListItem.
 	 *
@@ -30,89 +30,89 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FeedListItem = ListItemBase.extend("sap.m.FeedListItem", /** @lends sap.m.FeedListItem.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Icon to be displayed as graphical element within the FeedListItem. This can be an image or an icon from the icon font. If no icon is provided, a default person-placeholder icon is displayed.
 			 * Icon is only shown if showIcon = true.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * Icon displayed when the list item is active.
 			 */
 			activeIcon : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * Sender of the chunk
 			 */
 			sender : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * The FeedListItem text.
 			 */
 			text : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * The Info text.
 			 */
 			info : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * This chunks timestamp
 			 */
 			timestamp : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * If true, sender string is an link, which will fire 'senderPress' events. If false, sender is normal text.
 			 */
 			senderActive : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * If true, icon is an link, which will fire 'iconPress' events. If false, icon is normal image
 			 */
 			iconActive : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
 			 * 
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
 			iconDensityAware : {type : "boolean", defaultValue : true},
-	
+
 			/**
 			 * If set to "true" (default), icons will be displayed, if set to false icons are hidden
 			 */
 			showIcon : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * The expand and collapse feature is set by default and uses 300 characters on mobile devices and 500 characters on desktops as limits. Based on these values, the text of the FeedListItem is collapsed once text reaches these limits. In this case, only the specified number of characters is displayed. By clicking on the text link More, the entire text can be displayed. The text link Less collapses the text. The application is able to set the value to its needs.
 			 */
 			maxCharacters : {type : "int", group : "Behavior", defaultValue : null}
 		},
 		events : {
-	
+
 			/**
 			 * Event is fired when name of the sender is pressed.
 			 */
 			senderPress : {
 				parameters : {
-	
+
 					/**
 					 * Dom reference of the feed item's sender string to be used for positioning.
 					 */
 					domRef : {type : "string"}
 				}
 			}, 
-	
+
 			/**
 			 * Event is fired when the icon is pressed.
 			 */
 			iconPress : {
 				parameters : {
-	
+
 					/**
 					 * Dom reference of the feed item's icon to be used for positioning.
 					 */
@@ -121,23 +121,23 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			}
 		}
 	}});
-	
+
 	///**
 	// * This file defines behavior for the control,
 	// */
-	
+
 	FeedListItem._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-	
+
 	FeedListItem._nMaxCharactersMobile = 300;
 	FeedListItem._nMaxCharactersDesktop = 500;
-	
+
 	/**
 	 * Default texts are fetched from the sap.m resource bundle
 	 */
-	
+
 	FeedListItem._sTextShowMore = FeedListItem._oRb.getText("TEXT_SHOW_MORE");
 	FeedListItem._sTextShowLess = FeedListItem._oRb.getText("TEXT_SHOW_LESS");
-	
+
 	/**
 	 * Function is called when exiting the control.
 	 *
@@ -154,10 +154,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		if (this._oLinkExpandCollapse) {
 			this._oLinkExpandCollapse.destroy();
 		}
-	
+
 		ListItemBase.prototype.exit.apply(this);
 	};
-	
+
 	/**
 	 * Overwrite ListItemBase's ontap: Propagate tap event from FeedListItem to ListItemBase only when tap performed
 	 * not on active elements of FeedListItem (i.e. image, sender link, expand/collapse link)
@@ -173,26 +173,26 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			ListItemBase.prototype.ontap.apply(this, [oEvent]);
 		}
 	};
-	
+
 	/**
 	 * Lazy load feed icon image.
 	 *
 	 * @private
 	 */
 	FeedListItem.prototype._getImageControl = function() {
-	
+
 		var sIconSrc = this.getIcon() ? this.getIcon() : sap.ui.core.IconPool.getIconURI("person-placeholder"), sImgId = this
 				.getId()
 				+ '-icon', mProperties = {
 			src : sIconSrc,
 			alt : this.getSender(),
 			densityAware : this.getIconDensityAware(),
-			decorative : !this.getIconActive()
+			decorative : false
 		}, aCssClasses = ['sapMFeedListItemImage'];
-	
+
 		var that = this;
 		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
-	
+
 		if (this.getIconActive()) {
 			this._oImageControl.attachPress(function() {
 				var sIconDomRef = this.getDomRef();
@@ -201,10 +201,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 				});
 			});
 		}
-	
+
 		return this._oImageControl;
 	};
-	
+
 	/**
 	 * Returns a link control with sender text firing a 'senderPress' event. Does not take care of the 'senderActive' flag,
 	 * though
@@ -227,17 +227,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			// Necessary so this gets garbage collected
 			this._oLinkControl.setParent(this, null, true);
 		}
-		
+
 		if (withColon) {
 			this._oLinkControl.setProperty("text", this.getSender() + FeedListItem._oRb.getText("COLON"), true);
 		} else {
 			this._oLinkControl.setProperty("text", this.getSender(), true);
 		}
 		this._oLinkControl.setProperty("enabled", this.getSenderActive(), true);
-	
+
 		return this._oLinkControl;
 	};
-	
+
 	/**
 	 * Overwrite base method to hook into list item's active handling
 	 *
@@ -245,12 +245,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 */
 	FeedListItem.prototype._activeHandlingInheritor = function() {
 		var sActiveSrc = this.getActiveIcon();
-	
+
 		if (!!this._oImageControl && !!sActiveSrc) {
 			this._oImageControl.setSrc(sActiveSrc);
 		}
 	};
-	
+
 	/**
 	 * Overwrite base method to hook into list item's inactive handling
 	 *
@@ -262,7 +262,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			this._oImageControl.setSrc(sSrc);
 		}
 	};
-	
+
 	/**
 	 * The first this._nMaxCollapsedLength characters of the text are shown in the collapsed form, the text string ends up
 	 * with a complete word, the text string contains at least one word
@@ -279,7 +279,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		}
 		return this._sShortText;
 	};
-	
+
 	/**
 	 * Expands or collapses the text of the FeedListItem expanded state: this._sFullText + ' ' + 'LESS' collapsed state:
 	 * this._sShortText + '...' + 'MORE'
@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			this._bTextExpanded = true;
 		}
 	};
-	
+
 	/**
 	 * Gets the link for expanding/collapsing the text
 	 *
@@ -322,7 +322,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		}
 		return this._oLinkExpandCollapse;
 	};
-	
+
 	/**
 	 * Checks if the text is expandable: If maxCharacters is empty the default values are used, which are 300 characters (
 	 * on mobile devices) and 500 characters ( on tablet and desktop). Otherwise maxCharacters is used as a limit. Based on
