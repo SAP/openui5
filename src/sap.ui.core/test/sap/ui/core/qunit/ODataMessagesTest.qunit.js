@@ -450,7 +450,7 @@ function runODataMessagesTests() {
 				}
 			}
 			
-			console.error = console.warn = console.log = console.debug = console.info = fnCount;
+			jQuery.sap.log.error = jQuery.sap.log.warning = jQuery.sap.log.debug = jQuery.sap.log.info = fnCount;
 			
 			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
 			
@@ -524,10 +524,10 @@ function runODataMessagesTests() {
 			
 			
 			// Clean up
-			jQuery.sap.log.info = fnInfo;
 			jQuery.sap.log.error = fnError;
 			jQuery.sap.log.warning = fnWarn;
 			jQuery.sap.log.debug = fnDebug;
+			jQuery.sap.log.info = fnInfo;
 			
 			oMetadata.destroy();
 			oParser.destroy();
