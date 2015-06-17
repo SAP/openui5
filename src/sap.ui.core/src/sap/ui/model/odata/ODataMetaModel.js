@@ -13,8 +13,8 @@ sap.ui.define([
 		MetaModel, Utils) {
 	"use strict";
 
-	// path to an entity type's property ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
-	var rPropertyPath = /^((\/dataServices\/schema\/\d+)\/entityType\/\d+)\/property\/\d+$/;
+	// path to a type's property e.g. ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
+	var rPropertyPath = /^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/;
 
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
@@ -791,8 +791,8 @@ sap.ui.define([
 	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
 	 *
 	 * @param {sap.ui.model.Context} oPropertyContext
-	 *   a model context for a structural property of an entity type, as returned by
-	 *   {@link #getMetaContext getMetaContext}
+	 *   a model context for a structural property of an entity type or a complex type, as
+	 *   returned by {@link #getMetaContext getMetaContext}
 	 * @returns {Promise}
 	 *   a Promise that gets resolved as soon as the value lists as well as the required model
 	 *   elements have been loaded
