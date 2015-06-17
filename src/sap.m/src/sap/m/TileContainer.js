@@ -368,6 +368,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		}
+
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			this._fnOrientationChange = function(oEvent) {
+				if (this.getDomRef()) {
+					this._oTileDimensionCalculator.calc();
+					//there is not need to call this._update, because resize event will be triggered also, where it is called
+				}
+			}.bind(this);
+		}
+
+		this._oTileDimensionCalculator = new TileDimensionCalculator(this);
 	};
 
 	/**
@@ -422,6 +433,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (this.getTiles().length > 0 && this._mFocusables) {
 				this._mFocusables[this.getTiles()[0].getId()].eq(0).attr('tabindex', '0');
 			}
+		}
+
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			sap.ui.Device.orientation.attachHandler(this._fnOrientationChange, this);
 		}
 	};
 
@@ -541,6 +556,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._sInitialResizeTimeoutId) {
 			clearTimeout(this._sInitialResizeTimeoutId);
 		}
+
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			sap.ui.Device.orientation.detachHandler(this._fnOrientationChange, this);
+		}
 	};
 
 	/**
@@ -558,6 +577,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
+		this._oTileDimensionCalculator.calc();
 		this._updateTilePositions();
 
 		if (!this._oDragSession) {
@@ -871,6 +891,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._iPages = Math.ceil(aTiles.length / this._iMaxTiles);
 
+		var oTileDimension = this._oTileDimensionCalculator.getLastCalculatedDimension();
 		for (var i = 0; i < aTiles.length; i++) {
 
 			if (aTiles[i].isDragged()) {
@@ -879,15 +900,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var iPage =  Math.floor(i / this._iMaxTiles),
 				oTile = aTiles[i],
-				iLeft = (iPage * oContentDimension.outerwidth) + this._iOffsetX + i % this._iMaxTilesX * this._oTileDimension.width,
-				iTop =  this._iOffsetY + Math.floor(i / this._iMaxTilesX) * this._oTileDimension.height - (iPage * this._iMaxTilesY * this._oTileDimension.height);
+				iLeft = (iPage * oContentDimension.outerwidth) + this._iOffsetX + i % this._iMaxTilesX * oTileDimension.width,
+				iTop =  this._iOffsetY + Math.floor(i / this._iMaxTilesX) * oTileDimension.height - (iPage * this._iMaxTilesY * oTileDimension.height);
 
 			if (this._bRtl) {
-				iLeft = (this._iPages - iPage) * oContentDimension.outerwidth - this._iOffsetX - (i % this._iMaxTilesX  + 1) * this._oTileDimension.width;
+				iLeft = (this._iPages - iPage) * oContentDimension.outerwidth - this._iOffsetX - (i % this._iMaxTilesX  + 1) * oTileDimension.width;
 			}
 
 			oTile.setPos(iLeft,iTop);
-			oTile.setSize(this._oTileDimension.width, this._oTileDimension.height);
+			oTile.setSize(oTileDimension.width, oTileDimension.height);
 		}
 	};
 
@@ -1013,32 +1034,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns the dimension (width and height) of a tile.
-	 *
-	 * @returns {object} Width and height of a tile.
-	 * @private
-	 */
-	TileContainer.prototype._getTileDimension = function() {
-
-		if (!this.getDomRef()) {
-			return;
-		}
-
-		if (this._oTileDim) {
-			return this._oTileDim;
-		}
-
-		//TODO: Why the dimensions of the first Tile?
-		var oTile = this.getTiles()[0];
-		this._oTileDim = {
-			width  : Math.round(oTile.$().outerWidth(true)),
-			height : Math.round(oTile.$().outerHeight(true))
-		};
-
-		return this._oTileDim;
-	};
-
-	/**
 	 * Calculates the tile page sizes.
 	 *
 	 * @private
@@ -1048,8 +1043,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getTiles().length === 0) {	// no tiles
 			return;
 		}
-
-		this._oTileDimension = this._getTileDimension();
 
 		var oContentDimension = this._getContainerDimension(),
 			iTiles = this.getTiles().length,
@@ -1063,8 +1056,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oContentDimension.width  -= 45 * 2;
 		}
 
-		var iMaxTilesX = Math.max( Math.floor( oContentDimension.width / this._oTileDimension.width ),1), 		  //at least one tile needs to be visible
-			iMaxTilesY = Math.max( Math.floor((oContentDimension.height - iPagerHeight) / this._oTileDimension.height),1), //at least one tile needs to be visible
+		var oTileDimension = this._oTileDimensionCalculator.getLastCalculatedDimension(),
+			iMaxTilesX = Math.max( Math.floor( oContentDimension.width / oTileDimension.width ),1), 		  //at least one tile needs to be visible
+			iMaxTilesY = Math.max( Math.floor((oContentDimension.height - iPagerHeight) / oTileDimension.height),1), //at least one tile needs to be visible
 			iNumTileX = (iTiles < iMaxTilesX)  ? iTiles : iMaxTilesX,
 			iNumTileY = (iTiles / iNumTileX < iMaxTilesY)  ? Math.ceil(iTiles / iNumTileX) : iMaxTilesY;
 
@@ -1072,13 +1066,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iMaxTiles = iMaxTilesX * iMaxTilesY;
 		this._iMaxTilesX = iMaxTilesX;
 		this._iMaxTilesY = iMaxTilesY;
-		this._iOffsetX = Math.floor(( oContentDimension.width  -  (this._oTileDimension.width * iNumTileX)) / 2);
+		this._iOffsetX = Math.floor(( oContentDimension.width  -  (oTileDimension.width * iNumTileX)) / 2);
 
 		if (sap.ui.Device.system.desktop) {
 			this._iOffsetX += 45;
 		}
 
-		this._iOffsetY = Math.floor(( oContentDimension.height - iPagerHeight - (this._oTileDimension.height * iNumTileY )) / 2);
+		this._iOffsetY = Math.floor(( oContentDimension.height - iPagerHeight - (oTileDimension.height * iNumTileY )) / 2);
 
 	};
 
@@ -1714,6 +1708,55 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return this;
+	};
+
+	TileContainer.prototype.onThemeChanged = function() {
+		if (this.getDomRef()) {
+			this.invalidate();
+		}
+	};
+
+	/**
+	 * Calculates a common tile dimension (width and height),
+	 * that should be applied for all tiles.
+	 * Function {@link getLastCalculatedDimension} does not do the calculation,
+	 * the caller must explicitly call the {@link calc} function before it, or when he/she wants up-to-date dimension
+	 * @private
+	 */
+	var TileDimensionCalculator = function(oTileContainer) {
+		this._oDimension = null;
+		this._oTileContainer = oTileContainer;
+	};
+	/**
+	 * Calculates the dimension (width and height) of a tile.
+	 * @returns {object} Width and height of a tile.
+	 * @protected
+	 */
+	TileDimensionCalculator.prototype.calc = function() {
+		var oTile;
+
+		if (!this._oTileContainer.getDomRef()) {
+			return;
+		}
+
+		if (this._oTileContainer.getTiles().length) {
+			//All tiles have fixed with, defined in the corresponding tile css/less file. So use the first.
+			oTile = this._oTileContainer.getTiles()[0];
+			this._oDimension = {
+				width  : Math.round(oTile.$().outerWidth(true)),
+				height : Math.round(oTile.$().outerHeight(true))
+			};
+		}
+		return this._oDimension;
+	};
+	/**
+	 * Returns the current dimension (width and height) of a tile.
+	 *
+	 * @returns {object} Width and height of a tile.
+	 * @protected
+	 */
+	TileDimensionCalculator.prototype.getLastCalculatedDimension = function() {
+		return this._oDimension;
 	};
 
 	return TileContainer;
