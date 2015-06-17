@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 		this._fnListUpdateFinished = function() {
 			// Find all checkboxes in the list
-			var aItems = this.$().find('.sapMCb'),
+			var aItems = that._oList.$().find('.sapMCb'),
 				iItemsLength = aItems.length;
 			// 'forEach' does not work
 			for (var i = 0; i < iItemsLength; i++) {
@@ -243,7 +243,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			updateFinished: this._fnListUpdateFinished
 		});
 
-		//this._oList.addDelegate({onAfterRendering : this._fnAfterListRendering});
+		this._oList.addDelegate({onAfterRendering : this._fnListUpdateFinished});
 
 		this._oSearchField = new sap.m.SearchField(this.getId() + "-searchField", {
 			width: "100%",
@@ -493,6 +493,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			});
 
 			this._oP13nModel.updateBindings();
+			//Make sure that list is rerendered so that _fnListUpdateFinished is called
+			//and list items are rendered correctly
+			sap.ui.getCore().applyChanges();
 		}
 	};
 
