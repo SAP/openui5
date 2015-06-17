@@ -14,17 +14,15 @@ module.exports = function(grunt, config) {
 	var sSourcesFolder = 'target/openui5-sap.ui.core/resources/';
 
 	return {
+		options: {
+			banner: 'window["sap-ui-optimized"] = true;',
+			preserveComments: 'some'
+		},
 		coreNoJQueryJS: {
-			options: {
-				banner: 'window["sap-ui-optimized"] = true;'
-			},
 			src: sSourcesFolder + 'sap-ui-core-nojQuery-dbg.js',
 			dest: sSourcesFolder + 'sap-ui-core-nojQuery.js'
 		},
 		coreJs: {
-			options: {
-				banner: 'window["sap-ui-optimized"] = true;'
-			},
 			src: sSourcesFolder + 'sap-ui-core-dbg.js',
 			dest: sSourcesFolder + 'sap-ui-core.js'
 		}

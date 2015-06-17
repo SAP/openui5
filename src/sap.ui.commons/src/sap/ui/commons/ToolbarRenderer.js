@@ -4,7 +4,7 @@
 
 // Provides default renderer for control sap.ui.commons.Toolbar
 sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+function(jQuery) {
 	"use strict";
 
 
@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ToolbarRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given toolbar using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -23,41 +23,42 @@ sap.ui.define(['jquery.sap.global'],
 	ToolbarRenderer.render = function(oRenderManager, oToolbar) {
 		var rm = oRenderManager;
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
-	
+
 		jQuery.sap.assert(oToolbar instanceof sap.ui.commons.Toolbar, "ToolbarRenderer.render: oToolbar must be a toolbar");
-	
+
 		rm.write("<div role='toolbar' tabindex='0'"); // Tab index required for ItemNavigation, the Toolbar is actually not tabable
 		rm.writeControlData(oToolbar);
 		if (oToolbar.getWidth()) {
 			rm.addStyle("width", oToolbar.getWidth());
 		}
-	
+
 		var sTooltip = oToolbar.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
-	
+
 		rm.addClass("sapUiTb");
 		rm.addClass("sapUiTbDesign" + oToolbar.getDesign());
 		if (oToolbar.getStandalone()) {
 			rm.addClass("sapUiTbStandalone");
 		}
-	
+
 		rm.writeStyles();
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		var aRightItems = oToolbar.getRightItems();
 		var iRightItemsLength =  aRightItems.length;
 		var bHasRightItems = iRightItemsLength > 0;
-	
-	    if (bHasRightItems) {
-				rm.write("<div class='sapUiTbCont sapUiTbContLeft'><div class='sapUiTbInner' >");
-	    } else {
-				rm.write("<div class='sapUiTbCont'><div class='sapUiTbInner'>");
-	    }
-	
-	
+
+		var sInnerDiv = "<div class='sapUiTbInner' id='" + oToolbar.getId() + "-inner" + "'>";
+		if (bHasRightItems) {
+            rm.write("<div class='sapUiTbCont sapUiTbContLeft'>" + sInnerDiv);
+		} else {
+			rm.write("<div class='sapUiTbCont'>" + sInnerDiv);
+		}
+
+
 		// Render each item, also the hidden ones, as they might become visible when the toolbar is resized
 		var aItems = oToolbar.getItems();
 		var iLength = aItems.length;
@@ -65,7 +66,7 @@ sap.ui.define(['jquery.sap.global'],
 			var oToolbarItem = aItems[i];
 			if (oToolbarItem) {
 				jQuery.sap.assert(oToolbarItem.getMetadata().isInstanceOf("sap.ui.commons.ToolbarItem"), "ToolbarRenderer.render: oToolbarItem must be a ToolbarItem");
-	
+
 				// Render ToolbarSeparator elements internally, dispatch rendering of real controls
 				if (oToolbarItem instanceof sap.ui.commons.ToolbarSeparator) {
 					ToolbarRenderer.renderSeparator(rm, oToolbarItem);
@@ -74,12 +75,12 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}
 		}
-	
+
 		// Render the overflow menu button and the cover hiding it, if appropriate
 		rm.write("<div id='");
 		rm.write(oToolbar.getId());
 		rm.write("-mn' class='sapUiTbOB' role='button' aria-haspopup='true' title='" + rb.getText("TOOLBAR_OVERFLOW") + "' tabindex='-1'></div></div></div>");
-	
+
 		// Render right side items if right items exist
 		if (bHasRightItems) {
 			rm.write("<div class='sapUiTbInnerRight' >");
@@ -99,10 +100,10 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		// Close div for the toolbar
 		rm.write("</div>");
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Renders the given ToolbarSeparator
 	 *
@@ -125,8 +126,8 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write(" class='sapUiTbSpacer' role='separator'></span>");
 		}
 	};
-	
-	
+
+
 	/**
 	 * Fills the overflow popup with the currently invisible toolbar items.
 	 *
@@ -138,28 +139,41 @@ sap.ui.define(['jquery.sap.global'],
 		if (!oPopupHolder) {
 			oPopupHolder = ToolbarRenderer.initOverflowPopup(oToolbar).firstChild;
 		}
-	
-		// Move all invisible items from the second row of the toolbar to the popup
-		var iVisibleItems = oToolbar.getVisibleItemInfo().count;
-		var oToolbarCont = oToolbar.getDomRef().firstChild.firstChild;
-		var iPos = 0;
-		var oChild = oToolbarCont.firstChild;
-		var sOverflowButtonId = oToolbar.getId() + "-mn";
+
+		// Move all invisible (due to overflow) left items from the second row of the toolbar to the popup
+		//1. Obtaining all invisible due to overflow and due to API property visible=false
+		var $oPopupHolderParent = jQuery(oPopupHolder.parentNode),
+			iVisibleItems = oToolbar.getVisibleItemInfo(true).count,
+			oToolbarCont = oToolbar.getDomRef().firstChild.firstChild,
+			iPos = 0,
+			oChild = oToolbarCont.firstChild,
+			sOverflowButtonId = oToolbar.getId() + "-mn",
+			iPopupParentWidth = $oPopupHolderParent.width(),
+			iBiggestItemWidth = 0;
+
+		//2. Move all left items that are not visible due to the overflow
 		while (oChild) {
 			var nextChild = oChild.nextSibling;
 			if (iPos >= iVisibleItems) {
-				if (oChild.id == sOverflowButtonId) { // do not move overflow button and cover
+				if (oChild.id === sOverflowButtonId) { // do not move overflow button and cover
 					break;
 				}
-	
+				// calculate biggest item width CSS: (1570140661)
+				iBiggestItemWidth = iBiggestItemWidth  < jQuery(oChild).outerWidth(true) ? jQuery(oChild).outerWidth(true) : iBiggestItemWidth;
 				oPopupHolder.appendChild(oChild);
 			}
 			oChild = nextChild;
 			iPos++;
 		}
+		// when there is an item with width bigger than the last opened popup width, set popup width
+		// to be equal to the biggest width among items (CSS: 1570140661)
+		if (iBiggestItemWidth > iPopupParentWidth) {
+			var iPaddingSpace = 12;//preserve space for left+right padding(.sapUiTbDD)
+			$oPopupHolderParent.width(iBiggestItemWidth + iPaddingSpace);
+		}
 	};
-	
-	
+
+
 	/**
 	 * Creates the overflow popup inside the static area, but does not fill its contents (=no items).
 	 *
@@ -174,28 +188,58 @@ sap.ui.define(['jquery.sap.global'],
 		oStaticArea.appendChild(oPopupHolder);
 		return oPopupHolder;
 	};
-	
-	
+
+
 	/**
-	 * Removes the toolbar items from the overflow popup and puts them back into the toolbar.
+	 * Either move the items from the overflow popup to the toolbar or just remove them from the DOM.
 	 *
 	 * @param {sap.ui.commons.Toolbar} oToolbar
+	 * @param {boolean} [bMoveItems=true] move popup items to the toolbar DOM or remove them completely
 	 * @private
 	 */
-	ToolbarRenderer.emptyOverflowPopup = function(oToolbar) {
-		var oPopupHolder = oToolbar.getDomRef("pu");
-		var oDomRef = oToolbar.getDomRef();
-		
-		if (oPopupHolder && oDomRef) {
-			var oOverflowButton = oToolbar.getDomRef("mn");
-			var oToolbarCont = oDomRef.firstChild.firstChild;
+	ToolbarRenderer.emptyOverflowPopup = function(oToolbar, bMoveItems) {
+		var oPopupHolder    = oToolbar.getDomRef("pu"),
+		    oDomRef         = oToolbar.getDomRef(),
+		    oContext        = null,
+		    sMethod         = '',
+		    aAdditionalArgs = [];
+
+		if (bMoveItems === undefined) {
+			// by default the items are moved from the popup to the toolbar
+			bMoveItems = true;
+		}
+
+		if (oPopupHolder) {
+			if (bMoveItems && oDomRef) {
+				// move the items from the popup to the toolbar
+				// i.e. oToolbarContent.insertBefore(oPopupHolder.firstChild, oOverflowButton)
+				oContext        = oDomRef.firstChild.firstChild; // the toolbar content holder
+				sMethod         = 'insertBefore';
+				aAdditionalArgs = [oToolbar.getDomRef("mn")];
+			} else if (!bMoveItems) {
+				// simply remove the popup items from the DOM
+				// i.e. oPopupHolder.removeChild(oPopupHolder.firstChild)
+				oContext    = oPopupHolder;
+				sMethod     = 'removeChild';
+			} else {
+				jQuery.sap.log.error("The renderer 'sap.ui.commons.ToolbarRenderer' cannot empty the toolbar overflow popup.");
+
+				return;
+			}
+
 			while (oPopupHolder.hasChildNodes()) {
-				oToolbarCont.insertBefore(oPopupHolder.firstChild, oOverflowButton);
+				var aArgs = [oPopupHolder.firstChild].concat(aAdditionalArgs);
+				oContext[sMethod].apply(oContext, aArgs);
+			}
+
+			if (oDomRef && oToolbar.sOriginalStylePropertyWidth) {
+				jQuery(oDomRef).width(oToolbar.sOriginalStylePropertyWidth);
+				oToolbar.sOriginalStylePropertyWidth = null;
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Returns the area in which the overflow popup should be rendered.
 	 *
@@ -206,7 +250,7 @@ sap.ui.define(['jquery.sap.global'],
 	ToolbarRenderer.getPopupArea = function(oToolbar) {
 		return oToolbar.getDomRef("pu");
 	};
-	
+
 	/**
 	 * @param {sap.ui.commons.Toolbar} oToolbar The Toolbar where the overflow button should be set active
 	 * @private
@@ -214,7 +258,7 @@ sap.ui.define(['jquery.sap.global'],
 	ToolbarRenderer.setActive = function(oToolbar) {
 		oToolbar.$("mn").addClass("sapUiTbOBAct");
 	};
-	
+
 	/**
 	 * @param {sap.ui.commons.Toolbar} oToolbar The Toolbar where the overflow button should be set not active
 	 * @private

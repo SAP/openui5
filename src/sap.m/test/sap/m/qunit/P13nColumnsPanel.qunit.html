@@ -770,12 +770,11 @@
 			strictEqual(iItemIndex, -1, "Wrong index return -> item is valid but it shall not exist in that list of items");
 		});
 
-		test("Shall check onAfterRendering", function() {
-			ok(oP13nColumnsPanel.onAfterRendering, "Method does not exist");
+		test("Shall check onBeforeRendering", function() {
+			ok(oP13nColumnsPanel.onBeforeRendering, "Method does not exist");
 
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
 			oP13nColumnsPanel._updateSelectAllDescription = sinon.stub();
-			oP13nColumnsPanel._fnHandleResize = sinon.stub();
 
 			var oInitialModel = {
 				"id": "initial model"
@@ -788,26 +787,12 @@
 			oP13nColumnsPanel._oTable.getModel().getJSON = sinon.stub().returns(oInitialModel);
 			sap.ui.Device.resize.attachHandler = sinon.stub();
 
-			// following lines are important for stable unit test run in firefox (version > 34) 
-			// if window timer function are stubed it has to be reset to the original functions as otherwise the unit test fill end up in errors   
-			var fClearTimeOut = window.clearTimeout;
-			var fSetTimeOut = window.setTimeout;
-			window.clearTimeout = sinon.stub();
-			window.setTimeout = sinon.stub();
+			// CUT (onBeforeRendering will be called for the very first time)
+			oP13nColumnsPanel._bOnBeforeRenderingFirstTimeExecuted = false;
+			oP13nColumnsPanel.onBeforeRendering();
 
-			// CUT (onAfterRendering will be called for the very first time)
-			oP13nColumnsPanel._bOnAfterRenderingFirstTimeExecuted = false;
-			oP13nColumnsPanel.onAfterRendering();
-
-			strictEqual(oP13nColumnsPanel._bOnAfterRenderingFirstTimeExecuted, true, "Marker that onAfterRendering method was called shall be set to true");
+			strictEqual(oP13nColumnsPanel._bOnBeforeRenderingFirstTimeExecuted, true, "Marker that onAfterRendering method was called shall be set to true");
 			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Calculation of move button appearance shall be called");
-			strictEqual(sap.ui.Device.resize.attachHandler.called, true, "Resize handler shall be attached");
-			strictEqual(window.clearTimeout.called, true, "timer shall be cleared");
-			strictEqual(window.setTimeout.called, true, "time shall be set to call method _fnHandleResize");
-
-			//reset stubed time functions to original
-			window.clearTimeout = fClearTimeOut;
-			window.setTimeout = fSetTimeOut
 		});
 
 		test("Shall check exit", function() {
@@ -1079,7 +1064,6 @@
 			strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, true, "Method shall be executed");
 			strictEqual(oNewColumnsItem.setVisible.called, true, "Method shall be executed");
-			strictEqual(oItem.getSelected.called, true, "Method shall be executed");
 
 			//CUT -> check that the method is executed -> columnsItem with this key already exist -> just 
 			//change the visible property and reorder the existing table items
@@ -1095,7 +1079,10 @@
 			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
 			oP13nColumnsPanel._oTableItemsOrdering._bShallBeOrdered = true;
 			oP13nColumnsPanel._handleItemVisibilityChanged([
-				oItem
+				{
+					"columnKey": oItem.data('P13nColumnKey'),
+					"visible": oItem.getSelected()
+				}
 			]);
 
 			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
@@ -1686,7 +1673,7 @@
 			];
 			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
 			strictEqual(bTableItemsChangeStatusResult, true, "Changes deteced: Order is equal, but property index is different");
-			
+
 		});
 	}());
 </script>

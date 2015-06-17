@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.TreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason'],
-	function(jQuery, TreeBinding, ODataTreeBinding, TreeAutoExpandMode, ChangeReason) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils'],
+	function(jQuery, TreeBinding, ODataTreeBinding, TreeAutoExpandMode, ChangeReason, TreeBindingUtils) {
 	"use strict";
 
 	/**
@@ -30,21 +30,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			}
 		}
 		
+		// make sure we have a parameter object
+		this.mParameters = this.mParameters || {};
+		
 		// initialize the contexts
 		this._aRowIndexMap = [];
-		
-		//create general tree structure
-		this._createTreeState();
 		
 		//Store length and threshold for all requests
 		this._iThreshold = 0;
 		this._iPageSize = 0;
 		
 		//set the default auto expand mode
-		this.mParameters = this.mParameters || {};
-		if (!this.mParameters.autoExpandMode) {
-			this.mParameters.autoExpandMode = TreeAutoExpandMode.Sequential;
-		}
+		this.setAutoExpandMode(this.mParameters.autoExpandMode || TreeAutoExpandMode.Sequential);
 		
 		//default value for collapse recursive
 		if (this.mParameters.collapseRecursive === undefined) {
@@ -52,8 +49,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		} else {
 			this.bCollapseRecursive = !!this.mParameters.collapseRecursive;
 		}
+		
+		//create general tree structure
+		this._createTreeState();
 	};
 
+	ODataTreeBindingAdapter.prototype.setAutoExpandMode = function (sAutoExpandMode) {
+		this._autoExpandMode = sAutoExpandMode;
+	};
+	
 	/**
 	 * @override
 	 */
@@ -214,7 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		jQuery.sap.assert(oNewSection.startIndex >= 0, "The sections start index mus be greater/equal to 0.");
 		
 		// Iterate over all known/loaded sections of the node
-		oNodeState.sections = this._mergeSections(oNodeState.sections, oNewSection);
+		oNodeState.sections = TreeBindingUtils.mergeSections(oNodeState.sections, oNewSection);
 		
 		return oNodeState.sections;
 	};
@@ -249,7 +253,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 				for (var i = 0; i < oNodeState.sections.length; i++) {
 					var oCurrentSection = oNodeState.sections[i];
 					oCurrentSection.length = Math.max(oCurrentSection.length, this._iPageSize);
-					aNewSections = this._mergeSections(aNewSections, oCurrentSection);
+					aNewSections = TreeBindingUtils.mergeSections(aNewSections, oCurrentSection);
 				}
 				oNodeState.sections = aNewSections;
 			}
@@ -431,7 +435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			level: this.bDisplayRootNode && !(oRootContext === null) ? 0 : -1,
 			nodeState: oRootNodeState,
 			isLeaf: false,
-			autoExpand: this.iNumberOfExpandedLevels + 1
+			autoExpand: this.getNumberOfExpandedLevels() + 1
 		});
 		//flag the root node as artificial in case we have no real root context (but only children)
 		this._oRootNode.isArtificial = true; 
@@ -482,7 +486,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			
 			//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
 			//paging is handled differently
-			if (oNode.autoExpand >= 0 && this.mParameters.autoExpandMode === TreeAutoExpandMode.Bundled) {
+			if (oNode.autoExpand >= 0 && this._autoExpandMode === TreeAutoExpandMode.Bundled) {
 				iRequestedLength = Math.max(0, iMaxGroupSize);
 			}
 			
@@ -662,7 +666,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			numberOfTotals: mParameters.numberOfTotals || 0,
 			//the total number of leafs in the sub-tree
 			numberOfLeafs: mParameters.numberOfLeafs || 0,
-			autoExpand: mParameters.autoExpand || 0
+			autoExpand: mParameters.autoExpand || 0,
+			absoluteNodeIndex: mParameters.absoluteNodeIndex || 0
 		};
 		//calculate the group id
 		if (oContext !== undefined) {
@@ -798,6 +803,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			this._map(oChildNode, fnMapFunction);
 		}
 		
+		if (this._afterMapHook) {
+			this._afterMapHook(oNode, fnMapFunction);
+		}
 	};
 	
 	/**
@@ -840,7 +848,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			}
 		}
 		
+		//check if an after match hook is defined on sub-adapters
+		return this._afterMatchHook ? this._afterMatchHook(oNode, aResults, iMaxNumberOfMatches, fnMatchFunction, iPositionInParent, oParentNode) : false;
 	};
+
 	
 	/**
 	 * Toggles the tree node sitting at the given index.
@@ -907,6 +918,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		
 		// clear page size
 		this._iPageSize = 0;
+		this._iThreshold = 0;
 		
 		if (!mParameters || mParameters.reason !== ChangeReason.Sort) {
 			//remove the selection/reset lead selection index
@@ -942,6 +954,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			delete this._mTreeState.selected[oNodeState.groupID];
 			this._mTreeState.deselected[oNodeState.groupID] = oNodeState;
 		}
+	};
+	
+	/**
+	 * Returns the selection state for the node at the given index.
+	 * @param {int} iRowIndex the row index to check for selection state
+	 */
+	ODataTreeBindingAdapter.prototype.isIndexSelected = function (iRowIndex) {
+		var oNode = this.getNodeByIndex(iRowIndex);
+		return oNode && oNode.nodeState ? oNode.nodeState.selected : false;
+	};
+	
+	/**
+	 * Returns if the node at the given index is selectable.
+	 * In the AnalyticalTable only nodes with isLeaf = true are selectable.
+	 * @param {int} iRowIndex the row index which should be checked for "selectability"
+	 */
+	ODataTreeBindingAdapter.prototype.isIndexSelectable = function (iRowIndex) {
+		var oNode = this.getNodeByIndex(iRowIndex);
+		return this._isNodeSelectable(oNode);
+	};
+	
+	/**
+	 * Checks if the given node can be selected. Always true for TreeTable controls.
+	 */
+	ODataTreeBindingAdapter.prototype._isNodeSelectable = function (oNode) {
+		return true;
 	};
 	
 	/**
@@ -1144,19 +1182,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 				//if the node is inside the range -> select it
 				if (iNodeCounter >= iNewFromIndex && iNodeCounter <= iNewToIndex) {
 					
-					// fetch the node index if its selection state changes
-					if (oNode.nodeState.selected !== !!bSelectionValue) {
-						aChangedIndices.push(iNodeCounter);
+					if (this._isNodeSelectable(oNode)) {
+						// fetch the node index if its selection state changes
+						if (oNode.nodeState.selected !== !!bSelectionValue) {
+							aChangedIndices.push(iNodeCounter);
+						}
+						
+						// remember the old lead selection index if we encounter it 
+						// (might not happen if the lead selection is outside the newly set range)
+						if (oNode.groupID === this._sLeadSelectionGroupID) {
+							iOldLeadIndex = iNodeCounter;
+						}
+						
+						// select/deselect node, but suppress the selection change event
+						this.setNodeSelection(oNode.nodeState, !!bSelectionValue);
 					}
 					
-					// remember the old lead selection index if we encounter it 
-					// (might not happen if the lead selection is outside the newly set range)
-					if (oNode.groupID === this._sLeadSelectionGroupID) {
-						iOldLeadIndex = iNodeCounter;
-					}
-					
-					// select/deselect node, but suppress the selection change event
-					this.setNodeSelection(oNode.nodeState, !!bSelectionValue);
 					return true;
 				}
 			}
@@ -1225,21 +1266,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			
 			if (oNode) {
 				
-				// keep track of the last selected node -> this will be the new lead index
-				mParams.leadGroupID = oNode.groupID;
-				mParams.leadIndex = iNodeCounter;
-				
 				//if we find the old lead selection index -> keep it, safes some performance later on
 				if (oNode.groupID === this._sLeadSelectionGroupID) {
 					mParams.oldIndex = iNodeCounter;
 				}
 				
-				//if a node is NOT selected (and is not our artificial root node...)
-				if (!oNode.isArtificial && oNode.nodeState.selected !== true) {
-					mParams.rowIndices.push(iNodeCounter);
+				if (this._isNodeSelectable(oNode)) {
+					//if a node is NOT selected (and is not our artificial root node...)
+					if (!oNode.isArtificial && oNode.nodeState.selected !== true) {
+						mParams.rowIndices.push(iNodeCounter);
+					}
+					this.setNodeSelection(oNode.nodeState, true);
+
+					// keep track of the last selected node -> this will be the new lead index
+					mParams.leadGroupID = oNode.groupID;
+					mParams.leadIndex = iNodeCounter;
 				}
-				
-				this.setNodeSelection(oNode.nodeState, true);
 				
 				//propagate select all mode to all expanded nodes (including the root node)
 				// child nodes will inherit the selection state it in the process (see _buildTree/_loadChildContexts)
@@ -1346,7 +1388,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		}
 		
 		//only fire event if the selection actually changed somehow
-		if (mParams.rowIndices.length > 0 || typeof mParams.leadIndex !== "undefined") {
+		if (mParams.rowIndices.length > 0 || (mParams.leadIndex != undefined && mParams.leadIndex !== -1)) {
 			this.fireSelectionChanged(mParams);
 		}
 	};
@@ -1362,36 +1404,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	//*********************************************
 	//                   Events                   *
 	//*********************************************
-	
-	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'contextChange' event of this <code>sap.ui.model.odata.ODataTreeBODataTreeBindingAdaptere>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
-	 * @protected
-	 */
-	ODataTreeBindingAdapter.prototype.attachContextChange = function(fnFunction, oListener) {
-		this.attachEvent("contextChange", fnFunction, oListener);
-	};
-	
-	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'contextChange' event of this <code>sap.ui.model.ODataODataTreeBindingAdapter</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
-	 * @protected
-	 */
-	ODataTreeBindingAdapter.prototype.detachContextChange = function(fnFunction, oListener) {
-		this.detachEvent("contextChange", fnFunction, oListener);
-	};
-	
-	/**
-	 * Fire event contextChange to attached listeners.
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @private
-	 */
-	ODataTreeBindingAdapter.prototype._fireContextChange = function(mArguments) {
-		this.fireEvent("contextChange", mArguments);
-	};
-	
 	
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the 'selectionChanged' event of this <code>sap.ui.model.SelectionModel</code>.<br/>

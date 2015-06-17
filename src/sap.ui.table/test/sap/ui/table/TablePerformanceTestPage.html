@@ -157,7 +157,9 @@
 	function fnCreateTable () {
 		// create columns
 		var oControl, oColumn, i;
-
+	
+		jQuery.sap.measure.setActive(true);
+		
 		if (!console.timeStamp) {
 			console.timeStamp = function () {};
 		}
@@ -168,7 +170,7 @@
 
 			jQuery.sap.delayedCall(100, this, function() {
 				console.timeStamp("CreateTable");
-				oTimer.tableCreate = new Date().getTime();
+				jQuery.sap.measure.start("createTable");
 
 				var iVisibleRowCount = parseInt(oVisibleRowCountInput.getValue(), 10);
 				if (parseInt(oRowsInput.getValue(), 10) < parseInt(oVisibleRowCountInput.getValue(), 10)) {
@@ -178,23 +180,26 @@
 				oTable = new sap.ui.table.Table({
 					visibleRowCount: iVisibleRowCount
 				});
-
-
+				
+				
+				
 				oTable.addDelegate({
 					onBeforeRendering: function () {
-						oTimer.tableBeforeRenderingBegin = new Date().getTime();
+						jQuery.sap.measure.start("onBeforeRendering");
+						jQuery.sap.measure.start("rendering");
 					},
 					onAfterRendering: function () {
-						oTimer.tableAfterRenderingBegin = new Date().getTime();
+						jQuery.sap.measure.start("onAfterRendering");
 					}
 				}, true);
 
 				oTable.addDelegate({
 					onBeforeRendering: function () {
-						oTimer.tableBeforeRenderingEnd = new Date().getTime();
+						jQuery.sap.measure.end("onBeforeRendering");
 					},
 					onAfterRendering: function () {
-						oTimer.tableAfterRenderingEnd = new Date().getTime();
+						jQuery.sap.measure.end("onAfterRendering");
+						jQuery.sap.measure.end("rendering");
 					}
 				}, false);
 
@@ -202,16 +207,15 @@
 				var fnRowsUpdated = function() {
 					oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
 					console.timeStamp("RowsUpdated");
-					oTimer.tableDone = new Date().getTime();
 
-					var iOverall = (oTimer.tableDone - oTimer.tableCreate);
-					var iRendering = (oTimer.tableAfterRenderingEnd - oTimer.tableBeforeRenderingBegin);
-					var iBeforeRendering = (oTimer.tableBeforeRenderingEnd - oTimer.tableBeforeRenderingBegin);
-					var iAfterRendering = (oTimer.tableAfterRenderingEnd - oTimer.tableAfterRenderingBegin);
+					var iOverall = jQuery.sap.measure.end("createTable").duration;
+					var iRendering = jQuery.sap.measure.getMeasurement("rendering").duration;
+					var iBeforeRendering = jQuery.sap.measure.getMeasurement("onBeforeRendering").duration;
+					var iAfterRendering = jQuery.sap.measure.getMeasurement("onAfterRendering").duration;
 					var iTableCreate = (iOverall - iRendering);
 					var iFactor = Math.round(iAfterRendering / iRendering * 100);
-
-
+					
+					
 					var sKey = iColumns + "_" + iRows + "_" + iVisibleRowCount + "_" + (iColumnWidth || "");
 					if (!oResults[sKey]) {
 						oResults[sKey] = {

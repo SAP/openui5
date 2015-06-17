@@ -22,6 +22,10 @@
 		<!-- use the sinon faketimers for this test -->
 		<script type="text/javascript">
 			sinon.config.useFakeTimers = true;
+			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+			jQuery.now = function() {
+				return Date.now();
+			};
 		</script>
 
 		<script>
@@ -885,7 +889,7 @@
 				// Act
 				// Try to expand the IconTabBar by pressing SPACE key
 				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-				this.clock.tick(500);
+				this.clock.tick(1000);
 
 				// Assert
 				// Content shoud remain collapsed because expandable is set to false
@@ -918,7 +922,7 @@
 				// Act
 				// Try to expand the IconTabBar by pressing SPACE key
 				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-				this.clock.tick(500);
+				this.clock.tick(1000);
 
 				// Assert
 				// Content shoud collapsed because expandable is set to true
@@ -951,7 +955,7 @@
 				// Act
 				// Collapse the IconTabBar by pressing SPACE key
 				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-				this.clock.tick(500);
+				this.clock.tick(1000);
 
 				// Assert
 				ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
@@ -1905,6 +1909,68 @@
 
 				// Assert
 				ok(domContent == domContentNew, "the contents are the same");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("update ObjectHeader with IconTabBar ", function() {
+
+				// create
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: "Test 1",
+							count: "1",
+							content: [
+								new sap.m.Label({
+									text: "Content"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Test 2",
+							count: "2",
+							content: [
+								new sap.m.Label({
+									text: "Content"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Test 3",
+							count: "3",
+							content: [
+								new sap.m.Label({
+									text: "Content"
+								})
+							]
+						})
+					]
+				});
+
+				var oObjectHeader = new sap.m.ObjectHeader({
+					responsive : true,
+					title: 'Some Title',
+					headerContainer: oIconTabBar
+				});
+
+				// System under Test
+				oObjectHeader.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// change the IconTabFilter text property
+				var sNewText = 'New Text';
+				var aItems = oIconTabBar.getItems();
+				aItems[0].setText(sNewText);
+
+				// wait 500ms
+				this.clock.tick(500);
+
+				var $tab = oIconTabBar._getIconTabHeader().$().find('.sapMITBText').first();
+
+				// Assert
+				ok($tab.text() == sNewText, "the text is changed");
 
 				// Clean up
 				oIconTabBar.destroy();

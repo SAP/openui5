@@ -55,7 +55,7 @@
 		text-decoration: none;
 	}
 
-	.sapMOHTitle.sapMOHTitleActive:focus {
+	.sapMOHTitle.sapMOHTitleActive:focus > h1 span {
 		outline: 0.125rem dotted @sapHCStandardFG;
 		outline-offset: -0.125rem;
 		text-decoration: none;
@@ -126,17 +126,17 @@
 /* Fix ie outlines */
 html[data-sap-ui-browser^="ie"] {
 	.sapMOH {
-		.sapMOHTitleActive {
-			margin-top: 0.125rem;
+		.sapMOHTitleActive, .sapMOHTitle {
+			border: 1px solid transparent;
 			padding-top: 0.125rem;
 			padding-left: 0.125rem;
 			padding-right: 0.125rem;
-			span {
-				margin-right: 0.125rem;
-			}
 		}
 
-		.sapMOHTitleActive:focus .sapMOHTitle > span {
+		a.sapMOHTitleActive:focus {
+			border: 1px solid transparent;
+		}
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h1 > span {
 			outline: none;
 			border: 0.125rem dotted @sapHCStandardFG;
 		}

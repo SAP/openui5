@@ -17,11 +17,6 @@
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-<!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
-	sinon.config.useFakeTimers = true;
-</script>
-
 <!-- Fake Service Implementaton -->
 <script src="analytics/o4aFakeService.js"></script>
 <!-- The metadata Fake Content -->
@@ -40,7 +35,7 @@
 <script language="javascript">
 	jQuery.sap.require("sap.ui.model.odata.ODataModel");
 	jQuery.sap.require("sap.ui.model.analytics.ODataModelAdapter");
-	jQuery.sap.require("sap.ui.model.analytics.TreeBindingAdapter");
+	jQuery.sap.require("sap.ui.model.analytics.AnalyticalTreeBindingAdapter");
 
 	//start the fake service
 	var sServiceURI = "http://o4aFakeService:8080/";
@@ -48,6 +43,8 @@
 		baseURI: sServiceURI
 	});
 
+	sinon.config.useFakeTimers = false;
+	
 	var oModel,
 		oBinding;
 
@@ -102,7 +99,7 @@
 			useBatchRequests: true,
 			numberOfExpandedLevels: 0
 		});
-		sap.ui.model.analytics.TreeBindingAdapter.apply(oBinding);
+		sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
 		
 		//V1 => synchronous metadata, initialize the binding directly
 		if (iVersion === 1) {
@@ -117,7 +114,9 @@
 
 	asyncTest("Eventing - ODataModel V1 - DataRequested and DataReceived", function() {
 		setupAnalyticalBinding(1);
-
+		
+		var that = this;
+		
 		var oRequestedSpy = sinon.spy(oBinding, 'fireDataRequested');
 		var oReceivedSpy = sinon.spy(oBinding, 'fireDataReceived');
 		
@@ -128,8 +127,6 @@
 		var aContexts = oBinding.getContexts(0, 20, 100);
 		
 		// trigger timer (AB uses delayedCall to process batch request queue)
-		this.clock.tick(1000);
-		
 		function fnChangeHandler1() {
 			oBinding.detachChange(fnChangeHandler1);
 			aContexts = oBinding.getContexts(0, 20, 100);
@@ -152,10 +149,10 @@
 			oModel.attachRequestCompleted(fnCompletedHandler)
 			
 			oBinding.attachChange(fnChangeHandler3);
-			oBinding.getContexts(0, 20, 100);
+			var aContexts = oBinding.getContexts(0, 20, 100);
 		}
 		
-		function fnChangeHandler3() {
+		var fnChangeHandler3 = function () {
 			oBinding.detachChange(fnChangeHandler3);
 			//oBinding.getContexts(0, 20, 100);
 			
@@ -168,7 +165,7 @@
 		function fnCompletedHandler() {
 			oModel.detachRequestCompleted(fnCompletedHandler);
 			equal(oReceivedSpy.callCount, 2, "After Expand: Number of dataReceived Events = 2");
-			equal(oRequestCompletedSpy.callCount, 2, "After Expand: Number of requestCompleted Events = 2")
+			equal(oRequestCompletedSpy.callCount, 2, "After Expand: Number of requestCompleted Events = 2");
 			start();
 		}
 	});
@@ -230,7 +227,7 @@
 
 </head>
 <body>
-<h1 id="qunit-header">QUnit tests: sap.ui.model.analytics.TreeBindingAdapter</h1>
+<h1 id="qunit-header">QUnit tests: sap.ui.model.analytics.AnalyticalTreeBindingAdapter</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>

@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.openui5</groupId>
 		<artifactId>reactor</artifactId>
-		<version>1.29.0-SNAPSHOT</version>
+		<version>1.31.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -88,7 +88,7 @@
 								<echo>Merging module: sap-ui-core.js</echo>
 								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core.js" overwrite="true" encoding="UTF-8" eol="lf" fixlastline="true">
 									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
-										<file name="sap/ui/thirdparty/jquery/jquery-1.11.1.js"/>
+										<file name="sap/ui/thirdparty/jquery.js"/>
 										<file name="sap/ui/thirdparty/jqueryui/jquery-ui-position.js"/>
 										<file name="sap/ui/Device.js"/>
 										<file name="sap/ui/thirdparty/URI.js"/>

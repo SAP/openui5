@@ -13,7 +13,7 @@
 	for (i = 0; i < aScripts.length; i++) {
 		sSrc = aScripts[i].getAttribute("src");
 		if (sSrc) {
-			mMatch = sSrc.match(/(.*\/)sap-ui-core-nojQuery\.js$/i);
+			mMatch = sSrc.match(/(.*\/)sap-ui-core(?:-nojQuery)?\.js$/i);
 			if (mMatch) {
 				sBaseUrl = mMatch[1];
 				break;

@@ -123,7 +123,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 			oRm.writeStyles();
 			oRm.writeClasses();
-
 			oRm.write(">");
 			oRm.writeEscaped(oSelectedItem ? oSelectedItem.getText() : "");
 			oRm.write('</label>');
@@ -224,7 +223,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.writeAccessibilityState(oSelect, {
 				role: "combobox",
 				expanded: oSelect.isOpen(),
-				live: "polite"
+				live: "polite",
+				labelledby: {
+					value: oSelect.getId() + "-label",
+					append: true
+				}
 			});
 		};
 

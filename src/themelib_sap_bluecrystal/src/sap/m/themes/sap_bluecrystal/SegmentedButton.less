@@ -17,18 +17,18 @@
 	padding-right: 1rem;
 	text-align: center;
 	text-shadow: none;
-	color: @sapUiSegmentedBtnText;
-	border: 1px solid @sapUiSegmentedBtnBorder;
+	color: @sapUiSegmentedButtonTextColor;
+	border: 1px solid @sapUiSegmentedButtonBorderColor;
 	border-right: 0;
-	background-color: @sapUiSegmentedBtnBG;
+	background-color: @sapUiSegmentedButtonBackground;
 }
 
 .sapMSegBBtnFocusable:hover {
-	background: @sapUiSegmentedBtnBGHover;
+	background: @sapUiSegmentedButtonHoverBackground;
 }
 
 .sapMSegBBtn:last-child {
-	border-right: 1px solid @sapUiSegmentedBtnBorder;
+	border-right: 1px solid @sapUiSegmentedButtonBorderColor;
 }
 
 /* Custom focus outline: */
@@ -74,24 +74,24 @@
 }
 
 .sapMSegBBtn.sapMSegBBtnSel {
-	background: @sapUiSegmentedBtnBGSelected;
-	color: @sapUiSegmentedBtnTextActive;
-	border-color: @sapUiSegmentedBtnBGSelectedHover;
+	background: @sapUiSegmentedButtonSelectedBackground;
+	color: @sapUiSegmentedButtonSelectedTextColor;
+	border-color: @sapUiSegmentedButtonSelectedHoverBorderColor;
 	.sapUiIcon{
-		color: @sapUiSegmentedBtnIconLight;
+		color: @sapUiSegmentedButtonSelectedIconColor;
 	}
 }
 .sapMSegBBtnFocusable.sapMBtnActive  {
-	background: @sapUiSegmentedBtnBGSelected;
-	color: @sapUiSegmentedBtnTextActive;
+	background: @sapUiButtonActiveBackground;
+	color: @sapUiSegmentedButtonActiveTextColor;
 	.sapUiIcon{
-		color: @sapUiSegmentedBtnIconLight;
+		color: @sapUiSegmentedButtonActiveIconColor;
 	}
 }
 
 .sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
 .sapMSegBBtnFocusable.sapMBtnActive:hover{
-	background: @sapUiSegmentedBtnBGSelectedHover;
+	background: @sapUiSegmentedButtonSelectedHoverBackground;
 }
 
 .sapMSegB img {
@@ -103,7 +103,7 @@
 	font-size: 1.375rem;
 	line-height: 2.375rem;
 	width: 2.375rem;
-	color: @sapUiSegmentedBtnIconDark;
+	color: @sapUiSegmentedButtonIconColor;
 	vertical-align: middle;
 	text-align: center;
 }
@@ -112,30 +112,27 @@
 .sapMFooter-CTX {
 	.sapMSegB,
 	.sapMSegBBtn {
-		border-color: @sapUiSegmentedBtnBorderFooter;
+		border-color: @sapUiSegmentedButtonFooterBorderColor;
 	}
 	.sapMSegBBtn {
 		background-color: transparent;
 		color: @sapUiTextInverted;
 	}
-	.sapMSegBBtn .sapUiIcon {
-		color: @sapUiSegmentedBtnIconDark;
-	}
 	.sapMSegBBtn:hover {
-		background: @sapUiSegmentedBtnFooterHover;
+		background: @sapUiSegmentedButtonFooterHoverBackground;
 	}
 	.sapMSegBBtn .sapUiIcon {
-		color: @sapUiSegmentedBtnIconLight;
+		color: @sapUiInvertedElement;
 	}
 	.sapMSegBBtn.sapMBtnActive,
 	.sapMSegBBtn.sapMSegBBtnSel {
-			background:	@sapUiHighlight;
-			color: @sapUiTextInverted;
+			background: @sapUiSegmentedButtonSelectedBackground;
+			color: @sapUiSegmentedButtonSelectedTextColor;
 		}
 	.sapMSegBBtn.sapMSegBBtnSel:hover,
 	.sapMSegBBtn.sapMBtnActive:hover{
-		background: @sapUiSegmentedBtnBGSelectedHover;
-		border-color: @sapUiSegmentedBtnBGSelectedHover;
+		background: @sapUiSegmentedButtonSelectedHoverBackground;
+		border-color: @sapUiSegmentedButtonSelectedHoverBorderColor;
 	}
 }
 

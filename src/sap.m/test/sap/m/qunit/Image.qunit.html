@@ -141,12 +141,60 @@
 			equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
 		});
 
+		test("Decorative Image", function() {
+			var oImage = new sap.m.Image({
+				src: sSrc,
+				decorative: true,
+				alt: "abcd"
+			});
+
+			oImage.placeAt("uiArea7");
+			sap.ui.getCore().applyChanges();
+
+			var $Image = oImage.$();
+			equal($Image.attr("role"), "presentation", "role is set to presentation");
+			equal($Image.attr("aria-hidden"), "true", "aria-hidden is set to true");
+			ok(!$Image.attr("alt"), "alt is kept empty");
+			ok(!$Image.attr("title"), "title isn't set when no tooltip is provided");
+
+			oImage.setTooltip("abced");
+			sap.ui.getCore().applyChanges();
+			equal(oImage.$().attr("title"), "abced", "title is updated with tooltip after it's set");
+
+			oImage.destroy();
+		});
+
+		test("Non decorative Image", function() {
+			var oImage = new sap.m.Image({
+				src: sSrc,
+				decorative: false,
+				tooltip: "abc",
+				alt: "abcd"
+			});
+
+			oImage.placeAt("uiArea7");
+			sap.ui.getCore().applyChanges();
+
+			var $Image = oImage.$();
+			equal($Image.attr("alt"), "abcd", "alt is rendered");
+			equal($Image.attr("aria-label"), "abcd", "aria-label is rendered");
+			equal($Image.attr("title"), "abc", "title is rendered");
+			ok(!$Image.attr("role"), "no role is output");
+			ok(!$Image.attr("aria-hidden"), "no aria-hidden is output");
+
+			oImage.destroy();
+		});
+
+		test("Default property", function() {
+			equal(i1.getMode(), sap.m.ImageMode.Image, "The default mode is set to sap.m.ImageMode.Image");
+		});
+
 		test("Offset Dimensions", function() {
 
 			// test the initial dimensions
 			var oDomRef = jQuery.sap.domById("i1");
-			equals(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
-			equals(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
+			equal(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
+			equal(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
 		});
 
 		if (window.devicePixelRatio > 1) {
@@ -219,7 +267,7 @@
 			setTimeout(function() {
 				oDomRef = window.document.getElementById("i2");
 				equals(oDomRef.offsetWidth, 150, "i2.offsetWidth should equal 150");
-				equals(oDomRef.offsetHeight, 74, "i2.offsetHeight should equal 74");	
+				equals(oDomRef.offsetHeight, 74, "i2.offsetHeight should equal 74");
 				start();
 			}, 100);
 		});
@@ -286,6 +334,72 @@
 				});
 			});
 		});
+
+		test("Existence of attribute tabindex", function() {
+			var fn1 = function() {},
+				fn2 = function() {},
+				oImage = new sap.m.Image({
+					src: sSrc,
+					press: fn1
+				});
+
+			oImage.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+
+			var $Image = oImage.$();
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.attachPress(fn2);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn1);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn2);
+			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
+			equal($Image.attr("role"), "presentation", "role is set to presentation");
+
+			oImage.attachPress(fn2);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.setDecorative(false);
+			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			equal($Image.attr("role"), "button", "role is set to button");
+
+			oImage.detachPress(fn2);
+			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
+			ok(!$Image.attr("role"), "role is removed");
+
+			oImage.destroy();
+		});
+
+		asyncTest("Image with mode sap.m.ImageMode.Background", function() {
+			var oImage = new sap.m.Image({
+				mode: sap.m.ImageMode.Background,
+				src: sSrc
+			});
+
+			oImage.placeAt("uiArea6");
+			sap.ui.getCore().applyChanges();
+
+			jQuery(oImage._oImage).on("load", function() {
+				var $Image = oImage.$(),
+						sBackgroundImage = $Image.css("background-image");
+
+				equal(sBackgroundImage.indexOf("url("), 0, "The background-image CSS style starts with 'url('");
+				equal(sBackgroundImage.charAt(sBackgroundImage.length-1), ")", "The background-image CSS style ends with ')'");
+				ok(sBackgroundImage.substring(4, sBackgroundImage.length - 1).indexOf("images/SAPLogo.jpg") !== -1, "The background-image CSS style has the right path");
+				equal($Image.css("background-size"), "cover", "backgroundSize property is set by default to 'cover' and output to the dom CSS style");
+				equal($Image.css("background-repeat"), "no-repeat", "backgroundRepeat property is set by default to 'no-repeat' and output to the dom CSS style");
+				oImage.destroy();
+				equal(oImage._oImage, null, "internal image instance is also set to null");
+				start();
+			});
+		});
 		</script>
 	</head>
 	<body>
@@ -301,5 +415,6 @@
 		<div id="uiArea4"></div>
 		<div id="uiArea5"></div>
 		<div id="uiArea6"></div>
+		<div id="uiArea7"></div>
 	</body>
 </html>

@@ -303,6 +303,29 @@
 		context = contexts[1];
 		equal(oModel.getProperty("name", context), "Gina Rush", "TreeBinding node content");
 	});
+	
+	test("Sorting", function () {
+		setup();
+		createTreeBinding("/orgStructure2", {
+			displayRootNode: true
+		});
+		
+		var treeBinding = bindings[0];
+		
+		treeBinding.sort(new sap.ui.model.Sorter("name"));
+		
+		var aRootContexts = treeBinding.getRootContexts(0, 3);
+		
+		equal(aRootContexts[0].getProperty("name"), "Catherine Platte", "1st node after sorting is: Catherine Platte");
+		equal(aRootContexts[1].getProperty("name"), "Inga Horst", "2nd node after sorting is: Inga Horst");
+		equal(aRootContexts[2].getProperty("name"), "Tom Bay", "3rd node after sorting is: Tom Bay");
+		
+		var aChildContexts = treeBinding.getNodeContexts(aRootContexts[1]);
+		equal(aChildContexts[0].getProperty("name"), "Frank Wallace", "Inga child node[0] after sorting is: Frank Wallace");
+		equal(aChildContexts[1].getProperty("name"), "Gina Rush", "Inga child node[1] after sorting is: Gina Rush");
+		equal(aChildContexts[2].getProperty("name"), "John Wallace", "Inga child node[2]] after sorting is: John Wallace");
+		
+	});
 
 	</script>
 

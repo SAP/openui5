@@ -387,7 +387,33 @@
 				oPopup1.destroy();
 				oPopup2.destroy();
 				start();
-			}, 100);
+			}, 200);
+		});
+
+		asyncTest("Check if focus is inside the Popup", function() {
+			// arrange
+			var oPopupDomRef = jQuery.sap.domById("popup"),
+				oPopup = new sap.ui.core.Popup(oPopupDomRef),
+				oButtonInside = jQuery.sap.domById("popupcontent"),
+				oButtonOustide = jQuery.sap.domById("focusableElement");
+
+			// act
+			oPopup.open();
+			oButtonInside.focus();
+
+			// assert
+			ok(oPopup._isFocusInsidePopup(), "Focus is inside the Popup");
+
+			// act
+			oButtonOustide.focus();
+
+			// assert
+			ok(!oPopup._isFocusInsidePopup(), "Focus is outside of the Popup");
+
+			setTimeout(function () {
+				oPopup.destroy();
+				start();
+			});
 		});
 
 		/* Utilities */
@@ -475,6 +501,56 @@
 
 			oPopZIndex.attachOpened(fnOpened);
 			oPopZIndex.open();
+		});
+
+		module("Parent / Child Popups", {
+			setup : function() {
+				this.oChildOpener = jQuery.sap.domById("popup2-btn");
+
+				oDomRef = jQuery.sap.domById("popup");
+				this.oChildPop = new sap.ui.core.Popup(oDomRef);
+
+				oDomRef =jQuery.sap.domById("popup2");
+				this.oParentPop = new sap.ui.core.Popup(oDomRef);
+			},
+
+			teardown : function() {
+				delete this.oChildOpener;
+				this.oChildPop.destroy();
+
+				this.oParentPop.destroy();
+			}
+		});
+
+		asyncTest("Child registered at parent", function() {
+			that = this;
+
+			fnParentOpened = function() {
+				that.oParentPop.detachOpened(fnParentOpened);
+				that.oChildPop.open(0, sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, that.oChildOpener, "0 0", "fit");
+			};
+
+			fnChildOpened = function() {
+				that.oChildPop.detachOpened(fnChildOpened);
+
+				ok(that.oChildPop.isInPopup(that.oChildPop._oPosition.of), "Child belongs to parent");
+				ok(that.oParentPop.getChildPopups().length, "Parent got child");
+
+				that.oChildPop.close(0);
+			};
+
+			fnChildClosed = function() {
+				that.oChildPop.detachClosed(fnChildClosed);
+
+				ok(!that.oParentPop.getChildPopups().length, "Parent has no child");
+
+				start();
+			};
+
+			this.oParentPop.attachOpened(fnParentOpened);
+			this.oChildPop.attachOpened(fnChildOpened);
+			this.oChildPop.attachClosed(fnChildClosed);
+			this.oParentPop.open();
 		});
 		</script>
 	</head>

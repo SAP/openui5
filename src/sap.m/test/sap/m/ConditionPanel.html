@@ -29,7 +29,7 @@
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
-			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel]});
+			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel]});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
 			}			
@@ -57,7 +57,7 @@
 			oConditionPanel = new sap.m.P13nConditionPanel({
 	 			maxConditions: -1,
 	 			autoReduceKeyFieldItems: true,
-	 			showLabel: true
+	 			showLabel: false
 			});
 			
 			oConditionPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 

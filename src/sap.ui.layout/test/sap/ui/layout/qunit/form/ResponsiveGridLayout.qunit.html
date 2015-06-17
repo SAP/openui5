@@ -278,6 +278,18 @@
 			equal(oLayoutData.getId(), "F3C2E2_T2LD", "Form3: Container2 Field3 must use given LayoutData");
 		});
 
+		test("DOM representation", function() {
+			var oContainer = sap.ui.getCore().byId("F1C1");
+			equal(oContainer.getRenderedDomRef().id, "F1C1--Grid", "Form1: Container1 ResponsiveFlowLayout is DOM representation");
+			oContainer = sap.ui.getCore().byId("F2C1");
+			equal(oContainer.getRenderedDomRef().id, "F2C1---Panel", "Form2: Container1 Panel is DOM representation");
+			oContainer = sap.ui.getCore().byId("F3C5");
+			ok(!oContainer.getRenderedDomRef(), "Form3: invisible Container5 no DOM representation");
+
+			var oElement = sap.ui.getCore().byId("F1C1E1");
+			ok(!oElement.getRenderedDomRef(), "no DOM representation rendered for FormElements");
+		});
+
 		module("Rendering");
 
 		test("Container rendering", function() {

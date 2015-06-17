@@ -28,12 +28,15 @@
 			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.Product/Width">
 				<Annotation Term="Org.OData.Measures.V1.Unit" Path="DimUnit"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Width"/>
 			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.Product/Depth">
 				<Annotation Term="Org.OData.Measures.V1.Unit" Path="DimUnit"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Depth"/>
 			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.Product/Height">
 				<Annotation Term="Org.OData.Measures.V1.Unit" Path="DimUnit"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Height"/>
 			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.Product/Price">
 				<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCode"/>
@@ -195,6 +198,22 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Chart" Qualifier="Dimensions">
+					<Record>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>ProductID</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>Depth</PropertyPath>
+								<PropertyPath>Height</PropertyPath>
+								<PropertyPath>Width</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.Facets">
 					<Collection>
 						<Record Type="com.sap.vocabularies.UI.v1.CollectionFacet">
@@ -217,6 +236,15 @@
 							<PropertyValue Property="Target" AnnotationPath="@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"/>
 						</Record>
 					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ProductSet">
+				<Annotation Term="com.sap.vocabularies.UI.v1.DataPoint">
+					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
+						<PropertyValue Property="Title" String="Price"/>
+						<PropertyValue Property="Description" Path="Name"/>
+						<PropertyValue Property="Value" Path="Price"/>
+					</Record>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/GrossAmount">
@@ -354,6 +382,14 @@
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Label" String="Changed at"/>
 							<PropertyValue Property="Value" Path="ChangedAt"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldForAction">
+							<PropertyValue Property="Label" String="Cancel Sales Order"/>
+							<PropertyValue Property="Action" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Cancel"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldForAction">
+							<PropertyValue Property="Label" String="Confirm Sales Order"/>
+							<PropertyValue Property="Action" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Confirm"/>
 						</Record>
 					</Collection>
 				</Annotation>
@@ -674,24 +710,6 @@
 				</Annotation>
 			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.Contact">
-				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
-					<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
-						<PropertyValue Property="TypeName" String="Contact"/>
-						<PropertyValue Property="TypeNamePlural" String="Contacts"/>
-						<PropertyValue Property="Title">
-							<Record Type="com.sap.vocabularies.UI.v1.DataField">
-								<PropertyValue Property="Label" String="Name"/>
-								<PropertyValue Property="Value">
-									<Apply Function="odata.concat">
-										<Path>FirstName</Path>
-										<String/>
-										<Path>LastName</Path>
-									</Apply>
-								</PropertyValue>
-							</Record>
-						</PropertyValue>
-					</Record>
-				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.Badge">
 					<Record Type="com.sap.vocabularies.UI.v1.BadgeType">
 						<PropertyValue Property="HeadLine" Path="ToBusinessPartner/CompanyName"/>
@@ -742,7 +760,7 @@
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
 					<Collection>
-						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithNavigationPath">
 							<PropertyValue Property="Label" String="Name"/>
 							<PropertyValue Property="Value">
 								<Apply Function="odata.concat">
@@ -751,6 +769,7 @@
 									<Path>LastName</Path>
 								</Apply>
 							</PropertyValue>
+							<PropertyValue Property="Target" NavigationPropertyPath="ToBusinessPartner"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Label" String="Company Name"/>
@@ -842,6 +861,15 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsActionCritical" Bool="true"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Confirm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsActionCritical" Bool="false"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Cancel">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsActionCritical"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

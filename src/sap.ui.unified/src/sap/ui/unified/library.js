@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @version ${version}
 	 * @public
 	 */
-	
+
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.unified",
@@ -61,8 +61,8 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.unified.ShellHeadUserItem"
 		]
 	});
-	
-	
+
+
 	/**
 	 * Type of a calendar day used for visualization.
 	 *
@@ -72,70 +72,75 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.unified.CalendarDayType = {
-	
+
+		/**
+		 * None: No special type is used
+		 * @public
+		 */
+		None : "None",
+
 		/**
 		 * Type 01: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type01 : "Type01",
-	
+
 		/**
 		 * Type 02: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type02 : "Type02",
-	
+
 		/**
 		 * Type 03: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type03 : "Type03",
-	
+
 		/**
 		 * Type 04: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type04 : "Type04",
-	
+
 		/**
 		 * Type 05: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type05 : "Type05",
-	
+
 		/**
 		 * Type 06: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type06 : "Type06",
-	
+
 		/**
 		 * Type 07: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type07 : "Type07",
-	
+
 		/**
 		 * Type 08: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type08 : "Type08",
-	
+
 		/**
 		 * Type 09: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type09 : "Type09",
-	
+
 		/**
 		 * Type 10: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type10 : "Type10"
-	
+
 	};
-	
-	
+
 	/**
 	 * Predefined animations for the ContentSwitcher
 	 *
@@ -147,51 +152,51 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.unified.ContentSwitcherAnimation = {
-	
+
 		/**
 		 * No animation. Content is switched instantly.
 		 * @public
 		 */
 		None : "None",
-	
+
 		/**
 		 * Content is faded (opacity change).
 		 * @public
 		 */
 		Fade : "Fade",
-	
+
 		/**
 		 * The new content is "zoomed in" from the center and grows to fill the full content area.
 		 * @public
 		 */
 		ZoomIn : "ZoomIn",
-	
+
 		/**
 		 * The old content is "zoomed out", i.e. shrinks to a point at the center of the content area.
 		 * @public
 		 */
 		ZoomOut : "ZoomOut",
-	
+
 		/**
 		 * The new content rotates in. (Just like one of those old newspaper-animations.)
 		 * @public
 		 */
 		Rotate : "Rotate",
-	
+
 		/**
 		 * The new slides in from the left (to the right).
 		 * @public
 		 */
 		SlideRight : "SlideRight",
-	
+
 		/**
 		 * The new content slides in from the left while the old content slides out to the left at the same time.
 		 * @public
 		 */
 		SlideOver : "SlideOver"
-	
+
 	};
-	
+
 	sap.ui.base.Object.extend("sap.ui.unified._ContentRenderer", {
 		constructor : function(oControl, sContentContainerId, oContent, fAfterRenderCallback) {
 			sap.ui.base.Object.apply(this);
@@ -201,7 +206,7 @@ sap.ui.define(['jquery.sap.global',
 			this._rm = sap.ui.getCore().createRenderManager();
 			this._cb = fAfterRenderCallback || function(){};
 		},
-		
+
 		destroy : function() {
 			this._rm.destroy();
 			delete this._rm;
@@ -215,20 +220,20 @@ sap.ui.define(['jquery.sap.global',
 			}
 			sap.ui.base.Object.prototype.destroy.apply(this, arguments);
 		},
-		
+
 		render : function() {
 			if (!this._rm) {
 				return;
 			}
-			
+
 			if (this._rerenderTimer) {
 				jQuery.sap.clearDelayedCall(this._rerenderTimer);
 			}
-			
+
 			this._rerenderTimer = jQuery.sap.delayedCall(0, this, function(){
 				var $content = jQuery.sap.byId(this._id);
 				var doRender = $content.length > 0;
-				
+
 				if (doRender) {
 					if (typeof (this._cntnt) === "string") {
 						var aContent = this._ctrl.getAggregation(this._cntnt, []);
@@ -240,15 +245,15 @@ sap.ui.define(['jquery.sap.global',
 					}
 					this._rm.flush($content[0]);
 				}
-	
+
 				this._cb(doRender);
 			});
 		}
 	});
-	
-	
+
+
 	sap.ui.unified._iNumberOfOpenedShellOverlays = 0;
-	
+
 	//factory for the FileUploader to create TextField an Button to be overwritten by commons and mobile library
 	if (!sap.ui.unified.FileUploaderHelper) {
 		sap.ui.unified.FileUploaderHelper = {
@@ -263,4 +268,4 @@ sap.ui.define(['jquery.sap.global',
 
 	return sap.ui.unified;
 
-}, /* bExport= */ false);
+});

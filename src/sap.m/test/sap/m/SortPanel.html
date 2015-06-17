@@ -31,9 +31,9 @@
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
-			oPanel.setLayoutMode("Desktop");
+			//oPanel.setLayoutMode("Desktop");
 
-			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel], contentWidth: "1600px"});
+			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel], contentWidth: "1600px"});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
 			}			

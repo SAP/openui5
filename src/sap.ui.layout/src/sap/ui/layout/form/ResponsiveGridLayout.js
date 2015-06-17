@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			this.mContainers = {}; //association of container to panel and Grid
 			this.oDummyLayoutData = new GridData(this.getId() + "--Dummy");
-			this.SPANPATTERN = /^([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
+			this.SPANPATTERN = /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
 
 		};
 
@@ -324,6 +324,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		ResponsiveGridLayout.prototype.onsapdown = function(oEvent){
 			this.onsapright(oEvent);
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists.
+		 * If the FormContainer has a title or is expandable a internal Panel is rendered.
+		 * In this case the Panels DOM reference is returned, otherwise the DOM reference
+		 * of the Grid rendering the containers content.
+		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveGridLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
+
+			if (this.getDomRef()) {
+				var sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][0]) {
+						var oPanel = this.mContainers[sContainerId][0];
+						return oPanel.getDomRef();
+					}else if (this.mContainers[sContainerId][1]){
+						// no panel used -> return Grid
+						var oGrid = this.mContainers[sContainerId][1];
+						return oGrid.getDomRef();
+					}
+				}
+			}
+
+			return null;
+
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists.
+		 * In this Layout a FormElement has no DOM representation,
+		 * so always null will be returned
+		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveGridLayout.prototype.getElementRenderedDomRef = function(oElement) {
+
+			return null;
+
 		};
 
 		function _createPanels( oLayout, oForm ) {
@@ -804,16 +847,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		function _createMainGrid( oLayout, oForm ) {
 
 			var aContainers = oForm.getFormContainers();
+			var aVisibleContainers = [];
 			var oContainer;
 			var iLength = 0;
 			var iContentLenght = 0;
 			var i = 0;
+			var j = 0;
 
 			// count only visible containers
 			for ( i = 0; i < aContainers.length; i++) {
 				oContainer = aContainers[i];
 				if (oContainer.getVisible()) {
 					iLength++;
+					aVisibleContainers.push(oContainer);
 				}
 			}
 
@@ -857,6 +903,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 							oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
 						}
 						if (oContainer && oContainer.getVisible()) {
+							var oVisibleContainer = aVisibleContainers[j];
+							if (oContainer != oVisibleContainer) {
+								// order of containers has changed
+								bExchangeContent = true;
+								break;
+							}
+
 							var aContainerContent = oLayout.mContainers[oContainer.getId()];
 							if (aContainerContent[0] && aContainerContent[0] != oContentElement) {
 								// container uses panel but panel not the same element in content
@@ -868,6 +921,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								bExchangeContent = true;
 								break;
 							}
+							j++;
 						} else {
 							// no container exits for content -> just remove this content
 							oLayout._mainGrid.removeContent(oContentElement);
@@ -885,7 +939,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 				if (iContentLenght < iLength) {
 					// new containers added
-					for ( i = 0; i < aContainers.length; i++) {
+					var iStartIndex = 0;
+					if (iContentLenght > 0) {
+						iStartIndex = iContentLenght--;
+					}
+					for ( i = iStartIndex; i < aContainers.length; i++) {
 						oContainer = aContainers[i];
 						if (oContainer.getVisible()) {
 							var sContainerId = oContainer.getId();

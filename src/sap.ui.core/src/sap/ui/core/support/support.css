@@ -552,12 +552,33 @@ ul.sapUiSupportBreakpointList li:hover img {
 	margin-right: 3px;
 }
 
+
+/* DEBUGGING */
+
 #sapUiSupportDebugging {
-	height: 300px;
+	height: 400px;
 }
 
-#sapUiSupportDebugging .sapUiSupportDottedContainer {
+#sapUiSupportDebugging > .sapUiSupportDottedContainer {
 	height: 278px;
+	margin: 6px 0;
+}
+
+#sapUiSupportDebugging > #sapUiSupportDebuggingRebootContainer {
+	box-sizing: border-box;
+	width: 100%;
+	height: 82px;
+}
+
+#sapUiSupportDebuggingRebootSelect {
+	width: 100%;
+	margin: 6px 0;
+}
+
+#sapUiSupportDebuggingRebootInput {
+	width: 533px;
+	box-sizing: border-box;
+	width: calc(100% - 142px);
 }
 
 #sapUiSupportDebuggingMethodContainer {

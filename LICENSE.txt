@@ -293,7 +293,7 @@ Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0
 
-Component: Handlebars 2.0.0
+Component: Handlebars 3.0.3
 Licensor: Yehuda Katz
 Website: http://handlebarsjs.com/
 License: MIT License

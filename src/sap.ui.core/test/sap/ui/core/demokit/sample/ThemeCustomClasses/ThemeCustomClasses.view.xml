@@ -19,13 +19,13 @@
       	</Column>
       	<Column
         	demandPopin="true"
-        	hAglin="Center">
+        	hAlign="Center">
         	<Text text="Sample" />
       	</Column>
       	<Column
-      		minScreenWidth="Tablet" 
+      		minScreenWidth="Tablet"
       		width="22em"
-      		hAglin="Right">
+      		hAlign="Right">
       		<Text text="Css String"/>
       	</Column>
       </columns>

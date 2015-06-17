@@ -12,6 +12,19 @@
 
 		<script type="text/javascript">
 
+			var moveContainer = function(oEvent){
+
+				var oForm = sap.ui.getCore().byId("F1");
+				var oContainer = sap.ui.getCore().byId("C2");
+				oForm.removeFormContainer(oContainer);
+				if(oEvent.getParameter("pressed")){
+					oForm.insertFormContainer(oContainer, 0);
+				}else{
+					oForm.insertFormContainer(oContainer, 1);
+				}
+
+			};
+
 			var newContainer = function(oEvent){
 
 				var oForm = sap.ui.getCore().byId("F1");
@@ -237,15 +250,16 @@
 					new sap.ui.layout.form.FormContainer("C5",{
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.ToggleButton("B1",{text: "new Container", press: newContainer}),
-												 new sap.ui.commons.ToggleButton("B2",{text: "new Element", press: newElement}),
-												 new sap.ui.commons.ToggleButton("B3",{text: "new Field", press: newField}),
-												 new sap.ui.commons.ToggleButton("B4",{text: "expandable", press: toggleExpandable}),
-												 new sap.ui.commons.ToggleButton("B5",{text: "title",pressed: true, press: toggleTitle}),
-												 new sap.ui.commons.ToggleButton("B6",{text: "LineBreak Container",pressed: true, press: lineBreakContainer,
-													 		layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true})}),
-												 new sap.ui.commons.ToggleButton("B7",{text: "LineBreak Element", press: lineBreakElement}),
-												 new sap.ui.commons.ToggleButton("B8",{text: "LineBreak Field", press: lineBreakField})
+								fields: [new sap.ui.commons.ToggleButton("B1",{text: "move Container", press: moveContainer}),
+								         new sap.ui.commons.ToggleButton("B2",{text: "new Container", press: newContainer}),
+								         new sap.ui.commons.ToggleButton("B3",{text: "new Element", press: newElement}),
+								         new sap.ui.commons.ToggleButton("B4",{text: "new Field", press: newField}),
+								         new sap.ui.commons.ToggleButton("B5",{text: "expandable", press: toggleExpandable}),
+								         new sap.ui.commons.ToggleButton("B6",{text: "title",pressed: true, press: toggleTitle}),
+								         new sap.ui.commons.ToggleButton("B7",{text: "LineBreak Container",pressed: true, press: lineBreakContainer,
+								          		layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true})}),
+								         new sap.ui.commons.ToggleButton("B8",{text: "LineBreak Element", press: lineBreakElement}),
+								         new sap.ui.commons.ToggleButton("B9",{text: "LineBreak Field", press: lineBreakField})
 												]
 							})
 						],

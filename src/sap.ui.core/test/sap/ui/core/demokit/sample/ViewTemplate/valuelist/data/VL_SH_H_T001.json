@@ -1,0 +1,863 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "0001",
+					"BUTXT" : "SAP A.G.",
+					"ORT01" : "Walldorf",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('0MB1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('0MB1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "0MB1",
+					"BUTXT" : "IS-B Musterbank Deutschl.",
+					"ORT01" : "Walldorf",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('1000')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('1000')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "1000",
+					"BUTXT" : "SAP A.G.",
+					"ORT01" : "Walldorf",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AC01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AC01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "AC01",
+					"BUTXT" : "Country Template RU",
+					"ORT01" : "Russia",
+					"WAERS" : "RUB"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AE01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AE01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "AE01",
+					"BUTXT" : "Country Template AE",
+					"ORT01" : "Dubai",
+					"WAERS" : "AED"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AR01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AR01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "AR01",
+					"BUTXT" : "Country Template AR",
+					"ORT01" : "Argentinien",
+					"WAERS" : "ARS"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ARG1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ARG1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "ARG1",
+					"BUTXT" : "Country Template AR",
+					"ORT01" : "Argentinien",
+					"WAERS" : "ARS"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AT01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AT01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "AT01",
+					"BUTXT" : "Country Template AT",
+					"ORT01" : "Austria",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AU01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('AU01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "AU01",
+					"BUTXT" : "Country Template AU",
+					"ORT01" : "Australia",
+					"WAERS" : "AUD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('BE01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('BE01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "BE01",
+					"BUTXT" : "Country Template BE",
+					"ORT01" : "Belgium",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('BR01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('BR01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "BR01",
+					"BUTXT" : "Country Template BR",
+					"ORT01" : "Brazil",
+					"WAERS" : "BRL"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CA01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CA01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "CA01",
+					"BUTXT" : "Country Template CA",
+					"ORT01" : "Canada",
+					"WAERS" : "CAD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CALP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CALP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "CALP",
+					"BUTXT" : "For Cash2 Testing",
+					"ORT01" : "Walldorf",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CH01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CH01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "CH01",
+					"BUTXT" : "Country Template CH",
+					"ORT01" : "Switzerland",
+					"WAERS" : "CHF"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CL01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CL01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "CL01",
+					"BUTXT" : "Country Template CL",
+					"ORT01" : "Chile",
+					"WAERS" : "CLP"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CN01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CN01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "CN01",
+					"BUTXT" : "Country Template CN",
+					"ORT01" : "China",
+					"WAERS" : "CNY"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CO01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CO01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "CO01",
+					"BUTXT" : "Country Template CO",
+					"ORT01" : "Colombia",
+					"WAERS" : "COP"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('COPY')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('COPY')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "COPY",
+					"BUTXT" : "Copy from CC.0001",
+					"ORT01" : "(Only G/L accounts B-seg)",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CZ01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('CZ01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "CZ01",
+					"BUTXT" : "Country Template CZ",
+					"ORT01" : "Czech Republic",
+					"WAERS" : "CZK"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('DE01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('DE01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "DE01",
+					"BUTXT" : "Country Template DE",
+					"ORT01" : "Germany",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('DE02')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('DE02')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "DE02",
+					"BUTXT" : "Country Template DE",
+					"ORT01" : "Germany",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('DK01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('DK01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "DK01",
+					"BUTXT" : "Country Template DK",
+					"ORT01" : "Denmark",
+					"WAERS" : "DKK"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('EK01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('EK01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "EK01",
+					"BUTXT" : "For GL Testing",
+					"ORT01" : "Walldorf",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ES01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ES01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "ES01",
+					"BUTXT" : "Country Template ES",
+					"ORT01" : "Spain",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "F001",
+					"BUTXT" : "Tools Inc. Europe",
+					"ORT01" : "Walldorf",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('F002')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('F002')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "F002",
+					"BUTXT" : "Tools Inc. America",
+					"ORT01" : "New Orleans",
+					"WAERS" : "USD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('F010')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('F010')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "F010",
+					"BUTXT" : "Wind Turbine Inc. Europe",
+					"ORT01" : "Mannheim",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('FI01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('FI01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "FI01",
+					"BUTXT" : "Country Template FI",
+					"ORT01" : "Finland",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('FR01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('FR01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "FR01",
+					"BUTXT" : "Country Template FR",
+					"ORT01" : "France",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('GB01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('GB01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "GB01",
+					"BUTXT" : "Country Template GB",
+					"ORT01" : "Great Britain",
+					"WAERS" : "GBP"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('HK01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('HK01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "HK01",
+					"BUTXT" : "Country Template HK",
+					"ORT01" : "Hong Kong",
+					"WAERS" : "HKD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('HU01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('HU01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "HU01",
+					"BUTXT" : "Country Template HU",
+					"ORT01" : "Hungary",
+					"WAERS" : "HUF"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ID01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ID01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "ID01",
+					"BUTXT" : "Country Template ID",
+					"ORT01" : "Jakarta",
+					"WAERS" : "IDR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('IE01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('IE01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "IE01",
+					"BUTXT" : "Country Template IE",
+					"ORT01" : "Ireland",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('IN01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('IN01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "IN01",
+					"BUTXT" : "India Model Company, IN",
+					"ORT01" : "Bangalore",
+					"WAERS" : "INR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('IT01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('IT01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "IT01",
+					"BUTXT" : "Country Template IT",
+					"ORT01" : "Italy",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('JP01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('JP01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "JP01",
+					"BUTXT" : "Country Template JP",
+					"ORT01" : "Japan",
+					"WAERS" : "JPY"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('KR01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('KR01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "KR01",
+					"BUTXT" : "Country Template KR",
+					"ORT01" : "Seoul",
+					"WAERS" : "KRW"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('KW01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('KW01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "KW01",
+					"BUTXT" : "Country Template KW",
+					"ORT01" : "Kuwait City",
+					"WAERS" : "KWD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('KZ01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('KZ01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "KZ01",
+					"BUTXT" : "Country Template KZ",
+					"ORT01" : "Astana",
+					"WAERS" : "KZT"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('LN01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('LN01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "LN01",
+					"BUTXT" : "LN01 für Unittests",
+					"ORT01" : "Walldorf",
+					"WAERS" : "CHF"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('LT01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('LT01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "LT01",
+					"BUTXT" : "Tools Inc. Europe",
+					"ORT01" : "Walldorf",
+					"WAERS" : "CHF"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('LU01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('LU01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "LU01",
+					"BUTXT" : "Country Template LU",
+					"ORT01" : "Luxembourg",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "MCA1",
+					"BUTXT" : "MCA Bank Backpack (bal.)",
+					"ORT01" : "Walldorf",
+					"WAERS" : "USD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA2')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA2')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "MCA2",
+					"BUTXT" : "MCA Bank Backpack (doc.)",
+					"ORT01" : "Walldorf",
+					"WAERS" : "USD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA3')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA3')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "MCA3",
+					"BUTXT" : "MCA Bank 4-pack (bal.)",
+					"ORT01" : "Walldorf",
+					"WAERS" : "CHF"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA4')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MCA4')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "MCA4",
+					"BUTXT" : "MCA Bank 4-pack (doc.)",
+					"ORT01" : "Walldorf",
+					"WAERS" : "CHF"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MX01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MX01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "MX01",
+					"BUTXT" : "Country Template MX",
+					"ORT01" : "Mexico",
+					"WAERS" : "MXN"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MX03')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MX03')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "MX03",
+					"BUTXT" : "Country Template MX",
+					"ORT01" : "Mexico",
+					"WAERS" : "MXN"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MY01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('MY01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "MY01",
+					"BUTXT" : "Country Template MY",
+					"ORT01" : "Kuala Lumpur",
+					"WAERS" : "MYR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('NL01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('NL01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "NL01",
+					"BUTXT" : "Country Template NL",
+					"ORT01" : "The Netherlands",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('NO01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('NO01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "NO01",
+					"BUTXT" : "Country Template NO",
+					"ORT01" : "Norway",
+					"WAERS" : "NOK"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('NZ01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('NZ01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "NZ01",
+					"BUTXT" : "Country Template NZ",
+					"ORT01" : "New Zealand",
+					"WAERS" : "NZD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PE01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PE01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "PE01",
+					"BUTXT" : "Country Template PE",
+					"ORT01" : "Perú",
+					"WAERS" : "PEN"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PH01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PH01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "PH01",
+					"BUTXT" : "Country Template PH",
+					"ORT01" : "Manila",
+					"WAERS" : "PHP"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PL01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PL01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "PL01",
+					"BUTXT" : "Country Template PL",
+					"ORT01" : "Poland",
+					"WAERS" : "PLN"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PT01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PT01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "PT01",
+					"BUTXT" : "Country Template PT",
+					"ORT01" : "Portugal",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PT02')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('PT02')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "PT02",
+					"BUTXT" : "Country Template PT (SNC)",
+					"ORT01" : "Portugal",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('QA01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('QA01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "QA01",
+					"BUTXT" : "Country Template QA",
+					"ORT01" : "Doha",
+					"WAERS" : "QAR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RECO')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RECO')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "RECO",
+					"BUTXT" : "Sondereigentum (WEG)",
+					"ORT01" : "",
+					"WAERS" : ""
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('REOB')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('REOB')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "REOB",
+					"BUTXT" : "Referenz Objektmandate",
+					"ORT01" : "",
+					"WAERS" : ""
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RERF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RERF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "RERF",
+					"BUTXT" : "WEG Referenzbuchungskreis",
+					"ORT01" : "",
+					"WAERS" : ""
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RU01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RU01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "RU01",
+					"BUTXT" : "Country Template RU",
+					"ORT01" : "Russia",
+					"WAERS" : "RUB"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RU04')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('RU04')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "RU04",
+					"BUTXT" : "Country Template RU",
+					"ORT01" : "Russia",
+					"WAERS" : "RUB"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SE01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SE01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "SE01",
+					"BUTXT" : "Country Template SE",
+					"ORT01" : "Sweden",
+					"WAERS" : "SEK"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SG01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SG01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "SG01",
+					"BUTXT" : "SAP Asia",
+					"ORT01" : "Singapore",
+					"WAERS" : "SGD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SK01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SK01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "SK01",
+					"BUTXT" : "Country Template SK",
+					"ORT01" : "Slovak Republic",
+					"WAERS" : "SKK"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SLE0')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('SLE0')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "SLE0",
+					"BUTXT" : "Musterbank",
+					"ORT01" : "",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('TH01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('TH01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "TH01",
+					"BUTXT" : "Country Template TH",
+					"ORT01" : "Bangkok",
+					"WAERS" : "THB"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('TR01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('TR01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "TR01",
+					"BUTXT" : "Country Template TR",
+					"ORT01" : "Turkey",
+					"WAERS" : "TRY"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('TW01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('TW01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "TW01",
+					"BUTXT" : "Country Template TW",
+					"ORT01" : "Taipei",
+					"WAERS" : "TWD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('UA01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('UA01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "UA01",
+					"BUTXT" : "Country Template UA",
+					"ORT01" : "Ukraine",
+					"WAERS" : "UAH"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('US01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('US01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "US01",
+					"BUTXT" : "Country Template US",
+					"ORT01" : "U.S.A.",
+					"WAERS" : "USD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('VE01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('VE01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "VE01",
+					"BUTXT" : "Country Template VE",
+					"ORT01" : "Venezuela",
+					"WAERS" : "VEB"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('XI01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('XI01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "XI01",
+					"BUTXT" : "SAP A.G.",
+					"ORT01" : "Walldorf",
+					"WAERS" : "EUR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ZA01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ZA01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "ZA01",
+					"BUTXT" : "Country Template ZA",
+					"ORT01" : "South Africa",
+					"WAERS" : "ZAR"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ZHX1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ZHX1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "ZHX1",
+					"BUTXT" : "Check Management Test",
+					"ORT01" : "U.S.A.",
+					"WAERS" : "USD"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ZZJD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_H_T001('ZZJD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001"
+					},
+					"BUKRS" : "ZZJD",
+					"BUTXT" : "company code to test cust",
+					"ORT01" : "Podunk",
+					"WAERS" : "CAD"
+				}]
+	}
+}

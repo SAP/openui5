@@ -1,0 +1,84 @@
+{
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "05fa3cbcff58095cee85f90fd1241b3456a5cdcd",
+        "author": "Krasimir Chariyski \u003ckrasimir.chariyski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.FixFlex: Added scrolling option",
+        "references": []
+      },
+      {
+        "id": "133882094e565056ca4a029920127995b2b121f9",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: Added function to get DOM representation of FormConatiner and FormElement",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Ensure exiatence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "be70b418050fa0f9fb1a0bf5704826b34b451c58",
+        "author": "stefan hipfel \u003cstefan.hipfel@sap.com\u003e",
+        "type": "FIX",
+        "text": "SimpleForm: Fixes problem with empty form containers on removeContent",
+        "references": []
+      },
+      {
+        "id": "3bffba21fc70c54384dcbfb1b498e2c32ef037d9",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Splitter: Enable autoresize on bar move end",
+        "references": []
+      },
+      {
+        "id": "9d470d9ad55075783219f6fa7444370a964ef863",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Keyboard navigation issues",
+        "references": []
+      },
+      {
+        "id": "17d7a6280708b3340f56d4c4b1c1ed52228e5c9a",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.layout.Grid: Added new XL breakpoint",
+        "references": []
+      },
+      {
+        "id": "d632d7a5649729bc7cd69d8fc0600c89d7597b14",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.for.Form: Fixed changing order of FormContainer",
+        "references": []
+      },
+      {
+        "id": "8ccdb3d0119cf91bff89b6cffbf61814cced86da",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
+        "references": []
+      },
+      {
+        "id": "95760e3c740f95a163e3dd9db5ffad3553d08302",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "VerticalLayout: Vertical alignment issue in Safari resolved",
+        "references": []
+      },
+      {
+        "id": "3dc1ac652605c469e1f38ac67b12f838cf9bab52",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "DynamicSideContent: New control implemented",
+        "references": []
+      }
+    ]
+  }
+}

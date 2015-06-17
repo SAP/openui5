@@ -16,12 +16,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './CalendarRenderer'
 	CalendarDateIntervalRenderer.addAttributes = function(oRm, oCal){
 
 		oRm.addClass("sapUiCalDateInt");
+		var iDays = oCal._getDays();
 
-		if (oCal.getDays() > oCal._iDaysLarge) {
+		if (iDays > oCal._iDaysLarge) {
 			oRm.addClass("sapUiCalDateIntLarge");
 		}
 
-		if (oCal.getDays() > oCal._iDaysMonthHead) {
+		if (iDays > oCal._iDaysMonthHead) {
 			oRm.addClass("sapUiCalDateIntMonthHead");
 		}
 

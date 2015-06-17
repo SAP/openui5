@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>sap.m.UploadCollection for Pending Upload File List</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script type="text/javascript">
+
+/* =========================================================== */
+/* UploadCollection                                            */
+/* =========================================================== */
+// create JSON model instance
+	var oModel = new sap.ui.model.json.JSONModel();
+	// set the model to the core
+	sap.ui.getCore().setModel(oModel);
+
+	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
+	/* =========================================================== */
+	/* Handle UploadCollection Events                              */
+	/* =========================================================== */
+	function fnChange(oEvent) {
+		sap.m.MessageToast.show("Event change triggered");
+	}
+
+	function fnFileDeleted(oEvent) {
+		sap.m.MessageToast.show("Event fileDeleted triggered");
+	}
+
+	function fnfilenameLengthExceed(oEvent) {
+		sap.m.MessageToast.show("Event filenameLengthExceed triggered");
+	}
+
+	function fnFileSizeExceed(oEvent) {
+		sap.m.MessageToast.show("Event fileSizeExceed triggered");
+	}
+
+	function fnTypeMissmatch(oEvent) {
+		sap.m.MessageToast.show("Event typeMissmatch triggered");
+	}
+
+	function fnUploadComplete(oEvent) {
+		sap.m.MessageToast.show("Event uploadComplete triggered");
+	}
+
+	function fnUpload(oEvent) {
+		oUploadCollection.upload();
+		sap.m.MessageToast.show("Method Upload is called");
+	}
+
+	// create instance of UploadCollection and set model
+	var oUploadCollection = new sap.m.UploadCollection({
+		maximumFilenameLength : 55,
+		maximumFileSize: 50,
+		multiple : true,
+		fileType : aFileTypes,
+		sameFilenameAllowed : true,
+		instantUpload : false,
+	// events
+		change : fnChange,
+		fileDeleted : fnFileDeleted,
+		filenameLengthExceed : fnfilenameLengthExceed,
+		fileSizeExceed : fnFileSizeExceed,
+		typeMissmatch : fnTypeMissmatch,
+		uploadComplete : fnUploadComplete,
+		});
+
+	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
+
+/* =========================================================== */
+/* Create Page                   */
+/* =========================================================== */
+	var oPage = new sap.m.Page("page", {
+		title : "Test Page for sap.m.UploadCollection with Pending Uploading Files",
+		content : oUploadCollection,
+		footer : new sap.m.Bar({
+			contentMiddle: oButton })
+		});
+// create a mobile App embedding the page and place the App into the HTML document
+	var app = new sap.m.App("myApp", {
+			pages : [oPage]
+		}).placeAt("body");
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

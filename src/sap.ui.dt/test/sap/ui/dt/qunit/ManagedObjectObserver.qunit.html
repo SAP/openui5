@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.ManagedObjectObserver</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.ManagedObjectObserver");
+
+			var TestObject = sap.ui.core.Element.extend("sap.ui.dt.TestObject", {
+				metadata: {
+					properties : {
+						"myProperty" : {
+							type : "boolean"
+						}
+					},
+					associations : {
+						"myAssociation" : {
+							"type" : "sap.ui.core.Control"
+						}
+					},
+					aggregations : {
+						"myAggregation" : {
+							"type" : "sap.ui.core.Control"
+						}	
+					}
+				}
+			});
+
+
+			QUnit.module("Given that an ManagedObject is observed", {
+				beforeEach : function() {
+					this.oManagedObject = new TestObject();
+					this.oManagedObjectObserver = new sap.ui.dt.ManagedObjectObserver({
+						target : this.oManagedObject
+					});
+				},
+				afterEach : function() {
+					this.oManagedObjectObserver.destroy();
+					this.oManagedObject.destroy();
+				}
+			});
+
+			QUnit.test("when the property of the ManagedObject is modified", 1, function(assert) {
+				this.oManagedObjectObserver.attachModified(function(oEvent) {
+					assert.ok(oEvent, 'then a "Modified" event is fired');
+				});
+				this.oManagedObject.setMyProperty(true);
+			});
+
+			QUnit.module("Given that an ManagedObject is observed", {
+				beforeEach : function() {
+					this.oManagedObject = new TestObject();
+					this.oManagedObjectObserver = new sap.ui.dt.ManagedObjectObserver({
+						target : this.oManagedObject
+					});
+				},
+				afterEach : function() {
+					this.oManagedObjectObserver.destroy();
+				}
+			});
+
+			QUnit.test("when the MangedObject is destroyed", 1, function(assert) {
+				this.oManagedObjectObserver.attachDestroyed(function(oEvent) {
+					assert.ok(oEvent, 'then a "Destroyed" event is fired');
+				});
+				this.oManagedObject.destroy();
+			});
+
+			// TODO Add Binding tests
+
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.ManagedObjectObserver</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

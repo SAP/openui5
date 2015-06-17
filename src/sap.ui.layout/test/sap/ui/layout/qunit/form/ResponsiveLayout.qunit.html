@@ -179,6 +179,22 @@
 
 		});
 
+		test("DOM representation", function() {
+			var oContainer = sap.ui.getCore().byId("F1C1");
+			equal(oContainer.getRenderedDomRef().id, "F1C1--RFLayout", "Form1: Container1 ResponsiveFlowLayout is DOM representation");
+			oContainer = sap.ui.getCore().byId("F2C1");
+			equal(oContainer.getRenderedDomRef().id, "F2C1--Panel", "Form2: Container1 Panel is DOM representation");
+			oContainer = sap.ui.getCore().byId("F3C5");
+			ok(!oContainer.getRenderedDomRef(), "Form3: invisible Container5 no DOM representation");
+
+			var oElement = sap.ui.getCore().byId("F1C1E1");
+			equal(oElement.getRenderedDomRef().id, "F1C1E1--RFLayout", "Form1: Element1 ResponsiveFlowLayout is DOM representation");
+			oElement = sap.ui.getCore().byId("F3C2E3");
+			ok(!oElement.getRenderedDomRef(), "Form3: invisible Element no DOM representation");
+			oElement = sap.ui.getCore().byId("F3C5E1");
+			ok(!oElement.getRenderedDomRef(), "Form3: invisible Containers Element no DOM representation");
+		});
+
 		module("Rendering");
 
 		test("Container rendering", function() {

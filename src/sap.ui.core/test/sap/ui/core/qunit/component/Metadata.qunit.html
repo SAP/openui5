@@ -8,26 +8,21 @@
 <head>
 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
 
-	<base href="../../../../../../">
-	<!--[if lte IE 9]><script type="text/javascript">
-		(function() {
-			var baseTag = document.getElementsByTagName('base')[0];
-			baseTag.href = baseTag.href;
-		})();
-	</script><![endif]-->
+	<title>QUnit tests: Component Metadata</title>
 
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
-		src="resources/sap-ui-core.js"
+		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true">
 	</script>
 
-	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script language="javascript">
 
@@ -39,24 +34,25 @@
 	qutils.delayTestStart();
 
 	// register the module paths (package mapping)
-	jQuery.sap.registerModulePath("sap.ui.test", "test-resources/sap/ui/core/qunit/component/");
+	jQuery.sap.registerModulePath("sap.ui.test", ".");
 
 
 	/*
 	 * SHARED TEST CODE
 	 */
 
-	function moduleSetup(sComponentVersion) {
+	function moduleSetup(sComponentName, iMetadataVersion) {
 
 		this.oComponent = sap.ui.getCore().createComponent({
-			name: "sap.ui.test." + sComponentVersion
+			name: "sap.ui.test." + sComponentName
 		});
 
-		this.oMetadata = this.oComponent.getMetadata()
+		this.oMetadata = this.oComponent.getMetadata();
 
+		this.iExpectedMetadataVersion = iMetadataVersion;
 		this.oExpectedMetadata = {
 
-			"name": "sap.ui.test." + sComponentVersion + ".Component",
+			"name": "sap.ui.test." + sComponentName + ".Component",
 			"version": "1.0.0",
 			"includes" : ["style.css", "script.js"],
 			"dependencies": {
@@ -112,7 +108,7 @@
 				"sap.ui.viewModification": {
 					"sap.ui.test.view.Main": {
 						"myControlId": {
-							"text": "{i18n_custom>mytext}"
+							"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
 						}
 					}
 				}
@@ -146,21 +142,41 @@
 		};
 
 		this.oExpectedManifest = {
-			"name": "sap.ui.test." + sComponentVersion + ".Component",
+			"name": "sap.ui.test." + sComponentName + ".Component",
 			"sap.app": {
-				"id": "sap.ui.test." + sComponentVersion + ".Component",
+				"id": "sap.ui.test." + sComponentName,
 				"applicationVersion": {
 					"version": "1.0.0"
-				}
+				},
+				"title": "App Title",
+				"description": "App Description"
 			},
 			"sap.ui5": {
-				"resources": {
-					"js": [{
-						"uri": "script.js"
-					}],
-					"css": [{
-						"uri": "style.css"
-					}]
+				"resources": iMetadataVersion === 1 ? {
+					"js": [
+						{
+							"uri": "script.js"
+						}
+					],
+					"css": [
+						{
+							"uri": "style.css"
+						}
+					]
+				} : {
+					"js": [
+						{
+							"uri": "script.js"
+						},
+						{}
+					],
+					"css": [
+						{
+							"uri": "style.css",
+							"id": "mystyle"
+						},
+						{}
+					]
 				},
 				"dependencies": {
 					"components": {
@@ -219,7 +235,7 @@
 						"sap.ui.viewModification": {
 							"sap.ui.test.view.Main": {
 								"myControlId": {
-									"text": "{i18n_custom>mytext}"
+									"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
 								}
 							}
 						},
@@ -250,13 +266,20 @@
 				}
 			}
 		};
+		this.oExpectedRawManifest = jQuery.extend(true, {}, this.oExpectedManifest);
+		this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
+		this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
+		this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
+			["sap.ui.test.view.Main"]["myControlId"]["text"] = "{{mytext}}";
 
 	}
 
 	function moduleTeardown() {
 
 		this.oExpectedManifest = undefined;
+		this.oExpectedRawManifest = undefined;
 		this.oExpectedMetadata = undefined;
+		this.iExpectedMetadataVersion = undefined;
 		this.oMetadata = undefined;
 		this.oComponent.destroy();
 		this.oComponent = undefined;
@@ -269,6 +292,7 @@
 
 			equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 			equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+			equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 			deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
 			deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
 			deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
@@ -290,6 +314,7 @@
 		test("Manifest Validation", function() {
 
 			deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+			deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
 
 		});
 
@@ -302,10 +327,17 @@
 
 	module("Component Metadata v1", {
 		setup: function() {
-			moduleSetup.call(this, "v1");
+			moduleSetup.call(this, "v1", 1);
 			// fix the specials in the metadata for the v1
-			this.oExpectedManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
-			this.oExpectedManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+				[
+					this.oExpectedManifest,
+					this.oExpectedRawManifest
+				].forEach(function(oManifest) {
+					oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+					delete oManifest["sap.app"]["title"];
+					delete oManifest["sap.app"]["description"];
+				});
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -321,7 +353,7 @@
 
 	module("Component Metadata v2", {
 		setup: function() {
-			moduleSetup.call(this, "v2");
+			moduleSetup.call(this, "v2", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -337,10 +369,17 @@
 
 	module("Component Metadata v1 (inline)", {
 		setup: function() {
-			moduleSetup.call(this, "v1inline");
+			moduleSetup.call(this, "v1inline", 1);
 			// fix the specials in the metadata for the v1
-			this.oExpectedManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
-			this.oExpectedManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+			[
+				this.oExpectedManifest,
+				this.oExpectedRawManifest
+			].forEach(function(oManifest) {
+				oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+				oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+				delete oManifest["sap.app"]["title"];
+				delete oManifest["sap.app"]["description"];
+			});
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -356,7 +395,7 @@
 
 	module("Component Metadata v2 (inline)", {
 		setup: function() {
-			moduleSetup.call(this, "v2inline");
+			moduleSetup.call(this, "v2inline", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -372,7 +411,7 @@
 
 	module("Component Metadata v1 (empty)", {
 		setup: function() {
-			moduleSetup.call(this, "v1empty");
+			moduleSetup.call(this, "v1empty", 1);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -382,6 +421,7 @@
 	test("Metadata Validation", function() {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -391,7 +431,7 @@
 
 	module("Component Metadata v2 (empty)", {
 		setup: function() {
-			moduleSetup.call(this, "v2empty");
+			moduleSetup.call(this, "v2empty", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -401,6 +441,7 @@
 	test("Manifest Validation", function() {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -410,7 +451,7 @@
 
 	module("Component Metadata v1 (missing)", {
 		setup: function() {
-			moduleSetup.call(this, "v1missing");
+			moduleSetup.call(this, "v1missing", 1);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -420,6 +461,7 @@
 	test("Metadata Validation", function() {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -429,7 +471,7 @@
 
 	module("Component Metadata v2 (missing)", {
 		setup: function() {
-			moduleSetup.call(this, "v2missing");
+			moduleSetup.call(this, "v2missing", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -439,6 +481,7 @@
 	test("Manifest Validation", function() {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -448,7 +491,7 @@
 
 	module("Component Metadata v1 & v2 (mixed)", {
 		setup: function() {
-			moduleSetup.call(this, "mixed");
+			moduleSetup.call(this, "mixed", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -459,6 +502,7 @@
 
 		equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 		equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 		deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
 		deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
 		deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
@@ -480,6 +524,7 @@
 	test("Manifest Validation", function() {
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
 
 	});
 
@@ -489,22 +534,29 @@
 
 	module("Component Metadata v1 & v2 (mixed/inheritance)", {
 		setup: function() {
-			moduleSetup.call(this, "inherit");
+			moduleSetup.call(this, "inherit", 2);
 			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
 			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
 			this.oExpectedMetadata.models.i18n_1 = this.oExpectedMetadata.models.i18n;
 			this.oExpectedMetadata.models.sfapi_1 = this.oExpectedMetadata.models.sfapi;
-			this.oExpectedManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
-			delete this.oExpectedManifest["sap.ui5"].rootView;
-			this.oExpectedManifest["sap.ui5"].routing = {
-				"routes": [
-					{
-						"name" : "myRouteName1",
-						"pattern" : "FirstView/{from}",
-						"view" : "myViewId"
-					}
-				]
-			};
+
+			[
+				this.oExpectedManifest,
+				this.oExpectedRawManifest
+			].forEach(function(oManifest) {
+				oManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
+				delete oManifest["sap.ui5"].rootView;
+				oManifest["sap.ui5"].routing = {
+					"routes": [
+						{
+							"name" : "myRouteName1",
+							"pattern" : "FirstView/{from}",
+							"view" : "myViewId"
+						}
+					]
+				};
+
+			});
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -515,6 +567,7 @@
 
 		equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 		equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 		deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
 		deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
 		deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
@@ -538,12 +591,55 @@
 	test("Manifest Validation", function() {
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
 
+	});
+
+	/*
+	 * TEST CODE: Component Metadata URI resolution
+	 */
+
+	module("Component Metadata: Resolve URI", {
+		assertResolvedUri: function(sInput, sBase, sExpected) {
+			var sActual = sap.ui.core.ComponentMetadata._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
+			assert.equal(sActual, sExpected, "Resolved URI is correct!");
+		}
+	});
+
+	test("relative", function(assert) {
+		this.assertResolvedUri("local/uri",                           "path/to/base/",          "path/to/base/local/uri");
+		this.assertResolvedUri("./local/uri",                         "path/to/base/",          "path/to/base/local/uri");
+		this.assertResolvedUri("../relative/1/uri",                   "path/to/base/",          "path/to/relative/1/uri");
+		this.assertResolvedUri("../../relative/2/uri",                "path/to/base/",          "path/relative/2/uri");
+		this.assertResolvedUri("../../../relative/3/uri",             "path/to/base/",          "relative/3/uri");
+		this.assertResolvedUri("../../../../relative/4/uri",          "path/to/base/",          "../relative/4/uri");
+		this.assertResolvedUri("../../../../../relative/5/uri",       "path/to/base/",          "../../relative/5/uri");
+		this.assertResolvedUri("../../../../../../relative/6/uri",    "path/to/base/",          "../../../relative/6/uri");
+		this.assertResolvedUri("../../../../../../../relative/7/uri", "path/to/base/",          "../../../../relative/7/uri");
+
+		this.assertResolvedUri("local/uri",                           "../../../path/to/base/", "../../../path/to/base/local/uri");
+		this.assertResolvedUri("./local/uri",                         "../../../path/to/base/", "../../../path/to/base/local/uri");
+		this.assertResolvedUri("../relative/1/uri",                   "../../../path/to/base/", "../../../path/to/relative/1/uri");
+		this.assertResolvedUri("../../relative/2/uri",                "../../../path/to/base/", "../../../path/relative/2/uri");
+		this.assertResolvedUri("../../../relative/3/uri",             "../../../path/to/base/", "../../../relative/3/uri");
+		this.assertResolvedUri("../../../../relative/4/uri",          "../../../path/to/base/", "../../../../relative/4/uri");
+		this.assertResolvedUri("../../../../../relative/5/uri",       "../../../path/to/base/", "../../../../../relative/5/uri");
+		this.assertResolvedUri("../../../../../../relative/6/uri",    "../../../path/to/base/", "../../../../../../relative/6/uri");
+		this.assertResolvedUri("../../../../../../../relative/7/uri", "../../../path/to/base/", "../../../../../../../relative/7/uri");
+	});
+
+	test("absolute", function(assert) {
+		this.assertResolvedUri("http://absolute:1234/uri", "path/to/base/",          "http://absolute:1234/uri");
+		this.assertResolvedUri("//absolute:1234/uri",      "path/to/base/",          "//absolute:1234/uri");
+		this.assertResolvedUri("/server-absolute/uri",     "path/to/base/",          "/server-absolute/uri");
+		this.assertResolvedUri("http://absolute:1234/uri", "../../../path/to/base/", "http://absolute:1234/uri");
+		this.assertResolvedUri("//absolute:1234/uri",      "../../../path/to/base/", "//absolute:1234/uri");
+		this.assertResolvedUri("/server-absolute/uri",     "../../../path/to/base/", "/server-absolute/uri");
 	});
 
 	</script>
 	</head>
-	<body><h1 id="qunit-header">QUnit tests: Components</h1>
+	<body><h1 id="qunit-header">QUnit tests: Component Metadata</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>

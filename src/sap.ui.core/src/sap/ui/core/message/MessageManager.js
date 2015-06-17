@@ -182,15 +182,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	MessageManager.prototype._updateMessageModel = function() {
 		var aMessages = [];
 		
-		if (!this.oMessageModel) {
-			this.oMessageModel = new MessageModel(this);
-		}
+		var oMessageModel = this.getMessageModel();
+		
 		jQuery.each(this.mMessages, function(sProcessorId, mMessages) {
 			jQuery.each(mMessages, function(sKey, vMessages){
 				aMessages = jQuery.merge(aMessages, vMessages);
 			});
 		});
-		this.oMessageModel.setData(aMessages);
+		oMessageModel.setData(aMessages);
 		this._pushMessages();
 	};
 	
@@ -217,9 +216,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 		var that = this;
 		if (!vMessages || (jQuery.isArray(vMessages) && vMessages.length == 0)) {
 			return;
-		}else if (jQuery.isArray(vMessages)) {
-			for (var i = 0; i < vMessages.length; i++) {
-				that._removeMessage(vMessages[i]);
+		} else if (jQuery.isArray(vMessages)) {
+			// We need to work on a copy since the messages reference is changed by _removeMessage()
+			var vOriginalMessages = vMessages.slice(0);
+			for (var i = 0; i < vOriginalMessages.length; i++) {
+				that._removeMessage(vOriginalMessages[i]);
 			}
 		} else if (vMessages instanceof sap.ui.core.message.Message){
 			that._removeMessage(vMessages);
@@ -251,6 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 				var oMsg = aMessages[i];
 				if (jQuery.sap.equal(oMsg, oMessage) && !oMsg.getPersistent()) {
 					aMessages.splice(i,1);
+					--i; // Decrease counter as one element has been removed
 				}
 			}
 		}
@@ -365,6 +367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	MessageManager.prototype.getMessageModel = function() {
 		if (!this.oMessageModel) {
 			this.oMessageModel = new MessageModel(this);
+			this.oMessageModel.setData([]);
 		}
 		return this.oMessageModel;
 	};

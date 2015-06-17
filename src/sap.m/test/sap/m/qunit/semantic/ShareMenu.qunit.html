@@ -22,22 +22,23 @@
 		jQuery.sap.require("sap.m.semantic.SemanticPage");
 		jQuery.sap.require("sap.m.semantic.SemanticButton");
 		jQuery.sap.require("sap.m.semantic.ShareMenu");
-		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		module("ShareMenu Control", {
-			setUp: function () {
-
+			setup: function () {
+				this.oActionSheet = new sap.m.ActionSheet();
+				// Action sheet needs a parent to create the button correctly
+				this.oSemanticPage = new sap.m.semantic.SemanticPage();
+				this.oSemanticPage.addDependent(this.oActionSheet);
 			},
-
-			tearDown: function () {
+			teardown: function () {
+				this.oSemanticPage.destroy();
 				jQuery("#qunit-fixture-visible").html("");
 			}
 		});
 
 		test("has correct init state", function () {
 			// Arrange
-			var oActionSheet = new sap.m.ActionSheet(),
-			oMenu = new sap.m.semantic.ShareMenu(oActionSheet);
+			var oMenu = new sap.m.semantic.ShareMenu(this.oActionSheet);
 
 			// Act
 
@@ -51,8 +52,7 @@
 
 		test("content aggregation", function () {
 			// Arrange
-			var oActionSheet = new sap.m.ActionSheet(),
-					oMenu = new sap.m.semantic.ShareMenu(oActionSheet),
+			var oMenu = new sap.m.semantic.ShareMenu(this.oActionSheet),
 					oCustomButton1 = new sap.m.Button("customButtonId1",{
 						text: "Custom1",
 						icon: "sap-icon://synchronize"

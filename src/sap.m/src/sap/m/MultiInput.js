@@ -300,14 +300,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var aTokens = this.getTokens();
 
 		if (aTokens.length > 1) {
-			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			this.setValue(oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", aTokens.length - 1));
 			var i = 0;
 			for ( i = 0; i < aTokens.length - 1; i++ ) {
 				aTokens[i].setVisible(false);
 			}
 		} else {
-			this.setValue("");
+		this.setValue("");
 		}
 	};
 	
@@ -358,8 +356,18 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		this._setLastTokenVisible();
 		
-		if (this._$input) {
-			this._$input.attr("readonly", true);
+		// no value is allowed to show in the input when multiline is closed
+		if (this.getValue() !== "") {
+			this.setValue() === "";
+		}
+		
+		var iTokens = this.getTokens().length;
+		
+		if (iTokens > 1) {
+			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iTokens - 1) + "</span>";
+			
+			this.$().find(".sapMTokenizer").after(sSpanText);
 		}
 		
 		this._bShowIndicator = true;
@@ -374,12 +382,19 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.prototype._showAllTokens = function(oTokenizer) {
 		
 		this._setAllTokenVisible(oTokenizer);
-		
+		this._removeIndicator();
+	};
+	
+	/**
+	 * Remove tokenizer indicator
+	 *
+	 * @since 1.30
+	 * @private
+	 */
+	MultiInput.prototype._removeIndicator = function() {
+		this.$().find(".sapMMultiInputIndicator").remove();
 		this._bShowIndicator = false;
 
-		if (this._$input) {
-			this._$input.attr("readonly", false);
-		}
 	};
 	
 	/**
@@ -430,11 +445,23 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this._$input.parent().addClass("sapMMultiInputMultiModeInputContainer");
 		}
 
-		// necessary to display expanded MultiInput which is inside SimpleForm
-		if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
-			this.$().parent('[class*="sapUiRespGridSpan"]').css("overflow", "visible");
+		// necessary to display expanded MultiInput which is inside layout
+		var oParent = this.getParent();
+		this._originalOverflow = null;
+		if (oParent && oParent.$ && oParent.$().css("overflow") === "hidden") {
+			this._originalOverflow = oParent.$().css("overflow");
+			oParent.$().css("overflow", "visible");
 		}
 		
+		// necessary to display expanded MultiInput which is inside SimpleForm
+		var $Parent;			
+		if (this.$().parents(".sapUiRFLContainer")) {
+			$Parent = this.$().parents(".sapUiRFLContainer");
+			if ($Parent.css("overflow") === "hidden") {
+				$Parent.css("overflow", "visible");
+			}
+		}	
+
 	};
 	
 	/**
@@ -449,9 +476,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				this._$input.parent().removeClass("sapMMultiInputMultiModeInputContainer");
 			}
 			
-			// set overflow of sapUiRespGridSpan back to hidden
-			if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
-				this.$().parent('[class*="sapUiRespGridSpan"]').css("overflow", "hidden");
+			// set overflow back
+			if (this._originalOverflow) {
+				var oParent = this.getParent();
+				oParent.$().css("overflow", this._originalOverflow);
 			}
 	};
 
@@ -948,7 +976,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
 						||  oEvent.target.className.indexOf("sapMTokenText") > -1) {
 					
-					this.setValue("");
+					this._removeIndicator();
 					this._oSuggestionPopup.open();
 					this._tokenizerInPopup = this.cloneTokenizer(this._tokenizer);
 					this._setAllTokenVisible(this._tokenizerInPopup);
@@ -976,8 +1004,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 						this.openMultiLine();
 						this._showAllTokens(this._tokenizer);
 						
-						//remove the text of indicator
-						this.setValue("");
 						var that = this;
 						setTimeout(function() {
 							that._setContainerSizes();

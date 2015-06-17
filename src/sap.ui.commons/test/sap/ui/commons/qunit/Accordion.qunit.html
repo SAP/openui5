@@ -13,116 +13,430 @@
      <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" /> 
      <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script> 
      <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-      
-     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script> 
+
+	   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+
   
      <script language="javascript">        																						
-									
-			//Accordion 1 --> Constructor and setters to fill properties			
-			var oAccordion1 = new sap.ui.commons.Accordion("accordion1");			
-			oAccordion1.setOpenedSectionsId("1");
-			oAccordion1.setWidth("100px");	
-			
-			//Section 1
-			var oSection1 = new sap.ui.commons.AccordionSection( "section1" );		
-			oSection1.setTitle("My section 1");					
-			for (var i=0 ; i < 5 ; i++){		  
-			  var oButton1 = new sap.ui.commons.Button( "Button1"+i );
-			  oButton1.setText("Button1 "+i);
-			  oSection1.addContent( oButton1);			 
-			}							
-			oAccordion1.addSection( oSection1 );
-			
-			//Section 2
-			var oSection2 = new sap.ui.commons.AccordionSection( "section2");
-			oSection2.setTitle("My section 2");			
-			for (var i=0 ; i < 5 ; i++){		  
-			  var oButton2 = new sap.ui.commons.Button( "Button2"+i );
-			  oButton2.setText("Button2 "+i);
-			  oSection2.addContent( oButton2);
-			}			
-			oAccordion1.addSection( oSection2 );	
-			
-			//Building Section 3
-			var oSection3 = new sap.ui.commons.AccordionSection( "section3");
-			oSection3.setTitle("My section 3");
-			oSection3.setEnabled(false);	
-			var oButton3 = new sap.ui.commons.Button( "Button3" );
-			oSection3.addContent( oButton3);
-			oAccordion1.addSection( oSection3 );	
-			
-			//Building Section 4
-			var oSection4 = new sap.ui.commons.AccordionSection( "section4");
-			oSection4.setTitle("My section 4");			
-			var oButton4 = new sap.ui.commons.Button( "Button4" );
-			oButton4.setWidth("200px");
-			oSection4.addContent( oButton4);						
-			oAccordion1.addSection( oSection4 );
-			
-			sap.ui.setRoot("uiArea1", oAccordion1);
-																							
-       </script> 
+			function createAccordion(bNoSections) {
+				//Accordion 1 --> Constructor and setters to fill properties
+				var oAccordion1 = new sap.ui.commons.Accordion("accordion1");
 
-	   <script> 
-			
-	   		qutils.delayTestStart();	
-			module("Accordion Properties");
-													
-			//OpenSectionsId property			
-			test("OpenSectionsIdOk", function() {				
-				ok(oAccordion1.getOpenedSectionsId(),"OpenSectionsId for accordion1 is correct using 'ok()'!");
-				equals(oAccordion1.getOpenedSectionsId(),"1","OpenSectionsId for accordion1 is correct using 'equals()'!");							
+				if (!bNoSections) {
+					//Section 1
+					var oSection1 = new sap.ui.commons.AccordionSection( "section1" );
+					oSection1.setTitle("My section 1");
+					for (var i=0 ; i < 5 ; i++){
+						var oButton1 = new sap.ui.commons.Button( "Button1"+i );
+						oButton1.setText("Button1 "+i);
+						oSection1.addContent( oButton1);
+					}
+					oAccordion1.addSection( oSection1 );
+
+					//Section 2
+					var oSection2 = new sap.ui.commons.AccordionSection( "section2");
+					oSection2.setTitle("My section 2");
+					for (var i=0 ; i < 5 ; i++){
+						var oButton2 = new sap.ui.commons.Button( "Button2"+i );
+						oButton2.setText("Button2 "+i);
+						oSection2.addContent( oButton2);
+					}
+					oAccordion1.addSection( oSection2 );
+
+					//Building Section 3
+					var oSection3 = new sap.ui.commons.AccordionSection( "section3");
+					oSection3.setTitle("My section 3");
+					oSection3.setEnabled(false);
+					var oButton3 = new sap.ui.commons.Button( "Button3" );
+					oSection3.addContent( oButton3);
+					oAccordion1.addSection( oSection3 );
+
+					//Building Section 4
+					var oSection4 = new sap.ui.commons.AccordionSection( "section4");
+					oSection4.setTitle("My section 4");
+					var oButton4 = new sap.ui.commons.Button( "Button4" );
+					oButton4.setWidth("200px");
+					oSection4.addContent( oButton4);
+					oAccordion1.addSection( oSection4 );
+				}
+
+
+				sap.ui.setRoot("uiArea1", oAccordion1);
+
+				return oAccordion1;
+			}
+
+	   		qutils.delayTestStart();
+
+			module("Accordion API and Properties", {
+				setup : function () {
+					this.oAccordion1 = createAccordion();
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oAccordion1.destroy();
+					this.oAccordion1 = null;
+				}
 			});
-			
-			//Width property			
-			test("WidthOk", function() {				
-				ok(oAccordion1.getWidth() == "100px","Width for accordion1 is correct using 'ok()'!");
-				equals(oAccordion1.getWidth(),"100px","Width for accordion1 is correct using 'equals()'!");								
+
+			//OpenSectionsId property
+			test("OpenSectionsId Default value - the first added section", function() {
+				strictEqual(this.oAccordion1.getOpenedSectionsId(), "section1", "OpenSectionsId should be the first added section id.");
 			});
-			
-			
-			module("Accordion Open/Close sections");
-			
+			test("SetOpenedSectionsId multiple values test", function() {
+				this.oAccordion1.setOpenedSectionsId("section2,section3,section4");
+				this.oAccordion1.openDefaultSections();
+
+//				// now section 2 and 4 should be open as section 3 is disabled
+				strictEqual(this.oAccordion1.getOpenedSectionsId(), "section2,section4", "OpenedSectionsId should be section 2 and section 4 ");
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
+				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is closed as is disabled");
+				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is open now");
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is was open by default");
+			});
+
+			test("SetOpenedSectionsId disabled section Id test", function() {
+				this.oAccordion1.setOpenedSectionsId("section3");
+				this.oAccordion1.openDefaultSections();
+				sap.ui.getCore().applyChanges();
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is closed as is disabled");
+			});
+
+			test("SetOpenedSectionsId invalid section Id test", function() {
+				this.oAccordion1.setOpenedSectionsId("alabala");
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open as the provided Id is not valid");
+			});
+
+			test("Set OpenedSectionsId", function() {
+				var sID = "section2";
+				this.oAccordion1.setOpenedSectionsId(sID);
+				strictEqual(this.oAccordion1.getOpenedSectionsId(), sID, "OpenSectionsId for accordion1 is correct ");
+			});
+
+			//Width property
+			test("Default Width value 200px", function() {
+				strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
+			});
+
+			//sections aggregation
+			test("sections Aggregation test", function() {
+				strictEqual(this.oAccordion1.getAggregation("sections").length, 4, "4 sections should be added");
+			});
+			test("Sections aggregation visibility test", function() {
+				ok(this.oAccordion1.getSections, "Sections aggregation is visible");
+			});
+			test("Test getNumberOfOpenedSections", function() {
+				strictEqual(this.oAccordion1.getNumberOfOpenedSections(), 1, "Should be 1");
+			});
+
+
+			module("Accordion API and Properties, no any section added", {
+				setup : function () {
+					this.oAccordion1 = createAccordion(true);
+				},
+				teardown : function () {
+					this.oAccordion1.destroy();
+					this.oAccordion1 = null;
+				}
+			});
+
+			//Width property
+			test("Default Width value 200px", function() {
+				strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
+			});
+
+			//OpenSectionsId property
+			test("OpenedSectionsId Default value null", function() {
+				strictEqual(this.oAccordion1.getOpenedSectionsId(), "", "OpenedSectionsId should be null as no sections exist ");
+			});
+
+
+			//sections aggregation
+			test("sections Aggregation test", function() {
+				strictEqual(this.oAccordion1.getAggregation("sections"), null, "No any section exist");
+			});
+
+			module("AccordionSection API and Properties", {
+				setup : function () {
+					this.oAccordion1 = createAccordion();
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oAccordion1.destroy();
+					this.oAccordion1 = null;
+				}
+			});
+
+			test("API test - focusFirstControl", function() {
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				//focus the first control of the first section
+				aSections[0].focusFirstControl();
+				strictEqual(aSections[0].getContent()[0].$().is(":focus"), true, "The first button is focused");
+			});
+
+			test("API test - onThemeChanged", function() {
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				aSections[0].onThemeChanged();
+
+				strictEqual(aSections[0].$("hdrL").css("width"), "20px", "The width is 20px");
+			});
+
+			test("API test - Enabled property", function() {
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+
+				//set the property "enabled"
+				aSections[0].setEnabled(false);
+				strictEqual(aSections[0].$().hasClass( "sapUiAcdSectionDis" ), true, "The Section header has the disabled class applied");
+				strictEqual(aSections[0].getEnabled(), false, "The Section 1 is disabled");
+				aSections[0].setEnabled(true);
+				strictEqual(aSections[0].$().hasClass( "sapUiAcdSectionDis" ), false, "The Section header doesn't have the disabled class applied");
+				strictEqual(aSections[0].getEnabled(), true, "The Section 1 is enabled");
+			});
+
+
+			module("Accordion Open/Close sections",{
+				setup : function () {
+					this.oAccordion1 = createAccordion();
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oAccordion1.destroy();
+					this.oAccordion1 = null;
+				}
+			} );
+
+
+
 			//Some keyboard shortcuts...
-			test("Accordion Open/Close sections", function() {		
-												
+			test("Accordion Open/Close sections", function() {
+
 				// Navigation + close/open sections
-				//Open the fourth section				
-				jQuery("section4-minL").focus();	
-				qutils.triggerEvent("click", "section4-minL");							
-				
-				//Check if default section is closed (1) and (4) is now opened
-				var aSections = oAccordion1.getSections();
-				equals(aSections[0].getCollapsed(), true, "Section 1 is now closed : section.isCollapsed()");
-				equals(aSections[1].getCollapsed(), true, "Section 2 is now closed : section.isCollapsed()");
-				equals(aSections[2].getCollapsed(), true, "Section 3 is now closed : section.isCollapsed()");
-				equals(aSections[3].getCollapsed(), false, "Section 4 is now opened : section.isCollapsed()");																												
-				
+				//Open the fourth section
+				jQuery("section4-minL").focus();
+				qutils.triggerEvent("click", "section4-minL");
+
+				//Check if default section is closed (1) and (4) are now opened
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed ");
+				strictEqual(aSections[1].getCollapsed(), true, "Section 2 is now closed ");
+				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is now closed ");
+				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open ");
+
+
 			});
 						
-			//module("Accordion Keyboard Shortcuts");
+			module("Accordion Keyboard Handling Test",{
+				setup : function () {
+					this.oAccordion1 = createAccordion();
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oAccordion1.destroy();
+					this.oAccordion1 = null;
+				}
+			} );
 			
-			//test("Accordion Keyboard Shortcuts", function() {		
+			test("Space and Arrows Left & Right ", function() {
 														
-				//jQuery("section1-minL").focus();
-				//qutils.triggerEvent("click", "section1-minL");	
-				//qutils.triggerKeyboardEvent("accordion1", "ARROW_RIGHT");
-				//qutils.triggerKeyboardEvent("accordion1", "SPACE");	
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				qutils.triggerEvent("click", "section1-minL");
+				// now all sections should be closed
+				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
+				this.oAccordion1.getSections()[0].setCollapsed(false);
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
+
+				jQuery("section1-minL").focus();
+				qutils.triggerEvent("click", "section1-minL");
+				qutils.triggerKeyboardEvent("accordion1", "ARROW_RIGHT");
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
 								
-				//Navigate up by 1, section is disabled, so it will jump top section 2
-				//Section 2 is now opened and section 4 is now collapsed
-				//jQuery("section4-minL").focus();								
-				//qutils.triggerKeyboardEvent("section4-minL", "ARROW_LEFT");
-				//qutils.triggerKeyboardEvent("section2-minL", "SPACE");				
-				//equals(aSections[1].getCollapsed(), false, "Section 2 is now opened");
-				//equals(aSections[3].getCollapsed(), true, "Section 4 is now closed");
+//				Navigate up by 1, section is disabled, so it will jump top section 2
+//				Section 2 is now opened and section 4 is now collapsed
+				jQuery("section4-minL").focus();
+				qutils.triggerKeyboardEvent("section4-minL", "ARROW_LEFT");
+				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.SPACE);
+				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened");
+				strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
 				
-				//Close it and the default section will reopen, in this case, it is section1
-				//qutils.triggerKeyboardEvent("accordion1", "SPACE");
-				//equals(aSections[1].getCollapsed(), true, "Section 2 is now closed");
-				//equals(aSections[0].getCollapsed(), true, "Section 4 is now opened");
+//				Close it and the default section will reopen, in this case, it is section1
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
+				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
+				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
 			
-			//});
+			});
+
+			test("Space and End buttons ", function() {
+
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				qutils.triggerEvent("click", "section1-minL");
+				// now all sections should be closed
+				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
+				this.oAccordion1.getSections()[0].setCollapsed(false);
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
+
+				jQuery("section1-minL").focus();
+				qutils.triggerEvent("click", "section1-minL");
+				// test handling END button
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.END);
+				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused");
+
+				// test END button, when the last section is disabled
+				//Building Section 5
+				var oSection5 = new sap.ui.commons.AccordionSection( "section5");
+				oSection5.setTitle("My section 5");
+				oSection5.setEnabled(false);
+				var oButton5 = new sap.ui.commons.Button( "Button5" );
+				oSection5.addContent( oButton5);
+				this.oAccordion1.addSection( oSection5 );
+				//Building Section 6
+				var oSection6 = new sap.ui.commons.AccordionSection( "section6");
+				oSection6.setTitle("My section 6");
+				oSection6.setEnabled(false);
+				var oButton6 = new sap.ui.commons.Button( "Button6" );
+				oSection6.addContent( oButton6);
+				this.oAccordion1.addSection( oSection6 );
+				sap.ui.getCore().applyChanges();
+
+				jQuery("section1-minL").focus();
+				qutils.triggerEvent("click", "section1-minL");
+				// test handling END button
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.END);
+				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as the last 2 are disabled");
+
+			});
+
+			test("Space and HOME buttons ", function() {
+
+				// test HOME button, when some of the first sections are disabled
+				this.oAccordion1.destroyAggregation("sections", true);		// note: suppress re-rendering
+				//Building Section 1
+				var oSection = new sap.ui.commons.AccordionSection( "section1");
+				oSection.setTitle("My section 1");
+				oSection.setEnabled(false);
+				var oButton = new sap.ui.commons.Button( "Button1" );
+				oSection.addContent( oButton);
+				this.oAccordion1.addSection( oSection );
+				//Building Section 2
+				oSection = new sap.ui.commons.AccordionSection( "section2");
+				oSection.setTitle("My section 2");
+				oSection.setEnabled(false);
+				oButton = new sap.ui.commons.Button( "Button2" );
+				oSection.addContent( oButton);
+				this.oAccordion1.addSection( oSection );
+
+				//Building Section 3
+				oSection = new sap.ui.commons.AccordionSection( "section3");
+				oSection.setTitle("My section 3");
+				oButton = new sap.ui.commons.Button( "Button3" );
+				oSection.addContent( oButton);
+				this.oAccordion1.addSection( oSection );
+
+				//Building Section 4
+				oSection = new sap.ui.commons.AccordionSection( "section4");
+				oSection.setTitle("My section 4");
+				oButton = new sap.ui.commons.Button( "Button4" );
+				oSection.addContent( oButton);
+				this.oAccordion1.addSection( oSection );
+
+				sap.ui.getCore().applyChanges();
+				var aSections = this.oAccordion1.getSections();
+				// section 3 should be focused and open by default as first 2 are disabled
+				strictEqual(aSections[2].getCollapsed(), false, "Section 3 is open by default as first 2 are disabled");
+
+				// navigate to the last section
+				qutils.triggerKeyboardEvent("section3-minL", jQuery.sap.KeyCodes.ARROW_DOWN);
+				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused ");
+
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.HOME);
+				strictEqual(aSections[2].$("hdr").is(":focus"), true, "Section 3 is now focused as first 2 are disabled");
+			});
+
+			test("Space and Arrows Up & Down ", function() {
+
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				qutils.triggerEvent("click", "section1-minL");
+				// now all sections should be closed
+				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
+				this.oAccordion1.getSections()[0].setCollapsed(false);
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
+
+				jQuery("section1-minL").focus();
+				qutils.triggerEvent("click", "section1-minL");
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.ARROW_DOWN);
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
+
+//				Navigate up by 1, section is disabled, so it will jump top section 2
+//				Section 2 is now opened and section 4 is now collapsed
+				jQuery("section4-minL").focus();
+				qutils.triggerKeyboardEvent("section4-minL", "ARROW_UP");
+				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.SPACE);
+				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened as 3 is disabled");
+				strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
+
+//				Close it and the default section will reopen, in this case, it is section1
+				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
+				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
+				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
+
+			});
+
+			test("Ctrl + PgDn ", function() {
+
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+
+				jQuery("section2-minL").focus();
+				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.PAGE_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
+				//next section will be focused and open
+				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as Section 3 is disabled");
+				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open");
+
+			});
+
+			test("Ctrl + PgUp ", function() {
+
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+
+				jQuery("section4-minL").focus();
+				qutils.triggerKeyboardEvent("section4-minL", jQuery.sap.KeyCodes.PAGE_UP, {ctrlKey: true});			//, {ctrlKey: true}
+				//prev section will be focused and open
+				strictEqual(aSections[1].$("hdr").is(":focus"), true, "Section 2 is now focused as Section 3 is disabled");
+				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is open now as Section 3 is disabled");
+
+			});
+
+			test("Ctrl + ARROW DOWN ", function() {
+
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+
+				qutils.triggerKeyboardEvent("section1-minL", jQuery.sap.KeyCodes.ARROW_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
+				//Section 2 will become the first section and Section 1 will become the second one section
+				strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
+				strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section1 is now at the second position");
+			});
+
+			test("Ctrl + ARROW UP ", function() {
+
+				var aSections = this.oAccordion1.getSections();
+				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+
+				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.ARROW_UP, {ctrlKey: true});			//, {ctrlKey: true}
+				//Section 2 will become the first section and Section 1 will become the second one section
+				strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
+				strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section 1 is now at the second position");
+			});
 								
 		</script>
 

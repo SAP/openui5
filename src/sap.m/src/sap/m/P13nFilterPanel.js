@@ -1,5 +1,5 @@
-/*!
- * ${copyright}
+/*
+ * ! ${copyright}
  */
 
 // Provides control sap.m.P13nFilterPanel.
@@ -11,20 +11,15 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nFilterPanel.
 	 * 
-	 * @param {string}
-	 *            [sId] id for the new control, generated automatically if no id is given
-	 * @param {object}
-	 *            [mSettings] initial settings for the new control
-	 * 
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nFilterPanel control is used to define filter-specific settings for table personalization.
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
-	 * 
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nFilterPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime
-	 *                metamodel
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nFilterPanel = P13nPanel.extend("sap.m.P13nFilterPanel", /** @lends sap.m.P13nFilterPanel.prototype */
 	{
@@ -34,7 +29,8 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * defines the max number of include filter.
+				 * Defines the maximum number of include filters.
+				 * 
 				 * @since 1.26
 				 */
 				maxIncludes: {
@@ -44,7 +40,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * defines the max number of exclude filter
+				 * Defines the maximum number of exclude filters.
+				 * 
 				 * @since 1.26
 				 */
 				maxExcludes: {
@@ -54,8 +51,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When
-				 * the ConditionPanel is used on a dialog the property should be set to true!
+				 * Defines if the <code>mediaQuery</code> or a <code>ContainerResize</code> is used for layout update. If the
+				 * <code>ConditionPanel</code> is used in a dialog, the property must be set to <code>true</code>.
+				 * 
 				 * @since 1.26
 				 */
 				containerQuery: {
@@ -65,8 +63,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * can be used to control the layout behavior. Default is "" which will automatically
-				 * change the layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
+				 * Can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table"
+				 * or"Phone" you can set a fixed layout.
+				 * 
 				 * @since 1.26
 				 */
 				layoutMode: {
@@ -78,7 +77,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * content for include and exclude panels
+				 * Contains content for include and exclude panels.
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -88,7 +87,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * defined Filter Items
+				 * Defines filter items.
+				 * 
 				 * @since 1.26
 				 */
 				filterItems: {
@@ -101,19 +101,22 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * event raised when a filterItem was added
+				 * Event raised if a filter item has been added.
+				 * 
 				 * @since 1.26
 				 */
 				addFilterItem: {},
 
 				/**
-				 * remove a filter item
+				 * Removes a filter item.
+				 * 
 				 * @since 1.26
 				 */
 				removeFilterItem: {},
 
-				/**								 
-				 * update a filter item
+				/**
+				 * Updates a filter item.
+				 * 
 				 * @since 1.26
 				 */
 				updateFilterItem: {}
@@ -124,12 +127,11 @@ sap.ui.define([
 	// EXC_ALL_CLOSURE_003
 
 	/**
-	 * sets the array of conditions.
+	 * Sets the array of conditions.
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @param {object[]}
-	 *            aConditions the complete list of conditions
+	 * @param {object[]} aConditions the complete list of conditions
 	 */
 	P13nFilterPanel.prototype.setConditions = function(aConditions) {
 		var aIConditions = [];
@@ -154,11 +156,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * add a new condition object 
+	 * Adds a new condition object.
 	 * 
 	 * @private
-	 * @param {object}
-	 *            oCondition the new condition
+	 * @param {object} oCondition the new condition
 	 */
 	P13nFilterPanel.prototype._addCondition = function(oCondition) {
 		if (!oCondition.exclude) {
@@ -173,7 +174,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * returns the array of conditions.
+	 * Returns the array of conditions.
 	 * 
 	 * @public
 	 * @since 1.26
@@ -200,20 +201,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state)
+	 * Checks if the entered and modified conditions are correct, marks invalid fields in yellow (warning).
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @returns {boolean}
-	 * 			false, if there is an invalid condition 
+	 * @returns {boolean} <code>false</code>, if there is an invalid condition
 	 */
 	P13nFilterPanel.prototype.validateConditions = function() {
 		return this._oIncludeFilterPanel.validateConditions() && this._oExcludeFilterPanel.validateConditions();
 	};
 
 	/**
-	 * removes all invalid conditions.					 
-	 *  
+	 * Removes all invalid conditions.
+	 * 
 	 * @public
 	 * @since 1.28
 	 */
@@ -223,7 +223,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * removes all errors/warning states from of all filter conditions.
+	 * Removes all errors and warnings states from of all filter conditions.
 	 * 
 	 * @public
 	 * @since 1.28
@@ -242,12 +242,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * setter for the supported Include operations array
+	 * Setter for the supported Include operations array.
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @param {array}
-	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @param {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
 	P13nFilterPanel.prototype.setIncludeOperations = function(aOperation) {
 		this._aIncludeOperations = aOperation;
@@ -258,12 +257,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * getter for the Include operations 
+	 * Getter for the include operations.
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @returns {array}
-	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @returns {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
 	P13nFilterPanel.prototype.getIncludeOperations = function() {
 		if (this._oIncludeFilterPanel) {
@@ -272,12 +270,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * setter for the supported Exclude operations array
+	 * Setter for the supported exclude operations array.
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @param {array}
-	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @param {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
 	P13nFilterPanel.prototype.setExcludeOperations = function(aOperation) {
 		this._aExcludeOperations = aOperation;
@@ -288,12 +285,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * getter for the Exclude operations 
+	 * Getter for the exclude operations.
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @returns {array}
-	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @returns {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
 	P13nFilterPanel.prototype.getExcludeOperations = function() {
 		if (this._oExcludeFilterPanel) {
@@ -302,13 +298,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * setter for a KeyFields array
+	 * Setter for a KeyFields array.
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @param {array}
-	 *            array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text :
-	 *            "Name"}]
+	 * @param {array} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
 	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields) {
 		this._aKeyFields = aKeyFields;
@@ -354,12 +348,14 @@ sap.ui.define([
 				this._oIncludePanel.setHeaderText(null);
 				this._oIncludePanel.setExpandable(false);
 				this._oIncludePanel.addStyleClass("panelTopMargin");
+				this._oIncludePanel.addStyleClass("panelNoHeader");
 			}
 		}
 
 		if (iMaxExcludes === 0) {
 			this._oExcludePanel.setHeaderText(null);
 			this._oExcludePanel.setExpandable(false);
+			this._oExcludePanel.addStyleClass("panelNoHeader");
 		}
 
 	};

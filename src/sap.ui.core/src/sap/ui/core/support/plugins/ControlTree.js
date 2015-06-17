@@ -4,11 +4,11 @@
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip'],
-	function(jQuery, Plugin, ViewSerializer, jszip) {
+	function(jQuery, Plugin, ViewSerializer, JSZip) {
 	"use strict";
 
 
-	/*global JSZip, Blob, Uint8Array, alert */
+	/*global Blob, Uint8Array, alert */
 
 
 
@@ -1033,7 +1033,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 			return true;
 		};
 
-		Plugin.prototype.getSelectedControlId = function() {
+		ControlTree.prototype.getSelectedControlId = function() {
 			var $sret = this.$().find(".sapUiSupportControlTreeSelected");
 			if ($sret.length === 0) {
 				return undefined;
@@ -1551,7 +1551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 							};
 							break;
 						}
-					} while ((oCurrentControl = oCurrentControl.getParent()) !== undefined);
+					} while ( (oCurrentControl = oCurrentControl.getParent()) );
 
 					mControlBindingInfos.contexts.push(mContext);
 				}
@@ -1594,7 +1594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 						};
 						break;
 					}
-				} while ((oCurrentControl = oCurrentControl.getParent()) !== undefined);
+				} while ( (oCurrentControl = oCurrentControl.getParent()) );
 
 				// check for core model if no model was found
 				if (!mModelInfo.location) {

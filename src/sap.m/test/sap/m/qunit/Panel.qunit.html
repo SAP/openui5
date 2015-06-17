@@ -113,6 +113,10 @@
 		assert.notStrictEqual(this.oPanel.oIconCollapsed, undefined, "should create an icon");
 	});
 
+	QUnit.test("Default Panel backgroundDesign", function (assert) {
+		assert.strictEqual(this.oPanel.getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, "should be sap.m.BackgroundDesign.Translucent");
+	});
+
 	QUnit.module("Events", {
 		createPanel: function (options) {
 			this.oPanel = new sap.m.Panel({
@@ -291,6 +295,30 @@
 		assert.strictEqual($panel.find(".sapMPanelWrappingDivExpanded").length, 0, "should NOT have sapMPanelWrappingDivExpanded class present");
 	});
 
+	QUnit.test("Panel with solid backgroundDesign", function(assert) {
+		this.oPanel.setBackgroundDesign(sap.m.BackgroundDesign.Solid);
+		sap.ui.getCore().applyChanges();
+
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelBGSolid").length, 1, "should have sapMPanelBGSolid class present once");
+	});
+
+	QUnit.test("Panel with transparent backgroundDesign", function(assert) {
+		this.oPanel.setBackgroundDesign(sap.m.BackgroundDesign.Transparent);
+		sap.ui.getCore().applyChanges();
+
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelBGTransparent").length, 1, "should have sapMPanelBGTransparent class present once");
+	});
+
+	QUnit.test("Panel with translucent backgroundDesign", function(assert) {
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelBGTranslucent").length, 1, "should have sapMPanelBGTranslucent class present once");
+	});
+
 	QUnit.module("Computed styles", {
 		setup: function () {
 			this.oPanel = new sap.m.Panel({
@@ -368,6 +396,23 @@
 		var $panel = this.oPanel.$();
 
 		assert.strictEqual($panel.find(".sapMPanelContent").css("display"), "none", "should have display:none style present");
+	});
+
+	QUnit.test("Panel with solid backgroundDesign", function(assert) {
+		this.oPanel.setBackgroundDesign(sap.m.BackgroundDesign.Solid);
+		sap.ui.getCore().applyChanges();
+
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelBGSolid").css("background-color"), "rgb(255, 255, 255)",
+			"should have background-color:rgb(255, 255, 255) style present");
+	});
+
+	QUnit.test("Panel with translucent backgroundDesign", function(assert) {
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelBGTranslucent").css("background-color"), "rgba(255, 255, 255, 0.8)",
+			"should have background-color:rgba(255, 255, 255, 0.8) style present");
 	});
 
 	QUnit.test("Container Padding Classes", function (assert) {

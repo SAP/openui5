@@ -1,43 +1,64 @@
 <core:FragmentDefinition
-  xmlns="sap.m"
-  xmlns:core="sap.ui.core">
-  <Dialog
-    title="Settings"
-    class="sapUiPopupWithPadding"
-    contentWidth="350px"
-    id="AppSettingsDialog">
-    <content>
-		<Label text="Theme" design="Bold" id="ThemeLabel"/>
-		<SegmentedButton 
-			selectedButton="sap_bluecrystal"
-			id="ThemeButtons"
-			width="100%" >
-		      <Button text="High Contrast Black" id="sap_hcb" />
-		      <Button text="Blue Crystal" id="sap_bluecrystal" />
-		</SegmentedButton>
-		<Label text="Compact Form Factor" design="Bold" />
-		<SegmentedButton 
-			selectedButton="compactOn"
-			id="CompactModeButtons" 
-			width="100%" >
-		      <Button text="On" id="compactOn" />
-		      <Button text="Off" id="compactOff" />
-		</SegmentedButton>
-		<Label text="Right To Left Mode" design="Bold" />
-		<SegmentedButton 
-			selectedButton="RTLOff"
-			id="RTLButtons" 
-			width="100%" >
-		      <Button text="On" id="RTLOn" />
-		      <Button text="Off" id="RTLOff" />
-		</SegmentedButton>
-	</content>
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core">
+	<Dialog
+			title="Settings"
+			class="sapUiPopupWithPadding"
+			contentWidth="350px"
+			id="AppSettingsDialog">
+		<content>
+			<l:Grid
+					class="sapUiSmallMarginTop"
+					hSpacing="0.5"
+					vSpacing="0.5"
+					defaultSpan="L6 M6 S10">
+				<l:content>
+					<Label text="Theme:" design="Standard" id="ThemeLabel">
+						<layoutData>
+							<l:GridData span="L12 M12 S12"/>
+						</layoutData>
+					</Label>
+
+					<Select id="ThemeButtons" width="100%">
+						<core:Item key="sap_hcb" text="High Contrast Black"/>
+						<core:Item key="sap_bluecrystal" text="Blue Crystal"/>
+						<layoutData>
+							<l:GridData span="L12 M12 S12"/>
+						</layoutData>
+					</Select>
+
+					<Label id="CompactModeLabel" text="Compact Content Density:" design="Standard">
+						<layoutData>
+							<l:GridData span="L8 M8 S8"/>
+						</layoutData>
+					</Label>
+					<Switch id="CompactModeButtons" state="false">
+						<layoutData>
+							<l:GridData span="L4 M4 S4"/>
+						</layoutData>
+					</Switch>
+
+					<Label id="RTLLabel" text="Right To Left Mode:" design="Standard">
+						<layoutData>
+							<l:GridData span="L8 M8 S8"/>
+						</layoutData>
+					</Label>
+					<Switch id="RTLButtons" state="false">
+						<layoutData>
+							<l:GridData span="L4 M4 S4"/>
+						</layoutData>
+					</Switch>
+				</l:content>
+			</l:Grid>
+		</content>
 		<beginButton>
-			<Button text="Ok" press="onSaveAppSettings" />
+			<Button text="Ok" press="onSaveAppSettings"/>
 		</beginButton>
 		<endButton>
-			<Button text="Cancel" press="onDialogCloseButton" />
+			<Button text="Cancel" press="onDialogCloseButton"/>
 		</endButton>
-  </Dialog>
+	</Dialog>
 </core:FragmentDefinition>
 

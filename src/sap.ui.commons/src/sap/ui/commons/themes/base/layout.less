@@ -7,13 +7,40 @@
 .sapUiMlt {
 	color: @sapUiBaseText;
 	font-family: @sapUiFontFamily;
-	font-size:@sapUiFontSize;
+	font-size: @sapUiFontSize;
+	text-align: initial; /* alignment should not be inherited */
 }
 
 .sapUiMltCell {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
+}
+
+/* HAlign */
+.sapUiMltCellHAlignCenter {
+	text-align: center;
+}
+.sapUiMltCellHAlignLeft {
+	text-align: left;
+}
+.sapUiMltCellHAlignRight {
+	text-align: right;
+}
+
+.sapUiMltCellHAlignCenter > * {
+	margin-left: auto;
+	margin-right: auto;
+}
+.sapUiMltCellHAlignLeft > *,
+html[dir=rtl] .sapUiMltCellHAlignRight > * {
+	margin-right: auto;
+	margin-left: 0;
+}
+.sapUiMltCellHAlignRight > *,
+html[dir=rtl] .sapUiMltCellHAlignLeft > * {
+	margin-left: auto;
+	margin-right: 0;
 }
 
 /* BackGround design */

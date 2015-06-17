@@ -7,7 +7,8 @@
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs='sap.ui.commons,sap.ui.table'>
+	data-sap-ui-libs='sap.ui.commons,sap.ui.table'
+	>
 </script>
 
 <link rel="stylesheet"
@@ -30,11 +31,12 @@ var fnOriginalClearTimeout = window.setTimeout;
 <!--[if IE]>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
+
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
 
-<!-- use the sinon faketimers for this test -->
+<!-- Whether to use the sinon faketimers for this test -->
 <script type="text/javascript">
-	sinon.config.useFakeTimers = true;
+	sinon.config.useFakeTimers = false;
 </script>
 
 <!-- This test is not running against the real Northwind service, but a fake service based on
@@ -47,6 +49,9 @@ var fnOriginalClearTimeout = window.setTimeout;
 <!-- Test functions -->
 
 <script>
+	// Enable code coverage
+    jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	
 	sap.ui.getCore().attachInit(function() {
 		runODataAnnotationTests();
 	})

@@ -82,7 +82,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 				jQuery.sap.log.debug("ThemeCheck: Check styles '" + $Style.attr("id") + "': " + res + "/" + res2 + "/" + !!oStyle);
 			}
 			return res || res2;
-		} catch (e) {}
+		} catch (e) {
+			//escape eslint check for empty block
+		}
 
 		if (bLog) {
 			jQuery.sap.log.debug("ThemeCheck: Error during check styles '" + $Style.attr("id") + "': false/false/" + !!oStyle);

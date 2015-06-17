@@ -9,11 +9,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Core, URI1) {
+	function(jQuery, Core, URI) {
 	"use strict";
-
-		/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
-
 
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.
@@ -32,6 +29,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI']
 
 		function resetParameters() {
 			mParameters = null;
+		}
+
+		function mergeParameters(mNewParameters) {
+			for (var sParam in mNewParameters) {
+				if (typeof mParameters[sParam] == "undefined") {
+					mParameters[sParam] = mNewParameters[sParam];
+				}
+			}
 		}
 
 		function checkAndResolveUrls(mParams, sResourceUrl){
@@ -92,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI']
 					}
 					try {
 						var oParams = jQuery.parseJSON(sParams);
-						jQuery.extend(mParameters, oParams);
+						mergeParameters(oParams);
 						return;
 					} catch (ex) {
 						jQuery.sap.log.warning("Could not parse theme parameters from " + sUrl + ". Loading library-parameters.json as fallback solution.");
@@ -119,12 +124,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI']
 				if ( jQuery.isArray(oResult) ) {
 					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
 					for (var j = 0; j < oResult.length; j++) {
-						oResult[j] = checkAndResolveUrls(oResult[j], sUrl);
-						jQuery.extend(mParameters, oResult[j]);
+						var oParams = oResult[j];
+						oParams = checkAndResolveUrls(oParams, sUrl);
+						mergeParameters(oParams);
 					}
 				} else {
 					oResult = checkAndResolveUrls(oResult, sUrl);
-					jQuery.extend(mParameters, oResult);
+					mergeParameters(oResult);
 				}
 			} else {
 				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file

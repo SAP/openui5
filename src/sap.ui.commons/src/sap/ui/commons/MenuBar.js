@@ -63,33 +63,42 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	/*Ensure MenuItemBase is loaded (incl. loading of unified library)*/
 	
 	MenuItem.extend("sap.ui.commons._DelegatorMenuItem", {
-	  constructor : function(oAlterEgoItm) {
-	    MenuItem.apply(this);
-	    this.oAlterEgoItm = oAlterEgoItm;
-	    var that = this;
-	    this.oAlterEgoItm.getSubmenu().getRootMenu = function(){
-				return that.getParent();
-	    };
-	  },
-	  exit : function () {
-		this.oAlterEgoItm.getSubmenu().getRootMenu = Menu.prototype.getRootMenu;
-	    this.oAlterEgoItm = null;
-	  },
-	  getText : function() {
-	    return this.oAlterEgoItm.getText();
-	  },
-	  getIcon : function() {
-		  return this.oAlterEgoItm.getIcon();
-	  },
-	  getEnabled : function() {
-		  return this.oAlterEgoItm.getEnabled();
-	  },
-	  getVisible : function() {
-		  return this.oAlterEgoItm.getVisible();
-	  },
-	  getSubmenu : function() {
-		  return this.oAlterEgoItm.getSubmenu();
-	  }
+		constructor: function(oAlterEgoItm) {
+			MenuItem.apply(this);
+			this.oAlterEgoItm = oAlterEgoItm;
+			this.bNoSubMenu = true;
+
+			var oSubmenu = this.oAlterEgoItm.getSubmenu();
+			if (oSubmenu) {
+				var that = this;
+				oSubmenu.getRootMenu = function() {
+					return that.getParent();
+				};
+				this.bNoSubMenu = false;
+			}
+		},
+		exit: function() {
+			if (!this.bNoSubMenu) {
+				this.oAlterEgoItm.getSubmenu().getRootMenu = Menu.prototype.getRootMenu;
+			}
+			this.bNoSubMenu = true;
+			this.oAlterEgoItm = null;
+		},
+		getText: function() {
+			return this.oAlterEgoItm.getText();
+		},
+		getIcon: function() {
+			return this.oAlterEgoItm.getIcon();
+		},
+		getEnabled: function() {
+			return this.oAlterEgoItm.getEnabled();
+		},
+		getVisible: function() {
+			return this.oAlterEgoItm.getVisible();
+		},
+		getSubmenu: function() {
+			return this.oAlterEgoItm.getSubmenu();
+		}
 	});
 	
 	(function() {
@@ -97,6 +106,7 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	
 	/**
 	 * Initialize this control.
+	 * 
 	 * @private
 	 */
 	MenuBar.prototype.init = function() {
@@ -369,6 +379,8 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 					if (oMenu && !oMenuItem._bSkipOpen) {
 						var eDock = sap.ui.core.Popup.Dock;
 						oMenu.open(bWithKeyboard, jRef.get(0), eDock.BeginTop, eDock.BeginBottom, jRef.get(0));
+					} else if (!oMenu) {
+						oMenuItem.fireSelect({item: oMenuItem});
 					}
 				}
 			}
@@ -469,6 +481,8 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 					if (!(oItem instanceof sap.ui.commons._DelegatorMenuItem)) {
 						var oItemRootMenu = Menu.prototype.getRootMenu.apply(oItem.getParent());
 						oItemRootMenu.fireItemSelect({item: oItem});
+					} else if (oItem.bNoSubMenu && oItem instanceof sap.ui.commons._DelegatorMenuItem) {
+						oItem.oAlterEgoItm.fireSelect({item: oItem.oAlterEgoItm});
 					}
 				});
 			}

@@ -1,0 +1,69 @@
+<!--/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA%2FLAND1&sap-language=en-->
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"
+			Alias="Common" />
+	</edmx:Reference>
+	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"
+			Alias="UI" />
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+			Namespace="FAR_CUSTOMER_LINE_ITEMS" xml:lang="en" sap:schema-version="0">
+			<EntityType Name="VL_SH_FARP_T005" sap:value-list="true"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="LAND1" />
+				</Key>
+				<Property Name="LAND1" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:display-format="UpperCase" sap:text="LANDX"
+					sap:label="Country" />
+				<Property Name="LANDX" Type="Edm.String" MaxLength="15"
+					sap:label="Name" />
+				<Property Name="NATIO" Type="Edm.String" MaxLength="15"
+					sap:label="Nationality" />
+			</EntityType>
+			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities"
+				m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="VL_SH_FARP_T005" EntityType="FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+			</EntityContainer>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"
+				Target="FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA/LAND1">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Help_View for Countries" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FARP_T005" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="LAND1" />
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LANDX" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NATIO" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

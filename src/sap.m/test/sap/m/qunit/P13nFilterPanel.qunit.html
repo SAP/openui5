@@ -241,12 +241,12 @@
 
 		// Remove item
  		var nItems= 2;
-		oConditionPanel._triggerRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+		oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 		
 		// Add item
 		nItems= 3;
- 		oConditionPanel._triggerAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+ 		oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.value1.setValue("new");
 		oConditionPanel._changeField(oConditionGrid);		

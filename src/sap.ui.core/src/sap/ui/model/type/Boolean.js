@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		if (bValue == undefined || bValue == null) {
 			return null;
 		}
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "boolean":
 			case "any":
 				return bValue;
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 */
 	BooleanType.prototype.parseValue = function(oValue, sInternalType) {
 		var oBundle;
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "boolean":
 				return oValue;
 			case "string":

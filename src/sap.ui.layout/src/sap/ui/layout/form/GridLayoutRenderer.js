@@ -28,6 +28,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		var iColumnsHalf = 0;
 		var aContainers = oForm.getFormContainers();
 		var iContainerLength = aContainers.length;
+		var i = 0;
+
+		var oContainer;
+		var oContainerData;
 
 		if (bSingleColumn) {
 			iColumns = iColumns / 2;
@@ -35,8 +39,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		} else {
 			iColumnsHalf = iColumns / 2;
 			//check if the separator column is needed -> if there are half containers
-			for ( var i = 0; i < iContainerLength; i++) {
-				var oContainerData = this.getContainerData(oLayout, aContainers[i]);
+			for ( i = 0; i < iContainerLength; i++) {
+				oContainerData = this.getContainerData(oLayout, aContainers[i]);
 				if (oContainerData && oContainerData.getHalfGrid()) {
 					bSeparatorColumn = true;
 					break;
@@ -77,9 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			rm.write("</th></tr>");
 		}
 
-		var i = 0;
-		var oContainer;
-		var oContainerData;
+		i = 0;
 		var oContainer2;
 		var oContainerData2;
 		while (i < iContainerLength) {
@@ -112,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version >= 9) {
 			// As IE9 is buggy with colspan and layout fixed if not all columns are defined least once
 			rm.write("<tr style=\"visibility:hidden;\">");
-			for ( var i = 0; i < iColumns; i++) {
+			for ( i = 0; i < iColumns; i++) {
 				rm.write("<td style=\"visibility:hidden; padding:0; height: 0;\"></td>");
 			}
 			if (bSeparatorColumn) {
@@ -163,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					bEmptyRow = aReservedCells[0] && (aReservedCells[0][0] == iColumns);
 
 					rm.write("<tr");
-					if (aReservedCells[0] != "full" && !bEmptyRow) {
+					if (!this.checkFullSizeElement(oLayout, oElement) && aReservedCells[0] != "full" && !bEmptyRow) {
 						rm.writeElementData(oElement);
 						rm.addClass("sapUiFormElement");
 					}
@@ -321,8 +323,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		var iCellsUsed = 0;
 		var iAutoCellsUsed = 0;
 		var bMiddleSet = false;
+		var iColspan = 1;
+		var iRowspan = 1;
+		var x = 0;
 
-		if (aFields.length == 1 && this.getElementData(oLayout, aFields[0]) && this.getElementData(oLayout, aFields[0]).getHCells() == "full") {
+		if (this.checkFullSizeElement(oLayout, oElement)) {
 			// field must be full size - render label in a separate row
 			if (aReservedCells.length > 0 && aReservedCells[0] != "full") {
 				// already rowspans left -> ignore full line and raise error
@@ -339,12 +344,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				return ["full"];
 			} else {
 				aReservedCells.splice(0,1);
-				var iRowspan = this.getElementData(oLayout, aFields[0]).getVCells();
+				iRowspan = this.getElementData(oLayout, aFields[0]).getVCells();
 				rm.write("<td colspan=" + iCells);
 				if (iRowspan > 1 && bHalf) {
 					// Rowspan on full size cells -> reserve cells for next line (makes only sense in half size containers);
 					rm.write(" rowspan=" + iRowspan);
-					for ( var x = 0; x < iRowspan - 1; x++) {
+					for ( x = 0; x < iRowspan - 1; x++) {
 						aReservedCells.push([iCells, undefined, false]);
 					}
 				}
@@ -365,14 +370,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		}
 
 		var iLabelCells = iLabelFromRowspan;
+		var oElementData;
+		var sColspan = "";
 		if (oLabel || iLabelFromRowspan > 0) {
 			iLabelCells = 3;
 			if (oLabel && iLabelFromRowspan == 0) {
 				// if there is a rowspan in rows above, the label can not have a different size
-				var oElementData = this.getElementData(oLayout, oLabel);
+				oElementData = this.getElementData(oLayout, oLabel);
 
 				if (oElementData) {
-					var sColspan = oElementData.getHCells();
+					sColspan = oElementData.getHCells();
 					if (sColspan != "auto" && sColspan != "full") {
 						iLabelCells = parseInt(sColspan, 10);
 					}
@@ -391,21 +398,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			// calculate free cells for auto size
 			var iAutoCells = iCells;
 			var iAutoFields = aFields.length;
-			for (var i = 0, il = aFields.length; i < il; i++) {
-				var oField = aFields[i];
-				var oElementData = this.getElementData(oLayout, oField);
+			var oField;
+			var i = 0;
+			var il = 0;
+			for (i = 0, il = aFields.length; i < il; i++) {
+				oField = aFields[i];
+				oElementData = this.getElementData(oLayout, oField);
 				if (oElementData && oElementData.getHCells() != "auto") {
 					iAutoCells = iAutoCells - parseInt(oElementData.getHCells(), 10);
 					iAutoFields = iAutoFields - 1;
 				}
 			}
 
-			for (var i = 0, iAutoI = 0, il = aFields.length; i < il; i++) {
-				var oField = aFields[i];
-				var oElementData = this.getElementData(oLayout, oField);
-				var sColspan = "auto";
-				var iColspan = 1;
-				var iRowspan = 1;
+			var iAutoI = 0;
+			for (i = 0, iAutoI = 0, il = aFields.length; i < il; i++) {
+				oField = aFields[i];
+				oElementData = this.getElementData(oLayout, oField);
+				sColspan = "auto";
+				iColspan = 1;
+				iRowspan = 1;
 				if (oElementData) {
 					sColspan = oElementData.getHCells();
 					iRowspan = oElementData.getVCells();
@@ -439,7 +450,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 				if (iRowspan > 1) {
 					// Rowspan is used -> reserve cells for next line
-					for ( var x = 0; x < iRowspan - 1; x++) {
+					for ( x = 0; x < iRowspan - 1; x++) {
 						if (oLabel) {
 							iLabelFromRowspan = iLabelCells;
 						}
@@ -458,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					bMiddleSet = true;
 					if (iRowspan > 1) {
 						// Rowspan is used -> reserve cells for next line
-						for ( var x = 0; x < iRowspan - 1; x++) {
+						for ( x = 0; x < iRowspan - 1; x++) {
 							aReservedCells[x][1] = true;
 						}
 					}
@@ -486,6 +497,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		}
 
 		return aReservedCells;
+
+	};
+
+	GridLayoutRenderer.checkFullSizeElement = function(oLayout, oElement){
+
+		var aFields = oElement.getFields();
+
+		if (aFields.length == 1 && this.getElementData(oLayout, aFields[0]) && this.getElementData(oLayout, aFields[0]).getHCells() == "full") {
+			return true;
+		}else {
+			return false;
+		}
 
 	};
 

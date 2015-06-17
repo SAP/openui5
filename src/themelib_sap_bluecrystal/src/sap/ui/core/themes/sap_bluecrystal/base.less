@@ -206,7 +206,7 @@
 // [Label "Highlight Text Color"]
 // [Description "The text color of highlighted screen elements"]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapHighlightTextColor: contrast(@sapHighlightColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapHighlightTextColor: contrast(@sapHighlightColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Title Text Color"]
 // [Description "The text color of the application title"]
@@ -270,8 +270,8 @@
 
 // [Label "Text Contrast Threshold"]
 // [Description "The threshold to switch to alternative text color to keep contrast for texts"]
-// [TranslationKey "sapContent_ContrastTxtTreshold"]
-@sapContent_ContrastTextTreshold: 0.65;
+// [TranslationKey "sapContent_ContrastTxtThreshold"]
+@sapContent_ContrastTextThreshold: 0.65;
 
 // [Label "Text Contrast Color"]
 // [Description "The alternative text color switched to by a threshold to keep contrast for texts"]
@@ -292,7 +292,7 @@
 // [Label "Content Foreground Text Color"]
 // [Description "The foreground color of texts in the content area."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
@@ -307,7 +307,7 @@
 // [Label "Shell Text Color"]
 // [Description "The color of texts in the shell."]
 // [Tags "Base", "Shell", "Color", "Font"]
-@sapShell_TextColor: contrast(@sapShell_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapShell_TextColor: contrast(@sapShell_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
@@ -332,7 +332,7 @@
 // [Label "Button Text Color"]
 // [Description "The color of texts on buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_TextColor: contrast(@sapButton_Background, @sapDarkTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapButton_TextColor: contrast(@sapButton_Background, @sapDarkTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Disabled Button Background Color"]
 // [Description "The background color of disabled buttons."]
@@ -347,7 +347,7 @@
 // [Label "Disabled Button Text Color"]
 // [Description "The color of texts on disabled buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_Disabled_TextColor: contrast(@sapButton_Disabled_Background, mix(lighten(@sapTextColor,20), #fff, 25), @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapButton_Disabled_TextColor: contrast(@sapButton_Disabled_Background, mix(lighten(@sapTextColor,20), #fff, 25), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Button Hover Background Color"]
 // [Description "The background color of buttons on hover."]
@@ -362,7 +362,7 @@
 // [Label "Button Hover Text Color"]
 // [Description "The color of texts on buttons on hover."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, @sapDarkTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, @sapDarkTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Emphasized Button Background Color"]
 // [Description "The background color of emphasized buttons."]
@@ -378,7 +378,7 @@
 // [Label "Emphasized Button Text Color"]
 // [Description "The color of texts on emphasized buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_Emphasized_TextColor: contrast(@sapButton_Emphasized_Background, @sapDarkTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapButton_Emphasized_TextColor: contrast(@sapButton_Emphasized_Background, @sapDarkTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Reject Button Background Color"]
 // [Description "The background color of \"Reject\" buttons."]
@@ -525,7 +525,7 @@
 // [Label "Group Title Text Color"]
 // [Description "The text color of the group title. The text color of the title of a group."]
 // [Tags "Base", "Group", "Color", "Font"]
-@sapGroup_TitleTextColor: contrast(@sapBackgroundColor, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold); // #333
+@sapGroup_TitleTextColor: contrast(@sapBackgroundColor, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); // #333
 
 // [Label "Group Title Font Size"]
 // [Description "The font size of the group title."]
@@ -580,7 +580,7 @@
 // [Label "List Header Text Color"]
 // [Description "The color of texts on the list header area."]
 // [Tags "Base", "List", "Color", "Font"]
-@sapList_HeaderTextColor: contrast(@sapList_HeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextTreshold);
+@sapList_HeaderTextColor: contrast(@sapList_HeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "List Border Color"]
 // [Description "The color of the border in a list separating the entries."]

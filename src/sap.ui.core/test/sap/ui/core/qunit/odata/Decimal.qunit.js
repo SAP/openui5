@@ -102,7 +102,9 @@
 		strictEqual(oType.parseValue(" -12345 ", "string"), "-12345", "spaces");
 		strictEqual(oType.parseValue("0012345", "string"), "12345", "leading zeroes");
 		strictEqual(oType.parseValue("0", "string"), "0", "only 0");
-		strictEqual(oType.parseValue("12345.00000", "string"), "12345", "trailing zeroes");
+		strictEqual(oType.parseValue("1234500000", "string"), "1234500000",
+			"trailing integer zeroes");
+		strictEqual(oType.parseValue("12345.00000", "string"), "12345", "trailing decimal zeroes");
 		strictEqual(oType.parseValue("12345.101010", "string"), "12345.10101", "trailing zero");
 		strictEqual(oType.parseValue(".1234", "string"), "0.1234", "no integer digits");
 		strictEqual(oType.parseValue("-1234.", "string"), "-1234", "decimal point w/o decimals");
@@ -183,13 +185,11 @@
 		strictEqual(oType.parseValue("1 234 567 890 123 456.789012", "string"),
 				"1234567890123456.789012", "only safe format options -> full precision");
 
-		// random format option considered "unsafe" --> use NumberFormat losing precision
-		// Check only 17 characters incl. the dot to see that we are near, but avoid rounding
-		// effects in different browsers
+		// random format option should not influence result
 		oFormatOptions.foo = "bar";
 		oType = new sap.ui.model.odata.type.Decimal(oFormatOptions);
-		strictEqual(oType.parseValue("123 456 789 012 345.6789012", "string").slice(0, 17),
-			"123456789012345.6", "random format option -> losing precision");
+		strictEqual(oType.parseValue("123 456 789 012 345.6789012", "string"),
+			"123456789012345.6789012", "random format option");
 
 		// check that short style works
 		oType = new sap.ui.model.odata.type.Decimal({style: "short"});
@@ -327,27 +327,28 @@
 	//*********************************************************************************************
 	[{
 		set: {foo: "bar"},
-		expect: {foo: "bar", groupingEnabled: true, maxIntegerDigits: Infinity}
+		expect: {foo: "bar", groupingEnabled: true, maxIntegerDigits: Infinity,
+			parseAsString: true}
 	}, {
 		set: {decimalSeparator: ".", maxIntegerDigits: 20}, scale: 13,
 		expect: {decimalSeparator: ".", groupingEnabled: true, maxFractionDigits: 13,
-			maxIntegerDigits: 20, minFractionDigits: 13}
+			maxIntegerDigits: 20, minFractionDigits: 13, parseAsString: true}
 	}, {
 		set: {groupingEnabled: false}, scale: 13,
 		expect: {groupingEnabled: false, maxFractionDigits: 13, maxIntegerDigits: Infinity,
-			minFractionDigits: 13}
+			minFractionDigits: 13, parseAsString: true}
 	}, {
 		set: {decimals: 20}, scale: 13,
 		expect: {decimals: 20, groupingEnabled: true, maxFractionDigits: 13,
-			maxIntegerDigits: Infinity, minFractionDigits: 13}
+			maxIntegerDigits: Infinity, minFractionDigits: 13, parseAsString: true}
 	}, {
 		set: {maxFractionDigits: 20}, scale: 13,
 		expect: {groupingEnabled: true, maxFractionDigits: 20, maxIntegerDigits: Infinity,
-			minFractionDigits: 13}
+			minFractionDigits: 13, parseAsString: true}
 	}, {
 		set: {minFractionDigits: 10}, scale: 13,
 		expect: {groupingEnabled: true, maxFractionDigits: 13, maxIntegerDigits: Infinity,
-			minFractionDigits: 10}
+			minFractionDigits: 10, parseAsString: true}
 	}].forEach(function (oFixture) {
 		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 			var oSpy,

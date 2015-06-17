@@ -141,19 +141,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	RadioButton.prototype._groupNames = {};
 
-	RadioButton.prototype.onBeforeRendering = function () {
-		var sGroupName = this.getGroupName(),
-			aControlsInGroup = this._groupNames[sGroupName];
-
-		if (!aControlsInGroup) {
-			aControlsInGroup = this._groupNames[sGroupName] = [];
-		}
-
-		if (aControlsInGroup.indexOf(this) === -1) {
-			aControlsInGroup.push(this);
-		}
-	};
-
 	/**
 	 * Function is called when radiobutton is tapped.
 	 *
@@ -224,8 +211,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sGroupName = this.getGroupName(),
 			aControlsInGroup = this._groupNames[sGroupName],
 			iLength = aControlsInGroup && aControlsInGroup.length;
-
+			
 		this.setProperty("selected", bSelected, true); // No re-rendering
+		this._changeGroupName(this.getGroupName());
 
 		if (bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
 			for (var i = 0; i < iLength; i++) {
@@ -286,6 +274,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._createLabel("textDirection", this.getTextDirection());
 		}
 		return this;
+	};
+
+	RadioButton.prototype.setGroupName = function(sGroupName) {
+		this._changeGroupName(sGroupName, this.getGroupName());
+
+		return this.setProperty("groupName", sGroupName, true);
 	};
 
 	RadioButton.prototype.exit = function() {
@@ -352,6 +346,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	RadioButton.prototype._changeGroupName = function(sNewGroupName, sOldGroupName) {
+		var aNewGroup = this._groupNames[sNewGroupName],
+			aOldGroup = this._groupNames[sOldGroupName];
+
+		if (!aNewGroup) {
+			aNewGroup = this._groupNames[sNewGroupName] = [];
+		}
+
+		if (aNewGroup.indexOf(this) === -1) {
+			aNewGroup.push(this);
+		}
+
+		if (aOldGroup && aOldGroup.indexOf(this) !== -1) {
+			aOldGroup.splice(aOldGroup.indexOf(this), 1);
+		}
+	};
 
 	return RadioButton;
 

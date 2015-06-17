@@ -1,6 +1,11 @@
 {
 	"tests" : [
 		{
+			"control": "sap.m.ActionSelect",
+			"url": "../ActionSelect.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Bar",
 			"url": "../Bar.html",
 			"appComponent": "CA-UI5-CTR-SOF"
@@ -46,6 +51,11 @@
 			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
+			"control": "sap.m.FeedListItem",
+			"url": "../FeedListItem.html",
+			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
 			"control": "sap.m.IconTabBar",
 			"url": "../IconTabBar.html",
 			"appComponent": "CA-UI5-CTR-SOF"
@@ -53,6 +63,11 @@
 		{
 			"control": "sap.m.InputBase",
 			"url": "../InputBase.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Input",
+			"url": "Input.html",
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
@@ -80,6 +95,16 @@
 			"control": "sap.m.MessageToast",
 			"url": "../MessageToast.html",
 			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.MultiInput",
+			"url": "../MultiInput.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.MultiComboBox",
+			"url": "../MultiComboBox.html",
+			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
@@ -114,6 +139,11 @@
 		{
 			"control": "sap.m.ProgressIndicator",
 			"url": "../ProgressIndicator.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.PullToRefresh",
+			"url": "../PullToRefresh.html",
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{

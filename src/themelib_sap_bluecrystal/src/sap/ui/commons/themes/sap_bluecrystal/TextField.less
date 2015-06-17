@@ -77,16 +77,16 @@ html[data-sap-ui-browser^="cr"] .sapUiTfBrd > .sapUiTfInner{
 
 /* need to be separate statements for each browser, otherwise it will not work */
 .sapUiTfPlace{
-	color: @sapUiInputBasePlaceholder;
+	color: @sapUiFieldPlaceholderTextColor;
 }
 .sapUiTf::-webkit-input-placeholder{
-	color: @sapUiInputBasePlaceholder;
+	color: @sapUiFieldPlaceholderTextColor;
 }
 .sapUiTf::-moz-placeholder{
-	color: @sapUiInputBasePlaceholder;
+	color: @sapUiFieldPlaceholderTextColor;
 }
 .sapUiTf:-ms-input-placeholder{
-	color: @sapUiInputBasePlaceholder;
+	color: @sapUiFieldPlaceholderTextColor;
 }
 
 /* ================= */
@@ -103,6 +103,7 @@ html[data-sap-ui-browser="ie10"] .sapUiGrid td > .sapUiTfBrd{
 /* ResponsiveGridLayout */
 html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div > .sapUiTf,
 html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > div > .sapUiTf,
-html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiTf {
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiTf,
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > div > .sapUiTf {
 	line-height: 16px;
 }

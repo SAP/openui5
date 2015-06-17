@@ -283,17 +283,17 @@
 			appFeedList.placeAt("content");
 
 
-			module("Properties", {
+			QUnit.module("Properties", {
 					setup : function() {
 					//Does nothing yet
 				}
 			});
 
-			test("ImagePool Icon", function(assert) {
+			QUnit.test("ImagePool Icon", function(assert) {
 				assert.ok($('#__item1-oFeedItemList-1 .sapMFeedListItemImage.sapUiIcon').length === 1, "Image pool icon displayed");
 			});
 
-			test("All Properties", function(assert) {
+			QUnit.test("All Properties", function(assert) {
 				assert.ok(!!oFeedList.getItems()[0]._oImageControl.$(), "Image rendered");
 				assert.ok(oFeedList.getItems()[0]._oImageControl.getSrc() === oFeedList.getItems()[0].getIcon(), "Image rendered (icon <> initial)");
 				assert.ok(oFeedList.getItems()[0]._oImageControl.$().hasClass("sapMImg"), "property icon set: image should have class sapMImg ");
@@ -306,39 +306,39 @@
 				assert.ok(oFeedList.getItems()[0].$("maxCharacters").length === 0, "maxCharacters is nothing to be rendered");
 			});
 
-			test("Sender inactive, Icon inactive", function(assert) {
+			QUnit.test("Sender inactive, Icon inactive", function(assert) {
 				assert.ok(oFeedList.getItems()[2]._oLinkControl.$().hasClass("sapMLnkDsbl"), " Sender Link inactive");
 			});
 
-			test("Show default icon (icon is initial + showIcon = true)", function(assert) {
+			QUnit.test("Show default icon (icon is initial + showIcon = true)", function(assert) {
 				assert.ok(oFeedList.getItems()[3]._oImageControl.getSrc() === sap.ui.core.IconPool.getIconURI("person-placeholder"), "Placeholder icon rendered (icon  initial)");
 			});
 
-			test("Do not show icon", function(assert) {
+			QUnit.test("Do not show icon", function(assert) {
 				assert.ok(!oFeedList.getItems()[7]._oImageControl, "No icon rendered");
 			});
 
-			test("No Icon", function(assert) {
+			QUnit.test("No Icon", function(assert) {
 				assert.ok(!oFeedList.getItems()[4]._oImageControl.$().hasClass("sapMImg"), "property icon initial: image should not have class sapMImg ");
 			});
 
-			test("No Timestamp", function(assert) {
+			QUnit.test("No Timestamp", function(assert) {
 				assert.ok(oFeedList.getItems()[4].$("timestamp").length === 0, "no timestamp should be rendered");
 			});
 
-			test("No Info", function(assert) {
+			QUnit.test("No Info", function(assert) {
 				assert.ok(oFeedList.getItems()[5].$("info").length === 0, "no info should be rendered");
 			});
 
-			test("No Sender", function() {
+			QUnit.test("No Sender", function() {
 				ok(!oFeedList.getItems()[6]._oLinkControl, "No sender name rendered");
 			});
 
-			test("Sender link disabled", function(assert) {
+			QUnit.test("Sender link disabled", function(assert) {
 				assert.ok(!oFeedList.getItems()[2]._oLinkControl.getEnabled(), "Sender link disabled (senderActive = false)" );
 			});
 
-			test("expand/collapse function", function(assert) {
+			QUnit.test("expand/collapse function", function(assert) {
 				assert.ok(oFeedList.getItems()[8].$("realtext").hasClass("sapMFeedListItemTextString"), "Text should have class sapMFeedListItemTextString");
 				assert.ok(oFeedList.getItems()[8].$("realtext").text() === oFeedList.getItems()[8]._sShortText, "the collapsed text displayed ");
 				assert.ok(oFeedList.getItems()[8].$("threeDots").hasClass("sapMFeedListItemTextString"), "three dots should have class sapMFeedListItemTextString");
@@ -355,13 +355,13 @@
 				assert.ok(oFeedList.getItems()[10]._sShortText.length === 20, "the length of collapsed text without spaces equals to the property maxCharacters ");
 			});
 
-			module("Events", {
+			QUnit.module("Events", {
 					setup : function() {
 					//Does nothing yet
 				}
 			});
 
-			test("Press Icon", function(assert) {
+			QUnit.test("Press Icon", function(assert) {
 				qutils.triggerEvent("tap", oFeedList.getItems()[0]._oImageControl.getId());
 				assert.ok($('.sapMPopoverCont').length === 1, "Popover is displayed");
 				if (oPopover) {
@@ -369,7 +369,7 @@
 				}
 			});
 
-			test("Press Sender", function(assert) {
+			QUnit.test("Press Sender", function(assert) {
 				qutils.triggerEvent("tap", $('#__item1-oFeedItemList-0 .sapMFeedListItemTextText .sapMLnk')[0].id);
 				assert.ok($('.sapMPopoverCont').length === 1, "Popover is displayed");
 				if (oPopover) {
@@ -377,27 +377,42 @@
 				}
 			});
 			
-			test("Press SPACE Key on Sender", function(assert) {
+			QUnit.test("Press SPACE Key on Sender", function(assert) {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				assert.equal(oFeedList.getItems()[9].getSender(), "Event was fired", "Sender Press event was fired");
 				oFeedList.getItems()[9].setSender("Jack Jones");
 			});
 			
-			test("Press X Key on Sender", function(assert) {
+			QUnit.test("Press X Key on Sender", function(assert) {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.X, false, false, false);
 				assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 			});
 			
-			test("Press SPACE Key on MORE", function(assert) {
+			QUnit.test("Press SPACE Key on MORE", function(assert) {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				assert.ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sFullText, "the expanded text displayed ");
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				assert.ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sShortText, "the collapsed text displayed ");
 			});
 			
-			test("Press X Key on MORE", function(assert) {
+			QUnit.test("Press X Key on MORE", function(assert) {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.X, false, false, false);
 				assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
+			});
+
+			QUnit.module("Rendering behavior", {
+				setup : function() {
+					//Does nothing yet
+				}
+			});
+
+			QUnit.test("Expanded text should be appear also after rerendering.", function(assert) {
+				oFeedList.getItems()[10]._toggleTextExpanded();
+				oFeedList.getItems()[10].invalidate();
+				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowLess);
+				oFeedList.getItems()[10]._toggleTextExpanded();
+				oFeedList.getItems()[10].invalidate();
+				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
 			});
 		</script>
 	</head>

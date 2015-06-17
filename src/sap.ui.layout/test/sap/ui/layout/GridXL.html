@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<title>Grid - sap.ui.layout</title>
+
+	<script id='sap-ui-bootstrap' type='text/javascript'
+		src='../../../../resources/sap-ui-core.js'
+		data-sap-ui-theme='sap_bluecrystal'
+		data-sap-ui-libs='sap.ui.layout'>
+	</script>
+
+			
+	<script>
+		    
+	try{
+		sap.ui.getCore().loadLibrary("sap.ui.commons");
+	}catch(e){
+		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		throw(e);
+	}
+			var oGrid1 = new sap.ui.layout.Grid({
+				hSpacing: 1,	// in rem; default half of the value for gutter, adds to left and right, for corrections
+				vSpacing: 1, 	// in rem; together with horizontalSpacing it generates the .gridSpacingNone, .gridSpacingHalfFull class
+				defaultSpan: "XL4 L3 M6 S12",
+				defaultIndent:"XL4",
+				content: [
+				
+				// headings
+
+				new sap.ui.core.HTML({
+					content: '<b>Grid with 1rem horizontal and vertical spacing</b>'
+					
+				}),
+				new sap.ui.commons.Label({
+					text: 'Area spanning over the full width of the grid on all resolutions (XL8 L12 M12 S12)',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "XL6 L12 M12 S12",
+						spanXL: 8,
+						indent: "XL6",
+						indentXL: 2
+					})
+				}),
+
+				
+				new sap.ui.core.HTML({
+					content: '<p>(XL4 L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "XL4 L1 M1 S1",
+						indentXL: 2
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>XL2 L2 M2<br />Indent XL2 L5 M5</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "XL2 L2 M2",
+						indent: "XL2 L5 M5",
+						linebreakL: false,
+						linebreakM: true,
+						visibleOnSmall: false
+					})
+				}),
+
+				new sap.ui.core.HTML({
+					content: '<p>XL2 L6 M6 S6<br />Indent XL6 L3 M3 S3<br />linebreakL linebreakM linebreakS</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "XL2 L6 M6 S6",
+						indent: "XL6 L3 M3 S3",
+						linebreakL: true,
+						linebreakM: true,
+						linebreakS: true
+					})
+				}),
+
+				// visisble
+
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleL: true,
+						visibleM: true,
+						visibleS: true
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnLarge</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleL: true,
+						visibleM: false,
+						visibleS: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnMedium</p>',
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleOnLarge: false, // test deprecated properties
+						visibleOnMedium: true,
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnSmall</p>',
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleL: false,
+						visibleM: true,
+						visibleS: true
+					})
+				}),
+
+				new sap.ui.core.HTML({
+					content: '<p>No layout Data - all defaults</p>'
+				}),
+				new sap.ui.core.HTML({
+					content: '<b>NO layout Data - Default is L5 M6, Indent L3</b>'
+				}),
+				new sap.ui.commons.Label({
+					text: 'NO layout Data - Default is L5 M6, Indent L3',
+					width: "100%"
+				}),
+
+				
+				new sap.ui.core.HTML({
+					content: '<p>Span L5, Indent L8</p>'
+				})
+			]
+		});
+
+			var oGrid2 = new sap.ui.layout.Grid({
+				hSpacing: 0.5,	// in rem; default half of the value for gutter, adds to left and right, for corrections
+				vSpacing: 2, 	// in rem; together with horizontalSpacing it generates the .gridSpacingNone, .gridSpacingHalfFull class
+				defaultSpan: "L4 M6",
+				defaultIndent:"L4",
+				content: [
+				
+
+				new sap.ui.core.HTML({
+					content: '<b>Grid with 2rem horizontal and vertical spacing</b>'
+					
+				}),
+				new sap.ui.commons.Label({
+					text: 'Area spanning over the full width of the grid on all resolutions (XL8 L12 M12 S12)',
+					
+					layoutData: new sap.ui.layout.GridData({
+						span: "XL6 L12 M12 S12",
+						spanXL: 8,
+						indent: "XL6",
+						indentXL: 2
+					})
+				}),
+
+
+				new sap.ui.core.HTML({
+					content: '<p>No layout Data - all defaults</p>'
+				}),
+				new sap.ui.core.HTML({
+					content: '<b>NO layout Data</b>'
+				}),
+				new sap.ui.commons.Label({
+					text: 'NO layout Data',
+					width: "100%"
+				})
+			]
+		});
+
+
+	oGrid1.placeAt('content1');
+	oGrid2.placeAt('content2');
+		
+	</script>
+
+	<style>
+	.sapUiRespGrid div {
+		background: silver;
+		color: white;
+	}
+
+	.sapUiRespGrid div p {
+		text-align: center;
+	}
+	</style>
+
+</head>
+<body class='sapUiBody'>
+		  <div id='content1'></div>
+		  </br>
+		  </br>
+		  </br>
+		  </br>
+		  <div id='content2'></div>
+</body>
+</html>

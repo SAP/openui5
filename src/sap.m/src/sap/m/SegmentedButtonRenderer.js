@@ -25,9 +25,19 @@ sap.ui.define(['jquery.sap.global'],
 			oButton,
 			sTooltip,
 			sButtonWidth,
-			sTooltip,
 			sButtonTextDirection,
 			i = 0;
+
+		// Select representation mockup
+		if (oControl._bInOverflow) {
+			oRM.write("<div");
+			oRM.writeControlData(oControl);
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.renderControl(oControl.getAggregation("_select"));
+			oRM.write("</div>");
+			return;
+		}
 
 		// write the HTML into the render manager
 		oRM.write("<ul");
@@ -54,6 +64,19 @@ sap.ui.define(['jquery.sap.global'],
 		for (; i < aButtons.length; i++) {
 			oButton = aButtons[i];
 
+			var sButtonText = oButton.getText(),
+				oButtonIcon = oButton.getIcon(),
+				sIconAriaLabel = "";
+
+			if (oButtonIcon) {
+				var oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
+				if (oImage instanceof sap.m.Image) {
+					oControl._overwriteImageOnload(oImage);
+				} else {
+					sIconAriaLabel = oControl._getIconAriaLabel(oImage);
+				}
+			}
+
 			// instead of the button API we render a li element but with the id of the button
 			// only the button properties enabled, width, icon, text, and tooltip are evaluated here
 			oRM.write("<li");
@@ -72,7 +95,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (sSelectedButton === oButton.getId()) {
 				oRM.addClass("sapMSegBBtnSel");
 			}
-			if (oButton.getIcon() && oButton.getText() !== '') {
+			if (oButtonIcon && sButtonText !== '') {
 				oRM.addClass("sapMSegBBtnMixed");
 			}
 			oRM.writeClasses();
@@ -98,32 +121,24 @@ sap.ui.define(['jquery.sap.global'],
 				checked : sSelectedButton === oButton.getId()
 			});
 
+			// BCP:1570027826 If button has an icon add ARIA label containing the generic icon name
+			if (oImage && sIconAriaLabel !== "") {
+				// If there is text inside the button add it in the aria-label
+				if (sButtonText !== "") {
+					sIconAriaLabel += " " + sButtonText;
+				}
+				oRM.writeAttributeEscaped("aria-label", sIconAriaLabel);
+			}
+
 			oRM.write('>');
 
-			// render icon
-			if (oButton.getIcon()) {
-				var oImage = oButton._getImage((oButton.getId() + "-img"), oButton.getIcon());
-				if (oImage instanceof sap.m.Image) {
-					// image does not have an onload event but we need to recalculate the button sizes after the image is loaded
-					// we override the onload method once and call the calulation method after the original method is called
-					if (oImage.onload === sap.m.Image.prototype.onload) {
-						/*eslint-disable no-loop-func*/
-						oImage.onload = function () {
-							if (sap.m.Image.prototype.onload) {
-								sap.m.Image.prototype.onload.apply(this, arguments);
-							}
-							window.setTimeout(function() {
-								oControl._fCalcBtnWidth();
-							}, 20);
-						};
-						/*eslint-enable no-loop-func*/
-					}
-				}
+			if (oButtonIcon && oImage) {
 				oRM.renderControl(oImage);
 			}
+
 			// render text
-			if (oButton.getText() !== '') {
-				oRM.writeEscaped(oButton.getText(), false);
+			if (sButtonText !== '') {
+				oRM.writeEscaped(sButtonText, false);
 			}
 			oRM.write("</li>");
 		}

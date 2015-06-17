@@ -153,21 +153,10 @@
 
 	//*********************************************************************************************
 	test("parse other minus/plus symbols, unbreakable spaces", sinon.test(function () {
-		var fnLocaleData = sap.ui.core.LocaleData.getInstance,
-			oType;
+		var oType = new sap.ui.model.odata.type.Int64({plusSign: ">", minusSign: "<"});
 
 		// special: non-breaking space as grouping separator
-		// We did not find any locale using different characters for plus or minus sign, so we
-		// modify the LocaleData here.
-		this.stub(sap.ui.core.LocaleData, "getInstance", function () {
-			var oLocaleData = fnLocaleData.apply(this, arguments);
-			oLocaleData.mData["symbols-latn-plusSign"] = ">";
-			oLocaleData.mData["symbols-latn-minusSign"] = "<";
-			return oLocaleData;
-		});
-
 		sap.ui.getCore().getConfiguration().setLanguage("sv");
-		oType = new sap.ui.model.odata.type.Int64();
 
 		strictEqual(oType.parseValue(">1 234 567 890 123 456", "string"),
 			"1234567890123456", "plus sign, spaces");
@@ -198,13 +187,11 @@
 		strictEqual(oType.parseValue("1 234 567 890 123 456789", "string"),
 				"1234567890123456789", "only safe format options -> full precision");
 
-		// random format option considered "unsafe" --> use NumberFormat losing precision
-		// Do not check the last 3 characters to see that we are near, but avoid rounding
-		// effects in different browsers
+		// random format option should not influence result
 		oFormatOptions.foo = "bar";
 		oType = new sap.ui.model.odata.type.Int64(oFormatOptions);
-		strictEqual(oType.parseValue("1 234 567 890 123 456 789", "string").slice(0, -3),
-			"1234567890123456", "random format option -> losing precision");
+		strictEqual(oType.parseValue("1 234 567 890 123 456 789", "string"),
+			"1234567890123456789", "random format option");
 
 		// check that short style works
 		oType = new sap.ui.model.odata.type.Int64({style: "short"});
@@ -307,10 +294,10 @@
 	//*********************************************************************************************
 	[{
 		set: {foo: "bar"},
-		expect: {foo: "bar", groupingEnabled: true}
+		expect: {foo: "bar", groupingEnabled: true, parseAsString: true}
 	}, {
 		set: {minIntegerDigits: 17, groupingEnabled: false},
-		expect: {minIntegerDigits: 17, groupingEnabled: false}
+		expect: {minIntegerDigits: 17, groupingEnabled: false, parseAsString: true}
 	}].forEach(function (oFixture) {
 		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 			var oSpy,

@@ -1,0 +1,34 @@
+{
+	"explored": {
+		"entitiesDefaults": {
+			"formFactors": "ML"
+		},
+		"samplesRef": {
+			"namespace": "sap.ui.table.sample",
+			"ref": "test-resources/sap/ui/table/demokit/sample"
+		},
+		"entities": [
+			{
+				"id": "sap.ui.table.Table",
+				"name": "Table",
+				"category": "List",
+				"since": "1.0",
+				"samples": [
+					"sap.ui.table.sample.Basic",
+					"sap.ui.table.sample.Sorting"
+				]
+			}
+		],
+		"samples": [
+			{
+				"id": "sap.ui.table.sample.Basic",
+				"name": "Basic",
+				"description": "Basic example showing most controls which are intended to be used inside a table."
+			},{
+				"id": "sap.ui.table.sample.Sorting",
+				"name": "Sorting",
+				"description": "Example showing the different kinds of sorting capabilities."
+			}
+		]
+	}
+}

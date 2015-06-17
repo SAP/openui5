@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			this.aBindings = aBindings;
 			this.aValues = null;
 			this.bRawValues = bRawValues;
+			this.bPreventUpdate = false;
 		},
 		metadata : {
 			
@@ -62,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	 */
 	CompositeBinding.prototype.setType = function(oType, sInternalType) {
 		if (oType && !(oType instanceof CompositeType)) {
-			throw new Error("Only CompositeType can be used as type for composite bindings!")
+			throw new Error("Only CompositeType can be used as type for composite bindings!");
 		}
 		PropertyBinding.prototype.setType.apply(this, arguments);
 		
@@ -228,11 +229,18 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	* @protected
 	*/
 	CompositeBinding.prototype.attachChange = function(fnFunction, oListener) {
+		var that = this;
+		this.fChangeHandler = function(oEvent) {
+			var oBinding = oEvent.getSource();
+			if (oBinding.getBindingMode() == sap.ui.model.BindingMode.OneTime) {
+				oBinding.detachChange(that.fChangeHandler);
+			}
+			that.checkUpdate();
+		};
 		this.attachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
-			var that = this;
 			jQuery.each(this.aBindings, function(i,oBinding) {
-				oBinding.attachChange(that.checkUpdate, that);
+				oBinding.attachChange(that.fChangeHandler);
 			});
 		}
 	};
@@ -244,11 +252,11 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	* @protected
 	*/
 	CompositeBinding.prototype.detachChange = function(fnFunction, oListener) {
+		var that = this;
 		this.detachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
-			var that = this;
 			jQuery.each(this.aBindings, function(i,oBinding) {
-				oBinding.detachChange(that.checkUpdate, that);
+				oBinding.detachChange(that.fChangeHandler);
 			});
 		}
 	};
@@ -266,6 +274,27 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 		});
 		return bUpdateRequired;
 	};
+
+	/**
+	 * Initialize the binding. The message should be called when creating a binding.
+	 * The default implementation calls checkUpdate(true).
+	 * Prevent checkUpdate to be triggered while initializing nestend bindings, it is
+	 * sufficient to call checkUpdate when all nested bindings are initialized.
+	 *
+	 * @protected
+	 */
+	CompositeBinding.prototype.initialize = function() {
+		this.bPreventUpdate = true;
+		if (this.aBindings) {
+			jQuery.each(this.aBindings, function(i,oBinding) {
+				oBinding.initialize();
+			});
+		}
+		this.bPreventUpdate = false;
+		this.checkUpdate(true);
+		return this;
+	};
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
@@ -274,6 +303,9 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	 * 
 	 */
 	CompositeBinding.prototype.checkUpdate = function(bForceupdate){
+		if (this.bPreventUpdate) {
+			return;
+		}
 		var aValues = this.getValue();
 		if (!jQuery.sap.equal(aValues, this.aValues) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;

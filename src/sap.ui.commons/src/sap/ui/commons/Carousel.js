@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Carousel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -29,50 +29,50 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Carousel = Control.extend("sap.ui.commons.Carousel", /** @lends sap.ui.commons.Carousel.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Can be either "horizontal" or "vertical"
 			 */
 			orientation : {type : "sap.ui.commons.enums.Orientation", group : "Misc", defaultValue : sap.ui.commons.enums.Orientation.horizontal},
-	
+
 			/**
 			 * Width of carousel
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Height of carousel
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Default height of item in carousel if no height can be determined
 			 */
 			defaultItemHeight : {type : "int", group : "Misc", defaultValue : 150},
-	
+
 			/**
 			 * Default width of item in carousel if no height can be determined
 			 */
 			defaultItemWidth : {type : "int", group : "Misc", defaultValue : 150},
-	
+
 			/**
 			 * Duration for animation when navigating through children
 			 */
 			animationDuration : {type : "int", group : "Misc", defaultValue : 500},
-	
+
 			/**
 			 * If defined, the carousel displays the number of items defined. Items will be resized to fit the area.
 			 */
 			visibleItems : {type : "int", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Size of the handle in pixels. (Height for vertical carousel, width for horizontal carousel)
 			 */
 			handleSize : {type : "int", group : "Misc", defaultValue : 22},
-	
+
 			/**
 			 * The index of the element in the content aggreation which is displayed first on rendering
 			 * @since 1.11.0
@@ -81,29 +81,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		},
 		defaultAggregation : "content",
 		aggregations : {
-	
+
 			/**
 			 * Controls which are displayed inside the carousel
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Initialize the carousel control
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.init = function() {
 		this._visibleItems = 0;
-		
+
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
-	
+
 	/**
 	 * Clean up control when it is destroyed
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.exit = function() {
@@ -114,15 +114,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		this._destroyItemNavigation();
 	};
-	
+
 	/**
 	 * If one of the navigation buttons is clicked we trigger the navigation
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onclick = function(oEvent) {
 		var sCarouselId = this.getId();
-	
+
 		switch (oEvent.target) {
 		case jQuery.sap.byId(sCarouselId + '-prevbutton')[0]:
 			this.showPrevious();
@@ -134,10 +134,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 	};
-	
+
 	/**
 	 * Used for before-rendering initialization.
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onBeforeRendering = function() {
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.sResizeListenerId = null;
 		}
 	};
-	
+
 	/**
 	 * Used for after-rendering initialization.
 	 *
@@ -164,24 +164,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._sAnimationAttribute = 'margin-left';
 			}
 		}
-	
+
 		this.showElementWithId(this._getItemIdByIndex(this.getFirstVisibleIndex()));
-	
+
 		this.calculateAndSetSize();
 		this.oDomRef = this.getDomRef();
 		this.sResizeListenerId = ResizeHandler.register(this.oDomRef, jQuery.proxy(this.onresize, this));
-		
+
 		this._initItemNavigation();
 	};
-	
+
 	/**
 	 * Initialize item navigation
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype._initItemNavigation = function() {
 		var $scrollList = this.$("scrolllist");
-	
+
 		if (!this._oItemNavigation) {
 			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.setCycling(true);
@@ -191,7 +191,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
 				var $ContentArea = this.$("contentarea"),
 					$ScrollList = this.$("scrolllist");
-	
+
 				// ItemNavigation should only handle keyboard, do not set the focus on a carousel item if clicked on control inside
 				var oOrgEvent = oEvent.getParameter("event");
 				if (oOrgEvent && oOrgEvent.type == "mousedown") {
@@ -208,7 +208,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						oOrgEvent.target.focus();
 					}
 				}
-	
+
 				if (sap.ui.getCore().getConfiguration().getRTL()) {
 					$ContentArea.scrollLeft($ScrollList.width()  - $ContentArea.width());
 				} else {
@@ -216,14 +216,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}, this);
 		}
-	
+
 		this._oItemNavigation.setRootDomRef($scrollList[0]);
 		this._oItemNavigation.setItemDomRefs($scrollList.children());
 	};
-	
+
 	/**
 	 * Destroy item navigation
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype._destroyItemNavigation = function() {
@@ -232,20 +232,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oItemNavigation = undefined;
 		}
 	};
-	
+
 	/**
 	 * Called after the theme has been switched. Some adjustments required.
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onThemeChanged = function (oEvent) {
 		this.calculateAndSetSize();
 	};
-	
+
 	/**
 	 * Focus in handling
 	 * handles the focus when you tab into the control
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onfocusin = function(oEvent) {
@@ -262,11 +262,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery(this._oItemNavigation.getFocusedDomRef() || this._oItemNavigation.getRootDomRef()).focus();
 		}
 	};
-	
+
 	/**
 	 * If we are in action mode we only allow tabbing within the selected element
 	 * else we focus on the next element in the tab chain (not in the carousel item)
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onsaptabnext = function(oEvent) {
@@ -285,11 +285,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * If we are in action mode we only allow tabbing within the selected element
 	 * else we focus on the previous element in the tab chain (not in the carousel item)
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onsaptabprevious = function(oEvent) {
@@ -309,19 +309,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * handle the ESCAPE key to leave the action mode
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onsapescape = function(oEvent) {
 		this._leaveActionMode(oEvent);
 	};
-	
+
 	/**
 	 * Trigger the navigation to the next item and stop current animations (if available)
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onsapnext = function(oEvent) {
@@ -333,10 +333,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.preventDefault();
 		}
 	};
-	
+
 	/**
 	 * Trigger the navigation to the previous item and stop current animations (if available)
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onsapprevious = function(oEvent) {
@@ -348,11 +348,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.preventDefault();
 		}
 	};
-	
+
 	/**
 	 * If in action mode and F2 is pressed we leave the action mode
 	 * If not in action mode and F2 or enter is pressed we enter the action mode
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onkeydown = function(oEvent) {
@@ -370,10 +370,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._leaveActionMode(oEvent);
 		}
 	};
-	
+
 	/**
 	 * Handle clicking into elements
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype.onmouseup = function(oEvent) {
@@ -385,62 +385,62 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._leaveActionMode(oEvent);
 		}
 	};
-	
+
 	if (sap.ui.Device.support.touch) {
-		
+
 		Carousel.prototype.onswipeleft = function(oEvent) {
 			this.showNext();
 		};
-		
+
 		Carousel.prototype.onswiperight = function(oEvent) {
 			this.showPrevious();
 		};
-	
+
 	}
-	
-	
+
+
 	/**
 	 * Enter action mode
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype._enterActionMode = function(oDomRef) {
 		// only enter the action mode when not already in action mode
 		if (oDomRef && !this._bActionMode) {
-	
+
 			// in the action mode we need no item navigation
 			this._bActionMode = true;
 			this.removeDelegate(this._oItemNavigation);
-	
+
 			// remove the tab index from the item navigation
 			jQuery(this._oItemNavigation.getFocusedDomRef()).attr("tabindex", "-1");
-			
+
 			//set aria active descendent
 			this.$("scrolllist").attr("aria-activedescendant", jQuery(this._oItemNavigation.getFocusedDomRef()).attr("id"));
-	
+
 			// set the focus to the active control
 			jQuery(oDomRef).focus();
 		}
 	};
-	
+
 	/**
 	 * Leave action mode
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype._leaveActionMode = function(oEvent) {
 		if (this._bActionMode) {
-	
+
 			// in the navigation mode we use the item navigation
 			this._bActionMode = false;
 			this.addDelegate(this._oItemNavigation);
-	
+
 			// reset the tabindex of the focused domref of the item navigation
 			jQuery(this._oItemNavigation.getFocusedDomRef()).attr("tabindex", "0");
-	
+
 			//remove aria active descendent
 			this.$("scrolllist").removeAttr("aria-activedescendant");
-	
+
 			// when we have an event which is responsible to leave the action mode
 			// we search for the closest
 			if (oEvent) {
@@ -461,7 +461,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * Function is called when window is resized
 	 *
@@ -480,10 +480,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			return;
 		}
-	
+
 		this.calculateAndSetSize();
 	};
-	
+
 	/**
 	 * Shows previous item in carousel. This can be only used after the component is rendered.
 	 *
@@ -512,7 +512,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				that._hideInvisibleItems();
 			});
 	};
-	
+
 	/**
 	 * Shows next item in carousel. This can be only used after the component is rendered.
 	 *
@@ -541,7 +541,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				that._hideInvisibleItems();
 			});
 	};
-	
+
 	/**
 	 * Shows the element with id specified. This can be only used after the component is rendered.
 	 *
@@ -558,17 +558,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		$ScrollList.children('li:lt(' + index + ')').appendTo($ScrollList);
 		this._hideInvisibleItems();
 	};
-	
+
 	Carousel.prototype.calculateAndSetSize = function() {
 		var aContent = this.getContent();
 		var sCarouselId = this.getId();
-	
+
 		this._showAllItems();
-	
+
 		if (aContent.length > 0) {
 			var maxWidth = 0;
 			var maxHeight = 0;
-	
+
 			for ( var i = 0; i < aContent.length; i++) {
 				var childWidth, childHeight;
 				try {
@@ -590,43 +590,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				maxWidth = Math.max(maxWidth, parseInt(childWidth, 10));
 				maxHeight = Math.max(maxHeight, parseInt(childHeight, 10));
 			}
-	
+
 			if (maxWidth == 0 || isNaN(maxWidth)) {
 				maxWidth = this.getDefaultItemWidth();
 			}
 			if (maxHeight == 0 || isNaN(maxHeight)) {
 				maxHeight = this.getDefaultItemHeight();
 			}
-	
+
 			var contentBarSize;
 			var visibleItems = this.getVisibleItems();
 			var $Me = jQuery.sap.byId(sCarouselId);
 			var $NextButton = jQuery.sap.byId(sCarouselId + '-nextbutton');
 			var $PrevButton = jQuery.sap.byId(sCarouselId + '-prevbutton');
 			var $ContentArea = jQuery.sap.byId(sCarouselId + '-contentarea');
-	
+
 			if (this.getWidth() && this.getOrientation() == "vertical") {
 				maxWidth = $Me.width();
 			}
 			if (this.getHeight() && this.getOrientation() == "horizontal") {
 				maxHeight = $Me.height();
 			}
-	
+
 			this.$().addClass('sapUiCrsl' + jQuery.sap.charToUpperCase(this.getOrientation(), 0));
-	
+
 			if (this.getOrientation() == "horizontal") {
 				contentBarSize = $Me.width() - this.getHandleSize() * 2 - 1;
 				$ContentArea.css('left', this.getHandleSize() + "px").css('right', this.getHandleSize() + "px");
-	
+
 				if (visibleItems == 0) {
 					visibleItems = Math.floor(contentBarSize / maxWidth);
 				}
-	
+
 				maxWidth = contentBarSize / visibleItems;
 				this._iMaxWidth = maxWidth;
-	
+
 				var cLineHeight = maxHeight + "px";
-				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px");
+				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "inline-block");
 				$PrevButton.css("height", maxHeight).css("line-height", cLineHeight);
 				$NextButton.css("height", maxHeight).css("line-height", cLineHeight);
 				$ContentArea.height(maxHeight);
@@ -634,15 +634,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else {
 				contentBarSize = $Me.height() - this.getHandleSize() * 2 - 1;
 				$ContentArea.css('top', this.getHandleSize() + "px").css('bottom', this.getHandleSize() + "px");
-	
+
 				if (visibleItems == 0) {
 					visibleItems = Math.floor(contentBarSize / maxHeight);
 				}
-	
+
 				maxHeight = contentBarSize / visibleItems;
 				this._iMaxWidth = maxHeight;
-	
-				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px");
+
+				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "block");
 				$PrevButton.width(maxWidth).after($ContentArea);
 				$NextButton.width(maxWidth);
 				$ContentArea.width(maxWidth);
@@ -652,36 +652,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._hideInvisibleItems();
 		}
 	};
-	
+
 	Carousel.prototype.getFocusDomRef = function() {
 		return this.$("scrolllist");
 	};
-	
+
 	/**
 	 * Make all carousel items visible
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype._showAllItems = function() {
 		var $ContentArea = this.$("contentarea");
-		$ContentArea.find('.sapUiCrslItm').show();
+		$ContentArea.find('.sapUiCrslItm').show().css("display", "inline-block");
 	};
-	
+
 	/**
 	 * Hide all carousel items
-	 * 
+	 *
 	 * @private
 	 */
 	Carousel.prototype._hideInvisibleItems = function() {
 		var $ContentArea = this.$("contentarea");
 		$ContentArea.find('.sapUiCrslItm:gt(' + (this._visibleItems - 1)  + ')').hide();
 	};
-	
+
 	Carousel.prototype._getContentIndex = function(sId) {
 		var aIdParts = sId.split("-item-");
 		return jQuery.inArray(sap.ui.getCore().byId(aIdParts[1]), this.getContent());
 	};
-	
+
 	Carousel.prototype._getItemIdByIndex = function(iIndex) {
 		var oContent = this.getContent()[iIndex];
 		if (!oContent) {
@@ -689,11 +689,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		return oContent.getId();
 	};
-	
+
 	/**
 	 * Setter for property <code>firstVisibleIndex</code>.
 	 *
-	 * Default value is <code>0</code> 
+	 * Default value is <code>0</code>
 	 *
 	 * @param {int} iFirstVisibleIndex  new value for property <code>firstVisibleIndex</code>
 	 * @return {sap.ui.commons.Carousel} <code>this</code> to allow method chaining
@@ -712,21 +712,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		return this;
 	};
-	
-	
+
+
 	//Fix because jQuery clone doesn't support cloning textarea values
 	//jQuery Ticket #3016 (http://bugs.jquery.com/ticket/3016)
-	
+
 	//Textarea and select clone() bug workaround | Spencer Tipping
 	//Licensed under the terms of the MIT source code license
-	
+
 	//Motivation.
 	//jQuery's clone() method works in most cases, but it fails to copy the value of textareas and select elements. This patch replaces jQuery's clone() method with a wrapper that fills in the
 	//values after the fact.
-	
+
 	//An interesting error case submitted by Piotr Przybył: If two <select> options had the same value, the clone() method would select the wrong one in the cloned box. The fix, suggested by Piotr
 	//and implemented here, is to use the selectedIndex property on the <select> box itself rather than relying on jQuery's value-based val().
-	
+
 	(function (original) {
 		jQuery.fn.sapExtendedClone = function () {
 			var result           = original.apply(this, arguments);
@@ -734,14 +734,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var result_textareas = result.find('textarea').add(result.filter('textarea'));
 			var my_selects       = this.find('select').add(this.filter('select'));
 			var result_selects   = result.find('select').add(result.filter('select'));
-	
+
 			for (var i = 0, l = my_textareas.length; i < l; ++i) {
 				jQuery(result_textareas[i]).val(jQuery(my_textareas[i]).val());
 			}
 			for (var i = 0, l = my_selects.length;   i < l; ++i) {
 				result_selects[i].selectedIndex = my_selects[i].selectedIndex;
 			}
-	
+
 			return result;
 		};
 	})(jQuery.fn.clone);

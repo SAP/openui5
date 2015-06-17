@@ -34,8 +34,6 @@
 	width: 3rem;
 	height: 3rem;
 	text-align: center;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -91,13 +89,21 @@ li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF .sapMObj
 }
 
 .sapMObjLNumberStateError {
-	color: @sapHCStandardFG;
+	color: @sapUiNegativeText;
 }
 
 .sapMObjLNumberStateWarning {
-	color: @sapHCStandardFG;
+	color: @sapUiCriticalText;
 }
 
 .sapMObjLNumberStateSuccess {
+	color: @sapUiPositiveText;
+}
+
+.sapMLIB:hover .sapMObjLNumber {
+	color: @sapHCStandardFG;
+}
+
+.sapMLIB:hover .sapMObjLNumberUnit {
 	color: @sapHCStandardFG;
 }

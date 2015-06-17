@@ -20,7 +20,7 @@ function(jQuery) {
 	 * @name sap.ui.dt
 	 * @author SAP SE
 	 * @version ${version}
-	 * @public
+	 * @private
 	 */
 	
 	// delegate further initialization of this library to the Core
@@ -28,12 +28,37 @@ function(jQuery) {
 		name : "sap.ui.dt",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
-		types: [],
+		types: [
+			"sap.ui.dt.SelectionMode"
+		],
 		interfaces: [],
 		controls: [],
 		elements: []
 	});
 
+	/**
+	 * Selection mode of the tree
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.dt.SelectionMode = {
+	
+		/**
+		 * Select multiple overlays at a time.
+		 * @public
+		 */
+		Multi : "Multi",
+	
+		/**
+		 * Select one overlay at a time.
+		 * @public
+		 */
+		Single : "Single"
+	
+	};
+
 	return sap.ui.dt;
 
-}, /* bExport= */ false);
+});

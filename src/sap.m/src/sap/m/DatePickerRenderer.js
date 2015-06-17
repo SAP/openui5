@@ -21,8 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	DatePickerRenderer.addOuterClasses = function(oRm, oDP) {
 
 		oRm.addClass("sapMDP");
+		oRm.addClass("sapMInputVH"); // just reuse styling of value help icon
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			oRm.addClass("sapMInputIE9");
 		}
 
@@ -37,12 +38,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	DatePickerRenderer.writeInnerContent = function(oRm, oDP) {
 
 		if (oDP.getEnabled() && oDP.getEditable()) {
-			var aClasses = [];
+			var aClasses = ["sapMInputValHelpInner"];
 			var mAttributes = {};
 
 			mAttributes["id"] = oDP.getId() + "-icon";
 			mAttributes["tabindex"] = "-1"; // to get focus events on it, needed for popup autoclose handling
+			oRm.write('<div class="sapMInputValHelp">');
 			oRm.writeIcon("sap-icon://appointment-2", aClasses, mAttributes);
+			oRm.write("</div>");
 		}
 
 	};
@@ -67,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
 
-		if (sap.ui.Device.browser.mobile) {
+		if (oDP._bMobile) {
 			// prevent keyboard in mobile devices
 			oRm.writeAttribute("readonly", "readonly");
 		}
@@ -81,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	};
 
 	DatePickerRenderer.getDescribedByAnnouncement = function(oDP) {
-	
+
 		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE") + " " + sBaseAnnouncement;
 
@@ -95,6 +98,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		mAccessibilityState["autocomplete"] = "none";
 		mAccessibilityState["haspopup"] = true;
 		mAccessibilityState["owns"] = oDP.getId() + "-cal";
+
+		if (oDP._bMobile && oDP.getEnabled() && oDP.getEditable()) {
+			// if on mobile device readonly property is set, but should not be announced
+			mAccessibilityState["readonly"] = false;
+		}
 
 		return mAccessibilityState;
 

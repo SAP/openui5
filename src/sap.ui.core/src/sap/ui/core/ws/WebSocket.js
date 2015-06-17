@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ws.WebSocket for standard WebSocket support
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider', './ReadyState'],
-	function(jQuery, Device, EventProvider, ReadyState) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider', './ReadyState', 'sap/ui/thirdparty/URI'],
+	function(jQuery, Device, EventProvider, ReadyState, URI) {
 	"use strict";
 
 	/**
@@ -340,31 +340,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @private
 	 */
 	WebSocket.prototype._resolveFullUrl = function(sUrl) {
-		var sFullUrl = '';
+		// parse URI string
+		var oUri = new URI(sUrl);
 
-		// check if no protocol (ws:// or wss://) is provided
-		if (!/^wss?:\/\//.test(sUrl)) {
+		// create base URI to resolve absolute URL
+		var oBaseUri = new URI();
 
-			var loc = document.location;
+		// clear search string to remove parameters from the current page
+		oBaseUri.search('');
 
-			sFullUrl = ((loc.protocol === 'https:')
-							? 'wss://'
-							: 'ws://') +
-							loc.host;
+		// set according WebSocket protocol (secure / non-secure)
+		oBaseUri.protocol(oBaseUri.protocol() === 'https' ? 'wss' : 'ws');
 
-			if (sUrl.substr(0, 1) === '/') {
-				// absolute url, e.g. /foo/bar
-				sFullUrl += sUrl;
-			} else {
-				// relative url, eg. foo/../../bar
-				sFullUrl += loc.pathname.substring(0, loc.pathname.lastIndexOf('/')) + '/' + sUrl;
-			}
+		// resolve absolute to base
+		// if there is already a protocol defined it won't be replaced
+		oUri = oUri.absoluteTo(oBaseUri);
 
-		} else {
-			sFullUrl = sUrl;
-		}
-
-		return sFullUrl;
+		// build string
+		return oUri.toString();
 	};
 
 	/**

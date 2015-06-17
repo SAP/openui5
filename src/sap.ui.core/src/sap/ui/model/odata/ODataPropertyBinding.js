@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {object} [mParameters]
 	 * 
+	 * @public
 	 * @alias sap.ui.model.odata.ODataPropertyBinding
 	 * @extends sap.ui.model.PropertyBinding
 	 */

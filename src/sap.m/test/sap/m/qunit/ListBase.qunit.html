@@ -193,7 +193,7 @@
 			oList.getBinding("items").filter([]);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + 'item ' + oList);
 		
-			oList.setRememberSelections(false);
+			oList.setRememberSelections(false).removeSelections(true);
 			strictEqual(oList.getRememberSelections(), false, 'The property "rememberSelections" is "false" on ' + oList);
 
 			// TODO: decide if check on internal variables is needed (Cahit)
@@ -260,7 +260,7 @@
 			strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber +' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
 		
-			oList.setRememberSelections(false);
+			oList.setRememberSelections(false).removeSelections(true);
 			strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
 		
 			// sort descending
@@ -538,21 +538,24 @@
 			// add item to page & render
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
-			$list = oList.$();
 
 			// check again after rendering
 			sAddText = " (state: after rendering)";
 			oList.setInset(true);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
 			ok($list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has class "sapMListInsetBG" on ' + oList + sAddText);
 
 			oList.setInset(false);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
 			ok(!$list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has no class "sapMListInsetBG" on ' + oList + sAddText);
 
 			// standard setter tests
 			strictEqual(oList.setInset(false), oList, 'Method returns this pointer on ' + oList);
-			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+			strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
 
 			// cleanup
 			oPage.removeAllContent();
@@ -628,6 +631,8 @@
 			sWidth = "0px";
 			sWidthPx = 0;
 			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
@@ -635,6 +640,8 @@
 			sWidth = "500px";
 			sWidthPx = 500;
 			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
@@ -655,12 +662,16 @@
 			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "false" on ' + oList);
 
 			oList.setWidth("");
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getWidth(), "", 'The control property "width" is now "" after setting value "" on ' + oList);
 			strictEqual($list.width(), iWidth100Percent, 'The CSS property "width" is now 100% after setting value "" on ' + oList);
 
 			sWidth = "20rem";
 			sWidthPx = "320px";
 			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.width(), parseInt(sWidthPx.replace("px", "")), 'The px width is now "' + parseInt(sWidthPx.replace("px", "")) + '" on ' + oList);
@@ -668,21 +679,27 @@
 			sWidth = "50%";
 			sWidthPx = Math.ceil(parseInt($list.parent().css("width"))/2.0) + "px";
 			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getWidth(), sWidth, 'The property "width" is now "' + sWidth + '" on ' + oList);
 
 			sWidth = "auto";
 			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
 
 			sWidth = "inherit";
 			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
 
 			// standard setter tests
 			strictEqual(oList.setWidth(""), oList, 'Method returns this pointer on ' + oList);
-			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+			strictEqual(oRenderSpy.callCount, 8, "The list should be rerendered in this method");
 
 			// cleanup
 			oPage.removeAllContent();
@@ -828,19 +845,22 @@
 			// call method & do tests
 			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
 			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
 			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
 
 			sText = "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>";
 			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'Javascript code injection is not possible on ' + oList);
+			sap.ui.getCore().applyChanges();
 			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
 
 			sText = "";
 			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
-			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), oRB.getText("LOAD_MORE_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
 
 			// standard setter tests
 			strictEqual(oList.setGrowingTriggerText(""), oList, 'Method returns this pointer on ' + oList);
-			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+			strictEqual(oRenderSpy.callCount, 4, "The list should be rerendered in this method");
 
 			// cleanup
 			oPage.removeAllContent();
@@ -885,11 +905,15 @@
 			ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
 
 			strictEqual(oList.setBackgroundDesign(sap.m.BackgroundDesign.Transparent).getBackgroundDesign(), sap.m.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
 			ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
 			ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
 
 			strictEqual(oList.setBackgroundDesign(sap.m.BackgroundDesign.Translucent).getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
 			ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
 			ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
 			ok($list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list has class "sapMListBGTranslucent" on ' + oList);
@@ -901,7 +925,7 @@
 
 			// standard setter tests
 			strictEqual(oList.setBackgroundDesign(), oList, 'Method returns this pointer on ' + oList);
-			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+			strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
 
 			// cleanup
 			oPage.removeAllContent();
@@ -931,11 +955,15 @@
 			ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
 
 			strictEqual(oList.setShowSeparators(sap.m.ListSeparators.Inner).getShowSeparators(), sap.m.ListSeparators.Inner, 'The property "showSeparators" is "Inner" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$listUl = jQuery(oList.$().children("ul")[0]);
 			ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
 			ok($listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list has class "sapMListShowSeparatorsInner" on ' + oList);
 			ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
 
 			strictEqual(oList.setShowSeparators(sap.m.ListSeparators.None).getShowSeparators(), sap.m.ListSeparators.None, 'The property "showSeparators" is "None" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$listUl = jQuery(oList.$().children("ul")[0]);
 			ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
 			ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
 			ok($listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list has class "sapMListShowSeparatorsNone" on ' + oList);
@@ -947,7 +975,7 @@
 
 			// standard setter tests
 			strictEqual(oList.setShowSeparators(), oList, 'Method returns this pointer on ' + oList);
-			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+			strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
 
 			// cleanup
 			oPage.removeAllContent();
@@ -977,9 +1005,8 @@
 			// call method & do tests
 			bIncludeItemInSelection = true;
 			strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
 			oList.getItems().forEach(function (oItem) {
-				// TODO: decide if check on internal variables is needed (Cahit)
-				strictEqual(oItem._includeItemInSelection, true, 'Each item has internal property "_includeItemInSelection" set to true on ' + oList);
 				strictEqual(oItem.$().hasClass("sapMLIBCursor"), true, 'Each item has css class "sapMLIBCursor" on ' + oList);
 			});
 
@@ -990,9 +1017,8 @@
 			
 			bIncludeItemInSelection = false;
 			strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
 			oList.getItems().forEach(function (oItem) {
-				// TODO: decide if check on internal variables is needed (Cahit)
-				strictEqual(oItem._includeItemInSelection, false, 'Each item has internal property "_includeItemInSelection" set to false on ' + oList);;
 				strictEqual(oItem.$().hasClass("sapMLIBCursor"), false, 'Each item does not have has css class "sapMLIBCursor" on ' + oList);;
 			});
 
@@ -1009,7 +1035,7 @@
 
 			// standard setter tests
 			strictEqual(oList.setIncludeItemInSelection(), oList, 'Method returns this pointer on ' + oList);
-			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+			strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
 
 			// cleanup
 			oPage.removeAllContent();

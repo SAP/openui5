@@ -37,6 +37,17 @@
 				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
 			},
 			{
+				"id" : "sap.ui.core.mvc.View",
+				"name" : "View",
+				"category" : "Display",
+				"appComponent" : "CA-UI-COR",
+				"formFactors" : "-",
+				"since" : "\"The Elders may know...\"",
+				"samples" : [
+					"sap.ui.core.sample.View.async"
+				]
+			},
+			{
 				"id" : "sap.ui.core.mvc.XMLView",
 				"name" : "XMLView",
 				"category" : "Display",
@@ -44,7 +55,8 @@
 				"samples" : [
 					"sap.ui.core.sample.ViewTemplate.scenario",
 					"sap.ui.core.sample.ViewTemplate.tiny",
-					"sap.ui.core.sample.ViewTemplate.types"
+					"sap.ui.core.sample.ViewTemplate.types",
+					"sap.ui.core.sample.ViewTemplate.valuelist"
 				]
 			},
 			{
@@ -209,6 +221,11 @@
 				"description" : "Many controls provide the associations ariaLabelledBy and ariaDescribedBy for accessibility purposes. The InvisibleText control can be used by application to provide hidden texts on the UI which can be referenced via these associations."
 			},
 			{
+				"id": "sap.ui.core.sample.View.async",
+				"name": "Async View loading and delayed rendering",
+				"description": "Example for Views with async source loading and the effects to rendering."
+			},
+			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
 				"name": "XML Templating: demo scenario",
 				"description": "Complete demo scenario for XML Templating based on OData V4 annotations"
@@ -222,6 +239,11 @@
 				"id": "sap.ui.core.sample.ViewTemplate.types",
 				"name": "XML Templating: UI5 OData types",
 				"description": "XML Templating sample with UI5 core primitive OData types"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.valuelist",
+				"name": "Separate Value List Loading",
+				"description": "Separate loading of value lists to reduce size of OData service metadata to be loaded"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaMatchers",

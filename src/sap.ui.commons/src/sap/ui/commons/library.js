@@ -1217,6 +1217,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			return new sap.ui.commons.Label(mConfig);
 		},
 		createTextView: function(mConfig){
+			if (mConfig && !mConfig.wrapping) {
+				mConfig.wrapping = false;
+			}
 			return new sap.ui.commons.TextView(mConfig);
 		},
 		createTextField: function(mConfig){
@@ -1231,4 +1234,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 	return sap.ui.commons;
 
-}, /* bExport= */ false);
+});

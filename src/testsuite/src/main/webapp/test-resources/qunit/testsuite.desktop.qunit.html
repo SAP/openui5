@@ -1,6 +1,7 @@
 <html>
  <head>
   <title>Global Desktop QUnit TestSuite</title>
+  <script type="text/javascript" src="../../resources/sap/ui/qunit/qunit-redirect.js"></script>
  </head>
  <body>
   <script language="javascript">
@@ -12,16 +13,17 @@
     var suite = new top.jsUnitTestSuite();
     var contextPath = "/" + window.location.pathname.split("/")[1];
     suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuite.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/testsuite.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/testsuite.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/testsuite.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/testsuite.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/testsuite.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/testsuite.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/testsuite.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/suite/qunit/testsuite.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/testsuite.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/testsuite.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/testsuite.qunit.html");
+
     return suite;
-  }    
+  }
 
   </script>
  </body>
 </html>
-

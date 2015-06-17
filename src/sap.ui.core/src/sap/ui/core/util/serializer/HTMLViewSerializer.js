@@ -3,13 +3,10 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTML', 'sap/ui/thirdparty/vkbeautify'],
-	function(jQuery, EventProvider, HTML, vkbeautify1) {
+	function(jQuery, EventProvider, HTML, vkbeautify) {
 	"use strict";
 
 
-	
-	/*global vkbeautify *///declare unusual global vars for JSLint/SAPUI5 validation
-	
 	/**
 	 * HTML view serializer class. Serializes a given view.
 	 *

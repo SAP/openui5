@@ -11,165 +11,496 @@
 -->
 
 <html>
-
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
 	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
 	<title>Test Page for sap.ui.commons.Toolbar Overflow</title>
 
-		<script id="sap-ui-bootstrap"
-			      type="text/javascript"
-			      src="../../../../../resources/sap-ui-core.js"
-			      data-sap-ui-theme="sap_bluecrystal"
-			      data-sap-ui-noConflict="true"
-			      data-sap-ui-libs="sap.ui.commons"> 
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		
-		
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+
 	<script type="text/javascript">
-		
+		var aItemsOnTheSecondRow = [];
 
 		function addManyItems(oToolbar) {
 			var id = oToolbar.getId();
 
-		    // 10 buttons
-		    var aIcons =
-		      [
-		        "../images/new.png",
-		        "../images/open.png",
-		        "../images/save.png",
-		        "../images/cut.png",
-		        "../images/copy.png",
-		        "../images/paste2.png",
-		        null,
-		        null,
-		        null,
-		        null
-		      ];
-		    var aLabels =
-			  [
-				  "",
-				  "",
-				  "",
-				  "",
-				  "",
-				  "",
-				  "Forward",
-				  "Process",
-				  "View All",
-				  "Approve"
-		     ];
+			// 10 buttons
+			var aIcons =
+					[
+						"../images/new.png",
+						"../images/open.png",
+						"../images/save.png",
+						"../images/cut.png",
+						"../images/copy.png",
+						"../images/paste2.png",
+						null,
+						null,
+						null,
+						null
+					];
+			var aLabels =
+					[
+						"",
+						"",
+						"",
+						"",
+						"",
+						"",
+						"Forward",
+						"Process",
+						"View All",
+						"Approve"
+					];
 
 
-		   // create ten buttons
-		    for (var i = 0; i < 10; ++i) {
-		      var oButton = new sap.ui.commons.Button(id + "_b_" + i, {text : aLabels[i]});
-		      if (aIcons[i]) {
-		    	  oButton.setIcon(aIcons[i]);
-		      }
+			// create ten buttons
+			var sSeparatorId = "";
+			for (var i = 0; i < 10; ++i) {
+				var oButton = new sap.ui.commons.Button(id + "_b_" + i, {text: aLabels[i]});
+				if (aIcons[i]) {
+					oButton.setIcon(aIcons[i]);
+				}
 
-		      // add separators at various positions
-		      if (i==2) { 
-		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
-		      } else if (i==5) {
-		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
-		      } else if (i==8) {
-		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"displayVisualSeparator":false}));
-		      }
-	
-		      oToolbar.addItem(oButton);
-		    }
-	
-		    // input field
-		    var oTextField = new sap.ui.commons.TextField(id + "_tf",
-			  {
-			    value : "#0"
-			  });
-		    oToolbar.addItem(oTextField);
-	
-		    // combo box for 2nd button's text
-		    var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb",
-		      {
-		        items :
-		        [
-		          new sap.ui.core.ListItem({text : "#1"}),
-		          new sap.ui.core.ListItem({text : "Do it"}),
-		          new sap.ui.core.ListItem({text : "Hello world"}),
-		          new sap.ui.core.ListItem({text : "Yet another stupid button text"})
-		        ]
-		      });
-		    oToolbar.addItem(oComboBox);
-		    return oToolbar;
+				// add separators at various positions
+				sSeparatorId = id + "_sep_" + i;
+				if (i == 2) {
+					oToolbar.addItem(new sap.ui.commons.ToolbarSeparator(sSeparatorId));
+				} else if (i == 5) {
+					oToolbar.addItem(new sap.ui.commons.ToolbarSeparator(sSeparatorId));
+				} else if (i == 8) {
+					oToolbar.addItem(new sap.ui.commons.ToolbarSeparator(sSeparatorId, {"displayVisualSeparator": false}));
+				}
+
+				oToolbar.addItem(oButton);
+			}
+
+			// input field
+			var oTextField = new sap.ui.commons.TextField(id + "_tf",
+					{
+						value: "#0"
+					});
+			oToolbar.addItem(oTextField);
+
+			// combo box for 2nd button's text
+			var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb",
+					{
+						items: [
+							new sap.ui.core.ListItem({text: "#1"}),
+							new sap.ui.core.ListItem({text: "Do it"}),
+							new sap.ui.core.ListItem({text: "Hello world"}),
+							new sap.ui.core.ListItem({text: "Yet another stupid button text"})
+						]
+					});
+			oToolbar.addItem(oComboBox);
+			return oToolbar;
 		}
 
-		
-		var oCtrl = new sap.ui.commons.Toolbar("Toolbar", {width:"300px"}).placeAt("uiArea1");
-		addManyItems(oCtrl);
 
-		
-		asyncTest("VisibleItems calculation with images involved", function() {
+		var oCtrl = new sap.ui.commons.Toolbar("Toolbar", {width: "300px"}).placeAt("uiArea1");
+		addManyItems(oCtrl);
+		//when toolbar width is set to 300px, the first "invisible" (on the second row) item is Toolbar_b_6
+		aItemsOnTheSecondRow = ["Toolbar_b_6", "Toolbar_b_7", "Toolbar_sep_8", "Toolbar_b_8", "Toolbar_b_9", "Toolbar_tf", "Toolbar_cmb"];
+
+
+		test("VisibleItems calculation with images involved", function (assert) {
+			var done = assert.async();
 			expect(2);
 
-			setTimeout(function(){ // give the Toolbar some time to recognize the change
+			setTimeout(function () { // give the Toolbar some time to recognize the change
 				equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible (6 Buttons + 2 Separators)");
-				equal(oCtrl.iItemDomRefCount, 7, "There should be 8 items considered navigable by the ItemNavigation (6 Buttons + 1 overflow button)"); 
-				start();
+				equal(oCtrl.iItemDomRefCount, 7, "There should be 8 items considered navigable by the ItemNavigation (6 Buttons + 1 overflow button)");
+				done();
 			}, 1000);
 		});
 
+		test("Items on the second row preserves their order after close of overflow pop-up when there is at least one item with visibility=false", function (assert) {
+			var done = assert.async();
+			var sOverflowButtonId = oCtrl.getId() + "-mn";
+			var oButton = sap.ui.getCore().byId(aItemsOnTheSecondRow[1]);
+			oButton.setVisible(false);
+			function clickOverflowButton() {
+				var oOverflowBtnElement = jQuery.sap.byId(sOverflowButtonId);
+				sap.ui.test.qunit.triggerKeydown(oOverflowBtnElement, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			}
 
-		asyncTest("VisibleItems calculation with item size change", function() {
+			setTimeout(function () { // give the Toolbar some time to recognize the change
+				clickOverflowButton(); //should open
+				setTimeout(function () {
+					oButton.setVisible(true);
+					oCtrl.popup.close(0);
+					setTimeout(function () {
+						var aRealSecondRowItems = [],
+								aLastItemInFirstRow = document.getElementById("Toolbar_b_5"),
+								nextSibling = aLastItemInFirstRow.nextSibling;
+						while (nextSibling && nextSibling.id !== sOverflowButtonId) {
+							aRealSecondRowItems.push(nextSibling.id);
+							nextSibling = nextSibling.nextSibling;
+						}
+						deepEqual(aRealSecondRowItems, aItemsOnTheSecondRow, "The order of the second row items must be the same after popup open->close");
+						done();
+					}, 1000);
+				}, 1000);
+			}, 1000);
+		})
+
+
+		test("VisibleItems calculation with item size change", function (assert) {
+			var done = assert.async();
 			expect(2);
 			sap.ui.getCore().byId("Toolbar_b_0").setWidth("400px");
 
-			setTimeout(function(){ // give the Toolbar some time to recognize the change
+			setTimeout(function () { // give the Toolbar some time to recognize the change
 				equal(oCtrl.getVisibleItemInfo().count, 1, "1 item should be considered visible (1 huge Button)");
 				equal(oCtrl.iItemDomRefCount, 2, "There should be 2 items considered navigable by the ItemNavigation (1 huge Button + 1 overflow button)");
-				start();
+				done();
+			}, 500);
+		})
+
+
+		test("Test if emptyPopupOverflow method removes popup content from the DOM if called with the right parameter.", function (assert) {
+			var done = assert.async();
+			var oCtrl = new sap.ui.commons.Toolbar({
+				id: "Toolbar1",
+				width: "180px",
+				items: [
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({id: 'test', text: 'button'})
+				]
+			}).placeAt("uiArea1");
+
+
+			setTimeout(function () {
+				oCtrl.handleOverflowButtonTriggered();
+				setTimeout(function () {
+					sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl, false);
+					equal(jQuery('#test', oCtrl.getDomRef("pu")).length, 0)
+					done();
+				}, 500);
+			}, 500);
+
+
+		});
+
+		test("Test if emptyPopupOverflow method moves popup content to the toolbar when called with the right parameter and the toolbar DOM is existing", function (assert) {
+			var done = assert.async();
+			var oCtrl = new sap.ui.commons.Toolbar({
+				id: "Toolbar2",
+				width: "180px",
+				items: [
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({id: 'test_button', text: 'button'})
+				]
+			}).placeAt("uiArea1");
+
+
+			setTimeout(function () {
+				oCtrl.handleOverflowButtonTriggered();
+				setTimeout(function () {
+					sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl, true);
+					equal(oCtrl.getDomRef("pu").hasChildNodes(), false);
+					equal(jQuery('#test_button', oCtrl.getDomRef()).length, 1);
+					done();
+				}, 500);
 			}, 500);
 		});
 
+		test("Test if emptyPopupOverflow method throws error if it has to move popup contents to the toolbar when the toolbar DOM is not existing;", function (assert) {
+			var done = assert.async();
+			var oCtrl = new sap.ui.commons.Toolbar({
+				id: "Toolbar3",
+				width: "180px",
+				items: [
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'})
+				]
+			}).placeAt("uiArea1");
 
-		// ================================================== 
-		//          helper functions 
-		// ================================================== 
+
+			setTimeout(function () {
+				oCtrl.handleOverflowButtonTriggered();
+				setTimeout(function () {
+					var aButtonAttributes = {
+						type: 'button',
+						id: '__button2',
+						'data-sap-ui': '__button2',
+						role: 'button',
+						'aria-disabled': 'false',
+						tabindex: '0',
+						'class': 'sapUiBtn sapUiBtnNorm sapUiBtnS sapUiBtnStd'
+					};
+
+					sHtml = '' +
+					'<div id="Toolbar2-pu" data-sap-ui="Toolbar2" tabindex="-1" role="menu">' +
+					'	<button type="button" ' + '>button</button>' +
+					'</div>';
+
+					var oDiv = document.createElement('div');
+					var oButton = document.createElement('button');
+					var oButtonText = document.createTextNode("button");
+					oButton.appendChild(oButtonText);
+					for (var sAttributeName in aButtonAttributes) {
+						oButton.setAttribute(sAttributeName, aButtonAttributes[sAttributeName]);
+					}
+					oDiv.appendChild(oButton);
+
+					oCtrl.getDomRef = sinon.stub(oCtrl, 'getDomRef').returns(null);
+					oCtrl.getDomRef.withArgs("pu").returns(oDiv);
+
+					var oErrorSpy = sinon.spy(jQuery.sap.log, 'error');
+					sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl);
+					oCtrl.getDomRef.restore();
+
+					equal(oErrorSpy.withArgs("The renderer 'sap.ui.commons.ToolbarRenderer' cannot empty the toolbar overflow popup.").calledOnce, true);
+
+					oErrorSpy.restore();
+
+					done();
+				}, 500);
+			}, 500);
+		});
+
+		test("Test if when opened the overflow popup is causing a (bug) toolbar resize when the toolbar is nested in horizontal layout.", function(assert) {
+			var done = assert.async();
+			var oCtrl = new sap.ui.commons.Toolbar({
+				id: 'Toolbar4',
+				items: [
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'})
+				],
+				rightItems: [
+					new sap.ui.commons.Button({text: 'Right'})
+				]
+			});
+
+			var testLayout = new sap.ui.layout.HorizontalLayout({
+				content: [
+					oCtrl
+				],
+				allowWrapping: false
+			});
+			testLayout.placeAt('uiArea2');
+
+
+			jQuery('#uiArea2').css('width', '400');
+
+			setTimeout(function() {
+				var btn = oCtrl.getDomRef('mn');
+				btn.click();
+				setTimeout(function() {
+					btn.click();
+					setTimeout(function() {
+						btn.click();
+						setTimeout(function() {
+							var pu = oCtrl.getDomRef('pu');
+							// if the popup is still visible, it means resize was not triggered (causing the popup to close)
+							equal(jQuery(pu).css('visibility'), 'visible', 'Popup is properly visible');
+							equal(jQuery('#Toolbar4-pu button').length, 7, 'There are seven buttons in the popup.');
+							btn.click();
+							jQuery('#uiArea2').css('width', '600');
+							setTimeout(function() {
+								btn.click();
+								equal(jQuery('#Toolbar4-pu button').length, 3, 'There are three buttons in the popup - toolbar resizing still works after popup opening/closing.');
+								btn.click();
+								done();
+							}, 500);
+						}, 500);
+					}, 500);
+				}, 500);
+			}, 500);
+		});
+
+		test("Test invisible (API property visible=false) items must not break the overflow mechanism", function (assert) {
+			/* Toolbar (145px width) with 3 invisible (visible = false) and 3 visible items (all with width 50px).
+			 As there is no space for the 3th visible item, it goes into the overflow*/
+
+			var done = assert.async(),
+					oButtonA = new sap.ui.commons.Button("idButtonA", {text: "A", width: "50px"}),
+					oButtonB = new sap.ui.commons.Button("idButtonB", {text: "B", width: "50px", visible: false}),
+					oButtonC = new sap.ui.commons.Button("idButtonC", {text: "C", width: "50px", visible: false}),
+					oButtonD = new sap.ui.commons.Button("idButtonE", {text: "D", width: "50px"}),
+					oButtonE = new sap.ui.commons.Button("idButtonF", {text: "E", width: "50px", visible: false}),
+					oButtonF = new sap.ui.commons.Button("idButtonG", {text: "F", width: "50px"}),
+					aItems = [oButtonA, oButtonB, oButtonC, oButtonD, oButtonE, oButtonF],
+					aExpectedItemsInTheOverflow = [oButtonF.getId()];
+
+			var oCtrl = new sap.ui.commons.Toolbar({
+				items: aItems,
+				width: "145px"
+			}).placeAt("uiArea1");
+
+			setTimeout(function () {
+				clickOverflowButton(oCtrl);
+				setTimeout(function () {
+					ok(isPopupVisible(oCtrl), "The popup must be visible");
+					var aPopupContent = getPopupContentIds(oCtrl);
+					deepEqual(aPopupContent, aExpectedItemsInTheOverflow, "There must be just 1 items in the overflow -F");
+					done();
+				}, 1000);
+			}, 500);
+		});
+
+		test("Check if a very long button is now getting out of the overflow popup (CSS 1570140661).", function(assert) {
+			var done = assert.async();
+			var oCtrl = new sap.ui.commons.Toolbar({
+				id: 'Toolbar5',
+				width: '300px',
+				items: [
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({text: 'button'}),
+					new sap.ui.commons.Button({id: 'testButton' ,text: 'A long button label is causing the problem, let\'s see'})
+				]
+			});
+
+			oCtrl.placeAt('uiArea1');
+
+
+			setTimeout(function () {
+				oCtrl.getDomRef('mn').click();
+				setTimeout(function () {
+					checkTestButtonDoesNotExpandFromOverflowPopup(oCtrl, "testButton");
+					done();
+				}, 500);
+			}, 500);
+		});
+
+		test("Overflow buttons with width less than popup default does not change popup's width", function(assert) {
+			var done = assert.async();
+			var oCtrl = new sap.ui.commons.Toolbar({
+				id: 'Toolbar6',
+				width: '300px',
+				items: [
+					new sap.ui.commons.Button({text: 'button', width : "130px"}),
+					new sap.ui.commons.Button({text: 'button', width : "130px"}),
+					new sap.ui.commons.Button("testOverflowButton",{text: 'button', width : "130px"})
+				]
+			});
+			oCtrl.placeAt('uiArea1');
+			setTimeout(function () {
+				oCtrl.getDomRef('mn').click();
+				setTimeout(function () {
+					var oPopupParent = jQuery(oCtrl.getDomRef('pu').parentNode);
+					checkTestButtonDoesNotExpandFromOverflowPopup(oCtrl, "testOverflowButton");
+					equal(oPopupParent.width(), 222 /*Width in class sapUiTbDD */, "The width of the popup should not change.")
+					done();
+				}, 500);
+			}, 500);
+		});
+
+		test("Overflow button is not visible when the first item is FullHeight Separator and there is an invisible item",
+				function(assert) {
+			var oCtrl = new sap.ui.commons.Toolbar({
+				id: 'Toolbar7',
+				width: '300px',
+				items: [
+					new sap.ui.commons.ToolbarSeparator({design: sap.ui.commons.ToolbarSeparatorDesign.FullHeight}),
+					new sap.ui.commons.Button({icon: "sap-icon://competitor"}),
+					new sap.ui.commons.Button({icon: "sap-icon://delete", visible: false})
+				]
+			});
+			oCtrl.placeAt('uiArea1');
+			equal(isOverflowVisible(oCtrl), false, "Overflow button must not be visible");
+		});
+
+
+		// ==================================================
+		//          helper functions
+		// ==================================================
 
 		/**
 		 * Helper method using internal knowledge of the renderer to get the DomRef of oCtrl's overflow button
 		 */
-		function getOverflowDomRef() {
-			var sOverflowId = oCtrl.getId() + "-mn";
+		function getOverflowDomRef(oToolbar) {
+			var sOverflowId = getOverflowButtonId(oToolbar);
 			return jQuery.sap.domById(sOverflowId);
 		}
-	
+
+		function getOverflowButtonId(oToolbar) {
+			return oToolbar.getId() + "-mn";
+		}
 		/**
-		 * Returns the overflow popup DomRef for oCtrl or null if it does not exist
+		 * Returns the overflow popup DomRef for oCtrl or undefined if it does not exist
 		 */
-		function getPopupDomRef() {
-			var child = jQuery.sap.domById(oCtrl.getId()+"-pu");
-			if (child) {
-				return child.parentNode;
-			} else {
-				return null;
+		function getPopupDomRef(oToolbar) {
+			return jQuery.sap.domById(oToolbar.getId() + "-pu");
+		}
+		function isPopupVisible(oToolbar) {
+			var oPopup = getPopupDomRef(oToolbar);
+			return jQuery.sap.byId(oPopup.id).css("display") === "block";
+		}
+		function isOverflowVisible(oToolbar) {
+			var oOverflowButton = getOverflowButtonId(oToolbar);
+			return jQuery.sap.byId(oOverflowButton.id).css("display") === "block";
+		}
+		function getPopupContentIds(oToolbar) {
+			var oPopup = getPopupDomRef(oToolbar);
+			var sIds = [];
+			var oCurrent = oPopup.firstChild
+			while (oCurrent) {
+				sIds.push(oCurrent.id);
+				oCurrent = oCurrent.nextSibling;
 			}
+			return sIds;
 		}
 
+		function clickOverflowButton(oToolbar) {
+			var oOverflowBtnElement = jQuery.sap.byId(getOverflowButtonId(oToolbar));
+			sap.ui.test.qunit.triggerKeydown(oOverflowBtnElement, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		}
 
-    </script>
-  </head>
-	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.commons.Toolbar Overflow</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>	
-		<div id="uiArea1"></div>
-	</body>
+		function checkTestButtonDoesNotExpandFromOverflowPopup(oCtrl, buttonId) {
+			var oTestButton = jQuery('#' + buttonId);
+			var oPopup = jQuery(oCtrl.getDomRef('pu'));
+
+			var iButtonRightPosition = oTestButton.position().left + oTestButton.width();
+			var iToolbarRightPosition = oPopup.position().left + oPopup.width();
+			var bIsExpanding = (iButtonRightPosition) >= (iToolbarRightPosition);
+
+			equal(false, bIsExpanding, 'Button is not expanding from the overflow popup');
+		}
+
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">QUnit page for sap.ui.commons.Toolbar Overflow</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<div id="uiArea1"></div>
+<div id="uiArea2"></div>
+</body>
 </html>

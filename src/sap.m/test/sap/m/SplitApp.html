@@ -1,270 +1,361 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>SplitApp - sap.m</title>
-<script src="../../../resources/sap-ui-core.js" type="text/javascript"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.commons"
-	data-sap-ui-theme="sap_bluecrystal">
-	
-</script>
-<script type="text/javascript">
-	//create first detail page
-	var oDetailPage = new sap.m.Page(
-			"detail",
-			{
-				title : "Detail 1",
-				content : [ new sap.m.Label({
-					text : "this is Detail 1"
-				}),
-				new sap.m.Button({
-					text: "To DetailDetail",
-					press: function() {oSplitApp.to("detailDetail")}
-				})
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>SplitApp - sap.m</title>
+		<script src="../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m,sap.ui.commons"
+				data-sap-ui-theme="sap_bluecrystal">
+
+		</script>
+		<script type="text/javascript">
+			// create first detail page
+			var oDetailPage = new sap.m.Page("detail", {
+				title: "Detail 1",
+				content: [
+					new sap.m.Label({
+						text: "this is Detail 1"
+					}),
+					new sap.m.Button({
+						text: "To DetailDetail",
+						press: function() {
+							oSplitApp.to("detailDetail")
+						}
+					})
 				],
 				showNavButton: jQuery.device.is.phone,
-				navButtonText : "Back",
-				navButtonPress : function(){
+				navButtonText: "Back",
+				navButtonPress: function() {
 					oSplitApp.backDetail();
 				},
-				subHeader : new sap.m.Bar({
-					contentMiddle : [ new sap.m.Button({
-						text : "show/hide",
-						press : function() {
-							oSplitApp.setMode(sap.m.SplitAppMode.ShowHideMode)
-						}
-					}), new sap.m.Button({
-						text : "stretch/compress",
-						press : function() {
-							oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode)
-						}
-					}), new sap.m.Button({
-						text : "hide",
-						press: function(){
-							oSplitApp.setMode(sap.m.SplitAppMode.HideMode)
-						}
-					}), new sap.m.Button({
-						text : "popover",
-						press : function() {
-							oSplitApp.setMode(sap.m.SplitAppMode.PopoverMode)
-						}
-					})]
-				}),
-				footer : new sap.m.Bar(
-						{
-							id : 'detail-footer',
-							contentMiddle : [
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}) ]
+				subHeader: new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.Button({
+							text: "show/hide",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.ShowHideMode)
+							}
+						}), new sap.m.Button({
+							text: "stretch/compress",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode)
+							}
+						}), new sap.m.Button({
+							text: "hide",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.HideMode)
+							}
+						}), new sap.m.Button({
+							text: "popover",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.PopoverMode)
+							}
 						})
-			}).addStyleClass("sapUiStdPage");
-	var oDetailDetailPage = new sap.m.Page(
-			"detailDetail",
-			{
-				title : "Detail Detail",
-				content : [ new sap.m.Label({
-					text : "this is Detail Detail"
-				}) ],
-				showNavButton: true,
-				navButtonText : "Back",
-				navButtonPress : function(){
-					oSplitApp.backDetail();
-				},
-				subHeader : new sap.m.Bar({
-					contentMiddle : [ new sap.m.Button({
-						text : "show/hide",
-						press : function() {
-							oSplitApp.setMode(sap.m.SplitAppMode.ShowHideMode)
-						}
-					}), new sap.m.Button({
-						text : "stretch/compress",
-						press : function() {
-							oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode)
-						}
-					}), new sap.m.Button({
-						text : "hide",
-						press: function(){
-							oSplitApp.setMode(sap.m.SplitAppMode.HideMode)
-						}
-					}), new sap.m.Button({
-						text : "popover",
-						press : function() {
-							oSplitApp.setMode(sap.m.SplitAppMode.PopoverMode)
-						}
-					}) ]
+					]
+				}),
+				footer: new sap.m.Bar({
+					id: "detail-footer",
+					contentMiddle: [
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						})
+					]
 				})
 			}).addStyleClass("sapUiStdPage");
-	//create second detail page
-	var oDetailPage2 = new sap.m.Page(
-			"detail2",
-			{
-				title : "Detail 2",
+
+			var oDetailDetailPage = new sap.m.Page("detailDetail", {
+				title: "Detail Detail",
+				content: [
+					new sap.m.Label({
+						text: "this is Detail Detail"
+					})
+				],
 				showNavButton: true,
-				navButtonText : "Back",
-				navButtonPress : function(){
+				navButtonText: "Back",
+				navButtonPress: function() {
 					oSplitApp.backDetail();
 				},
-				content : [ new sap.m.Label({
-					text : "this is Detail 2"
-				}), new sap.m.Input() ],
-				subHeader : new sap.m.Bar({
-					contentMiddle : []
-				}),
-				footer : new sap.m.Bar(
-						{
-							id : 'detai2l-footer',
-							contentMiddle : [
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}) ]
+				subHeader: new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.Button({
+							text: "show/hide",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.ShowHideMode)
+							}
+						}), new sap.m.Button({
+							text: "stretch/compress",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode)
+							}
+						}), new sap.m.Button({
+							text: "hide",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.HideMode)
+							}
+						}), new sap.m.Button({
+							text: "popover",
+							press: function() {
+								oSplitApp.setMode(sap.m.SplitAppMode.PopoverMode)
+							}
 						})
+					]
+				})
 			}).addStyleClass("sapUiStdPage");
 
-	//create first master page
+			var oScrollToElementInput = new sap.m.Input("oScrollToElementInput");
+			var oScrollToElementInput2 = new sap.m.Input("oScrollToElementInput2");
 
-	var oMasterPage = new sap.m.Page(
-			"master",
-			{
-				title : "Master",
-				icon: "images/SAPUI5.jpg",
-				content : [ new sap.m.List({
-					items : [ new sap.m.StandardListItem({
-						title : "To Master 2",
-						type : "Navigation",
-						press : function() {
-							oSplitApp.toMaster("master2");
-						}
-					})]
-				}) ],
-				footer : new sap.m.Bar(
-						{
-							id : 'master-footer',
-							contentMiddle : [
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}) ]
+			//create second detail page
+			var oDetailPage2 = new sap.m.Page("detail2", {
+				title: "Detail 2",
+				showNavButton: true,
+				navButtonText: "Back",
+				navButtonPress: function() {
+					oSplitApp.backDetail();
+				},
+				content: [
+					new sap.m.Label({
+						text: "this is Detail 1"
+					}),
+					oScrollToElementInput2,
+					new sap.m.Label({
+						text: "this is Detail 2"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 3"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 4"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 5"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 6"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 7"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 8"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 9"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 10"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 11"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 12"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 13"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 14"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 15"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 16"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 17"
+					}),
+					new sap.m.Input(),
+					new sap.m.Label({
+						text: "this is Detail 18"
+					}),
+					oScrollToElementInput,
+					new sap.m.Label({
+						text: "this is Detail 19"
+					}),
+					new sap.m.Input()
+				],
+				subHeader: new sap.m.Bar({
+					contentMiddle: []
+				}),
+				footer: new sap.m.Bar({
+					id: "detai2l-footer",
+					contentMiddle: [
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
 						})
+					]
+				})
+			}).addStyleClass("sapUiStdPage");
+
+			//create first master page
+
+			var oMasterPage = new sap.m.Page("master", {
+				title: "Master",
+				icon: "images/SAPUI5.jpg",
+				content: [
+					new sap.m.List({
+						items: [
+							new sap.m.StandardListItem({
+								title: "To Master 2",
+								type: "Navigation",
+								press: function() {
+									oSplitApp.toMaster("master2");
+								}
+							})
+						]
+					})
+				],
+				footer: new sap.m.Bar({
+					id: "master-footer",
+					contentMiddle: [
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						})
+					]
+				})
 			});
-	//create second master page
-	var oMasterPage2 = new sap.m.Page(
-			"master2",
-			{
-				title : "Master 2",
-				showNavButton : true,
-				navButtonPress : function() {
+
+			var oButtonToLast = new sap.m.Button({
+				text: "Scroll to last input",
+				press: function() {
+					oDetailPage2.scrollToElement( document.getElementById("oScrollToElementInput"), 1000 );
+				}
+			});
+
+			var oButtonToFirst = new sap.m.Button({
+				text: "Scroll to first input",
+				press: function() {
+					oDetailPage2.scrollToElement( document.getElementById("oScrollToElementInput2"), 1000 );
+				}
+			});
+
+			//create second master page
+			var oMasterPage2 = new sap.m.Page("master2", {
+				title: "Master 2",
+				showNavButton: true,
+				navButtonPress: function() {
 					oSplitApp.backMaster();
 				},
 				icon: "images/SAPUI5.jpg",
-				content : [ new sap.m.List({
-					mode: jQuery.device.is.phone ? sap.m.ListMode.None : sap.m.ListMode.SingleSelectMaster,
-					select: function(oEv) {
-						if(oEv.getParameter("listItem").getId() == "listDetail2") {
-							oSplitApp.toDetail("detail2");
-						}else {
-							oSplitApp.toDetail("detail");
-						}
-					},
-					items : [ 
-						new sap.m.StandardListItem("listDetail",{
-							title : "To Detail 1",
-							type: sap.m.ListType.Active,
-							press: function(oEv){
+				content: [
+					new sap.m.List({
+						mode: jQuery.device.is.phone ? sap.m.ListMode.None : sap.m.ListMode.SingleSelectMaster,
+						select: function(oEv) {
+							if (oEv.getParameter("listItem").getId() == "listDetail2") {
+								oMasterPage2.addContent(oButtonToLast);
+								oMasterPage2.addContent(oButtonToFirst);
+
+								oSplitApp.toDetail("detail2");
+							} else {
+								oMasterPage2.removeContent(oButtonToLast);
+								oMasterPage2.removeContent(oButtonToFirst);
+
 								oSplitApp.toDetail("detail");
 							}
+						},
+						items: [
+							new sap.m.StandardListItem("listDetail", {
+								title: "To Detail 1",
+								type: sap.m.ListType.Active,
+								press: function(oEv) {
+									oSplitApp.toDetail("detail");
+								}
+							}),
+							new sap.m.StandardListItem("listDetail2", {
+								title: "To Detail 2",
+								type: sap.m.ListType.Active,
+								press: function(oEv) {
+									oSplitApp.toDetail("detail2");
+								}
+							})
+						]
+					})
+				],
+				footer: new sap.m.Bar({
+					id: "master2-footer",
+					contentMiddle: [
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
 						}),
-						new sap.m.StandardListItem("listDetail2",{
-							title : "To Detail 2",
-							type: sap.m.ListType.Active,
-							press: function(oEv){
-								oSplitApp.toDetail("detail2");
-							}
-						})]
-				})],
-				footer : new sap.m.Bar(
-						{
-							id : 'master2-footer',
-							contentMiddle : [
-									new sap.m.Button (
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}),
-									new sap.m.Button(
-											{
-												icon : "images/iconCompetitors.png"
-											}) ]
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
+						}),
+						new sap.m.Button({
+							icon: "images/iconCompetitors.png"
 						})
+					]
+				})
 			});
-	
-	
-	//create SplitApp()
-	var oSplitApp = new sap.m.SplitApp({
-		detailPages: [oDetailPage, oDetailDetailPage, oDetailPage2],
-		masterPages: [oMasterPage, oMasterPage2],
-		initialDetail: "detail",
-		initialMaster: "master",
-		afterMasterOpen: function(){
-			jQuery.sap.log.info("master is opened");
-		},
-		afterMasterClose: function(){
-			jQuery.sap.log.info("master is closed");
-		}
-	});
 
-	if(jQuery.device.is.tablet || jQuery.device.is.desktop){
-		oSplitApp.setDefaultTransitionNameDetail("fade");	
-	}
+			//create SplitApp()
+			var oSplitApp = new sap.m.SplitApp({
+				detailPages: [oDetailPage, oDetailDetailPage, oDetailPage2],
+				masterPages: [oMasterPage, oMasterPage2],
+				initialDetail: "detail",
+				initialMaster: "master",
+				afterMasterOpen: function() {
+					jQuery.sap.log.info("master is opened");
+				},
+				afterMasterClose: function() {
+					jQuery.sap.log.info("master is closed");
+				}
+			});
 
-	oSplitApp.placeAt("body");
-</script>
-</head>
-<body id="body" class="sapUiBody">
-</body>
+			if (sap.ui.Device.system.tablet  || sap.ui.Device.system.desktop) {
+				oSplitApp.setDefaultTransitionNameDetail("fade");
+			}
+
+			oSplitApp.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
 </html>

@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * Attach event-handler <code>fnFunction</code> to the 'change' event of this <code>sap.ui.model.Model</code>.<br/>
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
-	 * @protected
+	 * @public
 	 */
 	Binding.prototype.attachChange = function(fnFunction, oListener) {
 		if (!this.hasListeners("change")) {
@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * Detach event-handler <code>fnFunction</code> from the 'change' event of this <code>sap.ui.model.Model</code>.<br/>
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
-	 * @protected
+	 * @public
 	 */
 	Binding.prototype.detachChange = function(fnFunction, oListener) {
 		this.detachEvent("change", fnFunction, oListener);

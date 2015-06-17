@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>QUnit page for sap.m.QuickView Page</title>
+	<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript" data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" type="text/css" media="screen"
+		  href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript">
+
+		sinon.config.useFakeTimers = true;
+
+		//create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		// JSON sample data
+		var mData = {
+			header  : "Employee Info",
+			title  : "John Doe",
+			titleActive: false,
+			icon  : "sap-icon://person-placeholder",
+			description: "Department Manager1",
+			groups: [
+				{
+					heading: "Job",
+					elements: [
+						{
+							label: "Company",
+							value: "SAP AG",
+							url: "http://sap.com",
+							elementType: "link"
+						},
+						{
+							label: "Company address",
+							value: "Sofia, Boris III, 136A"
+						}
+					]
+				},
+				{
+					heading: "Other",
+					elements: [
+						{
+							label: "Email",
+							value: "john.dow@sap.com",
+							url: "john.dow@sap.com",
+							emailSubject: 'Subject',
+							elementType: "email"
+						},
+						{
+							label: "Phone",
+							value: "+359 888 888 888",
+							elementType: "phone"
+						},
+						{
+							label: "Phone",
+							value: "+359 888 888 888",
+							elementType: "phone",
+							visible : false
+						}
+					]
+				}
+
+			]
+
+		};
+
+		// set the data for the model
+		oModel.setData(mData);
+
+		sap.ui.getCore().setModel(oModel);
+
+		// create and add app
+		var oApp = new sap.m.App("myApp", {initialPage: "quickViewPage"});
+		oApp.placeAt("qunit-fixture");
+
+		// create and add a page with icon tab bar
+		var oPage = new sap.m.Page("quickViewPage", {
+			title: "Quick View Page"
+		});
+		oApp.addPage(oPage);
+
+		function getQuickViewPage() {
+			return new sap.m.QuickViewPage({
+				header: "{/header}",
+				title: "{/title}",
+				icon: "{/icon}",
+				description: "{/description}",
+				groups: {
+					path: '/groups',
+					template: new sap.m.QuickViewGroup({
+						heading: '{heading}',
+						elements: {
+							path: 'elements',
+							template: new sap.m.QuickViewGroupElement({
+								label: "{label}",
+								value: "{value}",
+								url: "{url}",
+								type: "{elementType}",
+								emailSubject: '{emailSubject}',
+								visible: '{visible}'
+							})
+						}
+					})
+				}
+			});
+		}
+
+		QUnit.module("Data binding", {
+			setup: function () {
+				this.oQuickViewPage = getQuickViewPage();
+
+				this.oQuickViewPage.setModel(oModel);
+				oPage.addContent(this.oQuickViewPage);
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oQuickViewPage.destroy();
+				this.oQuickViewPage = null;
+			}
+		});
+
+		QUnit.test("When testing the binding of the control", function (assert) {
+			// Act
+			var fnSpyCreatePageContent = sinon.spy(this.oQuickViewPage, "_createPageContent");
+			var fnSpyCreateForm = sinon.spy(this.oQuickViewPage, "_createForm");
+			var fnSpyGetPage = sinon.spy(this.oQuickViewPage, "_getPageHeaderContent");
+			var fnSpyRenderGroup = sinon.spy(this.oQuickViewPage, "_renderGroup");
+
+			this.oQuickViewPage.setModel(oModel);
+			oPage.addContent(this.oQuickViewPage);
+			sap.ui.getCore().applyChanges();
+
+
+			// Assert
+			assert.strictEqual(fnSpyCreatePageContent.callCount, 1, "_createPageContent() should be called");
+			assert.strictEqual(fnSpyCreateForm.callCount, 1, "_createForm() should be called");
+			assert.strictEqual(fnSpyGetPage.callCount, 1, "__getPageHeaderContent should be called");
+			assert.strictEqual(fnSpyRenderGroup.callCount, 2, "_renderGroup() should be called twice");
+		});
+
+		QUnit.test("Page properties", function (assert) {
+			assert.strictEqual(this.oQuickViewPage.getHeader(), "Employee Info", "Header should be set correctly");
+			assert.strictEqual(this.oQuickViewPage.getTitle(), "John Doe", "Title should be set correctly");
+			assert.strictEqual(this.oQuickViewPage.getDescription(), "Department Manager1", "Description should be set correctly");
+			assert.strictEqual(this.oQuickViewPage.getIcon(), "sap-icon://person-placeholder", "Icon should be set correctly");
+		});
+
+		QUnit.test("Group element properties", function (assert) {
+			var oGroup = this.oQuickViewPage.getGroups()[1];
+			var oElement = oGroup.getElements()[0];
+
+			assert.strictEqual(oElement.getLabel(), "Email", "Label should be set correctly");
+			assert.strictEqual(oElement.getValue(), "john.dow@sap.com", "Value should be set correctly");
+			assert.strictEqual(oElement.getUrl(), "john.dow@sap.com", "Url should be set correctly");
+			assert.strictEqual(oElement.getEmailSubject(), "Subject", "Email Subject should be set correctly");
+
+			oElement = oGroup.getElements()[1];
+			assert.strictEqual(oElement.getValue(), "+359 888 888 888", "Phone value should be set correctly");
+		});
+
+		QUnit.test("Element is not visible", function (assert) {
+			var $phoneLinks = this.oQuickViewPage.$().find('a[href*="tel"]');
+			assert.strictEqual($phoneLinks.length, 1, "Second phone is not visible");
+		});
+
+		QUnit.module("Rendering", {
+			setup: function () {
+				this.oQuickViewPage = getQuickViewPage();
+
+				this.oQuickViewPage.setModel(oModel);
+				oPage.addContent(this.oQuickViewPage);
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oQuickViewPage.destroy();
+				this.oQuickViewPage = null;
+			}
+		});
+
+		QUnit.test("Testing if the QuickView is created", function (assert) {
+			assert.strictEqual(this.oQuickViewPage.$().length, 1, "should render");
+		});
+
+
+
+	</script>
+</head>
+<body class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

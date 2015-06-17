@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				"sap.ui.viewModification": {
 					"sap.ui.test.view.Main": {
 						"myControlId": {
-							"text": "{i18n_custom>mytext}"
+							"text": "{{mytext}}"
 						}
 					}
 				}

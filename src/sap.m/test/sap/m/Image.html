@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Image - sap.m</title>
 		<!--  Do not use this test page as copy&paste template, as it is rather a web page than an App;
 		      better make use of either the App control or jQuery.sap.initMobile() to set up the viewport etc. meta tags. -->
@@ -12,19 +12,19 @@
 		<!-- Set the status bar style on Apple devices -->
 		<meta name="apple-mobile-web-app-status-bar-style" content="default">
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
-				
+
 		<script type="text/javascript">
 			var oImage = new sap.m.Image({
 				src: "images/SAPLogo.jpg",
 				alt: "test image",
 				decorative: false
 			});
-			
+
 			var oImageWithoutDensityAware = new sap.m.Image({
 				src: "images/SAPLogo.jpg",
 				alt: "test image",
@@ -33,12 +33,12 @@
 				height: "74px",
 				densityAware: false
 			});
-			
-			var sSrc3 = "images/SAPUI5.png", 
+
+			var sSrc3 = "images/SAPUI5.png",
 				i3 = new sap.m.Image("i3", {
 					src: sSrc3
 				});
-			
+
 			var oImage1 = new sap.m.Image({
 				src: "images/SAPLogo.jpg",
 				alt: "test image",
@@ -48,8 +48,7 @@
 				}
 			});
 			oImage1.addStyleClass("img1");
-			
-			
+
 			var oImageButton = new sap.m.Image({
 				src: "images/action.png",
 				activeSrc: "images/action_pressed.png",
@@ -58,7 +57,7 @@
 					jQuery.sap.log.info("!!!oImageButton pressed!!!");
 				}
 			});
-			
+
 			var oImageButton1 = new sap.m.Image({
 				src: "images/action.png",
 				decorative: false,
@@ -68,7 +67,7 @@
 				}
 			});
 			oImageButton1.setActiveSrc("images/action_pressed.png");
-			
+
 			var oImageInvalid = new sap.m.Image({
 				src:"invalid_src.png",
 				press: function(){
@@ -79,24 +78,33 @@
 				width: "48px",
 				height: "48px"
 			});
-			
+
 			var oBigImage = new sap.m.Image({
 				src: "images/balloonImageActive.png",
 				activeSrc: "images/balloonImageActiveActive.png"
 			});
-			
+
 			oBigImage.placeAt("imageArea");
-			
+
 			setTimeout(function(){
 				oImageInvalid.setSrc("images/action.png");
 			}, 3000);
-			
-			
+
+
 			var oDataImage = new sap.m.Image({
 				src: "data:image/gif;base64,R0lGODlhHwAeANU/AO1SReW2N+14Kf3YACOAulrAWtTW02Gh1uPIx/BkVFXKXu3t7bjZuoi9R7nV8fbOG8fBulSlWvh8ZlW0WvTu0aG8QqK92sGkdcWjoPr5+WyrUUaiV7q0oHWs2vrTCYOeiJ94QulCOYK34ceNifHEJfLWRuLf3tomHUWUzeQxLf/cDc1+dtzCOqKzo83o92mxbPSSjP/ohspCL2K1WG7Ga+k5NIGfWcbKKcu5ceTPBvDKAJfRkIyvjVvEXeV4af///yH5BAEAAD8ALAAAAAAfAB4AAAb/wJ9wSPwtDBCMEmJYFJ/QXwYx8kmuWIlvBMlEoaZVIptNmBMrw5eIObvfZkACgFn/MIA8/J3vj74jfYJycYMAIYh/TxCIiIaGjYg1NRBFCzYhNZGbk42TNSmhmiZELQogKZ+SNQkwrhICsbKzF0MLLwozMqmTKQAICy7CCxQlOg8PHh4DAyoPTj8QPQWnoikJCw4i29sOGSXKzOIqlT88CgXTuykhJg4HHdwdBxYUKuLjOFIv09Q2JydguIDXoaDBAw5i4GOmgkWGW/2ogTiBQASKAxgzHkAhgsLCZs8WzIjYQ4MMBBs1Zrxo7+MDEyILyJR5CiWKmzhxHmi58OWtzJkye8xA0IFATpwEOnj8SGJBhhdAZ+5wQMBozqoJPw5waC5qUANFq4pNylOcBxX6ok3wWoCGAQtjCVgwUWKhsgflfrKlweCtBQsGGFT46OFBAGg/WkxYu3eH4xcRcuC7+4ADkQURFrOduXiw2cKGEQuBkJkx2wkzlg1QVpgEiXJFWpQ2DXTCjdWUXVuOInuxb84NKD9wTWL3Fw4bIsz2zQIZcRIBjK8x8SG58ggbKjyHfkGNHSIGqm9IHqB8gAvdvXx/cgQCh/dMREMJAgA7",
 				activeSrc: "data:image/gif;base64,R0lGODlhHAAeANU/AJ+go4aZtKK2111cXT2g1thLFqfN5DCBuliLwPz6+YOf0e3s7NHR0bS0tODg35aly3l5eIC21TEyMmqZzouKjIKJnMjJyb3c7j2t20K452CBrnONuy6L2UlNTyBZpKSwvDWVzD94riCJxVO16tLd5vLx8UJ2uSFlp1xviefl5BtztNfX1r28uqysrMHAwFOx2tzb2zOm5W1tbfL2+vb19MXR4Hes55tELxdTmtjFvLfC3WGVypSVmNvm9IV+gf///yH5BAEAAD8ALAAAAAAcAB4AAAb/wJ9wOCxZGJYEccls/iwWWCPlrDJpLVeLAVtxS9amg7FIJBap1GKxYq3CwkUyYaHIBviBjOfSLqxdCQ0yMhAUFBUVFBAyHRAAPAxODA4LPjKIAQ+bDwoBFTx3EBAWTDBRMj48Gw8CNToCsQIPoBR6Mm9DCVuYq5sKrpybAhqgeBBKQg0sPhQAGwrR0Z2eAZ4+Gjw8ei1CNBQ8EC0a0tETNQob6hQ3GgEaLRADEGDMjwE7ChP7Ezs9OhoQ+CiAQt2GAC0G+GCRYJGPBgER7Nixzx+JCQMHINAQQoOGBqN4OGDE40PHgBMNCEAQYuCNk5o2NNjGwwIjAAE6hghxQMWE/xA4bhS48YFEDYPuElJocKlFzhMeTpzYYUDFhxw3Ohi4gAAqjhMBWMxrsKhBAA/qTBiYQSLCAhYoQEQQAaKuChUBXOhxEa5BCxOsTCA4MGFBAxQiIlx4QYAAiAMHPojFxcNHixYHEJiAfKAGRMUvMITG8PiAlg4yaGjjs4MuCBECWoRIPAMEAQy4X09YQcHRjwYAZDD4UFcugAPFLzTOkAGDYwsrBnRo8MOSjAYwIjQOYLsxCA4cCDBvHCEFAAkdwPwAIA9GdtsjcGPgYGMCB+YxyjPoIIFHkTs+LOBABMwVGJ4N92VQXgoDoEcDERZ00AEFC5RQQwQjFBhDhhHUQFaDAw1KIMkSDfAnXAIlkGDAigaQQAINNLDAnwTUNVGiBBJQYEEJZphBQwqD4DidFQzIgKME84Bjh4QS4gJHCUEK2UEeYz0IhxAlMNACBT5A0MwWVjIRBAA7"
 			});
-			
+
+			var oBGImage1 = new sap.m.Image({
+				src: "images/SAPLogo.jpg",
+				width: "36px",
+				height: "46px",
+				mode: sap.m.ImageMode.Background,
+				backgroundSize: "150px 74px",
+				backgroundPosition: "-74px -14px"
+			}).placeAt("uiArea9");
+
 			oImage.placeAt("uiArea1");
 			oImageWithoutDensityAware.placeAt("uiArea2");
 			i3.placeAt("uiArea3");
@@ -106,66 +114,70 @@
 			oImageInvalid.placeAt("uiArea7");
 			oDataImage.placeAt("uiArea8");
 		</script>
-		
+
 		<style>
-			span{
+			div.des{
 				vertical-align: top;
 				-webkit-box-flex: 1;
 				display: block;
 				margin-left: 10px;
 			}
-			
-			.uiArea{
+
+			dev.uiArea{
 				-webkit-box-flex: 0;
 				margin-left: 5px;
 			}
-			div{
+			div.row{
 				display: -webkit-box;
 				-webkit-box-orient: horizontal;
-				-webkit-box-pack: start; 				
+				-webkit-box-pack: start;
 			}
-			
+
 			.img1{
 				width: 50px;
 			}
 		</style>
 	</head>
 	<body id="body" class="sapUiBody">
-		<div id="imageArea"></div>
+		<div id="imageArea" class="row"></div>
 		<h3>
 			If this page runs in a high density device, you could see the difference between the two images.
 		</h3>
-		<div>
-			<span id="uiArea1" class="uiArea"></span>
-			<span>This image is density aware, it loads the high resolution version when it runs in a high density device.</span>
+		<div class="row">
+			<div id="uiArea1" class="uiArea"></div>
+			<div class="des">This image is density aware, it loads the high resolution version when it runs in a high density device.</div>
 		</div>
-		<div>
-			<span id="uiArea2" class="uiArea"></span>
-			<span>This image is NOT density aware, it always loads the default version no matter what device it runs in.</span>
+		<div class="row">
+			<div id="uiArea2" class="uiArea"></div>
+			<div class="des">This image is NOT density aware, it always loads the default version no matter what device it runs in.</div>
 		</div>
-		<div>
-			<span id="uiArea3" class="uiArea"></span>
-			<span>There's only one version of this image available, so the high density device tries first to load the high resolution version and then falls back to this version.</span>
+		<div class="row">
+			<div id="uiArea3" class="uiArea"></div>
+			<div class="des">There's only one version of this image available, so the high density device tries first to load the high resolution version and then falls back to this version.</div>
 		</div>
-		<div>
-			<span id="uiArea4" class="uiArea"></span>
-			<span>This image has a width value that is set from the css, and it will not resize in high density device</span>
+		<div class="row">
+			<div id="uiArea4" class="uiArea"></div>
+			<div class="des">This image has a width value that is set from the css, and it will not resize in high density device</div>
 		</div>
-		<div>
-			<span id="uiArea5" class="uiArea"></span>
-			<span>This image has a active state, when you press this image the src will be changed to the activeSrc property</span>
+		<div class="row">
+			<div id="uiArea5" class="uiArea"></div>
+			<div class="des">This image has a active state, when you press this image the src will be changed to the activeSrc property</div>
 		</div>
-		<div>
-			<span id="uiArea6" class="uiArea"></span>
-			<span>This image has a active state but it's not density aware, when you press this image the src will be changed to the activeSrc property</span>
+		<div class="row">
+			<div id="uiArea6" class="uiArea"></div>
+			<div class="des">This image has a active state but it's not density aware, when you press this image the src will be changed to the activeSrc property</div>
 		</div>
-		<div>
-			<span id="uiArea7" class="uiArea"></span>
-			<span>This image is set first to a non valid src but the space is reserved, and the src will be changed to a valid image source in 3 seconds.</span>
+		<div class="row">
+			<div id="uiArea7" class="uiArea"></div>
+			<div class="des">This image is set first to a non valid src but the space is reserved, and the src will be changed to a valid image source in 3 seconds.</div>
 		</div>
-		<div>
-			<span id="uiArea8" class="uiArea"></span>
-			<span>The src property of this image is in data uri format, it won't load higher density version in high density device.</span>
+		<div class="row">
+			<div id="uiArea8" class="uiArea"></div>
+			<div class="des">The src property of this image is in data uri format, it won't load higher density version in high density device.</div>
+		</div>
+		<div class="row">
+			<div id="uiArea9" class="uiArea"></div>
+			<div class="des">The SAP Logo image is set as background of the dom element. The letter 'P' is extracted from the logo by using the backgroundPosition. In order to display the high density correctly, the backgroundSize property needs to be set with the dimension of normal density version.</div>
 		</div>
 	</body>
 </html>

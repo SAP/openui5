@@ -10,6 +10,10 @@
 	display: inline-block;
 }
 
+.sapUiCalDateInt{
+	box-sizing: border-box;
+}
+
 /* calendar should have only a border if on popup */
 .sapUiCal.sapUiShd{
 	border: 0.0625rem solid @sapUiFieldBorderColor;
@@ -141,6 +145,11 @@
 	width: 12.5%;
 }
 
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalWH,
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalDay{
+	width: 14.2857%;
+}
+
 .sapUiCalDayNum{
 	width: 100%;
 	height: 100%;
@@ -154,6 +163,7 @@
 	color: @sapUiLightText;
 	font-size: @sapUiFontSmallSize;
 	cursor: default;
+	pointer-events: none;
 }
 
 .sapUiCalWH{
@@ -179,6 +189,10 @@
 	margin-left: 12.5%;
 	position: relative;
 	overflow: visible;
+}
+
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalFirstWDay{
+	margin-left: 0;
 }
 
 .sapUiCalDayOtherMonth{

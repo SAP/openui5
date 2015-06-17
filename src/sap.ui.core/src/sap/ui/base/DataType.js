@@ -41,6 +41,21 @@ sap.ui.define(['jquery.sap.global'],
 	};
 	
 	/**
+	 * The primitive base type of this type or the primitive type itself.
+	 * @return {sap.ui.base.DataType} the primitive type
+	 * @public
+	 */
+	DataType.prototype.getPrimitiveType = function() {
+		/*eslint-disable consistent-this*/
+		var oType = this;
+		/*eslint-enable consistent-this*/
+		while (oType.getBaseType()) {
+			oType = oType.getBaseType();
+		}
+		return oType;
+	};
+	
+	/**
 	 * The component type of this type or undefined if this is not an array.
 	 * @return {sap.ui.base.DataType} component type or undefined
 	 * @public
@@ -133,35 +148,35 @@ sap.ui.define(['jquery.sap.global'],
 	
 	(function() {
 	
-		function createType(name, s, base) {
+		function createType(sName, mSettings, oBase) {
 	
-			jQuery.sap.assert(typeof name === "string" && !!name, "DataType.<createType>: type name must be a string");
-			jQuery.sap.assert(!base || base instanceof DataType, "DataType.<createType>: base type must be empty or a DataType");
-			s = s || {};
-			base = base || DataType.prototype;
+			jQuery.sap.assert(typeof sName === "string" && !!sName, "DataType.<createType>: type name must be a string");
+			jQuery.sap.assert(!oBase || oBase instanceof DataType, "DataType.<createType>: base type must be empty or a DataType");
+			mSettings = mSettings || {};
 	
 			// create a new type object with the base type as prototype
-			var type = jQuery.sap.newObject(base);
+			var oBaseObject = oBase || DataType.prototype;
+			var oType = jQuery.sap.newObject(oBaseObject);
 	
 			// getter for the name
-			type.getName = function() {
-				return name;
+			oType.getName = function() {
+				return sName;
 			};
 	
 			// if a default value is specified, create a getter for it
-			if ( s.hasOwnProperty("defaultValue") ) {
-				var vDefault = s.defaultValue;
-				type.getDefaultValue = function() {
+			if ( mSettings.hasOwnProperty("defaultValue") ) {
+				var vDefault = mSettings.defaultValue;
+				oType.getDefaultValue = function() {
 					return vDefault;
 				};
 			}
 	
 			// if a validator is specified either chain it with the base type validator
 			// or set it if no base validator exists
-			if ( s.hasOwnProperty("isValid") ) {
-				var fnIsValid = s.isValid;
-				type.isValid = base.isValid ? function(vValue) {
-					if ( !base.isValid(vValue) ) {
+			if ( mSettings.hasOwnProperty("isValid") ) {
+				var fnIsValid = mSettings.isValid;
+				oType.isValid = oBaseObject.isValid ? function(vValue) {
+					if ( !oBaseObject.isValid(vValue) ) {
 						return false;
 					}
 					return fnIsValid(vValue);
@@ -169,31 +184,36 @@ sap.ui.define(['jquery.sap.global'],
 			}
 	
 			// not an array type
-			type.isArrayType = function() {
+			oType.isArrayType = function() {
 				return false;
 			};
 			
-			return type;
+			// return the base type
+			oType.getBaseType = function() {
+				return oBase;
+			};
+			
+			return oType;
 		}
 	
 		function createArrayType(componentType) {
 			jQuery.sap.assert(componentType instanceof DataType, "DataType.<createArrayType>: componentType must be a DataType");
 	
 			// create a new type object with the base type as prototype
-			var type = jQuery.sap.newObject(DataType.prototype);
+			var oType = jQuery.sap.newObject(DataType.prototype);
 	
 			// getter for the name
-			type.getName = function() {
+			oType.getName = function() {
 				return componentType.getName() + "[]";
 			};
 	
 			// getter for component type
-			type.getComponentType = function() {
+			oType.getComponentType = function() {
 				return componentType;
 			};
 	
 			// array validator
-			type.isValid = function(aValues) {
+			oType.isValid = function(aValues) {
 				if (aValues === null) {
 					return true;
 				}
@@ -209,7 +229,7 @@ sap.ui.define(['jquery.sap.global'],
 			};
 	
 			// array parser
-			type.parseValue = function(sValue) {
+			oType.parseValue = function(sValue) {
 				var aValues = sValue.split(",");
 				for (var i = 0; i < aValues.length; i++) {
 					aValues[i] = componentType.parseValue(aValues[i]);
@@ -218,14 +238,67 @@ sap.ui.define(['jquery.sap.global'],
 			};
 	
 			// is an array type
-			type.isArrayType = function() {
+			oType.isArrayType = function() {
 				return true;
 			};
 	
-			return type;
+			// return the base type
+			oType.getBaseType = function() {
+				return mHiddenTypes.array;
+			};
+			
+			return oType;
 		}
 	
-		var PREDEFINED_TYPES = {
+		function createEnumType(sTypeName, oEnum) {
+			
+			var mValues = {},
+				sDefaultValue;
+			for (var sName in oEnum) {
+				var sValue = oEnum[sName];
+				// the first entry will become the default value
+				if (!sDefaultValue) {
+					sDefaultValue = sValue;
+				}
+				if ( typeof sValue !== "string") {
+					throw new Error("Value " + sValue + " for enum type " + sTypeName + " is not a string"); 
+				}
+				// if there are multiple entries with the same value, the one where name
+				// and value are matching is taken
+				if (!mValues.hasOwnProperty(sValue) || sName == sValue) {
+					mValues[sValue] = sName;
+				}
+			}
+			
+			var oType = jQuery.sap.newObject(sap.ui.base.DataType.prototype);
+
+			// getter for the name
+			oType.getName = function() { return sTypeName; };
+
+			// enum validator
+			oType.isValid = function(v) {
+				return typeof v === "string" && mValues.hasOwnProperty(v);
+			};
+
+			// enum parser
+			oType.parseValue = function(sValue) {
+				return oEnum[sValue];
+			};
+
+			// default value
+			oType.getDefaultValue = function() {
+				return sDefaultValue;
+			};
+
+			// return the base type
+			oType.getBaseType = function() {
+				return mTypes.string;
+			};
+			
+			return oType;
+		}
+
+		var mTypes = {
 	
 			"any" :
 					createType("any", {
@@ -274,6 +347,18 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				})
 		};
+		
+		// Array type is not part of public types to avoid direct usage as property type
+		var mHiddenTypes = {
+
+			"array" :
+				createType("array", {
+					defaultValue : [],
+					isValid : function(vValue) {
+						return jQuery.isArray(vValue);
+					}
+				})
+		};
 	
 		/**
 		 * Returns the type object for the type with the given name.
@@ -283,13 +368,27 @@ sap.ui.define(['jquery.sap.global'],
 		 * @public
 		 */
 		DataType.getType = function(sTypeName) {
-			if (sTypeName.indexOf("[]") > 0) {
-				var sComponentTypeName = sTypeName.substr(0, sTypeName.length - 2),
-					oComponentType = this.getType(sComponentTypeName);
-				return oComponentType && createArrayType(oComponentType);
-			} else {
-				return PREDEFINED_TYPES[sTypeName] || jQuery.sap.getObject(sTypeName);
+			var oType = mTypes[sTypeName];
+			if ( !oType ) {
+				// check for array types
+				if (sTypeName.indexOf("[]") > 0) {
+					var sComponentTypeName = sTypeName.substr(0, sTypeName.length - 2),
+						oComponentType = this.getType(sComponentTypeName);
+					oType = oComponentType && createArrayType(oComponentType);
+					if ( oType ) {
+						mTypes[sTypeName] = oType;
+					}
+					return oType;
+				} else {
+					oType = jQuery.sap.getObject(sTypeName);
+					if ( oType instanceof sap.ui.base.DataType ) {
+						mTypes[sTypeName] = oType;
+					} else if ( jQuery.isPlainObject(oType) ) {
+						oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
+					}
+				}
 			}
+			return oType;
 		};
 	
 		/**

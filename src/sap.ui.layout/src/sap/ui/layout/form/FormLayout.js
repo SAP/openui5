@@ -844,6 +844,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 
 		};
 
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * In this basic FormLayout each FormContainer has it's own DOM.
+		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		FormLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
+
+			if (this.getDomRef()) {
+				return jQuery.sap.domById(oContainer.getId());
+			}else {
+				return null;
+			}
+
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * In this basic FormLayout each FormElement has it's own DOM.
+		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		FormLayout.prototype.getElementRenderedDomRef = function(oElement) {
+
+			if (this.getDomRef()) {
+				return jQuery.sap.domById(oElement.getId());
+			}else {
+				return null;
+			}
+
+		};
 
 	}());
 

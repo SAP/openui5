@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.ui.commons.Toolbar
+  Author: d046011
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+	<title>Test Page Keyboard Navigation for sap.ui.commons.Toolbar</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script type="text/javascript">
+
+		// Please bare in mind that keyboard navigation MUST NOT be debuged via dev tool console, because once the focus goes into the debugger
+		// it get lost from the app. Use console.log instead.
+		// During text execution switching focus outside the browser may cause tests to fail.
+		// ==================================================
+		// test fixture for control properties and events
+		// ==================================================
+		var bVisible = true,
+				iWidth = 300,
+				sWidth = iWidth + "px",
+				oDesign = sap.ui.commons.ToolbarDesign.Flat,
+				bStandalone = true;
+
+
+		var sToolbarId = "Toolbar";
+		var oToolbar = new sap.ui.commons.Toolbar(sToolbarId, {
+			visible: bVisible,
+			width: sWidth,
+			design: oDesign,
+			standalone: bStandalone
+		});
+
+		oToolbar.placeAt("content");
+
+		var oCtrl;
+		function initToolbar() {
+			oCtrl.setVisible(bVisible);
+			oCtrl.setWidth(sWidth);
+			oCtrl.setDesign(oDesign);
+			oCtrl.setStandalone(bStandalone);
+			oCtrl.destroyItems();
+			oCtrl.destroyRightItems();// because the same control is used again instead of creating a new Toolbar for each test
+			sap.ui.getCore().applyChanges();
+		}
+
+		// ==================================================
+		// async4_itemNavigation
+		// ==================================================
+
+		module("Item Navigation", {
+			beforeEach: function () {
+				oCtrl = sap.ui.getCore().getControl(sToolbarId);
+				notStrictEqual(oCtrl, null, "oCtrl must exist");
+				notStrictEqual(jQuery.sap.domById(sToolbarId), null, "Toolbar DomRef must exist");
+				initToolbar();
+			},
+			afterEach: function () {
+				oCtrl = null;
+			}
+		});
+
+		test("hidden buttons (visible=false) does not break the navigation", function (assert) {
+			var done = assert.async();
+			var oButtonA = new sap.ui.commons.Button({text: "A", width: "50px"});
+			var oButtonB = new sap.ui.commons.Button({text: "B", width: "50px", enabled: false});
+			var oButtonC = new sap.ui.commons.Button({text: "C", width: "50px", visible: false, enabled: false});
+			var oButtonD = new sap.ui.commons.Button({text: "D", width: "50px"});
+			var oButtonE = new sap.ui.commons.Button({text: "E", width: "50px", enabled: false});
+			var oButtonF = new sap.ui.commons.Button({text: "F", width: "50px"});
+			var oButtonG = new sap.ui.commons.Button({text: "G", width: "50px", visible: false});
+
+			var sOriginalWidth = jQuery("#content").css("width");
+
+			oCtrl.setWidth("400px");
+			oCtrl.addItem(oButtonA).addItem(oButtonB).addItem(oButtonC);
+			oCtrl.addRightItem(oButtonD).addRightItem(oButtonE).addRightItem(oButtonF).addRightItem(oButtonG);
+			sap.ui.getCore().applyChanges();
+
+			// Iterating through A-F buttons forth and back and check:
+			// - invisible buttons don't mess up the navigation chain
+			// - disabled buttons are part of the navigation chain
+			// - all other buttons gets focus (are part of hte navigation chain) in the expected order
+			setTimeout(function () {
+				jQuery(oCtrl.getDomRef()).focus();
+				setTimeout(function () {
+					clickRightArrow(oButtonA);
+					setTimeout(function () {
+						assertFocusedElement(oButtonB, "The focus must be on button B although it is disabled");
+						clickRightArrow(oButtonB);
+						setTimeout(function () {
+							assertFocusedElement(oButtonD, "The focus must be on button D, because C is skipped (not visible)");
+							clickRightArrow(oButtonD);
+							setTimeout(function () {
+								assertFocusedElement(oButtonE, "The focus must be on button E although it is disabled");
+								clickRightArrow(oButtonE);
+								setTimeout(function () {
+									assertFocusedElement(oButtonF, "The focus must be on button F");
+									// ---------- Going back --------
+									clickLeftArrow(oButtonF);
+									setTimeout(function () {
+										assertFocusedElement(oButtonE, "The focus must be on button E although it is disabled");
+										clickLeftArrow(oButtonE);
+										setTimeout(function () {
+											assertFocusedElement(oButtonD, "The focus must be on button D");
+											clickLeftArrow(oButtonD);
+											setTimeout(function () {
+												assertFocusedElement(oButtonB, "The focus must be on button B, because C is skipped (not visible)");
+												clickLeftArrow(oButtonB);
+												setTimeout(function () {
+													assertFocusedElement(oButtonA, "The focus must be on button A");
+													jQuery("#content").css("width", sOriginalWidth);
+													done();
+												}, 100);
+											}, 100);
+										}, 100);
+									}, 100);
+								}, 100);
+							}, 100);
+						}, 100);
+					}, 100);
+				}, 100);
+			}, 500);
+		});
+
+		test("Down arrow on overflow button opens the overflow popup", function (assert) {
+			var done = assert.async();
+			var sOriginalWidth = jQuery("#content").css("width");
+			oCtrl.setWidth("300px");
+
+			oCtrl.addItem(new sap.ui.commons.Button("testButton0", {"text": "Test", "width": "200px"}));
+			oCtrl.addItem(new sap.ui.commons.Button("testButton1", {
+				"text": "Test button into the overflow",
+				"width": "200px"
+			}));
+
+			var sOverflowButtonId = sToolbarId + "-mn";
+			clickDownArrow(sOverflowButtonId);
+			setTimeout(function () {
+				strictEqual(jQuery(getPopupDomRef()).css("visibility"), "visible", "Overflow popup should be visible");
+				jQuery("#content").css("width", sOriginalWidth);
+				done();
+			}, 100);
+		});
+
+		// BCP: 1580009795
+		test("Right item retain its tabindex attribute after visibility switch", function () {
+			var done = assert.async();
+			var oButtonRightItem = new sap.ui.commons.Button({text: 'Right Item'});
+			oCtrl.addRightItem(oButtonRightItem);
+
+			setTimeout(function () {
+				oButtonRightItem.$().focus();
+				assertFocusedElement(oButtonRightItem, "As prerequisite for the test, the right item button must have a focus.");
+				oCtrl.setVisible(false);
+				setTimeout(function () {
+					oCtrl.setVisible(true);
+					setTimeout(function () {
+						var iTabIndex = oCtrl.getRightItems()[0].$().attr("tabindex");
+						strictEqual(iTabIndex, '0', "After toggle toolbar visibility off->on, the right item must have tabindex='0'");
+						done();
+					}, 500);
+				}, 500);
+			}, 500);
+		});
+		//------------------------------------------
+		// helper functions
+		//------------------------------------------
+		function clickRightArrow(target) {
+			var oDomRef = typeof target == "string" ? document.getElementById(target) : target.getDomRef();
+			sap.ui.test.qunit.triggerKeydown(oDomRef, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		}
+		function clickLeftArrow(target) {
+			var oDomRef = typeof target == "string" ? document.getElementById(target) : target.getDomRef();
+			sap.ui.test.qunit.triggerKeydown(oDomRef, jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+		}
+		function clickDownArrow(target) {
+			var oDomRef = typeof target == "string" ? document.getElementById(target) : target.getDomRef();
+			sap.ui.test.qunit.triggerKeydown(oDomRef, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		}
+		function assertFocusedElement(oExpectedFocusedControl, sMessage) {
+			var oExpectedElement = oExpectedFocusedControl.getFocusDomRef();
+			var oActiveElement = document.activeElement;
+
+			equal("id=" + oActiveElement.id + ", text=" + oActiveElement.innerText, "id=" + oExpectedElement.id + ", text=" + oExpectedElement.innerText, sMessage);
+		}
+
+		function getPopupDomRef() {
+			var child = jQuery.sap.domById(sToolbarId + "-pu");
+			if (child) {
+				return child.parentNode;
+			} else {
+				return null;
+			}
+		}
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">QUnit page for sap.ui.commons.Toolbar</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<h2 id="qunit-userAgent"></h2>
+
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<div id="content" style="width: 100%"></div>
+
+</body>
+</html>

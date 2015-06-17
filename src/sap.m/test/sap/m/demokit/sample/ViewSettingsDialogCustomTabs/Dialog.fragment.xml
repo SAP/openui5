@@ -1,0 +1,81 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+			confirm="handleConfirm">
+		<sortItems>
+			<ViewSettingsItem text="Field 1" key="1" selected="true" />
+			<ViewSettingsItem text="Field 2" key="2" />
+			<ViewSettingsItem text="Field 3" key="3" />
+		</sortItems>
+		<groupItems>
+			<ViewSettingsItem text="Field 1" key="1" selected="true" />
+			<ViewSettingsItem text="Field 2" key="2" />
+			<ViewSettingsItem text="Field 3" key="3" />
+		</groupItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="Field1" key="1">
+				<items>
+					<ViewSettingsItem text="Value A" key="1a" />
+					<ViewSettingsItem text="Value B" key="1b" />
+					<ViewSettingsItem text="Value C" key="1c" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="Field2" key="2">
+				<items>
+					<ViewSettingsItem text="Value A" key="2a" />
+					<ViewSettingsItem text="Value B" key="2b" />
+					<ViewSettingsItem text="Value C" key="2c" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="Field3" key="3">
+				<items>
+					<ViewSettingsItem text="Value A" key="3a" />
+					<ViewSettingsItem text="Value B" key="3b" />
+					<ViewSettingsItem text="Value C" key="3c" />
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+		<customTabs>
+			<ViewSettingsCustomTab id="app-settings" icon="sap-icon://action-settings" title="Settings" tooltip="Application Settings">
+				<content>
+					<Panel height="338px">
+						<content>
+						<Label text="Theme" design="Bold" id="VSDThemeLabel"/>
+						<SegmentedButton
+								class="vsdSetting"
+								selectedButton="VSDsap_bluecrystal"
+								id="VSDThemeButtons"
+								width="100%" >
+							<Button text="High Contrast Black" id="VSDsap_hcb" />
+							<Button text="Blue Crystal" id="VSDsap_bluecrystal" />
+						</SegmentedButton>
+						<Label text="Compact Content Density" design="Bold" />
+						<SegmentedButton
+								class="vsdSetting"
+								selectedButton="VSDcompactOn"
+								id="VSDCompactModeButtons"
+								width="100%" >
+							<Button text="On" id="VSDcompactOn" />
+							<Button text="Off" id="VSDcompactOff" />
+						</SegmentedButton>
+						<Label text="Right To Left Mode" design="Bold" />
+						<SegmentedButton
+								selectedButton="VSDRTLOff"
+								id="VSDRTLButtons"
+								width="100%" >
+							<Button text="On" id="VSDRTLOn" />
+							<Button text="Off" id="VSDRTLOff" />
+						</SegmentedButton>
+						</content>
+					</Panel>
+				</content>
+			</ViewSettingsCustomTab>
+			<ViewSettingsCustomTab id="example-settings" tooltip="default icon">
+				<content>
+					<Button text="simple button example" />
+				</content>
+			</ViewSettingsCustomTab>
+		</customTabs>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

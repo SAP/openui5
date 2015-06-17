@@ -20,6 +20,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
+					"i18n": "i18n.properties",
+					"title": "{{title}}",
+					"description": "{{description}}",
 					"dataSources": {
 
 						"default": {
@@ -49,7 +52,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 
 						"annotations2": {
-							"uri": "/path/to/odata/annotations/2",
+							"uri": "path/to/local/odata/annotations/2",
 							"type": "ODataAnnotation"
 						},
 
@@ -60,6 +63,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"json-relative": {
 							"uri": "path/to/local/data.json",
+							"type": "JSON"
+						},
+
+						"json-relative-2": {
+							"uri": "../../path/to/other/data.json",
 							"type": "JSON"
 						},
 
@@ -93,7 +101,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"annotation-without-uri": {
 							"type": "ODataAnnotation"
-						}
+						},
+
+						"invalid": true
 
 					}
 				},
@@ -151,6 +161,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"json": "json",
 						"json-relative": "json-relative",
+						"json-relative-2": "json-relative-2",
 
 						"xml": "xml",
 						"xml-relative": "xml-relative",
@@ -222,7 +233,13 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 						"model-not-found": {
 							"type": "sap.ui.test.v2models.ModelNotDefined"
-						}
+						},
+						"dataSource-not-found": {
+							"dataSource": "does-not-exist"
+						},
+						"dataSource-invalid": {
+							"dataSource": "invalid"
+						},
 
 					}
 

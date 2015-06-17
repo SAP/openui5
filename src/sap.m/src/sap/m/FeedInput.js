@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			placeholder : {type : "string", group : "Appearance", defaultValue : "Post something here"},
 
 			/**
-			 * The text value of the feed input. As long as the user has not entered any text the post butoon is disabled
+			 * The text value of the feed input. As long as the user has not entered any text the post button is disabled
 			 */
 			value : {type : "string", group : "Data", defaultValue : null},
 
@@ -74,19 +74,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * Sets a new tooltip for submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this Element)
+			 * Sets a new tooltip for Submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this element)
 			 * or an instance of sap.ui.core.TooltipBase.
 			 * If a new tooltip is set, any previously set tooltip is deactivated.
 			 * The default value is set language dependent.
 			 * @since 1.28
 			 */
-			buttonTooltip : {type : "string" , altTypes : ["sap.ui.core.TooltipBase"], multiple : false, group : "Data", defaultValue : "Submit"}
+			buttonTooltip : {type : "string" , altTypes : ["sap.ui.core.TooltipBase"], multiple : false, group : "Data", defaultValue : "Submit"},
+
+			/**
+			 * Text for Picture which will be read by screenreader.
+			 * If a new ariaLabelForPicture is set, any previously set ariaLabelForPicture is deactivated.
+			 * @since 1.30
+			 */
+			ariaLabelForPicture : {type : "string", group : "Accessibility", defaultValue : null}
 		},
 
 		events : {
 
 			/**
-			 * The post event is triggered when the user has entered a value and pressed the post button. After firing this event the value is reset.
+			 * The Post event is triggered when the user has entered a value and pressed the post button. After firing this event, the value is reset.
 			 */
 			post : {
 				parameters : {
@@ -239,7 +246,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sImgId = this.getId() + '-icon',
 			mProperties = {
 				src : sIconSrc,
-				densityAware : this.getIconDensityAware()
+				alt : this.getAriaLabelForPicture(),
+				densityAware : this.getIconDensityAware(),
+				decorative : false
 			},
 			aCssClasses = ['sapMFeedInImage'];
 
@@ -247,7 +256,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		return this._oImageControl;
 	};
-
 
 	return FeedInput;
 

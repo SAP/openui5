@@ -130,14 +130,14 @@
 		}
 
 		testAllFlexBoxModes("Shrinking a toolbar should move some buttons to the overflow", function () {
-			
+
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
-						new sap.m.Button({text: "1", width: "100px"}),		
-						new sap.m.Button({text: "2", width: "100px"}),		
-						new sap.m.Button({text: "3", width: "100px"}),		
-						new sap.m.Button({text: "4", width: "100px"}),		
-						new sap.m.Button({text: "5", width: "100px"})		
+						new sap.m.Button({text: "1", width: "100px"}),
+						new sap.m.Button({text: "2", width: "100px"}),
+						new sap.m.Button({text: "3", width: "100px"}),
+						new sap.m.Button({text: "4", width: "100px"}),
+						new sap.m.Button({text: "5", width: "100px"})
 					],
 					oOverflowTB = createOverflowToolbar({
 						width: "550px"
@@ -159,29 +159,29 @@
 			var oOverflowButton = oOverflowTB._getOverflowButton();
 			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
-			// The action sheet should not be visible yet
-			var oActionSheet = oOverflowTB._getActionSheet();
-			strictEqual(oActionSheet.$().is(":visible"), false, "The action sheet is not visible");
+			// The popover should not be visible yet
+			var oPopover = oOverflowTB._getPopover();
+			strictEqual(oPopover.$().is(":visible"), false, "The popover is not visible");
 
 			// Click the overflow button
 			oOverflowButton.firePress();
 			this.clock.tick(1000);
 
-			// The action sheet should appear
-			strictEqual(oActionSheet.$().is(":visible"), true, "The action sheet is visible after clicking the overflow button");
+			// The popover should appear
+			strictEqual(oPopover.$().is(":visible"), true, "The popover is visible after clicking the overflow button");
 
-			// All buttons should be visible again, because the action sheet is open
+			// All buttons should be visible again, because the popover is open
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "After opening the action sheet, all buttons are visible once more");
+			strictEqual(iVisibleButtons, aDefaultContent.length, "After opening the popover, all buttons are visible once more");
 
 			// Restore the toolbar to the original size
 			oOverflowTB.setWidth('550px');
 			sap.ui.getCore().applyChanges();
 
-			// There should be no overflow button, no action sheet, all buttons visible again
+			// There should be no overflow button, no popover, all buttons visible again
 			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after restoring to full size");
 			this.clock.tick(1000);
-			strictEqual(oActionSheet.$().is(":visible"), false, "The action sheet is not visible after restoring to full size");
+			strictEqual(oPopover.$().is(":visible"), false, "The popover is not visible after restoring to full size");
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
 			strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
 
@@ -222,7 +222,7 @@
 			aDefaultContent[4].setWidth("100px");
 			sap.ui.getCore().applyChanges();
 
-			// There should be no overflow button, no action sheet, all buttons visible again
+			// There should be no overflow button, no popover, all buttons visible again
 			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
 			this.clock.tick(1000);
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -266,7 +266,7 @@
 			oOverflowTB.removeContent(oNewButton);
 			sap.ui.getCore().applyChanges();
 
-			// There should be no overflow button, no action sheet, all buttons visible again
+			// There should be no overflow button, no popover, all buttons visible again
 			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
 			this.clock.tick(1000);
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -472,7 +472,7 @@
 
 		});
 
-		test("[removeContent] Removing a control with removeContent works no matter if the control is in the toolbar or action sheet", function () {
+		test("[removeContent] Removing a control with removeContent works no matter if the control is in the toolbar or popover", function () {
 			var aContent,
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -489,7 +489,7 @@
 
 		});
 
-		test("[removeAllContent] Removing all controls with removeAllContent really removes all controls, even if there were some in the action sheet", function () {
+		test("[removeAllContent] Removing all controls with removeAllContent really removes all controls, even if there were some in the popover", function () {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -505,7 +505,7 @@
 
 		});
 
-		test("[destroyContent] Destroying the aggregation does not leave out any controls in the action sheet", function () {
+		test("[destroyContent] Destroying the aggregation does not leave out any controls in the popover", function () {
 			var aContent,
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -520,13 +520,13 @@
 				// There shouldn't be an overflow button and it should be visible
 				var oOverflowButton = oOverflowTB._getOverflowButton();
 				strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible");
-			
+
 				oOverflowTB.destroy();
 			}, this);
 
 		});
 
-		test("[indexOfContent] Getting all controls by index is possible no matter whether a control is in the action sheet or in the toolbar", function () {
+		test("[indexOfContent] Getting all controls by index is possible no matter whether a control is in the popover or in the toolbar", function () {
 			var aContent,
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -600,26 +600,55 @@
 				// There should be an overflow button and it should be visible
 				var oOverflowButton = oOverflowTB._getOverflowButton();
 				strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
-				
+
 				oOverflowTB.destroy();
 			}, this);
 
 		});
 
 		module("Layout");
-		test("Changing the visibility of controls in the toolbar forces a recalculation of the layout", function () {
+		test("Changing a control property that affects control size(visibility) forces a recalculation of the layout", function () {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
 
-			spy = this.spy(sap.m.OverflowToolbar.prototype, "_onContentPropertyChangedOverflowToolbar");
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
 			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
 			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
 			aContent[5].setVisible(false);
+
 			this.clock.tick(1000);
 
-			strictEqual(spy.callCount, 1, "Layout recalculation triggered");
+			var iInvalidationCountAfter = spy.callCount;
+
+			strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Changing a control property that does not affect control size(enabled) does not force a recalculation of the layout", function () {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			aContent[5].setEnabled(false);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation not triggered (_resetAndInvalidateToolbar not called)");
 
 			oOverflowTB.destroy();
 		});
@@ -643,7 +672,7 @@
 
 			oOverflowTB.destroy();
 		});
-		
+
 		test("[_doLayout] Control-size cache is invalidated only when necessary and resize handler is called always", function () {
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
@@ -659,10 +688,10 @@
 
 			var spyCache = this.spy(sap.m.OverflowToolbar.prototype, "_cacheControlsInfo");
 			var spyResizeHandler = this.spy(sap.m.OverflowToolbar.prototype, "_setControlsOverflowAndShrinking");
-			
+
 			// Change the width of the toolbar - the cache should not be invalidated
 			oOverflowTB.setWidth("251px");
-			this.clock.tick(1000);			
+			this.clock.tick(1000);
 
 			strictEqual(spyCache.callCount, 0, "When there is just a resize, the cache isn't recalculated");
 			strictEqual(spyResizeHandler.callCount, 1, "For every resize/change, _setControlsOverflowAndShrinking is called");
@@ -712,21 +741,21 @@
 					oOverflowTB = createOverflowToolbar({
 						width: "550px"
 					}, aDefaultContent);
-			
+
 
 			strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
 			strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
-			strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the action sheet");
+			strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
 			strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 labels are properly marked as toolbar only");
-			strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as action sheet only");
-			
+			strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
+
 			// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
-			
+
 			oOverflowTB.destroy();
 		});
-		
+
 		module("Resize handling");
-		
+
 		test("Handling of resizes that don't move elements around", function () {
 
 			var aDefaultContent = [
@@ -739,11 +768,11 @@
 				oOverflowTB = createOverflowToolbar({
 					width: "550px"
 				}, aDefaultContent);
-		
+
 			var spyResizeHandler = this.spy(sap.m.OverflowToolbar.prototype, "_setControlsOverflowAndShrinking");
 			var spyInvalidate = this.spy(sap.m.OverflowToolbar.prototype, "invalidate");
 			var spyFlexbox = this.spy(sap.m.OverflowToolbar.prototype, "_checkContents");
-			
+
 			// The toolbar already can fit all items, increase its size by 1px so that no rearranging will be necessary
 			oOverflowTB.setWidth("551px");
 			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
@@ -773,7 +802,7 @@
 			var spyInvalidate = this.spy(sap.m.OverflowToolbar.prototype, "invalidate");
 			var spyFlexbox = this.spy(sap.m.OverflowToolbar.prototype, "_checkContents");
 
-			// Decrease the size so that some buttons have to move the the action sheet
+			// Decrease the size so that some buttons have to move the the popover
 			oOverflowTB.setWidth("200px");
 			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);

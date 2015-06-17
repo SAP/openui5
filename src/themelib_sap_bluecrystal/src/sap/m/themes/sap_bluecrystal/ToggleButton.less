@@ -13,9 +13,9 @@
 /* Toolbar transparent context */
 .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed {
 	background-image: none;
-	background-color: @sapUiToggleBtnPressed;
-	border-color:     @sapUiToggleBtnBorder;
-	color:            @sapUiTextInverted;
+	background-color: @sapUiToggleButtonPressedBackground;
+	border-color:     @sapUiToggleButtonPressedBorderColor;
+	color:            @sapUiToggleButtonPressedTextColor;
 	text-shadow:      none;
 }
 
@@ -26,7 +26,7 @@
 /* Toolbar transparent context*/
 .sapMTB-Transparent-CTX .sapMBtnHoverable.sapMToggleBtnPressed:hover  {
 	background-image: none;
-	background-color: @sapUiToggleBtnPressedHover;
+	background-color: @sapUiToggleButtonPressedHoverBackground;
 }
 
 /* toggled - icon has to be adapted */
@@ -53,13 +53,13 @@ html[data-sap-ui-browser^="ie"] .sapMBtn:focus > .sapMToggleBtnPressed.sapMFocus
 /* hover and down on toggled button part 1*/
 
 .sapMIBar-CTX .sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
-	background-color: @sapUiToggleBtnPressedHover;
-	border-color:     @sapUiToggleBtnBorder;
-	color:            @sapUiTextInverted;
+	background-color: @sapUiToggleButtonPressedHoverBackground;
+	border-color:     @sapUiToggleButtonPressedBorderColor;
+	color:            @sapUiToggleButtonPressedTextColor;
 	text-shadow:      none;
 }
 
 /* hover and down on toggled button part 2*/
 .sapMIBar-CTX.sapMFooter-CTX .sapMToggleBtnPressed.sapMBtnActive:not(.sapMBtnDisabled) .sapMBtnIcon {
-	background-color: @sapUiToggleBtnPressedHover;
+	background-color: @sapUiToggleButtonPressedHoverBackground;
 }

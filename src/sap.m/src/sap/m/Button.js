@@ -190,6 +190,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// check if target which started the event is the same
 			if ((!!this._target) && (this._target === oEvent.target)) {
+
+				// note: on mobile, the press event should be fired after the focus is on the button
+				if (oEvent.originalEvent && oEvent.originalEvent.type === "touchend") {
+					this.focus();
+				}
+
 				this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
 				this.firePress({/* no parameters */});
 			}
@@ -337,7 +343,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				id: sImgId,
 				src : sSrc,
 				activeSrc : sActiveSrc,
-				densityAware : bIconDensityAware
+				densityAware : bIconDensityAware,
+
+				// do not use default tootip in icon as the button renders it's own tooltip
+				useIconTooltip: false
+
 			}, sap.m.Image).addStyleClass("sapMBtnCustomIcon").setParent(this, null, true);
 		}
 
@@ -384,10 +394,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oIcon = this._iconBtn;
 
 		// update or create image control
-		if (!!oIcon) {
+		if (oIcon) {
 			oIcon.setSrc(sSrc);
 		} else {
-			oIcon = IconPool.createControlByURI(sSrc, sap.m.Image);
+			oIcon = IconPool.createControlByURI({
+				id: sImgId,
+				src : sSrc,
+
+				// do not use default tootip in icon as the button renders it's own tooltip
+				useIconTooltip: false
+
+			}, sap.m.Image).setParent(this, null, true);
 		}
 
 		// add style classes to the object

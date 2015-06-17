@@ -6,8 +6,6 @@
 	position: absolute;
 	color: @sapUiText;
 	min-width: 100px;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	outline: none;
 	max-width: 100%;
@@ -36,8 +34,6 @@
 	overflow: hidden;
 	vertical-align: middle;
 	min-width: 100%;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -120,8 +116,6 @@
 }
 
 .sapMPopover > .sapMPopoverCont .sapMPage > section {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: auto;
 }
@@ -134,6 +128,84 @@
 
 .sapMPopoverWithoutBar .sapMPage footer.sapMIBar{
 	position: absolute;
+}
+
+.sapMPopoverHiddenFocusable {
+	width: 0;
+	height: 0;
+	font-size: 0;
+	line-height: 0;
+}
+
+// Adds a hidden layer below the Popover arrow to prevent closing the Popover when clicking on the arrow. In the past
+// it was working but the area was bigger you could not click near to the arrow
+.sapMPopoverArr {
+	pointer-events: none;
+}
+
+.sapMPopoverArr:before {
+	background: rgba(255, 255, 255, .01); // not fully transparent because of IE 9. Make it transparent when we drop IE 9
+	content: "";
+	display: block;
+	pointer-events: all;
+	-ms-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+	position: absolute;
+	z-index: -1;
+}
+
+.sapMPopoverArrLeft:before,
+.sapMPopoverArrRight:before {
+	margin-top: -.75rem;
+	margin-left: .35rem;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.sapMPopoverArrRight:before {
+	margin-left: -1.85rem;
+}
+
+.sapMPopoverArrUp:before,
+.sapMPopoverArrDown:before {
+	margin-top: .25rem;
+	margin-left: -.75rem;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.sapMPopoverArrDown:before {
+	margin-top: -1.85rem;
+}
+
+.sapMPopover.sapUiSizeCompact {
+	.sapMPopoverArrLeft:before,
+	.sapMPopoverArrRight:before {
+		margin-top: -.5rem;
+		margin-left: .25rem;
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.sapMPopoverArrRight:before {
+		margin-left: -1.25rem;
+	}
+
+	.sapMPopoverArrUp:before,
+	.sapMPopoverArrDown:before {
+		width: 1rem;
+		height: 1rem;
+		margin-left: -.5rem;
+	}
+
+	.sapMPopoverArrDown:before {
+		margin-top: -1.25rem;
+	}
+}
+
+.sapMPopover .sapUiRespGrid {
+	width: 100%;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */

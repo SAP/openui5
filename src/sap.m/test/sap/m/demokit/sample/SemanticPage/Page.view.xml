@@ -11,44 +11,65 @@
 	<SplitContainer>
 		<masterPages>
 			<semantic:MasterPage title="Master Page Title">
-				<semantic:semanticControls>
-
-					<semantic:SemanticSelect type="Sort"
-						change="onSemanticSelectChange"
-						items="{
+				<semantic:sort>
+					<semantic:SortSelect change="onSemanticSelectChange"
+											 items="{
 							path: '/ProductCollectionStats/Filters',
 							sorter: { path: 'Name' }
 							}">
 						<core:Item key="{type}" text="{type}" />
-					</semantic:SemanticSelect>
-
-					<semantic:SemanticButton type="Filter" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Group" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Add" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Multiselect" press="onSemanticButtonPress"/>
-
-				</semantic:semanticControls>
+					</semantic:SortSelect>
+				</semantic:sort>
+				<semantic:filter>
+					<semantic:FilterAction press="onSemanticButtonPress"/>
+				</semantic:filter>
+				<semantic:group>
+					<semantic:GroupAction  press="onSemanticButtonPress"/>
+				</semantic:group>
+				<semantic:addAction>
+					<semantic:AddAction press="onSemanticButtonPress"/>
+				</semantic:addAction>
+				<semantic:multiSelectAction>
+					<semantic:MultiSelectAction press="onMultiSelectPress"/>
+				</semantic:multiSelectAction>
 			</semantic:MasterPage>
 		</masterPages>
 		<detailPages>
-
 			<semantic:DetailPage
 					title="Detail Page Title">
-				<semantic:semanticControls>
-					<semantic:SemanticButton type="Approve" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Reject" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Forward" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Flag" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Favorite" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="SaveAsTile" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="ShareInJam" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="SendMessage" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="SendEmail" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="DiscussInJam" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="ShareInJam" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="Print" press="onSemanticButtonPress"/>
-					<semantic:SemanticButton type="MessagesIndicator"/>
-				</semantic:semanticControls>
+				<semantic:positiveAction>
+					<semantic:PositiveAction text="Positive" press="onSemanticButtonPress"/>
+				</semantic:positiveAction>
+				<semantic:negativeAction>
+					<semantic:NegativeAction text="Negative" press="onSemanticButtonPress"/>
+				</semantic:negativeAction>
+				<semantic:forwardAction>
+					<semantic:ForwardAction press="onSemanticButtonPress"/>
+				</semantic:forwardAction>
+				<semantic:flagAction>
+					<semantic:FlagAction press="onSemanticButtonPress"/>
+				</semantic:flagAction>
+				<semantic:favoriteAction>
+					<semantic:FavoriteAction press="onSemanticButtonPress"/>
+				</semantic:favoriteAction>
+				<semantic:sendEmailAction>
+					<semantic:SendEmailAction press="onSemanticButtonPress"/>
+				</semantic:sendEmailAction>
+				<semantic:sendMessageAction>
+					<semantic:SendMessageAction press="onSemanticButtonPress"/>
+				</semantic:sendMessageAction>
+				<semantic:discussInJamAction>
+					<semantic:DiscussInJamAction press="onSemanticButtonPress"/>
+				</semantic:discussInJamAction>
+				<semantic:shareInJamAction>
+					<semantic:ShareInJamAction press="onSemanticButtonPress"/>
+				</semantic:shareInJamAction>
+				<semantic:printAction>
+					<semantic:PrintAction press="onSemanticButtonPress"/>
+				</semantic:printAction>
+				<semantic:messagesIndicator>
+					<semantic:MessagesIndicator press="onMessagesButtonPress"/>
+				</semantic:messagesIndicator>
 
 				<semantic:customFooterContent>
 					<OverflowToolbarButton icon="sap-icon://settings" text="Settings" press="onPress"/>

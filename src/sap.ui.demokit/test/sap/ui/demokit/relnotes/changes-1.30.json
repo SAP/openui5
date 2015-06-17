@@ -1,0 +1,56 @@
+{
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "27b6907775bd125c08fd6d6b357272f632c13e96",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery can be referenced without a concrete version",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "f53501991b25501d7da14414abb32318c3e43f36",
+        "author": "Monika Juhasz \u003cmonika.juhasz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Icon Explorer: Added footer for favorites list in edit mode",
+        "references": []
+      },
+      {
+        "id": "453a5ed3834fc34eb13e30c9b8f51a644ebe04a3",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored App: Fixed CSS paths (Component includes)",
+        "references": []
+      },
+      {
+        "id": "efcc58e1ee1a6bf6665eaff1e28a180f48c06043",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Explored sample for asynchronous views implemented",
+        "references": []
+      },
+      {
+        "id": "b4dbc69ee75fda2a5fa2bb42dfe583cef990d4bc",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit: Navigation tree changed and filter introduced",
+        "references": []
+      },
+      {
+        "id": "c2db0fe76abf3b1b342de3c24713eeae357664fd",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit/SDK: Warning is displayed in header for SNAPSHOT versions",
+        "references": []
+      }
+    ]
+  }
+}

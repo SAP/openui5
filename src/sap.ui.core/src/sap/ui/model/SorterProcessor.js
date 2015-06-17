@@ -20,9 +20,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {array} aData the data array to be sorted
 	 * @param {array} aSorters the sorter array
 	 * @param {function} fnGetValue the method to get the actual value use for sorting
+	 * @param {function} [fnGetKey] method to get a key value for the given data entry
 	 * @public
 	 */
-	SorterProcessor.apply = function(aData, aSorters, fnGetValue){
+	SorterProcessor.apply = function(aData, aSorters, fnGetValue, fnGetKey){
 		var that = this,
 			aSortValues = [],
 			aCompareFunctions = [],
@@ -34,6 +35,9 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		
 		function fnCompare(a, b) {
+			if (a == b) {
+				return 0;
+			}
 			if (b == null) {
 				return -1;
 			}
@@ -68,12 +72,23 @@ sap.ui.define(['jquery.sap.global'],
 				if (!aSortValues[j]) {
 					aSortValues[j] = [];
 				}
+				
+				// When the data array might contain objects, e.g. in the ClientTreeBinding
+				if (fnGetKey) {
+					vRef = fnGetKey(vRef);
+				}
+				
 				aSortValues[j][vRef] = oValue;
 			});
 			/*eslint-enable no-loop-func */
 		}
 	
 		aData.sort(function(a, b) {
+			if (fnGetKey) {
+				a = fnGetKey(a);
+				b = fnGetKey(b);
+			}
+			
 			var valueA = aSortValues[0][a],
 				valueB = aSortValues[0][b];
 			

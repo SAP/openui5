@@ -5,22 +5,32 @@
 	<HBox>
 		<template:if test="{field>Value}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataField -->
 			<template:with path="field>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
-				<template:if test="{= ${target>sap:semantics} === 'email'}" >
-					<core:Icon src="sap-icon://email" />
+				<!--  check that IsEmailAddress annotation is available and that it has value true -->
+				<template:if test="{= ${target>com.sap.vocabularies.Communication.v1.IsEmailAddress} &amp;&amp; ${target>com.sap.vocabularies.Communication.v1.IsEmailAddress}.Bool}" >
+					<core:Icon src="sap-icon://email" tooltip="Email" />
 				</template:if>
-				<template:if test="{= ${target>sap:semantics} === 'tel'}" >
-					<core:Icon src="sap-icon://phone" />
+				<!--  check only the availability of the annotation -->
+				<template:if test="{target>com.sap.vocabularies.Communication.v1.IsPhoneNumber}" >
+					<core:Icon src="sap-icon://phone" tooltip="Phone" />
+				</template:if>
+				<template:if test="{target>com.sap.vocabularies.Common.v1.Text}">
+					<template:then>
+						<Text text="{path: 'target>com.sap.vocabularies.Common.v1.Text', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					</template:then>
+					<template:else>
+						<template:if test="{field>Url}">
+							<template:then>
+								<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+									target="_blank"
+									href="{path: 'field>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+							</template:then>
+							<template:else>
+								<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+							</template:else>
+						</template:if>
+					</template:else>
 				</template:if>
 			</template:with>
-			<template:if test="{field>Url}">
-				<template:then>
-					<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
-						href="{path: 'field>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
-				</template:then>
-				<template:else>
-					<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
-				</template:else>
-			</template:if>
 		</template:if>
 	</HBox>
 </core:FragmentDefinition>

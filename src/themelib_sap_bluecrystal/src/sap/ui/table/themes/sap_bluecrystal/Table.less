@@ -582,7 +582,7 @@ div.sapUiTable {
 	}
 }
 
-.sapUiTableM.sapUiSizeCozy {
+.sapUiSizeCozy .sapUiTable {
 	/* Hover */
 	.sapUiTableCol:hover, 
 	.sapUiTableColRowHdr:hover, 
@@ -600,4 +600,13 @@ div.sapUiTable {
 			color: @sapUiTextInverted;
 		}
 	}
+}
+
+.sapUiTableColCellMenu div {
+	color: @sapUiElement;
+}
+
+.sapUiTableColTouchRszActive {
+	background: @sapUiHighlight;
+	opacity: 0.5;
 }

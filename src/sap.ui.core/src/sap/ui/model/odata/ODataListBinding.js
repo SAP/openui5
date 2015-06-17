@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	"use strict";
 	
 	/**
-	 *
 	 * @class
 	 * List binding implementation for oData format
 	 *
@@ -19,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * 
+	 * @public
 	 * @alias sap.ui.model.odata.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
@@ -251,6 +251,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			}
 			iSectionLength = iThreshold;
 		}
+		
+		// prevent iSectionStartIndex to become negative
+		iSectionStartIndex = Math.max(iSectionStartIndex, 0);
 		
 		// No negative preload needed; move startindex if we already have some data
 		if (iSectionStartIndex == iStartIndex) {
@@ -686,9 +689,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 					jQuery.each(this.aLastContexts, function(iIndex, oContext) {
 						oLastData = that.oLastContextData[oContext.getPath()];
 						oCurrentData = aContexts[iIndex].getObject();
-						// Compare whether last data is completely contained in current data (so broader $select
-						// or $expand doesn't trigger a change) and to a maximum depth of 3, to cover complex types.
-						if (!jQuery.sap.equal(oLastData, oCurrentData, 3, true)) {
+						// Compare whether last data is completely contained in current data 
+						if (!jQuery.sap.equal(oLastData, oCurrentData, true)) {
 							bChangeDetected = true;
 							return false;
 						}

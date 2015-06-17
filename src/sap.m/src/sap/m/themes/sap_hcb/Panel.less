@@ -1,7 +1,9 @@
 /* ============================================= */
 /* Theme CSS for control sap.m/Panel.control     */
 /* ============================================= */
-.sapMPanelBG {
+.sapMPanelBGSolid,
+.sapMPanelBGTranslucent,
+.sapMPanelBGTransparent {
 	background-color: @sapHCStandardBG;
 }
 
@@ -28,9 +30,8 @@
 
 .sapMPanelExpandableIcon {
 	color: @sapHCStandardFG;
-}
 
-.sapMPanelExpandableIcon:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.75rem;
+	&:focus::after {
+		border: 0.125rem dotted @sapHCStandardFG;
+	}
 }

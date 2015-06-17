@@ -8,7 +8,7 @@
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
@@ -978,6 +978,44 @@
 		});
 		
 	   //******************************************
+	   var oMultiInput7 = new sap.m.MultiInput("multiInput7", {
+			 width: "500px",
+			 enableMultiLineMode: true
+			 
+		});
+	   
+		oMultiInput7.setTokens([
+		                        new sap.m.Token({text: "Token 1", key: "0001"}),
+				   			    new sap.m.Token({text: "Token 2", key: "0002"}),
+				   			    new sap.m.Token({text: "Token 3", key: "0003"}),
+				   			    new sap.m.Token({text: "Token 4", key: "0004"}),
+				   			    new sap.m.Token({text: "Token 5", key: "0005"}),
+				   			    new sap.m.Token({text: "Token 6", key: "0006"})
+				   			    ]);
+			
+		//*** add checkbox validator
+		oMultiInput7.addValidator(function(args){
+				var text = args.text;
+				return new sap.m.Token({key: text, text: text});
+		});
+		
+		var oLayout = new sap.ui.layout.VerticalLayout({
+			content: [ oMultiInput7 ]
+		});
+		
+	   //******************************************
+	   			var oSimpleForm = new sap.ui.layout.form.SimpleForm("mySimpleForm", {
+				title: "Personal Information",
+				content: [
+					new sap.m.Label({text:"Street/ Number"}),
+					oMultiInput7,
+					new sap.m.Label({text:"Street/ Number"}),
+					new sap.m.Input(),
+					new sap.m.Label({text:"Street/ Number"}),
+					new sap.m.Input()
+				]
+			});
+	   //******************************************
 		var app = new sap.m.App("myApp");
 
 		var page1 = new sap.m.Page("page1", {
@@ -993,25 +1031,29 @@
 					oMultiInputCustomAsyncValidator,
 					oChangeTextValidatorMultiInput,
 					oTabularSuggestMultiInput,
-					new sap.m.Label({ text : "EnableMultiLineMode: true", width:"100%"}),
+					new sap.m.Label({text : "EnableMultiLineMode: true", width:"100%"}),
 					oMultiInput6,
-					new sap.m.Label({ text : "EnableMultiLineMode: true + suggestion starts with 'H'", width:"100%"}),
+					new sap.m.Label({text : "EnableMultiLineMode: true + suggestion starts with 'H'", width:"100%"}),
 					oTabularSuggestMultiInputML,
-					new sap.m.Label({ text : "EnableMultiLineMode: true + synchronously validation", width:"100%"}),
+					new sap.m.Label({text : "EnableMultiLineMode: true + synchronously validation", width:"100%"}),
 					oMultiInput5,
-					new sap.m.Label({ text : "EnableMultiLineMode: true + asynchronously validation after 500ms + 500ms", width:"100%"}),
+					new sap.m.Label({text : "EnableMultiLineMode: true + asynchronously validation after 500ms + 500ms", width:"100%"}),
 					oMultiInputCustomAsyncValidatorML,
+					new sap.m.Label({text : "MultiInput in layout control", width:"100%"}),
+					oLayout,
+					new sap.m.Label({text : "MultiInput in simple form", width:"100%"}),
+					oSimpleForm,
 					new sap.m.MultiInput({ placeholder: "Warning", valueState: "Warning", valueHelpRequest: fValueHelpRequested, width:"33%" }),
 					new sap.m.MultiInput({ placeholder: "Error", valueState: "Error", valueHelpRequest: fValueHelpRequested, width:"33%" }),
 					new sap.m.MultiInput({ placeholder: "Success", valueState: "Success", valueHelpRequest: fValueHelpRequested, width:"33%" }),
-					new sap.m.Label({ text : "MultiInput.editable = false", width:"100%"}),
+					new sap.m.Label({text : "MultiInput.editable = false", width:"100%"}),
 					oMultiInput4,
 					new sap.m.Label({text: "Compact Mode"}),
 			        theCompactMode,
 					new sap.m.VBox({items: [new sap.m.Button({text: "Open Popup", press: openDialog})]}),
-					new sap.m.Label({ text : "token databinding in MultiInput"}),
+					new sap.m.Label({text : "token databinding in MultiInput"}),
 					oTable,
-					new sap.m.Label({ text : "Token events:"}),
+					new sap.m.Label({text : "Token events:"}),
 					oEventList
 			],
 			showNavButton: true,

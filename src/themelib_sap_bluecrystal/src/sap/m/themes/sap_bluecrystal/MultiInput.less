@@ -4,29 +4,29 @@
 
 .sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:hover,
 .sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:focus {
-	background-color: @sapUiBtnBGTransparentHover;
+	background-color: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:active {	
-	background-color: @sapUiBtnBGTransparentDown;
-	color: @sapUiBtnTextActive;
+.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:active {
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiButtonActiveTextColor;
 	outline: 1px dotted @sapUiInvertedFocus;
 }
 
-.sapMMultiInputNotEditable .sapMMultiInputBorder{
-	background: transparent;	         
+.sapMMultiInputNotEditable .sapMMultiInputBorder {
+	background: transparent;
 	border: transparent;
 }
 
-.sapMMultiInputBorder{	
-	border-radius: 0;		
-	background: @sapUiLightestBG;
-	border: 1px solid @sapUiInputBaseBorder;	
+.sapMMultiInputBorder {
+	border-radius: 0;
+	background: @sapUiFieldBackground;
+	border: 1px solid @sapUiFieldBorderColor;
 	height: 2.5rem;
 	padding-left: 0.75rem;
 }
 
-.sapMMultiInputNarrowBorder{
+.sapMMultiInputNarrowBorder {
 	padding-left: 0.375rem;
 }
 
@@ -36,6 +36,15 @@
 	max-height: 10.375rem;
 	overflow-y: auto;
 	z-index: 1;
+}
+
+.sap-desktop .sapMMultiInputIndicator {
+	display: inline-block;
+	vertical-align: top;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: @sapMFontMediumSize;
 }
 
 .sapUiSizeCompact .sapMMultiInputBorder{
@@ -58,14 +67,17 @@
 	border-color: transparent;
 }
 
-.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder,
-.sapMMultiInputBorder:hover{
-	border-color: @sapUiInputBaseFocus;
+.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+.sapMMultiInputBorder:hover {
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 .sapMMultiInputShadowDiv{
 	font-size: 			   @sapMFontMediumSize;
-	font-family: 		   @sapUiInputBaseFont;
+	font-family: 		   @sapUiFontFamily;
 }
 	
 .sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
@@ -75,15 +87,15 @@
 }
 
 .sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder {
-	border-color: @sapUiInputBaseWarning;
+	border-color: @sapUiFieldWarningColor;
 }
 
 .sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
-	border-color: @sapUiInputBaseError;
+	border-color: @sapUiFieldInvalidColor;
 }
 
 .sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
-	border-color: @sapUiInputBaseSuccess;
+	border-color: @sapUiFieldSuccessColor;
 }
 
 .sapMMultiInputInputContainer > input, .sapMMultiInputShadowDiv{

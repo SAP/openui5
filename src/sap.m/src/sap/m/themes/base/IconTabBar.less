@@ -4,16 +4,16 @@
 
 .sapMITB {
 	display: block;
-	width: 100%;
 	position: relative;
+	width: 100%;
 }
 
 .sapMITBContentClosed {
-	position: relative;
-	padding:0.125rem 0 0 0;
-	margin-top:0.750rem;
 	background-color: transparent;
 	border-bottom: none;
+	margin-top: 0.750rem;
+	padding: 0.125rem 0 0 0;
+	position: relative;
 }
 
 .sapMITBTab {
@@ -32,15 +32,15 @@
 }
 
 .sapMITBStretch {
-	position: absolute;
 	bottom: 0;
-	top: 0;
 	display: -webkit-flex;
 	display: -ms-flexbox;
 	display: flex;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
+	-ms-flex-direction: column;
+	-webkit-flex-direction: column;
+	position: absolute;
+	top: 0;
 }
 
 .sapMITBStretch > .sapMITBContainerContent {
@@ -50,11 +50,11 @@
 }
 
 .sapMITBStretch > .sapMITBContainerContent > .sapMITBContent {
-	position: absolute;
 	bottom: 0;
-	top: 0;
-	right: 0;
 	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
 }
 
 .sapMITB.sapMITBNoContentPadding > .sapMITBContainerContent > .sapMITBContent {
@@ -67,13 +67,13 @@
 
 /* fix rendering issue in BlackBerry - CSN: 0120061532 0001463943 2014 */
 .sap-bb .sapMITBContainerContent {
-	overflow : hidden;
+	overflow: hidden;
 }
 
-.sapMITB.sapMITBNoContentPadding > .sapMITBContainerContent, /* legacy class */ 
+.sapMITB.sapMITBNoContentPadding > .sapMITBContainerContent, /* legacy class */
 .sapMITB.sapUiNoContentPadding > .sapMITBContainerContent {
-	border-top: 0;
 	border-bottom: 0;
+	border-top: 0;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */

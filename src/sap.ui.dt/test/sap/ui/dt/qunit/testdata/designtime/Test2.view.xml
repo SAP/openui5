@@ -2,18 +2,85 @@
     height="100%"
     xmlns="sap.m"
     xmlns:sap.ui.layout="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
     xmlns:sap.ui.core.mvc="sap.ui.core.mvc" >
     <Page title="Title">
         <content>
 			<sap.ui.layout:VerticalLayout id="layout0" width="50%">
-				<Button id="button0" text="Button 0" width="100px"></Button>
-				<sap.ui.layout:HorizontalLayout id="layout0-0">
-					<Button id="button0-0" text="Button 0 0" width="100px"></Button>
-	            </sap.ui.layout:HorizontalLayout>
+                <Label text = "Vertical Layout 1"></Label>
+                <List width="50%">
+                    <StandardListItem title="List Item 1"></StandardListItem>
+                    <StandardListItem title="List Item 2"></StandardListItem>
+                    <StandardListItem title="List Item 3"></StandardListItem>
+                </List>
+				<Button id="button1" text="Button 1" width="100px"></Button>
+				<Button id="button2" text="Button 2" width="100px"></Button>
             </sap.ui.layout:VerticalLayout>
 
             <sap.ui.layout:VerticalLayout id="layout1" width="50%">
-                <Button id="button1" text="Button 1" width="100px"></Button>
+                <Label text = "Vertical Layout 2"></Label>
+                <List width="50%">
+                    <StandardListItem title="List Item 4"></StandardListItem>
+                    <StandardListItem title="List Item 5"></StandardListItem>
+                    <StandardListItem title="List Item 6"></StandardListItem>
+                </List>
+                <Button id="button3" text="Button 3" width="100px"></Button>
+                <Button id="button4" text="Button 4" width="100px"></Button>
+            </sap.ui.layout:VerticalLayout>
+
+            <sap.ui.layout:VerticalLayout id="layout3" width="100%">
+               <f:Form>
+                <f:layout>
+                    <f:ResponsiveGridLayout />
+                </f:layout>
+                <f:formContainers>
+                    <f:FormContainer title="Form Container With Title">
+                        <f:formElements>
+                            <f:FormElement label="Name">
+                                <f:fields>
+                                    <Input value="SupplierName" id="name"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Street">
+                                <f:fields>
+                                    <Input value="Street" />
+                                    <Input value="HouseNumber">
+                                    </Input>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="ZIP Code/City">
+                                <f:fields>
+                                    <Input value="ZIPCode">
+                                    </Input>
+                                    <Input value="City" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Country">
+                                <f:fields>
+                                    <Select width="100%" id="country" selectedKey="Country">
+                                    </Select>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement label="2">
+                                <f:fields>
+                                    <Input value="3" id="name3"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="4">
+                                <f:fields>
+                                    <Input value="Street" />
+                                    <Input value="HouseNumber">
+                                    </Input>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+               </f:Form>
             </sap.ui.layout:VerticalLayout>
         </content>
     </Page>

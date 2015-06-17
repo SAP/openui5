@@ -1,0 +1,590 @@
+{
+	"d" : {
+		"results" : [
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ELENA',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='ELENA%20R.',KUNNR='ER_1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ELENA',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='ELENA%20R.',KUNNR='ER_1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "ELENA",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "ELENA R.",
+					"KUNNR" : "ER_1",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WILZBACH',PSTLZ='69191',MCOD3='HEIDELBERG',MCOD1='GABRIELA%20WILZBACH%20DIVKOVI',KUNNR='WILZBACH',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WILZBACH',PSTLZ='69191',MCOD3='HEIDELBERG',MCOD1='GABRIELA%20WILZBACH%20DIVKOVI',KUNNR='WILZBACH',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "WILZBACH",
+					"LAND1" : "DE",
+					"PSTLZ" : "69191",
+					"MCOD3" : "HEIDELBERG",
+					"MCOD1" : "GABRIELA WILZBACH DIVKOVI",
+					"KUNNR" : "WILZBACH",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='FJSD',PSTLZ='69226',MCOD3='NUSSLOCH',MCOD1='FJSD',KUNNR='FJSD',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='FJSD',PSTLZ='69226',MCOD3='NUSSLOCH',MCOD1='FJSD',KUNNR='FJSD',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "FJSD",
+					"LAND1" : "DE",
+					"PSTLZ" : "69226",
+					"MCOD3" : "NUSSLOCH",
+					"MCOD1" : "FJSD",
+					"KUNNR" : "FJSD",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WERNERF',PSTLZ='69168',MCOD3='WIESLOCH',MCOD1='FRANK%20WERNER',KUNNR='FW_1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='WERNERF',PSTLZ='69168',MCOD3='WIESLOCH',MCOD1='FRANK%20WERNER',KUNNR='FW_1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "WERNERF",
+					"LAND1" : "DE",
+					"PSTLZ" : "69168",
+					"MCOD3" : "WIESLOCH",
+					"MCOD1" : "FRANK WERNER",
+					"KUNNR" : "FW_1",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MG',PSTLZ='69257',MCOD3='WIESENBACH',MCOD1='GR%C3%9CNEWALD%20%26%20FRIENDS',KUNNR='MG001',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MG',PSTLZ='69257',MCOD3='WIESENBACH',MCOD1='GR%C3%9CNEWALD%20%26%20FRIENDS',KUNNR='MG001',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "MG",
+					"LAND1" : "DE",
+					"PSTLZ" : "69257",
+					"MCOD3" : "WIESENBACH",
+					"MCOD1" : "GRÜNEWALD & FRIENDS",
+					"KUNNR" : "MG001",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ASCUST1',PSTLZ='12345',MCOD3='STADT',MCOD1='ANDR%C3%89S%20KUNDE%20EINS',KUNNR='ASCUST1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ASCUST1',PSTLZ='12345',MCOD3='STADT',MCOD1='ANDR%C3%89S%20KUNDE%20EINS',KUNNR='ASCUST1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "ASCUST1",
+					"LAND1" : "DE",
+					"PSTLZ" : "12345",
+					"MCOD3" : "STADT",
+					"MCOD1" : "ANDRÉS KUNDE EINS",
+					"KUNNR" : "ASCUST1",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "EB1",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "EB1_CUSTOMER",
+					"KUNNR" : "1",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BOHR UND H",
+					"LAND1" : "DE",
+					"PSTLZ" : "10117",
+					"MCOD3" : "BERLIN",
+					"MCOD1" : "BOHR UND HAMMER GMBH",
+					"KUNNR" : "C0001",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='CN01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EB1',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='EB1_CUSTOMER',KUNNR='1',BUKRS='CN01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "EB1",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "EB1_CUSTOMER",
+					"KUNNR" : "1",
+					"BUKRS" : "CN01"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='CN01')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BOHR%20UND%20H',PSTLZ='10117',MCOD3='BERLIN',MCOD1='BOHR%20UND%20HAMMER%20GMBH',KUNNR='C0001',BUKRS='CN01')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BOHR UND H",
+					"LAND1" : "DE",
+					"PSTLZ" : "10117",
+					"MCOD3" : "BERLIN",
+					"MCOD1" : "BOHR UND HAMMER GMBH",
+					"KUNNR" : "C0001",
+					"BUKRS" : "CN01"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='KB-SORGLOS',PSTLZ='68789',MCOD3='ST.%20LEON-ROT',MCOD1='SUSI%20KB-SORGLOS',KUNNR='11',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='KB-SORGLOS',PSTLZ='68789',MCOD3='ST.%20LEON-ROT',MCOD1='SUSI%20KB-SORGLOS',KUNNR='11',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "KB-SORGLOS",
+					"LAND1" : "DE",
+					"PSTLZ" : "68789",
+					"MCOD3" : "ST. LEON-ROT",
+					"MCOD1" : "SUSI KB-SORGLOS",
+					"KUNNR" : "11",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='001',PSTLZ='20100',MCOD3='SHANGHAI',MCOD1='YAN',KUNNR='YAN01',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='001',PSTLZ='20100',MCOD3='SHANGHAI',MCOD1='YAN',KUNNR='YAN01',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "001",
+					"LAND1" : "DE",
+					"PSTLZ" : "20100",
+					"MCOD3" : "SHANGHAI",
+					"MCOD1" : "YAN",
+					"KUNNR" : "YAN01",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SEY',PSTLZ='70111',MCOD3='FEUERBACH',MCOD1='EDWIN%20TEUFEL%20GMBH',KUNNR='JS_TEST',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SEY',PSTLZ='70111',MCOD3='FEUERBACH',MCOD1='EDWIN%20TEUFEL%20GMBH',KUNNR='JS_TEST',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "SEY",
+					"LAND1" : "DE",
+					"PSTLZ" : "70111",
+					"MCOD3" : "FEUERBACH",
+					"MCOD1" : "EDWIN TEUFEL GMBH",
+					"KUNNR" : "JS_TEST",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='AFU',PSTLZ='07952',MCOD3='PAUSA',MCOD1='AFU%20TESTDATENB%C3%84CKEREI',KUNNR='AFU_DE_101',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='AFU',PSTLZ='07952',MCOD3='PAUSA',MCOD1='AFU%20TESTDATENB%C3%84CKEREI',KUNNR='AFU_DE_101',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "AFU",
+					"LAND1" : "DE",
+					"PSTLZ" : "07952",
+					"MCOD3" : "PAUSA",
+					"MCOD1" : "AFU TESTDATENBÄCKEREI",
+					"KUNNR" : "AFU_DE_101",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MS',PSTLZ='68307',MCOD3='MANNHEIM',MCOD1='STEINLEUTNER%20%26%20OTHERS',KUNNR='MS001',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MS',PSTLZ='68307',MCOD3='MANNHEIM',MCOD1='STEINLEUTNER%20%26%20OTHERS',KUNNR='MS001',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "MS",
+					"LAND1" : "DE",
+					"PSTLZ" : "68307",
+					"MCOD3" : "MANNHEIM",
+					"MCOD1" : "STEINLEUTNER & OTHERS",
+					"KUNNR" : "MS001",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='77654',MCOD3='OFFENBURG',MCOD1='BAM%2001',KUNNR='16',BUKRS='BAM1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='77654',MCOD3='OFFENBURG',MCOD1='BAM%2001',KUNNR='16',BUKRS='BAM1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BAM",
+					"LAND1" : "DE",
+					"PSTLZ" : "77654",
+					"MCOD3" : "OFFENBURG",
+					"MCOD1" : "BAM 01",
+					"KUNNR" : "16",
+					"BUKRS" : "BAM1"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='60632',MCOD3='FRANKFURT',MCOD1='BAM%2002',KUNNR='17',BUKRS='BAM1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='60632',MCOD3='FRANKFURT',MCOD1='BAM%2002',KUNNR='17',BUKRS='BAM1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BAM",
+					"LAND1" : "DE",
+					"PSTLZ" : "60632",
+					"MCOD3" : "FRANKFURT",
+					"MCOD1" : "BAM 02",
+					"KUNNR" : "17",
+					"BUKRS" : "BAM1"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='69231',MCOD3='RAUENBERG',MCOD1='BAM%2003',KUNNR='18',BUKRS='BAM1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='69231',MCOD3='RAUENBERG',MCOD1='BAM%2003',KUNNR='18',BUKRS='BAM1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BAM",
+					"LAND1" : "DE",
+					"PSTLZ" : "69231",
+					"MCOD3" : "RAUENBERG",
+					"MCOD1" : "BAM 03",
+					"KUNNR" : "18",
+					"BUKRS" : "BAM1"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='77654',MCOD3='OFFENBURG',MCOD1='BAM%2001',KUNNR='BAM_CU01',BUKRS='BAM1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='77654',MCOD3='OFFENBURG',MCOD1='BAM%2001',KUNNR='BAM_CU01',BUKRS='BAM1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BAM",
+					"LAND1" : "DE",
+					"PSTLZ" : "77654",
+					"MCOD3" : "OFFENBURG",
+					"MCOD1" : "BAM 01",
+					"KUNNR" : "BAM_CU01",
+					"BUKRS" : "BAM1"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='60632',MCOD3='FRANKFURT',MCOD1='BAM%2002',KUNNR='BAM_CU02',BUKRS='BAM1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='60632',MCOD3='FRANKFURT',MCOD1='BAM%2002',KUNNR='BAM_CU02',BUKRS='BAM1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BAM",
+					"LAND1" : "DE",
+					"PSTLZ" : "60632",
+					"MCOD3" : "FRANKFURT",
+					"MCOD1" : "BAM 02",
+					"KUNNR" : "BAM_CU02",
+					"BUKRS" : "BAM1"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='69231',MCOD3='RAUENBERG',MCOD1='BAM%2003',KUNNR='BAM_CU03',BUKRS='BAM1')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='BAM',PSTLZ='69231',MCOD3='RAUENBERG',MCOD1='BAM%2003',KUNNR='BAM_CU03',BUKRS='BAM1')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "BAM",
+					"LAND1" : "DE",
+					"PSTLZ" : "69231",
+					"MCOD3" : "RAUENBERG",
+					"MCOD1" : "BAM 03",
+					"KUNNR" : "BAM_CU03",
+					"BUKRS" : "BAM1"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MS',PSTLZ='68307',MCOD3='MANNHEIM',MCOD1='STEINLEUTNER%20%26%20OTHERS',KUNNR='MS001',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MS',PSTLZ='68307',MCOD3='MANNHEIM',MCOD1='STEINLEUTNER%20%26%20OTHERS',KUNNR='MS001',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "MS",
+					"LAND1" : "DE",
+					"PSTLZ" : "68307",
+					"MCOD3" : "MANNHEIM",
+					"MCOD1" : "STEINLEUTNER & OTHERS",
+					"KUNNR" : "MS001",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='KB-SORGLOS',PSTLZ='68789',MCOD3='ST.%20LEON-ROT',MCOD1='SUSI%20KB-SORGLOS',KUNNR='21',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='KB-SORGLOS',PSTLZ='68789',MCOD3='ST.%20LEON-ROT',MCOD1='SUSI%20KB-SORGLOS',KUNNR='21',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "KB-SORGLOS",
+					"LAND1" : "DE",
+					"PSTLZ" : "68789",
+					"MCOD3" : "ST. LEON-ROT",
+					"MCOD1" : "SUSI KB-SORGLOS",
+					"KUNNR" : "21",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_3',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_3',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "HS_TEST",
+					"LAND1" : "DE",
+					"PSTLZ" : "94469",
+					"MCOD3" : "DEGGENDORF",
+					"MCOD1" : "HS_TEST",
+					"KUNNR" : "HS_TEST_3",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_1',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_1',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "HS_TEST",
+					"LAND1" : "DE",
+					"PSTLZ" : "94469",
+					"MCOD3" : "DEGGENDORF",
+					"MCOD1" : "HS_TEST",
+					"KUNNR" : "HS_TEST_1",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_2',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_2',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "HS_TEST",
+					"LAND1" : "DE",
+					"PSTLZ" : "94469",
+					"MCOD3" : "DEGGENDORF",
+					"MCOD1" : "HS_TEST",
+					"KUNNR" : "HS_TEST_2",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_4',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='HS_TEST',PSTLZ='94469',MCOD3='DEGGENDORF',MCOD1='HS_TEST',KUNNR='HS_TEST_4',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "HS_TEST",
+					"LAND1" : "DE",
+					"PSTLZ" : "94469",
+					"MCOD3" : "DEGGENDORF",
+					"MCOD1" : "HS_TEST",
+					"KUNNR" : "HS_TEST_4",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ECATT',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='ECATT%20GMBH',KUNNR='HS_TEST_10',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='ECATT',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='ECATT%20GMBH',KUNNR='HS_TEST_10',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "ECATT",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "ECATT GMBH",
+					"KUNNR" : "HS_TEST_10",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='DG',PSTLZ='99999',MCOD3='ENTENHAUSEN',MCOD1='DIETER%20GIETL',KUNNR='DG',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='DG',PSTLZ='99999',MCOD3='ENTENHAUSEN',MCOD1='DIETER%20GIETL',KUNNR='DG',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "DG",
+					"LAND1" : "DE",
+					"PSTLZ" : "99999",
+					"MCOD3" : "ENTENHAUSEN",
+					"MCOD1" : "DIETER GIETL",
+					"KUNNR" : "DG",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='COOL%20WERKZ',PSTLZ='10623',MCOD3='BERLIN',MCOD1='COOL%20WERKZEUG%20GMBH',KUNNR='C0002',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='COOL%20WERKZ',PSTLZ='10623',MCOD3='BERLIN',MCOD1='COOL%20WERKZEUG%20GMBH',KUNNR='C0002',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "COOL WERKZ",
+					"LAND1" : "DE",
+					"PSTLZ" : "10623",
+					"MCOD3" : "BERLIN",
+					"MCOD1" : "COOL WERKZEUG GMBH",
+					"KUNNR" : "C0002",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SP',PSTLZ='12345',MCOD3='MS',MCOD1='M%C3%9CLLER',KUNNR='SP1',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SP',PSTLZ='12345',MCOD3='MS',MCOD1='M%C3%9CLLER',KUNNR='SP1',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "SP",
+					"LAND1" : "DE",
+					"PSTLZ" : "12345",
+					"MCOD3" : "MS",
+					"MCOD1" : "MÜLLER",
+					"KUNNR" : "SP1",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MG',PSTLZ='69257',MCOD3='WIESENBACH',MCOD1='GR%C3%9CNEWALD%20%26%20FRIENDS',KUNNR='MG001',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='MG',PSTLZ='69257',MCOD3='WIESENBACH',MCOD1='GR%C3%9CNEWALD%20%26%20FRIENDS',KUNNR='MG001',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "MG",
+					"LAND1" : "DE",
+					"PSTLZ" : "69257",
+					"MCOD3" : "WIESENBACH",
+					"MCOD1" : "GRÜNEWALD & FRIENDS",
+					"KUNNR" : "MG001",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EILEEN',PSTLZ='20120',MCOD3='WALLDORF',MCOD1='EILEEN%20CUSTOMER%201',KUNNR='27',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EILEEN',PSTLZ='20120',MCOD3='WALLDORF',MCOD1='EILEEN%20CUSTOMER%201',KUNNR='27',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "EILEEN",
+					"LAND1" : "DE",
+					"PSTLZ" : "20120",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "EILEEN CUSTOMER 1",
+					"KUNNR" : "27",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EILEEN',PSTLZ='20120',MCOD3='WALLDORF',MCOD1='EILEEN%20CUSTOMER%202',KUNNR='31',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EILEEN',PSTLZ='20120',MCOD3='WALLDORF',MCOD1='EILEEN%20CUSTOMER%202',KUNNR='31',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "EILEEN",
+					"LAND1" : "DE",
+					"PSTLZ" : "20120",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "EILEEN CUSTOMER 2",
+					"KUNNR" : "31",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EILEEN',PSTLZ='20120',MCOD3='WALLDORF',MCOD1='EILEEN%20CUSTOMER%203',KUNNR='32',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='EILEEN',PSTLZ='20120',MCOD3='WALLDORF',MCOD1='EILEEN%20CUSTOMER%203',KUNNR='32',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "EILEEN",
+					"LAND1" : "DE",
+					"PSTLZ" : "20120",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "EILEEN CUSTOMER 3",
+					"KUNNR" : "32",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='CPD',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='GR%C3%9CNEWALD%20CPD',KUNNR='MG_CPD',BUKRS='0001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='CPD',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='GR%C3%9CNEWALD%20CPD',KUNNR='MG_CPD',BUKRS='0001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "CPD",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "GRÜNEWALD CPD",
+					"KUNNR" : "MG_CPD",
+					"BUKRS" : "0001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SEY',PSTLZ='70111',MCOD3='TOWN',MCOD1='TEST%20DUNNING%20WITH%20ALTERNA',KUNNR='JS_TEST_C',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SEY',PSTLZ='70111',MCOD3='TOWN',MCOD1='TEST%20DUNNING%20WITH%20ALTERNA',KUNNR='JS_TEST_C',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "SEY",
+					"LAND1" : "DE",
+					"PSTLZ" : "70111",
+					"MCOD3" : "TOWN",
+					"MCOD1" : "TEST DUNNING WITH ALTERNA",
+					"KUNNR" : "JS_TEST_C",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='CPD',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='GR%C3%9CNEWALD%20CPD',KUNNR='MG_CPD',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='CPD',PSTLZ='69190',MCOD3='WALLDORF',MCOD1='GR%C3%9CNEWALD%20CPD',KUNNR='MG_CPD',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "CPD",
+					"LAND1" : "DE",
+					"PSTLZ" : "69190",
+					"MCOD3" : "WALLDORF",
+					"MCOD1" : "GRÜNEWALD CPD",
+					"KUNNR" : "MG_CPD",
+					"BUKRS" : "F001"
+				},
+{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SEY',PSTLZ='70333',MCOD3='STUTTGART',MCOD1='ANTERNATIVE%20DUNNING%20RECIE',KUNNR='JS_TEST_D',BUKRS='F001')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBID(SORTL='SEY',PSTLZ='70333',MCOD3='STUTTGART',MCOD1='ANTERNATIVE%20DUNNING%20RECIE',KUNNR='JS_TEST_D',BUKRS='F001')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"
+					},
+					"BEGRU" : "",
+					"SORTL" : "SEY",
+					"LAND1" : "DE",
+					"PSTLZ" : "70333",
+					"MCOD3" : "STUTTGART",
+					"MCOD1" : "ANTERNATIVE DUNNING RECIE",
+					"KUNNR" : "JS_TEST_D",
+					"BUKRS" : "F001"
+				}]
+	}
+}

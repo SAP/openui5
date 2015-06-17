@@ -264,6 +264,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		};
 
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * If the FormElement has a DOM representation this function returns it,
+		 * independent from the ID of this DOM element
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		FormElement.prototype.getRenderedDomRef = function(){
+
+			var that = this;
+			var oContainer = this.getParent();
+
+			if (oContainer && oContainer.getElementRenderedDomRef) {
+				return oContainer.getElementRenderedDomRef(that);
+			}else {
+				return null;
+			}
+
+		};
+
 		// *** Private helper functions ***
 
 		/*

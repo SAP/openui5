@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 			} else {
 				 aHtml.push(" class='sapUiLnk'");
 			}
-			aHtml.push(">" + i + "</a>"); // TODO: clickable?! onPageClick
+			aHtml.push(">" + i + "</a>");
 			aHtml.push("</li>");
 		}
 	

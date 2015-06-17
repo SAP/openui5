@@ -2,12 +2,14 @@
 	"config": {
 		"sample": {
 			"files": [
+				"ChartAnnotation.fragment.xml",
 				"Component.js",
 				"Detail.controller.js",
 				"Detail.view.xml",
 				"Facets.fragment.xml",
 				"Field.fragment.xml",
 				"FormFacet.fragment.xml",
+				"Identification.fragment.xml",
 				"Main.controller.js",
 				"Main.view.xml",
 				"ODataMetaModel.json",
@@ -19,5 +21,5 @@
 	"dependencies": [],
 	"description": "Component for XMLView template sample scenario",
 	"name": "sap.ui.core.demokit.sample.ViewTemplate.scenario",
-	"version": "1.27.1-SNAPSHOT"
+	"version": "${version}"
 }

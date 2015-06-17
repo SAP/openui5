@@ -133,7 +133,11 @@ sap.ui.define(['jquery.sap.global', './TreeTable', './Table', './library'],
 	};
 	
 	DataTable.prototype.getContextByIndex = function (iRowIndex) {
-		Table.prototype.getContextByIndex.call(this, iRowIndex);
+		return Table.prototype.getContextByIndex.call(this, iRowIndex);
+	};
+	
+	DataTable.prototype._updateTableContent = function() {
+		Table.prototype._updateTableContent.apply(this, arguments);
 	};
 
 	return DataTable;

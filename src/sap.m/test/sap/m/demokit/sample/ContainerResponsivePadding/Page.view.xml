@@ -5,7 +5,13 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Text text="A panel by default has a fixed content padding of 1rem (16px). By by setting the CSS class 'sapUiResponsiveContentPadding' to the container control you will get a responsive padding based on the current screen size and the app mode around the content area. On phone devices and small screens no padding is applied, on tablet devices and inside a SplitApp control a medium padding is applied, and on desktop and fullscreen applications a large padding is applied. Try the fullscreen mode of the Explored app to see the difference" class="sapUiExploredNoMarginInfo"/>
+	<MessageStrip text="A panel by default has a fixed content padding of 1rem (16px).
+		By by setting the CSS class 'sapUiResponsiveContentPadding' to the container control
+		you will get a responsive padding based on the current screen size and the app mode around
+		the content area. On phone devices and small screens no padding is applied, on tablet devices
+		and inside a SplitApp control a medium padding is applied, and on desktop and fullscreen
+		applications a large padding is applied. Try the fullscreen mode of the Explored
+		app to see the difference" class="sapUiTinyMargin"/>
 	<Panel class="sapUiResponsiveContentPadding">
 		<headerToolbar>
 			<Toolbar height="3rem">

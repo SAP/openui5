@@ -27,19 +27,13 @@
 				"key": "All",
 				"text": "sap.m.ListSeparators.All"
 			},
-
-			{
-				"key": "Inner",
-				"text": "sap.m.ListSeparators.Inner"
-			},
-
 			{
 				"key": "None",
 				"text": "sap.m.ListSeparators.None"
 			}
 		],
 
-		"selected": "None"
+		"selected": "All"
 	};
 
 	oModelCB.setData(mDataCB);
@@ -88,7 +82,6 @@
 				"mimeType" : "image/jpg",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-07-30",
-				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg",
 				"attributes" : [{
 					"title" : "Co-author",
 					"text" : "Martin Silver"
@@ -173,10 +166,10 @@
 					"text" : "Jane Burns"
 				}, {
 					"title" : "Third attribute with a very long text",
-					"text" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+					"text" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 				}]
 			}, {
-				// item with a long attribute's title
+				// item with a long attribute's title and aggregation statuses
 				"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
 				"enableEdit" : true,
 				"enableDelete" : true,
@@ -191,8 +184,13 @@
 					"title" : "Contributor",
 					"text" : "John Blacksmith Henderson"
 				}, {
-					"title" : "This attribute's title is as long as the story about The Wind and the Sun starting with 'One day, the boastful wind declared to the sun, ‘You know that I am the strongest and most effective of all the weather!’ ...'",
+					"title" : "This attribute's title is as long as the story about The Wind and the Sun",
 					"text" : "no value"
+				}],
+				"statuses" : [{
+					"title" : "Status",
+					"text" : "Success",
+					"state" : sap.ui.core.ValueState.Success
 				}]
 			}, {
 				// item with aggregation statuses
@@ -207,11 +205,9 @@
 				"uploadedDate" : "Date: 2014-07-26",
 				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf",
 				"statuses" : [{
-					"title" : "Success",
-					"icon" : "sap-icon://accept"
-				}, {
-					"title" : "Error",
-					"icon" : "sap-icon://error"
+					"title" : "Status",
+					"text" : "Warning",
+					"state" : sap.ui.core.ValueState.Warning
 				}]
 			}, {
 				// item with aggregation statuses
@@ -229,26 +225,14 @@
 					"title" : "Status",
 					"text" : "Error",
 					"state" : sap.ui.core.ValueState.Error
-				}, {
-					"title" : "Status",
-					"text" : "None",
-					"state" : sap.ui.core.ValueState.None
-				}, {
-					"title" : "Status",
-					"text" : "Success",
-					"state" : sap.ui.core.ValueState.Success
-				}, {
-					"title" : "Status",
-					"text" : "Warning",
-					"state" : sap.ui.core.ValueState.Warning
 				}]
 			}, {
-				// item with aggregation statuses and icons
+				// item with aggregation statuses
 				"contributor" : "Dr. Susan Baker",
 				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9d1",
 				"enableEdit" : true,
 				"enableDelete" : true,
-				"fileName" : "Screenshot2.jpg",
+				"fileName" : "Screenshot2.JPEG",
 				"fileSize" : 20,
 				"mimeType" : "image/jpg",
 				"thumbnailUrl" : "",
@@ -256,12 +240,8 @@
 				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg",
 				"statuses" : [{
 					"title" : "Status",
-					"text" : "Success",
-					"icon" : "sap-icon://accept"
-				}, {
-					"title" : "Status",
-					"text" : "Error",
-					"icon" : "sap-icon://error"
+					"text" : "None",
+					"state" : sap.ui.core.ValueState.None
 				}]
 			}, {
 				// item with aggregation containing many attributes
@@ -418,97 +398,80 @@
 
 	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
 
-	// get current date
-	var fnCurrentDate = function() {
-		var date = new Date();
-		var day = date.getDate();
-		var month = date.getMonth() + 1;
-		var year = date.getFullYear();
-
-		if (day < 10) {
-			day = '0' + day
-		};
-		if (month < 10) {
-			month = '0' + month
-		}
-		return year + '-' + month + '-' + day;
-	};
-
 	/* =========================================================== */
 	/* Handle UploadCollection events                              */
 	/* =========================================================== */
 	var fnChange = function(oEvent) {
-		sap.m.MessageToast.show("Event change triggered");
+		sap.m.MessageToast.show("Change event triggered.");
 	};
 
 	var fnFileDeleted = function(oEvent) {
-		var oData = oModel.getData();
-		var aItems = oData.items;
+		var oData = oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
 		var sDocumentId = oEvent.getParameter("documentId");
-		var bSetData = false;
-
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems.splice(index, 1);
-				bSetData = true;
 			};
 		});
-		if (bSetData === true) {
-			oModel.setData(oData);
-		};
-		sap.m.MessageToast.show("Event fileDeleted triggered");
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("FileDeleted event triggered.");
 	};
 
 	var fnfilenameLengthExceed = function(oEvent) {
-		sap.m.MessageToast.show("Event filenameLengthExceed triggered");
+		sap.m.MessageToast.show("FilenameLengthExceed event triggered.");
 	}
 
 	var fnFileRenamed = function(oEvent) {
-		var aItems = oModel.getData().items;
+		var oData = oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
 		var sDocumentId = oEvent.getParameter("documentId");
-
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems[index].fileName = oEvent.getParameter("item").getFileName();
 			};
 		});
-		oModel.setData(oData);
-		sap.m.MessageToast.show("Event fileRenamed triggered");
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("FileRenamed event triggered.");
 	};
 
 	var fnFileSizeExceed = function(oEvent) {
-		sap.m.MessageToast.show("Event fileSizeExceed triggered");
+		sap.m.MessageToast.show("FileSizeExceed event triggered.");
 	};
 
 	var fnTypeMissmatch = function(oEvent) {
-		sap.m.MessageToast.show("Event typeMissmatch triggered");
+		sap.m.MessageToast.show("TypeMissmatch event triggered.");
 	};
 
 	var fnUploadComplete = function(oEvent) {
-		if (oEvent) {
-			var oData = oModel.getData();
-			var oItem = {};
-			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
-			// at the moment parameter fileName is not set in IE9
-			if (!sUploadedFile) {
-				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
-				sUploadedFile = aUploadedFile[0];
-			}
-			var nDocId = jQuery.now(); // generate Id
-			oItem = {
-				"contributor" : "You",
-				"documentId" : nDocId.toString(),
-				"fileName" : sUploadedFile,
-				"fileSize" : 10, // TODO get file size
-				"mimeType" : "",
-				"thumbnailUrl" : "",
-				"uploadedDate" : fnCurrentDate(),
-				"url" : "myUrl"
-			};
-			oData.items.unshift(oItem);
-			oModel.setData(oData);
-			sap.m.MessageToast.show("Event uploadComplete triggered");
+		var oData = oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
+		var oItem = {};
+		var sUploadedFile = oEvent.getParameter("files")[0].fileName;
+		// at the moment parameter fileName is not set in IE9
+		if (!sUploadedFile) {
+			var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
+			sUploadedFile = aUploadedFile[0];
 		}
+		oItem = {
+			"contributor" : "You",
+			"documentId" : jQuery.now().toString(), // generate Id
+			"fileName" : sUploadedFile,
+			"fileSize" : 10, // TODO get file size
+			"mimeType" : "",
+			"thumbnailUrl" : "",
+			"uploadedDate" : new Date(jQuery.now()).toLocaleDateString(),
+			"url" : ""
+		};
+		aItems.unshift(oItem);
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("UploadComplete event triggered.");
 	};
 
 	var oAttributeTemplate = new sap.m.ObjectAttribute({
@@ -558,7 +521,7 @@
 			path : "/items/",
 			template : oItemTemplate
 		},
-		sameFilenameAllowed : true,
+		sameFilenameAllowed : false,
 		// events
 		change : fnChange,
 		fileDeleted : fnFileDeleted,
@@ -570,6 +533,7 @@
 	});
 
 	oUploadCollection.setShowSeparators(oComboBox.getSelectedKey());
+
 
 	/* =========================================================== */
 	/* Create Page                   */

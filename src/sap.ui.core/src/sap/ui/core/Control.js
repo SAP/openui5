@@ -559,8 +559,11 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart mouseup touchend click",
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
-					if (this.getProperty("busy") === true && this.$()) {
-						fnAppendBusyIndicator.apply(this);
+					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId) {
+						// Also use the BusyIndicatorDelay when a control is initialized with "busy = true"
+						// If the delayed call was already initialized skip any further call if the control was re-rendered while
+						// the delay is on its way.
+						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
 					}
 				}
 			},
@@ -590,10 +593,19 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				}
 
 				//Append busy indicator to control DOM
-				var $BusyIndicator = jQuery('<div class="sapUiLocalBusyIndicator"><div class="sapUiLocalBusyIndicatorAnimation"><div class="sapUiLocalBusyIndicatorBox"></div><div class="sapUiLocalBusyIndicatorBox"></div><div class="sapUiLocalBusyIndicatorBox"></div></div></div>');
-				$BusyIndicator.attr("id",this.getId() + "-busyIndicator");
+				var $BusyIndicator = jQuery('<div class="sapUiLocalBusyIndicator" aria-role="progressbar" aria-valuemin="0" aria-valuemax="100">' +
+					'<div class="sapUiLocalBusyIndicatorAnimation">' +
+						'<div class="sapUiLocalBusyIndicatorBox"></div>' +
+						'<div class="sapUiLocalBusyIndicatorBox"></div>' +
+						'<div class="sapUiLocalBusyIndicatorBox"></div>' +
+					'</div>' +
+				'</div>');
+				var sBusyIndicatorId = this.getId() + "-busyIndicator";
+				$BusyIndicator.attr("id", sBusyIndicatorId);
 				$this.append($BusyIndicator);
 				$this.addClass('sapUiLocalBusy');
+				//Set the actual DOM Element to 'aria-busy'
+				$this.attr('aria-busy', true);
 				if (this._busyDelayedCallId) {
 					jQuery.sap.clearDelayedCall(this._busyDelayedCallId);
 				}
@@ -604,7 +616,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				var $this = this.$(this._sBusySection);
 
 				if (bBusy) {
-					var $TabRefs = $this.find('[tabindex]'),
+					// all focusable elements must be processed for the "tabindex=-1"
+					// attribute. The dropdownBox for example has got two focusable elements
+					// (arrow and intput field) and both shouldn't be focusable. Otherwise
+					// the input field will still be focused on keypress (tab) because the
+					// browser focuses the element
+					var $TabRefs = $this.find(":sapTabbable"),
 						that = this;
 					this._busyTabIndices = [];
 
@@ -644,6 +661,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				}
 			},
 			fnPreserveEvents = function(oEvent) {
+				jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
 			},
@@ -713,6 +731,8 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				//Remove the busy indicator from the DOM
 				this.$("busyIndicator").remove();
 				this.$().removeClass('sapUiLocalBusy');
+				//Unset the actual DOM Element´s 'aria-busy'
+				this.$().removeAttr('aria-busy');
 
 				//Reset the position style to its original state
 				if (this._busyStoredPosition) {

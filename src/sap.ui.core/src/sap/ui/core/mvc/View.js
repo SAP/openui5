@@ -166,10 +166,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	/**
 	* Initialize the View and connect (create if no instance is given) the Controller
 	*
-	* @param {object} [mSettings] settings for the view
-	* @param {object.string} [mSettings.viewData] view data
-	* @param {object.string} [mSettings.viewName] view name
-	* @param {object.boolean} [mSettings.async] set the view to load XML-view asynchronously
+	* @param {object} mSettings settings for the view
+	* @param {object.string} mSettings.viewData view data
+	* @param {object.string} mSettings.viewName view name
+	* @param {object.boolean} [mSettings.async] set the view to load a view resource asynchronously
 	* @private
 	*/
 	View.prototype._initCompositeSupport = function(mSettings) {
@@ -227,8 +227,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				this.initViewSettings(mSettings)
 					.then(fnInitController)
 					.then(function() {
-						// notify renderer for delayed initial rendering
-						that._bRenderAsync = true;
 						return that.runPreprocessor("controls", that);
 					})
 					.then(function() {
@@ -239,6 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			} else {
 				this.initViewSettings(mSettings);
 				fnInitController();
+				this.runPreprocessor("controls", this, true);
 				this.fireAfterInit();
 			}
 		}
@@ -396,10 +395,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 *   the type of preprocessor, e.g. "raw", "xml" or "controls"
 	 * @param {object|string|Element} vSource
 	 *   the view source as a JSON object, a raw text, or an XML document element
-	 * @param {boolean} bSync
-	 *   describes the view execution
-	 * @returns {Promise}
-	 *   a promise resolving with the processed source or an error
+	 * @param {boolean} [bSync]
+	 *   describes the view execution, true if sync
+	 * @returns {Promise|object|string|element}
+	 *   a promise resolving with the processed source or an error | the source when bSync=true
 	 * @protected
 	 */
 	View.prototype.runPreprocessor = function(sType, vSource, bSync) {
@@ -408,21 +407,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			oViewInfo = {
 				name: this.sViewName,
 				id: this.getId(),
-				caller: this + " (" + this.sViewName + ")"
+				caller: this + " (" + this.sViewName + ")",
+				sync: !!bSync
 			},
 			//global preprocessor availability
 			oConfig = View._mPreprocessors[sViewType] ? View._mPreprocessors[sViewType][sType] : undefined,
 			//local preprocessor availability
-			oLocalConfig = this.mPreprocessors[sType];
+			oLocalConfig = this.mPreprocessors[sType],
+			fnProcess;
 
 		// determine result type (Promise || object)
 		function fnResult(vResult) {
 			if (vResult instanceof Promise || bSync) {
 				return vResult;
 			} else {
-				return new Promise(function(resolve, reject) {
-					resolve(vResult);
-				});
+				return Promise.resolve(vResult);
 			}
 		}
 
@@ -435,24 +434,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			 jQuery.extend(true, oConfig, oLocalConfig);
 		} else if (oConfig && oConfig.onDemand) {
 			// default not activated
-			oConfig = undefined;
+				return fnResult(vSource);
 		} // else { // global not overridden }
 
-
-		// determine preprocessor implementation and execute
-		if (!oConfig) {
-			// resolve immediately if no valid preprocessor found
-			return fnResult(vSource);
-		} else if (typeof oConfig.preprocessor === "string") {
-			// module string given, resolve and retrieve object
-			jQuery.sap.require(oConfig.preprocessor);
-			jQuery.sap.log.debug("Running preprocessor for \"" + sType + "\" via module string \"" + oConfig.preprocessor + "\"", this);
-			return fnResult(jQuery.sap.getObject(oConfig.preprocessor).process(vSource, oViewInfo, oConfig));
-		} else if (oConfig.preprocessor) {
-			// function given directly
-			jQuery.sap.log.debug("Running preprocessor for \"" + sType + "\" via given function", this);
-			return fnResult(oConfig.preprocessor(vSource, oViewInfo, oConfig));
+		if (oConfig) {
+			// determine preprocessor implementation
+			if (typeof oConfig.preprocessor === "string") {
+				// module string given, resolve and retrieve object
+				jQuery.sap.require(oConfig.preprocessor);
+				jQuery.sap.log.debug("Running preprocessor for \"" + sType + "\" via module string \"" + oConfig.preprocessor + "\"", this);
+				fnProcess = jQuery.sap.getObject(oConfig.preprocessor).process;
+			} else if (oConfig.preprocessor) {
+				// function given directly
+				jQuery.sap.log.debug("Running preprocessor for \"" + sType + "\" via given function", this);
+				fnProcess = oConfig.preprocessor;
+			}
+			// determine preprocessor validity (only syncSupport preprocessors when in sync mode)
+			if (fnProcess && (!bSync || oConfig.syncSupport == bSync)) {
+				return fnResult(fnProcess(vSource, oViewInfo, oConfig));
+			}
 		}
+		// no valid preprocessor found
+		return fnResult(vSource);
 	};
 
 
@@ -464,11 +467,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 	 * view instance already, that one is used.
 	 *
-	 * It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.Preprocessor} or a
-	 * function with a signature according to {@link sap.ui.core.mvc.Preprocessor.process}.
+	 * It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
+	 * function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
 	 *
-	 * <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
-	 * in sync mode, as this could have unexpected side effects.
+	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
+	 * in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
+	 * bSyncSupport flag to true.
 	 *
 	 * @protected
 	 * @static
@@ -478,26 +482,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * 		module path of the preprocessor implementation or a preprocessor function
 	 * @param {string} sViewType
 	 * 		type of the calling view, e.g. <code>XML</code>
+	 * @param {boolean} bSyncSupport
+	 * 		declares if the vPreprocessor ensures safe sync processing. This means the preprocessor will be executed
+	 * 		also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
+	 * 		break the view initialization and lead to unexpected results.
 	 * @param {boolean} [bOnDemand]
-	* 		ondemand preprocessor which enables developers to quickly specify the preprocessor for a view,
-	* 		by setting <code>preprocessors : { xml }</code>, for example.
+	 * 		ondemand preprocessor which enables developers to quickly activate the preprocessor for a view,
+	 * 		by setting <code>preprocessors : { xml }</code>, for example.
 	 * @param {object} [mSettings]
 	 * 		optional configuration for preprocessor
 	 */
-	View.registerPreprocessor = function(sType, vPreprocessor, sViewType, bOnDemand, mSettings) {
+	View.registerPreprocessor = function(sType, vPreprocessor, sViewType, bSyncSupport, bOnDemand, mSettings) {
 		// determine optional parameters
 		if (typeof bOnDemand !== "boolean") {
 			mSettings = bOnDemand;
 			bOnDemand = false;
 		}
 		if (vPreprocessor) {
-			jQuery.sap.log.debug("Register " + (bOnDemand ? "onDemand-" : "") + "preprocessor for \"" + sType + "\"",  this.getMetadata().getName());
+			jQuery.sap.log.debug("Register " + (bOnDemand ? "onDemand-" : "") + "preprocessor for \"" + sType + "\"" +
+				(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
 			if (!View._mPreprocessors[sViewType]) {
 				View._mPreprocessors[sViewType] = {};
 			} else if (!View._mPreprocessors[sViewType][sType]) {
 				View._mPreprocessors[sViewType][sType] = {};
 			}
-			View._mPreprocessors[sViewType][sType] = {preprocessor: vPreprocessor, onDemand: bOnDemand};
+			View._mPreprocessors[sViewType][sType] = {preprocessor: vPreprocessor, onDemand: bOnDemand, syncSupport: bSyncSupport};
 			// to be consistent with local preprocessors, everything in one config object
 			jQuery.extend(true, View._mPreprocessors[sViewType][sType], mSettings);
 		} else {
@@ -533,20 +542,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * view types are listed in the enumeration sap.ui.core.mvc.ViewType.</li>
 	 * <li>The view data <code>vView.viewData</code> can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller</li>
+	 * <li>The view loading mode <code>vView.async</code> must be a boolean and defines if the view source is loaded
+	 * synchronously or asynchronously. In async mode, the view is rendered empty initially, and rerenderd with the
+	 * loaded view content.</li>
 	 * <li><code>vView.preprocessors</code></li> can hold a map from source type (e.g. "xml") to
 	 * preprocessor configuration; the configuration consists of an optional
 	 * <code>preprocessor</code> property and may contain further preprocessor-specific settings. The preprocessor can
-	 * be either an implementation of {@link sap.ui.core.mvc.Preprocessor} or a function according to
-	 * {@link sap.ui.core.mvc.Preprocessor.process}
+	 * be either a module name as string implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
+	 * {@link sap.ui.core.mvc.View.Preprocessor.process}.
 	 *
 	 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or a
 	 * default availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 	 *
-	 * <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
-	 * in sync mode, as this could have unexpected side effects.
+	 * <strong>Note</strong>: Please note that preprocessors in general are currently only available
+	 * to XMLViews.
+	 *
+	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
+	 * in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
+	 * bSyncSupport flag of the preprocessor to true.
 	 *
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
 	 * @param {string|object} [vView] the view name or view configuration object
+	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 	 * @public
 	 * @static
 	 * @return {sap.ui.core.mvc.View} the created View instance
@@ -570,6 +587,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				oView = vView;
 			}
 		}
+
+		// can be removed when generic type checking for special settings is introduced
+		jQuery.sap.assert(!oView.async || typeof oView.async === "boolean", "sap.ui.view factory: Special setting async has to be of the type 'boolean'!");
 
 		// apply the id if defined
 		if (sId) {
@@ -699,6 +719,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		// return undefined
 	};
+
+	/**
+	 * Interface for Preprocessor implementations that can be hooked in the view life cycle.
+	 *
+	 * There are two possibilities to use the preprocessor. It can be either passed to the view via the mSettings.preprocessors object
+	 * where it is the executed only for this instance, or by the registerPreprocessor method of the view type. Currently this is
+	 * available only for XMLViews (as of version 1.30).
+	 *
+	 * @see sap.ui.view
+	 * @see sap.ui.core.mvc.View.registerPreprocessor (the method is available specialized for view types, so use the following)
+	 * @see sap.ui.core.mvc.XMLView.registerPreprocessor
+	 *
+	 * @author SAP SE
+	 * @since 1.30
+	 * @interface
+	 * @name sap.ui.core.mvc.View.Preprocessor
+	 * @public
+	 */
+
+	/**
+	 * Processing method that must be implemented by a Preprocessor.
+	 *
+	 * @name sap.ui.core.mvc.View.Preprocessor.process
+	 * @function
+	 * @public
+	 * @static
+	 * @abstract
+	 * @param {object} vSource the source to be processed
+	 * @param {object} oViewInfo identification information about the calling instance
+	 * @param {string} oViewInfo.id the id
+	 * @param {string} oViewInfo.name the name
+	 * @param {string} oViewInfo.caller
+	 * 		identifies the caller of this preprocessor; basis for log or exception messages
+	 * @param {object} [mSettings]
+	 * 		settings object which was provided with the preprocessor
+	 * @return {object|Promise}
+	 * 		the processed resource or a promise which resolves with the processed resource or an error according to the
+	 * 		declared preprocessor sync capability
+	 */
 
 	return View;
 

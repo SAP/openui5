@@ -93,13 +93,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	 * bundle wins against the previous ones and the original ones. This function
 	 * can be called several times.
 	 *
-	 * @param {object} oData parameters used to initialize the ResourceModel; at least either bundleUrl or bundleName must be set on this object; if both are set, bundleName wins
+	 * @param {object|jQuery.sap.util.ResourceBundle} oData parameters used to initialize the ResourceModel; at least either bundleUrl or bundleName must be set on this object; if both are set, bundleName wins - or an instance of an existing {@link jQuery.sap.util.ResourceBundle}
 	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
 	 * @param {string} [oData.bundleName] the UI5 module name of the .properties file; this name will be resolved to a path like the paths of normal UI5 modules and ".properties" will then be appended (e.g. a name like "myBundle" can be given)
 	 * @param {string} [oData.bundleLocale] an optional locale; when not given, the default is the active locale from the UI5 configuration
-	 * @return Promise in async case (async ResourceModel) which is resolved when the the enhancement is finished
+	 * @return {Promise} Promise in async case (async ResourceModel) which is resolved when the the enhancement is finished
 	 * @since 1.16.1
-	 * @protected
+	 * @public
 	 */
 	ResourceModel.prototype.enhance = function(oData) {
 		var that = this,
@@ -109,17 +109,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 			}) : null;
 		
 		function doEnhance(){
-			oData.async = that.bAsync;
-			var bundle = that.loadResourceBundle(oData);
-			if (bundle instanceof Promise) {
-				bundle.then(function(customBundle){
-					that._oResourceBundle._enhance(customBundle);
+			if (jQuery.sap.resources.isBundle(oData)) {
+				that._oResourceBundle._enhance(oData);
+				if (oPromise) {
 					fResolve(true);
-				}, function(){
-					fResolve(true);
-				});
-			} else if (bundle) {
-				that._oResourceBundle._enhance(bundle);
+				}
+			} else {
+				oData.async = that.bAsync;
+				var bundle = that.loadResourceBundle(oData);
+				if (bundle instanceof Promise) {
+					bundle.then(function(customBundle){
+						that._oResourceBundle._enhance(customBundle);
+						fResolve(true);
+					}, function(){
+						fResolve(true);
+					});
+				} else if (bundle) {
+					that._oResourceBundle._enhance(bundle);
+				}
 			}
 		}
 		

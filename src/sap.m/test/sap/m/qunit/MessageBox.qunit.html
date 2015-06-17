@@ -60,13 +60,81 @@
 				id: "messagebox1",
 				styleClass: sClassName
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagebox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
 			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("simple show usage", function () {
+			sap.m.MessageBox.show(sMessageText);
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
+			ok(oMessageBox, "Dialog should be created");
+			oMessageBox.destroy();
+		});
+
+		test("show error", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.error(sMessageText, {
+				id: "messageboxError"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxError");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_CLOSE") , "Default action Cancel is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_ERROR"), "The title should be Error");
+			oMessageBox.destroy();
+		});
+
+		test("show information", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.information(sMessageText, {
+				id: "messageboxInfo"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxInfo");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_INFO"), "The title should be Info");
+			oMessageBox.destroy();
+		});
+
+		test("show warning", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.warning(sMessageText, {
+				id: "messageboxWarning"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxWarning");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_WARNING"), "The title should be Warning");
+			oMessageBox.destroy();
+		});
+
+		test("show success", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.success(sMessageText, {
+				id: "messageboxSuccess"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxSuccess");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_SUCCESS"), "The title should be Success");
 			oMessageBox.destroy();
 		});
 
@@ -104,7 +172,7 @@
 			);
 
 
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messageBoxScrolling");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -128,12 +196,12 @@
 				styleClass: sClassName,
 				initialFocus: oButton
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 
 			var oMessageBox = sap.ui.getCore().byId("messagebox2");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			equal(oMessageBox.getButtons().length, 4, "All three buttons are added to dialog");
+			equal(oMessageBox.getButtons().length, 4, "All four buttons are added to dialog");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			equal(oMessageBox.getInitialFocus(), oButton.sId, "InitialFocus is set correctly");
 			ok(oMessageBox.$().hasClass(sClassName));
@@ -149,7 +217,7 @@
 				styleClass: sClassName,
 				initialFocus: "Custom Text"
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 
 			var oMessageBox = sap.ui.getCore().byId("messagebox3");
 			var aButtons = oMessageBox.getButtons();
@@ -184,7 +252,7 @@
 				styleClass: sClassName,
 				initialFocus: sap.m.MessageBox.Action.NO
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var oMessageBox = sap.ui.getCore().byId("messagebox4");
@@ -218,7 +286,7 @@
 				id: "alertbox1",
 				styleClass: sClassName
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("alertbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -236,7 +304,7 @@
 				id: "confirmbox1",
 				styleClass: sClassName
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -249,7 +317,7 @@
 
 		test("show with OLD API", function () {
 			sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Custom Text", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagebox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -262,7 +330,7 @@
 		test("alert with OLD API", function () {
 			// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 			sap.m.MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("alertbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -275,7 +343,7 @@
 
 		test("confirm with OLD API", function () {
 			sap.m.MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -288,7 +356,7 @@
 
 		test("alert with message which contains curly bracket", function () {
 			sap.m.MessageBox.alert("I have {abc}");
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			equal(jQuery("span:contains('I have {abc}')").length, 1, "Text with curly bracket is rendered");
 			jQuery.sap.require("sap.m.InstanceManager");
 			sap.m.InstanceManager.getOpenDialogs()[0].destroy();
@@ -333,15 +401,16 @@
 		//sap.ca.ui.MessageDialog replacemet
 		// these examples cover the usage of sap.ca.ui.MessageDialog described in sap.ca.ui.messageDialog.qunit.html
 		test("add details", function () {
+			var sDetails = "Lorem ipsum dolor sit amet, eum an vidit porro ocurreret, has elit illud probatus ut. Ut est audire necessitatibus, case denique scribentur vel no. Ipsum suscipit te quo, eam ne justo insolens. His dico impedit offendit ea, decore eripuit volumus sea an, ut omnes cetero delectus eos.\n\nTota paulo graecis ei usu, mei te alii alia harum. Nulla singulis in nec, qui vide solum inani no. Lorem timeam posidonium nec te, decore noster ut eum, sit mazim delicata deterruisset cu. Id mea nemore delenit, eu ignota propriae eum.\n\nSolum atqui persecuti ut est, altera corrumpit te his. Nam justo epicurei mnesarchum ut, ne nam error ludus. Aeque utinam eum ad, homero audiam recteque nec ne, mazim constituam ne pri. Cum tollit dolorum interesset at. Pri partem tempor reprehendunt in, delectus vulputate sed ne. Etiam aeterno dolores eum ut.\n\nEx conceptam omittantur quo. Sit et petentium scripserit, te mea simul civibus scaevola. Mel solum ludus ea, ut sed cibo choro exerci. Eum discere quaestio ei, sed legendos platonem necessitatibus in. Eu duo populo mnesarchum vituperata."
 			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
 				id: "messagedialog1",
 				title: sMessageTitle,
 				type: sap.m.MessageBox.Icon.ERROR,
-				details: "Lorem ipsum dolor sit amet, eum an vidit porro ocurreret, has elit illud probatus ut. Ut est audire necessitatibus, case denique scribentur vel no. Ipsum suscipit te quo, eam ne justo insolens. His dico impedit offendit ea, decore eripuit volumus sea an, ut omnes cetero delectus eos.\n\nTota paulo graecis ei usu, mei te alii alia harum. Nulla singulis in nec, qui vide solum inani no. Lorem timeam posidonium nec te, decore noster ut eum, sit mazim delicata deterruisset cu. Id mea nemore delenit, eu ignota propriae eum.\n\nSolum atqui persecuti ut est, altera corrumpit te his. Nam justo epicurei mnesarchum ut, ne nam error ludus. Aeque utinam eum ad, homero audiam recteque nec ne, mazim constituam ne pri. Cum tollit dolorum interesset at. Pri partem tempor reprehendunt in, delectus vulputate sed ne. Etiam aeterno dolores eum ut.\n\nEx conceptam omittantur quo. Sit et petentium scripserit, te mea simul civibus scaevola. Mel solum ludus ea, ut sed cibo choro exerci. Eum discere quaestio ei, sed legendos platonem necessitatibus in. Eu duo populo mnesarchum vituperata.",
+				details: sDetails,
 				styleClass: sClassName,
 				initialFocus: "OK"
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagedialog1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -358,6 +427,7 @@
 
 			sap.ui.getCore().applyChanges();
 			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			deepEqual(oMessageBox.$().find('textarea').focus()[0].value, sDetails);
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});
@@ -393,6 +463,72 @@
 			ok(oMessageBox.getRightButton(), "Right button is also created");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.getContent()[0] instanceof sap.ui.core.Control, "Content is control");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("pass simple json to details", function () {
+			var oJSON = {x: 1, y: 2, z: 3};
+
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog2",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: oJSON,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagedialog2");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+
+			sap.ui.getCore().applyChanges();
+			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			deepEqual(oMessageBox.$().find('textarea').focus()[0].value, JSON.stringify(oJSON, null,'\t'));
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("pass control to details", function () {
+			var oJSON = new sap.m.Text("Hi");
+
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog3",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: oJSON,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagedialog3");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+
+			sap.ui.getCore().applyChanges();
+			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			deepEqual(oMessageBox.$().find('textarea').focus()[0].value, JSON.stringify(oJSON, null, '\t'));
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});

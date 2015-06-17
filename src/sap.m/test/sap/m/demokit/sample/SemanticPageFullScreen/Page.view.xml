@@ -11,23 +11,36 @@
 			<semantic:FullscreenPage title="FullScreen Page Title"
 									 showNavButton="true"
 									 navButtonPress="onNavButtonPress">
-
-					<semantic:semanticControls>
-
-						<semantic:SemanticButton type="Add" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="Edit" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="SaveAsTile" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="ShareInJam" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="SendMessage" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="SendEmail" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="DiscussInJam" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="ShareInJam" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="Print" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="Flag" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="Favorite" press="onSemanticButtonPress"/>
-						<semantic:SemanticButton type="MessagesIndicator"/>
-
-					</semantic:semanticControls>
+					<semantic:addAction>
+						<semantic:AddAction press="onSemanticButtonPress"/>
+					</semantic:addAction>
+					<semantic:editAction>
+						<semantic:EditAction press="onSemanticButtonPress"/>
+					</semantic:editAction>
+					<semantic:flagAction>
+						<semantic:FlagAction press="onSemanticButtonPress"/>
+					</semantic:flagAction>
+					<semantic:favoriteAction>
+						<semantic:FavoriteAction press="onSemanticButtonPress"/>
+					</semantic:favoriteAction>
+					<semantic:sendEmailAction>
+						<semantic:SendEmailAction press="onSemanticButtonPress"/>
+					</semantic:sendEmailAction>
+					<semantic:sendMessageAction>
+						<semantic:SendMessageAction press="onSemanticButtonPress"/>
+					</semantic:sendMessageAction>
+					<semantic:discussInJamAction>
+						<semantic:DiscussInJamAction press="onSemanticButtonPress"/>
+					</semantic:discussInJamAction>
+					<semantic:shareInJamAction>
+						<semantic:ShareInJamAction press="onSemanticButtonPress"/>
+					</semantic:shareInJamAction>
+					<semantic:printAction>
+						<semantic:PrintAction press="onSemanticButtonPress"/>
+					</semantic:printAction>
+					<semantic:messagesIndicator>
+						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
+					</semantic:messagesIndicator>
 
 					<semantic:customFooterContent>
 						<Button text="CustomTextBtn" press="onPress"/>

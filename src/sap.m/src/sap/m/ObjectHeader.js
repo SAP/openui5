@@ -72,6 +72,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
+			 * Object header icon alternative text that is displayed in case the Image is not available, or cannot be displayed.
+			 */
+			iconAlt : {type : "string", group : "Accessibility", defaultValue : null},
+
+			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
 			 *
 			 * If bandwidth is the key for the application, set this value to false.
@@ -181,9 +186,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * The list of Object Attributes
+			 * The list of Object sap.ui.core.Control. It will only allow sap.m.ObjectAttribute and sap.ui.comp.navpopover.SmartLink controls.
 			 */
-			attributes : {type : "sap.m.ObjectAttribute", multiple : true, singularName : "attribute"},
+			attributes : {type : "sap.ui.core.Control", multiple : true, singularName : "attribute"},
 
 			/**
 			 * First status shown on the right side of the attributes above the second status.
@@ -214,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * This aggregation takes only effect when you set "responsive" to true.
-			 * This is an association for the end area of the object header. It can either be filled with an sap.m.IconTabBar or a sap.suite.ui.commons.HeaderContainer control. Overflow handling must be taken care of by the inner control. If used with an IconTabBar control, only the header will be displayed inside the object header, the content will be displayed below the ObjectHeader.
+			 * It can either be filled with an sap.m.IconTabBar or a sap.suite.ui.commons.HeaderContainer control. Overflow handling must be taken care of by the inner control. If used with an IconTabBar control, only the header will be displayed inside the object header, the content will be displayed below the ObjectHeader.
 			 * @since 1.21.1
 			 */
 			headerContainer : {type : "sap.m.ObjectHeaderContainer", multiple : false}
@@ -381,7 +386,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumberState = function (sState) {
-		this.setProperty("numberState", sState,true);
+		this.setProperty("numberState", sState, true);
 		this._getObjectNumber().setState(sState);
 		return this;
 	};
@@ -670,6 +675,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			height : sHeight,
 			width : sWidth,
 			size : sSize,
+			alt: this.getIconAlt(),
 			densityAware : this.getIconDensityAware()
 		};
 
@@ -679,12 +685,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.onBeforeRendering = function() {
-		// the icontabbar content is rendered internally by the object header
-		// therefore we have to remove it manually before re-rendering
-		if (this.getHeaderContainer() instanceof Control && this.getHeaderContainer().$()) {
-			this.getHeaderContainer().$().remove();
-		}
-
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 			sap.ui.Device.orientation.detachHandler(this._onOrientationChange, this);
 		}

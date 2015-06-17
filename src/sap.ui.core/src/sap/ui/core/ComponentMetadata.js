@@ -3,10 +3,40 @@
  */
 
 // Provides class sap.ui.core.ComponentMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
-	function(jQuery, ManagedObjectMetadata) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/thirdparty/URI', 'jquery.sap.resources'],
+	function(jQuery, ManagedObjectMetadata, URI /*, jQuery2 */) {
 	"use strict";
 
+	/**
+	 * Util function to process strings in an object/array recursively
+	 *
+	 * @param {object/Array} oObject object/array to process
+	 * @param {function} fnCallback function(oObject, sKey, sValue) to call for all strings. Use "oObject[sKey] = X" to change the value.
+	 */
+	function processObject(oObject, fnCallback) {
+		for (var sKey in oObject) {
+			if (!oObject.hasOwnProperty(sKey)) {
+				continue;
+			}
+			var vValue = oObject[sKey];
+			switch (typeof vValue) {
+				case "object":
+					// ignore null objects
+					if (vValue) {
+						processObject(vValue, fnCallback);
+					}
+					break;
+				case "string":
+						fnCallback(oObject, sKey, vValue);
+						break;
+				default:
+					// do nothing in case of other types
+			}
+		}
+	}
+
+	// Manifest Template RegExp: {{foo}}
+	var rManifestTemplate = /\{\{([^\}\}]+)\}\}/g;
 
 	/**
 	 * Creates a new metadata object for a Component subclass.
@@ -133,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		// the namespace sap.ui5 and eventually the extends property
 		oManifest["name"] = oManifest["name"] || sName;
 		oManifest["sap.app"] = oManifest["sap.app"] || {
-			"id": sName
+			"id": sPackage // use the "package" namespace instead of the classname (without ".Component")
 		};
 		oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
 		if (sParentName) {
@@ -144,9 +174,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		// convert the old legacy metadata and merge with the new manifest
 		this._convertLegacyMetadata(oStaticInfo, oManifest);
 
-		// apply the manifest to the static info and store the static info for
+		// apply the raw manifest to the static info and store the static info for
 		// later access to specific custom entries of the manifest itself
 		oStaticInfo["manifest"] = oManifest;
+
+		// processed manifest will be set when the manifest
+		// gets requested for the first time
+		// see #getManifest / #getManifestEntry
+		oStaticInfo["processed-manifest"] = null;
+
 		this._oStaticInfo = oStaticInfo;
 
 	};
@@ -248,9 +284,100 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @since 1.27.1
 	 */
 	ComponentMetadata.prototype.getManifest = function() {
+
+		// use raw manifest in case of legacy metadata
+		if (this.getMetadataVersion() === 1) {
+			return this.getRawManifest();
+		}
+
 		// only a copy of the manifest will be returned to make sure that it
 		// cannot be modified - TODO: think about Object.freeze() instead
-		return jQuery.extend(true, {}, this._oStaticInfo.manifest);
+		return jQuery.extend(true, {}, this._getManifest());
+	};
+
+	/**
+	 * Returns the processed manifest object (no copy).
+	 * Processing will be done in a "lazy" way.
+	 *
+	 * @return {object} manifest
+	 * @private
+	 * @since 1.29.0
+	 */
+	ComponentMetadata.prototype._getManifest = function() {
+
+		// check if the manifest was already processed and set as a separate private property
+		var oProcessedManifest = this._oStaticInfo["processed-manifest"]; 
+		if (!oProcessedManifest) {
+
+			// use public getter to get a copy of the raw manifest
+			// otherwise the raw manifest would get modified
+			var oRawManifest = this.getRawManifest();
+
+			// process manifest and set it as private property
+			oProcessedManifest = this._oStaticInfo["processed-manifest"] = this._processManifestEntries(oRawManifest);
+		}
+
+		return oProcessedManifest;
+	};
+
+	/**
+	 * Returns the raw manifest defined in the metadata of the component.
+	 * If not specified, the return value is null.
+	 * @return {Object} manifest
+	 * @public
+	 * @since 1.29.0
+	 */
+	ComponentMetadata.prototype.getRawManifest = function() {
+		// only a copy of the manifest will be returned to make sure that it
+		// cannot be modified - TODO: think about Object.freeze() instead
+		return jQuery.extend(true, {}, this._getRawManifest());
+	};
+
+	/**
+	 * Returns the raw manifest object (no copy).
+	 *
+	 * @return {object} manifest
+	 * @private
+	 * @since 1.29.0
+	 */
+	ComponentMetadata.prototype._getRawManifest = function() {
+		return this._oStaticInfo["manifest"]; 
+	};
+
+	/**
+	 * Replaces template placeholder in manifest with values from
+	 * ResourceBundle referenced in manifest "sap.app/i18n".
+	 *
+	 * @private
+	 * @since 1.29.0
+	 */
+	ComponentMetadata.prototype._processManifestEntries = function(oManifest) {
+
+		// exclude abstract base classes and legacy metadata
+		if (!this.isAbstract() && this._oStaticInfo.__metadataVersion === 2) {
+
+			var that = this;
+
+			// read out i18n URI, defaults to i18n/i18n.properties
+			var sComponentRelativeI18nUri = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties";
+
+			var oResourceBundle;
+
+			processObject(oManifest, function(oObject, sKey, vValue) {
+				oObject[sKey] = vValue.replace(rManifestTemplate, function(sMatch, s1) {
+					// only create a resource bundle if there is something to replace
+					if (!oResourceBundle) {
+						oResourceBundle = jQuery.sap.resources({
+							url: that._resolveUri(new URI(sComponentRelativeI18nUri))
+						});
+					}
+					return oResourceBundle.getText(s1);
+				});
+			});
+
+		}
+
+		return oManifest;
 	};
 
 	/**
@@ -570,27 +697,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 */
 	ComponentMetadata.prototype._loadIncludes = function() {
 
-		// afterwards we load our includes!
-		var aIncludes = this.getIncludes();
-		if (aIncludes && aIncludes.length > 0) {
-			var that = this;
-			var sLibName = this.getLibraryName();
-			for (var i = 0, l = aIncludes.length; i < l; i++) {
-				var sFile = aIncludes[i];
-				if (sFile.match(/\.css$/i)) {
-					var sCssUrl = sap.ui.resource(sLibName, sFile);
-					jQuery.sap.log.info("Component \"" + that.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
-					jQuery.sap.includeStyleSheet(sCssUrl /* TODO: , sId (do we have a good idea how to create the id?!) */ );
-				} else {
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		var mResources = oUI5Manifest["resources"];
+
+		if (!mResources) {
+			return;
+		}
+
+		var sComponentName = this.getComponentName();
+
+		// load JS files
+		var aJSResources = mResources["js"];
+		if (aJSResources) {
+			for (var i = 0; i < aJSResources.length; i++) {
+				var oJSResource = aJSResources[i];
+				var sFile = oJSResource.uri;
+				if (sFile) {
 					// load javascript file
 					var m = sFile.match(/\.js$/i);
 					if (m) {
 						// prepend lib name to path, remove extension
-						var sPath = sLibName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
-						jQuery.sap.log.info("Component \"" + that.getName() + "\" is loading JS: \"" + sPath + "\"");
+						var sPath = sComponentName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
+						jQuery.sap.log.info("Component \"" + this.getName() + "\" is loading JS: \"" + sPath + "\"");
 						// call internal require variant that accepts a requireJS path
 						jQuery.sap._requirePath(sPath);
 					}
+				}
+			}
+		}
+
+		// include CSS files
+		var aCSSResources = mResources["css"];
+		if (aCSSResources) {
+			for (var j = 0; j < aCSSResources.length; j++) {
+				var oCSSResource = aCSSResources[j];
+				if (oCSSResource.uri) {
+					var sCssUrl = this._resolveUri(new URI(oCSSResource.uri)).toString();
+					jQuery.sap.log.info("Component \"" + this.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
+					jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
 				}
 			}
 		}
@@ -634,7 +778,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		}
 
 	};
-
 
 	/**
 	 * Converts the legacy metadata into the new manifest format
@@ -752,7 +895,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		}
 		
 	};
-	
+
+	/**
+	 * Resolves the given URI relative to the component.
+	 *
+	 * @private
+	 * @param {URI} oUri URI to resolve
+	 * @return {URI} resolved URI
+	 * @since 1.29.1
+	 */
+	ComponentMetadata.prototype._resolveUri = function(oUri) {
+		return ComponentMetadata._resolveUriRelativeTo(oUri, new URI(jQuery.sap.getModulePath(this.getComponentName()) + "/"));
+	};
+
+	/**
+	 * Resolves the given URI relative to the given base URI.
+	 *
+	 * @private
+	 * @param {URI} oUri URI to resolve
+	 * @param {URI} oBase base URI
+	 * @return {URI} resolved URI
+	 * @since 1.29.1
+	 */
+	ComponentMetadata._resolveUriRelativeTo = function(oUri, oBase) {
+		if (oUri.is("absolute") || (oUri.path() && oUri.path()[0] === "/")) {
+			return oUri;
+		}
+		var oPageBase = new URI().search("");
+		oBase = oBase.absoluteTo(oPageBase);
+		return oUri.absoluteTo(oBase).relativeTo(oPageBase);
+	};
+
 	return ComponentMetadata;
 
 }, /* bExport= */ true);

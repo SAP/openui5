@@ -33,7 +33,6 @@
 			data-sap-ui-compatVersion="1.16">
 	</script>
 	<script type="text/javascript">
-
 		var app = new sap.m.App("myApp", {initialPage: "page1"});
 
 		var sDateFormat = sap.m.getLocaleData().getDatePattern("medium");
@@ -466,8 +465,8 @@
 		});
 
 		var oDialogResize = new sap.m.Dialog({
-			title: "Resizeable Dialog",
-			resizeable: true,
+			title: "Resizable Dialog",
+			resizable: true,
 			content: new sap.ui.core.HTML({
 				content: '<div>Lipsum limple text</div>'
 			}),
@@ -481,7 +480,7 @@
 		var oDialogResizeAndDrag = new sap.m.Dialog({
 			title: "Dialog Resize And Drag",
 			draggable: true,
-			resizeable: true,
+			resizable: true,
 			content: new sap.ui.core.HTML({
 				content: '<div>Lipsum limple text</div>'
 			}),
@@ -997,6 +996,31 @@
 					width: "200px",
 					press: function() {
 						oDialogResizeAndDrag.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br/>"}),
+				new sap.m.Button({
+					width: "200px",
+					text: "Compact size",
+					press: function() {
+						var oDialog = new sap.m.Dialog({
+							title: "View Settings",
+							horizontalScrolling: false,
+							contentWidth: "65rem",
+							contentHeight: "40rem",
+							draggable: true,
+							subHeader: new sap.m.Bar({
+								contentLeft: [new sap.m.SegmentedButton({
+									width: "100%",
+									buttons: [new sap.m.Button({
+										type: sap.m.ButtonType.Default,
+										text: "Filter"
+									})]
+								})]
+							})
+						});
+						oDialog.toggleStyleClass("sapUiSizeCompact", true);
+						oDialog.open();
 					}
 				}),
 				new sap.m.Label({text: "Starting on"}).addStyleClass("specialLabelDialogPage"),

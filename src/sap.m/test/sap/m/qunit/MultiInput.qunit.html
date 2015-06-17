@@ -309,27 +309,30 @@
 	});
 
 	test("keyboard - ctrl + A with text", function() {
-		var token1 = new sap.m.Token();
-		var token2 = new sap.m.Token();
-		var token3 = new sap.m.Token();
-		multiInput1.setTokens([token1, token2, token3]);
+		
+		if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10)){
+			var token1 = new sap.m.Token();
+			var token2 = new sap.m.Token();
+			var token3 = new sap.m.Token();
+			multiInput1.setTokens([token1, token2, token3]);
 
-		multiInput1.updateDomValue("123");
-		sap.ui.test.qunit.triggerEvent("input", multiInput1.getFocusDomRef());
+			multiInput1.updateDomValue("123");
+			sap.ui.test.qunit.triggerEvent("input", multiInput1.getFocusDomRef());
 
-		multiInput1.selectText(0, multiInput1.getValue().length);
-		equals(multiInput1._$input.getSelectedText(), "123", "only texts are selected");
+			multiInput1.selectText(0, multiInput1.getValue().length);
+			equals(multiInput1._$input.getSelectedText(), "123", "only texts are selected");
 
-		sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
-		equals(token1.getSelected(), true, "Token1 is selected");
-		equals(token2.getSelected(), true, "Token2 is selected");
-		equals(token3.getSelected(), true, "Token3 is selected");
+			sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+			equals(token1.getSelected(), true, "Token1 is selected");
+			equals(token2.getSelected(), true, "Token2 is selected");
+			equals(token3.getSelected(), true, "Token3 is selected");
 
-		multiInput1.ontap();
-		this.clock.tick(1);
-		equals(token1.getSelected(), false, "Token1 is unselected");
-		equals(token2.getSelected(), false, "Token2 is unselected");
-		equals(token3.getSelected(), false, "Token3 is unselected");
+			multiInput1.ontap();
+			this.clock.tick(1);
+			equals(token1.getSelected(), false, "Token1 is unselected");
+			equals(token2.getSelected(), false, "Token2 is unselected");
+			equals(token3.getSelected(), false, "Token3 is unselected");
+		}
 
 	});
 
@@ -434,21 +437,18 @@
 		sap.ui.getCore().applyChanges();
 
 		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "initial single-line mode");
-		equals(oMISingleLineMode.getValue(), "", "no indicator in single-line mode");
 
 		oMISingleLineMode.setEnableMultiLineMode(true);
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(10);
 
 		equals(oMISingleLineMode.getEnableMultiLineMode(), true, "multi-line set successfully");
-		equals(oMISingleLineMode.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator appears");
 
 		oMISingleLineMode.setEnableMultiLineMode(false);
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(10);
 
 		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "set back single-line mode");
-		equals(oMISingleLineMode.getValue(), "", "no indicator in single-line mode");
 
 	});
 
@@ -457,8 +457,7 @@
 		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 is not visible");
 		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
-		equals(oMLInput.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator is visible");
-
+		
 		oMLInput.focus();
 		this.clock.tick(500);
 		var bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
@@ -466,8 +465,7 @@
 		equals(oMLInput.getTokens()[0].getVisible(), true, "token1 can be displayed");
 		equals(oMLInput.getTokens()[1].getVisible(), true, "token2 can be displayed");
 		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 can be displayed");
-		equals(oMLInput.getValue(), "", "indicator is not visible");
-
+		
 		oMLInput.setValue("a");
 		oMLInput._getIsSuggestionPopupOpen = function(){ return true; };
 		oMLInput.onsapenter();
@@ -486,7 +484,6 @@
 		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
 		equals(bHasClass, false, "multi-line mode is closed");
 		equals(oMLInput.getTokens()[3].getVisible(), true, "last token can be displayed");
-		equals(oMLInput.getValue(), oMessageBundle.getText(sShowMoreKey, 3), "indicator is visible");
 		equals(oMLInput.getTokens()[2].getVisible(), false, "token3 is not visible");
 		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
@@ -517,7 +514,6 @@
 		equals(oMLInput2.getTokens()[2].getVisible(), true, "token3 can be displayed");
 		equals(oMLInput2.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput2.getTokens()[0].getVisible(), false, "token1 is not visible");
-		equals(oMLInput2.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator is visible");
 
 		oMLInput2.focus();
 		sap.ui.getCore().applyChanges();
@@ -532,7 +528,6 @@
 		this.clock.tick(500);
 		oMLInput2.onsapenter();
 		this.clock.tick(500);
-		equals(oMLInput2._oPopupInput.getValue(), "", "no value");
 		equals(oTokenizerInPopup.getTokens().length, 4, "new token is added");
 		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
@@ -546,7 +541,6 @@
 		equals(oMLInput2._tokenizer.getTokens()[1].getVisible(), false, "token2 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[2].getVisible(), false, "token3 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[3].getVisible(), true, "new token can be displayed");
-		equals(oMLInput2.getValue(), oMessageBundle.getText(sShowMoreKey, 3), "indicator is visible");
 		
 		oMLInput2.destroy();
 	});

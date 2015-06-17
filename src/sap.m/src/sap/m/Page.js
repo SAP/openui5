@@ -88,10 +88,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			backgroundDesign : {type : "sap.m.PageBackgroundDesign", group : "Appearance", defaultValue : sap.m.PageBackgroundDesign.Standard},
 
 			/**
-			 * This property is used to set the appearance of the NavButton. By default when showNavButton is set to true, a back button will be shown in iOS and an up button in other platforms. In case you want to show a normal button in the left header, you can set the value to "Default".
+			 * This property is used to set the appearance of the NavButton. By default when showNavButton is set to true, a back button will be shown in iOS and an up button in other platforms. In case you want to show a normal button in the left header area, you can set the value to "Default".
 			 * @since 1.12
 			 * @deprecated Since version 1.20.
-			 * Deprecated since the MVI theme is removed now. This property is only useable with a Button text in that theme.
+			 * Deprecated since the MVI theme is removed now. This property is only usable with a Button text in that theme.
 			 */
 			navButtonType : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : sap.m.ButtonType.Back, deprecated: true},
 
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.13.1
 			 */
 			showFooter : {type : "boolean", group : "Appearance", defaultValue : true},
-			
+
 			/**
 			 * Decides which area is covered by the local BusyIndicator when <code>page.setBusy()</code> is called. By default the entire page is covered, including headers and footer. When this property is set to "true", only the content area is covered (not header/sub header and footer), which is useful e.g. when there is a SearchField in the sub header and live search continuously updates the content area while the user is still able to type.
 			 * @since 1.29.0
@@ -156,7 +156,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.12.2
 			 */
 			navButtonPress : {}
-		}
+		},
+		designTime : true
 	}});
 
 
@@ -229,6 +230,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
+	Page.prototype._ensureNavButton = function() {
+		if (!this._navBtn) {
+			var sNavButtonType = this.getNavButtonType(), 
+			    sBackText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
+
+			this._navBtn = new sap.m.Button(this.getId() + "-navButton", {tooltip: sBackText,press: jQuery.proxy(function(){this.fireNavButtonPress(); this.fireNavButtonTap();},this)});
+
+			if (sap.ui.Device.os.android && sNavButtonType == sap.m.ButtonType.Back) {
+				this._navBtn.setType(sap.m.ButtonType.Up);
+			} else {
+				this._navBtn.setType(sNavButtonType);
+			}
+		}
+	};
+
 	Page.prototype.setShowNavButton = function (bShowNavBtn) {
 		var bOldValue = !!this.getShowNavButton();
 		if (bShowNavBtn === bOldValue) {
@@ -236,21 +252,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		this.setProperty("showNavButton", bShowNavBtn, true);
-		this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {press: jQuery.proxy(function(){this.fireNavButtonPress(); this.fireNavButtonTap();},this)});
-		var sNavButtonType = this.getNavButtonType();
-		if (sap.ui.Device.os.android && sNavButtonType == sap.m.ButtonType.Back) {
-			this._navBtn.setType(sap.m.ButtonType.Up);
-		} else {
-			this._navBtn.setType(sNavButtonType);
-		}
 
 		if (bShowNavBtn) {
+			this._ensureNavButton(); // creates this._navBtn, if required
 			if (this._appIcon) {
 				this._updateHeaderContent(this._appIcon, 'left', -1);
 			}
 
 			this._updateHeaderContent(this._navBtn, 'left', 0);
-		} else {
+		} else if (this._navBtn) {
 			// remove back button from header bar
 			this._updateHeaderContent(this._navBtn, 'left', -1);
 		}
@@ -258,7 +268,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	Page.prototype.setNavButtonType = function (sNavButtonType) {
-		this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {press: jQuery.proxy(function(){this.fireNavButtonPress(); this.fireNavButtonTap();},this)});
+		this._ensureNavButton(); // creates this._navBtn, if required
 		if (!sap.ui.Device.os.ios && sNavButtonType == sap.m.ButtonType.Back) {
 			// internal conversion from Back to Up for non-iOS platform
 			this._navBtn.setType(sap.m.ButtonType.Up);
@@ -270,7 +280,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	Page.prototype.setNavButtonText = function (sText) {
-		this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {press: jQuery.proxy(function(){this.fireNavButtonPress(); this.fireNavButtonTap();},this)});
+		this._ensureNavButton(); // creates this._navBtn, if required
 		this.setProperty("navButtonText", sText, true);
 		return this;
 	};
@@ -412,6 +422,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Page.prototype.scrollTo = function(y, time) {
 		if (this._oScroller) {
 			this._oScroller.scrollTo(0, y, time);
+		}
+		return this;
+	};
+
+	/**
+	 * Scrolls to an element(DOM or sap.ui.core.Element) within the page if the element is rendered.
+	 * @param {HTMLElement | sap.ui.core.Element} oElement The element to which should be scrolled.
+	 * @param {int} [iTime=0] The duration of animated scrolling. To scroll immediately without animation, give 0 as value or leave it default.
+	 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
+	 * @since 1.30
+	 * @public
+	 */
+	Page.prototype.scrollToElement = function(oElement, iTime) {
+		if (oElement instanceof sap.ui.core.Element) {
+			oElement = oElement.getDomRef();
+		}
+
+		if (this._oScroller) {
+			this._oScroller.scrollToElement(oElement, iTime);
 		}
 		return this;
 	};

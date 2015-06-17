@@ -2569,9 +2569,9 @@
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
-		this.clock.tick(500);
+		this.clock.tick(1100);
 		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 300 msec');
+				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2612,9 +2612,9 @@
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
-		this.clock.tick(500);
+		this.clock.tick(1100);
 		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 300 msec');
+				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2793,53 +2793,101 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' + ENTER", function() {
+	test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function() {
+		// IE has security settings 
+		// which prompt the user if he wants to let the page access the clipboard.
+		if (!sap.ui.Device.browser.internet_explorer) { 
+			// system under test
+			var oItem;
+			var oMultiComboBox = new sap.m.MultiComboBox({
+				items : [oItem = new sap.ui.core.Item({
+					key : "DZ",
+					text : "Algeria"
+				})]
+			});
 
-		// system under test
-		var oItem;
-		var oMultiComboBox = new sap.m.MultiComboBox({
-			items : [oItem = new sap.ui.core.Item({
-				key : "DZ",
-				text : "Algeria"
-			})]
-		});
+			// arrange          
+			oMultiComboBox.placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
 
-		// arrange          
-		oMultiComboBox.placeAt("MultiComboBox-content");
-		sap.ui.getCore().applyChanges();
+			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+			var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
-		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
-		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
-		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
-
-		// act
-		sap.ui.test.qunit.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
-			originalEvent : {
-				clipboardData : {
-					getData : function() {
-						return "Algeria";
+			// act
+			sap.ui.test.qunit.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
+				originalEvent : {
+					clipboardData : {
+						getData : function() {
+							return "Algeria";
+						}
 					}
 				}
-			}
-		});
-		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria"); // need to add the value with triggerCharacterInput because triggerEvent("paste") does not set value
+			});
+			
+			// assertions
+			strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+			strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+			
+			deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+			
+			// cleanup
+			oMultiComboBox.destroy();
+		} else {
+			expect(0);
+		}
+	});
+	
+	test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function() {
+		// IE has security settings 
+		// which prompt the user if he wants to let the page access the clipboard.
+		if (!sap.ui.Device.browser.internet_explorer) {
+			// system under test
+			var oItem;
+			var oMultiComboBox = new sap.m.MultiComboBox({
+				items : [oItem1 = new sap.ui.core.Item({
+					key : "key1",
+					text : "item1"
+				}),
+				oItem2 = new sap.ui.core.Item({
+					key : "key2",
+					text : "item2"
+				})]
+			});
 
-		// assertions
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+			// arrange          
+			oMultiComboBox.placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
 
-		// act
-		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+			var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
-		// assertions        
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was not fired");
-
-		// cleanup
-		oMultiComboBox.destroy();
+			// act
+			sap.ui.test.qunit.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
+				originalEvent : {
+					clipboardData : {
+						getData : function() {
+							return "item1\ritem2";
+						}
+					}
+				}
+			});
+			
+			// assertions
+			strictEqual(fnFireSelectionChangeSpy.callCount, 2, "The selection change event was fired");
+			strictEqual(fnFireSelectionFinishSpy.callCount, 2, "The selection finish event was fired");
+			
+			var selectedItems = oMultiComboBox.getSelectedItems();
+			strictEqual(selectedItems[0].getKey(), oItem1.getKey(), "The first key should be 'key1'");
+			strictEqual(selectedItems[1].getKey(), oItem2.getKey(), "The second key should be 'key2'");
+			
+			strictEqual(selectedItems[0].getText(), oItem1.getText(), "The first item text should be 'item1'");
+			strictEqual(selectedItems[1].getText(), oItem2.getText(), "The second item text should be 'item2'");
+			
+			// cleanup
+			oMultiComboBox.destroy();
+		} else {
+			expect(0);
+		}
 	});
 
 	test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", function() {

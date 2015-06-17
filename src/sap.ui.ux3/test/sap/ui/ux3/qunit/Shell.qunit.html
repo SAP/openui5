@@ -399,7 +399,8 @@
 
 				setTimeout(function() {
 					// check whether popup is open
-					var $tp = jQuery.sap.byId("myShell-searchTool");
+					var oTP = sap.ui.getCore().byId("myShell-searchTool");
+					var $tp = oTP.$();
 					equal($tp.css("display"), "block", "Search tool popup should be visible now");
 
 					// enter text
@@ -412,11 +413,11 @@
 
 						// close tool popup
 						qutils.triggerMouseEvent("myShell-tool-myShell-searchTool", "click", 1, 1, 1, 1);
-						setTimeout(function() {
+						oTP.oPopup.attachClosed(function() {
 							// make sure the popup is closed again
 							equal($tp.css("display"), "none", "Search tool popup should not be visible now");
 							start();
-						}, 3000);
+						});
 					}, 300);
 				}, 300);
 			});

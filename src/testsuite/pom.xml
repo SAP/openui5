@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>testsuite</artifactId>
-	<version>1.29.0-SNAPSHOT</version>
+	<version>1.31.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 
@@ -161,7 +161,7 @@
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.4</version>
+						<version>0.1.8</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -171,7 +171,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<version>0.13.0</version>
+							<version>0.21.1</version>
 							<skip>false</skip>
 							<failOnError>true</failOnError>
 							<onlyChangedFiles>true</onlyChangedFiles>
@@ -203,7 +203,7 @@
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.4</version>
+						<version>0.1.8</version>
 						<configuration>
 							<onlyChangedFiles>false</onlyChangedFiles>
 						</configuration>

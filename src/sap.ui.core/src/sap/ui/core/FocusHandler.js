@@ -64,7 +64,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				if ($Act.is(":focus") || (Device.browser.internet_explorer && Device.browser.version == 8 && document.hasFocus())) {
 					aCtrls = $Act.control();
 				}
-			} catch (err) {}
+			} catch (err) {
+				//escape eslint check for empty block
+			}
 			return aCtrls && aCtrls.length > 0 ? aCtrls[0].getId() : null;
 		};
 		
@@ -95,6 +97,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				};
 			}
 			return null;
+		};
+		
+		/**
+		 * If the given control is the last known focused control, the stored focusInfo is updated.
+		 * 
+		 * @see sap.ui.core.FocusHandler#restoreFocus
+		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
+		 * @param {string} oControl the control
+		 * @private
+		 */
+		FocusHandler.prototype.updateControlFocusInfo = function(oControl){
+			if (oControl && this.oLastFocusedControlInfo && this.oLastFocusedControlInfo.control === oControl) {
+				var sControlId = oControl.getId();
+				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
+				jQuery.sap.log.debug("Update focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
+			}
 		};
 		
 		/**

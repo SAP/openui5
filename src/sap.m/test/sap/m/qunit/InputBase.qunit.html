@@ -21,6 +21,10 @@
 		<!-- use the sinon faketimers for this test -->
 		<script type="text/javascript">
 			sinon.config.useFakeTimers = true;
+			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+			jQuery.now = function() {
+				return Date.now();
+			};
 		</script>
 
 		<script>
@@ -1148,13 +1152,11 @@
 					}
 				});
 				
-				oValueStateInput.onfocusin();
 				oValueStateInput.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				
 				//warning state
-				oValueStateInput._$input.focus();
-				oValueStateInput.updateDomValue("1");
+				oValueStateInput.updateDomValue("1").focus();
 				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
 				this.clock.tick(1000);
 				strictEqual(oValueStateInput.getValueState(), "Warning");
@@ -1168,7 +1170,8 @@
 				this.clock.tick(1000);
 				oValueStateInput.getValueState();
 				strictEqual(oValueStateInput.getValueState(), "Success");
-				ok(!jQuery.sap.domById("vsinput-message"), "message popup is closed");
+				ok(jQuery.sap.domById("vsinput-message"), "Success message popup is open");
+				ok(jQuery.sap.byId("vsinput-message").hasClass("sapUiInvisibleText"), "Success message popup is not visible");
 
 				//error state
 				oValueStateInput.updateDomValue("123");

@@ -288,7 +288,7 @@ public class LessFilter implements Filter {
    * @param compressCSS true, if CSS should be compressed
    * @param compressJSON true if JSON should be compressed
    */
-  private synchronized void compile(String sourcePath, boolean compressCSS, boolean compressJSON) {
+  private void compile(String sourcePath, boolean compressCSS, boolean compressJSON) {
     
     Matcher m = PATTERN_THEME_REQUEST_PARTS.matcher(sourcePath);
     if (m.matches()) {
@@ -299,9 +299,6 @@ public class LessFilter implements Filter {
       String libraryName = library.replace('/', '.');
       String theme = m.group(3);
       String path = prefixPath + theme + "/";
-      
-      // some info
-      this.log("Compiling CSS/JSON of library " + libraryName + " for theme " + theme);
       
       try {
         
@@ -317,6 +314,9 @@ public class LessFilter implements Filter {
           long lastModified = resources != null ? this.getMaxLastModified(resources.split(";")) : -1;
           if (!this.lastModified.containsKey(sourcePath) || this.lastModified.get(sourcePath) < lastModified) {
             
+            // some info
+            this.log("Compiling CSS/JSON of library " + libraryName + " for theme " + theme);
+            
             // read the content
             InputStream is = conn.getInputStream();
             String input = IOUtils.toString(is, "UTF-8");
@@ -326,7 +326,7 @@ public class LessFilter implements Filter {
             long millis = System.currentTimeMillis();
             
             // compile the CSS/JSON
-            Object result = Context.call(null, this.parse, this.scope, this.scope, new Object[] { input, path, compressCSS, compressJSON, libraryName });
+            Scriptable result = this.compileCSS(input, path, compressCSS, compressJSON, libraryName);
             
             // cache the result
             String css = Context.toString(ScriptableObject.getProperty((Scriptable) result, "css"));
@@ -363,6 +363,20 @@ public class LessFilter implements Filter {
     }
     
   } // method: compile
+
+
+  /**
+   * compiles the CSS, RTL-CSS and theme parameters as JSON
+   * @param input less input
+   * @param path source path
+   * @param compressCSS true, if CSS should be compressed
+   * @param compressJSON true if JSON should be compressed
+   * @param libraryName name of the library
+   */
+  private synchronized Scriptable compileCSS(String input, String path, boolean compressCSS, boolean compressJSON, String libraryName) {
+    // compile the CSS/JSON within the Rhino environment
+    return (Scriptable) Context.call(null, this.parse, this.scope, this.scope, new Object[] { input, path, compressCSS, compressJSON, libraryName });
+  } // method: compileCSS
 
 
   /**

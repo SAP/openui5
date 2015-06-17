@@ -123,16 +123,11 @@
 				equal(_resolveFullUrl.call(null, "ws://hostname:1234/foo/bar"), "ws://hostname:1234/foo/bar", "resolved full URL (ws://)");
 				equal(_resolveFullUrl.call(null, "wss://hostname:1234/foo/bar"), "wss://hostname:1234/foo/bar", "resolved full URL (wss://)");
 
-				equal(_resolveFullUrl.call(null, "/foo/bar"),
-					((window.document.location.protocol === 'https:') ? 'wss://' : 'ws://') +
-					window.document.location.host +
-					"/foo/bar", "resolved absolute URL");
+				var oBaseUri = new URI();
+				oBaseUri.search('').protocol(oBaseUri.protocol() === 'https' ? 'wss' : 'ws');
 
-				equal(_resolveFullUrl.call(null, "../foo/bar"),
-					((window.document.location.protocol === 'https:') ? 'wss://' : 'ws://') +
-					window.document.location.host +
-					window.document.location.pathname.substring(0, window.document.location.pathname.lastIndexOf('/')) + '/' +
-					"../foo/bar", "resolved relative URL");
+				equal(_resolveFullUrl.call(null, "/foo/bar"), new URI("/foo/bar").absoluteTo(oBaseUri).toString(), "resolved absolute URL");
+				equal(_resolveFullUrl.call(null, "../foo/bar"), new URI("../foo/bar").absoluteTo(oBaseUri).toString(), "resolved relative URL");
 
 			});
 

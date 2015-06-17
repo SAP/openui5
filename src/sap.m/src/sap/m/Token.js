@@ -129,8 +129,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Token.prototype.ontouchstart = function(oEvent) {
 		this.$().toggleClass("sapMTokenActive", true);
-		if (sap.ui.Device.system.desktop && oEvent.originalEvent.button !== 0) {
-			return; // only on left mouse button
+		if (sap.ui.Device.system.desktop && oEvent.originalEvent.button) {
+			/* there are two cases that should fire touch start event:
+				left button click in desktop, where value of button event is 0; 
+				touch event in combi device, where value of button event is undefined.*/
+			return;
 		}
 
 		this._oSrcStartId = oEvent.target.id;

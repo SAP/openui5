@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
+			"sap.m.ImageMode",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
@@ -55,6 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.PageBackgroundDesign",
 			"sap.m.PlacementType",
 			"sap.m.PopinDisplay",
+			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
 			"sap.m.SelectType",
@@ -63,12 +65,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.ToolbarDesign",
-			"sap.m.VerticalPlacementType",
-			"sap.m.semantic.SemanticType"
+			"sap.m.VerticalPlacementType"
 		],
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IconTab",
+			"sap.m.semantic.IGroup",
+			"sap.m.semantic.IFilter",
+			"sap.m.semantic.ISort",
 			"sap.m.ObjectHeaderContainer"
 		],
 		controls: [
@@ -114,9 +118,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ListItemBase",
 			"sap.m.MessagePage",
 			"sap.m.MessagePopover",
+			"sap.m.MessageStrip",
 			"sap.m.MultiComboBox",
 			"sap.m.MultiInput",
 			"sap.m.NavContainer",
+			"sap.m.PagingButton",
 			"sap.m.ObjectAttribute",
 			"sap.m.ObjectHeader",
 			"sap.m.ObjectIdentifier",
@@ -137,6 +143,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Popover",
 			"sap.m.ProgressIndicator",
 			"sap.m.PullToRefresh",
+			"sap.m.QuickView",
+			"sap.m.QuickViewCard",
+			"sap.m.QuickViewPage",
+			"sap.m.QuickViewGroup",
+			"sap.m.QuickViewGroupElement",
 			"sap.m.RadioButton",
 			"sap.m.RadioButtonGroup",
 			"sap.m.RatingIndicator",
@@ -172,7 +183,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ViewSettingsDialog",
 			"sap.m.semantic.DetailPage",
 			"sap.m.semantic.FullscreenPage",
-			"sap.m.semantic.MasterPage"
+			"sap.m.semantic.MasterPage",
+			"sap.m.Wizard",
+			"sap.m.WizardStep"
 		],
 		elements: [
 			"sap.m.Column",
@@ -189,6 +202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
 			"sap.m.ViewSettingsCustomItem",
+			"sap.m.ViewSettingsCustomTab",
 			"sap.m.ViewSettingsFilterItem",
 			"sap.m.ViewSettingsItem",
 			"sap.m.semantic.SemanticButton",
@@ -782,6 +796,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
+	 *
+	 *   Marker interface for controls which are suitable as items of the group aggregation of sap.m.Semantic.MasterPage.
+	 *
+	 *
+	 * @name sap.m.semantic.IGroup
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+
+	/**
+	 *
+	 *   Marker interface for controls which are suitable as items of the filter aggregation of sap.m.Semantic.MasterPage.
+	 *
+	 *
+	 * @name sap.m.semantic.IFilter
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+
+	/**
+	 *
+	 *   Marker interface for controls which are suitable as items of the sort aggregation of sap.m.Semantic.MasterPage.
+	 *
+	 *
+	 * @name sap.m.semantic.ISort
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+
+		/**
 	 * Available Filter Item Design.
 	 *
 	 * @enum {string}
@@ -804,6 +854,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
+	/**
+	* Determines how the source image is used on the output DOM element.
+	*
+	* @enum {string}
+	* @public
+	* @since 1.30.0
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	sap.m.ImageMode = {
+
+		/**
+		* The image is rendered with 'img' tag and the 'src' property is set to the src attribute on the output DOM element.
+		* @public
+		*/
+		Image: "Image",
+
+		/**
+		* The image is rendered with 'span' tag and the 'src' property is set to the 'background-image' CSS style on the output DOM element
+		* @public
+		*/
+		Background: "Background"
+
+	};
 
 	/**
 	 * A subset of input types that fit to a simple API returning one string.
@@ -1239,6 +1312,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
+	 * QuickViewGroupElement is a combination of one label and another control (Link or Text) associated to this label
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.QuickViewGroupElementType = {
+
+		/**
+		 * Displays a phone number link for direct dialing
+		 * @public
+		 */
+		phone : "phone",
+
+		/**
+		 * Displays a phone number link for direct dialing and an icon for sending a text message
+		 * @public
+		 */
+		mobile : "mobile",
+
+		/**
+		 * Displays an e-mail link
+		 * @public
+		 */
+		email : "email",
+
+		/**
+		 * Displayes a regular HTML link
+		 * @public
+		 */
+		link : "link",
+
+		/**
+		 * Dislpays text
+		 * @public
+		 */
+		text : "text",
+
+		/**
+		 * Dislpays a link for navigating to another QuickViewPage
+		 * @public
+		 */
+		pageLink : "pageLink"
+
+	};
+
+	/**
 	* Types for the placement of message popover control.
 	*
 	* @enum {string}
@@ -1574,143 +1694,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		Solid : "Solid"
 
-	};
-
-	/**
-	 * Types of the Semantic Controls in Semantic Page
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.30.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.semantic.SemanticType = {
-		/**
-		 * Semantic icon-only Add button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Add : "Add",
-		/**
-		 * Semantic text-only Approve button of {@link sap.m.ButtonType.Positive} button type
-		 * @public
-		 * @since 1.30.0
-		 */
-		Approve : "Approve",
-		/**
-		 * Semantic text-only Reject button of {@link sap.m.ButtonType.Negative} button type
-		 * @public
-		 * @since 1.30.0
-		 */
-		Reject : "Reject",
-		/**
-		 * Semantic icon-only Multiselect toggle button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Multiselect : "Multiselect",
-		/**
-		 * Semantic text-only Cancel button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Cancel : "Cancel",
-		/**
-		 * Semantic icon-only Filter button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Filter : "Filter",
-		/**
-		 * Semantic icon-only Sort button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Sort : "Sort",
-		/**
-		 * Semantic icon-only Group button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Group : "Group",
-		/**
-		 * Semantic button that indicates
-		 * @public
-		 * @since 1.30.0
-		 */
-		MessagesIndicator : "MessagesIndicator",
-		/**
-		 * Semantic icon-only Flag button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Flag : "Flag",
-		/**
-		 * Semantic icon-only Favorite button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Favorite : "Favorite",
-		/**
-		 * Semantic Forward button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Forward : "Forward",
-		/**
-		 * The semantic text-only Edit button of {@link sap.m.ButtonType.Emphasized}
-		 * @public
-		 * @since 1.30.0
-		 */
-		Edit : "Edit",
-		/**
-		 * The semantic text-only Save button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Save : "Save",
-		/**
-		 * The semantic Send Email button
-		 * @public
-		 * @since 1.30.0
-		 */
-		SendEmail: "SendEmail",
-		/**
-		 * The semantic Discuss in Jam button
-		 * @public
-		 * @since 1.30.0
-		 */
-		DiscussInJam: "DiscussInJam",
-		/**
-		 * The semantic Save as tile button
-		 * @public
-		 * @since 1.30.0
-		 */
-		SaveAsTile: "SaveAsTile",
-		/**
-		 * The semantic Share in Jam button
-		 * @public
-		 * @since 1.30.0
-		 */
-		ShareInJam: "ShareInJam",
-		/**
-		 * The semantic Send Message button
-		 * @public
-		 * @since 1.30.0
-		 */
-		SendMessage: "SendMessage",
-		/**
-		 * The semantic Print button
-		 * @public
-		 * @since 1.30.0
-		 */
-		Print: "Print",
-		/**
-		 * The semantic Open in button
-		 * @public
-		 * @since 1.30.0
-		 */
-		OpenIn: "OpenIn"
 	};
 	/*global Element: true */
 
@@ -2768,4 +2751,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	return sap.m;
 
-}, /* bExport= */ false);
+});

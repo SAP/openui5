@@ -28,9 +28,13 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">"); // div element
 	
-		oRm.renderControl(oControl._oToolbar);
-		oRm.renderControl(oControl._oScrollContainer);
-	
+		var aContent = oControl.getAggregation("content");
+		if (aContent) {
+			aContent.forEach(function(oContent){
+				oRm.renderControl(oContent);
+			});
+		}
+
 		oRm.write("</div>");
 	};
 	

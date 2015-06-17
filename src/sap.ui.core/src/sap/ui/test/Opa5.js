@@ -1,9 +1,9 @@
 /*!
  * ${copyright}
  */
-/*global URI*/
 
 sap.ui.define(['jquery.sap.global',
+			'sap/ui/thirdparty/URI',
 			'./Opa',
 			'./OpaPlugin',
 			'./PageObjectFactory',
@@ -14,10 +14,8 @@ sap.ui.define(['jquery.sap.global',
 			'./matchers/PropertyStrictEquals',
 			'./matchers/Properties',
 			'./matchers/Ancestor',
-			'./matchers/AggregationContainsPropertyEqual',
-			'./everyPolyfill',
-			'sap/ui/thirdparty/URI'],
-	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
+			'./matchers/AggregationContainsPropertyEqual'],
+	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
 			oFrameJQuery = null,
@@ -75,6 +73,11 @@ sap.ui.define(['jquery.sap.global',
 			}
 
 			return this.waitFor({
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false,
 				check : function () {
 					if (!bFrameLoaded) {
 						return;
@@ -82,7 +85,7 @@ sap.ui.define(['jquery.sap.global',
 
 					return checkForUI5ScriptLoaded();
 				},
-				timeout : iTimeout || 90,
+				timeout : iTimeout || 80,
 				errorMessage : "unable to load the iframe with the url: " + sSource
 			});
 		}
@@ -355,12 +358,23 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Waits until all waitFor calls are done
-		 * see {@link sap.ui.test.Opa5#waitFor} for the description
+		 * see {@link sap.ui.test.Opa#.emptyQueue} for the description
 		 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 		 * @public
 		 * @function
 		 */
 		Opa5.emptyQueue = Opa.emptyQueue;
+
+		/**
+		 * Gives access to a singleton object you can save values in.
+		 * see {@link sap.ui.test.Opa#.getContext} for the description
+		 * @since 1.29.0
+		 * @returns {object} the context object
+		 * @public
+		 * @function
+		 */
+		Opa5.getContext = Opa.getContext;
+
 
 		//Dont document these as public they are just for backwards compatibility
 		Opa5.matchers = {};
@@ -610,8 +624,8 @@ sap.ui.define(['jquery.sap.global',
 		function modifyHashChanger (oNewHashChanger) {
 			oHashChanger = oNewHashChanger;
 
-			var oFrameHasher = oFrameWindow.hasher,
-				fnOriginalSetHash = oHashChanger.setHash;
+			var fnOriginalSetHash = oHashChanger.setHash,
+				fnOriginalGetHash = oHashChanger.getHash;
 
 			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
 			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
@@ -635,7 +649,7 @@ sap.ui.define(['jquery.sap.global',
 
 				//initial hash
 				if (this._sCurrentHash === undefined) {
-					return oFrameHasher.getHash();
+					return fnOriginalGetHash.apply(this, arguments);
 				}
 
 				return this._sCurrentHash;

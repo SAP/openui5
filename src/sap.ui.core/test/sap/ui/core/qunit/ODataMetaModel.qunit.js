@@ -1,31 +1,29 @@
 /*!
  * ${copyright}
  */
-(function () {
+sap.ui.require([
+	"sap/ui/base/BindingParser", "sap/ui/model/BindingMode", "sap/ui/model/ClientContextBinding",
+	"sap/ui/model/Context", "sap/ui/model/FilterProcessor",
+	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
+	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/MetaModel", "sap/ui/model/Model",
+	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
+	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils"
+], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
+	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel,
+	ODataModel1, ODataModel, TestUtils) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
-	jQuery.sap.require("sap.ui.thirdparty.datajs");
+	//TODO remove this workaround in IE9 for
+	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
+	sinon.xhr.supportsCORS = true;
 
-	sinon.config.useFakeServer = true;
-
-	function onFailed(oEvent) {
-		var oParameters = oEvent.getParameters();
-		while (oParameters.getParameters) { // drill down to avoid circular structure
-			oParameters = oParameters.getParameters();
-		}
-		ok(false, "Failed to load: " + JSON.stringify(oParameters));
-	}
-
-	var oDataMetaModel, // single cached instance, see withMetaModel()
-		sMetadata = '\
+	var sMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
-	xmlns:edmNs4="http://docs.oasis-open.org/odata/ns/edm"\
 	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
 	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
 	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
@@ -33,35 +31,49 @@
 		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en"\
 			sap:schema-version="0000">\
 			<EntityType Name="BusinessPartner" sap:content-version="1">\
-				<Property Name="BusinessPartnerID" Type="Edm.String"\
-					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID"\
-					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false" \
-					sap:sortable="false" sap:required-in-filter ="true">\
-					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
+				<Property Name="BusinessPartnerID" Type="Edm.String" \
+					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID" \
+					sap:creatable="false" sap:filter-restriction="multi-value" \
+					sap:text="AnyProperty" sap:updatable="false" \
+					sap:sortable="false" sap:required-in-filter ="true" \
+					sap:display-format="UpperCase" >\
 				</Property>\
-				<Property Name="AnyProperty" Type="Edm.String" sap:field-control="UX_FC_READONLY" \
-					sap:updatable="false" sap:sortable="false"/>\
+				<Property Name="AnyProperty" Type="Edm.String" sap:display-format="NonNegative" \
+					sap:field-control="UX_FC_READONLY" sap:filterable="false" sap:sortable="false" \
+					sap:updatable="false" />\
+				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false" \
+					sap:heading="No Filter" sap:quickinfo="No Filtering" />\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
-				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
 			<EntityType Name="VH_Sex" sap:content-version="1">\
 				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1" />\
 			</EntityType>\
 			<EntityType Name="Product">\
 				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" \
-					sap:precision="PriceScale" sap:unit="CurrencyCode"/>\
+					sap:filter-restriction="interval" sap:precision="PriceScale" \
+					sap:unit="CurrencyCode"/>\
 				<Property Name="PriceScale" Type="Edm.Byte"/>\
 				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13" Scale="3" \
-					sap:unit="WeightUnit"/>\
+					sap:unit="WeightUnit" sap:visible="true" />\
 				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" \
-					sap:semantics="unit-of-measure"/>\
+					sap:semantics="unit-of-measure" sap:visible="false" />\
 				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" \
-					sap:semantics="currency-code"/>\
+					sap:filter-restriction="single-value" sap:semantics="currency-code"/>\
+			</EntityType>\
+			<EntityType Name="Contact">\
+				<Property Name="FirstName" Type="Edm.String" sap:semantics="givenname"/>\
+				<Property Name="Honorific" Type="Edm.String" sap:semantics="honorific"/>\
+				<Property Name="LastName" Type="Edm.String" sap:semantics="familyname"/>\
+				<Property Name="NickName" Type="Edm.String" sap:semantics="nickname"/>\
+				<Property Name="Tel" Type="Edm.String" sap:semantics="tel;type=anything,fax"/>\
+				<Property Name="Zip" Type="Edm.String" sap:semantics="zip"/>\
 			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
 				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
-					sap:topable="false" sap:requires-filter="true" sap:content-version="1" />\
+					sap:deletable-path="Deletable" sap:topable="false" sap:requires-filter="true"\
+					sap:updatable-path="Updatable" sap:content-version="1" />\
+				<EntitySet Name="ProductSet" EntityType="GWSAMPLE_BASIC.Product"/>\
 				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex" \
 					sap:creatable="false" sap:updatable="false" sap:deletable="false" \
 					sap:pageable="false" sap:searchable="true" sap:content-version="1"/> \
@@ -78,7 +90,8 @@
 				</FunctionImport>\
 			</EntityContainer>\
 			<ComplexType Name="CT_Address">\
-				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"/>\
+				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"\
+					sap:semantics="city"/>\
 			</ComplexType>\
 			<Association Name="Assoc_Foo" sap:content-version="1">\
 				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="FromRole_Foo"/>\
@@ -113,6 +126,34 @@
 			</PropertyValue>\
 		</Record>\
 	</Annotation>\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Deletable" Path="DeletableAnnotation" />\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Updatable" Path="UpdatableAnnotation" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.Contact">\
+<Annotation Term="com.sap.vocabularies.Communication.v1.Contact">\
+	<Record>\
+		<PropertyValue Property="n">\
+			<Record>\
+				<PropertyValue Property="given" Path="FirstName"/>\
+				<PropertyValue Property="additional" Path="MiddleName"/>\
+				<PropertyValue Property="surname" Path="LastName"/>\
+				<PropertyValue Property="prefix" Path="Honorific"/>\
+				<PropertyValue Property="suffix" Path="Suffix"/>\
+			</Record>\
+		</PropertyValue>\
+		<PropertyValue Property="nickname" Path="NickName"/>\
+		<PropertyValue Property="tel">\
+			<Collection>\
+				<Record>\
+					<PropertyValue Property="uri" Path="Tel"/>\
+					<PropertyValue Property="type">\
+						<EnumMember>com.sap.vocabularies.Communication.v1.PhoneType/work com.sap.vocabularies.Communication.v1.PhoneType/cell</EnumMember>\
+					</PropertyValue>\
+				</Record>\
+			</Collection>\
+		</PropertyValue>\
+	</Record>\
+</Annotation>\
 </Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
 		<Annotation Term="Org.OData.Core.V1.Computed" Bool="false"/>\
@@ -121,6 +162,13 @@
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
 		<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" Path="UX_FC_READONLY"/>\
 		<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true"/>\
+		<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence" Bool="false"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/NonFilterable">\
+			<Annotation Term="com.sap.vocabularies.Common.v1.Heading" \
+				String="No Filter via Annotation" />\
+			<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" \
+				String="No Filtering via Annotation" />\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/Price">\
 		<Annotation Term="Org.OData.Measures.V1.Scale" Path="PriceScale"/>\
@@ -128,6 +176,10 @@
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/WeightMeasure">\
 		<Annotation Term="Org.OData.Measures.V1.Unit" Path="WeightUnit"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit">\
+			<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" \
+				EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
 		<Annotation Term="Org.OData.Capabilities.V1.FilterRestrictions">\
@@ -156,6 +208,18 @@
 			</Record>\
 		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.TopSupported" Bool="false" />\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ProductSet">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.FilterExpressionRestrictions">\
+			<Collection>\
+				<Record>\
+					<PropertyValue Property="Property" PropertyPath="CurrencyCode"/>\
+					<PropertyValue Property="AllowedExpressions" \
+						EnumMember="com.sap.vocabularies.Common.v1.FilterExpressionType/MultiValue"\
+					/>\
+				</Record>\
+			</Collection>\
+		</Annotation>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_SexSet">\
 		<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">\
@@ -273,21 +337,128 @@
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
+		', sEmptySchemaWithAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	>\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en">\
+			<!-- mind the XML namespace! -->\
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
 		',
+		sFARMetadata = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml", "", null),
+		sFARMetadataCompanyCode = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml", "", null),
+		sFARMetadataCompanyCode_Customer = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml", "", null),
+		sFARMetadataCustomer = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml", "", null),
+		sFARMetadataInvalid = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<!-- fictitious empty response for /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=Item/Invalid -->\
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>\
+	</edmx:Reference>\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="FAR_CUSTOMER_LINE_ITEMS" xml:lang="en" sap:schema-version="0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<EntityType Name="FOO" sap:content-version="1"/><!-- TODO remove this! -->\
+			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">\
+			</EntityContainer>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		',
+		sFARMetadataMyComplexType_Customer = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml", "", null),
 		sGWAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
 		sGWMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
-		mHeaders = {"Content-Type" : "application/xml"},
+		sMultipleValueListAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="4.0"\
+	xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+<edmx:DataServices>\
+<Schema Namespace="zanno4sample_anno_mdl.v1">\
+	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+			<Record>\
+				<PropertyValue Property="CollectionPath" String="VH_UnitWeight"/>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit" Qualifier="FOO">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+			<Record>\
+				<PropertyValue Property="CollectionPath" String="VH_UnitQuantity"/>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
+</Schema>\
+</edmx:DataServices>\
+</edmx:Edmx>\
+		',
+		sValueListMetadata = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en"\
+			sap:schema-version="0000">\
+			<EntityType Name="Product">\
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" \
+					sap:precision="PriceScale" sap:unit="CurrencyCode"/>\
+				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" \
+					sap:semantics="unit-of-measure" sap:visible="false" sap:value-list="standard"/>\
+			</EntityType>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		', mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
 			"/fake/emptyDataServices/$metadata" : [200, mHeaders, sEmptyDataServices],
 			"/fake/emptyEntityType/$metadata" : [200, mHeaders, sEmptyEntityType],
 			"/fake/emptyMetadata/$metadata" : [200, mHeaders, sEmptyDataServices],
 			"/fake/emptySchema/$metadata" : [200, mHeaders, sEmptySchema],
+			"/fake/emptySchemaWithAnnotations/$metadata" : [200, mHeaders, sEmptySchemaWithAnnotations],
 			"/fake/service/$metadata" : [200, mHeaders, sMetadata],
-			//TODO separate test for V4 metadata with inline annotations
 			"/fake/annotations" : [200, mHeaders, sAnnotations],
-			//TODO cleanup GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID (artificial example)
 			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
 			"/fake/emptyAnnotations" : [200, mHeaders, sEmptyAnnotations],
+			"/fake/multipleValueLists" : [200, mHeaders, sMultipleValueListAnnotations],
+			"/fake/valueListMetadata/$metadata" : [200, mHeaders, sValueListMetadata],
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" : [200, mHeaders, sFARMetadata],
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" :
+				[200, mHeaders, sFARMetadataCompanyCode],
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode,FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
+				[200, mHeaders, sFARMetadataCompanyCode_Customer],
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
+				[200, mHeaders, sFARMetadataCustomer],
+			// Note: Gateway says
+			// "Value-List FAR_CUSTOMER_LINE_ITEMS.Item/Invalid not found in Metadata", but we want
+			// to make our code more robust against empty responses
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FInvalid" :
+				[200, mHeaders, sFARMetadataInvalid], // no annotations at all
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Foo%2FInvalid" :
+				[200, mHeaders, sFARMetadataCompanyCode], // annotations for a different type
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer" :
+				[200, mHeaders, sFARMetadataMyComplexType_Customer],
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
 			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sGWAnnotations]
 		},
@@ -315,131 +486,276 @@
 		oServer.autoRespond = true;
 	}
 
+
 	/**
-	 * Runs the given code under test with an <code>ODataMetaModel</code>.
+	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
+	 * "/GWSAMPLE_BASIC" and annotation URL "/GWSAMPLE_BASIC/annotations".
+	 */
+	function withMetaModel(fnCodeUnderTest) {
+		return withGivenService("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations", fnCodeUnderTest);
+	}
+
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
+	 * "/GWSAMPLE_BASIC" and (array of) annotation URLs.
+	 */
+	function withGivenAnnotations(vAnnotationUrl, fnCodeUnderTest) {
+		return withGivenService("/GWSAMPLE_BASIC", vAnnotationUrl, fnCodeUnderTest);
+	}
+
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code> (and an
+	 * <code>ODataModel</code>) for the given service and (array of) annotation URLs.
 	 *
+	 * @param {string} sServiceUrl
+	 *   the service URL
+	 * @param {string|string[]} vAnnotationUrl
+	 *   the (array of) annotation URLs
 	 * @param {function} fnCodeUnderTest
-	 * @param {boolean} bImmediately
-	 *   whether to run the test immediately instead of waiting for the meta model to be loaded
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withMetaModel(fnCodeUnderTest, bImmediately) {
-		var oMetaModel,
-			oModel,
-			oSandbox; // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
-
-		/*
-		 * Call the given "code under test" with the given OData meta model, making sure that
-		 * no changes to the model are kept in the cached singleton.
-		 */
-		function call(fnCodeUnderTest, oDataMetaModel) {
-			var sCopy = oDataMetaModel.oModel.getJSON();
-
-			try {
-				return fnCodeUnderTest(oDataMetaModel);
-			} finally {
-				oDataMetaModel.oModel.setJSON(sCopy);
-			}
-		}
-
-		// Note: bImmediately requires a fresh instance
-		if (oDataMetaModel && !bImmediately) {
-			return call(fnCodeUnderTest, oDataMetaModel);
-		}
-
-		try {
-			oSandbox = sinon.sandbox.create();
-			setupSandbox(oSandbox);
-
-			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-			oModel = new sap.ui.model.odata.v2.ODataModel("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
+	function withGivenService(sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
+		// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
+		var oModel = new ODataModel(sServiceUrl, {
+				annotationURI : vAnnotationUrl,
 				json : true,
 				loadMetadataAsync : true
 			});
-			oModel.attachMetadataFailed(onFailed);
-			oModel.attachAnnotationsFailed(onFailed);
 
-			if (bImmediately) {
-				// no caching, no undo of modifications!
-				return fnCodeUnderTest(oModel.getMetaModel());
-			} else {
-				// calls the code under test once the meta model has loaded
-				oDataMetaModel = oModel.getMetaModel();
-				return oDataMetaModel.loaded().then(function () {
-					return call(fnCodeUnderTest, oDataMetaModel);
-				});
+		function onFailed(oEvent) {
+			var oParameters = oEvent.getParameters();
+			while (oParameters.getParameters) { // drill down to avoid circular structure
+				oParameters = oParameters.getParameters();
 			}
-		} finally {
-			oSandbox.restore();
+			ok(false, "Failed to load: " + JSON.stringify(oParameters));
 		}
+		oModel.attachMetadataFailed(onFailed);
+		oModel.attachAnnotationsFailed(onFailed);
+
+		// calls the code under test once the meta model has loaded
+		return oModel.getMetaModel().loaded().then(function () {
+			return fnCodeUnderTest(oModel.getMetaModel(), oModel);
+		});
 	}
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.ODataMetaModel", {
 		beforeEach : function () {
 			oGlobalSandbox = sinon.sandbox.create();
+			setupSandbox(oGlobalSandbox);
 		},
 		afterEach : function () {
+			ODataModel.mServiceData = {}; // clear cache
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			oGlobalSandbox. verifyAndRestore();
-			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
+			oGlobalSandbox.verifyAndRestore();
 		}
 	});
 
 	//*********************************************************************************************
-	test("functions using 'this.oModel' directly", function () {
-		return withMetaModel(function (oMetaModel) {
-			// call functions before loaded() promise has been resolved
-			throws(function () {
-				oMetaModel._getObject("/");
-			}, "_getObject")
-			throws(function () {
-				oMetaModel.destroy();
-			}, "destroy")
-			throws(function () {
-				oMetaModel.getODataAssociationEnd({
-					"navigationProperty" : [{
-						"name" : "ToSalesOrders",
-						"relationship" : "GWSAMPLE_BASIC.Assoc_BusinessPartner_SalesOrders",
-						"fromRole" : "FromRole_Assoc_BusinessPartner_SalesOrders",
-						"toRole" : "ToRole_Assoc_BusinessPartner_SalesOrders"
-					}]
-				}, "ToSalesOrders");
-			}, "getODataAssociationEnd")
-			throws(function () {
-				oMetaModel.getODataComplexType("don't care");
-			}, "getODataComplexType")
-			throws(function () {
-				oMetaModel.getODataEntityContainer();
-			}, "getODataEntityContainer")
-			throws(function () {
-				oMetaModel.getODataEntityType("don't care");
-			}, "getODataEntityType")
-			throws(function () {
-				oMetaModel.isList();
-			}, "isList")
+	test("TestUtils.deepContains", function () {
+		TestUtils.notDeepContains(null, {}, "null");
+		TestUtils.notDeepContains(undefined, {}, "undefined");
+		TestUtils.notDeepContains({}, [], "not an array");
+		TestUtils.deepContains({}, {});
+		TestUtils.deepContains([], []);
+		TestUtils.deepContains([{}], []);
+		TestUtils.notDeepContains([], [{}]);
 
-			return oMetaModel.loaded();
-		}, true);
+		TestUtils.notDeepContains("foo", "bar");
+//TODO?		TestUtils.deepContains(0, new Number(0));
+
+		TestUtils.notDeepContains({}, {foo : "bar"});
+		TestUtils.deepContains({foo : "bar"}, {foo : "bar"});
+		TestUtils.deepContains({foo : "bar"}, {});
+
+		TestUtils.notDeepContains([{}, {}], [{foo : "bar"}]);
+	});
+
+	//*********************************************************************************************
+	test("compatibility with synchronous ODataModel", function () {
+		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : false
+			}),
+			oMetaModel = oModel.getMetaModel();
+
+		strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+			"GWSAMPLE_BASIC", "meta data available");
+		strictEqual(
+			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
+			"Bus. Part. ID", "SAPData is lifted");
+		strictEqual(
+			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+				+ "com.sap.vocabularies.Common.v1.Label/String"),
+			"Bus. Part. ID", "v2 --> v4");
+		strictEqual(
+			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
+				+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
+			"Business Partner", "v4 annotations available");
+
+		return oMetaModel.loaded().then(function () {
+			strictEqual(arguments.length, 1, "almost no args");
+			deepEqual(arguments[0], undefined, "almost no args");
+		});
+	});
+
+	//*********************************************************************************************
+	test("compatibility with asynchronous old ODataModel", function () {
+		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel = oModel.getMetaModel();
+
+		return oMetaModel.loaded().then(function () {
+			strictEqual(arguments.length, 1, "almost no args");
+			deepEqual(arguments[0], undefined, "almost no args");
+
+			strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+				"GWSAMPLE_BASIC", "meta data available");
+			strictEqual(
+				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
+				"Bus. Part. ID", "SAPData is lifted");
+			strictEqual(
+				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+					+ "com.sap.vocabularies.Common.v1.Label/String"),
+				"Bus. Part. ID", "v2 --> v4");
+			strictEqual(
+				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
+					+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
+				"Business Partner", "v4 annotations available");
+		});
+	});
+
+	//*********************************************************************************************
+	test("compatibility with asynchronous old ODataModel: use after load", function (assert) {
+		var iCount = 0,
+			fnDone = assert.async(),
+			oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel;
+
+		function loaded() {
+			iCount += 1;
+			if (iCount === 2) {
+				// ...then get meta model and use immediately
+				oMetaModel = oModel.getMetaModel();
+
+				try {
+					strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+						"GWSAMPLE_BASIC", "meta data available");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+							+ "sap:label"),
+						"Bus. Part. ID", "SAPData is lifted");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+							+ "com.sap.vocabularies.Common.v1.Label/String"),
+						"Bus. Part. ID", "v2 --> v4");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
+							+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
+						"Business Partner", "v4 annotations available");
+				} catch (ex) {
+					ok(false, ex);
+				}
+
+				fnDone();
+			}
+		}
+
+		// wait for metadata and annotations to be loaded (but not via oMetaModel.loaded())...
+		oModel.attachAnnotationsLoaded(loaded);
+		oModel.attachMetadataLoaded(loaded);
+	});
+
+	//*********************************************************************************************
+	test("compatibility with old ODataModel: no separate loading of value lists", function () {
+		var oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
+				json : true,
+				loadMetadataAsync : false
+			}),
+			oMetaModel = oModel.getMetaModel(),
+			oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
+
+		return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+			deepEqual(mValueLists, {}, "no value lists");
+
+			// check robustness: no error even if interface is missing
+			oMetaModel = new ODataMetaModel(oMetaModel.oMetadata);
+			return oMetaModel.getODataValueLists(oContext);
+		});
+	});
+
+	//*********************************************************************************************
+	test("functions using 'this.oModel' directly", function () {
+		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel = oModel.getMetaModel();
+
+		ok(oMetaModel instanceof ODataMetaModel);
+		strictEqual(typeof oMetaModel.oODataModelInterface.addAnnotationUrl, "function",
+			"function addAnnotationUrl");
+
+		// call functions before loaded() promise has been resolved
+		throws(function () {
+			oMetaModel._getObject("/");
+		}, "_getObject")
+		throws(function () {
+			oMetaModel.destroy();
+		}, "destroy")
+		throws(function () {
+			oMetaModel.getODataAssociationEnd({
+				"navigationProperty" : [{
+					"name" : "ToSalesOrders",
+					"relationship" : "GWSAMPLE_BASIC.Assoc_BusinessPartner_SalesOrders",
+					"fromRole" : "FromRole_Assoc_BusinessPartner_SalesOrders",
+					"toRole" : "ToRole_Assoc_BusinessPartner_SalesOrders"
+				}]
+			}, "ToSalesOrders");
+		}, "getODataAssociationEnd")
+		throws(function () {
+			oMetaModel.getODataComplexType("don't care");
+		}, "getODataComplexType")
+		throws(function () {
+			oMetaModel.getODataEntityContainer();
+		}, "getODataEntityContainer")
+		throws(function () {
+			oMetaModel.getODataEntityType("don't care");
+		}, "getODataEntityType")
+		throws(function () {
+			oMetaModel.isList();
+		}, "isList")
+
+		return oMetaModel.loaded();
 	});
 
 	//*********************************************************************************************
 	test("basics", function () {
-		var oMetaModel = new sap.ui.model.odata.ODataMetaModel({
-				getServiceMetadata : function () { return {dataServices : {}}; },
-				isLoaded : function () { return true; }
+		var oMetaModel = new ODataMetaModel({
+				getServiceMetadata : function () { return {dataServices : {}}; }
 			});
 
-		return oMetaModel.loaded().then(sinon.test(function () {
-			var oMetaModelMock = this.mock(oMetaModel),
-				oModelMock = this.mock(oMetaModel.oModel),
+		return oMetaModel.loaded().then(function () {
+			var oMetaModelMock = oGlobalSandbox.mock(oMetaModel),
+				oModelMock = oGlobalSandbox.mock(oMetaModel.oModel),
 				oResult = {};
 
-			this.mock(sap.ui.model.Model.prototype).expects("destroy").once();
+			strictEqual(arguments.length, 1, "almost no args");
+			deepEqual(arguments[0], undefined, "almost no args");
+
+			oGlobalSandbox.mock(Model.prototype).expects("destroy").once();
 			// do not mock/stub this or else "destroy" will not bubble up!
-			this.spy(sap.ui.model.MetaModel.prototype, "destroy");
+			oGlobalSandbox.spy(MetaModel.prototype, "destroy");
 
 			// generic dispatching
 			["destroy", "isList"].forEach(function (sName) {
@@ -453,7 +769,7 @@
 				.returns(oResult);
 			strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
 
-			ok(sap.ui.model.MetaModel.prototype.destroy.calledOnce);
+			ok(MetaModel.prototype.destroy.calledOnce);
 
 			throws(function () {
 				oMetaModel.refresh();
@@ -465,15 +781,15 @@
 				oMetaModel.setLegacySyntax(true);
 			}, /Legacy syntax not supported by ODataMetaModel/);
 
-			strictEqual(oMetaModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
-			strictEqual(oMetaModel.oModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
+			strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
+			strictEqual(oMetaModel.oModel.getDefaultBindingMode(), BindingMode.OneTime);
 			throws(function () {
-				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+				oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
 			});
 			throws(function () {
-				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+				oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
 			});
-		}).apply({/*give Sinon a "this" to enrich*/}));
+		});
 	});
 
 	//*********************************************************************************************
@@ -488,14 +804,14 @@
 
 			// Note: support for events not needed
 			oBinding = oMetaModel.bindContext(sPath, oContext, mParameters);
-			ok(oBinding instanceof sap.ui.model.ClientContextBinding);
+			ok(oBinding instanceof ClientContextBinding);
 			strictEqual(oBinding.getModel(), oMetaModel);
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
 			strictEqual(oBinding.mParameters, mParameters);
 
 			oBinding = oMetaModel.bindProperty(sPath, oContext, mParameters);
-			ok(oBinding instanceof sap.ui.model.json.JSONPropertyBinding);
+			ok(oBinding instanceof JSONPropertyBinding);
 			strictEqual(oBinding.getModel(), oMetaModel);
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
@@ -506,7 +822,7 @@
 			}, /Unsupported operation: ODataMetaModel#setProperty/);
 
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
-			ok(oBinding instanceof sap.ui.model.json.JSONListBinding);
+			ok(oBinding instanceof JSONListBinding);
 			strictEqual(oBinding.getModel(), oMetaModel, "inner model not leaked");
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
@@ -515,12 +831,49 @@
 			strictEqual(oBinding.mParameters, mParameters);
 
 			oBinding = oMetaModel.bindTree(sPath, oContext, aFilters, mParameters);
-			ok(oBinding instanceof sap.ui.model.json.JSONTreeBinding);
+			ok(oBinding instanceof JSONTreeBinding);
 			strictEqual(oBinding.getModel(), oMetaModel);
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
 			strictEqual(oBinding.aFilters, aFilters);
 			strictEqual(oBinding.mParameters, mParameters);
+		});
+	});
+
+	//*********************************************************************************************
+	test("bindList", function () {
+		return withMetaModel(function (oMetaModel) {
+			var fnApply = oGlobalSandbox.mock(FilterProcessor).expects("apply"),
+				oBinding,
+				oContext = oMetaModel.createBindingContext("/"),
+				aFilters = [],
+				fnGetValue,
+				aIndices = ["schema"],
+				mParameters = {},
+				sPath = "dataServices",
+				aSorters = [];
+
+			fnApply.once()
+				.withArgs(["dataServiceVersion", "schema"], aFilters)
+				.returns(aIndices);
+
+			// code under test
+			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
+			// implicitly calls oBinding.applyFilter()
+
+			strictEqual(oBinding.aIndices, aIndices);
+			strictEqual(oBinding.iLength, oBinding.aIndices.length);
+
+			fnGetValue = fnApply.args[0][2];
+			oGlobalSandbox.mock(oMetaModel).expects("getProperty").once()
+				.withExactArgs("0/namespace", oBinding.oList["schema"])
+				.returns("foo");
+
+			// code under test
+			strictEqual(fnGetValue("schema", "0/namespace"), "foo");
+
+			// code under test
+			strictEqual(fnGetValue("schema", "@sapui.name"), "schema");
 		});
 	});
 
@@ -556,6 +909,109 @@
 			oContext = oMetaModel._getObject("/dataServices/schema/0/entityType/0");
 			strictEqual(oMetaModel._getObject("/dataServices/schema/0/entityType/1", oContext),
 				oMetaModel.oModel._getObject("/dataServices/schema/0/entityType/1"));
+		});
+	});
+
+	//*********************************************************************************************
+	test("_getObject: queries instead of indexes", function () {
+		var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+
+		oLogMock.expects("error")
+			.withExactArgs("A query is not allowed when an object context has been given",
+				"entityType/[$\{name}==='BusinessPartner']", "sap.ui.model.odata.ODataMetaModel");
+		oLogMock.expects("error")
+			.withExactArgs("Invalid query: '/dataServices/' does not point to an array",
+				"/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
+				"sap.ui.model.odata.ODataMetaModel");
+		oLogMock.expects("error")
+			.withExactArgs("no closing braces found in '[${namespace==='GWSAMPLE_BASIC']/"
+				+ "entityType' after pos:2", undefined, "sap.ui.base.ExpressionParser");
+
+		return withMetaModel(function (oMetaModel) {
+			[{
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']",
+				o: "/dataServices/schema/0"
+			}, { // syntax error (missing closing ']')
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC'",
+				o: undefined
+			}, { // syntax error (text after closing ']')
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a",
+				o: undefined
+			}, { // syntax error (text after closing ']')
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a/entityType/1",
+				o: undefined
+			}, { // query when we just landed in Nirvana
+				i: "/dataServices/unknown/[${namespace}==='GWSAMPLE_BASIC']",
+				o: undefined
+			}, {
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='Product']",
+				o: "/dataServices/schema/0/entityType/1",
+				c: {} // unnecessary context object (because of absolute path) silently ignored
+			}, { // ensure that we do not fail after a 'namespace' query that didn't find a result
+				i: "/dataServices/schema/[${namespace}==='unknown']/entityType/"
+					+ "[$\{name}==='Product']",
+				o: undefined
+			}, { // ensure that we do not fail after a 'name' query that didn't find a result
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='unknown']/property/[$\{name=}'foo']",
+				o: undefined
+			}, {
+				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='BusinessPartner']/com.sap.vocabularies.UI.v1.LineItem/"
+					+ "[${Value/Path}==='BusinessPartnerID']/Label/String",
+				o: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.LineItem/0"
+					+ "/Label/String"
+			}, {
+				i: "entityType/[$\{name}==='Product']",
+				o: "/dataServices/schema/0/entityType/1",
+				c: oMetaModel.getContext("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
+			}, { // query, but context is an object
+				i: "entityType/[$\{name}==='BusinessPartner']",
+				o: null,
+				c: oMetaModel.getObject("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
+			}, { // query on non-array
+				i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
+				o: null,
+			}, { // stupid query with [], but returning true
+				i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]/entityType",
+				o: "/dataServices/schema/0/entityType",
+			}, { // syntax error in query
+				i: "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
+				o: undefined,
+			}, { // search for the first property having a maxLength
+				i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
+				o: "/dataServices/schema/0/entityType/0/property/1",
+			}].forEach(function (oFixture) {
+				strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c),
+					oFixture.o ? oMetaModel.oModel.getObject(oFixture.o) : oFixture.o, oFixture.i);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("_getObject: some error in parseExpression (not SyntaxError)", function () {
+		var oError = new Error();
+
+		oGlobalSandbox.mock(BindingParser).expects("parseExpression").throws(oError);
+
+		return withMetaModel(function (oMetaModel) {
+			throws(function () {
+				oMetaModel.getObject("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']");
+			}, oError);
+		});
+	});
+
+	//*********************************************************************************************
+	test("_getObject: caching queries", function () {
+		return withMetaModel(function (oMetaModel) {
+			var sPath = "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					+ "[$\{name}==='Product']",
+				oResult = oMetaModel._getObject(sPath);
+
+			oGlobalSandbox.mock(oMetaModel.oResolver).expects("bindProperty").never();
+
+			strictEqual(oMetaModel._getObject(sPath), oResult);
 		});
 	});
 
@@ -627,6 +1083,15 @@
 	});
 
 	//*********************************************************************************************
+	test("/dataServices/schema/<i>/annotations dropped", function () {
+		return withGivenService("/fake/emptySchemaWithAnnotations", "", function (oMetaModel) {
+			return oMetaModel.loaded().then(function () {
+				strictEqual(oMetaModel.getObject("/dataServices/schema/0/annotations"), undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	[{
 		annotationURI : null,
 		title : "no annotations"
@@ -638,23 +1103,9 @@
 		title : "multiple annotation files"
 	}].forEach(function (oFixture, i) {
 		test("ODataMetaModel loaded: " + oFixture.title, function () {
-			var oMetaModel, oModel;
-
-			setupSandbox(this.sandbox);
-			oModel = new sap.ui.model.odata.v2.ODataModel("/fake/service", {
-				annotationURI : oFixture.annotationURI,
-				json : true,
-				loadMetadataAsync : true
-			});
-			oModel.attachMetadataFailed(onFailed);
-			oModel.attachAnnotationsFailed(onFailed);
-
-			oMetaModel = oModel.getMetaModel();
-			ok(oMetaModel instanceof sap.ui.model.odata.ODataMetaModel);
-
-			return oMetaModel.loaded().then(function () {
-				var oAnnotations = oModel.getServiceAnnotations(),
-					oMetadata = oModel.getServiceMetadata(),
+			return withGivenService("/fake/service", oFixture.annotationURI, function (oMetaModel,
+				oModel) {
+				var oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
 					oEntityContainer = oGWSampleBasic.entityContainer[0],
@@ -664,20 +1115,25 @@
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					oBusinessPartnerSet = oEntityContainer.entitySet[0],
+					oContact = oGWSampleBasic.entityType[3],
+					oContactTel = oContact.property[4],
 					oAnyProperty = oBusinessPartner.property[1],
+					oNonFilterable = oBusinessPartner.property[2],
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
 					oNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oParameter = oFunctionImport.parameter[0],
+					sPrefix,
 					oProduct = oGWSampleBasic.entityType[2],
 					oProductCurrencyCode =  oProduct.property[4],
 					oProductPrice = oProduct.property[0],
+					oProductSet = oEntityContainer.entitySet[1],
 					oProductWeightMeasure =  oProduct.property[2],
 					oProductWeightUnit =  oProduct.property[3],
 					sSAPData = "http://www.sap.com/Protocols/SAPData",
 					oVHSex = oGWSampleBasic.entityType[1],
-					oVHSexSet = oEntityContainer.entitySet[1];
+					oVHSexSet = oEntityContainer.entitySet[2];
 
 				function checkCapabilities(sExtension) {
 					var sCapability, sProperty, oExpected;
@@ -708,29 +1164,43 @@
 				strictEqual(oBusinessPartner.name, "BusinessPartner");
 				strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
 
-				strictEqual(arguments.length, 1, "almost no args");
-				deepEqual(arguments[0], undefined, "almost no args");
 				ok(oMetadata, "metadata is loaded");
 
+				strictEqual(oBusinessPartner.namespace, "GWSAMPLE_BASIC");
+				delete oBusinessPartner.namespace;
 				strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0");
 				delete oBusinessPartner.$path;
+				strictEqual(oVHSex.namespace, "GWSAMPLE_BASIC");
+				delete oVHSex.namespace;
 				strictEqual(oVHSex.$path, "/dataServices/schema/0/entityType/1");
 				delete oVHSex.$path;
+				strictEqual(oProduct.namespace, "GWSAMPLE_BASIC");
+				delete oProduct.namespace;
 				strictEqual(oProduct.$path, "/dataServices/schema/0/entityType/2");
 				delete oProduct.$path;
+				strictEqual(oContact.namespace, "GWSAMPLE_BASIC");
+				delete oContact.namespace;
+				strictEqual(oContact.$path, "/dataServices/schema/0/entityType/3");
+				delete oContact.$path;
 
+				strictEqual(oGWSampleBasic.$path, "/dataServices/schema/0");
+				delete oGWSampleBasic.$path;
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
 
 				deepEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];
 
+				strictEqual(oCTAddress.namespace, "GWSAMPLE_BASIC");
+				delete oCTAddress.namespace;
 				strictEqual(oCTAddress.$path, "/dataServices/schema/0/complexType/0", "$path");
 				delete oCTAddress.$path;
 
 				deepEqual(oAssociation["sap:content-version"], "1");
 				delete oAssociation["sap:content-version"];
 
+				strictEqual(oAssociation.namespace, "GWSAMPLE_BASIC");
+				delete oAssociation.namespace;
 				strictEqual(oAssociation.$path, "/dataServices/schema/0/association/0");
 				delete oAssociation.$path;
 
@@ -743,6 +1213,8 @@
 				deepEqual(oEntityContainer["sap:use-batch"], "false");
 				delete oEntityContainer["sap:use-batch"];
 
+				strictEqual(oEntityContainer.namespace, "GWSAMPLE_BASIC");
+				delete oEntityContainer.namespace;
 				strictEqual(oEntityContainer.$path, "/dataServices/schema/0/entityContainer/0");
 				delete oEntityContainer.$path;
 
@@ -758,8 +1230,6 @@
 				delete oVHSexSet["sap:content-version"];
 
 				if (i > 0) {
-					ok(oAnnotations, "annotations are also loaded");
-
 					deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Label"], {
 						"String" : "Label via external annotation: Business Partner"
 					});
@@ -867,6 +1337,12 @@
 					"String" : i <= 1 ? "City" : "GWSAMPLE_BASIC.CT_Address/City"
 				}, "Label derived from sap:label");
 				delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
+				// check sap:semantics
+				deepEqual(oCTAddressCity["sap:semantics"], "city");
+				delete oCTAddressCity["sap:semantics"];
+				deepEqual(oCTAddress["com.sap.vocabularies.Communication.v1.Contact"],
+					{ "adr": { "locality": { "Path": "City" } } });
+				delete oCTAddress["com.sap.vocabularies.Communication.v1.Contact"];
 
 				deepEqual(oParameter["sap:label"], "ID");
 				delete oParameter["sap:label"];
@@ -989,6 +1465,22 @@
 				}, "BusinessPartnerSet not searchable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"];
 
+				// sap:filterable
+				deepEqual(oAnyProperty["sap:filterable"], "false");
+				delete oAnyProperty["sap:filterable"];
+				deepEqual(oNonFilterable["sap:filterable"], "false");
+				delete oNonFilterable["sap:filterable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
+						["NonFilterableProperties"],
+					i > 0 ? undefined :
+						[
+							{"PropertyPath" : "AnyProperty"},
+							{"PropertyPath" : "NonFilterable"}
+						],
+					"BusinessPartnerSet not filterable");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
+					["NonFilterableProperties"];
+
 				// sap:required-in-filter
 				deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
 				delete oBusinessPartnerId["sap:required-in-filter"];
@@ -1000,7 +1492,160 @@
 				}, "BusinessPartnerSet filter restrictions");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
 
+				// sap:semantics for Communication.Contact
+				// test only a subset of sap:semantics (different categories)
+				oContact.property.forEach(function (oProperty) {
+					// check only availability of sap:semantics
+					// lift is tested multiple times before
+					ok(oProperty["sap:semantics"], oProperty.name + " has sap:semantics");
+					delete oProperty["sap:semantics"];
+				});
+				deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"], i === 0
+					? {
+						"adr": {
+							"code": { "Path": "Zip" }
+						},
+						"n": {
+							"given": { "Path": "FirstName" },
+							"prefix": { "Path": "Honorific" },
+							"surname": { "Path": "LastName" }
+						},
+						"nickname": { "Path": "NickName" },
+						"tel" : [{
+							"type" : {
+								"EnumMember" :
+									"com.sap.vocabularies.Communication.v1.PhoneType/fax"
+							},
+							"uri" : {
+								"Path" : "Tel"
+							}
+						}]
+					}
+					: {
+						"n": {
+							"additional": { "Path": "MiddleName" },
+							"given": { "Path": "FirstName" },
+							"prefix": { "Path": "Honorific" },
+							"suffix": { "Path": "Suffix" },
+							"surname": { "Path": "LastName" }
+						},
+						"nickname": {
+							// TODO why is EdmType contained here but not in properties in n above?
+							"EdmType": "Edm.String",
+							"Path": "NickName"
+						},
+						"tel" : [{
+							"type" : {
+								"EnumMember" :
+									"com.sap.vocabularies.Communication.v1.PhoneType/work " +
+									"com.sap.vocabularies.Communication.v1.PhoneType/cell"
+							},
+							"uri" : {
+								"Path" : "Tel"
+							}
+						}]
+					}
+				);
+				delete oContact["com.sap.vocabularies.Communication.v1.Contact"];
+
+				deepEqual(oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
+						{ "Bool" : "true" }, "IsPhoneNumber");
+				delete oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"];
+
+				// sap:display-format
+				deepEqual(oAnyProperty["sap:display-format"], "NonNegative");
+				delete oAnyProperty["sap:display-format"];
+				deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"], {
+					"Bool" : (i === 0 ? "true" : "false")
+				}, "sap:display-format=NonNegative");
+				delete oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
+
+				deepEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
+				delete oBusinessPartnerId["sap:display-format"];
+				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"], {
+					"Bool" : "true"
+				}, "sap:display-format=UpperCase");
+				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"];
+
+				// sap:heading
+				deepEqual(oNonFilterable["sap:heading"], "No Filter");
+				delete oNonFilterable["sap:heading"];
+				deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.Heading"], {
+					"String" : (i === 0 ? "No Filter" : "No Filter via Annotation")
+				}, "sap:heading");
+				delete oNonFilterable["com.sap.vocabularies.Common.v1.Heading"];
+
+				// sap:quickinfo
+				deepEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
+				delete oNonFilterable["sap:quickinfo"];
+				deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"], {
+					"String" : (i === 0 ? "No Filtering" : "No Filtering via Annotation")
+				}, "sap:quickinfo");
+				delete oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"];
+
+				// sap:visible
+				deepEqual(oProductWeightUnit["sap:visible"], "false");
+				delete oProductWeightUnit["sap:visible"];
+				deepEqual(oProductWeightMeasure["sap:visible"], "true");
+				delete oProductWeightMeasure["sap:visible"];
+				deepEqual(oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"], {
+					"EnumMember" : "com.sap.vocabularies.Common.v1.FieldControlType/" +
+						(i === 0 ? "Hidden" : "ReadOnly")},
+					"Product WeightUnit invisible");
+				delete oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"];
+
+				// sap:deletable-path (EntitySet)
+				deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
+				delete oBusinessPartnerSet["sap:deletable-path"];
+				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"], {
+						"Path" : (i === 0 ? "Deletable" : "DeletableAnnotation")},
+					"deletable-path");
+				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"];
+
+				// sap:updatable-path (EntitySet)
+				deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
+				delete oBusinessPartnerSet["sap:updatable-path"];
+				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"], {
+						"Path" : (i === 0 ? "Updatable" : "UpdatableAnnotation")},
+					"updatable-path");
+				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"];
+
+				// sap:filter-restriction (Property)
+				deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
+				delete oBusinessPartnerId["sap:filter-restriction"];
+				deepEqual(oProductPrice["sap:filter-restriction"], "interval");
+				delete oProductPrice["sap:filter-restriction"];
+				deepEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
+				delete oProductCurrencyCode["sap:filter-restriction"];
+
+				sPrefix = "com.sap.vocabularies.Common.v1.";
+				deepEqual(oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"], [{
+						"Property" : { "PropertyPath" : "BusinessPartnerID" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
+						}
+					}], "filter-restriction at BusinessPartnerSet");
+				delete oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"];
+				deepEqual(oProductSet[sPrefix + "FilterExpressionRestrictions"], (i === 0 ? [{
+						"Property" : { "PropertyPath" : "Price" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/SingleInterval"
+						}
+					}, {
+						"Property" : { "PropertyPath" : "CurrencyCode" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/SingleValue"
+						}
+					}] : [{
+						"Property" : { "PropertyPath" : "CurrencyCode" },
+						"AllowedExpressions" : {
+							"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
+						}
+					}]), "filter-restriction at ProductSet");
+				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
+
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
+				notStrictEqual(oMetaModelData, oMetadata, "is clone");
 			});
 		});
 	});
@@ -1013,9 +1658,8 @@
 		var oError = new Error("This call failed intentionally"),
 			oModel;
 
-		oGlobalSandbox.stub(sap.ui.model.Model.prototype, "setDefaultBindingMode").throws(oError);
-		setupSandbox(this.sandbox);
-		oModel = new sap.ui.model.odata.v2.ODataModel("/fake/service", {
+		oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
+		oModel = new ODataModel("/fake/service", {
 			annotationURI : "",
 			json : true
 		});
@@ -1029,41 +1673,15 @@
 	});
 
 	//*********************************************************************************************
-	[false, true, false, true].forEach(function (bAsync, i) {
-		test("Error loading" + (i < 2 ? " meta data" : " annotations" )
-				+ ", async: " + bAsync, function () {
-			var oModel,
-				sMetadataURL = i < 2 ? "/invalid/service" : "/fake/service",
-				sAnnotationsURL = i < 2 ? "" : "/invalid/annotations",
-				fnConstructor = bAsync
-					? sap.ui.model.odata.v2.ODataModel
-					: sap.ui.model.odata.ODataModel;
-
-			setupSandbox(this.sandbox);
-			oModel = new fnConstructor(sMetadataURL, {
-				annotationURI : sAnnotationsURL,
-				json : true
-			});
-
-			// code under test
-			return oModel.getMetaModel().loaded().then(function () {
-				throw new Error("Unexpected success");
-			}, function (ex) {
-				ok(ex instanceof Error);
-				ok(/Error loading meta model/.test(ex.message), ex.message);
-			});
-		});
-	});
-
-	//*********************************************************************************************
 	["annotations", "emptyAnnotations"].forEach(function (sAnnotation) {
 		["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"].forEach(
+
 			function (sPath) {
-				test(sAnnotation + ", " + sPath, function () {
+				test("check that no errors happen for empty/missing structures:"
+						+ sAnnotation + ", " + sPath, function () {
 					var oMetaModel, oModel;
 
-					setupSandbox(this.sandbox);
-					oModel = new sap.ui.model.odata.v2.ODataModel("/fake/" + sPath, {
+					oModel = new ODataModel("/fake/" + sPath, {
 						// annotations are mandatory for this test case
 						annotationURI : "/fake/" + sAnnotation,
 						json : true
@@ -1071,8 +1689,8 @@
 
 					// code under test
 					oMetaModel = oModel.getMetaModel();
+
 					return oMetaModel.loaded().then(function () {
-						// check that no errors happen for empty/missing structures
 						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
 							null, "getODataEntityType");
 						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
@@ -1132,6 +1750,12 @@
 		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
+			strictEqual(oMetaModel.getODataFunctionImport(
+				"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData"),
+				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
+			strictEqual(oMetaModel.getODataFunctionImport(
+				"FOO_Bar/RegenerateAllData"),
+				null);
 			strictEqual(oMetaModel.getODataFunctionImport("Foo"), null);
 			strictEqual(oMetaModel.getODataFunctionImport(), null);
 		});
@@ -1334,7 +1958,7 @@
 		return withMetaModel(function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')");
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1");
 
@@ -1358,7 +1982,7 @@
 		return withMetaModel(function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier");
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0");
 
@@ -1387,7 +2011,7 @@
 			var sPath = "/ProductSet('ABC')/ProductID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1/property/0");
 
@@ -1409,7 +2033,7 @@
 			var sPath = "/ProductSet('ABC')/ToSupplier/BusinessPartnerID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0/property/1");
 
@@ -1427,7 +2051,7 @@
 			var sPath = "/ProductSet('ABC')/ToSupplier/Address/Street",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof sap.ui.model.Context);
+			ok(oMetaContext instanceof Context);
 			strictEqual(oMetaContext.getModel(), oMetaModel);
 			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/complexType/0/property/2");
 
@@ -1443,5 +2067,394 @@
 			}, /Property not found: AndSoOn/);
 		});
 	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Metadata loaded completely, ValueList w/o qualifier", function () {
+		return withMetaModel(function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/Category"),
+				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+				oInterface = oMetaModel.oODataModelInterface,
+				oPromise,
+				oProperty = oMetaModel.getODataProperty(oEntityType, "Category");
+
+			oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
+				return Promise.reject(new Error("Unexpected call to addAnnotationUrl"));
+			});
+
+			oPromise = oMetaModel.getODataValueLists(oContext);
+
+			strictEqual(oInterface.addAnnotationUrl.callCount, 0,
+				"no separate load of value list");
+			oPromise.then(function (mValueLists) {
+				deepEqual(mValueLists,
+					{"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"]});
+			});
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Metadata loaded completely, no ValueList", function () {
+		return withMetaModel(function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/TypeCode"),
+				oPromise = oMetaModel.getODataValueLists(oContext);
+
+			oPromise.then(function (mValueLists) {
+				deepEqual(mValueLists, {});
+			});
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Metadata loaded completely, multiple ValueLists", function () {
+		return withGivenAnnotations(["/GWSAMPLE_BASIC/annotations", "/fake/multipleValueLists"],
+			function (oMetaModel) {
+				var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/WeightUnit"),
+					oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+					oPromise = oMetaModel.getODataValueLists(oContext),
+					oProperty = oMetaModel.getODataProperty(oEntityType, "WeightUnit");
+
+				oPromise.then(function (mValueLists) {
+					deepEqual(mValueLists, {
+						"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
+						"FOO" : oProperty["com.sap.vocabularies.Common.v1.ValueList#FOO"]
+					});
+				});
+				return oPromise;
+			}
+		);
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Metadata loaded w/o annot., separate value list load", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oContextNoValueList = oMetaModel.getMetaContext("/Items('foo')/GeneratedID"),
+				oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item"),
+				oExpectedVL = { //value list with no qualifier
+					"CollectionPath" : {"String":"VL_SH_DEBIA"},
+					"Parameters" :[{
+						"LocalDataProperty" : {"PropertyPath":"Customer"},
+						"ValueListProperty" : {"String":"KUNNR"},
+						"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+					}]
+				},
+				oExpectedVL_DEBID = { //value list for qualifier DEBID
+					"CollectionPath" : {"String": "VL_SH_DEBID"},
+					"Parameters" : [{
+						"LocalDataProperty" : {"PropertyPath": "CompanyCode"},
+						"ValueListProperty" : {"String": "BUKRS"},
+						"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+					}]
+				},
+				oInterface = oMetaModel.oODataModelInterface,
+				oPromise;
+
+			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+
+			// no sap:value-list => no request
+			oMetaModel.getODataValueLists(oContextNoValueList);
+			strictEqual(oInterface.addAnnotationUrl.callCount, 0);
+
+			// separate value list load
+			oPromise = oMetaModel.getODataValueLists(oContext);
+			strictEqual(oMetaModel.getODataValueLists(oContext), oPromise, "promise is cached");
+			return oPromise.then(function (mValueLists) {
+				deepEqual(mValueLists, {
+					"" : oExpectedVL,
+					"DEBID" : oExpectedVL_DEBID
+				});
+
+				strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
+				ok(oInterface.addAnnotationUrl.calledWithExactly(
+					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer"),
+					"addAnnotationUrl arguments");
+
+				notStrictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
+					"resolved promises deleted from cache");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: addAnnotationUrl rejects", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oInterface = oMetaModel.oODataModelInterface,
+				oMyError = new Error(),
+				oPromise;
+
+			oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
+				return Promise.reject(oMyError);
+			});
+
+			oPromise = oMetaModel.getODataValueLists(oContext);
+			return oPromise.then(function () {
+				throw new Error("Unexpected success");
+			}, function (oError) {
+				strictEqual(oError, oMyError, "error propagated");
+				strictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
+					"rejected promises are cached");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	["/Items('foo')/Invalid", "/Foos('foo')/Invalid"].forEach(function (sPath) {
+		test("getODataValueLists: reject invalid response for " + sPath, function () {
+			return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+				var oContext = oMetaModel.getMetaContext(sPath);
+
+				return oMetaModel.getODataValueLists(oContext).then(function () {
+					throw new Error("Unexpected success");
+				}, function (oError) {
+					strictEqual(oError.message,
+						"No value lists returned for " + oContext.getPath());
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: reject unsupported path", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')");
+
+			raises(function () {
+				oMetaModel.getODataValueLists(oContext);
+			}, /Unsupported property context with path \/dataServices\/schema\/0\/entityType\/0/);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: request bundling", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oCompanyCode = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
+				oCustomer = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oInterface = oMetaModel.oODataModelInterface,
+				oPromiseCompanyCode,
+				oPromiseCustomer;
+
+			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+
+			// Note: "wrong" alphabetic order of calls to check that property names will be sorted!
+			oPromiseCustomer = oMetaModel.getODataValueLists(oCustomer);
+			oPromiseCompanyCode = oMetaModel.getODataValueLists(oCompanyCode);
+
+			// check caching of pending requests
+			strictEqual(oMetaModel.getODataValueLists(oCompanyCode), oPromiseCompanyCode);
+			strictEqual(oMetaModel.getODataValueLists(oCustomer), oPromiseCustomer);
+
+			return Promise.all([oPromiseCustomer, oPromiseCompanyCode]).then(function () {
+				// check bundling
+				strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
+				strictEqual(oInterface.addAnnotationUrl.args[0][0],
+					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" +
+					",FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer",
+					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+			});
+		});
+	});
+	// Note: there is no need to avoid setTimeout() calls because the handler is so cheap
+	//TODO is there no need to clear timeouts in destroy()? is it better to resolve the promises?
+	// Note: different cache keys (property path vs. qualified property name) should be OK
+	//TODO call _sendBundledRequest with timeout > 0 to allow more API calls to "get on the bus"?
+	// --> use a single timeout in this case and clear the old one every time a new API call comes,
+	//     i.e. "bus leaves" only after some idle time!
+
+	//*********************************************************************************************
+	test("_sendBundledRequest", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oError = new Error(),
+				fnBarReject = sinon.spy(),
+				fnBarResolve = sinon.stub().throws(oError),
+				fnFooResolve = sinon.spy(),
+				oInterface = oMetaModel.oODataModelInterface,
+				oPromise,
+				oResponse = {
+					annotations : {},
+					entitySets : []
+				};
+
+			oGlobalSandbox.stub(oInterface, "addAnnotationUrl")
+				.returns(new Promise(function (fnResolve, fnReject) {
+					fnResolve(oResponse);
+				}));
+
+			oMetaModel.mQName2PendingRequest = {
+				"BAR" : {
+					resolve : fnBarResolve,
+					reject : fnBarReject
+				},
+				"FOO" : {
+					resolve : fnFooResolve,
+					reject : function (oError) {
+						ok(false, oError);
+					}
+				}
+			};
+
+			oMetaModel._sendBundledRequest();
+
+			// check bundling
+			strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
+			strictEqual(oInterface.addAnnotationUrl.args[0][0],
+				"$metadata?sap-value-list=BAR,FOO",
+				oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+			deepEqual(Object.keys(oMetaModel.mQName2PendingRequest), [], "nothing pending");
+
+			oPromise = oInterface.addAnnotationUrl.returnValues[0];
+			return oPromise.then(function (oResponse0) {
+				strictEqual(oResponse0, oResponse);
+				// technical test: oResponse is delivered to all pending requests, regardless of
+				// errors thrown
+				ok(fnBarResolve.calledWithExactly(oResponse), fnBarResolve.printf("%C"));
+				ok(fnFooResolve.calledWithExactly(oResponse), fnFooResolve.printf("%C"));
+				// if "resolve" handler throws, "reject" handler is called
+				ok(fnBarReject.calledWithExactly(oError), fnBarReject.printf("%C"));
+			});
+		});
+	});
+	// Note: rejecting a promise in _sendBundledRequest() cannot realistically throw errors
+
+	//*********************************************************************************************
+	test("getODataValueLists: Merge metadata with separate value list load", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+				oItemSetLabel = oMetaModel.getODataEntitySet("Items")
+					["com.sap.vocabularies.Common.v1.Label"],
+				oItemTypeLabel = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item")
+					["com.sap.vocabularies.Common.v1.Label"];
+
+			ok(!oMetaModel.getODataEntitySet("VL_SH_DEBIA"));
+			ok(!oMetaModel.getODataEntitySet("VL_SH_DEBID"));
+			ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"));
+			ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"));
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				var oODataMetadataSchema
+						= oMetaModel.oMetadata.getServiceMetadata().dataServices.schema[0],
+					oSet_DEBIA = oODataMetadataSchema.entityContainer[0].entitySet[2],
+					oSet_DEBID = oODataMetadataSchema.entityContainer[0].entitySet[3],
+					oType_DEBIA = oODataMetadataSchema.entityType[2],
+					oType_DEBID = oODataMetadataSchema.entityType[3],
+					oClonedSet_DEBIA = oMetaModel.getODataEntitySet("VL_SH_DEBIA"),
+					oClonedSet_DEBID = oMetaModel.getODataEntitySet("VL_SH_DEBID"),
+					oClonedType_DEBIA = oMetaModel.getODataEntityType(
+						"FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"),
+					oClonedType_DEBID = oMetaModel.getODataEntityType(
+						"FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID");
+
+				TestUtils.deepContains(oClonedSet_DEBIA, oSet_DEBIA);
+				notStrictEqual(oClonedSet_DEBIA, oSet_DEBIA);
+				TestUtils.deepContains(oClonedSet_DEBID, oSet_DEBID);
+				notStrictEqual(oClonedSet_DEBID, oSet_DEBID);
+
+				TestUtils.deepContains(oClonedType_DEBIA, oType_DEBIA);
+				notStrictEqual(oClonedType_DEBIA, oType_DEBIA);
+				TestUtils.deepContains(oClonedType_DEBID, oType_DEBID);
+				notStrictEqual(oClonedType_DEBID, oType_DEBID);
+
+				strictEqual(
+					oMetaModel.getODataEntitySet("Items")["com.sap.vocabularies.Common.v1.Label"],
+					oItemSetLabel,
+					"existing sets remain unchanged, as reference");
+				strictEqual(
+					oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item")
+						["com.sap.vocabularies.Common.v1.Label"],
+					oItemTypeLabel,
+					"existing types remain unchanged, as reference");
+
+				// check that v4 annotations are properly merged and that v2 ones are lifted etc.
+				strictEqual(
+					oClonedType_DEBIA.property[2/*LAND1*/]
+						["com.sap.vocabularies.Common.v1.ValueList"].CollectionPath.String,
+					"VL_SH_FARP_T005");
+				strictEqual(oClonedType_DEBIA.property[2/*LAND1*/]["sap:label"], "Country");
+				strictEqual(
+					oClonedType_DEBIA.property[2/*LAND1*/]
+						["com.sap.vocabularies.Common.v1.Label"].String,
+					"Country");
+
+				strictEqual(oClonedSet_DEBIA["sap:creatable"], "false");
+				strictEqual(oClonedSet_DEBIA["sap:deletable"], "false");
+				deepEqual(
+					oClonedSet_DEBIA["Org.OData.Capabilities.V1.InsertRestrictions"],
+					{Insertable : {Bool : "false"}}, "v2 --> v4");
+				deepEqual(
+					oClonedSet_DEBIA["Org.OData.Capabilities.V1.DeleteRestrictions"],
+					{Deletable : {Bool : "true"}}, "v4 wins");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Merge metadata with existing entity set", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
+				aEntitySet = oMetaModel.getObject(
+					"/dataServices/schema/0/entityContainer/0/entitySet"),
+				iOriginalLength;
+
+			// preparation: add dummy entity set with same name
+			aEntitySet.push({name : "VL_SH_H_T001"});
+			iOriginalLength = aEntitySet.length;
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				strictEqual(aEntitySet.length, iOriginalLength, "set not added twice");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: Merge metadata with existing entity type", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
+				aEntityType = oMetaModel.getObject("/dataServices/schema/0/entityType"),
+				iOriginalLength;
+
+			// preparation: add dummy entity type with same name
+			aEntityType.push({name : "VL_SH_H_T001"});
+			iOriginalLength = aEntityType.length;
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				strictEqual(aEntityType.length, iOriginalLength, "type not added twice");
+				ok(oMetaModel.getODataEntitySet("VL_SH_H_T001"), "set is added");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataValueLists: ValueList on ComplexType", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Complex/Customer"),
+				oInterface = oMetaModel.oODataModelInterface;
+
+			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				deepEqual(mValueLists, {
+					"" : {
+						"CollectionPath" : {"String":"VL_SH_DEBIA"},
+						"Parameters" :[{
+							"LocalDataProperty" : {"PropertyPath":"Customer"},
+							"ValueListProperty" : {"String":"KUNNR"},
+							"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+						}]
+					}
+				});
+
+				ok(oInterface.addAnnotationUrl.calledWithExactly(
+					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer"),
+					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+			});
+		});
+	});
+
+	//TODO support getODataValueLists with reference to complex type property via entity type
+	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?
+
 	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path
-}());
+	//TODO errors and warnings intentionally created should not be logged to console
+});

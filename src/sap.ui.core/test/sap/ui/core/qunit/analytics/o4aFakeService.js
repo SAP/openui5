@@ -159,7 +159,7 @@ var o4aFakeService =  {
 					if (request.async === true) {
 						_setTimeout(function() {
 							request.respond(200, oResponse.header, oResponse.content);
-						}, this.__iResponseDelay);
+						}, that._iResponseDelay);
 					} else {
 						request.respond(200, oResponse.header, oResponse.content);
 					}

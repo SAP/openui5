@@ -67,7 +67,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				var oToggleFullScreenBtn = oView.byId("toggleFullScreenBtn");
 				if (oToggleFullScreenBtn) {
 					sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateControl(oToggleFullScreenBtn, oView);
-				} 
+				}
 			}
 			return;
 		}
@@ -82,60 +82,59 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			this._oSettingsDialog = new sap.ui.xmlfragment("sap.ui.demokit.explored.view.appSettingsDialog", this);
 			this.getView().addDependent(this._oSettingsDialog);
 		}
-		
+
 //		var oCaller = oEvent.getSource();
 		jQuery.sap.delayedCall(0, this, function(){
-			
-			// variable for convenience 
+
+			// variable for convenience
 			var oAppSettings = sap.ui.getCore().getConfiguration();
-			var sCompactMode = (this._oViewSettings.compactOn) ? "compactOn" : "compactOff";
-			var sRTL = (this._oViewSettings.rtl) ? "RTLOn" : "RTLOff";
-			
+			var bCompactMode = this._oViewSettings.compactOn;
+			var bRTL = this._oViewSettings.rtl;
+
 			// handling of URI parameters
 			var sUriParamTheme = jQuery.sap.getUriParameters().get("sap-theme");
 			var sUriParamRTL = jQuery.sap.getUriParameters().get("sap-ui-rtl");
-			
+
 			// setting the button for Theme
 			if (sUriParamTheme){
-				sap.ui.getCore().byId("ThemeButtons").setSelectedButton(sUriParamTheme);
+				sap.ui.getCore().byId("ThemeButtons").setSelectedKey(sUriParamTheme);
 			} else {
-				sap.ui.getCore().byId("ThemeButtons").setSelectedButton(oAppSettings.getTheme());
+				sap.ui.getCore().byId("ThemeButtons").setSelectedKey(oAppSettings.getTheme());
 			}
-			
+
 			// setting the button for Compact Mode
-			sap.ui.getCore().byId("CompactModeButtons").setSelectedButton(sCompactMode);
-			
+			sap.ui.getCore().byId("CompactModeButtons").setState(bCompactMode);
+
 			// setting the RTL Button
 			if (sUriParamRTL){
-				sap.ui.getCore().byId("RTLButtons").setSelectedButton(sUriParamRTL ? "RTLOn" : "RTLOff");
+				sap.ui.getCore().byId("RTLButtons").setState(sUriParamRTL === "true" ? true : false);
 			} else {
-				sap.ui.getCore().byId("RTLButtons").setSelectedButton(sRTL);
+				sap.ui.getCore().byId("RTLButtons").setState(bRTL);
 			}
-			
-			
-			
+
+
 			this._oSettingsDialog.open();
 		});
-		
+
 	},
 
 	onSaveAppSettings : function(oEvent){
 
 		this._oSettingsDialog.close();
-		
+
 		if (!this._oBusyDialog){
 			jQuery.sap.require("sap.m.BusyDialog");
 			this._oBusyDialog = new sap.m.BusyDialog();
 			this.getView().addDependent(this._oBusyDialog);
 		}
-		var bCompact =  (sap.ui.getCore().byId('CompactModeButtons').getSelectedButton() === "compactOn") ? true : false;
-		var sTheme = sap.ui.getCore().byId('ThemeButtons').getSelectedButton();
-		var bRTL = (sap.ui.getCore().byId('RTLButtons').getSelectedButton() === "RTLOn") ? true : false;
-		
+		var bCompact = sap.ui.getCore().byId('CompactModeButtons').getState();
+		var sTheme = sap.ui.getCore().byId('ThemeButtons').getSelectedKey();
+		var bRTL = sap.ui.getCore().byId('RTLButtons').getState();
+
 		var bRTLChanged = (bRTL !== this._oViewSettings.rtl);
-		
+
 		// busy dialog
-		this._oBusyDialog.open();	
+		this._oBusyDialog.open();
 		jQuery.sap.delayedCall(1000, this, function(){
 			this._oBusyDialog.close();
 		});
@@ -145,19 +144,19 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		this._oViewSettings.themeActive = sTheme;
 		this._oViewSettings.rtl = bRTL;
 		var s = JSON.stringify(this._oViewSettings);
-		this._oStorage.put(this._sStorageKey, s);		
-		
+		this._oStorage.put(this._sStorageKey, s);
+
 		// handle settings change
 		this._component.getEventBus().publish("app", "applyAppConfiguration", {
 			themeActive : sTheme,
 			compactOn : bCompact
 		});
-		
+
 		if (bRTLChanged){
 			this._handleRTL(bRTL);
 		}
 	},
-	
+
 	onDialogCloseButton : function(){
 
 		this._oSettingsDialog.close();
@@ -190,7 +189,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		} else {
 			oList.removeSelections();
 		}
-		
+
 		// TODO scroll to list item
 	},
 
@@ -215,7 +214,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			this._oVSDialog.setSelectedFilterKeys(aFilterKeys);
 			this._oVSDialog.setSelectedGroupItem(this._oViewSettings.groupProperty);
 			this._oVSDialog.setGroupDescending(this._oViewSettings.groupDescending);
-			jQuery('body').toggleClass("sapUiSizeCompact", this._oViewSettings.compactOn);
+			jQuery('body').toggleClass("sapUiSizeCompact", this._oViewSettings.compactOn).toggleClass("sapUiSizeCozy", !this._oViewSettings.compactOn);
 
 			// open
 			this._oVSDialog.open();
@@ -250,7 +249,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		// update view
 		this._updateView();
 	},
-	
+
 	onSearch : function () {
 		this._updateView(); // yes this function does a bit too much for search but it makes my life easier and I see no delay
 	},
@@ -275,7 +274,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 	_updateView : function () {
 
 		if (!this._oViewSettings) {
-	
+
 			// init the view settings
 			this._initViewSettings();
 
@@ -284,9 +283,9 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				themeActive : this._oViewSettings.themeActive,
 				compactOn : this._oViewSettings.compactOn
 			});
-		
+
 		}
-		
+
 
 		// update the filter bar
 		this._updateFilterBarDisplay();
@@ -317,7 +316,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		oView.byId("vsFilterBar").setVisible(sFilterText.length > 0);
 		oView.byId("vsFilterLabel").setText(sFilterText);
 	},
-	
+
 	/**
 	 * Updates the binding of the master list and applies filters and groups
 	 */
@@ -388,9 +387,6 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			};
 
 		} else {
-			
-
-
 			// parse
 			this._oViewSettings = JSON.parse(sJson);
 
@@ -422,25 +418,25 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			if (!this._oViewSettings.hasOwnProperty("compactOn")) { // compactOn was introduced later
 				this._oViewSettings.compactOn = false;
 			}
-			
+
 			if (!this._oViewSettings.hasOwnProperty("themeActive")) { // themeActive was introduced later
 				this._oViewSettings.themeActive = "sap_bluecrystal";
 			}
-			
+
 			if (!this._oViewSettings.hasOwnProperty("rtl")) { // rtl was introduced later
 				this._oViewSettings.rtl = false;
 			}
-			
+
 			// handle RTL-on in settings as this need a reload
 			if (this._oViewSettings.rtl && !jQuery.sap.getUriParameters().get('sap-ui-rtl')){
 				this._handleRTL(true);
 			}
 		}
 	},
-	
+
 	// trigger reload w/o URL-Parameter;
 	_handleRTL : function(bSwitch){
-		
+
 		jQuery.sap.require("sap.ui.core.routing.HashChanger");
 		var oHashChanger = new sap.ui.core.routing.HashChanger();
 		var sHash = oHashChanger.getHash();
@@ -454,7 +450,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		}
 
 	},
-	
+
 	getGroupHeader: function (oGroup){
 		return new sap.m.GroupHeaderListItem( {
 			title: oGroup.key,

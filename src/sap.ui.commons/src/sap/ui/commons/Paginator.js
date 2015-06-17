@@ -194,7 +194,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		// the pages to be shown only after the animation are those to be rendered invisible, initially
-		for (var i = oNewRange.firstPage; i <= oNewRange.lastPage; i++) {
+		var i;
+		for (i = oNewRange.firstPage; i <= oNewRange.lastPage; i++) {
 			if (i < oOldRange.firstPage || i > oOldRange.lastPage) {
 				aIndicesToShow.push(i);
 			}
@@ -205,7 +206,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		};
 
 		// the pages to be shown initially, but NOT after the animation, are those to fade out
-		for (var i = oOldRange.firstPage; i <= oOldRange.lastPage; i++) {
+		for (i = oOldRange.firstPage; i <= oOldRange.lastPage; i++) {
 			if (i < oNewRange.firstPage || i > oNewRange.lastPage) {
 				aIndicesToHide.push(i);
 			}
@@ -253,12 +254,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 
-		for (var i = 0 ; i < aIndicesToHide.length; i++) {
+		for (i = 0 ; i < aIndicesToHide.length; i++) {
 			var id = prefix + aIndicesToHide[i];
 			jQuery.sap.byId(id).hide(400, removeAfterAnimation);
 		}
 
-		for (var i = 0 ; i < aIndicesToShow.length; i++) {
+		for (i = 0 ; i < aIndicesToShow.length; i++) {
 			jQuery.sap.byId(prefix + aIndicesToShow[i]).show(400);
 		}
 	};
@@ -289,23 +290,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				iLastPage = Paginator.MAX_NUMBER_PAGES;
 			}
 
-		} else { //Now, the current page is more than 3, so we need to shift the range
-
-			//Reached the last page
-			if (iCurrentPage == iLastPage) {
-				//How many pages exist, if less than 5, simply substract the nb of pages from the last one (range is in this case 1 to max 5)
-				if (iNbPages < 5) {
-					iFirstPage = 1;
-				} else { //More than 5 pages, substract 4 pages to have the 5 pages range
-					iFirstPage = iLastPage - 4;
-				}
-			} else if ( iLastPage - iCurrentPage < 3 ) {
-				//Last page - current page is below 3, substract 4 to always see the right range for the last 2 pages
+			//Now, the current page is more than 3, so we need to shift the range
+		} else if (iCurrentPage == iLastPage) { //Reached the last page
+			//How many pages exist, if less than 5, simply substract the nb of pages from the last one (range is in this case 1 to max 5)
+			if (iNbPages < 5) {
+				iFirstPage = 1;
+			} else { //More than 5 pages, substract 4 pages to have the 5 pages range
 				iFirstPage = iLastPage - 4;
-			} else { //All other case, create the range from the current page +-2
-				iFirstPage = iCurrentPage - 2;
-				iLastPage = iCurrentPage + 2;
 			}
+		} else if ( iLastPage - iCurrentPage < 3 ) {
+			//Last page - current page is below 3, substract 4 to always see the right range for the last 2 pages
+			iFirstPage = iLastPage - 4;
+		} else { //All other case, create the range from the current page +-2
+			iFirstPage = iCurrentPage - 2;
+			iLastPage = iCurrentPage + 2;
 		}
 
 		return { firstPage : iFirstPage, lastPage : iLastPage };
@@ -348,14 +346,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		var aFocusableElements = jQuery(this.getDomRef()).find(":sapFocusable");
 		var iCurrentIndex = jQuery(aFocusableElements).index(oEvent.target);
+		var iNextIndex, oNextElement;
 
 		//Right key pressed
 		if (sDirection == "next") {
-			var iNextIndex = iCurrentIndex + 1;
+			iNextIndex = iCurrentIndex + 1;
 			if (jQuery(oEvent.target).hasClass("sapUiPagCurrentPage")) {
 				iNextIndex = iNextIndex + 1;
 			}
-			var oNextElement = aFocusableElements[iNextIndex];
+			oNextElement = aFocusableElements[iNextIndex];
 			if (oNextElement) {
 				jQuery(oNextElement).focus();
 				oEvent.preventDefault();
@@ -363,8 +362,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		} else if (sDirection == "previous" && aFocusableElements[iCurrentIndex - 1]) {
 			//Left key pressed
-			var iNextIndex = iCurrentIndex - 1;
-			var oNextElement = aFocusableElements[iNextIndex];
+			iNextIndex = iCurrentIndex - 1;
+			oNextElement = aFocusableElements[iNextIndex];
 			if (oNextElement && jQuery(oNextElement).hasClass("sapUiPagCurrentPage")) {
 				oNextElement = aFocusableElements[iNextIndex - 1];
 			}

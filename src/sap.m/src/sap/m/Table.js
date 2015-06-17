@@ -140,12 +140,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		return this;
 	};
 	
-	Table.prototype.setFixedLayout = function (bFixed) {
-		this.setProperty("fixedLayout", bFixed, true);
-		this.$("listUl").css("table-layout", this.getFixedLayout() ? "fixed" : "auto");
-		return this;
-	};
-	
 	/**
 	 * Getter for aggregation columns.
 	 *
@@ -342,8 +336,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			$firstVisibleCol.width($firstVisibleCol.attr("data-sap-width"));
 		}
 	
-		// update GroupHeader colspan according to visible column count
-		$table.find(".sapMGHLICell").attr("colspan", aVisibleColumns.length);
+		// update GroupHeader colspan according to visible column count and additional selection column
+		$table.find(".sapMGHLICell").attr("colspan", aVisibleColumns.length + !!sap.m.ListBaseRenderer.ModeOrder[this.getMode()]);
 	
 		// remove or show column header row(thead) according to column visibility value
 		if (!bColVisible && bHeaderVisible) {
@@ -376,13 +370,15 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	
 	// pass pop-in events to ColumnListItem
 	Table.prototype._handlePopinEvent = function(oEvent, bRowOnly) {
+		if (!this.hasPopin()) {
+			return;
+		}
+		
 		if (bRowOnly && !sap.m.ColumnListItem.isPopinFocused()) {
 			return;
 		}
 	
-		if (this.hasPopin()) {
-			return sap.m.ColumnListItem.handleEvents(oEvent, this.getItemsContainerDomRef());
-		}
+		return sap.m.ColumnListItem.handleEvents(oEvent, this.getItemsContainerDomRef());
 	};
 	
 	/**
@@ -393,15 +389,21 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 * @return {sap.m.CheckBox} reference to the internal select all checkbox
 	 */
 	Table.prototype._getSelectAllCheckbox = function() {
-		return this._selectAllCheckBox || (this._selectAllCheckBox = new sap.m.CheckBox(this.getId("sa"), {
-			activeHandling : false
+		return this._selectAllCheckBox || (this._selectAllCheckBox = new sap.m.CheckBox({
+			id: this.getId("sa"),
+			activeHandling: false
 		}).setParent(this, null, true).attachSelect(function () {
 			if (this._selectAllCheckBox.getSelected()) {
 				this.selectAll(true);
 			} else {
 				this.removeSelections(false, true);
 			}
-		}, this).setTabIndex(-1));
+		}, this).setTabIndex(-1).addEventDelegate({
+			onAfterRendering: function() {
+				// hide this from the screen readers
+				this._selectAllCheckBox.getFocusDomRef().setAttribute("aria-hidden", "true");
+			}
+		}, this));
 	};
 	
 	/*
@@ -467,17 +469,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		return !!jQuery(oEvent.target).closest($Footer, this.getTableDomRef()).length;
 	};
 	
-	// this gets called after navigation items are focused
-	Table.prototype.onNavigationItemFocus = function(oEvent) {
-		var iIndex = oEvent.getParameter("index"),
-			aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oItemDomRef = aItemDomRefs[iIndex];
-		
-		if (this.getItemsContainerDomRef().contains(oItemDomRef)) {
-			ListBase.prototype.onNavigationItemFocus.call(this, oEvent, !this._headerHidden, this._hasFooter);
-		} else {
-			this.getNavigationRoot().removeAttribute("aria-activedescendant");
-		}
+	/*
+	 * This gets called after navigation items are focused
+	 * Overwrites the ListItemBase default handling
+	 */
+	Table.prototype.onNavigationItemFocus = function() {
 	};
 	
 	// keyboard handling
@@ -541,6 +537,13 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		} else {
 			this._handlePopinEvent(oEvent);
 		}
+	};
+	
+	// Handles focus of the popins
+	Table.prototype.onfocusin = function(oEvent) {
+		var oCLI = this._handlePopinEvent(oEvent, true);
+		ListBase.prototype.onfocusin.call(this, oEvent);
+		oCLI && oCLI.focus();
 	};
 
 	return Table;

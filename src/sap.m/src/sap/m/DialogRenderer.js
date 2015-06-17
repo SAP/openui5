@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			bVerticalScrolling = oControl.getVerticalScrolling(),
 			sState = oControl.getState(),
 			bStretch = oControl.getStretch(),
-			bResizeable = oControl.getResizeable(),
+			bResizable = oControl.getResizable(),
 			bDraggable = oControl.getDraggable();
 
 		if (oHeader) {
@@ -43,7 +43,14 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 		}
 
 		// write the HTML into the render manager
-		oRm.write("<div");
+		// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger then the html's height (scroller)
+		// The scroller will make the initial window width smaller and in the next recalculation the maxWidth will be larger.
+		var initialSmallSize = bStretch ? '' : 'max-height: auto; max-width: auto;';
+		var initialWidth =  oControl.getContentWidth() ? ' width: ' + oControl.getContentWidth() + ';' : '';
+		var initialHeight = oControl.getContentHeight() ? ' height: ' +  oControl.getContentHeight() + ';' : '';
+		var initialStyles = "style='" + initialSmallSize + initialWidth + initialHeight + "'";
+
+		oRm.write('<div ' + initialStyles);
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMDialog");
 		oRm.addClass("sapMDialog-CTX");
@@ -123,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 
 		if (sap.ui.Device.system.desktop) {
 
-			if (bResizeable && !bStretch) {
+			if (bResizable && !bStretch) {
 				oRm.write('<div class="sapMDialogResizeHandler"></div>');
 			}
 
@@ -161,21 +168,16 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.write('<footer id="' + id + '-footer" class="sapMDialogActions sapMBar-CTX sapMFooter-CTX sapMIBar-CTX">');
 			// Render actions
 			if (oLeftButton) {
-				oRm.write('<div class="sapMDialogAction">');
 				oRm.renderControl(oLeftButton.addStyleClass("sapMDialogBtn", true));
-				oRm.write("</div>");
 			}
 
 			if (oRightButton) {
-				oRm.write('<div class="sapMDialogAction">');
 				oRm.renderControl(oRightButton.addStyleClass("sapMDialogBtn", true));
-				oRm.write("</div>");
 			}
 
 			oRm.write("</footer>");
 		}
 		if (sap.ui.Device.system.desktop) {
-
 			// Invisible element which is used to determine when desktop keyboard navigation
 			// has reached the last focusable element of a dialog and went beyond. In that case, the controller
 			// will focus the first focusable element.

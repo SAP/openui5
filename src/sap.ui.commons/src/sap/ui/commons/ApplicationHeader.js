@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.ApplicationHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Image', './TextView', './Button'],
+	function(jQuery, library, Control, Image, TextView, Button) {
 	"use strict";
 
 
@@ -90,17 +90,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		//Create the logo image control and the title (textView) control
 		this.oLogo && this.oLogo.destroy();
-		this.oLogo = new sap.ui.commons.Image(appHeaderId + "-logoImg");
+		this.oLogo = new Image(appHeaderId + "-logoImg");
 		this.oLogo.setTooltip(rb.getText("APPHDR_LOGO_TOOLTIP"));
 		this.oLogo.setParent(this);
 		this.oLogoText && this.oLogoText.destroy();
-		this.oLogoText = new sap.ui.commons.TextView(appHeaderId + "-logoText");
+		this.oLogoText = new TextView(appHeaderId + "-logoText");
 		this.oLogoText.setAccessibleRole(sap.ui.core.AccessibleRole.Heading);
 		this.oLogoText.setParent(this);
 	
 		//Log off button
 		this.oLogoffBtn && this.oLogoffBtn.destroy();
-		this.oLogoffBtn = new sap.ui.commons.Button(appHeaderId + "-logoffBtn");
+		this.oLogoffBtn = new Button(appHeaderId + "-logoffBtn");
 		var sLogOffText = rb.getText("APPHDR_LOGOFF");
 		this.oLogoffBtn.setText(sLogOffText);
 		this.oLogoffBtn.setTooltip(sLogOffText);

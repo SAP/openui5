@@ -10,6 +10,7 @@ Argument | Description                                                          
 -------- | ------------------------------------------------------------------------------ | -------
 mode     | `src` uses source files, `target` uses built files (see build task)            | `src`
 port     | Network port to use                                                            | `8080`
+hostname | Network hostname to use (e.g. `127.0.0.1` for local access only)               | `*`
 watch    | `boolean` whether to enable watch / livereload (only possible with mode `src`) | `false`
 libs     | Library name(s) to watch (comma-separated). Can reduce CPU usage!              | All libraries
 
@@ -20,14 +21,15 @@ Maps folders of all libraries
 - test -> /test-resources
 
 ```
-grunt serve[:<mode>] [--port=<port>] [--watch] [--libs=<library-1>,<library-n>]
+grunt serve[:<mode>] [--port=<port>] [--hostname=<hostname>] [--watch] [--libs=<library-1>,<library-n>]
 
 # examples
-#  grunt serve --port=3000                 # mode=src, port=3000, watch=false
-#  grunt serve:src                         # mode=src, port=8080, watch=false
-#  grunt serve:src --watch                 # mode=src, port=8080, watch=true, watched libs=All
-#  grunt serve --watch=true --libs=sap.m   # mode=src, port=8080, watch=true, watched libs=sap.m
-#  grunt serve:target --port=80            # mode=target, port=80, watch=false
+#  grunt serve --port=3000                       # mode=src, port=3000, hostname=*, watch=false
+#  grunt serve --port=3000 --hostname=127.0.0.1  # mode=src, port=3000, hostname=127.0.0.1, watch=false
+#  grunt serve:src                               # mode=src, port=8080, hostname=*, watch=false
+#  grunt serve:src --watch                       # mode=src, port=8080, hostname=*, watch=true, watched libs=All
+#  grunt serve --watch=true --libs=sap.m         # mode=src, port=8080, hostname=*, watch=true, watched libs=sap.m
+#  grunt serve:target --port=80                  # mode=target, port=80, hostname=*, watch=false
 ```
 
 ## lint
@@ -85,4 +87,26 @@ grunt test --browsers=<browsers>
 
 # example
 #  grunt test --browsers="safari,firefox"   # run tests of all libraries on safari and firefox
+```
+
+## cldr
+
+Argument | Description | Default
+---------- | --------------------------------------------------------------------------------------------- | -------------
+download | The version of CLDR package which is downloaded from http://cldr.unicode.org | none
+file | The name of the zip file which is stored on http://cldr.unicode.org. CLDR doesn't have a consistent name for the zip file, for example it's named json-full.zip with version 26 but named json_full.zip with version 25 | json-full.zip
+output | The folder path where the generated JSON files are stored | none
+prettyPrint | Whether the output JSON files are pretty printed | false
+zip | The file path to the local zip file if the zip file is already downloaded from http://cldr.unicode.org | none
+tmp | The folder path where the temporary files are stored | temp
+dryrun | If this parameter is set to false, the generated JSON files will replace the corresponding JSON file in UI5 library | true
+
+Generate UI5 locale JSON files using the CLDR zip bundle.
+
+```
+grunt cldr (--download=<version-to-download> | --zip=<file-path>) (--output=<output-foler-path>) [--file=<download-file-name>] [--prettyPrint] [--tmp=<temp-folder-path>] [--dryrun]
+
+# example
+#  grunt cldr --download=26 --output=cldr --prettyPrint   # download CLDR version 26 and generate the UI5 locale JSON files which are saved in folder "cldr" and pretty printed
+#  grunt cldr --download=26 --no-dryrun   # download CLDR version 26 and generate the UI5 locale JSON files which replace the UI5 locale JSON files directly
 ```

@@ -276,6 +276,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			this.onsapright(oEvent);
 		};
 
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * If the FormContainer has a title or is expandable a internal Panel is rendered.
+		 * In this case the Panels DOM reference is returned, otherwise the DOM reference
+		 * of the ResponsifeFlowLayout rendering the containers content.
+		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
+
+			if (this.getDomRef()) {
+				var sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][0]) {
+						var oPanel = this.mContainers[sContainerId][0];
+						return oPanel.getDomRef();
+					}else if (this.mContainers[sContainerId][1]){
+						// no panel used -> return RFLayout
+						var oRFLayout = this.mContainers[sContainerId][1];
+						return oRFLayout.getDomRef();
+					}
+				}
+			}
+
+			return null;
+
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists.
+		 * In this Layout each FormElement is represented by an own ResponsiveFlowLayout.
+		 * So the DOM of this ResponsiveFlowLayout is returned
+		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveLayout.prototype.getElementRenderedDomRef = function(oElement) {
+
+			if (this.getDomRef()) {
+				var oContainer = oElement.getParent();
+				var sElementId = oElement.getId();
+				var sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][2]){
+						var mRFLayouts = this.mContainers[sContainerId][2];
+						if (mRFLayouts[sElementId]) {
+							var oRFLayout = mRFLayouts[sElementId][0];
+							return oRFLayout.getDomRef();
+						}
+					}
+				}
+			}
+
+			return null;
+
+		};
+
 		function _createPanels( oLayout, oForm ) {
 
 			var aContainers = oForm.getFormContainers();
@@ -691,16 +749,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 		function _createMainResponsiveFlowLayout( oLayout, oForm ) {
 
 			var aContainers = oForm.getFormContainers();
+			var aVisibleContainers = [];
 			var oContainer;
 			var iLength = 0;
 			var iContentLenght = 0;
 			var i = 0;
+			var j = 0;
 
 			// count only visible containers
 			for ( i = 0; i < aContainers.length; i++) {
 				oContainer = aContainers[i];
 				if (oContainer.getVisible()) {
 					iLength++;
+					aVisibleContainers.push(oContainer);
 				}
 			}
 
@@ -725,6 +786,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 							oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
 						}
 						if (oContainer && oContainer.getVisible()) {
+							var oVisibleContainer = aVisibleContainers[j];
+							if (oContainer != oVisibleContainer) {
+								// order of containers has changed
+								bExchangeContent = true;
+								break;
+							}
+
 							var aContainerContent = oLayout.mContainers[oContainer.getId()];
 							if (aContainerContent[0] && aContainerContent[0] != oContentElement) {
 								// container uses panel but panel not the same element in content
@@ -736,6 +804,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 								bExchangeContent = true;
 								break;
 							}
+							j++;
 						} else {
 							// no container exits for content -> just remove this content
 							oLayout._mainRFLayout.removeContent(oContentElement);
@@ -749,18 +818,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 				}
 				if (iContentLenght < iLength) {
 					// new containers added
-					for ( i = 0; i < aContainers.length; i++) {
-						oContainer = aContainers[i];
-						if (oContainer.getVisible()) {
-							var sContainerId = oContainer.getId();
-							if (oLayout.mContainers[sContainerId]) {
-								if (oLayout.mContainers[sContainerId][0]) {
-									// panel used
-									oLayout._mainRFLayout.addContent(oLayout.mContainers[sContainerId][0]);
-								} else if (oLayout.mContainers[sContainerId][1]) {
-									// no panel - used ResponsiveFlowLayot directly
-									oLayout._mainRFLayout.addContent(oLayout.mContainers[sContainerId][1]);
-								}
+					var iStartIndex = 0;
+					if (iContentLenght > 0) {
+						iStartIndex = iContentLenght--;
+					}
+					for ( i = iStartIndex; i < iLength; i++) {
+						oContainer = aVisibleContainers[i];
+						var sContainerId = oContainer.getId();
+						if (oLayout.mContainers[sContainerId]) {
+							if (oLayout.mContainers[sContainerId][0]) {
+								// panel used
+								oLayout._mainRFLayout.addContent(oLayout.mContainers[sContainerId][0]);
+							} else if (oLayout.mContainers[sContainerId][1]) {
+								// no panel - used ResponsiveFlowLayot directly
+								oLayout._mainRFLayout.addContent(oLayout.mContainers[sContainerId][1]);
 							}
 						}
 					}

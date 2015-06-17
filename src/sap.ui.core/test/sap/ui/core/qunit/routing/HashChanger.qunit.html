@@ -23,6 +23,22 @@
 			jQuery.sap.require("sap.ui.thirdparty.signals");
 			jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
+
+			// NEEDS TO BE THE FIRST TEST - tests the initial state of a global singleton in a closure
+			test("Should always overwrite the hashchanger", function () {
+				// this function must not be called before this test is executed so it acutally tests something
+				// sap.ui.core.routing.HashChanger.getInstance()
+
+				// System under Test
+				var oHashChanger = new sap.ui.core.routing.HashChanger();
+
+				// Act
+				sap.ui.core.routing.HashChanger.replaceHashChanger(oHashChanger);
+
+				// Assert
+				strictEqual(oHashChanger, sap.ui.core.routing.HashChanger.getInstance(), "did change the hashCHanger");
+			});
+
 			test("ShouldInitAndDestroyCorrectly", function () {
 				//Arrange
 				var calls = [],
@@ -69,6 +85,29 @@
 				strictEqual(initSpy.callCount, 0, "did not init hasher again");
 
 				//Cleanup
+				sut.destroy();
+			});
+
+			test("Should not init hasher twice when init is called in hashChange event", function() {
+				// System under test
+				var sut = new sap.ui.core.routing.HashChanger();
+
+				// Arrange
+				var initSpy = this.spy(sut, "init"),
+					hashChanged = function(evt) {
+						sut.init();
+					};
+				sut.attachEvent("hashChanged", hashChanged);
+
+				// Act
+				sut.init();
+
+				// Assert
+				equal(initSpy.callCount, 2, "The init method should only be called twice");
+				strictEqual(initSpy.returnValues[0], false, "The first call is returned with true");
+				strictEqual(initSpy.returnValues[1], true, "The second call is returned with false");
+
+				// Cleanup
 				sut.destroy();
 			});
 
@@ -153,19 +192,98 @@
 
 
 				//System under Test
-				var sut = new sap.ui.core.routing.HashChanger();
+				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+				oSecondHashChanger.attachEvent("hashChanged", hashChanged);
 
-				sap.ui.core.routing.HashChanger.replaceHashChanger(sut);
+				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
 
 				var retrievedInstance = sap.ui.core.routing.HashChanger.getInstance();
 
 				retrievedInstance.fireHashChanged("one");
+				strictEqual(hashChanged.callCount, 2, "did call all the listener");
 				//Should not add another call since all events need to be deregistered
 				firstInstance.fireHashChanged("two");
 
 				//Assert
-				strictEqual(retrievedInstance, sut, "retrieved the correct instance");
-				strictEqual(hashChanged.callCount, 1, "did call the listener");
+				strictEqual(retrievedInstance, oSecondHashChanger, "retrieved the correct instance");
+				strictEqual(hashChanged.callCount, 2, "did not add calls");
+			});
+
+			test("Should copy events correctly", function () {
+				// System under Test
+				var oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
+					fnHashChanged = this.spy();
+
+				// only add this event to the original hashchanger
+				oFirstHashCHanger.attachEvent("hashChanged", fnHashChanged);
+
+				// System under Test
+				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+
+				// Act
+				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+				// no event listener was added to the second hashchanger
+				oSecondHashChanger.fireHashChanged("one");
+
+				// Assert
+				strictEqual(fnHashChanged.callCount, 1, "did call all the listener from the first hashchanger");
+
+			});
+
+			test("Should not overwrite deleted events", function () {
+				// System under Test
+				var oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
+						fnHashChanged = this.spy();
+
+				// only add this event to the original hashchanger
+				oFirstHashCHanger.attachEvent("hashChanged", fnHashChanged);
+				//  detach an event so there is an empty entry in the event registry
+				oFirstHashCHanger.detachEvent("hashChanged", fnHashChanged);
+
+				// System under Test
+				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+				// add an event handler again
+				oSecondHashChanger.attachEvent("hashChanged", fnHashChanged);
+
+				// Act - see if the event handler is overwritten
+				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+
+				// spy should not be informed since the event is deregisterwd
+				oFirstHashCHanger.fireHashChanged("one");
+
+				// Assert
+				strictEqual(fnHashChanged.callCount, 0, "did not call the spy");
+
+				// spy has to be informed
+				oSecondHashChanger.fireHashChanged("one");
+				strictEqual(fnHashChanged.callCount, 1, "did add a call");
+			});
+
+			test("Should not duplicate History events", function (assert) {
+				jQuery.sap.require("sap.ui.core.routing.History");
+				// Arrange
+				var oHistory = sap.ui.core.routing.History.getInstance(),
+					oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
+					fnHashChanged = this.spy(),
+					oHistoryChangeStub = this.stub(oHistory, "_hashChange");
+
+				// Check if the history gut the current hashchanger
+				oFirstHashCHanger.fireHashChanged("one");
+				assert.strictEqual(oHistoryChangeStub.callCount, 1, "History is connected to the first hashchanger");
+
+				// System under Test
+				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+
+				// Act
+				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+
+				// the stub should be called a second time
+				oSecondHashChanger.fireHashChanged("two");
+				assert.strictEqual(oHistoryChangeStub.callCount, 2, "History is connected to the second hashchanger");
+
+
+				oFirstHashCHanger.fireHashChanged("one");
+				assert.strictEqual(oHistoryChangeStub.callCount, 2, "History is disconnected from the first hashchanger");
 			});
 
 			module("Synchronous hash setting");

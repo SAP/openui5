@@ -17,139 +17,378 @@
 
 </script>
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
-	var oWidth = "300px", oHeight = "350px", iScrollLeft = 0, iScrollTop = 0, bMaximized = true, oTitle = null, bApplyContentPadding = true, bShowCloseButton = true, bResizable = true;
-
-	var iPopupDelay = 500; // Dialog now has a delay of 400ms
-
-	var sClosedMessage = "closed event fired";
-
-	function closedEventHandler() {
-		ok(true, "This text will never be displayed..."); // this test tests by just being counted in the "CloseDialog" test
+	sinon.config.useFakeTimers = false;
+	<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 	}
 
-	var oDialog1 = new sap.ui.commons.Dialog("Dialog1", {
-		width : oWidth,
-		height : oHeight,
-		scrollLeft : iScrollLeft,
-		scrollTop : iScrollTop,
-		maximized : bMaximized,
-		title : oTitle,
-		applyContentPadding : bApplyContentPadding,
-		showCloseButton : bShowCloseButton,
-		resizable : bResizable
-	});
+	(function() {
+		var sWidth = '300px',
+			sHeight = '350px',
+			iScrollLeft = 0,
+			iScrollTop = 0,
+			oTitle = null,
+			bApplyContentPadding = true,
+			bShowCloseButton = true,
+			bResizable = true,
+			iPopupDelay = 500, // Dialog now has a delay of 400ms
+			Core = sap.ui.getCore();
 
-	//oCtrl = sap.ui.getCore().getControl("Dialog1");
-	oDialog1.attachClosed(closedEventHandler);
+		QUnit.module('Common use-cases', {
 
-	// make sure the Dialog exists
-	test("InitialCheck", function() {
-		ok(oDialog1, "Dialog does not exist");
-		equals(oDialog1.isOpen(), false, "Dialog should be closed initially!");
-		strictEqual(oDialog1.getWidth(), oWidth);
-		strictEqual(oDialog1.getHeight(), oHeight);
-		strictEqual(oDialog1.getScrollLeft(), iScrollLeft);
-		strictEqual(oDialog1.getScrollTop(), iScrollTop);
-		strictEqual(oDialog1.getTitle(), "");
-		strictEqual(oDialog1.getApplyContentPadding(), bApplyContentPadding);
-		strictEqual(oDialog1.getShowCloseButton(), bShowCloseButton);
-		strictEqual(oDialog1.getResizable(), bResizable);
-	});
+			beforeEach: function() {
+				var TEXT_FIELD_ID = 'txtField';
+				var OK_BUTTON_ID = 'btnOk';
+				var CANCEL_BUTTON_ID = 'btnCancel';
 
-	// open the Dialog
-	asyncTest("OpenDialog", function() {
-		oDialog1.open();
+				this.textField = new sap.ui.commons.TextField(TEXT_FIELD_ID, {
+					value: 'I am text field',
+					width: '100%'
+				});
 
-		setTimeout(function() {
-			ok(oDialog1.isOpen(), "Dialog should be open after opening!");
-			equals(jQuery("#Dialog1").css("visibility"), "visible", "Dialog should be visible after opening");
-			var oDomRef = oDialog1.getDomRef();
-			strictEqual(oDomRef.offsetWidth, parseInt(oWidth), "Width of the Dialog should be equal to the set value.");
-			var offsetHeight = oDomRef.offsetHeight;
-			if (sap.ui.Device.browser.chrome && offsetHeight == 351) { // a known issue in Chrome that sometimes happens
-				offsetHeight = 350;
+				this.btnOk = new sap.ui.commons.Button(OK_BUTTON_ID, {
+					text: 'OK',
+					press: function() {
+						jQuery.sap.log.debug('OK button is clicked');
+					}
+				}),
+				this.btnCancel = new sap.ui.commons.Button(CANCEL_BUTTON_ID, {
+					text: 'Cancel',
+					press: function() {
+						jQuery.sap.log.debug('Cancel button is clicked');
+					}
+				});
+
+				this.oDialog = new sap.ui.commons.Dialog('Dialog', {
+					content: [this.textField],
+					scrollLeft: iScrollLeft,
+					scrollTop: iScrollTop,
+					title: oTitle,
+					applyContentPadding: bApplyContentPadding,
+					showCloseButton: bShowCloseButton,
+					resizable: bResizable,
+					buttons: [this.btnOk, this.btnCancel]
+				});
+
+				this.initialFocusSpy = sinon.spy(this.oDialog, 'setInitialFocus');
+				this.initialPopupFocusSpy = sinon.spy(this.oDialog.oPopup, 'setInitialFocusId');
+			},
+			afterEach: function() {
+				this.oDialog.destroy();
+				this.initialFocusSpy.restore();
+				this.initialPopupFocusSpy.restore();
 			}
-			strictEqual(offsetHeight, parseInt(oHeight), "Height of the Dialog should be equal to the set value.");
-			start();
-		}, iPopupDelay);
-	});
-
-	// close the Dialog again
-	asyncTest("CloseDialog", function() {
-		expect(3); // needs to include the test in closedEventHandler !!
-		oDialog1.close();
-
-		setTimeout(function() {
-			equals(oDialog1.isOpen(), false, "Dialog should be closed again after closing!");
-			equals(jQuery("#Dialog1").css("visibility"), "hidden", "Dialog should be hidden after closing");
-			start();
-		}, iPopupDelay);
-	});
-
-	asyncTest("DestroyOnClose", function() {
-		var bCloseInProgress = false;
-		function onClosed(e) {
-			start();
-			ok(true, "onClosed called on destroy");
-		}
-		oDialog1.attachClosed(onClosed);
-		oDialog1.open();
-		oDialog1.oPopup.attachOpened(function() {
-			oDialog1.destroy();
-		});
-	});
-
-	asyncTest("Check XSS in title", function() {
-		expect(1);
-
-		var oDialogXSS = new sap.ui.commons.Dialog("XSSDialog1", {
-			width : oWidth,
-			height : oHeight,
-			scrollLeft : iScrollLeft,
-			scrollTop : iScrollTop,
-			maximized : bMaximized,
-			applyContentPadding : bApplyContentPadding,
-			showCloseButton : bShowCloseButton,
-			resizable : bResizable
-		});
-		var sXss = unescape("%3Cscript%3Ealert%28%27xss%20possible%27%29%3C/script%3E");
-		var oBtn = new sap.ui.commons.Button({
-			text : "Open XSS-dialog"
 		});
 
-		oBtn.press = function() {
-			oDialogXSS.open();
-			oDialogXSS.setTitle(sXss);
+		QUnit.test('On initialization the dialog', function(assert) {
+			assert.ok(this.oDialog, 'should not exist');
+			assert.equal(this.oDialog.isOpen(), false, 'should be closed initially!');
+		});
 
-			setTimeout(function() {
-				var bXss = oDialogXSS.$("lbl").text() === sXss;
+		QUnit.test('Setting inital focus to a string id', function(assert) {
+			this.oDialog.setInitialFocus('btnOk');
+			assert.ok(this.initialFocusSpy.calledOnce, 'setIntialFocus should be called once');
+			assert.ok(this.initialPopupFocusSpy.calledWithExactly('btnOk'), 'setIntialFocusId should be called on the popup with the passed id');
+		});
 
-				ok(bXss, "Text of title was escaped");
-				oDialogXSS.destroy();
-				start();
-			}, iPopupDelay);
-		};
-		oBtn.press();
-	});
+		QUnit.test('Setting inital focus to a control', function(assert) {
+			this.oDialog.setInitialFocus(this.btnCancel);
+			assert.ok(this.initialPopupFocusSpy.calledWithExactly('btnCancel'), 'setInitialFocusId should be called with the proper sId');
+		});
+
+		QUnit.test('Get minimal reasonable size', function(assert){
+			var done = assert.async(),
+				that = this;
+
+			var fnOpened = function() {
+				var textField = new sap.ui.commons.TextField({
+					value: 'Hola!'
+				});
+				var oMinSize = that.oDialog.getMinSize();
+				that.oDialog.addContent(textField);
+				Core.applyChanges();
+
+				var oNewMinSize = that.oDialog.getMinSize();
+				assert.deepEqual(oMinSize, oNewMinSize, 'should not change when changing the content');
+				done();
+			};
+
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+		});
+
+		QUnit.test('Open Dialog and changing its dimensions', function(assert) {
+			var done = assert.async();
+			var oSpyInvalidate = sinon.spy(sap.ui.core.UIArea.prototype, 'rerender');
+			var that = this;
+
+			var fnOpened = function() {
+				assert.ok(!oSpyInvalidate.calledOnce, 'UIArea was not rerendered when Dialog was opened');
+
+				that.oDialog.setWidth(sWidth);
+				that.oDialog.setHeight(sHeight);
+				Core.applyChanges();
+
+				assert.ok(that.oDialog.isOpen(), 'Dialog should be open after opening!');
+				assert.equal(jQuery('#Dialog').css('visibility'), 'visible', 'Dialog should be visible after opening');
+
+				var oDomRef = that.oDialog.getDomRef();
+				assert.strictEqual(oDomRef.offsetWidth, parseInt(that.oDialog.getWidth(), 10), 'Width of the Dialog should be equal to the set value.');
+
+				var offsetHeight = oDomRef.offsetHeight;
+				if (sap.ui.Device.browser.chrome && offsetHeight == 351) { // a known issue in Chrome that sometimes happens
+					offsetHeight = 350;
+				}
+				assert.strictEqual(offsetHeight, parseInt(that.oDialog.getHeight(), 10), 'Height of the Dialog should be equal to the set value.');
+				done();
+			};
+
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+		});
+
+		QUnit.test('Close Dialog', function(assert) {
+			var done = assert.async(),
+				that = this;
+
+			function fnClosed () {
+				assert.equal(that.oDialog.isOpen(), false, 'Dialog should be closed again after closing!');
+				assert.equal(jQuery('#Dialog').css('visibility'), 'hidden', 'Dialog should be hidden after closing');
+				done();
+			}
+
+			this.oDialog.oPopup.attachOpened(function fnOpened() {
+				that.oDialog.oPopup.attachClosed(fnClosed);
+				that.oDialog.close();
+			});
+
+			this.oDialog.open();
+		});
+
+		QUnit.test('Pressing enter', function(assert) {
+			var fnBtnClickSpy = sinon.spy(this.btnOk, 'onclick')
+				that = this,
+				done = assert.async();
+
+			function fnOpened() {
+				sap.ui.test.qunit.triggerKeydown(that.oDialog.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+				assert.equal(fnBtnClickSpy.calledOnce, true, 'should click the default button if set');
+				that.oDialog.close();
+				fnBtnClickSpy.restore();
+				done();
+			}
+
+			this.oDialog.setDefaultButton(this.btnOk);
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+		});
+
+		QUnit.test('Pressing escape', function(assert) {
+			var that = this,
+				done = assert.async();
+
+			function fnClosed(e) {
+				assert.ok(true, 'should close the Dialog');
+				done();
+			}
+
+			this.oDialog.oPopup.attachClosed(fnClosed);
+			this.oDialog.open();
+			sap.ui.test.qunit.triggerKeydown(this.oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		});
+
+		QUnit.test('Moving the dialog', function(assert) {
+			var that = this;
+				done = assert.async();
+				mouseDownSpy = sinon.spy(this.oDialog, 'onmousedown'),
+				mouseMoveSpy = sinon.spy(this.oDialog, 'handleMove'),
+				mouseUpSpy = sinon.spy(this.oDialog, 'handleMouseUp'),
+				popupPositionSpy = sinon.spy(this.oDialog.oPopup, 'setPosition')
+
+			function fnOpened() {
+				var sHeaderId = that.oDialog.getId() + '-hdr';
+				var headerDomRef = jQuery.sap.domById(sHeaderId);
+
+				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mousedown');
+				assert.strictEqual(mouseDownSpy.callCount, 1, 'should be called');
+				assert.strictEqual(that.oDialog.sDragMode, 'move','Move mode should be triggered');
+
+				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mousemove');
+				assert.strictEqual(mouseMoveSpy.callCount, 1,'The dialog should be moved');
+				assert.ok(popupPositionSpy.calledOnce, 'should call setPosition on the popup');
+				assert.strictEqual(mouseMoveSpy.returnValues[0], false, 'handleMove should return false')
+
+				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mouseup');
+				assert.strictEqual(mouseUpSpy.callCount, 1, 'handleUp should be called');
+
+				mouseDownSpy.restore();
+				mouseMoveSpy.restore();
+				mouseUpSpy.restore();
+				popupPositionSpy.restore();
+				done();
+			}
+
+
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+		});
+
+
+		QUnit.test('Resizing the dialog', function(assert) {
+			var that = this,
+				done = assert.async();
+				mouseDownSpy = sinon.spy(this.oDialog, 'onmousedown');
+				mouseMoveSpy = sinon.spy(this.oDialog, 'handleMove');
+				mouseUpSpy = sinon.spy(this.oDialog, 'handleMouseUp');
+				setPropertySpy = sinon.spy(this.oDialog, 'setProperty');
+				invalidateSpy = sinon.spy(this.oDialog, 'invalidate');
+
+			function fnOpened() {
+				var sGripId = that.oDialog.getId() + '-grip',
+					gripHandleRef = jQuery.sap.domById(sGripId);
+
+				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mousedown');
+				assert.strictEqual(mouseDownSpy.callCount, 1, 'should call onmousedown handler');
+				assert.strictEqual(that.oDialog.sDragMode, 'resize', 'should be trigger resize mode');
+
+				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mousemove');
+				assert.strictEqual(setPropertySpy.callCount, 4,'should set its the width and height once at the begining and once after resize is finished');
+				assert.strictEqual(invalidateSpy.callCount, 0, 'should not cause rerendering');
+
+				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mouseup');
+
+				mouseDownSpy.restore();
+				mouseMoveSpy.restore();
+				mouseUpSpy.restore();
+				setPropertySpy.restore();
+				invalidateSpy.restore();
+				done();
+			}
+
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+
+		});
+
+		QUnit.test('Destroying the dialog', function(assert) {
+			var that = this,
+				done = assert.async();
+
+			function fnClosed() {
+				assert.ok(true, 'should call the close handler');
+				done();
+			}
+			this.oDialog.oPopup.attachClosed(fnClosed);
+			this.oDialog.oPopup.attachOpened(function() {
+				this.destroy();
+			});
+			this.oDialog.open();
+		});
+
+
+		QUnit.module('Special use-cases', {
+
+			FOCUS_LINK_ID: 'focus-link',
+			DIALOG_ID: 'Dialog',
+
+			beforeEach: function() {
+
+				this.oLink = new sap.ui.commons.Link(this.FOCUS_LINK_ID, {
+					text: "Link a Action",
+					tooltip: "This a link to action"
+				}),
+
+				this.oLabel = new sap.ui.commons.Label({
+					text: "This is a label",
+				});
+
+				this.oTextField = new sap.ui.commons.TextField({
+					value: 'I am text field',
+					width: '100%'
+				});
+
+				this.btnOk = new sap.ui.commons.Button({
+					text: 'OK',
+					width: '150px'
+				});
+
+				this.oDialog = new sap.ui.commons.Dialog(this.DIALOG_ID, {
+					scrollLeft: iScrollLeft,
+					scrollTop: iScrollTop,
+					title: oTitle,
+					applyContentPadding: bApplyContentPadding,
+					showCloseButton: bShowCloseButton,
+					resizable: bResizable,
+				});
+			},
+
+			afterEach: function() {
+				this.oDialog.destroy();
+				this.oLink.destroy();
+			}
+		});
+
+		QUnit.test('Dialog with focusable elements', function(assert){
+			var that = this,
+				done = assert.async();
+
+			this.oDialog.oPopup.attachOpened(function opened(){
+				assert.strictEqual(jQuery(":sapTabbable", that.oDialog.$("cont"))[0].id, that.FOCUS_LINK_ID, "should focus the first  focusable element");
+				done();
+			});
+
+			this.oDialog.addContent(this.oLink);
+			this.oDialog.addContent(this.oTextField);
+			Core.applyChanges();
+			this.oDialog.open();
+		});
+
+
+		QUnit.test('Dialog without focusable elements', function(assert){
+			var that = this,
+				done = assert.async();
+
+			this.oDialog.oPopup.attachOpened(function opened(){
+				assert.strictEqual(jQuery.sap.domById(that.oDialog._mParameters.firstFocusable).id, that.DIALOG_ID + '-fhfe', "should focus the first fake focusable element (Header)");
+				done();
+			});
+			this.oDialog.addContent(this.oLabel);
+			this.oDialog.open();
+		});
+
+		QUnit.test('Dialog with variable size of the footer/header', function(assert){
+			var that = this,
+				done = assert.async(),
+				oOldMinSize,
+				oNewMinSize;
+
+			this.oDialog.oPopup.attachOpened(function opened(){
+				oOldMinSize = that.oDialog.getMinSize();
+				that.oDialog.addButton(that.btnOk);
+				Core.applyChanges();
+				oNewMinSize = that.oDialog.getMinSize();
+				assert.notDeepEqual(oOldMinSize, oNewMinSize, 'should be correctly reflected on the minSize');
+				done();
+			});
+
+			this.oDialog.open();
+		});
+
+	})();
 </script>
 
 </head>
-<body class="sapUiBody" role="application">
-	<h1 id="qunit-header">qUnit Page for sap.ui.commons.Dialog</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

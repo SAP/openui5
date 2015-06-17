@@ -17,13 +17,12 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
-			sinon.config.useFakeTimers = true;
-		</script>
-
 		<script>
+			sinon.config.useFakeTimers = true;
+			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+			jQuery.now = function() {
+				return Date.now();
+			};
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -1305,6 +1304,7 @@
 				ok(fnAddAggregationSpy.calledWith("items", oItem), "sap.m.ComboBox.addAggregation() method was called with the expected arguments");
 				ok(fnListAddAggregationSpy.calledWith("items", oComboBox.getListItem(oItem)), "sap.m.List.addAggregation() method was called with the expected arguments");
 				ok(fnAddItemSpy.returned(oComboBox));
+				ok(oItem.hasListeners("_change"));
 				ok(oComboBox.getListItem(oItem).getVisible(), "The item is visible");
 
 				// cleanup
@@ -1365,6 +1365,7 @@
 				ok(fnInsertAggregation.calledWith("items", oItem, 0), "oComboBox.insertAggregation() method was called with the expected arguments");
 				ok(fnListInsertAggregation.calledWith("items", oComboBox.getListItem(oItem), 0), "oList.insertAggregation() method was called with the expected arguments");
 				ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
+				ok(oItem.hasListeners("_change"));
 				ok(oComboBox.getListItem(oItem).getVisible(), "The item is visible");
 
 				// cleanup
@@ -2177,7 +2178,7 @@
 			/* removeItem()                   */
 			/* ------------------------------ */
 
-			test("removeItem() should give a warning when called with faulty parameter", function() {
+			test("removeItem() it should return null when called with an invalid input argument value", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox();
@@ -2203,7 +2204,7 @@
 				oComboBox.destroy();
 			});
 
-			test("removeItem() remove the selected item", function() {
+			test("removeItem() it should remove the selected item and change the selection (test case 1)", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
@@ -2270,7 +2271,7 @@
 						{
 							"value": "8",
 							"text": "item 8"
-						},
+						}
 					],
 
 					"selected": "8"
@@ -2279,6 +2280,7 @@
 				oModel.setData(mData);
 				sap.ui.getCore().setModel(oModel);
 				oComboBox.placeAt("content");
+				var oSelectedItem = oComboBox.getItemByKey("8");
 				sap.ui.getCore().applyChanges();
 
 				// act
@@ -2294,12 +2296,13 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "item 8");
 				strictEqual(oComboBox.getProperty("value"), "item 8");
+				strictEqual(oSelectedItem.hasListeners("_change"), false);
 
 				// cleanup
 				oComboBox.destroy();
 			});
 
-			test("removeItem() remove the selected item", function() {
+			test("removeItem() it should remove the selected item and change the selection (test case 2)", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
@@ -2373,7 +2376,7 @@
 				oComboBox.destroy();
 			});
 
-			test("removeItem()", function() {
+			test("removeItem() it should remove the selected item and change the selection (test case 3)", function() {
 
 				// system under test
 				var oExpectedItem;
@@ -2403,6 +2406,7 @@
 				strictEqual(oComboBox.getProperty("value"), "");
 				ok(oExpectedItem.getDomRef() === null);
 				ok(oComboBox.getListItem(oExpectedItem).getDomRef() === null);
+				strictEqual(oExpectedItem.hasListeners("_change"), false);
 
 				// cleanup
 				oComboBox.destroy();
@@ -2444,7 +2448,7 @@
 				var fnListRemoveAllItemsSpy = this.spy(oComboBox.getList(), "removeAllItems");
 
 				// act
-				oComboBox.removeAllItems();
+				var oRemovedItems = oComboBox.removeAllItems();
 				sap.ui.getCore().applyChanges();
 
 				var mDomRefs = fnGetDomRefs(oComboBox.getId());
@@ -2460,6 +2464,10 @@
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
 
+				for (var i = 0; i < oRemovedItems.length; i++) {
+					strictEqual(oRemovedItems[i].hasListeners("_change"), false);
+				}
+
 				// cleanup
 				oComboBox.destroy();
 			});
@@ -2471,24 +2479,25 @@
 			test("destroyItems()", function() {
 
 				// system under test
+				var aItems = [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				];
+
 				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
+					items: aItems,
 					selectedKey: "2"
 				});
 
@@ -2504,6 +2513,10 @@
 				// assert
 				ok(fnDestroyItemsSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyItems() method returns the ComboBox instance");
 				ok(oComboBox.getList().getSelectedItem() === null);
+
+				for (var i = 0; i < aItems.length; i++) {
+					strictEqual(aItems[i].hasListeners("_change"), false);
+				}
 
 				// cleanup
 				oComboBox.destroy();
@@ -3748,7 +3761,6 @@
 					}
 
 					ok(oComboBox.getDomRef(), "The combobox element exists");
-					strictEqual(oComboBox.getDomRef().getAttribute("role"), "combobox");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
@@ -3759,6 +3771,7 @@
 					ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS), 'The combo box element has the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + '"');
 					ok(oComboBox.$("arrow").length, "The HTML span element for the arrow exists");
 					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Arrow"');
+					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("tabindex"), "-1", "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getDomRef("buttonlabel").id);
 					ok(oComboBox.getDomRef("buttonlabel"), "The button label exists");

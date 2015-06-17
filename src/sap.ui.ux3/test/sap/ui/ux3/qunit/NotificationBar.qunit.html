@@ -8,7 +8,7 @@
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -22,6 +22,11 @@
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script language="javascript">
+	<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
 	function openHandler(oEvent) {
 		var bShow = oEvent.getParameter("show");
 		if (bShow) {

@@ -31,9 +31,9 @@
 
 			var sXml;
 			jQuery.ajax({
-				url : "/testsuite/test-resources/sap/ui/core/samples/mvc/views/Async.view.xml",
+				url : "../../../../../../test-resources/sap/ui/core/samples/mvc/views/Async.view.xml",
 				success : function(data) {
-					sXml = data.documentElement.outerHTML;
+					sXml = new XMLSerializer().serializeToString(data);
 				},
 				async : false
 			});
@@ -58,7 +58,7 @@
 			 * define ASYNC View and place it onto the page
 			 */
 			var oInput = new sap.ui.commons.TextField("timeout", {
-				value : "5000"
+				value : "1000"
 			}).placeAt("asyncInput");
 			var oButton = new sap.ui.commons.Button("showButton", {
 				text : "Show / rerender View",

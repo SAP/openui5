@@ -1,14 +1,28 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for sap.m Margin CSS Classes</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<base href="../../../../">
+	<!--[if lte IE 9]><script type="text/javascript">
+		(function() {
+			// The IE9 implementation of the <base> tag is not compliant with the HTML5 spec.
+			// It still requires an absolute URL (as in HMTL 4) and ignores relative URLs.
+			// By re-assigning the href attribute, it becomes an absolute URL and IE9 no longer ignores it.
+			var baseTag = document.getElementsByTagName('base')[0];
+			baseTag.href = baseTag.href;
+		})();
+	</script><![endif]-->
 
-<script
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs="sap.m">
-</script>
+	<title>qUnit Page for sap.m Margin CSS Classes</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			src="resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-resourceroots='{ "sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/" }' >
+	</script>
 
 <script id="marginQUnitView" type="sapui5/xmlview">
 <mvc:View
@@ -31,7 +45,7 @@
 				id="objectHeader"
 				title="{Name}"
 				number="{Price}"
-				unit="{CurrencyCode}" >
+				numberUnit="{CurrencyCode}" >
 				<attributes>
 					<ObjectAttribute title="Weight" text="{WeightMeasure} {WeightUnit}" />
 					<ObjectAttribute title="Dimensions" text="{Width} x {Depth} X {Height} {DimUnit}" />
@@ -144,7 +158,7 @@
 
 		onInit: function(oEvent) {
 			// set explored app's demo model on this sample
-			var oModel = new sap.ui.model.json.JSONModel("../../../../test-resources/sap/ui/demokit/explored/products.json");
+			var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.getView().setModel(oModel);
 			this.getView().byId("page").bindElement("/ProductCollection/0");
 		}

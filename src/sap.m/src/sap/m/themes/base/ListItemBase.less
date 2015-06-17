@@ -6,8 +6,6 @@
 .sapMLIBImgNav,
 .sapMLIBIconDet,
 .sapMLIBIconDel {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -20,6 +18,14 @@
 	-moz-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
+}
+
+.sapMLIBContent{
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	-ms-flex: auto;
+	flex: auto;
+	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 }
 
 .sapMLIBTypeNavigation{

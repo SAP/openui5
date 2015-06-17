@@ -3,6 +3,8 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-		<Text text="A dialog and other container controls by default have no content padding. By setting the CSS class 'sapUiContentPadding' to the container control you will get a default padding of 1rem (16px) around the content area." class="sapUiExploredNoMarginInfo"/>
-		<Button text="Show Dialog with content padding" press="onDialogOpen" class="sapUiSmallMargin" />
+		<MessageStrip text="A dialog and other container controls by default have no content padding.
+			By setting the CSS class 'sapUiContentPadding' to the container control you will
+			get a default padding of 1rem (16px) around the content area." class="sapUiTinyMargin"/>
+		<Button text="Show Dialog with content padding" press="onDialogOpen" class="sapUiTinyMargin" />
 </mvc:View>

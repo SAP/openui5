@@ -1,14 +1,12 @@
 /*!
  * ${copyright}
  */
-/*global Handlebars *///declare unusual global vars for JSLint/SAPUI5 validation
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', 'sap/ui/thirdparty/handlebars'],
-	function(jQuery, RenderManager, Template, handlebars) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/thirdparty/handlebars'],
+	function(jQuery, Core, Template, Handlebars) {
 	"use strict";
 
 
-	
 	/**
 	 * Creates and initializes a new handlebars template with the given <code>sId</code> 
 	 * and settings.
@@ -68,7 +66,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 	
 		// TODO: ERROR HANDLING!!!
 		// TODO: implement support for "with", ...
-	
+		// TODO: find a point in time for destroying this RenderManager again
+
 		// extended helpers:
 		//   - each
 		//   - if
@@ -87,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 			fnWith = Handlebars.helpers["with"],
 			fnIf = Handlebars.helpers["if"],
 			fnUnless = Handlebars.helpers["unless"],
-			oRenderManager = new RenderManager();
+			oRenderManager = sap.ui.getCore().createRenderManager();
 		
 		// this special RenderManager is used to write the controlData, classes
 		// and styles into the buffer and extract it later on via getHTML!

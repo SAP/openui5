@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			try {
 				oRM.oFocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
-				jQuery.sap.log.warning("Problems while restore focus after rendering: " + e, null, oRM);
+				jQuery.sap.log.warning("Problems while restoring the focus after rendering: " + e, null, oRM);
 			}
 
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)
@@ -972,12 +972,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 	/**
 	 * Writes necessary invisible control/element placeholder data into the HTML.
-	 * 
+	 *
 	 * Controls should only use this method if they can't live with the standard 'visible=false' implementation of the RenderManager which
 	 * renders dummy HTMLSpanElement for better re-rendering performance. Even though HTML5 error tolerance accepts this for most of the cases and
 	 * these dummy elements are not in the render tree of the Browser, controls may need to generate a valid and semantic HTML output when the
 	 * rendered HTMLSpanElement is not an allowed element(e.g. &lt;span&gt; element within the &lt;tr&gt; or &lt;li&gt; group).
-	 * 
+	 *
 	 * The caller needs to start an opening HTML tag, then call this method, then complete the opening and closing tag.
 	 * <pre>
 	 * oRenderManager.write("<tr");
@@ -994,10 +994,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 		var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oElement.getId(),
 			sPlaceholderHtml = ' ' +
-				'id="' + sPlaceholderId + '" ' + 
-				'class="sapUiHiddenPlaceholder" ' + 
-				'data-sap-ui="' + sPlaceholderId + '" ' + 
-				'style="display: none;"' + 
+				'id="' + sPlaceholderId + '" ' +
+				'class="sapUiHiddenPlaceholder" ' +
+				'data-sap-ui="' + sPlaceholderId + '" ' +
+				'style="display: none;"' +
 				'aria-hidden="true" ';
 
 		this.write(sPlaceholderHtml);
@@ -1073,13 +1073,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 * <code>required===true</code> => <code>aria-required="true"</code>
 	 * <code>selected===true</code> => <code>aria-selected="true"</code>
 	 * <code>checked===true</code> => <code>aria-checked="true"</code>
-	 * 
+	 *
 	 * In case of the required attribute also the Label controls which referencing the given element in their 'for' relation
 	 * are taken into account to compute the <code>aria-required</code> attribute.
 	 *
 	 * Additionally the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
 	 * the id lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
-	 * 
+	 *
 	 * Label controls which referencing the given element in their 'for' relation are automatically added to the
 	 * <code>aria-labelledby</code> attributes.
 	 *
@@ -1138,8 +1138,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 					var aIds = oElement[oAssoc._sGetter]();
 					if (sElemAssoc == "ariaLabelledBy") {
 						var aLabelIds = sap.ui.core.LabelEnablement.getReferencingLabels(oElement);
-						if (aLabelIds.length) {
-							aIds = aLabelIds.concat(aIds);
+						var iLen = aLabelIds.length;
+						if (iLen) {
+							var aFilteredLabelIds = [];
+							for (var i = 0; i < iLen; i++) {
+								if (jQuery.inArray(aLabelIds[i], aIds) < 0) {
+									aFilteredLabelIds.push(aLabelIds[i]);
+								}
+							}
+							aIds = aFilteredLabelIds.concat(aIds);
 						}
 					}
 
@@ -1204,14 +1211,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 	/**
 	 * Writes either an img tag for normal URI or an span tag with needed properties for icon URI.
-	 * 
+	 *
 	 * Additional classes and attributes can be added to the tag by given the second and third parameter.
 	 * All of the given attributes are escaped for security consideration.
-	 * 
+	 *
 	 * when img tag is rendered, the following two attributes are added by default which can be overwritten by the provided mAttributes parameter:
 	 * 1. role: presentation
 	 * 2. alt: ""
-	 * 
+	 *
 	 * @param {sap.ui.core.URI} sURI is the URI of an image or an icon registered in sap.ui.core.IconPool.
 	 * @param {array|string} aClasses are additional classes that are added to the rendered tag.
 	 * @param {object} mAttributes are additional attributes that are added to the rendered tag.
@@ -1219,23 +1226,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
 		jQuery.sap.require("sap.ui.core.IconPool");
-	
+
 		var bIconURI = sap.ui.core.IconPool.isIconURI(sURI),
 			sStartTag = bIconURI ? "<span " : "<img ",
-			sClasses, sProp, oIconInfo;
-	
+			sClasses, sProp, oIconInfo, mDefaultAttributes;
+
 		if (typeof aClasses === "string") {
 			aClasses = [aClasses];
 		}
-	
+
 		if (bIconURI) {
 			oIconInfo = sap.ui.core.IconPool.getIconInfo(sURI);
-	
+
 			if (!oIconInfo) {
 				jQuery.sap.log.error("An unregistered icon: " + sURI + " is used in sap.ui.core.RenderManager's writeIcon method.");
 				return this;
 			}
-	
+
 			if (!aClasses) {
 				aClasses = [];
 			}
@@ -1244,30 +1251,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				aClasses.push("sapUiIconMirrorInRTL");
 			}
 		}
-	
+
 		this.write(sStartTag);
-	
+
 		if (jQuery.isArray(aClasses) && aClasses.length) {
 			sClasses = aClasses.join(" ");
 			this.write("class=\"" + sClasses + "\" ");
 		}
-	
+
 		if (bIconURI) {
-			if (!mAttributes) {
-				mAttributes = {};
-			}
-			mAttributes["data-sap-ui-icon-content"] = oIconInfo.content;
-			mAttributes["role"] = "img";
-			mAttributes["aria-label"] = oIconInfo.name;
+			mDefaultAttributes = {
+				"data-sap-ui-icon-content": oIconInfo.content,
+				"role": "presentation",
+				"aria-label": oIconInfo.name
+			};
+
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
 		} else {
-			mAttributes = jQuery.extend({
+			mDefaultAttributes = {
 				role: "presentation",
 				alt: "",
 				src: sURI
-			}, mAttributes);
+			};
 		}
-	
+
+		mAttributes = jQuery.extend(mDefaultAttributes, mAttributes);
+
 		if (typeof mAttributes === "object") {
 			for (sProp in mAttributes) {
 				if (mAttributes.hasOwnProperty(sProp)) {
@@ -1275,9 +1284,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				}
 			}
 		}
-	
+
 		this.write(bIconURI ? "></span>" : "/>");
-	
+
 		return this;
 	};
 

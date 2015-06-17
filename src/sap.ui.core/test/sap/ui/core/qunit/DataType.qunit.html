@@ -56,6 +56,9 @@
 			ok(_boolean instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(_boolean.getName(), "boolean", "type name");
 			equal(_boolean.getDefaultValue(), false, "default value");
+			equal(_boolean.getBaseType(), undefined, "base type is undefined");
+			equal(_boolean.getPrimitiveType().getName(), "boolean", "primitive type is boolean");
+
 			equal(_boolean.isValid(false), true, "accepted value 1");
 			equal(_boolean.isValid(true), true, "accepted value 2");
 			equal(_boolean.isValid("yes"), false, "not accepted value 1");
@@ -68,6 +71,9 @@
 			ok(_int instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(_int.getName(), 'int', "type name");
 			equal(_int.getDefaultValue(), 0, "default value");
+			equal(_int.getBaseType(), undefined, "base type is undefined");
+			equal(_int.getPrimitiveType().getName(), "int", "primitive type is int");
+
 			equal(_int.isValid(0), true, "accepted value 0");
 			equal(_int.isValid(-42), true, "accepted value -42");
 			equal(_int.isValid('0'), false, "int.isValid('0')");
@@ -80,6 +86,9 @@
 			ok(_object instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(_object.getName(), 'object', "type name");
 			equal(_object.getDefaultValue(), null, "default value");
+			equal(_object.getBaseType(), undefined, "base type is undefined");
+			equal(_object.getPrimitiveType().getName(), "object", "primitive type is object");
+
 			equal(_object.isValid({}), true, "accepted value {}");
 			equal(_object.isValid([]), true, "accepted value []");
 			equal(_object.isValid(function(){}), true, "accepted value function(){}");
@@ -98,6 +107,10 @@
 			ok(_int instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(_int.getName(), 'int[]', "type name");
 			equal(_int.getDefaultValue(), null, "default value");
+			equal(_int.getBaseType().getName(), "array", "base type is array");
+			equal(_int.getPrimitiveType().getName(), "array", "primitive type is array");
+			equal(_int.getComponentType().getName(), "int", "primitive type is int");
+
 			equal(_int.isValid([1,2,3]), true, "accepted value [1,2,3]");
 			equal(_int.isValid([]), true, "accepted value []");
 			equal(_int.isValid([1,2,"3"]), false, "not accepted value [1,2,\"3\"]");
@@ -112,6 +125,10 @@
 			ok(_string instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(_string.getName(), 'string[]', "type name");
 			equal(_string.getDefaultValue(), null, "default value");
+			equal(_string.getBaseType().getName(), "array", "base type is array");
+			equal(_string.getPrimitiveType().getName(), "array", "primitive type is array");
+			equal(_string.getComponentType().getName(), "string", "primitive type is string");
+
 			equal(_string.isValid(["a","b","c"]), true, "accepted value [\"a\",\"b\",\"c\"]");
 			equal(_string.isValid([]), true, "accepted value []");
 			equal(_string.isValid([true,"b","c"]), false, "not accepted value [true,\"b\",\"c\"]");
@@ -125,6 +142,9 @@
 			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(type.getName(), 'sap.ui.core.ID', "type name");
 			equal(type.getDefaultValue(), "", "default value");
+			equal(type.getBaseType().getName(), "string", "base type is string");
+			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
 			equal(type.isValid("a"), true, "accepted value a");
 			equal(type.isValid("someid"), true, "accepted value someid");
 			equal(type.isValid("Z0_-:."), true, "accepted value z0_-:.");
@@ -144,6 +164,9 @@
 			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(type.getName(), 'sap.ui.core.CSSSize', "type name");
 			equal(type.getDefaultValue(), "", "default value");
+			equal(type.getBaseType().getName(), "string", "base type is string");
+			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
 			equal(type.isValid("0"), true, "accepted value 0");
 			equal(type.isValid("10px"), true, "accepted value 10px");
 			equal(type.isValid("-22pt"), true, "accepted value -22pt");
@@ -154,6 +177,33 @@
 			equal(type.isValid(" 20px"), false, "a partial match must not be valid");
 			equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
 			equal(type.isValid("100% "), false, "a partial match must not be valid");
+
+			equal(type.isValid("calc(100% - 20rem)"), true, "can substract two arguments");
+			equal(type.isValid("calc(100%- 20rem)"), false, "whitespace is mandatory around '-' operator");
+			equal(type.isValid("calc(100% -20rem)"), false, "whitespace is mandatory around '-' operator");
+			equal(type.isValid("calc(100%-20rem)"), false, "whitespace is mandatory around '-' operator");
+			equal(type.isValid("calc(100% + 20rem)"), true, "can add two arguments");
+			equal(type.isValid("calc(100%+ 20rem)"), false, "whitespace is mandatory around '+' operator");
+			equal(type.isValid("calc(100% +20rem)"), false, "whitespace is mandatory around '+' operator");
+			equal(type.isValid("calc(100%+20rem)"), false, "whitespace is mandatory around '+' operator");
+			equal(type.isValid("calc(100% * 20rem)"), true, "can multiply two arguments");
+			equal(type.isValid("calc(100%* 20rem)"), true, "whitespace is optional around '*' operator");
+			equal(type.isValid("calc(100% *20rem)"), true, "whitespace is optional around '*' operator");
+			equal(type.isValid("calc(100%*20rem)"), true, "whitespace is optional around '*' operator");
+			equal(type.isValid("calc(100% / 20rem)"), true, "can divide two arguments");
+			equal(type.isValid("calc(100%/ 20rem)"), true, "whitespace is optional around '/' operator");
+			equal(type.isValid("calc(100% /20rem)"), true, "whitespace is optional around '/' operator");
+			equal(type.isValid("calc(100%/20rem)"), true, "whitespace is optional around '/' operator");
+			equal(type.isValid("calc(2 * -20rem / 23)"), true, "arguments dont always need units");
+			equal(type.isValid("calc(2 * (-20rem / 23))"), true, "parenthesis can be used for grouping (simple)");
+			equal(type.isValid("calc(((2)) * (-20rem / (((14rem) + 23)))"), true, "parenthesis can be used for grouping (complex, no whitespace)");
+			equal(type.isValid("calc( ( ( 2 ) ) * ( -20rem / ( ( ( 14rem ) + 23 ) ) )"), true, "parenthesis can be used for grouping (complex, whitespace)");
+			equal(type.isValid("calc(     2 ) ) * ( -20rem / ( ( ( 14rem ) + 23     )"), true, "unbalanced parenthesis are not detected by the regexp");
+			equal(type.isValid("calc(100%)"), true, "a single value is valid");
+			equal(type.isValid("calc(10 3rem)"), false, "an operand is mandatory between values");  // this has a valid syntax but isn't a valid expression
+			equal(type.isValid("calc(10 + 3rem)"), true, "a valid calc() expression must be valid");  // this has a valid syntax but isn't a valid expression
+			equal(type.isValid("calc(100%-"), false, "can't substract undefined");
+			equal(type.isValid("calc(* - 100%)"), false, "arguments need to have digits");
 		});
 
 		test("type CSSSize[]", function() {
@@ -162,9 +212,14 @@
 			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
 			equal(type.getName(), 'sap.ui.core.CSSSize[]', "type name");
 			equal(type.getDefaultValue(), null, "default value");
+			equal(type.getBaseType().getName(), "array", "base type is array");
+			equal(type.getPrimitiveType().getName(), "array", "primitive type is array");
+			equal(type.getComponentType().getName(), "sap.ui.core.CSSSize", "primitive type is CSSSize");
+
 			equal(type.isValid(["0"]), true, "accepted value 0");
 			equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
 			equal(type.isValid(["-22pt","10%","50px"]), true, "accepted value -22pt,10%,50px");
+			equal(type.isValid(["-22pt","calc(10% / 2)","50px"]), true, "calc() expressions are allowed as element values");
 			equal(type.isValid("1"), false, "isValid('1')");
 			equal(type.isValid([42]), false, "isValid([42])");
 		});
@@ -173,6 +228,8 @@
 			var type = sap.ui.base.DataType.getType("sap.ui.core.CSSSizeShortHand");
 			ok(!!type, "type 'sap.ui.core.CSSSizeShortHand' exists");
 			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getBaseType().getName(), "string", "base type is string");
+			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
 
 			equal(type.isValid("0"), true, "single 0 allowed");
 			equal(type.isValid("0px"), true, "0 with unit allowed");
@@ -213,6 +270,42 @@
 			equal(_string.normalize("test"), "test", "the formatter is not applied for other types");
 		});
 
+		test("enum type sap.ui.core.TextAlign", function() {
+			var type = sap.ui.base.DataType.getType("sap.ui.core.TextAlign");
+			ok(!!type, "type 'sap.ui.core.TextAlign' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getName(), 'sap.ui.core.TextAlign', "type name");
+			equal(type.getDefaultValue(), "Begin", "default value");
+			equal(type.getBaseType().getName(), "string", "base type is string");
+			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+			jQuery.each(sap.ui.core.TextAlign, function(i,v) {
+				equal(type.isValid(v), true, "accepts value " + v);
+				equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+			});
+			equal(type.isValid("something"), false, "should not accept 'something'");
+			ok(sap.ui.base.DataType.getType("sap.ui.core.TextAlign") === type, "multiple calls should return same type object");
+		});
+
+		test("enum type sap.ui.core.Popup.Dock", function() {
+			jQuery.sap.require("sap.ui.core.Popup");
+			var type = sap.ui.base.DataType.getType("sap.ui.core.Popup.Dock");
+			ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getName(), 'sap.ui.core.Popup.Dock', "type name");
+			equal(type.getDefaultValue(), "begin top", "default value");
+			equal(type.getBaseType().getName(), "string", "base type is string");
+			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+			jQuery.each(sap.ui.core.Popup.Dock, function(i,v) {
+				equal(type.isValid(v), true, "'" + v + "' should be a valid value");
+				equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+			});
+			equal(type.isValid("something"), false, "should not accept 'something'");
+			// TODO parsing of illegal values?
+			ok(sap.ui.base.DataType.getType("sap.ui.core.Popup.Dock") === type, "multiple calls should return same type object");
+		});
+		
 	</script>
 
 </head>

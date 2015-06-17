@@ -281,7 +281,8 @@
 
 					oRouteMatchedHandler.setCloseDialogs(false);
 
-					assert.ok(!oRouteMatchedHandler.getCloseDialogs(), "The setter changed the getter")
+					assert.ok(!oRouteMatchedHandler.getCloseDialogs(), "The setter changed the getter");
+					assert.ok(!oRouteMatchedHandler._oTargetHandler.getCloseDialogs(), "The setter changed the getter");
 				});
 
 

@@ -3,8 +3,8 @@
  */
 
 // Provides the base class for all objects with managed properties and aggregations.
-sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', 'sap/ui/model/CompositeBinding', 'sap/ui/model/ContextBinding', 'sap/ui/model/Model', 'sap/ui/model/Type', 'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'],
-	function(jQuery, BindingParser, DataType, EventProvider, ManagedObjectMetadata, CompositeBinding, ContextBinding, Model, Type/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', 'sap/ui/model/BindingMode', 'sap/ui/model/CompositeBinding', 'sap/ui/model/ContextBinding', 'sap/ui/model/Model', 'sap/ui/model/Type', 'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'],
+	function(jQuery, BindingParser, DataType, EventProvider, ManagedObjectMetadata, BindingMode, CompositeBinding, ContextBinding, Model, Type/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
 	"use strict";
 
 
@@ -758,33 +758,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	};
 
-	/*
-	 * Returns the Id of the Component in whose context the given ManagedObject has been created.
-	 *
-	 * Might return <code>undefined</code> or <code>null</code> when no owner
-	 * has been recorded for the given object. See {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor}
-	 * for detailed constraints.
-	 *
-	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.getOwnerIdFor or sap.ui.core.Component.getOwnerComponentFor instead.
-	 */
-	ManagedObject.getOwnerIdFor = function(oObject) {
-		jQuery.sap.log.error("[Deprecated] The private method sap.ui.base.ManagedObject.getOwnerIdFor must no longer be used. Use the public sap.ui.core.Component.getOwnerForId instead.");
-		return oObject && oObject._sOwnerId;
-	};
-
-	/*
-	 * Redirect to new functionality
-	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.runAsOwner instead.
-	 */
-	ManagedObject.runWithOwner = function(fn, oOwner) {
-		jQuery.sap.log.error("[Deprecated] The private method sap.ui.base.ManagedObject.runWithOwner must no longer be used. Use the public sap.ui.core.Component.runAsOwner instead.");
-		if ( oOwner && typeof oOwner.runAsOwner === "function" ) {
-			oOwner.runAsOwner(fn);
-		} else {
-			throw new Error("trying to execute a function with a non-suitable owner " + oOwner + ". See the deprecation hint in the console.");
-		}
-	};
-
 	/**
 	 * Sets all the properties, aggregations, associations and event handlers as given in
 	 * the object literal <code>mSettings</code>. If a property, aggregation, etc.
@@ -1154,8 +1127,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected " +
 						oType.getName() + " for property \"" + sPropertyName + "\" of " + this);
 			}
-		} else if (!(oValue in oType)) { // Enumeration
-			throw new Error("\"" + oValue + "\" is not a valid entry of the enumeration for property \"" + sPropertyName + "\" of " + this);
 		}
 
 		// Normalize the value (if a normalizer was set using the setNormalizer method on the type)
@@ -1469,27 +1440,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oAggregation = oMetadata.getManagedAggregation(sAggregationName), // public or private
 			aAltTypes,
 			oType,
-			i,
+			i, 
 			msg;
 
-		// undeclared aggregation
 		if (!oAggregation) {
-			if (sAggregationName && oMetadata._mHiddenAggregations && oMetadata._mHiddenAggregations[sAggregationName]) {
-				oAggregation = oMetadata._mHiddenAggregations[sAggregationName];
-				jQuery.sap.log.error("Support for '_mHiddenAggregations' is about to be removed (with 1.12 latest). Hidden aggregations like '" + oMetadata.getName() + "." + sAggregationName + "' instead can be declared like normal aggregations but with visibility:'hidden'.");
-			} else {
-				msg = "Aggregation \"" + sAggregationName + "\" does not exist in " + this;
-
-				if ( /^sap\.(ui\.core|ui\.commons|ui\.table|ui\.ux3|m|makit|viz|uiext\.inbox)$/.test(oMetadata.getLibraryName() || "") ) {
-					throw new Error(msg);
-				} else {
-					// TODO throw for any lib as soon as "hidden" aggregations are a public feature.
-					// Otherwise, composite controls currently would have no legal way to react
-					jQuery.sap.log.error("Support for undeclared aggregations is about to be removed (with 1.12 latest). Hidden aggregations like '" + oMetadata.getName() + "." + sAggregationName + "' can be declared like normal aggregations but with visibility:'hidden'.");
-					jQuery.sap.assert(false, msg);
-					return oObject;
-				}
-			}
+			throw new Error("Aggregation \"" + sAggregationName + "\" does not exist in " + this);
 		}
 
 		if (oAggregation.multiple !== bMultiple ) {
@@ -1523,9 +1478,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					if (oType.isValid(oObject)) {
 						return oObject;
 					}
-				} else if (oObject in oType) { // Enumeration
-					return oObject;
-				}
+				} 
 			}
 		}
 
@@ -2548,9 +2501,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oPart.model = oPart.path.substr(0, iSeparatorPos);
 				oPart.path = oPart.path.substr(iSeparatorPos + 1);
 			}
-			// if a formatter exists the binding mode can be one way only
-			if (oBindingInfo.formatter) {
-				oPart.mode = sap.ui.model.BindingMode.OneWay;
+			// if a formatter exists the binding mode can be one way or one time only
+			if (oBindingInfo.formatter && oPart.mode != BindingMode.OneWay && oPart.mode != BindingMode.OneTime) {
+				oPart.mode = BindingMode.OneWay;
 			}
 
 			if (!that.getModel(oPart.model)) {
@@ -2579,7 +2532,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oContext,
 			oBinding,
 			sMode,
-			sCompositeMode = sap.ui.model.BindingMode.TwoWay,
+			sCompositeMode = BindingMode.TwoWay,
 			oType,
 			clType,
 			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName), // TODO fix handling of hidden entitites?
@@ -2598,7 +2551,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				if (oBinding.getMessages()) {
 					that.updateMessages(sName, oBinding.getMessages());
 				}
-				if (oBinding.getBindingMode() === sap.ui.model.BindingMode.OneTime) {
+				if (oBinding.getBindingMode() === BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
@@ -2647,8 +2600,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oBinding.setBindingMode(sMode);
 			
 			// Only if all parts have twoway binding enabled, the composite binding will also have twoway binding
-			if (sMode != sap.ui.model.BindingMode.TwoWay) {
-				sCompositeMode = sap.ui.model.BindingMode.OneWay;
+			if (sMode != BindingMode.TwoWay) {
+				sCompositeMode = BindingMode.OneWay;
 			}
 
 			aBindings.push(oBinding);
@@ -2773,7 +2726,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 
 			// only one property binding should work with two way mode...composite binding does not work with two way binding
-			if (oBinding && oBinding.getBindingMode() == sap.ui.model.BindingMode.TwoWay) {
+			if (oBinding && oBinding.getBindingMode() == BindingMode.TwoWay) {
 				try {
 					// Set flag to avoid originating property to be updated from the model
 					oBindingInfo.skipPropertyUpdate = true;
@@ -2858,11 +2811,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			aSorters,
 			aFilters,
 			oMetadata = this.getMetadata(),
-			oAggregation = oMetadata.getAggregation(sName);
+			oAggregationInfo = oMetadata.getAggregation(sName);
 
 		// check whether aggregation exists
-		if (!oAggregation) {
+		if (!oAggregationInfo) {
 			throw new Error("Aggregation \"" + sName + "\" does not exist in " + this);
+		}
+		if (!oAggregationInfo.multiple) {
+			jQuery.sap.log.error("Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
 		}
 
 		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
@@ -2882,13 +2838,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		// if aggregation is already bound, unbind it first
 		if (this.isBound(sName)) {
-			this.unbindAggregation(sName, true);
+			this.unbindAggregation(sName);
 		}
 
 		// check whether a template has been provided, which is required for proper processing of the binding
 		// If aggregation is marked correspondingly in the metadata, factory can be omitted (usually requires an updateXYZ method)
 		if (!(oBindingInfo.template || oBindingInfo.factory)) {
-			if ( oAggregation._doesNotRequireFactory ) {
+			if ( oAggregationInfo._doesNotRequireFactory ) {
 				// add a dummy factory as property 'factory' is used to distinguish between property- and list-binding
 				oBindingInfo.factory = function() {
 					throw new Error("dummy factory called unexpectedly ");
@@ -3020,51 +2976,87 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,
 			oAggregationInfo = this.getMetadata().getAggregation(sName),  // TODO fix handling of hidden aggregations
-			oClone,
-			oNewGroup = null,
-			sGroupFunction = null,
-			bGrouped = null,
 			sGroup = null,
+			bGrouped,
+			aContexts,
+			sGroupFunction = oAggregationInfo._sMutator + "Group",
 			that = this;
-		this[oAggregationInfo._sDestructor]();
-		if (this.isTreeBinding(sName)) {
-			var iNodeIndex = 0,
-				update = function(aContexts, fnFactory, oBinding, oParent){
-					jQuery.each(aContexts, function(iIndex, oContext) {
-						var sId = that.getId() + "-" + iNodeIndex++;
-						oClone = fnFactory(sId, oContext);
-						oClone.setBindingContext(oContext, oBindingInfo.model);
-						oParent[oAggregationInfo._sMutator](oClone); // also sets the Parent
-						update(oBinding.getNodeContexts(oContext), fnFactory, oBinding, oClone);
-					});
-				};
-			update(oBinding.getRootContexts(), fnFactory, oBinding, this);
-		} else {
-			sGroupFunction = oAggregationInfo._sMutator + "Group";
-			bGrouped = oBinding.isGrouped() && this[sGroupFunction];
-			jQuery.each(oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length), function(iIndex, oContext) {
-				if (bGrouped && oBinding.aSorters.length > 0) {
-					oNewGroup = oBinding.aSorters[0].fnGroup(oContext);
-					if (typeof oNewGroup == "string") {
-						oNewGroup = {
-							key: oNewGroup
-						};
-					}
-					if (oNewGroup.key !== sGroup) {
-						var oGroupHeader;
-						//If factory is defined use it
-						if (oBindingInfo.groupHeaderFactory) {
-							oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
-						}
-						that[sGroupFunction](oNewGroup, oGroupHeader);
-						sGroup = oNewGroup.key;
-					}
+		
+		// Update a single aggregation with the array of contexts. Reuse existing children
+		// and just append or remove at the end, if some are missing or too many.
+		function update(oControl, aContexts, fnBefore, fnAfter) {
+			var aChildren = oControl[oAggregationInfo._sGetter]() || [],
+				oContext,
+				oClone;
+			if (aChildren.length > aContexts.length) {
+				for (var i = aContexts.length; i < aChildren.length; i++) {
+					oControl[oAggregationInfo._sRemoveMutator](aChildren[i]);
+					aChildren[i].destroy();
 				}
-				var sId = that.getId() + "-" + iIndex;
-				oClone = fnFactory(sId, oContext);
-				oClone.setBindingContext(oContext, oBindingInfo.model);
-				that[oAggregationInfo._sMutator](oClone);
+			}
+			for (var i = 0; i < aContexts.length; i++) {
+				oContext = aContexts[i];
+				oClone = aChildren[i];
+				if (fnBefore) {
+					fnBefore(oContext);
+				}
+				if (oClone) {
+					oClone.setBindingContext(oContext, oBindingInfo.model);
+				} else {
+					var sId = oControl.getId() + "-" + i;
+					oClone = fnFactory(sId, oContext);
+					oClone.setBindingContext(oContext, oBindingInfo.model);
+					oControl[oAggregationInfo._sMutator](oClone);
+				}
+				if (fnAfter) {
+					fnAfter(oContext, oClone);
+				}
+			}
+		}
+		
+		// Check the current context for its group. If the group key changes, call the 
+		// group function on the control.
+		function updateGroup(oContext) {
+			var oNewGroup = oBinding.aSorters[0].fnGroup(oContext);
+			if (typeof oNewGroup == "string") {
+				oNewGroup = {
+					key: oNewGroup
+				};
+			}
+			if (oNewGroup.key !== sGroup) {
+				var oGroupHeader;
+				//If factory is defined use it
+				if (oBindingInfo.groupHeaderFactory) {
+					oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
+				}
+				that[sGroupFunction](oNewGroup, oGroupHeader);
+				sGroup = oNewGroup.key;
+			}
+		}
+		
+		// Update the tree recursively
+		function updateRecursive(oControl, oContexts) {
+			update(oControl, oContexts, null, function(oContext, oClone) {
+				updateRecursive(oClone, oBinding.getNodeContexts(oContext));
 			});
+		}
+		
+		// If a factory function is used, aggregation must be completely rebuild
+		if (!oBindingInfo.template) {
+			this[oAggregationInfo._sDestructor]();
+		}
+		
+		if (oBinding instanceof sap.ui.model.ListBinding) {
+			// If grouping is enabled, use updateGroup as fnBefore to create groups
+			bGrouped = oBinding.isGrouped() && sGroupFunction;
+			if (bGrouped) {
+				this[oAggregationInfo._sDestructor]();
+			}
+			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
+			update(this, aContexts, bGrouped ? updateGroup : null);
+		} else if (oBinding instanceof sap.ui.model.TreeBinding) {
+			// In fnAfter call update recursively for the child nodes of the current tree node
+			updateRecursive(this, oBinding.getRootContexts());
 		}
 	};
 
@@ -3817,51 +3809,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		}
 	};
 
-	/**
-	 * Maps the given aggregation with name <code>sOldAggrName</code>
-	 * on aggregation <code>sNewAggrName</code> (When calling an accessor function
-	 * of the old aggregation the call is forwarded to the corresponding accessor
-	 * function of the new aggregation).
-	 *
-	 * This function should help to perform a smooth transition for users of a managed object
-	 * when an aggregation must be renamed.
-	 *
-	 * Both aggregations must have a mutiple cardinality (0..n) and must have the same
-	 * aggregated type!
-	 *
-	 * @param {object} oPrototype prototype of the ManagedObject class for which a mapping should be defined
-	 * @param {string} sOldAggrName Name of the old deprecated aggregation
-	 * @param {string} sNewAggrName Name of the new aggregation
-	 * @deprecated
-	 */
-	ManagedObject._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
-		var mKeys = oPrototype.getMetadata().getAllSettings(); 
-		var oOldAggrInfo = mKeys[sOldAggrName];
-		var oNewAggrInfo = mKeys[sNewAggrName];
-
-		//Check whether aggregations exist and are multiple.
-		if (!oOldAggrInfo || !oNewAggrInfo || oOldAggrInfo._iKind != 2 || oNewAggrInfo._iKind != 2) {
-			return;
-		}
-
-		var mFunc = {"insert" : true, "add" : true, "remove" : true, "removeAll" : false, "indexOf" : true, "destroy" : false, "get" : false};
-
-		function method(sPrefix, sName) {
-			return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-		}
-
-		function fAggrDelegator(sFuncName){
-			return function() {
-				return this[sFuncName].apply(this, arguments);
-			};
-		}
-
-		for (var sPrefix in mFunc) {
-			var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo.name);
-			var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo.name);
-			oPrototype[sOldFuncName] = fAggrDelegator(sNewFuncName);
-		}
-	};
 
 	/**
 	 * Searches and returns an array of child elements and controls which are

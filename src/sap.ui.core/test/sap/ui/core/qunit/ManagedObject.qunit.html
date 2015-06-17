@@ -5,7 +5,6 @@
 		<title>ManagedObject - sap.ui.base</title>
 
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true" >
@@ -16,7 +15,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
+		<script>
 
 			var mObjects = {};
 
@@ -132,6 +131,7 @@
 
 			var oModel = new sap.ui.model.json.JSONModel({
 				value: "testvalue",
+				value2: "testvalue2",
 				objectValue: { model: true },
 				list: [
 					{value: "testvalue1"},
@@ -246,6 +246,112 @@
 				this.obj.bindProperty("value", "/value");
 				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
 				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+			});
+
+			test("Bind property OneTime", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "OneTime"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "testvalue", "New model value must not be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property OneWay", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "OneWay"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with formatter", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					formatter: function(sValue) {
+						return sValue;
+					}
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with formatter & parts", function() {
+				this.obj.bindProperty("value", {
+					parts: [{
+						path: "/value"
+					}],
+					mode: "TwoWay",
+					formatter: function(sValue) {
+						return sValue;
+					}
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property Composite with mixed binding modes", function() {
+				this.obj.bindProperty("value", {
+					parts: [
+						{
+							path: "/value",
+							mode: "OneWay"
+						},
+						{
+							path: "/value",
+							mode: "OneTime"
+						}
+					],
+					formatter: function(value1, value2) {
+						return value1 + "/" + value2;
+					}
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue/testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue/testvalue", "New model value must be reflected in oneway part only");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				oModel.setProperty("/value", "testvalue");
 			});
 
 			test("Bind property in settings", function() {
@@ -442,25 +548,20 @@
 				QUnit["throws"](function() {
 					this.obj.setAggregation("unknown", this.subObj);
 				}, null, "Must throw error on unknown aggregation setter");
-
-				// for controls in "unknown" libraries, the usage of invalid aggregations must not throw exceptions!
-				var object2 = new sap.test.TestManagedObject();
-				object2.setAggregation("phantasy", this.subObj);
-				object2.setAggregation("phantasy", null);
-				object2.addAggregation("phantasy", this.subObj);
-				object2.removeAggregation("phantasy", this.subObj);
-				object2.insertAggregation("phantasy", 0, this.subObj);
-				object2.removeAggregation("phantasy", this.subObj);
-				object2.setAggregation("phantasy", this.subObj);
-				object2.setAggregation("phantasy", null);
-				object2.destroy();
-				ok(true, "must not throw exception for unknown aggregations in custom libs");
 			});
 
 			test("Bind aggregation", function() {
 				this.obj.bindAggregation("subObjects", "/list", this.template);
 				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+			});
+
+			test("Bind single aggregation", function() {
+				// This worked in the past so I add a test to not break it accidentally
+				this.obj.bindAggregation("singleAggr", "/list", this.template);
+				equal(this.obj.isBound("singleAggr"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("singleAggr") instanceof sap.ui.core.TestManagedObject, true, "Aggregation is instance of TestManagedObject");
+				equal(this.obj.getAggregation("singleAggr").getValue(), "testvalue3", "Value matches the last array entry");
 			});
 
 			test("Bind aggregation with template non shareable", function() {
@@ -806,11 +907,15 @@
 
 			});
 
-			test("ShouldInvaidateWhenSettingAnAggregation", function() {
+			test("ShouldInvalidateWhenSettingAnAggregation", function() {
+				
 				//Arrange
 				sap.ui.core.Element.extend("sap.test.Dummy", { metadata : {
-					defaultAggregation : "someAggregation"
+					aggregations : {
+						"someAggregation": { type: "sap.test.Dummy", multiple: false }
+					}
 				}});
+				
 				var fnTestCase = function(supressInvalidate) {
 
 					var sut,
@@ -834,6 +939,7 @@
 				fnTestCase(true);
 				fnTestCase(false);
 			});
+
 			module("bind Object", {
 				setup: function() {
 					this.obj = new sap.ui.core.TestManagedObject();

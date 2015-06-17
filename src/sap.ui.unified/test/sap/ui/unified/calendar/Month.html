@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Month - sap.ui.unified.calendar</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.calendar.Month.gif">
@@ -18,10 +18,10 @@
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
-			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var aSpecialDays = [["20140101",undefined,"Neujahr",1],
-			                    ["20140106",undefined,"Heilige Drei Könige",1],
+			                    ["20140106",undefined,"Heilige Drei KÃ¶nige",1],
 			                    ["20140214",undefined,"Valentinstag",2],
 			                    ["20140303",undefined,"Rosenmontag",2],
 			                    ["20140304",undefined,"Fastnacht",2],
@@ -35,13 +35,13 @@
 			                    ["20140608",undefined,"Pfingstsonntag",1],
 			                    ["20140609",undefined,"Pfingstmontag",1],
 			                    ["20140619",undefined,"Fronleichnam",1],
-			                    ["20140815",undefined,"Mariä Himmelfahrt",2],
+			                    ["20140815",undefined,"MariÃ¤ Himmelfahrt",2],
 			                    ["20141003",undefined,"Tag der Deutschen Einheit",1],
 			                    ["20141005",undefined,"Erntedankfest",2],
 			                    ["20141031",undefined,"Reformationstag",2],
 			                    ["20141101",undefined,"Allerheiligen",1],
 			                    ["20141116",undefined,"Volkstrauertag",2],
-			                    ["20141119",undefined,"Buß- und Bettag",2],
+			                    ["20141119",undefined,"BuÃŸ- und Bettag",2],
 			                    ["20141123",undefined,"Totensonntag",2],
 			                    ["20141130",undefined,"1. Advent",2],
 			                    ["20141206",undefined,"Nikolaus",2],
@@ -52,7 +52,7 @@
 			                    ["20141225","20141226","Weihnachten",1],
 			                    ["20141231",undefined,"Silvester",2],
 			                    ["20150101",undefined,"Neujahr",1],
-			                    ["20150106",undefined,"Heilige Drei Könige",1],
+			                    ["20150106",undefined,"Heilige Drei KÃ¶nige",1],
 			                    ["20140804","20140810","Urlaub",3],
 			                    ["20140701",undefined,"Type01",1],
 			                    ["20140702",undefined,"Type02",2],
@@ -202,6 +202,8 @@
 				intervalSelection: false,
 				singleSelection: false,
 				showHeader: true,
+				firstDayOfWeek: 2,
+				nonWorkingDays: [3, 5],
 				select: function(oEvent){
 					var oLB = sap.ui.getCore().byId("LB");
 					var oMonth = oEvent.oSource;
@@ -263,7 +265,7 @@
 		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
-		<div>multiple day Selection</div>
+		<div>multiple day Selection (with custom weekend and weekstart)</div>
 		<br>
 		<div>
 		<div id="sample3" style="display:inline-block;"></div>

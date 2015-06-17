@@ -6,11 +6,13 @@
 	<Label class="caption" text="FeedInput with an Image" />
 	<FeedInput
 		post="onPostFeedItem"
-		icon="images/Woman_04.png" />
+		icon="images/Woman_04.png"
+		ariaLabelForPicture="Picture of a woman" />
 		
 	<Label class="caption" text="FeedInput with an Image Placeholder (showIcon = true, no icon provided)" />
 	<FeedInput
-		post="onPostFeedItem" />
+		post="onPostFeedItem"
+		ariaLabelForPicture="Placeholder-icon as a picture" />
 
 	<Label class="caption" text="FeedInput without an Image ( showIcon = false)" />
 	<FeedInput

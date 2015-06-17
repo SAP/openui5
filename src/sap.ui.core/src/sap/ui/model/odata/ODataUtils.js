@@ -15,6 +15,10 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	function(jQuery, ODataFilter, Sorter, Filter, DateFormat) {
 	"use strict";
 
+	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
+		rTrailingDecimal = /\.$/,
+		rTrailingZeroes = /0+$/;
+
 	// Static class
 
 	/**
@@ -283,8 +287,9 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	};
 
 	/**
-	 * Format a JavaScript value according to the given EDM type
-	 * http://www.odata.org/documentation/overview#AbstractTypeSystem
+	 * Formats a JavaScript value according to the given
+	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
+	 * EDM type</a>.
 	 *
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
@@ -335,6 +340,10 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			case "Edm.Int64":
 				sValue = vValue + "L";
 				break;
+			case "Edm.Double":
+				sValue = vValue + "d";
+				break;
+			case "Edm.Float":
 			case "Edm.Single":
 				sValue = vValue + "f";
 				break;
@@ -342,10 +351,164 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				sValue = "binary'" + vValue + "'";
 				break;
 			default:
-				sValue = new String(vValue);
+				sValue = String(vValue);
 				break;
 		}
 		return sValue;
+	};
+
+	/**
+	 * Compares the given values using <code>===</code> and <code>></code>.
+	 *
+	 * @param {any} vValue1
+	 *   the first value to compare
+	 * @param {any} vValue2
+	 *   the second value to compare
+	 * @return {integer}
+	 *   the result of the compare: <code>0</code> if the values are equal, <code>-1</code> if the
+	 *   first value is smaller, <code>1</code> if the first value is larger, <code>NaN</code> if
+	 *   they cannot be compared
+	 */
+	function simpleCompare(vValue1, vValue2) {
+		if (vValue1 === vValue2) {
+			return 0;
+		}
+		if (vValue1 === null || vValue2 === null
+				|| vValue1 === undefined || vValue2 === undefined) {
+			return NaN;
+		}
+		return vValue1 > vValue2 ? 1 : -1;
+	}
+
+	/**
+	 * Parses a decimal given in a string.
+	 *
+	 * @param {string} sValue
+	 *   the value
+	 * @returns {object}
+	 *   the result with the sign in <code>sign</code>, the number of integer digits in
+	 *   <code>integerLength</code> and the trimmed absolute value in <code>abs</code>
+	 */
+	function parseDecimal(sValue) {
+		var aMatches;
+
+		if (typeof sValue !== "string") {
+			return undefined;
+		}
+		aMatches = rDecimal.exec(sValue);
+		if (!aMatches) {
+			return undefined;
+		}
+		return {
+			sign: aMatches[1] === "-" ? -1 : 1,
+			integerLength: aMatches[2].length,
+			// remove trailing decimal zeroes and poss. the point afterwards
+			abs: aMatches[2] + aMatches[3].replace(rTrailingZeroes, "")
+					.replace(rTrailingDecimal, "")
+		};
+	}
+
+	/**
+	 * Compares two decimal values given as strings.
+	 *
+	 * @param {string} sValue1
+	 *   the first value to compare
+	 * @param {string} sValue2
+	 *   the second value to compare
+	 * @return {integer}
+	 *   the result of the compare: <code>0</code> if the values are equal, <code>-1</code> if the
+	 *   first value is smaller, <code>1</code> if the first value is larger, <code>NaN</code> if
+	 *   they cannot be compared
+	 */
+	function decimalCompare(sValue1, sValue2) {
+		var oDecimal1, oDecimal2, iResult;
+
+		if (sValue1 === sValue2) {
+			return 0;
+		}
+		oDecimal1 = parseDecimal(sValue1);
+		oDecimal2 = parseDecimal(sValue2);
+		if (!oDecimal1 || !oDecimal2) {
+			return NaN;
+		}
+		if (oDecimal1.sign !== oDecimal2.sign) {
+			return oDecimal1.sign > oDecimal2.sign ? 1 : -1;
+		}
+		// So they have the same sign.
+		// If the number of integer digits equals, we can simply compare the strings
+		iResult = simpleCompare(oDecimal1.integerLength, oDecimal2.integerLength)
+			|| simpleCompare(oDecimal1.abs, oDecimal2.abs);
+		return oDecimal1.sign * iResult;
+	}
+
+	/**
+	 * Extracts the milliseconds if the value is a date/time instance.
+	 * @param {any} vValue
+	 *   the value (may be <code>undefined</code> or <code>null</code>)
+	 * @returns {any}
+	 *   the number of milliseconds or the value itself
+	 */
+	function extractMilliseconds(vValue) {
+		if (vValue instanceof Date) {
+			return vValue.getTime();
+		}
+		if (vValue && vValue.__edmType === "Edm.Time") {
+			return vValue.ms;
+		}
+		return vValue;
+	}
+
+	/**
+	 * Compares the given OData values based on their type. All date and time types can also be
+	 * compared with a number. This number is then interpreted as the number of milliseconds that
+	 * the corresponding date or time object should hold.
+	 *
+	 * @param {any} vValue1
+	 *   the first value to compare
+	 * @param {any} vValue2
+	 *   the second value to compare
+	 * @param {string} [bAsDecimal=false]
+	 *   if <code>true</code>, the string values <code>vValue1</code> and <code>vValue2</code> are
+	 *   compared as a decimal number (only sign, integer and fraction digits; no exponential
+	 *   format). Otherwise they are recognized by looking at their types.
+	 * @return {integer}
+	 *   the result of the compare: <code>0</code> if the values are equal, <code>-1</code> if the
+	 *   first value is smaller, <code>1</code> if the first value is larger, <code>NaN</code> if
+	 *   they cannot be compared
+	 * @since 1.29.1
+	 * @public
+	 */
+	ODataUtils.compare = function (vValue1, vValue2, bAsDecimal) {
+		return bAsDecimal ? decimalCompare(vValue1, vValue2)
+			: simpleCompare(extractMilliseconds(vValue1), extractMilliseconds(vValue2));
+	};
+
+	/**
+	 * Returns a comparator function optimized for the given EDM type.
+	 *
+	 * @param {string} sEdmType
+	 *   the EDM type
+	 * @returns {function}
+	 *   the comparator function taking two values of the given type and returning <code>0</code>
+	 *   if the values are equal, <code>-1</code> if the first value is smaller, <code>1</code> if
+	 *   the first value is larger and <code>NaN</code> if they cannot be compared (e.g. one value
+	 *   is <code>null</code> or <code>undefined</code>)
+	 * @since 1.29.1
+	 * @public
+	 */
+	ODataUtils.getComparator = function (sEdmType) {
+		switch (sEdmType) {
+			case "Edm.Date":
+			case "Edm.DateTime":
+			case "Edm.DateTimeOffset":
+			case "Edm.Time":
+				return ODataUtils.compare;
+			case "Edm.Decimal":
+			case "Edm.Int64":
+				return decimalCompare;
+			default:
+				return simpleCompare;
+		}
 	};
 
 	return ODataUtils;

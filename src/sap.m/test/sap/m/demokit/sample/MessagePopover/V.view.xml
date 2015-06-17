@@ -27,7 +27,6 @@
 		</content>
 		<footer>
 			<Toolbar>
-				<ToolbarSpacer/>
 				<Button icon="sap-icon://alert" text="{/messagesLength}" type="Emphasized"
 						press="handleMessagePopoverPress2"/>
 				<ToolbarSpacer/>

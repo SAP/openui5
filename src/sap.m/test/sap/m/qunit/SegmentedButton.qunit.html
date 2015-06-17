@@ -538,6 +538,39 @@
 
 	});
 
+	test("Items aggregation tooltip", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "Button 1",
+					tooltip: "Tooltip 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 2"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var aButtons = oSegmentedButton.getButtons(),
+			$button1 = aButtons[0].$(),
+			$button2 = aButtons[1].$();
+
+
+		strictEqual($button1.attr("title"), "Tooltip 1", "First button should have a title with the setted value");
+		strictEqual($button2.attr("title"), undefined, "There should be no title for the second button");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
 	test("Initialize with XML view", function() {
 
 		// Arrange
@@ -702,25 +735,6 @@
 			})]
 		});
 
-		var oButton = new sap.m.Button({
-			text : "Open Dialog",
-			press : function() {
-				oDialog.open();
-			}
-		});
-
-		var oPage = new sap.m.Page("myFirstPage", {
-			title : "Dialog Test",
-			showNavButton : true,
-			enableScrolling : true,
-			content : oButton
-		});
-
-		var oApp = new sap.m.App("myApp");
-
-		oApp.addPage(oPage).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oDialog = new sap.m.Dialog({
 			subHeader : oBar,
 			content : [new sap.m.Button({
@@ -729,8 +743,16 @@
 			})]
 		});
 
+		sap.ui.getCore().applyChanges();
+
 		// Assert
 		oDialog.attachAfterOpen(function () {
+			setTimeout(function() {
+				oDialog.close();
+			}, 1000);
+		});
+
+		oDialog.attachBeforeClose(function () {
 			// the implementation of the SegmentedButton sets a timeout for IE browsers
 			// to re-calculate the button width(SegmentedButton.js, 121), so we need to do this in the test as well
 			setTimeout(function () {
@@ -744,14 +766,13 @@
 
 				// Cleanup
 				oDialog.destroy();
-				oApp.destroy();
 
 				start();
 			}, 0);
 		});
 
 		// Act
-		oButton.firePress();
+		oDialog.open();
 	});
 
 	/* =========================================================== */
@@ -1105,6 +1126,7 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b1", "When not set selectedKey should be equal to the first key in the list 'b1'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b1", "When not set selectedKey property should be equal to the first key in the list 'b1'");
 
 		// Act
 		// Change selectedKey to "b2"
@@ -1112,6 +1134,7 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
 
 		// Act
 		// Change selectedKey to non existing key
@@ -1119,9 +1142,91 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be unchanged = 'b2'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be unchanged = 'b2'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
+
+	});
+
+	test("selectedKey property on button press", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					key: "b1",
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "b2",
+					text: "Button 2"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		// Click on the second button
+		oSegmentedButton.getButtons()[1].$().trigger("tap");
+		oSegmentedButton.getButtons()[1].$().trigger("click");
+
+		// Assert
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("sap.m.SegmentedButtonItem property update", function () {
+
+		// Arrange
+		var oSBI = new sap.m.SegmentedButtonItem({
+			key: "b1",
+			text: "Btn 1"
+		});
+
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				oSBI
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSBI.setText("Btn changed");
+		oSBI.setIcon("sap-icon://attachment");
+		oSBI.setTextDirection(sap.ui.core.TextDirection.RTL);
+		oSBI.setEnabled(false);
+		oSBI.setWidth("300px");
+		oSBI.setKey("changed");
+		oSegmentedButton.setSelectedKey("changed");
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var oButton = oSegmentedButton.getButtons()[0];
+		var $LI = jQuery(oSegmentedButton.$().find("li")[0]);
+
+		strictEqual(oButton.getText(), "Btn changed", "Button text should have the new value");
+		strictEqual(oButton.getIcon(), "sap-icon://attachment", "Button should have the new value");
+		strictEqual(oButton.getTextDirection(), sap.ui.core.TextDirection.RTL, "Button should have the new value");
+		strictEqual(oButton.getEnabled(), false, "Button should have the new value");
+		strictEqual(oButton.getWidth(), "300px", "Button should have the new value");
+		strictEqual(oSegmentedButton.getSelectedKey(), "changed", "SegmentedButton getSelectedKey() should return the new value");
+
+		strictEqual($LI.text(), "Btn changed", "Rendered li text should have the new value");
+		ok($LI.find(".sapMBtnIcon"), "Rendered li should contain a icon span");
+		strictEqual($LI.attr("dir"), "rtl", "Rendered li should have attribute dir equal to 'rtl'");
+		ok($LI.hasClass("sapMSegBBtnDis"), "Rendered li should have a disabled class");
+		strictEqual($LI.width(), 300, "Rendered li width must be equal the the new value");
 
 	});
 
@@ -1571,10 +1676,248 @@
 		strictEqual(oButton2.$().attr("aria-checked"), "false", "Property 'aria-checked'  of Button2 should be 'false'");
 		strictEqual(oButton3.$().attr("aria-disabled"), "true", "Property 'aria-disabled' of Button3 should be 'true'");
 
-		oButton2.$().trigger("tap");
+		oButton2.$().trigger("tap");	// in a real mobile browser both tap and click are fired
+		oButton2.$().trigger("click");
 
 		strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
 		strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("Check aria attributes on SegmentedButton with icons", function() {
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items : [
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://home",
+					text: "button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://attachment"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "button 3"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		var aButtons = oSegmentedButton.getButtons();
+
+		// Assert
+		strictEqual(aButtons[0].$().attr("aria-label"),
+				sap.ui.core.IconPool.getIconInfo("sap-icon://home").name + " button 1",
+				"Attribute aria-label on the first button should contain the generic icon name and the text of the button");
+
+		strictEqual(aButtons[1].$().attr("aria-label"),
+				sap.ui.core.IconPool.getIconInfo("sap-icon://attachment").name,
+				"Attribute aria-label on the second button should contain only the icon generic name");
+
+		strictEqual(aButtons[2].$().attr("aria-label"), undefined,
+				"If we don't have a SAP Icon we don't need the aria-label attribute");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+
+	/* Module Select Mode */
+
+	module('Select Mode');
+
+	test("When not in select mode, there is no overhead", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [
+				new sap.m.Button({
+					text: "button 1"
+				}),
+				new sap.m.Button({
+					text: "button 2"
+				}),
+				new sap.m.Button({
+					text: "button 3"
+				})
+			]
+		});
+
+		// Act
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSegmentedButton.getButtons()[0].setText("new text");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getAggregation("_select"),
+				null,
+				"The hidden select has not been instantiated");
+
+		strictEqual(oSegmentedButton._bInOverflow,
+				undefined,
+				"The property _bInOverflow does not exist at all");
+
+		strictEqual(oSegmentedButton.$("select").length,
+				0,
+				"The select is not in the DOM");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("Activating select mode works", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [
+				new sap.m.Button({
+					text: "button 1"
+				}),
+				new sap.m.Button({
+					text: "button 2"
+				}),
+				new sap.m.Button({
+					text: "button 3"
+				})
+			]
+		});
+
+		// Act
+		oSegmentedButton.placeAt("qunit-fixture");
+		oSegmentedButton._toSelectMode();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getAggregation("_select").getMetadata().getName(),
+				"sap.m.Select",
+				"The hidden select is instantiated");
+
+		strictEqual(oSegmentedButton._bInOverflow,
+				true,
+				"The property _bInOverflow is set to true");
+
+		strictEqual(oSegmentedButton.$("select").length,
+				1,
+				"The select in in the DOM");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+
+	test("Modifying the segmented button affects the select", function() {
+		var newText = "new text";
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [
+				new sap.m.Button({
+					text: "button 1"
+				}),
+				new sap.m.Button({
+					text: "button 2"
+				}),
+				new sap.m.Button({
+					text: "button 3"
+				})
+			]
+		});
+
+		// Act
+		oSegmentedButton.placeAt("qunit-fixture");
+		oSegmentedButton._toSelectMode();
+		sap.ui.getCore().applyChanges();
+
+		oSegmentedButton.getButtons()[0].setText(newText);
+		this.clock.tick(1000);
+
+		// Assert
+		strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getText(),
+				newText,
+				"The select has been synced");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("Modifying the select affects the segmented button", function() {
+		var newText = "new text";
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [
+				new sap.m.Button({
+					text: "button 1"
+				}),
+				new sap.m.Button({
+					text: "button 2"
+				}),
+				new sap.m.Button({
+					text: "button 3"
+				})
+			]
+		});
+
+		// Act
+		oSegmentedButton.placeAt("qunit-fixture");
+		oSegmentedButton._toSelectMode();
+		sap.ui.getCore().applyChanges();
+
+		var fnSyncSelectSpy = this.spy(oSegmentedButton, "_syncSelect");
+		oSegmentedButton.getButtons()[0].setText(newText);
+		this.clock.tick(1000);
+
+		// Assert
+		strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getText(),
+				newText,
+				"The select has been synced");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("When switched to select mode and back to normal mode, there are no leftovers", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [
+				new sap.m.Button({
+					text: "button 1"
+				}),
+				new sap.m.Button({
+					text: "button 2"
+				}),
+				new sap.m.Button({
+					text: "button 3"
+				})
+			]
+		});
+
+		// Act
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSegmentedButton._toSelectMode();
+		this.clock.tick(1000);
+		oSegmentedButton._toNormalMode();
+		this.clock.tick(1000);
+
+		// Assert
+		strictEqual(oSegmentedButton.getAggregation("_select"),
+				null,
+				"The hidden select has not been instantiated");
+
+		strictEqual(oSegmentedButton._bInOverflow,
+				undefined,
+				"The property _bInOverflow does not exist at all");
+
+		strictEqual(oSegmentedButton.$("select").length,
+				0,
+				"The select is not in the DOM");
+
 
 		// Cleanup
 		oSegmentedButton.destroy();

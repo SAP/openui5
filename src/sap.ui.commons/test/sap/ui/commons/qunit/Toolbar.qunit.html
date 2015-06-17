@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.Toolbar
   Author: d046011
 -->
@@ -25,13 +25,14 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script type="text/javascript">
 
-		// ================================================== 
-		// test fixture for control properties and events 
-		// ================================================== 
+		// ==================================================
+		// test fixture for control properties and events
+		// ==================================================
 		var bVisible=true,
-		sWidth="300px",
-		oDesign=sap.ui.commons.ToolbarDesign.Flat,
-		bStandalone=true;
+			iWidth = 300,
+			sWidth = iWidth + "px",
+			oDesign = sap.ui.commons.ToolbarDesign.Flat,
+			bStandalone = true;
 
 
 		var oToolbar = new sap.ui.commons.Toolbar("Toolbar", {
@@ -41,63 +42,71 @@
 			standalone:bStandalone
 		});
 
-		sap.ui.setRoot("uiArea1", oToolbar);
+		oToolbar.placeAt("content");
 
-		var oCtrl; 
+		var oCtrl;
+		function initToolbar() {
+			oCtrl.setVisible(bVisible);
+			oCtrl.setWidth(sWidth);
+			oCtrl.setDesign(oDesign);
+			oCtrl.setStandalone(bStandalone);
+			oCtrl.destroyItems();// because the same control is used again instead of creating a new Toolbar for each test
+			sap.ui.getCore().applyChanges();
+		}
+		module("Basic", {
 
-		module("Basic", { 
 			setup: function() {
-				oCtrl = sap.ui.getCore().getControl("Toolbar");	
+				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				ok(oCtrl);
-				ok(jQuery.sap.domById("Toolbar"));  
+				ok(jQuery.sap.domById("Toolbar"));
+				initToolbar();
 			},
 			teardown: function() {
-				oCtrl.destroyItems(); // because the same control is used again instead of creating a new Toolbar for each test	
 				oCtrl = null;
 			}
 		});
 
-		// ================================================== 
-		// test property accessor methods 
-		// ================================================== 
+		// ==================================================
+		// test property accessor methods
+		// ==================================================
 
 
 		/**
-		 * Tests accessor method for property visible of control Toolbar. 
-		 */ 
+		 * Tests accessor method for property visible of control Toolbar.
+		 */
 		test("VisibleOk", function() {
 			strictEqual(oCtrl.getVisible(), bVisible);
 		});
 
 		/**
-		 * Tests accessor method for property width of control Toolbar. 
-		 */ 
+		 * Tests accessor method for property width of control Toolbar.
+		 */
 		test("WidthOk", function() {
 			strictEqual(oCtrl.getWidth(), sWidth);
 		});
 
 		/**
-		 * Tests accessor method for property design of control Toolbar. 
-		 */ 
+		 * Tests accessor method for property design of control Toolbar.
+		 */
 		test("DesignOk", function() {
 			strictEqual(oCtrl.getDesign(), oDesign);
 		});
 
 		/**
-		 * Tests accessor method for property standalone of control Toolbar. 
-		 */ 
+		 * Tests accessor method for property standalone of control Toolbar.
+		 */
 		test("StandaloneOk", function() {
 			strictEqual(oCtrl.getStandalone(), bStandalone);
 		});
 
 
-		// ================================================== 
-		// better tests of properties 
-		// ================================================== 
+		// ==================================================
+		// better tests of properties
+		// ==================================================
 
 		/**
 		 * Test actual visibility
-		 */ 
+		 */
 		test("Visibility", function() {
 			ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
 			oCtrl.setVisible(false);
@@ -110,20 +119,20 @@
 
 		/**
 		 * Test actual width
-		 */ 
+		 */
 		test("Width", function() {
-			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, 300, "actual width is wrong");
+			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, iWidth, "actual width is wrong");
 			oCtrl.setWidth("401px");
 			sap.ui.getCore().applyChanges();
 			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, 401, "actual width is wrong after change");
-			oCtrl.setWidth("300px");
+			oCtrl.setWidth(sWidth);
 			sap.ui.getCore().applyChanges();
-			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, 300, "actual width is wrong after change");
+			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, iWidth, "actual width is wrong after change");
 		});
 
 		/**
 		 * Test Toolbar designs
-		 */ 
+		 */
 		test("ToolbarDesigns", function() {
 			var oRootDomRef = jQuery.sap.domById("Toolbar");
 
@@ -132,7 +141,7 @@
 			strictEqual(oRootDomRef.className.indexOf("sapUiTbDesignTransparent"), -1, "Panel must not have sapUiTbDesignTransparent");
 			strictEqual(oRootDomRef.className.indexOf("sapUiTbDesignStandard"), -1, "Panel must not have sapUiTbDesignStandard");
 
-			// now switch to "Transparent" and do the same tests			
+			// now switch to "Transparent" and do the same tests
 			oCtrl.setDesign(sap.ui.commons.ToolbarDesign.Transparent);
 			sap.ui.getCore().applyChanges();
 			var oRootDomRef2 = jQuery.sap.domById(oCtrl.getId());
@@ -147,7 +156,7 @@
 			strictEqual(normalizeColor(jQuery(oRootDomRef2.firstChild).css("backgroundColor")), "rgba(0,0,0,0)", "Panel firstChild must be transparent");
 			strictEqual(normalizeColor(jQuery(oRootDomRef2.firstChild.firstChild).css("backgroundColor")), "rgba(0,0,0,0)", "Panel second-level child must be transparent");
 
-			// now switch back to "Flat"		
+			// now switch back to "Flat"
 			oCtrl.setDesign(sap.ui.commons.ToolbarDesign.Flat);
 			sap.ui.getCore().applyChanges();
 			var oRootDomRef3 = jQuery.sap.domById(oCtrl.getId());
@@ -160,26 +169,26 @@
 
 		/**
 		 * Test standalone mode
-		 */ 
+		 */
 		test("StandaloneMode", function() {
 			// make sure the class sapUiTbStandalone is there
 			notStrictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must have sapUiTbStandalone");
 
-			// now switch to not-standalone mode			
+			// now switch to not-standalone mode
 			oCtrl.setStandalone(false);
 			sap.ui.getCore().applyChanges();
 			strictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must not have sapUiTbStandalone");
 
-			// ...and back again			
+			// ...and back again
 			oCtrl.setStandalone(true);
 			sap.ui.getCore().applyChanges();
 			notStrictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must have sapUiTbStandalone");
 		});
 
 
-		// ================================================== 
-//		          test "Items" aggregation 
-		// ================================================== 
+		// ==================================================
+//		          test "Items" aggregation
+		// ==================================================
 
 		test("InitialItems", function() {
 			strictEqual(oCtrl.getItems().length, 0, "Toolbar may not have any items initially");
@@ -199,13 +208,15 @@
 			// the above simply must not throw exceptions
 			// assertions could be checked but optimizer might remove them
 			ok(true, "must not throw exception for aggregations with interface types");
+			oItem.destroy();
+			sap.ui.getCore().applyChanges();
 		});
-		
+
 		/**
 		 * Test how the toolbar adapts to its surroundings (width-wise)
 		 */
 		test("ToolbarAssumesOuterWidth", function() {
-			var uiArea = jQuery.sap.domById("uiArea1");
+			var uiArea = jQuery.sap.domById("content");
 			uiArea.style.width = "600px"; // make the parent div have a defined size
 
 			// check whether the "auto"-mode toolbar adapts to the parent
@@ -215,19 +226,25 @@
 
 			// clean up
 			uiArea.style.width = "auto";
-			oCtrl.setWidth("300px");
+			oCtrl.setWidth(sWidth);
 			sap.ui.getCore().applyChanges();
 		});
 
-		// ================================================== 
-		// async1_addItems 
-		// ================================================== 
+		test("Inner toolbar container has id", function() {
+			var sExpectedId = oCtrl.getId() + "-inner";
+			ok(document.getElementById(sExpectedId), "The inner container must has an id [" + sExpectedId + "]");
+		});
 
-		module("Overflow by addItems", { 
+		// ==================================================
+		// async1_addItems
+		// ==================================================
+
+		module("Overflow by addItems", {
 			setup: function() {
-				oCtrl = sap.ui.getCore().getControl("Toolbar");	
+				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
-				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");  
+				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				initToolbar();
 			},
 			teardown: function() {
 				oCtrl = null;
@@ -235,64 +252,86 @@
 		});
 
 		/**
-		 * Toolbar is 300px wide; add one button of 100px width (which will not cause overflow for reasonable margins etc.)
-		 * and then add another one, which should trigger the overflow.
+		 * Toolbar is 300px(sWidth) wide; add one button of 100px width (which will not cause overflow for reasonable margins etc.)
 		 */
-		asyncTest("AddItemsUntilOverflowButtonAppears", function() {
-			oCtrl = sap.ui.getCore().getControl("Toolbar");	
+		test("AddItemsUntilOverflowButtonAppears", function(assert) {
+			var done = assert.async();
+			oCtrl = sap.ui.getCore().getControl("Toolbar");
 			notStrictEqual(oCtrl, null, "oCtrl must exist");
 
-			strictEqual(oCtrl.getDomRef().offsetWidth, 300, "Toolbar width should be 300px");
+			strictEqual(oCtrl.getDomRef().offsetWidth, iWidth, "Toolbar width is wrong");
 			setTimeout(function() {
-				strictEqual(jQuery.sap.domById(oCtrl.getId() + "-mn").style.display, "none", "Overflow button may not be visible initially");
+				verifyOverflowButtonIsNotVisible("none", "Overflow button may not be visible initially");
 
 				// add a button that surely fits
 				var oBtn = new sap.ui.commons.Button("testButton", {"text":"Test","width":"100px"});
 				oCtrl.addItem(oBtn);
 				sap.ui.getCore().applyChanges();
 				setTimeout(function() {
-					strictEqual(getDisplayStyle(jQuery.sap.domById(oCtrl.getId() + "-mn")), "none", "Overflow button may not be visible with only one small item in the toolbar");
-					start();
+					verifyOverflowButtonIsNotVisible("Overflow button may not be visible with only one small item in the toolbar");
+					done();
 				}, 100);
 			}, 400);
 		});
 
-		asyncTest("AddItemsUntilOverflowButtonAppears2", function() {
+		test("AddItemsUntilOverflowButtonAppears2", function(assert) {
+			var done = assert.async();
+			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"100px"});
 			// add a large button that surely causes overflow
-			var oBtn = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"201px"});
-			oCtrl.addItem(oBtn);
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"201px"});
+			oCtrl.addItem(oBtn1);
+			oCtrl.addItem(oBtn2);
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				strictEqual(getDisplayStyle(jQuery.sap.domById(oCtrl.getId() + "-mn")), "block", "Overflow button must be visible when the items are larger than the toolbar width");
-				start();
+				verifyOverflowButtonIsVisible("block", "Overflow button must be visible when the items are larger than the toolbar width");
+				done();
 			}, 100);
 		});
 
-		asyncTest("AddItemsUntilOverflowButtonAppears3", function() {
+		test("AddItemsUntilOverflowButtonAppears2_InvisibleItemsDontCount", function(assert) {
+			var done = assert.async();
+			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"100px"});
+			// add a large button that would have caused overflow if not invisible
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"201px", "visible" : false});
+			oCtrl.addItem(oBtn1);
+			oCtrl.addItem(oBtn2);
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				verifyOverflowButtonIsNotVisible("Overflow button must not be visible when adding invisible item(s)");
+				done();
+			}, 100);
+		});
+
+		test("AddItemsUntilOverflowButtonAppears3", function(assert) {
+			var done = assert.async();
 			// remove last item again
+			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"100px"});
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"201px"});
+			oCtrl.addItem(oBtn1);
+			oCtrl.addItem(oBtn2);
+			sap.ui.getCore().applyChanges();
 			oCtrl.removeItem(1);
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				strictEqual(getDisplayStyle(jQuery.sap.domById(oCtrl.getId() + "-mn")), "none", "Overflow button may not be visible after removing the long button");
-				oCtrl.removeAllItems();
-				sap.ui.getCore().applyChanges();         	
-				sap.ui.getCore().byId("testButton").destroy();
-				sap.ui.getCore().byId("testButton2").destroy();
+				verifyOverflowButtonIsNotVisible("Overflow button may not be visible after removing the long button");
+				oBtn2.destroy();
+				sap.ui.getCore().applyChanges();
 				setTimeout(function() {
-					start();
+					done();
 				}, 100);
 			}, 100);
 		});
 
-		// ================================================== 
+		// ==================================================
 		// async2_resize
-		// ================================================== 
+		// ==================================================
 
-		module("Overflow due to resizing", { 
+		module("Overflow due to resizing", {
 			setup: function() {
-				oCtrl = sap.ui.getCore().getControl("Toolbar");	
+				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
-				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");  
+				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				initToolbar();
 			},
 			teardown: function() {
 				oCtrl = null;
@@ -301,15 +340,16 @@
 
 
 		/**
-		 * Toolbar is 300px wide; add two buttons of 75px width (which will not cause overflow for reasonable margins etc.)
+		 * Toolbar is 300px (sWidth) wide; add two buttons of 75px width (which will not cause overflow for reasonable margins etc.)
 		 * and then resize the toolbar to 199px width, which should trigger the overflow.
 		 */
-		asyncTest("ResizeUntilOverflowButtonAppears", function() {
-			oCtrl = sap.ui.getCore().getControl("Toolbar");	
+		test("ResizeUntilOverflowButtonAppears", function(assert) {
+			var done = assert.async();
+			oCtrl = sap.ui.getCore().getControl("Toolbar");
 			ok(oCtrl);
 
-			strictEqual(oCtrl.getDomRef().offsetWidth, 300, "Toolbar width should be 300px");
-			strictEqual(getDisplayStyle(getOverflowDomRef()), "none", "Overflow button may not be visible initially");
+			strictEqual(oCtrl.getDomRef().offsetWidth, iWidth, "Toolbar width is wrong");
+			verifyOverflowButtonIsNotVisible("Overflow button may not be visible initially");
 
 			// add two buttons that surely fit
 			var oBtn = new sap.ui.commons.Button("testButton", {"text":"Test","width":"75px"});
@@ -319,52 +359,108 @@
 			sap.ui.getCore().applyChanges();
 
 			setTimeout(function() {
-				strictEqual(getDisplayStyle(getOverflowDomRef()), "none", "Overflow button must not be visible with only two small items in the toolbar");
-				start();
+				verifyOverflowButtonIsNotVisible("Overflow button must not be visible with only two small items in the toolbar");
+				done();
 			}, 10);
 		});
 
-		asyncTest("ResizeUntilOverflowButtonAppears2", function() {
-
+		test("ResizeUntilOverflowButtonAppears2", function(assert) {
+			var done = assert.async();
+			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"75px"});
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"75px"});
+			oCtrl.addItem(oBtn1);
+			oCtrl.addItem(oBtn2);
+			sap.ui.getCore().applyChanges();
 			// resize toolbar to cause overflow
 			oCtrl.setWidth("149px");
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				strictEqual(getDisplayStyle(getOverflowDomRef()), "block", "Overflow button must be visible when the toolbar is resized to a very small size");
-				start();
+				verifyOverflowButtonIsVisible("Overflow button must be visible when the toolbar is resized to a very small size");
+				done();
 			}, 10);
 		});
 
-		asyncTest("ResizeUntilOverflowButtonAppears3", function() {
 
-			// resize again to avoid overflow
-			oCtrl.setWidth("300px");
+		test("ResizeUntilOverflowButtonAppears2_InvisibleItemsDontCount", function(assert) {
+			var done = assert.async();
+			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"75px"});
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"75px", "visible" : false});
+			oCtrl.addItem(oBtn1);
+			oCtrl.addItem(oBtn2);
+			sap.ui.getCore().applyChanges();
+			// resize toolbar to cause overflow
+			oCtrl.setWidth("149px");
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				strictEqual(getDisplayStyle(getOverflowDomRef()), "none", "Overflow button may not be visible with only two small items in the toolbar");
-				oCtrl.removeAllItems();
-				sap.ui.getCore().applyChanges();         	
-				sap.ui.getCore().byId("testButton").destroy();
-				sap.ui.getCore().byId("testButton2").destroy();
+				verifyOverflowButtonIsNotVisible("Overflow button must not be visible when the toolbar is resized to a size less than total width of all buttons, but larger than total width of visible items only");
+				done();
+			}, 10);
+		});
+
+		test("ResizeUntilOverflowButtonAppears3", function(assert) {
+			var done = assert.async();
+			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"75px"});
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"75px"});
+			oCtrl.setWidth("149px");
+			oCtrl.addItem(oBtn1);
+			oCtrl.addItem(oBtn2);
+			sap.ui.getCore().applyChanges();
+			// resize again to avoid overflow
+			oCtrl.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				verifyOverflowButtonIsNotVisible("Overflow button may not be visible with only two small items in the toolbar");
 				setTimeout(function() {
-					start();
+					done();
 				}, 100);
 			}, 10);
 		});
 
-		// ================================================== 
-		// async3_outerWidth
-		// ================================================== 
+		test("ResizeUntilOverflowButtonAppears3_ToolbarFullHeightSeparatorAtTheBeggining", function(assert) {
+			var done = assert.async();
+			oCtrl.setWidth("149px");
+			var oToolbarSeparator = new sap.ui.commons.ToolbarSeparator({design : sap.ui.commons.ToolbarSeparatorDesign.FullHeight});
+			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"75px"});
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"75px", "visible" : false});
+			oCtrl.addItem(oToolbarSeparator);
+			oCtrl.addItem(oBtn1);
+			oCtrl.addItem(oBtn2);
+			sap.ui.getCore().applyChanges();
+			// resize again to avoid overflow
+			oCtrl.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				verifyOverflowButtonIsNotVisible("Overflow button may not be visible with one full height separator and two small buttons in the toolbar");
+				setTimeout(function() {
+					done();
+				}, 100);
+			}, 450);
+		});
 
-		module("outerWidth");
+		// ==================================================
+		// async3_outerWidth
+		// ==================================================
+
+		module("outerWidth", {
+			setup: function () {
+				oCtrl = sap.ui.getCore().getControl("Toolbar");
+				notStrictEqual(oCtrl, null, "oCtrl must exist");
+				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				initToolbar();
+			},
+			teardown: function () {
+				oCtrl = null;
+			}
+		});
 
 		/**
 		 * Test how the toolbar adapts to size changes of the surroundings (width-wise) and updates the overflow button
 		 */
-		asyncTest("ToolbarAdaptsToOuterWidthAndUpdates", function() {
-			oCtrl = sap.ui.getCore().getControl("Toolbar");	
+		test("ToolbarAdaptsToOuterWidthAndUpdates", function(assert) {
+			var done = assert.async();
+			oCtrl = sap.ui.getCore().getControl("Toolbar");
 			ok(oCtrl);
-			var uiArea = jQuery.sap.domById("uiArea1");
+			var uiArea = jQuery.sap.domById("content");
 
 			uiArea.style.width = "600px"; // make the parent div have a defined size
 			var oBtn = new sap.ui.commons.Button("testButton", {"text":"Test","width":"100px"});
@@ -378,80 +474,50 @@
 			setTimeout(function() {
 				strictEqual(oCtrl.getDomRef().offsetWidth, 600, "Toolbar width should be adapted to parent DOM element");
 				strictEqual(getOverflowDomRef().style.display, "none", "Overflow button may not be visible with only two small items in the toolbar");
-				start();
+				done();
 			}, 350);
 		});
 
-		asyncTest("ToolbarAdaptsToOuterWidthAndUpdates2", function() {
+		test("ToolbarAdaptsToOuterWidthAndUpdates2", function(assert) {
+			var done = assert.async();
+			oCtrl.setWidth("auto");
+			var uiArea = jQuery.sap.domById("content");
+			var oBtn1 = new sap.ui.commons.Button("testButton", {"text":"Test","width":"100px"});
+			oCtrl.addItem(oBtn1);
+			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"100px"});
+			oCtrl.addItem(oBtn2);
+			sap.ui.getCore().applyChanges();
 			// make the parent smaller, check toolbar size and visibility of (then required) overflow button
-			var uiArea = jQuery.sap.domById("uiArea1");
 			uiArea.style.width = "199px";
+
 			setTimeout(function() {
-				strictEqual(oCtrl.getDomRef().offsetWidth, 199, "Toolbar width should be in sync with parent DOM element");
-				strictEqual(getOverflowDomRef().style.display, "block", "Overflow button must be visible once parent has become too small");
-
-				// cleanup
-				oCtrl.removeAllItems();
-				sap.ui.getCore().applyChanges();         	
-				sap.ui.getCore().byId("testButton").destroy();
-				sap.ui.getCore().byId("testButton2").destroy();
-				setTimeout(function() {
-					start();
-				}, 100);
-
-			}, 450);
+					strictEqual(oCtrl.getDomRef().offsetWidth, 199, "Toolbar width should be in sync with parent DOM element");
+					strictEqual(getOverflowDomRef().style.display, "block", "Overflow button must be visible once parent has become too small");
+					done();
+				}, 450);
 		});
 
-		// ================================================== 
-		// async4_itemNavigation
-		// ================================================== 
-
-		module("Item Navigation");
-
-		/**
-		 * Tests item navigation in toolbar
-		 */
-		test("ItemNavigation", function() {
-			oCtrl = sap.ui.getCore().getControl("Toolbar");	
-			ok(oCtrl);
-
-			var aButtons = [];
-			oCtrl.setWidth("800px");
-			for (var i = 0; i < 10; i++) {
-				aButtons[i] = new sap.ui.commons.Button("testButton" + i, {"text":"Test","width":"40px"});
-				oCtrl.addItem(aButtons[i]);
-			}
-			sap.ui.getCore().applyChanges();
-			// test the internal(!) method getVisibleItemInfo();
-			strictEqual(oCtrl.getVisibleItemInfo().count, 10, "Toolbar should have 10 visible items");
-
-			// focus the toolbar, which should then focus its first element
-			jQuery(oCtrl.getDomRef()).focus();
-			// TODO: method removed from Dom.js... asyncAssertEquals("first toolbar button should be focused", aButtons[0].getDomRef(), sap.ui.util.Dom.getActiveElement());
-
-			// move focus to next elements
-			var oFakeEvent = jQuery.Event("keydown");
-			oFakeEvent.which = oFakeEvent.keyCode = jQuery.sap.KeyCodes.ARROW_DOWN;
-			for (var i = 1; i < 10; i++) {
-				oCtrl.$().trigger(oFakeEvent);
-			}
-
-			// FIXME: I can't see any test here (logic copied from JSUnit test)
-			oCtrl.destroyItems();
-			sap.ui.getCore().applyChanges();
-
-		});
-
-		// ================================================== 
+		// ==================================================
 		// async5_overflowMenu
-		// ================================================== 
+		// ==================================================
 
-		module("Overflow Menu");
+		module("Overflow Menu", {
+			setup: function () {
+				oCtrl = sap.ui.getCore().getControl("Toolbar");
+				notStrictEqual(oCtrl, null, "oCtrl must exist");
+				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				initToolbar();
+			},
+			teardown: function () {
+				oCtrl = null;
+			}
+		});
 
 		/**
 		 * Tests the overflow menu for a toolbar with many buttons
 		 */
-		asyncTest("existance of menu", function() {
+		test("existance of menu", function(assert) {
+			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
 			ok(oCtrl);
 
@@ -465,28 +531,17 @@
 			}
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				strictEqual(getDisplayStyle(getOverflowDomRef()), "block", "Overflow button must be visible for 10 items");
-				start();
+				verifyOverflowButtonIsVisible("Overflow button must be visible for 10 items");
+				done();
 			}, 10);
 		});
 
-		asyncTest("keyboard navigation", function() {
 
-			// fake a user event opening the overflow dropdown
-			var sOverflowButtonId = oCtrl.getId()+"-mn";
-			var oFakeEvent = jQuery.Event("keydown");
-			oFakeEvent.which = oFakeEvent.keyCode = jQuery.sap.KeyCodes.ARROW_DOWN;
-			jQuery.sap.byId(sOverflowButtonId).trigger(oFakeEvent);
 
-			setTimeout(function() {
-				strictEqual(jQuery(getPopupDomRef()).css("visibility"), "visible", "Overflow popup should be visible");
-				start();
-			} ,10);
-		});
+		// ==================================================
+		// helper functions
+		// ==================================================
 
-		// ================================================== 
-		// helper functions 
-		// ================================================== 
 		function getDisplayStyle(element) {
 			return jQuery(element).css("display");
 		}
@@ -497,7 +552,7 @@
 		function getOverflowDomRef() {
 			var sOverflowId = oCtrl.getId() + "-mn";
 			return jQuery.sap.domById(sOverflowId);
-		}      
+		}
 
 		/**
 		 * Returns the overflow popup DomRef for oCtrl or null if it does not exist
@@ -510,7 +565,12 @@
 				return null;
 			}
 		}
-
+		function verifyOverflowButtonIsNotVisible(sErrorMessage) {
+			strictEqual(getDisplayStyle(getOverflowDomRef()), "none", sErrorMessage);
+		};
+		function verifyOverflowButtonIsVisible(sErrorMessage) {
+			strictEqual(getDisplayStyle(getOverflowDomRef()), "block", sErrorMessage);
+		};
 		(function() {
 
 			var RX_HEX_COLOR = /#[0-9a-fA-F]+/;
@@ -554,12 +614,12 @@
 
     </script>
   </head>
-	<body>  
+	<body>
 		<h1 id="qunit-header">QUnit page for sap.ui.commons.Toolbar</h1>
 		<h2 id="qunit-banner"></h2>
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>	
-		<div id="uiArea1"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
 	</body>
 </html>

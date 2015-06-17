@@ -20,18 +20,7 @@
 
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
 
-				// Applications
-
-				// Worklist
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/worklist/test/testsuite.worklistDemokit.qunit.html");
-
-				// MD - Template
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-template/test/unit/unitTestsDemokit.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-template/test/integration/opaTestsDemokit.qunit.html");
-
-				// tdg
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Navigation.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Filter.qunit.html");
+				// Cart Application
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/test/BuyProductJourney.qunit.html");
 
 				// ActionSelect
@@ -171,6 +160,9 @@
 				// MessagePopover
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessagePopover.qunit.html");
 
+				// MessageStrip
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageStrip.qunit.html");
+
 				// MessageToast
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageToast.qunit.html");
 
@@ -228,6 +220,10 @@
 
 				// PullToRefresh
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PullToRefresh_desktop.qunit.html");
+
+				// QuickView
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QuickView.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QuickViewCard.qunit.html");
 
 				// RadioButton
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RadioButton.qunit.html");
@@ -333,6 +329,10 @@
 				// Tokenizer
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Tokenizer.qunit.html");
 
+				// UploadCollection
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/UploadCollection.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/UploadCollectionItem.qunit.html");
+
 				// VBox
 				if (!ie9) {
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/VBox.qunit.html");
@@ -344,6 +344,11 @@
 				// QUnit Tests for responsive behaviour (for example Responsive Margins)
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QUnitCompositesUsingIFrames.qunit.html");
 
+				// Wizard
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Wizard.qunit.html");
+
+				// WizardProgressNavigator
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/WizardProgressNavigator.qunit.html");
 			}
 
 			return suite;

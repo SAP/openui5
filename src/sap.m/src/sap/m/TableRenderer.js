@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.write("<" + groupTag + ">");
 		rm.write("<tr");
 		rm.writeAttribute("tabindex", -1);
-		rm.writeAttribute("role", "rowheader");
+		rm.writeAttribute("role", "row");
 		rm.writeAttribute("id", oTable.addNavSection(idPrefix + type + "er" ));
 	
 		if (isHeaderHidden) {
@@ -173,7 +173,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.write("<table");
 		rm.addClass("sapMListTbl");
-		rm.addStyle("table-layout", oControl.getFixedLayout() ? "fixed" : "auto");
+		if (oControl.getFixedLayout() === false) {
+			rm.addStyle("table-layout", "auto");
+		}
 		
 		// make the type column visible if needed
 		if (oControl._iItemNeedsColumn) {

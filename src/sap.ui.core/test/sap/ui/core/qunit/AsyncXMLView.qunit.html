@@ -2,8 +2,7 @@
 <html>
 
 <!--
-	Tested classes: sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller
-	Author: d046011,d049080
+	Tested classes: sap.ui.core.mvc.XMLView
 -->
 
 <head>
@@ -17,11 +16,6 @@
 	>
 </script>
 
-<script>
-	// save the 'setTimeout' function since sinon will override it
-	window._setTimeout = window.setTimeout;
-</script>
-
 <link rel="stylesheet"
   href="../../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css"	media="screen" />
@@ -33,146 +27,34 @@
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script type="text/javascript" src="AnyViewAsync.qunit.js"></script>
 
 <script>
 
-// FIXME: the following tests will fail with PhantomJS => check how to renable them
-if (!sap.ui.Device.browser.phantomJS) {
-
-var sUrl = "test-resources/sap/ui/core/qunit/testdata/";
-jQuery.sap.registerModulePath("testdata", "../../../../../" + sUrl);
-
-var sXml;
-jQuery.ajax({
-	url : "testdata/mvc/Async.view.xml",
-	success : function(data) {
-		sXml = data.documentElement.outerHTML;
+// setup test config with generic factory
+var oConfig = {
+	type : "XML",
+	factory : function(bAsync) {
+		return sap.ui.view({
+			type : "XML",
+			viewName : "testdata.mvc.Async",
+			async : bAsync
+		});
 	},
-	async : false
-});
-
-var xhr = sinon.useFakeXMLHttpRequest();
-xhr.useFilters = true;
-xhr.addFilter(function(method, url) {
-	return url.indexOf("testdata/mvc/Async.view.xml") == -1;
-});
-
-var iDelay = 100;
-xhr.onCreate = function(request) {
-	request.onSend = function() {
-		if(!request.async) {
-			request.respond(200,  { "Content-Type" : "application/xml" }, sXml);
-		} else {
-			_setTimeout(function() {
-				request.respond(200,  { "Content-Type" : "application/xml" }, sXml);
-			}, iDelay);
-		}
-	};
+	receiveSource : function(source) {
+		return new XMLSerializer().serializeToString(source);
+	}
 };
+asyncTestsuite("Generic View Factory", oConfig);
 
-module("Sync pre-stuff", {
-	teardown : function() {
-		var oView = sap.ui.getCore().byId("syncView");
-		if (oView) {
-			oView.destroy();
-		}
-	}
-});
-test("Synchronous loading", function() {
-	expect(1);
-
-	ok(sXml != null, "View content was loaded synchronously");
-});
-
-test("Synchronous rendering", function() {
-	expect(1);
-
-	sap.ui.xmlview({
-		id : "syncView",
-		viewName : "testdata.mvc.Async"
-	}).placeAt("content");
-	sap.ui.getCore().applyChanges();
-
-	var oView = sap.ui.getCore().byId("syncView");
-	ok(oView.$().children().length, "View content was rendered synchronously");
-});
-
-
-module("Async Rendering", {
-	teardown : function() {
-		var oView = sap.ui.getCore().byId("asyncView");
-		if (oView) {
-			oView.destroy();
-		}
-	}
-});
-asyncTest("Render with Delayed XML load request", function() {
-	expect(3);
-
-	sap.ui.xmlview({
-		id : "asyncView",
+// switch factory function
+oConfig.factory = function(bAsync) {
+	return sap.ui.xmlview({
 		viewName : "testdata.mvc.Async",
-		async : true
-	}).placeAt("content");
-
-	sap.ui.getCore().applyChanges();
-	var oView = sap.ui.getCore().byId("asyncView");
-	ok(oView.$().length, "View was rendered empty");
-	ok(!oView.$().children().length, "View content is not rendered yet");
-
-	oView.attachAfterInit(function() {
-		sap.ui.getCore().applyChanges();
-		ok(oView.$().children().length, "View content was rendered");
-		start();
+		async : bAsync
 	});
-});
-
-module("XMLView#loaded", {
-	teardown : function() {
-		var oView = sap.ui.getCore().byId("promiseView");
-		if (oView) {
-			oView.destroy();
-		}
-	}
-});
-
-asyncTest("Retrieve promise for sync view", function() {
-	expect(2);
-
-	var oView = sap.ui.xmlview({
-		id : "promiseView",
-		viewName : "testdata.mvc.Async"
-	});
-
-	var oPromise = oView.loaded();
-	ok(oPromise instanceof Promise, "Promise returned");
-
-	oPromise.then(function(oViewLoaded) {
-		deepEqual(oView, oViewLoaded, "Views equal deeply");
-		start();
-	});
-});
-
-asyncTest("Retrieve promise for async view", function() {
-	expect(2);
-
-	var oView = sap.ui.xmlview({
-		id : "view",
-		viewName : "testdata.mvc.Async",
-		async : true
-	});
-
-	var oPromise = oView.loaded();
-	ok(oPromise instanceof Promise, "Promise returned");
-
-	oView.loaded().then(function(oViewLoaded) {
-		deepEqual(oView, oViewLoaded, "Views equal deeply");
-		start();
-	});
-
-});
-
-} // FIXME
+};
+asyncTestsuite("XMLView Factory", oConfig);
 
 </script>
 </head>

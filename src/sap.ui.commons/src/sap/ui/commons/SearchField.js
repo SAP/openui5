@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.SearchField.
-sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListBox', './TextField', './TextFieldRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/History', 'sap/ui/core/Renderer'],
-	function(jQuery, ComboBox, ComboBoxRenderer, ListBox, TextField, TextFieldRenderer, library, Control, History, Renderer) {
+sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListBox', './TextField', './TextFieldRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/History', 'sap/ui/core/Renderer', 'jquery.sap.dom'],
+	function(jQuery, ComboBox, ComboBoxRenderer, ListBox, TextField, TextFieldRenderer, library, Control, History, Renderer/*, DOM*/) {
 	"use strict";
 
 
@@ -691,47 +691,51 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			visibility : "hidden"
 		},
 		
-	  constructor : function (sId, mSettings) {
+		constructor: function(sId, mSettings) {
 			ComboBox.apply(this, arguments);
 			this._mSuggestions = {};
 			this._aSuggestValues = [];
-			this.mobile = false; //switch off native dropdown version
-	  },
-	  
-	  updateSuggestions : function(sSuggestVal, aSuggestions) {
+			this.mobile = false; // switch off native dropdown version
+		},
+
+		updateSuggestions: function(sSuggestVal, aSuggestions) {
 			this._mSuggestions[sSuggestVal] = aSuggestions;
 			if (this.getInputDomRef() && jQuery(this.getInputDomRef()).val() === sSuggestVal && this._hasSuggestValue(sSuggestVal)) {
 				this._doUpdateList(sSuggestVal);
-				this._aSuggestValues = [sSuggestVal];
 			}
-	  },
-	  
-	  applyFocusInfo : function(oFocusInfo){
-		jQuery(this.getInputDomRef()).val(oFocusInfo.sTypedChars);
-		return this;
-	  },
-	  
-	  _getListBox : function() {
+		},
+
+		applyFocusInfo: function(oFocusInfo) {
+			jQuery(this.getInputDomRef()).val(oFocusInfo.sTypedChars);
+			return this;
+		},
+
+		_getListBox: function() {
 			return this.getParent()._lb;
-	  },
-	  
-	  _hasSuggestValue : function(sSuggestVal) {
+		},
+
+		_hasSuggestValue: function(sSuggestVal) {
 			return this._aSuggestValues.length > 0 && sSuggestVal == this._aSuggestValues[this._aSuggestValues.length - 1];
-	  },
-	  
-	  _doUpdateList : function(sSuggestVal, bSkipOpen) {
-			if ((!this.oPopup || !this.oPopup.isOpen()) && !bSkipOpen) {
+		},
+
+		_doUpdateList: function(sSuggestVal, bSkipOpen) {
+			var bEmpty = this._updateList(sSuggestVal);
+			this._aSuggestValues = [sSuggestVal];
+			if ((!this.oPopup || !this.oPopup.isOpen()) && !bSkipOpen && !bEmpty) {
 				this._open();
-			} else {
-				this._updateList(sSuggestVal);
+			} else if (this.oPopup && this.oPopup.isOpen() && bEmpty) {
+				this._close();
 			}
-			if (!this._lastKeyIsDel && sSuggestVal === jQuery(this.getInputDomRef()).val()) {
+
+			if (!bEmpty && !this._lastKeyIsDel && sSuggestVal === jQuery(this.getInputDomRef()).val()) {
 				this._doTypeAhead();
 			}
-	  },
+		},
 	  
-	  onclick : function(oEvent) {
+		onclick: function(oEvent) {
+			//this._forceOpen = true;
 			ComboBox.prototype.onclick.apply(this, arguments);
+			//this._forceOpen = false;
 			if (oEvent.target === this.getDomRef("searchico")) {
 				if (this.oPopup && this.oPopup.isOpen()) {
 					this.oPopup.close();
@@ -739,14 +743,14 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 				if (!this.getParent().getEnableClear()) {
 					this.getParent().fireSearch();
 				} else if (jQuery(this.getInputDomRef()).val() && this.getEditable() && this.getEnabled()) {
-				this.setValue("");
-				this._triggerValueHelp = true;
-				this.onkeyup(null, true);
-				this._aSuggestValues = [];
-				if (this.getParent().getEnableFilterMode()) {
-					jQuery(this.getInputDomRef()).val("");
-					this.getParent().fireSearch();
-				}
+					this.setValue("");
+					this._triggerValueHelp = true;
+					this.onkeyup();
+					this._aSuggestValues = [];
+					if (this.getParent().getEnableFilterMode()) {
+						jQuery(this.getInputDomRef()).val("");
+						this.getParent().fireSearch();
+					}
 				}
 				if (this.getEditable() && this.getEnabled()) {
 					this.focus();
@@ -756,27 +760,36 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 					this.focus();
 				}
 			}
-	  },
-	  
-	  onkeypress : SearchField.TF.prototype.onkeypress,
-	  
-	  onkeyup : function(oEvent, bSkipOpen) {
-		this.getParent().$().toggleClass("sapUiSearchFieldVal", !!jQuery(this.getInputDomRef()).val());
-		_setClearTooltip(this.getParent());
-		  
+		},
+
+		onkeypress: SearchField.TF.prototype.onkeypress,
+
+		onkeyup: function(oEvent) {
+			var $Input = jQuery(this.getInputDomRef());
+			var sVal = $Input.val();
+			
+			this.getParent().$().toggleClass("sapUiSearchFieldVal", !!sVal);
+			_setClearTooltip(this.getParent());
+
 			if (oEvent) {
 				var oKC = jQuery.sap.KeyCodes;
-				if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === oKC.F4 && oEvent.which === 0 /*this is the Firefox case and ensures 's' with same charCode is accepted*/) {
+				if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === oKC.F4 && oEvent.which === 0 /* this is the Firefox case and ensures 's' with same charCode is accepted */) {
 					return;
 				}
-	  
+				
+				if (sVal && sVal == $Input.getSelectedText()) {
+					// When pressing Ctrl+A quite fast a keyup event for "A" is triggered without oEvent.ctrlKey flag.
+					// But it behaves like Ctrl+A (Text is marked and A is not entered into the field) -> see BCP 1570032167
+					return;
+				}
+
 				var iKC = oEvent.which || oEvent.keyCode;
-				if (iKC !== oKC.ESCAPE || this instanceof SearchField.TF/*Textfield uses the same onkeyup function therefore check*/) {
+				if (iKC !== oKC.ESCAPE || this instanceof SearchField.TF/* Textfield uses the same onkeyup function therefore check */) {
 					this._triggerValueHelp = true;
 					this._lastKeyIsDel = iKC == oKC.DELETE || iKC == oKC.BACKSPACE;
 				}
 			}
-	  
+
 			if (this._triggerValueHelp) {
 				this._triggerValueHelp = false;
 				if (this._sSuggest) {
@@ -786,127 +799,137 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 				var sCurrentValue = jQuery(this.getInputDomRef()).val();
 				if ((sCurrentValue && sCurrentValue.length >= this.getParent().getStartSuggestion()) || (!sCurrentValue && this.getParent().getStartSuggestion() == 0)) {
 					this._sSuggest = jQuery.sap.delayedCall(200, this, "_triggerSuggest", [sCurrentValue]);
-				} else if (this._doUpdateList) { //Textfield uses the same onkeyup function -> therefore check existence of this function
-					this._doUpdateList(sCurrentValue, bSkipOpen);
+				} else if (this._doUpdateList) { // Textfield uses the same onkeyup function -> therefore check existence of this function
+					this._doUpdateList(sCurrentValue, true);
 				}
 			}
-	  },
-	  
-	  _triggerSuggest : function(sSuggestValue) {
+		},
+
+		_triggerSuggest: function(sSuggestValue) {
 			this._sSuggest = null;
 			if (!this._mSuggestions[sSuggestValue] || !this.getParent().getEnableCache()) {
 				this._aSuggestValues.push(sSuggestValue);
 				var oSearchProvider = this.getParent().getSearchProvider();
 				if (oSearchProvider) {
 					var oSearchField = this.getParent();
-					oSearchProvider.suggest(sSuggestValue, function(sValue, aSuggestions){
+					oSearchProvider.suggest(sSuggestValue, function(sValue, aSuggestions) {
 						if (oSearchField) {
 							oSearchField.suggest(sValue, aSuggestions);
 						}
 					});
 				} else {
-					this.getParent().fireSuggest({value: sSuggestValue});
+					this.getParent().fireSuggest({
+						value: sSuggestValue
+					});
 				}
 			} else {
 				this._doUpdateList(sSuggestValue);
 			}
-	  },
-	  
-	  _updateList : function(sSuggestVal) {
+		},
+
+		_updateList: function(sSuggestVal) {
 			var bEmpty = false;
 			var oLb = this._getListBox();
 			oLb.destroyAggregation("items", true);
-	  
-			var addToListbox = function(oLb, aValues, iMax, bSeparatorBefore){
+
+			var addToListbox = function(oLb, aValues, iMax, bSeparatorBefore) {
 				aValues = aValues ? aValues : [];
 				var iCount = Math.min(aValues.length, iMax);
-	  
+
 				if (bSeparatorBefore && iCount > 0) {
 					oLb.addItem(new sap.ui.core.SeparatorItem());
 				}
-	  
+
 				for (var i = 0; i < iCount; i++) {
-					//oLb.addAggregation("items", new sap.ui.core.ListItem({text: aSug[i]}), true);
-					oLb.addItem(new sap.ui.core.ListItem({text: aValues[i]}));
+					// oLb.addAggregation("items", new sap.ui.core.ListItem({text: aSug[i]}), true);
+					oLb.addItem(new sap.ui.core.ListItem({
+						text: aValues[i]
+					}));
 				}
 				return iCount;
 			};
-	  
+
 			var iHistoryCount = addToListbox(oLb, this.getParent()._oHistory.get(sSuggestVal), this.getParent().getMaxHistoryItems(), false);
-	  
-			var iSuggestCount = addToListbox(oLb,
-					sSuggestVal && sSuggestVal.length >= this.getParent().getStartSuggestion() ? this._mSuggestions[sSuggestVal] : [],
-					this.getParent().getMaxSuggestionItems(),
-					iHistoryCount > 0);
-	  
+
+			var iSuggestCount = addToListbox(oLb, sSuggestVal && sSuggestVal.length >= this.getParent().getStartSuggestion() ? this._mSuggestions[sSuggestVal] : [], this.getParent().getMaxSuggestionItems(), iHistoryCount > 0);
+
 			if (iHistoryCount <= 0 && iSuggestCount == 0) {
-				oLb.addItem(new sap.ui.core.ListItem({text: getText("SEARCHFIELD_NO_ITEMS"), enabled: false}));
+				oLb.addItem(new sap.ui.core.ListItem({
+					text: getText("SEARCHFIELD_NO_ITEMS"),
+					enabled: false
+				}));
 				bEmpty = true;
 			}
-	  
+
 			var iItemsLength = oLb.getItems().length;
 			var iMaxPopupItems = this.getMaxPopupItems();
 			oLb.setVisibleItems(iMaxPopupItems < iItemsLength ? iMaxPopupItems : iItemsLength);
-			oLb.setSelectedIndex( -1);
+			oLb.setSelectedIndex(-1);
 			oLb.setMinWidth(jQuery(this.getDomRef()).rect().width + "px");
 			oLb.rerender();
 			return bEmpty;
-	  },
+		},
+
+		_prepareOpen: function() {},
 	  
-	  _prepareOpen : function() {},
-	  
-	  _open : function() {
+
+		_open: function() {
 			ComboBox.prototype._open.apply(this, [0]);
-	  },
-	  
-	  _rerenderListBox : function(){
-			return this._updateList(this._aSuggestValues.length > 0 ? this._aSuggestValues[this._aSuggestValues.length - 1] : null);
-	  },
-	  
-	  _checkChange : function(oEvent, bImmediate, bDoNotFireSearch) {
-			this.getParent().fireSearch({noFocus:bDoNotFireSearch});
-	  },
-	  
-	  onsapfocusleave : function(oEvent) {
+		},
+
+		_rerenderListBox: function() {
+			return this._updateList(this._aSuggestValues.length > 0 ? this._aSuggestValues[this._aSuggestValues.length - 1] : null) && !this._forceOpen;
+		},
+
+		_checkChange: function(oEvent, bImmediate, bDoNotFireSearch) {
+			this.getParent().fireSearch({
+				noFocus: bDoNotFireSearch
+			});
+		},
+
+		onsapfocusleave: function(oEvent) {
 			if (oEvent.relatedControlId === this._getListBox().getId()) {
 				this.focus();
 				return;
 			}
 			this._checkChange(oEvent, true, true);
-	  },
-	  
-	  onfocusout : function(oEvent) {
+		},
+
+		onfocusout: function(oEvent) {
 			if (this.getEditable() && this.getEnabled() && this.getRenderer().onblur) {
 				this.getRenderer().onblur(this);
 			}
 			this._checkChange(oEvent, true, true);
-	  },
+		},
 	  
-	  onsapshow : function(oEvent){
+
+		onsapshow: function(oEvent) {
 			if (this.getParent().hasListExpander()) {
+				//this._forceOpen = true;
 				ComboBox.prototype.onsapshow.apply(this, arguments);
+				//this._forceOpen = false;
 			} else {
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
 			}
-	  },
-	  
-	  _handleSelect : function(oControlEvent) {
+		},
+
+		_handleSelect: function(oControlEvent) {
 			var oItem = ComboBox.prototype._handleSelect.apply(this, arguments);
 			if (oItem && oItem.getEnabled()) {
 				this.getParent().fireSearch();
 			}
-	  },
-	  
-	  // extend ComboBoxRenderer
-	  renderer : {
-	    
-	    renderOuterContentBefore : function(oRM, oCtrl){
+		},
+
+		// extend ComboBoxRenderer
+		renderer: {
+
+			renderOuterContentBefore: function(oRM, oCtrl) {
 				if (oCtrl.getParent().hasListExpander()) {
 					ComboBoxRenderer.renderOuterContentBefore.apply(this, arguments);
 				}
 				_renderSearchIcon.apply(this, arguments);
-	    
+
 				if (oCtrl.getParent().getSearchProvider() && oCtrl.getParent().getSearchProvider().getIcon()) {
 					oRM.write("<div");
 					oRM.writeAttributeEscaped('id', oCtrl.getId() + '-providerico');
@@ -918,27 +941,28 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 					oRM.writeClasses();
 					oRM.write("><img src=\"" + oCtrl.getParent().getSearchProvider().getIcon() + "\"/></div>");
 				}
-	    },
-	    
-	    renderOuterAttributes : function(oRM, oCtrl) {
+			},
+
+			renderOuterAttributes: function(oRM, oCtrl) {
 				ComboBoxRenderer.renderOuterAttributes.apply(this, arguments);
 				oRM.addClass("sapUiSearchFieldCb");
 				if (oCtrl.getParent().getSearchProvider() && oCtrl.getParent().getSearchProvider().getIcon()) {
 					oRM.addClass("sapUiSearchFieldCbProv");
 				}
-	    },
-	    
-	    renderInnerAttributes : function(oRM, oCtrl) {
-				if (!sap.ui.Device.os.ios) { //on iOS the input is not focused if type search
+			},
+
+			renderInnerAttributes: function(oRM, oCtrl) {
+				if (!sap.ui.Device.os.ios) { // on iOS the input is not focused if type search
 					oRM.writeAttribute("type", "search");
 				}
 				if (isMobile()) {
 					oRM.writeAttribute('autocapitalize', 'off');
 					oRM.writeAttribute('autocorrect', 'off');
 				}
-	    }
-	  }
-	  
+			}
+
+		}
+
 	});
 	
 	}());

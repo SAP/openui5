@@ -1,0 +1,396 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>sap.m.QuickView</title>
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<style>
+		.label {
+			font-weight:bold;
+			padding: 3rem 1rem 1rem;
+			width: auto;
+			white-space: normal;
+		}
+	</style>
+	<script>
+
+		//		create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		// JSON sample data
+		var mData = {
+			"pages": [
+				{
+					pageId	: "customPageId",
+					header	: "Employee Info",
+					title	: "John Doe",
+					icon	: "",
+					description: "Department Manager1",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								},
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								}
+							]
+						},
+						{
+							heading: "Other",
+							elements: [
+								{
+									label: "Email",
+									value: "john.dow@sap.com",
+									elementType: sap.m.QuickViewGroupElementType.email
+								},
+								{
+									label: "Phone",
+									value: "+359 888 888 888",
+									elementType: sap.m.QuickViewGroupElementType.phone
+								},
+								{
+									label: "Best Friend",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								},
+								{
+									label: "Favorite Player",
+									value: "Ivaylo Ivanov",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId3"
+								}
+							]
+						}
+
+					]
+				},
+				{
+					pageId	: "customPageId2",
+					header	: "Page 2",
+					icon	: "sap-icon://person-placeholder",
+					title	: "Michael Muller",
+					description: "Account Manager",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Hobby",
+							elements: [
+								{
+									label: "Name",
+									value: "Jaga",
+									elementType: "text"
+								},
+								{
+									label: "Level",
+									value: "Beginner"
+								}
+
+							]
+						}
+
+					]
+				},
+				{
+					pageId	: "customPageId3",
+					header	: "Page 3",
+					icon	: "sap-icon://person-placeholder",
+					title	: "Ivaylo Ivanov",
+					description: "Developer",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Hobby",
+							elements: [
+								{
+									label: "Name",
+									value: "Table Tennis",
+									elementType: "text"
+								},
+								{
+									label: "Level",
+									value: "Beginner"
+								}
+
+							]
+						}
+
+					]
+				},
+				{
+					pageId	: "customPageId4",
+					header	: "Company View",
+					icon	: "sap-icon://building",
+					title	: "SAP AG",
+					description: "Run it simple",
+					groups: [
+						{
+							heading: "Contact Information",
+							elements: [
+								{
+									label: "Address",
+									value: "Waldorf, Germany",
+									url: "http://sap.com",
+									elementType: "link"
+								},
+								{
+									label: "Email",
+									value: "office@sap.com",
+									elementType: "email"
+								}
+							]
+						},
+						{
+							heading: "Main Contact",
+							elements: [
+								{
+									label: "Name",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								},
+								{
+									label: "E-mail",
+									value: "michael.muller@sap.com",
+									elementType: "email"
+								},
+								{
+									label: "Phone",
+									value: "+359 888 888 888",
+									elementType: "phone"
+								},
+								{
+									label: "Mobile",
+									value: "+359 888 999 999",
+									elementType: "phone"
+								}
+							]
+						}
+
+					]
+				}
+			]
+
+		};
+
+		// set the data for the model
+		oModel.setData(mData);
+
+		sap.ui.getCore().setModel(oModel);
+
+		// create and add app
+		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
+		app.placeAt("body");
+
+		var oQuickView = new sap.m.QuickView({
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					header: "{header}",
+					icon: "{icon}",
+					title: "{title}",
+					description: "{description}",
+					groups : {
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : '{heading}',
+							elements : {
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
+		var oQuickView1 = new sap.m.QuickView();
+
+		var oQuickView2 = new sap.m.QuickView({
+			pages : [
+				new sap.m.QuickViewPage({
+					header	: "Store",
+					title	: "Jumbo",
+					description	: "The best toy store in the USA",
+					icon	: "sap-icon://retail-store",
+					groups	: [
+						new sap.m.QuickViewGroup({
+							heading		: "Store details",
+							elements	: [
+								new sap.m.QuickViewGroupElement({
+									label	: "Address",
+									value	: "Sunset Blvd. 7, Los Angeles"
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Website",
+									value	: "http://jumbo.com",
+									url 	: "http://jumbo.com",
+									type	: sap.m.QuickViewGroupElementType.link
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Email",
+									value	: "info@jumbo.com",
+									type	: sap.m.QuickViewGroupElementType.email
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Opening hours",
+									value	: "Every day from 8AM to 10PM",
+									type	: sap.m.QuickViewGroupElementType.text
+								})
+							]
+						})
+					]
+				})
+			]
+		});
+
+		oQuickView.setModel(oModel);
+
+		// this.getView().addDependent(oQuickView);
+
+		var oButton = new sap.m.Button({
+			text: "Open Quick View with binding",
+			press: function() {
+				oQuickView.openBy(this);
+			}
+		});
+
+		var oModifyJsonButton = new sap.m.Button({
+			text: "Modify binded data",
+			press: function() {
+				for(var i in mData.pages[0].groups[1].elements) {
+					var element = mData.pages[0].groups[1].elements[i];
+					var tmp = element.label;
+					element.label = element.value;
+					element.value = tmp;
+				}
+				var newData = $.extend({}, mData, true);
+				oModel.setData(newData);
+			}
+		});
+
+		var oOpenEmptyQuickViewButton = new sap.m.Button({
+			text: "Open empty quick view",
+			press: function() {
+				oQuickView1.openBy(this);
+			}
+		});
+
+		var oSinglePageQuickViewButton = new sap.m.Button({
+			text: "Open a single page quick view",
+			press: function() {
+				oQuickView2.openBy(this);
+			}
+		});
+
+		var oQuickViewPage = new sap.m.QuickViewPage({
+			header	: "Store",
+			title	: "Jumbo",
+			description	: "The best toy store in the USA",
+			icon	: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg", //"sap-icon://retail-store",
+			groups	: [
+				new sap.m.QuickViewGroup({
+					heading		: "Store details",
+					elements	: [
+						new sap.m.QuickViewGroupElement({
+							label	: "Address",
+							value	: "Sunset Blvd. 7, Los Angeles"
+						}),
+						new sap.m.QuickViewGroupElement({
+							label	: "Website",
+							value	: "http://jumbo.com",
+							url 	: "http://jumbo.com",
+							type	: sap.m.QuickViewGroupElementType.link
+						}),
+						new sap.m.QuickViewGroupElement({
+							label	: "Email",
+							value	: "info@jumbo.com",
+							type	: sap.m.QuickViewGroupElementType.email
+						}),
+						new sap.m.QuickViewGroupElement({
+							label	: "Opening hours",
+							value	: "Every day from 8AM to 10PM",
+							type	: sap.m.QuickViewGroupElementType.text
+						})
+					]
+				})
+			]
+		});
+
+		var oPanel = new sap.m.Panel('quickViewPagePanel', {
+			width : '320px',
+			headerText : 'Store',
+			content : [
+				oQuickViewPage
+			]
+		});
+
+		// create and add a page with icon tab bar
+		var page = new sap.m.Page("quickViewPage", {
+			title : "Quick View",
+			content : [
+				oButton,
+				oModifyJsonButton,
+				oOpenEmptyQuickViewButton,
+				oSinglePageQuickViewButton,
+				oPanel
+			]
+		});
+		app.addPage(page);
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

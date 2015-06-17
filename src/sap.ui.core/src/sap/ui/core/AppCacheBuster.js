@@ -6,11 +6,9 @@
  * Provides the AppCacheBuster mechanism to load application files using a timestamp
  */
 sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Core, URI1) {
+	function(jQuery, Core, URI) {
 	"use strict";
 
-	/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
-	
 	/*
 	 * The AppCacheBuster is only aware of resources which are relative to the
 	 * current application or have been registered via:

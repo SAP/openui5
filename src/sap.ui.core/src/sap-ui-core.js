@@ -65,7 +65,7 @@
 		document.write("<script>sap.ui.getCore().boot && sap.ui.getCore().boot();</script>");
 	}
 }([
-	"raw:sap/ui/thirdparty/jquery/jquery-1.11.1.js",
+	"raw:sap/ui/thirdparty/jquery.js",
 	"raw:sap/ui/thirdparty/jqueryui/jquery-ui-position.js",
 	"raw:sap/ui/Device.js",
 	"raw:sap/ui/thirdparty/URI.js",

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global URI, Promise, alert, console, XMLHttpRequest */
+/*global URI, Promise, alert, confirm, console, XMLHttpRequest */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -229,8 +229,8 @@
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.7.0", "2.0.0") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.0; current version is " + jQuery.fn.jquery);
+	if ( !oJQVersion.inRange("1.7.0", "2.2.0") ) {
+		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2; current version is " + jQuery.fn.jquery);
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
@@ -324,46 +324,48 @@
 	 */
 	(function() {
 		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
-			window["sap-ui-bRestart"] = false;
-			window["sap-ui-sRestartUrl"] = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
+			// Dear developer, the way to reload UI5 from a different location has changed: it can now be directly configured in the support popup (Ctrl-Alt-Shift-P),
+			// without stepping into the debugger.
+			// However, for convenience or cases where this popup is disabled, or for other usages of an early breakpoint, the "sap-bootstrap-debug" URL parameter option is still available.
+			// To reboot an alternative core just step down a few lines and set sRebootUrl
+			/*eslint-disable no-debugger */
+			debugger;
+		}
+		
+		// Check local storage for booting a different core
+		var sRebootUrl;
+		try { // Necessary for FF when Cookies are disabled
+			sRebootUrl = window.localStorage.getItem("sap-ui-reboot-URL");
+			window.localStorage.removeItem("sap-ui-reboot-URL"); // only reboot once from there (to avoid a deadlock when the alternative core is broken)
+		} catch (e) { /* no warning, as this will happen on every startup, depending on browser settings */ }
 
-			// function to replace the bootstrap tag with a newly created script tag to enable
-			// restarting the core from a different server
-			var restartCore = function() {
+		if (sRebootUrl && sRebootUrl !== "undefined") { // sic! It can be a string.
+			/*eslint-disable no-alert*/
+			var bUserConfirmed = confirm("WARNING!\n\nUI5 will be booted from the URL below.\nPress 'Cancel' unless you have configured this.\n\n" + sRebootUrl);
+			/*eslint-enable no-alert*/
+
+			if (bUserConfirmed) {
+				// replace the bootstrap tag with a newly created script tag to enable restarting the core from a different server
 				var oScript = _oBootstrap.tag,
-					sScript = "<script src=\"" + window["sap-ui-sRestartUrl"] + "\"";
+					sScript = "<script src=\"" + sRebootUrl + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
 					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
-						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue + "\"";
+						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue.replace(/"/g, "&quot;") + "\"";
 					}
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
-
+	
 				// clean up cachebuster stuff
 				jQuery("#sap-ui-bootstrap-cachebusted").remove();
 				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
-
+	
 				document.write(sScript);
-				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + window["sap-ui-sRestartUrl"]);
+				
+				// now this core commits suicide to enable clean loading of the other core
+				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: " + sRebootUrl);
 				oRestart.name = "Restart";
-
-				// clean up
-				delete window["sap-ui-bRestart"];
-				delete window["sap-ui-sRestartUrl"];
-
 				throw oRestart;
-			};
-
-			// debugger stops here. To restart UI5 from somewhere else (default: localhost), set:
-			//    window["sap-ui-bRestart"] = true
-			// If you want to restart from a different server than localhost, you can adapt the URL, e.g.:
-			//    window["sap-ui-sRestartUrl"] = "http://someserver:8080/sapui5/resources/sap-ui-core.js"
-			/*eslint-disable no-debugger */
-			debugger;
-			/*eslint-enable no-debugger */
-			if (window["sap-ui-bRestart"]) {
-				restartCore();
 			}
 		}
 	})();
@@ -378,9 +380,11 @@
 			bIsOptimized = window["sap-ui-optimized"];
 
 		//Check local storage
-		try { //Necessary for FF when Cookies are deactivated
+		try {
 			bDebugSources = bDebugSources || (window.localStorage.getItem("sap-ui-debug") == "X");
-		} catch (e) {}
+		} catch (e) {
+			//Happens in FF when Cookies are deactivated
+		}
 
 		window["sap-ui-debug"] = bDebugSources;
 
@@ -535,6 +539,41 @@
 		return window.localStorage.getItem("sap-ui-debug") == "X";
 	};
 
+	/**
+	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
+	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
+	 * 
+	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
+	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared 
+	 * 
+	 * @private
+	 */
+	jQuery.sap.setReboot = function(sRebootUrl) { // null-ish clears the reboot request
+		var sUrl;
+		if (!window.localStorage) {
+			return null;
+		}
+
+		try {
+			if (sRebootUrl) {
+				window.localStorage.setItem("sap-ui-reboot-URL", sRebootUrl); // remember URL to reboot from
+				
+				/*eslint-disable no-alert */
+				alert("Next time this app is launched (only once), it will load UI5 from:\n" + sRebootUrl + ".\nPlease reload the application page now.");
+				/*eslint-enable no-alert */
+				
+			} else {
+				window.localStorage.removeItem("sap-ui-reboot-URL"); // clear reboot URL, so app will start normally
+			}
+
+			sUrl =  window.localStorage.getItem("sap-ui-reboot-URL");
+		} catch (e) {
+			jQuery.sap.log.warning("Could not access localStorage while setting reboot URL '" + sRebootUrl + "' (are cookies disabled?): " + e.message);
+		}
+
+		return sUrl;
+	};
+
 	// -------------------------- STATISTICS LOCAL STORAGE -------------------------------------
 
 	jQuery.sap.statistics = function(bEnable) {
@@ -542,7 +581,7 @@
 			return null;
 		}
 
-		function reloadHint(bUsesDbgSrc){
+		function gatewayStatsHint(bUsesDbgSrc){
 			/*eslint-disable no-alert */
 			alert("Usage of Gateway statistics " + (bUsesDbgSrc ? "on" : "off") + " now.\nFor the change to take effect, you need to reload the page.");
 			/*eslint-enable no-alert */
@@ -550,10 +589,10 @@
 
 		if (bEnable === true) {
 			window.localStorage.setItem("sap-ui-statistics", "X");
-			reloadHint(true);
+			gatewayStatsHint(true);
 		} else if (bEnable === false) {
 			window.localStorage.removeItem("sap-ui-statistics");
-			reloadHint(false);
+			gatewayStatsHint(false);
 		}
 
 		return window.localStorage.getItem("sap-ui-statistics") == "X";
@@ -1403,8 +1442,48 @@
 
 			mPreloadModules = {},
 
+		/* for future use 
 		/**
-		 * Information about third party modules that react on AMD loaders and need a workaround
+		 * Mapping from default AMD names to UI5 AMD names.
+		 * 
+		 * For simpler usage in requireModule, the names are already converted to 
+		 * normalized resource names.
+		 *     
+		 * /
+			mAMDAliases = {
+				'blanket.js': 'sap/ui/thirdparty/blanket.js',
+				'crossroads.js': 'sap/ui/thirdparty/crossroads.js',
+				'd3.js': 'sap/ui/thirdparty/d3.js',
+				'handlebars.js': 'sap/ui/thirdparty/handlebars.js',
+				'hasher.js': 'sap/ui/thirdparty/hasher.js',
+				'IPv6.js': 'sap/ui/thirdparty/IPv6.js',
+				'jquery.js': 'sap/ui/thirdparty/jquery.js',
+				'jszip.js': 'sap/ui/thirdparty/jszip.js',
+				'less.js': 'sap/ui/thirdparty/less.js',
+				'OData.js': 'sap/ui/thirdparty/datajs.js',
+				'punycode.js': 'sap/ui/thirdparty/punycode.js',
+				'SecondLevelDomains.js': 'sap/ui/thirdparty/SecondLevelDomains.js',
+				'sinon.js': 'sap/ui/thirdparty/sinon.js',
+				'signals.js': 'sap/ui/thirdparty/signals.js',
+				'URI.js': 'sap/ui/thirdparty/URI.js',
+				'URITemplate.js': 'sap/ui/thirdparty/URITemplate.js',
+				'esprima.js': 'sap/ui/demokit/js/esprima.js'
+			},
+		*/
+
+		/**
+		 * Information about third party modules that are delivered with the sap.ui.core library.
+		 * 
+		 * The information maps the name of the module (including extension '.js') to an info object with the 
+		 * following properties: 
+		 * 
+		 * <ul>
+		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading 
+		 *              such modules to force the modules to expose their content via global names.</li>
+		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined, 
+		 *              the first one will be read from the global object and will be used as value of the module.</li>
+		 * <li>deps:string[] : list of modules that the module depends on. The modules will be loaded first before loading the module itself.</li>
+		 * </ul>
 		 * to be able to work with jQuery.sap.require no matter whether an AMD loader is present or not.
 		 *
 		 * Note: this is a map for future extension
@@ -1412,31 +1491,132 @@
 		 * @private
 		 */
 			mAMDShim = {
-				'sap/ui/thirdparty/blanket.js': true,
-				'sap/ui/thirdparty/crossroads.js': true,
-				'sap/ui/thirdparty/d3.js': true,
-				'sap/ui/thirdparty/datajs.js': true,
-				'sap/ui/thirdparty/handlebars.js': true,
-				'sap/ui/thirdparty/hasher.js': true,
-				'sap/ui/thirdparty/IPv6.js': true,
-				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': true,
-				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': true,
-				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': true,
-				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': true,
-				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': true,
-				'sap/ui/thirdparty/jquery-mobile-custom.js': true,
-				'sap/ui/thirdparty/jszip.js': true,
-				'sap/ui/thirdparty/less.js': true,
-				'sap/ui/thirdparty/punycode.js': true,
-				'sap/ui/thirdparty/require.js': true,
-				'sap/ui/thirdparty/SecondLevelDomains.js': true,
-				'sap/ui/thirdparty/sinon.js': true,
-				'sap/ui/thirdparty/sinon-server.js': true,
-				'sap/ui/thirdparty/signals.js': true,
-				'sap/ui/thirdparty/URI.js' : true,
-				'sap/ui/thirdparty/URITemplate.js' : true,
-				'sap/ui/demokit/js/esprima.js' : true
-		  },
+				'sap/ui/thirdparty/blanket.js': {
+					amd: true,
+					exports: 'blanket' // '_blanket', 'esprima', 'falafel', 'inBrowser', 'parseAndModify'
+				},
+				'sap/ui/thirdparty/caja-html-sanitizer.js': {
+					amd: false,
+					exports: 'html' // 'html_sanitizer', 'html4'
+				},
+				'sap/ui/thirdparty/crossroads.js': {
+					amd: true,
+					exports: 'crossroads',
+					deps: ['sap/ui/thirdparty/signals.js']
+				},
+				'sap/ui/thirdparty/d3.js': {
+					amd: true,
+					exports: 'd3'
+				},
+				'sap/ui/thirdparty/datajs.js': {
+					amd: true,
+					exports: 'OData' // 'datajs'
+				},
+				'sap/ui/thirdparty/flexie.js': {
+					exports: 'Flexie'
+				},
+				'sap/ui/thirdparty/handlebars.js': {
+					amd: true,
+					exports: 'Handlebars'
+				},
+				'sap/ui/thirdparty/hasher.js': {
+					amd: true,
+					exports: 'hasher',
+					deps: ['sap/ui/thirdparty/signals.js']
+				},
+				'sap/ui/thirdparty/IPv6.js': {
+					amd: true,
+					exports: 'IPv6'
+				},
+				'sap/ui/thirdparty/iscroll-lite.js': {
+					exports: 'iScroll'
+				},
+				'sap/ui/thirdparty/iscroll.js': {
+					exports: 'iScroll'
+				},
+				'sap/ui/thirdparty/jquery.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery-mobile-custom.js': {
+					amd: true,
+					exports: 'jQuery.mobile'
+				},
+				'sap/ui/thirdparty/jszip.js': {
+					amd: true,
+					exports: 'JSZip'
+				},
+				'sap/ui/thirdparty/less.js': {
+					amd: true,
+					exports: 'less'
+				},
+				'sap/ui/thirdparty/mobify-carousel.js': {
+					exports: 'Mobify' // or Mobify.UI.Carousel?
+				},
+				'sap/ui/thirdparty/punycode.js': {
+					amd: true,
+					exports: 'punycode'
+				},
+				'sap/ui/thirdparty/require.js': {
+					exports: 'define' // 'require', 'requirejs'
+				},
+				'sap/ui/thirdparty/SecondLevelDomains.js': {
+					amd: true,
+					exports: 'SecondLevelDomains'
+				},
+				'sap/ui/thirdparty/signals.js': {
+					amd: true,
+					exports: 'signals'
+				},
+				'sap/ui/thirdparty/sinon.js': {
+					amd: true,
+					exports: 'sinon'
+				},
+				'sap/ui/thirdparty/sinon-server.js': {
+					amd: true,
+					exports: 'sinon' // really sinon! sinon-server is a subset of server and uses the same global for export
+				},
+				'sap/ui/thirdparty/unorm.js': {
+					exports: 'UNorm'
+				},
+				'sap/ui/thirdparty/unormdata.js': {
+					exports: 'UNorm', // really 'UNorm'! module extends UNorm
+					deps: ['sap/ui/thirdparty/unorm.js']
+				},
+				'sap/ui/thirdparty/URI.js' : { 
+					amd: true,
+					exports: 'URI'
+				},
+				'sap/ui/thirdparty/URITemplate.js' : {
+					amd: true,
+					exports: 'URITemplate',
+					deps: ['sap/ui/thirdparty/URI.js']
+				},
+				'sap/ui/thirdparty/vkbeautify.js' : {
+					exports: 'vkbeautify'
+				},
+				'sap/ui/thirdparty/zyngascroll.js' : {
+					exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
+				},
+				'sap/ui/demokit/js/esprima.js' : {
+					amd: true, 
+					exports: 'esprima'
+				}
+			},
 
 		/**
 		 * Stack of modules that are currently executed.
@@ -1589,6 +1769,73 @@
 			// return undefined;
 		}
 
+		var rDotsAnywhere = /(?:^|\/)\.+/;
+		var rDotSegment = /^\.*$/;
+
+		/**
+		 * Resolves relative module names that contain <code>./</code> or <code>../</code> segments to absolute names.
+		 * E.g.: A name <code>../common/validation.js</code> defined in <code>sap/myapp/controller/mycontroller.controller.js</code>
+		 * may resolve to <code>sap/myapp/common/validation.js</code>.
+		 * 
+		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call) 
+		 * and their usage results in an error being thrown.
+		 * 
+		 * @param {string|null} sBaseName name of a reference module
+		 * @param {string} sModuleName the name to resolve
+		 * @returns {string} resolved name
+		 * @private
+		 */
+		function resolveModuleName(sBaseName, sModuleName) {
+
+			var m = rDotsAnywhere.exec(sModuleName),
+				aSegments,
+				sSegment,
+				i,j,l;
+			
+			// check whether the name needs to be resolved at all - if not, just return the sModuleName as it is.
+			if ( !m ) {
+				return sModuleName;
+			}
+			
+			// if the name starts with a relative segments then there must be a base name (a global sap.ui.require doesn't support relative names)
+			if ( m.index === 0 && sBaseName == null ) {
+				throw new Error("relative name not supported ('" + sModuleName + "'");
+			}
+			
+			// if relative name starts with a dot segment, then prefix it with the base path
+			aSegments = (m.index === 0 ? sBaseName + sModuleName : sModuleName).split('/');
+			
+			// process path segments
+			for (i = 0, j = 0, l = aSegments.length; i < l; i++) {
+				
+				var sSegment = aSegments[i];
+
+				if ( rDotSegment.test(sSegment) ) {
+					if (sSegment === '.' || sSegment === '') {
+						// ignore '.' as it's just a pointer to current package. ignore '' as it results from double slashes (ignored by browsers as well)
+						continue;
+					} else if (sSegment === '..') {
+						// move to parent directory
+						if ( j === 0 ) {
+							throw new Error("Can't navigate to parent of root (base='" + sBaseName + "', name='" + sModuleName + "'");//  sBaseNamegetPackagePath(), relativePath));
+						}
+						j--;
+					} else {
+						throw new Error("illegal path segment '" + sSegment + "'");
+					}
+				} else {
+
+					aSegments[j++] = sSegment;
+
+				}
+
+			}
+
+			aSegments.length = j;
+
+			return aSegments.join('/');
+		}
+
 		function declareModule(sModuleName) {
 			var oModule;
 
@@ -1620,7 +1867,12 @@
 		}
 
 		function requireModule(sModuleName) {
+			
+			// TODO enable when preload has been adapted:
+			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
+			
 			var m = rJSSubtypes.exec(sModuleName),
+				oShim = mAMDShim[sModuleName],
 				sBaseName, sType, oModule, aExtensions, i;
 
 			// only for robustness, should not be possible by design (all callers append '.js')
@@ -1629,9 +1881,21 @@
 				return;
 			}
 
+			if ( oShim && oShim.deps ) {
+				if ( log.isLoggable() ) {
+					log.debug("require dependencies of raw module " + sModuleName);
+				}
+				for (i = 0; i < oShim.deps.length; i++) {
+					if ( log.isLoggable() ) {
+						log.debug("  require " + oShim.deps[i]);
+					}
+					requireModule(oShim.deps[i]);
+				}
+			}
+			
 			// in case of having a type specified ignore the type for the module path creation and add it as file extension
 			sBaseName = sModuleName.slice(0, m.index);
-			sType = m[0];			// must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
+			sType = m[0]; // must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
 
 			oModule = mModules[sModuleName] || (mModules[sModuleName] = { state : INITIAL });
 
@@ -1702,12 +1966,13 @@
 		function execModule(sModuleName) {
 
 			var oModule = mModules[sModuleName],
+				oShim = mAMDShim[sModuleName],
 				sOldPrefix, sScript, vAMD;
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
 
 				// check whether the module is known to use an existing AMD loader, remember the AMD flag
-				vAMD = mAMDShim[sModuleName] && typeof window.define === "function" && window.define.amd;
+				vAMD = (oShim === true || (oShim && oShim.amd)) && typeof window.define === "function" && window.define.amd;
 
 				try {
 
@@ -1727,6 +1992,8 @@
 					_execStack.push(sModuleName);
 					if ( typeof oModule.data === "function" ) {
 						oModule.data.call(window);
+					} else if ( jQuery.isArray(oModule.data) ) {
+						sap.ui.define.apply(sap.ui, oModule.data);
 					} else {
 
 						sScript = oModule.data;
@@ -1761,9 +2028,8 @@
 					_execStack.pop();
 					oModule.state = READY;
 					oModule.data = undefined;
-					// best guess for legacy modules that don't use sap.ui.define
-					// TODO implement fallback for raw modules
-					oModule.content = oModule.content || jQuery.sap.getObject(urnToUI5(sModuleName));
+					// best guess for raw and legacy modules that don't use sap.ui.define
+					oModule.content = oModule.content || jQuery.sap.getObject((oShim && oShim.exports) || urnToUI5(sModuleName));
 
 					if ( log.isLoggable() ) {
 						sLogPrefix = sOldPrefix;
@@ -1790,13 +2056,13 @@
 			}
 		}
 
-		function requireAll(aDependencies, fnCallback) {
+		function requireAll(sBaseName, aDependencies, fnCallback) {
 
 			var aModules = [],
 				i, sDepModName;
 
 			for (i = 0; i < aDependencies.length; i++) {
-				sDepModName = aDependencies[i];
+				sDepModName = resolveModuleName(sBaseName, aDependencies[i]);
 				log.debug(sLogPrefix + "require '" + sDepModName + "'");
 				requireModule(sDepModName + ".js");
 				// best guess for legacy modules that don't use sap.ui.define
@@ -2351,8 +2617,6 @@
 		 * <li><code>sap.ui.define</code> does <b>not</b> support the 'sugar' of requireJS where CommonJS
 		 * style dependency declarations using <code>sap.ui.require("something")</code> are automagically
 		 * converted into <code>sap.ui.define</code> dependencies before executing the factory function.</li>
-		 * <li><code>sap.ui.define</code> does not support the '../' prefix for module names. Only
-		 * relative names in the same package or in subpackages thereof are supported.</li>
 		 * </ul>
 		 *
 		 *
@@ -2384,7 +2648,7 @@
 		 *        is not used and if the asynchronous contract is respected, even Non-SAP code might use it.
 		 */
 		sap.ui.define = function(sModuleName, aDependencies, vFactory, bExport) {
-			var sResourceName, i;
+			var sResourceName, sBaseName;
 
 			// optional id
 			if ( typeof sModuleName === 'string' ) {
@@ -2399,21 +2663,16 @@
 			
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
-
+			
+			// calculate the base name for relative module names 
+			sBaseName = sResourceName.slice(0, sResourceName.lastIndexOf('/') + 1);
+			
 			// optional array of dependencies
 			if ( !jQuery.isArray(aDependencies) ) {
 				// shift parameters
 				bExport = vFactory;
 				vFactory = aDependencies;
 				aDependencies = [];
-			} else {
-				// resolve relative module names
-				var sPackage = sResourceName.slice(0,1 + sResourceName.lastIndexOf('/'));
-				for (i = 0; i < aDependencies.length; i++) {
-					if ( /^\.\//.test(aDependencies[i]) ) {
-						aDependencies[i] = sPackage + aDependencies[i].slice(2); // 2 == length of './' prefix
-					}
-				}
 			}
 
 			if ( log.isLoggable() ) {
@@ -2422,8 +2681,8 @@
 
 			var oModule = declareModule(sResourceName);
 
-			// note: dependencies will be converted from RJS to URN inside requireAll
-			requireAll(aDependencies, function(aModules) {
+			// Note: dependencies will be resolved and converted from RJS to URN inside requireAll
+			requireAll(sBaseName, aDependencies, function(aModules) {
 
 				// factory
 				if ( log.isLoggable() ) {
@@ -2457,6 +2716,30 @@
 				}
 
 			});
+
+		};
+
+		/**
+		 * @private
+		 */
+		sap.ui.predefine = function(sModuleName, aDependencies, vFactory, bExport) {
+
+			if ( typeof sModuleName !== 'string' ) {
+				throw new Error("sap.ui.predefine requires a module name");
+			}
+
+			var sResourceName = sModuleName + '.js';
+			var oModule = mModules[sResourceName];
+			if ( !oModule ) {
+				mModules[sResourceName] = { state : PRELOADED, url : "TODO???/" + sModuleName, data : [sModuleName, aDependencies, vFactory, bExport], group: null };
+			}
+
+			// when a library file is preloaded, also mark its preload file as loaded
+			// for normal library preload, this is redundant, but for non-default merged entities
+			// like sap/fiori/core.js it avoids redundant loading of library preload files
+			if ( sResourceName.match(/\/library\.js$/) ) {
+				mPreloadModules[urnToUI5(sResourceName) + "-preload"] = true;
+			}
 
 		};
 
@@ -2523,7 +2806,7 @@
 
 			}
 
-			requireAll(vDependencies, function(aModules) {
+			requireAll(null, vDependencies, function(aModules) {
 
 				if ( typeof fnCallback === 'function' ) {
 					// enforce asynchronous execution of callback
@@ -2735,13 +3018,12 @@
 
 			function handleData(d, e) {
 				if ( d == null && mOptions.failOnError ) {
-					e = e || new Error("no data returned for " + sResourceName);
+					oError = e || new Error("no data returned for " + sResourceName);
 					if (mOptions.async) {
-						oDeferred.reject(e);
-						jQuery.sap.log.error(e);
-						return d;
+						oDeferred.reject(oError);
+						jQuery.sap.log.error(oError);
 					}
-					throw e;
+					return null;
 				}
 
 				if (mOptions.async) {
@@ -2796,7 +3078,15 @@
 
 			}
 
-			return mOptions.async ? window.Promise.resolve(oDeferred) : oData;
+			if ( mOptions.async ) {
+				return Promise.resolve(oDeferred);
+			}
+			
+			if ( oError != null && mOptions.failOnError ) {
+				throw oError;
+			}
+			
+			return oData;
 		};
 
 		/*
@@ -2842,8 +3132,8 @@
 
 				var oScript = window.document.createElement('SCRIPT');
 				oScript.src = sUrl;
-				oScript.dataset.sapUiModule = sResource;
-				oScript.dataset.sapUiModuleError = '';
+				oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
+				// oScript.setAttribute("data-sap-ui-module-error", '');
 				oScript.addEventListener('load', function(e) {
 					jQuery.sap.log.info("Javascript resource loaded: " + sResource);
 // TODO either find a cross-browser solution to detect and assign execution errros or document behavior
@@ -3139,6 +3429,7 @@
 						}
 						oSupport.openSupportTool();
 					} catch (err2) {
+						// ignore error
 					}
 				}
 			});
@@ -3306,7 +3597,7 @@
 	}
 
 	// *********** fixes for (pending) jQuery bugs **********
-	if (!jQuery.support.opacity) {
+	if ( jQuery.support.opacity === false ) { // TODO check wether this can be removed for all jquery versions now (assumption: only needed in IE8)
 		(function() {
 			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
 			var oldSet = jQuery.cssHooks.opacity.set;

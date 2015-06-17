@@ -186,5 +186,88 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "3dc6d73ecb2d0e070ebe67bf50898ae0478fb523",
+        "author": "Christoph Kraemer \u003cchr.kraemer@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: Month picker is now updated only if rendered",
+        "references": []
+      },
+      {
+        "id": "c855b26f35b33402c605447fb7656e3a5616b794",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: Internet Explorer change event handling corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "3e37f255acaab810948c651a5e4ab2d4427248c0",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Fileuploader is now vertically aligned with the other sap.m controls",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "252ede5397ff16fe99276835473ed723b20631e1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui-unified.Calendar, sap.m.DatePicker: islamic calendar support",
+        "references": []
+      },
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "2a3d4e7e5d9f041a1bfdd33300cd024aad9b72ea",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setTooltip() fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "2f42418cbb09919edc55d152cb5416b1ed929ece",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File-type check fixed",
+        "references": []
+      },
+      {
+        "id": "9950aaab94a3792aea26673a199d5db4532c74d9",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: sameFilenameAllowed fixed for multiple devices",
+        "references": []
+      },
+      {
+        "id": "10044ece65ae41cf6a60ef2339914a970acc38ac",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.calendar.MonthPicker:Browser dependent width rounding issues avoided",
+        "references": []
+      }
+    ]
   }
 }

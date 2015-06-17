@@ -521,6 +521,18 @@
 			ok(!jQuery.sap.domById("C6E3_T1"), "Content of invisible Element is not rendered");
 		});
 
+
+		test("DOM representation", function() {
+			var oContainer = sap.ui.getCore().byId("C1");
+			ok(!oContainer.getRenderedDomRef(), "no DOM representation for FormContainers");
+
+			var oElement = sap.ui.getCore().byId("C1E1");
+			equal(oElement.getRenderedDomRef().id, oElement.getId(), "Form1: Container1 Element1 (full size Container) DOM representation rendered");
+			oElement = sap.ui.getCore().byId("C1E8");
+			ok(!oElement.getRenderedDomRef(), "no DOM representation rendered for full size elements");
+			oElement = sap.ui.getCore().byId("C2E1");
+			ok(!oElement.getRenderedDomRef(), "no DOM representation rendered for elements in half size containers");
+		});
 		module("Interaction");
 
 		test("Container expander", function() {

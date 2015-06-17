@@ -7,7 +7,6 @@
 }
 
 .sapMFFHead {
-
 	margin-left: 0rem;
 	white-space: nowrap;
 	position: relative;
@@ -16,7 +15,6 @@
 
 .sapMFF .sapUiIcon,
 .sapMFF .sapMTB .sapMBtnIcon .sapUiIcon {
-	
 	/* Override the default button icon size since it is too big. */
 	font-size: 1rem;
 }
@@ -59,7 +57,6 @@
 
 /* Reset button */
 .sapMFFResetDiv {
-	
 	position: absolute;
 	width: 3rem;
 	right: -3rem;
@@ -68,52 +65,47 @@
 
 .sapMFFResetSpacer {
 	/* Space reserved at the end of the FacetFilter for placing the reset button */
-	margin-right: 3rem; 
+	margin-right: 3rem;
 }
 
 .sapMFF .sapMTB-Info-CTX .sapMBtnIcon .sapUiIcon {
-	
 	color: @sapUiTextInverted;
 }
 
 /* Move the reset button to the end of the toolbar */
-.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn{
+.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn {
     margin: 0;
 }
+
 .sapMFF .sapMTB-Info-CTX.sapMTB {
     padding-right: 0;
 }
 
-.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:hover{
+.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:hover {
     background-color: @sapUiToolbarInfoHoverBG;
 }
 
-.sap-desktop .sapMFFRefresh .sapMBtnTransparent > .sapMBtnIcon  {
-color: #ffffff;
-}
-.sapMTB-Info-CTX .sapMFFBtnHoverable .sapMBtnHoverable:not(.sapMBtnActive):hover, .sapMTB-Transparent-CTX .sapMBtnHoverable:not(.sapMBtnActive):hover {
-background-color:#457aae;
+.sap-desktop .sapMFFRefresh .sapMBtnTransparent > .sapMBtnIcon {
+	color: #ffffff;
 }
 
-.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:active{
+.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:active {
     background-color: @sapUiToolbarInfoActiveBG;
 }
 
 .sapMFFCheckbar {
-	
 	cursor: pointer
 }
 
-.sapMFFDialog .sapMCbLabel
-{
+.sapMFFDialog .sapMCbLabel {
 	cursor: pointer
 }
 
 .sapMFF .sapMFFArrowScroll:hover {
-	background-color: @sapUiBtnBGStandardHover;
+	background-color: @sapUiButtonHoverBackground;
 }
 
 .sapMFF .sapMFFArrowScroll:active {
-	background-color: @sapUiBtnBGStandardDown;
-	color: @sapUiBtnTextActive;
+	background-color: @sapUiButtonActiveBackground;
+	color: @sapUiButtonActiveTextColor;
 }

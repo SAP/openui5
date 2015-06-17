@@ -518,7 +518,7 @@
 			});
 
 			test("Call preventDefault on masterNavigate or detailNavigate events should prevent the navigation", function() {
-				var oPortrait = {
+				var oLandscape = {
 						landscape: true,
 						portrait: false
 					},
@@ -529,7 +529,7 @@
 					};
 
 				this.stub(sap.ui.Device, "system", oSystem);
-				this.stub(sap.ui.Device, "orientation", oPortrait);
+				this.stub(sap.ui.Device, "orientation", oLandscape);
 
 				var oMasterPage1 = new sap.m.Page("mp1"),
 					oMasterPage2 = new sap.m.Page("mp2"),
@@ -561,6 +561,126 @@
 				equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is still 'dp1'");
 
 				oSC.destroy();
+			});
+			
+			test("Show hamburger button when there's INVISIBLE back button in detail page's header", function() {
+				var oPortrait = {
+						landscape: false,
+						portrait: true
+					},
+					oSystem = {
+						desktop: true,
+						phone: false,
+						tablet: false
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				var oMasterPage1 = new sap.m.Page("mp1"),
+					oDetailPage1 = new sap.m.Page("dp1", {
+						customHeader: new sap.m.Bar({
+							contentLeft: new sap.m.Button({
+								type: sap.m.ButtonType.Back,
+								text: "hidden button",
+								visible: false 
+							})
+						})
+					}),
+					oSC = new sap.m.SplitContainer({
+						masterPages: [oMasterPage1],
+						detailPages: [oDetailPage1]
+					});
+
+				oSC.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oMasterButton = oSC._oShowMasterBtn;
+
+				ok(oMasterButton, "Hamburger button is created");
+				ok(oMasterButton.$().closest("#dp1").length, "master button is in detail page");
+
+				oSC.destroy();
+			});
+
+			test("restore the overwritten methods on pages when page is moved from splitcontainer to navcontainer", function() {
+				var oDetailPage = new sap.m.Page(),
+					oSplitContainer = new sap.m.SplitContainer({
+						detailPages: oDetailPage
+					}),
+					oNavContainer = new sap.m.NavContainer();
+
+				notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is already overwritten");
+				notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already overwritten");
+
+
+				oNavContainer.addPage(oDetailPage);
+
+				strictEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButtton is already restored");
+				strictEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already restored");
+
+
+				oSplitContainer.addDetailPage(oDetailPage);
+
+				notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is overwritten again");
+				notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is overwritten again");
+
+				oNavContainer.destroy();
+				oSplitContainer.destroy();
+			});
+
+			test("Switch between different modes", function() {
+				var oSplitContainer = new sap.m.SplitContainer({
+						masterPages: new sap.m.Page(),
+						detailPages: new sap.m.Page()
+					}),
+					oSystem = {
+						desktop: true,
+						tablet: false,
+						phone: false
+					},
+					oLandscape = {
+						landscape: true,
+						portrait: false
+					},
+					oPortrait = {
+						landscape: false,
+						portrait: true
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oLandscape);
+
+				equal(oSplitContainer.getMode(), sap.m.SplitAppMode.ShowHideMode, "The default mode is showhide mode");
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+				ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
+
+				oSplitContainer.setMode(sap.m.SplitAppMode.HideMode);
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+				ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
+
+				qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+				oSplitContainer._handleResize();
+
+				oSplitContainer.showMaster();
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+
+				oSplitContainer.setMode(sap.m.SplitAppMode.ShowHideMode);
+				qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+
+				oSplitContainer.destroy();
 			});
 		</script>
 	</head>

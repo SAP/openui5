@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.Plugin</title>
+
+		<style>
+			#content {
+				position: absolute;
+				bottom: 0px;
+				z-index: 1000;
+				width: 700px;
+				height: 300px;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		jQuery.sap.require("sap.ui.dt.DesignTime");
+		jQuery.sap.require("sap.ui.dt.Plugin");
+
+		QUnit.module("Given that an Plugin is initialized with register methods", {
+			beforeEach : function() {
+				this.oButton = new sap.m.Button();
+				this.oLayout = new sap.ui.layout.VerticalLayout({
+					content : [
+						this.oButton
+					]
+				});
+
+				this.oDesignTime = new sap.ui.dt.DesignTime({
+					rootElements : [this.oLayout]
+				});
+
+				this.oPlugin = new sap.ui.dt.Plugin();
+				this.iRegisterOverlayCalls = 0;
+				this.iRegisterAggregationOverlayCalls = 0;
+				var that = this;
+				this.oPlugin.registerOverlay = function() {
+					that.iRegisterOverlayCalls += 1;
+				};
+				this.oPlugin.registerAggregationOverlay = function() {
+					that.iRegisterAggregationOverlayCalls += 1;
+				};
+				this.oPlugin.deregisterOverlay = function() {
+					that.iRegisterOverlayCalls -= 1;
+				};
+				this.oPlugin.deregisterAggregationOverlay = function() {
+					that.iRegisterAggregationOverlayCalls -= 1;
+				};
+			},
+			afterEach : function() {
+				this.oButton.destroy();
+				this.oLayout.destroy();
+				this.oDesignTime.destroy();
+				this.oPlugin.destroy();
+			}
+		});
+
+		QUnit.test("when the plugin is added to designTime with two controls", function(assert) {
+			this.oDesignTime.addPlugin(this.oPlugin);
+			assert.strictEqual(this.iRegisterOverlayCalls, 2, "register was called for two overlays");
+			var iAggregationCount = Object.keys(this.oLayout.getMetadata().getAllAggregations()).length + Object.keys(this.oButton.getMetadata().getAllAggregations()).length;
+			assert.strictEqual(this.iRegisterAggregationOverlayCalls, iAggregationCount, "register was called for all aggregation overlays");
+		});
+
+		QUnit.test("when the plugin is added to designTime and new control is added to designTime", function(assert) {
+			var oLayout = new sap.ui.layout.VerticalLayout();
+
+			this.oDesignTime.addPlugin(this.oPlugin);
+			this.iRegisterOverlayCalls = 0;
+			this.iRegisterAggregationOverlayCalls = 0;
+
+			this.oDesignTime.addRootElement(oLayout);
+			assert.strictEqual(this.iRegisterOverlayCalls, 1, "register was called for a new control");
+			assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
+		});
+
+		QUnit.test("when the plugin is added to designTime and then removed from DT", function(assert) {
+			var oLayout = new sap.ui.layout.VerticalLayout();
+
+			this.oDesignTime.addPlugin(this.oPlugin);
+			this.oDesignTime.removePlugin(this.oPlugin);
+			assert.strictEqual(this.iRegisterOverlayCalls, 0, "registered overlays are deregistered");
+			assert.strictEqual(this.iRegisterAggregationOverlayCalls, 0, "registered aggregations are deregistered");
+		});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.Plugin</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

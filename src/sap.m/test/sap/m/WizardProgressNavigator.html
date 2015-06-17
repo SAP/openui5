@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>sap.m.WizardProgessNavigator</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script type="text/javascript">
+		jQuery.sap.require("sap.m.WizardProgressNavigator");
+
+		var app = new sap.m.App({initialPage: "landing"});
+		var pageOne = new sap.m.Page("landing", {showHeader: false});
+
+		var steps = 3;
+		var maximumSteps = 8;
+
+		while (steps <= maximumSteps) {
+			var navId = "prog-nav-" + steps;
+
+			(function (navigatorId) {
+				var inputId = navigatorId + "-input";
+
+				pageOne.addContent(new sap.ui.layout.VerticalLayout({
+					width: "100%",
+					content: [
+						new sap.m.WizardProgressNavigator(navigatorId, {
+							stepCount: steps,
+							varyingStepCount: steps % 2 === 1
+						}),
+						new sap.m.Button({
+							text: "Previous",
+							press: function () {
+								sap.ui.getCore().byId(navigatorId).previousStep();
+							}
+						}),
+						new sap.m.Button({
+							text: "Next",
+							press: function () {
+								sap.ui.getCore().byId(navigatorId).nextStep();
+							}
+						}),
+						new sap.m.Button({
+							text: "Discard After Step",
+							press: function () {
+								var inputVal = parseInt(sap.ui.getCore().byId(inputId).getValue(), 10);
+
+								if (isNaN(inputVal)) {
+									return;
+								}
+
+								sap.ui.getCore().byId(navigatorId).discardProgress(inputVal);
+							}
+						}),
+						new sap.m.Input(inputId, {
+							type: sap.m.InputType.Number
+						})
+					]
+				}));
+			}(navId));
+
+			steps += 1;
+		}
+
+		app.addPage(pageOne);
+		app.placeAt("content");
+	</script>
+	<style>
+		.sapUiVlt + .sapUiVlt {
+			margin-top: 4rem;
+		}
+
+		.sapUiVltCell:nth-child(n+2) {
+			display: inline-block;
+		}
+	</style>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content">
+	</div>
+</body>
+</html>

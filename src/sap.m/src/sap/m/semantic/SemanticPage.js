@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegmentedContainer', 'sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData'],
-function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, OverflowToolbar, OverflowToolbarButton, OverflowToolbarLayoutData, ToolbarSpacer, Bar, CustomData) {
+sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegmentedContainer', 'sap/m/semantic/SemanticConfiguration','sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject'],
+function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, ActionSheet, Page, OverflowToolbar, OverflowToolbarButton, OverflowToolbarLayoutData, ToolbarSpacer, Bar, CustomData, ManagedObject) {
 	"use strict";
 
 	/**
@@ -92,21 +92,21 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 				},
 
 				/**
-				 * Semantic controls
-				 */
-				semanticControls: {
-					type: "sap.m.semantic.SemanticControl",
-					multiple: true,
-					singularName: "semanticControl"
-				},
-
-				/**
 				 * See {@link sap.m.Page#content}
 				 */
 				content: {
 					type: "sap.ui.core.Control",
 					multiple: true,
 					singularName: "content"
+				},
+				
+				/**
+				 * Custom header buttons
+				 */
+				customHeaderContent: {
+					type: "sap.m.Button",
+					multiple: true,
+					singularName: "customHeaderContent"
 				},
 
 				/**
@@ -138,29 +138,11 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 		}
 	});
 
-	/*
-	 static members
-	 */
-	SemanticPage.prototype._PositionInPage = {
-
-		headerLeft: "headerLeft",
-		headerRight: "headerRight",
-		headerMiddle: "headerMiddle",
-		footerLeft: "footerLeft",
-		footerRight_IconOnly: "footerRight_IconOnly",
-		footerRight_TextOnly: "footerRight_TextOnly"
-	};
-
-	SemanticPage._PageMode = {
-
-		display: "display",
-		edit: "edit",
-		multimode: "multimode"
-	};
-
 	SemanticPage.prototype.init = function () {
 
+		this._currentMode = SemanticConfiguration._PageMode.display;
 		this._getPage().setCustomHeader(this._getInternalHeader());
+		this._getPage().setFooter(new OverflowToolbar(this.getId() + "-footer"));
 	};
 
 	/**
@@ -339,129 +321,103 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 		return this;
 	};
-
+	
 	/*
 
-	 SEMANTIC CONTENT
+	 HEADER RIGHT (CUSTOM CONTENT)
 	 */
 
-	SemanticPage.prototype.addSemanticControl = function (oSemanticControl, bSuppressInvalidate) {
-		if (!oSemanticControl.getType) {
-			jQuery.sap.log.warning("skipping invalid entry", this);
+	SemanticPage.prototype.getCustomHeaderContent = function () {
+		return this._getSegmentedHeader().getSection("customRight").getContent();
+	};
+
+	SemanticPage.prototype.addCustomHeaderContent = function (oControl, bSuppressInvalidate) {
+		this._getSegmentedHeader().getSection("customRight").addContent(oControl, bSuppressInvalidate);
+		return this;
+	};
+
+	SemanticPage.prototype.indexOfCustomHeaderContent = function (oControl) {
+		return this._getSegmentedHeader().getSection("customRight").indexOfContent(oControl);
+	};
+
+	SemanticPage.prototype.insertCustomHeaderContent = function (oControl, iIndex, bSuppressInvalidate) {
+		this._getSegmentedHeader().getSection("customRight").insertContent(oControl, iIndex, bSuppressInvalidate);
+		return this;
+	};
+
+	SemanticPage.prototype.removeCustomHeaderContent = function (oControl, bSuppressInvalidate) {
+		return this._getSegmentedHeader().getSection("customRight").removeContent(oControl, bSuppressInvalidate);
+	};
+
+	SemanticPage.prototype.removeAllCustomHeaderContent = function (bSuppressInvalidate) {
+		return this._getSegmentedHeader().getSection("customRight").removeAllContent(bSuppressInvalidate);
+	};
+
+	SemanticPage.prototype.destroyCustomHeaderContent = function (bSuppressInvalidate) {
+
+		var aChildren = this.getCustomHeaderContent();
+
+		if (!aChildren) {
 			return this;
 		}
 
-		var oSemanticType = oSemanticControl.getType();
-
-		if (!oSemanticType && oSemanticControl.getBindingInfo("type")) {
-			oSemanticControl.attachEvent("_change:type", this._updateContentPosition, this);
-			this.addAggregation("semanticControls", oSemanticControl, bSuppressInvalidate);
-			return this;
+		// set suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate++;
 		}
 
-		var bKnownType = (jQuery.inArray(oSemanticType, this.aAllowedTypes) > -1);
+		this._getSegmentedHeader().getSection("customRight").destroy(bSuppressInvalidate);
 
-		if (!bKnownType) {
-			jQuery.sap.log.error("skipping unknown semantic type " + oSemanticType, this);
-			return this;
+		if (!this.isInvalidateSuppressed()) {
+			this.invalidate();
 		}
 
-		if (this._findBySemanticType(this.getAggregation("semanticControls"), oSemanticType)) { //already there
-			jQuery.sap.log.warning("skipping already added entry", this);
-			return this;
+		// reset suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate--;
 		}
-
-		this._initMonitor(oSemanticControl);
-		this._addToInnerAggregation(oSemanticControl._getControl(), oSemanticControl._getConfiguration(), bSuppressInvalidate);
-		this.addAggregation("semanticControls", oSemanticControl, bSuppressInvalidate);
 
 		return this;
 	};
 
-	SemanticPage.prototype.insertSemanticControl = function (oSemanticControl, iIndex, bSuppressInvalidate) {
-		if (!oSemanticControl.getType) {
-			jQuery.sap.log.warning("skipping invalid entry", this);
-			return this;
-		}
+	SemanticPage.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
-		var oSemanticType = oSemanticControl.getType();
+		var oAggregationInfo = this.getMetadata().getAggregations()[sAggregationName];
+		if (oAggregationInfo && SemanticConfiguration.isKnownSemanticType(oAggregationInfo.type)) {
 
-		if (!oSemanticType && oSemanticControl.getBindingInfo("type")) {
-			oSemanticControl.attachEvent("_change:type", this._updateContentPosition, this);
-			this.addAggregation("semanticControls", oSemanticControl, bSuppressInvalidate);
-			return this;
-		}
-
-		var bKnownType = (jQuery.inArray(oSemanticType, this.aAllowedTypes) > -1);
-
-		if (!bKnownType) {
-			jQuery.sap.log.error("skipping unknown semantic type " + oSemanticType, this);
-			return this;
-		}
-
-		var oConfig = oSemanticControl._getConfiguration();
-
-		if (this._findBySemanticType(this.getSemanticControls(), oSemanticType)) {//already there
-			jQuery.sap.log.warning("skipping already added entry", this);
-			return this;
-		}
-
-		this._initMonitor(oSemanticControl);
-
-		this._addToInnerAggregation(oSemanticControl._getControl(), oConfig, bSuppressInvalidate);
-		this.insertAggregation("semanticControls", oSemanticControl, iIndex, bSuppressInvalidate);
-
-		return this;
-	};
-
-	SemanticPage.prototype.removeSemanticControl = function (oSemanticControl, bSuppressInvalidate) {
-
-		if (!oSemanticControl.getType) {
-			jQuery.sap.log.warning("skipping invalid entry", this);
-			return this;
-		}
-
-		var oSemanticType = oSemanticControl.getType();
-
-		if (!oSemanticType) {
-			oSemanticControl.detachEvent("_change:type", this._updateContentPosition, this);
-			return this.removeAggregation("semanticControls", oSemanticControl, bSuppressInvalidate);
-		}
-
-		var bKnownType = (jQuery.inArray(oSemanticType, this.aAllowedTypes) > -1);
-
-		if (!bKnownType) {
-			jQuery.sap.log.error("skipping unknown semantic type " + oSemanticType, this);
-			return this;
-		}
-
-		this._stopMonitor(oSemanticControl);
-
-		//remove from respective innerAggregation
-		var oPositionInPage = this._getSemanticPositionsMap()[oSemanticControl._getConfiguration().position];
-		if (oPositionInPage && oPositionInPage.oContainer && oPositionInPage.sAggregation) {
-			oPositionInPage.oContainer["remove" + fnCapitalize(oPositionInPage.sAggregation)](oSemanticControl._getControl(), bSuppressInvalidate);
-		}
-		return this.removeAggregation("semanticControls", oSemanticControl, bSuppressInvalidate);
-	};
-
-	SemanticPage.prototype.removeAllSemanticControls = function (bSuppressInvalidate) {
-
-		//remove from innerAggregations
-		this._PositionInPage.forEach(function (key, position) {
-			var oPositionInPage = this._getSemanticPositionsMap()[position];
-			if (oPositionInPage && oPositionInPage.oContainer) {
-				oPositionInPage.oContainer["removeAll" + fnCapitalize(oPositionInPage.sAggregation)](bSuppressInvalidate);
+			if (oObject) {
+				this._initMonitor(oObject);
+				this._addToInnerAggregation(oObject._getControl(),
+						SemanticConfiguration.getPositionInPage(oAggregationInfo.type),
+						SemanticConfiguration.getSequenceOrderIndex(oAggregationInfo.type),
+						bSuppressInvalidate);
+			} else { //removing object
+				var oObjectToRemove = ManagedObject.prototype.getAggregation.call(this, sAggregationName);
+				if (oObjectToRemove) {
+					this._stopMonitor(oObjectToRemove);
+					this._removeFromInnerAggregation(oObjectToRemove._getControl(), SemanticConfiguration.getPositionInPage(oAggregationInfo.type), bSuppressInvalidate);
+				}
 			}
-		}, this);
+		}
 
-		var aRemoved = this.removeAllAggregation("semanticControls", bSuppressInvalidate);
+		ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+	};
 
-		aRemoved.forEach(function (iIndex, oSemanticControl) {
-			this._stopMonitor(oSemanticControl);
-		}, this);
+	SemanticPage.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 
-		return aRemoved;
+		var oAggregationInfo = this.getMetadata().getAggregations()[sAggregationName];
+		if (oAggregationInfo && SemanticConfiguration.isKnownSemanticType(oAggregationInfo.type)) {
+
+			var oObject = ManagedObject.prototype.getAggregation.call(this, sAggregationName);
+			if (oObject) {
+				this._stopMonitor(oObject);
+				if (!oObject._getControl().bIsDestroyed) {
+					this._removeFromInnerAggregation(oObject._getControl(), SemanticConfiguration.getPositionInPage(oAggregationInfo.type), bSuppressInvalidate);
+				}
+			}
+		}
+
+		ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	SemanticPage.prototype._getTitle = function () {
@@ -481,20 +437,6 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 		return this._oNavButton;
 	};
 
-	SemanticPage.prototype._findBySemanticType = function (aContent, sType) {
-
-		if (aContent && sType) {
-			for (var i = 0; i < aContent.length; i++) {
-				var oContent = aContent[i];
-				if (oContent && (oContent.getType() === sType)) {
-					return oContent;
-				}
-			}
-		}
-	};
-
-	SemanticPage._currentMode = SemanticPage._PageMode.display;
-
 	SemanticPage.prototype._initMonitor = function (oSemanticControl) {
 
 		var oConfig = oSemanticControl._getConfiguration();
@@ -502,12 +444,11 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 		if (oConfig.triggers) { // control is defined to trigger a PageMode upon press
 			oSemanticControl.attachEvent("press", this._updateCurrentMode, this);
 		}
-		oSemanticControl.attachEvent("_change:type", this._updateContentPosition, this);
 
 		var oStates = oConfig.states,
 				that = this;
 		if (oStates) {
-			jQuery.each(SemanticPage._PageMode, function (key, value) {
+			jQuery.each(SemanticConfiguration._PageMode, function (key, value) {
 				if (oStates[key]) {
 					that.attachEvent(key, oSemanticControl._onPageStateChanged, oSemanticControl);
 				}
@@ -518,13 +459,12 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 	SemanticPage.prototype._stopMonitor = function (oSemanticControl) {
 
 		oSemanticControl.detachEvent("press", this._updateCurrentMode, this);
-		oSemanticControl.detachEvent("_change:type", this._updateContentPosition, this);
 
 		var oConfig = oSemanticControl._getConfiguration();
 		var oStates = oConfig.states,
 				that = this;
 		if (oStates) {
-			jQuery.each(SemanticPage._PageMode, function (key, value) {
+			jQuery.each(SemanticConfiguration._PageMode, function (key, value) {
 				if (oStates[key]) {
 					that.detachEvent(key, oSemanticControl._onPageStateChanged, oSemanticControl);
 				}
@@ -532,18 +472,12 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 		}
 	};
 
-	SemanticPage.prototype._updateContentPosition = function (oEvent) {
-		var oSemanticControl = oEvent.oSource;
-		this.removeSemanticControl(oSemanticControl);
-		this.addSemanticControl(oSemanticControl);
-	};
-
 	SemanticPage.prototype._updateCurrentMode = function (oEvent) {
 
 		var oConfig = oEvent.oSource._getConfiguration();
 		// update global state
 		if (typeof oConfig.triggers === 'string') {
-			SemanticPage._currentMode = oConfig.triggers;
+			this._currentMode = oConfig.triggers;
 		} else {
 			var iLength = oConfig.triggers.length; // control triggers more than one global state,
 			// depending on current state (e.g. if toggle button)
@@ -551,31 +485,39 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 				for (var iIndex = 0; iIndex < iLength; iIndex++) {
 
 					var oTriggerConfig = oConfig.triggers[iIndex];
-					if (oTriggerConfig && (oTriggerConfig.inState === SemanticPage._currentMode)) {
-						SemanticPage._currentMode = oTriggerConfig.triggers;
+					if (oTriggerConfig && (oTriggerConfig.inState === this._currentMode)) {
+						this._currentMode = oTriggerConfig.triggers;
 						break;
 					}
 				}
 			}
 		}
 
-		this.fireEvent(SemanticPage._currentMode);
+		this.fireEvent(this._currentMode);
 	};
 
-	SemanticPage.prototype._addToInnerAggregation = function (oControl, oConfig, bSuppressInvalidate) {
+	SemanticPage.prototype._removeFromInnerAggregation = function (oControl, sPosition, bSuppressInvalidate) {
 
-		if (!oControl || !oConfig || !oConfig.position) {
+		var oPositionInPage = this._getSemanticPositionsMap()[sPosition];
+		if (oPositionInPage && oPositionInPage.oContainer && oPositionInPage.sAggregation) {
+			oPositionInPage.oContainer["remove" + fnCapitalize(oPositionInPage.sAggregation)](oControl, bSuppressInvalidate);
+		}
+	};
+
+	SemanticPage.prototype._addToInnerAggregation = function (oControl, sPosition, iOrder, bSuppressInvalidate) {
+
+		if (!oControl || !sPosition) {
 			return;
 		}
 
-		var oPositionInPage = this._getSemanticPositionsMap()[oConfig.position];
+		var oPositionInPage = this._getSemanticPositionsMap()[sPosition];
 
 		if (!oPositionInPage || !oPositionInPage.oContainer || !oPositionInPage.sAggregation) {
 			return;
 		}
 
-		if (typeof oConfig.order !== 'undefined') {
-			oControl.addCustomData(new CustomData({key: "sortIndex", value: oConfig.order}));
+		if (typeof iOrder !== 'undefined') {
+			oControl.addCustomData(new CustomData({key: "sortIndex", value: iOrder}));
 		}
 
 		return oPositionInPage.oContainer["add" + fnCapitalize(oPositionInPage.sAggregation)](oControl, bSuppressInvalidate);
@@ -587,32 +529,32 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 			this._oPositionsMap = {};
 
-			this._oPositionsMap[SemanticPage.prototype._PositionInPage.headerLeft] = {
+			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.headerLeft] = {
 				oContainer: this._getInternalHeader(),
 				sAggregation: "contentLeft"
 			};
 
-			this._oPositionsMap[SemanticPage.prototype._PositionInPage.headerRight] = {
-				oContainer: this._getInternalHeader(),
-				sAggregation: "contentRight"
+			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.headerRight] = {
+				oContainer: this._getSegmentedHeader().getSection("semanticRight"),
+				sAggregation: "content"
 			};
 
-			this._oPositionsMap[SemanticPage.prototype._PositionInPage.headerMiddle] = {
+			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.headerMiddle] = {
 				oContainer: this._getInternalHeader(),
 				sAggregation: "contentMiddle"
 			};
 
-			this._oPositionsMap[SemanticPage.prototype._PositionInPage.footerLeft] = {
+			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.footerLeft] = {
 				oContainer: this._getSegmentedFooter().getSection("semanticLeft"),
 				sAggregation: "content"
 			};
 
-			this._oPositionsMap[SemanticPage.prototype._PositionInPage.footerRight_IconOnly] = {
+			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly] = {
 				oContainer: this._getSegmentedFooter().getSection("semanticRight_IconOnly"),
 				sAggregation: "content"
 			};
 
-			this._oPositionsMap[SemanticPage.prototype._PositionInPage.footerRight_TextOnly] = {
+			this._oPositionsMap[SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly] = {
 				oContainer: this._getSegmentedFooter().getSection("semanticRight_TextOnly"),
 				sAggregation: "content"
 			};
@@ -660,6 +602,33 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 	SemanticPage.prototype._getAnyHeader = function () {
 		return this._getInternalHeader();
 	};
+	
+	
+	/**
+	 * Returns the internal footer
+	 * @private
+	 * @returns {sap.m.semantic.SemanticPageSegmentedContainer}
+	 */
+	SemanticPage.prototype._getSegmentedHeader = function() {
+
+		if (!this._oWrappedHeader) {
+
+			var oHeader = this._getInternalHeader();
+			if (!oHeader) {
+				jQuery.sap.log.error("missing page header", this);
+				return null;
+			}
+
+			this._oWrappedHeader = new SegmentedContainer(oHeader, "contentRight");
+
+			this._oWrappedHeader.addSection({sTag: "customRight"});
+			this._oWrappedHeader.addSection({sTag: "semanticRight"});
+
+		}
+
+		return this._oWrappedHeader;
+
+	};
 
 	/**
 	 * Returns the internal footer
@@ -670,8 +639,11 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 		if (!this._oWrappedFooter) {
 
-			var oFooter = new OverflowToolbar();
-			this._getPage().setFooter(oFooter);
+			var oFooter = this._getPage().getFooter();
+			if (!oFooter) {
+				jQuery.sap.log.error("missing page footer", this);
+				return null;
+			}
 
 			this._oWrappedFooter = new SegmentedContainer(oFooter);
 
@@ -705,7 +677,6 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 		return this._oWrappedFooter;
 
 	};
-
 
 	/*
 	 helper functions

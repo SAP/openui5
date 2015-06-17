@@ -14,20 +14,21 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ProgressIndicatorRenderer = {
 	};
-	
-	
+
+
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.fw.RenderManager}.
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.fw.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ProgressIndicatorRenderer.render = function(oRenderManager, oProgressIndicator){
-		// .convenience variable
-		var rm = oRenderManager;
-		var widthControl = oProgressIndicator.getWidth();
-		var widthBar = oProgressIndicator.getPercentValue();
-		var widthBorder;
+	ProgressIndicatorRenderer.render = function (oRm, oProgressIndicator) {
+		var widthControl = oProgressIndicator.getWidth(),
+			widthBar = oProgressIndicator.getPercentValue(),
+			tooltip = oProgressIndicator.getTooltip_AsString(),
+			displayValue = oProgressIndicator.getDisplayValue(),
+			widthBorder;
+
 		oProgressIndicator.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (widthBar > 100) {
@@ -35,136 +36,129 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			widthBorder = '100%';
 		}
-	
-		// write the HTML into the render manager
-		rm.write('<DIV');
-		rm.writeControlData(oProgressIndicator);
-	
-		rm.writeAttribute('tabIndex', '0');
-	
-		//ARIA
-		if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
-	//		rm.writeAttribute("role", sap.ui.core.AccessibleRole.Slider);
-			rm.writeAttribute('role', 'progressbar');
-			rm.writeAccessibilityState(oProgressIndicator, {valuemin: '0%'});
-			rm.writeAccessibilityState(oProgressIndicator, {valuemax: '100%'});
-			rm.writeAccessibilityState(oProgressIndicator, {valuenow: widthBar + '%'});
-	//		rm.writeAccessibilityState(oProgressIndicator, {label:oSlider.getTooltip()});
-	
-	//		if (!oProgressIndicator.getEditable()) {
-	//			rm.writeAccessibilityState(oProgressIndicator, {disabled: true});
-	//		}else {
-	//			rm.writeAccessibilityState(oProgressIndicator, {disabled: false});
-	//		}
+
+		oRm.write('<DIV');
+		oRm.writeControlData(oProgressIndicator);
+		oRm.writeAttribute('tabIndex', '0');
+
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			oRm.writeAccessibilityState(oProgressIndicator, {
+				role: 'progressbar',
+				valuemin: '0%',
+				valuenow: widthBar + '%',
+				valuemax: '100%'
+			});
 		}
-	
-		if (oProgressIndicator.getWidth() && oProgressIndicator.getWidth() != '') {
-			rm.writeAttribute('style', 'height: 16px; width:' + widthControl + ';');
+
+		if (displayValue) {
+			oRm.writeAttributeEscaped('aria-valuetext', displayValue);
 		}
-	
-		if (oProgressIndicator.getTooltip_AsString()) {
-			rm.writeAttributeEscaped('title', oProgressIndicator.getDisplayValue() + '- ' + oProgressIndicator.getTooltip_AsString());
-		} else {
-			rm.writeAttributeEscaped('title', oProgressIndicator.getDisplayValue());
+
+		if (tooltip) {
+			oRm.writeAttributeEscaped('title', tooltip);
 		}
-	
-		rm.addClass('sapUiProgInd');
-		rm.writeClasses();
-	
-		rm.write('>');
-	
-		rm.write('<DIV');
-		rm.writeAttribute('id', oProgressIndicator.getId() + '-box');
-	
-		if (oProgressIndicator.getWidth() && oProgressIndicator.getWidth() != '') {
-			rm.writeAttribute('style', 'height: 16px; width:' + widthBorder + ';');
+
+		if (oProgressIndicator.getWidth() && oProgressIndicator.getWidth() !== '') {
+			oRm.writeAttribute('style', 'height: 16px; width:' + widthControl + ';');
 		}
-	
-		rm.addClass('sapUiProgIndBorder');
-		rm.writeClasses();
-	
-		rm.write('>');
-	
-		rm.write('<DIV');
-		rm.writeAttribute('id', oProgressIndicator.getId() + '-bar');
-		rm.writeAttribute('onselectstart', "return false");
-		rm.writeAttribute('style', 'height: 14px; width:' + oProgressIndicator.getPercentValue() + '%;');
-	
+
+		oRm.addClass('sapUiProgInd');
+		oRm.writeClasses();
+
+		oRm.write('>');
+
+		oRm.write('<DIV');
+		oRm.writeAttribute('id', oProgressIndicator.getId() + '-box');
+
+		if (oProgressIndicator.getWidth() && oProgressIndicator.getWidth() !== '') {
+			oRm.writeAttribute('style', 'height: 16px; width:' + widthBorder + ';');
+		}
+
+		oRm.addClass('sapUiProgIndBorder');
+		oRm.writeClasses();
+
+		oRm.write('>');
+
+		oRm.write('<DIV');
+		oRm.writeAttribute('id', oProgressIndicator.getId() + '-bar');
+		oRm.writeAttribute('onselectstart', "return false");
+		oRm.writeAttribute('style', 'height: 14px; width:' + oProgressIndicator.getPercentValue() + '%;');
+
 		var sBarColor = oProgressIndicator.getBarColor();
 		switch (sBarColor) {
 			case "POSITIVE":
-				rm.addClass('sapUiProgIndBarPos');
+				oRm.addClass('sapUiProgIndBarPos');
 				break;
 			case "NEGATIVE":
-				rm.addClass('sapUiProgIndBarNeg');
+				oRm.addClass('sapUiProgIndBarNeg');
 				break;
 			case "CRITICAL":
-				rm.addClass('sapUiProgIndBarCrit');
+				oRm.addClass('sapUiProgIndBarCrit');
 				break;
 			case "NEUTRAL":
-				rm.addClass('sapUiProgIndBar');
+				oRm.addClass('sapUiProgIndBar');
 				break;
 			default:
-				rm.addClass('sapUiProgIndBar');
+				oRm.addClass('sapUiProgIndBar');
 				break;
 		}
-	
-		rm.writeClasses();
-	
-		rm.write('>');
-	
-		rm.write('<DIV');
-		rm.writeAttribute('id', oProgressIndicator.getId() + '-end');
-	
+
+		oRm.writeClasses();
+
+		oRm.write('>');
+
+		oRm.write('<DIV');
+		oRm.writeAttribute('id', oProgressIndicator.getId() + '-end');
+
 		if (widthBar > 100) {
 			switch (sBarColor) {
 				case "POSITIVE":
-					rm.addClass('sapUiProgIndPosEnd');
+					oRm.addClass('sapUiProgIndPosEnd');
 					break;
 				case "NEGATIVE":
-					rm.addClass('sapUiProgIndNegEnd');
+					oRm.addClass('sapUiProgIndNegEnd');
 					break;
 				case "CRITICAL":
-					rm.addClass('sapUiProgIndCritEnd');
+					oRm.addClass('sapUiProgIndCritEnd');
 					break;
 				case "NEUTRAL":
-					rm.addClass('sapUiProgIndEnd');
+					oRm.addClass('sapUiProgIndEnd');
 					break;
 				default:
-					rm.addClass('sapUiProgIndEnd');
+					oRm.addClass('sapUiProgIndEnd');
 					break;
 			}
 		} else {
-			rm.addClass('sapUiProgIndEndHidden');
+			oRm.addClass('sapUiProgIndEndHidden');
 		}
-	
-		rm.writeClasses();
+
+		oRm.writeClasses();
 		if (oProgressIndicator.bRtl) {
-			rm.writeAttribute('style', 'position: relative; right:' + widthBorder);
+			oRm.writeAttribute('style', 'position: relative; right:' + widthBorder);
 		} else {
-			rm.writeAttribute('style', 'position: relative; left:' + widthBorder);
+			oRm.writeAttribute('style', 'position: relative; left:' + widthBorder);
 		}
-	
-		rm.write('>');
-		rm.write('</DIV>');
-	
-		rm.write('<SPAN');
-	
-		rm.addClass('sapUiProgIndFont');
-		rm.writeClasses();
-	
-		rm.write('>');
-	
-		if (oProgressIndicator.getShowValue() && oProgressIndicator.getShowValue() == true) {
-			if (oProgressIndicator.getDisplayValue() && oProgressIndicator.getDisplayValue() != '') {
-				rm.writeEscaped(oProgressIndicator.getDisplayValue());
+
+		oRm.write('>');
+		oRm.write('</DIV>');
+
+		oRm.write('<SPAN');
+
+		oRm.addClass('sapUiProgIndFont');
+		oRm.writeClasses();
+
+		oRm.write('>');
+
+		if (oProgressIndicator.getShowValue() && oProgressIndicator.getShowValue()) {
+			if (oProgressIndicator.getDisplayValue() && oProgressIndicator.getDisplayValue() !== '') {
+				oRm.writeEscaped(oProgressIndicator.getDisplayValue());
 			}
 		}
-	
-		rm.write('</SPAN>');
-		rm.write('</DIV>');
-		rm.write('</DIV>');
-		rm.write('</DIV>');
+
+		oRm.write('</SPAN>');
+		oRm.write('</DIV>');
+		oRm.write('</DIV>');
+		oRm.write('</DIV>');
 	};
 
 	return ProgressIndicatorRenderer;

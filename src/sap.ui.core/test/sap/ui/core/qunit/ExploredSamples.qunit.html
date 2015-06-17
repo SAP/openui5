@@ -20,12 +20,13 @@
 			data-sap-ui-libs="sap.ui.layout,sap.ui.demokit,sap.m"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-bindingSyntax="complex"
-			data-sap-ui-resourceroots='{ "sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/" }' >
+			data-sap-ui-resourceroots='{ "sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/" }'
+			data-sap-ui-xx-componentPreload='off' >
 	</script>
 	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script>
 		// ignore "error" event fired via jQuery.trigger() (e.g. from sap.m.Image control in FF or PhantomJS)
-		// FF adds a prefix "uncaught exception: ", PhantomJS simply calls toString(). 
+		// FF adds a prefix "uncaught exception: ", PhantomJS simply calls toString().
 		// therefore we test with a regular expression
 		window.onerror = function(e) {
 			return /\[object Object\]/.test(e);
@@ -42,7 +43,8 @@
 			new SampleTester(
 				'sap.ui.core',
 				[
-					'sap.ui.core.sample.ViewTemplate.tiny' // fails due to the need for a proxy
+					'sap.ui.core.sample.ViewTemplate.tiny', // fails due to the need for a proxy
+					'sap.ui.core.sample.View.async' // failes due to delayed rendering cycle
 				]
 			).placeAt('content');
 		});

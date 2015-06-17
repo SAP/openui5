@@ -1,8 +1,10 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessagePopover',
+		'sap/m/MessagePopoverItem'
+	], function(jQuery, Controller, JSONModel, MessagePopover, MessagePopoverItem) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.SemanticPage.Page", {
@@ -25,19 +27,51 @@ sap.ui.define([
 				})
 		);
 	},
-	onPress: function (evt) {
-		sap.m.MessageToast.show("Pressed custom button " + evt.getSource().getId());
+	onPress: function (oEvent) {
+
+		sap.m.MessageToast.show("Pressed custom button " + oEvent.getSource().getId());
 	},
-	onSemanticButtonPress: function (evt) {
-		sap.m.MessageToast.show("Pressed: " + evt.getSource().getType());
+	onSemanticButtonPress: function (oEvent) {
+
+		var sAction = oEvent.oSource.getMetadata().getName();
+		sAction = sAction.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+
+		sap.m.MessageToast.show("Pressed: " + sAction);
 	},
 	onSemanticSelectChange: function (oEvent, oData) {
-		var sType = oEvent.oSource.getType();
-		var sStatusText = sType + " by " + oEvent.oSource.getSelectedItem().getText();
+		var sAction = oEvent.oSource.getMetadata().getName();
+		sAction = sAction.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+
+		var sStatusText = sAction + " by " + oEvent.oSource.getSelectedItem().getText();
 		sap.m.MessageToast.show("Selected: " + sStatusText);
 	},
-	onNavButtonPress: function (evt) {
+	onNavButtonPress: function () {
 		sap.m.MessageToast.show("Pressed navigation button");
+	},
+	onMessagesButtonPress: function(oEvent) {
+
+		var oMessagesButton = oEvent.oSource;
+		if (!this._messagePopover) {
+			this._messagePopover = new MessagePopover({
+				items: {
+					path: "message>/",
+					template: new MessagePopoverItem({
+						description: "{message>description}",
+						type: "{message>type}",
+						title: "{message>message}"
+					})
+				}
+			});
+			oMessagesButton.addDependent(this._messagePopover);
+		}
+		this._messagePopover.toggle(oMessagesButton);
+	},
+	onMultiSelectPress: function(oEvent) {
+		if (oEvent.getSource().getPressed()) {
+			sap.m.MessageToast.show("MultiSelect Pressed");
+		} else {
+			sap.m.MessageToast.show("MultiSelect Unpressed");
+		};
 	}
 });
 

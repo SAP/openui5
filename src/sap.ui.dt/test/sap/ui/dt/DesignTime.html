@@ -25,26 +25,38 @@
 		</script>
 
 		<script>
-
-			jQuery.sap.require("sap.ui.dt.adapter");
+			jQuery.sap.require("sap.ui.dt.Preloader");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			jQuery.sap.require("sap.ui.dt.DesignTime");
-
-
+			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
+			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
 			var oView = sap.ui.xmlview("testView", "dt.view.Test2");
 			oView.placeAt("content");
 
-			var oDesignTime = new sap.ui.dt.DesignTime({
-				rootControl : oView
+
+			jQuery(function() {
+				var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
+				var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop({
+					draggableTypes : ["sap.m.Button", "sap.m.StandardListItem", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"]
+				});
+
+				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(oView);
+				sap.ui.dt.Preloader.load(aElements).then(function() {
+					var oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [oView],
+						plugins : [
+							oSelectionPlugin,
+							oDragPlugin
+						]
+					});
+				});
 			});
 
-			oDesignTime.ensureLoadedThen(function() {
-				jQuery.sap.log.debug("DesignTime ready");
-			});
+
 			
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
-		Press "ctrl" key to switch drop zones when a control is dragged
 		<div id="content"></div>
 	</body>
 </html>

@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	 * @class
 	 * Allows end users to interact with date and/or time and select from a date and/or time pad.
 	 * Note: Since 1.22, this control should not be used as a date picker(type property "Date"), instead please use dedicated sap.m.DatePicker control.
+	 * Note: This control does not support the Islamic calendar.
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
@@ -395,9 +396,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	};
 	
 	/**
-	 * Opens scroller via keyboard [F4] or [ALT]+[DOWN]
+	 * Opens scroller on tap
 	 */
-	DateTimeInput.prototype.onsapshow = function(oEvent) {
+	DateTimeInput.prototype.ontap = function(oEvent) {
+		document.activeElement.blur();
 		this._$input.scroller("show");
 		oEvent.preventDefault();
 		oEvent.setMarked();
@@ -406,7 +408,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	/**
 	 * Opens scroller via keyboard [ALT]+[UP]
 	 */
-	DateTimeInput.prototype.onsaphide = DateTimeInput.prototype.onsapshow;
+	DateTimeInput.prototype.onsaphide = DateTimeInput.prototype.ontap;
+	
+	/**
+	 * Opens scroller via keyboard [F4] or [ALT]+[DOWN]
+	 */
+	DateTimeInput.prototype.onsapshow = DateTimeInput.prototype.ontap;
 	
 	/**
 	 * Enables custom date time and adds related methods to prototype
@@ -598,7 +605,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					oConfig = $.extend({}, oSettings, {
 						preset : sType.toLowerCase(),
 						showOnFocus : false,
-						showOnTap: true,
+						showOnTap: false,
 						disabled : !that.getEnabled() || !that.getEditable(),
 						onShow : function($dialog) {
 							// Special treatment for IE: with jQuery < 1.9 focus is fired twice in IE

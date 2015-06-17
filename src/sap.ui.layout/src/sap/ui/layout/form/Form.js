@@ -72,7 +72,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			 * @since 1.28.0
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		}
+		},
+		designTime : true
 	}});
 
 	/**
@@ -84,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 	//	sap.ui.commons.Form.prototype.init = function(){
 	//	// do something for initialization...
 	//	};
-	
+
 		Form.prototype.toggleContainerExpanded = function(oContainer){
 
 			var oLayout = this.getLayout();
@@ -153,11 +154,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 		*/
 		Form.prototype.invalidate = function(oOrigin) {
 
-		if (!this._bNoInvalidate) {
-			Control.prototype.invalidate.apply(this, arguments);
-		}
+			if (!this._bNoInvalidate) {
+				Control.prototype.invalidate.apply(this, arguments);
+			}
 
-	};
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * If the FormContainer has a DOM representation this function returns it,
+		 * independent from the ID of this DOM element
+		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		Form.prototype.getContainerRenderedDomRef = function(oContainer) {
+
+			var oLayout = this.getLayout();
+			if (oLayout && oLayout.getContainerRenderedDomRef) {
+				return oLayout.getContainerRenderedDomRef(oContainer);
+			}else {
+				return null;
+			}
+
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * If the FormElement has a DOM representation this function returns it,
+		 * independent from the ID of this DOM element
+		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		Form.prototype.getElementRenderedDomRef = function(oElement) {
+
+			var oLayout = this.getLayout();
+			if (oLayout && oLayout.getElementRenderedDomRef) {
+				return oLayout.getElementRenderedDomRef(oElement);
+			}else {
+				return null;
+			}
+
+		};
 
 	}());
 

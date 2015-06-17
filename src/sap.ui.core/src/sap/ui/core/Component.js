@@ -8,7 +8,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	"use strict";
 
 	/*global Promise */
-	
+
+	/**
+	 * Util function which adds SAP-specific search parameters to an URI instance
+	 *
+	 * @param {object} oUriParams See <code>jQuery.sap.getUriParameters()</code>
+	 * @param {URI} oUri URI.js instance
+	 * @private
+	 */
+	function addSapUriParams(oUriParams, oUri) {
+		['sap-client', 'sap-server'].forEach(function(sName) {
+			var sValue = oUriParams.get(sName);
+			if (sValue && !oUri.hasSearch(sName)) {
+				oUri.addSearch(sName, sValue);
+			}
+		});
+	}
+
 	/**
 	 * Creates and initializes a new component with the given <code>sId</code> and
 	 * settings.
@@ -368,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		var oAppManifest = oMetadata.getManifestEntry("sap.app");
 		var oUI5Manifest = oMetadata.getManifestEntry("sap.ui5");
 
-		var mModelConfigs = (oUI5Manifest && oUI5Manifest["models"]) ? oUI5Manifest["models"] : null;
+		var mModelConfigs = oUI5Manifest && oUI5Manifest["models"];
 		if (!mModelConfigs) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
 			return;
@@ -377,8 +393,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		// optional dataSources from "sap.app" manifest
 		var mDataSources = (oAppManifest && oAppManifest["dataSources"]) ? oAppManifest["dataSources"] : null;
 
-		// base dir to resolve URIs relative to component
-		var sComponentBaseDir = jQuery.sap.getModulePath(this.getMetadata().getComponentName()) + "/";
+		// read current URI params to mix them into model URI
+		var oUriParams = jQuery.sap.getUriParameters();
 
 		// create a model for each ["sap.ui5"]["models"] entry
 		for (var sModelName in mModelConfigs) {
@@ -395,9 +411,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 			// check for referenced dataSource entry and read out settings/uri/type
 			// if not already provided in model config
-			if (oModelConfig.dataSource && mDataSources) {
+			if (oModelConfig.dataSource) {
 
-				var oDataSource = mDataSources[oModelConfig.dataSource];
+				var oDataSource = mDataSources && mDataSources[oModelConfig.dataSource];
 				if (typeof oDataSource === 'object') {
 
 					// default type is OData
@@ -437,35 +453,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 							// dataSource entry should be defined!
 							if (!oAnnotation) {
-								jQuery.sap.log.error("ODataAnnotation \"" + aAnnotations[i] + "\" for dataSource \"" + oModelConfig.dataSource + "\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								jQuery.sap.log.error("Component Manifest: ODataAnnotation \"" + aAnnotations[i] + "\" for dataSource \"" + oModelConfig.dataSource + "\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
 								continue;
 							}
 
 							// type should be ODataAnnotation!
 							if (oAnnotation.type !== 'ODataAnnotation') {
-								jQuery.sap.log.error("dataSource \"" + aAnnotations[i] + "\" was expected to have type \"ODataAnnotation\" but was \"" + oAnnotation.type + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								jQuery.sap.log.error("Component Manifest: dataSource \"" + aAnnotations[i] + "\" was expected to have type \"ODataAnnotation\" but was \"" + oAnnotation.type + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
 								continue;
 							}
 
 							// uri is required!
 							if (!oAnnotation.uri) {
-								jQuery.sap.log.error("Missing \"uri\" for ODataAnnotation \"" + aAnnotations[i] + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								jQuery.sap.log.error("Component Manifest: Missing \"uri\" for ODataAnnotation \"" + aAnnotations[i] + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
 								continue;
 							}
+
+							// resolve relative to component
+							var oAnnotationUri = oMetadata._resolveUri(new URI(oAnnotation.uri)).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
 							oModelConfig.settings.annotationURI = oModelConfig.settings.annotationURI || [];
-							oModelConfig.settings.annotationURI.push(oAnnotation.uri);
+							oModelConfig.settings.annotationURI.push(oAnnotationUri);
 						}
 					}
 
+				} else {
+					jQuery.sap.log.error("Component Manifest: dataSource \"" + oModelConfig.dataSource + "\" for model \"" + sModelName + "\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"" + oModelConfig.dataSource + "\"]", this);
 				}
 			}
 
 			// model type is required!
 			if (!oModelConfig.type) {
-				jQuery.sap.log.error("Missing \"type\" for model \"" + sModelName + "\"", this);
+				jQuery.sap.log.error("Component Manifest: Missing \"type\" for model \"" + sModelName + "\"", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", this);
 				continue;
 			}
 
@@ -474,7 +495,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			try {
 				jQuery.sap.require(oModelConfig.type);
 			} catch(oError) {
-				jQuery.sap.log.error("Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, this);
+				jQuery.sap.log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", this);
 				continue;
 			}
 
@@ -482,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			var ModelClass = jQuery.sap.getObject(oModelConfig.type);
 			if (!ModelClass) {
 				// this could be the case if the required module doesn't register itself in the defined namespace
-				jQuery.sap.log.error("Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", this);
+				jQuery.sap.log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", this);
 				continue;
 			}
 
@@ -496,9 +517,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					oModelConfig.settings.json = true;
 			}
 
-			// resolve URI relative to component
+			// adopt model uri
 			if (oModelConfig.uri) {
-				oModelConfig.uri = new URI(oModelConfig.uri).absoluteTo(sComponentBaseDir).toString();
+
+				// parse model URI to be able to modify it
+				var oUri = new URI(oModelConfig.uri);
+
+				// resolve URI relative to component
+				oUri = oMetadata._resolveUri(oUri);
+
+				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
+				if (oModelConfig.dataSource) {
+					addSapUriParams(oUriParams, oUri);
+				}
+
+				oModelConfig.uri = oUri.toString();
 			}
 
 			// set model specific "uri" property names which should be used to map "uri" to model specific constructor
@@ -827,14 +860,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			return oClass;
 		} 
 
+		function registerPath(vObj) {
+
+			jQuery.sap.assert(
+				(typeof vObj === 'string' && vObj) || 
+				(typeof vObj === 'object' && typeof vObj.name === 'string' && vObj.name), 
+				"reference either must be a non-empty string or an object with a non-empty 'name' and an optional 'url' property");
+
+			if ( typeof vObj === 'object' ) {
+				if ( vObj.url ) {
+					jQuery.sap.registerModulePath(vObj.name, vObj.url);
+				}
+				return vObj.name;
+			}
+
+			return vObj;
+		}
+
 		function preload(sComponentName, bAsync) {
-			
+
 			var sController = sComponentName + '.Component',
 				sPreloadName;
-			
+
 			// only load the Component-preload file if the Component module is not yet available
 			if ( bComponentPreload && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
-				
+
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, '-preload.js'); // URN
 					return jQuery.sap._loadJSResourceAsync(sPreloadName, true);
@@ -862,7 +912,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 			// preload required libraries 
 			if ( hints.libs ) {
-				collect(sap.ui.getCore().loadLibraries( hints.libs ));
+				collect(sap.ui.getCore().loadLibraries( hints.libs.map(registerPath) ));
 			}
 
 			if ( bComponentPreload ) {
@@ -870,8 +920,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 				// if a hint about "used" components is given, preload those components
 				if ( hints.components ) {
-					jQuery.each(hints.components, function(i, sCompName) {
-						collect(preload(sCompName, true));
+					jQuery.each(hints.components, function(i, vComp) {
+						collect(preload(registerPath(vComp), true));
 					});
 				}
 			}

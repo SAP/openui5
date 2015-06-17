@@ -56,6 +56,53 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 
 		}});
 
+		/**
+		 * Overwrite property setters to update buttons on item property change
+		 * @overwrite
+		 */
+		SegmentedButtonItem.prototype.setText = function (sValue) {
+			this.setProperty("text", sValue, true);
+			if (this.oButton) {
+				this.oButton.setText(this.getText());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setIcon = function (sValue) {
+			this.setProperty("icon", sValue, true);
+			if (this.oButton) {
+				this.oButton.setIcon(this.getIcon());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setEnabled = function (bValue) {
+			this.setProperty("enabled", bValue, true);
+			if (this.oButton) {
+				this.oButton.setEnabled(this.getEnabled());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setTextDirection = function (sValue) {
+			this.setProperty("textDirection", sValue, true);
+			if (this.oButton) {
+				this.oButton.setTextDirection(this.getTextDirection());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setWidth = function (sValue) {
+			this.setProperty("width", sValue, true);
+			if (this.oButton) {
+				this.oButton.setWidth(this.getWidth());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setTooltip = function (sValue) {
+			this.setAggregation("tooltip", sValue, true);
+			if (this.oButton) {
+				this.oButton.setTooltip(sValue);
+			}
+			return this;
+		};
+
 		return SegmentedButtonItem;
 
 	}, /* bExport= */ true);

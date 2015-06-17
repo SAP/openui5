@@ -24,6 +24,7 @@ sap.ui.define([
 
 		createContent : function () {
 			var sAnnotationUri,
+				sAnnotationUri2,
 				sServiceUri,
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
@@ -39,6 +40,7 @@ sap.ui.define([
 			// GWSAMPLE_BASIC with external annotations
 			sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
 				+ "/Annotations(TechnicalName='ZANNO4SAMPLE_ANNO_MDL',Version='0001')/$value";
+			sAnnotationUri2 = "/sap(====)/bc/bsp/sap/zanno_gwsample/annotations.xml";
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
 			if (oUriParameters.get("realOData") !== "true") {
@@ -60,17 +62,27 @@ sap.ui.define([
 						response : function(oXHR) {
 							oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations.xml");
 						}
+					}, {
+						method : "GET",
+						//TODO have MockServer fixed and pass just the URL!
+						path : new RegExp(MockServer.prototype
+							._escapeStringForRegExp(sAnnotationUri2)),
+						response : function(oXHR) {
+							oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations2.xml");
+						}
 					}]
 				}).start();
 			} else if (location.hostname === "localhost") { //for local testing prefix with proxy
 				sAnnotationUri = "proxy" + sAnnotationUri;
+				sAnnotationUri2 = "proxy" + sAnnotationUri2;
 				sServiceUri = "proxy" + sServiceUri;
 			}
 
 			oModel = new fnModel(sServiceUri, {
-				annotationURI : sAnnotationUri,
+				annotationURI : [sAnnotationUri, sAnnotationUri2],
 				json : true,
-				loadMetadataAsync : true
+				loadMetadataAsync : true,
+				skipMetadataAnnotationParsing : true
 			});
 
 			oModel.getMetaModel().loaded().then(function () {

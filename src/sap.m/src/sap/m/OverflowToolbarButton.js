@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides control sap.m.OverflowToolbarHelpers._OverflowToolbarButton.
+// Provides control sap.m.OverflowToolbarButton.
 sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	function(Button, ButtonRenderer) {
 	"use strict";

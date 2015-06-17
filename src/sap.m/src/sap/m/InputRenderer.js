@@ -61,15 +61,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			// required for JAWS reader on password fields on desktop and in other cases:
 			oRm.writeAttribute("readonly", "readonly");
 		}
-		// Screen reader: announcements
-		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
-			oRm.writeAccessibilityState({
-				describedby : {
-					value: oControl._sAriaF4LabelId,
-					append: true
-				}
-			});
-		}
 	};
 
 	/**
@@ -112,6 +103,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			oRm.write("</span>");
 		}
 
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
+				oRm.write("<span id=\"" + oControl.getId() + "-SuggDescr\" class=\"sapUiInvisibleText\" role=\"status\" aria-live=\"polite\"></span>");
+			}
+		}
+
 	};
 
 	InputRenderer.writeValueHelpIcon = function(oRm, oControl) {
@@ -135,6 +132,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		if (oControl.getDescription()) {
 			oRm.addStyle("width", oControl.getFieldWidth() || "50%");
 		}
+
+	};
+
+	InputRenderer.getAriaDescribedBy = function(oControl) {
+
+		var sAriaDescribedBy = InputBaseRenderer.getAriaDescribedBy.apply(this, arguments);
+
+		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
+			if (sAriaDescribedBy) {
+				sAriaDescribedBy = sAriaDescribedBy + " " + oControl._sAriaValueHelpLabelId;
+			} else {
+				sAriaDescribedBy = oControl._sAriaValueHelpLabelId;
+			}
+			if (oControl.getValueHelpOnly()) {
+				sAriaDescribedBy = sAriaDescribedBy + " " + oControl._sAriaInputDisabledLabelId;
+			}
+		}
+
+		if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
+			if (sAriaDescribedBy) {
+				sAriaDescribedBy = sAriaDescribedBy + " " + oControl.getId() + "-SuggDescr";
+			} else {
+				sAriaDescribedBy = oControl.getId() + "-SuggDescr";
+			}
+		}
+
+		return sAriaDescribedBy;
+
+	};
+
+	InputRenderer.getAccessibilityState = function(oControl) {
+
+		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
+
+		if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
+			mAccessibilityState.autocomplete = "list";
+		}
+
+		return mAccessibilityState;
 
 	};
 

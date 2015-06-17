@@ -194,6 +194,16 @@
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 	});
 
+	test("Model enhancement (with bundle)", function(){
+		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
+		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+		var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
+		oModel.enhance(oBundle);
+		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+	});
+
 	//clean up
 	test("clean up", 0, function(){
 		oModel = null;
@@ -250,6 +260,26 @@
 		});
 	});
 	
+	asyncTest("Enhancement after load (with bundle)", function(){
+		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
+		sap.ui.getCore().setModel(oModel, "async2");
+		
+		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
+		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
+		
+		oModel.getResourceBundle().then(function(oBundle){
+			equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+			var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
+			var oPromise = oModel.enhance(oBundle);
+			oPromise.then(function(){
+				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+				start();
+			});
+		});
+	});
+	
 	asyncTest("Enhancement before load", function(){
 		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
 		sap.ui.getCore().setModel(oModel, "async3");
@@ -257,6 +287,24 @@
 		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 		var oPromise = oModel.enhance({bundleUrl:"./testdata/messages_custom.properties"});
+		equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
+		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
+		
+		Promise.all([oModel.getResourceBundle(), oPromise]).then(function(args){
+			equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
+			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
+			start();
+		});
+	});
+	
+	asyncTest("Enhancement before load (with bundle)", function(){
+		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
+		sap.ui.getCore().setModel(oModel, "async3");
+		
+		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
+		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
+		var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
+		var oPromise = oModel.enhance(oBundle);
 		equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
 		

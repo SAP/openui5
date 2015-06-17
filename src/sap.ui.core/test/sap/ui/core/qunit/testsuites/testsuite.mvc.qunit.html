@@ -11,15 +11,17 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
-		    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/View.qunit.html");
-		    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HTMLView.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSONView.qunit.html");
-		    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSView.qunit.html");
-		    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/XMLView.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AsyncXMLView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/View.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HTMLView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AsyncHTMLView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSONView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AsyncJSONView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AsyncJSView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/XMLView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AsyncXMLView.qunit.html");
 			return suite;
 		}
-
 		</script>
 	</head>
 	<body>

@@ -42,6 +42,9 @@ var fnOriginalClearTimeout = window.setTimeout;
 <!-- Test functions -->
 
 <script>
+	// Enable code coverage
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
 	sap.ui.getCore().attachInit(function() {
 		runODataMessagesTests();
 	})

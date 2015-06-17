@@ -1,6 +1,7 @@
 <mvc:View height="100%" controllerName="sap.m.sample.MultiInput.Page"
 	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
+	<Label text="Type in MultiInput to search and add product as token, e.g. 'H'" width="100%"></Label>
 	<MultiInput width="500px"
 		suggestionItems="{
                                         path: '/ProductCollection',

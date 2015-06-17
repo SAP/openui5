@@ -72,6 +72,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	ShareMenu.prototype.getBaseButton = function () {
 		return this._oBaseButton;
 	};
+	
+	ShareMenu.prototype.getAggregation = function (sName) {
+		if (sName === "content") {
+			return this.getContent();
+		}
+	};
+	
+	ShareMenu.prototype.addAggregation = function (sName, oButton, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.addContent(oButton, bSuppressInvalidate);
+		}
+	};
+
+	ShareMenu.prototype.insertAggregation = function (sName, oButton, iIndex, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.insertContent(oButton, iIndex, bSuppressInvalidate);
+		}
+	};
+	
+	ShareMenu.prototype.indexOfAggregation = function (sName, oButton) {
+		if (sName === "content") {
+			return this.indexOfContent(oButton);
+		}
+	};
+	
+	ShareMenu.prototype.removeAggregation = function (sName, oButton, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.removeContent(oButton, bSuppressInvalidate);
+		}
+	};
+	
+	ShareMenu.prototype.removeAllAggregation = function (sName, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.removeAllContent(bSuppressInvalidate);
+		}
+	};
 
 	/**
 	 * Getter for the items of this menu
@@ -311,7 +347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 			var that = this;
 
-			this._oShareMenuBtn = new sap.m.Button({
+			this._oShareMenuBtn = new sap.m.Button(this._oActionSheet.getParent().getId() + "-shareButton", {
 				icon: "sap-icon://action",
 				layoutData: new OverflowToolbarLayoutData({
 					moveToOverflow: false,

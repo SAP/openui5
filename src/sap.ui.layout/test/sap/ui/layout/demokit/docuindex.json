@@ -8,6 +8,18 @@
 		},
 		"entities" : [
 			{
+				"id" : "sap.ui.layout.DynamicSideContent",
+				"name" : "Dynamic Side Content",
+				"category" : "Layout",
+				"since" : "1.30",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.DynamicSideContent",
+					"sap.ui.layout.sample.DynamicSideContentEqualSplit",
+					"sap.ui.layout.sample.DynamicSideContentProduct"
+				]
+			},
+			{
 				"id" : "sap.ui.layout.form.Form",
 				"name" : "Form",
 				"category" : "Layout",
@@ -87,6 +99,21 @@
 			}
 		],
 		"samples" : [
+			{
+				"id": "sap.ui.layout.sample.DynamicSideContent",
+				"name": "Dynamic Side Content",
+				"description": "Attaches side content area which is next to the main content of the page on larger screens taking different ratios between the two on different screen sizes and on phone size screens the side content area falls down under the main content area. Best viewed in full screen."
+			},
+			{
+				"id": "sap.ui.layout.sample.DynamicSideContentEqualSplit",
+				"name": "Dynamic Side Content - equal split mode",
+				"description": "The side content and the main content take 50%/50% of the container on all screen sizes except on phone screens where there is a button implemented to toggle between each other."
+			},
+			{
+				"id": "sap.ui.layout.sample.DynamicSideContentProduct",
+				"name": "Dynamic Side Content - product page",
+				"description": "Product page with comments example."
+			},
 			{
 				"id": "sap.ui.layout.sample.Form354",
 				"name": "Form - Single 3:5:4",

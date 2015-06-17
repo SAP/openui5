@@ -26,19 +26,27 @@ sap.ui.define([
 		},
 
 		onBeforeRendering: function () {
-			var oUiModel = new JSONModel({
-					bindTexts : false,
-					icon: jQuery.sap.getUriParameters().get("realOData") === "true" ?
-							"sap-icon://building" : "sap-icon://record"
-				}),
-				oMetaModel = this.getView().getModel().getMetaModel(),
+			var aEntitySets,
+				bIsRealOData,
+				oMetaModel,
+				oUiModel,
+				oView = this.getView();
+
+			if (!oView.getModel("ui")) {
+				bIsRealOData = jQuery.sap.getUriParameters().get("realOData") === "true";
+				oMetaModel = oView.getModel().getMetaModel();
 				aEntitySets = oMetaModel.getODataEntityContainer().entitySet;
+				oUiModel = new JSONModel({
+					bindTexts : false,
+					entitySet : aEntitySets,
+					icon : bIsRealOData ? "sap-icon://building" : "sap-icon://record",
+					iconTooltip : bIsRealOData ? "real OData service" : "mock OData service",
+					selectedEntitySet : aEntitySets[0].name
+				});
+				oView.setModel(oUiModel, "ui");
 
-			oUiModel.setProperty("/entitySet", aEntitySets);
-			oUiModel.setProperty("/selectedEntitySet", aEntitySets[0].name);
-			this.getView().setModel(oUiModel, "ui");
-
-			this._bindSelectInstance();
+				this._bindSelectInstance();
+			}
 		},
 
 		onChangeType: function (oEvent) {
@@ -99,7 +107,7 @@ sap.ui.define([
 		},
 
 		_showDetails: function (sPath) {
-			var oDetailView, sMetadataPath, oMetaModel;
+			var oDetailBox, oDetailView, sMetadataPath, oMetaModel, iStart;
 
 			oMetaModel = this.getView().getModel().getMetaModel();
 			sMetadataPath = oMetaModel.getODataEntitySet(this._getSelectedSet(), true);
@@ -120,7 +128,12 @@ sap.ui.define([
 			});
 
 			oDetailView.bindElement(sPath);
-			this.getView().byId("detailBox").destroyContent().addContent(oDetailView);
+			oDetailBox = this.getView().byId("detailBox");
+			oDetailBox.destroyContent();
+			iStart = Date.now();
+			oDetailBox.addContent(oDetailView);
+			jQuery.sap.log.info("addContent took " + (Date.now() - iStart) + " ms", null,
+				"sap.ui.core.sample.ViewTemplate.scenario.Main");
 			this.onSourceCode();
 		}
 	});

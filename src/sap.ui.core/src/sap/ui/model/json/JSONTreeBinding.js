@@ -37,62 +37,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 */
 	var JSONTreeBinding = ClientTreeBinding.extend("sap.ui.model.json.JSONTreeBinding");
 	
-	/**
-	 * Return node contexts for the tree
-	 * @param {object} oContext to use for retrieving the node contexts
-	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
-	 * @return {Array} the contexts array
-	 * @protected
-	 */
-	JSONTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength) {
-		if (!iStartIndex) {
-			iStartIndex = 0;
-		}
-		if (!iLength) {
-			iLength = this.oModel.iSizeLimit;
-		}
-	
-		var sContextPath = oContext.getPath();
-		if (!jQuery.sap.endsWith(sContextPath,"/")) {
-			sContextPath = sContextPath + "/";
-		}
-		if (!jQuery.sap.startsWith(sContextPath,"/")) {
-			sContextPath = "/" + sContextPath;
-		}
-	
-		var aContexts = [],
-			that = this,
-			oNode = this.oModel._getObject(sContextPath),
-			aArrayNames = this.mParameters && this.mParameters.arrayNames,
-			aChildArray;
-		
-		if (oNode) {
-			if (aArrayNames && jQuery.isArray(aArrayNames)) {
-				jQuery.each(aArrayNames, function(iIndex, sArrayName){
-					aChildArray = oNode[sArrayName];
-					if (aChildArray) {
-						jQuery.each(aChildArray, function(sSubName, oSubChild) {
-							that._saveSubContext(oSubChild, aContexts, sContextPath, sArrayName + "/" + sSubName);
-						});
-					}
-				});
-			} else {
-				jQuery.sap.each(oNode, function(sName, oChild) {
-					if (jQuery.isArray(oChild)) {
-						jQuery.each(oChild, function(sSubName, oSubChild) {
-							that._saveSubContext(oSubChild, aContexts, sContextPath, sName + "/" + sSubName);
-						});
-					} else if (oChild && typeof oChild == "object") {
-						that._saveSubContext(oChild, aContexts, sContextPath, sName);
-					}
-				});
-			}
-		}
-		return aContexts.slice(iStartIndex, iStartIndex + iLength);
-	};
-	
-	
 	JSONTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
 		if (typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);

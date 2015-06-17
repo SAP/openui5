@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *            the button to be rendered
 	 */
 	ButtonRenderer.render = function(oRm, oButton) {
+
 		// get control properties
 		var sType = oButton.getType();
 		var bEnabled = oButton.getEnabled();
@@ -35,8 +36,9 @@ sap.ui.define(['jquery.sap.global'],
 		var sBackURI = sap.ui.core.IconPool.getIconURI("nav-back");
 
 		// start button tag
-		oRm.write("<button type=\"button\"");
+		oRm.write("<button");
 		oRm.writeControlData(oButton);
+		oRm.addClass("sapMBtnBase");
 
 		// button container style class
 		if (!oButton._isUnstyled()) {
@@ -93,9 +95,12 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 
+		// get icon-font info. will return null if the icon is a image
+		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
+
 		// add tooltip if available
-		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+		if (sTooltip || (oIconInfo && !oButton.getText())) {
+			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
 		}
 
 		oRm.writeClasses();

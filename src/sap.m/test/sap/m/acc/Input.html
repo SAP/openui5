@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Input ACC Test - sap.m</title>
+
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+
+		jQuery.sap.require("sap.m.MessageBox");
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+		var app = new sap.m.App("myApp");
+
+		function handleChange(oEvent){
+			var oInput = oEvent.oSource;
+			var sValue = oEvent.getParameter("value");
+		};
+
+		function handleChange2(oEvent){
+			var oInput = oEvent.oSource;
+			var sValue = oEvent.getParameter("value");
+			if( sValue != "Hello") {
+				oInput.setValueState(sap.ui.core.ValueState.Error);
+			}else {
+				oInput.setValueState(sap.ui.core.ValueState.None);
+			}
+		};
+
+		function handleValueHelp(oEvent) {
+			sap.m.MessageBox.alert("Value help requested");
+		};
+
+		var aData = [
+								{name: "Dente, Al", userid: "U01"},
+								{name: "Friese, Andy", userid: "U02"},
+								{name: "Mann, Anita", userid: "U03"},
+								{name: "Schutt, Doris", userid: "U04"},
+								{name: "Open, Doris", userid: "U05"},
+								{name: "Dewit, Kenya", userid: "U06"},
+								{name: "Zar, Lou", userid: "U07"},
+								{name: "Burr, Tim", userid: "U08"},
+								{name: "Hughes, Tish", userid: "U09"},
+								{name: "Town, Mo", userid: "U10"},
+								{name: "Case, Justin", userid: "U11"},
+								{name: "Time, Justin", userid: "U12"},
+								{name: "Barr, Sandy", userid: "U13"},
+								{name: "Poole, Gene", userid: "U14"},
+								{name: "Ander, Corey", userid: "U15"},
+								{name: "Early, Brighton", userid: "U16"},
+								{name: "Noring, Constance", userid: "U17"},
+								{name: "O'Lantern, Jack", userid: "U18"},
+								{name: "Tress, Matt", userid: "U19"},
+								{name: "Turner, Paige", userid: "U20"}
+							];
+
+		var oModel1 = new sap.ui.model.json.JSONModel();
+		oModel1.setData(aData);
+
+		var oSuggestionData = {
+				tabularSuggestionItems : [
+					{	name : "Hard disk", qty : "2 EA", limit : "99.00 EUR", price : "90.00 EUR"},
+					{	name : "CPU", qty : "1 EA", limit : "199.00 EUR", price : "180.00 EUR"},
+					{	name : "DRAM", qty : "8 EA", limit : "99.00 EUR", price : "89.00 EUR"},
+					{	name : "Fan", qty : "2 EA", limit : "30.00 EUR", price : "20.00 EUR"},
+					{	name : "CPU Fan", qty : "1 EA", limit : "50.00 EUR", price : "48.00 EUR"},
+					{	name : "Graphic card", qty : "1 EA", limit : "200.00 EUR", price : "150.00 EUR"},
+					{	name : "CD drive", qty : "1 EA", limit : "99.00 EUR", price : "70.00 EUR"},
+					{	name : "Monitor", qty : "2 EA", limit : "200.00 EUR", price : "190.00 EUR"},
+					{	name : "Keyboard", qty : "1 EA", limit : "30.00 EUR", price : "20.00 EUR"},
+					{	name : "Mouse", qty : "1 EA", limit : "99.00 EUR", price : "90.00 EUR"},
+					{	name : "Mouse Pad", qty : "1 EA", limit : "20.00 EUR", price : "10.00 EUR"},
+					{	name : "Speakers", qty : "1 EA", limit : "99.00 EUR", price : "60.00 EUR"}
+				]
+			};
+		var oModel2 = new sap.ui.model.json.JSONModel();
+		oModel2.setData(oSuggestionData);
+
+		var oI18nModel = new sap.ui.model.json.JSONModel();
+		oI18nModel.setData({
+			Name : "Name",
+			Qty : "Qty",
+			Value : "Value",
+			Price : "Price"
+		});
+		sap.ui.getCore().setModel(oI18nModel, "i18n");
+
+		var oTableItemTemplate = new sap.m.ColumnListItem({
+			type : "Active",
+			vAlign : "Middle",
+			cells : [
+				new sap.m.Label({text: "{name}"}),
+				new sap.m.Label({text: "{qty}", wrapping: true}),
+				new sap.m.Label({text: "{limit}"}),
+				new sap.m.Label({text: "{price}"})
+			]
+		});
+
+		var mySuggestionColumns = [
+			new sap.m.Column({hAlign: "Begin", header: new sap.m.Label({text: "{i18n>/Name}"})}),
+			new sap.m.Column({hAlign: "Center", popinDisplay: "Inline", header: new sap.m.Label({text: "{i18n>/Qty}"}),minScreenWidth: "Tablet", demandPopin: true}),
+			new sap.m.Column({hAlign: "Center", width: "30%", header: new sap.m.Label({text: "{i18n>/Value}"}), minScreenWidth: "XXSmall", demandPopin: true}),
+			new sap.m.Column({hAlign: "End", width: "30%", popinDisplay: "Inline", header: new sap.m.Label({text : "{i18n>/Price}"}), minScreenWidth: "400px", demandPopin: true})
+		];
+
+		var page1 = new sap.m.Page("page1", {
+			title:"Mobile Input",
+			content : [
+				new sap.m.Label({text: "Name", labelFor: "I1"}),
+				new sap.m.Input("I1", {type: sap.m.InputType.Text, change: handleChange }),
+				new sap.m.Label({text: "email address", labelFor: "I2"}),
+				new sap.m.Input("I2", {type: sap.m.InputType.Email, change: handleChange}),
+				new sap.m.Label({text: "Amount", labelFor: "I3"}),
+				new sap.m.Input("I3", {type: sap.m.InputType.Number, change: handleChange}),
+				new sap.m.Label({text: "phone", labelFor: "I4"}),
+				new sap.m.Input("I4", {type: sap.m.InputType.Tel, change: handleChange}),
+				new sap.m.Label({text: "link", labelFor: "I5"}),
+				new sap.m.Input("I5", {type: sap.m.InputType.Url, change: handleChange}),
+				new sap.m.Label({text: "password", labelFor: "I6"}),
+				new sap.m.Input("I6", {type: sap.m.InputType.Password, change: handleChange}),
+				new sap.m.Label({text: "Name", labelFor: "I7"}),
+				new sap.m.Input("I7", { placeholder: "choose name", showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}),
+				new sap.m.Label({text: "User", labelFor: "I8"}),
+				new sap.m.Input("I8", { showSuggestion: true, change: handleChange}).setModel(oModel1).bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"})),
+				new sap.m.Label({text: "Hardware (try with C)", labelFor: "I9"}),
+				new sap.m.Input("I9", { showSuggestion: true, suggestionColumns: mySuggestionColumns, showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}).setModel(oModel2).bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate),
+				new sap.m.Label({text: "Price", labelFor: "I10"}),
+				new sap.m.Input("I10", { value: "220", description: "EUR", fieldWidth: "30%", change: handleChange}),
+				new sap.m.Label({text: "only \"Hello\" is valid", labelFor: "I11"}),
+				new sap.m.Input("I11", {type: sap.m.InputType.Text, value: "Hello", change: handleChange2 })
+				]
+		});
+
+		app.addPage(page1);
+		app.placeAt("body");
+
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+		.sapMPageScroll {
+			padding: 1rem;
+		}
+	</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

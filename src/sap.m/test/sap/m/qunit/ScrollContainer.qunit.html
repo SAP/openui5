@@ -107,22 +107,27 @@
 			ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
 		});
 
-		function getScrollPos(){
+		// Gets the scroll position of ScrolLContainer with id: sScrollContainerId in sDirection(left/top)
+		function getScrollPos(sScrollContainerId, sDirection) {
 			var s,
-				scrollEnablement = oSC2.getScrollDelegate();
+				scrollEnablement = sap.ui.getCore().byId(sScrollContainerId).getScrollDelegate(),
+				aScrollPosition = null;
 
 			if (scrollEnablement._scroller) { // iScroll
 				if (sap.ui.Device.browser.mozilla) {
-					s = jQuery.sap.byId("sc2-scroll").css("-moz-transform").split(" ")[4]; // "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
+					aScrollPosition = jQuery.sap.byId(sScrollContainerId).css("-moz-transform").split(" ");
+					// "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
+					s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 				} else if (sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome) {
-					s = jQuery.sap.byId("sc2-scroll").css("-webkit-transform").split(" ")[4];
+					aScrollPosition = jQuery.sap.byId(sScrollContainerId).css("-webkit-transform").split(" ");
+					s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 				} else if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9) {
-					s = jQuery.sap.byId("sc2-scroll").css("left");
+					s = jQuery.sap.byId(sScrollContainerId).css(sDirection);
 				}
 				return Math.round(parseFloat(s));
 
 			} else { // NativeMouseScroller
-				s = Math.round(oSC2.getDomRef().scrollLeft);
+				sDirection == "left" ? s = Math.round(sap.ui.getCore().byId(sScrollContainerId).getDomRef().scrollLeft) : s = Math.round(sap.ui.getCore().byId(sScrollContainerId).getDomRef().scrollTop);
 				return -s;
 			}
 		}
@@ -132,10 +137,10 @@
 			test("Scrolling - immediate", function() {
 				expect(4);
 
-				equal(getScrollPos(), 0, "ScrollContainer 2 should be scrolled to position 0");
+				equal(getScrollPos(oSC2.getId(), "left"), 0, "ScrollContainer 2 should be scrolled to position 0");
 				oSC2.scrollTo(100,0,0);
 
-				equal(getScrollPos(), -100, "ScrollContainer 2 should be scrolled to position 100");
+				equal(getScrollPos(oSC2.getId(), "left"), -100, "ScrollContainer 2 should be scrolled to position 100");
 				intEqual(oSC2._oScroller._scrollX, 100, "Internally stored x scrolling position should be 100");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 			});
@@ -162,7 +167,7 @@
 
 				oSC2.scrollTo(110,50,0);
 
-				equal(getScrollPos(), -110, "ScrollContainer 2 should be scrolled to position 110");
+				equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 
 				intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0"); // no y scrolling possible, so 0 should be the position
@@ -173,7 +178,7 @@
 
 				oSC2.rerender();
 
-				equal(getScrollPos(), -110, "ScrollContainer 2 should be scrolled to position 110");
+				equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 				intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
@@ -186,14 +191,13 @@
 				oSC2.scrollTo(9999,0,0); // try to scroll way beyond the end of the content
 
 				window.setTimeout(function(){
-					equal(getScrollPos(), -650, "ScrollContainer 2 should be scrolled to position 650");
+					equal(getScrollPos(oSC2.getId(), "left"), -650, "ScrollContainer 2 should be scrolled to position 650");
 					intEqual(oSC2._oScroller._scrollX, 650, "Internally stored x scrolling position should be 650");
 					intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
 					start();
 				}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
 			});
-
 
 			asyncTest("Scrolling after resize", function() {
 				expect(3);
@@ -204,7 +208,7 @@
 					oSC2.scrollTo(9999,0,0);  // again try to scroll way beyond the end of the content - but this time the content is a bit larger, iscroll should have noticed
 
 					window.setTimeout(function(){
-						equal(getScrollPos(), -750, "ScrollContainer 2 should be scrolled to position 750");
+						equal(getScrollPos(oSC2.getId(), "left"), -750, "ScrollContainer 2 should be scrolled to position 750");
 
 						intEqual(oSC2._oScroller._scrollX, 750, "Internally stored x scrolling position should be 750");
 						intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
@@ -214,6 +218,67 @@
 				}, 300);
 			});
 
+
+			QUnit.test("Vertical Scroll to element", function(assert) {
+
+				var oScrollContainer = new sap.m.ScrollContainer("oSC", {
+					height: "200px",
+					width: "400px",
+					vertical: true,
+					content: [
+						new sap.ui.core.HTML({
+							content : "<div style=\"height: 800px\">800px height div" +
+							"<div style=\"position: absolute; left: 0; top: 200px;\">" +
+							"<div style=\"position: absolute; left: 0; top: 200px;\" id=\"nestedPositioned\">XYZ</div>" +
+							"</div>" +
+							"</div>"
+						}),
+						this.oTestButton = new sap.m.Button(),
+						new sap.ui.core.HTML({
+							content : "<div style=\"height: 200px\">200px00px height div</div>"
+						})
+					]
+				});
+
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oScrollContainer.scrollToElement(this.oTestButton);
+
+				assert.equal(getScrollPos(oScrollContainer.getId(), "top"), -800, "ScrollContainer should be scrolled to position 800 from the top");
+
+				oScrollContainer.scrollToElement(document.getElementById('nestedPositioned'));
+
+				assert.equal(getScrollPos(oScrollContainer.getId(), "top"), -400, "ScrollContainer should be scrolled to position 400 from the top");
+
+				oScrollContainer.destroy();
+
+			});
+
+			QUnit.test("Horisontal Scroll to element", function(assert) {
+
+				var oScrollContainer = new sap.m.ScrollContainer("oSC-2", {
+					height: "200px",
+					content: [
+						new sap.ui.core.HTML({
+							content: "<span style=\"width: 800px; display: inline-block\">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>"
+						}),
+						this.oTestButton = new sap.m.Button(),
+						new sap.ui.core.HTML({
+							content: "<span style=\"width: 200px; display: inline-block\">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>"
+						})
+					]
+				});
+
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oScrollContainer.scrollToElement(this.oTestButton.getDomRef());
+				assert.equal(getScrollPos(oScrollContainer.getId(), "left"), -800, "ScrollContainer should be scrolled to position 800 from the left");
+
+				oScrollContainer.destroy();
+
+			});
 
 			test("Press [CTRL] + [DOWN]", function() {
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
@@ -288,6 +353,8 @@
 					sContentSelector = ".sapMScrollContScroll",
 					sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
 					aResponsiveSize = sResponsiveSize.split(" "),
+					sResponsiveSizeLeftRight = aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0],
+					sResponsiveSizeTopBottom = aResponsiveSize[0],
 					$container,
 					$containerContent;
 
@@ -318,10 +385,10 @@
 				oContainer.addStyleClass("sapUiResponsiveContentPadding");
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-				strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-				strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-				strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+				strictEqual($containerContent.css("padding-left"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-left"));
+				strictEqual($containerContent.css("padding-right"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-right"));
+				strictEqual($containerContent.css("padding-top"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-top"));
+				strictEqual($containerContent.css("padding-bottom"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-bottom"));
 
 				// Cleanup
 				oContainer.destroy();
@@ -332,11 +399,11 @@
 		</script>
 
 		<style>
-			#sc2 {
+			#sc2, #oSC-2 {
 				white-space: nowrap;
 				border: 1px solid red;
 			}
-			#sc2-scroll {
+			#sc2-scroll{
 				width: 1000px;
 			}
 		</style>
@@ -348,5 +415,7 @@
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
 		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+
 	</body>
 </html>

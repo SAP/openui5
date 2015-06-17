@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 
 	var Segment = Metadata.createClass("sap.m.semantic.Segment", {
 
-		constructor : function(aContent, oContainer, fnSortFunction) {
+		constructor : function(aContent, oContainer, sContainerAggregationName, fnSortFunction) {
 			if (!oContainer) {
 				jQuery.sap.log.error("missing argumment: constructor expects a container reference", this);
 				return;
@@ -36,6 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 
 			this._aContent = aContent;
 			this._oContainer = oContainer;
+			this._sContainerAggregationName = sContainerAggregationName;
 			this._fnSortFunction = fnSortFunction;
 		}
 
@@ -74,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 		var iContainerInsertIndex = this.getEndIndex();
 		var iLocalInsertIndex = this._aContent.length;
 
-		this._oContainer.insertContent(oControl, iContainerInsertIndex, bSuppressInvalidate);
+		this._oContainer.insertAggregation(this._sContainerAggregationName, oControl, iContainerInsertIndex, bSuppressInvalidate);
 		this._aContent.splice(iLocalInsertIndex, 0, oControl);
 
 		return oControl;
@@ -99,19 +100,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 		if (iLocalIndex > -1) {
 			this._aContent.splice(iLocalIndex, 1);
 
-			return this._oContainer.removeContent(oControl, bSuppressInvalidate);
+			return this._oContainer.removeAggregation(this._sContainerAggregationName, oControl, bSuppressInvalidate);
 		}
 	};
 
 	Segment.prototype.removeAllContent = function (bSuppressInvalidate) {
 
 		var aRemovedContent = [],
-			aGlobalContent = this._oContainer.getContent(),
+			aGlobalContent = this._oContainer.getAggregation(this._sContainerAggregationName),
 			iStartIndex = this.getStartIndex(),
 			iEndIndex = this.getEndIndex();
 
 		for (var i = iStartIndex; i < iEndIndex; i++) {
-			var oItem = this._oContainer.removeContent(aGlobalContent[i], bSuppressInvalidate); //TODO: test index consistency upon iteration+removal
+			var oItem = this._oContainer.removeAggregation(this._sContainerAggregationName, aGlobalContent[i], bSuppressInvalidate); //TODO: test index consistency upon iteration+removal
 			if (oItem) {
 				aRemovedContent.push(oItem);
 			}
@@ -134,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 		var iInsertIndexInContainer = Math.min(this.getStartIndex() + iIndex, this.getEndIndex());
 		iInsertIndexInContainer = Math.max(iInsertIndexInContainer, 0);
 
-		this._oContainer.insertContent(oControl, iInsertIndexInContainer, bSuppressInvalidate);
+		this._oContainer.insertAggregation(this._sContainerAggregationName, oControl, iInsertIndexInContainer, bSuppressInvalidate);
 		this._aContent.splice(iIndex, 0, oControl);
 
 		return oControl;

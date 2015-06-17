@@ -98,6 +98,17 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/simple-values.xml":
 				sAnswer = sSimpleValues;
 				break;
+				
+			// Test multiple annotations loaded after each other...
+			case "fakeService://testdata/odata/multiple-annotations-01.xml":
+				sAnswer = sMultipleTest01;
+				break;
+			case "fakeService://testdata/odata/multiple-annotations-02.xml":
+				sAnswer = sMultipleTest02;
+				break;
+			case "fakeService://testdata/odata/multiple-annotations-03.xml":
+				sAnswer = sMultipleTest03;
+				break;
 
 			case "fakeService://testdata/odata/collection-with-namespace.xml":
 				sAnswer = sCollectionWithNamespace;
@@ -106,6 +117,39 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/UrlRef.xml":
 				sAnswer = sUrlRefTest;
 				break;
+				
+			case "fakeService://testdata/odata/Aliases.xml":
+				sAnswer = sAliasesTest;
+				break;
+
+			case "fakeService://testdata/odata/DynamicExpressions.xml":
+				sAnswer = sDynamicExpressionsTest;
+				break;
+				
+			case "fakeService://testdata/odata/DynamicExpressions2.xml":
+				sAnswer = sDynamicExpressionsTest2;
+				break;
+				
+			case "fakeService://testdata/odata/collections-with-simple-values.xml":
+				sAnswer= sCollectionsWithSimpleValuesTest;
+				break;
+				
+			case "fakeService://testdata/odata/simple-values-2.xml":
+				sAnswer = sSimpleValuesTest2;
+				break;
+				
+			case "fakeService://testdata/odata/if-in-apply.xml":
+				sAnswer = sIfInApply;
+				break;
+				
+			case "fakeService://testdata/odata/labeledelement-other-values.xml":
+				sAnswer = sLabeledElementOtherValues;
+				break;
+				
+			case "fakeService://testdata/odata/apply-in-if.xml":
+				sAnswer = sApplyInIf;
+				break;
+
 
 			default:
 				// You used the wrong URL, dummy!
@@ -687,6 +731,10 @@ var sNorthwindAnnotations = '\
 						</Record>\
 					</Collection>\
 			</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Category/CategoryID">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />\
+				<Annotation Term="annotationSource" String="Annotations" />\
 			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
@@ -2493,26 +2541,28 @@ var sNorthwindMetadataAnnotated = '\
 				</AssociationSet>\
 			</EntityContainer>\
 		</Schema>\
-	</edmx:DataServices>\
-	<edmx:DataServices>\
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="NorthwindModelAnnotations">\
 			<Annotations Target="UnitTest">\
-			<Annotation Term="Test.FromMetadata">\
-					<Collection>\
-						<Record Type="Test.DataField">\
-							<PropertyValue Property="Label" String="From" />\
-							<PropertyValue Property="Value" Path="Metadata" />\
-						</Record>\
-					</Collection>\
-			</Annotation>\
-			<Annotation Term="Test.Merged">\
-					<Collection>\
-						<Record Type="Test.DataField">\
-							<PropertyValue Property="Label" String="From" />\
-							<PropertyValue Property="Value" Path="Metadata" />\
-						</Record>\
-					</Collection>\
-			</Annotation>\
+				<Annotation Term="Test.FromMetadata">\
+						<Collection>\
+							<Record Type="Test.DataField">\
+								<PropertyValue Property="Label" String="From" />\
+								<PropertyValue Property="Value" Path="Metadata" />\
+							</Record>\
+						</Collection>\
+				</Annotation>\
+				<Annotation Term="Test.Merged">\
+						<Collection>\
+							<Record Type="Test.DataField">\
+								<PropertyValue Property="Label" String="From" />\
+								<PropertyValue Property="Value" Path="Metadata" />\
+							</Record>\
+						</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Category/CategoryID">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />\
+				<Annotation Term="annotationSource" String="Metadata" />\
 			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
@@ -3762,6 +3812,403 @@ var sUrlRefTest = '\
 							</PropertyValue>\
 						</Record>\
 					</Collection>\
+				</Annotation>\
+			</Annotations>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sUrlRefTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" Version="4.0">\
+	<edm:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edm:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edm:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="UrlTest">\
+				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Label" String="ID"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldForAnnotation">\
+							<PropertyValue Property="Label" String="Address"/>\
+							<PropertyValue Property="Target" AnnotationPath="@com.sap.vocabularies.Communication.v1.Address"/>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
+							<PropertyValue Property="Label" String="Link to"/>\
+							<PropertyValue Property="Value" String="Google Maps"/>\
+							<PropertyValue Property="Url">\
+								<UrlRef>\
+									<Apply Function="odata.fillUriTemplate">\
+										<String>https://www.google.de/maps/place/{street},{city}</String>\
+										<LabeledElement Name="street">\
+											<Apply Function="odata.uriEncode">\
+												<Path>Address/Street</Path>\
+											</Apply>\
+										</LabeledElement>\
+										<LabeledElement Name="city">\
+											<Apply Function="odata.uriEncode">\
+												<Path>Address/City</Path>\
+											</Apply>\
+										</LabeledElement>\
+									</Apply>\
+								</UrlRef>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sMultipleTest01 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.MultipleAnnotations">\
+				<Annotation Term="Test.FromAll">\
+					<String>First</String>\
+				</Annotation>\
+				<Annotation Term="Test.FromFirst">\
+					<String>First</String>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sMultipleTest02 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.MultipleAnnotations">\
+				<Annotation Term="Test.FromAll">\
+					<String>Second</String>\
+				</Annotation>\
+				<Annotation Term="Test.FromSecond">\
+					<String>Second</String>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sMultipleTest03 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+		<Annotations Target="Test.MultipleAnnotations">\
+			<Annotation Term="Test.FromAll">\
+				<String>Third</String>\
+			</Annotation>\
+			<Annotation Term="Test.FromThird">\
+				<String>Third</String>\
+			</Annotation>\
+		</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+
+var sAliasesTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="TEST" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.AliasReplacement">\
+				<Annotation Term="TestAnnotation">\
+				  <Record>\
+				    <PropertyValue Property="NotReplaced">\
+				      <Collection>\
+				        <AnnotationPath>@TEST.Value</AnnotationPath>\
+				      </Collection>\
+				    </PropertyValue>\
+				    <PropertyValue Property="Replaced" AnnotationPath="@TEST.Value"/>\
+				  </Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+
+var sDynamicExpressionsTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edm:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edm:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edm:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="DynamicExpressions">\
+				<Annotation Term="org.example.person.Gender">\
+				  <If>\
+				    <Path>IsFemale</Path>\
+				    <String>Female</String>\
+				    <String>Male</String>\
+				  </If>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sDynamicExpressionsTest2 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="DynamicExpressions2">\
+				<Annotation Term="Test.Data">\
+					<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+						<PropertyValue Property="Value">\
+							<And>\
+								<Or>\
+									<Eq>\
+										<Lt>\
+											<Not>\
+												<Path>p1</Path>\
+											</Not>\
+											<Path>p2</Path>\
+										</Lt>\
+										<Path>p3</Path>\
+									</Eq>\
+									<Gt>\
+										<Path>p4</Path>\
+										<Path>p5</Path>\
+									</Gt>\
+								</Or>\
+								<Ne>\
+									<Ge>\
+										<Path>p6</Path>\
+										<Path>p7</Path>\
+									</Ge>\
+									<Le>\
+										<Path>p8</Path>\
+										<Path>p9</Path>\
+									</Le>\
+								</Ne>\
+							</And>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sCollectionsWithSimpleValuesTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="CollectionsWithSimpleValues">\
+				<Annotation Term="Test.Data">\
+					<Collection>\
+						<String>String01</String>\
+						<String>String02</String>\
+						<String>String03</String>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sSimpleValuesTest2 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="SimpleValues">\
+				<Annotation Term="Test.Data">\
+					<String>String01</String>\
+					<String>String02</String>\
+					<String>String03</String>\
+					<Path>Path01</Path>\
+					<Path>Path02</Path>\
+					<Int>1</Int>\
+					<Int>2</Int>\
+					<Int>3</Int>\
+					<Int>4</Int>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sIfInApply = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="IfInApply">\
+				<Annotation Term="Test.Data">\
+					<Record>\
+						<PropertyValue Property="Value">\
+							<Apply Function="odata.concat">\
+								<If>\
+									<Eq>\
+										<Path>Sex</Path>\
+										<String>M</String>\
+									</Eq>\
+									<String>Mr. </String>\
+									<If>\
+										<Eq>\
+											<Path>Sex</Path>\
+											<String>F</String>\
+										</Eq>\
+										<String>Mrs. </String>\
+										<String></String>\
+									</If>\
+								</If>\
+								<Path>FirstName</Path>\
+								<String/>\
+								<Path>LastName</Path>\
+							</Apply>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sLabeledElementOtherValues = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="LabeledElement">\
+				<Annotation Term="Test.Data">\
+					<Record Type="Test.Data.DataFieldWithUrl">\
+						<PropertyValue Property="Url">\
+							<UrlRef>\
+								<Apply Function="odata.fillUriTemplate">\
+									<String><![CDATA[#{Bool}/{Date}/{DateTimeOffset}/{Decimal}/{Float}/{Guid}/{Int}/{Path}/{String}/{TimeOfDay}]]></String>\
+									<LabeledElement Name="Bool">\
+										<Bool>true</Bool>\
+									</LabeledElement>\
+									<LabeledElement Name="Date">\
+										<Date>2015-03-24</Date>\
+									</LabeledElement>\
+									<LabeledElement Name="DateTimeOffset">\
+										<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+									</LabeledElement>\
+									<LabeledElement Name="Decimal">\
+										<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+									</LabeledElement>\
+									<LabeledElement Name="Float">\
+										<Float>-7.4503e-36</Float>\
+									</LabeledElement>\
+									<LabeledElement Name="Guid">\
+										<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+									</LabeledElement>\
+									<LabeledElement Name="Int">\
+										<Int>9007199254740992</Int>\
+									</LabeledElement>\
+									<LabeledElement Name="Path">\
+										<Path>BusinessPartnerID</Path>\
+									</LabeledElement>\
+									<LabeledElement Name="String">\
+										<String>hello, world</String>\
+									</LabeledElement>\
+									<LabeledElement Name="TimeOfDay">\
+										<TimeOfDay>13:57:06</TimeOfDay>\
+									</LabeledElement>\
+								</Apply>\
+							</UrlRef>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sApplyInIf = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="ApplyInIf">\
+				<Annotation Term="Test.1">\
+					<Record Type="Value">\
+						<PropertyValue Property="Value">\
+							<If>\
+								<Ne>\
+									<Path>EmailAddress</Path>\
+									<Null/>\
+								</Ne>\
+								<Apply Function="odata.concat">\
+									<String>mailto:</String>\
+									<Path>EmailAddress</Path>\
+								</Apply>\
+								<Null/>\
+							</If>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.2">\
+					<Record Type="WithUrlRef">\
+						<PropertyValue Property="Url">\
+							<UrlRef>\
+								<If>\
+									<Ne>\
+										<Path>EmailAddress</Path>\
+										<Null/>\
+									</Ne>\
+									<Apply Function="odata.concat">\
+										<String>mailto:</String>\
+										<Path>EmailAddress</Path>\
+									</Apply>\
+									<Null/>\
+								</If>\
+							</UrlRef>\
+						</PropertyValue>\
+					</Record>\
 				</Annotation>\
 			</Annotations>\
 		</Schema>\

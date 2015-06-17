@@ -2462,8 +2462,9 @@ function toolbarModuleFilter() {
 	var toolbar = id( "qunit-testrunner-toolbar" ),
 		moduleFilter = document.createElement( "span" ),
 		moduleFilterHtml = toolbarModuleFilterHtml();
-
-	if ( !moduleFilterHtml ) {
+// ### BEGIN MODIFIED BY SAP, part of pull request #734
+	if ( !toolbar || !moduleFilterHtml ) {
+// ### END MODIFIED BY SAP
 		return false;
 	}
 
@@ -2493,6 +2494,19 @@ function appendToolbar() {
 		toolbar.appendChild( toolbarUrlConfigContainer() );
 	}
 }
+
+// ### BEGIN MODIFIED BY SAP 
+// implements fix in pull request 732
+function appendHeader() {
+	var header = id( "qunit-header" );
+
+	if ( header ) {
+		header.innerHTML = "<a href='" +
+			QUnit.url({ filter: undefined, module: undefined, testId: undefined }) +
+			"'>" + header.innerHTML + "</a> ";
+	}
+}
+// #### END MODIFIED BY SAP
 
 function appendBanner() {
 	var banner = id( "qunit-banner" );
@@ -2589,18 +2603,18 @@ QUnit.begin(function( details ) {
 
 	// Fixture is the only one necessary to run without the #qunit element
 	storeFixture();
-
-	if ( !qunit ) {
-		return;
-	}
-
-	qunit.innerHTML =
+// ### BEGIN MODIFIED BY SAP
+// implements fix from pull request 732
+	if ( qunit ) {
+		qunit.innerHTML =
 		"<h1 id='qunit-header'>" + escapeText( document.title ) + "</h1>" +
 		"<h2 id='qunit-banner'></h2>" +
 		"<div id='qunit-testrunner-toolbar'></div>" +
 		"<h2 id='qunit-userAgent'></h2>" +
 		"<ol id='qunit-tests'></ol>";
+	}
 
+	appendHeader();
 	appendBanner();
 	appendTestResults();
 	appendUserAgent();
@@ -2608,9 +2622,10 @@ QUnit.begin(function( details ) {
 	appendTestsList( details.modules );
 	toolbarModuleFilter();
 
-	if ( config.hidepassed ) {
+	if ( qunit && config.hidepassed ) {
 		addClass( qunit.lastChild, "hidepass" );
 	}
+// ### END MODIFIED BY SAP
 });
 
 QUnit.done(function( details ) {

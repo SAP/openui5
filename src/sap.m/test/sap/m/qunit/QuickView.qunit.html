@@ -1,0 +1,436 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>QUnit page for sap.m.QuickView</title>
+	<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript" data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" type="text/css" media="screen"
+		  href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+
+		//create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		// JSON sample data
+		var mData = {
+			"pages": [
+				{
+					pageId: "customPageId",
+					header: "Employee Info",
+					title: "John Doe",
+					icon: "",
+					description: "Department Manager1",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Other",
+							elements: [
+								{
+									label: "Email",
+									value: "john.dow@sap.com",
+									url: "john.dow@sap.com",
+									emailSubject: 'Subject',
+									elementType: sap.m.QuickViewGroupElementType.email
+								},
+								{
+									label: "Phone",
+									value: "+359 888 888 888",
+									elementType: sap.m.QuickViewGroupElementType.phone
+								},
+								{
+									label: "Best Friend",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								},
+								{
+									label: "Favorite Player",
+									value: "Ivaylo Ivanov",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId3"
+								}
+							]
+						}
+
+					]
+				},
+				{
+					pageId: "customPageId2",
+					header: "Page 2",
+					icon: "sap-icon://person-placeholder",
+					title: "Michael Muller",
+					description: "Account Manager",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Hobby",
+							elements: [
+								{
+									label: "Name",
+									value: "Jaga",
+									elementType: "text"
+								},
+								{
+									label: "Level",
+									value: "Beginner"
+								}
+
+							]
+						}
+
+					]
+				},
+				{
+					pageId: "customPageId3",
+					header: "Page 3",
+					icon: "sap-icon://person-placeholder",
+					title: "Ivaylo Ivanov",
+					description: "Developer",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Hobby",
+							elements: [
+								{
+									label: "Name",
+									value: "Table Tennis",
+									elementType: "text"
+								},
+								{
+									label: "Level",
+									value: "Beginner"
+								}
+
+							]
+						}
+
+					]
+				},
+				{
+					pageId: "customPageId4",
+					header: "Company View",
+					icon: "sap-icon://building",
+					title: "SAP AG",
+					description: "Run it simple",
+					groups: [
+						{
+							heading: "Contact Information",
+							elements: [
+								{
+									label: "Address",
+									value: "Waldorf, Germany",
+									url: "http://sap.com",
+									elementType: "link"
+								},
+								{
+									label: "Email",
+									value: "office@sap.com",
+									emailSubject: 'Subject',
+									elementType: "email"
+								}
+							]
+						},
+						{
+							heading: "Main Contact",
+							elements: [
+								{
+									label: "Name",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								},
+								{
+									label: "E-mail",
+									value: "michael.muller@sap.com",
+									emailSubject: 'Subject',
+									elementType: "email"
+								},
+								{
+									label: "Phone",
+									value: "+359 888 888 888",
+									elementType: "phone"
+								},
+								{
+									label: "Mobile",
+									value: "+359 888 999 999",
+									elementType: "phone"
+								}
+							]
+						}
+
+					]
+				}
+			]
+
+		};
+
+		// set the data for the model
+		oModel.setData(mData);
+
+		sap.ui.getCore().setModel(oModel);
+
+		// create and add app
+		var oApp = new sap.m.App("myApp", {initialPage: "quickViewPage"});
+		oApp.placeAt("qunit-fixture");
+
+		// create and add a page with icon tab bar
+		var oPage = new sap.m.Page("quickViewPage", {
+			title: "Quick View"
+		});
+		oApp.addPage(oPage);
+
+		function getQuickView() {
+			return new sap.m.QuickView({
+				pages: {
+					path: '/pages',
+					template: new sap.m.QuickViewPage({
+						pageId: "{pageId}",
+						header: "{header}",
+						icon: "{icon}",
+						title: "{title}",
+						description: "{description}",
+						groups: {
+							path: 'groups',
+							template: new sap.m.QuickViewGroup({
+								heading: '{heading}',
+								elements: {
+									path: 'elements',
+									template: new sap.m.QuickViewGroupElement({
+										label: "{label}",
+										value: "{value}",
+										url: "{url}",
+										type: "{elementType}",
+										pageLinkId: "{pageLinkId}",
+										emailSubject: '{emailSubject}'
+									})
+								}
+							})
+						}
+					})
+				}
+			})
+		}
+
+		QUnit.module("API", {
+			setup: function () {
+				this.oQuickView = getQuickView();
+
+				this.oQuickView.setModel(oModel);
+				var that = this;
+				this.oButton = new sap.m.Button({
+					text: "Open Quick View",
+					press: function () {
+						that.oQuickView.openBy(this);
+					}
+				});
+
+				oPage.addContent(this.oButton);
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oButton.destroy();
+				this.oButton = null;
+
+				this.oQuickView.destroy();
+				this.oQuickView = null;
+			}
+		});
+
+		QUnit.test("Testing if the QuickView is created", function (assert) {
+			assert.ok(sap.ui.getCore().byId(this.oQuickView.getId()), "should render");
+		});
+
+		QUnit.test("Test binding", function (assert) {
+			var aQuickViewPages = this.oQuickView.getPages();
+
+			aQuickViewPages.forEach(function (page, index) {
+				assert.strictEqual(page.mProperties.header, mData.pages[index].header, "Header property is set correctly");
+			});
+		});
+
+		QUnit.module("Render", {
+			setup: function () {
+				this.oQuickView = getQuickView();
+
+				this.oQuickView.setModel(oModel);
+				var that = this;
+				this.oButton = new sap.m.Button({
+					text: "Open Quick View",
+					press: function () {
+						that.oQuickView.openBy(this);
+					}
+				});
+
+				oPage.addContent(this.oButton);
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oButton.destroy();
+				this.oButton = null;
+
+				this.oQuickView.destroy();
+				this.oQuickView = null;
+			}
+		});
+
+		QUnit.test("Clicking on a button to open a QuickView", function (assert) {
+			var fnEventSpy = sinon.spy(this.oQuickView, "openBy");
+			this.oButton.firePress();
+
+			assert.strictEqual(fnEventSpy.callCount, 1, "Should call openBy() method");
+		});
+
+		QUnit.test("Losing focus after showing QuickView", function (assert) {
+			this.oButton.firePress();
+			this.clock.tick(500);
+			assert.ok(this.oQuickView._oPopover.isOpen(), "QuickView is already open");
+
+			assert.ok(sap.ui.getCore().byId(this.oQuickView.getId()), "QuickView is rendered after it's opened.");
+			assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), true, "QuickView is visible after it's opened.");
+
+			this.oQuickView._oPopover.close();
+			this.clock.tick(500);
+			assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), false, "QuickView is not visible after it's closed.");
+		});
+
+		QUnit.test("Invalidating the button that is used in openBy", function (assert) {
+			this.oButton.firePress();
+			this.clock.tick(500);
+
+			this.oButton.invalidate();
+			assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), true, "Should not close the QuickView control.");
+		});
+
+		QUnit.module("Keyboard handling", {
+			setup: function () {
+				this.oQuickView = getQuickView();
+
+				this.oQuickView.setModel(oModel);
+				var that = this;
+				this.oButton = new sap.m.Button({
+					text: "Open Quick View",
+					press: function () {
+						that.oQuickView.openBy(this);
+					}
+				});
+
+				oPage.addContent(this.oButton);
+				sap.ui.getCore().applyChanges();
+
+			},
+			teardown: function () {
+				this.oButton.destroy();
+				this.oButton = null;
+
+				this.oQuickView.destroy();
+				this.oQuickView = null;
+			}
+		});
+
+		QUnit.test("Pressing the ESC key", function (assert) {
+			var fnEventSpy = sinon.spy(this.oQuickView, "_onPopupKeyDown"),
+				oPopupControl = this.oQuickView._oPopover.getAggregation("_popup");
+
+			oPopupControl.addEventDelegate({
+				onkeydown: fnEventSpy
+			}, this.oQuickView);
+
+			this.oButton.firePress();
+			this.clock.tick(500);
+
+			var $popover = this.oQuickView._oPopover.$();
+			sap.ui.test.qunit.triggerKeydown($popover, jQuery.sap.KeyCodes.ESCAPE);
+
+			assert.strictEqual(fnEventSpy.callCount, 1, "Should call the event handler.");
+			assert.notEqual(this.oQuickView._oPopover.getId(), document.activeElement.id, "Should lose the focus from the QuickView");
+			assert.strictEqual(this.oQuickView.isActive(), false, "Should close the QuickView");
+		});
+
+		QUnit.test("Check if Shift + Enter is handled", function (assert) {
+			var fnEventSpy = sinon.spy(this.oQuickView._oNavContainer, "back"),
+				done = assert.async();
+
+			this.oButton.firePress();
+			this.clock.tick(500);
+
+			var currentPage = this.oQuickView._oNavContainer.getCurrentPage().getId(),
+					pageToNavigate = this.oQuickView._oNavContainer.getPages()[1].getId();
+
+			this.oQuickView._oNavContainer.to(pageToNavigate);
+			this.clock.tick(500);
+
+			var $popover = this.oQuickView._oPopover.$();
+			sap.ui.test.qunit.triggerKeydown($popover, "ENTER", true, false, false);
+
+			var newCurrentPage = this.oQuickView._oNavContainer.getCurrentPage().getId();
+
+			assert.strictEqual(fnEventSpy.callCount, 1, "Should call the back() method of the nav container");
+			assert.strictEqual(currentPage, newCurrentPage, "Should have returned to the first page");
+			done();
+		});
+
+
+	</script>
+</head>
+<body class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

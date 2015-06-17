@@ -178,7 +178,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionSheet.prototype.openBy = function(oControl){
-		var that = this;
+		var that = this, iTop, sEndTransform;
 
 		//Generate a translate3d string with the given y offset
 		function genTransformCSS(y){
@@ -278,12 +278,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					this._parent.oPopup.setModal(true);
 					//doesn't need to react on content change because content is always 100%
 					this._parent._registerResizeHandler = this._parent._deregisterResizeHandler = function() {};
-					this._parent._setDimensions = function(){
+					this._parent._setDimensions = function() {
+						sap.m.Dialog.prototype._setDimensions.apply(this);
 						var $this = this.$(),
 							$content = this.$("cont");
 						//CSS reset
 						$this.css({
 							"width": "100%",
+							"max-width": "",
 							"max-height": "100%",
 							"left": "0px",
 							"right": "",
@@ -310,13 +312,23 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							jQuery(this).unbind("webkitTransitionEnd transitionend");
 							$this.removeClass("sapMDialogSliding");
 							fnOpened();
+							// replace the css transform with css top because div with css transform can scroll the whole page
+							// on Android stock browser and blackberry browser
+							setTimeout(function(){
+								$this.css({
+									"top": iTop + "px",
+									"-webkit-transform": "",
+									"-moz-transform": "",
+									"transform": ""
+								});
+							}, 0);
 						});
 
 						//need a timeout to trigger the animation
 						setTimeout(function(){
-							var iTop = iWindowHeight - $this.outerHeight(),
-								//calculation for the end point of the animation
-								sEndTransform = genTransformCSS(iTop);
+							iTop = iWindowHeight - $this.outerHeight();
+							//calculation for the end point of the animation
+							sEndTransform = genTransformCSS(iTop);
 							$this.addClass("sapMDialogSliding") // Windows Phone: class should be added before CSS, otherwise no animation
 								 .removeClass("sapMDialogHidden")
 								 .css({
@@ -335,12 +347,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							$this.removeClass("sapMDialogSliding");
 							fnClosed();
 						});
-						$this.addClass("sapMDialogSliding")  // Windows Phone: class should be added before CSS, otherwise no animation
-							 .css({
-								"-webkit-transform": sTransform,
-								"-moz-transform": sTransform,
-								"transform": sTransform
-							 });
+
+						// set the css transform back before the real close animation
+						$this.css({
+							"-webkit-transform": sEndTransform,
+							"-moz-transform": sEndTransform,
+							"transform": sEndTransform,
+							"top": 0
+						});
+						setTimeout(function() {
+							$this.addClass("sapMDialogSliding") // Windows Phone: class should be added before CSS, otherwise no animation
+								.css({
+									"-webkit-transform": sTransform,
+									"-moz-transform": sTransform,
+									"transform": sTransform
+								});
+						}, 0);
 					};
 
 					//set the animation to the interal oPopup instance on Dialog
@@ -351,10 +373,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					this._parent._adjustScrollingPane = function(){
 						var $this = this.$(),
 							iHeight = $this.height(),
-							iHeaderHeight = $this.children("header.sapMIBar").outerHeight(true),
 							$content = this.$("cont");
 
-						$content.css("max-height", iHeight - iHeaderHeight);
+						$content.css("max-height", iHeight);
 						if (this._oScroller) {
 							this._oScroller.refresh();
 						}
@@ -367,13 +388,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 						var $window = jQuery(window),
 							iWindowHeight = $window.height(),
 							$this = this.$(),
-							iTop = iWindowHeight - $this.outerHeight(),
-							sTransform = genTransformCSS(iTop);
+							iTop = iWindowHeight - $this.outerHeight();
 
 						$this.css({
-							"-webkit-transform": sTransform,
-							"-moz-transform": sTransform,
-							"transform": sTransform
+							top: iTop + "px"
 						});
 
 						this._adjustScrollingPane();
@@ -492,6 +510,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this.setProperty("title", sTitle, true);
 		if (this._parent && sap.ui.Device.system.phone) {
 			this._parent.setTitle(sTitle);
+			this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
 		}
 
 		if (this._parent) {

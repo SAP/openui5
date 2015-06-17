@@ -13,7 +13,7 @@
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.unified, sap.ui.commons"
 	data-sap-ui-language="en-US">
-	
+
 </script>
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
@@ -39,6 +39,7 @@
 	var aSpecialDays = [ [ "20140801", undefined, "Type01", 1 ], [ "20140802", undefined, "Type02", 2 ], [ "20140803", undefined, "Type03", 3 ], [ "20140804", undefined, "Type04", 4 ], [ "20140805", undefined, "Type05", 5 ], [ "20140806", undefined, "Type06", 6 ], [ "20140807", undefined, "Type07", 7 ], [ "20140808", undefined, "Type08", 8 ], [ "20140809", undefined, "Type09", 9 ], [ "20140810", undefined, "Type10", 10 ] ];
 
 	var oCal = new sap.ui.unified.Calendar("Cal", {
+		selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
 		select : function(oEvent) {
 			alert("Select");
 		},
@@ -68,6 +69,16 @@
 	oCal.placeAt("uiArea3");
 	oLeg3.placeAt("uiArea4");
 
+	var oLeg4 = new sap.ui.unified.CalendarLegend("Leg4", {
+		items: [ new sap.ui.unified.CalendarLegendItem("L4-I0", {text: "Type10", type: sap.ui.unified.CalendarDayType.Type10, tooltip: "Type 10"}),
+		         new sap.ui.unified.CalendarLegendItem("L4-I1", {text: "Type09", type: sap.ui.unified.CalendarDayType.Type09, tooltip: "Type 9"}),
+		         new sap.ui.unified.CalendarLegendItem("L4-I2", {text: "Type08", type: sap.ui.unified.CalendarDayType.Type08, tooltip: "Type 8"}),
+		         new sap.ui.unified.CalendarLegendItem("L4-I3", {text: "no type 1", tooltip: "no type 1"}),
+		         new sap.ui.unified.CalendarLegendItem("L4-I4", {text: "Type07", type: sap.ui.unified.CalendarDayType.Type07, tooltip: "Type 7"}),
+		         new sap.ui.unified.CalendarLegendItem("L4-I5", {text: "no type 2", tooltip: "no type 2"}),
+		        ]
+	}).placeAt("uiArea5");
+
 	qutils.delayTestStart();
 
 	module("Rendering");
@@ -86,11 +97,11 @@
 		oLeg2 = sap.ui.getCore().byId("Leg2");
 		var i = 0;
 		for (i; i < 9; i++) {
-			oLeg2.addItem(new sap.ui.unified.CalendarLegendItem({
+			oLeg2.addItem(new sap.ui.unified.CalendarLegendItem("L2-I" + i, {
 				text : "Placeholder 0" + (i + 1)
 			}));
 		}
-		oLeg2.addItem(new sap.ui.unified.CalendarLegendItem({
+		oLeg2.addItem(new sap.ui.unified.CalendarLegendItem("L2-I" + i, {
 			text : "Placeholder " + (i + 1)
 		}));
 
@@ -99,6 +110,16 @@
 		$Leg2 = oLeg2.$();
 		var aLegendItems = $Leg2.children(".sapUiUnifiedLegendItem");
 		equal(aLegendItems.length, 14, "14 categories rendered");
+
+		ok(jQuery("#L2-I0").hasClass("sapUiCalLegDayType01"), "Legend2: 1. item has type 01");
+		ok(jQuery("#L2-I1").hasClass("sapUiCalLegDayType02"), "Legend2: 2. item has type 02");
+
+		ok(jQuery("#L4-I0").hasClass("sapUiCalLegDayType10"), "Legend4: 1. item has type 10");
+		ok(jQuery("#L4-I1").hasClass("sapUiCalLegDayType09"), "Legend4: 2. item has type 09");
+		ok(jQuery("#L4-I2").hasClass("sapUiCalLegDayType08"), "Legend4: 3. item has type 08");
+		ok(jQuery("#L4-I3").hasClass("sapUiCalLegDayType01"), "Legend4: 4. item has type 01");
+		ok(jQuery("#L4-I4").hasClass("sapUiCalLegDayType07"), "Legend4: 5. item has type 07");
+		ok(jQuery("#L4-I5").hasClass("sapUiCalLegDayType02"), "Legend4: 6. item has type 02");
 	});
 
 	test("Combination with Calendar", function() {
@@ -113,16 +134,16 @@
 
 		var $Leg = oLeg3.$().children();
 		var specialDatesLeg = oLeg3.getItems();
-		
+
 		for (var i = 1; i < 9; i++) {
 			//compare specialDates of Calendar
-			ok(jQuery("#Cal-2014080" + i).hasClass("sapUiCalDayType0" + i), "2014080" + i + " is special day of Type0" + i);
+			ok(jQuery("#Cal--Month0-2014080" + i).hasClass("sapUiCalDayType0" + i), "2014080" + i + " is special day of Type0" + i);
 			//with categories in CalendarLegend //skipping standard categories
 			ok(($Leg[i + 3].textContent == "Type0" + i), "Type0" + i + " is present in Legend");
 			equal($Leg[i + 3].textContent,specialDates[i-1].getTooltip(),"Type0" + i +" matches");
 		}
 		//compare specialDates of Calendar
-		ok(jQuery("#Cal-20140810").hasClass("sapUiCalDayType10"), "201408010 is special day of Type10");
+		ok(jQuery("#Cal--Month0-20140810").hasClass("sapUiCalDayType10"), "201408010 is special day of Type10");
 		//with categories in CalendarLegend //skipping standard categories
 		ok(($Leg[13].textContent == "Type10"), "Type10 is present in Legend");
 		equal($Leg[13].textContent,specialDates[9].getTooltip(),"Type10 matches");
@@ -142,9 +163,11 @@
 	<br>
 	<div id="uiArea2"></div>
 	<br>
-	<div>
+	<div style="display: inline-block;">
 		<div id="uiArea3" style="float: left"></div>
 		<div id="uiArea4" style="width: 135px; margin-left:320px;background:white"></div>
 	</div>
+	<br>
+	<div id="uiArea5"></div>
 </body>
 </html>

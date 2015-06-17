@@ -274,17 +274,25 @@
 		
 		bindFeedListData(feedData, oFeedListItemTemplate, oFeedList);
 		
-		var appFeedList = new sap.m.App("myApp", {initialPage:"feedListPage"});
-		
-		var feedListPage = new sap.m.Page("feedListPage", 
-			{title: "Feed List Item Test Page"}
-		);
-		
-		
-		feedListPage.addContent(oFeedList);
+		var oRerenderButton = new sap.m.Button({
+			text : "Invalidate / Rerender",
+			press : function (oEvent) {
+				sap.m.MessageToast.show("Rerender triggered.");
+				sap.ui.getCore().byId("feedListPage").invalidate();
+			}
+		});
+
+		var appFeedList = new sap.m.App("myApp", {
+			initialPage : "feedListPage"
+		});
+
+		var feedListPage = new sap.m.Page("feedListPage", {
+			title: "Feed List Item Test Page",
+			content : [oRerenderButton, oFeedList]
+		});
+
 		appFeedList.addPage(feedListPage);
 		appFeedList.placeAt("body");
-		
 		
 		</script>
 		

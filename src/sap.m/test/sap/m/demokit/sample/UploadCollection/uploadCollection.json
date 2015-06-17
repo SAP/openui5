@@ -1,93 +1,218 @@
 {
 	"items" : [
 		{
-			"contributor" : "Susan Baker",
 			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 			"enableEdit" : true,
-			"enableDelete" : true,
+			"visibleDelete" : false,
 			"fileName" : "Screenshot.jpg",
-			"fileSize" : 20,
 			"mimeType" : "image/jpg",
 			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-30",
-			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg"
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg",
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"Susan Baker"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-09-03"
+				},
+				{
+					"title":"File Size",
+					"text":"5"
+				}
+			],
+			"statuses":[
+				{
+					"title":"First status' title",
+					"text":"First status' text"
+				}
+			]
 		}, {
-			"contributor" : "John Smith",
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
 			"enableEdit" : true,
 			"enableDelete" : false,
 			"fileName" : "Notes.txt",
-			"fileSize" : 10,
 			"mimeType" : "text/plain",
 			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-08-01",
-			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Notes.txt"
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Notes.txt",
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"John Smith"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-09-02"
+				},
+				{
+					"title":"File Size",
+					"text":"226600"
+				},
+				{
+					"title":"Attribute with a long text",
+					"text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+				}
+			],
+			"statuses":[
+				{
+					"title":"Status",
+					"text":"None",
+					"state":"None"
+				}
+			]
 		}, {
-			"contributor" : "J Edgar Hoover",
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
 			"enableEdit" : true,
 			"enableDelete" : true,
 			"fileName" : "Document.txt",
-			"fileSize" : 15,
 			"mimeType" : "text/plain",
 			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-09-01",
-			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Document.txt"
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"J Edgar Hoover"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-09-01"
+				},
+				{
+					"title":"File Size",
+					"text":"1500"
+				}
+			],
+			"statuses":[
+				{
+					"title":"Status",
+					"text":"Success",
+					"state":"Success"
+				}
+			]
 		}, {
-			"contributor" : "Sean O'Connel",
 			"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e028",
 			"enableEdit" : false,
 			"enableDelete" : true,
 			"fileName" : "Third Quarter Results.ppt",
-			"fileSize" : 30,
 			"mimeType" : "application/vnd.ms-powerpoint",
 			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-29",
-			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt"
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt",
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"Sean O'Connel"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-07-29"
+				},
+				{
+					"title":"File Size",
+					"text":"200"
+				}
+			],
+			"statuses":[
+				{
+					"title":"Status",
+					"text":"Warning",
+					"state":"Warning"
+				}
+			]
 		}, {
-			"contributor" : "Jane Burns",
 			"documentId" : "34e484e4-a523-6c50-685b-e5ae66069250",
 			"enableEdit" : false,
 			"enableDelete" : true,
 			"fileName" : "Business Plan Agenda.doc",
-			"fileSize" : 40,
 			"mimeType" : "application/msword",
 			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-28",
-			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc"
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"Jane Burns"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-07-28"
+				},
+				{
+					"title":"File Size",
+					"text":"25"
+				}
+			],
+			"statuses":[
+				{
+					"title":"Status",
+					"text":"Error",
+					"state":"Error"
+				}
+			]
 		}, {
-			"contributor" : "John Black",
 			"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
 			"enableEdit" : true,
 			"enableDelete" : true,
 			"fileName" : "Business Plan Topics.xls",
-			"fileSize" : 50,
 			"mimeType" : "application/msexcel",
 			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-27",
-			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls"
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls",
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"John Black"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-07-27"
+				},
+				{
+					"title":"File Size",
+					"text":"3000000"
+				}
+			]
 		}, {
-			"contributor" : "David Keane",
 			"documentId" : "6b6ccd2f-e5c2-15b7-3b67-191564850063",
 			"enableEdit" : true,
 			"enableDelete" : true,
 			"fileName" : "Instructions.pdf",
-			"fileSize" : 60,
 			"mimeType" : "application/pdf",
 			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-26",
-			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf"
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf",
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"David Keane"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-07-26"
+				},
+				{
+					"title":"File Size",
+					"text":"35000"
+				}
+			]
 		}, {
-			"contributor" : "Kate Brown",
 			"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
 			"enableEdit" : true,
 			"enableDelete" : true,
 			"fileName" : "Picture of a woman.png",
-			"fileSize" : 70,
 			"mimeType" : "image/png",
 			"thumbnailUrl" : "test-resources/sap/m/images/Woman_04.png",
-			"uploadedDate" : "2014-07-25",
-			"url" : "test-resources/sap/m/images/Woman_04.png"
+			"url" : "test-resources/sap/m/images/Woman_04.png",
+			"attributes":[
+				{
+					"title":"Uploaded By",
+					"text":"Kate Brown"
+				},
+				{
+					"title":"Uploaded On",
+					"text":"2014-07-25"
+				},
+				{
+					"title":"File Size",
+					"text":"40000000"
+				}
+			]
 		}
 	]
 }

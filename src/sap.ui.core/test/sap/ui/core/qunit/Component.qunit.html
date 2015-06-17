@@ -131,11 +131,11 @@
 
 	test("Components Includes", function(){
 		ok((typeof foo == 'function'), "function foo from included js exists");
-		sFontSize = "12px";
+		sFontSize = "4px";
 		foo("comparea2", sFontSize);
 		var sSize = jQuery("#comparea2").css('font-size');
 		equal(sSize, sFontSize, "function from JS include invoked");
-		equal(jQuery.sap.byId("vLayout---myTF").css("font-size"), sFontSize, "CSS from include applied");
+		equal(jQuery.sap.byId("vLayout---myTF").css("padding-left"), "321px", "CSS from include applied");
 	});
 
 	test("Factory Function", function(){

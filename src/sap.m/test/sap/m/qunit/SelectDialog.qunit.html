@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.SelectDialog</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
@@ -69,7 +69,7 @@
 						]
 					};
 				}
-				
+
 				// create a bindable list item
 				function createTemplateListItem() {
 					return new sap.m.StandardListItem({
@@ -117,10 +117,12 @@
 				QUnit.module("Rendering", {
 					setup: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog");
+						this.mockupData = generateData();
 					},
 					teardown: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
+						delete this.mockupData;
 					}
 				});
 
@@ -132,8 +134,18 @@
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
 						assert.ok(jQuery.sap.domById("selectDialog-dialog"), "Dialog is opened");
 						assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
-						assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");	
+						assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 					});
+				});
+
+				QUnit.test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function (assert) {
+					var that = this;
+					this.oSelectDialog.setMultiSelect(true);
+					bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+
+					this.oSelectDialog.open();
+					sap.ui.getCore().applyChanges();
+					assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
 				});
 
 				QUnit.module("XML Rendering", {
@@ -199,13 +211,13 @@
 							noDataText: "Sorry, no data is available",
 							growingThreshold: 50
 						});
-						this.mockupData = generateData();	
+						this.mockupData = generateData();
 					},
 					teardown: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
-					},
+					}
 				});
 
 				QUnit.asyncTest("Remember Selections after Cancel", function (assert) {
@@ -510,9 +522,9 @@
 					// bind items
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
-					// attach dialog cancel event 
+					// attach dialog cancel event
 					this.oSelectDialog.attachCancel(fnChecks);
-					
+
 					// simulate open and close
 					this.oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
 						// make a change to the selection
@@ -641,7 +653,7 @@
 					sap.ui.getCore().applyChanges();
 
 					this.oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
-						
+
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
 
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");

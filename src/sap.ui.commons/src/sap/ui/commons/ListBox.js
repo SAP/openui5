@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.ListBox.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation', 'jquery.sap.strings'],
-	function(jQuery, library, Control, IconPool, ItemNavigation/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'jquery.sap.strings'],
+	function(jQuery, library, Control, ItemNavigation/* , jQuerySap */) {
 	"use strict";
 
 
@@ -183,16 +183,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		//FIXME Mapping from activeItems index to the id of it for item navigation purposes
 		this._aActiveItems = null;
-
-		if (sap.ui.Device.support.touch) {
-			jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
-			this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, this.getId() + "-list", {
-				   vertical: true,
-				   zynga: true,
-				   preventDefault: true
-			});
-		}
-
 	};
 
 
@@ -355,6 +345,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * For the given iIndex, this method calculates the index of the respective item within the ItemNavigation set.
 	 * (if there are separators, the ItemNavigation does not know them)
 	 * Prerequisite: the iIndex points to an element which is NOT a Separator or disabled (= it must be known to the ItemNavigation)
+	 *
+	 * @param {int} iIndex real index (with separators)
+	 * @return {int} iNavIndex itemnavigation index (without separators)
 	 * @private
 	 */
 	ListBox.prototype._getNavigationIndexForRealIndex = function(iIndex) {
@@ -395,7 +388,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *         The index to which the ListBox should scroll.
 	 * @param {boolean} bLazy
 	 *         If set to true, the ListBox only scrolls if the item is not completely visible, and it scrolls for exactly the space to make it fully visible. If set to false, the item is scrolled to the top position (if possible).
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -510,7 +503,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Sets the height of this ListBox in CSS units
 
-	 * @param {sap.ui.core.CSSSize} sHeight
+	 * @param {sap.ui.core.CSSSize} sHeight new height for the ListBox
 	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -534,7 +527,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Setter for property width.
 	 *
-	 * @param {sap.ui.core.CSSSize} sWidth
+	 * @param {sap.ui.core.CSSSize} sWidth new width for the ListBox
 	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -618,6 +611,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Internal method invoked when the user activates an item. Differentiates and dispatches according to modifier key
 	 * and current selection.
 	 *
+	 * @param {jQuery.Event} oEvent jQuery Event
 	 * @private
 	 */
 	ListBox.prototype._handleUserActivation = function (oEvent) {
@@ -649,21 +643,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					// Take care of selection and select event
 					if (oEvent.ctrlKey || oEvent.metaKey) { // = CTRL
 							this._handleUserActivationCtrl(iIndex, oItem);
+					} else  if (oEvent.shiftKey) {
+						this.setSelectedIndices(this._getUserSelectionRange(iIndex));
+						this.fireSelect({
+							id:this.getId(),
+							selectedIndex:iIndex,
+							selectedIndices:this.getSelectedIndices(), /* NEW (do not use hungarian prefixes!) */
+							selectedItem:oItem,
+							sId:this.getId(),
+							aSelectedIndices:this.getSelectedIndices() /* OLD */
+						});
+						this._iLastDirectlySelectedIndex = iIndex;
 					} else {
-						if (oEvent.shiftKey) {
-							this.setSelectedIndices(this._getUserSelectionRange(iIndex));
-							this.fireSelect({
-								id:this.getId(),
-								selectedIndex:iIndex,
-								selectedIndices:this.getSelectedIndices(), /* NEW (do not use hungarian prefixes!) */
-								selectedItem:oItem,
-								sId:this.getId(),
-								aSelectedIndices:this.getSelectedIndices() /* OLD */
-							});
-							this._iLastDirectlySelectedIndex = iIndex;
-						} else {
-							this._handleUserActivationPlain(iIndex, oItem);
-						}
+						this._handleUserActivationPlain(iIndex, oItem);
 					}
 				}
 			}
@@ -676,6 +668,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Called when the user triggers an item without holding a modifier key.
 	 * Changes the selection in the expected way.
 	 *
+	 * @param {int} iIndex index that should be selected
+	 * @param {sap.ui.core.Item} oItem item that should be selected
 	 * @private
 	 */
 	ListBox.prototype._handleUserActivationPlain = function (iIndex, oItem) {
@@ -699,6 +693,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Called when the user triggers an item while pressing the Ctrl key.
 	 * Changes the selection in the expected way for the "Ctrl" case.
 	 *
+	 * @param {int} iIndex index that should be selected
+	 * @param {sap.ui.core.Item} oItem item that should be selected
 	 * @private
 	 */
 	ListBox.prototype._handleUserActivationCtrl = function (iIndex, oItem) {
@@ -725,6 +721,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * given index. Used internally for calculating the new selection range when the user holds the "shift" key
 	 * while clicking in the ListBox.
 	 *
+	 * @param {int} iIndex index of selection end
+	 * @returns {int[]} Indices of user selection range
 	 * @private
 	 */
 	ListBox.prototype._getUserSelectionRange = function (iIndex) {
@@ -735,14 +733,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var aItems = this.getItems();
 		var aRange = [];
+		var i;
 		if (this._iLastDirectlySelectedIndex <= iIndex) {
-			for (var i = this._iLastDirectlySelectedIndex; i <= iIndex; i++) {
+			for (i = this._iLastDirectlySelectedIndex; i <= iIndex; i++) {
 				if ((i > -1) && (aItems[i].getEnabled() && !(aItems[i] instanceof sap.ui.core.SeparatorItem))) {
 					aRange.push(i);
 				}
 			}
 		} else {
-			for (var i = iIndex; i <= this._iLastDirectlySelectedIndex; i++) {
+			for (i = iIndex; i <= this._iLastDirectlySelectedIndex; i++) {
 				if ((i > -1) && (aItems[i].getEnabled() && !(aItems[i] instanceof sap.ui.core.SeparatorItem))) {
 					aRange.push(i);
 				}
@@ -759,7 +758,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Zero-based index of selected item. Index value for no selection is -1. When multiple selection is enabled and multiple items are selected, the method returns the first selected item.
 	 *
-	 * @type int
+	 * @return {int} Selected index
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -776,21 +775,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Sets the zero-based index of the currently selected item. This method removes any previous selections. When the given index is invalid, the call is ignored.
 	 *
-	 * @param {int} iIndex
+	 * @param {int} iSelectedIndex
 	 *         Index to be selected
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBox.prototype.setSelectedIndex = function(iSelectedIndex) {
 		if ((iSelectedIndex < -1) || (iSelectedIndex > this._aSelectionMap.length - 1)) {
-			return;
+			return this;
 		} // Invalid index
 
 		// do not select a disabled or separator item
 		var aItems = this.getItems();
 		if ((iSelectedIndex > -1) && (!aItems[iSelectedIndex].getEnabled() || (aItems[iSelectedIndex] instanceof sap.ui.core.SeparatorItem))) {
-			return;
+			return this;
 		}
 
 		for (var i = 0; i < this._aSelectionMap.length; i++) {
@@ -810,9 +809,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Adds the given index to current selection. When multiple selection is disabled, this replaces the current selection. When the given index is invalid, the call is ignored.
 	 *
-	 * @param {int} iIndex
+	 * @param {int} iSelectedIndex
 	 *         Index to add to selection.
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -823,17 +822,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// Multi-selectable case
 		if ((iSelectedIndex < -1) || (iSelectedIndex > this._aSelectionMap.length - 1)) {
-			return;
+			return this;
 		} // Invalid index
 
 		// do not select a disabled or separator item
 		var aItems = this.getItems();
 		if ((iSelectedIndex > -1) && (!aItems[iSelectedIndex].getEnabled() || (aItems[iSelectedIndex] instanceof sap.ui.core.SeparatorItem))) {
-			return;
+			return this;
 		}
 
 		if (this._aSelectionMap[iSelectedIndex]) {
-			return;
+			return this;
 		} // Selection does not change
 
 		// Was not selected before
@@ -849,17 +848,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {int} iIndex
 	 *         Index that shall be removed from selection.
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBox.prototype.removeSelectedIndex = function(iIndex) {
 		if ((iIndex < 0) || (iIndex > this._aSelectionMap.length - 1)) {
-			return;
+			return this;
 		} // Invalid index
 
 		if (!this._aSelectionMap[iIndex]) {
-			return;
+			return this;
 		} // Selection does not change
 
 		// Was selected before
@@ -873,7 +872,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Removes complete selection.
 	 *
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -900,7 +899,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
 	 *
-	 * @type int[]
+	 * @return {int[]} Array of selected indices
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -921,16 +920,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Any invalid indices are ignored.
 	 * The previous selection is in any case replaced.
 	 *
-	 * @param {int[]} aIndices
+	 * @param {int[]} aSelectedIndices
 	 *         Indices of the items to be selected.
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBox.prototype.setSelectedIndices = function(aSelectedIndices) {
 		var indicesToSet = [];
 		var aItems = this.getItems();
-		for (var i = 0; i < aSelectedIndices.length; i++) {
+		var i;
+		for (i = 0; i < aSelectedIndices.length; i++) {
 			if ((aSelectedIndices[i] > -1) && (aSelectedIndices[i] < this._aSelectionMap.length)) {
 				if (aItems[aSelectedIndices[i]].getEnabled() && !(aItems[aSelectedIndices[i]] instanceof sap.ui.core.SeparatorItem)) {
 					indicesToSet.push(aSelectedIndices[i]);
@@ -945,12 +945,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		for (var i = 0; i < this._aSelectionMap.length; i++) {
+		for (i = 0; i < this._aSelectionMap.length; i++) {
 			this._aSelectionMap[i] = false;
 		}
 
 		// O(n+m)
-		for (var i = 0; i < indicesToSet.length; i++) {
+		for (i = 0; i < indicesToSet.length; i++) {
 			this._aSelectionMap[indicesToSet[i]] = true;
 		}
 		this.getRenderer().handleSelectionChanged(this);
@@ -962,16 +962,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Adds the given indices to selection. Any invalid indices are ignored.
 	 *
-	 * @param {int[]} aIndices
+	 * @param {int[]} aSelectedIndices
 	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBox.prototype.addSelectedIndices = function(aSelectedIndices) {
 		var indicesToSet = [];
 		var aItems = this.getItems();
-		for (var i = 0; i < aSelectedIndices.length; i++) {
+		var i;
+		for (i = 0; i < aSelectedIndices.length; i++) {
 			if ((aSelectedIndices[i] > -1) && (aSelectedIndices[i] < this._aSelectionMap.length)) {
 				// do not select a disabled or separator item
 				if (aItems[aSelectedIndices[i]].getEnabled() && !(aItems[aSelectedIndices[i]] instanceof sap.ui.core.SeparatorItem)) {
@@ -987,7 +988,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			// O(n+m)
-			for (var i = 0; i < indicesToSet.length; i++) {
+			for (i = 0; i < indicesToSet.length; i++) {
 				this._aSelectionMap[indicesToSet[i]] = true;
 			}
 			this.getRenderer().handleSelectionChanged(this);
@@ -1002,7 +1003,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {int} iIndex
 	 *         Index which is checked for selection state.
-	 * @type boolean
+	 * @return {boolean} Whether index is selected
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1021,9 +1022,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * and multiple keys are given, the selection is set to the item with the first valid key in the given array. Any invalid keys are ignored.
 	 * The previous selection is replaced in any case.
 	 *
-	 * @param {string[]} aKeys
+	 * @param {string[]} aSelectedKeys
 	 *         The keys of the items to be selected
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1049,7 +1050,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns the keys of the selected items in an array. If a selected item does not have a key, the respective array entry will be undefined.
 	 *
-	 * @type string[]
+	 * @return {string[]} Array with selected keys
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1069,7 +1070,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns selected item. When no item is selected, "null" is returned. When multi-selection is enabled and multiple items are selected, only the first selected item is returned.
 	 *
-	 * @type sap.ui.core.Item
+	 * @return {sap.ui.core.Item} Selected item
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1085,7 +1086,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns an array containing the selected items. In the case of no selection, an empty array is returned.
 	 *
-	 * @type sap.ui.core.Item[]
+	 * @return {sap.ui.core.Item[]} Selected items
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1151,7 +1152,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *         The items to set for this ListBox.
 	 * @param {boolean} bDestroyItems
 	 *         Optional boolean parameter to indicate that the formerly set items should be destroyed, instead of just removed.
-	 * @type sap.ui.commons.ListBox
+	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1192,7 +1193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ListBox.prototype.insertItem = function(oItem, iIndex) {
 		if ((iIndex < 0) || (iIndex > this._aSelectionMap.length)) {
-			return;
+			return this;
 		} // Ignore invalid index TODO:: check behavior for iIndex=length
 		// TODO: Negative indices might be used to count from end of array
 
@@ -1225,7 +1226,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (!this.bNoItemsChangeEvent) {
 				this.fireEvent("itemsChanged", {event: "removeItem", item: vElement}); //private event used in DropdownBox
 			}
-			return;
+			return undefined;
 		} // Ignore invalid index
 
 		this.bNoItemInvalidateEvent = true;
@@ -1308,11 +1309,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.removeDelegate(this.oItemNavigation);
 			this.oItemNavigation.destroy();
 			delete this.oItemNavigation;
-		}
-
-		if (this._oScroller) {
-			this._oScroller.destroy();
-			this._oScroller = null;
 		}
 
 		// No super.exit() to call

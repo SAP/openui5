@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', './FormatException', './ParseException', './Type', './ValidateException'],
-	function(jQuery, FormatException, ParseException, Type, ValidateException) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException', './ParseException', './Type', './ValidateException'],
+	function(jQuery, DataType, FormatException, ParseException, Type, ValidateException) {
 	"use strict";
 
 
@@ -100,6 +100,28 @@ sap.ui.define(['jquery.sap.global', './FormatException', './ParseException', './
 	 */
 	SimpleType.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
+	};
+
+	/**
+	 * Returns the primitive type name for the given internal type name
+	 *
+	 * @param {string} sInternalType the internal type name
+	 * @return {string} the primitive type name
+	 */
+	SimpleType.prototype.getPrimitiveType = function(sInternalType) {
+		// Avoid dealing with type objects, unless really necessary
+		switch (sInternalType) {
+			case "any": 
+			case "boolean":
+			case "int":
+			case "float":
+			case "string":
+			case "object":
+				return sInternalType;
+			default:
+				var oInternalType = DataType.getType(sInternalType);
+				return oInternalType && oInternalType.getPrimitiveType().getName();
+		}
 	};
 
 	return SimpleType;

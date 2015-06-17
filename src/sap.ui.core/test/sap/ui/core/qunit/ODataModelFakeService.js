@@ -11,6 +11,14 @@ xhr.onCreate = function(request) {
 	var	responses = {
 		"$metadata": 
 			[200, oMetaDataHeaders, sMetaData],
+		"$metadata?sap-value-list=none": 
+			[200, oMetaDataHeaders, sMetaData1],
+		"$metadata?sap-value-list=all": 
+			[200, oMetaDataHeaders, sMetaData2],
+		"$metadata?sap-value-list=Test": 
+				[200, oMetaDataHeaders, sMetaData2],
+		"$metadata?sap-value-list=Test2": 
+			[200, oMetaDataHeaders, sMetaData2],
 		"$metadata?test=x": 
 			[200, oMetaDataHeaders, sMetaData],
 		"$metadata?test=x&sap-language=en&test2=xx": 
@@ -5589,3 +5597,862 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"<m:count>3</m:count>\n" + 
 				"<link rel=\"next\" href=\"Orders?$top=1&amp;$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&amp;$inlinecount=allpages&amp;$skiptoken=MISSING_DATA_FROM__1\"/>\n" + 
 				"</feed>";
+		var sMetaData1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+				"<edmx:Edmx xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\"\n" + 
+				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" + 
+				"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.Common.v1\"\n" + 
+				"			Alias=\"Common\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.UI.v1\"\n" + 
+				"			Alias=\"UI\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:DataServices m:DataServiceVersion=\"2.0\">\n" + 
+				"		<Schema xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\"\n" + 
+				"			Namespace=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV\" xml:lang=\"en\"\n" + 
+				"			sap:schema-version=\"0\">\n" + 
+				"			<EntityType Name=\"UpdatableItem\" sap:label=\"UpdatableItem\"\n" + 
+				"				sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"CompanyCode\" />\n" + 
+				"					<PropertyRef Name=\"AccountingDocument\" />\n" + 
+				"					<PropertyRef Name=\"FiscalYear\" />\n" + 
+				"					<PropertyRef Name=\"AccountingDocumentItem\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"CompanyCode\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:label=\"Company Code\" sap:creatable=\"false\"\n" + 
+				"					sap:updatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocument\" Type=\"Edm.String\"\n" + 
+				"					Nullable=\"false\" MaxLength=\"10\" sap:label=\"Document Number\"\n" + 
+				"					sap:creatable=\"false\" sap:updatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"FiscalYear\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:label=\"Fiscal Year\" sap:creatable=\"false\"\n" + 
+				"					sap:updatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocumentItem\" Type=\"Edm.String\"\n" + 
+				"					Nullable=\"false\" MaxLength=\"3\" sap:label=\"Line item\" sap:creatable=\"false\"\n" + 
+				"					sap:updatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DunningBlockingReasonCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:label=\"Dunning Block\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentBlockingReasonCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:label=\"Item Payment Block\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DueCalculationBaseDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:label=\"Baseline Date\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount1Days\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"3\" Scale=\"0\" sap:label=\"Days 1\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount1Percent\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"5\" Scale=\"3\" sap:label=\"Disc. Percent 1\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount2Days\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"3\" Scale=\"0\" sap:label=\"Days 2\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount2Percent\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"5\" Scale=\"3\" sap:label=\"Disc. Percent 2\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"NetPaymentDays\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"3\" Scale=\"0\" sap:label=\"Days net\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentMethod\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:label=\"Payment Method\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DunningArea\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:label=\"Dunning Area\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"LastDunningDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:label=\"Last Dunned\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DunningLevel\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:label=\"Dunning Level\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"MaximumDunningLevel\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:label=\"Dunning Key\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"AssignmentReference\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"18\" sap:label=\"Assignment\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DocumentItemText\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"50\" sap:label=\"Text\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"FinancialAccountType\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:label=\"Account Type\" sap:creatable=\"false\"\n" + 
+				"					sap:updatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"SpecialGeneralLedgerCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:label=\"Special G/L ind\" sap:creatable=\"false\"\n" + 
+				"					sap:updatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"PostingKey\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:label=\"Posting Key\" sap:creatable=\"false\" sap:updatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocumentCategory\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:label=\"Doc.status\" sap:creatable=\"false\"\n" + 
+				"					sap:updatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"TaxCode\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:label=\"Tax Code\" sap:creatable=\"false\" sap:updatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"Note\" Type=\"Edm.String\" sap:label=\"Note\"\n" + 
+				"					sap:creatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"Title\" Type=\"Edm.String\" MaxLength=\"50\"\n" + 
+				"					sap:label=\"Title\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityType Name=\"Item\" sap:service-schema-version=\"1\"\n" + 
+				"				sap:service-version=\"1\" sap:label=\"Item\" sap:semantics=\"aggregate\"\n" + 
+				"				sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"GeneratedID\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"CashDiscountAmountInTransactionCurrency\"\n" + 
+				"					Type=\"Edm.Decimal\" Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Discount (Doc. Crcy)\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ValuatedAmntInAdditionalCrcy1\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"AdditionalCurrency1\"\n" + 
+				"					sap:label=\"LC2 Evaluated Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ValuatedAmntInAdditionalCrcy2\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"AdditionalCurrency2\"\n" + 
+				"					sap:label=\"LC3 Evaluated Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ValuatedAmountInCompanyCodeCurrency\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"CompanyCodeCurrency\"\n" + 
+				"					sap:label=\"LC Evaluated Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AmountInAdditionalCurrency1\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"AdditionalCurrency1\"\n" + 
+				"					sap:label=\"LC2 Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AmountInAdditionalCurrency2\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"AdditionalCurrency2\"\n" + 
+				"					sap:label=\"LC3 Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"BalancedAmountInCompanyCodeCurrency\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"CompanyCodeCurrency\"\n" + 
+				"					sap:label=\"Amnt in LC (no sign)\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AmountInCompanyCodeCurrency\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"CompanyCodeCurrency\"\n" + 
+				"					sap:label=\"Amount in LC\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PlannedAmountInTransactionCurrency\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Planned Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"BilledRevenueAmountInCompanyCodeCurrency\"\n" + 
+				"					Type=\"Edm.Decimal\" Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"CompanyCodeCurrency\"\n" + 
+				"					sap:label=\"Billed Revenue\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AmountInBalanceTransactionCurrency\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"BalanceTransactionCurrency\"\n" + 
+				"					sap:label=\"G/L Update Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AmountInPaymentCurrency\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"PaymentCurrency\"\n" + 
+				"					sap:label=\"Pymt Currency Amnt\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"WithholdingTaxAmount\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Withholding Tax\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"WithholdingTaxExemptionAmount\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Withhold. Tax Exempt\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"WithholdingTaxBaseAmount\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Withholding Tax Base\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscountBaseAmount\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Cash Discount Base\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscountAmtInCompanyCodeCrcy\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Discount (Loc. Crcy)\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AmountInTransactionCurrency\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Amount in FC\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscountAmount\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"24\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"TransactionCurrency\"\n" + 
+				"					sap:label=\"Discount Amount\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"HedgedAmount\" Type=\"Edm.Decimal\" Precision=\"24\"\n" + 
+				"					Scale=\"3\" sap:aggregation-role=\"measure\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:unit=\"TransactionCurrency\" sap:label=\"Hedged Amount\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"InterestToBePosted\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"16\" Scale=\"3\" sap:aggregation-role=\"measure\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:unit=\"CompanyCodeCurrency\"\n" + 
+				"					sap:label=\"Imputed Interest\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount1ArrearsDays\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"5\" Scale=\"0\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Disc.1 Arrears\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"NetDueArrearsDays\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"5\" Scale=\"0\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Net Arrears\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount1Percent\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"5\" Scale=\"3\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Disc. Percent 1\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount2Percent\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"5\" Scale=\"3\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Disc. Percent 2\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount1Days\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"3\" Scale=\"0\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Cash Discount Days 1\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDiscount2Days\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"3\" Scale=\"0\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Cash Discount Days 2\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"NetPaymentDays\" Type=\"Edm.Decimal\"\n" + 
+				"					Precision=\"3\" Scale=\"0\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Days Net\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ReconciliationAccount\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Recon. Account\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"MasterFixedAsset\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"12\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Main Asset No.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"FixedAsset\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Subnumber\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"Order\" Type=\"Edm.String\" MaxLength=\"12\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Order\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ClearingAccountingDocument\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Clearing Doc. No.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ClearingDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Clearing Date\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ClearingDocFiscalYear\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Clrg Fiscal Yr\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ClearingStatus\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Clearing Status\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AuthorizationGroup\" Type=\"Edm.String\"\n" + 
+				"					Nullable=\"false\" MaxLength=\"4\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:display-format=\"UpperCase\" sap:label=\"Authorization\"\n" + 
+				"					sap:creatable=\"false\" sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocument\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Document Number\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocumentType\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Document Type\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DocumentDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Document Date\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"BooleanParameter\" Type=\"Edm.String\"\n" + 
+				"					Nullable=\"false\" MaxLength=\"5\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:label=\"for internal use only\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"Industry\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:text=\"IndustryName\" sap:label=\"Industry\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IndustryName\" Type=\"Edm.String\" MaxLength=\"20\"\n" + 
+				"					sap:label=\"Industry Name\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"PostingKey\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Posting Key\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocumentCategory\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Document Status\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PostingDate\" Type=\"Edm.DateTime\" Precision=\"0\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Posting Date\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CompanyCode\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:text=\"CompanyName\" sap:label=\"Company Code\" sap:creatable=\"false\"\n" + 
+				"					sap:required-in-filter=\"true\" />\n" + 
+				"				<Property Name=\"BusinessPlace\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Business Place\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingClerk\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Acctg Clerk\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CompanyName\" Type=\"Edm.String\" MaxLength=\"25\"\n" + 
+				"					sap:label=\"Company Name\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocumentItem\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"3\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Line Item\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentCardsSettlementRun\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Settlement\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsAccountsReceivablePledged\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"AR Pledging\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocumentCreationDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Entered On\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"SettlementReferenceDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Reference Date\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TuningParameter1\" Type=\"Edm.String\"\n" + 
+				"					Nullable=\"false\" MaxLength=\"40\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:label=\"for internal use only\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DataExchangeInstruction1\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Instruction 1\" sap:creatable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DataExchangeInstruction2\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Instruction 2\" sap:creatable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DataExchangeInstruction3\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Instruction 3\" sap:creatable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"DataExchangeInstruction4\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Instruction 4\" sap:creatable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"PurchasingDocument\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Purchasing Document\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PurchasingDocumentItem\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"5\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Purchasing Doc. Item\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountCreationDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Created on\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountCreatedByUser\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"12\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Created by\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DeliveryScheduleLine\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Schedule Line\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"BranchAccount\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Branch Account No.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"FundsManagementCenter\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"16\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Funds Center\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"GeneratedID\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"FiscalYear\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Fiscal Year\" sap:creatable=\"false\"\n" + 
+				"					sap:required-in-filter=\"true\" />\n" + 
+				"				<Property Name=\"BusinessArea\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Business Area\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"HouseBank\" Type=\"Edm.String\" MaxLength=\"5\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"House Bank\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"GeneralLedgerAccount\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"G/L Account\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AdditionalCurrency1\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"5\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Local Currency 2\" sap:creatable=\"false\" sap:semantics=\"currency-code\" />\n" + 
+				"				<Property Name=\"AdditionalCurrency2\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"5\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Local Currency 3\" sap:creatable=\"false\" sap:semantics=\"currency-code\" />\n" + 
+				"				<Property Name=\"CompanyCodeCurrency\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"5\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Local Currency\" sap:creatable=\"false\" sap:semantics=\"currency-code\" />\n" + 
+				"				<Property Name=\"RealEstateObject\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"8\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Real Estate Key\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TuningParameter2\" Type=\"Edm.String\"\n" + 
+				"					Nullable=\"false\" MaxLength=\"40\" sap:aggregation-role=\"dimension\"\n" + 
+				"					sap:label=\"for internal use only\" sap:creatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"FiscalYearPeriod\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"7\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Year/Period\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"KeyDate\" Type=\"Edm.DateTime\" Precision=\"0\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Open at Key Date\" sap:creatable=\"false\" sap:sortable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentReference\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"30\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Payment Reference\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CreditControlArea\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Credit Control Area\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AlternativePayeeAccount\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Alternative Payer\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"HeadOffice\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Head Office\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"FinancialAccountType\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Account Type\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CustomerVendorAccount\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Account Number\" sap:creatable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"CorporateGroup\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Corporate Group\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CostCenter\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Cost Center\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CustomerAccountName\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Account Group\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"Customer\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:text=\"CustomerName\" sap:label=\"Customer\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"EffectiveExchangeRate\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"12\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Effect. Exch. Rate\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"AccountMemo\" Type=\"Edm.String\" MaxLength=\"30\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:visible=\"false\" sap:label=\"Account Memo\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CustomerCountry\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"3\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Country\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsMarkedForDeletion\" Type=\"Edm.Boolean\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Delete\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DunningArea\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Dunning Area\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"LastDunningDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Last Dunned\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DunningBlockingReasonCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Dunning Block\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DunningLevel\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Dunning Level\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"FiscalPeriod\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Period\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"MaximumDunningLevel\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Dunning Key\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TaxCode\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Sales/Purchases Tax\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CustomerName\" Type=\"Edm.String\" MaxLength=\"35\"\n" + 
+				"					sap:label=\"Customer Name\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"NetDueDate\" Type=\"Edm.DateTime\" Precision=\"0\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Due on\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CityName\" Type=\"Edm.String\" MaxLength=\"25\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:label=\"City\" sap:creatable=\"false\"\n" + 
+				"					sap:semantics=\"city\" />\n" + 
+				"				<Property Name=\"POBox\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"PO Box\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"SalesDocumentItem\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"6\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Item No.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ProfitCenter\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Profit Center\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"WorkBreakdownStructureElement\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"24\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"WBS Element\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"POBoxPostalCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"PO Box Postal Code\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PostalCode\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Postal Code\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"BalanceTransactionCurrency\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"5\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"G/L Currency\" sap:creatable=\"false\" sap:semantics=\"currency-code\" />\n" + 
+				"				<Property Name=\"PaymentCurrency\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"5\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Autom. Pymt Currency\" sap:creatable=\"false\"\n" + 
+				"					sap:semantics=\"currency-code\" />\n" + 
+				"				<Property Name=\"InvoiceReference\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Invoice Reference\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"FollowOnDocumentType\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Follow-On Doc.Type\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"Region\" Type=\"Edm.String\" MaxLength=\"3\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:text=\"RegionName\" sap:label=\"Region\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"RegionName\" Type=\"Edm.String\" MaxLength=\"25\"\n" + 
+				"					sap:label=\"Region Name\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentCardItem\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"3\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Payment Card Item\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentDifferenceReason\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"3\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Reason Code\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"InvoiceList\" Type=\"Edm.String\" MaxLength=\"8\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Coll. Inv. List No.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TaxSection\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Section Code\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DocumentItemText\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"50\" sap:aggregation-role=\"dimension\" sap:label=\"Item Text\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DebitCreditCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Debit/Credit\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDisount1DueDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Cash Disc 1 Due Date\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"SortKey\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Search Term\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CustomerIsBlockedForPosting\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Phys.Invent. Blocked\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TaxID1\" Type=\"Edm.String\" MaxLength=\"16\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Tax Number 1\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TaxID2\" Type=\"Edm.String\" MaxLength=\"11\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Tax Number 2\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"VATRegistration\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"20\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"VAT Registration No.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"HasClearingAccountingDocument\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Item Status\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DueNetSymbol\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Due Net (Symbol)\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashDateDueNetSymbol\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Cash Date 1 Due\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AccountingDocumentTextCategory\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Text ID\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"ToleranceGroup\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Tolerance Group\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TaxJurisdiction\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"15\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Tax Jur.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DueItemCategory\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:label=\"Due Item Category\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"SpecialGeneralLedgerTransactionType\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"SG Transaction Type\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"SpecialGeneralLedgerCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Special G/L ind\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentMethodSupplement\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Pymnt Methd Supplemt\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"ValueDate\" Type=\"Edm.DateTime\" Precision=\"0\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Value Date\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"SalesDocument\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Sales Document\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"BillingDocument\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"10\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"SD Document No.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CashFlowType\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Flow Type\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TradingPartnerCompanyID\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"6\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Company ID\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AssetContract\" Type=\"Edm.String\" MaxLength=\"13\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Contract Number\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TreasuryContractType\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Contract Type\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"InterestCalculationCode\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Interest Indic.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TransactionCurrency\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"5\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Currency\" sap:creatable=\"false\" sap:semantics=\"currency-code\" />\n" + 
+				"				<Property Name=\"Plant\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Plant\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"BillOfExchangeUsage\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"BoE Usage\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DocumentArchivedIndiator\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Archived\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsCleared\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Item Cleared\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DocumentReferenceID\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"16\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Reference\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsOneTimeAccount\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"One-Time Account\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsCashDiscount1Due\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Cash Disc 1 Due Ind\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsDueNet\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Due Net Indicator\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsPaytAdviceSentByEDI\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Pmt Adv. by EDI\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsNegativePosting\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Negative Posting\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsSinglePayment\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Individual Payment\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"HasPaymentOrder\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Payment Sent\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsClearingReversed\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Reverse Clearing\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"Reference1IDByBusinessPartner\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"12\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Reference Key 1\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"Reference2IDByBusinessPartner\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"12\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Reference Key 2\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"Reference3IDByBusinessPartner\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"20\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Reference Key 3\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsDisputed\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Disputed Item\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"HasText\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Text Exists\" sap:creatable=\"false\" sap:sortable=\"false\"\n" + 
+				"					sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"IsSalesRelated\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Sales-Related Item\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IsUsedInPaymentTransaction\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Pymt Tran.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AlternativePayerIsAllowed\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Payee in Doc.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"CustomerPaymentBlockingReason\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Cust. Payment Block\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"FixedCashDiscount\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Fixed Payment Terms\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"DueCalculationBaseDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Baseline Date\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"InterestCalculationDate\" Type=\"Edm.DateTime\"\n" + 
+				"					Precision=\"0\" sap:aggregation-role=\"dimension\" sap:display-format=\"Date\"\n" + 
+				"					sap:label=\"Int. Last Calculated\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"IntrstCalcFrequencyInMonths\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"2\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Interest Calc. Freq.\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentMethod\" Type=\"Edm.String\" MaxLength=\"1\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Payment Method\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentBlockingReason\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"1\" sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Item Payment Block\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"TargetTaxCode\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Target Tax Code\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"PaymentTerms\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
+				"					sap:aggregation-role=\"dimension\" sap:display-format=\"UpperCase\"\n" + 
+				"					sap:label=\"Payment Terms\" sap:creatable=\"false\" />\n" + 
+				"				<Property Name=\"AssignmentReference\" Type=\"Edm.String\"\n" + 
+				"					MaxLength=\"18\" sap:aggregation-role=\"dimension\" sap:label=\"Assignment\"\n" + 
+				"					sap:creatable=\"false\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityType Name=\"Customer\" sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"CustomerId\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"Country\" Type=\"Edm.String\" MaxLength=\"3\"\n" + 
+				"					sap:label=\"Country\" sap:creatable=\"false\" sap:updatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" sap:semantics=\"country\" />\n" + 
+				"				<Property Name=\"CustomerName\" Type=\"Edm.String\" MaxLength=\"35\"\n" + 
+				"					sap:label=\"Customer Name\" sap:creatable=\"false\" sap:updatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"CustomerId\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"10\" sap:text=\"CustomerName\" sap:label=\"Customer\"\n" + 
+				"					sap:creatable=\"false\" sap:updatable=\"false\" />\n" + 
+				"				<Property Name=\"AddressNumber\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+				"					sap:label=\"Address Number\" sap:creatable=\"false\" sap:updatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"				<Property Name=\"Address\" Type=\"Edm.String\" MaxLength=\"80\"\n" + 
+				"					sap:label=\"Address Long\" sap:creatable=\"false\" sap:updatable=\"false\"\n" + 
+				"					sap:sortable=\"false\" sap:filterable=\"false\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityContainer Name=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV_Entities\"\n" + 
+				"				m:IsDefaultEntityContainer=\"true\" sap:supported-formats=\"atom json xlsx\">\n" + 
+				"				<EntitySet Name=\"UpdatableItems\"\n" + 
+				"					EntityType=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.UpdatableItem\" sap:label=\"Updatable Item\"\n" + 
+				"					sap:creatable=\"false\" sap:deletable=\"false\" sap:pageable=\"false\"\n" + 
+				"					sap:addressable=\"false\" sap:content-version=\"1\" />\n" + 
+				"				<EntitySet Name=\"Items\" EntityType=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item\"\n" + 
+				"					sap:label=\"Item\" sap:creatable=\"false\" sap:deletable=\"false\"\n" + 
+				"					sap:pageable=\"false\" sap:addressable=\"false\" sap:content-version=\"1\" />\n" + 
+				"				<EntitySet Name=\"Customers\" EntityType=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Customer\"\n" + 
+				"					sap:label=\"Customers\" sap:creatable=\"false\" sap:deletable=\"false\"\n" + 
+				"					sap:pageable=\"false\" sap:content-version=\"1\" />\n" + 
+				"			</EntityContainer>\n" + 
+				"		</Schema>\n" + 
+				"	</edmx:DataServices>\n" + 
+				"</edmx:Edmx>";
+		var sMetaData2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+				"<edmx:Edmx xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\"\n" + 
+				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" + 
+				"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.Common.v1\"\n" + 
+				"			Alias=\"Common\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.UI.v1\"\n" + 
+				"			Alias=\"UI\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:DataServices m:DataServiceVersion=\"2.0\">\n" + 
+				"		<Schema xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\"\n" + 
+				"			Namespace=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV\" xml:lang=\"en\"\n" + 
+				"			sap:schema-version=\"0\">\n" + 
+				"			<EntityType Name=\"VL_CH_ANLH\" sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"BUKRS\" />\n" + 
+				"					<PropertyRef Name=\"ANLN1\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"BUKRS\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Company Code\" />\n" + 
+				"				<Property Name=\"ANLN1\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"12\" sap:display-format=\"UpperCase\" sap:label=\"Main Asset No.\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityType Name=\"VL_CH_ANLA\" sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"BUKRS\" />\n" + 
+				"					<PropertyRef Name=\"ANLN1\" />\n" + 
+				"					<PropertyRef Name=\"ANLN2\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"BUKRS\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Company Code\" />\n" + 
+				"				<Property Name=\"ANLN1\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"12\" sap:display-format=\"UpperCase\" sap:label=\"Main Asset No.\" />\n" + 
+				"				<Property Name=\"ANLN2\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Subnumber\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityContainer Name=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV_Entities\"\n" + 
+				"				m:IsDefaultEntityContainer=\"true\" sap:supported-formats=\"atom json xlsx\">\n" + 
+				"				<EntitySet Name=\"VL_CH_ANLA\" EntityType=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA\"\n" + 
+				"					sap:creatable=\"false\" sap:updatable=\"false\" sap:deletable=\"false\"\n" + 
+				"					sap:content-version=\"1\" sap:countable=\"false\" sap:semantics=\"aggregate\" />\n" + 
+				"			</EntityContainer>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/BooleanParameter\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"boolean true/false\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_FV_FARP_BOOLEAN\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"BooleanParameter\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"Code\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record\n" + 
+				"									Type=\"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly\">\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"Text\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/Industry\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"&quot;Industry Texts&quot;\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_SH_H_T016\" />\n" + 
+				"						<PropertyValue Property=\"SearchSupported\" Bool=\"true\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"Industry\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BRSCH\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record\n" + 
+				"									Type=\"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly\">\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BRTXT\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/PostingKey\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"Help_View for TBSL\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_SH_H_TBSL\" />\n" + 
+				"						<PropertyValue Property=\"SearchSupported\" Bool=\"true\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"PostingKey\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BSCHL\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"FinancialAccountType\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"KOART\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"DebitCreditCode\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"SHKZG\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"IndustryName\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"LTEXT\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"		</Schema>\n" + 
+				"	</edmx:DataServices>\n" + 
+				"</edmx:Edmx>";

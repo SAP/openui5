@@ -3,7 +3,9 @@
 	controllerName="sap.m.sample.ContainerNoPadding.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Text text="The IconTabBar and other container controls have a content padding by default. You can override default container content paddings by setting the CSS class 'sapUiNoContentPadding' to the container control" class="sapUiExploredNoMarginInfo"/>
+	<MessageStrip text="The IconTabBar and other container controls have a content padding by default.
+		You can override default container content paddings by setting the CSS class 'sapUiNoContentPadding'
+		to the container control" class="sapUiTinyMargin"/>
 	<IconTabBar
 		id="idIconTabBar"
 		class="sapUiNoContentPadding">

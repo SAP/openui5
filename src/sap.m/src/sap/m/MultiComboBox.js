@@ -395,11 +395,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
 		ComboBoxBase.prototype.onkeydown.apply(this, arguments);
-
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.V)) {
+			this._bIsPasteEvent = true;
+		} else {
+			this._bIsPasteEvent = false;
+		}
+
 		// only if there is no text and tokenizer has some tokens
 		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.A)
 				&& this._hasTokens()) {
@@ -422,10 +427,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
+
+		if (this._bIsPasteEvent) {
+			this.updateDomValue(this._sOldValue || "");
+			return;
+		}
 	
 		var aItems = this._getItemsStartingText(sValue);
 		var bVisibleItemFound = !!aItems.length;
-	
 		
 		// suppress invalid value
 		if (!bVisibleItemFound && sValue !== "") {
@@ -486,19 +495,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	/*                                                             */
 	/* ----------------------------------------------------------- */
 	/**
-	 * 
+	 * Triggers the value state "Error" for 1s, and resets the state to the previous one.
 	 * @private
 	 */
 	MultiComboBox.prototype._showWrongValueVisualEffect = function() {
-		var sValueState = this.getValueState();
-		if (sValueState === sap.ui.core.ValueState.Error || sValueState === sap.ui.core.ValueState.Success
-				|| sValueState === sap.ui.core.ValueState.Warning) {
-			this.$().removeClass("sapMInputBase" + sValueState);
-			jQuery.sap.delayedCall(300, this.$(), "addClass", ["sapMInputBase" + sValueState]);
-		} else {
-			this.$().addClass("sapMInputBaseError");
-			jQuery.sap.delayedCall(300, this.$(), "removeClass", ["sapMInputBaseError"]);
+		var sOldValueState = this.getValueState();
+		if (sOldValueState === sap.ui.core.ValueState.Error) {
+			return;
 		}
+
+		this.setValueState(sap.ui.core.ValueState.Error);
+		jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
 	};
 	
 	/**
@@ -819,7 +826,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		mOptions.item.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token", oToken);
 		this._oTokenizer.addToken(oToken);
 	
-		this.addStyleClass("sapMMultiComboBoxHasToken");
+		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 	
 		this.setValue('');
 	
@@ -882,9 +889,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			this._oTokenizer.removeToken(oToken);
 		}
 	
-		if (!this._hasTokens()) {
-			this.removeStyleClass("sapMMultiComboBoxHasToken");
-		}
+		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 	
 		if (mOptions.fireChangeEvent) {
 			// fire the change event
@@ -971,30 +976,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			return;
 		}
 
-		var iAvailableWidth = this.$().find(".sapMMultiComboBoxBorder").width();
-		if (iAvailableWidth > 0) {
-			// Determine input value width
-			var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true);
-
-			var $ShadowDiv = $MultiComboBox.children(MultiComboBoxRenderer.DOT_CSS_CLASS + "ShadowDiv");
-			$ShadowDiv.text(this.getValue());
-			
-			var iInputWidthMinimalNeeded = $ShadowDiv.outerWidth() + iIconWidth;
-			var $InputContainer = $MultiComboBox.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "InputContainer");
-
-			// Set Tokenizer width
-			var iAvailableInnerSpace = iAvailableWidth - iInputWidthMinimalNeeded;
-			var sInputWidth;
-			
-			if (this._oTokenizer.getScrollWidth() > iAvailableInnerSpace) {
-				this._oTokenizer.setPixelWidth(iAvailableInnerSpace);
-				sInputWidth = (iInputWidthMinimalNeeded / parseFloat(sap.m.BaseFontSize)) + "rem";
-			} else {
-				sInputWidth = ((iAvailableWidth - this._oTokenizer.getScrollWidth()) / parseFloat(sap.m.BaseFontSize)) + "rem";
-			}
-			
-			$InputContainer.find(".sapMInputBaseInner").css("width", sInputWidth);
-		}
+		var $InputContainer = $MultiComboBox.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "InputContainer");
+		var $ShadowDiv = $MultiComboBox.children(MultiComboBoxRenderer.DOT_CSS_CLASS + "ShadowDiv");
+		$ShadowDiv.text(this.getValue());
+		
+		var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true);
+		var sTokenizerScrollWidth = (this._oTokenizer.getScrollWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
+		var sInputWidth = (($ShadowDiv.outerWidth() + iIconWidth) / parseFloat(sap.m.BaseFontSize)) + "rem";
+		
+		this._oTokenizer.$().css("width","calc(100% - " + sInputWidth + ")");
+		$InputContainer.css("width", "calc(100% - " + sTokenizerScrollWidth + ")");
+		$InputContainer.css("min-width", sInputWidth);
 	};
 	
 	/**
@@ -1178,7 +1170,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 				}
 	
 				this._resetCurrentItem();
-	
+				
 				// Handle when CTRL + A is pressed to select all
 				// Note: at first this function should be called and
 				// not the
@@ -1397,6 +1389,44 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
 		this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
+	};
+	
+	/**
+	 * Handle the paste event
+	 * Converts line-break separated strings into tokens, 
+	 * when there are selectable items available which contain the same text.
+	 *
+	 * @param {jQuery.Event} oEvent - the occurring event
+	 * @private
+	 */
+	MultiComboBox.prototype.onpaste = function (oEvent) {
+		var sOriginalText;
+		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+		if (window.clipboardData) {
+			// IE
+			sOriginalText = window.clipboardData.getData("Text");
+		} else {
+			// Chrome, Firefox, Safari
+			sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
+		}
+
+		var aSeparatedText = this._oTokenizer._parseString(sOriginalText);
+		if (aSeparatedText && aSeparatedText.length > 0) {
+			this.getSelectableItems().forEach(function(oItem) {
+				if (jQuery.inArray(oItem.getText(), aSeparatedText) > -1) {
+					this.setSelection({
+						item : oItem,
+						id : oItem.getId(),
+						key : oItem.getKey(),
+						fireChangeEvent : true,
+						fireFinishEvent : true,
+						suppressInvalidate : true,
+						listItemUpdated : false
+					});
+				}
+			}, this);
+		}
+	
 	};
 	
 	/**
@@ -1686,30 +1716,29 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 							this);
 			return this;
 		}
-		aItems
-				.forEach(
-						function(oItem) {
-							if (!(oItem instanceof sap.ui.core.Item) && (typeof oItem !== "string")) {
-								jQuery.sap.log
-										.warning(
-												'Warning: setSelectedItems() "aItems" has to be an array of sap.ui.core.Item instances or an array of valid sap.ui.core.Item Ids',
-												this);
-								// Go to next item
-								return;
-							}
-							if (typeof oItem === "string") {
-								oItem = sap.ui.getCore().byId(oItem);
-							}
-	
-							// Update and synchronize "selectedItems" association,
-							// "selectedKey" and "selectedItemId" properties.
-							this.setSelection({
-								item : oItem ? oItem : null,
-								id : oItem ? oItem.getId() : "",
-								key : oItem ? oItem.getKey() : "",
-								suppressInvalidate : true
-							});
-						}, this);
+		aItems.forEach(
+			function(oItem) {
+				if (!(oItem instanceof sap.ui.core.Item) && (typeof oItem !== "string")) {
+					jQuery.sap.log
+							.warning(
+									'Warning: setSelectedItems() "aItems" has to be an array of sap.ui.core.Item instances or an array of valid sap.ui.core.Item Ids',
+									this);
+					// Go to next item
+					return;
+				}
+				if (typeof oItem === "string") {
+					oItem = sap.ui.getCore().byId(oItem);
+				}
+
+				// Update and synchronize "selectedItems" association,
+				// "selectedKey" and "selectedItemId" properties.
+				this.setSelection({
+					item : oItem ? oItem : null,
+					id : oItem ? oItem.getId() : "",
+					key : oItem ? oItem.getKey() : "",
+					suppressInvalidate : true
+				});
+			}, this);
 		return this;
 	};
 	/**

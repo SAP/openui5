@@ -391,7 +391,7 @@
 			text: "{text}"
 		});
 
-		var oComboBoxDefault = new sap.m.ComboBox({
+		var oComboBox = new sap.m.ComboBox({
 
 			items: {
 				path: "/items",
@@ -407,7 +407,7 @@
 			}
 		});
 
-		var oComboBoxDefault2 = new sap.m.ComboBox({
+		var oComboBoxDefault = new sap.m.ComboBox({
 			placeholder: "List of countries",
 			items: {
 				path: "/items",
@@ -417,7 +417,7 @@
 
 		var oLabel = new sap.m.Label({
 			text: "Choose your country",
-			labelFor: oComboBoxDefault2
+			labelFor: oComboBoxDefault
 		}).addStyleClass("customLabel");
 
 		var oComboBoxWithPlaceholder  = new sap.m.ComboBox({
@@ -491,7 +491,7 @@
 			title: "sap.m.ComboBox",
 			content: [
 				new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
-				oComboBoxDefault,
+				oComboBox,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Placeholder</h3>" }),
@@ -500,7 +500,7 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Label and placeholder</h3>" }),
 				oLabel,
-				oComboBoxDefault2,
+				oComboBoxDefault,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),

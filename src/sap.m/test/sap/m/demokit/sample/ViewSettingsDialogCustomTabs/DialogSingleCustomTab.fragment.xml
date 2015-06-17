@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+			confirm="handleConfirm">
+		<customTabs>
+			<ViewSettingsCustomTab id="app-settings" icon="sap-icon://action-settings" title="Settings" tooltip="Application Settings">
+				<content>
+					<Panel height="386px">
+						<content>
+						<Label text="Theme" design="Bold" id="VSDThemeLabel"/>
+						<SegmentedButton
+								class="vsdSetting"
+								selectedButton="VSDsap_bluecrystal"
+								id="VSDThemeButtons"
+								width="100%" >
+							<Button text="High Contrast Black" id="VSDsap_hcb" />
+							<Button text="Blue Crystal" id="VSDsap_bluecrystal" />
+						</SegmentedButton>
+						<Label text="Compact Content Density" design="Bold" />
+						<SegmentedButton
+								class="vsdSetting"
+								selectedButton="VSDcompactOn"
+								id="VSDCompactModeButtons"
+								width="100%" >
+							<Button text="On" id="VSDcompactOn" />
+							<Button text="Off" id="VSDcompactOff" />
+						</SegmentedButton>
+						<Label text="Right To Left Mode" design="Bold" />
+						<SegmentedButton
+								selectedButton="VSDRTLOff"
+								id="VSDRTLButtons"
+								width="100%" >
+							<Button text="On" id="VSDRTLOn" />
+							<Button text="Off" id="VSDRTLOff" />
+						</SegmentedButton>
+						</content>
+					</Panel>
+				</content>
+			</ViewSettingsCustomTab>
+		</customTabs>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

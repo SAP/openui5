@@ -28,7 +28,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * Title text appears in the panel
+				 * Title text appears in the panel.
 				 * 
 				 * @since 1.26.0
 				 */
@@ -39,7 +39,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Large title text appears e.g. in dialog header in case that only one panel is shown
+				 * Large title text appears e.g. in dialog header in case that only one panel is shown.
 				 * 
 				 * @since 1.30.0
 				 */
@@ -50,7 +50,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Panel type for generic use. Due to extensibility reason the type of "type" property should be "string". So it is feasible to add a
+				 * Panel type for generic use. Due to extensibility reason the type of <code>type</code> property should be <code>string</code>. So it is feasible to add a
 				 * custom panel without expanding the type.
 				 * 
 				 * @since 1.26.0
@@ -62,7 +62,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * makes the vertical Scrolling on the P13nDialog enabled when the panel is shown
+				 * Enables the vertical Scrolling on the P13nDialog when the panel is shown.
 				 * 
 				 * @since 1.26.0
 				 */
@@ -70,6 +70,22 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: true
+				},
+				/**
+				 * Callback method which is called in order to validate end user entry.
+				 */
+				validationExecutor: {
+					type: "object",
+					group: "Misc",
+					defaultValue: null
+				},
+				/**
+				 * Callback method which is called in order to register for validation result.
+				 */
+				validationListener: {
+					type: "object",
+					group: "Misc",
+					defaultValue: null
 				}
 			},
 			defaultAggregation: "items",

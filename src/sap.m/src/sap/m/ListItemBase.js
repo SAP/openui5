@@ -100,9 +100,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			detailPress : {}
 		}
 	}});
-		
-	// mode of the list e.g. singleSelection, multi...
-	// internal selected state of the listitem
+	
+	// internal active state of the listitem
 	ListItemBase.prototype.init = function() {
 		this._active = false;
 	};
@@ -129,14 +128,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 	
-	
 	/*
 	 * Returns the responsible list control
 	 * 
 	 * @returns {sap.m.ListBase|undefined} 
 	 * @protected
 	 */
-	ListItemBase.prototype.getList = function(fnCallback) {
+	ListItemBase.prototype.getList = function() {
 		var oParent = this.getParent();
 		if (oParent instanceof sap.m.ListBase) {
 			return oParent;
@@ -176,6 +174,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			if (oList[sMethod]) {
 				oList[sMethod](this, vParam1, vParam2);
 			}
+		}
+	};
+	
+	ListItemBase.prototype.informSelectedChange = function(bSelected) {
+		var oList = this.getList();
+		if (oList) {
+			oList.onItemSelectedChange(this, bSelected);
+			this.bSelectedDelayed = undefined;
+		} else {
+			this.bSelectedDelayed = bSelected;
 		}
 	};
 	
@@ -428,7 +436,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		// notify parent about the selection first
 		if (!bDontNotifyParent) {
-			this.informList("SelectedChange", bSelected);
+			this.informSelectedChange(bSelected);
 		}
 	
 		// update the selection control status
@@ -450,6 +458,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ListItemBase.prototype.updateSelectedDOM = function(bSelected, $LI) {
 		$LI.toggleClass("sapMLIBSelected", bSelected);
 		$LI.attr("aria-selected", bSelected);
+	};
+	
+	ListItemBase.prototype.setParent = function(oParent) {
+		Control.prototype.setParent.apply(this, arguments);
+		if (!oParent) {
+			return;
+		}
+		
+		this.informList("Inserted", this.bSelectedDelayed);
+		return this;
+	};
+	
+	ListItemBase.prototype.setBindingContext = function() {
+		Control.prototype.setBindingContext.apply(this, arguments);
+		this.informList("BindingContextSet");
+		return this;
 	};
 	
 	/**
@@ -500,12 +524,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	
-		return this;
-	};
-	
-	ListItemBase.prototype.setUnread = function(bUnread) {
-		this.setProperty("unread", bUnread, true);
-		this.$().toggleClass("sapMLIBUnread", bUnread);
 		return this;
 	};
 	
@@ -560,11 +578,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		
 		// active handling if not handled already by control
 		// several fingers could be used 
-		// for selections with whole list item interaction and singleselectmaster active handling is disabled
 		if (this._eventHandledByControl || 
 			oEvent.touches.length != 1 || 
-			!this.hasActiveType() || 
-			this.isIncludedIntoSelection()) {
+			!this.hasActiveType()) {
 			return;
 		}
 	

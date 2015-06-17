@@ -43,6 +43,27 @@
 				assert.strictEqual(this.oFeedInput.getShowIcon(), true, "showIcon is 'true'");
 				assert.strictEqual(this.oFeedInput.getValue(), "", "value is ''");
 				assert.strictEqual(this.oFeedInput.getVisible(), true, "visible is 'true'");
+				assert.strictEqual(this.oFeedInput.getAriaLabelForPicture(), "", "ariaLabelForPicture is ''");
+			});
+
+			test("TextForPicture", function(assert) {
+				//No Image -> default Icon
+				this.oFeedInput.setAriaLabelForPicture("My test default icon description");
+				sap.ui.getCore().applyChanges();
+				var $Image = jQuery.sap.domById(this.oFeedInput._getImageControl().getId());
+				assert.strictEqual($Image.getAttribute("aria-label"),"My test default icon description" ,"Aria-label of default icon was set")
+				//Icon
+				this.oFeedInput.setIcon("sap-icon://nurse");
+				this.oFeedInput.setAriaLabelForPicture("SAPUI5 Icon");
+				sap.ui.getCore().applyChanges();
+				$Image = jQuery.sap.domById(this.oFeedInput._getImageControl().getId());
+				assert.strictEqual($Image.getAttribute("aria-label"),"SAPUI5 Icon" ,"Aria-label of icon was set");
+				//Image
+				this.oFeedInput.setIcon("../images/SAPUI5.jpg");
+				this.oFeedInput.setAriaLabelForPicture("SAPUI5 Image");
+				sap.ui.getCore().applyChanges();
+				$Image = jQuery.sap.domById(this.oFeedInput._getImageControl().getId());
+				assert.strictEqual($Image.getAttribute("aria-label"),"SAPUI5 Image" ,"Aria-label of image was set");
 			});
 
 			test("ButtonTooltip", function(assert) {
@@ -170,6 +191,7 @@
 				this.oFeedInput.setValue("firedValue");
 				this.oFeedInput.setEnabled(true);
 				qutils.triggerEvent("tap", "input-button");
+				qutils.triggerEvent("click", "input-button");
 			});
 
 			test("Post - not fired if disabled", function(assert) {
@@ -213,6 +235,7 @@
 				this.oFeedInput.setValue("firedValue");
 				this.oFeedInput.setEnabled(true);
 				qutils.triggerEvent("tap", "input-button");
+				qutils.triggerEvent("click", "input-button");
 				assert.strictEqual(this.oFeedInput.getValue(), "", "value should be empty");
 			});
 

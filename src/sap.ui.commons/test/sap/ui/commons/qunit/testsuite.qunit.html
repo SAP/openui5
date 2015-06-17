@@ -1,82 +1,83 @@
 <html>
- <head>
-  <title>QUnit TestSuite for sap.ui.commons</title>
-  <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-  <script language="javascript">
+<head>
+	<title>QUnit TestSuite for sap.ui.commons</title>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+	<script language="javascript">
 
-  /**
-   * Add test pages to this test suite function.
-   * Please order alphabetically
-   */
-  function suite() {
-    var suite = new parent.jsUnitTestSuite();
-    var contextPath = "/" + window.location.pathname.split("/")[1];
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/AbsoluteLayout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Accordion.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ApplicationHeader.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/AutoComplete.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/BorderLayout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Button.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Callout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Carousel.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/CheckBox.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ColorPicker.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ComboBox.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Datepicker.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Dialog.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/DropdownBox.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Form.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/FormattedTextView.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/GenericEventBinding.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/GridLayout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/HorizontalLayout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Image.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ImageMap.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/InPlaceEdit.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Label.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Link.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ListBox.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ListBox-ComboBoxPopup.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ListBox-GoldReflection.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/MatrixLayout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Menu.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/MenuBar.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/MenuButton.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Paginator.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Panel.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RadioButton.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RadioButtonGroup.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RangeSlider.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RatingIndicator.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ResponsiveFlowLayout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ResponsiveLayout.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RichTooltip.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RoadMap.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RowRepeater.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/SearchField.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/SegmentedButton.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/SimpleForm.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Slider.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Splitter.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Tab.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TabStrip.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TextArea.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TextField.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TextView.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ToggleButton.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Toolbar.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ToolbarOverflow.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ToolbarRightItems.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Tree.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TreeMultiSelection.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TriStateCheckBox.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ValueHelpField.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/VerticalLayout.qunit.html");
-    return suite;
-  }
-
-  </script>
- </head>
- <body>
- </body>
+		/**
+		 * Add test pages to this test suite function.
+		 * Please order alphabetically
+		 */
+		function suite() {
+			var suite = new parent.jsUnitTestSuite();
+			var contextPath = "/" + window.location.pathname.split("/")[1];
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/AbsoluteLayout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Accordion.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ApplicationHeader.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/AutoComplete.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/BorderLayout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Button.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Callout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Carousel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/CheckBox.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ColorPicker.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ComboBox.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Datepicker.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Dialog.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/DropdownBox.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Form.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/FormattedTextView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/GenericEventBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/GridLayout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/HorizontalLayout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Image.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ImageMap.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/InPlaceEdit.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Label.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Link.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ListBox.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ListBox-ComboBoxPopup.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ListBox-GoldReflection.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/MatrixLayout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Menu.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/MenuBar.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/MenuButton.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Paginator.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Panel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RadioButton.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RadioButtonGroup.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RangeSlider.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RatingIndicator.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ResponsiveContainer.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ResponsiveFlowLayout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ResponsiveLayout.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RichTooltip.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RoadMap.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/RowRepeater.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/SearchField.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/SegmentedButton.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/SimpleForm.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Slider.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Splitter.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Tab.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TabStrip.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TextArea.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TextField.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TextView.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ToggleButton.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Toolbar.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ToolbarOverflow.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ToolbarKeyboardNavigation.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ToolbarRightItems.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/Tree.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TreeMultiSelection.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/TriStateCheckBox.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/ValueHelpField.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/commons/qunit/VerticalLayout.qunit.html");
+			return suite;
+		}
+	</script>
+</head>
+<body>
+</body>
 </html>

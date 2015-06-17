@@ -19,13 +19,8 @@
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
-			sinon.config.useFakeTimers = true;
-		</script>
-
 		<script>
+			sinon.config.useFakeTimers = true;
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -1783,6 +1778,33 @@
 				oSelect.destroy();
 			});
 
+			// BCP 1570296493
+			test("it should synchronize property changes of items to the select control", function() {
+
+				// system under test
+				var oItem;
+				var oSelect = new sap.m.Select({
+					items: [
+						oItem = new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					],
+					selectedKey: "CU"
+				});
+
+				// act
+				oItem.setKey("GER");
+				oItem.setText("Germany");
+
+				// assert
+				strictEqual(oSelect.getSelectedKey(), "GER");
+				strictEqual(oSelect.getSelectedItem().getText(), "Germany");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			/* ------------------------------ */
 			/* setName()                      */
 			/* ------------------------------ */
@@ -1901,7 +1923,26 @@
 				ok(oSelect.getFirstItem() === oItem);
 				ok(oSelect.getList().getFirstItem() === oItem);
 				ok(fnAddItemSpy.returned(oSelect));
+				ok(oItem.hasListeners("_change"));
 				// ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("addItem() it should not throw an exeption", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select();
+
+				// arrange
+				var fnAddItemSpy = this.spy(oSelect, "addItem");
+
+				// act
+				oSelect.addItem(null);
+
+				// assert
+				ok(fnAddItemSpy.returned(oSelect));
 
 				// cleanup
 				oSelect.destroy();
@@ -1932,7 +1973,26 @@
 				ok(oSelect.getList().getFirstItem() === oItem);
 				ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
 				ok(fnInsertItem.returned(oSelect), 'oSelect.insertAggregation() returns this to allow method chaining');
+				ok(oItem.hasListeners("_change"));
 				// ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("insertItem() it should not throw an exeption", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select();
+
+				// arrange
+				var fnInsertItemSpy = this.spy(oSelect, "insertItem");
+
+				// act
+				oSelect.insertItem(null);
+
+				// assert
+				ok(fnInsertItemSpy.returned(oSelect));
 
 				// cleanup
 				oSelect.destroy();
@@ -2711,7 +2771,7 @@
 			/* removeItem()                   */
 			/* ------------------------------ */
 
-			test("removeItem() called with faulty parameter", function() {
+			test("removeItem() it should return null when called with an invalid input argument value", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select();
@@ -2734,7 +2794,7 @@
 				oSelect.destroy();
 			});
 
-			test("removeItem() remove the selected item", function() {
+			test("removeItem() it should remove the selected item and change the selection to the first enabled item will be selected if any (test case 1)", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select({
@@ -2800,7 +2860,7 @@
 						{
 							"value": "8",
 							"text": "item 8"
-						},
+						}
 					],
 
 					"selected": "8"
@@ -2809,6 +2869,7 @@
 				oModel.setData(mData);
 				sap.ui.getCore().setModel(oModel);
 				oSelect.placeAt("content");
+				var oSelectedItem = oSelect.getItemByKey("8");
 				sap.ui.getCore().applyChanges();
 
 				// act
@@ -2823,12 +2884,13 @@
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.getList().getSelectedItem().getText(), "item 0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(oSelectedItem.hasListeners("_change"), false);
 
 				// cleanup
 				oSelect.destroy();
 			});
 
-			test("removeItem() remove the selected item", function() {
+			test("removeItem() it should remove the selected item and change the selection to the first enabled item will be selected if any (test case 2)", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select({
@@ -2844,10 +2906,6 @@
 					selectedKey: {
 						path : "/selected",
 						template: "{selected}"
-					},
-
-					change: function(oControlEvent) {
-						jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("selectedItem"));
 					}
 				});
 
@@ -2904,7 +2962,7 @@
 				oSelect.destroy();
 			});
 
-			test("removeItem()", function() {
+			test("removeItem() it should remove the selected item and change the selection to null (test case 3)", function() {
 
 				// system under test
 				var oExpectedItem;
@@ -2935,6 +2993,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "");
 				strictEqual(oSelect.$("label").text(), "");
 				ok(oExpectedItem.getDomRef() === null);
+				strictEqual(oExpectedItem.hasListeners("_change"), false);
 
 				// cleanup
 				oSelect.destroy();
@@ -2976,7 +3035,7 @@
 				var fnListRemoveAllItemsSpy = this.spy(oSelect.getList(), "removeAllItems");
 
 				// act
-				oSelect.removeAllItems();
+				var oRemovedItems = oSelect.removeAllItems();
 				sap.ui.getCore().applyChanges();
 
 				// assert
@@ -2993,6 +3052,10 @@
 				strictEqual(oSelect.$("label").text(), "");
 				strictEqual(oSelect.$().children("select").length, 1);
 
+				for (var i = 0; i < oRemovedItems.length; i++) {
+					strictEqual(oRemovedItems[i].hasListeners("_change"), false);
+				}
+
 				// cleanup
 				oSelect.destroy();
 			});
@@ -3004,23 +3067,25 @@
 			test("destroyItems()", function() {
 
 				// system under test
+				var aItems = [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				];
+
 				var oSelect = new sap.m.Select({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					]
+					items: aItems
 				});
 
 				// arrange
@@ -3039,6 +3104,10 @@
 				ok(oSelect.getList().getSelectedItem() === null);
 				strictEqual(oSelect.$("label").text(), "");
 				strictEqual(oSelect.$().children("select").length, 1);
+
+				for (var i = 0; i < aItems.length; i++) {
+					strictEqual(aItems[i].hasListeners("_change"), false);
+				}
 
 				// cleanup
 				oSelect.destroy();
@@ -4228,6 +4297,85 @@
 
 				// cleanup
 				oSelect.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* updateItems()                        */
+			/* ------------------------------------ */
+
+			// BCP 1570150535
+			test('it should not dispatch the change event when the binding of the item aggregation is updated', function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: {
+						path: "/contries",
+						template: new sap.ui.core.Item({
+							text: "{name}"
+						})
+					},
+					change: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+					}
+				});
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"contries": [
+						{
+							"name": "Germany"
+						},
+						{
+							"name": "Cuba"
+						}
+					]
+				};
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+				oModel.setData(mData);
+				oSelect.setModel(oModel);
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.updateItems("change");
+
+				// act
+				oSelect.getFocusDomRef().blur();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event should not be fired");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* ariaLabelledBy()               */
+			/* ------------------------------ */
+
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the internal label element separated by a space", function() {
+
+				// system under test
+				var oLabel = new sap.m.Label({
+					id: "label"
+				});
+
+				var oSelect = new sap.m.Select({
+					ariaLabelledBy: oLabel
+				});
+
+				// arrange
+				oLabel.placeAt("content");
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSelect.getId() + "-label";
+
+				// assert
+				strictEqual(oSelect.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSelect.destroy();
+				oLabel.destroy();
 			});
 
 			/* ------------------------------------ */
@@ -6255,6 +6403,97 @@
 
 				// assert
 				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* onfocusout                     */
+			/* ------------------------------ */
+
+			test("it should not fire the change event if re-rendering occurs (test case 1)", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item(),
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+				// act
+				oSelect.rerender();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("it should not fire the change event if re-rendering occurs (test case 2)", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item(),
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+				oSelect.rerender();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("it should fire the change event", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item(),
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+				oSelect.rerender();
+
+				// act
+				oSelect.getFocusDomRef().blur();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 1);
 
 				// cleanup
 				oSelect.destroy();

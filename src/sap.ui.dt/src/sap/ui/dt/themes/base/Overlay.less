@@ -1,132 +1,18 @@
-/******************************************************************
-	Drag and Drop Overlays
-*******************************************************************/
-
-.sapUiDtWidget-droparea-min-height {
-	min-height: 32px;
+.sapUiDtOverlay {
+	position : absolute;
 }
 
-.sapUiDtWidget-droparea-min-width {
-	min-width: 32px;
+.sapUiDtOverlaySelected {
+	outline: 1px solid #35F;
 }
 
-.sapUiDtWidget-droparea-relative {
-	position: relative !important;
-}
-
-.sapUiDtWidget-droparea-sortable{
-	box-shadow: inset 0 0 0 2px #4fb81c;
-}
-
-.sapUiDtControlOverlay {
-	opacity: 1;
-	display:none;
-}
-.sapUiDtControlOverlay[draggable="true"] {
+.sapUiDtOverlayDraggable {
 	cursor: move;
-	-webkit-user-drag: element;
 }
 
-.sapUiDtControlOverlayForUnsupportedControl .sapUiDtControlOverlayForUnsupportedControl {
-	background: none;
-}
-
-.sapUiDtControlOverlaySelected.sapUiDtControlOverlayForUnsupportedControl {
-	box-shadow: 0 0 0 2px #999999 inset;
-	opacity: 1;
-}
-.sapUiDtControlOverlayBadge {
-	position: absolute;
-	display: none;
-	box-sizing: border-box;
+#overlay-container {
+	// to prevent overlay's height from expanding the body
+	position: fixed;
 	top: 0;
 	left: 0;
-	padding: 2px 2px;
-	height: 14px;
-	line-height: 7px;
-	font-size: 10px;
-	background: #FFF;
-	color: #005B8D;
-	border: solid 1px;
-	border-color: #00C9FF;
-}
-
-.sapUiDtControlOverlayForUnsupportedControl .sapUiDtControlOverlayBadge{
-	border-color: #999999;
-}
-.sapUiDtControlOverlaySelected > .sapUiDtControlOverlayBadge {
-	display: block;
-}
-
-.sapUiDtWidget-overlay-highlighted {
-	box-shadow: 0 0 0 1px #00C9FF inset;
-	opacity: 0.5;
-}
-
-.sapUiDtControlOverlaySelected {
-	box-shadow: 0 0 0 1px #00C9FF inset;
-	opacity: 1;
-}
-
-.sapUiDtControlOverlayForUnsupportedControl.sapUiDtWidget-overlay-highlighted {
-	box-shadow: 0 0 0 1px #999999 inset;
-	opacity: 1;
-}
-
-#sapUiDtWidget-droparea {
-	position: absolute;
-	left: 100000px;
-}
-
-.sapUiDtEmptyContainer {
-	min-height : 48px !important;
-	min-width : 100px !important;
-}
-.sapUiDtNarrowEmptyContainer{
-	min-height:  24px !important;
-	min-width : 100px !important;
-}
-
-.sapUiDtEmptyBackground {
-	background-size: 20px 20px !important;
-	background-position: 0 0, 10px 10px !important;
-	background-image:
-		linear-gradient(45deg,
-		rgba(238, 238, 238, 0.7) 25%,
-		rgba(247, 247, 247, 0.3) 25%,
-		rgba(247, 247, 247, 0.3) 75%,
-		rgba(238, 238, 238, 0.7) 75%,
-		rgba(238, 238, 238, 0.7)),
-
-		linear-gradient(45deg,
-		rgba(238, 238, 238, 0.7) 25%,
-		rgba(247, 247, 247, 0.3) 25%,
-		rgba(247, 247, 247, 0.3) 75%,
-		rgba(238, 238, 238, 0.7) 75%,
-		rgba(238, 238, 238, 0.7)) !important;
-}
-
-.sapUiDtToolbarSpacerStyle {
-	background-repeat: repeat-x !important;
-	background-position-y: 6px !important;
-	min-height : 12px !important;
-	border-left: 1px #CCC solid !important;
-	border-right: 1px #CCC solid !important;
-	margin-left: 8px !important;
-}
-
-.sapUiDtEmptyImage {
-	border: none !important;
-	visibility: visible !important;
-	background-repeat: no-repeat !important;
-	background-size: auto auto !important;
-	background-image: url("emptyImage.svg") !important;
-}
-
-.sapUiDtEmptyIcon {
-	min-width: 24px !important;
-	min-height: 24px !important;
-	background-repeat: no-repeat !important;
-	background-size: auto auto !important;
-	background-image: url("emptyIcon.svg") !important;
 }
