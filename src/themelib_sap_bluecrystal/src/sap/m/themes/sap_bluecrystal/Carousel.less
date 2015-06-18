@@ -45,8 +45,8 @@
 	width: 0;
 	height: 0;
 	margin: 0 0.25rem;
-	color: @sapUiExtraDarkBorder;
-	background-color: @sapUiExtraDarkBorder;
+	color: lighten(@sapUiBase, 10);
+	background-color: lighten(@sapUiBase, 10);
 	-webkit-transition: background-color 0.1s ease-in;
 	-moz-transition: background-color 0.1s ease-in;
 	transition: background-color 0.1s ease-in;
@@ -64,8 +64,8 @@
 }
 
 .sapMCrslBulleted > span.sapMCrslActive {
-	color: @sapUiHighlight;
-	background-color: @sapUiHighlight;
+	color: @sapUiSelected;
+	background-color: @sapUiSelected;
 }
 
 
@@ -85,7 +85,7 @@
 	padding: 0;
 	text-decoration: none;
 	overflow: hidden;
-	background-color: @sapUiLightestBorder;
+	background-color: @sapUiLightestBG;
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
 	border-radius: 50%;
