@@ -4,10 +4,10 @@
 		<pages>
 
 			<l:VerticalLayout>
-				<Image src="{img>/products/pic1}" />
+				<Image src="{img>/products/pic1}" alt="Example picture of speakers"/>
 			</l:VerticalLayout>
 
-			<Image src="{img>/products/pic2}" />
+			<Image src="{img>/products/pic2}" alt="Example picture of USB flash drive"/>
 
 			<Text class="sapUiSmallMargin" text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
 
@@ -25,7 +25,7 @@
 				</List>
 			</ScrollContainer>
 
-			<Image src="{img>/products/pic3}" />
+			<Image src="{img>/products/pic3}" alt="Example picture of spotlight"/>
 
 		</pages>
 	</Carousel>
