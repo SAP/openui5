@@ -101,7 +101,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			SC_GRID_CELL_SELECTOR = "SCGridCell",
 			MC_GRID_CELL_SELECTOR = "MCGridCell",
 			S_M_BREAKPOINT = 720,
-			M_L_BREAKPOINT = 1053,
+			M_L_BREAKPOINT = 1024,
 			L_XL_BREAKPOINT = 1440;
 
 		/**
