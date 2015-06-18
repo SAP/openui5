@@ -162,7 +162,7 @@ sap.ui.require([
 			expression: "foo(${path})"
 		}, {
 			value: {result: "constant", type: "edm:Null", value: "null"},
-			binding: "",
+			binding: null,
 			expression: "null"
 		}].forEach(function (oFixture) {
 			strictEqual(Basics.resultToString(oFixture.value, false), oFixture.binding,
