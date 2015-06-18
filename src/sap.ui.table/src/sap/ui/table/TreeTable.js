@@ -491,21 +491,22 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			
 			var $TreeIcon = $row.find(".sapUiTableTreeIcon");
 			var sTreeIconClass = "sapUiTableTreeIconLeaf";
+			var $FirstTd = $row.children("td.sapUiTableTdFirst");
 			if (!this.getUseGroupMode()) {
 				$TreeIcon.css("marginLeft", iLevel * 17);
 			}
 			if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
 				sTreeIconClass = bIsExpanded ? "sapUiTableTreeIconNodeOpen" : "sapUiTableTreeIconNodeClosed";
-				$row.attr('aria-expanded', bIsExpanded);
+				$FirstTd.attr('aria-expanded', bIsExpanded);
 				var sNodeText = bIsExpanded ? this._oResBundle.getText("TBL_COLLAPSE") : this._oResBundle.getText("TBL_EXPAND");
 				$TreeIcon.attr('title', sNodeText);
 			} else {
-				$row.attr('aria-expanded', false);
+				$FirstTd.attr('aria-expanded', false);
 				$TreeIcon.attr('aria-label', this._oResBundle.getText("TBL_LEAF"));
 			}
 			$TreeIcon.removeClass("sapUiTableTreeIconLeaf sapUiTableTreeIconNodeOpen sapUiTableTreeIconNodeClosed").addClass(sTreeIconClass);
 			$row.attr("data-sap-ui-level", iLevel);
-			$row.attr('aria-level', iLevel + 1);
+			$FirstTd.attr('aria-level', iLevel + 1);
 		}
 
 	};
