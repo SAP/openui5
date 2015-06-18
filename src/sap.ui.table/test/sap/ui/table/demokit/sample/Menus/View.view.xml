@@ -21,7 +21,7 @@
 				columnSelect="onColumnSelect"
 				cellContextmenu="onProductIdCellContextMenu">
 				<toolbar>
-					<m:ToolBar>
+					<m:Toolbar>
 						<m:Title text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
@@ -36,7 +36,7 @@
 							icon="sap-icon://grid"
 							tooltip="Enable / Disable Cell Filter"
 							pressed="{ui>/enableCellFilter}"/>
-					</m:ToolBar>
+					</m:Toolbar>
 				</toolbar>
 				<columns>
 					<Column
@@ -109,13 +109,13 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:ToolBar>
+					<m:Toolbar>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://hint"
 							tooltip="Show information"
 							press="showInfo"/>
-					</m:ToolBar>
+					</m:Toolbar>
 				</footer>
 			</Table>
 		</m:content>
