@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
 	 */
 	var ExportCell = Element.extend('sap.ui.core.util.ExportCell', {
 		metadata: {
+			library: "sap.ui.core",
 			properties: {
 				/**
 				 * Cell content.
