@@ -1,10 +1,9 @@
 /*!
  * ${copyright}
  */
-
 // Provides control sap.m.UploadCollection.
-sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library', 'sap/ui/core/Control', 'sap/ui/unified/library', 'sap/ui/core/format/FileSizeFormat', 'sap/m/ObjectAttribute'],
-	function(jQuery, MessageBox, MessageToast, library, Control, library1, FileSizeFormat, ObjectAttribute) {
+sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "./Link", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./TextRenderer", "./DialogRenderer"],
+	function(jQuery, MessageBox, Dialog, Library, Control, FileUploaderParamter, FileUploader, FileSizeFormat, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem, Link) {
 	"use strict";
 
 	/**
@@ -340,7 +339,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype.init = function() {
-		sap.ui.getCore().loadLibrary("sap.ui.layout");
 		UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oList = new sap.m.List(this.getId() + "-list", {});
 		this._oList.addStyleClass("sapMUCList");
