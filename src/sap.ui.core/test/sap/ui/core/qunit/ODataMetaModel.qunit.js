@@ -676,16 +676,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("compatibility with old ODataModel: no separate loading of value lists", function () {
+	test("compatibility with old ODataModel: separate value list load", function () {
 		var oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
 				json : true,
 				loadMetadataAsync : false
 			}),
 			oMetaModel = oModel.getMetaModel(),
+			oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item"),
+			oProperty = oMetaModel.getODataProperty(oEntityType, "Customer"),
 			oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
 
 		return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
-			deepEqual(mValueLists, {}, "no value lists");
+			deepEqual(mValueLists, {
+				"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
+				"DEBID" : oProperty["com.sap.vocabularies.Common.v1.ValueList#DEBID"]
+			});
 
 			// check robustness: no error even if interface is missing
 			oMetaModel = new ODataMetaModel(oMetaModel.oMetadata);
