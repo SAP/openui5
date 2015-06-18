@@ -62,4 +62,4 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 
 	return LayoutData;
 
-}, /* bExport= */ true);
+});

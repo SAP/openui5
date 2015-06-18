@@ -3,8 +3,8 @@
  */
 
 // Provides the OData model implementation of a tree binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/CountMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/TreeBindingUtils'],
-	function(jQuery, TreeBinding, CountMode, ChangeReason, ODataUtils, TreeBindingUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/CountMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/Sorter',  'sap/ui/model/odata/ODataUtils', 'sap/ui/model/TreeBindingUtils'],
+	function(jQuery, TreeBinding, CountMode, ChangeReason, Sorter, ODataUtils, TreeBindingUtils) {
 	"use strict";
 
 
@@ -925,7 +925,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.resetData();
 			this.bNeedsUpdate = false;
 			this.bRefresh = true;
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 	
@@ -953,7 +953,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 
 		var bSuccess = false;
 
-		if (aSorters instanceof sap.ui.model.Sorter) {
+		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
 		}
 
@@ -1179,7 +1179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
 			this._processSelectParameters();
 			this.oEntityType = this._getEntityType();
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 		return this;
 	};
@@ -1352,4 +1352,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 
 	return ODataTreeBinding;
 
-}, /* bExport= */ true);
+});

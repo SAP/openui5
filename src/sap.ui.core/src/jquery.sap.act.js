@@ -8,20 +8,16 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	if (typeof window.jQuery.sap.act === "object" || typeof window.jQuery.sap.act === "function" ) {
-		return;
+		return jQuery;
 	}
-	
-//	Date.now = Date.now || function() {
-//		return new Date().getTime();
-//	};
-	
+
 	/**
 	 * @public
 	 * @name jQuery.sap.act
 	 * @namespace
 	 * @static
 	 */
-	
+
 	var _act = {},
 		_active = true,
 		_deactivatetimer = null,
@@ -43,14 +39,14 @@ sap.ui.define(['jquery.sap.global'],
 		//_triggerEvent(_aDeactivateListeners); //Maybe provide later
 		_domChangeObserver.observe(document.documentElement, {childList: true, attributes: true, subtree: true, characterData: true});
 	}
-	
+
 	function _onActivate(){
 		// Never activate when document is not visible to the user
 		if (document.hidden === true) {
 			// In case of IE<10 document.visible is undefined, else it is either true or false
 			return;
 		}
-		
+
 		if (!_active) {
 			_active = true;
 			_triggerEvent(_aActivateListeners);
@@ -63,7 +59,7 @@ sap.ui.define(['jquery.sap.global'],
 			_activityDetected = false;
 		}
 	}
-	
+
 	function _triggerEvent(aListeners){
 		if (aListeners.length == 0) {
 			return;
@@ -77,8 +73,8 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}, 0);
 	}
-	
-	
+
+
 	/**
 	 * Registers the given handler to the activity event, which is fired when an activity was detected after a certain period of inactivity.
 	 * 
@@ -94,7 +90,7 @@ sap.ui.define(['jquery.sap.global'],
 	_act.attachActivate = function(fnFunction, oListener){
 		_aActivateListeners.push({oListener: oListener, fFunction:fnFunction});
 	};
-	
+
 	/**
 	 * Deregisters a previously registered handler from the activity event.
 	 * 
@@ -113,7 +109,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Checks whether recently an activity was detected.
 	 * 
@@ -126,7 +122,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @name jQuery.sap.act#isActive
 	 */
 	_act.isActive = !_deactivateSupported ? function(){ return true; } : function(){ return _active; };
-	
+
 	/**
 	 * Reports an activity.
 	 * 
@@ -136,10 +132,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @name jQuery.sap.act#refresh
 	 */
 	_act.refresh = !_deactivateSupported ? function(){} : _onActivate;
-	
-	
+
+
 	// Setup and registering handlers
-	
+
 	if (_deactivateSupported) {
 		var aEvents = ["resize", "orientationchange", "mousemove", "mousedown", "mouseup", //"mouseout", "mouseover",
 					   "touchstart", "touchmove", "touchend", "touchcancel", "paste", "cut", "keydown", "keyup",
@@ -147,7 +143,7 @@ sap.ui.define(['jquery.sap.global'],
 		for (var i = 0; i < aEvents.length; i++) {
 			window.addEventListener(aEvents[i], _act.refresh, true);
 		}
-		
+
 		if (window.MutationObserver) {
 			_domChangeObserver = new window.MutationObserver(_act.refresh);
 			} else if (window.WebKitMutationObserver) {
@@ -162,7 +158,7 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				};
 			}
-		
+
 		if (typeof (document.hidden) === "boolean") {
 			document.addEventListener("visibilitychange", function() {
 				// Only trigger refresh if document has changed to visible
@@ -171,12 +167,12 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}, false);
 		}
-		
+
 		_onActivate();
 	}
-	
+
 	jQuery.sap.act = _act;
 
 	return jQuery;
-	
-}, /* bExport= */ false);
+
+});

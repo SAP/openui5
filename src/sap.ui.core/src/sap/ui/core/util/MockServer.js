@@ -3373,4 +3373,4 @@ sap.ui
 
 			return MockServer;
 
-		}, /* bExport= */ true);
+		});

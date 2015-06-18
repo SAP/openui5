@@ -222,4 +222,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 	return DOMElement;
 
-}, /* bExport= */ true);
+});

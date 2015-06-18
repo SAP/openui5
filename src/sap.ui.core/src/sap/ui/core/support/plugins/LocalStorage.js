@@ -82,4 +82,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 	return LocalStorage;
 
-}, /* bExport= */ true);
+});

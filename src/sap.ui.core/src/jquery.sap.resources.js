@@ -510,4 +510,4 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

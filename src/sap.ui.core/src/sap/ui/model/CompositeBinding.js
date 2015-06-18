@@ -3,8 +3,8 @@
  */
 
 // Provides an abstract property binding.
-sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
-	function(jQuery, PropertyBinding, CompositeType) {
+sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './PropertyBinding', './CompositeType'],
+	function(jQuery, BindingMode, ChangeReason, PropertyBinding, CompositeType) {
 	"use strict";
 
 
@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 		var that = this;
 		this.fChangeHandler = function(oEvent) {
 			var oBinding = oEvent.getSource();
-			if (oBinding.getBindingMode() == sap.ui.model.BindingMode.OneTime) {
+			if (oBinding.getBindingMode() == BindingMode.OneTime) {
 				oBinding.detachChange(that.fChangeHandler);
 			}
 			that.checkUpdate();
@@ -309,10 +309,10 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 		var aValues = this.getValue();
 		if (!jQuery.sap.equal(aValues, this.aValues) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;
-			this._fireChange({reason: sap.ui.model.ChangeReason.Change});
+			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
 
 	return CompositeBinding;
 
-}, /* bExport= */ true);
+});

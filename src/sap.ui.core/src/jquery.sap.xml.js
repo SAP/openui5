@@ -194,4 +194,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

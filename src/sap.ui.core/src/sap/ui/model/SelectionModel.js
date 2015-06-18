@@ -515,4 +515,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return SelectionModel;
 
-}, /* bExport= */ true);
+});

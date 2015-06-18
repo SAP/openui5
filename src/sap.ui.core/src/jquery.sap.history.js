@@ -722,4 +722,4 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'],
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

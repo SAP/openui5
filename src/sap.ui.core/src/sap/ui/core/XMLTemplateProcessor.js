@@ -4,8 +4,8 @@
 
 /*global HTMLTemplateElement, DocumentFragment*/
 
-sap.ui.define(['jquery.sap.global', './mvc/View'],
-	function(jQuery, View) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', './ExtensionPoint'],
+	function(jQuery, ManagedObject, View, ExtensionPoint) {
 	"use strict";
 
 
@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 
 		function parseScalarType(sType, sValue, sName, oController) {
 			// check for a binding expression (string)
-			var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oController, true);
+			var oBindingInfo = ManagedObject.bindingParser(sValue, oController, true);
 			if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 				return oBindingInfo;
 			}
@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 			}
 
 			// Note: to avoid double resolution of binding expressions, we have to escape string values once again
-			return typeof vValue === "string" ? sap.ui.base.ManagedObject.bindingParser.escape(vValue) : vValue;
+			return typeof vValue === "string" ? ManagedObject.bindingParser.escape(vValue) : vValue;
 		}
 
 		function localName(xmlNode) {
@@ -340,7 +340,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 						mSettings['containingView'] = oView._oContainingView;
 
 					} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
-						var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+						var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
 						// TODO reject complex bindings, types, formatters; enable 'parameters'?
 						mSettings.objectBindings = mSettings.objectBindings || {};
 						mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
@@ -367,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 						mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController);
 
 					} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
-						var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+						var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
 						if ( oBindingInfo ) {
 							mSettings[sName] = oBindingInfo;
 						} else {

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.format.NumberFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
-	function(jQuery, LocaleData) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleData'],
+	function(jQuery, BaseObject, LocaleData) {
 	"use strict";
 
 
@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 
 	 * @alias sap.ui.core.format.NumberFormat
 	 */
-	var NumberFormat = sap.ui.base.Object.extend("sap.ui.core.format.NumberFormat", /** @lends sap.ui.core.format.NumberFormat.prototype */ {
+	var NumberFormat = BaseObject.extend("sap.ui.core.format.NumberFormat", /** @lends sap.ui.core.format.NumberFormat.prototype */ {
 		constructor : function(oFormatOptions) {
 			// Do not use the constructor
 			throw new Error();
@@ -1088,4 +1088,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 
 	return NumberFormat;
 
-}, /* bExport= */ true);
+});

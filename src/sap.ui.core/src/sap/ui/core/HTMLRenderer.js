@@ -3,10 +3,12 @@
  */
 
 // A renderer for the HTML control
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['./library'], function(library) {
 	"use strict";
 
+
+	// local shortcut
+	var RenderPrefixes = library.RenderPrefixes;
 
 	var HTMLRenderer = {
 	
@@ -18,15 +20,15 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		render : function(oRM, oControl) {
 			// render an invisible, but easily identifiable placeholder for the content
-			oRM.write("<div id=\"" + sap.ui.core.RenderPrefixes.Dummy + oControl.getId() + "\" style=\"display:none\">");
-	
+			oRM.write("<div id=\"" + RenderPrefixes.Dummy + oControl.getId() + "\" style=\"display:none\">");
+
 			// Note: we do not render the content string here, but only in onAfterRendering
 			// This has the advantage that syntax errors don't affect the whole control tree
 			// but only this control...
-	
+
 			oRM.write("</div>");
 		}
-	
+
 	};
 
 	return HTMLRenderer;

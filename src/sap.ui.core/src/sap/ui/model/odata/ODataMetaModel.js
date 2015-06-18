@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
+   'jquery.sap.global',
    'sap/ui/model/BindingMode', 'sap/ui/base/BindingParser', 'sap/ui/model/Context',
    'sap/ui/base/ManagedObject', 'sap/ui/model/ClientContextBinding',
    'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONModel',
    'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONPropertyBinding',
    'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel', './_ODataMetaModelUtils'
-], function (BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
+], function (jQuery, BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
 		FilterProcessor, JSONModel, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
 		MetaModel, Utils) {
 	"use strict";
@@ -287,7 +288,7 @@ sap.ui.define([
 				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 					jQuery.sap.log.warning("Invalid part: " + vPart,
 						"path: " + sPath + ", context: "
-						+ (oContext instanceof sap.ui.model.Context ?
+						+ (oContext instanceof Context ?
 							oContext.getPath() : oContext),
 						"sap.ui.model.odata.ODataMetaModel");
 				}
@@ -920,4 +921,4 @@ sap.ui.define([
 	};
 
 	return ODataMetaModel;
-}, /* bExport= */ true);
+});

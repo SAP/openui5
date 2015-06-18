@@ -132,4 +132,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		generateStaticMethods();
 
 		return UniversalDate;
-	}, /* bExport= */true);
+	});

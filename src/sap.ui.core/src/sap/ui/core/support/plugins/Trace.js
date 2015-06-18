@@ -208,4 +208,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 	return Trace;
 
-}, /* bExport= */ true);
+});

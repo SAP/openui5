@@ -3293,4 +3293,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 	return ODataModel;
 
-}, /* bExport= */ true);
+});

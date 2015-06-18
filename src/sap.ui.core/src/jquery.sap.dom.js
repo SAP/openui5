@@ -976,6 +976,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return _oScrollbarSize[sKey];
 	};
 
+	// handle weak dependency to sap/ui/core/Control 
+	var _Control;
+
+	function getControl() {
+		return _Control || (_Control = sap.ui.require('sap/ui/core/Control'));
+	}
+
 	/**
 	 * Search ancestors of the given source DOM element for the specified CSS class name.
 	 * If the class name is found, set it to the root DOM element of the target control.
@@ -994,7 +1001,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			return vDestination;
 		}
 
-		if (vSource instanceof sap.ui.core.Control) {
+		var Control = getControl();
+		
+		if (Control && vSource instanceof Control) {
 			vSource = vSource.$();
 		} else if (typeof vSource === "string") {
 			vSource = jQuery.sap.byId(vSource);
@@ -1007,7 +1016,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		if (vDestination instanceof jQuery) {
 			vDestination.toggleClass(sStyleClass, bClassFound);
-		} else if (vDestination instanceof sap.ui.core.Control) {
+		} else if (Control && vDestination instanceof Control) {
 			vDestination.toggleStyleClass(sStyleClass, bClassFound);
 		} else {
 			jQuery.sap.assert(false, 'jQuery.sap.syncStyleClass(): vDestination must be a jQuery object or a Control');
@@ -1137,4 +1146,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

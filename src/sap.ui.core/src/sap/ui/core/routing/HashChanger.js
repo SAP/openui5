@@ -175,4 +175,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 	return HashChanger;
 
-}, /* bExport= */ true);
+});

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSerializer', './Serializer', './XMLViewSerializer'],
-	function(jQuery, EventProvider, HTMLViewSerializer, Serializer, XMLViewSerializer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSerializer', './XMLViewSerializer'],
+	function(jQuery, EventProvider, HTMLViewSerializer, XMLViewSerializer) {
 	"use strict";
 
 
@@ -195,4 +195,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 
 	return ViewSerializer;
 
-}, /* bExport= */ true);
+});

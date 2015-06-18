@@ -85,4 +85,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	
 	return ControlMessageProcessor;
 
-}, /* bExport= */ true);
+});

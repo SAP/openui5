@@ -408,4 +408,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	return Binding;
 
-}, /* bExport= */ true);
+});

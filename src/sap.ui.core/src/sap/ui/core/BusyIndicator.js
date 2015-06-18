@@ -3,8 +3,8 @@
  */
 
 // A static class to show a busy indicator
-sap.ui.define(['jquery.sap.global', './Popup'],
-	function(jQuery, Popup) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', './Popup', './Core'],
+	function(jQuery, Device, EventProvider, Popup, Core) {
 	"use strict";
 
 	/**
@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './Popup'],
 	 * @public
 	 * @alias sap.ui.core.BusyIndicator
 	 */
-	var BusyIndicator = jQuery.extend(jQuery.sap.newObject(sap.ui.base.EventProvider.prototype), {
+	var BusyIndicator = jQuery.extend(jQuery.sap.newObject(EventProvider.prototype), {
 		oPopup: null,
 		oDomRef: null,
 		bOpenRequested: false,
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Popup'],
 		sDOM_ID: "sapUiBusyIndicator"
 	});
 
-	sap.ui.base.EventProvider.apply(BusyIndicator);
+	EventProvider.apply(BusyIndicator);
 
 	/**
 	 * Map of event names and ids, that are provided by this class
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './Popup'],
 		this.oPopup.setShadow(false);
 
 		// since IE <9 isn't able to use CSS animations a JS-animation is needed
-		if (sap.ui.Device.browser.msie &&  sap.ui.Device.browser.version <= 9) {
+		if (Device.browser.msie &&  Device.browser.version <= 9) {
 			this._iBusyPageWidth = jQuery(document.body).width();
 			this._iBusyLeft = 0;
 			this._iBusyDelta = 60;

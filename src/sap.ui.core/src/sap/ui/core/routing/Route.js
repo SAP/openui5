@@ -318,4 +318,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 
 		return Route;
 
-}, /* bExport= */ true);
+});

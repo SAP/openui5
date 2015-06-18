@@ -3,8 +3,11 @@
  */
 
 // Provides class sap.ui.model.odata.ODataListBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', './ODataUtils', './CountMode', './Filter'],
-	function(jQuery, DateFormat, FilterType, ListBinding, ODataUtils, CountMode, Filter) {
+sap.ui.define([
+		'jquery.sap.global', 
+		'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/Sorter', 
+		'./ODataUtils', './CountMode'
+	], function(jQuery, ChangeReason, Filter, FilterType, ListBinding, Sorter, ODataUtils, CountMode) {
 	"use strict";
 	
 	/**
@@ -449,7 +452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				that.iLength = 0;
 				that.bLengthFinal = true;
 				that.bDataAvailable = true;
-				that._fireChange({reason: sap.ui.model.ChangeReason.Change});
+				that._fireChange({reason: ChangeReason.Change});
 			}
 			that.fireDataReceived();
 		}
@@ -598,7 +601,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (bForceUpdate || bChangeDetected) {
 			this.abortPendingRequest();
 			this.resetData();
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 	
@@ -622,9 +625,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	ODataListBinding.prototype.initialize = function() {
 		if (this.oModel.oMetadata.isLoaded()) {
 			if (this.bDataAvailable) {
-				this._fireChange({reason: sap.ui.model.ChangeReason.Change});
+				this._fireChange({reason: ChangeReason.Change});
 			} else {
-				this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+				this._fireRefresh({reason: ChangeReason.Refresh});
 			}
 		}
 	};
@@ -637,7 +640,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {object} mChangedEntities
 	 */
 	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
-		var bChangeReason = this.sChangeReason ? this.sChangeReason : sap.ui.model.ChangeReason.Change,
+		var bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
 			bChangeDetected = false,
 			oLastData, oCurrentData,
 			that = this,
@@ -751,7 +754,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		
 		var bSuccess = false;
 		
-		if (aSorters instanceof sap.ui.model.Sorter) {
+		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
 		}
 
@@ -762,7 +765,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			// Only reset the keys, length usually doesn't change when sorting
 			this.aKeys = [];
 			this.abortPendingRequest();
-			this.sChangeReason = sap.ui.model.ChangeReason.Sort;
+			this.sChangeReason = ChangeReason.Sort;
 			this._fireRefresh({reason : this.sChangeReason});
 			// TODO remove this if the sort event gets removed which is now deprecated
 			this._fireSort({sorter: aSorters});
@@ -803,7 +806,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			aFilters = [];
 		}
 		
-		if (aFilters instanceof sap.ui.model.Filter) {
+		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
 	
@@ -827,7 +830,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (!this.bInitial) {
 			this.resetData();
 			this.abortPendingRequest();
-			this.sChangeReason = sap.ui.model.ChangeReason.Filter;
+			this.sChangeReason = ChangeReason.Filter;
 			this._fireRefresh({reason : this.sChangeReason});
 			// TODO remove this if the filter event gets removed which is now deprecated
 			if (sFilterType == FilterType.Application) {
@@ -917,4 +920,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	return ODataListBinding;
 
-}, /* bExport= */ true);
+});
