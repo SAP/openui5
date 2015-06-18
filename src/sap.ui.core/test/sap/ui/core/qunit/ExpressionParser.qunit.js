@@ -424,13 +424,37 @@
 	]);
 
 	//*********************************************************************************************
-	test("Warning for global identifier with value undefined", function () {
+	test("Warning for undefined global identifier", function () {
 		this.mock(jQuery.sap.log).expects("warning")
 			.withExactArgs(
 				"Unsupported global identifier 'foo' in expression parser input '{=42 === foo}'",
 				undefined, "sap.ui.base.ExpressionParser");
 
 		check("{=42 === foo}", "false");
+	});
+
+	//*********************************************************************************************
+	checkFixtures("Global identifiers", [
+		{expression: "{=${/foo} === undefined}", result: "true"},
+		{expression: "{=isNaN(NaN)}", result: "true"},
+		{expression: "{=NaN !== NaN}", result: "true"},
+		{expression: "{=-1/0 === -Infinity}", result: "true"},
+		{expression: "{=isFinite(-Infinity)}", result: "false"},
+		{expression: "{=parseFloat('3.14')}", result: "3.14"},
+		{expression: "{=typeof parseFloat('3.14')}", result: "number"},
+		{expression: "{=parseInt('3.14')}", result: "3"},
+		{expression: "{=typeof parseInt('3.14')}", result: "number"},
+		{expression: "{=Object.keys({'a':'b'})[0]}", result: "a"},
+		{expression: "{=Boolean(0)}", result: "false"},
+		{expression: "{=Boolean(1)}", result: "true"},
+		{expression: "{=isFinite(Number.POSITIVE_INFINITY)}", result: "false"},
+		{expression: "{=Date.UTC(1970, 0, 1)}", result: "0"},
+		{expression: "{=String.fromCharCode(32)}", result: " "},
+		{expression: "{=Array.isArray([])}", result: "true"},
+		{expression: "{=Array.isArray({})}", result: "false"},
+		{expression: "{=JSON.stringify({a:1})}", result: '{"a":1}'},
+	], function (oSandbox) {
+		oSandbox.mock(jQuery.sap.log).expects("warning").never();
 	});
 
 	//*********************************************************************************************
