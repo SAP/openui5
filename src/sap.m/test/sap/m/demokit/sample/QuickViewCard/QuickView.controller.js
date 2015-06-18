@@ -124,6 +124,10 @@ sap.ui.define([
 			oButton.setEnabled(false);
 		},
 
+		onAfterRendering: function() {
+			this.getView().byId("quickViewCardContainer").$().css("maxWidth", "320px");
+		},
+
 		onButtonBackClick : function() {
 			var oQuickViewCard = this.getView().byId('quickViewCard');
 			oQuickViewCard.navigateBack();
