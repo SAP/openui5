@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, coreLibrary, URI, MessageParser, Message) {
+sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, Device, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
 
 /**
@@ -702,7 +702,7 @@ var xPath = null;
 function getXPath() {
 	if (xPath === null) {
 		xPath = {};
-		if (sap.ui.Device.browser.msie) {// IE
+		if (Device.browser.msie) {// IE
 			xPath = {
 				selectNodes : function(oSearchNode, sPath) {
 					return oSearchNode.selectNodes(sPath);

@@ -308,4 +308,4 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 
 	return EventProvider;
 
-}, /* bExport= */ true);
+});

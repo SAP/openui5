@@ -3,11 +3,9 @@
  */
 
 // Provides base class sap.ui.core.Control for all controls
-sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
-	function(jQuery, CustomStyleClassSupport, Element) {
+sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', /* cyclic: './RenderManager', */ './ResizeHandler'],
+	function(jQuery, CustomStyleClassSupport, Element, UIArea, ResizeHandler) {
 	"use strict";
-
-//jQuery.sap.require("sap.ui.core.RenderManager"); // cyclic
 
 	/**
 	 * Creates and initializes a new control with the given <code>sId</code> and settings.
@@ -187,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @protected
 	 */
 	Control.prototype.rerender = function() {
-		sap.ui.core.UIArea.rerenderControl(this);
+		UIArea.rerenderControl(this);
 	};
 
 	/**
@@ -550,7 +548,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		//Cleanup Busy Indicator
 		this._cleanupBusyIndicator();
 
-		sap.ui.core.ResizeHandler.deregisterAllForControl(this.getId());
+		ResizeHandler.deregisterAllForControl(this.getId());
 
 		Element.prototype.destroy.call(this, bSuppressInvalidate);
 	};
@@ -807,4 +805,4 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 
 	return Control;
 
-}, /* bExport= */ true);
+});

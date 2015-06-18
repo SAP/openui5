@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.VariantLayoutData.
-sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
-	function(jQuery, LayoutData, library) {
+sap.ui.define(['./LayoutData', './library'],
+	function(LayoutData, library) {
 	"use strict";
 
 
@@ -42,4 +42,4 @@ sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
 
 	return VariantLayoutData;
 
-}, /* bExport= */ true);
+});

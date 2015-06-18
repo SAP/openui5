@@ -13,8 +13,8 @@
  */
 
 // Provides the resource bundle based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBinding'],
-	function(jQuery, Model, ResourcePropertyBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Model', './ResourcePropertyBinding'],
+	function(jQuery, BindingMode, Model, ResourcePropertyBinding) {
 	"use strict";
 
 
@@ -44,14 +44,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 			
 			this.bAsync = !!(oData && oData.async);
 		
-			this.sDefaultBindingMode = this.bAsync ? sap.ui.model.BindingMode.OneWay : sap.ui.model.BindingMode.OneTime;
+			this.sDefaultBindingMode = this.bAsync ? BindingMode.OneWay : BindingMode.OneTime;
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
 				"OneTime" : true
 			};
 			
-			if (this.bAsync && this.sDefaultBindingMode == sap.ui.model.BindingMode.OneTime) {
+			if (this.bAsync && this.sDefaultBindingMode == BindingMode.OneTime) {
 				jQuery.sap.log.warning("Using binding mode OneTime for asynchronous ResourceModel is not supported!");
 			}
 	
@@ -222,4 +222,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 
 	return ResourceModel;
 
-}, /* bExport= */ true);
+});

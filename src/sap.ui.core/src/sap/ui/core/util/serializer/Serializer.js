@@ -131,4 +131,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return Serializer;
 
-}, /* bExport= */ true);
+});

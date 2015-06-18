@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.JSView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
-	function(jQuery, library, View) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View', 'sap/ui/base/ManagedObject'],
+	function(jQuery, library, View, ManagedObject) {
 	"use strict";
 
 
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 			}
 			oPreprocessors.settings = this._fnSettingsPreprocessor;
 			// unset any preprocessors (e.g. from an enclosing JSON view)
-			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
+			ManagedObject.runWithPreprocessors(function() {
 				that.applySettings({ content : that.createContent(oController) });
 			}, oPreprocessors);
 		};
@@ -171,4 +171,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 
 	return JSView;
 
-}, /* bExport= */ true);
+});

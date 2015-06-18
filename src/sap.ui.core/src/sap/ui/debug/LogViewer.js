@@ -3,8 +3,7 @@
  */
 
 // Provides a log viewer for debug purposes
-sap.ui.define('sap/ui/debug/LogViewer', ['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define('sap/ui/debug/LogViewer', function() {
 	"use strict";
 
 

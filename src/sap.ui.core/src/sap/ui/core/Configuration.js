@@ -3,8 +3,8 @@
  */
 
 //Provides class sap.ui.core.Configuration
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/thirdparty/URI'],
-	function(jQuery, BaseObject, Locale, URI) {
+sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', 'sap/ui/thirdparty/URI'],
+	function(jQuery, Device, BaseObject, Locale, URI) {
 	"use strict";
 
 	/**
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 
 			function detectLanguage() {
 				var match;
-				if (!!sap.ui.Device.os.android) {
+				if ( Device.os.android ) {
 					// on Android, navigator.language is hardcoded to 'en', so check UserAgent string instead
 					match = navigator.userAgent.match(/\s([a-z]{2}-[a-z]{2})[;)]/i);
 					if ( match ) {
@@ -1368,4 +1368,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 
 	return Configuration;
 
-}, /* bExport= */ true);
+});

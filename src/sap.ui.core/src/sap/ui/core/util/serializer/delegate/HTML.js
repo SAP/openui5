@@ -264,4 +264,4 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 
 	return HTML;
 
-}, /* bExport= */ true);
+});

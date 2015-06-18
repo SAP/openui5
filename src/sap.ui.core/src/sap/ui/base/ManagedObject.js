@@ -3,8 +3,19 @@
  */
 
 // Provides the base class for all objects with managed properties and aggregations.
-sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', 'sap/ui/model/BindingMode', 'sap/ui/model/CompositeBinding', 'sap/ui/model/ContextBinding', 'sap/ui/model/Model', 'sap/ui/model/Type', 'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'],
-	function(jQuery, BindingParser, DataType, EventProvider, ManagedObjectMetadata, BindingMode, CompositeBinding, ContextBinding, Model, Type/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
+sap.ui.define([
+		'jquery.sap.global',
+		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata',
+		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException', '../model/ListBinding',
+		'../model/Model', '../model/ParseException', '../model/TreeBinding', '../model/Type', '../model/ValidateException',
+		'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
+	], function(
+		jQuery, 
+		BindingParser, DataType, EventProvider, ManagedObjectMetadata, 
+		BindingMode, CompositeBinding, Context, FormatException, ListBinding, 
+		Model, ParseException, TreeBinding, Type, ValidateException
+		/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
+
 	"use strict";
 
 
@@ -827,7 +838,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			if ( typeof mSettings.bindingContexts !== "object" ) {
 				throw new Error("bindingContexts must be a simple object");
 			}
-			if ( mSettings.bindingContexts instanceof sap.ui.model.Context) {
+			if ( mSettings.bindingContexts instanceof Context) {
 				this.setBindingContext(mSettings.bindingContexts);
 			} else {
 				for (sKey in mSettings.bindingContexts ) {
@@ -2425,21 +2436,22 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} [oBindingInfo.model] the model identifier
 	 * @param {function} [oBindingInfo.formatter] the formatter function
 	 * @param {boolean} [oBindingInfo.useRawValues] determines if the parameters in the formatter functions should be passed as raw values or not. In this case
-	 * 					the specified type for the binding is not used and the values are not formatted. Note: use this flag only when using multiple bindings.
-	 * 					If you use only one binding and want raw values then simply don't specify a type for that binding.
+	 *                  the specified type for the binding is not used and the values are not formatted. Note: use this flag only when using multiple bindings.
+	 *                  If you use only one binding and want raw values then simply don't specify a type for that binding.
 	 * @param {sap.ui.model.Type|string} [oBindingInfo.type] the sap.ui.model.Type object or class name
 	 * @param {object} [oBindingInfo.formatOptions] the format options to be used
 	 * @param {object} [oBindingInfo.constraints] the constraints for this value
 	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
 	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
 	 * @param {object} [oBindingInfo.parts] object for definding a read only composite binding which may have multiple binding paths also in different models.
-	 * 									<code>oTxt.bindValue({
-   * 										parts: [
-   *         								{path: "/firstName", type: new sap.ui.model.type.String()},
-   *         								{path: "myModel2>/lastName"}
-   *        						]
-	 *									}); </code>
-	 *
+	 * <pre>
+	 *   oTxt.bindValue({
+	 *     parts: [
+	 *       {path: "/firstName", type: new sap.ui.model.type.String()},
+	 *       {path: "myModel2>/lastName"}
+	 *     ]
+	 *   });
+	 * </pre>
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
@@ -2689,7 +2701,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oBindingInfo.skipModelUpdate = false;
 		} catch (oException) {
 			oBindingInfo.skipModelUpdate = false;
-			if (oException instanceof sap.ui.model.FormatException) {
+			if (oException instanceof FormatException) {
 				this.fireFormatError({
 					element : this,
 					property : sName,
@@ -2752,7 +2764,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					}
 				} catch (oException) {
 					oBindingInfo.skipPropertyUpdate = false;
-					if (oException instanceof sap.ui.model.ParseException) {
+					if (oException instanceof ParseException) {
 						this.fireParseError({
 							element: this,
 							property: sName,
@@ -2762,7 +2774,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 							exception: oException,
 							message: oException.message
 						}, false, true); // bAllowPreventDefault, bEnableEventBubbling
-					} else if (oException instanceof sap.ui.model.ValidateException) {
+					} else if (oException instanceof ValidateException) {
 						this.fireValidationError({
 							element: this,
 							property: sName,
@@ -3046,7 +3058,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			this[oAggregationInfo._sDestructor]();
 		}
 		
-		if (oBinding instanceof sap.ui.model.ListBinding) {
+		if (oBinding instanceof ListBinding) {
 			// If grouping is enabled, use updateGroup as fnBefore to create groups
 			bGrouped = oBinding.isGrouped() && sGroupFunction;
 			if (bGrouped) {
@@ -3054,7 +3066,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 			update(this, aContexts, bGrouped ? updateGroup : null);
-		} else if (oBinding instanceof sap.ui.model.TreeBinding) {
+		} else if (oBinding instanceof TreeBinding) {
 			// In fnAfter call update recursively for the child nodes of the current tree node
 			updateRecursive(this, oBinding.getRootContexts());
 		}
@@ -3849,4 +3861,4 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	
 	return ManagedObject;
 
-}, /* bExport= */ true);
+});

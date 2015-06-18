@@ -4,8 +4,8 @@
 
 /* EXPERIMENTAL */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Core'],
+	function(jQuery, Device, Core) {
 	"use strict";
 
 
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 		} else if (currentStep.startTriggerEvent == "UIUpdated") {
 	
-			sap.ui.getCore().attachEvent(sap.ui.core.Core.M_EVENTS.UIUpdated, function() {
+			sap.ui.getCore().attachEvent(Core.M_EVENTS.UIUpdated, function() {
 				// Start timer for interaction step if it's the first measuring step
 				if (sap.ui.core.support.stepPointer == 0) {
 					jQuery.sap.measure.start(currentInteraction.id, currentInteraction.description);
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global'],
 		// Detach start trigger event or delegate
 		if (currentStep.startTriggerEvent == "UIUpdated") {
 			// Detach from this function from UIUpdated event
-			sap.ui.getCore().detachEvent(sap.ui.core.Core.M_EVENTS.UIUpdated, PerformanceRecorder.processStepStop);
+			sap.ui.getCore().detachEvent(Core.M_EVENTS.UIUpdated, PerformanceRecorder.processStepStop);
 		} else if (currentStep.startTriggerId && currentStep.startTriggerEvent) {
 			// Remove delegate from trigger element
 			var oTrigger = sap.ui.getCore().byId(currentStep.startTriggerId);
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 		// Register the stop event
 		if (currentStep.stopTriggerEvent == "UIUpdated") {
-			sap.ui.getCore().attachEvent(sap.ui.core.Core.M_EVENTS.UIUpdated, PerformanceRecorder.concludeStep);
+			sap.ui.getCore().attachEvent(Core.M_EVENTS.UIUpdated, PerformanceRecorder.concludeStep);
 		} else if (currentStep.stopTriggerId && currentStep.stopTriggerEvent) {	// Trigger by element event
 	
 			// Get the trigger element
@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 		// Detach trigger event
 		if (currentStep.stopTriggerEvent == "UIUpdated") {
-			sap.ui.getCore().detachEvent(sap.ui.core.Core.M_EVENTS.UIUpdated, PerformanceRecorder.concludeStep);
+			sap.ui.getCore().detachEvent(Core.M_EVENTS.UIUpdated, PerformanceRecorder.concludeStep);
 		}
 	
 		// Stop timer for interaction step if it's the last measuring step
@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global'],
 					},
 					browser: {
 						name: navigator.userAgent,
-						version: sap.ui.Device.browser.version
+						version: Device.browser.version
 					}
 			}
 		};

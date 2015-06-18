@@ -138,4 +138,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 
 	return Plugin;
 
-}, /* bExport= */ true);
+});

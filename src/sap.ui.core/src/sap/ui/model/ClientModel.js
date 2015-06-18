@@ -175,4 +175,4 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 
 	return ClientModel;
 
-}, /* bExport= */ true);
+});

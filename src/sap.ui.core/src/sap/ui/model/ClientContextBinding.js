@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './ContextBinding'],
-	function(jQuery, ContextBinding) {
+sap.ui.define(['./ContextBinding'],
+	function(ContextBinding) {
 	"use strict";
 
 
@@ -79,4 +79,4 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 
 	return ClientContextBinding;
 
-}, /* bExport= */ true);
+});

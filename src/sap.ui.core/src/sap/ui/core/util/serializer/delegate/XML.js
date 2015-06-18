@@ -318,4 +318,4 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 
 	return XML;
 
-}, /* bExport= */ true);
+});

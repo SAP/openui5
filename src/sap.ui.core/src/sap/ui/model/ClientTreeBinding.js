@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/SorterProcessor', 'sap/ui/model/FilterProcessor'],
-	function(jQuery, TreeBinding, SorterProcessor, FilterProcessor) {
+sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBinding', 'sap/ui/model/SorterProcessor', 'sap/ui/model/FilterProcessor'],
+	function(jQuery, ChangeReason, Context, TreeBinding, SorterProcessor, FilterProcessor) {
 	"use strict";
 
 
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/SorterProcess
 		} else {
 			this.aFilters = aFilters;
 			// start with binding path root
-			var oContext = new sap.ui.model.Context(this.oModel, this.sPath);
+			var oContext = new Context(this.oModel, this.sPath);
 			this.filterRecursive(oContext);
 		}
 		this._fireChange({reason: "filter"});
@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/SorterProcess
 		aSorters = aSorters || [];
 		this.aSorters = jQuery.isArray(aSorters) ? aSorters : [aSorters];
 		
-		this._fireChange({reason: sap.ui.model.ChangeReason.Sort});
+		this._fireChange({reason: ChangeReason.Sort});
 		
 		return this;
 	};
@@ -325,4 +325,4 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/SorterProcess
 
 	return ClientTreeBinding;
 
-}, /* bExport= */ true);
+});

@@ -11,8 +11,7 @@
  */
 
 // Provides class sap.ui.model.odata.ODataUtils
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 	// Static class

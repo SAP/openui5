@@ -2,9 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings'], function(jQuery, URI/* , jQuerySap1 */) {
 	"use strict";
-	/*global URI */
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
 	//    see http://portal.acm.org/citation.cfm?id=512931
@@ -27,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					var ODataUtils;
 
 					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-					ODataUtils = sap.ui.model.odata.ODataUtils;
+					ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 					return ODataUtils.compare.apply(ODataUtils, arguments);
 				},
 				fillUriTemplate: function () {
@@ -40,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					var ODataUtils;
 
 					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-					ODataUtils = sap.ui.model.odata.ODataUtils;
+					ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 					return ODataUtils.formatValue.apply(ODataUtils, arguments);
 				}
 			},

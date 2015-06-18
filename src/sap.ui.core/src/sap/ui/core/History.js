@@ -140,4 +140,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 	return History;
 
-}, /* bExport= */ true);
+});

@@ -834,4 +834,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 	return LocaleData;
 
-}, /* bExport= */ true);
+});

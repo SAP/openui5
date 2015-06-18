@@ -3,13 +3,11 @@
  */
 
 // Provides class sap.ui.core.EventBus
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProvider'],
+	function(jQuery, BaseObject, EventProvider) {
 	"use strict";
 
 
-	
-	
 	/**
 	 * Creates an instance of EventBus.
 	 * @class Provides eventing facilities, so subscribe, unsubscribe and publish events.
@@ -22,10 +20,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @since 1.8.0
 	 * @alias sap.ui.core.EventBus
 	 */
-	var EventBus = sap.ui.base.Object.extend("sap.ui.core.EventBus", {
+	var EventBus = BaseObject.extend("sap.ui.core.EventBus", {
 		
 		constructor : function() {
-			sap.ui.base.Object.apply(this);
+			BaseObject.apply(this);
 			this._mChannels = {};
 			this._defaultChannel = new EventProvider();
 		}
@@ -189,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			this._mChannels[channel].destroy();
 		}
 		this._mChannels = {};
-		sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+		BaseObject.prototype.destroy.apply(this, arguments);
 	};
 	
 	
@@ -208,10 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		return oChannel;
 	}
-	
-	
-	
 
 	return EventBus;
 
-}, /* bExport= */ true);
+});

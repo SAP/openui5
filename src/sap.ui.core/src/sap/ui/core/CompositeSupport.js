@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.CompositeSupport
-sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlModel'],
-	function(jQuery, Control, ControlModel) {
+sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlModel', 'sap/ui/base/EventProvider'],
+	function(jQuery, Control, ControlModel, EventProvider) {
 	"use strict";
 
 
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 					return oMetadata.getComponentFactoryClass();
 				}
 			} while ( oMetadata );
-			return sap.ui.core.ComponentFactory;
+			return ComponentFactory;
 		}
 	
 		// create a new component factory class
@@ -105,11 +105,11 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * @class Base class for component factories. Subclasses are created by the CompositeSupport mixin.
 	 *
 	 * @param {sap.ui.core.Control} oComposite Composite control that this factory is used for.
-	 * @name sap.ui.core.ComponentFactory
+	 * @alias sap.ui.core.ComponentFactory
 	 */
-	sap.ui.base.EventProvider.extend("sap.ui.core.ComponentFactory", /** @lends sap.ui.core.ComponentFactory */ {
+	var ComponentFactory = EventProvider.extend("sap.ui.core.ComponentFactory", /** @lends sap.ui.core.ComponentFactory */ {
 		constructor: function(oComposite) {
-			sap.ui.base.EventProvider.apply(this);
+			EventProvider.apply(this);
 			this.oComposite = oComposite;
 			return this;
 		}
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * @return {sap.ui.core.ComponentFactory} returns this to facilitate method chaining
 	 * @public
 	 */
-	sap.ui.core.ComponentFactory.prototype.attachChange = function (f,o) {
+	ComponentFactory.prototype.attachChange = function (f,o) {
 		this.getModel();
 		this.attachEvent("change", f,o);
 		return this;
@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * @return {sap.ui.core.ComponentFactory} returns this to facilitate method chaining
 	 * @public
 	 */
-	sap.ui.core.ComponentFactory.prototype.detachChange = function (f,o) {
+	ComponentFactory.prototype.detachChange = function (f,o) {
 		this.getModel();
 		this.detachEvent("change", f,o);
 		return this;
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * @return {sap.ui.model.control.ControlModel} A model for the composite of this factory
 	 * @public
 	 */
-	sap.ui.core.ComponentFactory.prototype.getModel = function() {
+	ComponentFactory.prototype.getModel = function() {
 		if ( !this.oModel ) {
 			var that = this;
 			this.oModel = new ControlModel(this.oComposite);
@@ -168,7 +168,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * @return {void}
 	 * @public
 	 */
-	sap.ui.core.ComponentFactory.prototype.addFacadeComponent = function(oElement) {
+	ComponentFactory.prototype.addFacadeComponent = function(oElement) {
 		this.getModel().add(oElement);
 	};
 	
@@ -178,7 +178,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * @return {void}
 	 * @public
 	 */
-	sap.ui.core.ComponentFactory.prototype.removeFacadeComponent = function(oElement) {
+	ComponentFactory.prototype.removeFacadeComponent = function(oElement) {
 		this.getModel().remove(oElement);
 	};
 	
@@ -226,7 +226,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 		 * @param {object} [oMethods] Map of methods that should be attached to the subclass.
 		 * @return {Function} constructor for created subclass. 
 		 */
-		sap.ui.core.ComponentFactory.subclass = _createExtendFunction(sap.ui.core.ComponentFactory);
+		ComponentFactory.subclass = _createExtendFunction(ComponentFactory);
 	
 		/**
 		 * Overrides factory methods with a customized implementation.
@@ -241,7 +241,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 		 * @return {sap.ui.core.ComponentFactory} this to allow method chaining
 		 * @public
 		 */
-		sap.ui.core.ComponentFactory.prototype.customize = function (mMethods) {
+		ComponentFactory.prototype.customize = function (mMethods) {
 			_extend(this, mMethods);
 			if ( this.oComposite && this.oComposite._onComponentFactoryChanged ) {
 				//

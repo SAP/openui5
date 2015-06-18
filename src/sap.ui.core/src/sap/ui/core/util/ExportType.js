@@ -279,4 +279,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	return ExportType;
 
-}, /* bExport= */ true);
+});

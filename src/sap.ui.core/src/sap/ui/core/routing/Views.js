@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent'],
-	function($, EventProvider, UIComponent) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
+	function($, EventProvider, UIComponent, View) {
 		"use strict";
 
 		/**
@@ -219,4 +219,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 
 		return Views;
 
-	}, /* bExport= */ true);
+	});

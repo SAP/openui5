@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.core.PopupSupport
-sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery, Element, Control) {
+sap.ui.define([ 'jquery.sap.global', 'sap/ui/Device', './Element', './Control'], function(jQuery, Device, Element, Control) {
 	"use strict";
 
 	/**
@@ -207,7 +207,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 				 * isn't read when the focus happens too fast. Therefore a delay
 				 * is added to JAWS can read the newly focused element.
 				 */
-				var iDelay = sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9 ? 100 : 0;
+				var iDelay = Device.browser.msie && Device.browser.version === 9 ? 100 : 0;
 
 				jQuery.sap.delayedCall(iDelay, this, function() {
 					// if the element is a control the focus should be called

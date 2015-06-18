@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ResizeHandler
-sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.script'],
-	function(jQuery, Global, BaseObject/* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.script'],
+	function(jQuery, BaseObject/* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
 	// local logger, by default only logging errors
@@ -242,4 +242,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jque
 
 	return ResizeHandler;
 
-}, /* bExport= */ true);
+});

@@ -332,4 +332,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 
 	return LibraryInfo;
 
-}, /* bExport= */ true);
+});

@@ -3,10 +3,9 @@
  */
 
 // Provides the implementation for a Message
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, Object) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
+	function(jQuery, Object, library, MessageProcessor) {
 	"use strict";
-
 
 	/**
 	 *
@@ -167,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 * @param {sap.ui.core.message.MessageProcessor} oMessageProcessor The Message processor 
 	 */
 	Message.prototype.setMessageProcessor = function(oMessageProcessor) {
-		if (oMessageProcessor instanceof sap.ui.core.message.MessageProcessor) {
+		if (oMessageProcessor instanceof MessageProcessor) {
 			this.processor = oMessageProcessor;
 		} else {
 			jQuery.sap.log.error("MessageProcessor must be an instance of sap.ui.core.message.MessageProcessor");
@@ -241,4 +240,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	
 	return Message;
 
-}, /* bExport= */ true);
+});

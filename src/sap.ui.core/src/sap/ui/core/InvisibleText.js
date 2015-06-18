@@ -3,12 +3,11 @@
  */
 
 // Provides control sap.ui.core.InvisibleText.
-sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.strings'],
-	function(jQuery, Control, library, strings) {
+sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encoder'],
+	function(jQuery, Control, library/*, jQuerySap1 */) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new InvisibleText.
 	 *
@@ -139,4 +138,4 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.string
 
 	return InvisibleText;
 
-}, /* bExport= */ true);
+});

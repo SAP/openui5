@@ -8,8 +8,8 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Core, URI) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
+	function(jQuery, URI) {
 	"use strict";
 
 		/**
