@@ -453,11 +453,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 					oNode.numberOfLeafs += 1;
 				}
 				
+				//if the parent node is in selectAllMode, select this child node
+				if (oChildNode.parent.nodeState.selectAllMode && !this._mTreeState.deselected[oChildNode.groupID] && oChildNode.isLeaf) {
+					this.setNodeSelection(oChildNode.nodeState, true);
+				}
+				
 				// if the child node was previously expanded, it has to be expanded again after we rebuilt our tree
 				// --> recursion
 				// but only if we have at least 1 group (otherwise we have a flat list and not a tree)
 				if ((oChildNode.autoExpand >= 0 || oChildNode.nodeState.expanded) && this.isGrouped()) {
 					if (!this._mTreeState.collapsed[oChildNode.groupID]) {
+						
+						// propagate teh selectAllMode to the childNode, but only if the parent node is flagged and we are still autoexpanding
+						if (oChildNode.autoExpand >= 0 && oChildNode.parent.nodeState.selectAllMode && !this._mTreeState.deselected[oChildNode.groupID]) {
+							if (oChildNode.nodeState.selectAllMode === undefined) {
+								oChildNode.nodeState.selectAllMode = true;
+							}
+						}
 						
 						this._updateTreeState({groupID: oChildNode.nodeState.groupID, fallbackNodeState: oChildNode.nodeState , expanded: true});
 						this._loadChildContexts(oChildNode, oRecursionDetails);
@@ -555,6 +567,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		//mark the node as collapsed
 		this._updateTreeState({groupID: oNodeStateForCollapsingNode.groupID, expanded: false});
 		
+		// remove the select-all state
+		oNodeStateForCollapsingNode.selectAllMode = false;
+		
 		var bAutoExpandRequestTriggered = false;
 		
 		if (this.bCollapseRecursive || this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled)) {
@@ -592,6 +607,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			// also remove selections from child nodes of the collapsed node
 			jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
 				if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode)) {
+					oNodeState.selectAllMode = false;
 					that.setNodeSelection(oNodeState, false);
 				}
 			});
