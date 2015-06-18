@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './ExportType'],
 	var CSV = ExportType.extend('sap.ui.core.util.ExportTypeCSV', {
 
 		metadata: {
-
+			library: "sap.ui.core",
 			properties: {
 				
 				/**

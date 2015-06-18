@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell']
 	 */
 	var ExportRow = ManagedObject.extend("sap.ui.core.util.ExportRow", {
 		metadata: {
+			library: "sap.ui.core",
 			aggregations: {
 				/**
 				 * Cells for the Export.
