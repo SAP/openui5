@@ -7,7 +7,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 
 	opaTest("Find view elements", function(Given, When, Then) {
 
-		Given.iStartMyAppInAFrame("index.html");
+		Given.iStartMyAppInAFrame("../index.html?component=scenario");
 
 		Then.waitFor({
 			controlType: "sap.m.CheckBox",

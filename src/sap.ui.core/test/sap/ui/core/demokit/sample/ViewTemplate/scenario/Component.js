@@ -9,17 +9,18 @@
  */
 sap.ui.define([
 		'jquery.sap.global',
-		'sap/ui/core/UIComponent',
 		'sap/ui/core/mvc/View',
+		'sap/ui/core/sample/ViewTemplate/Component',
 		'sap/ui/core/util/MockServer',
 		'sap/ui/model/odata/AnnotationHelper',
 		'sap/m/HBox',
 		'sap/m/MessageBox',
 		'jquery.sap.script'
-	], function(jQuery, UIComponent, View, MockServer, AnnotationHelper, HBox, MessageBox/*, jQuerySapScript*/) {
+	], function (jQuery, View, BaseComponent, MockServer, AnnotationHelper, HBox, MessageBox
+		/*, jQuerySapScript*/) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
+	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
 		metadata : "json", //TODO Use component metadata from manifest file
 
 		createContent : function () {
@@ -43,7 +44,11 @@ sap.ui.define([
 			sAnnotationUri2 = "/sap(====)/bc/bsp/sap/zanno_gwsample/annotations.xml";
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
-			if (oUriParameters.get("realOData") !== "true") {
+			if (oUriParameters.get("realOData") === "true") {
+				sAnnotationUri = this.proxy(sAnnotationUri);
+				sAnnotationUri2 = this.proxy(sAnnotationUri2);
+				sServiceUri = this.proxy(sServiceUri);
+			} else {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
 
 				oMockServer = new MockServer({rootUri : sServiceUri});
@@ -72,10 +77,6 @@ sap.ui.define([
 						}
 					}]
 				}).start();
-			} else if (location.hostname === "localhost") { //for local testing prefix with proxy
-				sAnnotationUri = "proxy" + sAnnotationUri;
-				sAnnotationUri2 = "proxy" + sAnnotationUri2;
-				sServiceUri = "proxy" + sServiceUri;
 			}
 
 			oModel = new fnModel(sServiceUri, {
@@ -101,7 +102,5 @@ sap.ui.define([
 		}
 	});
 
-
 	return Component;
-
 });

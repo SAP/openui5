@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Loader for Templating demo scenario</title>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<meta charset="UTF-8">
+
+		<base href="../../../../../../../">
+		<!--[if lte IE 9]><script type="text/javascript">
+			(function() {
+				// The IE9 implementation of the <base> tag is not compliant with the HTML5 spec.
+				// It still requires an absolute URL (as in HMTL 4) and ignores relative URLs.
+				// By re-assigning the href attribute, it becomes an absolute URL and IE9 no longer
+				// ignores it.
+				var baseTag = document.getElementsByTagName('base')[0];
+				baseTag.href = baseTag.href;
+			})();
+		</script><![endif]-->
+
+		<script id="sap-ui-bootstrap"
+				src="resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-compatVersion="edge">
+		</script>
+		<script>
+			var sComponentName = jQuery.sap.getUriParameters().get("component");
+
+			if (!sComponentName) {
+				alert("Missing URL parameter 'component', e.g. '?component=scenario'");
+			} else {
+				jQuery.sap.registerModulePath(
+					"sap.ui.core.sample", "test-resources/sap/ui/core/demokit/sample");
+				new sap.m.App({
+					pages: [
+						new sap.m.Page({
+							content: new sap.ui.core.ComponentContainer({
+								component: sap.ui.component({
+									name : "sap.ui.core.sample.ViewTemplate." + sComponentName
+								})
+							})
+						})
+					]
+				}).placeAt('content');
+			}
+		</script>
+	</head>
+	<body class='sapUiBody' id='content'>
+	</body>
+</html>
