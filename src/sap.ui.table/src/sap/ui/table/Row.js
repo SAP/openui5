@@ -104,8 +104,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		// row selector domRef
 		oDomRefs.rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
 
-		if (bJQuery) {
-			oDomRefs.row = oDomRefs.rowScrollPart.add(oDomRefs.rowFixedPart.add(oDomRefs.rowSelector));
+		if (bJQuery === true) {
+			oDomRefs.row = oDomRefs.rowScrollPart;
+			if (oDomRefs.rowSelector) {
+				oDomRefs.row = oDomRefs.row.add(oDomRefs.rowSelector);
+			}
+
+			if (oDomRefs.rowFixedPart) {
+				oDomRefs.row = oDomRefs.row.add(oDomRefs.rowFixedPart);
+			}
 		}
 
 		return oDomRefs;
@@ -134,18 +141,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			sSelectReference = "rowDeselect";
 		}
 
-		// update visual selection state
-		$DomRefs.row.toggleClass("sapUiTableRowSel", bIsSelected);
-
 		// update tooltips and aria texts
 		if ($DomRefs.rowSelector) {
 			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
 			$DomRefs.rowSelector.attr("aria-label", mTooltipTexts.keyboard[sSelectReference]);
 		}
 
-		$DomRefs.rowSelectorText.text(mTooltipTexts.keyboard[sSelectReference]);
+		if ($DomRefs.rowSelectorText) {
+			$DomRefs.rowSelectorText.text(mTooltipTexts.keyboard[sSelectReference]);
+		}
 
-		var $Row = $DomRefs.rowFixedPart.add($DomRefs.rowScrollPart);
+		var $Row = $DomRefs.rowScrollPart;
+		if ($DomRefs.rowFixedPart) {
+			$Row = $Row.add($DomRefs.rowFixedPart);
+		}
+
 		if (bSelectOnCellsAllowed) {
 			// the row requires a tooltip for selection if the cell selection is allowed
 			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
@@ -156,7 +166,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 
 		// update aria-selected state, do at the very end since this forces the screen reader to read the aria texts again
-		$DomRefs.row.children("td").add($DomRefs.row).attr("aria-selected", bIsSelected.toString());
+		if ($DomRefs.row) {
+			// update visual selection state
+			$DomRefs.row.toggleClass("sapUiTableRowSel", bIsSelected);
+			$DomRefs.row.children("td").add($DomRefs.row).attr("aria-selected", bIsSelected.toString());
+		}
 	};
 
 	return Row;
