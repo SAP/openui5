@@ -133,6 +133,9 @@
 		var oStatusLabel = new sap.m.Text({id: "statusLabel",
 			text: "{status>/lastAction}"});
 
+		var oPressedLabel = new sap.m.Text({id: "pressedLabel",
+			text: "{status>/master/multiSelectPressed}"});
+
 		var oAddWarningButton = new sap.m.Button({
 			text: "add Warning",
 			press: function () {
@@ -1077,7 +1080,9 @@
 			editable: true,
 			content: [
 				new sap.m.Text({text: "Last action: "}),
-					oStatusLabel
+					oStatusLabel,
+				new sap.m.Text({text: "Multiselect pressed: "}),
+				oPressedLabel
 			]
 		});
 

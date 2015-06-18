@@ -58,13 +58,10 @@ sap.ui.define(["sap/m/semantic/SemanticConfiguration", "sap/ui/base/ManagedObjec
 	});
 
 	SemanticControl.prototype.setProperty = function (key, value, bSuppressInvalidate) {
+		ManagedObject.prototype.setProperty.call(this, key, value, true);
 		this._getControl().setProperty(key, value, bSuppressInvalidate);
 
 		return this;
-	};
-
-	SemanticControl.prototype.getProperty = function (key) {
-		return this._getControl().getProperty(key);
 	};
 
 	SemanticControl.prototype.updateAggregation = function (sName) {

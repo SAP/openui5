@@ -52,35 +52,6 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 	});
 
 	/**
-	 * Forwards all properties to the inner control,
-	 * except in the case where the property is 'type',
-	 * since 'type' belongs to the semantic wrapper control itself
-	 * @ param {string} sPropertyName - the name of the property to set
-	 * @ param {any} oValue - value to set the property to
-	 * @ param {boolean} [bSuppressInvalidate] if true, the managed object is not marked as changed
-	 * @ return this
-	 * @ public
-	 */
-	SemanticButton.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
-
-		if (!this.getMetadata().getProperties()[sPropertyName]
-				&& !SemanticButton.getMetadata().getProperties()[sPropertyName]
-					&& !SemanticControl.getMetadata().getProperties()[sPropertyName]) {
-
-			jQuery.sap.log.error("unknown property: " + sPropertyName, this);
-			return this;
-		}
-
-		SemanticControl.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
-
-		return this;
-	};
-
-	SemanticButton.prototype.getProperty = function(key) {
-		return SemanticControl.prototype.getProperty.call(this, key);
-	};
-
-	/**
 	 * @Overwrites
 	 */
 	SemanticButton.prototype._getControl = function() {
