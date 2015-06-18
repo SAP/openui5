@@ -25,8 +25,7 @@
 
 				jQuery.sap.require("sap.ui.layout.DynamicSideContent");
 
-				var SIDE_CONTENT = "SideContent",
-					S = "S",
+				var	S = "S",
 					M = "M",
 					L = "L",
 					XL = "XL",
@@ -271,17 +270,17 @@
 
 					// test M breakpoint
 					var sBreakpoint = this.oDSC._getBreakPointFromWidth(800);
-					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1053px includingly, the breakpoint should be 'M'");
+					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(1053);
-					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1053px includingly, the breakpoint should be 'M'");
+					sBreakpoint = this.oDSC._getBreakPointFromWidth(1024);
+					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
 					// test L breakpoint
 					var sBreakpoint = this.oDSC._getBreakPointFromWidth(1060);
-					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1053px-1440px includingly, the breakpoint should be 'L'");
+					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
 					sBreakpoint = this.oDSC._getBreakPointFromWidth(1440);
-					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1053px-1440px includingly, the breakpoint should be 'L'");
+					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
 					// test XL breakpoint
 					var sBreakpoint = this.oDSC._getBreakPointFromWidth(1500);
