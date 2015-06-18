@@ -343,6 +343,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             initTreeNodes(aTreeData, oTopLevelNavItem.links.links, 0, "");
 
             var oJSONModel = new sap.ui.model.json.JSONModel();
+            oJSONModel.setSizeLimit(iNodes);
             oTree.setModel(oJSONModel);
             oJSONModel.setData(aTreeData);
             oTree.bindNodes("/", oTreeNode);
@@ -353,6 +354,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
             oTopLevelNavItem._oTree = oTree;
             oTopLevelNavItem._iTreeSize = iNodes;
+            oTopLevelNavItem._oEmptyTreeLabel = new sap.ui.commons.Label({
+                text: "No matching entry found.",
+                visible: false
+            });
         };
 
         DemokitApp.prototype._createWorksetItem = function (oTLNItem) {
@@ -551,8 +556,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
 
         DemokitApp.prototype.navigateTo = function (sName, bSkipSetHash, bSkipSwitchLocation, bNewWindow) {
-
             var that = this;
+            var TREE_ABSOLUTE_LOCATION_LEFT = "0px";
+            var TREE_ABSOLUTE_LOCATION_TOP = "25px";
 
             // normalize page name (from hash)
             var sPageName = sName.indexOf("#") === 0 ? sName.substring(1) : sName;
@@ -642,8 +648,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 return null;
             }
 
-            function createTreeFilter(oTree) {
-                var updateTree = function (oTree, sFilter) {
+            function createTreeFilter(oTree, oEmptyLabel) {
+                var updateTree = function (oTree, sFilter, oEmptyLabel) {
                     var filters = [];
                     var nameFilter = new sap.ui.model.Filter("parentName", sap.ui.model.FilterOperator.Contains, sFilter);
                     filters.push(nameFilter);
@@ -652,6 +658,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     if (sFilter !== "") {
                         oTree.expandAll();
                     }
+                    var bNoNodes = (oTree.getNodes().length === 0);
+                    oTree.setVisible(!bNoNodes);
+                    oEmptyLabel.setVisible(bNoNodes);
+
                 };
 
                 var oSearch = new sap.ui.commons.SearchField({
@@ -661,7 +671,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     enableFilterMode: true,
                     startSuggestion: 0,
                     suggest: function (oEvent) {
-                        updateTree(oTree, oEvent.getParameter("value"));
+                        updateTree(oTree, oEvent.getParameter("value"), oEmptyLabel);
                     }
                 });
 
@@ -677,10 +687,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 oShell.setSelectedWorksetItem(oNewNavItem);
                 this._oSidePanelLayout.removeAllContent();
                 if (oNewTLNItem._oTree) {
-                    this._oSidePanelLayout.addContent(createTreeFilter(oNewTLNItem._oTree));
+                    this._oSidePanelLayout.addContent(createTreeFilter(oNewTLNItem._oTree, oNewTLNItem._oEmptyTreeLabel));
                     this._oSidePanelLayout.addContent(oNewTLNItem._oTree, {
-                        left: "0px",
-                        top: "25px"
+                        left: TREE_ABSOLUTE_LOCATION_LEFT,
+                        top: TREE_ABSOLUTE_LOCATION_TOP
+                    });
+                    this._oSidePanelLayout.addContent(oNewTLNItem._oEmptyTreeLabel, {
+                        left: TREE_ABSOLUTE_LOCATION_LEFT,
+                        top: TREE_ABSOLUTE_LOCATION_TOP
                     });
                 }
                 oSelectedNavEntry = findAndSelectTreeNode(sPageName, oNewTLNItem._oTree, true);
