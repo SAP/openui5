@@ -679,10 +679,21 @@ sap.ui.require([
 		result: {result: "composite", value: "{path:'path',type:" +
 			"'sap.ui.model.odata.type.String'}\\{foo\\}", type: "Edm.String"}
 	}, {
+		title: "composite binding w/ null",
+		bExpression: false,
+		parameter2: {result: "constant", value: "null", type: "edm:Null"},
+		result: {result: "composite", value: "{path:'path',type:" +
+			"'sap.ui.model.odata.type.String'}", type: "Edm.String"}
+	}, {
 		title: "expression binding",
 		bExpression: true,
 		parameter2: {result: "constant", value: "foo\\bar", type: "Edm.String"},
 		result: {result: "expression", value: "${path}+'foo\\\\bar'", type: "Edm.String"}
+	}, {
+		title: "expression binding w/ null",
+		bExpression: true,
+		parameter2: {result: "constant", value: "null", type: "edm:Null"},
+		result: {result: "expression", value: "${path}", type: "Edm.String"}
 	}, {
 		title: "expression parameter",
 		bExpression: false,
@@ -692,12 +703,12 @@ sap.ui.require([
 		test("concat: " + oFixture.title, function () {
 			var oInterface = {},
 				oPathValue = {value: [{}, {}]},
-				oResult1 = {result: "binding", value: "path", type: "Edm.String"},
+				oParameter1 = {result: "binding", value: "path", type: "Edm.String"},
 				oExpression = this.mock(Expression);
 
 			this.mock(Basics).expects("expectType").withExactArgs(oPathValue, "array");
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 0).returns(oResult1);
+				.withExactArgs(oInterface, oPathValue, 0).returns(oParameter1);
 			oExpression.expects("parameter")
 				.withExactArgs(oInterface, oPathValue, 1).returns(oFixture.parameter2);
 
