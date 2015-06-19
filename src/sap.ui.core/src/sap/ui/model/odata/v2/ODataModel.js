@@ -188,9 +188,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				var oAnnotations = this._getAnnotationParser();
 				
 				if (!this.bSkipMetadataAnnotationParsing) {
-					this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(mParams) {
-						return that.addAnnotationXML(mParams["metadataString"]);
-					});
+					this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(bSuppressEvents, mParams) {
+						// Only fire annotationsLoaded event if no further annotation URLs will be loaded
+						return this.addAnnotationXML(mParams["metadataString"], bSuppressEvents);
+					}.bind(this, !!this.sAnnotationURI));
 				}
 				
 				if (this.sAnnotationURI) {
@@ -3402,15 +3403,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * can be retrieved by calling the getServiceAnnotations()-method.
 	 *
 	 * @param {string} sXMLContent - The string that should be parsed as annotation XML
+	 * @param {boolean} [bSuppressEvents=false] - Wheter not to fire annotationsLoaded event on the annotationParser
 	 * @return {Promise} The Promise to parse the given XML-String, resolved if parsed without errors, rejected if errors occur
 	 * @protected
 	 */
-	ODataModel.prototype.addAnnotationXML = function(sXMLContent) {
+	ODataModel.prototype.addAnnotationXML = function(sXMLContent, bSuppressEvents) {
 		return new Promise(function(resolve, reject) {
 			this._getAnnotationParser().setXML(null, sXMLContent, {
 				success:    resolve,
 				error:      reject,
-				fireEvents: true
+				fireEvents: !bSuppressEvents
 			});
 		}.bind(this));
 	};
