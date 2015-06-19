@@ -1,398 +1,322 @@
 (function () {
 	'use strict';
 
+	var DOM_RENDER_LOCATION = "qunit-fixture";
+
 	<!-- use the sinon faketimers for this test -->
 	sinon.config.useFakeTimers = true;
+	var sinonClockTickValue = 600;
 
-	module("Properties");
-
-	var oEmptyCarousel = new sap.m.Carousel("empty_carousel");
-
-	test("Default Values", function () {
-		// without parameter
-		strictEqual(oEmptyCarousel.getLoop(), false, "Default 'loop' value is wrong");
-		strictEqual(oEmptyCarousel.getWidth(), '100%', "Default 'width' value is wrong");
-		strictEqual(oEmptyCarousel.getHeight(), '100%', "Default 'height' value is wrong");
-		strictEqual(oEmptyCarousel.getVisible(), true, "Default 'loop' value is wrong");
-		equal(oEmptyCarousel.getActivePage(), null, "Default 'activePage' value is wrong");
-	});
-
-	module("Methods");
-//images for first carousel
-	var img1 = new sap.m.Image("myPage1", {
-			src: "../images/demo/nature/desert.jpg"
-		}),
-		img2 = new sap.m.Image("myPage2", {
-			src: "../images/demo/nature/elephant.jpg"
-		}),
-		img3 = new sap.m.Image("myPage3", {
-			src: "../images/demo/nature/fish.jpg"
-		}),
-		img4 = new sap.m.Image("myPage4", {
-			src: "../images/demo/nature/forest.jpg"
-		}),
-		img5 = new sap.m.Image("myPage5", {
-			src: "../images/demo/nature/huntingLeopard.jpg"
-		}),
-		img6 = new sap.m.Image("myPage6", {
-			src: "../images/demo/nature/prairie.jpg"
-		});
-//images for second carousel
-	var img11 = new sap.m.Image("myPage11", {
-			src: "../images/demo/nature/desert.jpg"
-		}),
-		img21 = new sap.m.Image("myPage21", {
-			src: "../images/demo/nature/elephant.jpg"
-		}),
-		img31 = new sap.m.Image("myPage31", {
-			src: "../images/demo/nature/fish.jpg"
-		}),
-		img41 = new sap.m.Image("myPage41", {
-			src: "../images/demo/nature/forest.jpg"
-		}),
-		img51 = new sap.m.Image("myPage51", {
-			src: "../images/demo/nature/huntingLeopard.jpg"
-		}),
-		img61 = new sap.m.Image("myPage61", {
-			src: "../images/demo/nature/prairie.jpg"
-		});
-//the first pucture carousel
-	var oPictureCarousel = new sap.m.Carousel("picture_carousel", {
-			activePage: "myPage1",
-			height: "100%",
-			width: "100%",
-			pages: [img1, img2, img3, img4, img5, img6]
-		}),
-		oApp = new sap.m.App("testCarouselApp", {initialPage: "myPageApp"}),
-		oPageApp = new sap.m.Page("myPageApp", {title: "Carousel Test Page", enableScrolling: false});
-
-	var fnTestMove = function (iIndex, iIndicator) {
-		var actIndicator = iIndicator ? iIndicator : iIndex;
-		ok(this.$().find("#myPage" + iIndex).parents('.sapMCrslActive').length == 1, "Page " + iIndex + " should be active");
-		if (this.getPages().length > 1) {
-			ok(this.$().find(".sapMCrslBulleted :nth-child(" + actIndicator + ")").hasClass('sapMCrslActive'), "Page Indicator " + actIndicator + " should still be selected");
-		} else {
-			ok(this.$().find('.sapMCrslBulleted').length == 0, "Page Indicator should be hidden");
+	//================================================================================
+	// Carousel Properties
+	//================================================================================
+	QUnit.module("Properties", {
+		setup: function () {
+			this.oCarousel = new sap.m.Carousel();
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oCarousel.destroy();
 		}
-
-	};
-
-	oPageApp.addContent(oPictureCarousel);
-	oApp.addPage(oPageApp);
-	oApp.placeAt("carousel-test-content");
-//act
-	sap.ui.getCore().applyChanges();
-
-	test("Move active page", function () {
-		equal(oPictureCarousel.getActivePage(), "myPage1", "Default 'activePage' value is wrong");
-		oPictureCarousel.setActivePage("myPage6");
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 6);
-		oPictureCarousel.setActivePage("myPage1");
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 1);
-		oPictureCarousel.setActivePage("myPage3");
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 3);
 	});
 
-	test("Next, Previous", function () {
-		oPictureCarousel.previous();
-		oPictureCarousel.previous();
+	QUnit.test("Default Values", function (assert) {
+		assert.strictEqual(this.oCarousel.getLoop(), false, "Default 'loop' value is false");
+		assert.strictEqual(this.oCarousel.getWidth(), '100%', "Default 'width' value is 100%");
+		assert.strictEqual(this.oCarousel.getHeight(), '100%', "Default 'height' value is 100%");
+		assert.strictEqual(this.oCarousel.getVisible(), true, "Default 'visible' value is true");
+		assert.strictEqual(this.oCarousel.getActivePage(), null, "Default 'activePage' value is null");
+	});
 
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 1);
-		oPictureCarousel.previous();
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 1);
-		for (var i = 0; i < 5; i++) {
-			oPictureCarousel.next();
+	//================================================================================
+	// Carousel Methods
+	//================================================================================
+	QUnit.module("Methods", {
+		setup: function () {
+			this.oCarousel = new sap.m.Carousel({
+				height: "100%",
+				width: "100%",
+				pages: [
+					new sap.m.Image("keyTestPage_1", {
+						src: "../images/demo/nature/desert.jpg"
+					}),
+					new sap.m.Image("keyTestPage_2", {
+						src: "../images/demo/nature/elephant.jpg"
+					}),
+					new sap.m.Image("keyTestPage_3", {
+						src: "../images/demo/nature/fish.jpg"
+					}),
+					new sap.m.Image("keyTestPage_4", {
+						src: "../images/demo/nature/forest.jpg"
+					}),
+					new sap.m.Image("keyTestPage_5", {
+						src: "../images/demo/nature/huntingLeopard.jpg"
+					}),
+					new sap.m.Image("keyTestPage_6", {
+						src: "../images/demo/nature/prairie.jpg"
+					})
+				]
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oCarousel.destroy();
 		}
-		;
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 6);
-		oPictureCarousel.next();
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 6);
 	});
 
-	test("Loop", function () {
-		oPictureCarousel.setLoop(true);
-		oPictureCarousel.next();
+	QUnit.test("#setActivePage()", function (assert) {
+		// Act
+		this.oCarousel.setActivePage("keyTestPage_6");
 
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 1);
-		oPictureCarousel.previous();
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 6);
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "The active page should be 'keyTestPage_6'");
 	});
 
+	QUnit.test("#next()", function (assert) {
+		// Act
+		this.oCarousel.next();
 
-	test("Carousel Visibility", function () {
-		oPictureCarousel.setVisible(false);
-
-		this.clock.tick(600);
-
-		ok(oPictureCarousel.$().length === 0, "Carousel should deleted from DOM");
-		oPictureCarousel.setVisible(true);
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 6);
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "The active page should be 'keyTestPage_2'");
 	});
 
+	QUnit.test("#previous()", function (assert) {
+		// Arrange
+		this.oCarousel.setActivePage("keyTestPage_6");
 
-	test("Page Indicator Visibility", function () {
-		var originalDisplayValue = oPictureCarousel.$().find(".sapMCrslBulleted").css('display');
-		oPictureCarousel.setShowPageIndicator(false);
+		// Act
+		this.oCarousel.previous();
 
-		this.clock.tick(600);
-
-		ok(oPictureCarousel.$().find(".sapMCrslBulleted").css('display') == 'none', "Page Indicator should be invisible");
-		oPictureCarousel.setShowPageIndicator(true);
-
-		this.clock.tick(600);
-
-		ok(oPictureCarousel.$().find(".sapMCrslBulleted").css('display') == originalDisplayValue, "Page Indicator should be visible again");
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_5", "The active page should be 'keyTestPage_5'");
 	});
 
-	test("Page Indicator Position", function () {
-		oPictureCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Top);
-		ok(oPictureCarousel.$().children().first().hasClass('sapMCrslBulleted'), "Page Indicator should be on top");
-		oPictureCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Bottom);
-		ok(oPictureCarousel.$().children().last().hasClass('sapMCrslBulleted'), "Page Indicator should be at bottom");
+	QUnit.test("#setLoop()", function (assert) {
+		// Arrange
+		this.oCarousel.setActivePage("keyTestPage_6");
+		this.oCarousel.setLoop(true);
+
+		// Act
+		this.oCarousel.next();
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_1", "The active page should be 'keyTestPage_1'");
+
+		// Act
+		this.oCarousel.previous();
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "The active page should be 'keyTestPage_6'");
 	});
 
-	test("Removing Pages", function () {
-		var oRemovedPage = oPictureCarousel.removePage(img6);
-		ok(oRemovedPage.getId() === 'myPage6', "'removePage' does not return correct page");
+	QUnit.test("#setVisible(false) should delete Carousel from DOM", function (assert) {
+		// Act
+		this.oCarousel.setVisible(false);
+		this.clock.tick(sinonClockTickValue);
 
-		oPictureCarousel.removePage(img5);
-		oPictureCarousel.removePage(img4);
-		oPictureCarousel.removePage(img3);
-		oPictureCarousel.removePage(img2);
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 1);
-		oPictureCarousel.addPage(img5);
-
-		this.clock.tick(600);
-
-		oPictureCarousel.next();
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 5, 2);
-		oPictureCarousel.addPage(img6);
-
-		this.clock.tick(600);
-
-		oPictureCarousel.next();
-
-		this.clock.tick(600);
-
-		fnTestMove.call(oPictureCarousel, 6, 3);
-		oPictureCarousel.removePage(img1);
+		// Assert
+		assert.strictEqual(this.oCarousel.$().length, 0, "Carousel should be deleted from DOM");
 	});
 
-	test("Add a second carousel", function () {
-		oEmptyCarousel.addPage(img11);
-		oEmptyCarousel.addPage(img21);
-		oEmptyCarousel.addPage(img31);
-		oEmptyCarousel.setHeight('50%');
-		oPictureCarousel.setHeight('50%');
-		oPictureCarousel.setLoop(false);
-		oPageApp.addContent(oEmptyCarousel);
-		sap.ui.getCore().applyChanges();
-		ok(oEmptyCarousel.$().length === 1, "Second carousel should have been added");
-		oEmptyCarousel.insertPage(img41, 2);
-		oEmptyCarousel.insertPage(img51, 2);
-		oEmptyCarousel.insertPage(img61, 2);
+	QUnit.test("#setVisible(true) should add Carousel to DOM", function (assert) {
+		// Arrange
+		this.oCarousel.setVisible(false);
+		this.clock.tick(sinonClockTickValue);
+
+		// Act
+		this.oCarousel.setVisible(true);
+		this.clock.tick(sinonClockTickValue);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.$().length, 1, "Carousel should be added to DOM");
 	});
 
-	test("Remove all pages from carousel and add pages which were used in other carousel. AddCustom style", function () {
-		//Arrange
-		var oCarousel = new sap.m.Carousel({
-			pages: [
-				new sap.m.Page(),
-				new sap.m.Page()
-			]
-		});
+	QUnit.test("#setShowPageIndicator(false) should  make Page Indicator invisible", function (assert) {
+		// Act
+		this.oCarousel.setShowPageIndicator(false);
 
-		// System under Test
-		oCarousel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var allPages = oCarousel.removeAllPages();
-		ok(allPages.length === 2, "'removeAllPages' does not return correct page array");
-
-		this.clock.tick(800);
-
-		ok(oCarousel.$().find('.sapMCrslInner').children().length === 0, "Second Carousel should deleted from DOM");
-
-		oCarousel.addPage(img11);
-		oCarousel.addStyleClass('TestClass');
-
-		this.clock.tick(600);
-
-		ok(oCarousel.$().find("#myPage11").parents('.sapMCrslActive').length == 1, "Page 11 should be active");
-		ok(oCarousel.$().find('.sapMCrslBulleted').length == 0, "Page Indicator should be hidden");
-		ok(oCarousel.$().hasClass("TestClass"), "Carousel has custom style class");
-		var whoAmI = oCarousel.destroyPages();
-		ok(whoAmI === oCarousel, "'destroyPages' does not return carousel");
-
-		//Cleanup
-		oCarousel.destroy();
+		// Assert
+		assert.strictEqual(this.oCarousel.$().find(".sapMCrslBulleted").css('display'), 'none', "Page Indicator should be invisible");
 	});
 
-	module("Events");
+	QUnit.test("#setShowPageIndicator(true) should make Page Indicator visible", function (assert) {
+		// Arrange
+		this.oCarousel.setShowPageIndicator(false);
 
-	test("Listen to 'pageChanged' event", function () {
-		//Arrange
-		var oCarousel = new sap.m.Carousel({
-			pages: [
-				new sap.m.Page("keyTestPage_1"),
-				new sap.m.Page("keyTestPage_2"),
-				new sap.m.Page("keyTestPage_3"),
-				new sap.m.Page("keyTestPage_4")
-			],
-			activePage: "keyTestPage_1"
-		});
+		// Act
+		this.oCarousel.setShowPageIndicator(true);
 
-		oCarousel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.strictEqual(this.oCarousel.$().find(".sapMCrslBulleted").css('display'), 'block', "Page Indicator should be visible");
+	});
 
+	QUnit.test("#setPageIndicatorPlacement() to 'top' position", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Top);
+
+		// Assert
+		assert.ok(this.oCarousel.$().children().first().hasClass('sapMCrslBulleted'), "Page Indicator should be on top");
+	});
+
+	QUnit.test("#setPageIndicatorPlacement() to 'bottom' position", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Bottom);
+
+		// Assert
+		assert.ok(this.oCarousel.$().children().last().hasClass('sapMCrslBulleted'), "Page Indicator should be at bottom");
+	});
+
+	//================================================================================
+	// Carousel Events
+	//================================================================================
+	QUnit.module("Events", {
+		setup: function () {
+			this.oCarousel = new sap.m.Carousel({
+				pages: [
+					new sap.m.Page("keyTestPage_1"),
+					new sap.m.Page("keyTestPage_2"),
+					new sap.m.Page("keyTestPage_3"),
+					new sap.m.Page("keyTestPage_4")
+				],
+				activePage: "keyTestPage_2"
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oCarousel.destroy();
+		}
+	});
+
+	QUnit.test("Listen to 'pageChanged' event", function (assert) {
+		// Arrange
 		var bPageNewOK = false,
 			bPageOldOK = false;
 
-		oCarousel.attachPageChanged(function (oControlEvent) {
-			bPageNewOK = oControlEvent.getParameters().oldActivePageId == 'keyTestPage_1';
-			bPageOldOK = oControlEvent.getParameters().newActivePageId == 'keyTestPage_2';
-		});
-
-		oCarousel.next();
-
-		this.clock.tick(600);
-
-		ok(bPageNewOK, "Old active page should be 'keyTestPage_1'");
-		ok(bPageOldOK, "New active page should be 'keyTestPage_2'");
-
-		//Clean up
-		oCarousel.destroy();
-	});
-
-	test("Should fire pageChanged only once when using 'setActivePage' (CSN 0120061532 0001323934 2014)", function () {
-		//Arrange
-		//System under Test
-		var sut = new sap.m.Carousel({
-				pages: [new sap.m.Page('firePage1'), new sap.m.Page('firePage2')]
-			}),
-			oChangePageSpy = this.spy(sut, "_changePage");
-
-		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		sut.setActivePage('firePage2');
-
-		//Act
-		this.clock.tick(600);
-
-		//Assert
-		ok(oChangePageSpy.calledOnce, "PageChanged fired once");
-
-		//Clean up
-		sut.destroy();
-	});
-
-	test("Active page should be set when specified in constructor'", function () {
-		//Arrange
-		//System under Test
-		var sut = new sap.m.Carousel({
-			activePage: 'activePage2',
-			pages: [new sap.m.Page('activePage1'), new sap.m.Page('activePage2')]
-		});
-
-		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		ok(sut.getActivePage() == 'activePage2', "Active page should be 'activePage2'");
-
-		//Clean up
-		sut.destroy();
-	});
-
-	test("Should fire pageChanged only once even if it is invalidated meanwhile", function () {
-		// Arrange
-		var callCount = 0,
-			oNestedCarousel = new sap.m.Carousel({
-				pages: [new sap.m.Page()]
-			}),
-			oPageOfNestedCarousel = new sap.m.Page({
-				content: oNestedCarousel
-			});
-
-
-		// System under Test
-		var oCarousel = new sap.m.Carousel({
-			pages: [oPageOfNestedCarousel, new sap.m.Page()]
+		this.oCarousel.attachPageChanged(function (oControlEvent) {
+			bPageNewOK = oControlEvent.getParameters().oldActivePageId == "keyTestPage_2";
+			bPageOldOK = oControlEvent.getParameters().newActivePageId == "keyTestPage_3";
 		});
 
 		// Act
-		oCarousel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		this.oCarousel.next();
 
-		oCarousel.attachPageChanged(shouldOnlyBeCalledOnce);
-		oCarousel.next();
+		// Assert
+		assert.ok(bPageNewOK, "Old active page should be 'keyTestPage_2'");
+		assert.ok(bPageOldOK, "New active page should be 'keyTestPage_3'");
+	});
+
+	QUnit.test("Should fire 'pageChanged' only once when using #setActivePage() (CSN 0120061532 0001323934 2014)", function (assert) {
+		// Arrange
+		var oChangePageSpy = this.spy(this.oCarousel, "_changePage");
+
+		// Act
+		this.oCarousel.setActivePage('keyTestPage_3');
+
+		// Assert
+		assert.ok(oChangePageSpy.calledOnce, "PageChanged fired once");
+
+		// Reset sinon spy
+		this.oCarousel._changePage.restore();
+	});
+
+	QUnit.test("Active page should be set when specified in constructor'", function (assert) {
+		//Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), 'keyTestPage_2', "Active page should be 'keyTestPage_2'");
+	});
+
+	//================================================================================
+	// Nested Carousel
+	//================================================================================
+	QUnit.module("Nested Carousel", {
+		setup: function () {
+
+			this.oNestedCarousel = new sap.m.Carousel({
+				pages: [new sap.m.Page()]
+			});
+
+			this.oCarousel = new sap.m.Carousel({
+				pages: [
+					new sap.m.Page({
+						content: this.oNestedCarousel
+					}),
+					new sap.m.Page()
+				]
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oCarousel.destroy();
+		}
+	});
+
+	QUnit.test("Should fire pageChanged only once even if it is invalidated meanwhile", function (assert) {
+		// Arrange
+		var callCount = 0,
+			that = this;
+
+		// Act
+		this.oCarousel.attachPageChanged(shouldOnlyBeCalledOnce);
+		this.oCarousel.next();
 
 		function shouldOnlyBeCalledOnce() {
 			callCount++;
 
 			if (callCount === 1) {
 				//Act part 2;
-				oNestedCarousel.invalidate();
+				that.oNestedCarousel.invalidate();
 				//The bug that is tested here triggered a recursion at this point.
 				sap.ui.getCore().applyChanges();
 			}
 
 			// Assert
-			strictEqual(callCount, 1, "Did only call it once");
+			assert.strictEqual(callCount, 1, "Did only call it once");
 
 			//Cleanup
-			oCarousel.destroy();
+			that.oCarousel.destroy();
 		}
 	});
 
-	module("Clean up");
-	test("Destroy both carousels", function () {
-		oPictureCarousel.destroy();
-		strictEqual(oPictureCarousel.$().length, 0, "Picture Carousel removed from DOM");
-		ok(!oPictureCarousel._mScrollContainerMap, "Picture Carousel's container map has been cleaned up");
-		oEmptyCarousel.destroy();
-		strictEqual(oEmptyCarousel.$().length, 0, "Empty Carousel removed from DOM");
-		ok(!oEmptyCarousel._mScrollContainerMap, "Empty Carousel's container map has been cleaned up");
-		var oNotRenderedCarousel = new sap.m.Carousel();
-		oNotRenderedCarousel.destroy();
-		ok(!oNotRenderedCarousel._mScrollContainerMap, "Empty Carousel's container map has been cleaned up");
+	//================================================================================
+	// Carousel clean up
+	//================================================================================
+	QUnit.module("Clean up", {
+		setup: function () {
+			this.oCarousel = new sap.m.Carousel({
+				pages: [
+					new sap.m.Page("keyTestPage_1"),
+					new sap.m.Page("keyTestPage_2"),
+					new sap.m.Page("keyTestPage_3"),
+					new sap.m.Page("keyTestPage_4")
+				],
+				activePage: "keyTestPage_1"
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oCarousel.destroy();
+		}
 	});
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
+	QUnit.test("Destroy rendered Carousels", function (assert) {
+		this.oCarousel.destroy();
+		assert.strictEqual(this.oCarousel.$().length, 0, "Picture Carousel removed from DOM");
+		assert.strictEqual(this.oCarousel._mScrollContainerMap, undefined, "Picture Carousel's container map has been cleaned up");
+	});
+
+	QUnit.test("Destroy not rendered Carousels", function (assert) {
+		var oNotRenderedCarousel = new sap.m.Carousel();
+		oNotRenderedCarousel.destroy();
+		assert.strictEqual(oNotRenderedCarousel._mScrollContainerMap, undefined, "Empty Carousel's container map has been cleaned up");
+	});
+
+	//================================================================================
+	// Carousel Keyboard handling
+	//================================================================================
 	QUnit.module("Keyboard", {
 		setup: function () {
 			this.oCarousel = new sap.m.Carousel({
@@ -670,8 +594,10 @@
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
 	});
 
+	//================================================================================
+	// Carousel Keyboard handling
+	//================================================================================
 	QUnit.module("Container Padding Classes");
-
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new sap.m.Carousel({
@@ -720,5 +646,4 @@
 		// Cleanup
 		oContainer.destroy();
 	});
-
 })();
