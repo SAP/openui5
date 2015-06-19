@@ -254,6 +254,17 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/apply-in-if.xml",
 			serviceValid     : true,
 			annotationsValid : "all",
+		},
+		"Joined Loading with automated $metadata parsing": {
+			service          : "fakeService://testdata/odata/northwind-annotated/",
+			annotations      : [
+				"fakeService://testdata/odata/northwind-annotations-normal.xml",
+				"fakeService://testdata/odata/multiple-annotations-01.xml",
+				"fakeService://testdata/odata/multiple-annotations-02.xml",
+				"fakeService://testdata/odata/multiple-annotations-03.xml"
+			],
+			serviceValid     : true,
+			annotationsValid : "all",
 		}
 		
 	};
@@ -3989,4 +4000,53 @@ function runODataAnnotationTests() {
 		});
 	});
 	
+	
+	
+	asyncTest("V2: Joined Loading with automated $metadata parsing", function() {
+		expect(16);
+
+		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: false,
+			loadAnnotationsJoined: true
+		});
+		
+		
+		var oModel2 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: false,
+			loadAnnotationsJoined: false
+		});
+
+		var iCount = 0;
+		var fnTestAllAnnotations = function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			equals(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path, "Annotations", "Annotation from correct source (Annotations)");
+			equals(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path, "Metadata", "Annotation from correct source (Metadata)");
+			equals(oAnnotations.UnitTest["Test.Merged"][0].Value.Path, "Annotations", "Merged annotations filled");
+			
+			
+			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
+			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
+			
+			++iCount;
+			if (iCount == 2) {
+				// Make sure no additional events are fired afterwards
+				setTimeout(start, 500);
+			} else if(iCount > 2) {
+				ok(false, "Too many events have been fired");
+			}
+		}
+		
+		oModel.attachMetadataLoaded(fnTestAllAnnotations);
+		oModel2.attachAnnotationsLoaded(fnTestAllAnnotations);
+	});
 }
