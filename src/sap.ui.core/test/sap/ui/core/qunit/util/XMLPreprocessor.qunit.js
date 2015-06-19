@@ -899,7 +899,7 @@
 		var oLogMock = this.mock(jQuery.sap.log);
 
 		oLogMock.expects("error").never();
-		warn(oLogMock, 'qux: Binding not ready in <Text text="{unrelated>/some/path}"/>');
+		oLogMock.expects("warning").never();
 
 		window.foo = {
 			Helper: {
@@ -956,92 +956,98 @@
 	});
 
 	//*********************************************************************************************
-	test("binding resolution: interface to formatter", function () {
-		var oModel = new sap.ui.model.json.JSONModel({
-				"somewhere": {
-					"com.sap.vocabularies.UI.v1.HeaderInfo": {
-						"Title": {
-							"Label": {
-								"String": "Customer"
-							},
-							"Value": {
-								"Path": "CustomerName"
+	[false, true].forEach(function (bIsLoggable) {
+		test("binding resolution: interface to formatter, debug = " + bIsLoggable, function () {
+			var oModel = new sap.ui.model.json.JSONModel({
+					"somewhere": {
+						"com.sap.vocabularies.UI.v1.HeaderInfo": {
+							"Title": {
+								"Label": {
+									"String": "Customer"
+								},
+								"Value": {
+									"Path": "CustomerName"
+								}
 							}
 						}
 					}
-				}
-			});
+				});
 
-		/*
-		 * Dummy formatter function.
-		 *
-		 * @param {object} oInterface
-		 * @param {any} vRawValue
-		 */
-		function help(oInterface, vRawValue) {
-			var oContext,
-				sExpectedPath = vRawValue.String
-					? "/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label"
-					: "/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value";
+			/*
+			 * Dummy formatter function.
+			 *
+			 * @param {object} oInterface
+			 * @param {any} vRawValue
+			 */
+			function help(oInterface, vRawValue) {
+				var oContext,
+					sExpectedPath = vRawValue.String
+						? "/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label"
+						: "/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value";
 
-			strictEqual(oInterface.getModel(), oModel);
-			strictEqual(oInterface.getPath(), sExpectedPath);
-			strictEqual(oInterface.getSetting("bindTexts"), true, "settings");
-			throws(function () {
-				oInterface.getSetting("bindingContexts");
-			}, /Illegal argument: bindingContexts/);
-			throws(function () {
-				oInterface.getSetting("models");
-			}, /Illegal argument: models/);
+				strictEqual(oInterface.getModel(), oModel);
+				strictEqual(oInterface.getPath(), sExpectedPath);
+				strictEqual(oInterface.getSetting("bindTexts"), true, "settings");
+				throws(function () {
+					oInterface.getSetting("bindingContexts");
+				}, /Illegal argument: bindingContexts/);
+				throws(function () {
+					oInterface.getSetting("models");
+				}, /Illegal argument: models/);
 
-			return vRawValue.String || "{" + vRawValue.Path + "}";
-		}
-		help.requiresIContext = true;
-
-		/*
-		 * Dummy formatter function to check that only <code>requiresIContext = true</code> counts.
-		 *
-		 * @param {any} vRawValue
-		 */
-		function other(vRawValue) {
-			strictEqual(arguments.length, 1);
-		}
-		other.requiresIContext = "ignored";
-
-		window.foo = {
-			Helper: {
-				help: help,
-				other: other
+				return vRawValue.String || "{" + vRawValue.Path + "}";
 			}
-		};
+			help.requiresIContext = true;
 
-		checkTracing.call(this, true, [
-			{m: "[ 0] Start processing qux"},
-			{m: "[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"},
-			{m: "[ 0] removed attribute text", d: 1},
-			{m: "[ 0] text = Customer", d: 2},
-			{m: "[ 0] text = Value: {CustomerName}", d: 3},
-			{m: "[ 0] text = Customer: {CustomerName}", d: 4},
-			{m: "[ 0] Finished processing qux"}
-		], [
-			mvcView(),
-			'<Text text="{formatter: \'foo.Helper.other\', path: \'Title/Label\'}"/>',
-			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}"/>',
-			'<Text text="Value: {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
-			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
-				+ ': {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
-			'</mvc:View>'
-		], {
-			models: oModel,
-			bindingContexts: oModel.createBindingContext(
-					"/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"),
-			bindTexts: true
-		}, [
-			'<Text/>',
-			'<Text text="Customer"/>',
-			'<Text text="Value: {CustomerName}"/>',
-			'<Text text="Customer: {CustomerName}"/>'
-		]);
+			/*
+			 * Dummy formatter function to check that only <code>requiresIContext = true</code>
+			 * counts.
+			 *
+			 * @param {any} vRawValue
+			 */
+			function other(vRawValue) {
+				strictEqual(arguments.length, 1);
+			}
+			other.requiresIContext = "ignored";
+
+			window.foo = {
+				Helper: {
+					help: help,
+					other: other
+				}
+			};
+
+			checkTracing.call(this, bIsLoggable, [
+				{m: "[ 0] Start processing qux"},
+				{m: "[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"},
+				{m: "[ 0] Removed attribute text", d: 1},
+				{m: "[ 0] text = Customer", d: 2},
+				{m: "[ 0] text = Value: {CustomerName}", d: 3},
+				{m: "[ 0] text = Customer: {CustomerName}", d: 4},
+				{m: "[ 0] Binding not ready for attribute text", d: 5},
+				{m: "[ 0] Finished processing qux"}
+			], [
+				mvcView(),
+				'<Text text="{formatter: \'foo.Helper.other\', path: \'Title/Label\'}"/>',
+				'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}"/>',
+				'<Text text="Value: {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
+				'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
+					+ ': {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
+				'<Text text="{unrelated>/some/path}"/>',
+				'</mvc:View>'
+			], {
+				models: oModel,
+				bindingContexts: oModel.createBindingContext(
+						"/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"),
+				bindTexts: true
+			}, [
+				'<Text/>',
+				'<Text text="Customer"/>',
+				'<Text text="Value: {CustomerName}"/>',
+				'<Text text="Customer: {CustomerName}"/>',
+				'<Text text="{unrelated&gt;/some/path}"/>'
+			]);
+		});
 	});
 
 	//*********************************************************************************************

@@ -411,7 +411,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					if (typeof vBindingInfo === "object") {
 						vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings);
-						if (vBindingInfo === oUNBOUND) {
+						if (bMandatory && vBindingInfo === oUNBOUND) {
 							warn('Binding not ready in ', oElement, null);
 						}
 					} else if (fnCallIfConstant) { // string
@@ -497,20 +497,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					try {
 						vValue = getResolvedBinding(sValue, oElement, oWithControl, false);
-						if (vValue !== oUNBOUND) {
-							// If the formatter returns null, the value is undefined (the default
-							// value of _With.any)
-							if (vValue === undefined) {
-								if (bDebug) {
-									debug(oElement, "removed attribute", oAttribute.name);
-								}
-								oElement.removeAttribute(oAttribute.name);
-							} else {
-								if (bDebug && vValue !== oAttribute.value) {
-									debug(oElement, oAttribute.name, "=", vValue);
-								}
-								oAttribute.value = vValue;
+						if (vValue === oUNBOUND) {
+							debug(oElement, 'Binding not ready for attribute', oAttribute.name);
+						} else if (vValue === undefined) {
+							// if the formatter returns null, the value becomes undefined
+							// (the default value of _With.any)
+							debug(oElement, "Removed attribute", oAttribute.name);
+							oElement.removeAttribute(oAttribute.name);
+						} else {
+							if (bDebug && vValue !== oAttribute.value) {
+								debug(oElement, oAttribute.name, "=", vValue);
 							}
+							oAttribute.value = vValue;
 						}
 					} catch (ex) {
 						// just don't replace XML attribute value
