@@ -70,6 +70,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				containerQuery : {type : "boolean", group : "Behavior", defaultValue : false}
 			},
 			defaultAggregation : "mainContent",
+			events : {
+				/**
+				 * The event indicates that the current breakpoint has been changed.
+				 */
+				breakpointChanged : {
+					parameters : {
+						currentBreakpoint : {type : "string"}
+					}
+				}
+			},
 			aggregations : {
 
 				/**
@@ -338,12 +348,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			if (iWidth <= S_M_BREAKPOINT && this._currentBreakpoint !== S) {
+				this.fireBreakpointChanged({currentBreakpoint : S});
 				return S;
 			} else if ((iWidth > S_M_BREAKPOINT) && (iWidth <= M_L_BREAKPOINT) && this._currentBreakpoint !== M) {
+				this.fireBreakpointChanged({currentBreakpoint : M});
 				return M;
 			} else if ((iWidth > M_L_BREAKPOINT) && (iWidth <= L_XL_BREAKPOINT) && this._currentBreakpoint !== L) {
+				this.fireBreakpointChanged({currentBreakpoint : L});
 				return L;
 			} else if (iWidth > L_XL_BREAKPOINT && this._currentBreakpoint !== XL) {
+				this.fireBreakpointChanged({currentBreakpoint : XL});
 				return XL;
 			}
 			return this._currentBreakpoint;

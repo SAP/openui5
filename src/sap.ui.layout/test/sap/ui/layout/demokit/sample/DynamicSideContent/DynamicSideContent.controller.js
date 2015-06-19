@@ -7,32 +7,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 			var iValue = oEvent.getParameter("value");
 			this.updateControlWidth(iValue);
 		},
-		onAfterRendering: function (oEvent) {
-			// Get the initial breakpoint here.
-			this.updateToggleButtonState();
-		},
 		updateControlWidth: function (iValue) {
 			var $DSCContainer = this.getView().byId("sideContentContainer").$();
 			if (iValue) {
 				$DSCContainer.width(iValue + "%");
-				this.updateToggleButtonState();
 			}
 		},
-		updateToggleButtonState: function () {
+		updateToggleButtonState: function (oEvent) {
 			var oToggleButton = this.getView().byId("toggleButton"),
-				oDSC = this.getView().byId("DynamicSideContent");
+				sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint");
 
-			if (oDSC.getCurrentBreakpoint() === "S") {
+			if (sCurrentBreakpoint === "S") {
 				oToggleButton.setEnabled(true);
 			} else {
 				oToggleButton.setEnabled(false);
 			}
 		},
-		handleToggleClick: function (oEvent) {
+		handleToggleClick: function () {
 			this.getView().byId("DynamicSideContent").toggle();
 		}
 	});
 
 	return DynamicSideContent;
-
 });
