@@ -27,10 +27,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 *         [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
-	 *         If the mParameter <code>arrayNames</code> is specified with an array of string names this names will be checked against the tree data structure
-	 *         and the found data in this array is included in the tree but only if also the parent array is included.
-	 *         If this parameter is not specified then all found arrays in the data structure are bound.
-	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter. 
+	 * @param {string[]} [mParameters.arrayNames]
+	 *         If this parameter is specified with an array of string names, these names will be used to construct the tree data structure.
+	 *         Only the nested objects contained in arrays, with names specified by mParameters.arrayNames, will be included in the tree.
+	 *         Of course this will only happen if all parent-nodes up to the top-level are also included.
+	 *         If you do NOT specify this parameter: by default all nested objects/arrays will be used to build the trees hierarchy.
 	 * 
 	 * @alias sap.ui.model.json.JSONTreeBinding
 	 * @extends sap.ui.model.TreeBinding
