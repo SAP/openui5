@@ -178,7 +178,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			// table row count
 			rm.write("<span");
 			rm.writeAttribute("id", oTable.getId() + "-rownumberofrows");
-			//rm.writeAttribute("aria-live", "polite");
 			rm.addStyle("position", "absolute");
 			rm.addStyle("top", "-20000px");
 			rm.writeStyles();
@@ -509,9 +508,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			mAriaAttributes["aria-haspopup"] = {value: "true"};
 		}
 
-		if (!!sap.ui.Device.browser.internet_explorer) {
-			mAriaAttributes.role = {value: "columnheader"};
-		}
+		mAriaAttributes.role = {value: "columnheader"};
 
 		if (iColumnIndex < oTable.getFixedColumnCount()) {
 			mAriaAttributes["aria-labelledby"] = {value: oColumn.getId() + " " + oTable.getId() + "-ariafixedcolumn"};
