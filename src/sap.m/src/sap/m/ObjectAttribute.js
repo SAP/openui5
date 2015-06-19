@@ -55,6 +55,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		aggregations : {
 
 			/**
+			 * When the aggregation is set it replaces the text, active and textDirection property. This also ignores the press event. The provided control is displayed as an active link.
+			 */
+			attribute : {type : "sap.ui.core.Control", multiple : false},
+
+			/**
 			 * Text control to display title and text property
 			 */
 			_textControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
@@ -76,9 +81,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
+	ObjectAttribute.MAX_LINES = {
+		SINGLE_LINE: 1,
+		MULTI_LINE: 2
+	};
 
 	/**
 	 *  Initialize member variables
@@ -95,30 +101,51 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	ObjectAttribute.prototype._getUpdatedTextControl = function() {
-		var oTextControl = this.getAggregation('_textControl');
-		var sTextDir = this.getTextDirection();
-		var oParent = this.getParent();
-		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
-		var oMaxLinesConst = {
-			singleLine : 1,
-			multiLine : 2
-		};
-		var iMaxLines = oMaxLinesConst.multiLine;
-		var oppositeDirectionMarker = '';
+		var oAttrAggregation = this.getAggregation('attribute') || this.getAggregation('_textControl'),
+			sTitle = this.getTitle(),
+			sText = this.getAggregation('attribute') ? this.getAggregation('attribute').getText() : this.getText(),
+			sTextDir = this.getTextDirection(),
+			oParent = this.getParent(),
+			bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			iMaxLines = ObjectAttribute.MAX_LINES.MULTI_LINE,
+			bWrap = true,
+			oppositeDirectionMarker = '';
+
 		if (sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) {
 			oppositeDirectionMarker = '\u200e';
 		}
 		if (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL) {
 			oppositeDirectionMarker = '\u200f';
 		}
-
-		oTextControl.setProperty('text', (this.getTitle() ? this.getTitle() + ": " : "") + oppositeDirectionMarker + this.getText() + oppositeDirectionMarker, true);
-		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
-		if (oParent && ((oParent instanceof sap.m.ObjectHeader && oParent.getResponsive()) || oParent instanceof sap.m.ObjectListItem)) {
-			iMaxLines = oMaxLinesConst.singleLine;
+		sText = oppositeDirectionMarker + sText + oppositeDirectionMarker;
+		if (sTitle) {
+			sText = sTitle + ": " + sText;
 		}
-		oTextControl.setProperty('maxLines', iMaxLines, true);
-		return oTextControl;
+		oAttrAggregation.setProperty('text', sText, true);
+
+		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
+		if (oParent instanceof sap.m.ObjectListItem) {
+			bWrap = false;
+			iMaxLines = ObjectAttribute.MAX_LINES.SINGLE_LINE;
+		}
+
+		this._setControlWrapping(oAttrAggregation, bWrap, iMaxLines);
+
+		return oAttrAggregation;
+	};
+
+	/**
+	 * Sets the appropriate property to the attribute aggregation
+	 *
+	 * @private
+	 */
+	ObjectAttribute.prototype._setControlWrapping = function(oAttrAggregation, bWrap, iMaxLines) {
+		if (oAttrAggregation instanceof sap.m.Link) {
+			oAttrAggregation.setProperty('wrapping', bWrap, true);
+		}
+		if (oAttrAggregation instanceof sap.m.Text) {
+			oAttrAggregation.setProperty('maxLines', iMaxLines, true);
+		}
 	};
 
 	/**
@@ -126,7 +153,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ObjectAttribute.prototype.ontap = function(oEvent) {
 		//event should only be fired if the click is on the text
-		if (!!this.getActive() && (oEvent.target.id != this.getId())) {
+		if (this._isSimulatedLink() && (oEvent.target.id != this.getId())) {
 			this.firePress({
 				domRef : this.getDomRef()
 			});
@@ -137,7 +164,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	sap.m.ObjectAttribute.prototype.onsapenter = function(oEvent) {
-		if (!!this.getActive()) {
+		if (this._isSimulatedLink()) {
 			this.firePress({
 				domRef : this.getDomRef()
 			});
@@ -158,6 +185,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @returns {boolean} true if attribute's text is empty or only consists of whitespaces.
 	 */
 	ObjectAttribute.prototype._isEmpty = function() {
+		if (this.getAggregation('attribute') && !(this.getAggregation('attribute') instanceof sap.m.Link || this.getAggregation('attribute') instanceof sap.m.Text)) {
+			jQuery.sap.log.warning("Only sap.m.Link or sap.m.Text are allowed in \"sap.m.ObjectAttribute.attribute\" aggregation");
+			return true;
+		} 
+		
 		return !(this.getText().trim() || this.getTitle().trim());
 	};
 
@@ -167,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	ObjectAttribute.prototype.ontouchstart = function(oEvent) {
-		if (!!this.getActive()) {
+		if (this._isSimulatedLink()) {
 			// for control who need to know if they should handle events from the ObjectAttribute control
 			oEvent.originalEvent._sapui_handledByControl = true;
 		}
@@ -183,6 +215,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this.getDomRef("text");
 	};
 
+	ObjectAttribute.prototype._isSimulatedLink = function () {
+		return this.getActive() && !this.getAggregation('attribute');
+	};
 
 	return ObjectAttribute;
 

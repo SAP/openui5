@@ -16,16 +16,26 @@
 }
 
 .sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
-	outline: 1px dotted @sapHCStandardFG;
-	outline-offset: -1px;
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: -0.125rem;
+}
+
+.sapMObjectAttributeActive .sapMText {
+	color: @sapHCStandardFG;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.sapMObjectAttributeActive .sapMText:hover {
+	text-decoration: none;
 }
 
 /*=========================================== */
 /* Custom design for Responsive Object Header */
 /*=========================================== */
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeTitle,
-.sapMOHR .sapMOHAttr .sapMObjectAttributeText {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle,
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeText {
 	display: inline-block;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
@@ -38,14 +48,18 @@
 	max-width: 50%;
 }
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeTitle {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle {
 	padding-right: 0.5rem;
 	max-width: 50%;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeColon {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeDiv > span:only-of-type {
+	max-width: 100%;
+}
+
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeColon {
 	display: inline-block;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
@@ -75,7 +89,7 @@
 	outline-offset: -0.125rem;
 }
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeDiv {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeDiv {
 	display: block;
 	white-space: nowrap;
 	overflow: hidden;
