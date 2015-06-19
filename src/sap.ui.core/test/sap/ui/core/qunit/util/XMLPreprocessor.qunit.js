@@ -905,6 +905,9 @@
 			Helper: {
 				help: function (vRawValue) {
 					return vRawValue.String || "{" + vRawValue.Path + "}";
+				},
+				nil: function () {
+					return null;
 				}
 			}
 		};
@@ -914,6 +917,8 @@
 			'<Label text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\','
+				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+			'<Text text="{formatter: \'foo.Helper.nil\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
 			'<Label text="A \\{ is a special character"/>', // escaping MUST NOT be changed!
 			'<Text text="{unrelated>/some/path}"/>', // unrelated binding MUST NOT be changed!
@@ -941,6 +946,7 @@
 		}, [ // Note: XML serializer outputs &gt; encoding...
 			'<Label text="Customer"/>',
 			'<Text text="{CustomerName}"/>',
+			'<Text/>',
 			'<Label text="A \\{ is a special character"/>',
 			'<Text text="{unrelated&gt;/some/path}"/>',
 			'<Text text="' + "{path:'/some/path',formatter:'.someMethod'}" + '"/>',
@@ -1012,7 +1018,7 @@
 		checkTracing.call(this, true, [
 			{m: "[ 0] Start processing qux"},
 			{m: "[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"},
-			{m: "[ 0] text = ", d: 1},
+			{m: "[ 0] removed attribute text", d: 1},
 			{m: "[ 0] text = Customer", d: 2},
 			{m: "[ 0] text = Value: {CustomerName}", d: 3},
 			{m: "[ 0] text = Customer: {CustomerName}", d: 4},
@@ -1031,7 +1037,7 @@
 					"/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"),
 			bindTexts: true
 		}, [
-			'<Text text="undefined"/>',
+			'<Text/>',
 			'<Text text="Customer"/>',
 			'<Text text="Value: {CustomerName}"/>',
 			'<Text text="Customer: {CustomerName}"/>'

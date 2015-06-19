@@ -183,7 +183,7 @@ sap.ui.define([
 				return vValue;
 			case "constant":
 				if (oResult.type === "edm:Null") {
-					return bExpression ? "null" : "";
+					return bExpression ? "null" : null;
 				}
 				return bExpression ? Basics.toJSON(vValue)
 						: BindingParser.complexParser.escape(vValue);

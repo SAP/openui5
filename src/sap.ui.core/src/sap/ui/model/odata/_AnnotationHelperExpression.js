@@ -183,7 +183,10 @@ sap.ui.define([
 					// the expression might have a lower operator precedence than '+'
 					Expression.wrapExpression(oResult);
 				}
-				aParts.push(Basics.resultToString(oResult, bExpression, true));
+				if (oResult.type !== 'edm:Null') {
+					// ignore null (otherwise the string 'null' would appear in expressions)
+					aParts.push(Basics.resultToString(oResult, bExpression, true));
+				}
 			});
 			oResult = bExpression
 				? {result: "expression", value: aParts.join("+")}

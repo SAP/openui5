@@ -1338,7 +1338,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath);
 
-			testBinding(oCurrentContext, undefined, {EmailAddress: null});
+			testBinding(oCurrentContext, undefined, {EmailAddress: null},
+				"null from formatter converted to property's default value");
 			testBinding(oCurrentContext, "mailto:foo@bar.com", {EmailAddress: "foo@bar.com"});
 		});
 	});

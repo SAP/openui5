@@ -165,7 +165,7 @@ sap.ui.define([
 			 *   binding to be evaluated at run-time. The expression is a conditional expression
 			 *   like <code>"{=condition ? expression1 : expression2}"</code>.
 			 *   <li> the dynamic "14.5.10 Expression edm:Null": This is turned into a
-			 *   <code>null</code> in expression bindings or an empty string otherwise.
+			 *   <code>null</code> value. In <code>odata.concat</code> it is ignored.
 			 *   <li> the dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
 			 *   edm:PropertyPath": This is turned into a data binding relative to an entity,
 			 *   including type information and constraints as available from meta data,
