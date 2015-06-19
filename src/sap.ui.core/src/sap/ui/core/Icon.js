@@ -486,7 +486,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		if (alabelledBy.length > 0) {
 			mAccAttributes.labelledby = alabelledBy.join(" ");
 		} else if (sAlt || sTooltip || (bUseIconTooltip && oIconInfo)) {
-			mAccAttributes.label = sAlt || sTooltip || oIconInfo.text;
+			mAccAttributes.label = sAlt || sTooltip || oIconInfo.text || oIconInfo.name;
 		}
 
 		return mAccAttributes;

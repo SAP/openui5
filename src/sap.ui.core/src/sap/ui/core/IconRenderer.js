@@ -32,7 +32,7 @@ sap.ui.define(function() {
 		oRm.writeControlData(oControl);
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
-		if (sTooltip || (bUseIconTooltip && oIconInfo)) {
+		if (sTooltip || (bUseIconTooltip && oIconInfo && oIconInfo.text)) {
 			oRm.writeAttribute("title", sTooltip || oIconInfo.text);
 		}
 
