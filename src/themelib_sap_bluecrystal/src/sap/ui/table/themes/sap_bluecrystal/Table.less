@@ -169,42 +169,23 @@
 	border-bottom: 1px solid @sapUiExtraLightBorder;
 }
 
-.sapUiTableCtrl.sapUiTableCtrlRowFixed tr:last-child > td {
-	padding-top: 2px;
-	padding-bottom: 1px;
+// Fixed Top Row Indicator
+.sapUiTableFixedLastTopRow, .sapUiTableFixedLastTopRow > td {
 	border-bottom: 1px solid @sapUiExtraDarkBorder;
 }
 
-.sapUiTableCtrl.sapUiTableCtrlFixed tr > td:last-child, 
-.sapUiTableColHdrCnt .sapUiTableColHdrFixed  .sapUiTableCol:nth-last-of-type(2) {
-	border-right: 1px solid @sapUiExtraDarkBorder !important;
+// Fixed Left Row Indicator
+.sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child { 
+	border-right: 1px solid @sapUiExtraDarkBorder;
 }
 
-.sapUiTableCtrl.sapUiTableCtrlRowFixedBottom {
-	margin-top: -1px;
-}
-.sapUiTableCtrl.sapUiTableCtrlRowFixedBottom tr:first-child > td {
-	padding-top: 2px;
-	padding-bottom: 1px;
-	border-top: 1px solid @sapUiMediumBorder;
-}
-
-.sapUiTableCtrl tr.sapUiTableFixedPreBottomRow > td,
-div.sapUiTableRowHdr.sapUiTableFixedPreBottomRow {
-	border-bottom: 1px solid @sapUiMediumBorder;
-}
-
-.sapUiTableCtrl tr.sapUiTableFixedBottomRow > td,
-div.sapUiTableRowHdr.sapUiTableFixedBottomRow {
-	border-top: 1px solid @sapUiMediumBorder;
-}
-
-.sapUiTableCtrl.sapUiTableCtrlRowFixedBottom tr.sapUiTableFixedBottomRow:first-child > td {
-	border-top: 2px solid @sapUiMediumBorder;
+// Fixed Bottom Row Indicator
+.sapUiTableFixedPreBottomRow > td, .sapUiTableRowHdr.sapUiTableFixedPreBottomRow {
+	border-bottom: 1px solid @sapUiExtraDarkBorder !important;
 }
 
 .sapUiTableRowHdr:last-child,
-.sapUiTableCtrl tr:last-child > td {
+.sapUiTableCtrl tr:not(.sapUiTableFixedLastTopRow):last-child > td {
 	border-bottom: none;
 }
 

@@ -466,12 +466,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				
 				$row.attr('aria-expanded', oContextInfo.nodeState.expanded);
 				$fixedRow.attr('aria-expanded', oContextInfo.nodeState.expanded);
+				
 				var sGroupHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
 
 				var sClass = oContextInfo.nodeState.expanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
 
 				if (oContextInfo.nodeState.expanded && !this.getSumOnTop()) {
 					$row.addClass("sapUiTableRowHidden");
+					$fixedRow.addClass("sapUiTableRowHidden");
 					$rowHdr.addClass("sapUiTableRowHidden");
 				}
 				
@@ -482,6 +484,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
 				
 				$row.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+				$fixedRow.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$rowHdr.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
 			} else {
@@ -489,13 +492,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				$row.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 
 				$fixedRow.attr('aria-expanded', false);
-				$fixedRow.removeClass("sapUiTableGroupHeader");
+				$fixedRow.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum");
 
 				$rowHdr.html("");
 				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableDummy sapUiAnalyticalTableSum");
 
 				if (oContextInfo.nodeState.sum && oContextInfo.context && oContextInfo.context.getObject()) {
 					$row.addClass("sapUiAnalyticalTableSum");
+					$fixedRow.addClass("sapUiAnalyticalTableSum");
 					$rowHdr.addClass("sapUiAnalyticalTableSum");
 				}
 			}

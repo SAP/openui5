@@ -62,6 +62,11 @@
 	font-size: 0.875rem;
 }
 
+// Shift last cell content to left, on the right edge the touch button is placed.
+.sapUiTableTouch .sapUiTableCtrlScroll .sapUiTableGroupHeader td:last-child {
+	padding-right: 3rem;
+}
+
 /* Hierarchical Support */
 
 .sapUiAnalyticalTable tr.sapUiAnalyticalTableSum,
@@ -335,3 +340,8 @@
 .sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum td:last-child {
 	border-right: 1px solid @sapUiMediumBorder;
 }
+
+.sapUiAnalyticalTable .sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td { 
+	border-right: 1px solid @sapUiExtraDarkBorder;
+}
+
