@@ -1019,16 +1019,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 
 			var fnSetAriaLive = function() {
-				this._$AriaLiveDomRef = jQuery(this._oItemNavigation.getFocusedDomRef()).attr("aria-live", "rude");
-				var oTable = this;
-				var fnRemoveAriaLive = function () {
-					if (oTable._$AriaLiveDomRef) {
-						oTable._$AriaLiveDomRef.removeAttr("aria-live");
-						delete oTable._$AriaLiveDomRef;
-					}
-				};
-				jQuery.sap.delayedCall(0, this, fnRemoveAriaLive);
-				delete this._ariaLiveTimer;
+				if (this._oItemNavigation) {
+					this._$AriaLiveDomRef = jQuery(this._oItemNavigation.getFocusedDomRef()).attr("aria-live", "rude");
+					var oTable = this;
+					var fnRemoveAriaLive = function () {
+						if (oTable._$AriaLiveDomRef) {
+							oTable._$AriaLiveDomRef.removeAttr("aria-live");
+							delete oTable._$AriaLiveDomRef;
+						}
+					};
+					jQuery.sap.delayedCall(0, this, fnRemoveAriaLive);
+					delete this._ariaLiveTimer;
+				}
 			};
 
 			this._ariaLiveTimer = jQuery.sap.delayedCall(60, this, fnSetAriaLive);
