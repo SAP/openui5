@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/UnicodeNormalizer'],
-	function(jQuery, UnicodeNormalizer) {
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 	"use strict";
 
 	/**
