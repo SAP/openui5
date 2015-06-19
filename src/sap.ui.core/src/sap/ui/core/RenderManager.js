@@ -1267,7 +1267,7 @@ sap.ui.define([
 			mDefaultAttributes = {
 				"data-sap-ui-icon-content": oIconInfo.content,
 				"role": "presentation",
-				"aria-label": oIconInfo.name
+				"aria-label": oIconInfo.text
 			};
 
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
