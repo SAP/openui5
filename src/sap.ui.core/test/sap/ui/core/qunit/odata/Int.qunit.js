@@ -186,6 +186,9 @@
 
 			this.mock(jQuery.sap.log).expects("warning").never();
 
+			oType = new (jQuery.sap.getObject(sName))({});
+			strictEqual(oType.oConstraints, undefined);
+
 			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
 			strictEqual(oType.oConstraints, undefined);
 
