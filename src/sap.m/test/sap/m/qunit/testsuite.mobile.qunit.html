@@ -56,10 +56,7 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Button.qunit.html");
 
 				// Carousel
-				//Commented out since there have been failing tests during Git/Gerrit Builds.
-				//Seems like this happens since the sinon clock had been introduced to simulate
-				//delays.Needs further investigation
-				//suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Carousel.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Carousel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Carousel_tablet.qunit.html?sap-ui-xx-fakeOS=ipad");
 
 				// CheckBox
