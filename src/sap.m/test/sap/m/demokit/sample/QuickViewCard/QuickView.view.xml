@@ -6,7 +6,26 @@
 		   controllerName="sap.m.sample.QuickViewCard.QuickView">
 	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
 		<content>
-			<Button id="buttonBack" enabled="false" text="Navigate Back" press="onButtonBackClick"></Button>
+			<l:HorizontalLayout class="sapUiSmallMarginBottom">
+				<l:content>
+					<Button id="buttonBack"
+							enabled="false"
+							text="Navigate Back"
+							press="onButtonBackClick"
+							class="sapUiSmallMarginEnd">
+					</Button>
+					<Button id="buttonHideScroll"
+							text="Hide Scroll"
+							press="onHideScrollClick"
+							class="sapUiSmallMarginEnd">
+					</Button>
+					<Button id="buttonShowScroll"
+							text="Show Scroll"
+							press="onShowScrollClick"
+							class="sapUiSmallMarginEnd">
+					</Button>
+				</l:content>
+			</l:HorizontalLayout>
 			<core:Fragment fragmentName="sap.m.sample.QuickViewCard.QuickView" type="XML" />
 		</content>
 	</Page>
