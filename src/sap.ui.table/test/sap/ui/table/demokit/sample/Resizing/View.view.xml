@@ -1,0 +1,111 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.Resizing.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m"
+	height="100%">
+	<m:Page
+		showHeader="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				selectionMode="MultiToggle"
+				rows="{/ProductCollection}"
+				visibleRowCount="7"
+				minAutoRowCount="5"
+				visibleRowCountMode="Fixed"
+				columnResize="onColumnResize">
+				<toolbar>
+					<m:Toolbar>
+						<m:Title text="Products"></m:Title>
+					</m:Toolbar>
+				</toolbar>
+				<columns>
+					<Column
+						width="{ui>/widthName}"
+						filterProperty="Name"
+						resizable="true"
+						autoResizable="true">
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}"/>
+						</template>
+					</Column>
+					<Column
+						width="{ui>/widthCategory}"
+						resizable="true"
+						filterProperty="Category">
+						<m:Label text="Category" />
+						<template>
+							<m:Text text="{Category}"/>
+						</template>
+					</Column>
+					<Column
+						width="{ui>/widthImage}"
+						flexible="false"
+						resizable="false">
+						<m:Label text="Image" />
+						<template>
+							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</template>
+					</Column>
+					<Column
+						width="{ui>/widthQuantity}"
+						resizable="false"
+						hAlign="End">
+						<m:Label text="Quantity" />
+						<template>
+							<m:Label text="{
+								path: 'Quantity',
+								type: 'sap.ui.model.type.Integer'
+							}" />
+						</template>
+					</Column>
+					<Column 
+						id="deliverydate"
+						width="{ui>/widthDate}">
+						<m:Label text="Delivery Date" />
+						<template>
+							<m:Text text="{
+								path: 'DeliveryDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'timestamp'}}
+							}"/>
+						</template>
+					</Column>
+				</columns>
+				<footer>
+					<m:Toolbar>
+						<m:Label text="Row Count Mode:" labelFor="rowCountMode"/>
+						<m:SegmentedButton
+							id="rowCountMode"
+							selectedButton="rowCountModeFixed"
+							select="onRowCountModeSelect">
+							<m:Button icon="sap-icon://locked" id="rowCountModeFixed" tooltip="Fixed"/>
+							<m:Button icon="sap-icon://restart" id="rowCountModeAuto" tooltip="Auto"/>
+							<m:Button icon="sap-icon://resize-vertical" id="rowCountModeInteractive" tooltip="Interactive"/>
+						</m:SegmentedButton>
+						<m:ToolbarSpacer/>
+						<m:Label text="Column Widths:" labelFor="columnWidths"/>
+						<m:SegmentedButton
+							id="columnWidths"
+							selectedButton="columnWidthsStatic"
+							select="onColumnWidthsChange">
+							<m:Button icon="sap-icon://color-fill" id="columnWidthsStatic" tooltip="Static"/>
+							<m:Button icon="sap-icon://overlay" id="columnWidthsFlexible" tooltip="Flexible"/>
+							<m:Button icon="sap-icon://business-objects-mobile" id="columnWidthsMixed" tooltip="Mixed"/>
+						</m:SegmentedButton>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://hint"
+							tooltip="Show information"
+							press="showInfo"/>
+					</m:Toolbar>
+				</footer>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

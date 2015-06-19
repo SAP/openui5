@@ -1,0 +1,30 @@
+[
+	{
+		"title" : "Vertical Resizing (Property 'visibleRowCountMode')",
+		"text"	: "The property 'visibleRowCountMode' defines how the table handles the visible rows in the table. When mode 'Fixed' is used (default) the table shows as many rows as defined in the property 'visibleRowCount'. In mode 'Auto' the value of the 'visibleRowCount' property is changed by the table automatically. The table will adjust its maximum row count to the space it is allowed to cover limited by the surrounding container (Note: The surrounding container MUST provide a defined height. Otherwise this feature cannot be used.). The minimum row count is defined by property 'minAutoRowCount'. In interactive mode the user can change the visibleRowCount via a resizer bar. The segmented button on the bottom can be used to swicth between the different modes (The table in the example initially has set a visible row count of 7 and a minimum row count of 5)."
+	},
+	{
+		"title" : "Column 'Product Name'",
+		"text" : "For the first column the standard drag&drop resizing is active. Furthermore the auto-resize feature is enabled. When the user doubleclicking the resizer the width of the column is automatically adapted depending on its content. Note: This feature only can be used for certain template controls."
+	},
+	{
+		"title" : "Columns 'Category'",
+		"text" : "For this column only the standard drag&drop resizing is active."
+	},
+	{
+		"title" : "Column 'Image'",
+		"text" : "Resizing is deactivated for this column. Additionally the flexibility of the column is set to false."
+	},
+	{
+		"title" : "Column 'Quantity'",
+		"text" : "Resizing is also deactivated for the 'Quantity' column."
+	},
+	{
+		"title" : "Column 'Delivery Date'",
+		"text" : "For this column the standard drag&drop resizing is active but prevented using the columnResize event."
+	},
+	{
+		"title" : "Column Widths",
+		"text" : "The segmented button on the bottom allows to switch the sizes of the columns to study the different behaviors. When 'Static' is selected all columns have a static rem-based width. When 'Flexible' is used the width for all columns is defined in %. In the 'Mixed' scenario the 'Product Name' column gets a width in %. The other columns have static rem-based widths like in 'Static' case."
+	}
+]
