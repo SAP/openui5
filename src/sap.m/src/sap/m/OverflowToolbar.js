@@ -503,19 +503,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			this._getOverflowButton().setPressed(false); // Turn off the toggle button
 			this._getOverflowButton().$().focus(); // Focus the toggle button so that keyboard handling will work
 
-			// On IE, if you click the toggle button again to close the popover, onAfterClose is triggered first, which closes the popup, and then the click event on the toggle button reopens it
+			// On IE/sometimes other browsers, if you click the toggle button again to close the popover, onAfterClose is triggered first, which closes the popup, and then the click event on the toggle button reopens it
 			// To prevent this behaviour, disable the overflow button till the end of the current javascript engine's "tick"
-			if (sap.ui.Device.browser.internet_explorer) {
-				this._getOverflowButton().setEnabled(false);
-				jQuery.sap.delayedCall(0, this, function() {
-					this._getOverflowButton().setEnabled(true);
+			this._getOverflowButton().setEnabled(false);
+			jQuery.sap.delayedCall(0, this, function() {
+				this._getOverflowButton().setEnabled(true);
 
-					// In order to restore focus, we must wait another tick here to let the renderer enable it first
-					jQuery.sap.delayedCall(0, this, function() {
-						this._getOverflowButton().$().focus();
-					});
+				// In order to restore focus, we must wait another tick here to let the renderer enable it first
+				jQuery.sap.delayedCall(0, this, function() {
+					this._getOverflowButton().$().focus();
 				});
-			}
+			});
 		};
 
 		/**
