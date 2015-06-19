@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Table ACC Test - sap.ui.table</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
+
+<!-- ********************************************************************** -->
+<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
+		data-sap-ui-theme="sap_bluecrystal"
+		src="../../../../../resources/sap-ui-core.js"></script>
+
+<script type="text/javascript">
+
+// TABLE TEST DATA
+var oData = {
+	root:{
+		name: "root",
+		description: "moep moep",
+		checked: false,
+		0: {
+			name: "Rock",
+			description: "Rockmusik",
+			checked: true,
+			0: { //children as object references
+				name: "Rock'n'Roll",
+				description: "late 1940s",
+				checked: true,
+				children: [ // Children inside an array
+					{
+						name: "Elvis Presley",
+						description: "*1935 - +1977",
+						checked: true
+					},
+					{
+						name: "Chuck Berry",
+						description: "*1926",
+						checked: true
+					}
+				],
+				"flup": { // mixed with arrays and objects
+					name: "Keith Richards",
+					description: "*1943",
+					checked: true
+				}
+			},
+			1: {
+				name: "Heavy Metal",
+				description: "late 1960s",
+				checked: true,
+				0: {
+					name: "Black Sabbath",
+					description: "founded 1968",
+					checked: true
+				},
+				1: {
+					name: "Judas Priest",
+					description: "founded 1969",
+					checked: true
+				}
+			},
+			2: {
+				name: "Grunge",
+				description: "Mid-1980s",
+				checked: true,
+				0: {
+					name: "Nirvana",
+					description: "1987",
+					checked: true
+				},
+				1: {
+					name: "Soundgarden",
+					description: "1984",
+					checked: true
+				},
+				2: {
+					name: "Alice in Chains",
+					description: "1987",
+					checked: true
+				}
+			}
+		},
+		1:{
+			name: "Hip-Hop",
+			description: "Hip-Hop",
+			checked: true,
+			0: {
+				name: "Old-School",
+				description: "Mid 1970s",
+				checked: true,
+				0: {
+					name: "The Sugarhill Gang",
+					description: "1973",
+					checked: true
+				},
+				1: {
+					name: "Grandmaster Flash and the Furious Five",
+					description: "1978",
+					checked: true
+				}
+			},
+			1: {
+				name: "Rap-Rock",
+				description: "early 1980s",
+				checked: true,
+				0: {
+					name: "Run-D.M.C.",
+					description: "1981 - 2002",
+					checked: true
+				},
+				1: {
+					name: "Beastie Boys",
+					description: "1981 - 2012",
+					checked: true
+				}
+			},
+			2: {
+				name: "Gangsta rap",
+				description: "mid 1980s",
+				checked: true,
+				0: {
+					name: "2Pac",
+					description: "1971 - 1996",
+					checked: true
+				},
+				1: {
+					name: "N.W.A",
+					description: "1986 - 1991, 1998 - 2002",
+					checked: true
+				}
+			}
+		},
+		2: {
+			name: "Swing/Big Band",
+			description: "1930s",
+			checked: true,
+			0: {
+				name: "Frank Sinatra",
+				description: "1915 - 1998",
+				checked: true
+			},
+			1: {
+				name: "Count Basie",
+				description: "1904 - 1984",
+				checked: true
+			}
+		},
+		3: {
+			name: "ZZZ",
+			description: "None",
+			checked: true
+		}
+	}
+};
+
+for (var i = 0; i < 20; i++) {
+	oData["root"][3][i] = {
+		name: "subitem3-" + i,
+		description: "subitem3-" + i + " description",
+		checked: false
+	};
+}
+
+// create table with supported sap.m controls
+var oTable = new sap.ui.table.TreeTable({
+	expandFirstLevel: true,
+	columns: [
+		new sap.ui.table.Column({label: "Alfa", template: "name", filterProperty: "name", sortProperty: "name"}),
+		new sap.ui.table.Column({label: "Bravo", template: "description", sortProperty: "description"})
+	]
+});
+
+oTable.setTitle("Tango");
+oTable.setFooter("Sierra");
+oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+
+oTable.setToolbar(new sap.m.Toolbar({content: [
+	new sap.m.Button({
+		text: "November"
+	}),
+	new sap.m.Button({
+		text: "Oscar"
+	})
+]}));
+
+// set Model and bind Table
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(oData);
+oTable.setModel(oModel);
+oTable.bindRows("/root");
+
+oTable.placeAt("content");
+
+var oButtonAfterTable = new sap.m.Button({text: "Just a Button after the Table"});
+oButtonAfterTable.placeAt("content");
+
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCompact" role="application">
+<div id="configuration" style="padding-bottom: 40px; display: none;"></div>
+<h1 id="header">ACC Test Page for <code>sap.ui.table.Table</code> with <code>sap.m</code> library</h1>
+<div id="content"></div>
+<p>
+</body>
+</html>
