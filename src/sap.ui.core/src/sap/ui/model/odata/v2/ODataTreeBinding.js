@@ -11,9 +11,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	/**
 	 *
 	 * @class
-	 * Tree binding implementation for odata models. The ODataTreeBinding does only support CountMode.Inline. 
+	 * Tree binding implementation for odata models. The ODataTreeBinding does only support CountMode.Inline.
 	 * This CountMode is set as default. To use the ODataTreeBinding with an odata service, which exposed hierarchy annotations, please
-	 * consult the "SAP Annotations for OData Version 2.0" Specification. The necessary property annotations, as well as accepted/defaukt values
+	 * consult the "SAP Annotations for OData Version 2.0" Specification. The necessary property annotations, as well as accepted/default values
 	 * are documented in the specification.
 	 *
 	 * @param {sap.ui.model.Model} oModel
