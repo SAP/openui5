@@ -54,35 +54,6 @@ for (var i = 0, l = aData.length; i < l; i++) {
 	aData[i].birthdayDate = new Date(aData[i].birthday);
 }
 
-// Change Table Style
-var oSelectTableStyleLabel = new sap.m.Label({text: "Select Table Style"});
-var oSelectTableStyle = new sap.m.Select({
-	items: [
-		new sap.ui.core.Item({
-			key: "sapUiSizeCozy",
-			text: "Cozy"
-		}),
-		new sap.ui.core.Item({
-			key: "sapUiSizeCompact",
-			text: "Compact"
-		}),
-		new sap.ui.core.Item({
-			key: "sapUiSizeCondensed",
-			text: "Condensed"
-		})
-	],
-	change: function (oEvent) {
-		var $elem = $("#content");
-		$elem.removeClass("sapUiSizeCondensed");
-		$elem.removeClass("sapUiSizeCompact");
-		var sSelectedKey = oEvent.getParameter("selectedItem").getKey();
-		if (sSelectedKey !== "") {
-			$elem.addClass(sSelectedKey);
-		}
-		oTable.rerender();
-	}
-});
-
 // create table with supported sap.m controls
 var oTable = new sap.ui.table.Table();
 
