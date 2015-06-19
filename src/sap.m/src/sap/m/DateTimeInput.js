@@ -399,7 +399,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	 * Opens scroller on tap
 	 */
 	DateTimeInput.prototype.ontap = function(oEvent) {
-		document.activeElement.blur();
+		if (document.activeElement) {
+			document.activeElement.blur();
+		}
+		
 		this._$input.scroller("show");
 		oEvent.preventDefault();
 		oEvent.setMarked();
