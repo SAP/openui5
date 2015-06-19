@@ -1,0 +1,4 @@
+{
+	"@odata.context" : "/V4/Northwind/Northwind.svc/$metadata#Products(1)/ProductName",
+	"value" : "Chai"
+}
