@@ -249,6 +249,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		delete this._elementId;
 		
 		this.setAssociation("element", vElement);
+		// TODO: designTimeMetadata aggregation is NOT ready in this moment... how we can make it consistent?
 		this._createAggregationOverlays();
 
 		var oElement = this.getElementInstance();
