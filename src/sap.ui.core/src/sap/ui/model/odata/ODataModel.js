@@ -2314,8 +2314,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * 		given with the context.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {boolean} [mParameters.async=true] true for asynchronous requests.
-	 * @param {array} [mParameter.filters] an array of sap.ui.model.Filter to be included in the request URL
-	 * @param {array} [mParameter.sorters] an array of sap.ui.model.Sorter to be included in the request URL
+	 * @param {array} [mParameters.filters] an array of sap.ui.model.Filter to be included in the request URL
+	 * @param {array} [mParameters.sorters] an array of sap.ui.model.Sorter to be included in the request URL
 	 * @param {function} [mParameters.success] a callback function which is called when the data has
 	 *		been successfully retrieved. The handler can have the
 	 *		following parameters: oData and response.
