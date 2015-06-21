@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 *
 				 * @param {Element} [oElement]
 				 *   a DOM element which is serialized to the details
-				 * @param {string...} aTexts
+				 * @param {...string} aTexts
 				 *   the main text of the message is constructed from the rest of the arguments by
 				 *   joining them separated by single spaces
 				 */
