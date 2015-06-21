@@ -1386,10 +1386,14 @@ sap.ui
 						for (var nFlag = 0, nShifted = nMask; nFlag < 32; nFlag++, sMask += String(nShifted >>> 31), nShifted <<= 1)
 						;
 						/*eslint-enable */
-
 						return sMask;
 					case "DateTimeOffset":
-						//TODO: generate value for DateTimeOffset
+						var date = new Date();
+						date.setFullYear(2000 + Math.floor(Math.random() * 20));
+						date.setDate(Math.floor(Math.random() * 30));
+						date.setMonth(Math.floor(Math.random() * 12));
+						date.setMilliseconds(0);
+						return date.toJSON();
 					default:
 						return this._generateDataFromEntity(mComplexTypes[sType], iIndex, mComplexTypes);
 				}
