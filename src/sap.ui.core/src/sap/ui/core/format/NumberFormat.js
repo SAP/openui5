@@ -151,7 +151,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 	/*
 	 * Default format options for Integer
-	 * @name sap.ui.core.format.NumberFormat.oDefaultIntegerFormat
 	 */
 	NumberFormat.oDefaultIntegerFormat = {
 		minIntegerDigits: 1,
@@ -174,7 +173,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 	/*
 	 * Default format options for Float
-	 * @name sap.ui.core.format.NumberFormat.oDefaultFloatFormat
 	 */
 	NumberFormat.oDefaultFloatFormat = {
 		minIntegerDigits: 1,
@@ -197,7 +195,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 	/*
 	* Default format options for Percent
-	* @name sap.ui.core.format.NumberFormat.oDefaultFloatFormat
 	*/
 	NumberFormat.oDefaultPercentFormat = {
 		minIntegerDigits: 1,

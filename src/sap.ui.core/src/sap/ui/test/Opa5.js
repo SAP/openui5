@@ -393,8 +393,8 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt;
 		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt;
 		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions]
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 1&gt;
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 2&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-1&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-2&gt;
 		 * @returns {map} mPageObject
 		 * @returns {map} mPageObject.&lt;your-page-object-name&gt;
 		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.actions an instance of baseClass or Opa5 with all the actions defined above

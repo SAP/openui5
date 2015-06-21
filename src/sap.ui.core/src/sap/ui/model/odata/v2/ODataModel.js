@@ -601,6 +601,7 @@ sap.ui.define([
 	/**
 	 * Fire event batchRequestCompleted to attached listeners.
 	 *
+	 * @param {object} mArguments parameters to add to the fired event
 	 * @param {string} mArguments.ID The request ID
 	 * @param {string} mArguments.url The url which is sent to the backend
 	 * @param {string} mArguments.method The HTTP method
@@ -3200,8 +3201,8 @@ sap.ui.define([
 	 * @param {object} [mParameters.context] If specified the sPath has to be is relative to the path
 	 * 		given with the context.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {array} [mParameter.filters] an array of sap.ui.model.Filter to be included in the request URL
-	 * @param {array} [mParameter.sorters] an array of sap.ui.model.Sorter to be included in the request URL
+	 * @param {array} [mParameters.filters] an array of sap.ui.model.Filter to be included in the request URL
+	 * @param {array} [mParameters.sorters] an array of sap.ui.model.Sorter to be included in the request URL
 	 * @param {function} [mParameters.success] a callback function which is called when the data has
 	 *		been successfully retrieved. The handler can have the
 	 *		following parameters: oData and response.
@@ -3847,7 +3848,6 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] The batchGroupId
 	 * @param {string} [mParameters.changeSetId] The changeSetId
 	 * @param {sap.ui.model.Context} [mParameters.context] The binding context
-	 * @param {function} [mParameters.success] The success callback function
 	 * @param {function} [mParameters.success] The success callback function
 	 * @param {function} [mParameters.error] The error callback function
 	 * @param {map} [mParameters.headers] A map of headers
