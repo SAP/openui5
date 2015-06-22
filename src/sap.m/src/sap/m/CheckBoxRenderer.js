@@ -25,15 +25,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		// get control properties
 		var bEnabled = oCheckBox.getEnabled();
 		var bEditable = oCheckBox.getEditable();
-		var bInteractible = oCheckBox.getEnabled() && oCheckBox.getEditable();
 
 		// CheckBox wrapper
 		oRm.write("<div");
 		oRm.addClass("sapMCb");
-
-		if (bInteractible) {
-			oRm.addClass("sapMPointer");
-		}
 
 		if (!bEditable) {
 			oRm.addClass("sapMCbRo");
@@ -57,10 +52,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 		//ARIA attributes
 		oRm.writeAccessibilityState(oCheckBox, {
-			role: 'checkbox',		
+			role: "checkbox",
 			selected: null,
 			checked: oCheckBox.getSelected()
-		});		
+		});
 
 		oRm.write(">");		// DIV element
 

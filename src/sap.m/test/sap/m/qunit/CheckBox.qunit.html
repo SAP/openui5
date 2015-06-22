@@ -53,7 +53,7 @@ jQuery.sap.require("sap.m.CheckBox");
 		strictEqual(oCheckBox.getName(), sName, "Property 'name': Default value should be '" + sName + "'");
 		strictEqual(oCheckBox.getText(), sText, "Property 'text': Default value should be '" + sText + "'");
 		strictEqual(oCheckBox.getTextDirection(), sTextDirection, "Property 'textDirection': Default value should be '" + sTextDirection + "'");
-		strictEqual(oCheckBox.getWidth(), sWidth, "Property 'width': Default value should be '" + sWidth + "'");		
+		strictEqual(oCheckBox.getWidth(), sWidth, "Property 'width': Default value should be '" + sWidth + "'");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -117,7 +117,6 @@ jQuery.sap.require("sap.m.CheckBox");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(oCheckBox.$().hasClass("sapMPointer"), "enabled=" + bEnabled + ": CheckBox should have class sapMPointer");
 		ok(!oCheckBox.$("CbBg").hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should not have class sapMCbBgDis");
 		strictEqual(oCheckBox.$("CB").attr("disabled"), undefined, "enabled=" + bEnabled + ": CheckBox should not have attribute 'disabled'");
 		var iTabindex = oCheckBox.getTabIndex();
