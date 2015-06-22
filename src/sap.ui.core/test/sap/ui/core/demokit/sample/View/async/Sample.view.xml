@@ -10,5 +10,8 @@
 	<Panel>
 		<mvc:HTMLView viewName="sap.ui.core.sample.View.async.Async" id="html_sample" async="true"></mvc:HTMLView>
 	</Panel>
+	<Panel>
+		<mvc:JSView viewName="sap.ui.core.sample.View.async.Async" id="js_sample" async="true"></mvc:JSView>
+	</Panel>
 
 </mvc:View>
