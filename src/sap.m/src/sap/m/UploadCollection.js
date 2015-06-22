@@ -116,7 +116,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 * If false, no upload is triggered when a file is selected. In addition, if a file was selected, a new FileUploader instance is created to ensure that multiple files from multiple folders can be chosen.
 			 * @since 1.30
 			 */
-			instantUpload : {type : "boolean", group : "Behavior", defaultValue : true}
+			instantUpload : {type : "boolean", group : "Behavior", defaultValue : true},
+			
+			/**
+			 * Sets the title text in the toolbar of the list of attachments. 
+			 * To show as well the number of attachments in brackets like the default text does. The number of attachments could be retrieved via "getItems().length".
+			 * If a new title is set, the default is deactivated.
+			 * The default value is set to language-dependent "Attachments (n)".
+			 * @since 1.30
+			 */
+			numberOfAttachmentsText : {type : "string" , group : "Appearance", defaultValue : null}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -1112,12 +1121,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype._getNumberOfAttachmentsTitle = function(items) {
 		var nItems = items || 0;
+		var sText;
+		if (this.getNumberOfAttachmentsText()) {
+			sText = this.getNumberOfAttachmentsText();
+		} else {
+			sText = this._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [nItems]);
+		}
 		if (!this.oNumberOfAttachmentsTitle) {
-			this.oNumberOfAttachmentsTitle = new sap.m.Title(this.getId() + "-numberOfAttachmentsLabel", {
-				text : this._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [nItems])
+			this.oNumberOfAttachmentsTitle = new sap.m.Title(this.getId() + "-numberOfAttachmentsTitel", {
+				text : sText
 			});
 		} else {
-			this.oNumberOfAttachmentsTitle.setText(this._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [nItems]));
+			this.oNumberOfAttachmentsTitle.setText(sText);
 		}
 		return this.oNumberOfAttachmentsTitle;
 	};
