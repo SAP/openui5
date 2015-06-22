@@ -114,8 +114,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * If false, no upload is triggered when a file is selected. In addition, if a file was selected, a new FileUploader instance is created to ensure that multiple files from multiple folders can be chosen.
-			 * @since 1.30.0
-			 * @experimental Since 1.30. Behavior might change.
+			 * @since 1.30
 			 */
 			instantUpload : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
@@ -470,8 +469,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	/**
 	 * Starts the upload for all selected files.
 	 * @type void
-	 * @since 1.30.0
-	 * @experimental
+	 * @public
+	 * @since 1.30
 	 */
 	UploadCollection.prototype.upload = function() {
 		if (this.getInstantUpload()) {
@@ -772,6 +771,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		oRm.flush(jQuery.sap.byId(sContainerId)[0], true); // after removal to UploadCollectionItemRenderer delete this line
 	};
 
+	/**
+	 * @private
+	 */
 	UploadCollection.prototype._renderButtons = function(oRm, oItem, sStatus, sItemId, that) {
 		var aButtons, iButtonCounter;
 
