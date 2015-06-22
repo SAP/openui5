@@ -24,6 +24,16 @@
 							press="onShowScrollClick"
 							class="sapUiSmallMarginEnd">
 					</Button>
+					<Button id="buttonHideHeader"
+							text="Hide Header"
+							press="onHideHeaderClick"
+							class="sapUiSmallMarginEnd">
+					</Button>
+					<Button id="buttonShowHeader"
+							text="Show Header"
+							press="onShowHeaderClick"
+							class="sapUiSmallMarginEnd">
+					</Button>
 				</l:content>
 			</l:HorizontalLayout>
 			<core:Fragment fragmentName="sap.m.sample.QuickViewCard.QuickView" type="XML" />
