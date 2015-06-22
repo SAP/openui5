@@ -141,14 +141,14 @@ sap.ui.define(['jquery.sap.global'],
 
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
 		sOffsetCSSClass = bBottom ? " sapMCrslBottomOffset" : "",
-		sOffsetCSSClass2 = bShowPageIndicator ? "" : "display: none";
+		sDisplayStyle = bShowPageIndicator ? "" : "display: none";
 
 		// If there is only one page - do not render the indicator
 		if (iPageCount <= 1) {
 			return;
 		}
 
-		rm.write('<div class="sapMCrslControls sapMCrslBulleted' + sOffsetCSSClass + '" style="' + sOffsetCSSClass2 + '">');
+		rm.write('<div class="sapMCrslControls sapMCrslBulleted' + sOffsetCSSClass + '" style="' + sDisplayStyle + '">');
 
 		for ( var i = 1; i <= iPageCount; i++) {
 			rm.write("<span role='img' data-slide=" + i + " aria-label='" + oResourceBundle.getText('CAROUSEL_POSITION', [i, iPageCount]) + "'>" + i + "</span>");
