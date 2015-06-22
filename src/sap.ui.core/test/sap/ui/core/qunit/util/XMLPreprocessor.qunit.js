@@ -8,6 +8,7 @@
 	"use strict";
 
 	jQuery.sap.require("jquery.sap.xml");
+	jQuery.sap.require("sap.ui.core.CustomizingConfiguration");
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 
 	var sComponent = "sap.ui.core.util.XMLPreprocessor",
@@ -142,7 +143,8 @@
 	}
 
 	/**
-	 * Calls our XMLPreprocessor on the given view content, identifying the caller as "qux".
+	 * Calls our XMLPreprocessor on the given view content, identifying the caller as "qux"
+	 * and passing "this._sOwnerId" as component ID and "this.sViewName" as (view) name.
 	 *
 	 * @param {Element} oViewContent
 	 *   the original view content as an XML document element
@@ -150,7 +152,12 @@
 	 *   a settings object for the preprocessor
 	 */
 	function process(oViewContent, mSettings) {
-		return sap.ui.core.util.XMLPreprocessor.process(oViewContent, {caller : "qux"}, mSettings);
+		var oViewInfo = {
+				caller : "qux",
+				componentId : "this._sOwnerId",
+				name : "this.sViewName"
+			};
+		return sap.ui.core.util.XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
 	}
 
 	/**
@@ -540,6 +547,13 @@
 			'</mvc:View>'
 		],
 		bAsIs : true // view remains "as is"
+	}, {
+		aViewContent : [
+			mvcView(),
+			'<ExtensionPoint name="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '"/>',
+			'</mvc:View>'
+		],
+		bAsIs : true // view remains "as is"
 	}].forEach(function (oFixture) {
 		[false, true].forEach(function (bIsLoggable) {
 			var aViewContent = oFixture.aViewContent,
@@ -609,6 +623,15 @@
 		vExpected : [ // Note: XML serializer outputs &gt; encoding...
 			'<Fragment fragmentName="{foo&gt;/some/path}" type="XML"/>'
 		]
+	}, {
+		aViewContent : [
+			mvcView(),
+			'<ExtensionPoint name="{foo>/some/path}"/>',
+			'</mvc:View>'
+		],
+		vExpected : [ // Note: XML serializer outputs &gt; encoding...
+			'<ExtensionPoint name="{foo&gt;/some/path}"/>'
+		]
 	}].forEach(function (oFixture) {
 		[false, true].forEach(function (bIsLoggable) {
 			var aViewContent = oFixture.aViewContent,
@@ -618,6 +641,8 @@
 			test(aViewContent[1] + ", warn = " + bIsLoggable, function () {
 				var oLogMock = this.mock(jQuery.sap.log);
 
+				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
+					.never();
 				this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
 				if (!bIsLoggable) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
@@ -1531,10 +1556,12 @@
 	test("fragment support", function () {
 		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<In xmlns="foo"/>']));
+			.returns(xml(['<In xmlns="sap.ui.core"/>']));
 		check.call(this, [
 				mvcView(),
-				'<Fragment fragmentName="myFragment" type="XML"/>',
+				'<Fragment fragmentName="myFragment" type="XML">',
+				'<template:error />', // this must not be processed!
+				'</Fragment>',
 				'</mvc:View>'
 			], {}, [
 				'<In />'
@@ -1545,7 +1572,7 @@
 	test("dynamic fragment names", function () {
 		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("dynamicFragmentName", "fragment")
-			.returns(xml(['<In xmlns="foo"/>']));
+			.returns(xml(['<In xmlns="sap.ui.core"/>']));
 		check.call(this, [
 				mvcView(),
 				'<Fragment fragmentName="{= \'dynamicFragmentName\' }" type="XML"/>',
@@ -1580,13 +1607,13 @@
 		// BEWARE: use fresh XML document for each call because liftChildNodes() makes it empty!
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<In xmlns="foo" src="{src}" />']));
+			.returns(xml(['<In xmlns="sap.ui.core" src="{src}" />']));
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<In xmlns="foo" src="{src}" />']));
+			.returns(xml(['<In xmlns="sap.ui.core" src="{src}" />']));
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<In xmlns="foo" src="{src}" />']));
+			.returns(xml(['<In xmlns="sap.ui.core" src="{src}" />']));
 
 		check.call(this, [
 			mvcView(),
@@ -1685,27 +1712,6 @@
 	});
 
 	//*********************************************************************************************
-	test("Legacy signature support", function () {
-		var aViewContent = [
-				mvcView(),
-				'<template:if test="false">',
-				'<Out/>',
-				'<\/template:if>',
-				'<\/mvc:View>'
-			],
-			fnProcess = sap.ui.core.util.XMLPreprocessor.process;
-
-		this.stub(sap.ui.core.util.XMLPreprocessor, "process",
-			function (oRootElement, oViewInfo, mSettings) {
-				// simulate call with legacy signature
-				return fnProcess.call(this, oRootElement, mSettings, oViewInfo.caller);
-			}
-		);
-
-		check.call(this, aViewContent);
-	});
-
-	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
 		test("tracing, debug=" + bIsLoggable, function () {
 			var oBarModel = new sap.ui.model.json.JSONModel({
@@ -1795,4 +1801,158 @@
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	test("<ExtensionPoint>: no (supported) configuration", function () {
+		var oCustomizingConfiguration = sap.ui.core.CustomizingConfiguration,
+			oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration);
+
+		function checkNoReplacement() {
+			check.call(this, [
+					mvcView(),
+					'<ExtensionPoint name="myExtensionPoint">',
+					'<template:if test="true">', // checks that content is processed
+					'<In />',
+					'</template:if>',
+					'</ExtensionPoint>',
+					'</mvc:View>'
+				], {}, [
+					'<ExtensionPoint name="myExtensionPoint">',
+					'<In />',
+					'</ExtensionPoint>',
+				]);
+		}
+
+		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+
+		[
+			undefined,
+			{className : "sap.ui.core.Fragment", type : "JSON"},
+			{className : "sap.ui.core.mvc.View", type : "XML"}
+		].forEach(function (oViewExtension) {
+			oCustomizingConfigurationMock.expects("getViewExtension")
+				.withExactArgs("this.sViewName", "myExtensionPoint", "this._sOwnerId")
+				.returns(oViewExtension);
+			checkNoReplacement();
+		});
+
+		try {
+			delete sap.ui.core.CustomizingConfiguration;
+			checkNoReplacement();
+		} finally {
+			sap.ui.core.CustomizingConfiguration = oCustomizingConfiguration;
+		}
+	});
+
+	//*********************************************************************************************
+	["outerExtensionPoint", "{:= 'outerExtensionPoint' }"].forEach(function (sName) {
+		test("<ExtensionPoint name='" + sName + "'>: XML fragment configured", function () {
+			var oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration),
+				oLogMock = this.mock(jQuery.sap.log),
+				oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
+
+			// <ExtensionPoint name="outerExtensionPoint">
+			oCustomizingConfigurationMock.expects("getViewExtension")
+				.withExactArgs("this.sViewName", "outerExtensionPoint", "this._sOwnerId")
+				.returns({
+					className : "sap.ui.core.Fragment",
+					fragmentName : "acme.OuterReplacement",
+					type : "XML"
+				});
+			oXMLTemplateProcessorMock.expects("loadTemplate")
+				.withExactArgs("acme.OuterReplacement", "fragment")
+				.returns(xml([
+					'<template:if test="true" xmlns="sap.ui.core" xmlns:template='
+						+'"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">',
+					'<ExtensionPoint name="outerReplacement"/>',
+					'</template:if>'
+				]));
+			// Note: mock result of loadTemplate() is not analyzed by check() method, of course
+			warn(oLogMock, 'qux: Constant test condition in <template:if test="true">');
+
+			// <ExtensionPoint name="outerReplacement">
+			// --> nothing configured, just check that it is processed
+			oCustomizingConfigurationMock.expects("getViewExtension")
+				.withExactArgs("acme.OuterReplacement", "outerReplacement", "this._sOwnerId");
+
+			// <Fragment fragmentName="myFragment" type="XML"/>
+			oXMLTemplateProcessorMock.expects("loadTemplate")
+				.withExactArgs("myFragment", "fragment")
+				.returns(xml([
+					'<ExtensionPoint name="innerExtensionPoint" xmlns="sap.ui.core"/>'
+				]));
+
+			// <ExtensionPoint name="innerExtensionPoint"/>
+			// --> fragment name is used here!
+			oCustomizingConfigurationMock.expects("getViewExtension")
+				.withExactArgs("myFragment", "innerExtensionPoint", "this._sOwnerId")
+				.returns({
+					className : "sap.ui.core.Fragment",
+					fragmentName : "acme.InnerReplacement",
+					type : "XML"
+				});
+			oXMLTemplateProcessorMock.expects("loadTemplate")
+				.withExactArgs("acme.InnerReplacement", "fragment")
+				.returns(xml([
+					'<ExtensionPoint name="innerReplacement" xmlns="sap.ui.core"/>'
+				]));
+
+			// <ExtensionPoint name="innerReplacement">
+			// --> nothing configured, just check that it is processed
+			oCustomizingConfigurationMock.expects("getViewExtension")
+				.withExactArgs("acme.InnerReplacement", "innerReplacement", "this._sOwnerId");
+
+			// <ExtensionPoint name="lastExtensionPoint">
+			// --> nothing configured, just check that view name is used again
+			oCustomizingConfigurationMock.expects("getViewExtension")
+				.withExactArgs("this.sViewName", "lastExtensionPoint", "this._sOwnerId");
+
+			check.call(oLogMock, [
+					mvcView(),
+					'<ExtensionPoint name="' + sName + '">',
+					'<template:error />', // this must not be processed!
+					'</ExtensionPoint>',
+					'<Fragment fragmentName="myFragment" type="XML"/>',
+					'<ExtensionPoint name="lastExtensionPoint"/>',
+					'</mvc:View>'
+				], {}, [
+					'<ExtensionPoint name="outerReplacement"/>',
+					'<ExtensionPoint name="innerReplacement"/>',
+					'<ExtensionPoint name="lastExtensionPoint"/>'
+				]);
+		});
+	});
+
+	//*********************************************************************************************
+	test("Legacy signature support", function () {
+		var aViewContent = [
+				mvcView(),
+				'<template:if test="false">', // warning 'qux: Constant test condition in ...'
+				'<Out/>',
+				'<\/template:if>',
+				'<ExtensionPoint name="myExtensionPoint">',
+				'<In />',
+				'</ExtensionPoint>',
+				'<\/mvc:View>'
+			],
+			fnProcess = sap.ui.core.util.XMLPreprocessor.process;
+
+		this.stub(sap.ui.core.util.XMLPreprocessor, "process",
+			function (oRootElement, oViewInfo, mSettings) {
+				// simulate call with legacy signature
+				return fnProcess.call(this, oRootElement, mSettings, oViewInfo.caller);
+			}
+		);
+		// Note: w/o proper oViewInfo, extension point replacement is not supported
+		this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension").never();
+		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+
+		check.call(this, aViewContent, {}, [
+			'<ExtensionPoint name="myExtensionPoint">',
+			'<In />',
+			'</ExtensionPoint>',
+		]);
+	});
+
+	//TODO we have completely missed support for unique IDs in fragments via the "id" property!
 } ());
