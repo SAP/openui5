@@ -34,7 +34,7 @@ sap.ui.define([
 					library : "sap.m",
 					properties : {
 						/**
-						 * Specifies if the browser should display vertical scroll bar or simply cut the content of the QuickViewCard.
+						 * Determines whether the browser displays the vertical scroll bar or simply cuts the content of the QuickViewCard.
 						 */
 						showVerticalScrollBar : {
 							type : "boolean",
