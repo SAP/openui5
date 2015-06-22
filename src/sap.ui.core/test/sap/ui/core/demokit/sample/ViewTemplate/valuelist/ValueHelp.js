@@ -57,9 +57,10 @@ sap.ui.define(['sap/m/Column',
 									+ JSON.stringify(oValueList, undefined, 2));
 								that.setIconURL("sap-icon://value-help");
 								that.setEditable(true);
-						});
+							});
 					}
 				}, function (oError) {
+					//TODO errors cannot seriously be handled per _instance_ of a control
 					MessageBox.alert(oError.message, {
 						icon: MessageBox.Icon.ERROR,
 						title: "Error"});
