@@ -89,6 +89,21 @@
 			assert.strictEqual(sId, this.sWizardId, "#" + sId + " should be equal to #" + this.sWizardId);
 		});
 
+		QUnit.test("default text of finish button", function (assert) {
+			this.oWizard.nextStep();
+			this.oWizard.nextStep();
+			var text = this.oWizard._getNextButton().getText();
+			assert.strictEqual(text, "Finish", "Default text of finish button should be equal to 'Finish'");
+		});
+
+		QUnit.test("setFinishLabel() should change the finish button text", function (assert) {
+			this.oWizard.setFinishButtonText("changed_finish");
+			this.oWizard.nextStep();
+			this.oWizard.nextStep();
+			var text = this.oWizard._getNextButton().getText();
+			assert.strictEqual(text, "changed_finish", "Text of finish button should be equal to 'changed_finish'");
+		});
+
 		QUnit.test("addStep() should increment the default value", function (assert) {
 			this.oWizard.addStep(new sap.m.WizardStep());
 			assert.strictEqual(this.oWizard._getProgressNavigator().getStepCount(), 4, " of the progress navigator steps");

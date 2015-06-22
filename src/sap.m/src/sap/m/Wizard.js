@@ -47,7 +47,12 @@ sap.ui.define([
 					 * steps either through the API (with nextStep and previousStep methods) or let the user click
 					 * the next button, and control it with validateStep() or invalidateStep()
 					 */
-					showNextButton : {type : "boolean", group : "Behavior", defaultValue : true}
+					showNextButton : {type : "boolean", group : "Behavior", defaultValue : true},
+					/**
+					 * Changes the text of the finish button for the last step. By default is "Finish".
+					 * This property can be used only if showNextButton is set to true.
+					 */
+					finishButtonText: {type: "string", group: "Appearance", defaultValue: "Finish"}
 				},
 				defaultAggregation: "steps",
 				aggregations: {
@@ -275,7 +280,7 @@ sap.ui.define([
 		/**
 		 * Sets the visiblity of the next button
 		 * @param {boolean} value - The new value to be set
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * @returns {sap.m.Wizard} Reference to the control instance for chaining
 		 * @public
 		 */
 		Wizard.prototype.setShowNextButton = function (value) {
@@ -284,6 +289,32 @@ sap.ui.define([
 				this._getNextButton().setVisible(value);
 			}
 			return this;
+		};
+
+		/**
+		 * Sets the text for the finish button. By default it is "Finish".
+		 * @param {string} value - The text of the finish button
+		 * @returns {sap.m.Wizard} Reference to the control instance for chaining
+		 * @public
+		 */
+		Wizard.prototype.setFinishButtonText = function (value) {
+			this.setProperty("finishButtonText", value, true);
+			this._updateNextButtonState();
+			return this;
+		};
+
+		/**
+		 * Returns the finish button text.
+		 * If the finishButtonText property value is set, then this value is returned, otherwise - the default value.
+		 * @returns {string}
+		 * @public
+		 */
+		Wizard.prototype.getFinishButtonText = function ()  {
+			if (this.getProperty("finishButtonText") === "Finish") {
+				return this._oResourceBundle.getText("WIZARD_FINISH");
+			} else {
+				return this.getProperty("finishButtonText");
+			}
 		};
 
 		/**
@@ -664,6 +695,10 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._updateNextButtonState = function () {
+			if (!this._getNextButton()) {
+				return;
+			}
+
 			var stepCount = this._getStepCount(),
 				nextButton = this._getNextButton(),
 				progressAchieved = this.getProgress(),
@@ -671,7 +706,7 @@ sap.ui.define([
 
 			nextButton.setEnabled(isStepValidated);
 			if (progressAchieved === stepCount) {
-				nextButton.setText(this._oResourceBundle.getText("WIZARD_FINISH"));
+				nextButton.setText(this.getFinishButtonText());
 			} else {
 				nextButton.setText(this._oResourceBundle.getText("WIZARD_NEXT"));
 			}
