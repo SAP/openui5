@@ -664,16 +664,26 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ListBase.prototype.removeSelections = function(bAll, bFireEvent) {
+	ListBase.prototype.removeSelections = function(bAll, bFireEvent, bDetectBinding) {
 		var aChangedListItems = [];
 		this._oSelectedItem = null;
 		bAll && (this._aSelectedPaths = []);
 		this.getItems(true).forEach(function(oItem) {
-			if (oItem.getSelected()) {
-				oItem.setSelected(false, true);
-				aChangedListItems.push(oItem);
-				!bAll && this._updateSelectedPaths(oItem);
+			if (!oItem.getSelected()) {
+				return;
 			}
+			
+			// if selected property two-way bounded then we do not need to update the selection
+			if (bDetectBinding) {
+				var oSelectedBinding = oItem.getBinding("selected");
+				if (oSelectedBinding && oSelectedBinding.getBindingMode() == sap.ui.model.BindingMode.TwoWay) {
+					return;
+				}
+			}
+			
+			oItem.setSelected(false, true);
+			aChangedListItems.push(oItem);
+			!bAll && this._updateSelectedPaths(oItem);
 		}, this);
 	
 		if (bFireEvent && aChangedListItems.length) {
@@ -912,9 +922,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		if (this.isBound("items")) {
 			this._bUpdating = false;
 			this._bReceivingData = false;
-			this.removeSelections(true);
-			this._hideBusyIndicator();
+			this.removeSelections(true, false, true);
 			this._oGrowingDelegate && this._oGrowingDelegate.reset();
+			this._hideBusyIndicator();
 			
 			/* reset focused position */
 			if (this._oItemNavigation) {
