@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * ${copyright}
  */
 
@@ -227,6 +227,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (this.getExpanded()) {
 				// this is relevant when we create Panel specifying the expanded property as 'constructor parameter'
 				$this.children(".sapMPanelWrappingDiv").addClass("sapMPanelWrappingDivExpanded");
+				$this.children(".sapMPanelWrappingDivTb").addClass("sapMPanelWrappingDivTbExpanded");
 				//ARIA
 				$icon.attr("aria-expanded", "true");
 			} else {
@@ -302,6 +303,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// for controlling the visibility of the border
 		$this.children(".sapMPanelWrappingDiv").toggleClass("sapMPanelWrappingDivExpanded");
+		$this.children(".sapMPanelWrappingDivTb").toggleClass("sapMPanelWrappingDivTbExpanded");
 		$this.find(".sapMPanelExpandableIcon").first().toggleClass("sapMPanelExpandableIconExpanded");
 	};
 
