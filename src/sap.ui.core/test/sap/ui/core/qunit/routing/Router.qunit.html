@@ -143,13 +143,14 @@
 					}
 				});
 
-			oFirstRouter.getRoute("matchingRoute").attachMatched(function () {
-				oRouterToBeDestroyed.destroy();
-			});
-
 			// first router has to init first it is the first registered router on the hashchanger
 			oFirstRouter.initialize();
 			oRouterToBeDestroyed.initialize();
+
+			this.stub(oFirstRouter, "parse", function() {
+				sap.ui.core.routing.Router.prototype.parse.apply(this, arguments);
+				oRouterToBeDestroyed.destroy();
+			});
 
 			// Act - trigger both routers
 			hasher.setHash("matches");
@@ -196,6 +197,7 @@
 					router.initialize();
 					hasher.setHash("foo");
 					hasher.setHash("");
+					this.clock.tick(0);
 					router.destroy();
 
 					//Assert
@@ -354,6 +356,7 @@
 
 			// Act
 			oRouter.parse(sPattern);
+			this.clock.tick(0);
 
 			// Assert
 			strictEqual(fnFirstSpy.callCount, 1, "first route gets pattern matched");
@@ -394,6 +397,7 @@
 
 			// Act
 			oRouter.parse(sPattern);
+			this.clock.tick(0);
 
 			// Assert
 			strictEqual(fnFirstSpy.callCount, 1, "First route gets the hashchange");
@@ -423,6 +427,7 @@
 			//Act
 			router.attachRouteMatched(spy);
 			router.initialize();
+			this.clock.tick(0);
 
 			//Assert
 			strictEqual(spy.callCount, 1, "Did call the callback function once");
@@ -443,6 +448,7 @@
 			//Act
 			oRouter.getRoute("name").attachMatched(spy);
 			oRouter.initialize();
+			this.clock.tick(0);
 
 			//Assert
 			strictEqual(spy.callCount, 1, "Did call the callback function once");
@@ -476,6 +482,7 @@
 				foo : "foo"
 			});
 			sap.ui.core.routing.HashChanger.getInstance().setHash(url);
+			this.clock.tick(0);
 
 			//Assert
 			strictEqual(callCount, 1, "Did call the callback function once");
@@ -531,6 +538,7 @@
 				foo : "foo"
 			});
 			sap.ui.core.routing.HashChanger.getInstance().setHash(url);
+			this.clock.tick(0);
 
 			//Assert
 			strictEqual(callCount, 2, "Did call the callback function twice");
@@ -564,6 +572,7 @@
 
 			//Act
 			sap.ui.core.routing.HashChanger.getInstance().setHash("foo/");
+			this.clock.tick(0);
 
 			//Assert
 			strictEqual(callCount, 1, "Did call the callback function once");

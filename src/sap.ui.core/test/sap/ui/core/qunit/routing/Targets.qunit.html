@@ -302,6 +302,7 @@
 			oFireReturnValue = this.oTargets.fireDisplay(oParameters);
 			oDetachReturnValue = this.oTargets.detachDisplay(fnEventSpy, oListener);
 			this.oTargets.fireDisplay();
+			this.clock.tick(0);
 
 			// Assert
 			strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
@@ -349,6 +350,7 @@
 
 			// Act
 			this.oTargets.display("myTarget", oData);
+			this.clock.tick(0);
 
 			// Assert
 			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
@@ -382,6 +384,7 @@
 
 			// Act
 			this.oTargets.display(["myChild", "mySecondTarget"], oData);
+			this.clock.tick(0);
 
 			// Assert
 			strictEqual(fnEventSpy.callCount, 3, "the event got fired");
