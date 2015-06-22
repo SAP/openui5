@@ -173,8 +173,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		};
 		
 		var aParams = [];
+		
+		// build filter statement containing the node filter for the root AND the application/control filters
+		var sNodeFilterParams = this._getNodeFilterParams({id: sRootNodeID, isRoot: true});
 		var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
-		aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-node-for"] + " eq '" + sRootNodeID + "'") + sFilterParams);
+		aParams.push("$filter=" + sNodeFilterParams + sFilterParams);
+		
 		// make sure to abort previous requests, with the same paging parameters
 		// this is necessary to make sure, that only the most recent request gets processed
 		// e.g. the (Tree)Table performs multiple calls to the binding (see BindingTimer in Table.js) 
@@ -190,6 +194,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			sorters: this.aSorters,
 			batchGroupId: sBatchGroupId
 		});
+	};
+	
+	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
+		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"] : this.oTreeProperties["hierarchy-parent-node-for"];
+		var oEntityType = this._getEntityType();
+		return ODataUtils._createFilterParams([new sap.ui.model.Filter(sPropName, "EQ", mParams.id)], this.oModel.oMetadata, oEntityType);
 	};
 	
 	/**
@@ -566,9 +576,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			if (aMissingSections.length > 0) {
 				var aParams = [];
 				if (this.bHasTreeAnnotations) {
+					// application/control filter parameters, will be added to the node/level filter
 					var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
 					if (sNodeId) {
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
+						var sNodeFilterParams = this._getNodeFilterParams({id: sNodeId});
+						aParams.push("$filter=" + sNodeFilterParams + sFilterParams);
 					} else {
 						// no root node id is given: sNodeId === null
 						// in this case we use the root level
@@ -629,11 +641,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		var sNodeFilter = "";
 		if (this.bHasTreeAnnotations) {
 			sPath = this.oModel.resolve(this.getPath(), this.getContext());
-			
 			// only filter for the parent node if the given node is not the root (null)
 			// if root and we $count the collection
 			if (sNodeId != null) {
-				sNodeFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'");
+				sNodeFilter = this._getNodeFilterParams({id: sNodeId});
 			} else {
 				sNodeFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel());
 			}
