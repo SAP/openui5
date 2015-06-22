@@ -1025,7 +1025,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			}
 			
 			if (oNode) {
-				if (oNode.nodeState.selected && !oNode.isArtificial) {
+				if (oNode.nodeState && oNode.nodeState.selected && !oNode.isArtificial) {
 					aResultIndices.push(iNodeCounter);
 				}
 			}
