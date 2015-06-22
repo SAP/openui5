@@ -57,7 +57,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");				
+			equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
 
 			//Cleanup
 			sut.destroy();
@@ -174,43 +174,26 @@
 			//Assert
 			var $onnum = jQuery("#on4").find(".sapMObjectNumberText");
 			var $onunit = jQuery("#on4").find(".sapMObjectNumberUnit");
-			var sLeftPadding = $onunit.css('padding-left');
-			var sRightPadding = $onunit.css('padding-right');
 
 			ok($onnum.offset().left === 0, "object number is left aligned");
 			ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
-			ok(sRightPadding === "0px", "number unit has no right padding.");
-			ok(sLeftPadding.length > 0 && sLeftPadding.indexOf("0") !== 0, "number unit has left padding.");
 
 			$onnum = jQuery("#on5").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on5").find(".sapMObjectNumberUnit");
-			sLeftPadding = $onunit.css('padding-left');
-			sRightPadding = $onunit.css('padding-right');
 
 			ok($onnum.offset().left > 0, "object number is right aligned");
 			ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
-			ok(sRightPadding === "0px", "number unit has no right padding.");
-			ok(sLeftPadding.length > 0 && sLeftPadding.indexOf("0") !== 0, "number unit has left padding.");
 
 			$onnum = jQuery("#on6").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on6").find(".sapMObjectNumberUnit");
-			sLeftPadding = $onunit.css('padding-left');
-			sRightPadding = $onunit.css('padding-right');
 
 			ok($onunit.offset().left > 0, "object number is right aligned");
 			ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
-			ok(sRightPadding.length > 0 && sRightPadding.indexOf("0") !== 0, "number unit has right padding.");
-			ok(sLeftPadding === "0px", "number unit has no left padding.");
-
 			$onnum = jQuery("#on7").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on7").find(".sapMObjectNumberUnit");
-			sLeftPadding = $onunit.css('padding-left');
-			sRightPadding = $onunit.css('padding-right');
 
 			ok($onunit.offset().left === 0, "object number is left aligned");
 			ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
-			ok(sRightPadding.length > 0 && sRightPadding.indexOf("0") !== 0, "number unit has right padding.");
-			ok(sLeftPadding === "0px", "number unit has no left padding.");
 
 			//Cleanup
 			on4.destroy();
