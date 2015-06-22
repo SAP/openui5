@@ -541,10 +541,6 @@ function runODataMessagesTests() {
 	
 	// TODO: Function imports with action-for annotation
 	
-	// Relative target
-	"fakeservice://testdata/odata/function-imports/ActionForFunction?key=1";
-	// Absolute target
-	"fakeservice://testdata/odata/function-imports/ActionForFunction?key=2";
 	
 	asyncTest("Function Imports with action-for annotation", function() {
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
@@ -562,19 +558,19 @@ function runODataMessagesTests() {
 			testFunctionTarget({
 				url: "/ActionForFunction",
 				parameters: {
-					"ProductUUID": "00000000-0000-0000-0000-000000000001",
+					"SupplierUUID": "00000000-0000-0000-0000-000000000001",
 					"foo": "bar"
 				},
 				
 				numMessages: 1,
-				lastTarget: "/Categories(guid'00000000-0000-0000-0000-000000000001')",
+				lastTarget: "/Suppliers(guid'00000000-0000-0000-0000-000000000001')",
 				final: false
 			});
 
 			testFunctionTarget({
 				url: "/ActionForFunction",
 				parameters: {
-					"ProductUUID": "00000000-0000-0000-0000-000000000002",
+					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
 					"foo": "bar"
 				},
 				
@@ -586,7 +582,7 @@ function runODataMessagesTests() {
 			testFunctionTarget({
 				url: "/ActionForFunction",
 				parameters: {
-					"ProductUUID": "00000000-0000-0000-0000-000000000002",
+					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
 					"foo": "bar"
 				},
 				

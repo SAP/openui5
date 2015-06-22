@@ -159,7 +159,7 @@ xhr.onCreate = function(request) {
 				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 				break;
 				
-			case "fakeservice://testdata/odata/function-imports/ActionForFunction?ProductUUID=guid'00000000-0000-0000-0000-000000000001'":
+			case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000001'":
 				iStatus = 200;
 				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
 				mResponseHeaders["sap-message"] = JSON.stringify({
@@ -172,7 +172,7 @@ xhr.onCreate = function(request) {
 				sAnswer = sFunctionImportProduct1;
 				break;
 				
-			case "fakeservice://testdata/odata/function-imports/ActionForFunction?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
+			case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000002'":
 				iStatus = 200;
 				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
 				mResponseHeaders["sap-message"] = JSON.stringify({
@@ -192,7 +192,7 @@ xhr.onCreate = function(request) {
 					sRandomServiceUrl = sUrl.substr(mServiceData["serviceUrl"].length);
 				} else {
 					debugger;
-					throw "Unknown Fakeservice URL";
+					throw new Error("Unknown Fakeservice URL");
 				}
 			
 		}
@@ -2498,8 +2498,8 @@ var sFunctionImportMetadata = '\
 					<Parameter Name="ProductUUID" Type="Edm.Guid" Mode="In" />\
 				</FunctionImport>\
 				<FunctionImport Name="ActionForFunction" ReturnType="SEPMRA_PROD_MAN.Category"\
-					EntitySet="Categories" m:HttpMethod="POST" sap:action-for="SEPMRA_PROD_MAN.Product">\
-					<Parameter Name="ProductUUID" Type="Edm.Guid" Mode="In" />\
+					EntitySet="Categories" m:HttpMethod="POST" sap:action-for="SEPMRA_PROD_MAN.Supplier">\
+					<Parameter Name="SupplierUUID" Type="Edm.Guid" Mode="In" />\
 				</FunctionImport>\
 			</EntityContainer>\
 			<Annotations Target="SEPMRA_PROD_MAN.Product/SupplierName"\
