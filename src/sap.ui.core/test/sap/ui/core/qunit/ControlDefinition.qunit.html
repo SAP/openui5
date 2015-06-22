@@ -204,7 +204,7 @@
 			var properties = md.getProperties();
 			equal(keys(properties).length, 2, "there should be two local public properties");
 			var properties = md.getAllProperties();
-			equal(keys(properties).length, 5, "there should be five public properties");
+			equal(keys(properties).length, 6, "there should be six public properties");
 			ok(properties.text, "there should be a 'text' property");
 			equal(properties.text.type, "string", "'text' should be a string property");
 			
@@ -229,7 +229,7 @@
 			equal(associations.assi.type, "sap.ui.commons.Button", "the 'assi' association should be of type Button");
 			
 			var events = md.getAllEvents();
-			equal(keys(events).length, 5, "there should be 5 public events");
+			equal(keys(events).length, 6, "there should be 6 public events");
 			ok(events.somethingHappened, "there should be a 'somethingHappened' event");
 		});
 
@@ -509,7 +509,7 @@
 			equal(associations.assi.multiple, false, "'assi' should have cardinality 'single'");
 			
 			var events = md.getAllEvents();
-			equal(keys(events).length, 6, "there should be 6 public events");
+			equal(keys(events).length, 7, "there should be 7 public events");
 			equal(typeof events.somethingHappened, "object", "there should be a 'somethingHappened' event info object");
 			equal(events.somethingHappened.name, "somethingHappened", "'somethingHappened' should have name 'somethingHappened'");
 			equal(events.somethingHappened.allowPreventDefault, false, "'somethingHappened' should not allow to preventDefault");

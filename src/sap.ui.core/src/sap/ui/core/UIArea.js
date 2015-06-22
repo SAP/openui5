@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.UIArea
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', 'jquery.sap.act', 'jquery.sap.ui'],
-	function(jQuery, ManagedObject, Element, RenderManager /* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', 'jquery.sap.act', 'jquery.sap.ui', 'jquery.sap.keycodes'],
+	function(jQuery, ManagedObject, Element, RenderManager /* , jQuerySap1, jQuerySap, jQuerySap2 */) {
 	"use strict";
 
 	/**
@@ -707,6 +707,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		}
 		aEventTypes.push(oEvent.type);
 
+		//enable check for fieldgroup change
+		var bGroupChanged = false;
+
 		// dispatch the event to the controls (callback methods: onXXX)
 		while (oElement && oElement instanceof Element && oElement.isActive() && !oEvent.isPropagationStopped()) {
 
@@ -722,6 +725,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				if (oEvent.isImmediatePropagationStopped()) {
 					break;
 				}
+			}
+			if (!bGroupChanged) {
+				bGroupChanged = this._handleGroupChange(oEvent,oElement);
 			}
 
 			// if the propagation is stopped do not bubble up further
@@ -886,6 +892,94 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 */
 	UIArea.prototype.clone = function() {
 		throw new Error("UIArea can't be cloned");
+	};
+
+	/**
+	 * Handles field group change or validation based on the given event.
+	 * Triggers the changeGroup event (with reason: validate) for current field group control.
+	 *
+	 * @param {jQuery.Event} oEvent the jQuery event object
+	 * @param {sap.ui.core.Element} oElement the element where the event occured
+	 *
+	 * @return {boolean} true if the field group control was set or validated.
+	 *
+	 * @private
+	 */
+	UIArea.prototype._handleGroupChange = function(oEvent, oElement) {
+		var oKey = UIArea._oFieldGroupValidationKey;
+		if (oEvent.type === "focusin") {
+			//check for field group change (reason : enter,leave) after events where processed by elements
+			this.setFieldGroupControl(oElement);
+			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
+		} else if (this.getFieldGroupControl() && 
+				oEvent.type === "keyup" && 
+				oEvent.keyCode === oKey.keyCode &&
+				oEvent.shiftKey === oKey.shiftKey &&
+				oEvent.altKey === oKey.altKey &&
+				oEvent.ctrlKey === oKey.ctrlKey) {
+			//check for field group change (validate) after events where processed by elements
+			this.getFieldGroupControl().triggerValidateFieldGroup();
+			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
+		}
+		return false;
+	};
+
+	/**
+	 * Sets the field group control and triggers the validateFieldGroup event for 
+	 * the current field group control.
+	 * There is only one field group control for all UI areas.
+	 *
+	 * @param {sap.ui.core.Element} oElement the new field group control
+	 *
+	 * @return {sap.ui.core.UIArea} the UI area that the active field group control belongs to.
+	 *
+	 * @private
+	 */
+	UIArea.prototype.setFieldGroupControl = function(oElement) {
+		var oCurrentControl = this.getFieldGroupControl();
+		if (oElement != oCurrentControl) {
+			var oControl = null;
+			if (oElement instanceof sap.ui.core.Control) {
+				oControl = oElement;
+			} else {
+				oControl = oElement.findParent(function(oElement){
+					return oElement instanceof sap.ui.core.Control;
+				});
+			}
+			var sCurrentGroupId = oCurrentControl ? oCurrentControl.getFieldGroupId() : "", 
+				sNewGroupId = oControl ? oControl.getFieldGroupId() : "";
+			if (sCurrentGroupId !== sNewGroupId) {
+				if (oCurrentControl && sCurrentGroupId) {
+					oCurrentControl.triggerValidateFieldGroup();
+				}
+			}
+			UIArea._oFieldGroupControl = oControl;
+		} 
+		return this;
+	};
+
+	/**
+	 * Returns the current valid field group control.
+	 * There is only one field group control for all UI areas.
+	 *
+	 * @return {sap.ui.core.Control} the current valid field group control or null.
+	 *
+	 * @private
+	 */
+	UIArea.prototype.getFieldGroupControl = function() {
+		if (UIArea._oFieldGroupControl && !UIArea._oFieldGroupControl.bIsDestroyed) {
+			return UIArea._oFieldGroupControl;
+		}
+		return null;
+	};
+
+	// field group static members
+	UIArea._oFieldGroupControl = null; // group control for all UI areas to handle change of field groups
+	UIArea._oFieldGroupValidationKey = {// keycode and modifier combination that is used to fire a change group event (reason: validate)
+			keyCode : jQuery.sap.KeyCodes.ENTER,
+			shiftKey : false,
+			altKey: false,
+			ctrlKey: false
 	};
 
 	// share the render log with Core

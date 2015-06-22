@@ -1977,7 +1977,6 @@ sap.ui.define([
 		return bInvalidateSuppressed;
 	};
 
-
 	/**
 	 * Removes the given child from this object's named aggregation.
 	 * @see sap.ui.core.UIArea#_removeChild
@@ -2115,6 +2114,27 @@ sap.ui.define([
 		return this.oParent;
 	};
 
+	/**
+	 * Returns the first parent of this object where a given condition matches.
+	 * The parent object is passed as a parameter in the condition function.
+	 *
+	 * @param {function} fnCondition The condition function that is called for the parent util true is returned
+	 *
+	 * @return {sap.ui.core.ManagedObject} The matching parent object of this element
+	 *
+	 * @protected
+	 */
+	ManagedObject.prototype.findParent = function(fnCondition) {
+		var oParent = this.getParent();
+		if (oParent) {
+			if (fnCondition(oParent)) {
+				return oParent;
+			} else {
+				return oParent.findParent(fnCondition);
+			}
+		}
+		return null;
+	};
 
 	/**
 	 * Cleans up the resources associated with this object and all its aggregated children.
