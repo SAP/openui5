@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	var WizardController = Controller.extend("sap.m.sample.Wizard.C", {
-		onInit: function() {
+		onInit: function () {
 			this._wizard = this.getView().byId("CreateProductWizard");
 			this.model = new sap.ui.model.json.JSONModel();
 			this.model.setData({
@@ -16,19 +16,21 @@ sap.ui.define([
 				productWeightState:"Error"
 			});
 			this.getView().setModel(this.model);
+			this.model.setProperty("/productType", "Mobile");
+			this.model.setProperty("/navApiEnabled", true);
 		},
-		setProductType: function(evt) {
+		setProductType: function (evt) {
 			var productType = evt.getSource().getTitle();
 			this.model.setProperty("/productType", productType);
 			this.getView().byId("ProductStepChosenType").setText("Chosen product type: " + productType);
 			this._wizard.validateStep(this.getView().byId("ProductTypeStep"));
 		},
-		setProductTypeFromSegmented: function(evt) {
+		setProductTypeFromSegmented: function (evt) {
 			var productType = evt.mParameters.button.getText();
 			this.model.setProperty("/productType", productType);
 			this._wizard.validateStep(this.getView().byId("ProductTypeStep"));
 		},
-		additinalInfoValidation : function() {
+		additinalInfoValidation : function () {
 			var name = this.getView().byId("ProductName").getValue();
 			var weight = parseInt(this.getView().byId("ProductWeight").getValue());
 
@@ -45,23 +47,29 @@ sap.ui.define([
 				'This event is fired on activate of Step3.'
 			);
 		},
-		optionalStepCompletion: function() {
+		optionalStepCompletion: function () {
 			MessageToast.show(
 				'This event is fired on complete of Step3. You can use it to gather the information, and lock the input data.'
 			);
 		},
-		scrollFrom4to2 : function() {
+		pricingActivate: function () {
+			this.model.setProperty("/navApiEnabled", true);
+		},
+		pricingComplete: function () {
+			this.model.setProperty("/navApiEnabled", false);
+		},
+		scrollFrom4to2 : function () {
 			this._wizard.goToStep(this.getView().byId("ProductInfoStep"));
 		},
-		goFrom4to3 : function() {
+		goFrom4to3 : function () {
 			if(this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
 				this._wizard.previousStep();
 		},
-		goFrom4to5 : function() {
+		goFrom4to5 : function () {
 			if(this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
 				this._wizard.nextStep();
 		},
-		wizardCompletedHandler: function() {
+		wizardCompletedHandler: function () {
 			MessageBox.show(
 				'This event is fired on complete of the whole process.',
 				{
@@ -71,11 +79,27 @@ sap.ui.define([
 				}
 			);
 		},
-		productWeighStateFormatter: function(val) {
+		productWeighStateFormatter: function (val) {
 			return isNaN(val)?"Error":"None";
 		},
-		discardProgress: function() {
+		discardProgress: function () {
 			this._wizard.discardProgress(this.getView().byId("ProductTypeStep"));
+
+			var clearContent = function (content) {
+				for (var i = 0; i < content.length ; i++) {
+					if (content[i].setValue) {
+						content[i].setValue("");
+					}
+
+					if (content[i].getContent) {
+						clearContent(content[i].getContent());
+					}
+				}
+			};
+
+			this.model.setProperty("/productWeightState", "Error");
+			this.model.setProperty("/productNameState", "Error")
+			clearContent(this._wizard.getSteps());
 		}
 	});
 

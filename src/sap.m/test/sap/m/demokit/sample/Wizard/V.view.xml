@@ -14,7 +14,7 @@
 					complete="wizardCompletedHandler">
 				<WizardStep id="ProductTypeStep"
 							title="Product Type"
-							validated="false">
+							validated="true">
 					<MessageStrip class="sapUiSmallMarginBottom"
 								  text="The Wizard control is supposed to break down large tasks, into smaller steps, easier for the user to work with."
 								  showIcon="true"/>
@@ -32,23 +32,6 @@
 							<Button icon="sap-icon://database" text="Other"/>
 						</SegmentedButton>
 					</HBox>
-					<!--<Title width="100%" textAlign="Center" id="ProductStepChosenType"
-						   text="Please, select a product type" titleStyle="H2"/>
-					<TileContainer
-							height="320px">
-						<StandardTile
-								press="setProductType"
-								title="Mobile"
-								icon="sap-icon://iphone"/>
-						<StandardTile
-								press="setProductType"
-								title="Desktop"
-								icon="sap-icon://sys-monitor"/>
-						<StandardTile
-								press="setProductType"
-								title="Other"
-								icon="sap-icon://database"/>
-					</TileContainer>-->
 				</WizardStep>
 				<WizardStep id="ProductInfoStep"
 							validated="false"
@@ -121,6 +104,8 @@
 					</form:SimpleForm>
 				</WizardStep>
 				<WizardStep id="PricingStep"
+							activate="pricingActivate"
+							complete="pricingComplete"
 							validated="false"
 							title="Pricing">
 					<MessageStrip class="sapUiSmallMarginBottom"
@@ -140,9 +125,9 @@
 						<Label text=" VAT is included"/>
 						<CheckBox selected="{/productVAT}"/>
 						<Label text="Go to next without validation"/>
-						<Button press="goFrom4to5" text="Next"/>
+						<Button press="goFrom4to5" text="Next" enabled="{/navApiEnabled}" />
 						<Label text="Go to previous"/>
-						<Button press="goFrom4to3" text="Previous"/>
+						<Button press="goFrom4to3" text="Previous" enabled="{/navApiEnabled}"/>
 						<Label text="Go to step 2"/>
 						<Button press="scrollFrom4to2" text="Scroll to step 2"/>
 					</form:SimpleForm>
