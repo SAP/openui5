@@ -973,6 +973,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		return oTarget;
 	};
 
+	/**
+	 * Returns the first EntitySet from all EntityContainers that matches the namespace and name of the given EntityType
+	 *
+	 * @param {map} mEntityType - The EntityType object
+	 * @return {map|null} Retuns the EntitySet object or null if not found
+	 */
+	ODataMetadata.prototype._getEntitySetByType = function(mEntityType) {
+		var sEntityType = mEntityType.namespace + "." + mEntityType.name;
+		
+		var aSchema = this.oMetadata.dataServices.schema;
+		for (var i = 0; i < aSchema.length; ++i) {
+			var aContainers = aSchema[i].entityContainer;
+			for (var n = 0; n < aContainers.length; ++n) {
+				var aSets = aContainers[n].entitySet;
+				for (var m = 0; m < aSets.length; ++m) {
+					if (aSets[m].entityType === sEntityType) {
+						return aSets[m];
+					}
+				}
+			}
+		}
+		return null;
+	};
+	
 	return ODataMetadata;
 
 });
