@@ -398,5 +398,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "742e3b3a459be9d0d1cecc6793a2d8984f031ad3",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.DataTable: Fix oRowContext in toggleOpenState event",
+        "references": []
+      }
+    ]
   }
 }

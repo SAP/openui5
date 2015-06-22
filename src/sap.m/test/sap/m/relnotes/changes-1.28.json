@@ -3053,5 +3053,143 @@
         "references": []
       }
     ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "2d1815fbd92745892448682a2f55eb2f930098c8",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ColumnListItem: Column visibility index should be updated when cells are not rendered.",
+        "references": []
+      },
+      {
+        "id": "bffe8a6d80d17bcfeaaf41bc6322e30fa3f76ee0",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateRangeSelection: Custom placeholder should be removed when value is set.",
+        "references": []
+      },
+      {
+        "id": "0fdcd1bc36dd9240b9c11fac4c79112a50cf2b02",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: initial width and height is set in the render",
+        "references": []
+      },
+      {
+        "id": "53c950ddc0bf3ad2901fe3150d71cf94f04362ad",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase: No data text should only be visible when there is no items after loading.",
+        "references": []
+      },
+      {
+        "id": "814f5647fee2b30bea599ae42dcf5331535b8671",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Adding classes now works",
+        "references": []
+      },
+      {
+        "id": "c5e2eb6d7276aeab80831c0b18d4d2e9a1fa2498",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Popover position corrected when opened from ObjectAttribute active text",
+        "references": []
+      },
+      {
+        "id": "7f738a181767505ad2287651f190e5faf8052573",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: Show header when no headerText only when expandable",
+        "references": []
+      },
+      {
+        "id": "cecef11e7435c7f17ab4cdb6028e20d553bf3e80",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Content is shown properly when device change its orientation",
+        "references": []
+      },
+      {
+        "id": "f0d0fc2a9e07bc3017bd98059ccf5973ca1748b6",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Correctly show ResponsiveGridLayout when visibility is binded",
+        "references": []
+      },
+      {
+        "id": "68d874b2a3e39b2291e6d2a7c181d27752e766f5",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event was fired but Popover was not closed",
+        "references": []
+      },
+      {
+        "id": "5eebd596a7172c2b7e7541b7320bcac865a57591",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: infinite loop occurs after a page in splitcontainer moved to another control\u0027s aggregation",
+        "references": []
+      },
+      {
+        "id": "a55fc02aba03e7f6767bf944816caa1ce6d57f92",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: master can\u0027t be open again after switching modes",
+        "references": []
+      },
+      {
+        "id": "edf4c73713334dd6df6607d8268da66dc05e53f5",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Should respect selection mode while calculation colspan of group headers",
+        "references": []
+      },
+      {
+        "id": "de26eac1552f43c7d87dae5900c7e64a0a010372",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: fix token truncation after navigation action",
+        "references": []
+      },
+      {
+        "id": "a1bf58861f0d6e3d83f30d6bc009eaf324662c46",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Displayed data corrected when data binding is refreshed.",
+        "references": []
+      },
+      {
+        "id": "2315171982f9e172f2b0dc450c42ed30beaf064f",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Extend dependencies to improve stability.",
+        "references": []
+      },
+      {
+        "id": "38f280e65eaedf02c5e088b961deb35e1d0c5b7d",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Headerparameter duplication removed.",
+        "references": []
+      },
+      {
+        "id": "4d8819a5701b6d0bc1a581443b131045a044bc4b",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Second renaming is working again.",
+        "references": []
+      },
+      {
+        "id": "4c21ce21cbd08c1e4487f9730729988aa06550f3",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.m.TextArea: should convert carriage returns correctly.",
+        "references": []
+      }
+    ]
   }
 }

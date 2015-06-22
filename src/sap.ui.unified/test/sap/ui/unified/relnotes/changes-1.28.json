@@ -269,5 +269,59 @@
         "references": []
       }
     ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "134e1c3de3ed779dcbc56a4843f8d890c68b5d94",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar new properties to set weekend and first weekday",
+        "references": []
+      },
+      {
+        "id": "f38d0d8cf8d3bdc60f9d3773b554351adddad83d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: use all space in islamic case",
+        "references": []
+      },
+      {
+        "id": "d6e97d5b81a61061014b7668ee693cacef906481",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.CalendarLegend: allow to specify tye of an item",
+        "references": []
+      },
+      {
+        "id": "2e167ab58531faa24548650944642ee4fc082dcb",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Focus issues after change of selectedDates",
+        "references": []
+      },
+      {
+        "id": "1462c46d841924d083bee7fe5d75d68a3eb9f615",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus lost on tab on year picker",
+        "references": []
+      },
+      {
+        "id": "1a466cb76ab303076e002410c0c4a18822815b12",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: specialDates can not be removed",
+        "references": []
+      },
+      {
+        "id": "683f468ae76ae0e78f822b0dbbb1cf1df3540e70",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Open Popup before Menu state is set to opened.",
+        "references": []
+      }
+    ]
   }
 }
