@@ -278,5 +278,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "f84a0f52ed5cf3db08efa2187c36d9e40e857c33",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Renew DOM-reference When Used in \"checkDocking\"",
+        "references": []
+      }
+    ]
   }
 }
