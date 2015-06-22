@@ -34,57 +34,57 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		properties : {
 
 			/**
-			 * This property only takes effect when runs on desktop or tablet. Please see the documentation {@linkcode sap.m.Popover#placement here}.
+			 * This property only takes effect when runs on desktop or tablet. Please see the documentation sap.m.Popover#placement.
 			 */
 			placement : {type : "sap.m.PlacementType", group : "Misc", defaultValue : sap.m.PlacementType.Right},
 
 			/**
-			 * This property is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#showHeader sap.m.Popover} and {@linkcode sap.m.Dialog#showHeader sap.m.Dialog}
+			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#showHeader and sap.m.Dialog#showHeader
 			 */
 			showHeader : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * This property is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#title sap.m.Popover} and {@linkcode sap.m.Dialog#title sap.m.Dialog}
+			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#title and sap.m.Dialog#title
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property only takes effect when runs on phone. Please see the documentation {@linkcode sap.m.Dialog#icon here}.
+			 * This property only takes effect when runs on phone. Please see the documentation sap.m.Dialog#icon.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property only takes effect when runs on desktop or tablet. Please see the documentation {@linkcode sap.m.Popover#modal here}.
+			 * This property only takes effect when runs on desktop or tablet. Please see the documentation sap.m.Popover#modal.
 			 */
 			modal : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property only takes effect when runs on desktop or tablet. Please see the documentation {@linkcode sap.m.Popover#offsetX here}.
+			 * This property only takes effect when runs on desktop or tablet. Please see the documentation sap.m.Popover#offsetX.
 			 */
 			offsetX : {type : "int", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property only takes effect when runs on desktop or tablet. Please see the documentation {@linkcode sap.m.Popover#offsetY here}.
+			 * This property only takes effect when runs on desktop or tablet. Please see the documentation sap.m.Popover#offsetY.
 			 */
 			offsetY : {type : "int", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#contentWidth sap.m.Popover} and {@linkcode sap.m.Dialog#contentWidth sap.m.Dialog}
+			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#contentWidth and sap.m.Dialog#contentWidth
 			 */
 			contentWidth : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#contentHeight sap.m.Popover} and {@linkcode sap.m.Dialog#contentHeight sap.m.Dialog}
+			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#contentHeight and sap.m.Dialog#contentHeight
 			 */
 			contentHeight : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#horizontalScrolling sap.m.Popover} and {@linkcode sap.m.Dialog#horizontalScrolling sap.m.Dialog}
+			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#horizontalScrolling and sap.m.Dialog#horizontalScrolling
 			 */
 			horizontalScrolling : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * This property is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#verticalScrolling sap.m.Popover} and {@linkcode sap.m.Dialog#verticalScrolling sap.m.Dialog}
+			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#verticalScrolling and sap.m.Dialog#verticalScrolling
 			 */
 			verticalScrolling : {type : "boolean", group : "Misc", defaultValue : null},
 
@@ -96,17 +96,17 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		aggregations : {
 
 			/**
-			 * Content is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#content sap.m.Popover} and {@linkcode sap.m.Dialog#content sap.m.Dialog}
+			 * Content is supported by both variants. Please see the documentation on sap.m.Popover#content and sap.m.Dialog#content
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
 
 			/**
-			 * CustomHeader is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#customHeader sap.m.Popover} and {@linkcode sap.m.Dialog#customHeader sap.m.Dialog}
+			 * CustomHeader is supported by both variants. Please see the documentation on sap.m.Popover#customHeader and sap.m.Dialog#customHeader
 			 */
 			customHeader : {type : "sap.m.IBar", multiple : false},
 
 			/**
-			 * SubHeader is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#subHeader sap.m.Popover} and {@linkcode sap.m.Dialog#subHeader sap.m.Dialog}
+			 * SubHeader is supported by both variants. Please see the documentation on sap.m.Popover#subHeader and sap.m.Dialog#subHeader
 			 */
 			subHeader : {type : "sap.m.IBar", multiple : false},
 
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		associations : {
 
 			/**
-			 * InitialFocus is supported by both variants. Please see the documentation on {@linkcode sap.m.Popover#initialFocus sap.m.Popover} and {@linkcode sap.m.Dialog#initialFocus sap.m.Dialog}
+			 * InitialFocus is supported by both variants. Please see the documentation on sap.m.Popover#initialFocus and sap.m.Dialog#initialFocus
 			 */
 			initialFocus : {type : "sap.ui.core.Control", multiple : false}
 		},
