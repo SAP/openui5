@@ -246,9 +246,23 @@
 			}
 		});
 
+		var oHideScrollButton = new sap.m.Button({
+			text : 'Hide ScrollBar',
+			press : function () {
+				oQuickViewCard.setShowVerticalScrollBar(false);
+			}
+		});
+
+		var oShowScrollButton = new sap.m.Button({
+			text : 'Show ScrollBar',
+			press : function () {
+				oQuickViewCard.setShowVerticalScrollBar(true);
+			}
+		});
+
 		var oPanel = new sap.m.Panel('quickViewCardPanel', {
 			width : '320px',
-			height : '500px',
+			height : '292px',
 			headerText : 'Store',
 			content : [
 				oQuickViewCard
@@ -260,6 +274,8 @@
 			title : "Quick View Card",
 			content : [
 				oButton,
+				oHideScrollButton,
+				oShowScrollButton,
 				oPanel
 			]
 		});

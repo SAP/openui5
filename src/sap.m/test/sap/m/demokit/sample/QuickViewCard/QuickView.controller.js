@@ -133,6 +133,16 @@ sap.ui.define([
 			oQuickViewCard.navigateBack();
 		},
 
+		onHideScrollClick : function() {
+			var oQuickViewCard = this.getView().byId('quickViewCard');
+			oQuickViewCard.setShowVerticalScrollBar(false);
+		},
+
+		onShowScrollClick : function() {
+			var oQuickViewCard = this.getView().byId('quickViewCard');
+			oQuickViewCard.setShowVerticalScrollBar(true);
+		},
+
 		onNavigate : function(oEvent) {
 			var oButton = this.getView().byId('buttonBack');
 			oButton.setEnabled(!oEvent.getParameter('isTopPage'));
