@@ -134,10 +134,10 @@
 		}
 	});
 
-	QUnit.test("Get number of attachments label", function(assert) {
+	QUnit.test("Get number of attachments title", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
-		assert.equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
-		assert.equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), sText, "Correct label text for number of attachments");
+		assert.equal(typeof this.oUploadCollection._getNumberOfAttachmentsTitle(999), 'object', "Correct type of title for number of attachments returned");
+		assert.equal(this.oUploadCollection._getNumberOfAttachmentsTitle(999).getText(), sText, "Correct Title text for number of attachments");
 	});
 
 	QUnit.test("Determine icon from filename", function(assert) {
