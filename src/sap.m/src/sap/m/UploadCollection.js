@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application.
+	 * This control allows users to upload single or multiple files from their devices (desktop PC, tablet or phone) and attach them into the application.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -117,9 +117,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 * @since 1.30
 			 */
 			instantUpload : {type : "boolean", group : "Behavior", defaultValue : true},
-			
+
 			/**
-			 * Sets the title text in the toolbar of the list of attachments. 
+			 * Sets the title text in the toolbar of the list of attachments.
 			 * To show as well the number of attachments in brackets like the default text does. The number of attachments could be retrieved via "getItems().length".
 			 * If a new title is set, the default is deactivated.
 			 * The default value is set to language-dependent "Attachments (n)".
@@ -476,8 +476,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	/* API methods                                           */
 	/* =========================================================== */
 	/**
-	 * Starts the upload for all selected files.
-	 * @type void
+	 * @description Starts the upload for all selected files.
+	 * @type {void}
 	 * @public
 	 * @since 1.30
 	 */
@@ -721,6 +721,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @description Renders fileName, attributes, statuses and buttons(except for IE9) into the oContainer. Later it should be moved to the UploadCollectionItemRenderer.
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {string} sContainerId ID of the container where the content will be rendered to
+	 * @param {object} that Context
 	 * @private
 	 */
 	UploadCollection.prototype._renderContent = function(oItem, sContainerId, that) {
@@ -775,6 +776,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
+	 * @description Renders buttons of the item in scope.
+	 * @param {object} oRm Render manager
+	 * @param {sap.ui.core.Item} oItem Item in scope
+	 * @param {string} sStatus Internal status of the item in scope
+	 * @param {string} sItemId ID of the container where the content will be rendered to
+	 * @param {object} that Context
 	 * @private
 	 */
 	UploadCollection.prototype._renderButtons = function(oRm, oItem, sStatus, sItemId, that) {
@@ -800,6 +807,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	/**
 	 * @description Gets a file name which is a sap.m.Link in display mode and a sap.m.Input with a description (file extension) in edit mode
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
+	 * @param {object} that Context
 	 * @return {sap.m.Link || sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
 	 * @private
 	 */
@@ -901,6 +909,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {string} sItemId ID of the item being processed
 	 * @param {string} sFileNameLong file name
+	 * @param {object} that Context
 	 * @return {sap.m.Image || sap.ui.core.Icon} oItemIcon
 	 * @private
 	 */
@@ -939,6 +948,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {string} sStatus status of the item: edit, display, uploading
 	 * @param {string} sItemId ID of the item being processed
+	 * @param {object} that Context
 	 * @return {array} aButtons an Array with buttons
 	 * @private
 	 */
@@ -1027,9 +1037,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {string} [sButton]
 	 *  if sButton == "deleteButton" it is a Delete button for the already uploaded file
 	 *  if sButton == "terminateButton" it is a button to terminate the upload of the file being uploaded
-	 * @param {Object} [oItem]
-	 * @param {string} [sErrorState]
+	 * @param {sap.m.UploadCollectionItem} oItem Item in scope
+	 * @param {string} sErrorState Internal error status
+	 * @param {object} that Context
 	 * @return {sap.m.Button} oDeleteButton
+	 * @private
 	 */
 	UploadCollection.prototype._createDeleteButton = function(sItemId, sButton, oItem, sErrorState, that) {
 		var bEnabled, oDeleteButton;
@@ -1128,7 +1140,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			sText = this._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [nItems]);
 		}
 		if (!this.oNumberOfAttachmentsTitle) {
-			this.oNumberOfAttachmentsTitle = new sap.m.Title(this.getId() + "-numberOfAttachmentsTitel", {
+			this.oNumberOfAttachmentsTitle = new sap.m.Title(this.getId() + "-numberOfAttachmentsTitle", {
 				text : sText
 			});
 		} else {
@@ -1144,6 +1156,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @description Handling of the deletion of an uploaded file
 	 * @param {object} oEvent Event of the deletion
 	 * @param {object} oContext Context of the deleted file
+	 * @returns {void}
 	 * @private
 	 */
 	UploadCollection.prototype._handleDelete = function(oEvent, oContext) {
@@ -1196,7 +1209,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * @description Handling of the termination of an uploading file
-	 * @param {sap.m.MessageBox.Action} oAction
+	 * @param {sap.m.MessageBox.Action} oAction Action to be executed at closing the message box
 	 * @private
 	 */
 	UploadCollection.prototype._onCloseMessageBoxDeleteItem = function (oAction) {
@@ -1350,6 +1363,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {object} oEvent Event of the 'OK' activity
 	 * @param {object} oContext Context of the list item where 'ok' was triggered
 	 * @param {string} sSourceId List item ID
+	 * @param {boolean} bTriggerRenderer Switch for to trigger the renderer
 	 * @private
 	 */
 	UploadCollection.prototype._handleOk = function(oEvent, oContext, sSourceId, bTriggerRenderer) {
@@ -1428,6 +1442,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * @description Handling of edit item
+	 * @param {string} sNewFileName New file name
 	 * @private
 	 */
 	UploadCollection.prototype._onEditItemOk = function (sNewFileName) {
@@ -1818,6 +1833,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	/**
 	 * @description Get the Request ID from the header parameters of a fileUploader event
 	 * @param {object} oEvent Event of the fileUploader
+	 * @returns {string} Request ID
 	 * @private
 	 */
 	UploadCollection.prototype._getRequestId = function(oEvent) {
@@ -1948,7 +1964,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * @description Trigger of the link which will be executed when the icon or image was clicked
-	 * @param {Object} oEvent when clicking or pressing of the icon or image
+	 * @param {object} oEvent when clicking or pressing of the icon or image
+	 * @param {object} oContext Context of the link
+	 * @returns {void}
 	 * @private
 	 */
 	UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
@@ -2163,6 +2181,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	/**
 	 * @description Delivers an array of Filenames from a string of the FileUploader event.
 	 * @param {string} sStringOfFilenames String of concatenated file names of the FileUploader
+	 * @param {object} oContext Context of the call
 	 * @returns {array} aUploadedFiles A Collection of the uploaded files
 	 * @private
 	 */
