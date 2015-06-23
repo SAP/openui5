@@ -108,7 +108,7 @@
 	QUnit.test("Composite Controls are rendered", function(assert) {
 		assert.ok(jQuery.sap.domById("uploadCollection-list"), "Item list is rendered");
 		assert.ok(jQuery.sap.domById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
-		assert.ok(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitel"), "Number of attachments label is rendered");
+		assert.ok(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle"), "Title attachments is rendered");
 		assert.ok(jQuery.sap.domById(this.oUploadCollection.getId() + "-" + this.oUploadCollection._iFUCounter + "-uploader"), "FileUploader is rendered");
 	});
 
@@ -136,15 +136,15 @@
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		assert.strictEqual(this.oUploadCollection._getNumberOfAttachmentsTitle(999).getText(), sText, "Correct Title text for number of attachments.");
 	});
-	
+
 	QUnit.test("Get number of attachments title", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		assert.strictEqual(this.oUploadCollection._getNumberOfAttachmentsTitle(999).getText(), sText, "Correct Title text for number of attachments");
 		var sText = "My own text for attachments";
 		this.oUploadCollection.setNumberOfAttachmentsText("My own text for attachments");
-		assert.strictEqual(this.oUploadCollection._getNumberOfAttachmentsTitle().getText(), sText, "Correct label text for number of attachments.");
+		assert.strictEqual(this.oUploadCollection._getNumberOfAttachmentsTitle().getText(), sText, "Correct Title text for number of attachments.");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitel")).text(), sText);
+		assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle")).text(), sText);
 	});
 
 	QUnit.test("Determine icon from filename", function(assert) {
