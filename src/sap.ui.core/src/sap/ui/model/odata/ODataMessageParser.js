@@ -194,6 +194,17 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 		var sTarget = aMessages[i].getTarget();
 
 		if (sTarget) {
+			// Add all "parents" of the current target to the list of affected targets
+			var sTrimmedTarget = sTarget.replace(/^\/+|\/$/g, "");
+			mAffectedTargets[sTrimmedTarget] = true;
+			var iPos = sTrimmedTarget.lastIndexOf("/");
+			while (iPos > -1) {
+				sTrimmedTarget = sTrimmedTarget.substr(0, iPos);
+				mAffectedTargets[sTrimmedTarget] = true;
+				iPos = sTrimmedTarget.lastIndexOf("/");
+			}
+			
+			// Add the Entityset itself
 			mEntitySet = this._metadata._getEntitySetByPath(sTarget);
 			if (mEntitySet) {
 				mAffectedTargets[mEntitySet.name] = true;
@@ -304,8 +315,22 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
 		}
 	} else {
+		
+		// Search for "action-for" annotation
+		var sActionFor = null;
+		if (mFunctionInfo.extensions) {
+			for (var i = 0; i < mFunctionInfo.extensions.length; ++i) {
+				if (mFunctionInfo.extensions[i].name === "action-for") {
+					sActionFor = mFunctionInfo.extensions[i].value;
+					break;
+				}
+			}
+		}
+		
 		var mEntityType;
-		if (mFunctionInfo.entitySet) {
+		if (sActionFor) {
+			mEntityType = this._metadata._getEntityTypeByName(sActionFor);
+		} else if (mFunctionInfo.entitySet) {
 			mEntityType = this._metadata._getEntityTypeByPath(mFunctionInfo.entitySet);
 		} else if (mFunctionInfo.returnType) {
 			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
