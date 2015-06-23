@@ -161,6 +161,26 @@ sap.ui.define([
 			this._oModel.setData(this._mData);
 		},
 
+		onScrollSwitchChange : function(oEvent) {
+			var oQuickViewCard = this.getView().byId('quickViewCard');
+
+			oQuickViewCard.setShowVerticalScrollBar(oEvent.getParameters().state);
+		},
+
+		onHeaderSwitchChange : function(oEvent) {
+			if (oEvent.getParameters().state) {
+				this._mData.pages[0].title = "Adventure Company";
+				this._mData.pages[0].icon = "sap-icon://building";
+				this._mData.pages[0].description = "John Doe";
+			} else {
+				this._mData.pages[0].title = "";
+				this._mData.pages[0].icon = "";
+				this._mData.pages[0].description = "";
+			}
+
+			this._oModel.setData(this._mData);
+		},
+
 		onNavigate : function(oEvent) {
 			var oButton = this.getView().byId('buttonBack');
 			oButton.setEnabled(!oEvent.getParameter('isTopPage'));
