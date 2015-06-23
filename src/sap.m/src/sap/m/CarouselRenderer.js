@@ -70,16 +70,19 @@ sap.ui.define(['jquery.sap.global'],
 		//do housekeeping
 		oCarousel._cleanUpScrollContainer();
 
-		var fnRenderPage = function(oPage, iIndex) {
+		var fnRenderPage = function(oPage, iIndex, aArray) {
 			//item div
 			rm.write("<div class='sapMCrslItem");
 			if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
 				rm.write(" sapMCrslBottomOffset");
 			}
 			rm.write("' id='" + oCarousel.sId + "-" + oPage.sId + "-slide'");
+
 			// ARIA
 			rm.writeAccessibilityState(oPage, {
-				role:"listitem"
+				role: "listitem",
+				posinset: iIndex + 1,
+				setsize: aArray.length
 			});
 
 			rm.write(">");
