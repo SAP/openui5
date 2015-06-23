@@ -417,6 +417,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				$rowHdr.html("");
 				$rowHdr.removeAttr("data-sap-ui-level");
 				$rowHdr.removeData("sap-ui-level");
+				$rowHdr.removeAttr('aria-level');
+				$rowHdr.removeAttr('aria-expanded');
 				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
@@ -459,13 +461,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				}
 			}
 
+			var aAriaLabelledByParts = [this.getId() + "-rownumberofrows"];
+			var sAriaTextForSum = "";
+
 			if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo)) {
 				// modify the rows
 				$row.addClass("sapUiTableGroupHeader");
 				$fixedRow.addClass("sapUiTableGroupHeader");
-				
-				$row.attr('aria-expanded', oContextInfo.nodeState.expanded);
-				$fixedRow.attr('aria-expanded', oContextInfo.nodeState.expanded);
+
+				$rowHdr.attr("aria-haspopup", true);
 				
 				var sGroupHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
 
@@ -481,32 +485,64 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				if (sap.ui.Device.system.tablet) {
 					sGroupHeaderMenuButton = "<div class='sapUiTableGroupMenuButton'></div>";
 				}
-				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
+				$rowHdr.html("<div id=\"" + oRow.getId() + "-groupHeader\" class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
+				aAriaLabelledByParts.push(oRow.getId() + "-groupHeader");
 				
 				$row.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$fixedRow.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$rowHdr.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
+				$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title").removeAttr("aria-label");
+
+				$row.attr('aria-expanded', oContextInfo.nodeState.expanded);
+				$fixedRow.attr('aria-expanded', oContextInfo.nodeState.expanded);
+				$rowHdr.attr('aria-expanded', oContextInfo.nodeState.expanded);
+
+				if (oContextInfo.level > 0) {
+					sAriaTextForSum = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
+				} else {
+					sAriaTextForSum = this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
+				}
 			} else {
-				$row.attr('aria-expanded', false);
+				$row.removeAttr('aria-expanded');
+				$rowHdr.removeAttr('aria-expanded');
+				$fixedRow.removeAttr('aria-expanded');
+				$rowHdr.attr("aria-haspopup", false);
+
+				$rowHdr.removeAttr('aria-describedby');
+
 				$row.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 
-				$fixedRow.attr('aria-expanded', false);
 				$fixedRow.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum");
 
 				$rowHdr.html("");
 				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableDummy sapUiAnalyticalTableSum");
 
+				// update aria description for row selection
+				if (!oContextInfo.nodeState.sum) {
+					aAriaLabelledByParts.push(this.getId() + "-rows-row" + $rowHdr.attr("data-sap-ui-rowindex") + "-rowselecttext");
+				}
+
 				if (oContextInfo.nodeState.sum && oContextInfo.context && oContextInfo.context.getObject()) {
 					$row.addClass("sapUiAnalyticalTableSum");
 					$fixedRow.addClass("sapUiAnalyticalTableSum");
 					$rowHdr.addClass("sapUiAnalyticalTableSum");
+
+					sAriaTextForSum;
+					if (oContextInfo.level > 0) {
+						sAriaTextForSum = this._oResBundle.getText("TBL_GROUP_TOTAL_ROW") + " " + oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
+					} else {
+						sAriaTextForSum = this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
+					}
+
+
 				}
 			}
+
 			//set the level of the node on the DOM
 			$row.attr("data-sap-ui-level", iLevel);
 			$fixedRow.attr("data-sap-ui-level", iLevel);
 			$rowHdr.attr("data-sap-ui-level", iLevel);
+			$rowHdr.attr('aria-level', iLevel + 1);
 			$row.attr('aria-level', iLevel + 1);
 			$fixedRow.attr('aria-level', iLevel + 1);
 			
@@ -545,6 +581,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// be cleared in the model - and the binding has no control over the
 			// value mapping - this happens directly via the context!
 			var aCells = oRow.getCells();
+			var aMeasures = [];
 			for (var i = 0, lc = aCells.length; i < lc; i++) {
 				var iCol = aCells[i].data("sap-ui-colindex");
 				var oCol = aCols[iCol];
@@ -553,13 +590,37 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					$td.addClass("sapUiTableMeasureCell");
 					if (!oContextInfo.nodeState.sum || oCol.getSummed()) {
 						$td.removeClass("sapUiTableCellHidden");
+						aMeasures.push(oCol.getId());
+						aMeasures.push($td[0].id);
 					} else {
 						$td.addClass("sapUiTableCellHidden");
+					}
+
+					var sAriaTextForSumId = $td[0].id + "-ariaTextForSum";
+					var $AriaTextForSum = jQuery.sap.byId(sAriaTextForSumId);
+					if ($AriaTextForSum.length === 0) {
+						$td.append("<span id=\"" + sAriaTextForSumId + "\" class=\"sapUiHidden\"></span>");
+						$AriaTextForSum = jQuery.sap.byId(sAriaTextForSumId);
+					}
+
+					if (oContextInfo.nodeState.sum || $row.hasClass("sapUiTableGroupHeader")) {
+						$AriaTextForSum.text(sAriaTextForSum);
+						$td.attr("aria-labelledby", sAriaTextForSumId + " " + $td.attr("aria-labelledby"));
+					} else {
+						$AriaTextForSum.text("");
+						$td.removeAriaLabelledBy(sAriaTextForSumId);
 					}
 				} else {
 					$td.removeClass("sapUiTableMeasureCell");
 				}
 			}
+
+			// connect measures with the group header
+			for (var k = 0; k < aMeasures.length; k++) {
+				aAriaLabelledByParts.push(aMeasures[k]);
+			}
+			// update aria description for row selection
+			$rowHdr.attr("aria-labelledby", aAriaLabelledByParts.join(" "));
 		}
 	};
 
