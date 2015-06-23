@@ -232,6 +232,7 @@
 							});
 						}
 
+						$frame[0].src = "about:blank";
 						$framediv.remove();
 
 						var fnTemplate = Handlebars.compile(sResultsTemplate);
@@ -252,8 +253,9 @@
 					if (new Date() - tBegin < 300000) {
 						setTimeout(fnCheckSuccess, 100);
 					} else {
+						$frame[0].src = "about:blank";
 						$framediv.remove();
-						// TODO: set Test overview visibile
+						// TODO: set Test overview visible
 						oDeferred.resolve();
 						// TODO: error handling
 					}
