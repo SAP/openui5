@@ -159,6 +159,33 @@ xhr.onCreate = function(request) {
 				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 				break;
 				
+			case "fakeservice://testdata/odata/function-imports/ActionForFunction?ProductUUID=guid'00000000-0000-0000-0000-000000000001'":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		"999",
+					"message":	"This is FunctionImport specific test message",
+					"severity":	"error",
+					"target": "",
+					"details": []
+				});
+				sAnswer = sFunctionImportProduct1;
+				break;
+				
+			case "fakeservice://testdata/odata/function-imports/ActionForFunction?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
+				iStatus = 200;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		"999",
+					"message":	"This is FunctionImport specific test message",
+					"severity":	"error",
+					"target": "/Products(999)/ProductName",
+					"details": []
+				});
+				sAnswer = sFunctionImportProduct1;
+				break;
+					
+				
 			default:
 				if (sUrl.startsWith(mServiceData["serviceUrl"])) {
 					// This one's for us...
@@ -2468,6 +2495,10 @@ var sFunctionImportMetadata = '\
 				</FunctionImport>\
 				<FunctionImport Name="EditProduct" ReturnType="SEPMRA_PROD_MAN.Product"\
 					EntitySet="Products" m:HttpMethod="POST" sap:action-for="SEPMRA_PROD_MAN.Product">\
+					<Parameter Name="ProductUUID" Type="Edm.Guid" Mode="In" />\
+				</FunctionImport>\
+				<FunctionImport Name="ActionForFunction" ReturnType="SEPMRA_PROD_MAN.Category"\
+					EntitySet="Categories" m:HttpMethod="POST" sap:action-for="SEPMRA_PROD_MAN.Product">\
 					<Parameter Name="ProductUUID" Type="Edm.Guid" Mode="In" />\
 				</FunctionImport>\
 			</EntityContainer>\
