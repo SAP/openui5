@@ -168,11 +168,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
 				 * Attributes are displayed after an item has been uploaded.
 				 * The Active property of sap.m.ObjectAttribute is not supported.
-				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
 				 * Note that if one of the deprecated properties contributor, fileSize or UploadedDate is filled in addition to this attribute, two attributes with the same title
 				 * are displayed as these properties get displayed as an attribute.
 				 * Example: An application passes the property ‘contributor’ with the value ‘A’ and the aggregation attributes ‘contributor’: ‘B’. As a result, the attributes
 				 * ‘contributor’:’A’ and ‘contributor’:’B’ are displayed. To make sure the title does not appear twice, check if one of the properties is filled.
+				 * @since 1.30
 				 */
 				attributes : {
 					type : "sap.m.ObjectAttribute",
@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 				/**
 				 * Hidden aggregation for the attributes created from the deprecated properties uploadedDate, contributor and fileSize
-				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
+				 * @since 1.30
 				 */
 				_propertyAttributes : {
 					type : "sap.m.ObjectAttribute",
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				/**
 				 * Statuses of an uploaded item
 				 * Statuses will be displayed after an item has been uploaded
-				 * @experimental since version 1.30. The behavior might change in the next version.
+				 * @since 1.30
 				 */
 				statuses : {
 					type : "sap.m.ObjectStatus",
@@ -219,6 +219,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated contributor property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setContributor = function(sContributor) {
 		this.setProperty("contributor", sContributor, false);
@@ -229,6 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated uploadedDate property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setUploadedDate = function(sUploadedDate) {
 		this.setProperty("uploadedDate", sUploadedDate, false);
@@ -239,6 +241,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated fileSize property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setFileSize = function(sFileSize) {
 		this.setProperty("fileSize", sFileSize, false);
