@@ -369,20 +369,12 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  */
 ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, sRequestUri, sContentType) {
 	try {
-		var oDomParser = new DOMParser();
-		var oDoc = oDomParser.parseFromString(oResponse.body, sContentType);
+		// TODO: I do not have a v4 service to test this with.
 
-		var sPath =
-			"//*[local-name()='error'] | " + // Main Error - v2 and v4
-			"//*[local-name()='errordetails']/*[local-name()='errordetail'] | " + // v2 further errors
-			"//*[local-name()='details']/*[local-name()='error']"; // v4 further errrors
-		// TODO: I do not have a v4 service to test this. Is the v4 further errors path really "//details/detail"?
-
-		var oXPath = getXPath();
-		var oNodes = oXPath.selectNodes(oDoc, sPath);
-
-		for (var i = 0; i < oNodes.length; ++i) {
-			var oNode = oXPath.nextNode(oNodes, i);
+		var oDoc = new DOMParser().parseFromString(oResponse.body, sContentType);
+		var aElements = getAllElements(oDoc, [ "error", "errordetail" ]);
+		for (var i = 0; i < aElements.length; ++i) {
+			var oNode = aElements[i];
 
 			var oError = {};
 			// Manually set severity in case we get an error response
@@ -401,11 +393,11 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 					// Special case for v2 error message - the message is in the child node "value"
 					for (var m = 0; m < oChildNode.childNodes.length; ++m) {
 						if (oChildNode.childNodes[m].nodeName === "value") {
-							oError["message"] = oXPath.getNodeText(oChildNode.childNodes[m]);
+							oError["message"] = oChildNode.childNodes[m].text || oChildNode.childNodes[m].textContent;
 						}
 					}
 				} else {
-					oError[oChildNode.nodeName] = oXPath.getNodeText(oChildNode);
+					oError[oChildNode.nodeName] = oChildNode.text || oChildNode.textContent;
 				}
 			}
 
@@ -432,7 +424,7 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 			// v4 response according to OData specification or v2 response according to MS specification and SAP message specification
 			oError = oErrorResponse["error"];
 		} else {
-			// Actual v2 response in all tested services
+			// Actual v2 response in some tested services
 			oError = oErrorResponse["odata.error"];
 		}
 
@@ -546,40 +538,38 @@ function stripURI(sURI) {
 	return sStrippedURI;
 }
 
-var xPath = null;
-function getXPath() {
-	if (xPath === null) {
-		xPath = {};
-		if (sap.ui.Device.browser.msie) {// IE
-			xPath = {
-				selectNodes : function(oSearchNode, sPath) {
-					return oSearchNode.selectNodes(sPath);
-				},
-				nextNode : function(oNode) {
-					return oNode.nextNode();
-				},
-				getNodeText : function(oNode) {
-					return oNode.text;
+function getAllElements(oDocument, aElementNames) {
+	var aElements = [];
+	
+	var mElementNames = {};
+	for (var i = 0; i < aElementNames.length; ++i) {
+		mElementNames[aElementNames[i]] = true;
+	}
+	
+	var oElement = oDocument;
+	while (oElement) {
+		if (mElementNames[oElement.tagName]) {
+			aElements.push(oElement);
+		}
+		
+		if (oElement.hasChildNodes()) {
+			oElement = oElement.firstChild;
+		} else {
+			while (!oElement.nextSibling) {
+				oElement = oElement.parentNode;
+				
+				if (!oElement || oElement === oDocument) {
+					oElement = null;
+					break;
 				}
-			};
-		} else {// Chrome, Firefox, Opera, etc.
-			xPath = {
-				selectNodes : function(oSearchNode, sPath) {
-					var xmlNodes = oSearchNode.evaluate(sPath, oSearchNode, null, /* ORDERED_NODE_SNAPSHOT_TYPE: */ 7, null);
-					xmlNodes.length = xmlNodes.snapshotLength;
-					return xmlNodes;
-				},
-				nextNode : function(oNode, oItem) {
-					return oNode.snapshotItem(oItem);
-				},
-				getNodeText : function(oNode) {
-					return oNode.textContent;
-				}
-			};
+			}
+			if (oElement) {
+				oElement = oElement.nextSibling;
+			}
 		}
 	}
-
-	return xPath;
+	
+	return aElements;
 }
 
 //////////////////////////////////////// Overridden Methods ////////////////////////////////////////
