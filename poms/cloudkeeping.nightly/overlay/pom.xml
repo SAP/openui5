@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.ui5.dist</groupId>
 		<artifactId>maven-webapp-pom</artifactId>
-		<version>1.29.1-SNAPSHOT</version>
+		<version>1.31.0-SNAPSHOT</version>
 		<relativePath>../poms/webapp/pom.xml</relativePath>
 	</parent>
 
@@ -48,7 +48,7 @@
 		<web.context.name>sapui5-sdk-dist</web.context.name>
 
 		<!-- SAPUI5 version for NW Cloud -->
-		<sapui5.version>1.29.1-SNAPSHOT</sapui5.version>
+		<sapui5.version>1.31.0-SNAPSHOT</sapui5.version>
 	
 	</properties>
 
