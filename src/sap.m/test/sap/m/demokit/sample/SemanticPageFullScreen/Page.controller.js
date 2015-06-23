@@ -7,7 +7,7 @@ sap.ui.define([
 	], function(jQuery, Controller, JSONModel, MessagePopover, MessagePopoverItem) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.SemanticPage.Page", {
+	var PageController = Controller.extend("sap.m.sample.SemanticPageFullScreen.Page", {
 
 	onInit: function () {
 		var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
@@ -38,12 +38,8 @@ sap.ui.define([
 
 		sap.m.MessageToast.show("Pressed: " + sAction);
 	},
-	onSemanticSelectChange: function (oEvent, oData) {
-		var sAction = oEvent.getSource().getMetadata().getName();
-		sAction = sAction.replace(oEvent.getSource().getMetadata().getLibraryName() + ".", "");
-
-		var sStatusText = sAction + " by " + oEvent.getSource().getSelectedItem().getText();
-		sap.m.MessageToast.show("Selected: " + sStatusText);
+	onNavButtonPress: function () {
+		sap.m.MessageToast.show("Pressed navigation button");
 	},
 	onMessagesButtonPress: function(oEvent) {
 
@@ -62,13 +58,6 @@ sap.ui.define([
 			oMessagesButton.addDependent(this._messagePopover);
 		}
 		this._messagePopover.toggle(oMessagesButton);
-	},
-	onMultiSelectPress: function(oEvent) {
-		if (oEvent.getSource().getPressed()) {
-			sap.m.MessageToast.show("MultiSelect Pressed");
-		} else {
-			sap.m.MessageToast.show("MultiSelect Unpressed");
-		};
 	}
 });
 
