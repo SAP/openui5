@@ -485,11 +485,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				$sideContent.removeClass().addClass("sapUiDSCSpan" + this._iScSpan);
 
 				if (this._shouldSetHeight()) {
-					$sideContent.css("height", "100%");
-					$mainContent.css("height", "100%");
+					$sideContent.css("height", "100%").css("float", "left");
+					$mainContent.css("height", "100%").css("float", "left");
 				} else {
-					$sideContent.css("height", "auto");
-					$mainContent.css("height", "auto");
+					$sideContent.css("height", "auto").css("float", "none");
+					$mainContent.css("height", "auto").css("float", "none");
 				}
 			} else if (!this.getShowSideContent() && !this.getShowMainContent()) {
 				$mainContent.addClass(HIDDEN_CLASS);
