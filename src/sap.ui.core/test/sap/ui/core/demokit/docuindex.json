@@ -44,7 +44,8 @@
 				"formFactors" : "-",
 				"since" : "\"The Elders may know...\"",
 				"samples" : [
-					"sap.ui.core.sample.View.async"
+					"sap.ui.core.sample.View.async",
+					"sap.ui.core.sample.View.preprocessor"
 				]
 			},
 			{
@@ -224,6 +225,11 @@
 				"id": "sap.ui.core.sample.View.async",
 				"name": "Async View loading and rendering",
 				"description": "Example for Views with async source loading and the impact on rendering."
+			},
+			{
+				"id": "sap.ui.core.sample.View.preprocessor",
+				"name": "Preprocessor example with XMLView",
+				"description": "A small example for View Preprocessor usage with XMLViews."
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
