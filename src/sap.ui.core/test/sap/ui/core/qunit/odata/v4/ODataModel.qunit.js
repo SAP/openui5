@@ -3,29 +3,36 @@
  */
 sap.ui.require([
 	"sap/ui/model/Model", "sap/ui/model/odata/v4/ODataContextBinding",
-	"sap/ui/model/odata/v4/ODataPropertyBinding", "sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v2/ODataModel"
-], function(Model, ODataContextBinding, ODataPropertyBinding, ODataModel, V2ODataModel) {
+	"sap/ui/model/odata/v4/ODataPropertyBinding", "sap/ui/model/odata/v4/ODataModel"
+], function (Model, ODataContextBinding, ODataPropertyBinding, ODataModel) {
 	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	notEqual, notStrictEqual, ok, sinon, start, strictEqual, stop, test, throws,
+	odatajs
 	*/
 	"use strict";
 
-	var TestControl = sap.ui.core.Element.extend("TestControl", {
+	/*
+	 * You can run various tests in this module against a real OData v4 service. Set the system
+	 * property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server containing the Gateway test
+	 * service "/sap/opu/local_v4/IWBEP/TEA_BUSI" and load the page with the request property
+	 * "realOData=true".
+	 */
+
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		mFixture = {
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name": "Name.json",
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')": [404, "TEAMS('UNKNOWN').json"]
+		},
+		oGlobalSandbox,
+		oLogMock,
+		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
+		TestControl = sap.ui.core.Element.extend("TestControl", {
 			metadata: {
 				properties: {
 					text: "string"
 				}
 			}
-		}),
-		mFixture = {
-			"/foo/$metadata": 404,
-			"/Northwind/Northwind.svc/$metadata": "v2/metadata.xml",
-			"/Northwind/Northwind.svc/Products(ProductID=1)": "v2/Products(ProductID=1).json",
-			"/V4/Northwind/Northwind.svc/Products(ProductID=1)": "v4/Products(ProductID=1).json",
-			"/V4/Northwind/Northwind.svc/Products(ProductID=1)/ProductName": "v4/ProductName.json",
-		},
-		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true";
+		});
 
 	/**
 	 * Prepare Sinon fake server for the given fixture.
@@ -63,8 +70,14 @@ sap.ui.require([
 				sMessage = "";
 				mHeaders = {};
 			} else {
-				iCode = 200;
-				sSource = sBase + '/' + vResponse;
+				if (typeof vResponse === "string") {
+					iCode = 200;
+					sSource = vResponse;
+				} else {
+					iCode = vResponse[0];
+					sSource = vResponse[1];
+				}
+				sSource = sBase + '/' + sSource;
 				sMessage = jQuery.sap.syncGetText(sSource, "", null);
 				mHeaders = {"Content-Type": contentType(sSource)};
 			}
@@ -75,7 +88,7 @@ sap.ui.require([
 		// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
 		sinon.xhr.supportsCORS = true;
 
-		oServer = sinon.fakeServer.create(),
+		oServer = sinon.fakeServer.create();
 		sinon.FakeXMLHttpRequest.useFilters = true;
 		sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
 			return !(sUrl in mFixture); // do not fake if URL is unknown
@@ -93,136 +106,94 @@ sap.ui.require([
 
 	function getServiceUrl(sUrl) {
 		if (bRealOData) {
-			return "/databinding/proxy/http/services.odata.org" + sUrl;
+			sUrl = "../../../../../../../proxy" + sUrl;
 		}
 		return sUrl;
 	}
 
-	/**
-	 * Create ODataModel for Northwind service. Both model and service are V2 unless the version
-	 * parameter is set to V4.
-	 * @param {string} sVersion - The OData version to use
-	 */
-	function createNorthwindModel(sVersion) {
-		var sServiceUrl = getServiceUrl(
-				(sVersion === "V4" ? "/V4" : "") + "/Northwind/Northwind.svc"),
-			fnConstructor = sVersion === "V4" ? ODataModel : V2ODataModel;
-
-		return new fnConstructor(sServiceUrl, {useBatch : false});
+	function createModel() {
+		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI"));
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.v4.ODataModel");
+	module("sap.ui.model.odata.v4.ODataModel", {
+		beforeEach : function () {
+			oGlobalSandbox = sinon.sandbox.create();
+			oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+			oLogMock.expects("warning").never();
+			oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
+			oGlobalSandbox.verifyAndRestore();
+		}
+	});
 
 	//*********************************************************************************************
 	test("basics", function () {
-		ok(new ODataModel("foo") instanceof Model);
+		ok(new ODataModel("/foo") instanceof Model);
 		throws(function () {
 			new ODataModel();
 		}, /Missing service URL/);
 	});
 
 	//*********************************************************************************************
-	test("bindContext", function () {
-		var oModel = new ODataModel("foo"),
-			oContext = {},
-			oBinding = oModel.bindContext("/path", oContext);
-
-		ok(oBinding instanceof ODataContextBinding);
-		strictEqual(oBinding.getModel(), oModel);
-		strictEqual(oBinding.getContext(), oContext);
-		strictEqual(oBinding.getPath(), "/path");
-
-		//TODO add further tests once exact behavior of bindContext is clear
-	});
-
-	//*********************************************************************************************
-	test("bindProperty", function () {
-		var oModel = new ODataModel("foo"),
-			oPropertyBinding = oModel.bindProperty("property");
-
-		ok(oPropertyBinding instanceof ODataPropertyBinding);
-		strictEqual(oPropertyBinding.getValue(), undefined);
-
-		//TODO add further tests once exact behavior of bindProperty is clear
-	});
-
-// Integration tests: Feature parity v2.ODataModel and v4.ODataModel
-
-	//*********************************************************************************************
-	[V2ODataModel//TODO error handling for invalid URL , ODataModel
-	].forEach(function (fnConstructor) {
-		test("empty " + fnConstructor.getMetadata().getName()
-				+ " model: property access from ManagedObject", function () {
-			var oModel = new fnConstructor("/foo"),
-				oControl = new TestControl();
-
-			oControl.setModel(oModel);
-			oControl.bindElement("/entity");
-			oControl.bindProperty("text", "property");
-			strictEqual(oControl.getText(), undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	test("Northwind V2: ODataModel.read", function (oAssert) {
-		var oModel = createNorthwindModel("V2"),
+	test("Property access from ManagedObject w/o context binding", function (oAssert) {
+		var oModel = createModel(),
+			oControl = new TestControl({models: oModel}),
 			fnDone = oAssert.async();
 
-		oModel.read("/Products(ProductID=1)", {
-			success: function (oData) {
-				strictEqual(oData.ProductName, "Chai");
-				fnDone();
-			},
-			error : function(oError) {
-				ok(false, oError.message + ", stack: " + oError.stack);
-				fnDone();
-			}
+		oControl.bindProperty("text", "/TEAMS('TEAM_01')/Name");
+		// bindProperty creates an ODataPropertyBinding and calls its initialize which results in
+		// checkUpdate and a request. The value is updated asynchronously via a change event later
+		oControl.getBinding("text").attachChange(function () {
+			strictEqual(oControl.getText(), "Business Suite", "property value");
+			fnDone();
 		});
 	});
 
 	//*********************************************************************************************
-	test("Northwind V4: ODataModel.read", function () {
-		var oModel = createNorthwindModel("V4"),
-			oPromise;
+	test("Property access from ManagedObject w/ context binding", function (oAssert) {
+		var oModel = createModel(),
+			oControl = new TestControl({models: oModel}),
+			fnDone = oAssert.async();
 
-		this.spy(odatajs.oData, "read");
-
-		oPromise = oModel.read("/Products(ProductID=1)");
-		oPromise.then(function (oData) {
-			strictEqual(oData.ProductName, "Chai");
+		oControl.bindObject("/TEAMS('TEAM_01')");
+		oControl.bindProperty("text", "Name");
+		// bindProperty creates an ODataPropertyBinding and calls its initialize which results in
+		// checkUpdate and a request. The value is updated asynchronously via a change event later
+		oControl.getBinding("text").attachChange(function () {
+			strictEqual(oControl.getText(), "Business Suite", "property value");
+			fnDone();
 		});
-
-		ok(jQuery.sap.endsWith(odatajs.oData.read.args[0][0],
-			"/V4/Northwind/Northwind.svc/Products(ProductID=1)", "URL for read"));
-		return oPromise;
 	});
 
 	//*********************************************************************************************
-	["V2", "V4"].forEach(function (sVersion) {
-		test("Northwind " + sVersion + ": property access from ManagedObject", function (oAssert) {
-			var oModel = createNorthwindModel(sVersion),
-				oControl = new TestControl(),
-				bDone = false,
-				fnDone = oAssert.async();
+	test("ODataModel.read: failure", function () {
+		var oModel = createModel();
 
-			oControl.setModel(oModel);
-			oControl.bindObject("/Products(ProductID=1)");
-			oControl.bindProperty("text", "ProductName");
-			oControl.getBinding("text").attachChange(function () {
-				//v2 model sends several change events with only the last one setting the final
-				//property value. TODO check with SAPUI5 Core
-				if (sVersion === "V2" && oControl.getText() === undefined) {
-					return;
-				}
-				if (!bDone) {
-					strictEqual(oControl.getText(), "Chai", "property value");
-					fnDone();
-				}
-				if (sVersion === "V2") { //v2 sends several change events: ignore all but the 1st
-					bDone = true;
-				}
-			});
+		sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		oLogMock.expects("error")
+			.withExactArgs(
+				"The requested entity of type 'TEAM' cannot be accessed. It does not exist.",
+				"read(" + getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')") + ")",
+				"sap.ui.model.odata.v4.ODataModel");
+		oGlobalSandbox.spy(odatajs.oData, "read");
+
+		return oModel.read("/TEAMS('UNKNOWN')").then(function (oData) {
+			ok(false, "Unexpected success");
+		}, function (oError) {
+			ok(oError instanceof Error);
+			strictEqual(odatajs.oData.read.args[0][0].headers["accept-language"], "en-US");
+			strictEqual(oError.error.code, "/IWBEP/CM_V4_APPS/002");
+			strictEqual(oError.message,
+				"The requested entity of type 'TEAM' cannot be accessed. It does not exist.");
 		});
 	});
+
+	// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
+	// TODO constructor: test that the service URL is absolute?
+	// TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
+	// TODO read: abort
 });
