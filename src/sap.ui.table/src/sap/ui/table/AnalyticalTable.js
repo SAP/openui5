@@ -936,7 +936,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
-		Table.prototype.removeColumn.apply(this, arguments);
+		var oResult = Table.prototype.removeColumn.apply(this, arguments);
 		
 		//TODO: Make sure vColumn is really an AnalyticalColumn instance
 		this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
@@ -950,17 +950,17 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
-		return this;
+		return oResult;
 	};
 
 	AnalyticalTable.prototype.removeAllColumns = function(bSuppressInvalidate) {
 		this._aGroupedColumns = [];
-		Table.prototype.removeColumn.apply(this, arguments);
+		var aResult = Table.prototype.removeAllColumns.apply(this, arguments);
 		
 		this._updateTableColumnDetails();
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
-		return this;
+		return aResult;
 	};
 
 	AnalyticalTable.prototype._getColumn = function(vColumn) {
