@@ -53,7 +53,7 @@ public class GitClient {
     }
     pb.redirectErrorStream(true);
     if ( verbose ) {
-      Log.printf("%s > %s", getRepository(), pb.command());
+      //Log.printf("%s > %s", getRepository(), pb.command());
     }
     long t0 = System.currentTimeMillis();
     Process process = pb.start();
@@ -78,8 +78,8 @@ public class GitClient {
     lastOutput = lines;
     lastCommits = null;
     long t1 = System.currentTimeMillis();
-    Log.println("  Process returned exit code " + process.exitValue() + " (" + (t1-t0) + "ms)");
-    Log.println("  Process returned output " + Log.summary(lines));
+    //Log.println("  Process returned exit code " + process.exitValue() + " (" + (t1-t0) + "ms)");
+    //Log.println("  Process returned output " + Log.summary(lines));
     if ( lastExitValue != 0 ) {
       throw new IOException("Git failed with error code " + lastExitValue);
     }
