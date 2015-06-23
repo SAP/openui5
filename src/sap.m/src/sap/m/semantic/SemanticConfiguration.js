@@ -396,8 +396,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 		};
 
 		oTypeConfigs["pagingAction"] = {
-			position: SemanticConfiguration.prototype._PositionInPage.headerRight,
-			order: 0
+			position: SemanticConfiguration.prototype._PositionInPage.headerRight
 		};
 
 		oTypeConfigs["sap.m.semantic.DiscussInJamAction"] = {
