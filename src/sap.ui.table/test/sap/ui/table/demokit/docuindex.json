@@ -19,6 +19,7 @@
 					"sap.ui.table.sample.Sorting",
 					"sap.ui.table.sample.Filtering",
 					"sap.ui.table.sample.Menus",
+					"sap.ui.table.sample.TableFreeze",
 					"sap.ui.table.sample.Resizing"
 				]
 			}
@@ -44,6 +45,10 @@
 				"id": "sap.ui.table.sample.Menus",
 				"name": "Table related Menus",
 				"description": "Example which focuses the handling of the table related Menus."
+			},{
+				"id": "sap.ui.table.sample.TableFreeze",
+				"name": "Table Freeze",
+				"description": "Example which shows table freeze with fixed columns."
 			},{
 				"id": "sap.ui.table.sample.Resizing",
 				"name": "Resizing",
