@@ -381,6 +381,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this._minHeight = _minSize.height;
 					this._sDelayedCall = null;
 				});
+			} else {
+				jQuery.sap.clearDelayedCall(this._sDelayedCall);
 			}
 		};
 
@@ -558,6 +560,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			this.oPopup = null;
+			jQuery.sap.clearDelayedCall(this._sDelayedCall);
 			this._sDelayedCall = null;
 			delete this._mParameters;
 		};
