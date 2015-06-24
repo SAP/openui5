@@ -1007,7 +1007,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 								if ((iIndex % this.iColumns) > 0) {
 									iCol = (iIndex % this.iColumns) - 1;
 								} else if (this.bCycling) {
-									iCol = this.iColumns - 1;
+									iCol = Math.min(this.iColumns - 1, this.aItemDomRefs.length - 1);
 								}
 
 								if (iIndex === 0 && iCol === 0) {
