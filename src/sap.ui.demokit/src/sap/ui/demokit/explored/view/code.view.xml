@@ -3,6 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
+	xmlns:d="sap.ui.demokit"
 	xmlns="sap.m">
 	<Page
 		id="page"
@@ -30,7 +31,7 @@
 							 press="onViewCodePress"/>
 				</content>
 			</OverflowToolbar>
-			<core:HTML id="fileContent" />
+			<d:CodeViewer id="fileContent" class="sapUiExploredCodeViewer"/>
 		</content>
 	</Page>
 </mvc:View>

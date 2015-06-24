@@ -92,9 +92,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 
 		_setFileContent: function(sFileName) {
 			var oFileViewer = this.getView().byId("fileContent");
-
+			oFileViewer.setVisible(true);
+			
 			if (!sFileName) {
-				oFileViewer.setContent("");
+				oFileViewer.setSource("");
+				oFileViewer.setVisible(false);
 				return;
 			}
 
@@ -107,7 +109,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 					}
 				});
 			if (bResult) {
-				oFileViewer.setContent(aFiles[iPossInArray].code);
+				oFileViewer.setSource(aFiles[iPossInArray].code);
 			}
 		},
 
@@ -238,7 +240,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			// Improve indentation for display
 			code = code.replace(/\t/g, "  ");
 
-			return '<pre><code>' + jQuery.sap.encodeHTML(code) + '</code></pre>';
+			return code;
 		},
 
 		_changeIframeBootstrapToCloud : function (sRawIndexFileHtml) {
