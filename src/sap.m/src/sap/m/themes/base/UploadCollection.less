@@ -49,7 +49,7 @@
 	.sapMLIB.sapMUCListFirstItem,
 	.sapMLIB.sapMUCListLastItem,
 	.sapMLIB.sapMUCListItem {
-		border-bottom-color: 	transparent; // this is the central switch to have inner separators or not
+		border-bottom-color: 	transparent; /* this is the central switch to have inner separators or not */
 	}
 }
 
@@ -75,7 +75,7 @@
 	padding-bottom: 1rem;
 }
 
-//fallback for IE9
+/* fallback for IE9 */
 .sapMUCItem .sapMLIBContentNF {
 	padding-top: 1rem;
 	padding-bottom: 1rem;
@@ -94,10 +94,10 @@
 .sapMUCItemImage {
 	height:				3rem;
 	width:				3rem;
-	margin-right:		0.65rem; // because of the keyboard frame it should be margin and not padding
-	margin-top:			0.1rem; // is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin
-	margin-bottom:		0.1rem; // is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin
-	margin-left:		0.1rem; // is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin
+	margin-right:		0.65rem; /* because of the keyboard frame it should be margin and not padding */
+	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
 	-webkit-box-flex:	0;		 	/* OLD - iOS 6-, Safari 3.1-6 */
 	-moz-box-flex: 		0;         	/* OLD - Firefox 19- */
 	-webkit-flex:		none;			/* Chrome */
@@ -179,33 +179,46 @@
 }
 
 /*Container for a textContainer and a button container */
-.sapMUCTextButtonContainer {
-	display:		-webkit-box; 		/* OLD - iOS 6-, Safari 3.1-6 */
-	display:		-ms-flexbox; 		/* IE10 */
-	display:		-webkit-flex; 		/* NEW - Chrome */
-	display:		-moz-box;
-	display: 		-moz-flex;			/*NEW		*/
-	display: 		-ms-flex;			/*NEW 		*/
-	display:		flex; 				/*FF 20+ 	*/
-	width: 			100%;
-	-ms-flex-negative: 1;  /*IE10 */
-	min-width: 		0; // to avoid FF bug with flex
+@media(min-width: 30rem) {
+	.sapMUCTextButtonContainer {
+		display:		-webkit-box; 		/* OLD - iOS 6-, Safari 3.1-6 */
+		display:		-ms-flexbox; 		/* IE10 */
+		display:		-webkit-flex; 		/* NEW - Chrome */
+		display:		-moz-box;
+		display: 		-moz-flex;			/*NEW		*/
+		display: 		-ms-flex;			/*NEW 		*/
+		display:		flex; 				/*FF 20+ 	*/
+		width: 			100%;
+		-ms-flex-negative: 1;  /*IE10 */
+		min-width: 		0; /* to avoid FF bug with flex*/
+	}
 }
 
+.sapMUCTextButtonContainer {
+	min-width: 		0; /* to avoid FF bug with truncation */
+	width: 			100%; /* it is necessary for the file name truncation in IE10 */
+}
+
+@media(max-width: 30rem) {
+	.sapMUCTextButtonContainer {
+		-ms-flex-negative: 1;  /*strangely it is needed even for display:inline-block in IE10 for the proper truncation of the file name */
+	}
+}
 /*text container holding the file name, a container for attributes and a container for statuses */
-.sapMUCTextContainer {
-	-webkit-box-flex:	10;			/* OLD - iOS 6-, Safari 3.1-6 */
-	-webkit-flex:		10;			/* Chrome */
-	-moz-box-flex:		10;
-	-moz-flex:			10;
-	-ms-flex-positive:	10;			/* IE 10 */
-	-ms-flex-negative:	10;
-	-ms-flex-preferred-size: auto;
-	flex:	 			10 10 auto;			/* NEW, Firefox 20+	*/
-	padding-top: 		0.125rem;
-	padding-bottom: 	0.125rem;
-	display: 			block;
-	overflow: 			hidden;
+@media(min-width: 30rem) {
+	.sapMUCTextContainer {
+		-webkit-box-flex:	10;			/* OLD - iOS 6-, Safari 3.1-6 */
+		-webkit-flex:		10;			/* Chrome */
+		-moz-box-flex:		10;
+		-moz-flex:			10;
+		-ms-flex-positive:	10;			/* IE 10 */
+		-ms-flex-negative:	10;
+		-ms-flex-preferred-size: auto;
+		flex:	 			10 10 auto;			/* NEW, Firefox 20+	*/
+		padding-top: 		0.125rem;
+		padding-bottom: 	0.125rem;
+		display: 			block;
+	}
 }
 
 /*fallback for IE9 as it does not support flex */
@@ -222,33 +235,16 @@ html[data-sap-ui-browser="ie9"] .sapMUCItem .sapMLIBContentNF {
 	padding-top: 0rem;
 }
 
-@media(max-width: 30rem) {
-	.sapMUCTextContainer {
-		padding-top: 0rem;
-		padding-bottom: 0rem;
-		overflow: hidden;
-		width: 100%;
-		white-space: nowrap; // necessary for text ellipsis of the file name in FF
-	}
+.sapMUCTextContainer {
+	width: 100%;
+	white-space: nowrap; /* necessary for text ellipsis of the file name in FF */
+	overflow: hidden;
 }
 
-
-/* if width is less than 30 rem the buttons should be displayed below the text */
-@media(max-width: 30rem) {
-	.sapMUCTextButtonContainer {
-		display: inline-block; // forces the button container to be displayed below the text
-	}
+/*display the attributes inline */
+.sapMUCAttrContainer .sapMObjectAttributeDiv {
+	display: inline;
 }
-
-	/*display the attributes inline */
-	.sapMUCAttrContainer .sapMObjectAttributeDiv {
-		display: inline;
-	}
-
-	/*allow to wrap inside each attribute */
-	.sapMObjectAttributeDiv.sapMUCAttr > .sapMText {
-	//	display: inline;  // it had to be deleted as it breaks everything in IE10
-	}
 
 /* display the statuses inline */
 .sapMUCStatusContainer .sapMObjStatus {
@@ -270,10 +266,10 @@ html[data-sap-ui-browser="ie9"] .sapMUCItem .sapMLIBContentNF {
 	margin-left: 0.1rem;
 }
 
-@media(max-width: 30rem) {
+@media(min-width: 30rem) {
 	/* !important is necessary here for overriding inline style of sap.m.input */
 	.sapMUCEditBox >.sapMInputBaseInner {
-		width: 75% !important;
+		width: 60% !important;
 	}
 }
 
@@ -281,19 +277,21 @@ html[data-sap-ui-browser="ie9"] .sapMUCItem .sapMLIBContentNF {
 	margin-bottom: 0.1875rem;
 }
 
-.sapMUCButtonContainer {
-	white-space: nowrap; // so that buttons are displayed in a row
-	padding-left: 1rem;
-	padding-top: 0rem;
-	align-self: flex-end; // for buttons alignment at the bottom
-	-webkit-align-self: flex-end; // for buttons alignment at the bottom in Safari
-	-ms-flex-item-align:		end; // for buttons alignment at the bottom in IE10
-	-webkit-box-flex:	0;			/* OLD - iOS 6-, Safari 3.1-6 */
-	-webkit-flex:		none;		 	/* Chrome */
-	-moz-box-flex:		0;
-	-moz-flex:			none;
-	-ms-flex:			none;			/* IE 10 */
-	flex:				none;		 	/* NEW, Firefox 20+	*/
+@media(min-width: 30rem) {
+	.sapMUCButtonContainer {
+		white-space: nowrap; /* so that buttons are displayed in a row */
+		padding-left: 1rem;
+		padding-top: 0rem;
+		align-self: flex-end; /* for buttons alignment at the bottom */
+		-webkit-align-self: flex-end; /* for buttons alignment at the bottom in Safari */
+		-ms-flex-item-align:		end; /* for buttons alignment at the bottom in IE10 */
+		-webkit-box-flex:	0;			/* OLD - iOS 6-, Safari 3.1-6 */
+		-webkit-flex:		none;		 	/* Chrome */
+		-moz-box-flex:		0;
+		-moz-flex:			none;
+		-ms-flex:			none;			/* IE 10 */
+		flex:				none;		 	/* NEW, Firefox 20+	*/
+	}
 }
 
 /*fallback for IE9 as it does not support flex */
@@ -305,46 +303,47 @@ html[data-sap-ui-browser="ie9"] .sapMUCButtonContainer {
 
 @media(max-width: 30rem) {
 	.sapMUCButtonContainer {
-		padding-left: 0rem;
 		padding-top: 0.75rem;
 	}
 }
 
 /* this padding is only needed if both buttons are displayed */
+/* for the width less than 30 rem */
 .sapMBtn.sapMUCFirstButton {
-	padding-right: 0.125rem;
+	padding-right: 0.5rem;
 }
 
-/* if the width is less than 30 rem the padding between buttons is changed */
-@media(max-width: 30rem) {
+/* this padding is only needed if both buttons are displayed */
+/* for the width >=30rem */
+@media(min-width: 30rem) {
 	.sapMBtn.sapMUCFirstButton {
-		padding-right: 0.5rem;
+		padding-right: 0.125rem;
 	}
 }
 
-/* for compact form: this padding is only needed if both buttons are displayed */
-.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
-	padding-right: 0.125rem;
-}
-
-/* for compact form: if the width is less than 30 rem the padding beween buttons is changed */
-@media(max-width: 30rem) {
+/* for compact form: for the width less than 30rem */
 .sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
 	padding-right: 0.5rem;
+}
+
+/* for compact form: this padding is only needed if both buttons are displayed */
+@media(min-width: 30rem) {
+	.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+		padding-right: 0.125rem;
 	}
 }
 
 .sapMUCButtonContainer > .sapMBtn {
-	padding-top: 0rem; //the padding of the sap.m.Button should be removed
-	padding-bottom: 0rem; // the padding of the sap.m.Button should be removed
+	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
+	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
 	height:			2.5rem;
 }
 
 
 /*compact form */
 .sapUiSizeCompact .sapMUCButtonContainer > .sapMBtn {
-	padding-top: 0rem; //the padding of the sap.m.Button should be removed
-	padding-bottom: 0rem; // the padding of the sap.m.Button should be removed
+	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
+	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
 }
 
 .sapMUCSeparator {

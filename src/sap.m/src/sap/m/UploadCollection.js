@@ -82,8 +82,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			mimeType : {type : "string[]", group : "Data", defaultValue : null},
 
 			/**
-			 * Allows multiple files to be chosen and uploaded from the same folder.
-			 * This property is not supported by Internet Explorer 8 and 9.
+			 * Lets the user select multiple files from the same folder and then upload them.
+			 * Internet Explorer 8 and 9 do not support this property.
+			 * Please note that the various operating systems for mobile devices can react differently to the property so that fewer upload functions may be available in some cases.
 			 */
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -861,7 +862,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (!oFileNameEditBox) {
 				oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
 					type : sap.m.InputType.Text,
-					fieldWidth: "60%",
+					fieldWidth: "75%",
 					valueState : sValueState,
 					valueStateText : sValueStateText,
 					showValueStateMessage: bShowValueStateMessage,
@@ -870,7 +871,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				}).addStyleClass("sapMUCEditBox");
 			} else {
 				oFileNameEditBox.setValueState(sValueState);
-				oFileNameEditBox.setFieldWidth("60%");
+				oFileNameEditBox.setFieldWidth("75%");
 				oFileNameEditBox.setValueStateText(sValueStateText);
 				oFileNameEditBox.setValue(sFileName);
 				oFileNameEditBox.setDescription(oFile.extension);
