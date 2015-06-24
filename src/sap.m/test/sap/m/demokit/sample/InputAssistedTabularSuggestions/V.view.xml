@@ -49,7 +49,12 @@
 						<Label text="{Name}"/>
 						<Label text="{ProductId}"/>
 						<Label text="{SupplierName}"/>
-						<Label text="{Price} {CurrencyCode}"/>
+						<Label
+							text="{
+ 		 						parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+		 						formatOptions: {showMeasure: true}
+							}"/>
 					</cells>
 					</ColumnListItem>
 				</suggestionRows>

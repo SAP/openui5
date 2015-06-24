@@ -52,13 +52,16 @@
                             <Text text="{SupplierName}" />
                             <Text text="{Width} x {Depth} x {Height} {DimUnit}" />
                             <ObjectNumber
-                                    number="{Price}"
+                                    number="{
+			                            parts:[{path:'Price'},{path:'CurrencyCode'}],
+			                            type: 'sap.ui.model.type.Currency',
+		                            	formatOptions: {showMeasure: false}
+		                            }"
                                     unit="{CurrencyCode}" />
                         </cells>
                     </ColumnListItem>
                 </items>
             </Table>
-
 		</content>
 		<footer>
             <OverflowToolbar id="otbFooter">
