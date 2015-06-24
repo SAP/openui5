@@ -207,7 +207,7 @@ QUnit.test("Rendering after initial load", function(assert) {
 	assert.ok(this.oUploadCollection, "UploadCollection instantiated");
 	assert.ok(jQuery.sap.domById("uploadCollection1-list"), "Item list is rendered");
 	assert.ok(jQuery.sap.domById("uploadCollection1-toolbar"), "Toolbar of the item list is rendered");
-	assert.ok(jQuery.sap.domById("uploadCollection1-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
+	assert.ok(jQuery.sap.domById("uploadCollection1-numberOfAttachmentsTitel"), "Label Number of attachments label is rendered");
 });
 
 QUnit.test("Rendering of an item after change event", function(assert) {
