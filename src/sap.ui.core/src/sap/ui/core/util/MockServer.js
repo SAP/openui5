@@ -1393,7 +1393,7 @@ sap.ui
 						date.setDate(Math.floor(Math.random() * 30));
 						date.setMonth(Math.floor(Math.random() * 12));
 						date.setMilliseconds(0);
-						return date.toJSON();
+						return "/Date(" + date.getTime() + "+0000)/";
 					default:
 						return this._generateDataFromEntity(mComplexTypes[sType], iIndex, mComplexTypes);
 				}
