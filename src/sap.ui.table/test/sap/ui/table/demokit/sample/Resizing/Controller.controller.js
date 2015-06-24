@@ -14,58 +14,37 @@ sap.ui.define([
 			var oView = this.getView();
 			oView.setModel(oJSONModel);
 			
-			oView.setModel(new JSONModel(), "ui");
+			oView.setModel(new JSONModel({
+				visibleRowCountMode: "Fixed"
+			}), "ui");
 			this.onColumnWidthsChange();
 			
 			this._messageBuffer = [];
 		},
 		
-		onRowCountModeSelect : function(oEvent) {
-			var oView = this.getView();
-			var sButtonId = oEvent.getParameter("id");
-			
-			var sMode = "Fixed";
-			if (sButtonId == oView.createId("rowCountModeAuto")) {
-				sMode = "Auto";
-			} else if (sButtonId == oView.createId("rowCountModeInteractive")) {
-				sMode = "Interactive";
-			}
-			
-			oView.byId("table").setVisibleRowCountMode(sMode);
-		},
-		
 		onColumnWidthsChange : function(oEvent) {
-			var oView = this.getView();
-			var sButtonId = oEvent ? oEvent.getParameter("id") : null;
-			
+			var sColumnWidthMode = oEvent ? oEvent.getParameter("key") : "Static";
 			var oWidthData;
-			if (sButtonId == oView.createId("columnWidthsFlexible")) {
+			
+			if (sColumnWidthMode == "Flexible") {
 				oWidthData = {
-					widthName: "25%",
-					widthCategory: "25%",
-					widthImage: "15%",
-					widthQuantity: "10%",
-					widthDate: "25%"
-				};
-			} else if (sButtonId == oView.createId("columnWidthsMixed")) {
-				oWidthData = {
-					widthName: "20%",
-					widthCategory: "11rem",
-					widthImage: "7rem",
-					widthQuantity: "6rem",
-					widthDate: "9rem"
+					name: "25%",
+					category: "25%",
+					image: "15%",
+					quantity: "10%",
+					date: "25%"
 				};
 			} else {
 				oWidthData = {
-					widthName: "13rem",
-					widthCategory: "11rem",
-					widthImage: "7rem",
-					widthQuantity: "6rem",
-					widthDate: "9rem"
+					name: sColumnWidthMode == "Mixed" ? "20%" : "13rem",
+					category: "11rem",
+					image: "7rem",
+					quantity: "6rem",
+					date: "9rem"
 				};
 			}
 			
-			oView.getModel("ui").setData(oWidthData);
+			this.getView().getModel("ui").setProperty("/widths", oWidthData);
 		},
 		
 		onColumnResize : function(oEvent) {
@@ -81,6 +60,7 @@ sap.ui.define([
 				this._messageTimer = jQuery.sap.delayedCall(50, this, function(){
 					MessageToast.show(this._messageBuffer.join("\n"));
 					this._messageBuffer = [];
+					this._messageTimer = null;
 				});
 			}
 		},
