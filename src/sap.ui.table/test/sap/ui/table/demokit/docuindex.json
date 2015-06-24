@@ -21,6 +21,7 @@
 					"sap.ui.table.sample.Menus",
 					"sap.ui.table.sample.TableFreeze",
 					"sap.ui.table.sample.Resizing",
+					"sap.ui.table.sample.MultiHeader",
 					"sap.ui.table.sample.OData"
 				]
 			}
@@ -54,7 +55,13 @@
 				"id": "sap.ui.table.sample.Resizing",
 				"name": "Resizing",
 				"description": "Example for column resizing and the different row count modes."
-			},{
+			},
+			{				
+				"id": "sap.ui.table.sample.MultiHeader",
+				"name": "Multi Header",
+				"description": "Example for multi-header of table."
+			},
+			{
 				"id": "sap.ui.table.sample.OData",
 				"name": "OData",
 				"description": "OData related example"
