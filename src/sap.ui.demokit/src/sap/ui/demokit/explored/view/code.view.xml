@@ -23,15 +23,22 @@
 				press="onDownload" />
 		</headerContent>
 		<content>
-			<OverflowToolbar content="{/files}">
-				<content>
-					<Button  text="{name}"
-							icon="{path: 'name', formatter: '.getButtonIconFormatter'}"
-							 type="{parts:[{path: '/fileName'}, {path: 'name'}], formatter:'.getButtonTypeFormatter'}"
-							 press="onViewCodePress"/>
-				</content>
-			</OverflowToolbar>
-			<d:CodeViewer id="fileContent" class="sapUiExploredCodeViewer"/>
+			<IconTabBar
+					class="sapUiContentPadding"
+					expandable="false"
+					selectedKey="{/fileName}"
+					select="handleTabSelectEvent"
+					items="{/files}" >
+				<items>
+					<IconTabFilter
+							key="{name}"
+							text="{name}" >
+						<content>
+							<d:CodeViewer class="sapUiExploredCodeViewer" source="{raw}"/>
+						</content>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
 		</content>
 	</Page>
 </mvc:View>

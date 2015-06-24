@@ -25,7 +25,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			}
 
 			this._sId = oEvt.getParameter("arguments").id;
-			var sFileName = oEvt.getParameter("arguments").fileName;
+			var sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
 
 			// retrieve sample object
 			var oSample = sap.ui.demokit.explored.data.samples[this._sId];
@@ -58,7 +58,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 					stretch : oConfig.sample ? oConfig.sample.stretch : false,
 					files : [],
 					iframe : oConfig.sample.iframe,
-					fileName: sFileName
+					fileName: sFileName,
+					includeInDownload: oConfig.sample.includeInDownload
 				};
 
 				// retrieve files
@@ -82,35 +83,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			// set model
 			this.getView().setModel(new sap.ui.model.json.JSONModel(this._oData));
 
-			// show file content if it is set already
-			this._setFileContent(sFileName);
-
 			// scroll to top of page
 			var page = this.getView().byId("page");
 			page.scrollTo(0);
-		},
-
-		_setFileContent: function(sFileName) {
-			var oFileViewer = this.getView().byId("fileContent");
-			oFileViewer.setVisible(true);
-			
-			if (!sFileName) {
-				oFileViewer.setSource("");
-				oFileViewer.setVisible(false);
-				return;
-			}
-
-			var aFiles = this._oData.files,
-				iPossInArray = -1,
-				bResult = aFiles.some(function(element, index) {
-					if (element.name === sFileName) {
-						iPossInArray = index;
-						return true;
-					}
-				});
-			if (bResult) {
-				oFileViewer.setSource(aFiles[iPossInArray].code);
-			}
 		},
 
 		fetchSourceFile : function (sRef, sFile) {
@@ -163,12 +138,19 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 				}
 			}
 
-			var sRef = jQuery.sap.getModulePath(this._sId);
+			var sRef = jQuery.sap.getModulePath(this._sId),
+				aExtraFiles = oData.includeInDownload || [],
+				that = this;
 			oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
 
 			if (!oData.iframe) {
 				oZipFile.file("index.html", this.createIndexFile(oData));
 			}
+
+			// add extra download files
+			aExtraFiles.forEach(function(sFileName, index) {
+				oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+			});
 
 			var oContent = oZipFile.generate();
 
@@ -248,31 +230,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"');
 		},
 
-		getButtonIconFormatter: function(sFileName) {
-			var fileIcon = "sap-icon://";
-			switch (sFileName.substr(sFileName.lastIndexOf('.') + 1)) {
-				case "js":
-					fileIcon += "display";
-					break;
-				case "xml":
-					fileIcon += "attachment-html";
-					break;
-				default:
-					fileIcon += "attachment-text-file";
-			}
-
-			return fileIcon;
-		},
-
-		getButtonTypeFormatter: function(sSelectedFileName, sFileName) {
-			return (sSelectedFileName === sFileName) ? sap.m.ButtonType.Accept : sap.m.ButtonType.Default;
-		},
-
-		onViewCodePress: function(oEvent) {
-			var sFileName = oEvent.getSource().getText();
+		handleTabSelectEvent: function(oEvent) {
+			var sFileName = oEvent.getParameter("selectedKey");
 			this.router.navTo("code_file", {
 				id : this._sId,
-				fileName: sFileName
+				fileName: encodeURIComponent(sFileName)
 			}, false);
 		}
 
