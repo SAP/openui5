@@ -76,6 +76,7 @@
 @sapUiListBorderColor: @sapList_BorderColor;
 @sapUiListHighlightColor: @sapList_HighlightColor;
 @sapUiListSelectionBackgroundColor: @sapList_SelectionBackgroundColor;
+@sapUiListBackground: @sapList_Background;
 @sapUiListHoverBackground: @sapList_Hover_Background;
 
 @sapUiScrollBarFaceColor: @sapScrollBar_FaceColor;
@@ -686,6 +687,21 @@
 @sapUiFieldtextColor: @sapUiBaseText;
 @sapUiFieldPlaceholderTextColor: @sapUiExtraLightText;
 
+@sapUiListTextColor: @sapUiDarkText;
+@sapUiListVerticalBorderColor: @sapUiLightBorder;
+@sapUiListActiveBackground: @sapUiListHighlightColor;
+@sapUiListActiveTextColor: contrast(@sapUiListActiveBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@sapUiListSelectionHoverBackground: contrast(@sapUiListSelectionBackgroundColor, darken(@sapUiListSelectionBackgroundColor, 3), lighten(@sapUiListSelectionBackgroundColor, 6));
+@sapUiListFooterBackground: lighten(@sapUiExtraLightBG, 2);
+@sapUiListFooterTextColor: @sapUiLightText;
+@sapUiListGroupHeaderBackground: lighten(@sapUiExtraLightBG, 2);
+//@sapUiListGroupHeaderBorderColor:
+//@sapUiListGroupHeaderTextColor:
+@sapUiListTableFooterBorder: @sapUiMediumBorder;
+@sapUiListTableTextSize: 0.875rem;
+@sapUiListTableIconSize: 1rem;
+
+
 @sapUiCalendarColorToday: #ffc51c;
 
 // shadow for popups
@@ -882,7 +898,6 @@
 @sapUiListFooterText: @sapUiLightText;
 @sapUiListSingleSelectMasterAsActive: false;
 @sapUiListHeaderBorder: @sapUiLightBorder;
-@sapUiListTextColor: @sapUiDarkText;
 @sapUiGroupHeaderBG: lighten(@sapUiExtraLightBG,2);
 @sapUiListNoDataTextColor: @sapUiDarkText;
 
