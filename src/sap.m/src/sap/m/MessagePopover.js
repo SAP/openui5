@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * ${copyright}
  */
 
@@ -609,18 +609,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				}
 			}, this);
 
-			if (sap.ui.Device.system.phone) {
-				this._fnFilterList("all");
-			} else {
-				if (!this.getInitiallyExpanded()) {
-					this._oPopover.addStyleClass(CSS_CLASS + "-init");
-					this._oSegmentedButton.setSelectedButton("none");
-				} else {
-					this._oPopover.setContentHeight(this._oPopover.getContentWidth());
-					this._fnFilterList("all");
-				}
-			}
-
 			return this;
 		};
 
@@ -916,9 +904,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			this._sCurrentList = sCurrentListName;
 			this._oLists[sCurrentListName].setVisible(true);
 
-			this._oPopover
-				.setContentHeight(this._oPopover.getContentWidth())
-				.removeStyleClass(CSS_CLASS + "-init");
+			this._expandMsgPopover();
 
 			this.fireListSelect({messageTypeFilter: this._getCurrentMessageTypeFilter()});
 		};
@@ -1018,6 +1004,47 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
+		 * Restores the state defined by the initiallyExpanded property of the MessagePopover
+		 * @private
+		 */
+		MessagePopover.prototype._restoreExpansionDefaults = function () {
+			if (sap.ui.Device.system.phone) {
+				this._fnFilterList("all");
+			} else  if (this.getInitiallyExpanded()) {
+				this._expandMsgPopover();
+				this._fnFilterList("all");
+			} else {
+				this._collapseMsgPopover();
+				LIST_TYPES.forEach(function (sListName) {
+					this._oLists[sListName].setVisible(false);
+				}, this);
+			}
+		};
+
+		/**
+		 * Expands the MessagePopover so that the width and height are equal
+		 * @private
+		 */
+		MessagePopover.prototype._expandMsgPopover = function () {
+			this._oPopover
+				.setContentHeight(this._oPopover.getContentWidth())
+				.removeStyleClass(CSS_CLASS + "-init");
+		};
+
+		/**
+		 * Shrinks the height of the MessagePopover to 48px so that only the header with
+		 * the SegmentedButton is visible
+		 * @private
+		 */
+		MessagePopover.prototype._collapseMsgPopover = function () {
+			this._oPopover
+				.addStyleClass(CSS_CLASS + "-init")
+				.setContentHeight("48px");
+
+			this._oSegmentedButton.setSelectedButton("none");
+		};
+
+		/**
 		 * Opens the MessagePopover
 		 *
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
@@ -1035,6 +1062,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			}
 
 			if (this._oPopover) {
+				this._restoreExpansionDefaults();
 				this._oPopover.openBy(oControl);
 			}
 

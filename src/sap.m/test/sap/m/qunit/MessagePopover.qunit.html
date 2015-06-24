@@ -383,6 +383,22 @@
 			assert.ok(this.oMessagePopover.hasStyleClass("test"), "should have 'test' class");
 		});
 
+		QUnit.test("_collapseMsgPopover() is called on opening when initiallyExpanded=false", function (assert) {
+			var shrinkSpy = sinon.spy();
+
+			this.oMessagePopover._collapseMsgPopover = shrinkSpy;
+			this.oMessagePopover.setInitiallyExpanded(false);
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.oMessagePopover.close();
+			
+			assert.strictEqual(shrinkSpy.calledOnce, true, "_collapseMsgPopover() is called the first time");
+
+			this.oMessagePopover.openBy(this.oButton);
+
+			assert.strictEqual(shrinkSpy.callCount, 2, "_collapseMsgPopover() is called the second time");
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
@@ -410,8 +426,25 @@
 			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover"), -1, "sapMMsgPopover class should present on the HTML element");
 		});
 
+		QUnit.test("sapMMsgPopover-init class should be present when initiallyExpanded=false", function (assert) {
+			this.oMessagePopover.setInitiallyExpanded(false);
+			this.oMessagePopover.openBy(this.oButton);
+			var oDomRef = this.oMessagePopover.getDomRef();
 
+			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover-init"), -1,
+				"sapMMsgPopover-init class should present on the HTML element");
+		});
 
+		QUnit.test("sapMMsgPopover-init class should be present after shrinking the MessagePopover", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.oMessagePopover._collapseMsgPopover();
+			sap.ui.getCore().applyChanges();
+
+			var oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover-init"), -1,
+				"sapMMsgPopover-init class should present on the HTML element");
+		});
 
 		QUnit.module("Public API for async handlers", {
 			sCustomId: "custom-msg-popover-id",
