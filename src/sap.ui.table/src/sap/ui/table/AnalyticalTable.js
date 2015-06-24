@@ -397,7 +397,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			
 			var iLevel = oContextInfo ? oContextInfo.level : 0;
 
-			var $FirstCellLabel = $row.find(".sapUiTableTdFirst .sapUiTableCell > *");
+			var $FirstCellLabel;
+			if (this.getFixedColumnCount() > 0) {
+				$FirstCellLabel = $fixedRow.find(".sapUiTableTdFirst .sapUiTableCell > *");
+			} else {
+				$FirstCellLabel = $row.find(".sapUiTableTdFirst .sapUiTableCell > *");
+			}
 			$FirstCellLabel.width('auto');
 			// 40 is standard space between the group header content and the sum label
 			iFirstLabelWidth = $FirstCellLabel.outerWidth() + 40;

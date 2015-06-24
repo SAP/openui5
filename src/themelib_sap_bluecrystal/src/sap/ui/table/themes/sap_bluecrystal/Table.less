@@ -8,6 +8,7 @@
 @sapUiTableCompactRowHeight: 32px;
 @sapUiTableCompactColHdrHeight: 32px;
 @sapUiTableCompactRowHdrWidth: 32px;
+@sapUiTableCozyRowHdrWidth: 3rem;
 
 @sapUiTableCondensedRowHeight: 25px;
 @sapUiTableCondensedColHdrHeight: 25px;
@@ -15,7 +16,6 @@
 
 .sapUiTable {
 	font-family: @sapUiDesktopFontFamily;
-	font-size: @sapUiDesktopFontSize;
 	color: @sapUiStandardText;
 }
 
@@ -156,13 +156,9 @@
 }
 
 .sapUiTableRowHdr {
-	border-bottom: 1px solid @sapUiLightBorder;
-	border-right: 1px solid @sapUiLightBorder;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	border-right: 1px solid @sapUiExtraLightBorder;
 	position: relative;
-}
-
-.sapUiSizeCompact .sapUiTableRowHdr {
-	border-bottom: 1px solid @sapUiLightBorder;
 }
 
 .sapUiTableTr > td {
@@ -184,8 +180,11 @@
 	border-bottom: 1px solid @sapUiExtraDarkBorder !important;
 }
 
+// Hide last row bottom cell border
 .sapUiTableRowHdr:last-child,
-.sapUiTableCtrl tr:not(.sapUiTableFixedLastTopRow):last-child > td {
+.sapUiTableCtrl:last-child tr:not(.sapUiTableFixedLastTopRow):last-child > td,
+.sapUiTableCtrlRowFixedBottom tr:not(.sapUiTableFixedLastTopRow):last-child > td
+{
 	border-bottom: none;
 }
 
@@ -249,26 +248,78 @@
 
 /* Table Row Checkbox */
 /* REQUIRES ICON FONTS */
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHdr::after {
-	content: '';
-	display: block;
-	position: absolute;
-	width: 16px;
-	height: 16px;
-	border: 2px @sapUiDarkBorder solid;
-	background-color: @sapUiLightestBG;
-	font-family: "SAP-icons";
-	font-size: 11px;
-	line-height: 12px;
-	text-align: center;
-	color: @sapUiHighlight;
-	box-sizing: border-box;
-	margin: auto;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
+
+.sapUiSizeCompact {
+	.sapUiTableSelModeMultiToggle {
+		.sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
+		.sapUiTableRowHdr::after {
+			width: 16px;
+			height: 16px;
+			font-size: 11px;
+			line-height: 12px;
+		}
+	}
+}
+
+.sapUiSizeCozy {
+	.sapUiTableSelModeMultiToggle {
+		.sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
+		.sapUiTableRowHdr::after {
+			width: 1.375rem;
+			height: 1.375rem;
+			font-size: 1rem;
+		}
+		
+		.sapUiTableColRowHdr.sapUiTableSelAllEnabled,
+		.sapUiTableRowHdr {
+			width: @sapUiTableCozyRowHdrWidth;
+		}
+	}
+}
+
+.sapUiSizeCompact, .sapUiSizeCozy {
+	.sapUiTableSelModeMultiToggle {
+		.sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
+		.sapUiTableRowHdr::after {
+			content: '';
+			display: block;
+			position: absolute;
+			border: 2px @sapUiDarkBorder solid;
+			background-color: @sapUiLightestBG;
+			font-family: "SAP-icons";
+			text-align: center;
+			color: @sapUiHighlight;
+			box-sizing: border-box;
+			margin: auto;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+		}
+		
+		/* only display if data is available */
+		 .sapUiTableRowHidden.sapUiTableRowHdr::after {
+			display: none;
+		}
+		
+		.sapUiTableRowHdr:hover:after {
+			border-color: @sapUiHighlight;
+		}
+		
+		:not(.sapUiTableSelAll).sapUiTableSelAllEnabled.sapUiTableColRowHdr::after,
+		.sapUiTableRowHdr.sapUiTableRowSel::after {
+			content: '\e05b';
+		}
+		
+		.sapUiTableColRowHdr .sapUiTableColRowHdrIco,
+		.sapUiTableColRowHdr:hover .sapUiTableColRowHdrIco {
+			display: none;
+		}
+	}
+
+	.sapUiTableRowHdr.sapUiAnalyticalTableDummy:after {
+		display: none;
+	}
 }
 
 .sapUiSizeCondensed .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled::after {
@@ -276,32 +327,6 @@
 	font-size: 10px;
 }
 
-/* only display if data is available */
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHidden.sapUiTableRowHdr::after {
-	display: none;
-}
-
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled::after {
-	margin-top: 7px;
-}
-
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHdr:hover:after {
-	border-color: @sapUiHighlight;
-}
-
-.sapUiSizeCompact .sapUiTableRowHdr.sapUiAnalyticalTableDummy:after {
-	display: none;
-}
-
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle :not(.sapUiTableSelAll).sapUiTableSelAllEnabled.sapUiTableColRowHdr::after,
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHdr.sapUiTableRowSel::after {
-	content: '\e05b';
-}
-
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr .sapUiTableColRowHdrIco,
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr:hover .sapUiTableColRowHdrIco {
-	display: none;
-}
 
 
 /*******************************************************************************
@@ -319,7 +344,8 @@
 	border-top: 1px solid @sapUiLightBorder;
 	border-bottom: 1px solid @sapUiLightBorder;
 }
-.sapUiTable>div:last-child {
+
+.sapUiTable > div:last-child {
 	border-bottom: 1px solid @sapUiLightBorder;
 }
 
@@ -421,20 +447,32 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline: 1px dotted @sapUiFocus;
 }
 
-.sapUiTableRSel .sapUiTableColHdrScr,
-.sapUiTableRSel .sapUiTableColHdrFixed,
-.sapUiTableRSel .sapUiTableCtrlScr,
-.sapUiTableRSel .sapUiTableCtrlScrFixed {
-	margin-left: @sapUiTableRowHdrWidth;
+.sapUiTableRSel {
+	.sapUiTableColHdrScr,
+	.sapUiTableColHdrFixed,
+	.sapUiTableCtrlScr,
+	.sapUiTableCtrlScrFixed {
+		margin-left: @sapUiTableRowHdrWidth;
+	}
 }
 
-.sapUiSizeCompact .sapUiTableRSel .sapUiTableColHdrScr,
-.sapUiSizeCompact .sapUiTableRSel .sapUiTableColHdrFixed,
-.sapUiSizeCompact .sapUiTableRSel .sapUiTableCtrlScr,
-.sapUiSizeCompact .sapUiTableRSel .sapUiTableCtrlScrFixed {
-	margin-left: @sapUiTableCompactRowHdrWidth;
+.sapUiSizeCompact .sapUiTableRSel {
+	.sapUiTableColHdrScr,
+	.sapUiTableColHdrFixed,
+	.sapUiTableCtrlScr,
+	.sapUiTableCtrlScrFixed {
+		margin-left: @sapUiTableCompactRowHdrWidth;
+	}
 }
 
+.sapUiSizeCozy .sapUiTableRSel {
+	.sapUiTableColHdrScr,
+	.sapUiTableColHdrFixed,
+	.sapUiTableCtrlScr,
+	.sapUiTableCtrlScrFixed {
+		margin-left: @sapUiTableCozyRowHdrWidth;
+	}
+}
 
 .sapUiTableRSel .sapUiTableTr > td:first-child {
 	border-right: none;
@@ -460,7 +498,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 /* Table Row Tree Node */
 .sapUiTableTr {
 	color: @sapUiText;
-	font-size: 12px;
 	font-weight: normal;
 }
 
@@ -531,7 +568,7 @@ div.sapUiTable {
 	font-size: @sapUiFontSize;
 }
 
-.sapUiTableM.sapUiTableTouch {
+.sapUiTableM.sapUiTableTouch .sapUiScrollBar {
 
 	::-webkit-scrollbar-thumb {
 		background-color: darken(@sapUiLightestBG,13);

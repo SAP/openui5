@@ -569,7 +569,7 @@ html[dir=rtl] .sapUiTableColRsz {
 }
 
 /* Keep sure that sap.m.Link is vertically aligned inside a table cell */
-.sapUiTableCell .sapUiLnk {
+.sapUiTableCell .sapUiLnk, .sapUiTableColCell .sapUiImg {
 	vertical-align: middle;
 }
 
@@ -630,42 +630,49 @@ html[dir=rtl] .sapUiTableColRsz {
 	cursor: pointer;
 }
 
-.sapUiSizeCompact .sapUiTableGroupIcon {
-	padding-left: 0;
-	margin-left: 0;
-	background-image: none;
-}
+.sapUiSizeCompact, .sapUiSizeCozy {
+	// Hide plus/minus
+	.sapUiTableGroupIcon {
+		padding-left: 0;
+		margin-left: 0;
+		background-image: none;
+	}
 
-.sapUiSizeCompact .sapUiTableGroupIcon::before,
-.sapUiSizeCompact .sapUiTableTreeIcon::before {
-	font-family: "SAP-icons";
-	font-size: 12px;
-	font-weight: normal;
-	display: inline-block;
-	width: @sapUiTableRowHdrWidth;
-	text-align: center;
-	vertical-align: middle;
+	// Show arrow
+	.sapUiTableGroupIcon::before,
+	.sapUiTableTreeIcon::before {
+		font-family: "SAP-icons";
+		font-size: 12px;
+		font-weight: normal;
+		display: inline-block;
+		width: @sapUiTableRowHdrWidth;
+		text-align: center;
+		vertical-align: middle;
+	}
+	
+	// Show arrow
+	.sapUiTableGroupIcon.sapUiTableGroupIconOpen::before,
+	.sapUiTableTreeIconNodeOpen::before {
+		content: '\e1e2';
+	}
+	
+	// Show arrow
+	.sapUiTableGroupIcon.sapUiTableGroupIconClosed::before,
+	.sapUiTableTreeIconNodeClosed::before {
+		content: '\e066';
+	}
+	
+	.sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon {
+		left: 0;
+	}
 }
 
 .sapUiTableGroupIcon {
 	line-height: @sapUiTableRowHeight;
 }
 
-.sapUiSizeCompact .sapUiTableGroupIcon.sapUiTableGroupIconOpen::before,
-.sapUiSizeCompact .sapUiTableTreeIconNodeOpen::before {
-	content: '\e1e2';
-}
-
-.sapUiSizeCompact .sapUiTableGroupIcon.sapUiTableGroupIconClosed::before,
-.sapUiSizeCompact .sapUiTableTreeIconNodeClosed::before {
-	content: '\e066';
-}
-
 .sapUiTableRowHdr.sapUiTableGroupHeader {
 	border-right: none;
-}
-
-.sapUiTableRowHdr.sapUiTableGroupHeader {
 	position: relative;
 }
 
@@ -687,10 +694,6 @@ html[dir=rtl] .sapUiTableColRsz {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-width: 60px;
-}
-
-.sapUiSizeCompact .sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon {
-	left: 0;
 }
 
 .sapUiSizeCompact .sapUiTableTr > td {
@@ -763,11 +766,17 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	text-align: center;
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
+	cursor: default;
 }
+
+ .sapUiTableColDropDown:active {
+ 	color: @sapUiTextInverted;
+ }
 
 .sapUiTableColResizer {
 	right: 0;
 	width: 2rem;
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
+	cursor: default;
 }
