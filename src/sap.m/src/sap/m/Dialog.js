@@ -676,14 +676,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 			//set the max-height so contents with defined height and width can be displayed with scroller when the height/width is smaller than the content
 			this.$('cont').css({ 'max-height': iMaxHeight + "px" });
-
-			if (!(sap.ui.Device.system.tablet || sap.ui.Device.system.desktop)) {
-				if (sap.ui.Device.orientation.portrait) {
-					oStyles.width = iMaxWidth + "px";
-				} else {
-					oStyles['min-width'] = iWindowHeight + "px";
-				}
-			}
 		}
 
 		if ((bStretch && !bMessageType) || (bStretchOnPhone && jQuery.device.is.iphone)) {
