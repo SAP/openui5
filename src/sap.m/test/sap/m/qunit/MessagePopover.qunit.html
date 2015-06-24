@@ -409,6 +409,160 @@
 
 			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover"), -1, "sapMMsgPopover class should present on the HTML element");
 		});
+
+
+
+
+		QUnit.module("Public API for async handlers", {
+			sCustomId: "custom-msg-popover-id",
+			oSpies : {},
+			setup: function () {
+				var that = this;
+
+				that.promiseDescription = new window.Promise(function(resolve) {
+					that.resolveDescription = resolve;
+				});
+
+				that.promiseURL = new window.Promise(function(resolve) {
+					that.resolveURL = resolve;
+				});
+
+				jQuery.sap.require("sap.m.MessagePopover");
+
+				sap.m.MessagePopover.setDefaultHandlers({
+					asyncDescriptionHandler: function(config) {
+						config.item.setDescription(that.mockMarkupDescription);
+						config.promise.resolve();
+						that.resolveDescription();
+					},
+					asyncURLHandler: function(config) {
+						var allowed = config.url.lastIndexOf("http", 0) < 0;
+						config.promise.resolve({
+							allowed: allowed,
+							id: config.id
+						});
+						that.resolveURL();
+					}
+				});
+
+				this.oMessagePopover = new sap.m.MessagePopover(this.sCustomId, {});
+
+				this.oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+				this.oMockupData = {
+					count: 5,
+					messages: [{
+						type: "Error",
+						title: "Error message",
+						description: "<p>First Error message description</p>"
+					}, {
+						type: "Warning",
+						title: "Warning without description",
+						description: ""
+					}, {
+						type: "Success",
+						title: "Success message",
+						description: "<p>First Success message description</p>"
+					}, {
+						type: "Error",
+						title: "Error",
+						description: "<p>Second Error message description</p>"
+					}, {
+						type: "Information",
+						title: "Information message (Long)",
+						description: "<h1>HTML sanitization test</h1><h3>heading</h3><p>paragraph</p><embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>",
+						longtextUrl: "protocol://domain.tld"
+					}]};
+
+				this.mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
+						"<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
+						"<ul>" +
+						"	<li>Unordered list item 1 <a href=\"http://sap.com/some/url\">Absolute URL</a></li>" +
+						"	<li>Unordered list item 2</li>" +
+						"</ul>" +
+						"<ol>" +
+						"	<li>Ordered list item 1 <a href=\"/relative/url\">Relative URL</a></li>" +
+						"	<li>Ordered list item 2</li>" +
+						"</ol>";
+
+				this.oMessageTemplate = new sap.m.MessagePopoverItem({
+					type: "{type}",
+					title: "{title}",
+					description: "{description}",
+					longtextUrl: "{longtextUrl}",
+					markupDescription: true
+				});
+
+				this.oButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function(){});
+			},
+			bindMessagePopover: function(oMessagePopover, oData) {
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(oData);
+				sap.ui.getCore().setModel(oModel);
+
+				oMessagePopover.bindAggregation("items", {
+					path: "/messages",
+					template: this.oMessageTemplate
+				});
+			},
+			openDetailPageAfterOpen: function(oMessagePopover, iItem) {
+				oMessagePopover.attachAfterOpen(function() {
+					var oItem = oMessagePopover._oLists['all'].getItems()[iItem].getDomRef();
+					sap.ui.test.qunit.triggerEvent("tap", oItem);
+				});
+			},
+			teardown: function() {
+				this.oMessagePopover.destroy();
+				this.oButton.destroy();
+
+				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				this.oMessagePopover = null;
+				this.oButton = null;
+				this.oMockupData = null;
+				this.oMessageTemplate.destroy();
+			}
+		});
+
+		QUnit.test("Async description handler", function (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.promiseDescription.then(function () {
+				assert.ok(true, "Default async description handler has been executed");
+				done();
+			});
+
+			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
+
+		QUnit.test("Async URL handler", function (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.promiseURL.then(function () {
+				assert.ok(true, "Default async URL handler has been executed");
+				done();
+			});
+
+			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
