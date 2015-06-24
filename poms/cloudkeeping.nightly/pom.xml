@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.ui5</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.5</version>
 	</parent>
 
 
@@ -36,7 +36,7 @@
 	<name>SAPUI5 - Automated NetWeaver Cloud Deployment</name>
 	<description>SAPUI5 - Automated NetWeaver Cloud Deployment</description>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Properties Settings
 	***************************************************************************-->
@@ -47,16 +47,16 @@
 		<command>status</command>
 		<user></user> <!-- SDN User -->
 		<password></password> <!-- SDN Password -->
-		
+
 	</properties>
-	
+
 
 	<!--**************************************************************************
 	* POM SECTION: Build Settings
 	***************************************************************************-->
 
 	<build>
-	
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -66,9 +66,39 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	
+
 		<plugins>
-		
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>deployables</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.sap.ui5.dist</groupId>
+									<artifactId>sapui5-sdk-dist</artifactId>
+									<version>${sapui5.version}</version>
+									<classifier>hcp</classifier>
+									<type>war</type>
+									<destFileName>sapui5-sdk-dist.war</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>com.sap.ui5.tools.maven</groupId>
 				<artifactId>nwcloud-maven-plugin</artifactId>
@@ -83,7 +113,7 @@
 						<user>${user}</user>
 						<password>${password}</password>
 						<deployables>
-							<deployable>${basedir}/overlay/target/sapui5-sdk-dist.war</deployable>
+							<deployable>${project.build.directory}/deployables/sapui5-sdk-dist.war</deployable>
 						</deployables>
 					</properties>
 					<httpProxyHost>proxy</httpProxyHost>
@@ -94,9 +124,9 @@
 					<httpsNonProxyHosts>localhost|*sap.corp</httpsNonProxyHosts>
 				</configuration>
 			</plugin>
-      
+
 		</plugins>
-		
+
 	</build>
 
 </project>

@@ -116,7 +116,7 @@
 									<type>war</type>
 									<overWrite>false</overWrite>
 									<destFileName>uilib-sample.war</destFileName>
-								</artifactItem>								
+								</artifactItem>
 								<artifactItem>
 									<groupId>com.sap.ui5.test</groupId>
 									<artifactId>databinding</artifactId>
