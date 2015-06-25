@@ -699,67 +699,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		if (oBinding) {
 			jQuery.each(this.getRows(), function(iIndex, oRow) {
-
-				var $row = oRow.$();
-				var $fixedRow = oRow.$("fixed");
-				var $rowHdr = that.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
+				var $rowDomRefs = oRow.getDomRefs(true);
 
 				// update row header tooltip
 				if (oRow.getBindingContext()) {
-					$rowHdr.attr("title", that._oResBundle.getText("TBL_ROW_SELECT"));
+					$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
 				} else {
-					$rowHdr.attr("title", "");
+					$rowDomRefs.rowSelector.attr("title", "");
 				}
 
 				if (iFixedTopRows > 0) {
-					var bIsTopRow = iIndex < iFixedTopRows;
-					if (bIsTopRow) {
-						if (!$row.hasClass("sapUiTableFixedTopRow")) {
-							$row.addClass('sapUiTableFixedTopRow');
-							$fixedRow.addClass('sapUiTableFixedTopRow');
-							$rowHdr.addClass('sapUiTableFixedTopRow');
-						}
-					} else if ($row.hasClass("sapUiTableFixedTopRow")) {
-						$row.removeClass('sapUiTableFixedTopRow');
-						$fixedRow.removeClass('sapUiTableFixedTopRow');
-						$rowHdr.removeClass('sapUiTableFixedTopRow');
-					}
+					$rowDomRefs.row.toggleClass("sapUiTableFixedTopRow", iIndex < iFixedTopRows);
+					$rowDomRefs.row.toggleClass("sapUiTableFixedLastTopRow", iIndex == iFixedTopRows - 1);
 				}
 
 				if (iFixedBottomRows > 0) {
-					var bIsBottomRow,
-						bIsPreBottomRow;
+					var bIsPreBottomRow;
 					if (oBinding.getLength() >= iVisibleRowCount) {
-						bIsBottomRow = iIndex > iVisibleRowCount - iFixedBottomRows - 1;
-						bIsPreBottomRow = iIndex > iVisibleRowCount - iFixedBottomRows - 2;
+						bIsPreBottomRow = (iIndex == iVisibleRowCount - iFixedBottomRows - 1);
 					} else {
-						bIsBottomRow = (that.getFirstVisibleRow() + iIndex) > (oBinding.getLength() - 1 - iFixedBottomRows) && (that.getFirstVisibleRow() + iIndex) < oBinding.getLength();
-						bIsPreBottomRow = (that.getFirstVisibleRow() + iIndex) > (oBinding.getLength() - 2 - iFixedBottomRows) && (that.getFirstVisibleRow() + iIndex) < oBinding.getLength();
+						bIsPreBottomRow = (this.getFirstVisibleRow() + iIndex) == (oBinding.getLength() - iFixedBottomRows - 1) && (this.getFirstVisibleRow() + iIndex) < oBinding.getLength();
 					}
-					if (bIsBottomRow) {
-						if (!$row.hasClass("sapUiTableFixedBottomRow")) {
-							$row.addClass('sapUiTableFixedBottomRow');
-							$fixedRow.addClass('sapUiTableFixedBottomRow');
-							$rowHdr.addClass('sapUiTableFixedBottomRow');
-						}
-					} else if ($row.hasClass("sapUiTableFixedBottomRow")) {
-						$row.removeClass('sapUiTableFixedBottomRow');
-						$fixedRow.removeClass('sapUiTableFixedBottomRow');
-						$rowHdr.removeClass('sapUiTableFixedBottomRow');
-					}
-					if (bIsPreBottomRow) {
-						if (!$row.hasClass("sapUiTableFixedPreBottomRow")) {
-							$row.addClass('sapUiTableFixedPreBottomRow');
-							$fixedRow.addClass('sapUiTableFixedPreBottomRow');
-							$rowHdr.addClass('sapUiTableFixedPreBottomRow');
-						}
-					} else if ($row.hasClass("sapUiTableFixedPreBottomRow")) {
-						$row.removeClass('sapUiTableFixedPreBottomRow');
-						$fixedRow.removeClass('sapUiTableFixedPreBottomRow');
-						$rowHdr.removeClass('sapUiTableFixedPreBottomRow');
-					}
+
+					$rowDomRefs.row.toggleClass("sapUiTableFixedPreBottomRow", bIsPreBottomRow);
 				}
-			});
+			}.bind(this));
 		}
 
 		// update the row header (sync row heights)
