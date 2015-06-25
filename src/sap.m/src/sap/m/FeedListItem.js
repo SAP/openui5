@@ -187,7 +187,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			src : sIconSrc,
 			alt : this.getSender(),
 			densityAware : this.getIconDensityAware(),
-			decorative : false
+			decorative : false,
+			useIconTooltip : false
 		}, aCssClasses = ['sapMFeedListItemImage'];
 
 		var that = this;
