@@ -230,7 +230,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 					oCell.getAriaLabelledBy && 
 					this.isTextualControl(oHeader) &&
 					oCell.getAriaLabelledBy().indexOf(oHeader.getId()) == -1) {
-					oCell.addAriaLabelledBy(oHeader);
+					
+					// suppress the invalidation during the rendering
+					oCell.addAssociation("ariaLabelledBy", oHeader, true);
 				}
 				
 				rm.renderControl(oColumn.applyAlignTo(oCell));

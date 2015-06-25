@@ -114,13 +114,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 			/**
 			 * Sets the growing(paging) feature of control.
-			 * Note: This feature only works with item binding and should not be used with two way binding!
+			 * Note: This feature only works when "items" aggregation is bound. Growing must not be used together with two-way binding!
 			 * @since 1.16
 			 */
 			growing : {type : "boolean", group : "Behavior", defaultValue : false},
 	
 			/**
-			 * Number of items requested from the server. To activate this you should set "growing" property to "true".
+			 * Number of items requested from the server. To activate this you should set the "growing" property to "true".
 			 * @since 1.16
 			 */
 			growingThreshold : {type : "int", group : "Misc", defaultValue : 20},
@@ -673,12 +673,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 				return;
 			}
 			
-			// if selected property two-way bounded then we do not need to update the selection
-			if (bDetectBinding) {
-				var oSelectedBinding = oItem.getBinding("selected");
-				if (oSelectedBinding && oSelectedBinding.getBindingMode() == sap.ui.model.BindingMode.TwoWay) {
-					return;
-				}
+			// if the selected property is two-way bound then we do not need to update the selection
+			if (bDetectBinding && oItem.isSelectedBoundTwoWay()) {
+				return;
 			}
 			
 			oItem.setSelected(false, true);
@@ -1010,9 +1007,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 		
-		// if selected property two-way bounded then we do not need to update the selection
-		var oSelectedBinding = oItem.getBinding("selected");
-		if (oSelectedBinding && oSelectedBinding.getBindingMode() == sap.ui.model.BindingMode.TwoWay) {
+		// if selected property two-way bound then we do not need to update the selection
+		if (oItem.isSelectedBoundTwoWay()) {
 			return;
 		}
 

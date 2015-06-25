@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			/**
 			 * Set "true" to merge repeating cells(duplicates) into one cell block.
 			 * Please see "mergeFunctionName" property to customize this property.
-			 * Note: This feature should not be enabled when two-way binding is in use. Also this property gets disabled if any column is in pop-in.
+			 * Note: This feature must not be used together with two-way binding. This property is ignored if a column is shown in the pop-in.
 			 * @since 1.16
 			 */
 			mergeDuplicates : {type : "boolean", group : "Behavior", defaultValue : false},
