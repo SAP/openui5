@@ -4069,9 +4069,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 
 	/**
-	 * Get URL for downloading the matching entities in the bound OData entity set 
-	 * @param {string} sFormat The required format for the download
+	 * Get a download URL with the specified format considering the
+	 * sort/filter/custom parameters.
+	 * 
+	 * The download URL also takes into account the selected dimensions and measures,
+	 * depending on the given column definitions of the AnalyticalTable.
+	 * This is based on the visible/inResult flags of the columns, as well as integrity dependencies,
+	 * e.g. for mandatory Unit properties.
+	 * 
+	 * @param {string} sFormat Value for the $format Parameter
+	 * @return {string} URL which can be used for downloading
 	 * @since 1.24
+	 * @public
 	 */
 	AnalyticalBinding.prototype.getDownloadUrl = function(sFormat) {
 
