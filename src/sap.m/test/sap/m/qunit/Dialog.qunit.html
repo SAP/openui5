@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<title>qUnit Page for sap.m.Dialog</title>
 
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-noConflict="true"
-			data-sap-ui-compatVersion="1.16"
-			data-sap-ui-libs="sap.m">
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-compatVersion="1.16"
+				data-sap-ui-libs="sap.m">
 		</script>
 
 		<style>
@@ -21,7 +21,7 @@
 			}
 		</style>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -34,18 +34,16 @@
 			sap.ui.test.qunit.delayTestStart();
 
 			function overwriteAnimationIE9(oDialog) {
-				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
-					// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
-					// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no
-					// animation when runs in IE9
-					oDialog.oPopup.setAnimations(
-						function($Ref, iDuration, fnOpen) {
+				// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
+				// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no
+				// animation when runs in IE9
+				oDialog.oPopup.setAnimations(
+						function ($Ref, iDuration, fnOpen) {
 							fnOpen();
-						}, function($Ref, iDuration, fnClosed) {
+						}, function ($Ref, iDuration, fnClosed) {
 							fnClosed();
 						}
-					);
-				}
+				);
 			}
 
 			var core = sap.ui.getCore();
@@ -61,52 +59,50 @@
 					]
 				}),
 				content: [
-					new sap.ui.core.HTML({content:"<p>Do you want to start a new world domination campaign?</p>"}),
+					new sap.ui.core.HTML({content: "<p>Do you want to start a new world domination campaign?</p>"}),
 				],
 				icon: "../images/SAPUI5Icon.png",
-				beginButton:
-					new sap.m.Button("leftButton", {
-						text: "Reject",
-						type: sap.m.ButtonType.Reject,
-						press : function() {
-							oDialog.close();
-						}
-					}),
-				endButton:
-					new sap.m.Button("rightButton", {
-						text: "Accept",
-						type: sap.m.ButtonType.Accept,
-						press : function() {
-							oDialog.close();
-						}
-					}),
-				beforeOpen: function(){
+				beginButton: new sap.m.Button("leftButton", {
+					text: "Reject",
+					type: sap.m.ButtonType.Reject,
+					press: function () {
+						oDialog.close();
+					}
+				}),
+				endButton: new sap.m.Button("rightButton", {
+					text: "Accept",
+					type: sap.m.ButtonType.Accept,
+					press: function () {
+						oDialog.close();
+					}
+				}),
+				beforeOpen: function () {
 					ok(jQuery.sap.byId("dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
 				},
-				afterOpen: function(){
+				afterOpen: function () {
 					equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 				},
-				beforeClose: function(){
+				beforeClose: function () {
 					equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 				},
-				afterClose: function(){
+				afterClose: function () {
 					equal(jQuery.sap.byId("dialog").css("visibility"), "hidden", "Dialog should be hidden before it's opened");
 					ok(!oDialog.isOpen(), "Dialog is already closed");
 				}
 			});
 
 			var oButton = new sap.m.Button({
-				text : "Open Dialog",
-				press : function() {
+				text: "Open Dialog",
+				press: function () {
 					oDialog.open();
 				}
 			});
 
 			var page = new sap.m.Page("myFirstPage", {
-				title : "Dialog Test",
-				showNavButton : true,
-				enableScrolling : true,
-				content : oButton
+				title: "Dialog Test",
+				showNavButton: true,
+				enableScrolling: true,
+				content: oButton
 			});
 
 			var app = new sap.m.App("myApp", {
@@ -117,49 +113,49 @@
 
 			module("Initial Check");
 
-			test("Initialization", function() {
+			test("Initialization", function () {
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
 			});
 
 			module("Open and Close");
 
-			test("Open Dialog", function(){
+			test("Open Dialog", function () {
 				oButton.firePress();
 				ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(600);
 				var $Dialog = jQuery.sap.byId("dialog"),
-					$ScrollDiv = oDialog.$("scroll"),
-					oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
-					oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
-					oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
-					oLeftButtonDom = jQuery.sap.domById("leftButton"),
-					oRightButtonDom = jQuery.sap.domById("rightButton"),
-					oLeftButtonFocusDom = sap.ui.getCore().byId("leftButton").getFocusDomRef();
+						$ScrollDiv = oDialog.$("scroll"),
+						oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
+						oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
+						oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
+						oLeftButtonDom = jQuery.sap.domById("leftButton"),
+						oRightButtonDom = jQuery.sap.domById("rightButton"),
+						oLeftButtonFocusDom = sap.ui.getCore().byId("leftButton").getFocusDomRef();
 				ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 				ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 				ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
 				equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
-				if(!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop){
+				if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
 					equal(oLeftButtonFocusDom, document.activeElement, "left button should have the focus");
 				}
 
-				if(jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop){
+				if (jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop) {
 					expect(9);
-				}else{
+				} else {
 					expect(10);
 				}
 				ok(oIconDom, "Icon should be rendered.");
 				ok(oTitleDom, "Title should be rendered");
 			});
 
-			test("Close Dialog", function(){
+			test("Close Dialog", function () {
 				expect(3);
 				oDialog.getBeginButton().firePress();
 				this.clock.tick(500);
 			});
 
-			test("Open Message Dialog on phone", function(){
+			test("Open Message Dialog on phone", function () {
 				var oSystem = {
 					desktop: false,
 					tablet: false,
@@ -183,7 +179,7 @@
 
 			module("set properties");
 
-			test("Set vertical/horizontal scrolling to false", function() {
+			test("Set vertical/horizontal scrolling to false", function () {
 				var oDialog = new sap.m.Dialog({
 					content: new sap.ui.core.HTML({
 						content: "<div style='width: 1000px;height: 1000px'></div>"
@@ -203,7 +199,7 @@
 				oDialog.destroy();
 			});
 
-			test("Set vertical/horizontal scrolling to false", function() {
+			test("Set vertical/horizontal scrolling to false", function () {
 				var oDialog = new sap.m.Dialog({
 					content: new sap.ui.core.HTML({
 						content: "<div style='width: 1000px;height: 1000px'></div>"
@@ -223,7 +219,7 @@
 				oDialog.destroy();
 			});
 
-			test("ShouldAdjustTheScrollingPaneIfContentIsBiggerThanContainer", function() {
+			test("ShouldAdjustTheScrollingPaneIfContentIsBiggerThanContainer", function () {
 				//Arrange
 				this.stub(sap.ui.Device, "system", {desktop: true});
 
@@ -233,13 +229,13 @@
 				});
 
 				var resultingContentWidth,
-					resultingScrollPaneWidth,
-					contentWidth = "500px",
+						resultingScrollPaneWidth,
+						contentWidth = "500px",
 				//System under Test
-					sut = new sap.m.Dialog({
-						contentWidth: contentWidth,
-						content: new sap.ui.core.HTML({content:"<p style='width : 700px'></p>"})
-					});
+						sut = new sap.m.Dialog({
+							contentWidth: contentWidth,
+							content: new sap.ui.core.HTML({content: "<p style='width : 700px'></p>"})
+						});
 
 				//Act
 				sut.open();
@@ -247,14 +243,14 @@
 
 				//Assert
 				resultingScrollPaneWidth = sut._$scrollPane.width();
-				resultingContentWidth =  sut._$content.width();
-				ok(resultingScrollPaneWidth >= resultingContentWidth,"scroll pane width: " + resultingScrollPaneWidth + " was bigger than the contentWidth - we are able to scroll");
+				resultingContentWidth = sut._$content.width();
+				ok(resultingScrollPaneWidth >= resultingContentWidth, "scroll pane width: " + resultingScrollPaneWidth + " was bigger than the contentWidth - we are able to scroll");
 
 				ok(sut._$content.width() >= 398 && sut._$content.width() <= 500, "content width should be with in the set value and minimum value of dialog");
 				sut.destroy();
 			});
 
-			test("ShouldAdjustTheScrollingPaneIfContentIsSmallerThanContainer", function() {
+			test("ShouldAdjustTheScrollingPaneIfContentIsSmallerThanContainer", function () {
 				jQuery("html").addClass("sap-desktop");
 				//Arrange
 				this.stub(sap.ui.Device, "system", {desktop: true});
@@ -265,25 +261,25 @@
 				});
 
 				var resultingContentWidth,
-					resultingScrollPaneWidth,
-					//System under Test
-					sut = new sap.m.Dialog({
-						content: new sap.ui.core.HTML({content:'<p style="width : 90px"></p>'})
-					});
+						resultingScrollPaneWidth,
+				//System under Test
+						sut = new sap.m.Dialog({
+							content: new sap.ui.core.HTML({content: '<p style="width : 90px"></p>'})
+						});
 
 				//Act
 				sut.open();
 				this.clock.tick(500);
 
 				resultingScrollPaneWidth = sut._$scrollPane.width();
-				resultingContentWidth =  sut.$("scrollCont").width();
-				strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth );
+				resultingContentWidth = sut.$("scrollCont").width();
+				strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth);
 				ok(90 <= resultingScrollPaneWidth, "The content fits in the scollpane");
 				sut.destroy();
 				jQuery("html").removeClass("sap-desktop");
 			});
 
-			test("Dialog: set stretch to true", function(){
+			test("Dialog: set stretch to true", function () {
 				jQuery("html").css("overflow", "hidden"); // hide scrollbar during test
 				var oDialog = new sap.m.Dialog({
 					stretch: true,
@@ -302,7 +298,7 @@
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
 
-			test("Dialog: set contentWidth when stretch set to true", function(){
+			test("Dialog: set contentWidth when stretch set to true", function () {
 				jQuery("html").css("overflow", "hidden"); // hide scrollbar during test
 				var oDialog = new sap.m.Dialog({
 					stretch: true,
@@ -322,22 +318,22 @@
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
 
-			test("Set contentWidth to a fixed value on desktop", function(){
+			test("Set contentWidth to a fixed value on desktop", function () {
 				var oSystem = {
-						desktop: true,
-						tablet: false,
-						phone: false
-					};
+					desktop: true,
+					tablet: false,
+					phone: false
+				};
 
 				this.stub(sap.ui.Device, "system", oSystem);
 
 				var oDialog = new sap.m.Dialog({
-						content: new sap.ui.core.HTML({
-							content: "<div style='width: 1000px; height: 1000px'></div>"
+							content: new sap.ui.core.HTML({
+								content: "<div style='width: 1000px; height: 1000px'></div>"
+							}),
+							contentWidth: "500px",
 						}),
-						contentWidth: "500px",
-					}),
-					iValue = 500;
+						iValue = 500;
 
 				oDialog.open();
 				this.clock.tick(500);
@@ -352,7 +348,7 @@
 			if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
 				// this test is designed for phone and taken out from IE9 because it's not relevate to IE9
 				// and fails for some unknown reason
-				test("Set contentWidth to a fixed value on phone", function(){
+				test("Set contentWidth to a fixed value on phone", function () {
 					var oSystem = {
 						desktop: false,
 						tablet: false,
@@ -381,7 +377,7 @@
 					this.clock.tick(500);
 
 					var $Dialog = oDialog.$();
-					if(jQuery(window).height() > 500){
+					if (jQuery(window).height() > 500) {
 						iValue = jQuery(window).height() - window.parseInt($Dialog.css("border-left-width"), 10) - window.parseInt($Dialog.css("border-right-width"), 10);
 					}
 
@@ -407,7 +403,7 @@
 				});
 			}
 
-			test("set ContentWidth/ContentHeight to percentage value", function(){
+			test("set ContentWidth/ContentHeight to percentage value", function () {
 				var oSystem = {
 					desktop: true,
 					phone: false,
@@ -428,7 +424,7 @@
 				oDialog.destroy();
 			});
 
-			test("beginButton, endButton, buttons on desktop or tablet", function() {
+			test("beginButton, endButton, buttons on desktop or tablet", function () {
 				var oSystem = {
 					desktop: true,
 					phone: false,
@@ -438,12 +434,12 @@
 				this.stub(sap.ui.Device, "system", oSystem);
 
 				var oBBtn = new sap.m.Button("beginButton"),
-					oEBtn = new sap.m.Button("endButton"),
-					aButtons = [
-						new sap.m.Button("buttons1"),
-						new sap.m.Button("buttons2"),
-						new sap.m.Button("buttons3")
-					];
+						oEBtn = new sap.m.Button("endButton"),
+						aButtons = [
+							new sap.m.Button("buttons1"),
+							new sap.m.Button("buttons2"),
+							new sap.m.Button("buttons3")
+						];
 
 				// instanciate dialog with begin and endButton
 				var oDialog = new sap.m.Dialog("testDialog", {
@@ -461,7 +457,7 @@
 				equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
 
 				// add button into "buttons" aggregation while begin/endButton are set
-				aButtons.forEach(function(oButton){
+				aButtons.forEach(function (oButton) {
 					oDialog.addButton(oButton);
 				});
 				sap.ui.getCore().applyChanges();
@@ -489,12 +485,12 @@
 				oDialog.destroy();
 				ok(oBBtn.bIsDestroyed, "beginButton should also be destroyed");
 				ok(oEBtn.bIsDestroyed, "endButton should also be destroyed");
-				aButtons.forEach(function(oButton){
+				aButtons.forEach(function (oButton) {
 					oButton.destroy();
 				});
 			});
 
-			test("beginButton, endButton, buttons on phone", function() {
+			test("beginButton, endButton, buttons on phone", function () {
 				var oSystem = {
 					desktop: false,
 					phone: true,
@@ -504,12 +500,12 @@
 				this.stub(sap.ui.Device, "system", oSystem);
 
 				var oBBtn = new sap.m.Button("beginButton"),
-					oEBtn = new sap.m.Button("endButton"),
-					aButtons = [
-						new sap.m.Button("buttons1"),
-						new sap.m.Button("buttons2"),
-						new sap.m.Button("buttons3")
-					];
+						oEBtn = new sap.m.Button("endButton"),
+						aButtons = [
+							new sap.m.Button("buttons1"),
+							new sap.m.Button("buttons2"),
+							new sap.m.Button("buttons3")
+						];
 
 				// instantiate dialog with begin/endButton
 				var oDialog = new sap.m.Dialog("testDialog", {
@@ -528,7 +524,7 @@
 				equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
 
 				// add button to "buttons" aggregation while begin/endButton are set
-				aButtons.forEach(function(oButton){
+				aButtons.forEach(function (oButton) {
 					oDialog.addButton(oButton);
 				});
 				sap.ui.getCore().applyChanges();
@@ -555,12 +551,12 @@
 				oDialog.destroy();
 				ok(oBBtn.bIsDestroyed, "beginButton should also be destroyed");
 				ok(oEBtn.bIsDestroyed, "endButton should also be destroyed");
-				aButtons.forEach(function(oButton){
+				aButtons.forEach(function (oButton) {
 					oButton.destroy();
 				});
 			});
 
-			test("Setting starting and ending buttons", function() {
+			test("Setting starting and ending buttons", function () {
 				// Arrange
 				var oDialog = new sap.m.Dialog();
 				var testButton = new sap.m.Button();
@@ -580,7 +576,7 @@
 				oDialog.destroy();
 			});
 
-			test("Setting name aggregation title", function() {
+			test("Setting name aggregation title", function () {
 				// Arrange
 				var oDialog = new sap.m.Dialog();
 
@@ -595,13 +591,13 @@
 
 			module("Initial focus");
 
-			test("Association initialFocus", function() {
+			test("Association initialFocus", function () {
 				// Arrange
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
 				var oDialog = new sap.m.Dialog({
-					content : [ oInput1, oInput2 ],
-					initialFocus : oInput2
+					content: [oInput1, oInput2],
+					initialFocus: oInput2
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -618,12 +614,12 @@
 				oDialog.destroy();
 			});
 
-			test("Focusable elements in content area", function() {
+			test("Focusable elements in content area", function () {
 				// Arrange
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
 				var oDialog = new sap.m.Dialog({
-					content : [ oInput1, oInput2 ]
+					content: [oInput1, oInput2]
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -640,13 +636,13 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregations \"beginButton\" and \"endButton\" - both visible", function() {
+			test("Aggregations \"beginButton\" and \"endButton\" - both visible", function () {
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					beginButton : oButton1,
-					endButton : oButton2
+					beginButton: oButton1,
+					endButton: oButton2
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -663,13 +659,13 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function() {
+			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function () {
 				// Arrange
-				var oButton1 = new sap.m.Button({visible : false});
+				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					beginButton : oButton1,
-					endButton : oButton2
+					beginButton: oButton1,
+					endButton: oButton2
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -686,12 +682,12 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregation \"buttons\" - two visible buttons", function() {
+			test("Aggregation \"buttons\" - two visible buttons", function () {
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					buttons : [oButton1, oButton2]
+					buttons: [oButton1, oButton2]
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -708,12 +704,12 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregation \"buttons\" - only second button is visible", function() {
+			test("Aggregation \"buttons\" - only second button is visible", function () {
 				// Arrange
-				var oButton1 = new sap.m.Button({visible : false});
+				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					buttons : [oButton1, oButton2]
+					buttons: [oButton1, oButton2]
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -730,7 +726,7 @@
 				oDialog.destroy();
 			});
 
-			test("No interactive elements or buttons", function() {
+			test("No interactive elements or buttons", function () {
 				// Arrange
 				var oDialog = new sap.m.Dialog();
 				overwriteAnimationIE9(oDialog);
@@ -747,7 +743,7 @@
 				oDialog.destroy();
 			});
 
-			test("No phone special CSS class when runs on desktop", function() {
+			test("No phone special CSS class when runs on desktop", function () {
 				var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -763,7 +759,7 @@
 				oDialog.destroy();
 			});
 
-			test("Initial focus shouldn't be set to input DOM element on mobile device", function() {
+			test("Initial focus shouldn't be set to input DOM element on mobile device", function () {
 				var oSystem = {
 					desktop: false,
 					tablet: true,
@@ -791,7 +787,7 @@
 				oDialog.destroy();
 			});
 
-			test("Controls in custom header is also in tab chain", function() {
+			test("Controls in custom header is also in tab chain", function () {
 				var oDialog = new sap.m.Dialog({
 					customHeader: new sap.m.Bar({
 						contentRight: [
@@ -826,11 +822,11 @@
 			test("Container Padding Classes", function () {
 				// System under Test + Act
 				var oContainer = new sap.m.Dialog(),
-					sContentSelector = "section > .sapMDialogScroll > .sapMDialogScrollCont",
-					sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
-					aResponsiveSize = sResponsiveSize.split(" "),
-					$container,
-					$containerContent;
+						sContentSelector = "section > .sapMDialogScroll > .sapMDialogScrollCont",
+						sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
+						aResponsiveSize = sResponsiveSize.split(" "),
+						$container,
+						$containerContent;
 
 				// Act
 				oContainer.placeAt("content");
@@ -860,7 +856,7 @@
 
 				// Assert
 				strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-				strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+				strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 				strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 				strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 
@@ -868,7 +864,7 @@
 				oContainer.destroy();
 			});
 
-			test("Clear CSS property 'display' from scrolling area before size calculation", function(){
+			test("Clear CSS property 'display' from scrolling area before size calculation", function () {
 				expect(2);
 				var oDialog = new sap.m.Dialog({
 					contentWidth: "450px",
@@ -879,7 +875,7 @@
 				this.clock.tick(500);
 
 				ok(oDialog.isOpen(), "Dialog is opened");
-				this.stub(oDialog, "_adjustScrollingPane", function(){
+				this.stub(oDialog, "_adjustScrollingPane", function () {
 					equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
 				});
 				oDialog._reapplyPosition();
@@ -889,8 +885,11 @@
 	</head>
 	<body id="body" class="sapUiBody">
 		<h1 id="qunit-header">qUnit Page for sap.m.Dialog</h1>
+
 		<h2 id="qunit-banner"></h2>
+
 		<h2 id="qunit-userAgent"></h2>
+
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
 		<div id="content"></div>
