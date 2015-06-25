@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.ResponsivePopover</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -16,11 +16,11 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		
+
 		<!-- use the sinon faketimers for this test -->
 		<script type="text/javascript">
 			sinon.config.useFakeTimers = true;
@@ -145,7 +145,7 @@
 		});
 
 		QUnit.test("Desktop and tablet mode", function(assert) {
-			
+
 			// Act and Arrange
 			bindListData(data, oItemTemplate1, this.oList);
 			this.stub(sap.ui.Device, "system", {desktop: true});
@@ -179,6 +179,7 @@
 			bindListData(data, oItemTemplate1, this.oList);
 			this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
 			this.oResponsivePopover.setShowHeader(true);
+			this.oResponsivePopover.setShowCloseButton(false);
 			this.oResponsivePopover.addContent(this.oInput);
 			this.oResponsivePopover.setInitialFocus(this.oInput);
 
@@ -198,10 +199,15 @@
 
 			// Open the ResponsivePopover
 			this.oResponsivePopover.openBy(this.oButton);
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 
 			// Assert
-			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("header")[0], "CloseButton should be rendered");
+			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").length === 0, "CloseButton should not be rendered");
+
+			this.oResponsivePopover.setShowCloseButton(true);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
 		});
 
 
@@ -251,7 +257,7 @@
 			assert.strictEqual(this.oResponsivePopover.getDomRef(), this.oResponsivePopover._oControl.getDomRef(), "getDomRef call is forwarded");
 
 		});
-		
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

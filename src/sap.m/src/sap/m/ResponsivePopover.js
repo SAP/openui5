@@ -263,15 +263,20 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this._oDelegate = {
 			onBeforeRendering: function(){
 				var bShowCloseButton = this.getShowCloseButton(),
-					oNavContent, oHeader, oPage, oRealPage;
+					oHeader = this._oControl._getAnyHeader(),
+					oNavContent, oPage, oRealPage;
 
-				if (!bShowCloseButton ||  !sap.ui.Device.system.phone || !this._bContentChanged) {
+				if (!bShowCloseButton ||  !sap.ui.Device.system.phone) {
+					this._removeCloseButton(oHeader);
+					return;
+				}
+
+				if (!this._bContentChanged) {
 					return;
 				}
 
 				this._bContentChanged = false;
 
-				oHeader = this._oControl._getAnyHeader();
 				if (oHeader) {
 					this._insertCloseButton(oHeader);
 				} else {
@@ -426,6 +431,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		}
 	};
 
+	ResponsivePopover.prototype._removeCloseButton = function(oHeader) {
+		var oCloseButton = this._getCloseButton();
+
+		if (oHeader) {
+			oHeader.removeAggregation("contentRight", oCloseButton);
+		}
+	};
+
 	ResponsivePopover.prototype._firstLetterUpperCase = function(sValue){
 		return sValue.charAt(0).toUpperCase() + sValue.slice(1);
 	};
@@ -519,6 +532,19 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	ResponsivePopover.prototype.setEndButton = function(oButton){
 		this._oControl.setEndButton(oButton);
 		return this._setButton("end", oButton);
+	};
+
+	ResponsivePopover.prototype.setShowCloseButton = function(bShowCloseButton) {
+		var oHeader = this._oControl._getAnyHeader();
+		if (bShowCloseButton) {
+			this._insertCloseButton(oHeader);
+		} else {
+			this._removeCloseButton(oHeader);
+		}
+
+		this.setProperty("showCloseButton", bShowCloseButton, true);
+
+		return this;
 	};
 
 	ResponsivePopover.prototype.getBeginButton = function(){

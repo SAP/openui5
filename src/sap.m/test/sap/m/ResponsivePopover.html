@@ -2,24 +2,24 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+
 		<title>ResponsivePopover - sap.m</title>
-		
+
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-compatVersion="1.16">
 		</script>
-		
+
 		<script type="text/javascript">
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 
 			//create the list
 			var oList = new sap.m.List({
 			});
-			
+
 			var data = {
 				navigation : [ {
 					title : "Travel Expend",
@@ -93,7 +93,7 @@
 					press : 'detailPage'
 				} ]
 			};
-			
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -101,7 +101,7 @@
 				iconInset : "{iconInset}",
 				type : "{type}"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -113,7 +113,7 @@
 				// bind Aggregation
 				list.bindAggregation("items", "/navigation", itemTemplate);
 			}
-			
+
 			bindListData(data, oItemTemplate1, oList)
 //end of the list creation
 
@@ -121,14 +121,15 @@
 				text: "Action1",
 				type: sap.m.ButtonType.Reject,
 				press: function(){
-					
+					oResponsivePopover.setShowCloseButton(false);
 				}
 			});
-			
+
 			var oEndButton = new sap.m.Button({
 				text: "Action2",
 				type: sap.m.ButtonType.Accept,
 				press: function(){
+					oResponsivePopover.setShowCloseButton(true);
 				}
 			});
 
@@ -155,7 +156,7 @@
 					oList
 				]
 			});
-			
+
 			//uncomment this line when padding is needed in the content area
 			//oResponsivePopover.addStyleClass("sapUiPopupWithPadding");
 
@@ -165,15 +166,15 @@
 					oResponsivePopover.openBy(this);
 				}
 			});
-			
-			
+
+
 			/* Second ResponsivePopover with NavContainer as content*/
 
 			/*************************************************************************/
 			/*     Create NavContainer with two pages inside and the first page      */
 			/*     contains a footer, there's no footer on the popover.              */
 			/*=======================================================================*/
-			
+
 			//begin: create the list
 			var oList1 = new sap.m.List({
 			});
@@ -187,28 +188,28 @@
 				type : "{type}",
 				press: handlePress
 			});
-			
+
 			bindListData(data, oItemTemplate2, oList1);
-			
+
 			function handlePress(e) {
 				oNavContainer.to("detailPage");
 			}
-			
-			
-			var footer = new sap.m.Bar({ 
-				contentLeft: [],	
+
+
+			var footer = new sap.m.Bar({
+				contentLeft: [],
 				contentMiddle: [new sap.m.Button({icon: "sap-icon://globe"}),
 				                new sap.m.Button({icon: "sap-icon://globe"}),
 				                new sap.m.Button({icon: "sap-icon://globe"})],
 				contentRight: []
 			});
-			
-			
+
+
 			//begin: creating navContainer
 			var oNavContainer = new sap.m.NavContainer({
 				initialPage: "listPage"
 			});
-			
+
 			var oPage1 = new sap.m.Page("listPage", {
 				title: "Click on the list (with footer)",
 				showNavButton: false,
@@ -217,7 +218,7 @@
 					oList1
 				]
 			});
-			
+
 			var oPage2 = new sap.m.Page("detailPage", {
 				title: "Detail Page",
 				showNavButton: true,
@@ -231,16 +232,16 @@
 					}
 				})]
 			});
-			
+
 			oNavContainer.addPage(oPage1).addPage(oPage2);
-		
+
 			var oButton1 = new sap.m.Button({
 				text: "NavContainer as Content",
 				press: function(){
 					oResponsivePopover1.openBy(this);
 				}
 			});
-			
+
 			var oResponsivePopover1 = new sap.m.ResponsivePopover({
 				placement: sap.m.PlacementType.Bottom,
 				title: "I'm adaptive now",
@@ -264,22 +265,22 @@
 					oNavContainer
 				]
 			});
-			
-			/* 
-				Third ResponsivePopover with NavContainer as content, but the header is 
+
+			/*
+				Third ResponsivePopover with NavContainer as content, but the header is
 				resposivepopover not in the pages of navcontainer.
-				
-				The close button should be added to the header in responsivepopover not 
+
+				The close button should be added to the header in responsivepopover not
 				to the navcontainer.
 			*/
-			
+
 			var oButton2 = new sap.m.Button({
 				text: "Header in Popover",
 				press: function(){
 					oResponsivePopover2.openBy(this);
 				}
 			});
-			
+
 			var oPage3 = new sap.m.Page("listPage1", {
 				title: "Click on the list",
 				showNavButton: false,
@@ -293,7 +294,7 @@
 					})
 				]
 			});
-			
+
 			var oPage4 = new sap.m.Page("detailPage1", {
 				title: "Detail Page",
 				showHeader: false,
@@ -304,12 +305,12 @@
 					}
 				})]
 			});
-			
+
 			var oNavContainer1 = new sap.m.NavContainer({
 				initialPage: "listPage1",
 				pages: [oPage3, oPage4]
 			});
-			
+
 			var oResponsivePopover2 = new sap.m.ResponsivePopover({
 				placement: sap.m.PlacementType.Bottom,
 				customHeader: new sap.m.Bar({
@@ -321,14 +322,14 @@
 				contentHeight: "400px",
 				content: oNavContainer1
 			});
-			
+
 			var page = new sap.m.Page("page1", {
 				title:"Page 1",
 				content: [
 					oButton, oButton1, oButton2
 				]
 			});
-			
+
 			app.addPage(page);
 			app.placeAt("body");
 		</script>
