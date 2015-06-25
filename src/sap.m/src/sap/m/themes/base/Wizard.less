@@ -2,6 +2,7 @@
 	height: 100%;
 	position:relative;
 	counter-reset: steps-counter;
+	overflow: hidden;
 
 	.sapMPageHeader::before {
 		content: none;
@@ -56,8 +57,6 @@
 		}
 	}
 
-
-
 	.sapUiFormResLayout > div {
 		background-color: inherit;
 	}
@@ -71,22 +70,23 @@
 	display: block;
 }
 
-.sap-phone {
-	.sapMWizard .sapMWizardNextButton {
-		position: absolute;
-		left: 50%;
-		-webkit-transform: translate(-50%, 0);
-		-moz-transform: translate(-50%, 0);
-		-ms-transform: translate(-50%, 0);
-		-o-transform: translate(-50%, 0);
-		transform: translate(-50%, 0);
-		transition: 0.4s linear;
-		bottom: 0rem;
-		opacity: 0;
-	}
+.sapMWizard .sapMWizardNextButton {
+	transition: 0.4s linear;
+	bottom: -3rem;
+	opacity: 0;
+}
 
-	.sapMWizard .sapMWizardNextButtonVisible {
-		bottom: 0.5rem;
-		opacity: 1;
-	}
+.sapMWizard .sapMWizardNextButtonVisible {
+	bottom: 0.5rem;
+	opacity: 1;
+}
+
+.sap-phone .sapMWizard .sapMWizardNextButton {
+	position: absolute;
+	left: 50%;
+	-webkit-transform: translate(-50%, 0);
+	-moz-transform: translate(-50%, 0);
+	-ms-transform: translate(-50%, 0);
+	-o-transform: translate(-50%, 0);
+	transform: translate(-50%, 0);
 }
