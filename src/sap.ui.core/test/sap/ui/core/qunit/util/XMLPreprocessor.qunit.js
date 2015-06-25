@@ -179,15 +179,18 @@
 	 */
 	function warn(oLogMock, sExpectedWarning, vDetails) {
 		return oLogMock.expects("warning")
+			// do not construct arguments in vain!
+			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING) ? 1 : 0)
 			.withExactArgs(matchArg(sExpectedWarning), vDetails || null,
 				"sap.ui.core.util.XMLPreprocessor");
 	}
 
 	/**
 	 * Checks that our XMLPreprocessor works as expected on the given view content. If called on a
-	 * <code>this</code> (which MUST be a sandbox then), the view content is automatically searched
-	 * for constant test conditions and appropriate warnings are expected; log output is stubbed
-	 * in order to keep console clean.
+	 * <code>this</code> (which MUST be either a sandbox or a log mock), the view content is
+	 * automatically searched for constant test conditions and appropriate warnings are expected;
+	 * log output is stubbed in order to keep console clean. Makes sure there are no unexpected
+	 * warnings or even errors.
 	 *
 	 * @param {string[]} aViewContent
 	 *   the original view content
@@ -228,13 +231,15 @@
 			} else if (this.mock) {
 				oLogMock = this.mock(jQuery.sap.log);
 			}
-		}
-		if (oLogMock) {
-			aViewContent.forEach(function (sLine) {
-				if (/if test="(false|true)"/.test(sLine)) {
-					warn(oLogMock, 'qux: Constant test condition in ' + sLine);
-				}
-			});
+			if (oLogMock) {
+				oLogMock.expects("error").never();
+				oLogMock.expects("warning").never();
+				aViewContent.forEach(function (sLine) {
+					if (/if test="(false|true|\{= false \})"/.test(sLine)) {
+						warn(oLogMock, 'qux: Constant test condition in ' + sLine);
+					}
+				});
+			}
 		}
 
 		withBalancedBindAggregation(function () {
@@ -385,10 +390,8 @@
 				if (!bIsLoggable) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
 				}
-				warn(oLogMock, 'qux: Constant test condition in ' + aViewContent[1])
-					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
-				check(aViewContent);
+				check.call(oLogMock, aViewContent);
 			});
 		});
 	});
@@ -452,35 +455,33 @@
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
 	["true", true, 1, "X"].forEach(function (oFlag) {
-		test("XML with template:if test='{/flag}', truthy, flag = " + oFlag,
-			function () {
-				check([
-					mvcView("t"),
-					'<t:if test="{path: \'/flag\', type: \'sap.ui.model.type.Boolean\'}">',
-					'<In id="flag"/>',
-					'</t:if>',
-					'</mvc:View>'
-				], {
-					models: new sap.ui.model.json.JSONModel({flag: oFlag})
-				});
+		test("XML with template:if test='{/flag}', truthy, flag = " + oFlag, function () {
+			check.call(this, [
+				mvcView("t"),
+				'<t:if test="{path: \'/flag\', type: \'sap.ui.model.type.Boolean\'}">',
+				'<In id="flag"/>',
+				'</t:if>',
+				'</mvc:View>'
+			], {
+				models: new sap.ui.model.json.JSONModel({flag: oFlag})
 			});
+		});
 	});
 
 	//*********************************************************************************************
 	// Note: " " intentionally not included yet, should not matter for OData!
 	["false", false, 0, null, undefined, NaN, ""].forEach(function (oFlag) {
-		test("XML with template:if test='{/flag}', falsy, flag = " + oFlag,
-			function () {
-				check([
-					mvcView(),
-					'<template:if test="{/flag}">',
-					'<Out/>',
-					'</template:if>',
-					'</mvc:View>'
-				], {
-					models: new sap.ui.model.json.JSONModel({flag: oFlag})
-				});
+		test("XML with template:if test='{/flag}', falsy, flag = " + oFlag, function () {
+			check.call(this, [
+				mvcView(),
+				'<template:if test="{/flag}">',
+				'<Out/>',
+				'</template:if>',
+				'</mvc:View>'
+			], {
+				models: new sap.ui.model.json.JSONModel({flag: oFlag})
 			});
+		});
 	});
 
 	//*********************************************************************************************
@@ -489,7 +490,7 @@
 		test("XML with template:if test='{flag}', truthy, flag = " + oFlag, function () {
 			var oModel = new sap.ui.model.json.JSONModel({flag: oFlag});
 
-			check([
+			check.call(this, [
 				mvcView(),
 				'<template:if test="{flag}">',
 				'<In id="flag"/>',
@@ -510,7 +511,7 @@
 				}
 			}
 		};
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="{formatter: \'foo.Helper.not\', path:\'/flag\'}">',
 			'<In id="flag"/>',
@@ -563,7 +564,7 @@
 					}
 				};
 
-				check(aViewContent, {
+				check.call(oLogMock, aViewContent, {
 					models: new sap.ui.model.json.JSONModel({flag: true})
 				}, vExpected);
 			});
@@ -624,7 +625,7 @@
 				warn(oLogMock, sMessage)
 					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
-				check(aViewContent, {}, vExpected);
+				check.call(oLogMock, aViewContent, {}, vExpected);
 			});
 		});
 	});
@@ -896,11 +897,6 @@
 
 	//*********************************************************************************************
 	test("binding resolution", function () {
-		var oLogMock = this.mock(jQuery.sap.log);
-
-		oLogMock.expects("error").never();
-		oLogMock.expects("warning").never();
-
 		window.foo = {
 			Helper: {
 				help: function (vRawValue) {
@@ -912,7 +908,7 @@
 			}
 		};
 
-		check([
+		check.call(this, [
 			mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
 			'<Label text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
@@ -1093,7 +1089,7 @@
 
 	//*********************************************************************************************
 	test("template:with", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:with path="/some/random/path">',
 			'<template:if test="{flag}">',
@@ -1122,7 +1118,7 @@
 					help : function () {} // empty helper must not make any difference
 				}
 			};
-			check([
+			check.call(this, [
 				mvcView(),
 				'<template:with path="/some" var="some">',
 				'<template:with path="some>random/path" var="path"'
@@ -1195,7 +1191,7 @@
 					}
 				}
 			};
-			check([
+			check.call(this, [
 				mvcView(),
 				'<template:with path="/some/random/path" helper="foo.Helper.help"'
 					+ (bWithVar ? ' var="target"' : '') + '>',
@@ -1230,7 +1226,7 @@
 					}
 				}
 			};
-			check([
+			check.call(this, [
 				mvcView(),
 				'<template:with path="/some/random/path" helper="foo.Helper.help"'
 					+ (bWithVar ? ' var="target"' : '') + '>',
@@ -1294,7 +1290,7 @@
 		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate2);
 		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate3);
 
-		check([
+		check.call(oLogMock, [
 			mvcView(),
 			sTemplate1,
 			sTemplate2,
@@ -1310,7 +1306,7 @@
 
 	//*********************************************************************************************
 	test("template:repeat w/o named models", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:repeat list="{/items}">',
 			'<In src="{src}"/>',
@@ -1335,7 +1331,7 @@
 
 	//*********************************************************************************************
 	test("template:repeat, startIndex & length", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:repeat list="' + "{path:'/items',startIndex:1,length:2}" + '">',
 			'<In src="{src}"/>',
@@ -1361,7 +1357,7 @@
 
 	//*********************************************************************************************
 	test("template:repeat with named models", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:repeat list="{modelName>/items}">',
 			'<In src="{modelName>src}"/>',
@@ -1417,7 +1413,7 @@
 	test('template:repeat list="{/unsupported/path}"', function () {
 		//TODO is this the expected behavior? the loop has no iterations and that's it?
 		// Note: the same happens with a relative path if there is no binding context for the model
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:repeat list="{/unsupported/path}"/>',
 			'</mvc:View>'
@@ -1428,7 +1424,7 @@
 
 	//*********************************************************************************************
 	test("template:repeat w/ complex binding and model", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			// Note: foo: 'bar' just serves as placeholder for any parameter (complex syntax)
 			'<template:repeat list="{foo: \'bar\', path:\'modelName>/items\'}">',
@@ -1456,7 +1452,7 @@
 
 	//*********************************************************************************************
 	test("template:repeat nested", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:repeat list="{customer>/orders}">',
 			'<In src="{customer>id}"/>',
@@ -1497,7 +1493,7 @@
 
 	//*********************************************************************************************
 	test("template:repeat with loop variable", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:repeat list="{modelName>/items}" var="item">',
 			'<In src="{item>src}"/>',
@@ -1533,72 +1529,69 @@
 
 	//*********************************************************************************************
 	test("fragment support", function () {
-		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
-			return xml(['<In xmlns="foo"/>']);
-		});
-		check([
+		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+			.withExactArgs("myFragment", "fragment")
+			.returns(xml(['<In xmlns="foo"/>']));
+		check.call(this, [
 				mvcView(),
 				'<Fragment fragmentName="myFragment" type="XML"/>',
 				'</mvc:View>'
-			],
-			{},
-			[
+			], {}, [
 				'<In />'
 			]);
-		sinon.assert.calledWithExactly(sap.ui.core.XMLTemplateProcessor.loadTemplate, "myFragment",
-			"fragment");
 	});
 
 	//*********************************************************************************************
 	test("dynamic fragment names", function () {
-		this.mock(sap.ui.core.XMLTemplateProcessor)
-			.expects("loadTemplate")
-			.once()
+		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("dynamicFragmentName", "fragment")
 			.returns(xml(['<In xmlns="foo"/>']));
-		check([
+		check.call(this, [
 				mvcView(),
 				'<Fragment fragmentName="{= \'dynamicFragmentName\' }" type="XML"/>',
 				'</mvc:View>'
-			],
-			{},
-			[
+			], {}, [
 				'<In />'
 			]);
 	});
 
 	//*********************************************************************************************
 	test("fragment with FragmentDefinition", function () {
-		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
-			return xml(['<FragmentDefinition xmlns="sap.ui.core">',
+		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+			.withExactArgs("myFragment", "fragment")
+			.returns(xml(['<FragmentDefinition xmlns="sap.ui.core">',
 						'<In id="first"/>',
 						'<In id="last"/>',
-						'</FragmentDefinition>']);
-		});
-		check([
+						'</FragmentDefinition>']));
+		check.call(this, [
 				mvcView(),
 				'<Fragment fragmentName="myFragment" type="XML"/>',
 				'</mvc:View>'
-			],
-			{},
-			[
+			], {}, [
 				'<In id="first"/>',
 				'<In id="last"/>'
 			]);
-		sinon.assert.calledWithExactly(sap.ui.core.XMLTemplateProcessor.loadTemplate, "myFragment",
-			"fragment");
 	});
 
 	//*********************************************************************************************
 	test("fragment in repeat", function () {
-		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
-			return xml(['<In xmlns="foo" src="{src}" />']);
-		});
+		var oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
 
-		check([
+		// BEWARE: use fresh XML document for each call because liftChildNodes() makes it empty!
+		oXMLTemplateProcessorMock.expects("loadTemplate")
+			.withExactArgs("myFragment", "fragment")
+			.returns(xml(['<In xmlns="foo" src="{src}" />']));
+		oXMLTemplateProcessorMock.expects("loadTemplate")
+			.withExactArgs("myFragment", "fragment")
+			.returns(xml(['<In xmlns="foo" src="{src}" />']));
+		oXMLTemplateProcessorMock.expects("loadTemplate")
+			.withExactArgs("myFragment", "fragment")
+			.returns(xml(['<In xmlns="foo" src="{src}" />']));
+
+		check.call(this, [
 			mvcView(),
 			'<template:repeat list="{/items}">',
-			'<Fragment fragmentName="A" type="XML"/>',,
+			'<Fragment fragmentName="myFragment" type="XML"/>',
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
@@ -1620,38 +1613,34 @@
 
 	//*********************************************************************************************
 	test("fragment with type != XML", function () {
-		var oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
-
-		check([
+		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+		check.call(this, [
 				mvcView(),
 				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
 				'</mvc:View>'
-			],
-			{}, [
+			], {}, [
 				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
 			]);
-		oXMLTemplateProcessorMock.expects("loadTemplate").never();
 	});
 
 	//*********************************************************************************************
 	test("error on fragment with simple cyclic reference", function () {
-		this.mock(jQuery.sap.log).expects("error")
-			.once()
+		var oLogMock = this.mock(jQuery.sap.log);
+
+		oLogMock.expects("error")
 			.withExactArgs('Stopped due to cyclic reference in fragment: cycle',
 				sinon.match(/Error: Stopped due to cyclic fragment reference/),
 				"sap.ui.core.util.XMLPreprocessor");
 
-		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
-			return xml(['<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>']);
-		});
-		check([
+		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+			.once() // no need to load the fragment in vain!
+			.withExactArgs("cycle", "fragment")
+			.returns(xml(['<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>']));
+		check.call(oLogMock, [
 				mvcView(),
 				'<Fragment fragmentName="cycle" type="XML"/>',
 				'</mvc:View>'
-			],
-			{},
-			/Error: Stopped due to cyclic fragment reference/
-			);
+			], {}, /Error: Stopped due to cyclic fragment reference/);
 	});
 
 	//*********************************************************************************************
@@ -1666,30 +1655,33 @@
 				'</template:with>',
 				'</FragmentDefinition>'
 			],
-			oLogMock = this.mock(jQuery.sap.log);
+			oLogMock = this.mock(jQuery.sap.log),
+			oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
 
 		oLogMock.expects("error")
-			.once()
 			.withExactArgs('Stopped due to cyclic reference in fragment: B',
 				sinon.match(/Error: Stopped due to cyclic fragment reference/),
 				"sap.ui.core.util.XMLPreprocessor");
 		warn(oLogMock, "qux: Set unchanged path '/foo' in " + aFragmentContent[1]);
 		warn(oLogMock, "qux: Set unchanged path '/bar' in " + aFragmentContent[2]);
 
-		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function (sTemplateName) {
-			if (sTemplateName === "A") {
-				return xml(aFragmentContent);
-			}
-			return xml(['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']);
-		});
-		check([
+		oXMLTemplateProcessorMock.expects("loadTemplate")
+			.withExactArgs("A", "fragment")
+			.returns(xml(aFragmentContent));
+		oXMLTemplateProcessorMock.expects("loadTemplate")
+			.withExactArgs("B", "fragment")
+			.returns(xml(['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']));
+		oXMLTemplateProcessorMock.expects("loadTemplate")
+			.withExactArgs("A", "fragment")
+			.returns(xml(aFragmentContent));
+
+		check.call(oLogMock, [
 				mvcView(),
 				'<Fragment fragmentName="A" type="XML"/>',
 				'</mvc:View>'
-			],
-			{ models: new sap.ui.model.json.JSONModel() },
-			/Error: Stopped due to cyclic fragment reference/
-			);
+			], {
+				models: new sap.ui.model.json.JSONModel()
+			}, /Error: Stopped due to cyclic fragment reference/);
 	});
 
 	//*********************************************************************************************

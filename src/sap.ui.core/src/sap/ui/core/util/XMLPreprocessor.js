@@ -541,8 +541,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					 *   the fragment's resolved name
 					 */
 					function insertFragment(sFragmentName) {
-						var oFragmentElement
-							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+						var oFragmentElement;
 
 						// Note: It is perfectly valid to include the very same fragment again, as long
 						// as the context is changed. So we check for cycles at the current "with"
@@ -562,6 +561,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						debug(oElement, "fragmentName =", sFragmentName);
 						oWithControl.$mFragmentContexts[sFragmentName] = true;
 
+						oFragmentElement
+							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
 						if (localName(oFragmentElement) === "FragmentDefinition" &&
 								oFragmentElement.namespaceURI === "sap.ui.core") {
 							liftChildNodes(oFragmentElement, oWithControl, oElement);
