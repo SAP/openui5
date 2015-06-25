@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="MYSAMPLE" xml:lang="en" sap:schema-version="0000" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Product" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ProductID"/>
+				</Key>
+				<Property Name="ProductID" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Product ID" sap:updatable="false"/>
+				<Property Name="TypeCode" Type="Edm.String" MaxLength="2" sap:label="Prod. Type Code"/>
+				<Property Name="Category" Type="Edm.String" MaxLength="40" sap:label="Category" sap:sortable="true" sap:filterable="true"/>
+				<Property Name="Name" Type="Edm.String" MaxLength="255" sap:label="Product Name" sap:sortable="true" sap:filterable="true"/>
+				<Property Name="NameLanguage" Type="Edm.String" MaxLength="1" sap:label="Language" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
+				<Property Name="Description" Type="Edm.String" MaxLength="255" sap:label="Prod.Descrip." sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DescriptionLanguage" Type="Edm.String" MaxLength="1" sap:label="Language" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
+				<Property Name="SupplierID" Type="Edm.String" MaxLength="10" sap:label="Supplier ID"/>
+				<Property Name="SupplierName" Type="Edm.String" MaxLength="80" sap:label="Supplier Company Name" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="TaxTarifCode" Type="Edm.Byte" sap:label="Prod. Tax Code" sap:visible="false"/>
+				<Property Name="MeasureUnit" Type="Edm.String" MaxLength="3" sap:label="Qty. Unit" sap:semantics="unit-of-measure"/>
+				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="WeightUnit" sap:label="Wt. Measure" sap:visible="false"/>
+				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" sap:label="Qty. Unit" sap:semantics="unit-of-measure"/>
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" sap:label="Currency" sap:semantics="currency-code"/>
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="CurrencyCode" sap:label="Unit Price"/>
+				<Property Name="Width" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimUnit" sap:label="Dimensions" sap:visible="false"/>
+				<Property Name="Depth" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimUnit" sap:label="Dimensions" sap:visible="false"/>
+				<Property Name="Height" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimUnit" sap:label="Dimensions" sap:visible="false"/>
+				<Property Name="DimUnit" Type="Edm.String" MaxLength="3" sap:label="Dim. Unit" sap:semantics="unit-of-measure"/>
+				<Property Name="CreatedAt" Type="Edm.DateTime" Precision="7" sap:label="Time Stamp" sap:creatable="false" sap:updatable="false" sap:visible="false"/>
+				<Property Name="ChangedAt" Type="Edm.DateTime" Precision="7" ConcurrencyMode="Fixed" sap:label="Time Stamp" sap:creatable="false" sap:updatable="false" sap:visible="false"/>
+			</EntityType>
+			<EntityContainer Name="MYSAMPLE_Entities" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="ProductSet" EntityType="MYSAMPLE.Product" sap:content-version="1"/>
+			</EntityContainer>
+			<atom:link rel="self" href="http://my.test.service.com/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link rel="latest-version" href="http://my.test.service.com/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
