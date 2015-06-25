@@ -584,11 +584,6 @@ sap.ui
 					if (!bValue) { //e.g eq, ne, gt, lt, le, ge
 						aODataFilterValues = rExp.exec(sODataQueryValue);
 						sValue = that._trim(aODataFilterValues[iValueIndex + 1]);
-						// remove number suffixes from EDM types decimal, Int64, Single
-						var sTypecheck = sValue[sValue.length - 1];
-						if (sTypecheck === "M" || sTypecheck === "L" || sTypecheck === "f") {
-							sValue = sValue.substring(0, sValue.length - 1);
-						}
 						sPath = that._trim(aODataFilterValues[iPathIndex + 1]);
 					} else { //e.g.substringof, startswith, endswith
 						var rStringFilterExpr = new RegExp("(substringof|startswith|endswith)\\(([^,\\)]*),(.*)\\)");
@@ -597,9 +592,17 @@ sap.ui
 						sPath = that._trim(aODataFilterValues[iPathIndex + 2]);
 					}
 					//TODO do the check using the property type and not value
+					// remove number suffixes from EDM types decimal, Int64, Single
+					var sTypecheck = sValue[sValue.length - 1];
+					if (sTypecheck === "M" || sTypecheck === "L" || sTypecheck === "f") {
+						sValue = sValue.substring(0, sValue.length - 1);
+					}
 					//fix for filtering on date time properties
 					if (sValue.indexOf("datetime") === 0) {
 						sValue = that._getJsonDate(sValue);
+					} else if (sValue.indexOf("guid") === 0) {
+						// strip the "guid'" (5) from the front and the "'" (-1) from the back 
+						sValue = sValue.substring(5, sValue.length - 1);
 					} else if (sValue === "true") { // fix for filtering on boolean properties
 						sValue = true;
 					} else if (sValue === "false") {
@@ -1397,7 +1400,6 @@ sap.ui
 					default:
 						return this._generateDataFromEntity(mComplexTypes[sType], iIndex, mComplexTypes);
 				}
-
 			};
 
 			/**
@@ -3376,5 +3378,4 @@ sap.ui
 			};
 
 			return MockServer;
-
 		});
