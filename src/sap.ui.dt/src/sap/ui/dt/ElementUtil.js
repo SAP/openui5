@@ -80,6 +80,10 @@ function(jQuery) {
 			}
 
 			if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
+				//This happens when the compontentConainer has not been rendered yet
+				if (!oElement.getComponentInstance()) {
+					return;
+				}
 				internalFind(oElement.getComponentInstance().getAggregation("rootControl"));
 			} else {
 				aFoundElements.push(oElement);
