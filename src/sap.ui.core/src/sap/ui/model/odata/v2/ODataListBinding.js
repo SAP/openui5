@@ -757,6 +757,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 */
 	ODataListBinding.prototype.resetData = function() {
 		this.aKeys = [];
+		this.aAllKeys = null;
 		this.iLength = 0;
 		this.bLengthFinal = false;
 		this.sChangeReason = undefined;
