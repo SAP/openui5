@@ -781,6 +781,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 */
 	ODataListBinding.prototype.resetData = function() {
 		this.aKeys = [];
+		this.aAllKeys = null;
 		this.iLength = 0;
 		this.bLengthFinal = false;
 		this.sChangeReason = undefined;
