@@ -10,7 +10,7 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/mvc/View',
-		'sap/ui/core/sample/ViewTemplate/Component',
+		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
 		'sap/ui/model/odata/AnnotationHelper',
 		'sap/m/HBox',

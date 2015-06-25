@@ -8,12 +8,11 @@
  * @version @version@
  */
 sap.ui.define([
-		'sap/m/MessageBox',
 		'sap/ui/core/UIComponent'
-	], function (MessageBox, UIComponent) {
+	], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.Component", {
+	var Component = UIComponent.extend("sap.ui.core.sample.common.Component", {
 		/**
 		 * Default implementation to invoke a proxy for the given absolute path.
 		 *
@@ -26,9 +25,7 @@ sap.ui.define([
 		 */
 		proxy : function (sAbsolutePath) {
 			if (location.hostname !== "localhost") {
-				MessageBox.alert("Cannot use a proxy for hosts other than localhost!", {
-					icon: sap.m.MessageBox.Icon.ERROR,
-					title: "Error"});
+				alert("Cannot use a proxy for hosts other than localhost!");
 				return sAbsolutePath;
 			}
 

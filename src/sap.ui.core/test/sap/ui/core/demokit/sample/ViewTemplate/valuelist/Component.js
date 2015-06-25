@@ -9,7 +9,7 @@
  */
 sap.ui.define([
 		'jquery.sap.global',
-		'sap/ui/core/sample/ViewTemplate/Component',
+		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
 		'sap/ui/model/odata/v2/ODataModel'
 	], function(jQuery, BaseComponent, MockServer, ODataModel) {

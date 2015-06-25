@@ -11,7 +11,7 @@ sap.ui.define([
 		'sap/m/HBox',
 		'sap/m/MessageBox',
 		'sap/ui/core/mvc/View',
-		'sap/ui/core/sample/ViewTemplate/Component',
+		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/odata/AnnotationHelper',
