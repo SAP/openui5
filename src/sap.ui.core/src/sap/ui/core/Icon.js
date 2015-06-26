@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			activeBackgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Decorative icons don't have tab stop.
+			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Tab stop isn't affected by this property anymore and it's now controlled by the existence of press event handler and the noTabStop property.
 			 * @since 1.16.4
 			 */
 			decorative : {type : "boolean", group : "Accessibility", defaultValue : true},
@@ -100,7 +100,14 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			 * This defines the alternative text which is used for outputting the aria-label attribute on the DOM.
 			 * @since 1.30.0
 			 */
-			alt : {type : "string", group : "Accessibility", defaultValue : null}
+			alt : {type : "string", group : "Accessibility", defaultValue : null},
+
+			/**
+			 * Defines whether the tab stop of icon is controlled by the existence of press event handler. When it's set to false, Icon control has tab stop when press event handler is attached.
+			 * If it's set to true, Icon control never has tab stop no matter whether press event handler exists or not.
+			 * @since 1.30.1
+			 */
+			noTabStop : {type : "boolean", group : "Accessibility", defaultValue : false} 
 		},
 		associations : {
 
@@ -112,7 +119,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		events : {
 
 			/**
-			 * This event is fired when icon is pressed/activated by the user.
+			 * This event is fired when icon is pressed/activated by the user. When a handler is attached to this event, the Icon gets tab stop. If you want to disable this behavior, set the noTabStop property to true.
 			 */
 			press : {}
 		}
@@ -443,7 +450,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		if (this.hasListeners("press")) {
 			this.$().css("cursor", "pointer").attr({
 				role: "button",
-				tabindex: 0
+				tabindex: this.getNoTabStop() ? undefined : 0
 			});
 		}
 

@@ -229,7 +229,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oDeleteControl = new Icon({
 			id: this.getId() + "-imgDel",
 			src: this.DeleteIconURI,
-			useIconTooltip: false
+			useIconTooltip: false,
+			noTabStop: true
 		}).setParent(this, null, true).addStyleClass("sapMLIBIconDel").attachPress(function(oEvent) {
 			this.informList("Delete");
 		}, this);
@@ -251,7 +252,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oDetailControl = new Icon({
 			id: this.getId() + "-imgDet",
 			src: this.DetailIconURI,
-			useIconTooltip: false
+			useIconTooltip: false,
+			noTabStop: true
 		}).setParent(this, null, true).attachPress(function() {
 			this.fireDetailTap();
 			this.fireDetailPress();
@@ -274,7 +276,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oNavigationControl = new Icon({
 			id: this.getId() + "-imgNav",
 			src: this.NavigationIconURI,
-			useIconTooltip: false
+			useIconTooltip: false,
+			noTabStop: true
 		}).setParent(this, null, true).addStyleClass("sapMLIBType sapMLIBImgNav");
 		
 		return this._oNavigationControl;

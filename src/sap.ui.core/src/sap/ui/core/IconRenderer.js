@@ -26,7 +26,8 @@ sap.ui.define(function() {
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
 			sTooltip = oControl.getTooltip_AsString(),
-			bUseIconTooltip = oControl.getUseIconTooltip();
+			bUseIconTooltip = oControl.getUseIconTooltip(),
+			bNoTabStop = oControl.getNoTabStop();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
@@ -36,7 +37,7 @@ sap.ui.define(function() {
 			oRm.writeAttribute("title", sTooltip || oIconInfo.text);
 		}
 
-		if (oControl.hasListeners("press")) {
+		if (oControl.hasListeners("press") && !bNoTabStop) {
 			oRm.writeAttribute("tabindex", 0);
 		}
 
