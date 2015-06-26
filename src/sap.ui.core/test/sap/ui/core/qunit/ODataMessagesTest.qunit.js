@@ -539,5 +539,110 @@ function runODataMessagesTests() {
 	});
 	
 	
+	// TODO: Function imports with action-for annotation
+	
+	// Relative target
+	"fakeservice://testdata/odata/function-imports/ActionForFunction?key=1";
+	// Absolute target
+	"fakeservice://testdata/odata/function-imports/ActionForFunction?key=2";
+	
+	asyncTest("Function Imports with action-for annotation", function() {
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
+			useBatch: false,
+			json: false
+		});
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		
+		oModel.attachMetadataLoaded(function() {
+			var mMessages = oMessageModel.getProperty("/");
+			var oMetadata = oModel.getServiceMetadata();
+
+			testFunctionTarget({
+				url: "/ActionForFunction",
+				parameters: {
+					"ProductUUID": "00000000-0000-0000-0000-000000000001",
+					"foo": "bar"
+				},
+				
+				numMessages: 1,
+				lastTarget: "/Categories(guid'00000000-0000-0000-0000-000000000001')",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/ActionForFunction",
+				parameters: {
+					"ProductUUID": "00000000-0000-0000-0000-000000000002",
+					"foo": "bar"
+				},
+				
+				numMessages: 2,
+				lastTarget: "/Products(999)/ProductName",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/ActionForFunction",
+				parameters: {
+					"ProductUUID": "00000000-0000-0000-0000-000000000002",
+					"foo": "bar"
+				},
+				
+				numMessages: 2,
+				lastTarget: "/Products(999)/ProductName",
+				final: true
+			});
+
+
+			function testFunctionTarget(mTestOptions) {
+				// Set default values
+				mTestOptions.method      = mTestOptions.method      ? mTestOptions.method      : "POST";
+				mTestOptions.parameters  = mTestOptions.parameters  ? mTestOptions.parameters  : {};
+				mTestOptions.numMessages = mTestOptions.numMessages ? mTestOptions.numMessages : {};
+				mTestOptions.final       = mTestOptions.final       ? mTestOptions.final       : false;
+				mTestOptions.lastTarget  = mTestOptions.lastTarget  ? mTestOptions.lastTarget  : "INVALIDTARGET";
+				
+				testFunctionTarget.aTests = testFunctionTarget.aTests ? testFunctionTarget.aTests : [];
+				testFunctionTarget.aTests.push(mTestOptions);
+				
+				var fnNextTest = function() {
+					var mTestOptions;
+					if (testFunctionTarget.aTests.length > 0) {
+						mTestOptions = testFunctionTarget.aTests.shift();
+					} else {
+						testFunctionTarget._running = false;
+					}
+					
+					oModel.callFunction(mTestOptions.url, {
+						method: mTestOptions.method,
+						urlParameters: mTestOptions.parameters,
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							equal(aMessages.length, mTestOptions.numMessages, mTestOptions.numMessages + " messages set after the function import");
+							equal(aMessages[aMessages.length - 1].target, mTestOptions.lastTarget, "Message has correct target");
+							
+							if (mTestOptions.final) {
+								testFunctionTarget._running = false;
+								oModel.destroy();
+								start();
+							} else {
+								fnNextTest();
+							}
+						}
+					});
+					
+				};
+				
+				if (!testFunctionTarget._running) {
+					testFunctionTarget._running = true;
+					fnNextTest();
+				}
+				
+			}
+		});
+	});	
+	
 	// TODO: Function imports with multiple key fields
 }
