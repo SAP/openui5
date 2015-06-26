@@ -207,20 +207,45 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 	
 	/**
-	 * Sets the selection mode. The current selection is lost.
+	 * Sets the selection mode, the current selection is lost.
+	 * Since the AnalyticalTable relies on the RowSelector for rendering the group headers the SelectionMode "None" is
+	 * not supported and must not be used.
 	 * @param {string} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
 	 * @public
-	 * @return a reference on the table for chaining
+	 * @return {sap.ui.table.Table} a reference on the table for chaining
 	 */
 	AnalyticalTable.prototype.setSelectionMode = function (sSelectionMode) {
 		// clear selection if the mode changes
+		if (sSelectionMode === sap.ui.table.SelectionMode.None) {
+			jQuery.sap.log.fatal("SelectionMode 'None' is not supported by the AnalyticalTable.");
+			return this;
+		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
 		}
-		// set selection mode independet from clearing the selection
+
+		// set selection mode independent from clearing the selection
 		this.setProperty("selectionMode", sSelectionMode);
 		return this;
+	};
+
+	/**
+	 * Sets the selection behavior.
+	 * Since the AnalyticalTable relies on the RowSelector for rendering the group headers the SelectionBehavior "RowOnly" is
+	 * not supported and must not be used.
+	 * @param {string} sBehavior the selection behavior, see sap.ui.table.SelectionBehavior
+	 * @public
+	 * @returns {sap.ui.table.Table} this for chaining
+	 */
+	AnalyticalTable.prototype.setSelectionBehavior = function (sBehavior) {
+		if (sBehavior === sap.ui.table.SelectionBehavior.RowOnly) {
+			jQuery.sap.log.fatal("SelectionBehavior 'RowOnly' is not supported by the AnalyticalTable.");
+			return this;
+		} else {
+			return Table.prototype.setSelectionBehavior.apply(this, arguments);
+		}
 	};
 	
 	/**
