@@ -3,8 +3,11 @@
  */
 sap.ui.require([
 	"sap/ui/model/Model", "sap/ui/model/odata/v4/ODataContextBinding",
-	"sap/ui/model/odata/v4/ODataPropertyBinding", "sap/ui/model/odata/v4/ODataModel"
-], function (Model, ODataContextBinding, ODataPropertyBinding, ODataModel) {
+	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/odata/v4/ODataPropertyBinding", "sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel"
+], function(Model, ODataContextBinding, ODataListBinding, ODataPropertyBinding, ODataModel,
+		V2ODataModel) {
 	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
 	notEqual, notStrictEqual, ok, sinon, start, strictEqual, stop, test, throws,
 	odatajs
@@ -136,6 +139,7 @@ sap.ui.require([
 		throws(function () {
 			new ODataModel();
 		}, /Missing service URL/);
+		strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo", "remove trailing /");
 	});
 
 	//*********************************************************************************************
@@ -190,6 +194,40 @@ sap.ui.require([
 			strictEqual(oError.message,
 				"The requested entity of type 'TEAM' cannot be accessed. It does not exist.");
 		});
+	});
+
+	//*********************************************************************************************
+	test("bindList", function () {
+		var oModel = new ODataModel("foo"),
+			oContext = {},
+			oBinding = oModel.bindList("/path", oContext);
+
+		ok(oBinding instanceof ODataListBinding);
+		strictEqual(oBinding.getModel(), oModel);
+		strictEqual(oBinding.getContext(), oContext);
+		strictEqual(oBinding.getPath(), "/path");
+		strictEqual(oBinding.iIndex, 0, "list binding unique index");
+		strictEqual(oModel.bindList("/path", oContext).iIndex, 1);
+		strictEqual(oModel.aLists[0], oBinding, "model stores list bindings");
+		//TODO add further tests once exact behavior of bindList is clear
+	});
+
+	//*********************************************************************************************
+	test("read with list binding specific path reads from list binding cache", function () {
+		var iIndex = Math.floor(Math.random() * 50), // some index
+			oModel = createModel(),
+			oListBinding = oModel.bindList("/TEAMS"),
+			oResult = {value : [{"Name" : "Business Suite"}]};
+
+		oListBinding.oCache = {readRange : function () {}};
+		oGlobalSandbox.mock(oListBinding.oCache).expects("readRange").withExactArgs(iIndex, 1)
+			.once().returns(Promise.resolve(oResult));
+		oGlobalSandbox.mock(odatajs.oData).expects("read").never();
+
+		return oModel.read("/TEAMS[" + iIndex + "];list=0/Name").then(function (oData) {
+			deepEqual(oData, {value : oResult.value[0]["Name"]});
+		});
+		//TODO support complex type properties, e.g. EMPLOYEE/Location/COUNTRY ../City/POSTALCODE
 	});
 
 	// TODO constructor: sDefaultBindingMode, mSupportedBindingModes

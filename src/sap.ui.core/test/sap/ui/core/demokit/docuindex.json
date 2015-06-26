@@ -114,7 +114,8 @@
 				"category" : "Data Binding",
 				"since" : "1.32",
 				"samples" : [
-					"sap.ui.core.sample.odata.v4.PropertyBinding"
+					"sap.ui.core.sample.odata.v4.PropertyBinding",
+					"sap.ui.core.sample.odata.v4.ListBinding"
 				]
 			},
 			{
@@ -240,9 +241,14 @@
 				"description": "Example for property binding with an OData v4 model"
 			},
 			{
+				"id": "sap.ui.core.sample.odata.v4.ListBinding",
+				"name": "List Binding",
+				"description": "Example for list binding with an OData v4 model"
+			},
+			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
 				"name": "XML Templating: demo scenario",
-				"description": "Complete demo scenario for XML Templating based on OData V4 annotations"
+				"description": "Complete demo scenario for XML Templating based on OData v4 annotations"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.tiny",

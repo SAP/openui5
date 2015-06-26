@@ -3,16 +3,27 @@
  */
 
 //Provides class sap.ui.model.odata.v4.ODataModel
+
+/**
+ * Model and related classes like bindings for OData v4.
+ *
+ * @namespace
+ * @name sap.ui.model.odata.v4
+ * @public
+ */
+
 sap.ui.define([
 	//FIX4MASTER open source approval for Olingo missing
-	"jquery.sap.global", "sap/ui/model/Model", "./ODataContextBinding", "./ODataPropertyBinding",
-	"sap/ui/thirdparty/odatajs-4.0.0"
-], function (jQuery, Model, ODataContextBinding, ODataPropertyBinding, Olingo) {
+	"jquery.sap.global", "sap/ui/model/Model", "./ODataContextBinding", "./ODataListBinding",
+	"./ODataPropertyBinding", "sap/ui/thirdparty/odatajs-4.0.0"
+], function(jQuery, Model, ODataContextBinding, ODataListBinding, ODataPropertyBinding, Olingo) {
 	"use strict";
 
 	/*global odatajs */
 
-	var OData = odatajs.oData;
+	var ODataModel,
+		rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)\/(.+)/,
+		rTrailingSlash = /\/?$/;
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
@@ -47,7 +58,7 @@ sap.ui.define([
 	 * @since 1.31.0
 	 * @version ${version}
 	 */
-	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
+	ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (sServiceUrl) {
@@ -56,10 +67,7 @@ sap.ui.define([
 					if (!sServiceUrl) {
 						throw new Error("Missing service URL");
 					}
-					this.sServiceUrl = sServiceUrl;
-				},
-				metadata : {
-					publicMethods : []
+					this.sServiceUrl = sServiceUrl.replace(rTrailingSlash, "");
 				}
 			});
 
@@ -81,8 +89,25 @@ sap.ui.define([
 		return new ODataContextBinding(this, sPath, oContext);
 	};
 
-	ODataModel.prototype.bindList = function () {
-		notImplemented("bindList", arguments);
+	/**
+	 * Creates a new list binding for the given path and optional context which must
+	 * resolve to an absolute OData path for an entity set.
+	 *
+	 * @param {string} sPath
+	 *   the binding path in the model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   the context which is required as base for a relative path
+	 * @return {sap.ui.model.odata.v4.ODataListBinding}
+	 *   the list binding
+	 * @public
+	 */
+	ODataModel.prototype.bindList = function (sPath, oContext) {
+		var oListBinding;
+
+		this.aLists = this.aLists || [];
+		oListBinding = new ODataListBinding(this, sPath, oContext, this.aLists.length);
+		this.aLists.push(oListBinding);
+		return oListBinding;
 	};
 
 	/**
@@ -103,23 +128,6 @@ sap.ui.define([
 		return new ODataPropertyBinding(this, sPath, oContext);
 	};
 
-	/**
-	 * TODO Implement in inheriting classes
-	 *
-	 * @name sap.ui.model.Model.prototype.bindTree
-	 * @function
-	 * @param {string}
-	 *         sPath the path pointing to the tree / array that should be bound
-	 * @param {object}
-	 *         [oContext=null] the context object for this databinding (optional)
-	 * @param {array}
-	 *         [aFilters=null] predefined filter/s contained in an array (optional)
-	 * @param {object}
-	 *         [mParameters=null] additional model specific parameters (optional)
-	 * @returns {sap.ui.model.TreeBinding}
-	 *
-	 * @public
-	 */
 	ODataModel.prototype.bindTree = function () {
 		notImplemented("bindTree", arguments);
 	};
@@ -150,9 +158,20 @@ sap.ui.define([
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
-			var sRequestUri = that.sServiceUrl + sPath;
+			var oListCache,
+				aMatches = rListBindingPath.exec(sPath), // /TEAMS[2];list=0/Name
+				sRequestUri;
 
-			OData.read({
+			if (aMatches) { // path resolves to cache of a list binding
+				oListCache = that.aLists[Number(aMatches[2])].oCache;
+				oListCache.readRange(Number(aMatches[1]), 1).then(function (oData) {
+					fnResolve({value: oData.value[0][aMatches[3]]});
+				});
+				return;
+			}
+
+			sRequestUri = that.sServiceUrl + sPath;
+			odatajs.oData.read({
 				requestUri: sRequestUri,
 				headers: {
 					"accept-language": sap.ui.getCore().getConfiguration().getLanguage()

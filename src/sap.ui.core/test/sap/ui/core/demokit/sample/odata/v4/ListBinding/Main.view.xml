@@ -1,0 +1,27 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	>
+	<VBox>
+		<Table items="{/TEAMS}">
+			<columns>
+				<Column>
+					<Text text="Team name"/>
+				</Column>
+				<Column>
+					<Text text="Employee count"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{Name}"/>
+					</cells>
+					<cells>
+						<Text text="{MEMBER_COUNT}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</VBox>
+</mvc:View>
