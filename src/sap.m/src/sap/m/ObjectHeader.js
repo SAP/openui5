@@ -186,9 +186,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * The list of Object sap.ui.core.Control. It will only allow sap.m.ObjectAttribute and sap.ui.comp.navpopover.SmartLink controls.
+			 * The list of Object Attributes
 			 */
-			attributes : {type : "sap.ui.core.Control", multiple : true, singularName : "attribute"},
+			attributes : {type : "sap.m.ObjectAttribute", multiple : true, singularName : "attribute"},
 
 			/**
 			 * First status shown on the right side of the attributes above the second status.
