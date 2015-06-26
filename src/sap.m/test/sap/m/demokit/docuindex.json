@@ -384,7 +384,7 @@
 		  ]
 		},
 		{
-		  "id": "sap.m.QuickViewCardScrollBar",
+		  "id": "sap.m.QuickViewCard",
 		  "name": "Quick View Card",
 		  "category": "Container",
 		  "since": "1.30",
