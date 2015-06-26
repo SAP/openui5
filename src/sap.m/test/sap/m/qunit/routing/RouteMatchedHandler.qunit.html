@@ -29,9 +29,10 @@
 				"sap/ui/core/routing/History",
 				"sap/m/routing/TargetHandler",
 				"sap/m/InstanceManager",
-				"qunit/routing/commonIntegrationTests"
+				"qunit/routing/commonIntegrationTests",
+				"sap/m/Page"
 			],
-			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests) {
+			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests, Page) {
 				"use strict";
 
 				HashChanger.getInstance().init();
@@ -239,7 +240,27 @@
 					assert.strictEqual(oNavigateSpy.callCount, 1, "did call navigate");
 				});
 
-				module("Dialog closing");
+				module("Dialog closing", {
+					setup: function () {
+						var oPageToNavigateTo = new Page();
+						this.oNavContainer = new NavContainer({
+							pages: [ new Page(), oPageToNavigateTo ]
+						});
+						this.oEvent = {
+							targetControl: this.oNavContainer,
+							config: {},
+							view: oPageToNavigateTo,
+							name: "myRoute"
+						};
+						this.oRouter = new Router({
+							myRoute: {}
+						});
+					},
+					teardown: function () {
+						this.oNavContainer.destroy();
+						this.oRouter.destroy();
+					}
+				});
 
 				function closeDialogsTestCase (bCloseDialogs) {
 					//Arrange
@@ -249,15 +270,16 @@
 							iExpectedCallCount = bCloseDialogs ? 1 : 0,
 							oCloseAllPopoversSpy = this.spy(InstanceManager, "closeAllPopovers"),
 							oCloseAllDialogsSpy = this.spy(InstanceManager, "closeAllDialogs"),
-							oRouter = new Router(),
-					//System under Test
-							oRouteMatchedHandler = new RouteMatchedHandler(oRouter, bCloseDialogs);
+
+							//System under Test
+							oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter, bCloseDialogs);
 
 					this.stub(InstanceManager, "hasOpenPopover", bHasInstances);
 					this.stub(InstanceManager, "hasOpenDialog", bHasInstances);
 
 					//Act
-					oRouter.fireRoutePatternMatched({config: {}});
+					this.oRouter.fireRouteMatched(this.oEvent);
+					this.oRouter.fireRoutePatternMatched(this.oEvent);
 
 					//Assert
 					strictEqual(oCloseAllPopoversSpy.callCount, iExpectedCallCount, "did close the popups");
