@@ -16,7 +16,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The Table control provides a set of sophisticated and comfort functions for table design. For example, you can make settings for the number of visible rows. The first visible row can be explicitly set. For the selection of rows, a Multi, a Single, and a None mode are available.
+	 * <p>
+	 *     Provides a comprehensive set of features for displaying and dealing with vast amounts of data. The Table control supports
+	 *     desktop PCs and tablet devices. On tablets, special consideration should be given to the number of visible columns
+	 *     and rows due to the limited performance of some devices.
+	 * </p>
+	 * <p>
+	 *     In order to keep the document DOM as lean as possible, the Table control reuses its DOM elements of the rows.
+	 *     When the user scrolls, only the row contexts are changed but the rendered controls remain the same. This allows
+	 *     the Table control to handle huge amounts of data. Nevertheless, restrictions apply regarding the number of displayed
+	 *     columns. Keep the number as low as possible to improve performance. Due to the nature of tables, the used
+	 *     control for column templates also has a big influence on the performance.
+	 * </p>
+	 * <p>
+	 *     The Table control relies completely on data binding, and its supported feature set is tightly coupled to
+	 *     the data model and binding being used.
+	 * </p>
+	 *
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
