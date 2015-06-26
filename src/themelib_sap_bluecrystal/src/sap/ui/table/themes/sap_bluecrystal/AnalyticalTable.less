@@ -106,8 +106,10 @@
 	background-color: @sapUiLightBG;
 }
 
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiAnalyticalTableSum.sapUiTableRowHdr::after {
-	display: none;
+.sapUiSizeCompact, .sapUiSizeCozy {
+	.sapUiTableSelModeMultiToggle .sapUiAnalyticalTableSum.sapUiTableRowHdr::after {
+		display: none;
+	}
 }
 
 .sapUiAnalyticalTable .sapUiTableTr > td:focus {
@@ -339,9 +341,4 @@
 
 .sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum td:last-child {
 	border-right: 1px solid @sapUiMediumBorder;
-}
-
-
-.sapUiAnalyticalTable .sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td { 
-	border-right: 1px solid @sapUiExtraDarkBorder;
 }
