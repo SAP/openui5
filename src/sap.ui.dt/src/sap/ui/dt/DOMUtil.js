@@ -166,16 +166,22 @@ function(jQuery, ElementUtil) {
 	DOMUtil.copyComputedStyle = function(oSrc, oDest) {
 		var mStyles = this.getComputedStyles(oSrc);
 		for ( var sStyle in mStyles ) {
-			// Do not use `hasOwnProperty`, nothing will get copied
-			if ( typeof sStyle == "string" && sStyle != "cssText" && !/\d/.test(sStyle) && sStyle.indexOf("margin") === -1 ) {
-				oDest.style[sStyle] = mStyles[sStyle];
-				// `fontSize` comes before `font` If `font` is empty, `fontSize` gets
-				// overwritten.  So make sure to reset this property. (hackyhackhack)
-				// Other properties may need similar treatment
-				if ( sStyle == "font" ) {
-					oDest.style.fontSize = mStyles.fontSize;
+			try {
+				// Do not use `hasOwnProperty`, nothing will get copied
+				if ( typeof sStyle == "string" && sStyle != "cssText" && !/\d/.test(sStyle) && sStyle.indexOf("margin") === -1 ) {
+					oDest.style[sStyle] = mStyles[sStyle];
+					// `fontSize` comes before `font` If `font` is empty, `fontSize` gets
+					// overwritten.  So make sure to reset this property. (hackyhackhack)
+					// Other properties may need similar treatment
+					if ( sStyle == "font" ) {
+						oDest.style.fontSize = mStyles.fontSize;
+					}
 				}
+			/*eslint-disable no-empty */
+			} catch (exc) {
+				// readonly properties must not through an error
 			}
+			/*eslint-enable no-empty */
 		}
 	};
 
