@@ -13,6 +13,46 @@
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 	jQuery.sap.require("sap.m.MessageToast");
 
+	/* =========================================================== */
+	/* ComboBox for simulation of uploading status                 */
+	/* =========================================================== */
+	var oModelCBSR = new sap.ui.model.json.JSONModel();
+	var bSimulateUploadingStatusSR = "false";
+	var mDataCBSR = {
+		"items": [
+			{
+				"key": "false",
+				"text": "false"
+			},
+			{
+				"key": "true",
+				"text": "true"
+			}
+		],
+		"selected": "false"
+	};
+
+	oModelCBSR.setData(mDataCBSR);
+
+	var oListItemTemplate = new sap.ui.core.ListItem({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oComboBoxSR = new sap.m.Select({
+		items: {
+			path: "/items",
+			template: oListItemTemplate
+		},
+		selectedKey: {
+			path: "/selected"
+		},
+		change : function(oControlEvent) {
+			bSimulateUploadingStatusSR = oControlEvent.mParameters.selectedItem.getKey();
+		}
+	});
+
+	oComboBoxSR.setModel(oModelCBSR);
 
 	/* =========================================================== */
 	/* ComboBox for Selection of Separator Style                   */
@@ -36,11 +76,6 @@
 
 	oModelCB.setData(mDataCB);
 
-	var oListItemTemplate = new sap.ui.core.ListItem({
-		key: "{key}",
-		text: "{text}"
-	});
-
 	var oComboBox = new sap.m.Select({
 		items: {
 			path: "/items",
@@ -58,7 +93,6 @@
 	});
 
 	oComboBox.setModel(oModelCB);
-
 
 	/* =========================================================== */
 	/* UploadCollection                                            */
@@ -401,6 +435,13 @@
 	/* =========================================================== */
 	var fnChange = function(oEvent) {
 		sap.m.MessageToast.show("Change event triggered.");
+		// simulate status uploading for screen reader support
+		if(bSimulateUploadingStatusSR === "true") {
+			oUploadCollection._onUploadComplete = function () {
+				return;
+			};
+		oUploadCollection.invalidate();
+		}
 	};
 
 	var fnFileDeleted = function(oEvent) {
@@ -533,15 +574,20 @@
 
 	oUploadCollection.setShowSeparators(oComboBox.getSelectedKey());
 
-
 	/* =========================================================== */
 	/* Create Page                   */
 	/* =========================================================== */
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection",
-		headerContent : [new sap.m.Label({
-			text : "Layout:"
-		}), oComboBox],
+		headerContent : [
+			new sap.m.Label({
+				text : "Simulate uploading status for Screen reader:"
+			}),
+			oComboBoxSR,
+			new sap.m.Label({
+				text : "Layout:"
+			}),
+			oComboBox],
 		content : oUploadCollection
 	});
 
