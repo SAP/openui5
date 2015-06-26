@@ -265,11 +265,11 @@
 			height: 1.375rem;
 			font-size: 1rem;
 		}
-		
-		.sapUiTableColRowHdr.sapUiTableSelAllEnabled,
-		.sapUiTableRowHdr {
+	}
+	
+	.sapUiTableColRowHdr.sapUiTableSelAllEnabled,
+	.sapUiTableRowHdr {
 			width: @sapUiTableCozyRowHdrWidth;
-		}
 	}
 }
 
@@ -506,9 +506,18 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	width: @sapUiTableRowHdrWidth;
 }
 
-.sapUiSizeCompact .sapUiTableRowHdrScr,
-.sapUiSizeCompact .sapUiTableColRowHdr {
-	width: @sapUiTableCompactRowHdrWidth;
+.sapUiSizeCompact {
+	.sapUiTableRowHdrScr,
+	.sapUiTableColRowHdr {
+		width: @sapUiTableCompactRowHdrWidth;
+	}
+}
+
+.sapUiSizeCozy {
+	.sapUiTableRowHdrScr,
+	.sapUiTableColRowHdr {
+		width: @sapUiTableCozyRowHdrWidth;
+	}
 }
 
 /* Table Column Resizer */
