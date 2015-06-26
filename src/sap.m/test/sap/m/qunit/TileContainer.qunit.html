@@ -266,115 +266,6 @@
 
 		});
 
-
-		test('ShouldHaveAccessibilityAttributes', function () {
-			// SUT
-			var m 	  	= sap.m,
-				tile 	= new m.StandardTile(),
-				tiles 	= [tile],
-				sut 	= new m.TileContainer({tiles: tiles});
-
-			sut.placeAt("qunit-fixture");
-
-			// Act
-			core.applyChanges();
-
-			// Assert
-			equal(sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
-			equal(sut.$().attr('aria-multiselectable'), "false", 'false, false; equal success');
-			equal(sut.$().attr('aria-activedescendant'), tile.getId());
-
-			sut.destroy();
-		});
-
-
-		test('ShouldHaveProperAccessibilityAttributesValues', function () {
-			// SUT
-			var m 	  	= sap.m,
-					tile1 	= new m.StandardTile(),
-					tile2 	= new m.StandardTile(),
-					tiles 	= [tile1, tile2],
-					sut 	= new m.TileContainer({tiles: tiles});
-
-			sut.placeAt("qunit-fixture");
-
-			// Act
-			core.applyChanges();
-
-			// Assert
-			equal(tile1.$().attr('aria-posinset'), 1, '1, 1; equal success');
-			equal(tile1.$().attr('aria-setsize'), 2, '2, 2; equal success');
-
-			sut.destroy();
-		});
-
-
-		asyncTest('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function () {
-			// SUT
-			var m 	  	= sap.m,
-				sut 	= new m.TileContainer({
-					tiles: [
-						new m.StandardTile({id: 'first'}),
-						new m.StandardTile({id: 'second'}),
-						new m.StandardTile({id: 'third'}),
-						new m.StandardTile({id: 'fourth'}),
-						new m.StandardTile({id: 'fifth'}),
-						new m.StandardTile({id: 'sixth'})
-					]
-				});
-
-			sut.placeAt("qunit-fixture");
-
-			// Act
-			core.applyChanges();
-			setTimeout(function(){
-				// build an array with the posinset values for each tile
-				var aInsetPositions = [];
-				sut.getTiles().forEach(function (tile) {
-					aInsetPositions.push(tile.$().attr('aria-posinset'))
-				});
-
-				// Assert that there are 6 tiles with aria-posinset attribute
-				equal(aInsetPositions.length, "6", '6, 6; equal success');
-
-				// Assert that all tiles have aria-posinset attribute with proper values:
-				// no duplicates and proper numeric order
-				var aExpectedResult = ['1', '2', '3', '4', '5', '6'];
-				var aActualResult = [];
-				sut.getTiles().forEach(function (tile) {
-					aActualResult.push(tile.$().attr('aria-posinset'));
-				});
-				deepEqual(aActualResult, aExpectedResult);
-
-				// Assert that all tiles have aria-posinset attribute with proper values
-				// after a tile has changed its position from left to right
-				aActualResult = [];
-				sut.moveTile(sut.getTiles()[0], 3);
-				sut.getTiles().forEach(function (tile) {
-					aActualResult.push(tile.$().attr('aria-posinset'));
-				});
-				deepEqual(aActualResult, aExpectedResult);
-				// Assert that the tile was actually moved
-				equal(sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
-
-
-				// Assert that all tiles have aria-posinset attribute with proper values
-				// after a tile has changed its position from right to left
-				var aExpectedResult = ['1', '2', '3', '4', '5', '6'];
-				var aActualResult = [];
-				sut.moveTile(sut.getTiles()[4], 1);
-				sut.getTiles().forEach(function (tile) {
-					aActualResult.push(tile.$().attr('aria-posinset'));
-				});
-				deepEqual(aActualResult, aExpectedResult);
-				// Assert that the tile was actually moved
-				equal(sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
-
-				sut.destroy();
-				start();
-			}.bind(this), delay);
-		});
-
 		asyncTest('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function () {
 			// SUT
 			var m 	  	= sap.m,
@@ -495,6 +386,116 @@
 
 		asyncTest('Tile dimension gets updated upon real theme change', function () {
 			this.callAndTest(sap.ui.getCore().applyTheme, ["sap_hcb"]);
+		});
+
+		module("Accessability attributes", {
+			getAriaPosInSetValues: function() {
+				return this.sut.getTiles().map(function (tile) {
+					return tile.$().attr('aria-posinset');
+				});
+			},
+			// build an array with the "aria-setsize" values for each tile
+			getAriaSetSizeValues: function() {
+				return this.sut.getTiles().map(function (tile) {
+					return tile.$().attr('aria-setsize');
+				});
+			},
+			getExpectedAriaPositionInSetValues: function() {
+				return this.sut.getTiles().map(function(oTile, iIndex) {
+					return (iIndex + 1).toString();
+				});
+			},
+			setup: function() {
+				var m = sap.m;
+				var tc = sap.ui.getCore().byId("tcAcc");
+				this.sut = new m.TileContainer("tcAcc", {
+					tiles: [
+						new m.StandardTile({id: 'first'}),
+						new m.StandardTile({id: 'second'}),
+						new m.StandardTile({id: 'third'}),
+						new m.StandardTile({id: 'fourth'}),
+						new m.StandardTile({id: 'fifth'}),
+						new m.StandardTile({id: 'sixth'})
+					]
+				});
+
+				// SUT
+				this.sut.placeAt("qunit-fixture");
+				// Act
+				core.applyChanges();
+			},
+			teardown: function() {
+				this.sut.destroy();
+			}
+		});
+		test('ShouldHaveAccessibilityAttributes', function () {
+			var tile1 	= this.sut.getTiles()[0];
+			// Assert
+			equal(this.sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
+			equal(this.sut.$().attr('aria-multiselectable'), "false", 'false, false; equal success');
+			equal(this.sut.$().attr('aria-activedescendant'), "first");
+			// Assert
+			equal(tile1.$().attr('aria-posinset'), 1, '1, 1; equal success');
+			equal(tile1.$().attr('aria-setsize'), this.sut.getTiles().length, 'aria-setsize');
+		});
+
+		asyncTest('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function () {
+			// SUT
+			// build an array with the "aria-posinset" values for each tile
+			// Act
+			setTimeout(function(){
+				var aInsetPositions = this.getAriaPosInSetValues(),
+					aExpectedAriaPosInSetValues = this.getExpectedAriaPositionInSetValues();
+
+				// Assert that there are 6 tiles with aria-posinset attribute
+				equal(aInsetPositions.length, "6", '6, 6; equal success');
+
+				// Assert that all tiles have aria-posinset attribute with proper values:
+				// no duplicates and proper numeric order
+
+				deepEqual(aInsetPositions, aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+
+				// Assert that all tiles have aria-posinset attribute with proper values
+				// after a tile has changed its position from left to right
+				this.sut.moveTile(this.sut.getTiles()[0], 3);
+				deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+				// Assert that the tile was actually moved
+				equal(this.sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
+
+
+				// Assert that all tiles have aria-posinset attribute with proper values
+				// after a tile has changed its position from right to left
+				this.sut.moveTile(this.sut.getTiles()[4], 1);
+				deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+
+				// Assert that the tile was actually moved
+				equal(this.sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
+				start();
+			}.bind(this), delay);
+		});
+
+		asyncTest("Deletion of tile updates the aria-posinset and aria-setsize attributes", function() {
+			var oTile2 = this.sut.getTiles()[2];
+
+			setTimeout(function(){
+				this.sut.deleteTile(oTile2);
+				deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+				oTile2.destroy();
+				start();
+			}.bind(this), delay);
+		});
+
+		test("Insert of tile updates the aria-posinset and aria-setsize attributes", function() {
+			var oNewTile = new sap.m.StandardTile();
+			this.sut.insertTile(oNewTile, 4);
+
+			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+		});
+
+		test("Add of tile updates the aria-posinset and aria-setsize attributes", function() {
+			var oNewTile = new sap.m.StandardTile();
+			this.sut.addTile(oNewTile);
+			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
 		});
 	</script>
 </head>

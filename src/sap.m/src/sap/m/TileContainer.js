@@ -615,19 +615,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		}
 
-
-
-		// Save the initial ARIA position of the moved tile
-		var iOldPosInset = vTile.$().attr('aria-posinset');
-
 		this.deleteTile(vTile);
-		this.insertTile(vTile,iNewIndex);
-
-		// Update the aria-posinset HTML attribute for the tiles that changed position
-		var iNewPosInset = iNewIndex + 1;
-		if (typeof iOldPosInset !== undefined) {
-			this._updateTilesAriaPosition(parseInt(iOldPosInset, 10), iNewPosInset);
-		}
+		this.insertTile(vTile, iNewIndex);
 
 		return this;
 	};
@@ -642,7 +631,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype.addTile = function(oTile) {
 		this.insertTile(oTile,this.getTiles().length);
-		this._handleAriaSize();
 	};
 
 	/**
@@ -713,7 +701,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			this.insertAggregation("tiles",oTile,iIndex);
 		}
-		this._handleAriaSize();
+
+		handleAriaPositionInSet.call(this, iIndex, this.getTiles().length);
+		handleAriaSize.call(this);
 
 		return this;
 	};
@@ -756,9 +746,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.deleteTile = function(oTile) {
+		var iTileUnderDeletionIndex = this.indexOfAggregation("tiles",oTile);
 
 		if (this.getDomRef()) {
-			var iIndex = this.indexOfAggregation("tiles",oTile) - 1;
+			var iPreviousTileIndex = iTileUnderDeletionIndex - 1;
 			this.removeAggregation("tiles",oTile,true);
 
 			if (!this._oDragSession) {
@@ -770,12 +761,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}
 
-			this._applyPageStartIndex(iIndex < 0 ? 0 : iIndex);
+			this._applyPageStartIndex(iPreviousTileIndex < 0 ? 0 : iPreviousTileIndex);
 			this._update(false);
 		} else {
 			this.removeAggregation("tiles",oTile,false);
 		}
-		this._handleAriaSize();
+
+		handleAriaPositionInSet.call(this, iTileUnderDeletionIndex, this.getTiles().length);
+		handleAriaSize.call(this);
 		return this;
 	};
 
@@ -1660,56 +1653,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	/**
-	 * Handles the WAI ARIA property aria-setsize after new tiles added
-	 *
-	 * @private
-	 */
-	TileContainer.prototype._handleAriaSize = function () {
-		var iTilesCount = this.getTiles().length;
-		/* All the tiles in TileContainer have to be updated */
-		for (var iIndex = 0; iIndex < iTilesCount; iIndex++) {
-			var oTile = this.getTiles()[iIndex].getDomRef();
-			if (oTile) {
-				oTile.setAttribute("aria-setsize", iTilesCount);
-			}
-		}
-	};
-
-	/**
-	 * Synchronize the 'aria-posinset' attribute of the tiles with the respective
-	 * index of aggregation.
-	 *
-	 * @private
-	 * @param iOldPosInset The old posinset index
-	 * @param iNewPosInset The new posinset index
-	 * @returns {sap.m.TileContainer} This tile container.
-	 */
-	TileContainer.prototype._updateTilesAriaPosition = function (iOldPosInset, iNewPosInset) {
-		if (!iOldPosInset) {
-			jQuery.sap.log.warning("Cannot update ARIA posinset attribute. Missing old aria position inset.");
-			return this;
-		}
-
-		if (!iNewPosInset) {
-			jQuery.sap.log.warning("Cannot update ARIA posinset attribute. Missing new aria postion inset.");
-			return this;
-		}
-
-		var iLowerPosinset = Math.min(iOldPosInset, iNewPosInset);
-		var iHigherPosinset = Math.max(iOldPosInset, iNewPosInset);
-
-		if (iLowerPosinset !== iHigherPosinset) {
-			var tiles = this.getTiles();
-			for (var i = iLowerPosinset; i <= iHigherPosinset; i++) {
-				var iAggregationIndex = i - 1;
-				tiles[iAggregationIndex]._updateAriaPosition();
-			}
-		}
-
-		return this;
-	};
-
 	TileContainer.prototype.onThemeChanged = function() {
 		if (this.getDomRef()) {
 			this.invalidate();
@@ -1758,6 +1701,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	TileDimensionCalculator.prototype.getLastCalculatedDimension = function() {
 		return this._oDimension;
 	};
+
+	/**
+	 * Handles the WAI ARIA property "aria-setsize" after a change in the tile container
+	 *
+	 * @private
+	 */
+	function handleAriaSize () {
+		var iTilesCount = this.getTiles().length,
+			oDomRef = null;
+		this.getTiles().forEach(function(oTile) {
+			oDomRef = oTile.getDomRef();
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-setsize", iTilesCount);
+			}
+		});
+	}
+	/**
+	 * Handles the WAI ARIA property "aria-posinset" after a change in the tile container
+	 * @param {int} iStartIndex the index of the tile to start with
+	 * @param {int} iEndIndex the index of the tile to complete with
+	 * @private
+	 */
+	function handleAriaPositionInSet(iStartIndex, iEndIndex) {
+		var aTiles = this.getTiles(),
+			i, oTile = null;
+		for (var i = iStartIndex; i < iEndIndex; i++) {
+			oTile = aTiles[i];
+			if (oTile) {
+				oTile._updateAriaPosition();
+			}
+		}
+	}
 
 	return TileContainer;
 
