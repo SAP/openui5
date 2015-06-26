@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 						icon: "sap-icon://arrow-top",
 						enabled: false,
 						tooltip: that._oRb.getText('PERSODIALOG_UP'),
-						press: function(oEvent) {
+						press: function() {
 							that._moveItem(-1);
 						}
 		});
@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 						icon: "sap-icon://arrow-bottom",
 						enabled: false,
 						tooltip: that._oRb.getText('PERSODIALOG_DOWN'),
-						press: function(oEvent) {
+						press: function() {
 							  that._moveItem(1);
 						}
 		});
@@ -229,29 +229,28 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			// that._sLastSelectedItemId is used to have an initial selection when the dialog
 			// is opened for the first time and after 'resetAll' has been called
 			if (that._sLastSelectedItemId) {
-				var aItems = that._oList.getItems(),
-					fnItemMatches = function (oListItem) {
-						var bResult = (oListItem.getBindingContext('Personalization') &&
-								oListItem.getBindingContext('Personalization').getProperty('id') === that._sLastSelectedItemId);
-						if (bResult) {
-							that._oList.setSelectedItem(oListItem);
-						}
-						return bResult;
-					};
+				var	fnItemMatches = function (oListItem) {
+					var bResult = (oListItem.getBindingContext('Personalization') &&
+						oListItem.getBindingContext('Personalization').getProperty('id') === that._sLastSelectedItemId);
+					if (bResult) {
+						that._oList.setSelectedItem(oListItem);
+					}
+					return bResult;
+				};
 				// Use 'some' to make sure it only traverses the array of listItems
 				// as far as needed
-				aItems.some(fnItemMatches);
+				that._oList.getItems().some(fnItemMatches);
 				// Clear last selected item so it does not get used again
 				that._sLastSelectedItemId = null;
 			}
 		};
 
-		this._fnAfterDialogOpen = function (oEvent) {
+		this._fnAfterDialogOpen = function () {
 			// Make sure that arrow buttons are updated when dialog is opened
 			that._fnUpdateArrowButtons.call(that);
 		};
 
-		this._fnAfterScrollContainerRendering = function (oEvent) {
+		this._fnAfterScrollContainerRendering = function () {
 			// Scroll container gets focused in Firefox
 			that._oScrollContainer.$().attr('tabindex', '-1');
 		};
@@ -283,7 +282,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 				}
 			},
 			// Execute the standard search
-			search: function (oEvent) {
+			search: function () {
 				that._executeSearch();
 			}
 		});
@@ -301,8 +300,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			icon: "sap-icon://undo",
 			tooltip: this._oRb.getText('PERSODIALOG_UNDO'),
 			press : function () {
-				that._resetAll();
-			}
+				this._resetAll();
+			}.bind(this)
 		}).addStyleClass("sapMPersoDialogResetBtn");
 
 		this._oSelectAllCheckbox = new sap.m.CheckBox(this._getSelectAllCheckboxId(), {
@@ -366,7 +365,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	 * order: new order; text: the column's header text that was displayed
 	 * in the dialog; visible: visibility (true or false).
 	 *
-	 * @return object personalizationData
+	 * @return {object} the personalization data
 	 * @public
 	 */
 	TablePersoDialog.prototype.retrievePersonalizations = function () {
@@ -645,12 +644,18 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		});
 	};
 
+	/**
+	 * Filters the columns list with the given value
+	 * @return {string} the select all checkbox id.
+	 * @private
+	 */
 	TablePersoDialog.prototype._getSelectAllCheckboxId = function () {
 		return this.getId() + '_SelectAll';
 	};
 
 	/**
-	 * Filters the columns list with the given sValue
+	 * Filters the columns list with the given value
+	 * @return {TablePersoDialog} the tablePersoDialog instance.
 	 * @private
 	 */
 	TablePersoDialog.prototype._executeSearch = function () {
@@ -666,7 +671,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 	/**
 	 * Setter to turn on/ switch off TablePersoDialog's grouping mode.
-	 * @param {boolean} bHasGrouping
+	 * @param {boolean} bHasGrouping groping mode on or off.
+	 * @return {TablePersoDialog} the TablePersoDialog instance.
 	 * @public
 	 */
 	TablePersoDialog.prototype.setHasGrouping = function (bHasGrouping) {
@@ -688,7 +694,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 	/**
 	 * Setter to show/hide TablePersoDialog's 'selectAll' checkbox.
-	 * @param {boolean} bShowSelectAll
+	 * @param {boolean} bShowSelectAll selectAll checkbox visible or not.
+	 * @return {TablePersoDialog} the TablePersoDialog instance.
 	 * @public
 	 */
 	TablePersoDialog.prototype.setShowSelectAll = function (bShowSelectAll) {
@@ -701,7 +708,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 	/**
 	 * Setter to show/hide TablePersoDialog's 'Undo Personalization' button.
-	 * @param {boolean} bShowResetAll
+	 * @param {boolean} bShowResetAll 'undo Personalization' button visible or not.
+	 * @return {TablePersoDialog} the TablePersoDialog instance.
 	 * @public
 	 */
 	TablePersoDialog.prototype.setShowResetAll = function (bShowResetAll) {

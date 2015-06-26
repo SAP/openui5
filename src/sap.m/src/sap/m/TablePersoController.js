@@ -104,7 +104,9 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		this._mInitialTableStateMap = {};
 		//Internal flag which may be checked by clients which
 		//have workaround for missing event in place
+		/*eslint-disable */
 		this._triggersPersDoneEvent = true;
+		/*eslint-enable */
 
 	};
 
@@ -135,7 +137,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * its columns. Usually, this is when that table's view has set its model,
 	 * which is typically done in the corresponding controller's init method.
 	 * For example
-	 *  	onInit: function () {
+	 * <pre><code>
+	 *  onInit: function () {
 	 *
 	 *		// set explored app's demo model on this sample
 	 *		var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
@@ -150,10 +153,12 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 *			componentName: "demoApp",
 	 *			persoService: DemoPersoService,
 	 *		}).activate();
-	 *	},
+	 *	}
+	 *</code></pre>
 	 *
 	 *
 	 * @public
+	 * @return {TablePersoController} the TablePersoController instance.
 	 */
 	TablePersoController.prototype.activate = function() {
 
@@ -172,9 +177,10 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * This function makes a private aggregate publicly accessable. This is
 	 * necessary for downward compatibility reasons: in the first versions
 	 * of the tablePersoProvider developers still worked with the TablePersoDialog
-	 * directly, which is now not necessarry any longer.
+	 * directly, which is now not necessary any longer.
 	 *
 	 * @public
+	 * @return {TablePersoDialog} the TablePersoDialog instance.
 	 */
 	TablePersoController.prototype.getTablePersoDialog = function() {
 		return this.getAggregation("_tablePersoDialog");
@@ -185,7 +191,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * Applies the personalizations by getting the existing personalizations
 	 * and adjusting to the table.
 	 *
-	 * @param {object} oTable
+	 * @param {sap.m.Table} oTable the table to be personalized.
 	 * @public
 	 */
 	TablePersoController.prototype.applyPersonalizations = function(oTable) {
@@ -206,6 +212,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * Creates 'onBeforeRendering' delegate for given table and adds it to the controller'
 	 * '_mDelegateMap'
 	 *
+	 * @param {sap.m.Table} oTable the table to be personalized.
 	 * @private
 	 */
 	TablePersoController.prototype._createAndAddDelegateForTable = function(oTable) {
@@ -245,6 +252,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * Creation of the TablePersoDialog based on the content of oTable and
 	 * save the personalizations.
 	 *
+	 * @param {sap.m.Table} oTable the table to be personalized.
+	 * @private
 	 */
 	TablePersoController.prototype._createTablePersoDialog = function(oTable) {
 		// Create a new TablePersoDialog control for the associated table.
@@ -284,6 +293,9 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * Adjusts the table by getting the existing personalizations
 	 * and applying them to the table.
 	 *
+	 * @param {Object} oData the new persoanlization settings
+	 * @param {sap.m.Table} oTable the table to be personalized.
+	 *
 	 * @private
 	 */
 	TablePersoController.prototype._adjustTable = function(oData, oTable) {
@@ -310,6 +322,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * 		<componentName>-<tableIdSuffix>-<columnIDSuffix>
 	 * where tableIdSuffix and columnIdSuffix are 'final' ids that do not change.
 	 *
+	 * @param {sap.m.Table} oTable the table to be personalized.
 	 * @private
 	 */
 	TablePersoController.prototype._personalizeTable = function(oTable) {
@@ -429,7 +442,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 
 	/**
 	 * Reflector for the controller's 'contentWidth' property.
-	 * @param {sap.ui.core.CSSSize} sWidth
+	 * @param {sap.ui.core.CSSSize} sWidth the new width of the tablePersoDialog
+	 * @return {TablePersoController} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setContentWidth = function(sWidth) {
@@ -443,7 +457,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 
 	/**
 	 * Reflector for the controller's 'contentHeight' property.
-	 * @param {sap.ui.core.CSSSize} sHeight
+	 * @param {sap.ui.core.CSSSize} sHeight the new height of the TablePersoDialog.
+	 * @return {TablePersoController} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setContentHeight = function(sHeight) {
@@ -457,7 +472,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 
 	/**
 	 * Reflector for the controller's 'hasGrouping' property.
-	 * @param {boolean} bHasGrouping
+	 * @param {boolean} bHasGrouping is the tablePersoDialog displayed in grouping mode or not.
+	 * @return {TablePersoController} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setHasGrouping = function(bHasGrouping) {
@@ -471,7 +487,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 
 	/**
 	 * Reflector for the controller's 'showSelectAll' property.
-	 * @param {boolean} bShowSelectAll
+	 * @param {boolean} bShowSelectAll is the tablePersoDialog's 'Display All' checkbox displayed or not.
+	 * @return {TablePersoController} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setShowSelectAll = function(bShowSelectAll) {
@@ -485,7 +502,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 
 	/**
 	 * Reflector for the controller's 'showResetAll' property.
-	 * @param {boolean} bShowResetAll
+	 * @param {boolean} bShowResetAll is the tablePersoDialog's 'UndoPersonalization' button displayed or not.
+	 * @return {TablePersoController} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setShowResetAll = function(bShowResetAll) {
@@ -504,7 +522,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * If a component name is set using this method, it will be used, regardless of
 	 * whether the table's app has a different component name or not.
 	 *
-	 * @param {string} sCompName
+	 * @param {string} sCompName the new component name.
+	 * @return {TablePersoController} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setComponentName = function(sCompName) {
@@ -521,6 +540,9 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * delivers the given oControl's component name by recursive asking its
 	 * parents for their component name. If none of oControl's ancestors has a component
 	 * name, the function returns 'empty_component'.
+	 *
+	 * @param {object} oControl used to determine the component name.
+	 * @return {string} the component name.
 	 *
 	 * @private
 	 */
@@ -544,6 +566,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * 'table' or 'tables' association. The passed in function must take
 	 * a table as first parameter!
 	 *
+	 * @param {function} fnToCall function to be called
+	 *
 	 * @private
 	 */
 	TablePersoController.prototype._callFunctionForAllTables = function(fnToCall) {
@@ -561,9 +585,12 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	};
 
 	/**
-	* Simple heuristic to determine if an ID is generated or static
-	* @private
-	*/
+	 * Simple heuristic to determine if an ID is generated or static
+	 *
+	 * @param {string} sId id under test.
+	 * @return {boolean} static id or not.
+	 * @private
+	 */
 	TablePersoController.prototype._isStatic = function (sId) {
 		// SUGGESTED IMPROVEMENT: make this an inline function of '_getPersoColumnMap'
 		// it is only used there
@@ -590,7 +617,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * If table id or any column id is generated (id starts with configured UIDPrefix,
 	 * which is usually '__'), the map is not generated and this method returns 'null'.
 	 *
-	 * @param oTable the table for whose columns shall be the resulting map's keys.
+	 * @param {sap.m.Table} oTable the table for whose columns shall be the resulting map's keys.
+	 * @return {object] the table's personalization map.
 	 * @private
 	 */
 	TablePersoController.prototype._getPersoColumnMap = function(oTable) {
@@ -659,8 +687,9 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	/**
 	 * Store's the given table's initial state in the controller's initial state map.
 	 * This state will be used by the TablePersoDialog to undo the personalization.
+	 *
+	 * @param {sap.m.Table} oTable the table for which initial state shall be remembered.
 	 * @private
-	 * @param {object} oTable the table for which initial state shall be remembered
 	 */
 	TablePersoController.prototype._rememberInitialTableStates = function (oTable) {
 		this._mInitialTableStateMap[oTable] = this._tableColumnInfo(oTable, this._getPersoColumnMap(oTable));
@@ -668,9 +697,11 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 
 	/**
 	 * Returns table column settings (header text, order, visibility) for a table
-	 * @private
-	 * @param {object} oTable the table for which column settings should be returned
+	 *
+	 * @param {sap.m.Table} oTable the table for which column settings should be returned
 	 * @param {object} oPersoMap the table's personalization map
+	 * @return {object} the table's personlization settings.
+	 * @private
 	 */
 	TablePersoController.prototype._tableColumnInfo = function (oTable, oPersoMap) {
 
