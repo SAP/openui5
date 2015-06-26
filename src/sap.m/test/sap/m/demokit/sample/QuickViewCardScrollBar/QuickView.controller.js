@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(jQuery, Fragment, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.QuickViewCard.QuickView", {
+	var CController = Controller.extend("sap.m.sample.QuickViewCardScrollBar.QuickView", {
 
 		_mData : null,
 		_oModel : null,
@@ -126,6 +126,10 @@ sap.ui.define([
 		onBeforeRendering: function() {
 			var oButton = this.getView().byId('buttonBack');
 			oButton.setEnabled(false);
+		},
+
+		onAfterRendering: function() {
+			this.getView().byId("quickViewCardContainer").$().css("maxWidth", "320px");
 		},
 
 		onButtonBackClick : function() {

@@ -384,12 +384,13 @@
 		  ]
 		},
 		{
-		  "id": "sap.m.QuickViewCard",
+		  "id": "sap.m.QuickViewCardScrollBar",
 		  "name": "Quick View Card",
 		  "category": "Container",
 		  "since": "1.30",
 		  "samples": [
-			"sap.m.sample.QuickViewCard"
+			"sap.m.sample.QuickViewCard",
+			"sap.m.sample.QuickViewCardScrollBar"
 		  ]
 		},
 		{
@@ -941,6 +942,11 @@
 		  "id": "sap.m.sample.QuickViewCard",
 		  "name": "QuickViewCard",
 		  "description": "QuickView embedded in container"
+		},
+		{
+		  "id": "sap.m.sample.QuickViewCardScrollBar",
+		  "name": "QuickViewCard - Scroll example",
+		  "description": "QuickView embedded in container with scroll bar"
 		},
 		{
 		  "id": "sap.m.sample.ResponsivePopover",
