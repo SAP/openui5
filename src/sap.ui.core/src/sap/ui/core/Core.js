@@ -270,13 +270,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				oSyncPoint1.finishTask(iDocumentReadyTask);
 			});
 
-			// sync point 2 synchronizes all preload script loads and the end of the bootstrap script
+			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
 			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot();
 				oSyncPoint1.finishTask(iCoreBootTask);
 			});
 
+			// a helper task to prevent the premature completion of oSyncPoint2
+			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
+			
 			// when a boot task is configured, add it to syncpoint2
 			var fnCustomBootTask = this.oConfiguration["xx-bootTask"];
 			if ( fnCustomBootTask ) {
@@ -328,6 +331,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.require("sap.ui.core.AppCacheBuster");
 				sap.ui.core.AppCacheBuster.boot(oSyncPoint2);
 			}
+
+			oSyncPoint2.finishTask(iCreateTasksTask);
 
 		},
 
