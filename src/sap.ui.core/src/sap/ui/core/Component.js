@@ -801,6 +801,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 *     in some library preload. If components are listed in the hints section, they will be preloaded.</li>
 	 * <li><code>oConfig.asyncHints.libs : string[]</code>libraries needed by the component and its subcomponents.
 	 *     The framework will asynchronously load those libraries, if they're not loaded yet.</li>
+	 * <li><code>oConfig.asyncHints.preloadBundles : string[]</code>a list of additional preload bundles
+	 *     The framework will try to load these bundles asynchronously before requiring the component, errors will be ignored.
+	 *     The named modules must only represent preload bundles. If they are normal modules, their dependencies
+	 *     will be loaded with the normal synchronous request mechanism and performance might degrade.</li>
+	 * <li><code>oConfig.asyncHints.preloadOnly : boolean (default: false)</code> whether only the preloads should be done, 
+	 *     but not the loading of the Component controller class itself.
 	 * </ul>
 	 * 
 	 * If components and/or libraries are listed in the hints section, all the corresponding preload files will 
@@ -910,26 +916,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					}
 				};
 
+			// load any required preload bundles
+			if ( hints.preloadBundles ) {
+				jQuery.each(hints.preloadBundles, function(i, vBundle) {
+					collect(jQuery.sap._loadJSResourceAsync(registerPath(vBundle), true));
+				});
+			}
+
 			// preload required libraries 
 			if ( hints.libs ) {
 				collect(sap.ui.getCore().loadLibraries( hints.libs.map(registerPath) ));
 			}
 
-			if ( bComponentPreload ) {
-				collect(preload(sName, true));
+			// preload the component itself
+			collect(preload(sName, true));
 
-				// if a hint about "used" components is given, preload those components
-				if ( hints.components ) {
-					jQuery.each(hints.components, function(i, vComp) {
-						collect(preload(registerPath(vComp), true));
-					});
-				}
+			// if a hint about "used" components is given, preload those components
+			if ( hints.components ) {
+				jQuery.each(hints.components, function(i, vComp) {
+					collect(preload(registerPath(vComp), true));
+				});
 			}
 
 			// combine given promises
 			return Promise.all(promises).then(function(v) {
 				jQuery.sap.log.debug("Component.load: all promises fulfilled, then " + v);
-				return getControllerClass();
+				return hints.preloadOnly ? true : getControllerClass();
 			});
 
 		}
