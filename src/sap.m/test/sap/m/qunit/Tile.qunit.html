@@ -231,6 +231,8 @@
 
 			// Assert
 			equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+			equal(sut.$().attr('aria-posinset'), "1", 'position in the set must equal to 1');
+			equal(sut.$().attr('aria-setsize'), "2", 'the size of the set must equal to 2');
 
 			cnt.destroy();
 		});
