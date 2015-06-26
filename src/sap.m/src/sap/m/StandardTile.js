@@ -132,7 +132,8 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 			height : sSize,
 			width : sSize,
 			size: sSize,
-			densityAware : this.getIconDensityAware()
+			densityAware : this.getIconDensityAware(),
+			useIconTooltip : false
 		};
 
 		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
