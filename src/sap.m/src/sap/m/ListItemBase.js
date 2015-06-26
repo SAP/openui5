@@ -134,6 +134,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/*
+	 * Returns whether selected property is two-way bound or not
+	 * @protected
+	 */
+	ListItemBase.prototype.isSelectedBoundTwoWay = function() {
+		var oBinding = this.getBinding("selected");
+		if (oBinding && oBinding.getBindingMode() == sap.ui.model.BindingMode.TwoWay) {
+			return true;
+		}
+	};
+	
+	/*
 	 * Returns the responsible list control
 	 * 
 	 * @returns {sap.m.ListBase|undefined} 
