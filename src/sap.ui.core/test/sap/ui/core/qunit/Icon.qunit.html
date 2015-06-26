@@ -192,7 +192,7 @@
 				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
 			});
 
-			QUnit.test("press handler and accessbility", function(assert) {
+			QUnit.test("press handler, noTabStop and accessbility", function(assert) {
 				var fnPressHandler = function() {};
 
 				this.oAriaIcon.attachPress(fnPressHandler);
@@ -200,6 +200,16 @@
 				var $icon = this.oAriaIcon.$();
 				assert.strictEqual($icon.attr("role"), "button", "role is set to button");
 				assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
+
+				this.oAriaIcon.setNoTabStop(true);
+				sap.ui.getCore().applyChanges();
+				$icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex when noTabStop is set to true");
+
+				this.oAriaIcon.setNoTabStop(false);
+				sap.ui.getCore().applyChanges();
+				$icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is restored when noTabStop is set to false");
 
 				this.oAriaIcon.detachPress(fnPressHandler);
 				assert.strictEqual($icon.attr("role"), "presentation", "role is set back to presentation");
@@ -226,6 +236,22 @@
 
 				assert.strictEqual($icon.attr("aria-label"), undefined, "aria-label should be undefined");
 				assert.strictEqual($icon.attr("aria-labelledby"), sId, "aria-labelledby should be " + sId);
+			});
+
+			QUnit.test("Property noTabStop", function (assert) {
+				var fnPressHandler = function() {};
+
+				this.oAriaIcon.setNoTabStop(true);
+				sap.ui.getCore().applyChanges();
+
+				var $Icon = this.oAriaIcon.$();
+				assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists");
+
+				this.oAriaIcon.attachPress(fnPressHandler);
+				assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists after attach press event handler");
+
+				this.oAriaIcon.detachPress(fnPressHandler);
+				assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists after detach press event handler");
 			});
 
 			QUnit.module("Property 'useIconTooltip'", {
