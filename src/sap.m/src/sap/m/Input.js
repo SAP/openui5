@@ -390,7 +390,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			var sURI = IconPool.getIconURI("value-help");
 			this._oValueHelpIcon = IconPool.createControlByURI({
 				id: this.getId() + "__vhi",
-				src: sURI
+				src: sURI,
+				useIconTooltip: false,
+				noTabStop: true
 			});
 
 			this._oValueHelpIcon.addStyleClass("sapMInputValHelpInner");
