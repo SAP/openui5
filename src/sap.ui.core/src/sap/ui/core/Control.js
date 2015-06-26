@@ -59,7 +59,34 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				/**
 				 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control
 				 */
-				"visible" : { type: "boolean", group : "Appearance", defaultValue: true }
+				"visible" : { type: "boolean", group : "Appearance", defaultValue: true },
+				
+				/**
+				 * The id of a logical field group that this control belongs to. All fields in a logicalfield group should share the same fieldGroupId. 
+				 * Once a logical field group is left, the validateFieldGroup event is fired.
+				 * 
+				 * @see {sap.ui.core.Control.attachValidateFieldGroup}
+				 * @since 1.31
+				 */
+				"fieldGroupId" : { type: "string", defaultValue: "" }
+			
+			},
+			events : {
+				/**
+				 * Event is fired if a logical field group defined by a fieldGroupId of a control was left or the user explicitly pressed a validation key combination.
+				 * Use this event to validate data of the controls belonging to a field group.
+				 * @see {sap.ui.core.Control.setFieldGroupId}
+				 */
+				validateFieldGroup : {
+					enableEventBubbling:true,
+					parameters : {
+						
+						/**
+						 * Field group id of the logical field group to validate
+						 */
+						fieldGroupId : {type : "string"}
+					}
+				}
 			}
 		},
 
@@ -800,6 +827,22 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				delete this._busyAnimationTimer4;
 			}
 		};
+
+		/**
+		 * Triggers the validateFieldGroup event for this control.
+		 * Called by sap.ui.core.UIArea if a field group should be validated after is loses the focus or a validation key combibation was pressed.
+		 * The validation key is defined in the UI area <code>UIArea._oFieldGroupValidationKey</code>
+		 *
+		 * @see {sap.ui.core.Control.attachValidateFieldGroup}
+		 *
+		 * @protected
+		 */
+		Control.prototype.triggerValidateFieldGroup = function() {
+			this.fireValidateFieldGroup({
+				fieldGroupId : this.getFieldGroupId()
+			});
+		};
+
 	})();
 
 
