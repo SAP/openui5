@@ -22,6 +22,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 			
 				"sap.ui5": {
 				
+					"resourceRoots": {
+						"x.y.z": "anypath"
+					},
+					
 					"resources": {
 						"js": [
 							{
