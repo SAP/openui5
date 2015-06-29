@@ -298,7 +298,7 @@
 	});
 	
 	asyncTest("UpdateSelected Event", function() {
-		expect(3);
+		expect(2);
 		action = "update";
 		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
@@ -307,9 +307,8 @@
 			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
 			setTimeout(function() {
 				start();
-				ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
-				equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").css("visibility"), "hidden",
-						"Rendered update popup should be hidden in the page");
+				equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+						"Rendered update popup was removed in the page");
 			}, 500);
 		}, 500);
 	});
@@ -331,8 +330,8 @@
 						setTimeout(function() {
 							start();
 							ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
-							equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").css("visibility"), "hidden",
-							"Rendered update popup should be hidden in the page");
+							equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+							"Rendered update popup was removed in the page");
 						}, 500);
 					}, 500);
 				}, 500);

@@ -94,20 +94,22 @@
 	});
 	
 	asyncTest("Open Feed and close it again", function() {
+		expect(2);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
+			equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 1,
+				"Rendered update popup should be available in the page");
 			oActionBar1.closePopups();
 			setTimeout(function() {
 				start();
-				ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered update popup should exist in the page");
-				equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").css("visibility"), "hidden",
-				"Rendered update popup should be hidden in the page");
+				equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
+				"Rendered update popup should have been removed from the page");
 			}, 500);
 		}, 500);
 	});	
 	
 	asyncTest("Press \"Create an Update\" (Feed)", function() {
-		expect(5);
+		expect(4);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered update popup should exist in the page");
@@ -121,9 +123,8 @@
 						qutils.triggerMouseEvent(jQuery('#'+oActionBar1.getId()+'-Feeder-send')[0], "click", 1, 1, 1, 1);
 						setTimeout(function() {
 							start();
-							ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered comment popup should exist in the page");
-							equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").css("visibility"), "hidden",
-							"Rendered update popup should be hidden in the page");
+							equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
+								"Rendered update popup should have been removed from the page");
 						}, 500);
 					}, 500);
 				}, 500);
