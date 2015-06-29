@@ -197,7 +197,10 @@ sap.ui.define([
 				this.oLoadedPromise
 					= oODataModelInterface.annotationsLoadedPromise
 					? oODataModelInterface.annotationsLoadedPromise.then(load)
-					: Promise.resolve(load()); // call load() synchronously!
+					: new Promise(function (fnResolve, fnReject) {
+							load();
+							fnResolve();
+						}); // call load() synchronously!
 				this.oMetadata = oMetadata;
 				this.oODataModelInterface = oODataModelInterface;
 				this.mQueryCache = {};

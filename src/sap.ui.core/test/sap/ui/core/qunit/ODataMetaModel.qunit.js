@@ -1659,21 +1659,24 @@ sap.ui.require([
 	// Note: http://www.html5rocks.com/en/tutorials/es6/promises/ says that
 	// "Any errors thrown in the constructor callback will be implicitly passed to reject()."
 	// We make sure the same happens even with our asynchronous constructor.
-	test("Errors thrown inside load()", function () {
-		var oError = new Error("This call failed intentionally"),
-			oModel;
+	[false, true].forEach(function (bAsync) {
+		test("Errors thrown inside load(), async = " + bAsync, function () {
+			var oError = new Error("This call failed intentionally"),
+				oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
+					annotationURI : "",
+					json : true,
+					loadMetadataAsync : bAsync
+				});
 
-		oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
-		oModel = new ODataModel("/fake/service", {
-			annotationURI : "",
-			json : true
-		});
+			// Note: this is just a placeholder for "anything which could go wrong inside load()"
+			oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
 
-		// code under test
-		return oModel.getMetaModel().loaded().then(function () {
-			throw new Error("Unexpected success");
-		}, function (ex) {
-			strictEqual(ex, oError, ex.message);
+			// code under test
+			return oModel.getMetaModel().loaded().then(function () {
+				throw new Error("Unexpected success");
+			}, function (ex) {
+				strictEqual(ex, oError, ex.message);
+			});
 		});
 	});
 
