@@ -104,7 +104,7 @@
 
 		setTimeout(function() {
 			equals(oDialog1.isOpen(), false, "Dialog should be closed again after closing!");
-			equals(jQuery("#Dialog1").css("visibility"), "hidden", "Dialog should be hidden after closing");
+			equals(jQuery('#Dialog').length, 0, 'Dialog DOM should be removed after closing');
 			start();
 		}, iPopupDelay);
 	});
