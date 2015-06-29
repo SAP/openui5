@@ -521,8 +521,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this.fireClosed(this._oRect);
 			this.close();
+
 			// Make sure the dom content is not shown any more (in the static area)
-			this.$().hide();
+			// This used to be this.$().hide() which keeps the current DOM in the static UIArea. This led to the
+			// problem that control DOM with the same ID exists in two places if the control is added to a different
+			// aggregation without the dialog being destroyed. In this special case the RichTextEditor renders a
+			// textarea-element and afterwards tells the TinyMCE component which ID to use for rendering; since there
+			// are two elements with the same ID at that point, it does not work.
+			// As the Dialog can only contain other controls, we can safely discard the DOM - we cannot do this inside
+			// the Popup, since it supports displaying arbitrary HTML content.
+			this.$().remove();
 		};
 
 		/**
