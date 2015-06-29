@@ -123,7 +123,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
-				bounce: false
+				bounce: false,
+				showArrow: false
 			});
 
 			this._decoratePopover(oPicker);
@@ -139,41 +140,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype._decoratePopover = function(oPopover) {
 			var that = this;
 
-			// adding additional capabilities to the Popover
-			oPopover._removeArrow = function() {
-				this._marginTop = 0;
-				this._marginLeft = 0;
-				this._marginRight = 0;
-				this._marginBottom = 0;
-				this._arrowOffset = 0;
-				this._offsets = ["0 0", "0 0", "0 0", "0 0"];
-			};
-
-			oPopover._setPosition = function() {
-				this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
-				this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
-			};
-
-			oPopover._setArrowPosition = function() {};
-
 			oPopover.open = function() {
 				return this.openBy(that.getFocusDomRef());
 			};
-		};
-
-		/**
-		 * Required adaptations after rendering of the Popover.
-		 *
-		 * @private
-		 */
-		ComboBox.prototype.onAfterRenderingPopover = function() {
-			var oPopover = this.getPicker();
-
-			// remove the Popover arrow
-			oPopover._removeArrow();
-
-			// position adaptations
-			oPopover._setPosition();
 		};
 
 		/**
