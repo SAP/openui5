@@ -504,62 +504,6 @@
 				vsd2._resetButton.firePress();
 			});
 
-			module("Focus", {
-				setup: function() {
-					this.clock = sinon.useFakeTimers();
-				},
-				teardown: function() {
-					this.clock.restore();
-				}
-			});
-
-//			test("Focus on previously selected filter items", function () {
-//
-//				expect(1);
-//
-//				vsd2.open();
-//
-//				vsd2._switchToPage(0);
-//				vsd2._switchToPage(1);
-//				vsd2._switchToPage(2);
-//
-//				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
-//				vsd2._filterList.getItems()[0].firePress();
-//
-//				this.clock.tick(1000);
-//				sap.ui.test.qunit.triggerKeyboardEvent(vsd2._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
-//				this.clock.tick(1000);
-//				if (!sap.ui.Device.system.phone) {
-//					strictEqual(document.activeElement, vsd2._filterList.getItems()[0].getFocusDomRef(), "Previously selected filter item should get the focus");
-//				}
-//				vsd2._dialog.getEndButton().firePress();
-//				this.clock.tick(1000);
-//			});
-
-			// TODO check this test on refactoring unit tests. It just freezes on IE.
-			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-				//do not run this tests on IE9 because of a timeout issue which need to be fixed
-			} else {
-
-				test("Focus on first item in filter by section ", function () {
-
-					expect(1);
-					vsd5.open();
-
-					this.clock.tick(1000);
-
-					jQuery.sap.delayedCall(0, vsd5._navContainer, "to", [vsd5.getId() + '-page5', "show"]);
-					vsd5._filterList.getItems()[0].firePress();
-
-					this.clock.tick(1000);
-
-						if (!sap.ui.Device.system.phone && vsd5._filterDetailList) {
-						strictEqual(document.activeElement, vsd5._filterDetailList.getItems()[0].getFocusDomRef(), "The first item should get the focus");
-					}
-					vsd5._dialog.getEndButton().firePress();
-					vsd5.destroy();
-				});
-			}
 
 			module ("Construction/Destruction");
 
@@ -1480,6 +1424,116 @@
 					}, delay);
 				}, delay);
 			});
+
+			asyncTest("Test for rerendering after changing selections", function () {
+				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
+				var delay = 1000;
+				oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+					key: "myStatusSorter",
+					text: "Status"
+				}));
+
+				oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+					key: "myOtherSorter",
+					text: "Other"
+				}));
+
+				oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+					key: "myGrouper",
+					text: "Grouping"
+				}));
+
+				oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+					key: "myOtherGrouper",
+					text: "Other"
+				}));
+
+				oVsdInst.open();
+				setTimeout(function () {
+					var list 						= oVsdInst._getPage1().getContent()[1];
+					var listOfSortItems 			= list.getItems()[1];
+					var listOfSortDirectionItems	= oVsdInst._getPage1().getContent()[0];
+
+					var vsdSortItem 				= oVsdInst.getSortItems()[1];
+					var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[1];
+					var spySortItem 				= sinon.spy(vsdSortItem, "setProperty");
+					var spyVsd 						= sinon.spy(oVsdInst, "setProperty");
+
+					listOfSortItems._oSingleSelectControl.fireSelect({selected : true});
+					vsdSortDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
+
+					ok(spySortItem.calledWithExactly('selected', true, true), "Set sort item as selected should be called with suppress Invalidation flag=true");
+					ok(spySortItem.calledOnce, "setSelected should be called only once");
+
+					ok(spyVsd.calledWithExactly('sortDescending', true, true), "Set sort item as as selected should be called with suppress Invalidation flag=true");
+
+					ok(spyVsd.calledOnce, "setSelected should be called only once");
+
+					oVsdInst._switchToPage(1);
+
+					setTimeout(function () {
+						var list 						= oVsdInst._getPage1().getContent()[1];
+						var listOfGroupItems 			= list.getItems()[1];
+						var listOfGroupDirectionItems	= oVsdInst._getPage1().getContent()[0];
+						var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[1];
+						var vsdGroupItem 				= oVsdInst.getGroupItems()[1];
+						var spyGroupItem 				= sinon.spy(vsdGroupItem, "setProperty");
+
+
+						console.log(list, listOfGroupItems, listOfGroupDirectionItems,vsdGroupDirectionDesc, vsdGroupItem,spyGroupItem);
+
+						listOfGroupItems._oSingleSelectControl.fireSelect({selected : true});
+						vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
+
+						ok(spyGroupItem.calledWithExactly('selected', true, true), "Set group item as selected should be called with suppress Invalidation flag=true");
+						ok(spyGroupItem.calledOnce, "setSelected should be called only once");
+
+						ok(spyVsd.calledWithExactly('groupDescending', true, true), "Set group item as as selected should be called with suppress Invalidation flag=true");
+
+						ok(spyVsd.calledTwice, "setSelected should be called twice");
+
+						start();
+						oVsdInst.destroy();
+						delete oVsdInst;
+					}, delay);
+				}, delay);
+			});
+
+
+			module("Focus", {
+				setup: function() {
+					this.clock = sinon.useFakeTimers();
+				},
+				teardown: function() {
+					this.clock.restore();
+				}
+			});
+
+			// TODO check this test on refactoring unit tests. It just freezes on IE.
+			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
+				//do not run this tests on IE9 because of a timeout issue which need to be fixed
+			} else {
+
+				test("Focus on first item in filter by section ", function () {
+
+					expect(1);
+					vsd5.open();
+
+					this.clock.tick(1000);
+
+					jQuery.sap.delayedCall(0, vsd5._navContainer, "to", [vsd5.getId() + '-page5', "show"]);
+					vsd5._filterList.getItems()[0].firePress();
+
+					this.clock.tick(1000);
+
+					if (!sap.ui.Device.system.phone && vsd5._filterDetailList) {
+						strictEqual(document.activeElement, vsd5._filterDetailList.getItems()[0].getFocusDomRef(), "The first item should get the focus");
+					}
+					vsd5._dialog.getEndButton().firePress();
+					vsd5.destroy();
+				});
+			}
+
 			/* [end]  Actual unit tests of custom tabs */
 
 		</script>
