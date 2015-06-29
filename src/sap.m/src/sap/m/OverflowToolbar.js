@@ -453,6 +453,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 				// Create the Popover
 				oPopover = new OverflowToolbarAssociativePopover(this.getId() + "-popover", {
 					showHeader: false,
+					showArrow: sap.ui.Device.system.phone ? false : true,
 					modal: false,
 					horizontalScrolling: sap.ui.Device.system.phone ? false : true,
 					contentWidth: sap.ui.Device.system.phone ? "100%" : "auto"
