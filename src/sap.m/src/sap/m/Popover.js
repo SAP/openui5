@@ -67,6 +67,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			offsetY : {type : "int", group : "Appearance", defaultValue : 0},
 
 			/**
+			 * Whether Popover arrow should be visible
+			 * @since 1.31
+			 */
+			showArrow : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
 			 * Set the width of the content area inside Popover. When controls which adapt their size to the parent control are added directly into Popover, for example sap.m.Page control, a size needs to be specified to the content area of the Popover. Otherwise, Popover control isn't able to display the content in the right way. This values isn't necessary for controls added to Popover directly which can decide their size by themselves, for exmaple sap.m.List, sap.m.Image etc., only needed for controls that adapt their size to the parent control.
 			 * @since 1.9.0
 			 */
@@ -471,7 +477,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		//calculate the height of the header in the current page
 		//only for the first time calling after rendering
-		if (!this._marginTopInit) {
+		if (!this._marginTopInit && this.getShowArrow()) {
 			this._marginTop = 2;
 			if (this._oOpenBy) {
 				$openedBy = jQuery(this._getOpenByDomRef());
@@ -554,6 +560,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			// focus has to be inside/on popover otherwise autoclose() will not work
 			sFocusId = this._getInitialFocusId(),
 			oParentDomRef, iPlacePos;
+
+		this._adaptPositionParams();
 
 		if (ePopupState === sap.ui.core.OpenState.OPEN || ePopupState === sap.ui.core.OpenState.OPENING) {
 			if (this._oOpenBy === oControl) {
@@ -1549,26 +1557,58 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			$scrollArea.css("display", "block");
 		}
 
+		if (this.getShowArrow()) {
+			// Set the arrow next to the opener
+			$arrow.css(this._getArrowOffsetCss(sCalculatedPlacement, oPosParams));
 
-		// Set the arrow next to the opener
-		$arrow.css(this._getArrowOffsetCss(sCalculatedPlacement, oPosParams));
+			// Add position class to the arrow
+			$arrow.addClass(this._getArrowPositionCssClass(sCalculatedPlacement));
 
-		// Add position class to the arrow
-		$arrow.addClass(this._getArrowPositionCssClass(sCalculatedPlacement));
+			// Style the arrow according to the header/footer/content if it is to the left or right
+			if (sCalculatedPlacement === sap.m.PlacementType.Left || sCalculatedPlacement === sap.m.PlacementType.Right) {
+				var sArrowStyleClass = this._getArrowStyleCssClass(oPosParams);
 
-		// Style the arrow according to the header/footer/content if it is to the left or right
-		if (sCalculatedPlacement === sap.m.PlacementType.Left || sCalculatedPlacement === sap.m.PlacementType.Right) {
-			var sArrowStyleClass = this._getArrowStyleCssClass(oPosParams);
-
-			if (sArrowStyleClass) {
-				$arrow.addClass(sArrowStyleClass);
+				if (sArrowStyleClass) {
+					$arrow.addClass(sArrowStyleClass);
+				}
 			}
+
+			// Prevent the popover from hiding the arrow
+			$popover.css("overflow", "visible");
 		}
 
-		// Prevent the popover from hiding the arrow
-		$popover.css("overflow", "visible");
-
 		this._afterAdjustPositionAndArrowHook();
+	};
+
+	/**
+	 * Adapt position and offsets variables if the Popover is used without arrow
+	 *
+	 * @private
+	 */
+	Popover.prototype._adaptPositionParams = function () {
+		if (this.getShowArrow()) {
+			this._marginTop = 48;
+			this._marginLeft = 10;
+			this._marginRight = 10;
+			this._marginBottom = 10;
+
+			this._arrowOffset = 18;
+			this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
+
+			this._myPositions = ["center bottom", "begin center", "center top", "end center"];
+			this._atPositions = ["center top", "end center", "center bottom", "begin center"];
+		} else {
+			this._marginTop = 0;
+			this._marginLeft = 0;
+			this._marginRight = 0;
+			this._marginBottom = 0;
+
+			this._arrowOffset = 0;
+			this._offsets = ["0 0", "0 0", "0 0", "0 0"];
+
+			this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
+			this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
+		}
 	};
 
 	/**
