@@ -209,6 +209,11 @@ function(Plugin, DOMUtil) {
 
 		oEvent.stopPropagation();
 
+		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setData) {
+			// Fix for Firfox - Firefox only fires drag events when data is set
+			oEvent.originalEvent.dataTransfer.setData('text/plain', '');		
+		}
+
 		this.showGhost(oOverlay, oEvent);		
 		this.onDragStart(oOverlay, oEvent);
 	};
