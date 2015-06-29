@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	function mergeDefinitionSource(mDefinitions, mDefinitionSource, mSourceData, oSource) {
 		if (mSourceData) {
 			for (var sName in mDefinitions) {
-				if (!mDefinitionSource[sName] && mSourceData[sName]) {
+				if (!mDefinitionSource[sName] && mSourceData[sName] && mSourceData[sName].uri) {
 					mDefinitionSource[sName] = oSource;
 				}
 			}
@@ -409,26 +409,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		var oAppManifest = oMetadata.getManifestEntry("sap.app", true);
 		var oUI5Manifest = oMetadata.getManifestEntry("sap.ui5", true);
 
-		var mModelConfigs = oUI5Manifest["models"];
-		if (!mModelConfigs) {
+		var mConfig = {
+
+			// ui5 model definitions
+			models: oUI5Manifest["models"],
+
+			// optional dataSources from "sap.app" manifest
+			dataSources: oAppManifest["dataSources"] || {},
+
+			// to identify where the dataSources/models have been orginally defined
+			origin: {
+				dataSources: {},
+				models: {}
+			}
+
+		};
+
+		if (!mConfig.models) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
 			return;
 		}
 
-		// optional dataSources from "sap.app" manifest
-		var mDataSources = oAppManifest["dataSources"] || {};
-
-		// identify where the dataSources/models have been orginally defined
-		var mModelSource = {};
-		var mDataSourcesSource = {};
 		var oMeta = oMetadata;
 		while (oMeta && oMeta instanceof ComponentMetadata) {
 
 			var mCurrentDataSources = oMeta.getManifestEntry("sap.app")["dataSources"];
-			mergeDefinitionSource(mDataSources, mDataSourcesSource, mCurrentDataSources, oMeta);
+			mergeDefinitionSource(mConfig.dataSources, mConfig.origin.dataSources, mCurrentDataSources, oMeta);
 
 			var mCurrentModelConfigs = oMeta.getManifestEntry("sap.ui5")["models"];
-			mergeDefinitionSource(mModelConfigs, mModelSource, mCurrentModelConfigs, oMeta);
+			mergeDefinitionSource(mConfig.models, mConfig.origin.models, mCurrentModelConfigs, oMeta);
 
 			oMeta = oMeta.getParent();
 		}
@@ -437,9 +446,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		var oUriParams = jQuery.sap.getUriParameters();
 
 		// create a model for each ["sap.ui5"]["models"] entry
-		for (var sModelName in mModelConfigs) {
+		for (var sModelName in mConfig.models) {
 
-			var oModelConfig = mModelConfigs[sModelName];
+			var oModelConfig = mConfig.models[sModelName];
 			var bIsDataSourceUri = false;
 
 			// normalize dataSource shorthand, e.g.
@@ -454,7 +463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			// if not already provided in model config
 			if (oModelConfig.dataSource) {
 
-				var oDataSource = mDataSources && mDataSources[oModelConfig.dataSource];
+				var oDataSource = mConfig.dataSources && mConfig.dataSources[oModelConfig.dataSource];
 				if (typeof oDataSource === 'object') {
 
 					// default type is OData
@@ -491,7 +500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						var aAnnotations = oDataSource.settings.annotations;
 
 						for (var i = 0; i < aAnnotations.length; i++) {
-							var oAnnotation = mDataSources[aAnnotations[i]];
+							var oAnnotation = mConfig.dataSources[aAnnotations[i]];
 
 							// dataSource entry should be defined!
 							if (!oAnnotation) {
@@ -512,7 +521,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 							}
 
 							// resolve relative to component
-							var oAnnotationUri = mDataSourcesSource[aAnnotations[i]]._resolveUri(new URI(oAnnotation.uri)).toString();
+							var oAnnotationUri = mConfig.origin.dataSources[aAnnotations[i]]._resolveUri(new URI(oAnnotation.uri)).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -566,7 +575,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				var oUri = new URI(oModelConfig.uri);
 
 				// resolve URI relative to component which defined it
-				var oUriSourceComponent = (bIsDataSourceUri) ? mDataSourcesSource[oModelConfig.dataSource] : mModelSource[sModelName];
+				var oUriSourceComponent = (bIsDataSourceUri) ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName];
 				oUri = oUriSourceComponent._resolveUri(oUri);
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)

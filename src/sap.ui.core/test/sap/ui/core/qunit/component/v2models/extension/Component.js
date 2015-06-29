@@ -73,6 +73,14 @@ sap.ui.define(["sap/ui/test/v2models/empty/Component"], function(EmptyExtensionC
 
 					"models": {
 
+						// inherit and only change settings
+						"ODataModel": {
+							"settings": {
+								"useBatch": true,
+								"skipMetadataAnnotationParsing": true
+							}
+						},
+
 						// create model using a dataSource from the parent manifest
 						// and redefine the URI
 						"xml-extension": {
@@ -80,10 +88,9 @@ sap.ui.define(["sap/ui/test/v2models/empty/Component"], function(EmptyExtensionC
 							"uri": "./path/to/local/data.xml"
 						},
 
-						// override i18n model
+						// override i18n model but inherit uri (should still point to parent)
 						"resourceBundle-legacy-uri": {
-							"type": "sap.ui.model.resource.ResourceModel",
-							"uri": "./i18n.properties"
+							"type": "sap.ui.model.resource.ResourceModel"
 						}
 
 					}
