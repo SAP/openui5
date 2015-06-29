@@ -41,6 +41,7 @@
 
 pre.sapUiCodeViewer.sapUiExploredCodeViewer {
 	background-color: white;
+	word-wrap: break-word;
 }
 
 /* explored entity view */
