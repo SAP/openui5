@@ -241,7 +241,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	PullToRefresh.prototype.getCustomIconImage = function(){
 		var mProperties = {
 			src : this.getCustomIcon(),
-			densityAware : this.getIconDensityAware()
+			densityAware : this.getIconDensityAware(),
+			useIconTooltip : false
 		};
 		var aCssClasses = ['sapMPullDownCIImg'];
 
