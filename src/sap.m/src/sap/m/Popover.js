@@ -1427,7 +1427,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		}
 
 		$this.css("overflow", "visible");
+
+		this._afterAdjustPositionAndArrowHook();
 	};
+
+	/**
+	 * Hook called after adjusment of the Popover position
+	 *
+	 * @protected
+	 */
+	Popover.prototype._afterAdjustPositionAndArrowHook = function () { };
 
 	/**
 	 * Determine if the <code>oDomNode</code> is inside the popover or inside the control that opens the popover

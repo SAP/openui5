@@ -1195,6 +1195,23 @@
 				oPopover.destroy();
 			});
 
+			test("_afterAdjustPositionAndArrow is called once", function () {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover();
+				var oSpy = this.spy(oPopover, "_afterAdjustPositionAndArrowHook");
+
+				oPopover.openBy(oButton);
+
+				equal(oSpy.callCount, 1, "_afterAdjustPositionAndArrowHook is called once");
+
+				oPopover.destroy();
+			});
+
 			module("Screen Reader");
 
 			test("ARIA role", function() {
