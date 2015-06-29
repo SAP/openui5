@@ -101,7 +101,7 @@
 					equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 				},
 				afterClose: function () {
-					equal(jQuery.sap.byId("dialog").css("visibility"), "hidden", "Dialog should be hidden before it's opened");
+					equal(jQuery.sap.byId("dialog").length, 0, "Dialog content should not be rendered before it's opened");
 					ok(!oDialog.isOpen(), "Dialog is already closed");
 				}
 			});
