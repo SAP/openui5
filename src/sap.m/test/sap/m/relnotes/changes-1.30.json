@@ -1597,5 +1597,136 @@
         "references": []
       }
     ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "046eb75cbd6f6cb483fd81038e1b813dbbf2f555",
+        "author": "Jordan Dichev \u003cjordan.dichev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopover - Static setter for default async handlers added",
+        "references": []
+      },
+      {
+        "id": "f6d161d666d4badc0680122802ba244f3ed8ca68",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Enablement of overwriting the label of the attachments list.",
+        "references": []
+      },
+      {
+        "id": "72b95c785c184438b36268404b82b0ecf34fb56a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon: noTabStop property for not adding tabindex to",
+        "references": []
+      },
+      {
+        "id": "5bf0050cc164357a935d5cdd11f39e380d2f6f83",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: prevent icon tooltip when \"type\" is set",
+        "references": []
+      },
+      {
+        "id": "9eb781f27e897c2da789ba90b373759cbc93acd3",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ColumnListItem: Column visibility index should be updated when cells are not rendered.",
+        "references": []
+      },
+      {
+        "id": "28ade8ca7807d66664f2210dcae895f1eb3a5c6c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix name clashes issue in xml view",
+        "references": []
+      },
+      {
+        "id": "d9ed584435c788fc65fd63970a65e83dd40333cb",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase: No data text should only be visible when there is no items after loading.",
+        "references": []
+      },
+      {
+        "id": "5292cfd3659bf6c6ff5671adbdf340758d310467",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Adding classes now works",
+        "references": []
+      },
+      {
+        "id": "40f6846b0c34dd88ead919b05764fbdfd493cf48",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Collapsed state is restored after closing and reopening",
+        "references": []
+      },
+      {
+        "id": "451fc92f407e0e55a546a597986a20fcdfcf7d0c",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Make outline consistent in FireFox",
+        "references": []
+      },
+      {
+        "id": "6307f6a578eba7cd4193f720f0da7c81c76bc629",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: master can\u0027t be open again after switching modes",
+        "references": []
+      },
+      {
+        "id": "aeccfced57e88fccbf19c890450613e52ee7ac91",
+        "author": "i057508 \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Upon theme or orientation change tile dimensions are updated now.",
+        "references": []
+      },
+      {
+        "id": "082dc97f4be8b9417024dac4451992fa86908e7a",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: fix token truncation after navigation action",
+        "references": []
+      },
+      {
+        "id": "a07b27d05493c9ed0ba7bdb453064d00814af430",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Extend dependencies to improve stability.",
+        "references": []
+      },
+      {
+        "id": "fb3fe0ecfa9448383793526c9ef4707243f91656",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Header parameter duplication removed.",
+        "references": []
+      },
+      {
+        "id": "529b9e238e5a5b886fab595a03db3ed5e68604b1",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Second renaming is working again.",
+        "references": []
+      },
+      {
+        "id": "51934eba04bf227c4cf90f414ebc3e25db885f00",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Typo in explored app corrected",
+        "references": []
+      },
+      {
+        "id": "943b0a10c4fe618ea064c14776b80b96c014ce79",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.OverflowToolbar - handling of special button types",
+        "references": []
+      }
+    ]
   }
 }

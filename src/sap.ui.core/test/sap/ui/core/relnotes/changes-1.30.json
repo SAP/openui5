@@ -1387,5 +1387,150 @@
         "references": []
       }
     ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "22303d6f5c48b20d60cfdcfb6bbef3daccabc448",
+        "author": "Pavan \u003cpavan.nayak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "ODataModel: Automatically parse metadata for annotations",
+        "references": []
+      },
+      {
+        "id": "72b95c785c184438b36268404b82b0ecf34fb56a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon: noTabStop property for not adding tabindex to",
+        "references": []
+      },
+      {
+        "id": "d3f97c840215ec7c3a7ad1a052cfaddad3a2f7fe",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding: Make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "fde20127def2d85a67b2c2edf3cfea8b09ea2215",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Anonymous define in URI.js breaks CVOM charts",
+        "references": []
+      },
+      {
+        "id": "40d979adb32bd366569727ab6c77af7361b0278a",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: Support inheritance for models/dataSources metadata",
+        "references": []
+      },
+      {
+        "id": "38d87544e870c6b204b3b13918ba3e7523e2f3f2",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Don\u0027t boot before all tasks have been created",
+        "references": []
+      },
+      {
+        "id": "7613444a76e21fd9be1a326e8209b0e3c95d41ff",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Device-API: Correctly identify Windows 7 vs. 8",
+        "references": []
+      },
+      {
+        "id": "c5b456367a98eefe3ddfffa87d2d9fb96266af7e",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataListBinding: Make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "bbf360f00278c620f565dfa9602f38845aedcd91",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Normalize message target paths",
+        "references": []
+      },
+      {
+        "id": "6f478ebc51b5b01af034eee1a1c745b9705cea17",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Action-for annotations and message deletion",
+        "references": []
+      },
+      {
+        "id": "10929c2a7d47215c43ec0fbc593689834ae17c56",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBinding: Respect Edm Type in Filter-Statements",
+        "references": []
+      },
+      {
+        "id": "f121d0b10ed86b532f654985e73e6e3d32b1966e",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "OPA: Returns the correct hash when there is no change yet and running with ushell",
+        "references": []
+      },
+      {
+        "id": "e6c51dd8e97cc288bdbb05f82a9f4f7f28837e4e",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "RenderManager.writeIcon: Use icon text (i18n)",
+        "references": []
+      },
+      {
+        "id": "e15d215e8b64c35d4d50c7a7ed641bd287ad276b",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree-/AnalyticalTable \u0026 *Adapter(s): Fixed selectAllMode Propagation",
+        "references": []
+      },
+      {
+        "id": "6860883f8a9417f5c67eafda64e878251c5c3f02",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Prevent technical icon name as tooltip",
+        "references": []
+      },
+      {
+        "id": "c46b9c8986d00d076b6ff310046ed971ea54f536",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.Export: Add library metadata",
+        "references": []
+      },
+      {
+        "id": "fddf35cd8ac731b4c2a79bb7394fc9ed5fa43724",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataModel: Stay synchronous if possible in getMetaModel() to be compatible to legacy applications",
+        "references": []
+      },
+      {
+        "id": "0e5b10a0c9b196c057388196fe33cf9861f38c14",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: OperationMode.Client + refresh()",
+        "references": []
+      },
+      {
+        "id": "3b80fc7549dabe941da81db8dfd0887167715303",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Joined annotation loading event fired twice",
+        "references": []
+      },
+      {
+        "id": "8d968c8be1ad81de7fb14242b156cf122de0aa2a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding: Support CountMode \"Request\"",
+        "references": []
+      }
+    ]
   }
 }

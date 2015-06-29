@@ -241,5 +241,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "82f608f81530574f4add993795999bd10172ff6d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Consider also opener dom ref for cozy mode check",
+        "references": []
+      }
+    ]
   }
 }
