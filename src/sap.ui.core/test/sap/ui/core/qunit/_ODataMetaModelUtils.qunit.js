@@ -53,8 +53,6 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"uri" : { "Path" : "Tel2" }
 			}, {
 				"uri" : { "Path" : "Tel3" }
-			}, {
-				"uri" : { "Path" : "Tel4" }
 			}],
 			"title" : { "Path" : "Title" }
 		},
@@ -197,11 +195,6 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			"name" : "Tel3" , "type" : "Edm.String",
 			"extensions" : [{
 				"name" : "semantics" , "value" : "tel", "namespace" : sNamespace
-			}]
-		}, {
-			"name" : "Tel4" , "type" : "Edm.String",
-			"extensions" : [{
-				"name" : "semantics" , "value" : "tel;type=foo", "namespace" : sNamespace
 			}]
 		}, {
 			"name" : "Title" , "type" : "Edm.String",
@@ -367,18 +360,6 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 							}, {
 								"name" : "updatable-path",
 								"value" : "Updatable",
-								"namespace" : "http://www.sap.com/Protocols/SAPData"
-							}]
-						}, {
-							"name" : "ContactSet2",
-							"entityType" : "GWSAMPLE_BASIC.Contact",
-							"extensions" : [{
-								"name" : "deletable-path",
-								"value" : "Deletable2",
-								"namespace" : "http://www.sap.com/Protocols/SAPData"
-							}, {
-								"name" : "updatable-path",
-								"value" : "Updatable2",
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}]
 						}, {
@@ -653,26 +634,69 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	});
 
 	//*********************************************************************************************
+	test("addSapSemantics: unsupported sap:semantics type", function () {
+		var oLogMock = this.mock(jQuery.sap.log),
+			oType = {
+				"name" : "Foo",
+				"property" : [
+					{
+						"name" : "Bar",
+						"extensions" : [{
+							"name" : "semantics", "value" : "tel;type=foo", "namespace" : sNamespace
+						}]
+					}
+				]
+			};
+
+		// ensure that sap:semantics properties are available
+		oType.property.forEach(function (oProperty) {
+			Utils.liftSAPData(oProperty, "Property");
+		});
+		oLogMock.expects("warning")
+			.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
+				"sap.ui.model.odata._ODataMetaModelUtils");
+
+		// code under test
+		Utils.addSapSemantics(oType);
+	});
+
+	//*********************************************************************************************
 	test("convertEntitySetAnnotations", function () {
 		var aSchema = clone(oDataSchema).dataServices.schema,
-			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
-			oEntitySet2 = aSchema[0].entityContainer[0].entitySet[1],
+			oEntityContainer = aSchema[0].entityContainer[0],
+			oEntitySet = oEntityContainer.entitySet[0],
+			oEntitySet2 = {
+				"name" : "ContactSet2",
+				"entityType" : "GWSAMPLE_BASIC.Contact",
+				"extensions" : [{
+					"name" : "deletable-path",
+					"value" : "Deletable2",
+					"namespace" : "http://www.sap.com/Protocols/SAPData"
+				}, {
+					"name" : "updatable-path",
+					"value" : "Updatable2",
+					"namespace" : "http://www.sap.com/Protocols/SAPData"
+				}]
+			},
 			oEntityType = aSchema[0].entityType[0],
 			oLogMock = this.mock(jQuery.sap.log);
 
 		//Prepare data
+		// add an additional contact entity set with different deletable-path and updatable-path
+		// attributes
+		oEntityContainer.entitySet.push(oEntitySet2);
 		Utils.liftSAPData(oEntitySet, "EntitySet");
 		Utils.liftSAPData(oEntitySet2, "EntitySet");
 
 		oLogMock.expects("isLoggable").exactly(2).withExactArgs(jQuery.sap.log.Level.WARNING)
 			.returns(true);
-		oLogMock.expects("warning").exactly(1)
+		oLogMock.expects("warning")
 			.withExactArgs("Ignored 'sap:deletable-path' annotation (Deletable2) of ContactSet2",
 				"The entity type Contact contains a" +
 					" 'com.sap.vocabularies.Common.v1.Deletable' annotation with different" +
 					" path (Deletable)",
 				"sap.ui.model.odata._ODataMetaModelUtils");
-		oLogMock.expects("warning").exactly(1)
+		oLogMock.expects("warning")
 			.withExactArgs("Ignored 'sap:updatable-path' annotation (Updatable2) of ContactSet2",
 				"The entity type Contact contains a" +
 					" 'com.sap.vocabularies.Common.v1.Updatable' annotation with different" +
@@ -696,12 +720,28 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	test("convertEntitySetAnnotations no overwrite", function () {
 		var aSchema = clone(oDataSchema).dataServices.schema,
 			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
-			oEntityType = aSchema[0].entityType[0];
+			oEntityType = aSchema[0].entityType[0],
+			oLogMock = this.mock(jQuery.sap.log);
 
 		//Prepare data
 		Utils.liftSAPData(oEntitySet, "EntitySet");
 		oEntityType["com.sap.vocabularies.Common.v1.Deletable"] = {"Path" : "bar"};
 		oEntityType["com.sap.vocabularies.Common.v1.Updatable"] = {"Path" : "foo"};
+
+		oLogMock.expects("isLoggable").exactly(2).withExactArgs(jQuery.sap.log.Level.WARNING)
+			.returns(true);
+		oLogMock.expects("warning")
+			.withExactArgs("Ignored 'sap:deletable-path' annotation (Deletable) of ContactSet",
+				"The entity type Contact contains a" +
+					" 'com.sap.vocabularies.Common.v1.Deletable' annotation with different" +
+					" path (bar)",
+				"sap.ui.model.odata._ODataMetaModelUtils");
+		oLogMock.expects("warning")
+			.withExactArgs("Ignored 'sap:updatable-path' annotation (Updatable) of ContactSet",
+				"The entity type Contact contains a" +
+					" 'com.sap.vocabularies.Common.v1.Updatable' annotation with different" +
+					" path (foo)",
+				"sap.ui.model.odata._ODataMetaModelUtils");
 
 		// code under test
 		Utils.convertEntitySetAnnotations(oEntitySet, oEntityType);
@@ -820,7 +860,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	//*********************************************************************************************
 	test("calculateEntitySetAnnotations: call addFilterRestriction", function () {
 		var aSchemas = clone(oDataSchema).dataServices.schema,
-			oEntitySet = aSchemas[0].entityContainer[0].entitySet[2], // ProductSet
+			oEntitySet = aSchemas[0].entityContainer[0].entitySet[1], // ProductSet
 			oEntityType = aSchemas[0].entityType[4], // Product
 			oProperty = oEntityType.property[0]; // Product.Foo
 
@@ -862,7 +902,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				}}
 			},
 			oData = clone(oDataSchema),
-			oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[2];
+			oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[1];
 
 		// code under test
 		Utils.merge({}, oData);
@@ -881,7 +921,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 		// with annotations
 		oData = clone(oDataSchema),
-		oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[2];
+		oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[1];
 
 		// code under test
 		Utils.merge(oAnnotations, oData);

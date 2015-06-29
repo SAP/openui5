@@ -65,7 +65,7 @@ sap.ui.require([
 				<Property Name="Honorific" Type="Edm.String" sap:semantics="honorific"/>\
 				<Property Name="LastName" Type="Edm.String" sap:semantics="familyname"/>\
 				<Property Name="NickName" Type="Edm.String" sap:semantics="nickname"/>\
-				<Property Name="Tel" Type="Edm.String" sap:semantics="tel;type=anything,fax"/>\
+				<Property Name="Tel" Type="Edm.String" sap:semantics="tel;type=fax"/>\
 				<Property Name="Zip" Type="Edm.String" sap:semantics="zip"/>\
 			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
@@ -126,8 +126,8 @@ sap.ui.require([
 			</PropertyValue>\
 		</Record>\
 	</Annotation>\
-	<Annotation Term="com.sap.vocabularies.Common.v1.Deletable" Path="DeletableAnnotation" />\
-	<Annotation Term="com.sap.vocabularies.Common.v1.Updatable" Path="UpdatableAnnotation" />\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Deletable" Path="Deletable" />\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Updatable" Path="Updatable" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.Contact">\
 <Annotation Term="com.sap.vocabularies.Communication.v1.Contact">\
@@ -801,10 +801,10 @@ sap.ui.require([
 	test("bindings", function () {
 		return withMetaModel(function (oMetaModel) {
 			var oBinding,
-				oContext = oMetaModel.createBindingContext("/foo"),
+				oContext = oMetaModel.createBindingContext("/dataServices"),
 				aFilters = [],
 				mParameters = {},
-				sPath = "some/relative/path",
+				sPath = "schema/0/foo",
 				aSorters = [];
 
 			// Note: support for events not needed
@@ -944,23 +944,28 @@ sap.ui.require([
 				o: undefined
 			}, { // syntax error (text after closing ']')
 				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a/entityType/1",
-				o: undefined
+				o: undefined,
+				m: "Invalid part: entityType"
 			}, { // query when we just landed in Nirvana
 				i: "/dataServices/unknown/[${namespace}==='GWSAMPLE_BASIC']",
-				o: undefined
+				o: undefined,
+				m: "Invalid part: [${namespace}==='GWSAMPLE_BASIC']"
 			}, {
 				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 					+ "[$\{name}==='Product']",
 				o: "/dataServices/schema/0/entityType/1",
 				c: {} // unnecessary context object (because of absolute path) silently ignored
+
 			}, { // ensure that we do not fail after a 'namespace' query that didn't find a result
 				i: "/dataServices/schema/[${namespace}==='unknown']/entityType/"
 					+ "[$\{name}==='Product']",
-				o: undefined
+				o: undefined,
+				m: "Invalid part: entityType"
 			}, { // ensure that we do not fail after a 'name' query that didn't find a result
 				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 					+ "[$\{name}==='unknown']/property/[$\{name=}'foo']",
-				o: undefined
+				o: undefined,
+				m: "Invalid part: property"
 			}, {
 				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 					+ "[$\{name}==='BusinessPartner']/com.sap.vocabularies.UI.v1.LineItem/"
@@ -979,15 +984,21 @@ sap.ui.require([
 				i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
 				o: null,
 			}, { // stupid query with [], but returning true
-				i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]/entityType",
+				i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]"
+					+ "/entityType",
 				o: "/dataServices/schema/0/entityType",
 			}, { // syntax error in query
 				i: "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
 				o: undefined,
+				m: "Invalid part: entityType"
 			}, { // search for the first property having a maxLength
 				i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
 				o: "/dataServices/schema/0/entityType/0/property/1",
 			}].forEach(function (oFixture) {
+				if (oFixture.m) {
+					oLogMock.expects("warning").withExactArgs(oFixture.m, "path: "
+						+ oFixture.i + ", context: undefined", "sap.ui.model.odata.ODataMetaModel");
+				}
 				strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c),
 					oFixture.o ? oMetaModel.oModel.getObject(oFixture.o) : oFixture.o, oFixture.i);
 			});
@@ -1602,17 +1613,15 @@ sap.ui.require([
 				// sap:deletable-path (EntitySet)
 				deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
 				delete oBusinessPartnerSet["sap:deletable-path"];
-				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"], {
-						"Path" : (i === 0 ? "Deletable" : "DeletableAnnotation")},
-					"deletable-path");
+				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"],
+					{ "Path" : "Deletable" }, "deletable-path");
 				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"];
 
 				// sap:updatable-path (EntitySet)
 				deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
 				delete oBusinessPartnerSet["sap:updatable-path"];
-				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"], {
-						"Path" : (i === 0 ? "Updatable" : "UpdatableAnnotation")},
-					"updatable-path");
+				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"],
+					{ "Path" : "Updatable" }, "updatable-path");
 				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"];
 
 				// sap:filter-restriction (Property)
