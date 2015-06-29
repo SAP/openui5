@@ -655,7 +655,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		var mProperties = {
-			src : src
+			src : src,
+			useIconTooltip : false
 		};
 
 		var sSuffix = this._bTextOnly ? "TextOnly" : "";
