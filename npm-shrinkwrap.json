@@ -1600,11 +1600,6 @@
         }
       }
     },
-    "eslint-plugin-openui5": {
-      "version": "0.1.0",
-      "from": "https://registry.npmjs.org/eslint-plugin-openui5/-/eslint-plugin-openui5-0.1.0.tgz",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-openui5/-/eslint-plugin-openui5-0.1.0.tgz"
-    },
     "extend": {
       "version": "2.0.1",
       "from": "https://registry.npmjs.org/extend/-/extend-2.0.1.tgz",
