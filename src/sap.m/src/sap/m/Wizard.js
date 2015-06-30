@@ -648,7 +648,7 @@ sap.ui.define([
 			var firstStep = this._getWizardStep(0),
 				isStepValidated = (firstStep) ? firstStep.getValidated() : true,
 				nextButton = new Button({
-					text: this._oResourceBundle.getText("WIZARD_NEXT"),
+					text: this._oResourceBundle.getText("WIZARD_STEP") + " " + 2,
 					type: sap.m.ButtonType.Emphasized,
 					enabled: isStepValidated,
 					press: this._handleNextButtonPress.bind(this),
@@ -733,7 +733,7 @@ sap.ui.define([
 			if (progressAchieved === stepCount) {
 				nextButton.setText(this.getFinishButtonText());
 			} else {
-				nextButton.setText(this._oResourceBundle.getText("WIZARD_NEXT"));
+				nextButton.setText(this._oResourceBundle.getText("WIZARD_STEP" ) + " " + (progressAchieved + 1));
 			}
 		};
 
