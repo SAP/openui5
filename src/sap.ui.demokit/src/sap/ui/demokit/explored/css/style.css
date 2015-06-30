@@ -39,6 +39,11 @@
 	width: 1.5rem;
 }
 
+pre.sapUiCodeViewer.sapUiExploredCodeViewer {
+	background-color: white;
+	word-wrap: break-word;
+}
+
 /* explored entity view */
 
 .sapMOH[data-deprecated^="true"] .sapMText.sapMOHTitle {

@@ -356,7 +356,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             oTopLevelNavItem._iTreeSize = iNodes;
             oTopLevelNavItem._oEmptyTreeLabel = new sap.ui.commons.Label({
                 text: "No matching entry found.",
-                visible: false
+                visible: false,
+                width: "100%",
+                textAlign: "Center"
             });
         };
 
@@ -675,7 +677,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     }
                 });
 
-                oSearch.addStyleClass("sapUiSearchField");
+                oSearch.addEventDelegate({
+                    onAfterRendering: function () {
+                        oSearch._ctrl.$("searchico").addClass('sapUiIcon sapUiSearchFieldFilterIcon');
+                        oSearch._ctrl.$("searchico").attr('style', 'font-family: SAP-icons; cursor: default;');
+                        oSearch._ctrl.$("searchico").attr('data-sap-ui-icon-content', '?');
+                    }
+                });
+
+                oSearch._ctrl.setPlaceholder("Filter");
+
+                oSearch.addStyleClass("sapUiDemokitSearchField");
                 return oSearch;
             }
 

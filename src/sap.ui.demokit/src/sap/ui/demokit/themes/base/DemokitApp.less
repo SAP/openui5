@@ -60,8 +60,34 @@ html[data-sap-ui-browser^="ie"] .sapDkShell .sapUiUx3ShellCanvas {
 	color: #007CC0;
 }
 
-.sapUiSearchField .sapUiTfInner.sapUiTf{
-	color: #666666;
+.sapUiDemokitSearchField .sapUiTfInner.sapUiTf{
+  color: #333333;
+}
+
+.sapUiSearchFieldClear:not(.sapUiSearchFieldVal)>.sapUiSearchFieldTf>.sapUiSearchFieldIco.sapUiSearchFieldFilterIcon{
+  background-image: none;
+}
+
+.sapUiSearchFieldFilterIcon{
+  color: #666666;
+  font-size: small;
+  line-height: 1.1rem;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf::-webkit-input-placeholder {
+  font-style: italic;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf:-moz-placeholder {
+  font-style: italic;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf::-moz-placeholder {
+  font-style: italic;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf:-ms-input-placeholder {
+  font-style: italic;
 }
 
 html[data-sap-ui-browser^="ie"] .sapDkShell .sapUiUx3ShellContent {
