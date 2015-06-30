@@ -744,6 +744,14 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 						}
 					}
 
+					// check for existing id
+					var indexOfId = attrs.indexOf("id");
+					if (indexOfId > -1) {
+						// we start backwards
+						attrs.splice(indexOfId + 1, 1);
+						attrs.splice(indexOfId, 1);
+					}
+
 					// if no class attribute was found, add one
 					if (!done) {
 						attrs.unshift("sapMMsgPopoverItemDisabledLink sapMMsgPopoverItemPendingLink");
