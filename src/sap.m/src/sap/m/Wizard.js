@@ -95,7 +95,8 @@ sap.ui.define([
 			MINIMUM_STEPS: 3,
 			MAXIMUM_STEPS: 8,
 			ANIMATION_TIME: 300,
-			LOCK_TIME: 450
+			LOCK_TIME: 450,
+			SCROLL_OFFSET: 65
 		};
 
 		/************************************** LIFE CYCLE METHODS ***************************************/
@@ -222,7 +223,7 @@ sap.ui.define([
 		 */
 		Wizard.prototype.goToStep = function (step, focusFirstStepElement) {
 			this._scrollLocked = true;
-			this._getPage().scrollToElement(step, Wizard.CONSTANTS.ANIMATION_TIME);
+			this._getPage().scrollTo(this._getStepScrollOffset(step), Wizard.CONSTANTS.ANIMATION_TIME);
 			jQuery.sap.delayedCall(Wizard.CONSTANTS.LOCK_TIME, this, function () {
 				var progressNavigator = this._getProgressNavigator();
 
@@ -438,7 +439,7 @@ sap.ui.define([
 
 			progressNavigator._setOnEnter(function (event, stepIndex) {
 				var step = that._getWizardStep(stepIndex);
-				jQuery.sap.delayedCall(Wizard.CONSTANTS.ANIMATION_TIME, this, function () {
+				jQuery.sap.delayedCall(Wizard.CONSTANTS.ANIMATION_TIME, that, function () {
 					this._focusFirstStepElement(step);
 				});
 			});
@@ -447,6 +448,31 @@ sap.ui.define([
 				height: "4rem",
 				content: progressNavigator
 			});
+		};
+		/**
+		 * Gets the distance between the step heading, and the top of the container
+		 * @param {sap.m.WizardStep} step - The step whose distance is going to be calculcated
+		 * @returns {number}
+		 * @private
+		 */
+		Wizard.prototype._getStepScrollOffset = function (step) {
+			var $step = step.$(),
+				progressStep = this.getSteps()[this.getProgress() - 1],
+				scrollDelegate = this._getPage().getScrollDelegate(),
+				stepTop = scrollDelegate.getChildPosition($step).top,
+				additionalOffset = 0;
+
+			/**
+			 * Additional Offset is added in case of new step activation.
+			 * Because the rendering from step.addContent(button) happens with delay,
+			 * we can't properly detect the offset of the step, that's why
+			 * additionalOffset is added like this.
+			 */
+			if (!jQuery.sap.containsOrEquals(progressStep.getDomRef(), this._nextButton.getDomRef())
+				&& !sap.ui.Device.system.phone) {
+				additionalOffset = this._nextButton.$().outerHeight();
+			}
+			return stepTop + scrollDelegate.getScrollTop() - Wizard.CONSTANTS.SCROLL_OFFSET - additionalOffset;
 		};
 
 		/**
@@ -484,7 +510,6 @@ sap.ui.define([
 		Wizard.prototype._handleStepActivated = function (event) {
 			var index = event.getParameter("index"),
 				steps = this.getSteps();
-
 			steps[index - 2]._complete(this._getAutoStepLock());
 			steps[index - 1]._activate();
 			this.fireStepActivate({index: index});

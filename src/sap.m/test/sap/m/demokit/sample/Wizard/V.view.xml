@@ -67,7 +67,6 @@
 				<WizardStep id="OptionalInfoStep"
 							validated="true"
 							activate="optionalStepActivation"
-							complete="optionalStepCompletion"
 							title="Optional Information">
 					<MessageStrip class="sapUiSmallMarginBottom"
 								  text="You can validate steps by default with the validated='true' property of the step. The next button is always enabled."
