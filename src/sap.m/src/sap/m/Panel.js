@@ -254,6 +254,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			id: that.getId() + "-CollapsedImg",
 			src: sCollapsedIconURI,
 			decorative: false,
+			useIconTooltip: false,
 			press: function () {
 				that.setExpanded(!that.getExpanded());
 			}
