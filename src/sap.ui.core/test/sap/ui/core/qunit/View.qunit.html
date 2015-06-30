@@ -226,7 +226,13 @@
 			}),
 			logSpy = this.spy(jQuery.sap.log, "debug");
 
-		var oViewInfo = { caller: oView + " (foo)", id: oView.getId(), name: oView.sViewName, sync: false };
+		var oViewInfo = {
+			caller: oView + " (foo)",
+			id: oView.getId(),
+			name: oView.sViewName,
+			componentId: undefined,
+			sync: false
+		};
 		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo).returns(Promise.resolve(oResult));
 
 		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;

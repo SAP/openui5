@@ -407,6 +407,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		var sViewType = this.getMetadata().getClass()._sType ,
 			oViewInfo = {
 				name: this.sViewName,
+				componentId: this._sOwnerId,
 				id: this.getId(),
 				caller: this + " (" + this.sViewName + ")",
 				sync: !!bSync
@@ -751,6 +752,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @param {object} oViewInfo identification information about the calling instance
 	 * @param {string} oViewInfo.id the id
 	 * @param {string} oViewInfo.name the name
+	 * @param {string} oViewInfo.componentId the id of the owning Component
 	 * @param {string} oViewInfo.caller
 	 * 		identifies the caller of this preprocessor; basis for log or exception messages
 	 * @param {object} [mSettings]

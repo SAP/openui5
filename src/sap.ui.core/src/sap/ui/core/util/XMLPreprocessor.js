@@ -263,6 +263,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * @param {string} oViewInfo.caller
 			 *   identifies the caller of this preprocessor; used as a prefix for log or
 			 *   exception messages
+			 * @param {string} oViewInfo.componentId
+			 *   ID of the owning component (since 1.32; needed for extension point support)
+			 * @param {string} oViewInfo.name
+			 *   the view name (since 1.32; needed for extension point support)
 			 * @param {object} [mSettings={}]
 			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
@@ -277,6 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			process : function(oRootElement, oViewInfo, mSettings) {
 				var sCaller,
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
+					aFragmentNames = [], // stack of view and fragment names
 					iNestingLevel = 0,
 					sName;
 
@@ -421,6 +426,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				}
 
 				/**
+				 * Inserts the fragment with the given name in place of the given <core:Fragment>
+				 * or <core:ExtensionPoint> element.
+				 *
+				 * @param {string} sFragmentName
+				 *   the fragment's resolved name
+				 * @param {Element} oElement
+				 *   the <sap.ui.core:Fragment> or <core:ExtensionPoint> element
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the parent's "with" control
+				 */
+				function insertFragment(sFragmentName, oElement, oWithControl) {
+					var oFragmentElement;
+
+					// Note: It is perfectly valid to include the very same fragment again, as
+					// long as the context is changed. So we check for cycles at the current
+					// "with" control. A context change will create a new one.
+					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
+					if (oWithControl.$mFragmentContexts[sFragmentName]) {
+						oElement.appendChild(oElement.ownerDocument.createTextNode(
+							"Error: Stopped due to cyclic fragment reference"));
+						jQuery.sap.log.error(
+							'Stopped due to cyclic reference in fragment: ' + sFragmentName,
+							jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
+							"sap.ui.core.util.XMLPreprocessor");
+						return;
+					}
+
+					iNestingLevel++;
+					debug(oElement, "fragmentName =", sFragmentName);
+					oWithControl.$mFragmentContexts[sFragmentName] = true;
+					aFragmentNames.push(sFragmentName);
+
+					oFragmentElement
+						= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+					if (oFragmentElement.namespaceURI === "sap.ui.core"
+							&& localName(oFragmentElement) === "FragmentDefinition") {
+						liftChildNodes(oFragmentElement, oWithControl, oElement);
+					} else {
+						oElement.parentNode.insertBefore(oFragmentElement, oElement);
+						visitNode(oFragmentElement, oWithControl);
+					}
+					oElement.parentNode.removeChild(oElement);
+
+					aFragmentNames.pop();
+					oWithControl.$mFragmentContexts[sFragmentName] = false;
+					debugFinished(oElement);
+					iNestingLevel--;
+				}
+
+				/**
 				 * Visits the child nodes of the given parent element. Lifts them up by inserting
 				 * them before the target element.
 				 *
@@ -522,6 +577,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				}
 
 				/**
+				 * Replaces a <sap.ui.core:ExtensionPoint> element with the content of an XML
+				 * fragment configured as a replacement (via component meta data, "customizing" and
+				 * "sap.ui.viewExtensions"), or leaves it untouched in case no such replacement is
+				 * currently configured.
+				 *
+				 * @param {Element} oElement
+				 *   the <sap.ui.core:ExtensionPoint> element
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the parent's "with" control
+				 * @returns {boolean}
+				 *   whether the <sap.ui.core:ExtensionPoint> element has been replaced
+				 */
+				function templateExtensionPoint(oElement, oWithControl) {
+					var sName = oElement.getAttribute("name"),
+						vName,
+						oViewExtension;
+
+					if (oViewInfo && sap.ui.core.CustomizingConfiguration) {
+						try {
+							vName = getResolvedBinding(sName, oElement, oWithControl, true);
+							if (vName !== oUNBOUND) {
+								oViewExtension
+									= sap.ui.core.CustomizingConfiguration.getViewExtension(
+										aFragmentNames[aFragmentNames.length - 1], vName,
+										oViewInfo.componentId);
+							}
+						} catch (ex) {
+							warn('Error in formatter of ', oElement, ex);
+						}
+
+						if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
+								&& oViewExtension.type === "XML") {
+							insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
+							return true;
+						}
+					}
+					return false;
+				}
+
+				/**
 				 * Loads and inlines the content of a <sap.ui.core:Fragment> element.
 				 *
 				 * @param {Element} oElement
@@ -533,55 +628,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					var sFragmentName = oElement.getAttribute("fragmentName"),
 						vFragmentName;
 
-					/**
-					 * Inserts the fragment with the given name in place of the <core:Fragment>
-					 * element.
-					 *
-					 * @param {string} sFragmentName
-					 *   the fragment's resolved name
-					 */
-					function insertFragment(sFragmentName) {
-						var oFragmentElement;
-
-						// Note: It is perfectly valid to include the very same fragment again, as long
-						// as the context is changed. So we check for cycles at the current "with"
-						// control. A context change will create a new one.
-						oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
-						if (oWithControl.$mFragmentContexts[sFragmentName]) {
-							oElement.appendChild(oElement.ownerDocument.createTextNode(
-								"Error: Stopped due to cyclic fragment reference"));
-							jQuery.sap.log.error(
-								'Stopped due to cyclic reference in fragment: ' + sFragmentName,
-								jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
-								"sap.ui.core.util.XMLPreprocessor");
-							return;
-						}
-
-						iNestingLevel++;
-						debug(oElement, "fragmentName =", sFragmentName);
-						oWithControl.$mFragmentContexts[sFragmentName] = true;
-
-						oFragmentElement
-							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
-						if (localName(oFragmentElement) === "FragmentDefinition" &&
-								oFragmentElement.namespaceURI === "sap.ui.core") {
-							liftChildNodes(oFragmentElement, oWithControl, oElement);
-						} else {
-							oElement.appendChild(oFragmentElement);
-							liftChildNodes(oElement, oWithControl);
-						}
-						oElement.parentNode.removeChild(oElement);
-
-						oWithControl.$mFragmentContexts[sFragmentName] = false;
-						debugFinished(oElement);
-						iNestingLevel--;
-					}
-
 					try {
 						vFragmentName
 							= getResolvedBinding(sFragmentName, oElement, oWithControl, true);
 						if (vFragmentName !== oUNBOUND) {
-							insertFragment(vFragmentName);
+							insertFragment(vFragmentName, oElement, oWithControl);
 						}
 					} catch (ex) {
 						warn('Error in formatter of ', oElement, ex);
@@ -833,11 +884,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						default:
 							error("Unexpected tag ", oNode);
 						}
-					} else if (oNode.namespaceURI === "sap.ui.core"
-						&& localName(oNode) === "Fragment"
-						&& oNode.getAttribute("type") === "XML") {
-						templateFragment(oNode, oWithControl);
-						return;
+					} else if (oNode.namespaceURI === "sap.ui.core") {
+						switch (localName(oNode)) {
+						case "ExtensionPoint":
+							if (templateExtensionPoint(oNode, oWithControl)) {
+								return;
+							}
+							break;
+
+						case "Fragment":
+							if (oNode.getAttribute("type") === "XML") {
+								templateFragment(oNode, oWithControl);
+								return;
+							}
+							break;
+
+						// no default
+						}
 					}
 
 					visitAttributes(oNode, oWithControl);
@@ -866,8 +929,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				if (typeof mSettings === "string") {
 					sCaller = mSettings;
 					mSettings = oViewInfo;
+					oViewInfo = null; // not available
 				} else {
 					sCaller = oViewInfo.caller;
+					aFragmentNames.push(oViewInfo.name);
 				}
 				mSettings = mSettings || {};
 				if (bDebug) {

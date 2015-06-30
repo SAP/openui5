@@ -1,0 +1,5 @@
+<!-- Note: "facet>" MUST point to a com.sap.vocabularies.UI.v1.ReferenceFacet! -->
+<core:FragmentDefinition  xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Label text="Target/AnnotationPath"/>
+	<Text text="{facet>Target/AnnotationPath}"/>
+</core:FragmentDefinition>

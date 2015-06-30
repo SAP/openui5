@@ -13,11 +13,8 @@ sap.ui.define([
 		'sap/ui/core/sample/ViewTemplate/Component',
 		'sap/ui/core/util/MockServer',
 		'sap/ui/model/odata/AnnotationHelper',
-		'sap/m/HBox',
-		'sap/m/MessageBox',
 		'jquery.sap.script'
-	], function (jQuery, View, BaseComponent, MockServer, AnnotationHelper, HBox, MessageBox
-		/*, jQuerySapScript*/) {
+	], function (jQuery, View, BaseComponent, MockServer, AnnotationHelper/*, jQuerySapScript*/) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
@@ -29,7 +26,6 @@ sap.ui.define([
 				sServiceUri,
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
-				oLayout = new HBox(),
 				oMockServer,
 				oUriParameters = jQuery.sap.getUriParameters(),
 				fnModel = oUriParameters.get("oldOData") === "true"
@@ -86,19 +82,11 @@ sap.ui.define([
 				skipMetadataAnnotationParsing : true
 			});
 
-			oModel.getMetaModel().loaded().then(function () {
-				oLayout.addItem(sap.ui.view({
+			return sap.ui.view({
 					type : sap.ui.core.mvc.ViewType.XML,
 					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
 					models : oModel
-				}));
-			}, function (oError) {
-				MessageBox.alert(oError.message, {
-					icon: sap.m.MessageBox.Icon.ERROR,
-					title: "Error"});
-			});
-
-			return oLayout;
+				});
 		}
 	});
 
