@@ -145,7 +145,7 @@ sap.ui.define([
 		 *   if true the value is to be embedded into a binding expression, otherwise in a
 		 *   composite binding
 		 * @param {boolean} [bWithType=false]
-		 * 	 if <code>true</code> and <code>oResult.result</code> is "binding" and
+		 *  if <code>true</code> and <code>oResult.result</code> is "binding" and
 		 *  <code>bExpression</code> is <code>false</code>, type and constraint information is
 		 *  written to the resulting binding string
 		 * @returns {string}
