@@ -10,17 +10,12 @@
 	<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_goldreflection" >
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.ui.commons,sap.m">
 	</script>
 
 	<script>
-	try{
-		sap.ui.getCore().loadLibrary("sap.ui.commons");
-	}catch(e){
-		alert("This test page requires the library 'sap.ui.commons' which is not available.");
-		throw(e);
-	}
-
+	
 	var oVerticalLayout = new sap.ui.commons.layout.VerticalLayout();
 	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
 		jQuery.sap.log.info("Validate " + oEvent.mParameters.fieldGroupId);
@@ -71,6 +66,10 @@
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 3 of group3",labelFor:"field33"}),
 			new sap.ui.commons.CheckBox({id:"field33",width:"200px",fieldGroupId:"group3"})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "Field 4 with group3",labelFor:"field34"}),
+			new sap.m.DateTimeInput({id:"field34",width:"200px",fieldGroupId:"group3"})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 2 with no group",labelFor:"field2"}),
