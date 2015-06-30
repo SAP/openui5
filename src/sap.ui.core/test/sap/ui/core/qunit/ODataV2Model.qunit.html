@@ -1228,7 +1228,7 @@
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
 		oModel.remove("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(3)", {success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
 			_setTimeout(function() {
 				equal(oInfo.requestSent, 3, "Three requests sent");
@@ -1258,9 +1258,9 @@
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
 		oModel.remove("/Categories(1)", {changeSetId: 1, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(3)", {changeSetId: 1, success: fnSuccess, error: fnError});
 		oModel.remove("/Categories(1)", {changeSetId: 2, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(3)", {changeSetId: 2, success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
 			_setTimeout(function() {
 				equal(oInfo.requestSent, 5, "Five requests sent");
@@ -1290,7 +1290,7 @@
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
 		oModel.remove("/Categories(1)", {changeSetId: 1, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(3)", {changeSetId: 1, success: fnSuccess, error: fnError});
 		oModel.remove("/Categories(1)", {changeSetId: 2, success: fnSuccess, error: fnError});
 		oModel.remove("/Fail500(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
@@ -1440,14 +1440,14 @@
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
 			oRequest1.abort();
 			oRequest2.abort();
 			oModel.attachBatchRequestCompleted(function(oEvent) {
 				var oRequests = oEvent.getParameter('requests');
 				equal(oRequests.length, 1, "1 requests");
-				equal(oRequests[0].url, "Categories(7)", "request url check");
+				equal(oRequests[0].url, "Categories(4)", "request url check");
 				ok(oRequests[0].success, "request success check");
 				
 				setTimeout(function() {
@@ -1483,8 +1483,8 @@
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
 			oModel.attachBatchRequestSent(function() {
 				oRequest1.abort();
 				oRequest2.abort();
@@ -1496,11 +1496,11 @@
 				ok(!oRequests[0].success, "request success check");
 				equal(oRequests[0].response.statusCode, "0", "request aborted");
 				equal(oRequests[0].response.statusText, "abort", "request aborted");
-				equal(oRequests[1].url, "Categories(2)", "request url check");
+				equal(oRequests[1].url, "Categories(3)", "request url check");
 				ok(!oRequests[1].success, "request success check");
 				equal(oRequests[1].response.statusCode, "0", "request aborted");
 				equal(oRequests[1].response.statusText, "abort", "request aborted");
-				equal(oRequests[2].url, "Categories(7)", "request url check");
+				equal(oRequests[2].url, "Categories(4)", "request url check");
 				ok(oRequests[2].success, "request success check");
 				
 				setTimeout(function() {
@@ -1537,15 +1537,15 @@
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredBatchGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oRequest1.abort();
 			oRequest2.abort();
 			
 			oModel.attachBatchRequestCompleted(function(oEvent) {
 				var oRequests = oEvent.getParameter('requests');
 				equal(oRequests.length, 1, "1 requests");
-				equal(oRequests[0].url, "Categories(7)", "request url check");
+				equal(oRequests[0].url, "Categories(4)", "request url check");
 				ok(oRequests[0].success, "request success check");
 				
 				setTimeout(function() {
@@ -1583,8 +1583,8 @@
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredBatchGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 
 			oModel.attachBatchRequestSent(function() {
 				oRequest1.abort();
@@ -1597,11 +1597,11 @@
 				ok(!oRequests[0].success, "request success check");
 				equal(oRequests[0].response.statusCode, "0", "request aborted");
 				equal(oRequests[0].response.statusText, "abort", "request aborted");
-				equal(oRequests[1].url, "Categories(2)", "request url check");
+				equal(oRequests[1].url, "Categories(3)", "request url check");
 				ok(!oRequests[1].success, "request success check");
 				equal(oRequests[1].response.statusCode, "0", "request aborted");
 				equal(oRequests[1].response.statusText, "abort", "request aborted");
-				equal(oRequests[2].url, "Categories(7)", "request url check");
+				equal(oRequests[2].url, "Categories(4)", "request url check");
 				ok(oRequests[2].success, "request success check");
 				
 				setTimeout(function() {
@@ -1675,7 +1675,7 @@
 		});
 		var oInfo = {}, oRequest, oBinding, fnHandler, oCount = 0;
 		fnHandler = attachRequestEvents(oModel, oInfo);
-		oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		oBinding = oModel.bindList("/Invoices", null, null, null, {countMode: "None"});
 		oBinding.attachChange(function(){});
 		oBinding.attachRefresh(function() {
 			this.getContexts();
@@ -1694,7 +1694,7 @@
 					detachRequestEvents(oModel, fnHandler);
 					oInfo = {};
 					fnHandler = attachRequestEvents(oModel, oInfo);
-					oRequest = oModel.update("/Categories(1)", {});
+					oRequest = oModel.update("/Invoices(CustomerName='Alfreds%20Futterkiste',Discount=0f,OrderID=10702,ProductID=3,ProductName='Aniseed%20Syrup',Quantity=6,Salesperson='Margaret%20Peacock',ShipperName='Speedy%20Express',UnitPrice=10.0000M)", {});
 				}, 0);
 			} else if (oCount == 2) { // Data updated and refreshed
 				setTimeout(function() {
