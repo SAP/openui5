@@ -60,16 +60,16 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control
 				 */
 				"visible" : { type: "boolean", group : "Appearance", defaultValue: true },
-				
+
 				/**
-				 * The id of a logical field group that this control belongs to. All fields in a logicalfield group should share the same fieldGroupId. 
+				 * The id of a logical field group that this control belongs to. All fields in a logicalfield group should share the same fieldGroupId.
 				 * Once a logical field group is left, the validateFieldGroup event is fired.
-				 * 
+				 *
 				 * @see {sap.ui.core.Control.attachValidateFieldGroup}
 				 * @since 1.31
 				 */
 				"fieldGroupId" : { type: "string", defaultValue: "" }
-			
+
 			},
 			events : {
 				/**
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				validateFieldGroup : {
 					enableEventBubbling:true,
 					parameters : {
-						
+
 						/**
 						 * Field group id of the logical field group to validate
 						 */
@@ -678,7 +678,16 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				} else {
 					if (this._busyTabIndices) {
 						jQuery.each(this._busyTabIndices, function(iIndex, oObject) {
-							oObject.ref.attr('tabindex', oObject.tabindex);
+							if (oObject.tabindex) {
+								// if there was no tabindex before it was added by the BusyIndicator
+								// the previous value is "undefined". And this value can't be set
+								// so the attribute remains at the DOM-ref. So if there was no tabindex
+								// attribute before the whole attribute should be removed again.
+								oObject.ref.attr('tabindex', oObject.tabindex);
+							} else {
+								oObject.ref.removeAttr('tabindex');
+							}
+
 							oObject.ref.unbind(sPreventedEvents, fnPreserveEvents);
 						});
 					}
