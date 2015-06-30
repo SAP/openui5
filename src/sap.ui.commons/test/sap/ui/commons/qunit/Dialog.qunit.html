@@ -162,7 +162,7 @@
 
 			function fnClosed () {
 				assert.equal(that.oDialog.isOpen(), false, 'Dialog should be closed again after closing!');
-				assert.equal(jQuery('#Dialog').css('visibility'), 'hidden', 'Dialog should be hidden after closing');
+				assert.equal(jQuery('#Dialog').length, 0, 'Dialog DOM should be removed after closing');
 				done();
 			}
 
