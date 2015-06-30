@@ -126,8 +126,6 @@ sap.ui.require([
 			</PropertyValue>\
 		</Record>\
 	</Annotation>\
-	<Annotation Term="com.sap.vocabularies.Common.v1.Deletable" Path="Deletable" />\
-	<Annotation Term="com.sap.vocabularies.Common.v1.Updatable" Path="Updatable" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.Contact">\
 <Annotation Term="com.sap.vocabularies.Communication.v1.Contact">\
@@ -182,6 +180,16 @@ sap.ui.require([
 				EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
+		<Annotation Term="Org.OData.Core.V1.DeleteRestrictions">\
+			<Record>\
+				<PropertyValue Property="Deletable" Path="DeletableFromAnnotation"/>\
+			</Record>\
+		</Annotation>\
+		<Annotation Term="Org.OData.Core.V1.UpdateRestrictions">\
+			<Record>\
+				<PropertyValue Property="Updatable" Path="UpdatableFromAnnotation"/>\
+			</Record>\
+		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.FilterRestrictions">\
 			<Record>\
 				<PropertyValue Property="RequiresFilter" Bool="true"/>\
@@ -1613,16 +1621,18 @@ sap.ui.require([
 				// sap:deletable-path (EntitySet)
 				deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
 				delete oBusinessPartnerSet["sap:deletable-path"];
-				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"],
-					{ "Path" : "Deletable" }, "deletable-path");
-				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Deletable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.DeleteRestrictions"],
+					{ "Deletable" : { "Path" :
+						( i === 0 ? "Deletable" : "DeletableFromAnnotation") }}, "deletable-path");
+				delete oBusinessPartnerSet["Org.OData.Core.V1.DeleteRestrictions"];
 
 				// sap:updatable-path (EntitySet)
 				deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
 				delete oBusinessPartnerSet["sap:updatable-path"];
-				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"],
-					{ "Path" : "Updatable" }, "updatable-path");
-				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Updatable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.UpdateRestrictions"],
+					{ "Updatable" : { "Path" :
+						( i === 0 ? "Updatable" : "UpdatableFromAnnotation") }}, "updatable-path");
+				delete oBusinessPartnerSet["Org.OData.Core.V1.UpdateRestrictions"];
 
 				// sap:filter-restriction (Property)
 				deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
