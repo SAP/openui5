@@ -18,6 +18,7 @@
 	/* =========================================================== */
 	var oModelCBSR = new sap.ui.model.json.JSONModel();
 	var bSimulateUploadingStatusSR = "false";
+	var oUploadCompleteStub;
 	var mDataCBSR = {
 		"items": [
 			{
@@ -437,10 +438,15 @@
 		sap.m.MessageToast.show("Change event triggered.");
 		// simulate status uploading for screen reader support
 		if(bSimulateUploadingStatusSR === "true") {
-			oUploadCollection._onUploadComplete = function () {
-				return;
+			if (oUploadCompleteStub === undefined) {
+				oUploadCompleteStub = oUploadCollection._onUploadComplete;
+				oUploadCollection._onUploadComplete = function () {
+					return;
+				};
 			};
-		oUploadCollection.invalidate();
+			oUploadCollection.invalidate();
+		} else if (oUploadCompleteStub) {
+			oUploadCollection._onUploadComplete = oUploadCompleteStub;
 		}
 	};
 
