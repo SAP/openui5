@@ -372,6 +372,26 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 				config["frameOptions"] = 'allow';
 			}
 
+			var aCSSLibs = config['preloadLibCss'];
+			if ( aCSSLibs.length > 0 ) {
+				// a leading "!" denotes that the application has loaded the file already
+				aCSSLibs.appManaged = aCSSLibs[0].slice(0,1) === "!";
+				if ( aCSSLibs.appManaged ) {
+					aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in "config"!
+				}
+				if ( aCSSLibs[0] === "*" ) {
+					// replace with configured libs
+					aCSSLibs.splice(0,1); // remove *
+					var pos = 0;
+					jQuery.each(config.modules, function(i,mod) {
+						var m = mod.match(/^(.*)\.library$/);
+						if ( m ) {
+							aCSSLibs.splice(pos,0,m[1]);
+						}
+					});
+				}
+			}
+
 			// log  all non default value
 			for (var n in M_SETTINGS) {
 				if ( config[n] !== M_SETTINGS[n].defaultValue ) {
