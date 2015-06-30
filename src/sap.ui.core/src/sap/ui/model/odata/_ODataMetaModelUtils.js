@@ -347,6 +347,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   "EntitySet"
 		 */
 		addV4Annotation: function (o, oExtension, sTypeClass) {
+			var sTerm;
 			switch (oExtension.name) {
 				case "display-format":
 					if (oExtension.value === "NonNegative") {
@@ -365,6 +366,16 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				case "updatable":
 					// true is the default in v4 so add annotation only in case of false
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
+					break;
+				case "deletable-path":
+					sTerm = "Org.OData.Core.V1.DeleteRestrictions";
+					o[sTerm] = o[sTerm] || {};
+					o[sTerm].Deletable = { "Path" : oExtension.value };
+					break;
+				case "updatable-path":
+					sTerm = "Org.OData.Core.V1.UpdateRestrictions";
+					o[sTerm] = o[sTerm] || {};
+					o[sTerm].Updatable = { "Path" : oExtension.value };
 					break;
 				case "requires-filter":
 					// false is the default in v4 so add annotation only in case of true
@@ -431,29 +442,6 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						Utils.addFilterRestriction(oProperty, oEntitySet);
 					}
 				});
-			}
-		},
-
-		/**
-		 * Convert sap:deletable-path and sap:updatable-path at entity set to
-		 * com.sap.vocabularies.Common.v1.Deletable and com.sap.vocabularies.Common.v1.Updatable
-		 * at entity type.
-		 *
-		 * @param {object} oEntitySet
-		 *   the entity set
-		 * @param {object} oEntityType
-		 *   the corresponding entity type
-		 */
-		convertEntitySetAnnotations: function (oEntitySet, oEntityType) {
-			var sDeletablePath = oEntitySet["sap:deletable-path"],
-				sUpdatablePath = oEntitySet["sap:updatable-path"],
-				sEntitySetName = oEntitySet.name;
-
-			if (sUpdatablePath || sDeletablePath) {
-				Utils.setDeletableOrUpdatable(oEntityType, "Deletable", sDeletablePath,
-					sEntitySetName);
-				Utils.setDeletableOrUpdatable(oEntityType, "Updatable", sUpdatablePath,
-					sEntitySetName);
 			}
 		},
 
@@ -778,42 +766,6 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
-		 * Helper for setting com.sap.vocabularies.Common.v1.Deletable or
-		 * com.sap.vocabularies.Common.v1.Updatable at the given entity type.
-		 * If the annotation is already contained and the paths differ, log a warning.
-		 *
-		 * @param {object} oEntityType
-		 *    the entity type that needs to be annotated
-		 * @param {string} sV4Name
-		 *    either "Deletable" or "Updatable"
-		 * @param {string} sNewPath
-		 *    the path value for the v4 annotation
-		 * @param {object} sEntitySetName
-		 *    the name of the entity set, used only for logging
-		 */
-		setDeletableOrUpdatable: function (oEntityType, sV4Name, sNewPath, sEntitySetName) {
-			var oAnnotation, sV4Term;
-
-			if (!sNewPath) {
-				return;
-			}
-			sV4Term = "com.sap.vocabularies.Common.v1." + sV4Name;
-			oAnnotation = oEntityType[sV4Term];
-			if (!oAnnotation) {
-				oEntityType[sV4Term] = { "Path" : sNewPath };
-			} else if (sNewPath !== oAnnotation.Path) {
-				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-					jQuery.sap.log.warning("Ignored 'sap:" + sV4Name.toLowerCase() + "-path'"
-							+ " annotation (" + sNewPath + ") of " + sEntitySetName,
-						"The entity type " + oEntityType.name + " contains a"
-							+ " '" + sV4Term + "' annotation with different path ("
-							+ oAnnotation.Path + ")",
-						"sap.ui.model.odata._ODataMetaModelUtils");
-				}
-			}
-		},
-
-		/**
 		 * Visits all children inside the given array, lifts "SAPData" extensions and
 		 * inlines OData v4 annotations for each child.
 		 *
@@ -853,7 +805,6 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					// annotations are merged
 					oEntityType = Utils.getObject(aSchemas, "entityType", oChild.entityType);
 					Utils.calculateEntitySetAnnotations(oChild, oEntityType);
-					Utils.convertEntitySetAnnotations(oChild, oEntityType);
 				}
 
 				if (fnCallback) {

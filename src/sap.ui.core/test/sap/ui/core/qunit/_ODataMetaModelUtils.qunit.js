@@ -653,68 +653,6 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	});
 
 	//*********************************************************************************************
-	test("convertEntitySetAnnotations", function () {
-		var aSchema = clone(oDataSchema).dataServices.schema,
-			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
-			oEntitySet2 = aSchema[0].entityContainer[0].entitySet[1],
-			oEntityType = aSchema[0].entityType[0],
-			oLogMock = this.mock(jQuery.sap.log);
-
-		//Prepare data
-		Utils.liftSAPData(oEntitySet, "EntitySet");
-		Utils.liftSAPData(oEntitySet2, "EntitySet");
-
-		oLogMock.expects("isLoggable").exactly(2).withExactArgs(jQuery.sap.log.Level.WARNING)
-			.returns(true);
-		oLogMock.expects("warning").exactly(1)
-			.withExactArgs("Ignored 'sap:deletable-path' annotation (Deletable2) of ContactSet2",
-				"The entity type Contact contains a" +
-					" 'com.sap.vocabularies.Common.v1.Deletable' annotation with different" +
-					" path (Deletable)",
-				"sap.ui.model.odata._ODataMetaModelUtils");
-		oLogMock.expects("warning").exactly(1)
-			.withExactArgs("Ignored 'sap:updatable-path' annotation (Updatable2) of ContactSet2",
-				"The entity type Contact contains a" +
-					" 'com.sap.vocabularies.Common.v1.Updatable' annotation with different" +
-					" path (Updatable)",
-				"sap.ui.model.odata._ODataMetaModelUtils");
-
-		// code under test
-		Utils.convertEntitySetAnnotations(oEntitySet, oEntityType);
-		Utils.convertEntitySetAnnotations(oEntitySet2, oEntityType);
-
-		//verify results
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Deletable"],
-				{"Path" : "Deletable"}, "deletable-path");
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Updatable"],
-				{"Path" : "Updatable"}, "updatable-path");
-
-
-	});
-
-	//*********************************************************************************************
-	test("convertEntitySetAnnotations no overwrite", function () {
-		var aSchema = clone(oDataSchema).dataServices.schema,
-			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
-			oEntityType = aSchema[0].entityType[0];
-
-		//Prepare data
-		Utils.liftSAPData(oEntitySet, "EntitySet");
-		oEntityType["com.sap.vocabularies.Common.v1.Deletable"] = {"Path" : "bar"};
-		oEntityType["com.sap.vocabularies.Common.v1.Updatable"] = {"Path" : "foo"};
-
-		// code under test
-		Utils.convertEntitySetAnnotations(oEntitySet, oEntityType);
-
-		//verify results
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Deletable"],
-				{"Path" : "bar"}, "deletable-path not overwritten");
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Updatable"],
-				{"Path" : "foo"}, "updatable-path not overwritten");
-
-	});
-
-	//*********************************************************************************************
 	[{
 		test: "and v4 wins", annotations: oAnnotations,
 		expectedTypeAnnotations: oAnnotations["GWSAMPLE_BASIC.Contact"]
