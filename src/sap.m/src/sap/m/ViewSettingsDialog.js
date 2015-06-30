@@ -1120,7 +1120,7 @@ function(jQuery, library, Control, IconPool) {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
-				that.setSortDescending(oEvent.getParameter("listItem").data("item"));
+				that.setProperty('sortDescending', oEvent.getParameter("listItem").data("item"), true);
 			}
 		}).addStyleClass("sapMVSDUpperList");
 		this._sortOrderList.addItem(new sap.m.StandardListItem({
@@ -1136,7 +1136,7 @@ function(jQuery, library, Control, IconPool) {
 			selectionChange : function(oEvent) {
 				var item = oEvent.getParameter("listItem").data("item");
 				if (item) {
-					item.setSelected(oEvent.getParameter("listItem").getSelected());
+					item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 				}
 				that.setAssociation("selectedSortItem", item, true);
 			}
@@ -1160,8 +1160,7 @@ function(jQuery, library, Control, IconPool) {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
-				that.setGroupDescending(oEvent.getParameter("listItem")
-					.data("item"));
+				that.setProperty('groupDescending', oEvent.getParameter("listItem").data("item"), true);
 			}
 		}).addStyleClass("sapMVSDUpperList");
 		this._groupOrderList.addItem(new sap.m.StandardListItem({
@@ -1178,8 +1177,7 @@ function(jQuery, library, Control, IconPool) {
 				selectionChange : function(oEvent) {
 					var item = oEvent.getParameter("listItem").data("item");
 					if (item) {
-						item.setSelected(oEvent.getParameter("listItem")
-							.getSelected());
+						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 					that.setAssociation("selectedGroupItem", item, true);
 				}
@@ -1207,8 +1205,7 @@ function(jQuery, library, Control, IconPool) {
 				selectionChange : function(oEvent) {
 					var item = oEvent.getParameter("listItem").data("item");
 					if (item) {
-						item.setSelected(oEvent.getParameter("listItem")
-							.getSelected());
+						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 					that.setAssociation("selectedPresetFilterItem", item, true);
 					that._clearSelectedFilters();
