@@ -17,7 +17,11 @@
 		titleActive="true"
 		titleHref="http://www.sap.com"
 		titleTarget="_blank"
-		number="{Price}"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}"
 		showMarkers="true"
 		markFlagged="true"
