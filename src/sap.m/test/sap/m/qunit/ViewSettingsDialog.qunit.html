@@ -1479,9 +1479,6 @@
 						var vsdGroupItem 				= oVsdInst.getGroupItems()[1];
 						var spyGroupItem 				= sinon.spy(vsdGroupItem, "setProperty");
 
-
-						console.log(list, listOfGroupItems, listOfGroupDirectionItems,vsdGroupDirectionDesc, vsdGroupItem,spyGroupItem);
-
 						listOfGroupItems._oSingleSelectControl.fireSelect({selected : true});
 						vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
 
