@@ -1282,7 +1282,8 @@ sap.ui.define([
 			mDefaultAttributes = {
 				"data-sap-ui-icon-content": oIconInfo.content,
 				"role": "presentation",
-				"aria-label": oIconInfo.text || oIconInfo.name
+				"aria-label": oIconInfo.text || oIconInfo.name,
+				"title": oIconInfo.text || null
 			};
 
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
@@ -1298,7 +1299,7 @@ sap.ui.define([
 
 		if (typeof mAttributes === "object") {
 			for (sProp in mAttributes) {
-				if (mAttributes.hasOwnProperty(sProp)) {
+				if (mAttributes.hasOwnProperty(sProp) && mAttributes[sProp] !== null) {
 					this.writeAttributeEscaped(sProp, mAttributes[sProp]);
 				}
 			}
