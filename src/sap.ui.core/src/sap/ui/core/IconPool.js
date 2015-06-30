@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				sContent += String.fromCharCode(parseInt(iconInfo.content[i], 16));
 			}
 
-			var sText;
+			var sText = "";
 			if (!collectionName) {
 				// built-in collection => use sap.ui.core ResourceBundle
 				if (mIconI18nKey[iconName]) {
@@ -143,8 +143,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 					}
 					var sKey = "Icon." + iconName;
 					sText = oCoreMessageBundle.getText(sKey);
-				} else {
-					sText = iconName;
 				}
 			} else {
 				// TODO: use custom ResourceBundles provided via new API
