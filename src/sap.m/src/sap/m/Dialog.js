@@ -1213,7 +1213,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 				} else {
 					this._iconImage = IconPool.createControlByURI({
 						id: this.getId() + "-icon",
-						src: sIcon
+						src: sIcon,
+						useIconTooltip: false
 					}, sap.m.Image).addStyleClass("sapMDialogIcon");
 
 					this._createHeader();
