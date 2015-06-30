@@ -51,7 +51,14 @@
 
 		var oSwitch = sap.m.Switch({
 			customTextOn: "CPT",
-			customTextOff: "CZY"
+			customTextOff: "CZY",
+			change: function (ev) {
+				var $body = jQuery("body");
+
+				ev.getParameter("state") ?
+					$body.addClass("sapUiSizeCompact") :
+					$body.removeClass("sapUiSizeCompact");
+			}
 		});
 
 		jQuery.map(sap.m.MessageBox.Action, function (value, key) {
@@ -61,8 +68,7 @@
 					sap.m.MessageBox.show(sMessage, {
 						icon: oSelect.getSelectedItem().getProperty("key"),
 						title: sTitle,
-						actions: key,
-						styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+						actions: key
 					});
 				}
 			}));
@@ -74,8 +80,7 @@
 				sap.m.MessageBox.confirm("Confirmation dialog is opened?", {
 					onClose: function (bConfirmed) {
 						jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
-					},
-					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+					}
 				});
 			}
 		}));
@@ -83,9 +88,7 @@
 		oHL.addContent(new sap.m.Button({
 			text: "Alert",
 			press: function () {
-				sap.m.MessageBox.alert("Alert some message", {
-					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
-				});
+				sap.m.MessageBox.alert("Alert some message");
 			}
 		}));
 
@@ -120,9 +123,7 @@
 								}
 							},
 							dialogId: "messageBoxId",
-							initialFocus: sap.m.MessageBox.Action.NO,
-							styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
-
+							initialFocus: sap.m.MessageBox.Action.NO
 						}
 				);
 			}
@@ -143,7 +144,6 @@
 					},
 					icon: sap.m.MessageBox.Icon.INFORMATION,
 					title: "Set initial button focus",
-					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : "",
 					initialFocus: sap.m.MessageBox.Action.CANCEL
 				});
 			}
@@ -159,8 +159,7 @@
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
 					id: "messageBoxId1",
 					defaultAction: sap.m.MessageBox.Action.NO,
-					initialFocus: "Custom button text",
-					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+					initialFocus: "Custom button text"
 				});
 			}
 		}));
@@ -200,8 +199,7 @@
 							},
 							dialogId: "messageBoxId",
 							class: "",
-							initialFocus: oCheck2,
-							styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+							initialFocus: oCheck2
 						}
 				);
 			}
@@ -255,8 +253,7 @@
 					},
 					id: "messageBoxId",
 					verticalScrolling: false,
-					horizontalScrolling: true,
-					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+					horizontalScrolling: true
 				});
 			}
 		}));
@@ -302,9 +299,7 @@
 					},
 					id: "messageBoxId",
 					verticalScrolling: false,
-					horizontalScrolling: false,
-					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
-
+					horizontalScrolling: false
 				});
 			}
 		}));
