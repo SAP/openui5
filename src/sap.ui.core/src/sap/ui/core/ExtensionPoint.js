@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration'),
 			View = sap.ui.require('sap/ui/core/mvc/View'),
-			Fragment = sap.ui.require('sap/ui/core/mvc/Fragment');
+			Fragment = sap.ui.require('sap/ui/core/Fragment');
 
 		// Extension Point - is something configured?
 		if (CustomizingConfiguration) {
