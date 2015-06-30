@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		// write ARIA only on a simulated link
-		if (oOA.getActive() && !oOA.getAggregation("attribute")) {
+		if (oOA.getActive() && !oOA.getAggregation("customContent")) {
 			oRm.writeAccessibilityState(oOA, {
 				role: "link"
 			});
@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	ObjectAttributeRenderer.renderTextInObjectHeader = function (oRm, oOA) {
 		var sTextDir = oOA.getTextDirection(),
-			oAttrAggregation = oOA.getAggregation("attribute");
+			oAttrAggregation = oOA.getAggregation("customContent");
 
 		oRm.write("<span id=\"" + oOA.getId() + "-text\"");
 		oRm.addClass("sapMObjectAttributeText");
