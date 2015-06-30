@@ -37,6 +37,12 @@
 		oDefaultDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance(),
 		oDefaultTime = sap.ui.core.format.DateFormat.getTimeInstance();
 
+	test("format invalid date", function() {
+		var oDate = new Date("");
+		ok(isNaN(oDate.getTime()), "This is an invalid date");
+		strictEqual(oDefaultDate.format(oDate), "", "Formatting an invalid date should return ''");
+	});
+
 	test("format default date", function(){
 		equal(oDefaultDate.format(oDateTime), "Sep 11, 2001", "default date");
 		equal(oDefaultDateTime.format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "default datetime");
