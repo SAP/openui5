@@ -63,13 +63,20 @@
 		
 		test("Open with Title, Text and Button", function(){
 			busyDialog1.open();
-			var $busyDialog1 = jQuery.sap.byId("busyDialog1");
+			var $busyDialog1 = jQuery.sap.byId("busyDialog1"),
+				$header = $busyDialog1.children('header'),
+				sHeaderId = "busyDialog1-header";
 			ok(jQuery.sap.domById("busyDialog1"), "busyDialog1 is rendered after it's opened.");
 			equal($busyDialog1.css("display"), "block", "Busy dialog opened");
-			equal($busyDialog1.children('header').length, 1, "busyDialog1 is rendered after it's opened.");
+			equal($busyDialog1.attr("role"), "dialog", "The role attribute is set to dialog");
+			equal($header.length, 1, "busyDialog1 is rendered after it's opened.");
+			equal($header.attr("id"), sHeaderId, "header has a stable ID");
+			equal($header.attr("role"), "heading", "Dom node header has role heading");
+			equal($header.attr("aria-level"), "1", "header level is set to 1");
+			equal($busyDialog1.attr("aria-labelledBy"), sHeaderId, "The dialog is labelled by the header");
 			equal($busyDialog1.children('label').length, 1, "busyDialog1 is rendered after it's opened.");
 			equal($busyDialog1.children('footer').children().length, 3, "toolbar is rendered.");
-            equal($busyDialog1.children('footer').children()[0].id, "busyDialog1-toolbar-ariaLabel", "aria label rendered.");
+			equal($busyDialog1.children('footer').children()[0].id, "busyDialog1-toolbar-ariaLabel", "aria label rendered.");
 			equal($busyDialog1.children('footer').children()[1].id, "busyDialog1-toolbarspacer", "spacer is rendered.");
 			equal($busyDialog1.children('footer').children()[2].id, "busyDialog1busyCancelBtn", "cancel button is rendered.");
 			equal($busyDialog1.children('footer').children().eq(2).text(), "Abort", "button text should be'Abort'.");
