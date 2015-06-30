@@ -925,7 +925,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {string} sName The Property Name
 	 * @param {array} aMessages Array of Messages
 	 */
-	InputBase.prototype.updateMessages = function(sName, aMessages) {
+	InputBase.prototype.propagateMessages = function(sName, aMessages) {
 		if (aMessages && aMessages.length > 0) {
 			this.setValueState(aMessages[0].type);
 			this.setValueStateText(aMessages[0].message);
