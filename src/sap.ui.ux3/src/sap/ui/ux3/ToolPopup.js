@@ -276,8 +276,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				oElement = jQuery.sap.domById(that._mParameters.firstFocusable);
 			}
 
-			jQuery.sap.focus(oElement);
-			that._sInitialFocusId = oElement.id;
+			// oElement might not be available if this function is called during destroy
+			if (oElement) {
+				jQuery.sap.focus(oElement);
+				that._sInitialFocusId = oElement.id;
+			}
+
 		} else {
 			that._sInitialFocusId = that.oPopup._sInitialFocusId;
 		}
@@ -468,10 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ToolPopup.prototype.isOpen = function() {
-		if (this.oPopup && this.oPopup.isOpen()) {
-			return true;
-		}
-		return false;
+		return this.oPopup && (this.oPopup.getOpenState() == "OPENING" || this.oPopup.getOpenState() == "OPEN");
 	};
 
 	ToolPopup.prototype.willBeClosed = function() {
@@ -854,6 +855,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		if (!this._bPreventRestoreFocus) {
 			Popup.applyFocusInfo(this._oPreviousFocus);
 		}
+		
+		// Not removing the content DOM leads to the  problem that control DOM with the same ID exists in two places if
+		// the control is added to a different aggregation without the dialog being destroyed. In this special case the
+		// RichTextEditor (as an example) renders a textarea-element and afterwards tells the TinyMCE component which ID
+		// to use for rendering; since there are two elements with the same ID at that point, it does not work.
+		// As the Dialog can only contain other controls, we can safely discard the DOM - we cannot do this inside
+		// the Popup, since it supports displaying arbitrary HTML content.
+		this.$().remove();
+		
 		this.fireClosed();
 	};
 
