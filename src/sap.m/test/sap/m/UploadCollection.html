@@ -53,6 +53,8 @@
 		}
 	});
 
+	var oBackendErrorCheckBox = new sap.m.CheckBox();
+
 	oComboBoxSR.setModel(oModelCBSR);
 
 	/* =========================================================== */
@@ -493,30 +495,36 @@
 	};
 
 	var fnUploadComplete = function(oEvent) {
-		var oData = oUploadCollection.getModel().getData();
-		var aItems = jQuery.extend(true, {}, oData).items;
-		var oItem = {};
-		var sUploadedFile = oEvent.getParameter("files")[0].fileName;
-		// at the moment parameter fileName is not set in IE9
-		if (!sUploadedFile) {
-			var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
-			sUploadedFile = aUploadedFile[0];
+		if (oBackendErrorCheckBox.getSelected() === false) {
+			var oData = oUploadCollection.getModel().getData();
+			var aItems = jQuery.extend(true, {}, oData).items;
+			var oItem = {};
+			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
+			// at the moment parameter fileName is not set in IE9
+			if (!sUploadedFile) {
+				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
+				sUploadedFile = aUploadedFile[0];
+			}
+			oItem = {
+				"contributor" : "You",
+				"documentId" : jQuery.now().toString(), // generate Id
+				"fileName" : sUploadedFile,
+				"fileSize" : 10, // TODO get file size
+				"mimeType" : "",
+				"thumbnailUrl" : "",
+				"uploadedDate" : new Date(jQuery.now()).toLocaleDateString(),
+				"url" : ""
+			};
+			aItems.unshift(oItem);
+			oModel.setData({
+				"items" : aItems
+			});
+		} else {
+			oUploadCollection.getBinding("items").refresh(true);
 		}
-		oItem = {
-			"contributor" : "You",
-			"documentId" : jQuery.now().toString(), // generate Id
-			"fileName" : sUploadedFile,
-			"fileSize" : 10, // TODO get file size
-			"mimeType" : "",
-			"thumbnailUrl" : "",
-			"uploadedDate" : new Date(jQuery.now()).toLocaleDateString(),
-			"url" : ""
-		};
-		aItems.unshift(oItem);
-		oModel.setData({
-			"items" : aItems
-		});
-		sap.m.MessageToast.show("UploadComplete event triggered.");
+		setTimeout(function () {
+			sap.m.MessageToast.show("UploadComplete event triggered.");
+		}, 3000);
 	};
 
 	var oAttributeTemplate = new sap.m.ObjectAttribute({
@@ -586,8 +594,18 @@
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection",
 		headerContent : [
+			new sap.m.Button({
+				text : "Rerender UC",
+				press : function (oEvent) {
+					oUploadCollection.invalidate();
+				}
+			}),
 			new sap.m.Label({
-				text : "Simulate uploading status for Screen reader:"
+				text : "Simulates a backend error:"
+			}),
+			oBackendErrorCheckBox,
+			new sap.m.Label({
+				text : "Simulates the uploading status for screen reader:"
 			}),
 			oComboBoxSR,
 			new sap.m.Label({
