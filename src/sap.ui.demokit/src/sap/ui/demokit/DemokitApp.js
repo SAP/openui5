@@ -685,7 +685,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     }
                 });
                 
-                oSearch._ctrl.setPlaceholder("Filter..");
+                oSearch._ctrl.setPlaceholder("Filter");
                 
                 oSearch.addStyleClass("sapUiDemokitSearchField");
                 return oSearch;
