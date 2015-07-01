@@ -7,11 +7,11 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 
 	/**
 	 * Constructor for a new PrintAction.
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] custom initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Custom initial settings for the new control
 	 *
 	 * @class
-	 * A multiSelect button has default semantic-specific properties and is
+	 * A PrintAction button has default semantic-specific properties and is
 	 * eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}.
 	 *
 	 * @extends sap.m.semantic.SemanticButton

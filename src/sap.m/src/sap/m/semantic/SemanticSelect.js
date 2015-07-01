@@ -7,12 +7,11 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 
 	/**
 	 * Constructor for a new SemanticSelect.
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A semantic select is a {@link sap.m.Select} eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}. Depending on its type,
-	 * the semantic select is initialized with specific properties (icon etc.).
+	 * A semantic select is a {@link sap.m.Select} eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}.
 	 *
 	 * @extends sap.m.semantic.SemanticControl
 	 * @abstract
