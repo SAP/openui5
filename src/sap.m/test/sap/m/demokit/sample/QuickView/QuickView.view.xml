@@ -1,0 +1,29 @@
+<core:View height="100%"
+		   xmlns:core="sap.ui.core"
+		   xmlns="sap.m"
+		   xmlns:l="sap.ui.layout"
+		   xmlns:html="http://www.w3.org/1999/xhtml"
+		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		   controllerName="sap.m.sample.QuickView.QuickView">
+	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
+		<l:VerticalLayout>
+			<l:content>
+				<Button id="employeeQuickView"
+						class="sapUiSmallMarginBottom"
+						text="Employee QuickView"
+						width="200px"
+						press="handleEmployeeQuickViewPress" />
+				<Button id="showQuickView"
+						class="sapUiSmallMarginBottom"
+						text="Company QuickView"
+						width="200px"
+						press="handleCompanyQuickViewPress" />
+				<Button id="genericQuickView"
+						class="sapUiSmallMarginBottom"
+						text="Generic QuickView"
+						width="200px"
+						press="handleGenericQuickViewPress" />
+			</l:content>
+		</l:VerticalLayout>
+	</Page>
+</core:View>
