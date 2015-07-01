@@ -139,6 +139,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			SegmentedButton.prototype.removeButton.call(this, sButton);
 			this.setSelectedButton(this.getButtons()[0]);
 		};
+
+		// Workaround for the sake of sap.m.ViewSettingsDialog(VSD), that should be removed once VSD page rendering
+		// implementation is changed. If property set to true, the buttons will be rendered with their auto width
+		// and no further width updates will occur.
+		this._bPreventWidthRecalculationOnAfterRendering = false;
 	};
 
 	SegmentedButton.prototype._createGhostButton = function (oButton) {
@@ -315,6 +320,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SegmentedButton.prototype._fCalcBtnWidth = function () {
+		if (this._bPreventWidthRecalculationOnAfterRendering) {
+			return;
+		}
 		if (!sap.m.SegmentedButton._ghostTimer) {
 			this._addGhostButton();
 		} else {
@@ -371,6 +379,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				iMaxWidth = iMaxWidth - iInnerWidth;
 			}
 		}
+		iMaxWidth = Math.floor(iMaxWidth);
 
 		for (var i = 0; i < iItm; i++) {
 			var $button = $this.children('#' + oButtons[i].getId()),

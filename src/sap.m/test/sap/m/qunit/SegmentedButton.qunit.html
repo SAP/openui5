@@ -441,6 +441,7 @@
 
 	});
 
+
 	test("Button textDirecton attribute", function() {
 
 		// Arrange
@@ -716,12 +717,13 @@
 	/* Dialog module                                               */
 	/* =========================================================== */
 
-	module("SegmentedButton in Dialog's header", {
+	module("SegmentedButton in Dialog", {
 		setup : function () { sinon.config.useFakeTimers = false; },
 		teardown : function () { sinon.config.useFakeTimers = true; }
 	});
 
-	asyncTest("SegmentedButton in Dialog's header", function() {
+	test("SegmentedButton in Dialog's header", function(assert) {
+		var done = assert.async();
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -767,7 +769,7 @@
 				// Cleanup
 				oDialog.destroy();
 
-				start();
+				done();
 			}, 0);
 		});
 
@@ -775,6 +777,74 @@
 		oDialog.open();
 	});
 
+	test("SegmentedButton in Dialog's content when total buttons width is greater than the dialog's width", function(assert){
+		// Arrange
+		var done = assert.async();
+		var oButton1 = new sap.m.Button({text: "Button1 with very long text 1"}),
+				oButton2 = new sap.m.Button({text: "Button2 with very long text 22"}),
+				oButton3 = new sap.m.Button({text: "Button3 with very long text 3333"}),
+				iScreenWidth = 360,
+				iExpectedButtonWidth = 87, // 360/3 - 33 = 87(33=child button padding+border)
+				oOriginalFnWidth = jQuery.fn.width;
+
+		var	oStubWidth = sinon.stub(jQuery.fn, "width", function () {
+			if (this.get(0) === window) {
+
+				return iScreenWidth;
+			}
+			return oOriginalFnWidth.apply(this, arguments);
+		});
+
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton("buttonInBar", {
+			buttons: [oButton1, oButton2, oButton3]
+		});
+		var oDialog = new sap.m.Dialog( { content: [oSegmentedButton]});
+		oDialog.open();
+		setTimeout(function() {
+			oSegmentedButton.getButtons().forEach(function(oButton){
+				equal(oButton.$().width(), iExpectedButtonWidth, "Check the width of the button " + oButton.getText());
+			});
+			oStubWidth.restore();
+			oDialog.destroy();
+			done();
+		},1000);
+	});
+
+	test("SegmentedButton in Bar in Dialog's content when total buttons width is greater than the dialog's width", function(assert){
+		// Arrange
+		var done = assert.async();
+		var oButton1 = new sap.m.Button({text: "Button1 with very long text 1"}),
+				oButton2 = new sap.m.Button({text: "Button2 with very long text 22"}),
+				oButton3 = new sap.m.Button({text: "Button3 with very long text 3333"}),
+				iScreenWidth = 360,
+				iExpectedButtonWidth = 83, // (360-10)/3 - 33 = 83(33=child button padding+border, 10=bar padding +  2px paddingFix)
+		oOriginalFnWidth = jQuery.fn.width;
+
+		var	oStubWidth = sinon.stub(jQuery.fn, "width", function () {
+			if (this.get(0) === window) {
+
+				return iScreenWidth;
+			}
+			return oOriginalFnWidth.apply(this, arguments);
+		});
+
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton("buttonInBar", {
+			buttons: [oButton1, oButton2, oButton3]
+		});
+		var oBar = new sap.m.Bar( {contentMiddle: [oSegmentedButton]} );
+		var oDialog = new sap.m.Dialog( { content: [oBar]});
+		oDialog.open();
+		setTimeout(function() {
+			oSegmentedButton.getButtons().forEach(function(oButton){
+				equal(oButton.$().width(), iExpectedButtonWidth, "Check the width of the button " + oButton.getText());
+			});
+			oStubWidth.restore();
+			oDialog.destroy();
+			done();
+		},1000);
+	});
 	/* =========================================================== */
 	/* API module                                                  */
 	/* =========================================================== */

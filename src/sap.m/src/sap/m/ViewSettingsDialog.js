@@ -1006,11 +1006,9 @@ function(jQuery, library, Control, IconPool) {
 				}
 			}).addStyleClass("sapMVSDSeg");
 
-			// workaround to fix flickering caused by css measurement in
-			// SegmentedButton
-			this._segmentedButton._fCalcBtnWidth = function() {
-				// do nothing here
-			};
+			// workaround to fix flickering caused by css measurement in SegmentedButton. Temporary solution that
+			// may be removed once VSD current page rendering implementation is changed.
+			this._segmentedButton._bPreventWidthRecalculationOnAfterRendering = true;
 		}
 		return this._segmentedButton;
 	};
