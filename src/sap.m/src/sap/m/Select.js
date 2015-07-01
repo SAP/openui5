@@ -538,8 +538,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 					if (bAutoAdjustWidth) {
 						oPickerDomRef.style.width = "auto";
 						oPickerDomRef.style.minWidth = sWidth;
-					} else {
-						oPickerDomRef.style.width = sWidth;
 					}
 				}
 
