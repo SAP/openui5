@@ -16,6 +16,9 @@
 	.segCont {
 		margin: 10px;
 	}
+	.sap-phone .sapMPanel .sapMBtnContent {
+		font-size: 0.625rem;
+	}
 </style>
 <script>
 	jQuery.sap.require("sap.ui.core.HTML");
@@ -435,30 +438,49 @@
 		/****************************************
 		 * sap.m.Dialog Start                   *
 		 ****************************************/
-		var oBar = new sap.m.Bar({
-			contentMiddle : [
-				new sap.m.SegmentedButton({
-					width : "100%",
-					buttons : [
-						new sap.m.Button({text: "Button1"}),
-						new sap.m.Button({text: "Button2"}),
-						new sap.m.Button({text: "Button3"})
-					]
-				})
-			]
-		});
 
 		var oDialog = new sap.m.Dialog({
-			subHeader : oBar,
+			subHeader : new sap.m.Bar({
+				contentMiddle : [
+					new sap.m.SegmentedButton({
+						width : "100%",
+						buttons : [
+							new sap.m.Button({text: "Approved  1111111111"}),
+							new sap.m.Button({text: "Rejected 2222222222"}),
+							new sap.m.Button({text: "Lookup 3333333333"})
+						]
+					})]
+			}),
+			beginButton: new sap.m.Button({text: "Close  1111111111", press: function() {oDialog.close();}})
+		});
+
+		var oDialog11 = new sap.m.Dialog({
 			content : [
-				new sap.m.Button({
-					text : "long button",
-					width : "600px",
-					press: function () {
-						oDialog.close();
-					}
-				})
-			]
+				new sap.m.Bar({
+					contentMiddle : [
+						new sap.m.SegmentedButton({
+							width : "100%",
+							buttons : [
+								new sap.m.Button({text: "Approved  1111111111"}),
+								new sap.m.Button({text: "Button2"}),
+								new sap.m.Button({text: "Button3"})
+							]
+						})]
+			})],
+			beginButton: new sap.m.Button({text: "Close  very long text", press: function() {oDialog11.close();}})
+		});
+
+		var oDialog12 = new sap.m.Dialog({
+			content : [
+				new sap.m.SegmentedButton({
+				width : "100%",
+				buttons : [
+					new sap.m.Button({text: "Approved  long text1"}),
+					new sap.m.Button({text: "Rejected long text2"}),
+					new sap.m.Button({text: "Lookup long text3"})
+				]
+			})],
+			beginButton: new sap.m.Button({text: "Close  1111111111", press: function() {oDialog12.close();}})
 		});
 
 		var oDialog2 = new sap.m.Dialog({
@@ -513,21 +535,34 @@
 		var oPanel1 = new sap.m.Panel();
 
 		oPanel1.addContent(new sap.m.Button({
-			text: "In Dialog",
+			text: "SB(w.100%)->Bar(middle)->Dialog(subHeader)",
 			press: function () {
 				oDialog.open();
 			}
 		}));
 
 		oPanel1.addContent(new sap.m.Button({
-			text: "In Dialog - mixed content",
+			text: "SB(w.100%)->Bar(middle)->Dialog(content)",
+			press: function () {
+				oDialog11.open();
+			}
+		}));
+
+		oPanel1.addContent(new sap.m.Button({
+			text: "SB(w.100%)->Dialog(content)",
+			press: function () {
+				oDialog12.open();
+			}
+		}));
+		oPanel1.addContent(new sap.m.Button({
+			text: "SB(w.100%)->Bar(middle)->Dialog(subHeader)-mixed content",
 			press: function() {
 				oDialog2.open();
 			}
 		}));
 
 		oPanel1.addContent(new sap.m.Button({
-			text: "In Dialog - icons",
+			text: "SB(w.100%)->Bar(middle)->Dialog(subHeader)-icons",
 			press: function() {
 				oDialog3.open();
 			}
