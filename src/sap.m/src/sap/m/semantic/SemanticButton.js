@@ -7,13 +7,12 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 
 	/**
 	 * Constructor for a new SemanticButton.
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * A semantic button is either a {@link sap.m.Button} or {@link sap.m.OverflowButton} ,
-	 * eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}. Depending on its type,
-	 * the semantic button is initialized with specific properties (text, icon etc.).
+	 * eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}.
 	 *
 	 * @extends sap.m.semantic.SemanticControl
 	 * @abstract

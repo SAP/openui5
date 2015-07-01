@@ -6,14 +6,30 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 
 	/**
 	 * Constructor for a new FullscreenPage
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * A FullscreenPage is a {@link sap.m.semantic.ShareMenuPage} that is restricted to include only semantic controls of the following semantic types:
 	 *
 	 * <ul>
-
+	 *  <li>{@link sap.m.semantic.AddAction}</li>
+	 * 	<li>{@link sap.m.semantic.MainAction}</li>
+	 * 	<li>{@link sap.m.semantic.PositiveAction}</li>
+	 * 	<li>{@link sap.m.semantic.NegativeAction}</li>
+	 * 	<li>{@link sap.m.semantic.ForwardAction}</li>
+	 * 	<li>{@link sap.m.semantic.EditAction}</li>
+	 * 	<li>{@link sap.m.semantic.SaveAction}</li>
+	 * 	<li>{@link sap.m.semantic.CancelAction}</li>
+	 * 	<li>{@link sap.m.semantic.FlagAction}</li>
+	 * 	<li>{@link sap.m.semantic.FavoriteAction}</li>
+	 * 	<li>{@link sap.m.semantic.OpenInAction}</li>
+	 * 	<li>{@link sap.m.semantic.DiscussInJamAction}</li>
+	 * 	<li>{@link sap.m.semantic.ShareInJamAction}</li>
+	 * 	<li>{@link sap.m.semantic.SendEmailAction}</li>
+	 * 	<li>{@link sap.m.semantic.SendMessageAction}</li>
+	 * 	<li>{@link sap.m.semantic.PrintAction}</li>
+	 * 	<li>{@link sap.m.semantic.MessagesIndicator}</li>
 	 * </ul>
 	 *
 	 * @extends sap.m.semantic.ShareMenuPage
@@ -173,9 +189,9 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 */
 	FullscreenPage.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
-		if ((sAggregationName === "saveAsTileAction") 
+		if ((sAggregationName === "saveAsTileAction")
 				|| (sAggregationName === "pagingAction")) {
-			
+
 			var oPrivateReferenceName = '_' + sAggregationName;
 
 			if (oObject) {
@@ -198,7 +214,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 
 	FullscreenPage.prototype.getAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
-		if ((sAggregationName === "saveAsTileAction") 
+		if ((sAggregationName === "saveAsTileAction")
 				|| (sAggregationName === "pagingAction")) {
 
 				return this['_' + sAggregationName];
@@ -209,9 +225,9 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 
 	FullscreenPage.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 
-		if ((sAggregationName === "saveAsTileAction") 
+		if ((sAggregationName === "saveAsTileAction")
 			|| (sAggregationName === "pagingAction")) {
-			
+
 			var oPrivateReferenceName = '_' + sAggregationName;
 
 			if (this[oPrivateReferenceName]) {
@@ -224,6 +240,6 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 
 		return ShareMenuPage.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
-	
+
 	return FullscreenPage;
 }, /* bExport= */ true);
