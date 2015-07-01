@@ -8,26 +8,27 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 	"use strict";
 
 
-	
 	/**
-	 * Constructor for a new MenuItem.
+	 * Constructor for a new MenuItem element.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Smallest unit in the menu hierarchy. An item can be a direct part of a menu bar, of a menu, or of a sub menu.
+	 * Standard item to be used inside a menu. A menu item represents an action which can be selected by the user in the menu or
+	 * it can provide a submenu to organize the actions hierarchically.
 	 * @extends sap.ui.unified.MenuItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.0.0
 	 *
 	 * @constructor
 	 * @public
 	 * @deprecated Since version 1.21.0. 
-	 * Please use the control sap.ui.unified.MenuItem of the library sap.ui.unified instead.
+	 * Please use the element <code>sap.ui.unified.MenuItem</code> of the library <code>sap.ui.unified</code> instead.
 	 * @alias sap.ui.commons.MenuItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var MenuItem = MenuItem1.extend("sap.ui.commons.MenuItem", /** @lends sap.ui.commons.MenuItem.prototype */ { metadata : {
 	
