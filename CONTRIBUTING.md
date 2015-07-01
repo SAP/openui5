@@ -57,7 +57,7 @@ These eight requirements are the mandatory base of a good bug report:
    * precisely state the expected and the actual behavior
    * give information about the used browser/device and its version, if possible also the behavior in other browsers/devices
    * if the bug is about wrong UI appearance, attach a screenshot and mark what is wrong
-   * generally give as much additional information as possible. (But find the right balance: don not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)
+   * generally give as much additional information as possible. (But find the right balance: do not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)
  7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can create a gist. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.
  8. Only one bug per report: open different tickets for different issues
 
