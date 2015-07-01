@@ -336,6 +336,7 @@ function runODataAnnotationTests() {
 		// Check synchronous loading
 		mModelOptions.loadAnnotationsJoined = false;
 		mModelOptions.loadMetadataAsync = false;
+		mModelOptions.skipMetadataAnnotationParsing = true;
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
@@ -467,7 +468,8 @@ function runODataAnnotationTests() {
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = false;
 		mModelOptions.loadMetadataAsync = true;
-	
+		mModelOptions.skipMetadataAnnotationParsing = true;
+
 		sTestType = 
 			sTestName + " (" + 
 			(bServiceValid ? "Valid Service" : "Broken Service") + "/" + 
@@ -764,7 +766,7 @@ function runODataAnnotationTests() {
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = true;
 		mModelOptions.loadMetadataAsync = true;
-
+		mModelOptions.skipMetadataAnnotationParsing = true;
 
 		sTestType = 
 			sTestName + " (" +
@@ -937,6 +939,69 @@ function runODataAnnotationTests() {
 				"Asynchronous loading (joined events) - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
+		}
+	}
+
+
+	module("V1 only: Synchronous loading and MetaModel");
+	
+	var fnTestSynchronousLoading = function(mTest) {
+		expect(5);
+		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: false,
+			loadMetadataAsync: false
+		});
+		
+		
+		// Everything should be ready right now due to synchronous operation mode
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+		var oMetaModel = oModel.getMetaModel();
+		
+		ok(!!oMetadata, "Metadata is available.");
+		ok(!!oAnnotations, "Annotations are available.");
+		ok(!!oMetaModel, "MetaModel is available.");
+		
+		ok(oMetaModel.getProperty("/"), "Metamodel can be used");
+		ok(oMetaModel.getODataEntityContainer(), "Metamodel can be used");
+	};
+
+	
+	
+	for (i = 0; i < aServices.length; ++i) {
+		if (!aServices[i].serviceValid) {
+			// Only test valid services
+			continue;
+		}
+		
+		
+		sServiceURI = aServices[i].service;
+		mModelOptions = {
+			annotationURI : aServices[i].annotations,
+			json : true
+		};
+		sAnnotationsValid = aServices[i].annotationsValid;
+		bAnnotationsValid = sAnnotationsValid === "all" || sAnnotationsValid === "some";
+		sTestName = aServices[i].name ? aServices[i].name : "";
+
+		sTestType = 
+			sTestName + " (" + 
+			(bAnnotationsValid ? "Valid Annotations (" + sAnnotationsValid + ")" : "Broken Annotations") +
+			(bSharedMetadata ?  "/Shared Metadata" : "") + 
+			")";
+
+		// Check synchronous loading
+		mModelOptions.loadAnnotationsJoined = false;
+		mModelOptions.loadMetadataAsync = false;
+		mModelOptions.skipMetadataAnnotationParsing = true;
+
+		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
+
+		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
+		//  ==> PhantomJS doesn't fail when loading malformed XML!
+		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+			test("V1 only: Synchronous Metadata loading and Metamodel - " + sTestType, fnTestSynchronousLoading.bind(this, aServices[i]));	
 		}
 	}
 
@@ -4049,4 +4114,6 @@ function runODataAnnotationTests() {
 		oModel.attachMetadataLoaded(fnTestAllAnnotations);
 		oModel2.attachAnnotationsLoaded(fnTestAllAnnotations);
 	});
+
+
 }
