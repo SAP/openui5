@@ -545,7 +545,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Opens the view settings dialog relative to the parent control
 	 *
-	 * @param {string} the initial page to be opened in the dialog. 
+	 * @param {string} the initial page to be opened in the dialog.
 	 *                 available values: "sort", "group", "filter"
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 * @public
@@ -606,8 +606,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns the selected filters as an array of ViewSettingsItems. 
-	 * 
+	 * Returns the selected filters as an array of ViewSettingsItems.
+	 *
 	 * It can be used to create matching sorters and filters to apply the selected settings to the data.
 	 * @overwrite
 	 * @public
@@ -707,7 +707,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Get the selected filter object in format {key: boolean}.
-	 * 
+	 *
 	 * It can be used to create matching sorters and filters to apply the selected settings to the data.
 	 *
 	 * @public
@@ -730,9 +730,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Set the selected filter object in format {key: boolean}
 	 *
 	 * @public
-	 * @param {object} oSelectedFilterKeys 
-	 *         A configuration object with filter item and sub item keys in the format: { key: boolean }. 
-	 *         Setting boolean to true will set the filter to true, false or omitting an entry will set the filter to false. 
+	 * @param {object} oSelectedFilterKeys
+	 *         A configuration object with filter item and sub item keys in the format: { key: boolean }.
+	 *         Setting boolean to true will set the filter to true, false or omitting an entry will set the filter to false.
 	 *         It can be used to set the dialog state based on presets.
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1070,9 +1070,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
-				that
-						.setSortDescending(oEvent.getParameter("listItem").data(
-								"item"));
+				that.setProperty('sortDescending', oEvent.getParameter("listItem").data("item"), true);
 			}
 		}).addStyleClass("sapMVSDUpperList");
 		this._sortOrderList.addItem(new sap.m.StandardListItem({
@@ -1089,8 +1087,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					selectionChange : function(oEvent) {
 						var item = oEvent.getParameter("listItem").data("item");
 						if (item) {
-							item.setSelected(oEvent.getParameter("listItem")
-									.getSelected());
+							item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 						}
 						that.setAssociation("selectedSortItem", item, true);
 					}
@@ -1114,8 +1111,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
-				that.setGroupDescending(oEvent.getParameter("listItem")
-						.data("item"));
+				that.setProperty('groupDescending', oEvent.getParameter("listItem").data("item"), true);
 			}
 		}).addStyleClass("sapMVSDUpperList");
 		this._groupOrderList.addItem(new sap.m.StandardListItem({
@@ -1132,8 +1128,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					selectionChange : function(oEvent) {
 						var item = oEvent.getParameter("listItem").data("item");
 						if (item) {
-							item.setSelected(oEvent.getParameter("listItem")
-									.getSelected());
+							item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 						}
 						that.setAssociation("selectedGroupItem", item, true);
 					}
@@ -1161,8 +1156,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					selectionChange : function(oEvent) {
 						var item = oEvent.getParameter("listItem").data("item");
 						if (item) {
-							item.setSelected(oEvent.getParameter("listItem")
-									.getSelected());
+							item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 						}
 						that.setAssociation("selectedPresetFilterItem", item, true);
 						that._clearSelectedFilters();
