@@ -118,7 +118,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	 * @see sap.ui.model.ListBinding.prototype.sort
 	 */
 	ClientListBinding.prototype.sort = function(aSorters){
-		if (!aSorters) {
+		var aIndicesOld = this.aIndices.slice();
+        if (!aSorters) {
 			this.aSorters = null;
 			this.updateIndices();
 			this.applyFilter();
@@ -132,7 +133,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 		
 		this.bIgnoreSuspend = true;
 		
-		this._fireChange({reason: ChangeReason.Sort});
+		this._fireChange({reason: ChangeReason.Sort,
+                          aIndicesOld: aIndicesOld,
+                          aIndicesNew: this.aIndices.slice() });
 		// TODO remove this if the sorter event gets removed which is deprecated
 		this._fireSort({sorter: aSorters});
 		this.bIgnoreSuspend = false;
@@ -172,7 +175,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	 * @public
 	 */
 	ClientListBinding.prototype.filter = function(aFilters, sFilterType){
-		this.updateIndices();
+		var aIndicesOld = this.aIndices.slice();
+        this.updateIndices();
 		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
@@ -197,7 +201,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 		
 		this.bIgnoreSuspend = true;
 		
-		this._fireChange({reason: ChangeReason.Filter});
+		this._fireChange({reason: ChangeReason.Filter,
+                          aIndicesOld: aIndicesOld,
+                          aIndicesNew: this.aIndices.slice() });
 		// TODO remove this if the filter event gets removed which is deprecated
 		if (sFilterType == FilterType.Application) {
 			this._fireFilter({filters: this.aApplicationFilters});
