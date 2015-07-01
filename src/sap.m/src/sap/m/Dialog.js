@@ -522,6 +522,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 	Dialog.prototype._handleClosed = function() {
 		this.oPopup.detachClosed(this._handleClosed, this);
+
+		// Not removing the content DOM leads to the  problem that control DOM with the same ID exists in two places if
+		// the control is added to a different aggregation without the dialog being destroyed. In this special case the
+		// RichTextEditor (as an example) renders a textarea-element and afterwards tells the TinyMCE component which ID
+		// to use for rendering; since there are two elements with the same ID at that point, it does not work.
+		// As the Dialog can only contain other controls, we can safely discard the DOM - we cannot do this inside
+		// the Popup, since it supports displaying arbitrary HTML content.
+		this.$().remove();
+
 		sap.ui.Device.resize.detachHandler(this._fnOrientationChange);
 		InstanceManager.removeDialogInstance(this);
 		this.fireAfterClose({origin: this._oCloseTrigger});
