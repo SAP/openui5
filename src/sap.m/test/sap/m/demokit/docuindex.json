@@ -354,6 +354,15 @@
 				"samples" : [ "sap.m.sample.MessagePopover" ]
 			},
 			{
+			  "id": "sap.m.QuickView",
+			  "name": "Quick View",
+			  "category": "Popup",
+			  "since": "1.28",
+			  "samples": [
+				"sap.m.sample.QuickView"
+			  ]
+			},
+			{
 				"id" : "sap.m.MessageToast",
 				"name" : "Message Toast",
 				"category" : "Popup",
@@ -770,6 +779,11 @@
 				"id": "sap.m.sample.ToolbarVsBar",
 				"name": "Toolbar vs Bar",
 				"description": "Toolbar is better in handling overflow. It is more flexible as a container + it has a faster performance. Bar is able to perfectly center a text if nothing overflows."
+			},
+			{
+				"id": "sap.m.sample.QuickView",
+				"name": "QuickView",
+				"description": "QuickView embedded in popover"
 			},
 			{
 				"id": "sap.m.sample.ResponsivePopover",

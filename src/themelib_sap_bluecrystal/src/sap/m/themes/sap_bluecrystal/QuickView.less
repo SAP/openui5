@@ -1,0 +1,58 @@
+/* ================================================= */
+/* CSS for control sap.m.QuickView */
+/* ================================================= */
+
+.sapMQuickViewPage .sapMIBar-CTX .sapMTitle {
+	text-shadow: 0 0.625rem 0 fade(@sapUiLightShadowTint, 0.5);
+}
+
+.sap-desktop .sapMQuickViewPage.sapMPage > header,
+.sap-tablet .sapMQuickViewPage.sapMPage > header {
+	font-size: @sapMFontHeader5Size;
+}
+
+.sap-desktop .sapUiSizeCompact .sapMQuickViewPage.sapMPage > header .sapMTitle,
+.sap-tablet .sapUiSizeCompact .sapMQuickViewPage.sapMPage > header .sapMTitle {
+	font-size: @sapMFontHeader6Size;
+}
+
+.sapMQuickViewPage h1,
+.sapMQuickViewPage .sapUiForm .sapUiFormTitle {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader3Size;
+	font-weight: @sapUiFontHeaderWeight;
+	line-height: normal;
+	color: @sapUiHeaderText;
+	padding-left: 0;
+}
+
+.sapMQuickViewPage .sapUiVltCell .sapMLnk {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader3Size;
+	font-weight: @sapUiFontHeaderWeight;
+	line-height: normal;
+}
+
+.sapMQuickViewPage .sapUiHLayout h1 span {
+	white-space: normal;
+}
+
+.sapMQuickViewPage .sapUiVlt .sapMText {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiLightText;
+}
+
+.sapMQuickViewPage .sapMFlexItem:last-child {
+	color: @sapUiElement;
+}
+
+.sapMQuickViewPage .sapMQuickViewThumbnail {
+	background-color: @sapUiExtraLightBG;
+	color: darken(@sapUiExtraLightBG, 20);
+}
+
+.sapMQuickViewPage .sapUiIcon:focus {
+	outline: 1px dotted @sapUiFocus;
+	outline-offset: -1px;
+}
