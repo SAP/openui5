@@ -598,14 +598,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 	
 	/**
-	 * Recalculates the content sizes and manipulates the DOM accordingly.
+	 * Resizes the Splitter bars to fit the current content height. Must be done before and after content sizes have
+	 * been calculated.
 	 *
+	 * @param {sap.ui.core.Control[]} aContentAreas - The content areas of the Splitter
+	 * @returns {void}
 	 * @private
 	 */
-	Splitter.prototype._resize = function() {
-		var i = 0, $Bar;
-		var aContentAreas = this.getContentAreas();
-
+	Splitter.prototype._resizeBars = function(aContentAreas) {
+		var i, $Bar;
 		// In case the Splitter has a relative height or width set (like "100%"), and the surrounding 
 		// container does not have a size set, the content of the Splitter defines the height/width,
 		// in which case the size of the splitter bars is incorrect.
@@ -622,6 +623,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			$Bar.css(this._sizeType, "");
 			$Bar.css(this._sizeTypeNot, iSize + "px");
 		}
+	};
+	
+	/**
+	 * Recalculates the content sizes and manipulates the DOM accordingly.
+	 *
+	 * @private
+	 */
+	Splitter.prototype._resize = function() {
+		var i = 0, $Bar;
+		var aContentAreas = this.getContentAreas();
+
+		// Resize Splitter bars so that they do not influence the content sizes the wrong way
+		this._resizeBars(aContentAreas);
 
 		// Save calculated sizes to be able to tell whether a resize occurred
 		var oldCalculatedSizes = this.getCalculatedSizes();
@@ -662,6 +676,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 			bLastContentResizable = bContentResizable;
 		}
+
+		// Resize Splitter bars again so that the updated content sizes are calculated correctly
+		this._resizeBars(aContentAreas);
 
 		// In case something was resized, change sizes and fire resize event
 		if (_sizeArraysDiffer(oldCalculatedSizes, newCalculatedSizes)) {
