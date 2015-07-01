@@ -834,7 +834,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (this._oList instanceof Table) {
 				// CSN# 1421140/2014: hide the table for empty/initial results to not show the table columns
 				this._oList.addStyleClass("sapMInputSuggestionTableHidden");
-			} else {
+			} else if (this._oList && this._oList.destroyItems) {
 				this._oList.destroyItems();
 			}
 		} else if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
@@ -1179,7 +1179,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					var sValue = oInput.getValue();
 
 					oInput._oPopupInput.setValue(sValue);
-					oInput.fireSuggest({suggestValue : sValue});
+					oInput._triggerSuggest(sValue);
 					refreshListItems(oInput);
 				}));
 
@@ -1497,7 +1497,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @private
 	 */
 	Input.prototype.onsapshow = function (oEvent) {
-		if (!this.getEnabled() || !this.getShowValueHelp()) {
+		if (!this.getEnabled() || !this.getEditable() || !this.getShowValueHelp()) {
 			return;
 		}
 
