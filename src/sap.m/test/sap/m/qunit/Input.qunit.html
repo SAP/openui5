@@ -1703,21 +1703,19 @@
 		ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 
-		// set up a spy on the dialog's renderer (the dialog should not be rerendered)
+		// set up a spy on the dialog's renderer
 		oDialogRendererSpy = sinon.spy(sap.m.DialogRenderer, "render");
-
-		ok(oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table initially has the hidden style class");
 
 		oInput._oPopupInput._$input.focus().val("Product").trigger("input");
 		this.clock.tick(400);
 		equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
-		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog has not been renderded after opening");
+		strictEqual(oDialogRendererSpy.callCount, 1, "Dialog has been renderded after opening");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// remove input in between (to check if dialog is not re-rendered, this would cause the soft-keyboard to hide)
 		oInput._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
-		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog is not re-rendered when changing the input value to empty string");
+		strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to empty string");
 		ok(oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are displayed");
 
 		oInput._oPopupInput._$input.focus().val("Product1").trigger("input");
@@ -1728,7 +1726,7 @@
 		if (!bPhantomJS) {
 			equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
-		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog is not re-rendered when changing the input value to a another value");
+		strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// enter a string that is not found in suggestions
@@ -1740,7 +1738,7 @@
 		oPopup.getContent()[0].getItems().forEach(function (oItem) {
 			strictEqual(oItem.getVisible(), false, "Item " + oItem.getId() + " is not visible");
 		});
-		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog is not re-rendered when changing the input value to a another value");
+		strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
 		ok(oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are found");
 
 		// filter with a string that will display 3 items
@@ -1751,7 +1749,7 @@
 		if (!bPhantomJS) {
 			equal(oPopup.getContent()[0].$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		}
-		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog is not re-rendered during filtering of suggestions");
+		strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered during filtering of suggestions");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// checks for the show more button (tabular suggestions only)
