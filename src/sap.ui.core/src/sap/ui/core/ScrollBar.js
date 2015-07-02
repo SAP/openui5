@@ -174,6 +174,14 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		var $ffsize = this.$("ffsize");
 		if (!!sap.ui.Device.browser.firefox) {
 			stepSize = $ffsize.outerHeight();
+			if ( stepSize === 0) {
+				// the following code is used if a container of the scrollbar is rendered invisible and afterwards is set to visible
+				stepSize = window.getComputedStyle(jQuery("body").get(0))["font-size"];
+				if (jQuery.sap.endsWith(stepSize,"px")) {
+					stepSize = stepSize.substr(0, stepSize.length - 2);
+				}
+				stepSize = parseInt(stepSize, 10);
+			}
 		}
 		$ffsize.remove();
 	
