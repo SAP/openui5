@@ -58,6 +58,7 @@
 				"since" : "1.26",
 				"samples" : [
 					"sap.ui.core.sample.ViewTemplate.scenario",
+					"sap.ui.core.sample.ViewTemplate.scenario.extension",
 					"sap.ui.core.sample.ViewTemplate.tiny",
 					"sap.ui.core.sample.ViewTemplate.types",
 					"sap.ui.core.sample.ViewTemplate.valuelist"
@@ -243,6 +244,11 @@
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
 				"name": "XML Templating: demo scenario",
 				"description": "Complete demo scenario for XML Templating based on OData V4 annotations"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.scenario.extension",
+				"name": "XML Templating: demo scenario extension",
+				"description": "Complete demo scenario for XML Templating based on OData V4 annotations incl. custom extensions"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.tiny",

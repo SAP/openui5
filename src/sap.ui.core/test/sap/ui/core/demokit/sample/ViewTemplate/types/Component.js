@@ -77,6 +77,10 @@ sap.ui.define([
 					title: "Error"});
 			});
 			return oLayout;
+		},
+
+		exit : function () {
+			MockServer.destroyAll();
 		}
 	});
 
