@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 	 * @private
 	 */
 	ToggleButtonRenderer.renderButtonAttributes = function(oRm, oToggleButton) {
-		if (oToggleButton.getPressed()) {
+		if (oToggleButton.getPressed() && !oToggleButton._isUnstyled()) {
 			oRm.addClass("sapMToggleBtnPressed");
 		}
 	};
