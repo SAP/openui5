@@ -140,14 +140,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		},
 
 		// determines growing reset with binding change reason
-		// according to UX sort/filter/refresh/context should reset the growing
+		// according to UX sort/filter/context should reset the growing
 		shouldReset : function(sChangeReason) {
 			var mChangeReason = sap.ui.model.ChangeReason;
 
 			return 	sChangeReason == mChangeReason.Sort ||
 					sChangeReason == mChangeReason.Filter ||
-					sChangeReason == mChangeReason.Context ||
-					sChangeReason == mChangeReason.Refresh;
+					sChangeReason == mChangeReason.Context;
 		},
 
 		// get actual and total info
@@ -394,7 +393,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					if (oBindingInfo.groupHeaderFactory) {
 						oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
 					}
-					this.addItemGroup(oNewGroup, oGroupHeader);
+					this.addItemGroup(oNewGroup, oGroupHeader, bSuppressInvalidate);
 				}
 			}
 
@@ -446,9 +445,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		/**
 		 * adds a new GroupHeaderListItem
 		 */
-		addItemGroup : function(oGroup, oHeader) {
+		addItemGroup : function(oGroup, oHeader, bSuppressInvalidate) {
 			oHeader = this._oControl.addItemGroup(oGroup, oHeader, true);
-			this._renderItemIntoContainer(oHeader, false, true);
+			if (bSuppressInvalidate) {
+				this._renderItemIntoContainer(oHeader, false, true);
+			}
 			return this;
 		},
 
@@ -479,7 +480,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._bDataRequested = true;
 				this._onBeforePageLoaded(sChangeReason);
 			}
-			this._oControl.getBinding("items").getContexts(0, this._oControl.getGrowingThreshold());
+			
+			// set iItemCount to initial value if not set or no items at the control yet
+			if (!this._iItemCount || this.shouldReset(sChangeReason) || !this._oControl.getItems(true).length) {
+				this._iItemCount = this._oControl.getGrowingThreshold();
+			}
+			this._oControl.getBinding("items").getContexts(0, this._iItemCount);
 		},
 
 		/**
