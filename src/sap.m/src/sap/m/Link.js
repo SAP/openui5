@@ -189,8 +189,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Link.prototype.setHref = function(sUri){
 		this.setProperty("href", sUri, true);
-		sUri = this.getProperty("href");
-		this.$().attr("href", sUri);
+		if (this.getEnabled()) {
+			sUri = this.getProperty("href");
+			this.$().attr("href", sUri);
+		}
 		return this;
 	};
 
@@ -243,10 +245,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				$this.attr("disabled", false);
 				$this.attr("tabindex", "0");
 				$this.removeAttr("aria-disabled");
+				if (this.getHref()) {
+					$this.attr("href", this.getHref());
+				}
 			} else {
 				$this.attr("disabled", true);
 				$this.attr("tabindex", "-1");
 				$this.attr("aria-disabled", true);
+				/*eslint-disable no-script-url */
+				$this.attr("href", "javascript:void(0);");
+				/*eslint-disable no-script-url */
 			}
 		}
 		return this;
