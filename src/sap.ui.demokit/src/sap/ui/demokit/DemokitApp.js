@@ -681,7 +681,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     onAfterRendering: function () {
                         oSearch._ctrl.$("searchico").addClass('sapUiIcon sapUiSearchFieldFilterIcon');
                         oSearch._ctrl.$("searchico").attr('style', 'font-family: SAP-icons; cursor: default;');
-                        oSearch._ctrl.$("searchico").attr('data-sap-ui-icon-content', '?');
+                        oSearch._ctrl.$("searchico").attr('data-sap-ui-icon-content', '');
                     }
                 });
 
