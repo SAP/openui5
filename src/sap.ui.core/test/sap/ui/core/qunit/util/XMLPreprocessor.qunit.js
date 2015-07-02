@@ -295,7 +295,7 @@
 	 * console clean.
 	 *
 	 * BEWARE: Call via <code>checkTracing.call(this, ...)</code> so that <code>this</code> is a
-	 * Sinon sandbox!
+	 * Sinon sandbox! Or pass a log mock as this.
 	 *
 	 * @param {boolean} bDebug
 	 *   whether debug output is accepted and expected (sets the log level accordingly)
@@ -314,10 +314,13 @@
 	 *   a regular expression which is expected to match the serialized original view content.
 	 */
 	function checkTracing(bDebug, aExpectedMessages, aViewContent, mSettings, vExpected) {
-		var oLogMock = this.mock(jQuery.sap.log),
+		var oLogMock = this.expects ? this : this.mock(jQuery.sap.log),
 			sName;
 
-		if (bDebug) {
+		oLogMock.expects("debug").never();
+		if (!bDebug) {
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
+		} else {
 			aExpectedMessages.forEach(function (oExpectedMessage) {
 				var vExpectedDetail = oExpectedMessage.d;
 				if (typeof vExpectedDetail === "number") {
@@ -327,9 +330,6 @@
 					.exactly(oExpectedMessage.c || 1)
 					.withExactArgs(matchArg(oExpectedMessage.m), vExpectedDetail, sComponent);
 			});
-		} else {
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
-			oLogMock.expects("debug").never();
 		}
 
 		check.call(oLogMock, aViewContent, mSettings, vExpected);
@@ -359,10 +359,12 @@
 	//*********************************************************************************************
 	module("sap.ui.core.util.XMLPreprocessor", {
 		beforeEach : function () {
+			this.oCustomizingConfiguration = sap.ui.core.CustomizingConfiguration;
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 		},
 		afterEach : function () {
+			sap.ui.core.CustomizingConfiguration = this.oCustomizingConfiguration;
 			jQuery.sap.log.setLevel(iOldLogLevel);
 			delete window.foo;
 		}
@@ -563,6 +565,8 @@
 				var oError = new Error("deliberate failure"),
 					oLogMock = this.mock(jQuery.sap.log);
 
+				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
+					.never();
 				this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
 				if (!bIsLoggable) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
@@ -1735,6 +1739,7 @@
 				}),
 				oBazModel = new sap.ui.model.json.JSONModel({}),
 				aDebugMessages,
+				oLogMock = this.mock(jQuery.sap.log),
 				aViewContent = [
 					mvcView("t"),
 					'<t:with path="bar>Label" var="foo">',
@@ -1753,15 +1758,21 @@
 					'</t:repeat>',
 					'<t:if test="{bar>/com.sap.vocabularies.UI.v1.Identification}"/>',
 					'<t:if test="{bar>/qux}"/>',
+					'<ExtensionPoint name="staticName"/>',
+					'<ExtensionPoint name="{:= \'dynamicName\' }"/>',
+					'<ExtensionPoint name="{foo>/some/path}"/>',
 					'</mvc:View>'
 				];
 
+			warn(oLogMock, 'qux: Binding not ready in ' + aViewContent[19]);
 			this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 				.returns(xml(['<FragmentDefinition xmlns="sap.ui.core">',
 					'<In src="fragment"/>',
 					'</FragmentDefinition>']));
+			// debug output for dynamic names must still appear!
+			delete sap.ui.core.CustomizingConfiguration;
 
-			checkTracing.call(this, bIsLoggable, [
+			checkTracing.call(oLogMock, bIsLoggable, [
 				{m: "[ 0] Start processing qux"},
 				{m: "[ 0] bar = /com.sap.vocabularies.UI.v1.HeaderInfo/Title"},
 				{m: "[ 0] baz = /"},
@@ -1784,6 +1795,8 @@
 				{m: "[ 1] Finished", d: "</t:if>"},
 				{m: "[ 1] test == undefined --> false", d: 16},
 				{m: "[ 1] Finished", d: "</t:if>"},
+				{m: "[ 0] name = dynamicName", d: 18},
+				{m: "[ 0] Binding not ready for attribute name", d: 19},
 				{m: "[ 0] Finished processing qux"}
 			], aViewContent, {
 				models: { bar: oBarModel, baz: oBazModel },
@@ -1798,14 +1811,17 @@
 				'<In src="A"/>',
 				'<In src="B"/>',
 				'<In src="C"/>',
+				'<ExtensionPoint name="staticName"/>',
+				'<ExtensionPoint name="{:= \'dynamicName\' }"/>',
+				// Note: XML serializer outputs &gt; encoding...
+				'<ExtensionPoint name="{foo&gt;/some/path}"/>'
 			]);
 		});
 	});
 
 	//*********************************************************************************************
 	test("<ExtensionPoint>: no (supported) configuration", function () {
-		var oCustomizingConfiguration = sap.ui.core.CustomizingConfiguration,
-			oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration);
+		var oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration);
 
 		function checkNoReplacement() {
 			check.call(this, [
@@ -1836,12 +1852,8 @@
 			checkNoReplacement();
 		});
 
-		try {
-			delete sap.ui.core.CustomizingConfiguration;
-			checkNoReplacement();
-		} finally {
-			sap.ui.core.CustomizingConfiguration = oCustomizingConfiguration;
-		}
+		delete sap.ui.core.CustomizingConfiguration;
+		checkNoReplacement();
 	});
 
 	//*********************************************************************************************

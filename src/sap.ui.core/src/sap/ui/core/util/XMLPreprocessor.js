@@ -264,9 +264,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 *   identifies the caller of this preprocessor; used as a prefix for log or
 			 *   exception messages
 			 * @param {string} oViewInfo.componentId
-			 *   ID of the owning component (since 1.32; needed for extension point support)
+			 *   ID of the owning component (since 1.31; needed for extension point support)
 			 * @param {string} oViewInfo.name
-			 *   the view name (since 1.32; needed for extension point support)
+			 *   the view name (since 1.31; needed for extension point support)
 			 * @param {object} [mSettings={}]
 			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
@@ -591,22 +591,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function templateExtensionPoint(oElement, oWithControl) {
 					var sName = oElement.getAttribute("name"),
-						vName,
+						vName = oUNBOUND,
 						oViewExtension;
 
-					if (oViewInfo && sap.ui.core.CustomizingConfiguration) {
-						try {
-							vName = getResolvedBinding(sName, oElement, oWithControl, true);
-							if (vName !== oUNBOUND) {
-								oViewExtension
-									= sap.ui.core.CustomizingConfiguration.getViewExtension(
-										aFragmentNames[aFragmentNames.length - 1], vName,
-										oViewInfo.componentId);
-							}
-						} catch (ex) {
-							warn('Error in formatter of ', oElement, ex);
+					try {
+						// resolve name, no matter if CustomizingConfiguration is present!
+						vName = getResolvedBinding(sName, oElement, oWithControl, true);
+						if (vName !== oUNBOUND && vName !== sName) {
+							// debug trace for dynamic names only
+							debug(oElement, "name =", vName);
 						}
+					} catch (ex) {
+						warn('Error in formatter of ', oElement, ex);
+					}
 
+					if (oViewInfo && vName !== oUNBOUND && sap.ui.core.CustomizingConfiguration) {
+						oViewExtension = sap.ui.core.CustomizingConfiguration.getViewExtension(
+							aFragmentNames[aFragmentNames.length - 1], vName,
+							oViewInfo.componentId);
 						if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
 								&& oViewExtension.type === "XML") {
 							insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
