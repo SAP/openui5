@@ -353,7 +353,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._oList.addStyleClass("sapMUCList");
 		this._cAddItems = 0;
 		this.aItems = [];
-		this._RenderManager = sap.ui.getCore().createRenderManager();
+		this._RenderManager;
 		this._aFileUploadersForPendingUpload = [];
 	};
 
@@ -500,6 +500,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype.onBeforeRendering = function() {
+		this._RenderManager = this._RenderManager || sap.ui.getCore().createRenderManager();
 		var i, bItemToBeDeleted, cAitems;
 
 		if (!this.getInstantUpload()) {//
@@ -737,7 +738,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		sStatus = oItem._status;
 
 		oRm = that._RenderManager;
-		that._RenderManager = oRm;
 		oRm.write('<div class="sapMUCTextContainer '); // text container for fileName, attributes and statuses
 		if (sStatus === "Edit") {
 			oRm.write('sapMUCEditMode ');
