@@ -7709,6 +7709,42 @@
 				oComboBox.destroy();
 			});
 
+			// BCP 1570522570
+			test("it should not fire the change event when the arrow button is pressed", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+				var oButtonDomRef = oComboBox.getOpenArea();
+				oComboBox.updateDomValue("lorem ipsum");
+
+				// act
+				sap.ui.test.qunit.triggerEvent("mousedown", oButtonDomRef, {
+					target: oButtonDomRef
+				});
+
+				oButtonDomRef.focus();
+
+				sap.ui.test.qunit.triggerEvent("mouseup", oButtonDomRef, {
+					target: oButtonDomRef
+				});
+
+				sap.ui.test.qunit.triggerEvent("click", oButtonDomRef, {
+					target: oButtonDomRef
+				});
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* others                         */
 			/* ------------------------------ */

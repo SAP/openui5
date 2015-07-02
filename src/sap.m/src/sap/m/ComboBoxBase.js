@@ -185,6 +185,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 			// initialize list
 			this.createList();
+
+			// to prevent the change event from firing when the arrow button is pressed
+			this._bProcessChange = true;
 		};
 
 		/**
@@ -222,8 +225,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 			if (this.isOpenArea(oEvent.target)) {
 
+				// change detection for Firefox
+				this._bProcessChange = false;
+
 				// add the active state to the control's field
 				this.addStyleClass(ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+
+			// change detection for Firefox
+			} else {
+				this._bProcessChange = true;
 			}
 		};
 
@@ -241,6 +251,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
+
+			// change detection for Firefox
+			this._bProcessChange = true;
 
 			if ((!this.isOpen() || !this.hasContent()) && this.isOpenArea(oEvent.target)) {
 
@@ -283,6 +296,37 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 				// add the active state to the control's field
 				this.addStyleClass(CSS_CLASS + "Pressed");
+			}
+		};
+
+		/**
+		 * Handle the focus out event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		ComboBoxBase.prototype.onfocusout = function(oEvent) {
+
+			// note: the focusout event is not yet supported in Firefox (see bug 687787),
+			// although jQuery support the focusout event, it is not reliable.
+			// In some scenarios oEvent.relatedTarget doesn't point to the element receiving focus
+			if (!sap.ui.Device.browser.firefox) {
+				this._bProcessChange = !jQuery.sap.containsOrEquals(this.getDomRef(), oEvent.relatedTarget);
+			}
+
+			InputBase.prototype.onfocusout.apply(this, arguments);
+		};
+
+		/**
+		 * Handles the change event.
+		 *
+		 * @protected
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		ComboBoxBase.prototype.onChange = function(oEvent) {
+
+			if (this._bProcessChange) {
+				InputBase.prototype.onChange.apply(this, arguments);
 			}
 		};
 
