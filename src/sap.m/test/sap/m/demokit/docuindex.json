@@ -861,7 +861,8 @@
 		  "category" : "Container",
 		  "since" : "1.30",
 		  "samples" : [
-			"sap.m.sample.Wizard"
+			"sap.m.sample.Wizard",
+			"sap.m.sample.WizardBranching"
 		  ]
 		},
 		{
@@ -1841,6 +1842,11 @@
 		  "id": "sap.m.sample.Wizard",
 		  "name": "Wizard standard use case",
 		  "description": "The Wizard is useful for breaking down complex tasks into smaller steps."
+		},
+		{
+		  "id": "sap.m.sample.WizardBranching",
+		  "name": "Wizard branching use case",
+		  "description": "The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one."
 		}
 	  ]
 	}

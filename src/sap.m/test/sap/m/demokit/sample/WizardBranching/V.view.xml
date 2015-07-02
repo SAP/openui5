@@ -1,0 +1,247 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.m.sample.WizardBranching.C"
+		xmlns:layout="sap.ui.layout"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<Page
+			showHeader="false">
+		<content>
+			<Wizard id="CreateProductWizard"
+					enableBranching="true"
+					complete="wizardCompletedHandler">
+				<WizardStep id="ProductTypeStep"
+							title="Product Type"
+							complete="productTypeComplete"
+							subsequentSteps="MobileStep OtherStep DesktopStep"
+							validated="true">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="The branching mode should be used in cases when the next step depends on user action that was taken in the current step.
+								  To set the next step of the wizard, attach it in the complete event of the current step."
+								  showIcon="true"/>
+					<Text class="sapUiSmallMarginBottom"
+						  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
+					<HBox
+							alignItems="Center"
+							justifyContent="Center"
+							width="100%">
+						<SegmentedButton
+								width="320px"
+								select="setProductTypeFromSegmented">
+							<Button icon="sap-icon://iphone" text="Mobile"/>
+							<Button icon="sap-icon://sys-monitor" text="Desktop"/>
+							<Button icon="sap-icon://database" text="Other"/>
+						</SegmentedButton>
+					</HBox>
+				</WizardStep>
+				<WizardStep id="MobileStep"
+							title="Mobile Devices"
+							nextStep="ProductInfoStep">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="This is a step for the MOBILE devices. It is shown because you set MOBILE as your product type."
+								  showIcon="true"/>
+					<HBox
+						alignItems="Center"
+						justifyContent="Center"
+						width="100%">
+						<Panel	width="240px">
+							<core:Icon src="sap-icon://iphone-2" size="152px" />
+						</Panel>
+						<Panel	width="500px">
+							<Text class="sapUiSmallMarginBottom"
+							  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
+						</Panel>
+					</HBox>
+				</WizardStep>
+				<WizardStep id="DesktopStep"
+							title="Desktop Devices"
+							nextStep="ProductInfoStep">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="This is a step for the DESKTOP devices. It is shown because you set DESKTOP as your product type."
+								  showIcon="true"/>
+					<HBox
+							alignItems="Center"
+							justifyContent="Center"
+							width="100%">
+						<Panel	width="240px">
+							<core:Icon src="sap-icon://sys-monitor" size="152px" />
+						</Panel>
+						<Panel	width="500px">
+							<Text class="sapUiSmallMarginBottom"
+								  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
+						</Panel>
+					</HBox>
+				</WizardStep>
+				<WizardStep id="OtherStep"
+							title="Other Devices"
+							nextStep="ProductInfoStep">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="This is a step for the OTHER devices. It is shown because you set OTHER as your product type."
+								  showIcon="true"/>
+					<HBox
+							alignItems="Center"
+							justifyContent="Center"
+							width="100%">
+						<Panel	width="240px">
+							<core:Icon src="sap-icon://database" size="152px" />
+						</Panel>
+						<Panel	width="500px">
+							<Text class="sapUiSmallMarginBottom"
+								  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
+						</Panel>
+					</HBox>
+				</WizardStep>
+				<WizardStep id="ProductInfoStep"
+							validated="false"
+							subsequentSteps="OptionalInfoStep PricingStep"
+							complete="productInfoComplete"
+							title="Product Information">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="Validation in the wizard is controlled by calling the validateStep(Step) and invalidateStep(Step) methods "
+								  showIcon="true"/>
+					<Text text="Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis. Mauris hendrerit sapien a malesu corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  "/>
+					<form:SimpleForm
+							editable="true">
+						<Label text="Name" required="true"/>
+						<Input valueStateText="Enter 6 symbols or more"
+							   valueState="{/productNameState}" id="ProductName" liveChange="additinalInfoValidation"
+							   placeholder="Enter name with length greater than 6" value="{/productName}"/>
+						<Label text="Weight" required="true"/>
+						<Input valueStateText="Enter digits"
+							   valueState="{/productWeightState}" id="ProductWeight"
+							   liveChange="additinalInfoValidation" type="Number" placeholder="Enter digits"
+							   value="{/productWeight}"/>
+						<Label text="Manufacturer"/>
+						<Select selectedKey="{/productManufacturer}">
+							<core:Item key="Apple" text="Apple"/>
+							<core:Item key="Microsoft" text="Microsoft"/>
+							<core:Item key="Google" text="Google"/>
+							<core:Item key="Sony" text="Sony"/>
+							<core:Item key="Samsung" text="Samsung"/>
+							<core:Item key="Logitech" text="Logitech"/>
+						</Select>
+						<Label text="Description"/>
+						<TextArea value="{/productDescription}" rows="8"/>
+						<Label text="Go to optional step" required="true"/>
+						<CheckBox id="GoToOptionalStep" selected="true" />
+					</form:SimpleForm>
+				</WizardStep>
+				<WizardStep id="OptionalInfoStep"
+							validated="true"
+							nextStep="PricingStep"
+							activate="optionalStepActivation"
+							title="Optional Information">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="You can validate steps by default with the validated='true' property of the step. The next button is always enabled."
+								  showIcon="true"/>
+					<Text text="Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec ppellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  "/>
+					<form:SimpleForm
+							editable="true">
+						<Label text="Cover photo"/>
+						<u:FileUploader
+								width="400px"
+								tooltip="Upload product cover photo to the local server"
+								style="Emphasized"
+								placeholder="Choose a file for Upload..."/>
+						<Label text="Manufacturing date"/>
+						<DatePicker
+								id="DP3"
+								displayFormat="short"
+								change="handleChange"/>
+						<Label text="Availability"/>
+						<SegmentedButton selectedButton="inStock">
+							<Button text="In store" id="inStock"/>
+							<Button text="In depot"/>
+							<Button text="In repository"/>
+							<Button text="Out of stock"/>
+						</SegmentedButton>
+						<Label text="Size"/>
+						<Input/>
+						<ComboBox maxWidth="100px">
+							<core:Item key="X" text="X"/>
+							<core:Item key="Y" text="Y"/>
+							<core:Item key="Z" text="Z"/>
+						</ComboBox>
+
+					</form:SimpleForm>
+				</WizardStep>
+				<WizardStep id="PricingStep"
+							nextStep="SummaryStep"
+							activate="pricingActivate"
+							complete="pricingComplete"
+							validated="false"
+							title="Pricing">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps."
+								  showIcon="true"/>
+					<form:SimpleForm
+							editable="true">
+						<Label text="Price"/>
+						<Input value="{/productPrice}"/>
+						<Label text="Discoung group"/>
+						<MultiComboBox>
+							<core:Item key="Children" text="Kids"/>
+							<core:Item key="Children" text="Teens"/>
+							<core:Item key="Children" text="Adults"/>
+							<core:Item key="Children" text="Old people"/>
+						</MultiComboBox>
+						<Label text=" VAT is included"/>
+						<CheckBox selected="{/productVAT}"/>
+						<Label text="Go to next without validation"/>
+						<Button press="goFrom4to5" text="Next" enabled="{/navApiEnabled}" />
+						<Label text="Go to previous"/>
+						<Button press="goFrom4to3" text="Previous" enabled="{/navApiEnabled}"/>
+						<Label text="Go to step 2"/>
+						<Button press="scrollFrom4to2" text="Scroll to step Product information"/>
+					</form:SimpleForm>
+				</WizardStep>
+				<WizardStep
+						id="SummaryStep"
+						title="Summary">
+					<MessageStrip class="sapUiSmallMarginBottom"
+								  text="You can use the discardProgress(Step) method to discard the current progress, and go back to the defined step. Press the discard button to test it."
+								  showIcon="true"/>
+					<form:SimpleForm
+							minWidth="1024"
+							maxContainerCols="2"
+							editable="false"
+							layout="ResponsiveGridLayout"
+							labelSpanL="3"
+							labelSpanM="3"
+							emptySpanL="4"
+							emptySpanM="4"
+							columnsL="1"
+							columnsM="1">
+						<form:content>
+							<Label text="Type"/>
+							<Text id="ProductTypeChosen" text="{/productType}"/>
+							<Label text="Name"/>
+							<Text id="ProductNameChosen" text="{/productName}"/>
+							<Label text="Weight"/>
+							<Text id="ProductWeightChosen" text="{/productWeight}"/>
+							<Label text="Manufacturer"/>
+							<Text id="ProductManufacturerChosen" text="{/productManufacturer}"/>
+							<Label text="Description"/>
+							<Text id="ProductDescriptionChosen" text="{/productDescription}"/>
+							<Label text="Price"/>
+							<Text id="ProductPriceChosen" text="{/productPrice}"/>
+							<Label text="VAT Included"/>
+							<Text id="ProductVATChosen" text="{/productVAT}"/>
+							<Label text="Discard" />
+						</form:content>
+					</form:SimpleForm>
+					<Button press="discardProgress" text="Discard"/>
+				</WizardStep>
+			</Wizard>
+		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button text="Cancel"/>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>
