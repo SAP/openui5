@@ -39,9 +39,6 @@ sap.ui.define([
 			}
 		});
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaListBinding.prototype.applyFilter = function () {
 		var that = this;
 
@@ -423,38 +420,23 @@ sap.ui.define([
 			);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ClientContextBinding(this, sPath, oContext, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
 		mParameters) {
 		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new JSONPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindTree = function (sPath, oContext, aFilters, mParameters) {
 		return new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
 		return this.oModel.destroy.apply(this.oModel, arguments);
@@ -861,16 +843,10 @@ sap.ui.define([
 		return oPromise;
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.getProperty = function () {
 		return this._getObject.apply(this, arguments);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.isList = function () {
 		return this.oModel.isList.apply(this.oModel, arguments);
 	};
