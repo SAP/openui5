@@ -8,14 +8,14 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 	/**
 	 * Constructor for a new SemanticPage
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * A semantic page is an enhanced {@link sap.m.Page}, that can contain controls with semantic meaning @see sap.m.semantic.SemanticControl.<br>
 	 *
-	 * Content specified to the {@link sap.m.semantic.SemanticPage#semanticControls} aggregation will be automatically positioned in dedicated sections of the footer or the header of the page, depending on the control's {@link sap.m.semantic.SemanticType}.<br>
-	 * For example, a semantic button of type {@link sap.m.SemanticType.Approve} will be positioned in the right side of the footer, and in logically correct sequence order with respect to any other included semantic controls.<br>
+	 * Content specified in the {@link sap.m.semantic.SemanticPage#semanticControls} aggregations will be automatically positioned in dedicated sections of the footer or the header of the page, depending on the control's semantics.<br>
+	 * For example, a semantic button of type {@link sap.m.semantic.PositiveAction} will be positioned in the right side of the footer, and in logically correct sequence order with respect to any other included semantic controls.<br>
 	 *
 	 * In addition to the predefined semantic controls, the SemanticPage can host also custom controls. It preserves most of the API of {@link sap.m.Page} for specifying page content.<br>
 	 *
@@ -99,7 +99,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 					multiple: true,
 					singularName: "content"
 				},
-				
+
 				/**
 				 * Custom header buttons
 				 */
@@ -321,7 +321,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 		return this;
 	};
-	
+
 	/*
 
 	 HEADER RIGHT (CUSTOM CONTENT)
@@ -602,8 +602,8 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	SemanticPage.prototype._getAnyHeader = function () {
 		return this._getInternalHeader();
 	};
-	
-	
+
+
 	/**
 	 * Returns the internal footer
 	 * @private
