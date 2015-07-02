@@ -539,7 +539,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Carousel.prototype._getNavigationArrow = function(sName) {
 		jQuery.sap.require("sap.ui.core.IconPool");
 		var mProperties = {
-			src : "sap-icon://navigation-" + sName + "-arrow"
+			src : "sap-icon://navigation-" + sName + "-arrow",
+			useIconTooltip : false
 		};
 
 		if (sName === "left") {
