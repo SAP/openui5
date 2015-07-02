@@ -60,7 +60,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 		if (bPressed != this.getPressed()) {
 			this.setProperty("pressed", bPressed, true);
 			this.$().attr("aria-pressed", bPressed);
-			this.$("inner").toggleClass("sapMToggleBtnPressed",bPressed);
+			this.$("inner").toggleClass("sapMToggleBtnPressed",bPressed && !this._isUnstyled());
 		}
 		return this;
 	};
