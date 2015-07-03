@@ -59,7 +59,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 					files : [],
 					iframe : oConfig.sample.iframe,
 					fileName: sFileName,
-					includeInDownload: oConfig.sample.includeInDownload
+					includeInDownload: oConfig.sample.additionalDownloadFiles
 				};
 
 				// retrieve files
