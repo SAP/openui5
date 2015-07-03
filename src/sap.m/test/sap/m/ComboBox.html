@@ -400,6 +400,7 @@
 
 			change: function(oControlEvent) {
 				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
 			},
 
 			selectionChange: function(oControlEvent) {
