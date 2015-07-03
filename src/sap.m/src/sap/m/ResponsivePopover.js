@@ -388,6 +388,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this.addAggregation("content", oContent);
 	};
 
+	ResponsivePopover.prototype.clone = function(){
+		var oClone = Control.prototype.clone.apply(this, arguments),
+			aContent = this.getAggregation('_popup').getContent();
+
+		for (var i = 0; i < aContent.length; i++) {
+			oClone.addContent(aContent[i].clone());
+		}
+
+		return oClone;
+	};
 
 	ResponsivePopover.prototype._getSingleNavContent = function(){
 		var aContent = this.getContent();
@@ -581,7 +591,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	// forward the other necessary methods to the inner instance, but do not check the existence of generated methods like (addItem)
 	["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass",
-		"setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "getDomRef", "clone"].forEach(function(sName){
+		"setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "getDomRef"].forEach(function(sName){
 			ResponsivePopover.prototype[sName] = function() {
 				if (this._oControl && this._oControl[sName]) {
 					var res = this._oControl[sName].apply(this._oControl ,arguments);
