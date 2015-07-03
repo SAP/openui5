@@ -28,12 +28,13 @@
 	<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.ui.commons,sap.m"
+			data-sap-ui-libs="sap.ui.commons,sap.m,sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-compatVersion="1.16">
 	</script>
 	<script type="text/javascript">
 		var app = new sap.m.App("myApp", {initialPage: "page1"});
+		var _buttonWidth = "300px";
 
 		var sDateFormat = sap.m.getLocaleData().getDatePattern("medium");
 		var oDialog1 = new sap.m.Dialog("dialog1", {
@@ -185,7 +186,7 @@
 		});
 		var oButton = new sap.m.Button("button1", {
 			text: "Responsive Form in Dialog",
-			width: "200px",
+			width: _buttonWidth,
 			press: function() {
 				openDialog();
 			}
@@ -279,7 +280,7 @@
 
 		var oButton2 = new sap.m.Button("button2", {
 			text: "List in Dialog",
-			width: "200px",
+			width: _buttonWidth,
 			press: function() {
 				oListDialog.open();
 			}
@@ -299,7 +300,7 @@
 
 		var oButton3 = new sap.m.Button("button3", {
 			text: "Textarea in Dialog",
-			width: "200px",
+			width: _buttonWidth,
 			press: function() {
 				oTextAreaDialog.open();
 			}
@@ -307,7 +308,7 @@
 
 		var oButton4 = new sap.m.Button({
 			text: "SearchField in Dialog",
-			width: "200px",
+			width: _buttonWidth,
 			press: function() {
 				oDialogWithSF.open();
 			}
@@ -397,7 +398,7 @@
 
 		var oButton5 = new sap.m.Button({
 			text: "Select in Dialog",
-			width: "200px",
+			width: _buttonWidth,
 			press: function() {
 				oDialogWithSelect.open();
 			}
@@ -405,7 +406,7 @@
 
 		var oButton6 = new sap.m.Button({
 			text: "w: 35rem, h: 25%",
-			width: "200px",
+			width: _buttonWidth,
 			press: function() {
 				oDialogWithSelect.open();
 			}
@@ -792,27 +793,104 @@
 		});
 
 		//=================================================================
+		// Real use cases
+		//=================================================================
+
+		var dialogChangeContentSizeTimeoutInterval = 2000;
+		var dialogChangeContentSizeTimeout;
+		var dialogChangeCount = 0;
+		var dialogWithChangingContentSize = new sap.m.Dialog({
+			buttons: [
+				new sap.m.Button({
+					press: function() {
+						dialogWithChangingContentSize.close();
+					},
+					text: "Close"
+				}),
+				new sap.m.Button({
+					text: "Stop",
+					press: function() {
+						clearInterval(dialogChangeContentSizeTimeout);
+					}
+				}),
+				new sap.m.Button({
+					text: "Start",
+					press: function() {
+						_startResizingInterval();
+					}
+				})
+			],
+			content: [
+				new sap.ui.core.HTML({content: '<div id="dialogWithChangingContentSize">Do you want to start a new world domination campaign?</div>'})
+			]
+		});
+
+		function _startResizingInterval() {
+			dialogChangeContentSizeTimeout = setInterval(function() {
+				jQuery('#dialogWithChangingContentSize').css({
+					width: parseInt(Math.random()*1500) + 'px',
+					height: parseInt(Math.random()*1500) + 'px'
+				}).html('Changed content times: ' + dialogChangeCount++);
+			}, dialogChangeContentSizeTimeoutInterval);
+		}
+		_startResizingInterval();
+
+		var disabledScrollingDialogWithSplitter = new sap.m.Dialog({
+			contentWidth: '20rem',
+			contentHeight: "100%",
+			showHeader: true,
+			horizontalScrolling: false,
+			verticalScrolling: false,
+			buttons: [ new sap.m.Button({
+				press: function() {
+					disabledScrollingDialogWithSplitter.close();
+				},
+				text: "Close"
+			})],
+			content: sap.ui.layout.Splitter({
+				orientation: "Vertical",
+				contentAreas: [
+					new sap.m.Table({
+						columns: [ new sap.m.Column(),
+							new sap.m.Column() ],
+						rows: [
+							new sap.m.ColumnListItem(),
+							new sap.m.ColumnListItem(),
+							new sap.m.ColumnListItem()
+						]
+					}),
+					new sap.ui.layout.form.SimpleForm({
+						content: [
+							new sap.m.Label({text: "Test"}),
+							new sap.m.Input()
+						]
+					})
+				]
+			})
+		});
+
+		//=================================================================
 
 		var page1 = new sap.m.Page("page1", {
 			title: "Mobile Dialog Control",
 			content: [
 				new sap.m.Button({
 					text: "Simple Dialog",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogSimple.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Message Dialog",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogTypeMessage.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Message Dialog - Set Size",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogTypeMessageWithSize.open();
 					}
@@ -822,21 +900,21 @@
 
 				new sap.m.Button({
 					text: "Dialog No Footer Bar",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogNoFooter.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Dialog No Header",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogNoHeader.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "No Footer and Header",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogNoHeaderNoFooter.open();
 					}
@@ -846,14 +924,14 @@
 
 				new sap.m.Button({
 					text: "Big Content",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogBigContent.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Very Long Title",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogLongTitle.open();
 					}
@@ -863,21 +941,21 @@
 
 				new sap.m.Button({
 					text: "Set Height",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogWithHeight.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Set Width",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogWithWidth.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Set Width & Height",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogWithWidthAndHeight.open();
 					}
@@ -887,7 +965,7 @@
 
 				new sap.m.Button({
 					text: "Scrolling",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogWithWidthHeightAndBigContent.open();
 					}
@@ -895,7 +973,7 @@
 
 				new sap.m.Button({
 					text: "Disabled Scrollers",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogWithWidthHeightAndBigContentAndDisabledScroller.open();
 					}
@@ -905,21 +983,21 @@
 
 				new sap.m.Button({
 					text: "With SubHeader",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogWithSubheader.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "With Custom Header",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogWithCustomHeader.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "With State",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialog1.open();
 					}
@@ -930,14 +1008,14 @@
 
 				new sap.m.Button({
 					text: "Stretched",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogStretched.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Stretched on Mobile (depricated)",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogStretchedOnMobile.open();
 					}
@@ -947,7 +1025,7 @@
 				oButton3,
 				new sap.m.Button({
 					text: "Full-screen Form in Dialog",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialog2.open();
 					}
@@ -960,7 +1038,7 @@
 				new sap.ui.core.HTML({content: "<br/>"}),
 				new sap.m.Button({
 					text: "MessageBox as Dialog",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						jQuery.sap.require("sap.m.MessageBox");
 						sap.m.MessageBox.show("Do you really want to order this?", {
@@ -971,7 +1049,7 @@
 				}),
 				new sap.m.Button({
 					text: "Accept/Reject Buttons",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oMessageDialog1.open();
 					}
@@ -979,28 +1057,28 @@
 				new sap.ui.core.HTML({content: "<br/>"}),
 				new sap.m.Button({
 					text: "Drag Enabled",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogDrag.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Resize Enabled",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogResize.open();
 					}
 				}),
 				new sap.m.Button({
 					text: "Resize and Drag Enabled",
-					width: "200px",
+					width: _buttonWidth,
 					press: function() {
 						oDialogResizeAndDrag.open();
 					}
 				}),
 				new sap.ui.core.HTML({content: "<br/>"}),
 				new sap.m.Button({
-					width: "200px",
+					width: _buttonWidth,
 					text: "Compact size",
 					press: function() {
 						var oDialog = new sap.m.Dialog({
@@ -1035,7 +1113,24 @@
 					type: sap.m.InputType.Email, placeholder: "Type anything and press enter", change: function() {
 						oDialog1.open();
 					}
-				})
+				}),
+				new sap.ui.core.HTML({content: "<br/>"}),
+				new sap.ui.core.HTML({content: "<h1>Real use cases</h1>"}),
+				new sap.m.Button({
+					text: "No scrollars with splitter",
+					width: _buttonWidth,
+					press: function() {
+						disabledScrollingDialogWithSplitter.open();
+					}
+				}),
+				new sap.m.Button({
+					text: "Changing content size",
+					width: _buttonWidth,
+					press: function() {
+						dialogWithChangingContentSize.open();
+					}
+				}),
+
 			]
 		});
 		app.addPage(page1).placeAt("content");
