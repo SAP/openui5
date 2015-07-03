@@ -517,17 +517,17 @@ div.sapUiTable {
 .sapUiTableM.sapUiTableTouch {
 
 	::-webkit-scrollbar-thumb {
-		background-color: darken(@sapUiLightestBG,13);
-		border-top: 0.125rem solid darken(@sapUiLightestBG,3);
-		border-left: 0.125rem solid darken(@sapUiLightestBG,3);
-		border-right: 0.125rem solid darken(@sapUiLightestBG,3);
-		border-bottom: 0.125rem solid darken(@sapUiLightestBG,3);
+		background-color: @sapUiScrollBarFaceColor;
+		border-top: 0.125rem solid @sapUiScrollBarBorderColor;
+		border-left: 0.125rem solid @sapUiScrollBarBorderColor;
+		border-right: 0.125rem solid @sapUiScrollBarBorderColor;
+		border-bottom: 0.125rem solid @sapUiScrollBarBorderColor;
 		width: 0.25rem;
 		height: 0.25rem;
 	}
-	
+
 	::-webkit-scrollbar {
-		background-color: darken(@sapUiLightestBG,3);
+		background-color: @sapUiScrollBarTrackColor;
 	}
 
 	&.sapUiTableVScr {
@@ -548,21 +548,26 @@ div.sapUiTable {
 
 .sapUiSizeCozy .sapUiTable {
 	/* Hover */
-	.sapUiTableCol:hover, 
-	.sapUiTableColRowHdr:hover, 
-	tr.sapUiTableGroupHeader.sapUiTableRowHvr,
-	.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,
+
 	.sapUiTableCtrl .sapUiTableRowHvr > td {
-		background-color: contrast(@sapUiExtraLightBG, darken(@sapUiExtraLightBG, 6), lighten(@sapUiExtraLightBG, 6)); 
+		background-color: @sapUiListHoverBackground;
+	}
+
+	.sapUiTableCol:hover,
+	.sapUiTableColRowHdr:hover,
+	tr.sapUiTableGroupHeader.sapUiTableRowHvr,
+	.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr {
+		background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
 	}
 
 	/* Active Header */
 	.sapUiTableColRowHdr:active, .sapUiTableCol:active {
-		background-color: @sapUiHighlight;
+		background-color: @sapUiListActiveBackground;
+	}
 
-		.sapUiLbl {
-			color: @sapUiTextInverted;
-		}
+	.sapUiTableColRowHdr:active > div > label,
+	.sapUiTableCol:active > div > label {
+		color: @sapUiListActiveTextColor;
 	}
 }
 
@@ -571,6 +576,5 @@ div.sapUiTable {
 }
 
 .sapUiTableColTouchRszActive {
-	background: @sapUiHighlight;
-	opacity: 0.5;
+	background: @sapUiListActiveBackground;
 }
