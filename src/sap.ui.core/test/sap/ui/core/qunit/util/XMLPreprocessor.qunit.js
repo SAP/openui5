@@ -318,6 +318,8 @@
 			sName;
 
 		oLogMock.expects("debug").never();
+		oLogMock.expects("error").never();
+		oLogMock.expects("warning").never();
 		if (!bDebug) {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
 		} else {
@@ -1003,6 +1005,7 @@
 			 *
 			 * @param {object} oInterface
 			 * @param {any} vRawValue
+			 * @returns {string}
 			 */
 			function help(oInterface, vRawValue) {
 				var oContext,
@@ -1025,10 +1028,60 @@
 			help.requiresIContext = true;
 
 			/*
+			 * Dummy formatter function for a composite binding to test access to ith part.
+			 *
+			 * @param {object} oInterface
+			 * @param {any} [vRawValue]
+			 * @returns {string}
+			 */
+			function formatParts(oInterface, vRawValue) {
+				var i, aResult;
+
+				/*
+				 * Formats the given raw value as either label or value.
+				 * @param {object} o
+				 * @returns {string}
+				 */
+				function formatLabelOrValue(o) {
+					return o.String ? "[" + o.String + "]" : "{" + o.Path + "}";
+				}
+
+				try {
+					// access both getModel and getPath to test robustness
+					if (oInterface.getModel() || oInterface.getPath()) {
+						return formatLabelOrValue(vRawValue);
+					} else {
+						// root formatter for a composite binding
+						aResult = [];
+						strictEqual(oInterface.getModel(), undefined, "exactly as documented");
+						strictEqual(oInterface.getPath(), undefined, "exactly as documented");
+
+						// "probe for the smallest non-negative integer"
+						// access both getModel and getPath to test robustness
+						for (i = 0; oInterface.getModel(i) || oInterface.getPath(i); i += 1) {
+							//TODO do we need oInterface.getContext(i, sRelativePath) for
+							// convenience, e.g. to allow delegation to AnnotationHelper#format?
+							aResult.push(formatLabelOrValue(
+								oInterface.getModel(i).getProperty(oInterface.getPath(i))
+							));
+						}
+
+						strictEqual(oInterface.getModel(i), undefined, "exactly as documented");
+						strictEqual(oInterface.getPath(i), undefined, "exactly as documented");
+						return aResult.join(" ");
+					}
+				} catch (e) {
+					ok(false, e);
+				}
+			}
+			formatParts.requiresIContext = true;
+
+			/*
 			 * Dummy formatter function to check that only <code>requiresIContext = true</code>
 			 * counts.
 			 *
 			 * @param {any} vRawValue
+			 * @returns {string}
 			 */
 			function other(vRawValue) {
 				strictEqual(arguments.length, 1);
@@ -1037,6 +1090,7 @@
 
 			window.foo = {
 				Helper: {
+					formatParts: formatParts,
 					help: help,
 					other: other
 				}
@@ -1050,6 +1104,8 @@
 				{m: "[ 0] text = Value: {CustomerName}", d: 3},
 				{m: "[ 0] text = Customer: {CustomerName}", d: 4},
 				{m: "[ 0] Binding not ready for attribute text", d: 5},
+				{m: "[ 0] text = [Customer] {CustomerName}", d: 6},
+				{m: "[ 0] text = [Customer]", d: 7},
 				{m: "[ 0] Finished processing qux"}
 			], [
 				mvcView(),
@@ -1059,6 +1115,9 @@
 				'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
 					+ ': {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
 				'<Text text="{unrelated>/some/path}"/>',
+				'<Text text="{parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'}"/>',
+				'<Text text="{formatter: \'foo.Helper.formatParts\', path: \'Title/Label\'}"/>',
 				'</mvc:View>'
 			], {
 				models: oModel,
@@ -1070,7 +1129,9 @@
 				'<Text text="Customer"/>',
 				'<Text text="Value: {CustomerName}"/>',
 				'<Text text="Customer: {CustomerName}"/>',
-				'<Text text="{unrelated&gt;/some/path}"/>'
+				'<Text text="{unrelated&gt;/some/path}"/>',
+				'<Text text="[Customer] {CustomerName}"/>',
+				'<Text text="[Customer]"/>'
 			]);
 		});
 	});
