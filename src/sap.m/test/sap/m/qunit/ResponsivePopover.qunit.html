@@ -127,7 +127,7 @@
 					text : "ResponsivePopover"
 				});
 
-
+				bindListData(data, oItemTemplate1, this.oList);
 				this.oButton.placeAt('qunit-fixture');
 				sap.ui.getCore().applyChanges();
 
@@ -147,7 +147,7 @@
 		QUnit.test("Desktop and tablet mode", function(assert) {
 			
 			// Act and Arrange
-			bindListData(data, oItemTemplate1, this.oList);
+			
 			this.stub(sap.ui.Device, "system", {desktop: true});
 			this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
 			this.oResponsivePopover.addContent(this.oList);
@@ -176,7 +176,6 @@
 
 			// Act and Arrange
 			this.stub(sap.ui.Device, "system", {phone: true});
-			bindListData(data, oItemTemplate1, this.oList);
 			this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
 			this.oResponsivePopover.setShowHeader(true);
 			this.oResponsivePopover.addContent(this.oInput);
@@ -204,6 +203,19 @@
 			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("header")[0], "CloseButton should be rendered");
 		});
 
+		QUnit.test("Clone method", function(assert) {
+
+			// Act and Arrange
+			this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
+			this.oResponsivePopover.addContent(this.oList);
+			var oClone = this.oResponsivePopover.clone();
+
+			// Assert
+			assert.strictEqual(this.oResponsivePopover instanceof sap.m.ResponsivePopover, true, "Should return a new instance of ResponsivePopover");
+			assert.notEqual(this.oResponsivePopover.getContent(), oClone.getContent(), "The conents of the clone and original ResponsivePopover should not be same(e.g different IDs)");
+			assert.strictEqual(oClone.getContent()[0].getParent().getParent(), oClone, "Cloned content parent should be the clone instance");
+			assert.strictEqual(oClone.getContent()[0] instanceof sap.m.List, true, "The first control in the content should be a list");
+		});
 
 		if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
 			// Don't need to consider IE9 because it's a test for mobile device
