@@ -1758,9 +1758,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype._onUploadComplete = function(oEvent) {
 		if (oEvent) {
-			var i, sRequestId, sUploadedFile, cItems;
+			var i, sRequestId, sUploadedFile, cItems, bUploadSuccessful = checkRequestStatus();
 			sRequestId = this._getRequestId(oEvent);
 			sUploadedFile = oEvent.getParameter("fileName");
+
 			// at the moment parameter fileName is not set in IE9
 			if (!sUploadedFile) {
 				var aUploadedFile = (oEvent.getSource().getProperty("value")).split(/\" "/);
@@ -1770,17 +1771,27 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			for (i = 0; i < cItems; i++) {
 			// sRequestId should be null only in case of IE9 because FileUploader does not support header parameters for it
 				if (!sRequestId) {
-					if (this.aItems[i].getProperty("fileName") === sUploadedFile && 
-							this.aItems[i]._status === UploadCollection._uploadingStatus) {
+					if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
+							this.aItems[i]._status === UploadCollection._uploadingStatus &&
+							bUploadSuccessful) {
 						this.aItems[i]._percentUploaded = 100;
 						this.aItems[i]._status = UploadCollection._displayStatus;
 						break;
+					} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
+										 this.aItems[i]._status === UploadCollection._uploadingStatus) {
+						this.aItems.splice(i, 1);
 					}
-				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile && 
-									 this.aItems[i]._requestIdName === sRequestId && 
-									 this.aItems[i]._status === UploadCollection._uploadingStatus) {
+				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
+						this.aItems[i]._requestIdName === sRequestId &&
+						this.aItems[i]._status === UploadCollection._uploadingStatus &&
+						bUploadSuccessful) {
 					this.aItems[i]._percentUploaded = 100;
 					this.aItems[i]._status = UploadCollection._displayStatus;
+					break;
+				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
+									 this.aItems[i]._requestIdName === sRequestId &&
+									 this.aItems[i]._status === UploadCollection._uploadingStatus) {
+					this.aItems.splice(i, 1);
 					break;
 				}
 			}
@@ -1798,6 +1809,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					headers : oEvent.getParameter("headers")
 				}]
 			});
+		}
+
+		function checkRequestStatus () {
+			var sRequestStatus = oEvent.getParameter("status") || "200"; // In case of IE < 10 this will not work.
+			if (sRequestStatus[0] === "2" || sRequestStatus[0] === "3") {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	};
 
