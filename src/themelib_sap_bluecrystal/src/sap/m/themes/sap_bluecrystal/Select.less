@@ -41,7 +41,7 @@
 	text-align: center;
 	top: 0;
 	right: -0.0625rem;
-	color: @sapUiSelectArrowColor;
+	color: @sapUiElement;
 }
 
 .sapMSltDisabled {
@@ -57,37 +57,40 @@
 	margin: 0.25rem 0 0.25rem 0;
 
 	/* note: rounding issue of chrome when using rem as CSS unit for borders at zoom in < 100%  */
-	border: 1px solid @sapUiSelectBorderColor;
-	background: @sapUiSelectBG;
+	border: 1px solid @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
 }
 
 /* hover and focus */
 
 .sapMSltIconOnly.sapMSltHoverable:hover {
-	background: @sapUiSelectIconBGHover;
-	border-color: @sapUiSelectIconBorderColor;
+	background: contrast(@sapUiFieldHoverBackground, darken(@sapUiFieldHoverBackground, 6), lighten(@sapUiFieldHoverBackground, 6));
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
-.sap-desktop .sapMSlt:focus,
+.sap-desktop .sapMSlt:focus {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
 .sapMSltHoverable:hover {
-	border-color: @sapUiSelectBorderColorPressed;
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 /* pressed */
 
 .sapMSltPressed:not(.sapMSltDisabled) {
-	border-color: @sapUiSelectBorderColorPressed;
+	border-color: @sapUiFieldActiveBorderColor;
 }
 
 .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
-	background: @sapUiSelectIconBGPressed;
+	background: @sapUiFieldActiveBackground;
 }
 
 /* pressed and hover */
 
 .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover {
-	background: @sapUiSelectIconBGPressed;
-	border-color: @sapUiSelectIconBGPressed;
+	background: @sapUiFieldActiveBackground;
+	border-color: @sapUiFieldActiveBorderColor;
 }
 
 /* ------------------------------ */
@@ -97,7 +100,7 @@
 .sapMSlt > .sapMSltLabel {
 	width: 100%;
 	line-height: 2.375rem;
-	color: @sapUiSelectLabelTextColor;
+	color: @sapUiFieldTextColor;
 	font-size: @sapMFontMediumSize;
 }
 
@@ -109,13 +112,13 @@
 	font-size: 1.375rem;
 	line-height: 2.375rem;
 	padding: 0 0.625rem;
-	color: @sapUiSelectIconColor;
+	color: @sapUiElement;
 }
 
 /* pressed */
 
 .sapMSltPressed > .sapMSltIcon {
-	color: @sapUiSelectIconColorActive;
+	color: @sapUiInvertedElement;
 }
 
 /* ------------------------------ */
@@ -126,23 +129,23 @@
 	width: 2.5rem;
 	line-height: 2.5rem;
 	right: 0;
-	background: @sapUiLightestBG;
+	background: @sapUiFieldBackground;
 }
 
 /* hover */
 
 .sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-	background: @sapUiSelectArrowBGHover;
+	background: contrast(@sapUiFieldHoverBackground, darken(@sapUiFieldHoverBackground, 6), lighten(@sapUiFieldHoverBackground, 6));
 }
 
 /* pressed */
 
 .sapMSltPressed > .sapMSltArrow {
-	background: @sapUiSelectArrowBGActive;
+	background: @sapUiFieldActiveBackground;
 }
 
 .sapMSltPressed > .sapMSltArrow::before {
-	color: @sapUiSelectArrowColorActive;
+	color: @sapUiInvertedElement;
 }
 
 /* ------------------------------ */
@@ -178,7 +181,7 @@
 /* ====================================================== */
 
 .sapMSubHeader-CTX .sapMSltPressed > .sapMSltIcon {
-	color: @sapUiSelectIconColorActive;
+	color: @sapUiInvertedElement;
 }
 
 .sapMHeader-CTX .sapMSltPressed,
@@ -204,7 +207,7 @@
 /* ------------------------------ */
 
 .sapMSubHeader-CTX .sapMSltPressed > .sapMSltIcon {
-	color: @sapUiSelectIconColorActive;
+	color: @sapUiInvertedElement;
 }
 
 /* ====================================================== */
@@ -216,7 +219,7 @@
 }
 
 .sapMFooter-CTX .sapMSltIconOnly.sapMSltHoverable:not(.sapMSltPressed):hover {
-	background: @sapUiSelectFooterBGHover;
+	background: @sapUiButtonFooterHoverBackground;
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
@@ -264,11 +267,11 @@
 /* ------------------------------ */
 
 .sapMILI-CTX .sapMSltPressed > .sapMSltLabel {
-	color: @sapUiSelectLabelTextColorPressed;
+	color: @sapUiFieldActiveTextColor;
 }
 
 .sapMILI-CTX .sapMSltPressed:not(.sapMSltDisabled) > .sapMSltLabel {
-	color: @sapUiSelectLabelTextColor;
+	color: @sapUiFieldTextColor;
 }
 
 /* ------------------------------ */
@@ -320,15 +323,15 @@ div.sapMSltPicker .sapMDialogScrollCont {
 
 .sapMSltBar::after {
 	width: 3.5rem;
-	color: @sapUiSelectArrowColorActive;
-	background: @sapUiSelectArrowBGActive;
+	color: @sapUiInvertedElement;
+	background: @sapUiFieldActiveBackground;
 }
 
 /* Bar inside the Select's Dialog */
 
 .sapMSltPicker .sapMIBar.sapMIBar-CTX {
-	background: @sapUiSelectBG;
-	border: 0.0625rem solid @sapUiSelectBGActive;
+	background: @sapUiFieldBackground;
+	border: 0.0625rem solid @sapUiFieldActiveBorderColor;
 }
 
 /* Input inside the Select's Dialog */
@@ -425,5 +428,5 @@ div.sapMSltPicker .sapMDialogScrollCont {
 }
 
 .sapUiSizeCondensed .sapUiTableCell .sapMSltHoverable:hover {
-	border-color: @sapUiSelectBorderColorPressed;
+	border-color: @sapUiFieldHoverBorderColor;
 }
