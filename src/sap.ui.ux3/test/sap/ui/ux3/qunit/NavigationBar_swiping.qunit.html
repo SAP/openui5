@@ -4,14 +4,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>NavigationBar swiping - sap.ui.ux3</title>
 
-    <script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap" 
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.ux3" >
 		</script>
-    
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -22,7 +22,11 @@
 				/* Enable testing of the arrow, even though it is not used outside the shell in BC */
 				display: inline-block !important; 
 			}
-			
+
+			#uiArea1 {
+				width: 500px;
+			}
+
 		</style>
 		<script language="javascript">
 
@@ -31,57 +35,47 @@
 		if (orig_TouchEventMode !== "ON") {
 			jQuery.sap.touchEventMode = "ON";
 		}
-		
+
 		var oCtrl = new sap.ui.ux3.NavigationBar("n1").placeAt("uiArea1");
-		
+
 		jQuery.sap.touchEventMode = orig_TouchEventMode; //Set touch event mode back to original value
-		
+
 		for (var i = 0; i < 5; i++) {
 			oCtrl.addItem(new sap.ui.ux3.NavigationItem({text:"Item with a long title, so we have something to scroll 1"}));
 		}
-				
+
 		test("Initial Check", function() {
 			ok(oCtrl, "NavBar should exist after creating");
-  		var oDomRef = jQuery.sap.domById("n1");
-  		ok(oDomRef, "NavBar root element should exist in the page");
+			var oDomRef = jQuery.sap.domById("n1");
+			ok(oDomRef, "NavBar root element should exist in the page");
 		});
-		
 
-		
-		
-		stop();
 		asyncTest("Swiping", function() {
 			var oList = jQuery.sap.domById("n1-list");
 			var iTouchPosX = 400;
-			
+
 			equal(oList.scrollLeft, 0, "list should not be scrolled initially");
-			
+
 			// touch the bar
 			sap.ui.test.qunit.triggerTouchEvent("touchstart", oList, {originalEvent:{touches:[{pageX:iTouchPosX}]}, touches:[{pageX:iTouchPosX}]});
-			// that.startTouchX = evt.originalEvent.touches[0].pageX;
-			// x = iTouchPosX
-			
-			
+
 			setTimeout(function(){
 				// move the finger
 				sap.ui.test.qunit.triggerTouchEvent("touchmove", oList, {originalEvent:{touches:[{pageX:(iTouchPosX-100)}]}, touches:[{pageX:(iTouchPosX-100)}]});
-				
+
 				equal(isForwardVisible(), true, "forward arrow should be visible");
 				equal(isBackVisible(), true, "back arrow should be visible");
 				equal(oList.scrollLeft, 100, "list should be scrolled now by 100px");
-				
 
 				setTimeout(function(){
 					// move the finger further
 					sap.ui.test.qunit.triggerTouchEvent("touchmove", oList, {originalEvent:{touches:[{pageX:(iTouchPosX-200)}]}, touches:[{pageX:(iTouchPosX-200)}]});
-					//var dx = evt.originalEvent.touches[0].pageX - that.startTouchX;
-					// x = iTouchPosX - 200
-					
+
 					equal(oList.scrollLeft, 200, "list should be scrolled now by 200px");
-					
+
 					// remove the finger
 					sap.ui.test.qunit.triggerTouchEvent("touchend", oList);
-					
+
 					equal(oList.scrollLeft, 200, "list should still be scrolled now by 200px");
 
 					setTimeout(function(){
@@ -89,25 +83,25 @@
 						// verify that inertia scrolling has done its job
 						var finalScrollLeft = oList.scrollLeft;
 						ok(finalScrollLeft > 200, "list should be scrolled now a bit further by inertia scrolling");
-						
+
 						setTimeout(function(){
 							// verify that inertia scrolling has stopped
 							equal(oList.scrollLeft, finalScrollLeft, "list should be scrolled no further than before (inertia scrolling must have ended)");
-							
+
 							start();
 						}, 500);
 					}, 1000);
 				}, 200);
 			}, 200);
 		});
-		
+
 		function isForwardVisible() {
 			return jQuery.sap.byId(oCtrl.getId() + "-off").is(":visible");
 		}
 		function isBackVisible() {
 			return jQuery.sap.byId(oCtrl.getId() + "-ofb").is(":visible");
 		}
-		
+
 		function isForwardEnabled() {
 			return (jQuery.sap.byId(oCtrl.getId() + "-off").is(":visible")  &&  jQuery.sap.byId(oCtrl.getId()).hasClass("sapUiUx3NavBarScrollForward"));
 		}
@@ -122,7 +116,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-		
+
 		<div style="margin-top:10px;" id="uiArea1"></div>
 	</body>
 </html>
