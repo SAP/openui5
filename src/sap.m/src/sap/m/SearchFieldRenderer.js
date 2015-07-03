@@ -114,6 +114,9 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttribute("id", oSF.getId() + "-reset");
 				rm.addClass("sapMSFR"); // reset
 				rm.addClass("sapMSFB"); // button
+				if (sap.ui.Device.browser.firefox) {
+					rm.addClass("sapMSFBF"); // firefox, active state by peventDefault
+				}
 				if (!bShowSearchBtn) {
 					rm.addClass("sapMSFNS"); //no search button
 				}
@@ -126,6 +129,9 @@ sap.ui.define(['jquery.sap.global'],
 					rm.writeAttribute("id", oSF.getId() + "-search");
 					rm.addClass("sapMSFS"); // search
 					rm.addClass("sapMSFB"); // button
+					if (sap.ui.Device.browser.firefox) {
+						rm.addClass("sapMSFBF"); // firefox, active state by peventDefault
+					}
 					rm.writeClasses();
 					if (oSF.getRefreshButtonTooltip()) {
 						rm.writeAttributeEscaped("title", oSF.getRefreshButtonTooltip());
