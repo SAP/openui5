@@ -10,7 +10,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 	/**
 	 * Creates an instance of EventBus.
-	 * @class Provides eventing facilities, so subscribe, unsubscribe and publish events.
+	 * 
+	 * @class Provides eventing capabilities for applications like firing events and attaching or detaching event
+	 *        handlers for events which are notified when events are fired.
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
@@ -31,19 +33,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	});
 	
 	/**
-	 * Adds an event registration for the given object and given event name.
-	 * 
-	 * The channel "sap.ui" is reserved by th UI5 framework. An application might listen to events on this channel but is not allowed to publish own events there.
+	 * Attaches an event handler to the event with the given identifier on the given event channel.
 	 *
 	 * @param {string}
-	 *            [sChannelId] The channel of the event to subscribe for. If not given the default channel is used.
+	 *            [sChannelId] The channel of the event to subscribe to. If not given, the default channel is used.
+	 *                         The channel <code>"sap.ui"</code> is reserved by the UI5 framework. An application might listen to
+	 *                         events on this channel but is not allowed to publish its own events there.
 	 * @param {string}
-	 *            sEventId The identifier of the event to subscribe for
+	 *            sEventId The identifier of the event to listen for
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or on the event bus-instance. This functions might have the following parameters: sChannelId, sEventId, oData.
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the event bus instance. The channel is provided as first argument of the handler, and
+	 *                       the event identifier is provided as the second argument. The parameter map carried by the event is provided as the third argument (if present).
+	 *                       Handlers must not change the content of this map.
 	 * @param {object}
-	 *            [oListener] The object, that wants to be notified, when the event occurs
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the event bus.
 	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -66,18 +71,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 	
 	/**
-	 * Removes an event registration for the given object and given event name.
+	 * Removes a previously subscribed event handler from the event with the given identifier on the given event channel.
 	 *
 	 * The passed parameters must match those used for registration with {@link #subscribe } beforehand!
 	 *
 	 * @param {string}
-	 *            [sChannelId] The channel of the event to unsubscribe from. If not given the default channel is used.
+	 *            [sChannelId] The channel of the event to unsubscribe from. If not given, the default channel is used.
 	 * @param {string}
 	 *            sEventId The identifier of the event to unsubscribe from
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The handler function to unsubscribe from the event
 	 * @param {object}
-	 *            [oListener] The object, that wants to be notified, when the event occurs
+	 *            [oListener] The object that wanted to be notified when the event occurred
 	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -118,17 +123,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 	
 	/**
-	 * Fires the given event and notifies all listeners. Listeners must not change the content of the event.
+	 * Fires an event using the specified settings and notifies all attached event handlers.
 	 * 
-	 * The channel "sap.ui" is reserved by the UI5 framework. An application might listen to events 
-	 * on this channel but is not allowed to publish own events there.
-	 *
 	 * @param {string}
-	 *            [sChannelId] The channel of the event; if not given the default channel is used
+	 *            [sChannelId] The channel of the event to fire. If not given, the default channel is used. The channel <code>"sap.ui"</code> is
+	 *                         reserved by the UI5 framework. An application might listen to events on this channel but is not allowed
+	 *                         to publish its own events there.
 	 * @param {string}
-	 *            sEventId The identifier of the event
+	 *            sEventId The identifier of the event to fire
 	 * @param {object}
-	 * 			  [oData] the parameter map
+	 *            [oData] The parameters which should be carried by the event
 	 * @public
 	 */
 	EventBus.prototype.publish = function(sChannelId, sEventId, oData) {
@@ -169,15 +173,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		}
 	};
 	
-	/**
-	 * @see sap.ui.base.Object#getInterface
-	 * @public
-	 */
 	EventBus.prototype.getInterface = function() {
 		return this;
 	};
 	
 	/**
+	 * Cleans up the internal structures and removes all event handlers.
+	 * 
+	 * The object must not be used anymore after destroy was called.
+	 * 
 	 * @see sap.ui.base.Object#destroy
 	 * @public
 	 */
