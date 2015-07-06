@@ -1497,6 +1497,244 @@
 			});
 
 
+
+			module("Changing items after open", {
+				getFirstModelData: function() {
+					return {
+						sortData: [
+							{
+								myKey: "key1",
+								myText: "Sort text 1"
+							}],
+						groupData: [
+							{
+								myKey: "groupKey1",
+								myText: "Group text 1"
+							}],
+						filterData: [
+							{
+								myKey: "filterKey1",
+								myText: "Filter text 1",
+								myItems: [
+									{
+										myKey: 'item1',
+										myText: 'item2'
+									}
+								]
+							},
+							{
+								myKey: "filterKey2",
+								myText: "Filter text 2"
+							},
+							{
+								myKey: "filterKey3",
+								myText: "Filter text 3"
+							}]
+					};
+				},
+				getSecondModelData: function() {
+					return{
+						sortData: [
+							{
+								myKey: "key1",
+								myText: "2 Sort text 1"
+							}],
+						groupData: [
+							{
+								myKey: "groupKey1",
+								myText: "2 Group text 1"
+							}],
+						filterData: [
+							{
+								myKey: "filterKey22",
+								myText: "2 Filter text 2"
+							}]
+					}
+				},
+				bindAggregations: function(oVsdInst) {
+					var template1 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					});
+					var template2 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					});
+					var template3 = new sap.m.ViewSettingsFilterItem({
+						key: "{myKey}",
+						text: "{myText}",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "{myItems/0/myKey}",
+								text: "{myItems/0/myText}"
+							})
+						]
+					});
+					oVsdInst.bindAggregation("sortItems", "/sortData", template1);
+					oVsdInst.bindAggregation("groupItems", "/groupData", template2);
+					oVsdInst.bindAggregation("filterItems", "/filterData", template3);
+				}
+			});
+
+			asyncTest("Reopening filter detail page of a removed detail", function () {
+				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
+				var delay = 1000;
+
+				var filter = new sap.m.ViewSettingsFilterItem({
+					key: "myGFilter",
+					text: "Filtering",
+					items: [
+						new sap.m.ViewSettingsItem({
+							key: "test",
+							text: "2"
+						})
+					]
+				});
+				oVsdInst.addFilterItem(filter);
+
+				oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
+					key: "myOtherFilter",
+					text: "Other"
+				}));
+				oVsdInst.open();
+
+				setTimeout(function () {
+					var vsdFilterItem = oVsdInst.getFilterItems()[0];
+					oVsdInst._switchToPage(3, vsdFilterItem);
+					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					setTimeout(function () {
+						oVsdInst._dialog.getBeginButton().firePress();
+						oVsdInst.removeFilterItem(vsdFilterItem);
+						oVsdInst.open();
+						setTimeout(function () {
+							strictEqual(oVsdInst._vContentPage, 2, "Once filter details item is removed, " +
+								"the filter parent page should be the current page");
+						start();
+						oVsdInst.destroy();
+						delete oVsdInst;
+						}, delay);
+					}, delay);
+				}, delay);
+			});
+
+			asyncTest("Reopening filter detail page after all filters are removed", function () {
+				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
+				var delay = 1000;
+
+				var filter = new sap.m.ViewSettingsFilterItem({
+					key: "myGFilter",
+					text: "Filtering",
+					items: [
+						new sap.m.ViewSettingsItem({
+							key: "test",
+							text: "2"
+						})
+					]
+				});
+				oVsdInst.addFilterItem(filter);
+
+				oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
+					key: "myOtherFilter",
+					text: "Other"
+				}));
+				oVsdInst.open();
+
+				setTimeout(function () {
+					var vsdFilterItem = oVsdInst.getFilterItems()[0];
+					oVsdInst._switchToPage(3, vsdFilterItem);
+					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					setTimeout(function () {
+						oVsdInst._dialog.getBeginButton().firePress();
+						oVsdInst.removeAllFilterItems();
+						oVsdInst.open();
+						setTimeout(function () {
+							strictEqual(oVsdInst._vContentPage, 0, "If all filter items are removed, the first available" +
+							" page should be current(in this case 'Sort/0')");
+						start();
+						oVsdInst.destroy();
+						delete oVsdInst;
+						}, delay);
+					}, delay);
+				}, delay);
+			});
+
+
+
+			asyncTest("Reopening filter detail page of a removed detail with model change - remove single filter", function () {
+
+				var delay = 1000;
+				var oVsdInst = new sap.m.ViewSettingsDialog("vsd0");
+				oVsdInst.setSortDescending(false);
+				oVsdInst.setGroupDescending(true);
+				var modelData = this.getFirstModelData();
+				var modelData2 = this.getSecondModelData();
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(modelData);
+				var model2 = new sap.ui.model.json.JSONModel();
+				model2.setData(modelData2);
+				oVsdInst.setModel(oModel);
+
+				this.bindAggregations(oVsdInst);
+				oVsdInst.open();
+
+				setTimeout(function () {
+					var vsdFilterItem = oVsdInst.getFilterItems()[0];
+					oVsdInst._switchToPage(3, vsdFilterItem);
+					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					setTimeout(function () {
+						oVsdInst._dialog.getBeginButton().firePress();
+						oVsdInst.setModel(model2);
+						oVsdInst.open();
+						setTimeout(function () {
+							strictEqual(oVsdInst._vContentPage, 2, "If no given 'filter details item' exists in a model, " +
+								"the current page should be the parent filters page.");
+							start();
+							oVsdInst.destroy();
+							delete oVsdInst;
+						}, delay);
+					}, delay);
+				}, delay);
+			});
+
+
+			asyncTest("Reopening filter detail page of a removed detail with model change - remove all filters", function () {
+
+				var delay = 1000;
+				var oVsdInst = new sap.m.ViewSettingsDialog("vsd0");
+				oVsdInst.setSortDescending(false);
+				oVsdInst.setGroupDescending(true);
+				var modelData = this.getFirstModelData();
+				var modelData2 = this.getSecondModelData();
+				delete modelData2.filterData
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(modelData);
+				var model2 = new sap.ui.model.json.JSONModel();
+				model2.setData(modelData2);
+				oVsdInst.setModel(oModel);
+
+				this.bindAggregations(oVsdInst);
+				oVsdInst.open();
+
+				setTimeout(function () {
+					var vsdFilterItem = oVsdInst.getFilterItems()[0];
+					oVsdInst._switchToPage(3, vsdFilterItem);
+					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					setTimeout(function () {
+						oVsdInst._dialog.getBeginButton().firePress();
+						oVsdInst.setModel(model2);
+						oVsdInst.open();
+						setTimeout(function () {
+							strictEqual(oVsdInst._vContentPage, 0, "If no filters item inside the new model, the first" +
+								" available page should be current(in this case 'Sort/0')");
+							start();
+							oVsdInst.destroy();
+							delete oVsdInst;
+						}, delay);
+					}, delay);
+				}, delay);
+			});
+
+
 			module("Focus", {
 				setup: function() {
 					this.clock = sinon.useFakeTimers();
@@ -1532,7 +1770,6 @@
 			}
 
 			/* [end]  Actual unit tests of custom tabs */
-
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
