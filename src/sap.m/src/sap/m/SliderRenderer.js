@@ -88,7 +88,11 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.write("<span");
 			oRm.writeAttribute("id", oSlider.getId() + "-handle");
-			this.writeHandleTooltip(oRm, oSlider);
+
+			if (oSlider.getShowHandleTooltip()) {
+				this.writeHandleTooltip(oRm, oSlider);
+			}
+
 			oRm.addClass(SliderRenderer.CSS_CLASS + "Handle");
 			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", oSlider._sProgressValue);
 			this.writeAccessibilityState(oRm, oSlider);
