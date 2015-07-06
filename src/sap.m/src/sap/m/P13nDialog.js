@@ -510,7 +510,7 @@ sap.ui.define([
 		if (sId && oContent) {
 			// move panel div into dialog content div.
 			var oPanel = jQuery.find("#" + sId);
-			jQuery(oPanel).insertAfter(jQuery(oContent));
+			jQuery(oPanel).appendTo(jQuery(oContent));
 		}
 	};
 
