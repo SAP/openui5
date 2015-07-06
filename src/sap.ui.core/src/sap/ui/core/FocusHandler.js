@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		 * @param {Element} oRootRef e.g. document.body
 		 * @param {sap.ui.core.Core} oCore Reference to the Core implementation
 		 * @alias sap.ui.core.FocusHandler
+		 * @private
 		 */
 		var FocusHandler = BaseObject.extend("sap.ui.core.FocusHandler", /** @lends sap.ui.core.FocusHandler.prototype */ {
 			constructor : function(oRootRef, oCore) {
