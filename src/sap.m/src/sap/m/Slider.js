@@ -75,7 +75,14 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				 *
 				 * If the value is lower/higher than the allowed minimum/maximum, the value of the properties "min"/"max" are used instead.
 				 */
-				value: { type: "float", group: "Data", defaultValue: 0 }
+				value: { type: "float", group: "Data", defaultValue: 0 },
+
+				/**
+				 * Define whether the handle tooltip should be shown.
+				 * @since 1.31
+				 *
+				 */
+				showHandleTooltip: { type: "boolean", group: "Appearance", defaultValue: true }
 			},
 			associations: {
 
@@ -323,8 +330,11 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			// update the position of the handle
 			oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
 
-			// update the tooltip
-			oHandleDomRef.title = fNewValue;
+			if (this.getShowHandleTooltip()) {
+
+				// update the tooltip
+				oHandleDomRef.title = fNewValue;
+			}
 
 			// update the ARIA attribute value
 			oHandleDomRef.setAttribute("aria-valuenow", fNewValue);
