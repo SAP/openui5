@@ -117,7 +117,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.hasNativeLineClamp = (function() {
 		return (typeof document.documentElement.style.webkitLineClamp != "undefined");
 	})();
-
+	
+	/**
+	 * To prevent from the layout thrashing of the textContent call, this method
+	 * first tries to set the nodeValue of the first child when exist.
+	 *
+	 * @param {HTMLElement} oDomRef DOM reference of the text node container.
+	 * @param {String} [sNodeValue] new node value.
+	 * @since 1.30.3
+	 * @protected
+	 * @static
+	 */
+	Text.setNodeValue = function(oDomRef, sNodeValue) {
+		sNodeValue = sNodeValue || "";
+		var aChildNodes = oDomRef.childNodes;
+		if (aChildNodes.length == 1) {
+			aChildNodes[0].nodeValue = sNodeValue;
+		} else {
+			oDomRef.textContent = sNodeValue;
+		}
+	};
 
 	// suppress invalidation of text property setter
 	Text.prototype.setText = function(sText) {
@@ -126,12 +145,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// check text dom ref
 		var oDomRef = this.getTextDomRef();
 		if (oDomRef) {
-			oDomRef.textContent = this.getText(true);
+			// update the node value of the DOM text 
+			Text.setNodeValue(oDomRef, this.getText(true));
 
 			// Toggles the sapMTextBreakWord class when the text value is changed
 			if (this.getWrapping()) {
 				// no space text must break
-				if (sText && sText.length > 0 && !/\s/.test(sText)) {
+				if (sText && !/\s/.test(sText)) {
 					this.$().addClass("sapMTextBreakWord");
 				} else {
 					this.$().removeClass("sapMTextBreakWord");
@@ -342,8 +362,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		iStartPos = iStartPos || 0;
 		iEndPos = iEndPos || sText.length;
 
-		// do not set content if not needed
-		oDomRef.textContent = sText.slice(0, iEndPos);
+		// update only the node value without layout thrashing
+		Text.setNodeValue(oDomRef, sText.slice(0, iEndPos));
 
 		// if text overflow
 		if (oDomRef.scrollHeight > iMaxHeight) {
@@ -363,7 +383,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 				// check the middle position and update text
 				iEllipsisPos = (iStartPos + iEndPos) >> 1;
-				oDomRef.textContent = sText.slice(0, iEllipsisPos - iEllipsisLen) + sEllipsis;
+
+				// update only the node value without layout thrashing
+				Text.setNodeValue(oDomRef, sText.slice(0, iEllipsisPos - iEllipsisLen) + sEllipsis);
 
 				// check overflow
 				if (oDomRef.scrollHeight > iMaxHeight) {
