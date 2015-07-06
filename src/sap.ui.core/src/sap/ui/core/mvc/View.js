@@ -222,16 +222,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				that.onControllerConnected(that.oController);
 			}
 		};
+		
+		var fnPropagateOwner = function(fn) {
+			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+			
+			var Component = sap.ui.require("sap/ui/core/Component");
+			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
+			if (oOwnerComponent) {
+				return oOwnerComponent.runAsOwner(fn);
+			} else {
+				return fn.call();
+			}
+		};
 
 		if (this.initViewSettings) {
 			if (mSettings.async) {
 				this.initViewSettings(mSettings)
-					.then(fnInitController)
+					.then(function() {
+						return fnPropagateOwner(fnInitController);
+					})
 					.then(function() {
 						return that.runPreprocessor("controls", that);
 					})
 					.then(function() {
-						that.fireAfterInit();
+						fnPropagateOwner(that.fireAfterInit.bind(that));
 						// resolve View.prototype.loaded() methods promise
 						that._oAsyncState.resolve(that);
 					});
