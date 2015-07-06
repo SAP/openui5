@@ -640,5 +640,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "6c503a76d5bb4fc9f7918e3e863528cdc3be4a20",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: Number unit position corrected",
+        "references": []
+      }
+    ]
   }
 }

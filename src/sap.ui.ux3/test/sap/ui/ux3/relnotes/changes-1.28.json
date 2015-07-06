@@ -290,5 +290,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "fecca435e47d9d66a1d0cf1d723435dff7256472",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: Remove DOM when hiding ToolPopup",
+        "references": []
+      }
+    ]
   }
 }

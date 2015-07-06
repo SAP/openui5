@@ -2019,5 +2019,52 @@
         "references": []
       }
     ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "6e8aa210febc967145d01e7cd044b6c5e10c79b9",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding: make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "5b33a70470de761bd645fad0233ae011e5e4d61e",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Anonymous define in URI.js breaks CVOM charts",
+        "references": []
+      },
+      {
+        "id": "d33568629bf70c22aa634cb5e34aef74a1027b0b",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: IE does not parse XML with namespace declaration",
+        "references": []
+      },
+      {
+        "id": "ce05c735246ea5401d264f415a32c119ea074ecb",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataListBinding: make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "a3b0d795dae89ff1bc5d91d535d2bcbb9338fe67",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.ScrollBar: Correction for ScrollBar in FireFox in a case of invisible window content.",
+        "references": []
+      },
+      {
+        "id": "e21e6562d6c990f3b439741a86214d229c12c756",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding - OperationMode.Client + refresh()",
+        "references": []
+      }
+    ]
   }
 }

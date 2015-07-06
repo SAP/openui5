@@ -3191,5 +3191,108 @@
         "references": []
       }
     ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "640cca206c427b29ae4bc6dca05b4823b7ee35f0",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      },
+      {
+        "id": "daafddc40d38be9703233eaf7348642d16594621",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Fix wrong style of the focus state on mobile (HCB Theme)",
+        "references": []
+      },
+      {
+        "id": "60b3628eddc77c0e5b9b5738245c69cdc7adc046",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix name clashes issue in xml view",
+        "references": []
+      },
+      {
+        "id": "eb016e1e94dde6231ebd346de00d76f620062da0",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Multiple services should not be called when binding is refreshed.",
+        "references": []
+      },
+      {
+        "id": "988a4698034b4efcc4dac327c29f24123acb05d1",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Value help for read-only inputs",
+        "references": []
+      },
+      {
+        "id": "c19c9a10d2980f0c1d7b627223da23a40238a5df",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Now updates href property on setting to enabled state",
+        "references": []
+      },
+      {
+        "id": "6c503a76d5bb4fc9f7918e3e863528cdc3be4a20",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: Number unit position corrected",
+        "references": []
+      },
+      {
+        "id": "34aacdf153a0dfb370e4e30e80bd0eff6d90d29b",
+        "author": "Martin Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: Clone method should clone internal popup\u0027s content aggregation",
+        "references": []
+      },
+      {
+        "id": "88631d3f568ad1f92d97d006bc4061b8375d0e33",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Buttons positioning in HCB theme",
+        "references": []
+      },
+      {
+        "id": "28dd9dcc9e2c98c1e526071444ae537f38d0aaf5",
+        "author": "i057508 \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Upon theme or orientation change tile dimensions are updated now.",
+        "references": []
+      },
+      {
+        "id": "23354fb74b0bb64dc1fc60606aaa6a509f7fa001",
+        "author": "Vesselin Petrunov \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: The dialog is no longer flickering on iOS devices when an item is being selected",
+        "references": []
+      },
+      {
+        "id": "b01ccf8e5bd09af01008f43828ef5bc70bbcb544",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.TargetHandler: Respects view levels when multiple targets are displayed",
+        "references": []
+      },
+      {
+        "id": "161bcb17fb78116096388d8586b86a8cbba2ff11",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "unstyled sap.m.ToggleButton: Display corrected",
+        "references": []
+      },
+      {
+        "id": "3b0f4c4e14e58afd439b5335507f9a777e55dfe9",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Typo in explored app corrected",
+        "references": []
+      }
+    ]
   }
 }

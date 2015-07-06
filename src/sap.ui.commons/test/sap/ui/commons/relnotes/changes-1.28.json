@@ -768,5 +768,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "fad1e08ee0f925a100f2d60c851eb9406cb9201f",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      }
+    ]
   }
 }
