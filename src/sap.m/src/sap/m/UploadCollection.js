@@ -330,7 +330,42 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 * The event is triggered as soon as the upload request was terminated by the user.
 			 * @since 1.26.2
 			 */
-			uploadTerminated : {}
+			uploadTerminated : {},
+
+			/**
+			 * The event is triggered before the actual upload starts. An event is fired per file. All the necessary header parameters should be set here.
+			 * @since 1.30.2
+			 */
+			beforeUploadStarts : {
+				parameters: {
+					/**
+					 * Specifies the name of the file to be uploaded.
+					 */
+					fileName: {type : "string"},
+					/**
+					 * Adds a header parameter to the file that will be uploaded.
+					 */
+					addHeaderParameter: {type : "function",
+						parameters: {
+							/**
+							 * Specifies a header parameter that will be added
+							 */
+							headerParameter: {type : "sap.m.UploadCollectionParameter"}
+						}
+					},
+					/**
+					 * Returns the corresponding header parameter (type sap.m.UploadCollectionParameter) if available.
+					 */
+					getHeaderParameter: {type : "function",
+						parameters: {
+							/**
+							 * The (optional) name of the header parameter. If no parameter is provided all header parameters are returned.
+							 */
+							headerParameterName: {type : "string"}
+						}
+					}
+				}
+			}
 		}
 	}});
 
@@ -1942,22 +1977,47 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * @description Creates the unique key for a file by concatenating the fileName with its requestId and puts it into the requestHeaders parameter of the FileUploader.
+	 * It triggers the beforeUploadStarts event for applications to add the header parameters for each file.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadStart = function(oEvent) {
-		var oRequestHeaders = {}, i, sRequestIdValue, iParamCounter, sFileName, sFileNameRequestId;
+		var oRequestHeaders = {}, i, sRequestIdValue, iParamCounter, sFileName;
 		iParamCounter = oEvent.getParameter("requestHeaders").length;
 		for ( i = 0; i < iParamCounter; i++ ) {
 			if (oEvent.getParameter("requestHeaders")[i].name === this._headerParamConst.requestIdName) {
 				sRequestIdValue = oEvent.getParameter("requestHeaders")[i].value;
+				break;
 			}
 		}
 		sFileName = oEvent.getParameter("fileName");
-		sFileNameRequestId = sFileName + sRequestIdValue;
-		oRequestHeaders.name = this._headerParamConst.fileNameRequestIdName;
-		oRequestHeaders.value = sFileNameRequestId;
+		oRequestHeaders = {name: this._headerParamConst.fileNameRequestIdName,
+							value: sFileName + sRequestIdValue};
 		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
+		this.fireBeforeUploadStarts({
+			fileName: sFileName,
+			addHeaderParameter: addHeaderParameter,
+			getHeaderParameter: getHeaderParameter
+		});
+		function addHeaderParameter(oUploadCollectionParameter) {
+			var oRequestHeaders = {name: oUploadCollectionParameter.getName(),
+									value: oUploadCollectionParameter.getValue()};
+			oEvent.getParameter("requestHeaders").push(oRequestHeaders);
+		}
+		function getHeaderParameter(sHeaderParameterName) {
+			var iParamCounter;
+			if (sHeaderParameterName) {
+				iParamCounter = oEvent.getParameter("requestHeaders").length;
+				for ( i = 0; i < iParamCounter; i++ ) {
+					if (oEvent.getParameter("requestHeaders")[i].name === sHeaderParameterName) {
+						return new sap.m.UploadCollectionParameter({
+							name: sHeaderParameterName, value: oEvent.getParameter("requestHeaders")[i].value});
+					}
+				}
+			} else {
+				return oEvent.getParameter("requestHeaders");
+			}
+		}
 	};
 
 	/**

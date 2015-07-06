@@ -54,15 +54,7 @@ sap.ui.define([
 				name : "x-csrf-token",
 				value : "securityTokenFromModel"
 			});
-			// Header Slug
-			var oCustomerHeaderSlug = new UploadCollectionParameter({
-				name : "slug",
-				value : oEvent.getParameter("files")[0].name
-			});
-
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
-			oUploadCollection.addHeaderParameter(oCustomerHeaderSlug);
-
 			MessageToast.show("Change event triggered.");
 		},
 
@@ -156,6 +148,14 @@ sap.ui.define([
 		onSelectChange:  function(oEvent) {
 			var oUploadCollection=sap.ui.getCore().byId(this.getView().getId() + "--UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
+		},
+		onBeforeUploadStarts: function(oEvent) {
+			// Header Slug
+			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+				name : "slug",
+				value : oEvent.getParameter("fileName")
+			});
+			oEvent.getParameter("addHeaderParameter")(oCustomerHeaderSlug);
 		}
 	});
 
