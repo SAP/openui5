@@ -730,5 +730,55 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "06355ec6bef54ba91c9f583e3149d86c0baf3701",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Keyboard navigation when invisible item(s) exist is now supported.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "bbe66693fd59223562a6b30f04fe21b9fbe009ce",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Fixes Dialog resizing beyond minimum size",
+        "references": []
+      },
+      {
+        "id": "3edb22fd9ff50110a90f68492fd00b6297aa8df1",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Fix suggestion event in case of empty value and startSuggestion\u003d0",
+        "references": []
+      },
+      {
+        "id": "df0411983860fb75d688972956eb7b03feb01f8a",
+        "author": "i057508 \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Tab indexes on the right toolbar items are now correctly retained upon updating item navigation",
+        "references": []
+      }
+    ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "fad1e08ee0f925a100f2d60c851eb9406cb9201f",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      }
+    ]
   }
 }

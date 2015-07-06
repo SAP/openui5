@@ -175,5 +175,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "40a0c2acdc83b9106a481cd7e52b871800a6abf9",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Correctly resize Splitter bars",
+        "references": []
+      }
+    ]
   }
 }
