@@ -1532,5 +1532,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.2": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "75ddb9ede714bb5b45345a93335415fe52b688ce",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DebugEnv: properly declare dependencies in ControlTree",
+        "references": []
+      },
+      {
+        "id": "f580719babe110681d6b93fa41ba2b29fd156640",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ExtensionPoint: fixed non-working ExtensionPoints in Fragments",
+        "references": []
+      }
+    ]
   }
 }

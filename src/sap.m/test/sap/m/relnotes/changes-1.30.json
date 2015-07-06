@@ -1728,5 +1728,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.2": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "eb1acbeabf531ba7ff114618703c7a4e086a8ab8",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Buttons positioning in HCB theme",
+        "references": []
+      }
+    ]
   }
 }
