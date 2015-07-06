@@ -46,15 +46,15 @@
 		assert.strictEqual(this.oMessageStrip.getShowCloseButton(), false, "showCloseButton should be false");
 	});
 
-	QUnit.test("Error/Success/Warning type should render specific icon", function(assert) {
+	QUnit.test("Error type should render specific icon", function(assert) {
 		// act
 		this.oMessageStrip.setType("Error");
-		this.oMessageStrip.setCustomIcon("sap-icon://undo");
 		this.oMessageStrip.setShowIcon(true);
 		sap.ui.getCore().applyChanges();
 
 		//assert
-		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://message-error", "icon should be inherited from the type");
+		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://message-error",
+			"message-error icon should be inherited from the type");
 	});
 
 	QUnit.test("Setting None type", function(assert) {
@@ -66,8 +66,9 @@
 		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
 	});
 
-	QUnit.test("Information type should render custom icon", function(assert) {
+	QUnit.test("Setting custom icon on Error state", function(assert) {
 		// act
+		this.oMessageStrip.setType("Error");
 		this.oMessageStrip.setCustomIcon("sap-icon://undo");
 		sap.ui.getCore().applyChanges();
 
