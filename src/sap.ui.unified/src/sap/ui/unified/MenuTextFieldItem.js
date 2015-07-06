@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		// icon/check column 
 		rm.write("<div class=\"sapUiMnuItmIco\">");
 		if (oItem.getIcon()) {
-			rm.writeIcon(oItem.getIcon());
+			rm.writeIcon(oItem.getIcon(), null, {title: null});
 		}
 		rm.write("</div>");
 		
