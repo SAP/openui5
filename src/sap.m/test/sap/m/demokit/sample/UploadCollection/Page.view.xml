@@ -34,6 +34,7 @@
 				fileSizeExceed="onFileSizeExceed"
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
+				beforeUploadStarts="onBeforeUploadStarts"
 				items="{/items}"
 				numberOfAttachmentsText="Uploaded (8)">
 				<items>
