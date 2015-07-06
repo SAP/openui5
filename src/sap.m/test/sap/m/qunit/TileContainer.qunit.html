@@ -24,7 +24,7 @@
 
 	<script type="text/javascript">
 		var core = sap.ui.getCore();
-		const delay = 500;
+		var delay = 500;
 
 		test("ShouldRenderNiceHtml", function() {
 			// SUT
@@ -114,8 +114,7 @@
 				tile0 = new m.StandardTile(),
 				tile1 = new m.CustomTile(),
 				tiles = [tile0,tile1],
-				sut,
-				i;
+				sut;
 
 			// SUT
 			sut = new m.TileContainer({tiles : tiles});
@@ -152,7 +151,7 @@
 			sut.addTile(tileToAdd);
 
 			// Assert
-			strictEqual(sut.getTiles()[0], tileToAdd)
+			strictEqual(sut.getTiles()[0], tileToAdd);
 
 			// Cleanup
 			sut.destroy();
@@ -175,7 +174,7 @@
 			sut.deleteTile(tileToDelete);
 
 			// Assert
-			strictEqual(sut.getTiles().length, 0)
+			strictEqual(sut.getTiles().length, 0);
 
 			// Cleanup
 			sut.destroy();
@@ -401,12 +400,6 @@
 					return tile.$().attr('aria-posinset');
 				});
 			},
-			// build an array with the "aria-setsize" values for each tile
-			getAriaSetSizeValues: function() {
-				return this.sut.getTiles().map(function (tile) {
-					return tile.$().attr('aria-setsize');
-				});
-			},
 			getExpectedAriaPositionInSetValues: function() {
 				return this.sut.getTiles().map(function(oTile, iIndex) {
 					return (iIndex + 1).toString();
@@ -414,7 +407,6 @@
 			},
 			beforeEach: function() {
 				var m = sap.m;
-				var tc = sap.ui.getCore().byId("tcAcc");
 				this.sut = new m.TileContainer("tcAcc", {
 					tiles: [
 						new m.StandardTile({id: 'first'}),
