@@ -73,6 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			events : {
 				/**
 				 * The event indicates that the current breakpoint has been changed.
+				 * @since 1.32
 				 */
 				breakpointChanged : {
 					parameters : {
