@@ -2581,7 +2581,7 @@ sap.ui.define([
 				}
 				//delete control Messages (value is updated from model) and update control with model messages
 				if (oBinding.getMessages()) {
-					that.updateMessages(sName, oBinding.getMessages());
+					that.propagateMessages(sName, oBinding.getMessages());
 				}
 				if (oBinding.getBindingMode() === BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
@@ -2606,7 +2606,7 @@ sap.ui.define([
 				if (oBinding.getMessages()) {
 					aAllMessages = aAllMessages.concat(oBinding.getMessages());
 				}
-				that.updateMessages(sName, aAllMessages);
+				that.propagateMessages(sName, aAllMessages);
 			};
 
 		// Only use context for bindings on the primary model
@@ -3113,7 +3113,7 @@ sap.ui.define([
 	* @protected
 	* @since 1.28
 	*/
-	ManagedObject.prototype.updateMessages = function(sName, aMessages) {
+	ManagedObject.prototype.propagateMessages = function(sName, aMessages) {
 		jQuery.sap.log.warning("Message for " + this + ", Property " + sName);
 	};
 
