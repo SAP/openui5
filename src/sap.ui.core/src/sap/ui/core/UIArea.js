@@ -908,8 +908,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	UIArea.prototype._handleGroupChange = function(oEvent, oElement) {
 		var oKey = UIArea._oFieldGroupValidationKey;
 		if (oEvent.type === "focusin") {
-			//check for field group change (reason : enter,leave) after events where processed by elements
-			this.setFieldGroupControl(oElement);
+			//check for field group change delayed to allow focus forwarding and resetting focus after selection 
+			if (UIArea._iFieldGroupDelayTimer) {
+				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupDelayTimer);
+				UIArea._iFieldGroupDelayTimer = null;
+			}
+			UIArea._iFieldGroupDelayTimer = jQuery.sap.delayedCall(0,this, this.setFieldGroupControl,[oElement]);
 			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
 		} else if (this.getFieldGroupControl() && 
 				oEvent.type === "keyup" && 
@@ -918,6 +922,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				oEvent.altKey === oKey.altKey &&
 				oEvent.ctrlKey === oKey.ctrlKey) {
 			//check for field group change (validate) after events where processed by elements
+			if (UIArea._iFieldGroupTriggerDelay) {
+				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupTriggerDelay);
+			}
 			this.getFieldGroupControl().triggerValidateFieldGroup();
 			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
 		}
@@ -936,13 +943,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 * @private
 	 */
 	UIArea.prototype.setFieldGroupControl = function(oElement) {
+
+		function findParent(oElement, fnCondition) {
+			var oParent = oElement.getParent();
+			if (oParent) {
+				if (fnCondition(oParent)) {
+					return oParent;
+				} else {
+					return findParent(oParent, fnCondition);
+				}
+			}
+			return null;
+		}
+
 		var oCurrentControl = this.getFieldGroupControl();
 		if (oElement != oCurrentControl) {
 			var oControl = null;
 			if (oElement instanceof sap.ui.core.Control) {
 				oControl = oElement;
 			} else {
-				oControl = oElement.findParent(function(oElement){
+				oControl = findParent(oElement,function(oElement){
 					return oElement instanceof sap.ui.core.Control;
 				});
 			}
@@ -975,6 +995,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 	// field group static members
 	UIArea._oFieldGroupControl = null; // group control for all UI areas to handle change of field groups
+	UIArea._iFieldGroupDelayTimer = null; // delay timer for triggering field group changes if focus is forwarded or temporarily dispatched by selection
 	UIArea._oFieldGroupValidationKey = {// keycode and modifier combination that is used to fire a change group event (reason: validate)
 			keyCode : jQuery.sap.KeyCodes.ENTER,
 			shiftKey : false,

@@ -13,7 +13,7 @@
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
-		data-sap-ui-libs="sap.ui.commons"
+		data-sap-ui-libs="sap.ui.commons,sap.m"
 >
 </script>
 
@@ -81,6 +81,10 @@
 			new sap.ui.commons.CheckBox({id:"field33",width:"200px", fieldGroupId:"group3"})
 	);
 	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "Field 4 with group3",labelFor:"field34"}),
+			new sap.m.DateTimeInput({id:"field34",width:"200px",fieldGroupId:"group3"})
+	);
+	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 2 with no group",labelFor:"field2"}),
 			new sap.ui.commons.TextField({id:"field2",width:"200px"})
 	);
@@ -92,6 +96,11 @@
 	oVerticalLayout.addContent(oMatrixLayout);
 	oVerticalLayout.placeAt("content");
 	
+	//Attach handler for testing
+	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
+		checkEvent(oEvent);
+	});
+
 
 	// Testing parameters
 	var oEnterControl = null,
@@ -104,76 +113,131 @@
 	function checkEvent(oEvent) {
 		equal(oEvent.mParameters.fieldGroupId,sCurrentGroup,"ValidateFieldGroup event fired for correct group:" + sCurrentGroup);
 	}
-	function moveFocus(sFieldId, sCurrent, sNew) {
+	
+	function moveFocus(sFieldId, sCurrent, sNew, fContinue) {
 		sCurrentGroup = sCurrent;
 		sNewGroup = sNew;
 		sap.ui.getCore().byId(sFieldId).focus();
-		equal(sap.ui.core.UIArea._oFieldGroupControl.getFieldGroupId(),sNewGroup,"Focus now on newgroup:" + sNewGroup);
-		sCurrentGroup = sNew;
+		setTimeout(function () {
+			equal(sap.ui.core.UIArea._oFieldGroupControl.getFieldGroupId(),sNewGroup,"Focus now on newgroup:" + sNewGroup);
+			sCurrentGroup = sNew;
+			if (fContinue) {
+				fContinue();
+			}
+		},1);
 	};
 	
-	test("focus field of group 1",1, function(){
+	asyncTest("focus field of group 1", 1, function(){
 		//focus the content area initially
 		document.getElementById("content").focus();
-		moveFocus("field11","","group1");
+		moveFocus("field11","","group1",start);
 	});
-	test("focus field of group 2",2, function(){
-		moveFocus("field21","group1","group2");
+	asyncTest("focus field of group 2",2, function(){
+		document.getElementById("field11").focus();
+		moveFocus("field21","group1","group2",start);
 	});
-	test("focus field of group 3",2, function(){
-		moveFocus("field31","group2","group3");
+	asyncTest("focus field of group 3", 2, function(){
+		document.getElementById("field21").focus();
+		moveFocus("field31","group2","group3",start);
 	});
-	test("focus field with no group ",2, function(){
-		moveFocus("field1","group3","");
+	asyncTest("focus field with no group ", 2, function(){
+		document.getElementById("field31").focus();
+		moveFocus("field1","group3","",start);
 	});
-	test("focus field with 3 and validate",3, function(){
-		moveFocus("field31","","group3");
-		var UIArea = sap.ui.core.UIArea
-		qutils.triggerKeyEvent("keyup",
-				sap.ui.core.UIArea._oFieldGroupControl.getDomRef(),
-				UIArea._oFieldGroupValidationKey.keyCode,
-				UIArea._oFieldGroupValidationKey.shiftKey,
-				UIArea._oFieldGroupValidationKey.altKey,
-				UIArea._oFieldGroupValidationKey.ctrlKey);
-		//define a different key combination
-		UIArea._oGroupValidationKey = {
-				keyCode : jQuery.sap.KeyCodes.F2,
-				shiftKey:true,
-				altKey:false,
-				ctrlKey:true
-		}
-		qutils.triggerKeyEvent("keyup",
-				sap.ui.core.UIArea._oFieldGroupControl.getDomRef(),
-				UIArea._oFieldGroupValidationKey.keyCode,
-				UIArea._oFieldGroupValidationKey.shiftKey,
-				UIArea._oFieldGroupValidationKey.altKey,
-				UIArea._oFieldGroupValidationKey.ctrlKey);	
+	asyncTest("focus field of group 3 and validate", 3, function(){
+		document.getElementById("field1").focus();
+		moveFocus("field31","","group3",function() {
+			var UIArea = sap.ui.core.UIArea,
+				oStoreKeyCombination = jQuery.extend(UIArea._oFieldGroupValidationKey,{});
+			qutils.triggerKeyEvent("keyup",
+					sap.ui.core.UIArea._oFieldGroupControl.getDomRef(),
+					UIArea._oFieldGroupValidationKey.keyCode,
+					UIArea._oFieldGroupValidationKey.shiftKey,
+					UIArea._oFieldGroupValidationKey.altKey,
+					UIArea._oFieldGroupValidationKey.ctrlKey);
+			//define a different key combination
+			UIArea._oGroupValidationKey = {
+					keyCode : jQuery.sap.KeyCodes.F2,
+					shiftKey:true,
+					altKey:false,
+					ctrlKey:true
+			}
+			qutils.triggerKeyEvent("keyup",
+					sap.ui.core.UIArea._oFieldGroupControl.getDomRef(),
+					UIArea._oFieldGroupValidationKey.keyCode,
+					UIArea._oFieldGroupValidationKey.shiftKey,
+					UIArea._oFieldGroupValidationKey.altKey,
+					UIArea._oFieldGroupValidationKey.ctrlKey);	
+			//resest kecode after test
+			UIArea._oFieldGroupValidationKey = jQuery.extend(oStoreKeyCombination,{})
+			start();
+		});
 	});
-	test("change field group id",4, function(){
+	asyncTest("change field group id", 4, function(){
 		sNewGroup = "group4";
 		oEnterControl = sap.ui.getCore().byId("field31");
 		oEnterControl.setFieldGroupId(sNewGroup);
 		equal(oEnterControl.getFieldGroupId(),sNewGroup,"FieldGroupId changed to group4");
 		sCurrentGroup = sNewGroup;
 		sap.ui.getCore().byId("field1").focus();
+		setTimeout(function() {
+			sNewGroup = "group3";
+			oEnterControl = sap.ui.getCore().byId("field31");
+			oEnterControl.setFieldGroupId(sNewGroup);
+			equal(oEnterControl.getFieldGroupId(),sNewGroup,"FieldGroupId changed to group3");
+			setTimeout(function() {
+				oEnterControl.focus()
+				sCurrentGroup = "group3";
+				setTimeout(function() {
+					sap.ui.getCore().byId("field1").focus();
+					setTimeout(function() {
+						start();
+					},1);
+				},1)
+			},1);
+		},1)
 		
-		sNewGroup = "group3";
-		oEnterControl = sap.ui.getCore().byId("field31");
-		oEnterControl.setFieldGroupId(sNewGroup);
-		sCurrentGroup = sNewGroup;
-		equal(oEnterControl.getFieldGroupId(),sNewGroup,"FieldGroupId changed to group3");
-		sCurrentGroup = sNewGroup;
-		oEnterControl.focus()
-		sap.ui.getCore().byId("field1").focus();
+	});
+
+	test("get controls by field group", 5, function(){
+		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group1");
+		equal(aGroup.length,3,"3 controls in group1");
+		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");
+		equal(aGroup.length,3,"3 controls in group2");
+		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group3");
+		equal(aGroup.length,4,"4 controls in group3");
+		var aGroup = oVerticalLayout.getControlsByFieldGroupId("");
+		equal(aGroup.length,18,"18 controls with no field group");
+		var aGroup = oVerticalLayout.getControlsByFieldGroupId();
+		equal(aGroup.length,10,"10 controls with  field groups");
 		
 	});
 	
-	//Attach handler for testing
-	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
-		checkEvent(oEvent);
+	var oParent = null;
+	asyncTest("Destroy of fields", 6, function(){
+		document.getElementById("field11").focus();
+		oEnterControl = sap.ui.getCore().byId("field21");
+		oParent = oEnterControl.getParent();
+		moveFocus("field21","group1","group2",function () {
+			oEnterControl.destroy()
+		});
+		setTimeout(function() {
+			moveFocus("field31","group2","group3",function() {
+				moveFocus("field11","group3","group1",function() {
+					var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");
+					equal(aGroup.length,2,"2 controls in group2 field21 was destroyed");
+					//adding ading field again
+					oParent.addContent(new sap.ui.commons.CheckBox({id:"field21",width:"200px", fieldGroupId:"group2"}))
+					var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");
+					equal(aGroup.length,3,"3 controls in group2 field21 was added");
+					setTimeout(function() {
+						start();
+					},1);
+				});
+			});
+		},1);
 	});
-
-
+	
 	</script>
 
 </head>

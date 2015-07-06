@@ -2115,28 +2115,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the first parent of this object where a given condition matches.
-	 * The parent object is passed as a parameter in the condition function.
-	 *
-	 * @param {function} fnCondition The condition function that is called for the parent util true is returned
-	 *
-	 * @return {sap.ui.core.ManagedObject} The matching parent object of this element
-	 *
-	 * @protected
-	 */
-	ManagedObject.prototype.findParent = function(fnCondition) {
-		var oParent = this.getParent();
-		if (oParent) {
-			if (fnCondition(oParent)) {
-				return oParent;
-			} else {
-				return oParent.findParent(fnCondition);
-			}
-		}
-		return null;
-	};
-
-	/**
 	 * Cleans up the resources associated with this object and all its aggregated children.
 	 *
 	 * After an object has been destroyed, it can no longer be used in!
@@ -3845,29 +3823,39 @@ sap.ui.define([
 	/**
 	 * Searches and returns an array of child elements and controls which are
 	 * referenced within an aggregation or aggregations of child elements/controls.
-	 * This can be either done recursive or not.
+	 * This can be either done recursive or not. Optionally a condition function can be passed that
+	 * returns true if the object should be added to the array.
 	 * <br>
 	 * <b>Take care: this operation might be expensive.</b>
 	 * @param {boolean}
 	 *          bRecursive true, if all nested children should be returned.
+	 * @param {boolean}
+	 *          fnCondition if given, the object is passed as a parameter to the.
 	 * @return {sap.ui.base.ManagedObject[]} array of child elements and controls
 	 * @public
 	 */
-	ManagedObject.prototype.findAggregatedObjects = function(bRecursive) {
+	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {
 
 		var aAggregatedObjects = [];
+		if (fnCondition && !typeof fnCondition === "function") {
+			fnCondition = null;
+		}
 		function fFindObjects(oObject) {
 			for (var n in oObject.mAggregations) {
 				var a = oObject.mAggregations[n];
 				if (jQuery.isArray(a)) {
 					for (var i = 0; i < a.length; i++) {
-						aAggregatedObjects.push(a[i]);
+						if (!fnCondition || fnCondition(a[i])) {
+							aAggregatedObjects.push(a[i]);
+						}
 						if (bRecursive) {
 							fFindObjects(a[i]);
 						}
 					}
 				} else if (a instanceof ManagedObject) {
-					aAggregatedObjects.push(a);
+					if (!fnCondition || fnCondition(a)) {
+						aAggregatedObjects.push(a);
+					}
 					if (bRecursive) {
 						fFindObjects(a);
 					}

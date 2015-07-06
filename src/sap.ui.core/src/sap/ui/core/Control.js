@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		metadata : {
 			stereotype : "control",
 			"abstract" : true,
-			publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent"],
+			publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getControlsByFieldGroup"],
 			library: "sap.ui.core",
 			properties : {
 
@@ -835,6 +835,21 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				clearTimeout(this._busyAnimationTimer4);
 				delete this._busyAnimationTimer4;
 			}
+		};
+
+		/**
+		 * Returns a list of all control with a field group id or the controls with the given field group id.
+		 *
+		 * @param {string} sFieldGroupId optional id of the field group
+		 * @return {array} The list of controls with a field group id
+		 * @public
+		 */
+		Control.prototype.getControlsByFieldGroupId = function(sFieldGroupId) {
+			return this.findAggregatedObjects(true, function(oObject) {
+				return oObject instanceof sap.ui.core.Control && 
+						oObject.getFieldGroupId &&
+						((typeof sFieldGroupId !== "string" && oObject.getFieldGroupId()) || (oObject.getFieldGroupId() === sFieldGroupId));
+			});
 		};
 
 		/**
