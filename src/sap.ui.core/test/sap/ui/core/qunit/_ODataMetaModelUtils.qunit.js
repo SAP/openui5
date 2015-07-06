@@ -430,7 +430,16 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata._ODataMetaModelUtils");
+	module("sap.ui.model.odata._ODataMetaModelUtils", {
+		beforeEach : function () {
+			this.iOldLogLevel = jQuery.sap.log.getLevel();
+			// do not rely on ERROR vs. DEBUG due to minified sources
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+		},
+		afterEach : function () {
+			jQuery.sap.log.setLevel(this.iOldLogLevel);
+		}
+	});
 	//*********************************************************************************************
 
 	//*********************************************************************************************
@@ -606,58 +615,76 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	});
 
 	//*********************************************************************************************
-	test("addSapSemantics: unsupported sap:semantics", function () {
-		var oLogMock = this.mock(jQuery.sap.log),
-			oType = {
-				"name" : "Foo",
-				"property" : [
-					{
-						"name" : "Bar",
-						"extensions" : [{
-							"name" : "semantics", "value" : "*", "namespace" : sNamespace
-						}]
-					}
-				]
-			};
+	[false, true].forEach(function (bIsLoggable) {
+		test("addSapSemantics: unsupported sap:semantics, log = " + bIsLoggable, function () {
+			var oLogMock = this.mock(jQuery.sap.log),
+				oType = {
+					"name" : "Foo",
+					"property" : [
+						{
+							"name" : "Bar",
+							"extensions" : [{
+								"name" : "semantics",
+								"value" : "*",
+								"namespace" : sNamespace
+							}]
+						}
+					]
+				};
 
-		// ensure that sap:semantics properties are available
-		oType.property.forEach(function (oProperty) {
-			Utils.liftSAPData(oProperty, "Property");
+			// ensure that sap:semantics properties are available
+			oType.property.forEach(function (oProperty) {
+				Utils.liftSAPData(oProperty, "Property");
+			});
+
+			oLogMock.expects("isLoggable")
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				// do not construct arguments in vain!
+				.exactly(bIsLoggable ? 1 : 0)
+				.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
+					"sap.ui.model.odata._ODataMetaModelUtils");
+
+			// code under test
+			Utils.addSapSemantics(oType);
 		});
-
-		oLogMock.expects("warning").once().withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
-			"sap.ui.model.odata._ODataMetaModelUtils");
-
-		// code under test
-		Utils.addSapSemantics(oType);
-
 	});
 
 	//*********************************************************************************************
-	test("addSapSemantics: unsupported sap:semantics type", function () {
-		var oLogMock = this.mock(jQuery.sap.log),
-			oType = {
-				"name" : "Foo",
-				"property" : [
-					{
-						"name" : "Bar",
-						"extensions" : [{
-							"name" : "semantics", "value" : "tel;type=foo", "namespace" : sNamespace
-						}]
-					}
-				]
-			};
+	[false, true].forEach(function (bIsLoggable) {
+		test("addSapSemantics: unsupported sap:semantics type, log = " + bIsLoggable, function () {
+			var oLogMock = this.mock(jQuery.sap.log),
+				oType = {
+					"name" : "Foo",
+					"property" : [
+						{
+							"name" : "Bar",
+							"extensions" : [{
+								"name" : "semantics",
+								"value" : "tel;type=foo",
+								"namespace" : sNamespace
+							}]
+						}
+					]
+				};
 
-		// ensure that sap:semantics properties are available
-		oType.property.forEach(function (oProperty) {
-			Utils.liftSAPData(oProperty, "Property");
+			// ensure that sap:semantics properties are available
+			oType.property.forEach(function (oProperty) {
+				Utils.liftSAPData(oProperty, "Property");
+			});
+			oLogMock.expects("isLoggable")
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				// do not construct arguments in vain!
+				.exactly(bIsLoggable ? 1 : 0)
+				.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
+					"sap.ui.model.odata._ODataMetaModelUtils");
+
+			// code under test
+			Utils.addSapSemantics(oType);
 		});
-		oLogMock.expects("warning")
-			.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
-				"sap.ui.model.odata._ODataMetaModelUtils");
-
-		// code under test
-		Utils.addSapSemantics(oType);
 	});
 
 	//*********************************************************************************************
@@ -744,23 +771,32 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	});
 
 	//*********************************************************************************************
-	test("addFilterRestriction: unsupported sap:filter-restriction", function () {
-		var oLogMock = this.mock(jQuery.sap.log),
-			oEntitySet = { entityType : "Baz" },
-			oProperty = {
-				"name" : "Foo",
-				"sap:filter-restriction" : "Bar"
-			};
+	[false, true].forEach(function (bIsLoggable) {
+		test("addFilterRestriction: unsupported sap:filter-restriction, log = " + bIsLoggable,
+			function () {
+				var oLogMock = this.mock(jQuery.sap.log),
+					oEntitySet = { entityType : "Baz" },
+					oProperty = {
+						"name" : "Foo",
+						"sap:filter-restriction" : "Bar"
+					};
 
-		oLogMock.expects("warning").once().withExactArgs("Unsupported sap:filter-restriction: "
-				+ "Bar", "Baz.Foo",
-			"sap.ui.model.odata._ODataMetaModelUtils");
+				oLogMock.expects("isLoggable")
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					// do not construct arguments in vain!
+					.exactly(bIsLoggable ? 1 : 0)
+					.withExactArgs("Unsupported sap:filter-restriction: " + "Bar", "Baz.Foo",
+						"sap.ui.model.odata._ODataMetaModelUtils");
 
-		// code under test
-		Utils.addFilterRestriction(oProperty, oEntitySet);
+				// code under test
+				Utils.addFilterRestriction(oProperty, oEntitySet);
 
-		deepEqual(oEntitySet, { entityType : "Baz" },
-			"No v4 annotation created in case of unsupported value")
+				deepEqual(oEntitySet, { entityType : "Baz" },
+					"No v4 annotation created in case of unsupported value")
+			}
+		);
 	});
 
 	//*********************************************************************************************
@@ -779,7 +815,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		});
 
 		// Define expectations
-		this.mock(Utils).expects("addFilterRestriction").once()
+		this.mock(Utils).expects("addFilterRestriction")
 			.withExactArgs(oProperty, oEntitySet).returns("");
 
 		// run code under test

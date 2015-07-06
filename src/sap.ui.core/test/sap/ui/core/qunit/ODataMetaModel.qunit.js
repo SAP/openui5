@@ -552,8 +552,12 @@ sap.ui.require([
 		beforeEach : function () {
 			oGlobalSandbox = sinon.sandbox.create();
 			setupSandbox(oGlobalSandbox);
+			this.iOldLogLevel = jQuery.sap.log.getLevel();
+			// do not rely on ERROR vs. DEBUG due to minified sources
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
 		},
 		afterEach : function () {
+			jQuery.sap.log.setLevel(this.iOldLogLevel);
 			ODataModel.mServiceData = {}; // clear cache
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
@@ -766,19 +770,19 @@ sap.ui.require([
 			strictEqual(arguments.length, 1, "almost no args");
 			deepEqual(arguments[0], undefined, "almost no args");
 
-			oGlobalSandbox.mock(Model.prototype).expects("destroy").once();
+			oGlobalSandbox.mock(Model.prototype).expects("destroy");
 			// do not mock/stub this or else "destroy" will not bubble up!
 			oGlobalSandbox.spy(MetaModel.prototype, "destroy");
 
 			// generic dispatching
 			["destroy", "isList"].forEach(function (sName) {
-				oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
+				oModelMock.expects(sName).withExactArgs("foo", 0, false).returns(oResult);
 
 				strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
 			});
 
 			// getProperty dispatches to _getObject
-			oMetaModelMock.expects("_getObject").once().withExactArgs("foo", 0, false)
+			oMetaModelMock.expects("_getObject").withExactArgs("foo", 0, false)
 				.returns(oResult);
 			strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
 
@@ -866,9 +870,7 @@ sap.ui.require([
 				sPath = "dataServices",
 				aSorters = [];
 
-			fnApply.once()
-				.withArgs(["dataServiceVersion", "schema"], aFilters)
-				.returns(aIndices);
+			fnApply.withArgs(["dataServiceVersion", "schema"], aFilters).returns(aIndices);
 
 			// code under test
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
@@ -878,7 +880,7 @@ sap.ui.require([
 			strictEqual(oBinding.iLength, oBinding.aIndices.length);
 
 			fnGetValue = fnApply.args[0][2];
-			oGlobalSandbox.mock(oMetaModel).expects("getProperty").once()
+			oGlobalSandbox.mock(oMetaModel).expects("getProperty")
 				.withExactArgs("0/namespace", oBinding.oList["schema"])
 				.returns("foo");
 
@@ -926,89 +928,102 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("_getObject: queries instead of indexes", function () {
-		var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+	[false, true].forEach(function (bIsLoggable) {
+		test("_getObject: queries instead of indexes, log = " + bIsLoggable, function () {
+			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
-		oLogMock.expects("error")
-			.withExactArgs("A query is not allowed when an object context has been given",
-				"entityType/[$\{name}==='BusinessPartner']", "sap.ui.model.odata.ODataMetaModel");
-		oLogMock.expects("error")
-			.withExactArgs("Invalid query: '/dataServices/' does not point to an array",
-				"/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
-				"sap.ui.model.odata.ODataMetaModel");
-		oLogMock.expects("error")
-			.withExactArgs("no closing braces found in '[${namespace==='GWSAMPLE_BASIC']/"
-				+ "entityType' after pos:2", undefined, "sap.ui.base.ExpressionParser");
+			jQuery.sap.log.setLevel(bIsLoggable
+				? jQuery.sap.log.Level.WARNING
+				: jQuery.sap.log.Level.ERROR);
 
-		return withMetaModel(function (oMetaModel) {
-			[{
-				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']",
-				o: "/dataServices/schema/0"
-			}, { // syntax error (missing closing ']')
-				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC'",
-				o: undefined
-			}, { // syntax error (text after closing ']')
-				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a",
-				o: undefined
-			}, { // syntax error (text after closing ']')
-				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a/entityType/1",
-				o: undefined,
-				m: "Invalid part: entityType"
-			}, { // query when we just landed in Nirvana
-				i: "/dataServices/unknown/[${namespace}==='GWSAMPLE_BASIC']",
-				o: undefined,
-				m: "Invalid part: [${namespace}==='GWSAMPLE_BASIC']"
-			}, {
-				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
-					+ "[$\{name}==='Product']",
-				o: "/dataServices/schema/0/entityType/1",
-				c: {} // unnecessary context object (because of absolute path) silently ignored
+			oLogMock.expects("error")
+				.withExactArgs("A query is not allowed when an object context has been given",
+					"entityType/[$\{name}==='BusinessPartner']",
+					"sap.ui.model.odata.ODataMetaModel");
+			oLogMock.expects("error")
+				.withExactArgs("Invalid query: '/dataServices/' does not point to an array",
+					"/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
+					"sap.ui.model.odata.ODataMetaModel");
+			oLogMock.expects("error")
+				.withExactArgs("no closing braces found in '[${namespace==='GWSAMPLE_BASIC']/"
+					+ "entityType' after pos:2", undefined, "sap.ui.base.ExpressionParser");
+			oLogMock.expects("warning").never();
 
-			}, { // ensure that we do not fail after a 'namespace' query that didn't find a result
-				i: "/dataServices/schema/[${namespace}==='unknown']/entityType/"
-					+ "[$\{name}==='Product']",
-				o: undefined,
-				m: "Invalid part: entityType"
-			}, { // ensure that we do not fail after a 'name' query that didn't find a result
-				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
-					+ "[$\{name}==='unknown']/property/[$\{name=}'foo']",
-				o: undefined,
-				m: "Invalid part: property"
-			}, {
-				i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
-					+ "[$\{name}==='BusinessPartner']/com.sap.vocabularies.UI.v1.LineItem/"
-					+ "[${Value/Path}==='BusinessPartnerID']/Label/String",
-				o: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.LineItem/0"
-					+ "/Label/String"
-			}, {
-				i: "entityType/[$\{name}==='Product']",
-				o: "/dataServices/schema/0/entityType/1",
-				c: oMetaModel.getContext("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
-			}, { // query, but context is an object
-				i: "entityType/[$\{name}==='BusinessPartner']",
-				o: null,
-				c: oMetaModel.getObject("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
-			}, { // query on non-array
-				i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
-				o: null,
-			}, { // stupid query with [], but returning true
-				i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]"
-					+ "/entityType",
-				o: "/dataServices/schema/0/entityType",
-			}, { // syntax error in query
-				i: "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
-				o: undefined,
-				m: "Invalid part: entityType"
-			}, { // search for the first property having a maxLength
-				i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
-				o: "/dataServices/schema/0/entityType/0/property/1",
-			}].forEach(function (oFixture) {
-				if (oFixture.m) {
-					oLogMock.expects("warning").withExactArgs(oFixture.m, "path: "
-						+ oFixture.i + ", context: undefined", "sap.ui.model.odata.ODataMetaModel");
-				}
-				strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c),
-					oFixture.o ? oMetaModel.oModel.getObject(oFixture.o) : oFixture.o, oFixture.i);
+			return withMetaModel(function (oMetaModel) {
+				[{
+					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']",
+					o: "/dataServices/schema/0"
+				}, { // syntax error (missing closing ']')
+					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC'",
+					o: undefined
+				}, { // syntax error (text after closing ']')
+					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a",
+					o: undefined
+				}, { // syntax error (text after closing ']')
+					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a/entityType/1",
+					o: undefined,
+					m: "Invalid part: entityType"
+				}, { // query when we just landed in Nirvana
+					i: "/dataServices/unknown/[${namespace}==='GWSAMPLE_BASIC']",
+					o: undefined,
+					m: "Invalid part: [${namespace}==='GWSAMPLE_BASIC']"
+				}, {
+					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+						+ "[$\{name}==='Product']",
+					o: "/dataServices/schema/0/entityType/1",
+					c: {} // unnecessary context object (because of absolute path) silently ignored
+				}, { // ensure we don't fail after a 'namespace' query that didn't find a result
+					i: "/dataServices/schema/[${namespace}==='unknown']/entityType/"
+						+ "[$\{name}==='Product']",
+					o: undefined,
+					m: "Invalid part: entityType"
+				}, { // ensure we don't fail after a 'name' query that didn't find a result
+					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+						+ "[$\{name}==='unknown']/property/[$\{name=}'foo']",
+					o: undefined,
+					m: "Invalid part: property"
+				}, {
+					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+						+ "[$\{name}==='BusinessPartner']/com.sap.vocabularies.UI.v1.LineItem/"
+						+ "[${Value/Path}==='BusinessPartnerID']/Label/String",
+					o: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.LineItem/0"
+						+ "/Label/String"
+				}, {
+					i: "entityType/[$\{name}==='Product']",
+					o: "/dataServices/schema/0/entityType/1",
+					c: oMetaModel.getContext(
+						"/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
+				}, { // query, but context is an object
+					i: "entityType/[$\{name}==='BusinessPartner']",
+					o: null,
+					c: oMetaModel.getObject(
+						"/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
+				}, { // query on non-array
+					i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
+					o: null,
+				}, { // stupid query with [], but returning true
+					i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]"
+						+ "/entityType",
+					o: "/dataServices/schema/0/entityType",
+				}, { // syntax error in query
+					i: "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
+					o: undefined,
+					m: "Invalid part: entityType"
+				}, { // search for the first property having a maxLength
+					i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
+					o: "/dataServices/schema/0/entityType/0/property/1",
+				}].forEach(function (oFixture) {
+					if (oFixture.m) {
+						oLogMock.expects("warning")
+							// do not construct arguments in vain!
+							.exactly(bIsLoggable ? 1 : 0)
+							.withExactArgs(oFixture.m, "path: " + oFixture.i
+								+ ", context: undefined", "sap.ui.model.odata.ODataMetaModel");
+					}
+					strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c), oFixture.o
+						? oMetaModel.oModel.getObject(oFixture.o)
+						: oFixture.o, oFixture.i);
+				});
 			});
 		});
 	});
@@ -1044,7 +1059,7 @@ sap.ui.require([
 		test("_getObject: warning w/o context, log = " + bIsLoggable, function () {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
-			oLogMock.expects("isLoggable").once()
+			oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING)
 				.returns(bIsLoggable);
 			oLogMock.expects("warning")
@@ -1060,7 +1075,7 @@ sap.ui.require([
 		test("_getObject: warning with sap.ui.model.Context, log = " + bIsLoggable, function () {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
-			oLogMock.expects("isLoggable").once()
+			oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING)
 				.returns(bIsLoggable);
 			oLogMock.expects("warning")
@@ -1078,7 +1093,7 @@ sap.ui.require([
 		test("_getObject: warning with object context, log = " + bIsLoggable, function () {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
-			oLogMock.expects("isLoggable").once()
+			oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING)
 				.returns(bIsLoggable);
 			oLogMock.expects("warning")
@@ -1096,7 +1111,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("_getObject: Invalid relative path w/o context", function () {
-		oGlobalSandbox.mock(jQuery.sap.log).expects("error").once().withExactArgs(
+		oGlobalSandbox.mock(jQuery.sap.log).expects("error").withExactArgs(
 			"Invalid relative path w/o context",
 			"some/relative/path",
 			"sap.ui.model.odata.ODataMetaModel");
