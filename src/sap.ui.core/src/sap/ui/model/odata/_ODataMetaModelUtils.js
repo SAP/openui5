@@ -188,10 +188,12 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				sFilterRestrictionValue = mFilterRestrictions[oProperty["sap:filter-restriction"]];
 
 			if (!sFilterRestrictionValue) {
-				jQuery.sap.log.warning("Unsupported sap:filter-restriction: "
-						+ oProperty["sap:filter-restriction"],
+				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+					jQuery.sap.log.warning("Unsupported sap:filter-restriction: "
+							+ oProperty["sap:filter-restriction"],
 						oEntitySet.entityType + "." + oProperty.name,
 						"sap.ui.model.odata._ODataMetaModelUtils");
+				}
 				return;
 			}
 
@@ -257,9 +259,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					}
 					aMatches = rSemanticsWithTypes.exec(sV2Semantics);
 					if (!aMatches) {
-						jQuery.sap.log.warning("Unsupported sap:semantics: " + sV2Semantics,
-							oType.name + "." + oProperty.name,
-							"sap.ui.model.odata._ODataMetaModelUtils");
+						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+							jQuery.sap.log.warning("Unsupported sap:semantics: " + sV2Semantics,
+								oType.name + "." + oProperty.name,
+								"sap.ui.model.odata._ODataMetaModelUtils");
+						}
 						return;
 					}
 

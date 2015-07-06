@@ -288,8 +288,7 @@ sap.ui.define([
 				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 					jQuery.sap.log.warning("Invalid part: " + vPart,
 						"path: " + sPath + ", context: "
-						+ (oContext instanceof Context ?
-							oContext.getPath() : oContext),
+							+ (oContext instanceof Context ? oContext.getPath() : oContext),
 						"sap.ui.model.odata.ODataMetaModel");
 				}
 				break;
