@@ -23,12 +23,8 @@
 	padding: 1px; /* using padding here so that margin won't collide */
 }
 
-.sapMRb:focus .sapMRbBOut {
-	outline: 0.125rem dotted @sapHCStandardFG;
-}
-
-.sapMRbDis:focus .sapMRbBOut {
-	outline: none;
+.sapMRb:focus:before {
+	border: .125rem dotted @sapHCStandardFG;
 }
 
 .sapMRbBInn {
@@ -124,6 +120,17 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	.sapMRbBLabel {
 		line-height: 2rem;
 		height: 2rem;
+	}
+
+	.sapMRb:focus:before {
+		top: .4375rem;
+		bottom: .3125rem;
+		left: .4375rem;
+		right: .0625;
+	}
+
+	.sapMRbHasLabel.sapMRb:focus:before {
+		right: -.125rem;
 	}
 }
 

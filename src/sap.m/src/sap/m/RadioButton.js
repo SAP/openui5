@@ -251,6 +251,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			this._createLabel("text", this.getText());
 		}
+		this.addStyleClass("sapMRbHasLabel");
 		return this;
 	};
 
