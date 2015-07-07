@@ -353,13 +353,13 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 * @public
 	 */
 	Overlay.prototype.getDesignTimeMetadata = function() {
-		var oDesignTimeMetdata = this.getAggregation("designTimeMetadata");
-		if (!oDesignTimeMetdata && !this._oDefaultDesignTimeMetadata) {
+		var oDesignTimeMetadata = this.getAggregation("designTimeMetadata");
+		if (!oDesignTimeMetadata && !this._oDefaultDesignTimeMetadata) {
 			this._oDefaultDesignTimeMetadata = new DesignTimeMetadata({
-				data : this._getElementDesignTimeMetadata()
+				data : ElementUtil.getDesignTimeMetadata(this.getElementInstance())
 			});
 		}
-		return oDesignTimeMetdata || this._oDefaultDesignTimeMetadata;
+		return oDesignTimeMetadata || this._oDefaultDesignTimeMetadata;
 	};
 
 	/**
@@ -492,15 +492,6 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			this._oDefaultDesignTimeMetadata.destroy();
 			this._oDefaultDesignTimeMetadata = null;
 		}
-	};
-
-	/**
-	 * @return {map} returns the design time metadata of the associated element
-	 * @private
-	 */
-	Overlay.prototype._getElementDesignTimeMetadata = function() {
-		var oElement = this.getElementInstance();
-		return oElement ? oElement.getMetadata().getDesignTime() : {};
 	};
 
 	/**
