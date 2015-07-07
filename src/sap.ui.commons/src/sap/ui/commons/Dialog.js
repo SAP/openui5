@@ -941,15 +941,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var iLeft = this.originalRectangle.left + event.screenX - this.startDragX;
 				var iTop = this.originalRectangle.top + event.screenY - this.startDragY;
 
-				iTop = Math.max(iTop, 0); // should not move the Dialog beyond the top border - otherwise it cannot be moved back
+				iTop = Math.max(iTop, window.pageYOffset); // should not move the Dialog beyond the top border - otherwise it cannot be moved back
 				if (this._bRtlMode || this._keepInWindow()) {
-					iLeft = Math.min(iLeft, document.documentElement.clientWidth - this._RootWidth); // in RTL mode, do not move beyond the right window border
+					iLeft = Math.min(iLeft, document.documentElement.clientWidth + window.pageXOffset - this._RootWidth); // in RTL mode, do not move beyond the right window border
 				}
 				if (!this._bRtlMode || this._keepInWindow()) {
 					iLeft = Math.max(iLeft, 0); // in LTR mode do not move the Dialog beyond the left border
 				}
 				if (this._keepInWindow()) {
-					iTop = Math.min(iTop, document.documentElement.clientHeight - this._RootHeight);
+					iTop = Math.min(iTop, document.documentElement.clientHeight + window.pageYOffset - this._RootHeight);
 				}
 
 				this.oPopup.setPosition(Popup.Dock.LeftTop, {
