@@ -1351,6 +1351,10 @@ sap.ui.define([
 		var aIds = this.mAssociations[sAssociationName];
 		var sId = null;
 
+		if (!aIds) {
+			return null;
+		}
+
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
 			this.iSuppressInvalidate++;
