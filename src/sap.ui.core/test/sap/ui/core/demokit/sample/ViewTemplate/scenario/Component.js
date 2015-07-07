@@ -12,9 +12,8 @@ sap.ui.define([
 		'sap/ui/core/mvc/View',
 		'sap/ui/core/sample/ViewTemplate/Component',
 		'sap/ui/core/util/MockServer',
-		'sap/ui/model/odata/AnnotationHelper',
 		'jquery.sap.script'
-	], function (jQuery, View, BaseComponent, MockServer, AnnotationHelper/*, jQuerySapScript*/) {
+	], function (jQuery, View, BaseComponent, MockServer/*, jQuerySapScript*/) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {

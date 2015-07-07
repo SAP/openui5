@@ -53,19 +53,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 		 * @param {object} mSettings
 		 *   map/JSON-object with initial property values, etc.
 		 * @param {number} [i]
-		 *   index of part in case of a composite binding
+		 *   index of part inside a composite binding
 		 * @returns {object}
 		 *   the callback interface
 		 */
 		function getInterface(oWithControl, mSettings, i) {
 			/*
 			 * Returns the binding related to the current formatter call.
+			 * @param {number} [iPart]
+			 *   index of part in case of a root formatter for a composite binding
 			 * @returns {sap.ui.model.PropertyBinding}
 			 */
-			function getBinding() {
+			function getBinding(iPart) {
 				var oBinding = oWithControl.getBinding("any");
 				return oBinding instanceof CompositeBinding
-					? oBinding.getBindings()[i]
+					? oBinding.getBindings()[i === undefined/*root formatter*/ ? iPart : i]
 					: oBinding;
 			}
 
@@ -83,9 +85,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * This interface provides callback functions to access the model and path  which are
 			 * needed to process OData v4 annotations. It initially offers a subset of methods
 			 * from {@link sap.ui.model.Context} so that formatters might also be called with a
-			 * context object for convenience, e.g. outside of XML template processing.
+			 * context object for convenience, e.g. outside of XML template processing (see below
+			 * for an exception to this rule).
 			 *
-			 * Example: Suppose you have a formatter function called "foo" like this
+			 * <b>Example:</b> Suppose you have a formatter function called "foo" like this
 			 * <pre>
 			 * window.foo = function (oInterface, vRawValue) {
 			 *     //TODO ...
@@ -101,6 +104,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * <code>oInterface.getModel().getObject(oInterface.getPath()) === vRawValue</code>
 			 * holds.
 			 *
+			 * <b>Composite Binding Examples:</b> Suppose you have the same formatter function and
+			 * it is used in a composite binding like this
+			 * <pre>
+			 * &lt;Text text="{path: 'Label', formatter: 'foo'}: {path: 'Value', formatter: 'foo'}"/>
+			 * </pre>
+			 * Then <code>oInterface.getPath()</code> will refer to ".../Label" in the 1st call and
+			 * ".../Value" in the 2nd call, i.e. each formatter call knows which part of the
+			 * composite binding it belongs to and behaves just like it was an ordinary binding.
+			 *
+			 * In contrast, if your formatter is used not within a part of the composite binding,
+			 * but at the root of the composite binding in order to aggregate all parts like this
+			 * <pre>
+			 * &lt;Text text="{parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'}"/>
+			 * </pre>
+			 * Then <code>oInterface.getPath(0)</code> will refer to ".../Label" and
+			 * <code>oInterface.getPath(1)</code> will refer to ".../Value", i.e. a root formatter
+			 * can access the ith part of the composite binding at will (since 1.31.0).
+			 * The function <code>foo</code> will be called with arguments such that <code>
+			 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
+			 * holds.
+			 *
+			 * To distinguish those two use cases, just check whether
+			 * <code>oInterface.getModel() === undefined</code>, in which case the formatter is
+			 * called on root level. To find out the number of parts, probe for the smallest
+			 * non-negative integer where <code>oInterface.getModel(i) === undefined</code>.
+			 * This additional functionality is of course not available from
+			 * {@link sap.ui.model.Context}, i.e. such formatters MUST be called with an instance
+			 * of this context interface.
+			 *
 			 * @interface
 			 * @name sap.ui.core.util.XMLPreprocessor.IContext
 			 * @public
@@ -110,24 +142,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				/**
 				 * Returns the model related to the current formatter call.
 				 *
+				 * @param {number} [i]
+				 *   index of part in case of a root formatter for a composite binding
+				 *   (since 1.31.0)
 				 * @returns {sap.ui.model.Model}
-				 *   the model related to the current formatter call
+				 *   the model related to the current formatter call, or (since 1.31.0)
+				 *   <code>undefined</code> in case of a root formatter if no <code>i</code> is
+				 *   given or if <code>i</code> is out of range
 				 * @public
 				 */
-				getModel : function () {
-					return getBinding().getModel();
+				getModel : function (i) {
+					var oBinding = getBinding(i);
+					return oBinding && oBinding.getModel();
 				},
 
 				/**
 				 * Returns the absolute path related to the current formatter call.
 				 *
+				 * @param {number} [i]
+				 *   index of part in case of a root formatter for a composite binding
+				 *   (since 1.31.0)
 				 * @returns {string}
-				 *   the absolute path related to the current formatter call
+				 *   the absolute path related to the current formatter call, or (since 1.31.0)
+				 *   <code>undefined</code> in case of a root formatter if no <code>i</code> is
+				 *   given or if <code>i</code> is out of range
 				 * @public
 				 */
-				getPath : function () {
-					var oBinding = getBinding();
-					return oBinding.getModel().resolve(oBinding.getPath(), oBinding.getContext());
+				getPath : function (i) {
+					var oBinding = getBinding(i);
+					return oBinding
+						&& oBinding.getModel().resolve(oBinding.getPath(), oBinding.getContext());
 				},
 
 				/**

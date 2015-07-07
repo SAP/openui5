@@ -31,7 +31,8 @@
 					<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
 						<!-- Note: composite bindings instead of separate labels for testing only! -->
 						<Text text="[Type Name] {path: 'entityType>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						<Text text="[{path: 'entityType>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}] {path: 'entityType>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+						<!-- Text text="[{path: 'entityType>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}] {path: 'entityType>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" / -->
+						<Text text="{parts: [{path: 'entityType>Title/Label'}, {path: 'entityType>Title/Value'}], formatter: 'sap.ui.core.sample.ViewTemplate.scenario.formatParts'}"/>
 						<template:if test="{entityType>Description}"> <!-- HeaderInfo Description is Nullable -->
 							<Text text="[{path: 'entityType>Description/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}] {path: 'entityType>Description/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 						</template:if>
