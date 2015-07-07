@@ -3,8 +3,8 @@
  */
 
 // Provides base class for controllers (part of MVC concept)
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject'],
+	function(jQuery, EventProvider, ManagedObject) {
 	"use strict";
 
 
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			var oCustomControllerDef;
 
 			if (sap.ui.core.CustomizingConfiguration) {
-				var controllerExtensionConfig = sap.ui.core.CustomizingConfiguration.getControllerExtension(sName);
+				var controllerExtensionConfig = sap.ui.core.CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
 				if (controllerExtensionConfig) {
 					var sControllerName = controllerExtensionConfig.controllerName;
 					jQuery.sap.log.info("Customizing: Controller '" + sName + "' is now extended by '" + sControllerName + "'");
