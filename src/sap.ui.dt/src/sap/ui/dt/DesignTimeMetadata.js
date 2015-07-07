@@ -32,7 +32,6 @@ function(jQuery, ManagedObject) {
 	 */
 	var DesignTimeMetadata = ManagedObject.extend("sap.ui.dt.DesignTimeMetadata", /** @lends sap.ui.dt.DesignTimeMetadata.prototype */ {
 		metadata : {
-
 			// ---- object ----
 
 			// ---- control specific ----
