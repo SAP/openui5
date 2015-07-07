@@ -118,7 +118,8 @@ sap.ui.define(['jquery.sap.global',
 				var sViewPath = oOptions.viewNamespace + oOptions.viewName,
 					oView = this.getView(sViewPath),
 					result = [],
-					oControl;
+					oControl,
+					sViewId;
 
 				if (!oView) {
 					$.sap.log.info("Did not find the view: " + sViewPath);
@@ -136,11 +137,21 @@ sap.ui.define(['jquery.sap.global',
 					return result;
 				}
 
-				if (oOptions.id) {
+				if (typeof oOptions.id === "string") {
 					return oView.byId(oOptions.id);
 				}
 
-				return this.getAllControlsWithTheParent(oView, oOptions.controlType);
+				var aAllControlsOfTheView = this.getAllControlsWithTheParent(oView, oOptions.controlType);
+
+				if ($.type(oOptions.id) === "regexp") {
+					sViewId = oView.getId();
+					aAllControlsOfTheView = aAllControlsOfTheView.filter(function (oControl) {
+						var sUnprefixedControlId = oControl.getId().replace(sViewId, "");
+						return oOptions.id.test(sUnprefixedControlId);
+					});
+				}
+
+				return aAllControlsOfTheView;
 			},
 
 			getAllControlsWithTheParent : function (oParent, fnControlType) {
@@ -226,7 +237,7 @@ sap.ui.define(['jquery.sap.global',
 					return vControl && this._checkControlType(vControl, oOptions) ? vControl : null;
 				}
 
-				if (jQuery.type(vStringOrArrayOrRegex) === "regexp") {
+				if ($.type(vStringOrArrayOrRegex) === "regexp") {
 
 					//Performance critical
 					for (var sPropertyName in oCoreElements) {
