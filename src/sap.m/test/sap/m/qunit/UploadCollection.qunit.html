@@ -194,6 +194,25 @@
 		assert.equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name is null");
 	});
 
+	QUnit.test("Determine and set unique key for a file", function(assert) {
+		var sFileName = "someFileName", sRequestId = "1", sFileNameRequestIdValue, aRequestHeaders = [{
+				name: this.oUploadCollection._headerParamConst.requestIdName,
+				value: sRequestId
+			}];
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		oFileUploader.fireUploadStart({
+			fileName : sFileName,
+			requestHeaders: aRequestHeaders
+		});
+		var iParamCounter = aRequestHeaders.length;
+		for (var i = 0; i < iParamCounter; i++ ) {
+			if (aRequestHeaders[i].name === this.oUploadCollection._headerParamConst.fileNameRequestIdName) {
+				sFileNameRequestIdValue = aRequestHeaders[i].value;
+			}
+		}
+		assert.equal(sFileNameRequestIdValue, sFileName + sRequestId, "Unique key for a File is set correctly into requestHeaders");
+	});
+
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */

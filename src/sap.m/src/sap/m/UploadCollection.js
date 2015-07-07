@@ -337,19 +337,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection._uploadingStatus = "uploading";
 	UploadCollection._displayStatus = "display";
 	UploadCollection._toBeDeletedStatus = "toBeDeleted";
-	UploadCollection.prototype._requestIdName = "requestId";
-	UploadCollection.prototype._requestIdValue = 0;
-	UploadCollection._placeholderCamera = 'sap-icon://camera';
 	UploadCollection._pendingUploadStatus = "pendingUploadStatus"; // UploadCollectionItem has this status only if UploadCollection is used with the property 'instantUpload' = false
-	UploadCollection.prototype._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
-
+	UploadCollection._placeholderCamera = 'sap-icon://camera';
 	/**
 	 * @description This file defines behavior for the control
 	 * @private
 	 */
 	UploadCollection.prototype.init = function() {
 		UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._oList = new sap.m.List(this.getId() + "-list", {});
+		this._headerParamConst = {
+			requestIdName : "requestId" + jQuery.now(),
+			fileNameRequestIdName : "fileNameRequestId" + jQuery.now()
+		};
+		this._requestIdValue = 0;
+		this._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
+		this._oList = new sap.m.List(this.getId() + "-list");
 		this._oList.addStyleClass("sapMUCList");
 		this._cAddItems = 0;
 		this.aItems = [];
@@ -1619,7 +1621,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					});
 				}
 				that._oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
-					name : this._requestIdName,
+					name : this._headerParamConst.requestIdName,
 					value: sRequestValue
 				}));
 			}
@@ -1864,7 +1866,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			return null;
 		}
 		for (var j = 0; j < oHeaderParams.length; j++) {
-			if (oHeaderParams[j].name === this._requestIdName) {
+			if (oHeaderParams[j].name === this._headerParamConst.requestIdName) {
 				return oHeaderParams[j].value;
 			}
 		}
@@ -1920,6 +1922,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					if (that.getInstantUpload()) {
 						that._onUploadProgress(oEvent);
 					}
+				},
+				uploadStart : function(oEvent) {
+					that._onUploadStart(oEvent);
 				}
 			});
 			var sTooltip = this._oFileUploader.getTooltip();
@@ -1928,6 +1933,26 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 		}
 		return this._oFileUploader;
+	};
+
+	/**
+	 * @description Creates the unique key for a file by concatenating the fileName with its requestId and puts it into the requestHeaders parameter of the FileUploader.
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	UploadCollection.prototype._onUploadStart = function(oEvent) {
+		var oRequestHeaders = {}, i, sRequestIdValue, iParamCounter, sFileName, sFileNameRequestId;
+		iParamCounter = oEvent.getParameter("requestHeaders").length;
+		for ( i = 0; i < iParamCounter; i++ ) {
+			if (oEvent.getParameter("requestHeaders")[i].name === this._headerParamConst.requestIdName) {
+				sRequestIdValue = oEvent.getParameter("requestHeaders")[i].value;
+			}
+		}
+		sFileName = oEvent.getParameter("fileName");
+		sFileNameRequestId = sFileName + sRequestIdValue;
+		oRequestHeaders.name = this._headerParamConst.fileNameRequestIdName;
+		oRequestHeaders.value = sFileNameRequestId;
+		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
 	};
 
 	/**
