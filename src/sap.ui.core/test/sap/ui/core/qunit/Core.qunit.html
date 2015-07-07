@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested class: sap.ui.core.Core
   Author: Frank Weigel, d046314
 -->
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	
+
 		<title>Test Page for the SAPUI5 Core Object [sap.ui.core.Core]</title>
-		
+
 		<script type="text/javascript">
 		window["sap-ui-config"] = {
 			themeRoots : {
 				"my_preconfigured_theme" : "http://preconfig.com/ui5-themes",
-				
+
 				"my_second_preconfigured_theme" : {
 					"sap.ui.commons" : "http://commons.preconfig.com/ui5-themes",
 					"" : "http://preconfig.com/ui5-themes",
@@ -21,9 +21,9 @@
 				}
 			}
 		}
-		</script>	
-		
-		<script id="sap-ui-bootstrap" 
+		</script>
+
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="test_theme"
@@ -34,12 +34,12 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		
+
 		<script type="text/javascript">
 
 			function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
 				var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
-				  result = true, 
+				  result = true,
 					sMethod;
 				for(var i in aMethodNames) {
 					sMethod = aMethodNames[i];
@@ -51,12 +51,12 @@
 			}
 
 			function equalControls(actual, expected, message) {
-				ok(actual === expected, message); 
+				ok(actual === expected, message);
 			}
 
 		qutils.delayTestStart();
-		
-		
+
+
 		// used to get access to the non-public core parts
 		var oRealCore;
 		var TestCorePlugin = function() {};
@@ -64,21 +64,21 @@
 			oRealCore = oCore;
 		};
 		sap.ui.getCore().registerPlugin(new TestCorePlugin());
-		
-		
+
+
 		module("Basic");
-		
+
 		test("loadLibrary", function() {
 			equal(typeof sap.ui.getCore().loadLibrary, "function", "Core has method loadLibrary");
-			ok(!jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has not been loaded yet"); 
+			ok(!jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has not been loaded yet");
 			ok(!jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace doesn't exists");
 			ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 0, "style sheet doesn't exist");
 			sap.ui.getCore().loadLibrary("sap.ui.testlib", "./testdata/uilib");
-			ok(jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has been loaded"); 
+			ok(jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has been loaded");
 			ok(jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace exists");
 			ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 1, "style sheets have been added");
 		});
-		
+
 		/**
 		 * Tests creation of an UIArea instance and afterwards checks whether it can be found via getUIAreaMethod
 		 */
@@ -117,26 +117,26 @@
 		});
 
 		test("testGetLibraryResourceBundle", function() {
-			equal(typeof sap.ui.getCore().getLibraryResourceBundle, "function", "Core has method getLibraryResourceBundle"); 
+			equal(typeof sap.ui.getCore().getLibraryResourceBundle, "function", "Core has method getLibraryResourceBundle");
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de");
 			ok(oBundle, "bundle could be retrieved");
 			equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
 			equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
 		});
-		
+
 		test("testSetThemeRoot", function() {
 			sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.core"], "http://core.something.corp");
 		    sap.ui.getCore().setThemeRoot("my_theme", "http://custom.something.corp");
 		    sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.commons"], "http://commons.something.corp");
-			
+
 		    var corePath = oRealCore._getThemePath("sap.ui.core", "my_theme");
 		    var commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_theme");
 			var otherPath = oRealCore._getThemePath("sap.ui.other", "my_theme");
-			
+
 			equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
 			equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
 			equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
-				
+
 			corePath = jQuery.sap.getModulePath("sap.ui.core.themes.my_theme", "/");
 			commonsPath = jQuery.sap.getModulePath("sap.ui.commons.themes.my_theme", "/");
 			otherPath = jQuery.sap.getModulePath("sap.ui.other.themes.my_theme", "/");
@@ -144,34 +144,34 @@
 			equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
 			equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
 			equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
-			
+
 			corePath = sap.ui.resource("sap.ui.core", "themes/my_theme/img/x.png");
 			commonsPath = sap.ui.resource("sap.ui.commons", "themes/my_theme/img/x.png");
 			otherPath = sap.ui.resource("sap.ui.other", "themes/my_theme/img/x.png");
-			
+
 			equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/img/x.png", "path should be as configured");
 			equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/img/x.png", "path should be as configured");
 			equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/img/x.png", "path should be as configured");
 		});
-		
+
 		// now check the location of the preconfigured themes
 		test("themeRoot configuration", function() {
 			var corePath = oRealCore._getThemePath("sap.ui.core", "my_preconfigured_theme");
 			var commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_preconfigured_theme");
 			var otherPath = oRealCore._getThemePath("sap.ui.other", "my_preconfigured_theme");
-			
+
 			equal(corePath, "http://preconfig.com/ui5-themes/sap/ui/core/themes/my_preconfigured_theme/", "path should be as configured");
 			equal(commonsPath, "http://preconfig.com/ui5-themes/sap/ui/commons/themes/my_preconfigured_theme/", "path should be as configured");
 			equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_preconfigured_theme/", "path should be as configured");
-			
+
 			corePath = oRealCore._getThemePath("sap.ui.core", "my_second_preconfigured_theme");
 			commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_second_preconfigured_theme");
 			otherPath = oRealCore._getThemePath("sap.ui.other", "my_second_preconfigured_theme");
-			
+
 			equal(corePath, "http://core.preconfig.com/ui5-themes/sap/ui/core/themes/my_second_preconfigured_theme/", "path should be as configured");
 			equal(commonsPath, "http://commons.preconfig.com/ui5-themes/sap/ui/commons/themes/my_second_preconfigured_theme/", "path should be as configured");
 			equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_second_preconfigured_theme/", "path should be as configured");
-			
+
 			// read from script tag
 			corePath = oRealCore._getThemePath("sap.ui.core", "my_third_preconfigured_theme");
 			equal(corePath, "http://third.preconfig.com/ui5-themes/sap/ui/core/themes/my_third_preconfigured_theme/", "path should be as configured");
@@ -182,20 +182,20 @@
 			var ua = navigator.userAgent;
 			var value = jQuery("html").attr("data-sap-ui-browser");
 			ok(typeof value === "string" && value, "Data attribute is set and is not empty");
-			
+
 			var version = browser.version;
 			ok(typeof version === "number", "Browser version is set");
 
 			var oExpMobile = /Mobile/;
 			var bMobile = oExpMobile.test(navigator.userAgent);
 			equal(bMobile, !!browser.mobile, "Mobile is detected right");
-			
+
 			if (browser.firefox) {
 				ok(value.indexOf("ff") === 0, "Browser is Firefox and data attribute is set right");
 			} else if (browser.webkit) {
 				if (browser.chrome) {
-					ok(value.indexOf("cr") === 0, "Browser is Chrome and data attribute is set right");	
-				} 
+					ok(value.indexOf("cr") === 0, "Browser is Chrome and data attribute is set right");
+				}
 				// Those tests should not be called anymore
 				if (browser.safari && browser.mobile) {
 					ok(value.indexOf("msf") === 0, "Browser is Mobile Safari and data attribute is set right");
@@ -204,6 +204,8 @@
 				}
 			} else if (browser.internet_explorer) {
 				ok(value.indexOf("ie") === 0, "Browser is IE and data attribute is set right");
+			} else if (browser.edge) {
+				ok(value.indexOf("ed") === 0, "Browser is Edge and data attribute is set right");
 			}
 
 			ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
@@ -211,21 +213,21 @@
 
 		// now check the locale configuration to be applied as lang attribute
 		test("Locale configuration", function() {
-			
+
 			var $html = jQuery("html");
 			var oConfig = sap.ui.getCore().getConfiguration();
 			var oLocale = oConfig.getLocale();
 			var sLocale = oLocale && oLocale.toString();
-			
+
 			equal($html.attr("lang"), sLocale, "lang attribute matches locale");
-			
+
 			sLocale = "de";
 			oConfig.setLanguage(sLocale);
 			equal($html.attr("lang"), sLocale, "lang attribute matches locale");
-			
+
 		});
 
-		
+
 		</script>
 	</head>
 	<body>
