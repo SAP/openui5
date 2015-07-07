@@ -14,7 +14,7 @@
 				}
 			</html:style>
 
-			<Label text="Default(Information) with icon and close button:" />
+			<Label text="Default(Information) with default icon and close button:" />
 			<MessageStrip
 				text="Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				showIcon="true"
@@ -22,7 +22,7 @@
 				close="onMsgStripClose">
 			</MessageStrip>
 
-			<Label text="Error with icon and close button:" />
+			<Label text="Error with default icon and close button:" />
 			<MessageStrip
 				text="Error: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				type="Error"
@@ -31,7 +31,7 @@
 				close="onMsgStripClose">
 			</MessageStrip>
 
-			<Label text="Warning with icon and close button:" />
+			<Label text="Warning with default icon and close button:" />
 			<MessageStrip
 				text="Warning: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				type="Warning"
@@ -40,7 +40,7 @@
 				close="onMsgStripClose">
 			</MessageStrip>
 
-			<Label text="Success with icon and close button:" />
+			<Label text="Success with default icon and close button:" />
 			<MessageStrip
 				text="Success: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				type="Success"
@@ -49,7 +49,7 @@
 				close="onMsgStripClose">
 			</MessageStrip>
 
-			<Label text="Information with icon" />
+			<Label text="Information with default icon" />
 			<MessageStrip
 				text="Information: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 				type="Information"
@@ -62,6 +62,14 @@
 				type="Information"
 				showIcon="true"
 				customIcon="sap-icon://locked">
+			</MessageStrip>
+
+			<Label text="Warning with custom icon" />
+			<MessageStrip
+				text="Warning: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+				type="Warning"
+				showIcon="true"
+				customIcon="sap-icon://warning">
 			</MessageStrip>
 
 			<Label text="Error with link" />
