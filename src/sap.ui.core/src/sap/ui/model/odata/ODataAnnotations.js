@@ -1166,6 +1166,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 			}
 		} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
 			vPropertyValue = this._getTextValue(oDocumentNode, mAlias);
+		} else if (oDocumentNode.nodeName.toLowerCase() === "null") {
+			vPropertyValue = null;
 		} else {
 			vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 		}

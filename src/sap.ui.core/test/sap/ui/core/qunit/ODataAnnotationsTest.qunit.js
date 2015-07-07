@@ -18,7 +18,7 @@ function deepContains(oValue, oExpected, sMessage) {
 			equal(oExpected[sKey].length, oValue[sKey].length, sMessage + "/" + sKey + " length matches");
 		}
 		
-		if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
 			// Go deeper
 			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
 		} else {
@@ -3905,7 +3905,7 @@ function runODataAnnotationTests() {
 	});
 
 	asyncTest("Apply in If", function() {
-		expect(67);
+		expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -3930,7 +3930,7 @@ function runODataAnnotationTests() {
 								"Ne": [{
 									"Path": "EmailAddress"
 								}, {
-									"Null": {}
+									"Null": null
 								}]
 							}, {
 								"Apply": {
@@ -3944,7 +3944,7 @@ function runODataAnnotationTests() {
 									}]
 								}
 							}, {
-								"Null": {}
+								"Null": null
 							}]
 						},
 						"RecordType": "Value"
@@ -3956,7 +3956,7 @@ function runODataAnnotationTests() {
 									"Ne": [{
 										"Path":"EmailAddress"
 									}, {
-										"Null":{}
+										"Null": null
 									}]
 								}, {
 									"Apply": {
@@ -3970,7 +3970,7 @@ function runODataAnnotationTests() {
 										}]
 									}
 								}, {
-									"Null":{}
+									"Null": null
 								}]
 							}
 						},
@@ -3985,7 +3985,7 @@ function runODataAnnotationTests() {
 	});
 
 	asyncTest("V2: Apply in If", function() {
-		expect(67);
+		expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -4011,7 +4011,7 @@ function runODataAnnotationTests() {
 								"Ne": [{
 									"Path": "EmailAddress"
 								}, {
-									"Null": {}
+									"Null": null
 								}]
 							}, {
 								"Apply": {
@@ -4025,7 +4025,7 @@ function runODataAnnotationTests() {
 									}]
 								}
 							}, {
-								"Null": {}
+								"Null": null
 							}]
 						},
 						"RecordType": "Value"
@@ -4037,7 +4037,7 @@ function runODataAnnotationTests() {
 									"Ne": [{
 										"Path":"EmailAddress"
 									}, {
-										"Null":{}
+										"Null": null
 									}]
 								}, {
 									"Apply": {
@@ -4051,7 +4051,7 @@ function runODataAnnotationTests() {
 										}]
 									}
 								}, {
-									"Null":{}
+									"Null": null
 								}]
 							}
 						},
