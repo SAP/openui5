@@ -3027,5 +3027,272 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "6c3d62f58d65395e92f21c15121aba5287776d1f",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Should open dialog on tap.",
+        "references": []
+      },
+      {
+        "id": "0f712ccc0dec1bca5c30a76c1359c5f317bd95ec",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase: Active state should not be affected from list mode.",
+        "references": []
+      },
+      {
+        "id": "9eeca7135d2d9a88c4c27d139460dc9efd0e4a58",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectHeader and IconTabBar 2-Way-Binding issue fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "2d1815fbd92745892448682a2f55eb2f930098c8",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ColumnListItem: Column visibility index should be updated when cells are not rendered.",
+        "references": []
+      },
+      {
+        "id": "bffe8a6d80d17bcfeaaf41bc6322e30fa3f76ee0",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateRangeSelection: Custom placeholder should be removed when value is set.",
+        "references": []
+      },
+      {
+        "id": "0fdcd1bc36dd9240b9c11fac4c79112a50cf2b02",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: initial width and height is set in the render",
+        "references": []
+      },
+      {
+        "id": "53c950ddc0bf3ad2901fe3150d71cf94f04362ad",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase: No data text should only be visible when there is no items after loading.",
+        "references": []
+      },
+      {
+        "id": "814f5647fee2b30bea599ae42dcf5331535b8671",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Adding classes now works",
+        "references": []
+      },
+      {
+        "id": "c5e2eb6d7276aeab80831c0b18d4d2e9a1fa2498",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Popover position corrected when opened from ObjectAttribute active text",
+        "references": []
+      },
+      {
+        "id": "7f738a181767505ad2287651f190e5faf8052573",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: Show header when no headerText only when expandable",
+        "references": []
+      },
+      {
+        "id": "cecef11e7435c7f17ab4cdb6028e20d553bf3e80",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Content is shown properly when device change its orientation",
+        "references": []
+      },
+      {
+        "id": "f0d0fc2a9e07bc3017bd98059ccf5973ca1748b6",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Correctly show ResponsiveGridLayout when visibility is binded",
+        "references": []
+      },
+      {
+        "id": "68d874b2a3e39b2291e6d2a7c181d27752e766f5",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event was fired but Popover was not closed",
+        "references": []
+      },
+      {
+        "id": "5eebd596a7172c2b7e7541b7320bcac865a57591",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: infinite loop occurs after a page in splitcontainer moved to another control\u0027s aggregation",
+        "references": []
+      },
+      {
+        "id": "a55fc02aba03e7f6767bf944816caa1ce6d57f92",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: master can\u0027t be open again after switching modes",
+        "references": []
+      },
+      {
+        "id": "edf4c73713334dd6df6607d8268da66dc05e53f5",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Should respect selection mode while calculation colspan of group headers",
+        "references": []
+      },
+      {
+        "id": "de26eac1552f43c7d87dae5900c7e64a0a010372",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: fix token truncation after navigation action",
+        "references": []
+      },
+      {
+        "id": "a1bf58861f0d6e3d83f30d6bc009eaf324662c46",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Displayed data corrected when data binding is refreshed.",
+        "references": []
+      },
+      {
+        "id": "2315171982f9e172f2b0dc450c42ed30beaf064f",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Extend dependencies to improve stability.",
+        "references": []
+      },
+      {
+        "id": "38f280e65eaedf02c5e088b961deb35e1d0c5b7d",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Headerparameter duplication removed.",
+        "references": []
+      },
+      {
+        "id": "4d8819a5701b6d0bc1a581443b131045a044bc4b",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Second renaming is working again.",
+        "references": []
+      },
+      {
+        "id": "4c21ce21cbd08c1e4487f9730729988aa06550f3",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.m.TextArea: should convert carriage returns correctly.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "640cca206c427b29ae4bc6dca05b4823b7ee35f0",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      },
+      {
+        "id": "daafddc40d38be9703233eaf7348642d16594621",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Fix wrong style of the focus state on mobile (HCB Theme)",
+        "references": []
+      },
+      {
+        "id": "60b3628eddc77c0e5b9b5738245c69cdc7adc046",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix name clashes issue in xml view",
+        "references": []
+      },
+      {
+        "id": "eb016e1e94dde6231ebd346de00d76f620062da0",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Multiple services should not be called when binding is refreshed.",
+        "references": []
+      },
+      {
+        "id": "988a4698034b4efcc4dac327c29f24123acb05d1",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Value help for read-only inputs",
+        "references": []
+      },
+      {
+        "id": "c19c9a10d2980f0c1d7b627223da23a40238a5df",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Now updates href property on setting to enabled state",
+        "references": []
+      },
+      {
+        "id": "6c503a76d5bb4fc9f7918e3e863528cdc3be4a20",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: Number unit position corrected",
+        "references": []
+      },
+      {
+        "id": "34aacdf153a0dfb370e4e30e80bd0eff6d90d29b",
+        "author": "Martin Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: Clone method should clone internal popup\u0027s content aggregation",
+        "references": []
+      },
+      {
+        "id": "88631d3f568ad1f92d97d006bc4061b8375d0e33",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Buttons positioning in HCB theme",
+        "references": []
+      },
+      {
+        "id": "28dd9dcc9e2c98c1e526071444ae537f38d0aaf5",
+        "author": "i057508 \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Upon theme or orientation change tile dimensions are updated now.",
+        "references": []
+      },
+      {
+        "id": "23354fb74b0bb64dc1fc60606aaa6a509f7fa001",
+        "author": "Vesselin Petrunov \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: The dialog is no longer flickering on iOS devices when an item is being selected",
+        "references": []
+      },
+      {
+        "id": "b01ccf8e5bd09af01008f43828ef5bc70bbcb544",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.TargetHandler: Respects view levels when multiple targets are displayed",
+        "references": []
+      },
+      {
+        "id": "161bcb17fb78116096388d8586b86a8cbba2ff11",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "unstyled sap.m.ToggleButton: Display corrected",
+        "references": []
+      },
+      {
+        "id": "3b0f4c4e14e58afd439b5335507f9a777e55dfe9",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Typo in explored app corrected",
+        "references": []
+      }
+    ]
   }
 }
