@@ -804,6 +804,12 @@
 				equal(remaining[0], this.assocElement2.getId(), "remaining entry must be the ID of the second associated object");
 			});
 
+			test("Remove from 0..n Association that does not exists or was never used", function () {
+				var result = this.obj.removeAssociation("associatedObjects", this.assocElement);
+
+				equal(result, null, "returned value must be null");
+			});
+
 			test("Remove All from 0..n Association", function() {
 				this.obj.addAssociation("associatedObjects", this.assocElement2);
 				this.obj.addAssociation("associatedObjects", this.assocElement); // add one more so removeAll has to remove two objects
