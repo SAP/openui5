@@ -211,6 +211,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	InputBase.prototype.init = function() {
 		this._lastValue = "";	// last changed value
 		this._changeProxy = jQuery.proxy(this.onChange, this);
+
+		/**
+		 * To detect when the control is in the rendering phase.
+		 *
+		 * @protected
+		 */
+		this.bRenderingPhase = false;
 	};
 
 	/**
@@ -221,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	InputBase.prototype.onBeforeRendering = function() {
 
 		// mark the rendering phase
-		this._bRendering = true;
+		this.bRenderingPhase = true;
 
 		// is DOM already available
 		if (this._bCheckDomValue && this.isActive()) {
@@ -262,7 +269,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// rendering phase is finished
-		this._bRendering = false;
+		this.bRenderingPhase = false;
 	};
 
 	/**
@@ -386,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// because dom is replaced during the rendering
 		// onfocusout event is triggered probably focus goes to the document
 		// so we ignore this event that comes during the rendering
-		if (this._bRendering) {
+		if (this.bRenderingPhase) {
 			return;
 		}
 
