@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
-	'sap/ui/base/BindingParser', 'sap/ui/model/json/JSONModel',
-	'sap/ui/model/odata/_AnnotationHelperBasics', 'sap/ui/model/odata/_AnnotationHelperExpression',
-], function(BindingParser, JSONModel, Basics, Expression) {
+	'sap/ui/base/BindingParser', 'sap/ui/base/ManagedObject', 'sap/ui/model/json/JSONModel',
+	'sap/ui/model/odata/_AnnotationHelperBasics', 'sap/ui/model/odata/_AnnotationHelperExpression'
+], function(BindingParser, ManagedObject, JSONModel, Basics, Expression) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
@@ -1350,5 +1350,35 @@ sap.ui.require([
 	test("parseTimeOfDay", function () {
 		strictEqual(Expression.parseTimeOfDay("23:59:59.123456789012").getTime(),
 			Date.UTC(1970, 0, 1, 23, 59, 59, 123));
+	});
+
+	//*********************************************************************************************
+	test("expression: complex binding mode is disabled", function () {
+		var oInterface = {
+				getPath: function () { return ""; }
+			},
+			oParser = ManagedObject.bindingParser,
+			oPathValue = {
+				path: "/my/path",
+				value: { Bool: "true"}
+			};
+
+		this.mock(jQuery.sap.log).expects("warning")
+			.withExactArgs(
+				"Complex binding syntax not active", null, "sap.ui.model.odata.AnnotationHelper")
+			.once();
+
+		// preparation
+		ManagedObject.bindingParser = BindingParser.simpleParser;
+
+		try {
+			// code under test
+			Expression.getExpression(oInterface, oPathValue, false);
+			Expression.getExpression(oInterface, oPathValue, false);
+		}
+		finally {
+			// clean up
+			ManagedObject.bindingParser = oParser;
+		}
 	});
 });

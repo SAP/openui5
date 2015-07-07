@@ -6,8 +6,8 @@
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([
 	'jquery.sap.global', './_AnnotationHelperBasics', 'sap/ui/base/BindingParser',
-	'sap/ui/core/format/DateFormat'
-], function(jQuery, Basics, BindingParser, DateFormat) {
+	'sap/ui/base/ManagedObject', 'sap/ui/core/format/DateFormat'
+], function(jQuery, Basics, BindingParser, ManagedObject, DateFormat) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
@@ -427,6 +427,13 @@ sap.ui.define([
 		getExpression: function (oInterface, oRawValue, bWithType) {
 			var oResult;
 
+			if ( !Expression.simpleParserWarningLogged &&
+					ManagedObject.bindingParser === BindingParser.simpleParser) {
+				jQuery.sap.log.warning("Complex binding syntax not active", null,
+					"sap.ui.model.odata.AnnotationHelper");
+				Expression.simpleParserWarningLogged = true;
+			}
+
 			try {
 				oResult = Expression.expression(oInterface, {
 					path: oInterface.getPath(),
@@ -766,6 +773,13 @@ sap.ui.define([
 			}
 			return aParts.join('/');
 		},
+
+		/**
+		 * Flag indicating that warning for missing complex binding parser has already been logged.
+		 *
+		 * @type {boolean}
+		*/
+		simpleParserWarningLogged : false,
 
 		/**
 		 * Handling of "14.5.3.1.3 Function odata.uriEncode".
