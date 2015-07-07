@@ -8,10 +8,11 @@ sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Selection',
+	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/ElementUtil',
 	'./library'
 ],
-function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
+function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata, ElementUtil) {
 	"use strict";
 
 	/**
@@ -47,7 +48,15 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 				selectionMode : {
 					type : "sap.ui.dt.SelectionMode",
 					defaultValue : sap.ui.dt.SelectionMode.Single
-				}
+				},
+
+				/**
+				 * DesignTime metadata for classses to use with overlays (will overwrite default DTMetadata fields)
+				 * should have a map structure { "sClassName" : oDTMetadata, ... }
+				 */
+				 designTimeMetadata : {
+					type : "object"
+				 }
 			},
 			associations : {
 				/** 
@@ -218,7 +227,31 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 */
 	DesignTime.prototype.getRootElements = function() {
 		return this.getAssociation("rootElements") || [];
-	};	
+	};
+
+	/**
+	 * Returns a designTimeMetadata
+	 * @return {object} designTimeMetadata
+	 * @protected
+	 */
+	DesignTime.prototype.getDesignTimeMetadata = function() {
+		return this.getProperty("designTimeMetadata") || {};
+	};
+
+	/**
+	 * Returns a designTimeMetadata for the element or className
+	 * @param {string|sap.ui.core.Element}
+	 * @return {object} designTimeMetadata for a specific element or className
+	 * @protected
+	 */
+	DesignTime.prototype.getDesignTimeMetadataFor = function(vElement) {
+		var sClassName = vElement;
+		var mDTMetadata = this.getDesignTimeMetadata();
+		if (vElement.getMetadata) {
+			sClassName = vElement.getMetadata()._sClassName;
+		}
+		return mDTMetadata[sClassName];
+	};
 
 	/**
 	 * Adds a root element to the DesignTime and creates overlays for it and it's public descendants
@@ -236,7 +269,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 
 	/**
 	 * Removes a root element from the DesignTime and destroys overlays for it and it's public descendants
-	 * @param {String|sap.ui.core.Element} vRootElement element or elemet's id
+	 * @param {string|sap.ui.core.Element} vRootElement element or elemet's id
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
@@ -270,8 +303,17 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	 * @protected
 	 */
 	DesignTime.prototype.createOverlay = function(oElement) {
+		// merge the DTMetadata from the DesignTime and from UI5
+		var oDTMetadata = this.getDesignTimeMetadataFor(oElement);
+		var oDefaultDTMetadata = ElementUtil.getDesignTimeMetadata(oElement);
+		jQuery.extend(true, oDefaultDTMetadata, oDTMetadata);
+		if (oDefaultDTMetadata === {}) {
+			oDefaultDTMetadata = null;
+		}
+
 		return new Overlay({
-			element : oElement
+			element : oElement,
+			designTimeMetadata : oDefaultDTMetadata ? new DesignTimeMetadata({data : oDefaultDTMetadata}) : null
 		});
 	};
 

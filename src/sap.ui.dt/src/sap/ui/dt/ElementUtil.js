@@ -242,5 +242,15 @@ function(jQuery) {
 		}
 	};		
 
+	/**
+	 * 
+	 */
+	ElementUtil.getDesignTimeMetadata = function(oElement) {
+		var oDTMetadata = oElement ? oElement.getMetadata().getDesignTime() : {};
+		return oDTMetadata || {};
+	};		
+
+	
+
 	return ElementUtil;
 }, /* bExport= */ true);
