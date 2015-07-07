@@ -146,6 +146,33 @@ sap.ui.define(['jquery.sap.global',
 		 *
 		 * @param {object} oOptions an Object containing conditions for waiting and callbacks
 		 * @param {string|regexp} [oOptions.id] the global id of a control, or the id of a control inside of a view.
+		 * If a regex and a viewName is provided, Opa5 will only look for controls in the view with a matching id.<br/>
+		 * Example of a waitFor:
+		 * <pre>
+		 *     <code>
+		 *         this.waitFor({
+		 *             id: /my/,
+		 *             viewName: "myView"
+		 *         });
+		 *     </code>
+		 * </pre>
+		 * The view that is searched in:
+		 * <pre>
+		 *     <code>
+		 *         &lt;core:View xmlns:core="sap.ui.core" xmlns="sap.m"&gt;
+		 *             &lt;Button id="myButton"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="bar"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="baz"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Image id="myImage"&gt;&lt;/Image&gt;
+		 *         &lt;/core:View&gt;
+		 *     </code>
+		 * </pre>
+		 * Will result in matching two Controls, the image with the effective id myView--myImage and the button myView--myButton.
+		 * Although the ids of the controls myView--bar and myView--baz contain a my,
+		 * they will not be matched since only the part you really write in your views will be matched.
 		 * @param {string} [oOptions.viewName] the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
 		 * @param {string} [oOptions.viewNamespace] get appended before the viewName - should probably be set to the OPA config.
 		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers {@link sap.ui.test.matchers}. Matchers will be applied to an every control found by the waitFor function. The matchers are a pipeline, first matcher gets a control as an input parameter, each next matcher gets the same input, as the previous one, if the previous output is 'true'. If the previous output is a truthy value, the next matcher will receive this value as an input parameter. If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values. Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
