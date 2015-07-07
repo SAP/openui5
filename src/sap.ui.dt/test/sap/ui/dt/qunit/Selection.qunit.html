@@ -60,11 +60,20 @@
 		});
 
 		QUnit.test("when overlay is added to selection and then removed from selection", function(assert) {
+			var done = assert.async();
+
 			var oOverlay = new sap.ui.dt.Overlay();
 			this.oSelection.add(oOverlay);
+
+			this.oSelection.attachEventOnce("change", function(oEvent) {
+				var aSelection = oEvent.getParameter("selection");
+				assert.strictEqual(aSelection.length, 0, "selection from event is empty");
+				assert.strictEqual(this.oSelection.getSelection().length, 0, "selection is empty");
+				oOverlay.destroy();
+				done();
+			}, this);
+
 			this.oSelection.remove(oOverlay);
-			assert.strictEqual(this.oSelection.getSelection().length, 0, "selection is empty");
-			oOverlay.destroy();
 		});
 
 
