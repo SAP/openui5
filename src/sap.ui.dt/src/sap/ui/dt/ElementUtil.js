@@ -156,6 +156,21 @@ function(jQuery) {
 	/**
 	 * 
 	 */
+	ElementUtil.findClosestControlInDom = function(oNode) {
+		if (oNode && oNode.getAttribute("data-sap-ui")) {
+			return sap.ui.getCore().byId(oNode.getAttribute("data-sap-ui"));
+		} else {
+			if (oNode.parentNode) {
+				this.findClosestControlInDom(oNode.parentNode);
+			} else {
+				return null;
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
 	ElementUtil.getAggregationMutators = function(oElement, sAggregationName) {
 		var oMetadata = oElement.getMetadata();
 		oMetadata.getJSONKeys();

@@ -63,7 +63,7 @@ function(DragDrop, ElementUtil, DOMUtil) {
 			this._activateValidDroppablesFor(oOverlay);
 		}
 	};
-
+	
 	/**
 	 * @private
 	 */
