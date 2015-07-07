@@ -75,6 +75,12 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 					overlay : "sap.ui.dt.Overlay"
 				},
 				/** 
+				 * Event fired when an overlay is destroyed
+				 */
+				overlayDestroyed : {
+					overlay : "sap.ui.dt.Overlay"
+				},
+				/** 
 				 * Event fired when an overlays selection is changed
 				 */
 				selectionChange : {
@@ -349,6 +355,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, ElementUtil) {
 	DesignTime.prototype._onOverlayDestroyed = function(oEvent) {
 		var oOverlay = oEvent.getSource();
 
+		this.fireOverlayDestroyed({overlay : oOverlay});
 		this._oSelection.remove(oOverlay);
 	};
 
