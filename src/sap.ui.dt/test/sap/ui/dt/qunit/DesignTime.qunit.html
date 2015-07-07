@@ -176,6 +176,40 @@
 				assert.ok(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), "overlay for layout3 exists");
 			});
 
+			QUnit.module("Given that an DesignTime is created", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+
+					that.oButton = new sap.m.Button();
+					this.oButton.getMetadata().loadDesignTime().then(function() {
+						that.oDesignTime = new sap.ui.dt.DesignTime({
+							designTimeMetadata : {
+								"sap.m.Button" : {
+									testField : "testValue"
+								}
+							},
+							rootElements : [that.oButton]
+						});
+						
+						done();
+					});
+
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("when the DesignTime is initialized with a designTimeMetadata", function(assert) {
+				var oDTMetadata = this.oDesignTime.getDesignTimeMetadataFor("sap.m.Button");
+				assert.strictEqual(oDTMetadata.testField, "testValue", "Test field is save in DTMetadata");
+				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+				assert.strictEqual(oOverlay.getDesignTimeMetadata().getData().testField, "testValue", "DTMetadata from the DT is merged correctly");
+				assert.strictEqual(oOverlay.getDesignTimeMetadata().getName(), "{name}", "UI5 DTMetadata is merged correctly");
+			});
+
 			// TODO test all api methods!
 
 			var beforeEachTest = function() {
