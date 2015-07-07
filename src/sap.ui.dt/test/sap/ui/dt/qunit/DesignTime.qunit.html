@@ -109,6 +109,18 @@
 				assert.strictEqual(isOverlayForElementInDesignTime(this.oButton2, this.oDesignTime), false, "overlay for button2 destroyed");
 			});
 
+			QUnit.test("when the element inside of the DesignTime is destroyed", function(assert) {
+				var done = assert.async();
+
+				this.oDesignTime.attachEventOnce("overlayDestroyed", function(oEvent) {
+						assert.strictEqual(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), false, "overlay for button1 destroyed");
+
+						done();
+				}, this);
+
+				this.oButton1.destroy();
+			});
+
 			QUnit.module("Given that an DesignTime is created for two root controls", {
 				beforeEach : function() {
 					this.oLayout1 = new sap.ui.layout.VerticalLayout({
