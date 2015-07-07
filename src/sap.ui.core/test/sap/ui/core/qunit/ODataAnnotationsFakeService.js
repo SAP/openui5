@@ -736,6 +736,44 @@ var sNorthwindAnnotations = '\
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />\
 				<Annotation Term="annotationSource" String="Annotations" />\
 			</Annotations>\
+			<Annotations Target="Test.AnnotationInRecord">\
+				<Annotation Term="Test.AnnotationInRecord.Case1">\
+					<Record Type="Test.AnnotationInRecord.Case1.Record">\
+						<Annotation Term="Test.AnnotationInRecord.Case1.Record.SubAnnotation1" String="SubAnnotation1" />\
+						<PropertyValue Property="Label" String="Label1" />\
+						<Annotation Term="Label" String="Annotation" />\
+						<Annotation Term="Test.AnnotationInRecord.Case1.Record.SubAnnotation2">\
+							<If>\
+								<Eq>\
+									<Path>Condition</Path>\
+									<Bool>false</Bool>\
+								</Eq>\
+								<String>ConditionalValue</String>\
+							</If>\
+						</Annotation>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.AnnotationInRecord.Case2">\
+					<Record Type="Test.AnnotationInRecord.Case2.Record">\
+						<Annotation Term="Test.AnnotationInRecord.Case2.Record.SubAnnotation1" String="SubAnnotation1" />\
+						<Annotation Term="Label" String="Annotation" />\
+						<Annotation Term="Test.AnnotationInRecord.Case2.Record.SubAnnotation2">\
+							<If>\
+								<Eq>\
+									<Path>Condition</Path>\
+									<Bool>false</Bool>\
+								</Eq>\
+								<String>ConditionalValue</String>\
+							</If>\
+						</Annotation>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.AnnotationInRecord.Case3">\
+					<Record Type="Test.AnnotationInRecord.Case3.Record">\
+						<Null />\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>';
