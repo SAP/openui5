@@ -122,10 +122,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		jQuery.sap.log.error("The property fixedBottomRowCount is managed by the AnalyticalTable and must not be set!");
 		return this;
 	};
-	
-	AnalyticalTable.prototype.getFixedBottomRowCount = function() {
-		return 1;
-	};
 
 	/**
 	 * Rerendering handling

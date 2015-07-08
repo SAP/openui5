@@ -22,11 +22,11 @@
 <!-- Fake Service Implementaton -->
 <script src="../../core/qunit/analytics/o4aFakeService.js"></script>
 <!-- The metadata Fake Content -->
-<script src="../../core/qunit/analytics/ATBA_VLI_metadata.js"></script>
+<script src="../../core/qunit/analytics/o4aMetadata.js"></script>
 <!-- Fake Service Document -->
 <script src="../../core/qunit/analytics/TBA_ServiceDocument.js"></script>
 <!-- ATBA Request Mocks -->
-<script src="../../core/qunit/analytics/ATBA_VLI_Batches.js"></script>
+<script src="../../core/qunit/analytics/ATBA_Batch_Contexts.js"></script>
 
 <!-- Test functions -->
 <script language="javascript">
@@ -92,8 +92,7 @@
 			visible: true,
 			template: new sap.m.Label({
 				text: {
-					path: mSettings.name,
-					type: new sap.ui.model.type.Float()
+					path: mSettings.name
 				},
 				textAlign: "End"
 			}),
@@ -112,13 +111,16 @@
 			title: "AnalyticalTable",
 			
 			columns: [
-				//dimensions
-				createColumn({grouped: true, name: "Vendor"}),
-				createColumn({grouped: true, name: "FiscalYear"}),
-				createColumn({grouped: true, name: "TransactionCurrency"}),
+				//dimensions + description texts
+				createColumn({grouped: true, name: "CostCenter"}),
+				createColumn({name: "CostCenterText"}),
+				createColumn({grouped: true, name: "CostElement"}),
+				createColumn({name: "CostElementText"}),
+				createColumn({grouped: true, name: "Currency"}),
 				
 				//measures
-				createColumn({summed: true, name: "AmountInTransactionCurrency"})
+				createColumn({summed: true, name: "ActualCosts"}),
+				createColumn({summed: true, name: "PlannedCosts"})
 			],
 			
 			selectionMode: sap.ui.table.SelectionMode.Single,
@@ -142,7 +144,7 @@
 		return oTable;
 	}
 
-	module("TreeTable with Anotations, starting level 1", {
+	module("AnalyticalTable - ODataModel v2", {
 		setup: function() {
 			this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch:true});
 		},
@@ -151,7 +153,7 @@
 		}
 	});
 
-	asyncTest("Initial Load", function () {
+	asyncTest("Simple expand/collapse", function () {
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this);
 			
@@ -160,14 +162,79 @@
 				
 				equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be disabled (=0)");
 				
-				//initial getContexts call
+				var oContext = this.oTable.getContextByIndex(0);
+				equal(oContext.getProperty("ActualCosts"), "1588416", "First row data is correct");
 				
-				start();
-			
+				oContext = this.oTable.getContextByIndex(8);
+				equal(oContext.getProperty("CostCenterText"), "Marketing Canada", "Last data row is correct");
+				
+				oContext = this.oTable._getFixedBottomRowContexts(this.oTable.getBinding("rows"));
+				equal(oContext.getProperty("ActualCosts"), "11775332", "Sum Row is correct");
+				
+				// initial expand
+				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				this.oTable.expand(0);
 			};
 			
-			attachRowsUpdated(this.oTable, fnHandler1, this);
-			this.oTable.bindRows("/Items");
+			var fnHandler2 = function () {
+				ok(this.oTable.isExpanded(0), "First row is now expanded");
+				
+				var oContext = this.oTable.getContextByIndex(0);
+				var oSumContext = this.oTable.getContextByIndex(13);
+				deepEqual(oContext, oSumContext, "Subtotal-Row context is correct");
+				
+				this.oTable.collapse(0);
+				equal(this.oTable.isExpanded(0), false, "First row is now collapsed again");
+				start();
+			};
+			
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+			
+		}, this);
+	});
+
+	asyncTest("ProvideGrandTotals = false: No Sum row available", function () {
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this);
+			
+			var fnHandler1 = function() {
+				var oBinding = this.oTable.getBinding("rows");
+				
+				var oContext = this.oTable.getContextByIndex(0);
+				equal(oContext.getProperty("ActualCosts"), "1588416", "First row data is correct");
+				
+				oContext = this.oTable.getContextByIndex(8);
+				equal(oContext.getProperty("CostCenterText"), "Marketing Canada", "Last data row is correct");
+				
+				oContext = this.oTable._getFixedBottomRowContexts(this.oTable.getBinding("rows"));
+				equal(oContext.getPath(), "/artificialRootContext", "No Grand Totals: Root Context is artificial!");
+				
+				// initial expand
+				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				this.oTable.expand(0);
+			};
+			
+			var fnHandler2 = function () {
+				ok(this.oTable.isExpanded(0), "First row is now expanded");
+				
+				var oContext = this.oTable.getContextByIndex(0);
+				var oSumContext = this.oTable.getContextByIndex(13);
+				
+				notEqual(oContext.getPath(), oSumContext.getPath(), "No Subtotal Row Context inserted");
+				
+				this.oTable.collapse(0);
+				equal(this.oTable.isExpanded(0), false, "First row is now collapsed again");
+				start();
+			};
+			
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			this.oTable.bindRows({
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				parameters: {
+					provideGrandTotals: false
+				}
+			});
 			
 		}, this);
 	});
