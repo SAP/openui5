@@ -17,7 +17,17 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	 * Content specified in the {@link sap.m.semantic.SemanticPage#semanticControls} aggregations will be automatically positioned in dedicated sections of the footer or the header of the page, depending on the control's semantics.<br>
 	 * For example, a semantic button of type {@link sap.m.semantic.PositiveAction} will be positioned in the right side of the footer, and in logically correct sequence order with respect to any other included semantic controls.<br>
 	 *
-	 * In addition to the predefined semantic controls, the SemanticPage can host also custom controls. It preserves most of the API of {@link sap.m.Page} for specifying page content.<br>
+	 * The full list of what we internally define for semantic content is:
+	 *  <ul>
+	 *      <li>Visual properties (e.g. AddAction will be styled as an icon button)</li>
+	 *      <li>Position in the page (UX guidelines specify that some buttons should be in the header only, while others are in the footer or the "share" menu, so we do the correct positioning)</li>
+	 *      <li>Sequence order (UX guidelines define a specific sequence order of semantic controls with respect to each other)</li>
+	 *      <li>Default localized tooltip for icon-only buttons</li>
+	 *      <li>Overflow behavior (UX quidelines define which buttons are allowed to go to the overflow of the toolbar when the screen gets narrower). For icon buttons, we ensure that the text label of the button appears when the button is in overflow, as specified by UX.</li>
+	 *      <li>Screen reader support (invisible text for reading the semantic type)</li>
+	 *  </ul>
+	 *
+	 * In addition to the predefined semantic controls, the SemanticPage can host also custom application-provided controls. It preserves most of the API of {@link sap.m.Page} for specifying page content.<br>
 	 *
 	 * @extends sap.ui.core.Control
 	 * @abstract

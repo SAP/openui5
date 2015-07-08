@@ -12,7 +12,7 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A MasterPage is a {@link sap.m.semantic.SemanticPage} that is restricted to include only semantic controls of the following semantic types:
+	 * A MasterPage is a {@link sap.m.semantic.SemanticPage} that supports semantic content of the following types:
 	 *
 	 * <ul>
 	 * 	<li>{@link sap.m.semantic.AddAction}</li>
