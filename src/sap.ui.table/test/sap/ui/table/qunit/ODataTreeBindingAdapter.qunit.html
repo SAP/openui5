@@ -1328,6 +1328,9 @@
 			var aSelectedIndices = oBinding.getSelectedIndices();
 			// number of nodes on Level 1 and 2 --> 10
 			equal(aSelectedIndices.length, 10, "Number of selected Nodes after collapsing to level 1 must be 10");
+
+			// check that selectAllMode is removed
+			equal(oBinding._oRootNode.nodeState.selectAllMode, true, "After selectAll, selectAllMode of root node is true");
 			
 			var aSelectedContexts = oBinding.getSelectedContexts();
 			equal(aSelectedIndices.length, aSelectedContexts.length, "Number of selected contexts and indeces must be the same");
@@ -1342,7 +1345,10 @@
 			oBinding.clearSelection();
 			var aSelectedIndices = oBinding.getSelectedIndices();
 			equal(aSelectedIndices.length, 0, "There should be no selection after clearSelection");
-			
+
+			// check that selectAllMode is removed
+			equal(oBinding._oRootNode.nodeState.selectAllMode, false, "After clearSelection, selectAllMode of root node is false");
+
 			iLeadIndex = oBinding.getSelectedIndex();
 			equal(iLeadIndex, - 1, "LeadIndex must be -1 if there is no selection");
 			
