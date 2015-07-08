@@ -187,6 +187,17 @@
 		equals(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
 	});
 
+	test("Check Selection of Last fixedBottomRow", 1, function() {
+		oTable.setFixedBottomRowCount(3);
+		var aRows = oTable.getRows();
+		var oLastRow = aRows[aRows.length - 1];
+		var $LastRow = oLastRow.getDomRefs(true);
+		if ($LastRow.rowSelector) {
+			$LastRow.rowSelector.click()
+			equals(oTable.getSelectedIndex(), 199, "Selected Index is 199");
+		}
+	});
+
 	test("VisibleRowCount", 1, function() {
 		oTable.setVisibleRowCount(8);
 		equals( oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
