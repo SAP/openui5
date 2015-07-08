@@ -45,6 +45,9 @@ sap.ui.define([
 		var sStatusText = sAction + " by " + oEvent.getSource().getSelectedItem().getText();
 		sap.m.MessageToast.show("Selected: " + sStatusText);
 	},
+	onPositionChange: function (oEvent) {
+		sap.m.MessageToast.show("Positioned changed to " + oEvent.getParameter("newPosition"));
+	},
 	onMessagesButtonPress: function(oEvent) {
 
 		var oMessagesButton = oEvent.getSource();
