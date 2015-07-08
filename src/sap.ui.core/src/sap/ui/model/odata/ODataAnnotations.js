@@ -1088,37 +1088,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		return propertyValue;
 	};
-	ODataAnnotations.prototype.getPropertyValues = function(xmlDoc, documentNode, oAlias) {
-		var properties = {}, annotationNode = {}, annotationNodes, nodeIndexValue, termValue, propertyValueNodes, nodeIndex, propertyValueNode, propertyName, applyNodes, applyNode, applyNodeIndex;
-		annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
-		for (nodeIndexValue = 0; nodeIndexValue < annotationNodes.length; nodeIndexValue += 1) {
-			annotationNode = this.xPath.nextNode(annotationNodes, nodeIndexValue);
-			if (annotationNode.hasChildNodes() === false) {
-				termValue = this.replaceWithAlias(annotationNode.getAttribute("Term"), oAlias);
-				properties[termValue] = this.getPropertyValueAttributes(annotationNode, oAlias);
+
+	/**
+	 * Returns a map with all Annotation- and PropertyValue-elements of the given Node. The properties of the returned
+	 * map consist of the PropertyValue's "Property" attribute or the Annotation's "Term" attribute.
+	 * 
+	 * @param {Document} oXmlDocument - The document to use for the node search
+	 * @param {Element} oParentElement - The parent element in which to search
+	 * @param {map} mAlias - The alias map used in {@link ODataAnnotations#replaceWithAlias}
+	 * @returns {map} The collection of record values and annotations as a map
+	 * @private
+	 */
+	ODataAnnotations.prototype.getPropertyValues = function(oXmlDocument, oParentElement, mAlias) {
+		var mProperties = {}, i;
+
+		var oAnnotationNodes = this.xPath.selectNodes(oXmlDocument, "./d:Annotation", oParentElement);
+		var oPropertyValueNodes = this.xPath.selectNodes(oXmlDocument, "./d:PropertyValue", oParentElement);
+
+		if (oAnnotationNodes.length === 0 && oPropertyValueNodes.length === 0) {
+			mProperties = this.getPropertyValue(oXmlDocument, oParentElement, mAlias);
+		} else {
+			for (i = 0; i < oAnnotationNodes.length; i++) {
+				var oAnnotationNode = this.xPath.nextNode(oAnnotationNodes, i);
+				var sTerm = this.replaceWithAlias(oAnnotationNode.getAttribute("Term"), mAlias);
+				mProperties[sTerm] = this.getPropertyValue(oXmlDocument, oAnnotationNode, mAlias);
 			}
-		}
-		propertyValueNodes = this.xPath.selectNodes(xmlDoc, "./d:PropertyValue", documentNode);
-		if (propertyValueNodes.length > 0) {
-			for (nodeIndex = 0; nodeIndex < propertyValueNodes.length; nodeIndex += 1) {
-				propertyValueNode = this.xPath.nextNode(propertyValueNodes, nodeIndex);
-				propertyName = propertyValueNode.getAttribute("Property");
-				properties[propertyName] = this.getPropertyValue(xmlDoc, propertyValueNode, oAlias);
-				applyNodes = this.xPath.selectNodes(xmlDoc, "./d:Apply", propertyValueNode);
-				applyNode = null;
-				for (applyNodeIndex = 0; applyNodeIndex < applyNodes.length; applyNodeIndex += 1) {
-					applyNode = this.xPath.nextNode(applyNodes, applyNodeIndex);
-					if (applyNode) {
-						properties[propertyName] = {};
-						properties[propertyName]['Apply'] = this.getApplyFunctions(xmlDoc, applyNode, oAlias);
-					}
+
+			for (i = 0; i < oPropertyValueNodes.length; i++) {
+				var oPropertyValueNode = this.xPath.nextNode(oPropertyValueNodes, i);
+				var sPropertyName = oPropertyValueNode.getAttribute("Property");
+				mProperties[sPropertyName] = this.getPropertyValue(oXmlDocument, oPropertyValueNode, mAlias);
+				
+				var oApplyNodes = this.xPath.selectNodes(oXmlDocument, "./d:Apply", oPropertyValueNode);
+				for (var n = 0; n < oApplyNodes.length; n += 1) {
+					var oApplyNode = this.xPath.nextNode(oApplyNodes, n);
+					mProperties[sPropertyName] = {};
+					mProperties[sPropertyName]['Apply'] = this.getApplyFunctions(oXmlDocument, oApplyNode, mAlias);
 				}
 			}
-		} else {
-			properties = this.getPropertyValue(xmlDoc, documentNode, oAlias);
 		}
-		return properties;
-	};
+
+		return mProperties;
+	};	
+
 	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode, mAlias) {
 		var apply = {}, parameterNodes, paraNode = null, parameters = [], i;
 		parameterNodes = this.xPath.selectNodes(xmlDoc, "./d:*", applyNode);
