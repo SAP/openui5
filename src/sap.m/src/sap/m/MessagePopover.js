@@ -350,11 +350,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				content: "<span id=\"" + sHeadingDescrId + "\" style=\"display: none;\" role=\"heading\">" + sHeadingDescr + "</span>"
 			});
 
-			// TODO: Set the ariaDescribedBy directly on ResponsivePopover after it's implemented
-			if (this._oPopover) {
-				var oPopover = this._oPopover.getAggregation("_popup");
-				oPopover.addAssociation("ariaDescribedBy", sHeadingDescrId, true);
-			}
+			this._oPopover.addAssociation("ariaDescribedBy", sHeadingDescrId, true);
 
 			var oCloseBtn = new Button({
 				icon: ICONS["close"],
