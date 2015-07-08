@@ -89,6 +89,24 @@
 		strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
 
+	QUnit.test("Should resolve after 0ms if the conditions are met", function(asssert) {
+		// System under Test
+		var oOpa = new Opa();
+
+		// Act
+		oOpa.waitFor({
+			check : function () {
+				return true;
+			},
+			success : function () {
+				QUnit.ok(true, "Success is called synchronously");
+			}
+		});
+
+		Opa.emptyQueue();
+		this.clock.tick(0);
+	});
+
 	test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function() {
 		// System under Test
 		var oOpa = new Opa();
@@ -192,7 +210,7 @@
 		sap.ui.test.Opa.emptyQueue().done(oDoneSpy);
 
 		this.clock.tick(1000);
-		strictEqual(oFirstCheckSpy.callCount, 5, "Did apply the polling of the extendConfig");
+		strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");
 
 		bFirstCheck = true;
 
@@ -201,7 +219,7 @@
 
 		//check for faster polling
 		this.clock.tick(1000);
-		strictEqual(oSecondCheckSpy.callCount, 10, "Did apply the polling of the waitFor");
+		strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
 
 		bSecondCheck = true;
 
