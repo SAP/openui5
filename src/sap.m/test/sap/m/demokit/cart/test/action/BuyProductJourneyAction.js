@@ -4,11 +4,18 @@ jQuery.sap.require("sap.ui.test.matchers.PropertyStrictEquals");
 
 sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("sap.ui.demo.cart.test.action.BuyProductJourneyAction", {
 			iPressOnTheSecondCategory : function (sCategoryName) {
-				var oSecondItem = this.getContext().oCategoryList.getItems()[1];
-				this.getContext().sCategoryName = oSecondItem.getTitle();
 
-				oSecondItem.$().trigger("tap");
-				return this;
+				return this.waitFor({
+					controlType : "sap.m.StandardListItem",
+					matchers: function (oListItem) {
+						return oListItem.getBindingContextPath() === "/ProductCategories('FS')";
+					},
+					success : function (aListItems) {
+						aListItems[0].$().trigger("tap");
+						this.getContext().sCategoryName = aListItems[0].getTitle();
+					},
+					errorMessage : "The category list did not contain a second item"
+				});
 			},
 
 			iPressOnTheFirstProduct : function () {
@@ -70,7 +77,7 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 				});
 
 			},
-			
+
 			iFillTheForm : function () {
 				return this.waitFor({
 					viewName : "Order",
