@@ -255,11 +255,14 @@ sap.ui.define([
 				if (sIcon) {
 					if (this.getIcon().indexOf("sap-icon") == 0) {
 						oIcon = new Icon({
-							src: sIcon
+							src: sIcon,
+							useIconTooltip : false,
+							tooltip : sTitle
 						});
 					} else {
 						oIcon = new Image({
-							src: sIcon
+							src: sIcon,
+							tooltip : sTitle
 						}).addStyleClass("sapUiIcon");
 					}
 
@@ -354,6 +357,7 @@ sap.ui.define([
 					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile) {
 						var oSmsLink = new Icon({
 							src: IconPool.getIconURI("post"),
+							tooltip : this._oResourceBundle.getText("QUICKVIEW_SEND_SMS"),
 							decorative : false,
 							customData: [new CustomData({
 								key: "phoneNumber",
