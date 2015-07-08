@@ -106,12 +106,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 		if (bJQuery === true) {
 			oDomRefs.row = oDomRefs.rowScrollPart;
-			if (oDomRefs.rowSelector) {
+			if (oDomRefs.rowSelector && oDomRefs.rowSelector.length > 0) {
 				oDomRefs.row = oDomRefs.row.add(oDomRefs.rowSelector);
+			} else {
+				// since this won't be undefined in jQuery case
+				oDomRefs.rowSelector = undefined;
 			}
 
-			if (oDomRefs.rowFixedPart) {
+			if (oDomRefs.rowFixedPart.length > 0) {
 				oDomRefs.row = oDomRefs.row.add(oDomRefs.rowFixedPart);
+			} else {
+				// since this won't be undefined in jQuery case
+				oDomRefs.rowFixedPart = undefined;
 			}
 		}
 
