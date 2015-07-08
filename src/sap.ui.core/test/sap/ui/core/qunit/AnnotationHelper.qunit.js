@@ -335,19 +335,21 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				</PropertyValue>\
 				<PropertyValue Property="ImageUrl">\
 					<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
-						<UrlRef>\
-							<If>\
-								<Ne>\
-									<Path>EmailAddress</Path>\
+						<PropertyValue Property="Url">\
+							<UrlRef>\
+								<If>\
+									<Ne>\
+										<Path>EmailAddress</Path>\
+										<Null/>\
+									</Ne>\
+									<Apply Function="odata.concat">\
+										<String>mailto:</String>\
+										<Path>EmailAddress</Path>\
+									</Apply>\
 									<Null/>\
-								</Ne>\
-								<Apply Function="odata.concat">\
-									<String>mailto:</String>\
-									<Path>EmailAddress</Path>\
-								</Apply>\
-								<Null/>\
-							</If>\
-						</UrlRef>\
+								</If>\
+							</UrlRef>\
+						</PropertyValue>\
 					</Record>\
 				</PropertyValue>\
 			</Record>\
@@ -1332,7 +1334,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	test("14.5.10 Expression edm:Null", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2Contact
-					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/UrlRef",
+					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/Url/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath);
 
 			testBinding(oCurrentContext, undefined, {EmailAddress: null},
