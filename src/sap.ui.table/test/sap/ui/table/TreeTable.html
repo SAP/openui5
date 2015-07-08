@@ -167,6 +167,22 @@ for (var i = 0; i < 20; i++) {
 	};
 }
 
+oData["root"][4] = {
+	name: "Bottom - 1",
+	description: "1930s",
+	checked: true,
+	0: {
+		name: "Bottom - 2",
+		description: "1915 - 1998",
+		checked: true
+	},
+	1: {
+		name: "Bottom - 3",
+		description: "1904 - 1984",
+		checked: true
+	}
+};
+
 var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData(oData);
 
