@@ -1172,6 +1172,56 @@
 				oButton.destroy();
 			});
 
+			test("showArrow with value false should not render the arrow", function () {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover({ showArrow: false }),
+					oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
+					oSpyGetArrowPositionCssClass = sinon.spy(oPopover, "_getArrowPositionCssClass"),
+					oSpyGetArrowStyleCssClass = sinon.spy(oPopover, "_getArrowStyleCssClass");
+
+				oPopover.openBy(oButton);
+
+				equal(oPopover.$("arrow").length, 0, "Popover should not have arrow");
+				equal(oSpyGetArrowOffsetCss.callCount, 0, "_getArrowOffsetCss should not be called");
+				equal(oSpyGetArrowPositionCssClass.callCount, 0, "_getArrowPositionCssClass should not be called");
+				equal(oSpyGetArrowStyleCssClass.callCount, 0, "_getArrowStyleCssClass should not be called");
+
+				oSpyGetArrowOffsetCss.restore();
+				oSpyGetArrowPositionCssClass.restore();
+				oSpyGetArrowStyleCssClass.restore();
+				oPopover.destroy();
+			});
+
+			test("showArrow with value true should render the arrow", function () {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover({ showArrow: true }),
+					oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
+					oSpyGetArrowPositionCssClass = sinon.spy(oPopover, "_getArrowPositionCssClass"),
+					oSpyGetArrowStyleCssClass = sinon.spy(oPopover, "_getArrowStyleCssClass");
+
+				oPopover.openBy(oButton);
+
+				equal(oPopover.$("arrow").length, 1, "Popover should have arrow");
+				equal(oSpyGetArrowOffsetCss.callCount, 1, "_getArrowOffsetCss should be called");
+				equal(oSpyGetArrowPositionCssClass.callCount, 1, "_getArrowPositionCssClass should be called");
+				equal(oSpyGetArrowStyleCssClass.callCount, 1, "_getArrowStyleCssClass should be called");
+
+				oSpyGetArrowOffsetCss.restore();
+				oSpyGetArrowPositionCssClass.restore();
+				oSpyGetArrowStyleCssClass.restore();
+				oPopover.destroy();
+			});
+
 			module("Internal methods");
 
 			test("_applyPosition should be called with two parameters from check docking", function() {
@@ -1486,6 +1536,40 @@
 
 				stubArrowPosition.restore();
 				stubFooterPosition.restore();
+				oPopover.destroy();
+			});
+
+			test("_adaptPositionParams with showArrow true should have offsets set", function () {
+				var oPopover = new sap.m.Popover();
+
+				oPopover._adaptPositionParams();
+
+				equal(oPopover._marginTop, 48, "_marginTop should be 48");
+				equal(oPopover._marginRight, 10, "_marginTop should be 10");
+				equal(oPopover._marginBottom, 10, "_marginTop should be 10");
+				equal(oPopover._marginLeft, 10, "_marginTop should be 10");
+				equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
+				deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
+				deepEqual(oPopover._myPositions, ["center bottom", "begin center", "center top", "end center"], "myPositions should be correct");
+				deepEqual(oPopover._atPositions, ["center top", "end center", "center bottom", "begin center"], "atPositions should be correct");
+
+				oPopover.destroy();
+			});
+
+			test("_adaptPositionParams with showArrow false should not have offsets set", function () {
+				var oPopover = new sap.m.Popover({ showArrow: false });
+
+				oPopover._adaptPositionParams();
+
+				equal(oPopover._marginTop, 0, "_marginTop should be 0");
+				equal(oPopover._marginRight, 0, "_marginTop should be 0");
+				equal(oPopover._marginBottom, 0, "_marginTop should be 0");
+				equal(oPopover._marginLeft, 0, "_marginTop should be 0");
+				equal(oPopover._arrowOffset, 0, "_arrowoffset should be 0");
+				deepEqual(oPopover._offsets, ["0 0", "0 0", "0 0", "0 0"], "offsets should be correct according the arrowOffset");
+				deepEqual(oPopover._myPositions, ["begin bottom", "begin center", "begin top", "end center"], "myPositions should be correct");
+				deepEqual(oPopover._atPositions, ["begin top", "end center", "begin bottom", "begin center"], "atPositions should be correct");
+
 				oPopover.destroy();
 			});
 
