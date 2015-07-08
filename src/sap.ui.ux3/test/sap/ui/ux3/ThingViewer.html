@@ -8,7 +8,7 @@
 	type="text/javascript" id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 	data-sap-ui-theme="sap_goldreflection">
-	
+
 </script>
 
 <script>
@@ -39,20 +39,6 @@
 	}
 
 	function createTV() {
-		//Actions
-		var oA1 = new sap.ui.ux3.ThingAction({
-			id : "create",
-			text : "Create Survey"
-		});
-		var oA2 = new sap.ui.ux3.ThingAction({
-			id : "delete",
-			text : "Delete"
-		});
-		var oA3 = new sap.ui.ux3.ThingAction({
-			id : "dublicate",
-			text : "Duplicate"
-		});
-
 		// Facets of the ThingInspector
 		oNI1 = new sap.ui.ux3.NavigationItem({
 			key : "overview",
@@ -93,7 +79,6 @@
 			subtitle : "Thing subtitle",
 			type : "ThingType with a long type should have text-overflow:ellipsis",
 			icon : "images/Account_48.png",
-			actions : [ oA1, oA2, oA3 ],
 			facets : [ oNI1, oNI2, oNI3, oNI4, oNI5, oNI6, oNI7, oNI8 ],
 			selectedFacet : oNI2
 		});
@@ -140,7 +125,7 @@
 	var oTV = createTV();
 	oTV.setActionBar(oAB);
 	oOL.addContent(oTV);
-	
+
 	var press = function() {
 		oOL.open();
 	}
