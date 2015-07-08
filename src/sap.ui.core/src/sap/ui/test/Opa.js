@@ -21,44 +21,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			oOptions.timeout = 300;
 		}
 
-		var startTime = new Date(),
-			sId = setInterval(function () {
+		var startTime = new Date();
+		fnCheck();
 
-				var oResult = fnCallback();
+		function fnCheck () {
+			var oResult = fnCallback();
 
-				if (oResult.result) {
-					clearInterval(sId);
-					internalEmpty(oDeferred, sId);
+			if (oResult.result) {
+				internalEmpty(oDeferred);
+				return;
+			}
+
+			var timeDiff = new Date() - startTime;
+
+			// strip the milliseconds
+			timeDiff /= 1000;
+
+			var iPassedSeconds = Math.round(timeDiff % 60);
+
+			if (oOptions.timeout > iPassedSeconds) {
+				setTimeout(fnCheck, oOptions.pollingInterval);
+				// timeout not yet reached
+				return;
+			}
+
+			if (oOptions.error) {
+				try {
+					oOptions.error(oOptions, oResult.arguments);
+				} finally {
+					oDeferred.reject(oOptions, oResult.arguments);
 				}
+				return;
+			}
 
-				var timeDiff = new Date() - startTime;
+			oDeferred.reject(oOptions);
+		}
 
-				// strip the milliseconds
-				timeDiff /= 1000;
-
-				var iPassedSeconds = Math.round(timeDiff % 60);
-
-				if (oOptions.timeout > iPassedSeconds) {
-					// timeout not yet reached
-					return;
-				}
-
-				clearInterval(sId);
-
-				if (oOptions.error) {
-					try {
-						oOptions.error(oOptions, oResult.arguments);
-					} finally {
-						oDeferred.reject(oOptions, oResult.arguments);
-					}
-					return;
-				}
-
-				oDeferred.reject(oOptions);
-			}, oOptions.pollingInterval);
 	}
 
-	function internalEmpty(deferred, sId) {
+	function internalEmpty(deferred) {
 		if (queue.length === 0) {
 			deferred.resolve();
 			return true;
