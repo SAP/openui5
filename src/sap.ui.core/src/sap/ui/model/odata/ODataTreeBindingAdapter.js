@@ -1297,6 +1297,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		};
 		
 		this._match(this._oRootNode, [], iMaxNumberOfMatches, fnMatch);
+
+		// explicitly remove the selectAllMode from the root node
+		if (this._oRootNode && this._oRootNode.nodeState && this._oRootNode.isArtificial) {
+			this._oRootNode.nodeState.selectAllMode = false;
+		}
 		
 		return {
 			rowIndices: aChangedIndices,
