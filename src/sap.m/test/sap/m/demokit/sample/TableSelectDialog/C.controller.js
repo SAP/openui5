@@ -27,7 +27,7 @@ sap.ui.controller("sap.m.sample.TableSelectDialog.C", {
 		var bRemember = !!oEvent.getSource().data("remember");
 		this._oDialog.setRememberSelections(bRemember);
 
-		this._oDialog.setModel(this.getView().getModel());
+		this.getView().addDependent(this._oDialog);
 		// toggle compact style
 		jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
 		this._oDialog.open();
