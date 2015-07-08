@@ -52,6 +52,14 @@
 
 				exit : function() {
 					delete mObjects[this.getId()];
+				},
+				
+				// needed for grouping test
+				addSubObjGroup : function(oGroup, oControl) {
+					if (!oControl) {
+						oControl = new sap.ui.core.TestManagedObject({value: oGroup.key});
+					}
+					this.addSubObj(oControl);
 				}
 			});
 
@@ -134,9 +142,9 @@
 				value2: "testvalue2",
 				objectValue: { model: true },
 				list: [
-					{value: "testvalue1"},
-					{value: "testvalue2"},
-					{value: "testvalue3"}
+					{value: "testvalue1", intValue: 1, groupValue: "group1"},
+					{value: "testvalue2", intValue: 2, groupValue: "group2"},
+					{value: "testvalue3", intValue: 3, groupValue: null}
 				]
 			});
 
@@ -664,6 +672,33 @@
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 				equal(changed,true,"handler attached/change event fired");
 				changed = false;
+			});
+
+			test("Bind aggregation with grouping", function() {
+				jQuery.each(["value", "intValue", "groupValue"], function(i, sGroupProperty) {
+					this.obj.bindAggregation("subObjects", {
+						path: "/list",
+						template: this.template,
+						sorter: new sap.ui.model.Sorter(sGroupProperty, false, true)
+					});
+					equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+					equal(this.obj.getAggregation("subObjects", []).length, 6, "Aggregation length should match defined length plus headers");
+				}.bind(this));
+			});
+
+			test("Bind aggregation with grouping and header factory", function() {
+				jQuery.each(["value", "intValue", "groupValue"], function(i, sGroupProperty) {
+					this.obj.bindAggregation("subObjects", {
+						path: "/list",
+						template: this.template,
+						sorter: new sap.ui.model.Sorter(sGroupProperty, false, true),
+						groupHeaderFactory: function(oGroup) {
+							return  new sap.ui.core.TestManagedObject({value: oGroup.key});
+						}
+					});
+					equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+					equal(this.obj.getAggregation("subObjects", []).length, 6, "Aggregation length should match defined length plus headers");
+				}.bind(this));
 			});
 
 			test("Unbind aggregation", function() {
