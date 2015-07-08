@@ -102,6 +102,7 @@ sap.ui.require([
 							</Apply>\
 						</UrlRef>\
 					</PropertyValue>\
+					<PropertyValue Property="Value" String="n/a"/>\
 				</Record>\
 				<!-- concat embeds concat & uriEncode -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
@@ -188,6 +189,7 @@ sap.ui.require([
 							</Apply>\
 						</UrlRef>\
 					</PropertyValue>\
+					<PropertyValue Property="Value" String="n/a"/>\
 				</Record>\
 				<!-- fillUriTemplate + uriEncode w/ constants -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
@@ -248,6 +250,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 							</Apply>\
 						</UrlRef>\
 					</PropertyValue>\
+					<PropertyValue Property="Value" String="n/a"/>\
 				</Record>\
 				<!-- Comparison Operators -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
@@ -350,6 +353,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 								</If>\
 							</UrlRef>\
 						</PropertyValue>\
+						<PropertyValue Property="Value" String="n/a"/>\
 					</Record>\
 				</PropertyValue>\
 			</Record>\
@@ -1264,6 +1268,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
+			oGlobalSandbox.stub(Expression, "path", function (oInterface, oPathValue) {
+				// do not try to "determine type for property"
+				return {result: "binding", value: oPathValue.value};
+			});
+
 			strictEqual(format(oRawValue, oCurrentContext),
 				"{=((${p1}<${p2})===(${p4}>${p5}))&&((${p6}>=${p7})!==(${p8}<=${p9}))}");
 		});
@@ -1276,6 +1285,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					+ "/com.sap.vocabularies.UI.v1.Identification/7/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			oGlobalSandbox.stub(Expression, "path", function (oInterface, oPathValue) {
+				// do not try to "determine type for property"
+				return {result: "binding", value: oPathValue.value};
+			});
 
 			strictEqual(format(oRawValue, oCurrentContext),
 				"{=(!(${p1}===${p2}))||((${p3}===${p4})&&(${p5}===${p6}))}");
