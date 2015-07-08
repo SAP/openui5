@@ -468,9 +468,20 @@
 		var oDialogResize = new sap.m.Dialog({
 			title: "Resizable Dialog",
 			resizable: true,
-			content: new sap.ui.core.HTML({
-				content: '<div>Lipsum limple text</div>'
-			}),
+			content: [
+				new sap.ui.core.HTML({
+					content: '<div>HTML DIV</div>'
+				}),
+				new sap.m.Label({text: "sap.m.Select's Label :"}),
+				new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "0",
+							text: "item 0"
+						})
+					]
+				})
+			],
 			endButton: new sap.m.Button({
 				text: "Cancel", press: function() {
 					oDialogResize.close();
@@ -776,14 +787,17 @@
 				contentMiddle: [],
 				contentRight: []
 			}),
-			content: new sap.m.Select({
-				items: [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					})
-				]
-			}),
+			content: [
+				new sap.m.Label({text: "sap.m.Select:"}),
+				new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "0",
+							text: "item 0"
+						})
+					]
+				})
+			],
 			beginButton: new sap.m.Button({
 				press: function() {
 					oDialogWithCustomHeader.close();
