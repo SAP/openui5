@@ -623,10 +623,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype._onBeforeOpenDialog = function() {
-			var oHeader = this.getPicker().getCustomHeader();
-			oHeader.getContentLeft()[0].setValue(this.getSelectedItem().getText());
-			oHeader.getContentLeft()[0].setTextDirection(this.getTextDirection());
-			oHeader.getContentLeft()[0].setTextAlign(this.getTextAlign());
+			var oInput = this.getPicker().getCustomHeader().getContentLeft()[0];
+			oInput.setValue(this.getSelectedItem().getText());
+			oInput.setTextDirection(this.getTextDirection());
+			oInput.setTextAlign(this.getTextAlign());
 		};
 
 		/* =========================================================== */
