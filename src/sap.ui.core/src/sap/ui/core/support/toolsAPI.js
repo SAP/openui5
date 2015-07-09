@@ -6,7 +6,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	function () {
 		"use strict";
 
-		// sap.ui.require(["sap/ui/core/support/appInfo"], function (appInfo) {}); TODO remove
+		// sap.ui.require(["sap/ui/core/support/toolsAPI"], function (toolsAPI) {g=toolsAPI}); TODO remove
 		var versionInfo = sap.ui.getVersionInfo();
 		var configurationInfo = sap.ui.getCore().getConfiguration();
 
@@ -15,12 +15,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 		//================================================================================
 
 		function _getLibraries() {
-			var request = jQuery.sap.syncGetJSON(sap.ui.resource('', 'sap-ui-version.json'));
+			var libraries = sap.ui.versioninfo ? sap.ui.versioninfo.libraries : undefined;
 			var formattedLibraries = Object.create(null);
 
-			if (request.success) {
-				var libraries = request.data && request.data.libraries;
-
+			if (libraries !== undefined) {
 				libraries.forEach(function (element, index, array) {
 					formattedLibraries[element.name] = element.version;
 				});
