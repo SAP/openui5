@@ -21,6 +21,8 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script  language="javascript">
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 	var personImg = "../images/Person.png",
 		jobPosImg = "../images/JobPosition.png",
@@ -184,6 +186,18 @@
 	test("SelectedIndex", 1, function() {
 		oTable.setSelectedIndex(8);
 		equals(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
+	});
+
+	test("Check that marked events are not handled by Table", function(oAssert) {
+		var fnStub = this.stub(oTable, "_findAndfireCellEvent", jQuery.noop);
+
+		var tmpEvent = jQuery.Event("click");
+		oTable.onclick(tmpEvent);
+		oAssert.strictEqual(fnStub.callCount, 1, "Stub was called");
+
+		tmpEvent.setMarked();
+		oTable.onclick(tmpEvent);
+		oAssert.strictEqual(fnStub.callCount, 1, "Stub was not called");
 	});
 
 	test("VisibleRowCount", 1, function() {
