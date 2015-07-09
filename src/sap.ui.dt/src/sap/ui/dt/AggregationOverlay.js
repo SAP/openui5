@@ -78,7 +78,7 @@ function(jQuery, Control, DOMUtil, ElementUtil, OverlayUtil) {
 				 */
 				droppableChange : {
 					parameters : {
-						droppable : "boolean"
+						droppable : { type : "boolean" }
 					}
 				}
 			}

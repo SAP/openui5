@@ -116,9 +116,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 */
 				selectionChange : {
 					parameters : {
-						selected : {
-							type : "boolean"
-						}
+						selected : { type : "boolean" }
 					}
 				},
 				/**
@@ -126,9 +124,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 */
 				draggableChange : {
 					parameters : {
-						selected : {
-							draggable : "boolean"
-						}
+						draggable : { type : "boolean" }
 					}
 				},
 				/**
@@ -136,10 +132,10 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 */
 				elementModified : {
 					parameters : {
-						type : "string",
-						value : "any",
-						oldValue : "any",
-						target : "sap.ui.core.Element"
+						type : { type : "string" },
+						value : { type : "any" },
+						oldValue : { type : "any" },
+						target : { type : "sap.ui.core.Element" }
 					}
 				}
 			}

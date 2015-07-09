@@ -121,6 +121,20 @@
 				this.oButton1.destroy();
 			});
 
+			QUnit.test("when the overlay is selected inside of the DesignTime", function(assert) {
+				var done = assert.async();
+				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1);
+
+				this.oDesignTime.attachEventOnce("selectionChange", function(oEvent) {
+					var aSelection = oEvent.getParameter("selection");
+					assert.strictEqual(aSelection.length, 1, "selection is just one overlay");
+					assert.strictEqual(aSelection[0], oOverlay, "selection is correct");
+					done();
+				});
+
+				oOverlay.setSelected(true);
+			});			
+
 			QUnit.module("Given that an DesignTime is created for two root controls", {
 				beforeEach : function() {
 					this.oLayout1 = new sap.ui.layout.VerticalLayout({
