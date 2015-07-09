@@ -1380,6 +1380,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * Overwrite the model setter in order to reset the remembered page in case it was a filter detail page to make sure
+	 * the dialog is not trying to re-open a page for a removed item BCP 1570030370
+	 *
+	 * @param oModel
+	 * @param sName
+	 * @returns {ViewSettingsDialog}
+	 */
+	ViewSettingsDialog.prototype.setModel = function (oModel, sName) {
+		if (this._iContentPage === 3 && this._oContentItem) {
+			resetFilterPage.call(this);
+		}
+		return sap.ui.base.ManagedObject.prototype.setModel.call(this, oModel, sName);
+	};
+
+	/**
+	 * Reset the remembered page if it was the filter detail page of the removed filter
+	 *
+	 * @param oFilterItem
+	 * @returns {ViewSettingsDialog}
+	 */
+	ViewSettingsDialog.prototype.removeFilterItem = function (oFilterItem) {
+		if (this._iContentPage === 3 && this._oContentItem && this._oContentItem.getId() === oFilterItem.getId()) {
+			resetFilterPage.call(this);
+		}
+		return this.removeAggregation('filterItems', oFilterItem);
+	};
+
+	/**
+	 * Reset the remembered page if it was a filter detail page and all filter items are being removed
+	 * @returns {ViewSettingsDialog}
+	 */
+	ViewSettingsDialog.prototype.removeAllFilterItems = function () {
+		if (this._iContentPage === 3 && this._oContentItem) {
+			resetFilterPage.call(this);
+		}
+		return this.removeAllAggregation('filterItems');
+	};
 	/*
 	 * Switches to a dialog page (0 = sort, 1 = group, 2 = filter, 3 = subfilter)
 	 * @param {int} iWhich the page to be navigated to @param {sap.m.FilterItem}
@@ -1636,6 +1674,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * Sets the current page to the filter page, clears info about the last opened page (content)
+	 * and navigates to the filter page
+	 * @private
+	 * @return
+	 */
+	function resetFilterPage() {
+		this._iContentPage = 2;
+		this._oContentItem = null;
+		jQuery.sap.delayedCall(0, this._navContainer, "to", [this._getPage1().getId(), "show"]);
+	}
 	/* =========================================================== */
 	/* end: internal methods */
 	/* =========================================================== */
