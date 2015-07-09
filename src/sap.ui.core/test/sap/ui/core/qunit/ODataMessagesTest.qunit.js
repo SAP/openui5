@@ -69,7 +69,8 @@ function runODataMessagesTests() {
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		ok(oMessageModel.getProperty("/").length === undefined, "No message has been added");
+		var iOriginalMessages = oMessageModel.getProperty("/").length || 0;
+		equals(iOriginalMessages, 0, "No message has been added");
 
 		ok(oInput.getValueState() === "None", "ValueState has not been set");
 
@@ -82,7 +83,9 @@ function runODataMessagesTests() {
 					ok(oInput.getValueState() === "Error", "ValueState has been set to 'Error'");
 
 					var iMessages = oMessageModel.getProperty("/").length;
-					ok(iMessages === 21, "One message has been added for every Item and one for the Collection");
+					equals(iMessages, iOriginalMessages + 21, "One message has been added for every Item and one for the Collection");
+					
+					oModelJson.destroy();
 					start();
 				}, 0);
 			}
@@ -93,25 +96,31 @@ function runODataMessagesTests() {
 		mModelOptions.json = false;
 		oModelXml = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelXml, "xml");
+
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		var iOriginalMessages = oMessageModel.getProperty("/").length || 0;
 
 		ok(oInput2.getValueState() === "None", "ValueState has not been set");
 
 		var iRequests = 0;
+		
 		oModelXml.attachRequestCompleted(function(oRequest) {
 			iRequests++;
-			var iMessages = oMessageModel.getProperty("/").length;
 			if (oRequest.getParameter("url").indexOf("$count") == -1) {
 				ok(iRequests === 2, "Two Requests (with messages) has been processed");
 				setTimeout(function() {
 					ok(oInput2.getValueState() === "Error", "ValueState has been set to 'Error'");
 
 					var iMessages = oMessageModel.getProperty("/").length;
-					ok(iMessages === 42, "One message has been added for every Item and one for the Collection");
+					equals(iMessages, iOriginalMessages + 21, "One message has been added for every Item and one for the Collection");
+
+					oModelXml.destroy();
 					start();
 				}, 0);
 			}
 		});
+		
 	});
 	
 	

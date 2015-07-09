@@ -42,6 +42,9 @@ var fnOriginalClearTimeout = window.setTimeout;
 <!-- Test functions -->
 
 <script>
+	sinon.config.useFakeTimers = false;
+
+
 	sap.ui.getCore().attachInit(function() {
 		runODataMessagesTests();
 	})
