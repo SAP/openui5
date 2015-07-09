@@ -52,11 +52,6 @@
 				class="sapUiSmallMarginBottom"
 				press="handleShowMessageBoxPress_InitialFocus"
 				width="250px"/>
-			<Button
-				text="Control"
-				class="sapUiSmallMarginBottom"
-				press="handleShowMessageBoxPress_InitialFocus_Control"
-				width="250px"/>
-		</l:content>
+			</l:content>
 	</l:VerticalLayout>
 </mvc:View>
