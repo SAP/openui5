@@ -81,19 +81,25 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 				 * Event fired when an overlay is created
 				 */
 				overlayCreated : {
-					overlay : "sap.ui.dt.Overlay"
+					parameters : {
+						overlay : { type : "sap.ui.dt.Overlay" }
+					}
 				},
 				/** 
 				 * Event fired when an overlay is destroyed
 				 */
 				overlayDestroyed : {
-					overlay : "sap.ui.dt.Overlay"
+					parameters : {
+						overlay : { type : "sap.ui.dt.Overlay" }
+					}
 				},
 				/** 
 				 * Event fired when an overlays selection is changed
 				 */
 				selectionChange : {
-					type : "sap.ui.dt.Overlay[]"
+					parameters : {
+						selection : { type : "sap.ui.dt.Overlay[]" }
+					}
 				}
 			}
 		}
@@ -105,7 +111,9 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 	 */
 	DesignTime.prototype.init = function() {
 		this._oSelection = this.createSelection();
-		this._oSelection.attachEvent("change", this.fireSelectionChange, this);
+		this._oSelection.attachEvent("change", function(oEvent) {
+			this.fireSelectionChange({selection: oEvent.getParameter("selection")});
+		}, this);
 	};
 
 	/**
@@ -299,21 +307,14 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 	/**
 	 * Creates and returns the created instance of Overlay for an element
 	 * @param {string|sap.ui.core.Element} oElement to create overlay for
+	 * @param {object} oDTMetadata to create overlay with
 	 * @return {sap.ui.dt.Overlay} created overlay
 	 * @protected
 	 */
-	DesignTime.prototype.createOverlay = function(oElement) {
-		// merge the DTMetadata from the DesignTime and from UI5
-		var oDTMetadata = this.getDesignTimeMetadataFor(oElement);
-		var oDefaultDTMetadata = ElementUtil.getDesignTimeMetadata(oElement);
-		jQuery.extend(true, oDefaultDTMetadata, oDTMetadata);
-		if (oDefaultDTMetadata === {}) {
-			oDefaultDTMetadata = null;
-		}
-
+	DesignTime.prototype.createOverlay = function(oElement, oDTMetadata) {
 		return new Overlay({
 			element : oElement,
-			designTimeMetadata : oDefaultDTMetadata ? new DesignTimeMetadata({data : oDefaultDTMetadata}) : null
+			designTimeMetadata : oDTMetadata ? new DesignTimeMetadata({data : oDTMetadata}) : null
 		});
 	};
 
@@ -339,18 +340,27 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 
 	/**
 	 * @param {sap.ui.core.Element} oElement element
-	 * @private
+	 * @public
+	 * @return {sap.ui.dt.Overlay} created overlay
 	 */
-	DesignTime.prototype._createOverlay = function(oElement) {
+	DesignTime.prototype.createOverlayFor = function(oElement) {
 		// check if overlay for the element already exists before creating the new one
 		// (can happen when two aggregations returning the same elements)
 		if (!OverlayRegistry.getOverlay(oElement)) {
-			var oOverlay = this.createOverlay(oElement);
+			// merge the DTMetadata from the DesignTime and from UI5
+			var oMetadataFromDesignTime = this.getDesignTimeMetadataFor(oElement);
+			var oDTMetadata = ElementUtil.getDesignTimeMetadata(oElement);
+			jQuery.extend(true, oDTMetadata, oMetadataFromDesignTime);
+			oDTMetadata = oDTMetadata !== {} ? oDTMetadata : null;
+
+			var oOverlay = this.createOverlay(oElement, oDTMetadata);
 			oOverlay.attachEvent("elementModified", this._onElementModified, this);
 			oOverlay.attachEvent("destroyed", this._onOverlayDestroyed, this);
 			oOverlay.attachEvent("selectionChange", this._onOverlaySelectionChange, this);
 
 			this.fireOverlayCreated({overlay : oOverlay});
+
+			return oOverlay;
 		}
 	};
 
@@ -362,7 +372,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 		var that = this;
 
 		this._iterateRootElementPublicChildren(oRootElement, function(oElement) {
-			that._createOverlay(oElement);
+			that.createOverlayFor(oElement);
 		}); 
 	};
 
