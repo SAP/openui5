@@ -4,7 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Slider liveChange="onSliderLiveChange" step="20" value="100"/>
-	
+
 	<MessageStrip text="By default, toolbar items are not shrinkable except text and controls(e.g. Text, Label) and the controls that have percentual width." class="sapUiTinyMargin" />
 	<Toolbar class="sapUiMediumMarginTop" id="toolbar1">
 		<Label text="I am a text control, so I will shrink whenever toolbar overflows"/>
@@ -13,8 +13,8 @@
 		<ToolbarSpacer/>
 		<SearchField width="100%" placeholder="My width is 100%, so I should shrink"/>
 	</Toolbar>
-	
-	<MessageStrip text="You can configure the item's shrinkablitiy by providing ToolbarLayoutData" class="sapUiTinyMargin"/>
+
+	<MessageStrip text="You can configure the item's shrinkablitiy by providing ToolbarLayoutData." class="sapUiTinyMargin"/>
 	<Toolbar class="sapUiMediumMarginTop" id="toolbar2">
 		<Label text="I am an unshrinkable text">
 			<layoutData>
@@ -30,7 +30,7 @@
 		<ToolbarSpacer/>
 		<SearchField width="200px" placeholder="I have fixed width(200px), so I cannot be shrinkable"/>
 	</Toolbar>
-	
+
 	<MessageStrip text="You can define shrinking priority with setting min/maxWidth via ToolbarLayoutData. By default min width is 48px in Blue Crystal theme." class="sapUiTinyMargin"/>
 	<Toolbar class="sapUiMediumMarginTop" id="toolbar3">
 		<Label text="I should not shrink more than 200px because I am an important text">
