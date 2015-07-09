@@ -1022,9 +1022,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iTouchStartPageX = oTargetTouch.pageX;
 		this._iTouchDragX = 0;
 
+		var $target = jQuery(oEvent.target);
+
+		// prevent text selecting when click on the scrolling arrows
+		if ($target.hasClass('sapMITBArrowScroll')) {
+			oEvent.preventDefault();
+		}
+
 		//if the browser is IE prevent click events on dom elements in the tab, because the IE will focus them, not the tab itself.
 		if (sap.ui.Device.browser.internet_explorer) {
-			var $target = jQuery(oEvent.target);
 			if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
 				oEvent.preventDefault();
 			}
