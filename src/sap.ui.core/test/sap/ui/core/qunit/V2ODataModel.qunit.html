@@ -15,7 +15,7 @@
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
 	</script>
 
 <link rel="stylesheet"
@@ -2443,6 +2443,32 @@
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm");
 			start();	
 		});
+	});
+	
+	asyncTest("test oDataModel dataReceived event count", function() {
+		var iCount = 0;
+		var oInput1;
+		
+		oInput1 = new sap.m.Input();
+		oInput1.setModel(oModel);
+	
+		new sap.m.Input({
+			models: oModel,
+			objectBindings: {
+				undefined: {
+					path: "/ProductSet('HT-1000')",
+					events: {
+						dataReceived: function() {
+							ok(iCount == 0, "dataReceived called once");
+							iCount++;
+							oModel.setProperty("/ProductSet('HT-1000')/Name", "Test");
+							start();
+						}
+					}
+				}
+			},
+			value: "{Name}"
+		})
 	});
 	</script>
 

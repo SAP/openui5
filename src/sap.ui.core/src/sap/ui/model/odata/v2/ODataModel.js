@@ -1243,10 +1243,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 		});
 		//handle calls after update
-		for (var i = 0; i < this.aCallAfterUpdate.length; i++) {
-			this.aCallAfterUpdate[i]();
-		}
+		var aCallAfterUpdate = this.aCallAfterUpdate;
 		this.aCallAfterUpdate = [];
+		for (var i = 0; i < aCallAfterUpdate.length; i++) {
+			aCallAfterUpdate[i]();
+		}
 	};
 
 	/**
