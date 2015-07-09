@@ -1109,14 +1109,15 @@
 		 *              of this method.
 		 *
 		 * @param {boolean} bResult result of the checked assertion
-		 * @param {string} sMessage message that will be raised when the result is <code>false</code>
+		 * @param {string|function} vMessage message that will be raised when the result is <code>false</code>. In case this is a function, the return value of the function will be displayed. This can be used to execute complex code only if the assertion fails.
 		 *
 		 * @public
 		 * @static
 		 * @SecSink {1|SECRET} Could expose secret data in logs
 		 */
-		jQuery.sap.assert = function(bResult, sMessage) {
+		jQuery.sap.assert = function(bResult, vMessage) {
 			if ( !bResult ) {
+				var sMessage = typeof vMessage === "function" ? vMessage() : vMessage;
 				/*eslint-disable no-console */
 				if ( window.console && console.assert ) {
 					console.assert(bResult, sWindowName + sMessage);
