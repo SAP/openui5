@@ -46,7 +46,9 @@ function(ManagedObject) {
 			aggregations : {},
 			events : {
 				"change" : {
-					type : "sap.ui.dt.Overlay[]"
+					parameters : {
+						selection : { type : "sap.ui.dt.Overlay[]" }
+					}
 				}
 			}
 		}
