@@ -2,20 +2,34 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
-	function () {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap/ui/core/Core', 'sap/ui/core/ElementMetadata'],
+	function (jQuery, library, Global, Core, ElementMetadata) {
 		"use strict";
 
-		// sap.ui.require(["sap/ui/core/support/toolsAPI"], function (toolsAPI) {g=toolsAPI}); TODO remove
-		var versionInfo = sap.ui.getVersionInfo();
 		var configurationInfo = sap.ui.getCore().getConfiguration();
 
 		//================================================================================
 		// Technical Information
 		//================================================================================
 
+		function _getFrameworkName() {
+			var versionInfo;
+
+			try {
+				versionInfo = sap.ui.getVersionInfo();
+			} catch (e) {
+				versionInfo = undefined;
+			}
+
+			if (versionInfo && versionInfo.gav) {
+				return versionInfo.gav.indexOf('openui5') !== -1 ? 'OpenUI5' : 'SAPUI5';
+			} else {
+				return '';
+			}
+		}
+
 		function _getLibraries() {
-			var libraries = sap.ui.versioninfo ? sap.ui.versioninfo.libraries : undefined;
+			var libraries = Global.versioninfo ? Global.versioninfo.libraries : undefined;
 			var formattedLibraries = Object.create(null);
 
 			if (libraries !== undefined) {
@@ -42,10 +56,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 		var frameworkInformation = {
 
 			commonInformation: {
-				frameWorkName: (versionInfo.gav && versionInfo.gav.indexOf('openui5') !== -1) ? 'OpenUI5' : 'SAPUI5',
-				version: sap.ui.version,
-				buildTime: sap.ui.buildinfo.buildtime,
-				lastChange: sap.ui.buildinfo.lastchange,
+				frameWorkName: _getFrameworkName(),
+				version: Global.version,
+				buildTime: Global.buildinfo.buildtime,
+				lastChange: Global.buildinfo.lastchange,
 				userAgent: navigator.userAgent,
 				applicationHREF: window.location.href,
 				documentTitle: document.title,
@@ -167,14 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 
 				Object.keys(inheritedMetadataProperties).forEach(function (key) {
 					result.controlProperties[key] = Object.create(null);
-
-					// Check if the property is used in the control
-					if (control.getProperty(key)) {
-						result.controlProperties[key].value = control.getProperty(key);
-					} else {
-						result.controlProperties[key].value = inheritedMetadataProperties[key].defaultValue;
-					}
-
+					result.controlProperties[key].value = inheritedMetadataProperties[key].get(control);
 					result.controlProperties[key].type = inheritedMetadataProperties[key].type;
 				});
 
@@ -191,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 				var result = [];
 				var inheritedMetadata = control.getMetadata().getParent();
 
-				while (inheritedMetadata instanceof sap.ui.core.ElementMetadata) {
+				while (inheritedMetadata instanceof ElementMetadata) {
 					result.push(this._copyInheritedProperties(control, inheritedMetadata));
 					inheritedMetadata = inheritedMetadata.getParent();
 				}
@@ -206,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 			 * @private
 			 */
 			_getProperties: function (controlId) {
-				var control = sap.ui.getCore().byId(controlId);
+				var control =  sap.ui.getCore().byId(controlId);
 
 				var properties = Object.create(null);
 				properties.own = this._getOwnProperties(control);
@@ -275,7 +282,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 			_getBindDataForAggregations: function (control) {
 				// TODO need some default value if there is no available data
 
-
 				var aggregations = control.getMetadata().getAllAggregations();
 				var aggregationsBindingData = Object.create(null);
 
@@ -304,7 +310,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 
 			/**
 			 * Common information about the framework
-			 * @returns {{commonInformation: {frameWorkName: string, version: string, buildTime: (string|string), lastChange: (string|string), userAgent: *, applicationHREF: string}, configurationBootstrap: *, configurationComputed: {theme: (*|string), language: (*|string), formatLocale: (*|string), accessibility: (*|boolean), animation: (*|boolean), rtl: (*|boolean), debug: (*|boolean), inspect: (*|boolean), originInfo: (*|boolean), noDuplicateIds: (*|boolean)}, libraries: (*|libraryConfig|oLibs), loadedLibraries: map, loadedModules: Array.<string>, URLParameters: *}}
+			 * @returns {*}
 			 */
 			getFrameworkInformation: function () {
 				return frameworkInformation;
@@ -336,7 +342,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 			 * @returns {*}
 			 */
 			getControlBindingData: function (controlId) {
-				var control = sap.ui.getCore().byId(controlId);
+				var control =  sap.ui.getCore().byId(controlId);
 
 				if (!control) {
 					return Object.create(null);
@@ -345,7 +351,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 				var bindingData = Object.create(null);
 				var bindingContext = control.getBindingContext();
 
-				//this available only for directly bound controls
 				// TODO need some default value if there is no available data
 				if (bindingContext) {
 					bindingData.contextPath = bindingContext.sPath;
@@ -359,4 +364,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 		};
 
 
-	}, /* bExport= */ false);
+	});
