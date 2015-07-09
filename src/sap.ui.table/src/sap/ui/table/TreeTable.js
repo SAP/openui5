@@ -425,8 +425,12 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			iCount = this.getVisibleRowCount();
 
 		for (var iRow = 0; iRow < iCount; iRow++) {
+			var sFixed = "";
+			if (this.getFixedColumnCount() > 0) {
+				sFixed = "-fixed";
+			}
 			var oContext = this.getContextByIndex(iFirstRow + iRow),
-				$row = this.getRows()[iRow].$(),
+				$row = jQuery.sap.byId(this.getRows()[iRow] + sFixed),
 				$rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
 
 			if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
