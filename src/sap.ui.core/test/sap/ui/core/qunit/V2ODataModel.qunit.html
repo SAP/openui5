@@ -50,9 +50,8 @@
 		oMockServer.stop();
 	}
 	
-	function initModel(bJSON, sUpdateMethod) {
-		bJSON = bJSON !== false;
-		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON, defaultUpdateMethod : sUpdateMethod});
+	function initModel(mParameters) {
+		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
 
 	function removeSharedMetadata() {
@@ -65,7 +64,7 @@
 	module("ODataModelV2 XML", {
 		setup : function() {
 			initServer();
-			oModel = initModel(false);
+			oModel = initModel({json: false});
 		},
 		teardown : function() {
 			oModel = undefined;
@@ -107,7 +106,7 @@
 	});
 	
 	asyncTest("test init Model", function() {
-		oModel = initModel(true);	
+		oModel = initModel();	
 		var fnTest = function() {
 			ok(true, "metadataloaded");
 			start();
@@ -155,7 +154,7 @@
 	});
 	
 	asyncTest("test metadata promise", function() {
-		oModel = initModel(true);
+		oModel = initModel();
 		
 		var oPromise = oModel.metadataLoaded();
 		ok(oPromise, "promise exists");
@@ -168,7 +167,7 @@
 	});
 	
 	asyncTest("test metadata promise and refresh", function() {
-		oModel = initModel(true);
+		oModel = initModel();
 		
 		var oPromise = oModel.metadataLoaded();
 		ok(oPromise, "promise exists");
@@ -260,7 +259,7 @@
 	
 	asyncTest("test metadata promise ok then refresh failed", function() {
 		
-		oModel = initModel(true);
+		oModel = initModel();
 
 		var sTempService = sServiceUri;
 		var oPromise = oModel.metadataLoaded();
@@ -287,7 +286,7 @@
 	
 	asyncTest("test metadata promise ok then refresh failed then refresh ok", function() {
 		
-		oModel = initModel(true);
+		oModel = initModel();
 
 		var oPromise = oModel.metadataLoaded();
 		var sTempService = sServiceUri;
@@ -646,6 +645,8 @@
 		oModel.submitChanges();
 	});
 
+	
+	
 	asyncTest("test oDataModel read deferred with batchGroupId and submitChanges callback handler test", function() {
 		var bSuccess = false;
 		oModel.setDeferredBatchGroups([ "myId" ]);
@@ -977,7 +978,7 @@
 		});
 	});
 
-	asyncTest("test oDataModel update Read default batchgroup", function() {
+	asyncTest("test oDataModel update Reagroupbatchgroup", function() {
 		var bUpdate = false;
 		var bRead = false;
 
@@ -1414,6 +1415,8 @@
 			}
 		});
 	});
+	
+	
 	
 	asyncTest("test oDataModel list binding", function() {
 		var iCount = 0;
@@ -1912,7 +1915,7 @@
 		var bSetProp = false;
 		var bSuccess = false;
 
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
 		
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
@@ -2049,7 +2052,7 @@
 		var bRead = false;
 		var bSetProp = false;
 		var bSuccess = false;
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.PUT);
+		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -2110,7 +2113,7 @@
 		var bSetProp = false;
 		var bSuccess = false;
 
-		oModel = initModel(true); // default should be merge
+		oModel = initModel(); // default should be merge
 		
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
@@ -2195,7 +2198,7 @@
 		var bRead2 = false;
 		var bSuccess = false;
 
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
 		
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
@@ -2279,7 +2282,7 @@
 		var bRead = false;
 		var bSuccess = false;
 		var bUpdate = false;
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Merge);
+		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Merge});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -2336,7 +2339,7 @@
 		var bRead = false;
 		var bSetProp = false;
 		var bUpdate = false;
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -3661,6 +3664,438 @@
 			start();
 		}
 		oInput.getElementBinding().attachChange(fnHandler);
+	});
+	
+	module("ODataModelV2 single request with groupId", {
+		setup : function() {
+			initServer();
+			oModel = initModel({json: true, useBatch: false, defaultCountMode: 'None'});
+		},
+		teardown : function() {
+			oModel = undefined;
+			removeSharedMetadata();
+			stopServer();
+		}
+	});
+	
+	asyncTest("test oDataModel read with no group id", function() {
+		var iCount = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+		
+		oModel.read("/ProductSet", {
+			success : function(oData, oResponse) {
+				bRead1 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.read("/ContactSet", {
+			success : function(oData, oResponse) {
+				bRead2 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bRead1 && bRead2) {
+				ok(true, "requests with no ids should should be combined in a single batch request");
+				start();
+			}
+		});
+	});
+
+	asyncTest("test oDataModel read with different group ids", function() {
+		var iCount = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+		
+		oModel.read("/ProductSet", {
+			groupId : "myId1",
+			success : function(oData, oResponse) {
+				bRead1 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.read("/ContactSet", {
+			groupId : "myId2",
+			success : function(oData, oResponse) {
+				bRead2 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bRead1 && bRead2) {
+				ok(true, "requests with different ids should be in separate batch requests");
+				start();
+			}
+		});
+	});
+
+	asyncTest("test oDataModel read with same groupIds", function() {
+		var iCount = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+		
+		oModel.read("/ProductSet", {
+			groupId : "myId",
+			success : function(oData, oResponse) {
+				bRead1 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.read("/ContactSet", {
+			groupId : "myId",
+			success : function(oData, oResponse) {
+				bRead2 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.attachRequestCompleted(
+			this,
+			function(test) {
+				iCount++;
+				if (iCount === 2 && bRead1 && bRead2) {
+					ok(true, "requests with same id should be combined in a batch request");
+					start();
+				}
+			});
+	});
+
+	asyncTest("test oDataModel read deferred with groupId", function() {
+		oModel.setDeferredGroups([ "myId" ]);
+		oModel.read("/ProductSet", {
+			groupId : "myId",
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				start();
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel read deferred with default groupIds", function() {
+		var iCount = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+		
+		oModel.setDeferredGroups([ undefined ]);
+		oModel.read("/ProductSet", {
+			success : function(oData, oResponse) {
+				bRead1 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.read("/ContactSet", {
+			success : function(oData, oResponse) {
+				bRead2 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bRead1 && bRead2) {
+				ok(true, "requests with same default id should be combined in a batch request");
+				start();
+			}
+		});
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel read deferred with same groupIds", function() {
+		var iCount = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+				
+		oModel.setDeferredGroups([ "myId1" ]);
+		oModel.read("/ProductSet", {
+			groupId : "myId1",
+			success : function(oData, oResponse) {
+				bRead1 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.read("/ContactSet", {
+			groupId : "myId1",
+			success : function(oData, oResponse) {
+				bRead2 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 2 && bRead1 && bRead2) {
+				ok(true, "requests with same id should be combined in a batch request");
+				start();
+			}
+		});
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel read deferred with different groupIds", function() {
+		var iCount = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+		
+		oModel.setDeferredGroups([ "myId1", "myId2" ]);
+		oModel.read("/ProductSet", {
+			groupId : "myId1",
+			success : function(oData, oResponse) {
+				bRead1 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.read("/ContactSet", {
+			groupId : "myId2",
+			success : function(oData, oResponse) {
+				bRead2 = true;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(test) {
+				iCount++;
+				if (iCount === 2 && bRead1 && bRead2) {
+					ok(true, "requests with different ids should be in separate batch requests");
+					start();
+				}
+			});
+		oModel.submitChanges();
+	});
+	
+	asyncTest("test oDataModel Two Way", function() {
+		var iCount = 0;
+		var bsetProp = false;
+		oModel.setDefaultBindingMode("TwoWay");
+				
+		// make request non deferred...
+		oModel.setChangeGroups({
+			"*" : {groupId : "myId"}
+			
+		});
+
+		var mEntities = {
+				categories: { 
+					collection: "/ProductSet", 
+					properties: ["Name"]
+				}
+			}
+		var oTable = initTable(mEntities);
+		oTable.placeAt("target1");
+		
+		oTable.setModel(oModel);
+		
+		oModel.metadataLoaded().then(function() {
+			oTable.bindRows({path:mEntities.categories.collection});
+			oModel.attachRequestCompleted(this, function(test) {
+				iCount++;
+	
+				if (iCount === 1){ // bind rows should have been loaded
+					bSetProp = oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
+					
+				}
+				
+				if (iCount === 2 && bSetProp) {
+					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					start();
+				}
+			});
+		});
+	});
+	
+	asyncTest("test oDataModel Two Way deferred with using changeGroups", function() {
+		var iCount = 0;
+		var bsetProp = false;
+		oModel.setDefaultBindingMode("TwoWay");
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
+					"Product": {
+			 			groupId: "myId",  
+			  			changeSetId: "Test",
+			  			single: true
+			 		}});
+		var mEntities = {
+				categories: { 
+					collection: "/ProductSet", 
+					properties: ["Name"]
+				}
+			}
+		var oTable = initTable(mEntities);
+		oTable.placeAt("target1");
+		
+		oTable.setModel(oModel);
+		
+		oModel.metadataLoaded().then(function() {
+			oTable.bindRows({path:mEntities.categories.collection});
+			
+			var fnHandler = function(test) {
+				iCount++;
+	
+				if (iCount === 1){ // bind rows should have been loaded
+					bSetProp = oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
+					ok(oModel.hasPendingChanges(), "Pending changes test");
+					oModel.submitChanges();
+				}
+				if (iCount === 2) {
+					ok(true, "request called");
+					ok(bSetProp, "set Property succesful");
+					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oModel.detachRequestCompleted(fnHandler);
+					start();
+				}
+			};
+			oModel.attachRequestCompleted(this, fnHandler);
+		});
+	});
+	
+	asyncTest("test oDataModel Two Way 2 changes deferred with using changeGroups", function() {
+		var iCount = 0;
+		var bsetProp = false;
+		var bsetProp2 = false;
+		oModel.setDefaultBindingMode("TwoWay");
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
+			"Product": {
+	 			groupId: "myId",  
+	  			changeSetId: "Test",
+	  			single: true
+	 		}
+		});
+		var mEntities = {
+			categories: { 
+				collection: "/ProductSet", 
+				properties: ["Name"]
+			}
+		}
+		var oTable = initTable(mEntities);
+		oTable.placeAt("target1");
+		
+		oTable.setModel(oModel);
+		
+		oModel.metadataLoaded().then(function() {
+			oTable.bindRows({path:mEntities.categories.collection});
+			
+			var fnHandler = function(test) {
+				iCount++;
+	
+				if (iCount === 1) { // bind rows should have been loaded
+					bSetProp = oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
+					bSetProp2 = oModel.setProperty("/ProductSet('HT-1000')/Name", "NewValue2");
+					ok(oModel.hasPendingChanges(), "Pending changes test");
+					oModel.submitChanges();
+				}
+				if (iCount === 3) {
+					ok(true, "request called");
+					ok(bSetProp, "set property successful");
+					ok(bSetProp2, "set property successful");
+					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
+					
+					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oModel.detachRequestCompleted(this, fnHandler);
+					start();
+				}
+			}
+			oModel.attachRequestCompleted(this, fnHandler);
+		});
+	});
+	
+	asyncTest("test oDataModel Two Way 2 changes deferred with using changeGroups", function() {
+		var iCount = 0;
+		var bsetProp = false;
+		var bsetProp2 = false;
+		oModel.setDefaultBindingMode("TwoWay");
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
+					"Product": {
+			 			groupId: "myId",  
+			  			changeSetId: "Test",
+			  			single: false
+			 		}});
+		var mEntities = {
+				categories: { 
+					collection: "/ProductSet", 
+					properties: ["Name"]
+				}
+			}
+		var oTable = initTable(mEntities);
+		oTable.placeAt("target1");
+		
+		oTable.setModel(oModel);
+		oModel.metadataLoaded().then(function() {
+			oTable.bindRows({path:mEntities.categories.collection});
+			
+			var fnHandler = function(test) {
+				iCount++;
+	
+				if (iCount === 1) { // bind rows should have been loaded
+					bSetProp = oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
+					bSetProp2 = oModel.setProperty("/ProductSet('HT-1000')/Name", "NewValue2");
+					ok(oModel.hasPendingChanges(), "Pending changes test");
+					oModel.submitChanges();
+				}
+				if (iCount ===3) {
+					ok(true, "request called");
+					ok(bSetProp, "set property successful");
+					ok(bSetProp2, "set property successful");
+					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
+					
+					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oModel.detachRequestCompleted(this, fnHandler);
+					start();
+				}
+			}
+			oModel.attachRequestCompleted(this, fnHandler);
+		});
 	});
 	</script>
 
