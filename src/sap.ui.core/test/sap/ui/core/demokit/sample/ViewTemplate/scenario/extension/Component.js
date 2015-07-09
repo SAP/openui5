@@ -11,40 +11,44 @@ sap.ui.define([
 	], function (BaseComponent) {
 	"use strict";
 
-	var oCustomizing = {
-			"sap.ui.viewExtensions" : {
-				"sap.ui.core.sample.ViewTemplate.scenario.Detail" : {
-					"HeaderInfo" : {
-						className : "sap.ui.core.Fragment",
-						fragmentName :
-							"sap.ui.core.sample.ViewTemplate.scenario.extension.HeaderInfo",
-						type : "XML"
-					}
-				},
-				"sap.ui.core.sample.ViewTemplate.scenario.FormFacet" : {
-					"afterTitle" : {
-						className : "sap.ui.core.Fragment",
-						fragmentName :
-							"sap.ui.core.sample.ViewTemplate.scenario.extension.ReferenceFacet",
-						type : "XML"
-					}
-				},
-				"sap.ui.core.sample.ViewTemplate.scenario.extension.ReferenceFacet" : {
-					"replace.me" : {
-						className : "sap.ui.core.Fragment",
-						fragmentName :
-							"sap.ui.core.sample.ViewTemplate.scenario.extension.AnnotationPath",
-						type : "XML"
+	function fragment(sFileName) {
+		return {
+				className : "sap.ui.core.Fragment",
+				fragmentName : sPackage + sFileName,
+				type : "XML"
+			};
+	}
+
+	var sPackage = "sap.ui.core.sample.ViewTemplate.scenario.extension.",
+		oExtendedComponent = BaseComponent.extend(
+			"sap.ui.core.sample.ViewTemplate.scenario.extension.Component", {
+				metadata : {
+					config : {
+						sample : {
+							files : [ //TODO how can we override the list of files here?
+								"AnnotationPath.fragment.xml",
+								"Component.js",
+								"HeaderInfo.fragment.xml",
+								"ReferenceFacet.fragment.xml"
+							]
+						}
+					},
+					customizing : {
+						"sap.ui.viewExtensions" : {
+							"sap.ui.core.sample.ViewTemplate.scenario.Detail" : {
+								"HeaderInfo" : fragment("HeaderInfo")
+							},
+							"sap.ui.core.sample.ViewTemplate.scenario.FormFacet" : {
+								"afterTitle" : fragment("ReferenceFacet")
+							},
+							"sap.ui.core.sample.ViewTemplate.scenario.extension.ReferenceFacet" : {
+								"replace.me" : fragment("AnnotationPath")
+							}
+						}
 					}
 				}
 			}
-		};
+		);
 
-	return BaseComponent.extend(
-				"sap.ui.core.sample.ViewTemplate.scenario.extension.Component", {
-					metadata : {
-						customizing : oCustomizing
-					}
-				}
-			);
+		return oExtendedComponent;
 });

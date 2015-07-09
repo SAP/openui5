@@ -86,6 +86,10 @@ sap.ui.define([
 					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
 					models : oModel
 				});
+		},
+
+		exit : function () {
+			MockServer.destroyAll();
 		}
 	});
 

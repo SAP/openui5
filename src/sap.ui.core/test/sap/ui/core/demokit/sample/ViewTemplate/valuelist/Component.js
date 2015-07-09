@@ -138,6 +138,10 @@ sap.ui.define([
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"
 			});
+		},
+
+		exit : function () {
+			MockServer.destroyAll();
 		}
 	});
 
