@@ -6,13 +6,12 @@ sap.ui.require([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/ODataModel"
 ], function (ManagedObject, ChangeReason, ODataModel) {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, sinon, start, strictEqual, stop, test, throws,
-	*/
+	/*global QUnit, sinon */
+	/*eslint no-warning-comments: 0 */
+	/*... max-nested-callbacks: 0 */
 	"use strict";
 
-	var oGlobalSandbox,
-		TestControl = ManagedObject.extend("sap.ui.core.test.TestControl", {
+	var TestControl = ManagedObject.extend("sap.ui.core.test.TestControl", {
 			metadata: {
 				properties: {
 					text: "string"
@@ -21,53 +20,60 @@ sap.ui.require([
 					child: {multiple: false, type: "sap.ui.core.test.TestControl"}
 				}
 			}
-		}),
-		oLogMock,
-		oModelMock;
-
-	/**
-	 * Initializes the control's text property asynchronously. Waits for the bound context to be
-	 * present and passes the context binding to the resolve handler.
-	 * @returns {Promise}
-	 *   a promise to be resolved when the control's bound context has been initialized
-	 */
-	function createContextBinding() {
-		return new Promise(function (fnResolve, fnReject) {
-			var oBinding,
-				oModel = new ODataModel("/service"),
-				oControl = new TestControl({models: oModel});
-
-			oModelMock = oGlobalSandbox.mock(oModel);
-			oModelMock.expects("read").never();
-			oControl.bindObject("/EntitySet('foo')/child");
-			oBinding = oControl.getObjectBinding();
-			strictEqual(oBinding.getBoundContext(), null, "synchronous: no bound context yet");
-			oBinding.attachChange(function () {
-				strictEqual(oBinding.getBoundContext().getPath(), "/EntitySet('foo')/child",
-					"after initialize");
-				fnResolve(oBinding);
-			});
 		});
-	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.v4.ODataContextBinding", {
+	QUnit.module("sap.ui.model.odata.v4.ODataContextBinding", {
 		beforeEach : function () {
-			oGlobalSandbox = sinon.sandbox.create();
-			oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
-			oLogMock.expects("warning").never();
-			oLogMock.expects("error").never();
+			this.oSandbox = sinon.sandbox.create();
+			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 		},
+
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			oGlobalSandbox.verifyAndRestore();
+			this.oSandbox.verifyAndRestore();
+		},
+
+		/**
+		 * Initializes the control's text property asynchronously. Waits for the bound context
+		 * to be present and passes the context binding to the resolve handler.
+		 *
+		 * Note: This function mocks the model and holds the mock in this.oModelMock.
+		 *
+		 * @param {object} assert
+		 *   the QUnit assert methods
+		 * @returns {Promise}
+		 *   a promise to be resolved when the control's bound context has been initialized.
+		 *   The resolve function passes the context binding as parameter.
+		 */
+		createContextBinding : function (assert) {
+			var oModel = new ODataModel("/service"),
+				oControl = new TestControl({models: oModel});
+
+			this.oModelMock = this.oSandbox.mock(oModel);
+			this.oModelMock.expects("read").never();
+			return new Promise(function (fnResolve, fnReject) {
+				var oBinding;
+
+				oControl.bindObject("/EntitySet('foo')/child");
+				oBinding = oControl.getObjectBinding();
+				assert.strictEqual(oBinding.getBoundContext(), null,
+					"synchronous: no bound context yet");
+				oBinding.attachChange(function () {
+					assert.strictEqual(oBinding.getBoundContext().getPath(),
+						"/EntitySet('foo')/child", "after initialize");
+					fnResolve(oBinding);
+				});
+			});
 		}
 	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bForceUpdate) {
-		test("checkUpdate(" + bForceUpdate + "): unchanged", function (oAssert) {
-			return createContextBinding().then(function (oBinding) {
+		QUnit.test("checkUpdate(" + bForceUpdate + "): unchanged", function (assert) {
+			return this.createContextBinding(assert).then(function (oBinding) {
 				var bGotChangeEvent = false;
 
 				oBinding.attachChange(function () {
@@ -76,19 +82,19 @@ sap.ui.require([
 
 				// code under test
 				oBinding.checkUpdate(bForceUpdate).then(function () {
-					strictEqual(bGotChangeEvent, bForceUpdate, "got change event as expected");
+					assert.strictEqual(bGotChangeEvent, bForceUpdate,
+						"got change event as expected");
 				});
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("ManagedObject.bindObject on child (relative), then on parent", function (oAssert) {
+	QUnit.test("ManagedObject.bindObject on child (relative), then on parent", function (assert) {
 		var oBinding,
 			oChild = new TestControl(),
-			fnDone = oAssert.async(),
+			done = assert.async(),
 			oModel = new ODataModel("/service"),
-			oModelMock = oGlobalSandbox.mock(oModel),
 			oParent = new TestControl({models: oModel, child: oChild});
 
 		// This should not trigger anything yet
@@ -96,9 +102,9 @@ sap.ui.require([
 
 		oBinding = oChild.getObjectBinding();
 		oBinding.attachChange(function () {
-			strictEqual(oBinding.getBoundContext().getPath(), "/EntitySet('foo')/child");
+			assert.strictEqual(oBinding.getBoundContext().getPath(), "/EntitySet('foo')/child");
 
-			fnDone();
+			done();
 		});
 
 		// This creates and initializes a context binding at the parent. The change handler of the
@@ -109,16 +115,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("setContext on resolved binding", function (oAssert) {
+	QUnit.test("setContext on resolved binding", function (assert) {
 		var oModel = new ODataModel("/service"),
-			oModelMock = oGlobalSandbox.mock(oModel),
+			oModelMock = this.oSandbox.mock(oModel),
 			oBinding = oModel.bindContext("/EntitySet('foo')/child");
 
 		oModelMock.expects("read").never(); // no read expected due to absolute path
 
 		oBinding.setContext(oModel.getContext("/EntitySet('bar')"));
 
-		strictEqual(oBinding.getContext().getPath(), "/EntitySet('bar')", "stored nevertheless");
+		assert.strictEqual(oBinding.getContext().getPath(), "/EntitySet('bar')",
+			"stored nevertheless");
 	});
 
 	// TODO events dataRequested, dataReceived
