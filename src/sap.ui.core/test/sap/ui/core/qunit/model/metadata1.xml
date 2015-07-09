@@ -49,6 +49,17 @@
 					Relationship="RMTSAMPLEFLIGHT_2.CarrierToFlight" FromRole="ToRole_CarrierToFlight"
 					ToRole="FromRole_CarrierToFlight" />
 			</EntityType>
+			<EntityType Name="Carrier" m:HasStream="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CarrierID" />
+				</Key>
+				<Property Name="CarrierID" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Airline" />
+				<Property Name="AirLineName" Type="Edm.String" MaxLength="20" sap:label="Airline" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" sap:label="Airline Currency" sap:semantics="currency-code" />
+				<Property Name="URL" Type="Edm.String" MaxLength="255" sap:label="URL" />
+				<Property Name="mimeType" Type="Edm.String" MaxLength="128" sap:label="MIME Type" sap:filterable="false" />
+				<NavigationProperty Name="carrierFlights" Relationship="RMTSAMPLEFLIGHT.CarrierToFlight" FromRole="FromRole_CarrierToFlight" ToRole="ToRole_CarrierToFlight" />
+			</EntityType>
 			<ComplexType Name="FlightDetails" gp:display-order="0010">
 				<Property Name="DepartureCountryCode" Type="Edm.String"
 					MaxLength="3" sap:label="Country" />
@@ -90,6 +101,10 @@
 					sap:label="Free seats" />
 			</ComplexType>
 			<ComplexType Name="FlightAvailability2" BaseType="RMTSAMPLEFLIGHT_2.FlightAvailability" />
+			<Association Name="CarrierToFlight">
+				<End Type="RMTSAMPLEFLIGHT_2.Carrier" Role="FromRole_CarrierToFlight" Multiplicity="1" />
+				<End Type="RMTSAMPLEFLIGHT_2.Flight" Role="ToRole_CarrierToFlight" Multiplicity="*" />
+			</Association>			
 			<EntityContainer Name="RMTSAMPLEFLIGHT_2_Entities"
 				m:IsDefaultEntityContainer="true">
 				<EntitySet Name="FlightCollection" EntityType="RMTSAMPLEFLIGHT_2.Flight"
@@ -97,7 +112,33 @@
 					<gp:collectionLayout display-order="0010"
 						top-level="true" />
 				</EntitySet>
+				<EntitySet Name="CarrierCollection" EntityType="RMTSAMPLEFLIGHT_2.Carrier"
+					 sap:creatable="false" sap:deletable="false" sap:content-version="1">
+				</EntitySet>
+				<FunctionImport Name="Validate" ReturnType="RMTSAMPLEFLIGHT_2.Flight" m:HttpMethod="GET">
+					<Parameter Mode="In" Name="AirLineID" Type="Edm.String"/>
+					<Parameter Mode="In" Name="FlightConnectionID" Type="Edm.String"/>
+					<Parameter Mode="In" Name="FlightDate" Type="Edm.DateTime"/>
+				</FunctionImport>
+				<FunctionImport Name="Validate2" m:HttpMethod="GET" EntitySet="RMTSAMPLEFLIGHT_2.Flight">
+					<Parameter Mode="In" Name="AirLineID" Type="Edm.String"/>
+					<Parameter Mode="In" Name="FlightConnectionID" Type="Edm.String"/>
+					<Parameter Mode="In" Name="FlightDate" Type="Edm.DateTime"/>
+				</FunctionImport>
+				<FunctionImport Name="Validate3" m:HttpMethod="GET" sap:action-for="Flight">
+					<Parameter Mode="In" Name="AirLineID" Type="Edm.String"/>
+					<Parameter Mode="In" Name="FlightConnectionID" Type="Edm.String"/>
+					<Parameter Mode="In" Name="FlightDate" Type="Edm.DateTime"/>
+				</FunctionImport>
 			</EntityContainer>
+			<Annotations Target="RMTSAMPLEFLIGHT_2.Flight/AirLineID"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.test.ui5">
+					<String>AirLineID Annotation</String>
+				</Annotation>
+			</Annotations>
+			
+			
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
