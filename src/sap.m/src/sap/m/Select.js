@@ -519,10 +519,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype._decoratePopover = function(oPopover) {
 			var that = this;
 
-			oPopover._setMinWidth = function(sWidth) {
-				this.getDomRef().style.minWidth = sWidth;
-			};
-
 			oPopover._setWidth = function(sWidth) {
 				var bAutoAdjustWidth = that.getAutoAdjustWidth(),
 					bIconOnly = that.getType() === "IconOnly",
@@ -558,12 +554,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
-			// width adaptations
-			if (sap.ui.Device.system.phone) {
-				oPopover._setMinWidth("100%");
-			} else {
-				oPopover._setWidth(sWidth);
-			}
+			oPopover._setWidth(sWidth);
 		};
 
 		/* ----------------------------------------------------------- */
