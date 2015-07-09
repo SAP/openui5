@@ -12,7 +12,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A DetailPage is a {@link sap.m.semantic.ShareMenuPage} that is restricted to include only semantic controls of the following semantic types:
+	 * A DetailPage is a {@link sap.m.semantic.ShareMenuPage} that supports semantic content of the following types:
 	 *
 	 * <ul>
 	 * 	<li>{@link sap.m.semantic.AddAction}</li>
