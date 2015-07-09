@@ -519,23 +519,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype._decoratePopover = function(oPopover) {
 			var that = this;
 
-			oPopover._setWidth = function(sWidth) {
-				var bAutoAdjustWidth = that.getAutoAdjustWidth(),
-					bIconOnly = that.getType() === "IconOnly",
-					oPickerDomRef = this.getDomRef();
+			oPopover._setMinWidth = function(sWidth) {
+				var oPickerDomRef = this.getDomRef();
 
-				// set the width of the content
-				if (sap.ui.Device.system.desktop || sap.ui.Device.system.tablet) {
-
-					if (bAutoAdjustWidth) {
-						oPickerDomRef.style.width = "auto";
-						oPickerDomRef.style.minWidth = sWidth;
-					}
-				}
-
-				if (!bIconOnly) {
-
-					// set the width of the popover
+				if (oPickerDomRef) {
 					oPickerDomRef.style.minWidth = sWidth;
 				}
 			};
@@ -554,7 +541,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
-			oPopover._setWidth(sWidth);
+			oPopover._setMinWidth(sWidth);
 		};
 
 		/* ----------------------------------------------------------- */
