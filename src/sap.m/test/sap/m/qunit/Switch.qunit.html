@@ -876,6 +876,27 @@
 				// cleanup
 				oSwitch.destroy();
 			});
+
+			// BCP 1570633670
+			test("extending the switch should not throw an error", function() {
+
+				// system under test
+				sap.m.Switch.extend("CustomSwitch", {
+					renderer: {}
+				});
+
+				var oCustomSwitch = new CustomSwitch();
+
+				// arrange
+				oCustomSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(oCustomSwitch.isActive());
+
+				// cleanup
+				oCustomSwitch.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
