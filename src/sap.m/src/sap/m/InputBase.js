@@ -242,6 +242,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// remember dom value in case of invalidation during keystrokes
 			// so the following should only be used onAfterRendering
 			this._sDomValue = this._getInputValue();
+		} else {
+			// no active dom so we should not try to retain the value
+			this._bCheckDomValue = false;
 		}
 	};
 
@@ -691,9 +694,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	InputBase.prototype.updateDomValue = function(sValue) {
 
-		// dom value updated other than value property
-		this._bCheckDomValue = true;
-
 		// respect to max length
 		sValue = this._getInputValue(sValue);
 
@@ -701,6 +701,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// otherwise cursor can goto end of text unnecessarily
 		if (this.isActive() && (this._getInputValue() !== sValue)) {
 			this._$input.val(sValue);
+			
+			// dom value updated other than value property
+			this._bCheckDomValue = true;
 		}
 
 		// update synthetic placeholder visibility
