@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.TechInfo (TechInfo support plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAP', 'jquery.sap.encoder', 'jquery.sap.script'],
-	function(jQuery, Plugin, ToolsAP/* , jQuerySap, jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI', 'jquery.sap.encoder', 'jquery.sap.script'],
+	function(jQuery, Plugin, ToolsAPI/* , jQuerySap, jQuerySap1 */) {
 	"use strict";
 
 
@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAP', 
 
 
 		function sendData(oPlugin){
-			var oCfg = ToolsAP.getFrameworkInformation();
+			var oCfg = ToolsAPI.getFrameworkInformation();
 			var oData = {
 				version: oCfg.commonInformation.version,
 				build: oCfg.commonInformation.buildTime,
