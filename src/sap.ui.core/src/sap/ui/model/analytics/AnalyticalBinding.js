@@ -75,6 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
 			this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
 			this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
+			this.bNoPaging = (mParameters && mParameters.noPaging === true) ? true : false;
 
 			// attribute members for maintaining loaded data; mapping from groupId to related information
 			this.iTotalSize = -1;
@@ -1383,7 +1384,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
 		}
 		var oKeyIndexMapping = this._getKeyIndexMapping(sGroupId, iStartIndex);
-		oAnalyticalQueryRequest.setResultPageBoundaries(oKeyIndexMapping.iServiceKeyIndex + 1, oKeyIndexMapping.iServiceKeyIndex + iLength);
+		if (!this.bNoPaging) {
+			oAnalyticalQueryRequest.setResultPageBoundaries(oKeyIndexMapping.iServiceKeyIndex + 1, oKeyIndexMapping.iServiceKeyIndex + iLength);
+		}
 
 		// (8) request result entity count
 		oAnalyticalQueryRequest.setRequestOptions(null, !this.mFinalLength[sGroupId]);
@@ -1704,7 +1707,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				iEffectiveStartIndex = Math.max(iEffectiveStartIndex, iServiceLengthForGroupIdMissing);
 			}
 
-			oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+			if (!that.bNoPaging) {
+				oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+			}
 			
 			return {
 				iRequestType : iRequestType,

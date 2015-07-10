@@ -43,12 +43,16 @@
 		baseURI: sServiceURI
 	});
 
+	//sServiceURI = "../../../../../proxy/http/dewdflhanaui5.emea.global.corp.sap:8000/tmp/d041558/cca/CCA.xsodata/";
+	
 	sinon.config.useFakeTimers = false;
 	
 	var oModel,
 		oBinding;
 
-	var setupAnalyticalBinding = function(iVersion, fnODataV2Callback) {
+	var setupAnalyticalBinding = function(iVersion, mParameters, fnODataV2Callback) {
+		mParameters = mParameters || {};
+		
 		if (iVersion === 1) {
 			oModel = new sap.ui.model.odata.ODataModel(sServiceURI, {
 				json: true, 
@@ -97,7 +101,8 @@
 				visible: true
 			}],
 			useBatchRequests: true,
-			numberOfExpandedLevels: 0
+			numberOfExpandedLevels: mParameters.numberOfExpandedLevels || 0,
+			noPaging: mParameters.noPaging || false
 		});
 		sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
 		
@@ -113,7 +118,7 @@
 	};
 
 	asyncTest("Eventing - ODataModel V1 - DataRequested and DataReceived", function() {
-		setupAnalyticalBinding(1);
+		setupAnalyticalBinding(1, {});
 		
 		var that = this;
 		
@@ -135,7 +140,7 @@
 			equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
 			
 			equal(oRequestSentSpy.callCount, 1, "After Initial Loading: Number of requestSent Events = 1");
-			equal(oRequestCompletedSpy.callCount, 1, "After Initial Loading: Number of requestCompleted Events = 1")
+			equal(oRequestCompletedSpy.callCount, 1, "After Initial Loading: Number of requestCompleted Events = 1");
 		
 			oBinding.attachChange(fnChangeHandler2);
 			oBinding.expand(0);
@@ -173,7 +178,7 @@
 	asyncTest("Eventing - ODataModel V2 - DataRequested and DataReceived", function() {
 		var that = this;
 		
-		setupAnalyticalBinding(2, function () {
+		setupAnalyticalBinding(2, {}, function () {
 			var oRequestedSpy = sinon.spy(oBinding, 'fireDataRequested');
 			var oReceivedSpy = sinon.spy(oBinding, 'fireDataReceived');
 			
@@ -220,6 +225,77 @@
 				
 				start();
 			}
+		});
+	});
+	
+	asyncTest("No Paging Option - Normal Use Case", function() {
+		var that = this;
+		
+		setupAnalyticalBinding(2, {noPaging: true}, function () {
+			
+			oBinding.attachChange(fnChangeHandler1);
+			var aContexts = oBinding.getContexts(0, 20, 10);
+			
+			// simple hook to check if the URLs are correctly created
+			oModel.read = function () {
+				var vReturn = sap.ui.model.odata.v2.ODataModel.prototype.read.apply(this, arguments);
+				var sURL = arguments[0];
+				
+				// check if $top is contained in the URL, only $top=1 is allowed here!
+				equal(sURL.indexOf("$top") == -1 || sURL.indexOf("$top=1") > 0, true, "URL was created without $top value");
+				// check if $skip is contained in the URL
+				equal(sURL.indexOf("$skip") == -1, true, "URL was created without $skip value");
+				
+				return vReturn;
+			}
+			
+			var iChangeHandlerCounter = 0;
+			function fnChangeHandler1() {
+				iChangeHandlerCounter++;
+				if (iChangeHandlerCounter == 2) {
+					//retrieve contexts, every thing should be loaded
+					var aContexts = oBinding.getContexts(0, 100);
+					
+					equal(aContexts.length, 9, "All contexts on top level loaded");
+					
+					start();
+				}
+			}
+		
+		});
+	});
+	
+	asyncTest("No Paging Option - Auto Expand (NO multi-unit)", function() {
+		var that = this;
+		
+		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, function () {
+			
+			oBinding.attachChange(fnChangeHandler1);
+			var aContexts = oBinding.getContexts(0, 20, 10);
+			
+			var iChangeHandlerCounter = 0;
+			function fnChangeHandler1() {
+				iChangeHandlerCounter++;
+				if (iChangeHandlerCounter == 2) {
+					//retrieve contexts, every thing should be loaded
+					var aContexts = oBinding.getContexts(0, 1000);
+					
+					//even though 1000 were requested, we only receive 230, since that's all there is in the backend
+					equal(aContexts.length, 230, "Access via ATBA: All contexts over every level could be retrieved");
+					
+					equal(aContexts[0].getProperty().CostCenter, "100-1000", "Cost Center of 1st row is correct");
+					equal(aContexts[0].getProperty().ActualCosts, "1588416", "Sum Node of 1st row is correctly set");
+					
+					equal(aContexts[100].getProperty().CostCenter, "200-2000", "Cost Center of 100th row is correct");
+					equal(aContexts[100].getProperty().ActualCosts, "9254", "Sum Node of 100th row is correctly set");
+					
+					equal(aContexts[229].getProperty().CostCenter, "300-2000", "1. CostCenter of last row is correct (last subtotal row)");
+					equal(aContexts[229].getProperty().ActualCosts, "752475", "2. ActualCosts of last row is correct (last subtotal row)");
+					
+					start();
+				}
+			}
+		
 		});
 	});
 
