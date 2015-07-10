@@ -17,6 +17,12 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 	<script>
 	
 	
@@ -33,6 +39,8 @@
 	
 	var aLifeCycleCalls = [];
 	
+	
+	var oLifecycleSpy = sinon.spy();
 	
 	
 	// UI Construction
@@ -115,6 +123,20 @@
 		ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
 		ok(!oController.customerAction, "Extended Sub2 controller should have no customerAction method");
 		equal(oController.originalSAPAction(), "ori", "originalSAPAction method of extended controller should return 'ori'");
+	});
+	
+	
+	test("Controller Extension (Code Extensibility)", function() {
+		
+		// check lifecycle methods
+		equal(oLifecycleSpy.callCount, 3, "3 lifecycle methods should be called");
+		// check calling order
+		equal(oLifecycleSpy.getCall(0).args[0], "Sub6 Controller onInit()", "1st lifecycle method to be called should be: Sub6 Controller onInit()");
+		
+		equal(oLifecycleSpy.getCall(1).args[0], "Sub6 Controller onBeforeRendering()", "2nd lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
+		
+		equal(oLifecycleSpy.getCall(2).args[0], "Sub6 Controller onAfterRendering()", "3rd lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
+		
 	});
 	
 	
