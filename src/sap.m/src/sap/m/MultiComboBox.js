@@ -1836,7 +1836,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	MultiComboBox.prototype.setSelectedKeys = function(aKeys) {
 		this.removeAllSelectedItems();
 		this._aCustomerKeys = [];
-		this.addSelectedKeys(aKeys);
+		this.addSelectedKeys(aKeys === undefined ? [] : aKeys);
 		return this;
 	};
 	
@@ -1852,7 +1852,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 */
 	MultiComboBox.prototype.addSelectedKeys = function(aKeys) {	
 		aKeys = this.validateProperty("selectedKeys", aKeys);
-		
+		aKeys = (aKeys === undefined ? [] : aKeys);
 		aKeys.forEach(function(sKey) {
 			var oItem = this.getItemByKey(sKey);
 			if (oItem) {
