@@ -232,13 +232,134 @@
 			assert.strictEqual(this.oWizard.getProgress(), 2, "Should be at step 2");
 		});
 
-		QUnit.test("previousStep() should change the current step of the wizard", function(assert) {
+		QUnit.test("previousStep() should change the current step of the wizard", function (assert) {
 			 this.oWizard.nextStep();
 			 this.oWizard.nextStep();
 			 this.oWizard.previousStep();
 			 assert.strictEqual(this.oWizard.getProgress(), 2, "Should be at step 1");
 		 });
 
+		QUnit.module("Wizard Branching", {
+			sWizardId: "wizard-branching-id",
+			setup: function () {
+				var that = this;
+
+				this.externalStep = new sap.m.WizardStep();
+				this.step6 = new sap.m.WizardStep({
+					content : []
+				});
+				this.stepDummy = new sap.m.WizardStep("Dummy_Step", {
+					nextStep: this.step6,
+					content: []
+				});
+				this.step5 = new sap.m.WizardStep("Card_Contents",{
+					nextStep: this.stepDummy,
+					content : []
+				});
+				this.step4 = new sap.m.WizardStep("CreditCard_Information",{
+					nextStep: this.step6,
+					content : []
+				});
+				this.step3 = new sap.m.WizardStep("Payment_Details",{
+					subsequentSteps: [this.step4, this.step5],
+					content: []
+				});
+				this.step2 = new sap.m.WizardStep("Personal_Information",{
+					nextStep: this.step3,
+					content: []
+				});
+				this.step1 = new sap.m.WizardStep({
+					subsequentSteps: [this.step2, this.step3],
+					content: []
+				});
+
+				this.oWizard = new sap.m.Wizard({
+					enableBranching: true,
+					steps: [this.step1, this.step2, this.step3, this.step4, this.step5, this.stepDummy, this.step6]
+				});
+
+				this.oWizard.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function () {
+				});
+			},
+			teardown: function () {
+				this.oWizard.destroy();
+				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				this.oWizard = null;
+			}
+		});
+
+		QUnit.test("Progress navigator steps count", function (assert) {
+			var progressNavigator = this.oWizard._getProgressNavigator();
+			var stepsAtStart = progressNavigator.getStepCount();
+			this.step1.setNextStep(this.step2);
+			this.oWizard.nextStep();
+			var stepsAfterStep1 = progressNavigator.getStepCount();
+			assert.strictEqual(stepsAtStart, 1, "should be equal to 1 at start.");
+			assert.strictEqual(stepsAfterStep1, 3 , "should be equal to 3 after step1.");
+		});
+
+		QUnit.test("Discard after braching should reset progress navigator steps count", function (assert) {
+			var progressNavigator = this.oWizard._getProgressNavigator();
+			this.step1.setNextStep(this.step2);
+			this.oWizard.nextStep();
+			var stepsAfterStep1 = progressNavigator.getStepCount();
+			this.oWizard.discardProgress(this.step1);
+			var stepsAfterDiscard = progressNavigator.getStepCount();
+			assert.strictEqual(stepsAfterStep1, 3, "should be equal to 3");
+			assert.strictEqual(stepsAfterDiscard, 1, "should be equal to 1");
+		});
+
+		QUnit.test("Branching should change progress navigator varyingStepCount property", function (assert) {
+			var progressNavigator = this.oWizard._getProgressNavigator();
+			var varyingStepCountAtStart = progressNavigator.getVaryingStepCount();
+			this.step1.setNextStep(this.step3);
+			this.oWizard.nextStep();
+			var varyingStepCountAtStep3 = progressNavigator.getVaryingStepCount();
+			this.step3.setNextStep(this.step4);
+			this.oWizard.nextStep();
+			var varyingStepCountAtStep4 = progressNavigator.getVaryingStepCount();
+			this.oWizard.discardProgress(this.step1);
+			var varyingStepCountAfterDiscard = progressNavigator.getVaryingStepCount();
+			assert.strictEqual(varyingStepCountAtStart, true, "Should be equal to true at start");
+			assert.strictEqual(varyingStepCountAtStep3, true, "Should be equal to true at step3");
+			assert.strictEqual(varyingStepCountAtStep4, false, "Should be equal to true at step4");
+			assert.strictEqual(varyingStepCountAfterDiscard, true, "Should be reset after discard");
+		});
+
+		QUnit.test("Wizard should log error if next step is already in the step path", function (assert) {
+			var that = this;
+			assert.throws(function () {
+				that.step1.setNextStep(that.step1);
+				that.oWizard.nextStep();
+			}, "Should raise an error.");
+		});
+
+		QUnit.test("Wizard should log an error if no next step is set", function (assert) {
+			var that = this;
+			assert.throws(function () {
+				that.oWizard.nextStep();
+			}, "Should raise an error.");
+		});
+
+		QUnit.test("Wizard should log an error if next step in not present in previous step's subsequent aggregation",
+			function (assert) {
+				var that = this;
+				assert.throws(function () {
+					that.step1.setNextStep(that.step4);
+					that.oWizard.nextStep();
+				}, "Should raise an error.");
+		});
+
+		QUnit.test("Wizard should log an error if next step is outside the wizard", function (assert) {
+			var that = this;
+			assert.throws(function () {
+				that.step1.setNextStep(that.externalStep);
+				that.oWizard.nextStep();
+			}, "Should raise an error.");
+		});
 
 	</script>
 </head>

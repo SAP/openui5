@@ -66,6 +66,19 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 				 * when autoLocking is set to true
 				 */
 				_editButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
+			},
+			associations: {
+				/**
+				 * This association is used only when the 'enableBranching' property of the Wizard is set to true.
+				 * Use the association to store the next steps that are about to come after the current.
+				 * If this is going to be a final step - leave this association empty.
+				 */
+				subsequentSteps : {type : "sap.m.WizardStep", multiple : true, singularName : "subsequentStep"},
+				/**
+				 * The next step to be taken after the step is completed.
+				 * Set this association value in the complete event of the current WizardStep.
+				 */
+				nextStep : {type: "sap.m.WizardStep", multiple: false}
 			}
 		}
 	});
@@ -94,6 +107,34 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 		}
 
 		return this;
+	};
+
+	WizardStep.prototype._isLeaf = function () {
+		if ( this.getNextStep() === null && this.getSubsequentSteps().length === 0 ) {
+			return true;
+		}
+		return false;
+	};
+
+	WizardStep.prototype._isBranched = function () {
+		return this.getSubsequentSteps().length > 1;
+	};
+
+
+	WizardStep.prototype._getNextStepReference = function () {
+		if (this.getNextStep() != null) {
+			return sap.ui.getCore().byId(this.getNextStep());
+		}
+
+		if (this.getSubsequentSteps().length === 1) {
+			return sap.ui.getCore().byId(this.getSubsequentSteps[0]);
+		}
+
+		return null;
+	};
+
+	WizardStep.prototype._containsSubsequentStep = function (stepId) {
+		return this.getSubsequentSteps().some(function (step) { return step === stepId; });
 	};
 
 	WizardStep.prototype._getWizardParent = function () {
