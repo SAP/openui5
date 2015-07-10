@@ -262,20 +262,30 @@
 
 	/**
 	 * Checks that the XML preprocessor throws the expected error message when called on the given
-	 * view content.
+	 * view content. Expects the error to be logged additionally.
+	 *
+	 * BEWARE: Call via <code>checkError.call(this, ...)</code> so that <code>this</code> is a
+	 * Sinon sandbox! Or pass a log mock as this.
 	 *
 	 * @param {string[]} aViewContent
 	 * @param {string} sExpectedMessage
 	 *   no caller identification expected;
-	 *   "{0}" is replaced with the indicated line of the view content (see iOffender)
+	 *   "{0}" is replaced with the indicated line of the view content (see vOffender)
 	 * @param {object} [mSettings={}]
 	 *   a settings object for the preprocessor
-	 * @param {number} [iOffender=1]
-	 *   index of offending statement
+	 * @param {number|string} [vOffender=1]
+	 *   (index of) offending statement
 	 */
-	function checkError(aViewContent, sExpectedMessage, mSettings, iOffender) {
-		var oViewContent = xml(aViewContent),
-			sOffender = aViewContent[iOffender || 1];
+	function checkError(aViewContent, sExpectedMessage, mSettings, vOffender) {
+		var oLogMock = this.expects ? this : this.mock(jQuery.sap.log),
+			oViewContent = xml(aViewContent);
+
+		if (vOffender === undefined || typeof vOffender === "number") {
+			vOffender = aViewContent[vOffender || 1];
+		}
+		sExpectedMessage = sExpectedMessage.replace("{0}", vOffender);
+		oLogMock.expects("error").withExactArgs(matchArg(sExpectedMessage), "qux",
+			"sap.ui.core.util.XMLPreprocessor");
 
 		try {
 			process(oViewContent, mSettings);
@@ -283,7 +293,7 @@
 		} catch (ex) {
 			strictEqual(
 				normalizeXml(ex.message),
-				normalizeXml("qux: " + sExpectedMessage.replace("{0}", sOffender))
+				normalizeXml("qux: " + sExpectedMessage)
 			);
 		}
 	}
@@ -341,6 +351,9 @@
 	 * Checks that the XML preprocessor throws the expected error message when called on the given
 	 * view content. Determines the offending content by <code>id="unexpected"</code>.
 	 *
+	 * BEWARE: Call via <code>unexpected(this, ...)</code> so that <code>this</code> is a
+	 * Sinon sandbox! Or pass a log mock as this.
+	 *
 	 * @param {string[]} aViewContent
 	 * @param {string} sExpectedMessage
 	 *   no caller identification expected;
@@ -355,7 +368,7 @@
 			}
 		});
 
-		checkError(aViewContent, sExpectedMessage, undefined, iUnexpected);
+		checkError.call(this, aViewContent, sExpectedMessage, undefined, iUnexpected);
 	}
 
 	//*********************************************************************************************
@@ -793,7 +806,7 @@
 		'</mvc:View>'
 	]].forEach(function (aViewContent, i) {
 		test("Unexpected tags (" + i + ")", function () {
-			unexpected(aViewContent, "Unexpected tag {0}");
+			unexpected.call(this, aViewContent, "Unexpected tag {0}");
 		});
 	});
 
@@ -821,7 +834,7 @@
 		'</mvc:View>'
 	]].forEach(function (aViewContent, i) {
 		test("Expected <template:else>, but instead saw... (" + i + ")", function () {
-			unexpected(aViewContent,
+			unexpected.call(this, aViewContent,
 				"Expected <template:elseif> or <template:else>, but instead saw {0}");
 		});
 	});
@@ -845,7 +858,7 @@
 		'</mvc:View>'
 	]].forEach(function (aViewContent, i) {
 		test("Expected </t:if>, but instead saw... (" + i + ")", function () {
-			unexpected(aViewContent, "Expected </t:if>, but instead saw {0}");
+			unexpected.call(this, aViewContent, "Expected </t:if>, but instead saw {0}");
 		});
 	});
 
@@ -1235,7 +1248,7 @@
 
 	//*********************************************************************************************
 	test("template:with and 'named context', missing variable name", function () {
-		checkError([
+		checkError.call(this, [
 			mvcView(),
 			'<template:with path="/unused" var=""/>',
 			'</mvc:View>'
@@ -1244,7 +1257,7 @@
 
 	//*********************************************************************************************
 	test("template:with and 'named context', missing model", function () {
-		checkError([
+		checkError.call(this, [
 			mvcView(),
 			'<template:with path="some>random/path" var="path"/>', // "some" not defined here!
 			'</mvc:View>'
@@ -1253,7 +1266,7 @@
 
 	//*********************************************************************************************
 	test("template:with and 'named context', missing context", function () {
-		checkError([
+		checkError.call(this, [
 			mvcView(),
 			'<template:with path="some/random/place" var="place"/>',
 			'</mvc:View>'
@@ -1338,7 +1351,7 @@
 	[undefined, {}].forEach(function (fnHelper) {
 		test("template:with and helper = " + fnHelper, function () {
 			window.foo = fnHelper;
-			checkError([
+			checkError.call(this, [
 				mvcView(),
 				'<template:with path="/unused" var="target" helper="foo"/>',
 				'</mvc:View>'
@@ -1354,7 +1367,7 @@
 			window.foo = function () {
 				return vResult;
 			};
-			checkError([
+			checkError.call(this, [
 				mvcView(),
 				'<template:with path="/unused" var="target" helper="foo"/>',
 				'</mvc:View>'
@@ -1474,7 +1487,7 @@
 
 	//*********************************************************************************************
 	test('template:repeat w/o list', function () {
-		checkError([
+		checkError.call(this, [
 			mvcView(),
 			'<template:repeat/>',
 			'</mvc:View>'
@@ -1483,7 +1496,7 @@
 
 	//*********************************************************************************************
 	test('template:repeat list="no binding"', function () {
-		checkError([
+		checkError.call(this, [
 			mvcView(),
 			'<template:repeat list="no binding"/>',
 			'</mvc:View>'
@@ -1492,7 +1505,7 @@
 
 	//*********************************************************************************************
 	test('template:repeat list="{unknown>foo}"', function () {
-		checkError([
+		checkError.call(this, [
 			mvcView(),
 			'<template:repeat list="{unknown>foo}"/>',
 			'</mvc:View>'
@@ -1610,7 +1623,7 @@
 
 	//*********************************************************************************************
 	test("template:repeat with missing loop variable", function () {
-		checkError([
+		checkError.call(this, [
 			mvcView(),
 			'<template:repeat var="" list="{/unused}"/>',
 			'</mvc:View>'
@@ -1717,22 +1730,16 @@
 
 	//*********************************************************************************************
 	test("error on fragment with simple cyclic reference", function () {
-		var oLogMock = this.mock(jQuery.sap.log);
-
-		oLogMock.expects("error")
-			.withExactArgs('Stopped due to cyclic reference in fragment: cycle',
-				sinon.match(/Error: Stopped due to cyclic fragment reference/),
-				"sap.ui.core.util.XMLPreprocessor");
-
 		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 			.once() // no need to load the fragment in vain!
 			.withExactArgs("cycle", "fragment")
 			.returns(xml(['<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>']));
-		check.call(oLogMock, [
+
+		checkError.call(this, [
 				mvcView(),
 				'<Fragment fragmentName="cycle" type="XML"/>',
 				'</mvc:View>'
-			], {}, /Error: Stopped due to cyclic fragment reference/);
+			], "Cyclic reference to fragment 'cycle' {0}");
 	});
 
 	//*********************************************************************************************
@@ -1750,10 +1757,6 @@
 			oLogMock = this.mock(jQuery.sap.log),
 			oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
 
-		oLogMock.expects("error")
-			.withExactArgs('Stopped due to cyclic reference in fragment: B',
-				sinon.match(/Error: Stopped due to cyclic fragment reference/),
-				"sap.ui.core.util.XMLPreprocessor");
 		warn(oLogMock, "qux: Set unchanged path '/foo' in " + aFragmentContent[1]);
 		warn(oLogMock, "qux: Set unchanged path '/bar' in " + aFragmentContent[2]);
 
@@ -1767,13 +1770,13 @@
 			.withExactArgs("A", "fragment")
 			.returns(xml(aFragmentContent));
 
-		check.call(oLogMock, [
+		checkError.call(oLogMock, [
 				mvcView(),
 				'<Fragment fragmentName="A" type="XML"/>',
 				'</mvc:View>'
-			], {
+			], "Cyclic reference to fragment 'B' {0}", {
 				models: new sap.ui.model.json.JSONModel()
-			}, /Error: Stopped due to cyclic fragment reference/);
+			}, aFragmentContent[3]);
 	});
 
 	//*********************************************************************************************
