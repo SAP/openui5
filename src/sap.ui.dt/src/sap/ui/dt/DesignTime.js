@@ -270,7 +270,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 	DesignTime.prototype.addRootElement = function(vRootElement) {
 		this.addAssociation("rootElements", vRootElement);
 
-		this._createOverlaysForElement(ElementUtil.getElementInstance(vRootElement));
+		this.createOverlayFor(ElementUtil.getElementInstance(vRootElement));
 
 		return this;		
 	};
@@ -340,10 +340,10 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 
 	/**
 	 * @param {sap.ui.core.Element} oElement element
-	 * @public
 	 * @return {sap.ui.dt.Overlay} created overlay
+	 * @private
 	 */
-	DesignTime.prototype.createOverlayFor = function(oElement) {
+	DesignTime.prototype._createOverlay = function(oElement) {
 		// check if overlay for the element already exists before creating the new one
 		// (can happen when two aggregations returning the same elements)
 		if (!OverlayRegistry.getOverlay(oElement)) {
@@ -365,15 +365,21 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 	};
 
 	/**
-	 * @param {sap.ui.core.Element} oRootElement element
+	 * Creates overlay for an element and all public children of the element
+	 * @param {sap.ui.core.Element} oElement element
+	 * @return {sap.ui.dt.Overlay} created overlay
 	 * @private
 	 */
-	DesignTime.prototype._createOverlaysForElement = function(oRootElement) {
+	DesignTime.prototype.createOverlayFor = function(oRootElement) {
 		var that = this;
+		var oRootOverlay;
 
 		this._iterateRootElementPublicChildren(oRootElement, function(oElement) {
-			that.createOverlayFor(oElement);
+			var oOverlay = that._createOverlay(oElement);
+			oRootOverlay = oRootOverlay || oOverlay;
 		}); 
+
+		return oRootOverlay;
 	};
 
 	/**
@@ -407,8 +413,10 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 	DesignTime.prototype._onOverlayDestroyed = function(oEvent) {
 		var oOverlay = oEvent.getSource();
 
+		if (oOverlay.getSelected()) {
+			this._oSelection.remove(oOverlay);
+		}
 		this.fireOverlayDestroyed({overlay : oOverlay});
-		this._oSelection.remove(oOverlay);
 	};
 
 	/**
@@ -442,7 +450,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 	DesignTime.prototype._onOverlayElementAddAggregation = function(oElement) {
 		var oOverlay = OverlayRegistry.getOverlay(oElement);
 		if (!oOverlay) {
-			this._createOverlaysForElement(oElement);
+			this.createOverlayFor(oElement);
 		}
 	};
 

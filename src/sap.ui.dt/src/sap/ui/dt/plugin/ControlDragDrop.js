@@ -105,8 +105,6 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragStart = function(oOverlay, oEvent) {
-		delete this._previousTarget;
-
 		this._activateAllValidDroppables();
 	};
 
@@ -114,6 +112,8 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
+		delete this._oPreviousTarget;
+
 		this._deactivateAllDroppables();
 	};
 
@@ -121,26 +121,30 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
-		if (oTargetOverlay.getElementInstance() !== this.getDraggedOverlay().getElementInstance() && oTargetOverlay.getDomRef().outerHTML !== this._previousTarget) {
-			this._previousTarget = oTargetOverlay.getDomRef().outerHTML;
+		if (oTargetOverlay.getElementInstance() !== this.getDraggedOverlay().getElementInstance() && oTargetOverlay !== this._oPreviousTarget) {
 			this._repositionOn(oTargetOverlay);
 		}
+		this._oPreviousTarget = oTargetOverlay;
 	};
 
 	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay) {
-		delete this._previousTarget;
+		delete this._oPreviousTarget;
 
-		var oParentElement = oAggregationOverlay.getElementInstance();
+		var oTargetParentElement = oAggregationOverlay.getElementInstance();
 
 		var oDraggedElement = this.getDraggedOverlay().getElementInstance();
-		var oParentOverlay = this.getDraggedOverlay().getParentOverlay();
+		var oSourceParentOverlay = this.getDraggedOverlay().getParentOverlay();
+		var oSourceParentElement;
+		if (oSourceParentOverlay) {
+			oSourceParentElement = oSourceParentOverlay.getElementInstance();
+		}
 
-		if (oParentElement !== oParentOverlay.getElementInstance()) {
+		if (oTargetParentElement !== oSourceParentElement) {
 			var sAggregationName = oAggregationOverlay.getAggregationName();
-			ElementUtil.addAggregation(oParentElement, sAggregationName, oDraggedElement);
+			ElementUtil.addAggregation(oSourceParentElement, sAggregationName, oDraggedElement);
 		}
 	};
 
