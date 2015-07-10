@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             }
 
             var oTree = new sap.ui.commons.Tree(oTopLevelNavItem.id + "-index", {
-                showHeader: true,
+                showHeader: false,
                 width: "100%",
                 height: "100%",
                 showHorizontalScrollbar: true
@@ -560,7 +560,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
         DemokitApp.prototype.navigateTo = function (sName, bSkipSetHash, bSkipSwitchLocation, bNewWindow) {
             var that = this;
             var TREE_ABSOLUTE_LOCATION_LEFT = "0px";
-            var TREE_ABSOLUTE_LOCATION_TOP = "25px";
+            var TREE_ABSOLUTE_LOCATION_TOP = "32px";
+            var TREE_EXPAND_BUTTON_LOCATION_RIGHT = "30px";
+            var TREE_COLLAPSE_BUTTON_LOCATION_RIGHT = "0px";
+            var TREE_BUTTONS_LOCATION_TOP = "0px";
 
             // normalize page name (from hash)
             var sPageName = sName.indexOf("#") === 0 ? sName.substring(1) : sName;
@@ -665,9 +668,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     oEmptyLabel.setVisible(bNoNodes);
 
                 };
-                
+
                 var oSearch = new sap.ui.commons.SearchField({
-                    width: "100%",
                     enableListSuggest: false,
                     enableClear: true,
                     enableFilterMode: true,
@@ -687,10 +689,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 
                 oSearch._ctrl.setPlaceholder("Filter");
                 
-                oSearch.addStyleClass("sapUiDemokitSearchField");
+                oSearch.addStyleClass("sapUiDemokitAbsLayoutFirtsRow sapUiDemokitSearchField");
                 return oSearch;
             }
-
+            
+            function createTreeButtons(oTree, fTreeAction, sIcon, sTooltip, sStyle) {
+                var oButton = new sap.ui.commons.Button({
+                    lite: true,
+                    icon : sIcon,
+                    press : fTreeAction.bind(oTree)
+                });
+                oButton.addStyleClass("sapUiDemokitExpandCollapseButtons sapUiDemokitAbsLayoutFirtsRow");
+                if (sStyle) {
+                    oButton.addStyleClass(sStyle);
+                }
+                oButton.setTooltip(sTooltip);
+                                                
+                oButton.addEventDelegate({
+                    onAfterRendering: function () {
+                        oButton.$("icon").attr("title", sTooltip);
+                        oButton.$("icon").attr("aria-label", sTooltip);
+                    }
+                });
+                
+                return oButton;
+            }
+            
+            function createCollapseButton(oTree) {
+                return createTreeButtons(oTree, oTree.collapseAll, "sap-icon://collapse-group", "Collapse All", "sapUiDemokitCollapseButton");
+            }
+            
+            function createExpandButton(oTree) {
+                return createTreeButtons(oTree, oTree.expandAll, "sap-icon://expand-group", "Expand All");
+            }
+            
             //Update Top Level Navigation and Navigation Tree
             var oSelectedNavEntry = null;
             var oNewNavItem = oNewTLNItem && oNewTLNItem.navItem;
@@ -700,6 +732,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 this._oSidePanelLayout.removeAllContent();
                 if (oNewTLNItem._oTree) {
                     this._oSidePanelLayout.addContent(createTreeFilter(oNewTLNItem._oTree, oNewTLNItem._oEmptyTreeLabel));
+                    this._oSidePanelLayout.addContent(createCollapseButton(oNewTLNItem._oTree), {
+                        right: TREE_COLLAPSE_BUTTON_LOCATION_RIGHT,
+                        top: TREE_BUTTONS_LOCATION_TOP
+                    });
+                    this._oSidePanelLayout.addContent(createExpandButton(oNewTLNItem._oTree), {
+                        right: TREE_EXPAND_BUTTON_LOCATION_RIGHT,
+                        top: TREE_BUTTONS_LOCATION_TOP
+                    });
                     this._oSidePanelLayout.addContent(oNewTLNItem._oTree, {
                         left: TREE_ABSOLUTE_LOCATION_LEFT,
                         top: TREE_ABSOLUTE_LOCATION_TOP
