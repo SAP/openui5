@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global'],
 				bEnabled = oSwitch.getEnabled(),
 				sName = oSwitch.getName(),
 				bAccessibilityEnabled = sap.ui.getCore().getConfiguration().getAccessibility(),
-				oRb = oSwitch.constructor._oRb,
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
 			oRm.write("<div");
