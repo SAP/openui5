@@ -3,11 +3,11 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
-	<CheckBox text="Toolbar Active" selected="true" select="onCheckBoxSelect"/>
-	
-	<Toolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress">
-		<Text text="You press here when toolbar is active"/>
+	<CheckBox text="Active" selected="true" select="onCheckBoxSelect"/>
+
+	<OverflowToolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress">
+		<Text text="If you click here, while the OverflowToolbar is active, an event will be fired."/>
 		<ToolbarSpacer/>
 		<core:Icon src="sap-icon://undo" width="2rem" press="onIconPress"/>
-	</Toolbar>
+	</OverflowToolbar>
 </mvc:View>

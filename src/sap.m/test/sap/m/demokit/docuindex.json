@@ -484,7 +484,11 @@
 		  "since": "1.28",
 		  "samples": [
 			"sap.m.sample.OverflowToolbarSimple",
-			"sap.m.sample.OverflowToolbarFooter"
+			"sap.m.sample.OverflowToolbarFooter",
+			"sap.m.sample.ToolbarAlignment",
+			"sap.m.sample.ToolbarActive",
+			"sap.m.sample.ToolbarEnabled",
+			"sap.m.sample.TitleToolBar"
 		  ]
 		},
 		{
@@ -789,13 +793,8 @@
 		  "category": "Container",
 		  "since": "1.20",
 		  "samples": [
-			"sap.m.sample.ToolbarAlignment",
-			"sap.m.sample.ToolbarActive",
-			"sap.m.sample.ToolbarEnabled",
 			"sap.m.sample.ToolbarShrinkable",
-			"sap.m.sample.Page",
-			"sap.m.sample.ToolbarVsBar",
-			"sap.m.sample.TitleToolBar"
+			"sap.m.sample.ToolbarVsBar"
 		  ]
 		},
 		{
@@ -930,8 +929,8 @@
 		},
 		{
 		  "id": "sap.m.sample.ToolbarVsBar",
-		  "name": "Toolbar vs Bar",
-		  "description": "Toolbar is better in handling overflow. It is more flexible as a container + it has a faster performance. Bar is able to perfectly center a text if nothing overflows."
+		  "name": "Toolbar vs Bar vs OverflowToolbar",
+		  "description": "Toolbar handles overflow by shrinking items. OverflowToolbar provides an overflow menu. Bar is able to perfectly center a text if nothing overflows."
 		},
 		{
 		  "id": "sap.m.sample.QuickView",
@@ -980,18 +979,18 @@
 		},
 		{
 		  "id": "sap.m.sample.ToolbarAlignment",
-		  "name": "Toolbar - Alignment",
-		  "description": "One of the very common use-case with Toolbar is adding some group of items on the left and on the right. However, Toolbar does not provide left/right/middle aggregation as in the Bar control but it needs ToolbarSpacer to add a horizontal space between toolbar items. Lets see some examples."
+		  "name": "OverflowToolbar - Alignment",
+		  "description": "OverflowToolbar and Toolbar are often used for left/right alignment. This is easily achieved with ToolbarSpacer."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarActive",
-		  "name": "Toolbar - Active",
-		  "description": "Active toolbar indicates that the whole toolbar is clickable. Press event of this control is fired only if the active property is set to true."
+		  "name": "OverflowToolbar - Active",
+		  "description": "Making an OverflowToolbar or a Toolbar active allows them to react to the click event."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarEnabled",
-		  "name": "Toolbar - Enabled",
-		  "description": "Enabled property of the toolbar can be used to enable or disable all the controls inside the toolbar. This property is not for the toolbar itself. See also the active property."
+		  "name": "OverflowToolbar - Enabled",
+		  "description": "The Enabled property can be used to enable or disable all the controls inside the OverflowToolbar/Toolbar."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarShrinkable",
@@ -1760,8 +1759,8 @@
 		},
 		{
 		  "id": "sap.m.sample.TitleToolBar",
-		  "name": "Title Toolbar",
-		  "description": "A TitleToolBar is always 3 rem in height. For the title text inside the sap.m.Title control should be used."
+		  "name": "Placing a Title in OverflowToolbar/Toolbar",
+		  "description": "The sap.m.Title control can be used to place a title inside an OverflowToolbar/Toolbar."
 		},
 		{
 		  "id": "sap.m.sample.UploadCollection",
@@ -1831,7 +1830,7 @@
 		{
 		  "id": "sap.m.sample.OverflowToolbarSimple",
 		  "name": "Overflow Toolbar - layout",
-		  "description": "Overflow Toolbar can contain the same controls as Toolbar with the added benefit that buttons that do not fit are moved to an Action Sheet when overflow occurs."
+		  "description": "Overflow Toolbar can contain the same controls as Toolbar with the added benefit that buttons that do not fit are moved to an overflow area when overflow occurs."
 		},
 		{
 		  "id": "sap.m.sample.OverflowToolbarFooter",

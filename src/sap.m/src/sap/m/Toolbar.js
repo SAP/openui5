@@ -13,13 +13,15 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	/**
 	 * Constructor for a new Toolbar.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Toolbar control is a horizontal items container that can be used to get an input from user or just to display output.
-	 * 
-	 * Note: By default, when the Toolbar overflows, it provides shrinking for the controls which have percentual width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behaviour can be overwritten by providing {@link sap.m.ToolbarLayoutData} for the toolbar items.
+	 * The Toolbar control is a horizontal items container that can be used to get an input from a user or just to display output.
+	 *
+	 * By default, when the Toolbar overflows, it provides shrinking for the controls which have percentual width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behaviour can be overwritten by providing {@link sap.m.ToolbarLayoutData} for the toolbar items.
+	 *
+	 * Note: It is recommended that you use {@link sap.m.OverflowToolbar} over Toolbar, unless you want to avoid overflow in favor of shrinking.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
@@ -33,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Toolbar = Control.extend("sap.m.Toolbar", /** @lends sap.m.Toolbar.prototype */ { metadata : {
-	
+
 		interfaces : [
 			"sap.ui.core.Toolbar",
 			"sap.m.IBar"
@@ -46,24 +48,24 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			 * By default the Toolbar is block element, if the the width is not explicitly set, control will simply have its own natural size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Indicates that the whole toolbar is clickable. Press event of this control is fired only if this property is set "true"
 			 * Note: This property should be used when there is no interactive control inside the toolbar but to make the toolbar itself interactive.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * Sets the enabled property of all controls defined in the content aggregation. Note: This property is not for the toolbar itself. See also the "active" property.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Defines the height of the control.
 			 * Note: By default, the height property depends on the theme and the design property.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''},
-	
+
 			/**
 			 * Defines the toolbar design. Design settings are theme-dependent and can also define the default height of the toolbar.
 			 * @since 1.16.8
@@ -72,20 +74,20 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		},
 		defaultAggregation : "content",
 		aggregations : {
-	
+
 			/**
 			 * The content of the toolbar.
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
 		events : {
-	
+
 			/**
 			 * If "active" property is set "true" then "press" event is fired when user clicks on the toolbar.
 			 */
 			press : {
 				parameters : {
-	
+
 					/**
 					 * The control which caused the press event within the toolbar.
 					 */
@@ -94,12 +96,12 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			}
 		}
 	}});
-	
+
 	EnabledPropagator.call(Toolbar.prototype);
-	
+
 	// shrinkable class name
 	Toolbar.shrinkClass = "sapMTBShrinkItem";
-	
+
 	/*
 	 * Checks whether the given width is relative or not
 	 *
@@ -111,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	Toolbar.isRelativeWidth = function(sWidth) {
 		return /^([-+]?\d+%|auto|inherit|)$/i.test(sWidth);
 	};
-	
+
 	/*
 	 * This sets inner controls to the initial width and
 	 * checks the given element horizontally overflows
@@ -125,15 +127,15 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		if (!$Element || !$Element.length) {
 			return false;
 		}
-	
+
 		$Element.children().each(function() {
 			this.style.width = Toolbar.getOrigWidth(this.id);
 		});
-	
+
 		return $Element[0].scrollWidth > $Element[0].clientWidth;
-	
+
 	};
-	
+
 	/*
 	 * Returns the original width(currently only control's width) via Control ID
 	 * TODO: This function is not smart enough to detect DOM width changes
@@ -152,10 +154,10 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		if (!oControl || !oControl.getWidth) {
 			return "";
 		}
-	
+
 		return oControl.getWidth();
 	};
-	
+
 	/*
 	 * Checks given control whether shrinkable or not and marks according to second param
 	 * Percent widths and text nodes(without fixed width) are shrinkable
@@ -172,37 +174,37 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		if (oControl instanceof ToolbarSpacer) {
 			return this.isRelativeWidth(oControl.getWidth());
 		}
-	
+
 		// remove old class
 		sShrinkClass = sShrinkClass || this.shrinkClass;
 		oControl.removeStyleClass(sShrinkClass);
-	
+
 		// ignore the controls has fixed width
 		var sWidth = this.getOrigWidth(oControl.getId());
 		if (!this.isRelativeWidth(sWidth)) {
 			return;
 		}
-	
+
 		// check shrinkable via layout data
 		var oLayout = oControl.getLayoutData();
 		if (oLayout instanceof ToolbarLayoutData) {
 			return oLayout.getShrinkable() && oControl.addStyleClass(sShrinkClass);
 		}
-	
+
 		// is percent item?
 		// does implement shrinkable interface?
 		if (sWidth.indexOf("%") > 0 ||
 			oControl.getMetadata().isInstanceOf("sap.ui.core.IShrinkable")) {
 			return oControl.addStyleClass(sShrinkClass);
 		}
-	
+
 		// is text element?
 		var oDomRef = oControl.getDomRef();
 		if (oDomRef && (oDomRef.firstChild || {}).nodeType == 3) {
 			return oControl.addStyleClass(sShrinkClass);
 		}
 	};
-	
+
 	/*
 	 * Grow-Shrink flexbox polyfill for Toolbar
 	 *
@@ -213,16 +215,16 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @param {String} [sShrinkClass] shrinkable item class
 	 */
 	Toolbar.flexie = function($Element, sFlexClass, sShrinkClass) {
-	
+
 		// check element exists and has width to calculate
 		if (!$Element || !$Element.length || !$Element.width()) {
 			return;
 		}
-	
+
 		// set default values
 		sShrinkClass = sShrinkClass || this.shrinkClass;
 		sFlexClass = sFlexClass || ToolbarSpacer.flexClass;
-	
+
 		// initial values
 		var iTotalPercent = 0,
 			aFlexibleItems = [],
@@ -246,19 +248,19 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 					calcUnShrinkableItem($Item);
 					return;
 				}
-	
+
 				// calculate related percentage according to inner width
 				var iBoxSizing = 0;
 				var fWidth = $Item.width();
 				var fPercent = (fWidth * 100) / iInnerWidth;
 				iTotalPercent += fPercent;
-	
+
 				// margins + paddings + borders are not shrinkable
 				iTotalUnShrinkableWidth += $Item.outerWidth(true) - fWidth;
 				if ($Item.css("box-sizing") == "border-box") {
 					iBoxSizing = $Item.outerWidth() - fWidth;
 				}
-	
+
 				// should also take account of max width
 				// browsers does not respect computed max width when it has %
 				// https://code.google.com/p/chromium/issues/detail?id=228938
@@ -267,7 +269,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				if (sMaxWidth.indexOf("%") > 0) {
 					fMaxWidth = Math.ceil((fMaxWidth * $Element.outerWidth()) / 100);
 				}
-	
+
 				// push item
 				aShrinkableItems.push({
 					boxSizing : iBoxSizing,
@@ -279,36 +281,36 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			},
 			setWidths = function(iTotalWidth) {
 				var iSumOfWidth = 0;
-	
+
 				// check for max and min width and remove items if they cannot not shrink or grow anymore
 				aShrinkableItems.forEach(function(oItem, iIndex) {
 					var fRelativePercent = Math.min(100, (oItem.percent * 100) / iTotalPercent);
 					var iContentWidth = Math.floor((iTotalWidth * fRelativePercent) / 100);
 					var iCalcWidth = oItem.boxSizing + iContentWidth;
-	
+
 					// if we cannot set calculated shrink width because of the minimum width restriction
 					// then we should shrink the other items because current item cannot shrink more
 					if (iCalcWidth < oItem.minWidth) {
 						oItem.el.style.width = oItem.minWidth + "px";
 						iTotalWidth -= (oItem.minWidth - oItem.boxSizing);
-	
+
 						// ignore this element cannot shrink more
 						iTotalPercent -= oItem.percent;
 						delete aShrinkableItems[iIndex];
 					}
-	
+
 					// if there is a max width restriction and calculated grow width is more than max width
 					// then we should share this extra grow gap for the other items
 					if (oItem.maxWidth && oItem.maxWidth > oItem.minWidth && iCalcWidth > oItem.maxWidth) {
 						oItem.el.style.width = oItem.maxWidth + "px";
 						iTotalWidth += (iCalcWidth - oItem.maxWidth);
-	
+
 						// ignore this element cannot grow more
 						iTotalPercent -= oItem.percent;
 						delete aShrinkableItems[iIndex];
 					}
 				});
-	
+
 				// share the width to the items (can grow or shrink)
 				aShrinkableItems.forEach(function(oItem) {
 					var fRelativePercent = Math.min(100, (oItem.percent * 100) / iTotalPercent);
@@ -317,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 					oItem.el.style.width = fCalcWidth + "px";
 					iSumOfWidth += fCalcWidth;
 				});
-	
+
 				// calculate remain width
 				iTotalWidth -= iSumOfWidth;
 				if (iTotalWidth > 1) {
@@ -328,7 +330,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 					});
 				}
 			};
-	
+
 		// start calculation
 		// here items are in their initial width
 		$Children.each(function() {
@@ -349,15 +351,15 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				calcUnShrinkableItem($Child);
 			}
 		});
-	
+
 		// check if there is still place for flex or do the shrink
 		var iRemainWidth = iInnerWidth - iTotalUnShrinkableWidth;
 		setWidths(Math.max(iRemainWidth, 0));
 	};
-	
+
 	// determines whether toolbar has flexbox support or not
 	Toolbar.hasFlexBoxSupport = jQuery.support.hasFlexBoxSupport;
-	
+
 	// determines whether toolbar has new flexbox (shrink) support
 	Toolbar.hasNewFlexBoxSupport = (function() {
 		var oStyle = document.documentElement.style;
@@ -365,63 +367,63 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				oStyle.msFlex !== undefined ||
 				oStyle.webkitFlexShrink !== undefined);
 	}());
-	
+
 	Toolbar.prototype.init = function() {
 		// define group for F6 handling
 		this.data("sap-ui-fastnavgroup", "true", true);
-		
+
 		// content delegate reference
 		this._oContentDelegate = {
 			onAfterRendering: this._onAfterContentRendering
 		};
 	};
-	
+
 	Toolbar.prototype.onBeforeRendering = function() {
 		this._cleanup();
 	};
-	
+
 	Toolbar.prototype.onAfterRendering = function() {
 		// if there is no shrinkable item, layout is not needed
 		if (!this._checkContents()) {
 			return;
 		}
-	
+
 		// layout the toolbar
 		this._doLayout();
 	};
-	
+
 	Toolbar.prototype.exit = function() {
 		this._cleanup();
 	};
-			
+
 	Toolbar.prototype.onLayoutDataChange = function() {
 		this.rerender();
 	};
-	
+
 	Toolbar.prototype.addContent = function(oControl) {
 		this.addAggregation("content", oControl);
 		this._onContentInserted(oControl);
 		return this;
 	};
-	
+
 	Toolbar.prototype.insertContent = function(oControl, iIndex) {
 		this.insertAggregation("content", oControl, iIndex);
 		this._onContentInserted(oControl);
 		return this;
 	};
-	
+
 	Toolbar.prototype.removeContent = function(vContent) {
 		vContent = this.removeAggregation("content", vContent);
 		this._onContentRemoved(vContent);
 		return vContent;
 	};
-	
+
 	Toolbar.prototype.removeAllContent = function() {
 		var aContents = this.removeAllAggregation("content") || [];
 		aContents.forEach(this._onContentRemoved, this);
 		return aContents;
 	};
-	
+
 	// handle tap for active toolbar, do nothing if already handled
 	Toolbar.prototype.ontap = function(oEvent) {
 		if (this.getActive() && !oEvent.isMarked()) {
@@ -431,7 +433,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			});
 		}
 	};
-	
+
 	// fire press event when enter is hit on the active toolbar
 	Toolbar.prototype.onsapenter = function(oEvent) {
 		if (this.getActive() && oEvent.srcControl === this && !oEvent.isMarked()) {
@@ -441,15 +443,15 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			});
 		}
 	};
-	
+
 	// keyboard space handling mimic the enter event
 	Toolbar.prototype.onsapspace = Toolbar.prototype.onsapenter;
-	
+
 	// mark to inform active handling is done by toolbar
 	Toolbar.prototype.ontouchstart = function(oEvent) {
 		this.getActive() && oEvent.setMarked();
 	};
-	
+
 	// mark shrinkable contents and render layout data
 	// returns shrinkable and flexible content count
 	Toolbar.prototype._checkContents = function() {
@@ -459,17 +461,17 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				iShrinkableItemCount++;
 			}
 		});
-	
+
 		return iShrinkableItemCount;
 	};
-	
+
 	// apply the layout calculation according to flexbox support
 	Toolbar.prototype._doLayout = function() {
 		// let the flexbox do its job
 		if (Toolbar.hasNewFlexBoxSupport) {
 			return;
 		}
-	
+
 		// apply layout according to flex support
 		if (Toolbar.hasFlexBoxSupport) {
 			this._resetOverflow();
@@ -477,7 +479,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			this._reflexie();
 		}
 	};
-	
+
 	// reset overflow and mark with classname if overflows
 	Toolbar.prototype._resetOverflow = function() {
 		this._deregisterResize();
@@ -489,7 +491,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		this._iEndPoint = this._getEndPoint();
 		this._registerResize();
 	};
-	
+
 	// recalculate flexbox layout
 	Toolbar.prototype._reflexie = function() {
 		this._deregisterResize();
@@ -497,7 +499,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		this._iEndPoint = this._getEndPoint();
 		this._registerResize();
 	};
-	
+
 	// gets called when new control is inserted into content aggregation
 	Toolbar.prototype._onContentInserted = function(oControl) {
 		if (oControl) {
@@ -505,7 +507,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			oControl.addEventDelegate(this._oContentDelegate, oControl);
 		}
 	};
-	
+
 	// gets called when a control is removed from content aggregation
 	Toolbar.prototype._onContentRemoved = function(oControl) {
 		if (oControl) {
@@ -513,7 +515,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			oControl.removeEventDelegate(this._oContentDelegate, oControl);
 		}
 	};
-	
+
 	// gets called after content is (re)rendered
 	// here "this" points to the control not to the toolbar
 	Toolbar.prototype._onAfterContentRendering = function() {
@@ -522,29 +524,29 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			oLayout.applyProperties();
 		}
 	};
-	
+
 	// gets called when any content property is changed
 	Toolbar.prototype._onContentPropertyChanged = function(oEvent) {
 		if (oEvent.getParameter("name") != "width") {
 			return;
 		}
-	
+
 		// check and mark percent widths
 		var oControl = oEvent.getSource();
 		var bPercent = oControl.getWidth().indexOf("%") > 0;
 		oControl.toggleStyleClass(Toolbar.shrinkClass, bPercent);
 	};
-	
+
 	// register interval timer to detect inner content size is changed
 	Toolbar.prototype._registerContentResize = function() {
 		sap.ui.getCore().attachIntervalTimer(this._handleContentResize, this);
 	};
-	
+
 	// deregister interval timer for inner content
 	Toolbar.prototype._deregisterContentResize = function() {
 		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
 	};
-	
+
 	// register toolbar resize handler
 	Toolbar.prototype._registerToolbarResize = function() {
 		// register resize handler only if toolbar has relative width
@@ -553,7 +555,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			this._sResizeListenerId = ResizeHandler.register(this, fnResizeProxy);
 		}
 	};
-	
+
 	// deregister toolbar resize handlers
 	Toolbar.prototype._deregisterToolbarResize = function() {
 		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
@@ -562,24 +564,24 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			this._sResizeListenerId = "";
 		}
 	};
-	
+
 	// register resize handlers
 	Toolbar.prototype._registerResize = function() {
 		this._registerToolbarResize();
 		this._registerContentResize();
 	};
-	
+
 	// deregister resize handlers
 	Toolbar.prototype._deregisterResize = function() {
 		this._deregisterToolbarResize();
 		this._deregisterContentResize();
 	};
-	
+
 	// cleanup resize handlers
 	Toolbar.prototype._cleanup = function() {
 		this._deregisterResize();
 	};
-	
+
 	// get the end position of last content
 	Toolbar.prototype._getEndPoint = function() {
 		var oLastChild = (this.getDomRef() || {}).lastElementChild;
@@ -589,31 +591,31 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				iEndPoint += oLastChild.offsetWidth;
 			}
 		}
-		
+
 		return iEndPoint || 0;
 	};
-	
+
 	// handle toolbar resize
 	Toolbar.prototype._handleToolbarResize = function() {
 		this._handleResize(false);
 	};
-	
+
 	// handle inner content resize
 	Toolbar.prototype._handleContentResize = function() {
 		this._handleResize(true);
 	};
-	
+
 	// generic resize handler
 	Toolbar.prototype._handleResize = function(bCheckEndPoint) {
 		// check whether end point is changed or not
 		if (bCheckEndPoint && this._iEndPoint == this._getEndPoint()) {
 			return;
 		}
-	
+
 		// re-layout the toolbar
 		this._doLayout();
 	};
-	
+
 	/*
 	 * Augment design property setter.
 	 * 2nd parameter can be used to define auto design context.
@@ -627,11 +629,11 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		if (!bSetAutoDesign) {
 			return this.setProperty("design", sDesign);
 		}
-	
+
 		this._sAutoDesign = this.validateProperty("design", sDesign);
 		return this;
 	};
-	
+
 	/**
 	 * Returns the currently applied design property of the Toolbar.
 	 *
@@ -643,13 +645,13 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		if (sDesign != ToolbarDesign.Auto) {
 			return sDesign;
 		}
-	
+
 		return this._sAutoDesign || sDesign;
 	};
-	
+
 	/**
 	 * Returns the first sap.m.Title control id inside the toolbar for the accessibility
-	 * 
+	 *
 	 * @returns {String}
 	 * @since 1.28
 	 * @protected
@@ -658,7 +660,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		if (!sap.m.Title) {
 			return "";
 		}
-		
+
 		var aContent = this.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			var oContent = aContent[i];
@@ -666,10 +668,10 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				return oContent.getId();
 			}
 		}
-		
+
 		return "";
 	};
-	
+
 	///////////////////////////
 	// Bar in page delegation
 	///////////////////////////
@@ -679,7 +681,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @protected
 	 */
 	Toolbar.prototype.isContextSensitive = BarInPageEnabler.prototype.isContextSensitive;
-	
+
 	/**
 	 * Sets the HTML tag of the root domref
 	 * @param {string} sTag
@@ -687,21 +689,21 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @protected
 	 */
 	Toolbar.prototype.setHTMLTag = BarInPageEnabler.prototype.setHTMLTag;
-	
+
 	/**
 	 * Gets the HTML tag of the root domref
 	 * @returns {IBarHTMLTag} the HTML-tag
 	 * @protected
 	 */
 	Toolbar.prototype.getHTMLTag = BarInPageEnabler.prototype.getHTMLTag;
-	
+
 	/**
 	 * Sets classes and tag according to the context in the page. Possible contexts are header, footer, subheader
 	 * @returns {IBar} this for chaining
 	 * @protected
 	 */
 	Toolbar.prototype.applyTagAndContextClassFor = BarInPageEnabler.prototype.applyTagAndContextClassFor;
-	
+
 
 	return Toolbar;
 
