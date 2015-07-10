@@ -368,6 +368,7 @@
 		});
 		oOpa5.emptyQueue();
 
+		this.clock.tick(0);
 		strictEqual(oMatchSpy.callCount, 1, "called the matcher for the first time");
 		this.clock.tick(200);
 		strictEqual(oMatchSpy.callCount, 2, "called the matcher for the second time");
@@ -412,6 +413,7 @@
 		});
 		Opa5.emptyQueue();
 
+		this.clock.tick(0);
 		// Assert
 		strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
 		strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
@@ -541,6 +543,7 @@
 			timeout : 1 //second
 		});
 		oOpa5.emptyQueue();
+		this.clock.tick(0);
 
 		strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
 

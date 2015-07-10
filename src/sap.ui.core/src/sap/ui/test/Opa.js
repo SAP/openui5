@@ -67,7 +67,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 		var queueElement = queue.shift();
 
-		internalWait(queueElement.callback, queueElement.options, deferred);
+		// This has to be here for iframe with IE - if there is no timeout, there is a window with all properties undefined.
+		// Therefore the core code throws exceptions, when functions like setTimeout are called.
+		// I don't have a proper explanation for this.
+		setTimeout(function () {
+			internalWait(queueElement.callback, queueElement.options, deferred);
+		}, 0);
 	}
 
 	function ensureNewlyAddedWaitForStatementsPrepended(iPreviousQueueLength, nestedInOptions){
