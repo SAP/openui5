@@ -87,7 +87,7 @@
 		strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
 
-	QUnit.test("Should immediately resolve if the conditions are met", function(asssert) {
+	QUnit.test("Should resolve after 0ms if the conditions are met", function(asssert) {
 		// System under Test
 		var oOpa = new Opa();
 
@@ -102,6 +102,7 @@
 		});
 
 		Opa.emptyQueue();
+		this.clock.tick(0);
 	});
 
 	test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function() {
