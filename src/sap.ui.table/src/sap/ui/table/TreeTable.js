@@ -453,7 +453,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			}
 
 			var oContext = this.getContextByIndex(iIndex),
-				$row = this.getRows()[iRow].$();
+				$DomRefs = this.getRows()[iRow].getDomRefs(true),
+				$row = $DomRefs.rowFixedPart || $DomRefs.rowScrollPart;
 			
 			this._updateExpandIcon($row, oContext, iIndex);
 			
