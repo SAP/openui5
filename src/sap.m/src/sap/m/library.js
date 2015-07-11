@@ -1083,13 +1083,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.ListSeparators = {
 
 		/**
-		 * Separators around the items.
+		 * Separators between the items including the last and the first one.
 		 * @public
 		 */
 		All : "All",
 
 		/**
-		 * Separators between the items when there is no footer. Note: This enumeration depends on the theme. Please check design documentation for more details.
+		 * Separators between the items. 
+		 * <b>Note:</b> This enumeration depends on the theme.
 		 * @public
 		 */
 		Inner : "Inner",
