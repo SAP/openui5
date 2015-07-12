@@ -15,6 +15,9 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script language="javascript">
 
@@ -39,7 +42,8 @@
 					},
 					aggregations : {
 						singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
-						subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"}
+						subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"},
+						elements : { type : "sap.ui.core.Element", multiple : true}
 					},
 					associations : {
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
@@ -463,7 +467,204 @@
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 			});
 
-			test("Bind aggregation with template non shareable", function() {
+			test("Bind aggregation without templateShareable (default)", function() {
+				
+				var oTemplate = new sap.ui.core.Element("template", {value: "{value}"});
+
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate}); // old behavior
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('elements');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === oTemplate, "binding info template");
+				ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+
+				// when unbinding the aggregation, the template must not be destroyed, but it should be marked as a candidate for destroy 
+				this.obj.unbindAggregation("elements");
+				equal(this.obj.getAggregation("elements"), undefined, "Getter must not return an object");
+				ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				ok(oTemplate._sapui_candidateForDestroy, "Template should be marked for destroy");
+
+				// bind again with same template. Should remove the 'candidateForDestroy' marker
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate});
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('elements');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === oTemplate, "binding info template");
+				ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				ok(!oTemplate._sapui_candidateForDestroy, "Template must no longer be marked for destroy");
+
+				// doing the same re-bind operation without a preceding unbind should produce the same result
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate});
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('elements');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === oTemplate, "binding info template");
+				ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				ok(!oTemplate._sapui_candidateForDestroy, "Template must no longer be marked for destroy");
+				
+				// unbind again
+				this.obj.unbindAggregation("elements");
+				equal(this.obj.getAggregation("elements"), undefined, "Getter must not return an object");
+				ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				ok(oTemplate._sapui_candidateForDestroy, "Template should be marked for destroy");
+				
+				// create new UI object with same Id (must not throw exception, class can differ)
+				var oLogSpy = this.spy(jQuery.sap.log, "debug");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				var oTemplateNew = new sap.ui.core.Control("template", {value: "{value}"});
+				ok(oLogSpy.calledWith(sinon.match(/destroying dangling template [\s\S]+ when creating new object with same ID/)), "destroyed elements should be reported with level debug");
+				oLogSpy.restore();
+				ok(oTemplate.bIsDestroyed, "old Template should have been destroyed after object with same Id has been created");
+				checkIfDestroyed(oTemplate);
+
+				// bind again with the new object
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplateNew});
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+				
+				// delete the aggregating object -> should mark the new template for destroy
+				this.obj.destroy();
+				ok(!oTemplateNew.bIsDestroyed, "Template is not destroyed");
+				ok(oTemplateNew._sapui_candidateForDestroy, "Template should be marked for destroy");
+
+			});
+
+			test("Bind aggregation without templateShareable (default, Component)", function() {
+				
+				var MyControl = sap.ui.core.Control.extend("MyControl", {
+					metadata : {
+						aggregations : {
+							elements : "sap.ui.core.Element"
+						}
+					}
+				}); 
+				
+				var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
+					createContent : function() {
+						this.oMyTemplate = new sap.ui.core.Element("template", {value: "{value}"});
+						this.oMyRootControl = new MyControl({
+							models: oModel,
+							elements: {
+								path : '/list',
+								template: this.oMyTemplate
+							}
+						}); 
+						return this.oMyRootControl;
+					}
+				});
+				
+				var oComponent = new MyComponent(); 
+				ok(oComponent.oMyTemplate, "component should have a reference to the template");
+				ok(oComponent.oMyRootControl, "component should have a reference to the template");
+				equal(oComponent.oMyRootControl.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(oComponent.oMyRootControl.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = oComponent.oMyRootControl.getBindingInfo('elements');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === oComponent.oMyTemplate, "binding info template");
+				ok(!oComponent.oMyTemplate.bIsDestroyed, "Template is not destroyed");
+
+				// when destroying the component, the template should be desroyed as well 
+				var oLogSpy = this.spy(jQuery.sap.log, "debug");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				oComponent.destroy();
+				ok(oLogSpy.calledWith(sinon.match(/destroying dangling template [\s\S]+ when destroying the owner component/)), "destroyed elements should be reported with level debug");
+				oLogSpy.restore();
+
+				ok(oComponent.oMyTemplate.bIsDestroyed, "old Template should have been destroyed after object with same Id has been created");
+				checkIfDestroyed(oComponent.oMyTemplate);
+
+			});
+
+			test("Bind aggregation and clone with different templateShareable values", function() {
+				
+				// undefined 
+				
+				var oTemplate = new sap.ui.core.Element({value: "{value}"});
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate});
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+				ok(typeof this.obj.getBindingInfo("elements").templateShareable !== 'boolean' && this.obj.getBindingInfo("elements").templateShareable, "default for templateShareable should be neither true nor false");
+				
+				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oClone = this.obj.clone("clone");
+				sinon.assert.calledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				oLogSpy.restore();
+				
+				strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateShareable should have changed from MAYBE to true in origin"); 
+				strictEqual(oClone.getBindingInfo("elements").templateShareable, true, "after clone operation, templateShareable should have changed from MAYBE to true in clone");
+				oClone.destroy();
+				this.obj.unbindAggregation("elements");
+
+				// false
+				
+				var oTemplate = new sap.ui.core.Element({value: "{value}"});
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate, templateShareable: false});
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+				strictEqual(this.obj.getBindingInfo("elements").templateShareable, false, "value of templateShareable should be as specified");
+
+				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oClone = this.obj.clone("clone");
+				sinon.assert.neverCalledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				oLogSpy.restore();
+
+				strictEqual(this.obj.getBindingInfo("elements").templateShareable, false, "after clone operation, templateShareable of origin still should be false"); 
+				strictEqual(oClone.getBindingInfo("elements").templateShareable, false, "after clone operation, templateShareable of clone also should be false");
+				ok(this.obj.getBindingInfo("elements").template !== oClone.getBindingInfo("elements").template, "templates should differ");
+				oClone.destroy();
+				this.obj.unbindAggregation("elements");
+
+				// true
+				
+				var oTemplate = new sap.ui.core.Element({value: "{value}"});
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate, templateShareable: true});
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+				strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "value of templateShareable should be as specified");
+
+				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oClone = this.obj.clone("clone");
+				sinon.assert.neverCalledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				oLogSpy.restore();
+
+				strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateSharable of origin still should be false"); 
+				strictEqual(oClone.getBindingInfo("elements").templateShareable, true, "after clone operation, templateSharable of clone also should be false");
+				ok(this.obj.getBindingInfo("elements").template === oClone.getBindingInfo("elements").template, "templates should differ");
+				oClone.destroy();
+				this.obj.unbindAggregation("elements");
+
+			});
+			
+			test("Bind aggregation with templateShareable:true", function() {
+				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:true});
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('subObjects');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === this.template, "binding info template");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+
+				this.obj.unbindAggregation("subObjects");
+				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				ok(!this.template._sapui_candidateForDestroy, "Template must not be marked for destroy");
+
+			});
+
+			test("Bind aggregation with templateShareable:false", function() {
 				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:false});
 				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
@@ -478,44 +679,11 @@
 				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
 				ok(this.template.bIsDestroyed, "Template is destroyed");
 				checkIfDestroyed(this.template);
+				ok(!this.template._sapui_candidateForDestroy, "Template must not be marked for destroy");
 
 			});
 
-			test("Bind aggregation with template shareable", function() {
-				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template}); // old behavior
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
-
-				var oBindingInfo = this.obj.getBindingInfo('subObjects');
-				ok(oBindingInfo, "binding info");
-				ok(oBindingInfo.template, "binding info template");
-				ok(oBindingInfo.template === this.template, "binding info template");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-				this.obj.unbindAggregation("subObjects");
-				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-			});
-
-			test("Bind aggregation with template shareable with flag", function() {
-				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:true}); // old behavior
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
-
-				var oBindingInfo = this.obj.getBindingInfo('subObjects');
-				ok(oBindingInfo, "binding info");
-				ok(oBindingInfo.template, "binding info template");
-				ok(oBindingInfo.template === this.template, "binding info template");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-				this.obj.unbindAggregation("subObjects");
-				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-			});
-
-			test("Bind aggregation with template non shareable and destroy object", function() {
+			test("Bind aggregation with templateShareable:false and destroy object", function() {
 				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:false});
 				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
