@@ -532,10 +532,10 @@ sap.ui.define([
 	 * <ul>
 	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types 'string', 'boolean', 'int', 'float', 'object' or 'any', or a 
 	 *     type created and registered with {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li> 
-	 * <li><code>group: ...</li>
+	 * <li><code>group: ...</code></li>
 	 * <li><code>defaultValue: <i>any</i></code> the default value for the property or null if there is no defaultValue.</li>
 	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable') 
-	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i> and <code>unbind<i>Name</i></code> are generated as convenience. 
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience. 
 	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and 
 	 *     {@link #unbindProperty} can always be used. </li>
 	 * </ul>
@@ -567,7 +567,7 @@ sap.ui.define([
 	 * <li>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that belong to the API of a class must be 'public' whereas 
 	 *     'hidden' aggregations typically are used for the implementation of composite classes (e.g. composite controls) </li>
 	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable') 
-	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i> and <code>unbind<i>Name</i></code> are generated as convenience. 
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience. 
 	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and 
 	 *     {@link #unbindAggregation} can always be used. </li>
 	 * </ul>
@@ -2812,6 +2812,9 @@ sap.ui.define([
 		}
 	};
 
+	// a non-falsy value used as default for 'templateShareable'.  
+	var MAYBE_SHAREABLE_OR_NOT = 1;
+
 	/**
 	 * Bind an aggregation to the model.
 	 *
@@ -2889,8 +2892,13 @@ sap.ui.define([
 		// if we have a template we will create a factory function
 		if (oBindingInfo.template) {
 			// set default for templateShareable
+			if ( oBindingInfo.template._sapui_candidateForDestroy ) {
+				// template became active again, we should no longer consider to destroy it
+				jQuery.sap.log.warning("A template was reused in a binding, but was already marked as candidate for destroy. You better should declare such a usage with templateShareable:true in the binding configuration.");
+				delete oBindingInfo.template._sapui_candidateForDestroy; 
+			}
 			if (oBindingInfo.templateShareable === undefined) {
-				oBindingInfo.templateShareable = true;
+				oBindingInfo.templateShareable = MAYBE_SHAREABLE_OR_NOT;
 			}
 			oBindingInfo.factory = function(sId) {
 				return oBindingInfo.template.clone(sId);
@@ -2981,8 +2989,13 @@ sap.ui.define([
 				oBindingInfo.binding.destroy();
 			}
 			// remove template if any
-			if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.destroy) {
+			if (oBindingInfo.template ) {
+				if ( !oBindingInfo.templateShareable && oBindingInfo.template.destroy ) { 
 					oBindingInfo.template.destroy();
+				}
+				if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
+					oBindingInfo.template._sapui_candidateForDestroy = true;
+				}
 			}
 
 			delete this.mBindingInfos[sName];
@@ -3771,10 +3784,14 @@ sap.ui.define([
 				var oBindingInfo = this.mBindingInfos[sName];
 				var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
 
-				// clone the template if it is not shared
+				// clone the template if it is not sharable
 				if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.clone) {
 					oCloneBindingInfo.template = oBindingInfo.template.clone(sIdSuffix,	aLocalIds);
 					delete oCloneBindingInfo.factory;
+				} else if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
+					// a 'clone' operation implies sharing the template (if templateShareable is not set to false)
+					oBindingInfo.templateShareable = oCloneBindingInfo.templateShareable = true;
+					jQuery.sap.log.error("A shared template must be marked with templateShareable:true in the binding info");
 				}
 
 				delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
