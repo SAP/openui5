@@ -9,13 +9,14 @@ sap.ui.define(['jquery.sap.global',
 			'./PageObjectFactory',
 			'sap/ui/qunit/QUnitUtils',
 			'sap/ui/base/Object',
+			'sap/ui/Device',
 			'./matchers/Matcher',
 			'./matchers/AggregationFilled',
 			'./matchers/PropertyStrictEquals',
 			'./matchers/Properties',
 			'./matchers/Ancestor',
 			'./matchers/AggregationContainsPropertyEqual'],
-	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
+	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
 			oFrameJQuery = null,
@@ -539,6 +540,21 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		function handleFrameLoad () {
+
+			registerOnError();
+
+			bFrameLoaded = true;
+			//immediately check for UI5 to be loaded, to intercept any hashchanges
+			checkForUI5ScriptLoaded();
+		}
+
+		function registerOnError () {
+			// In IE9 retrieving the active element in an iframe when it has no focus produces an error.
+			// Since we use it all over the UI5 libraries, the only solution is to ignore frame errors in IE9.
+			if (Device.browser.internet_explorer && Device.browser.version === 9) {
+				return;
+			}
+
 			oFrameWindow = $Frame[0].contentWindow;
 
 			var fnFrameOnError = oFrameWindow.onerror;
@@ -550,9 +566,6 @@ sap.ui.define(['jquery.sap.global',
 				throw "OpaFrame error message: " + sErrorMsg + " url: " + sUrl + " line: " + iLine;
 			};
 
-			bFrameLoaded = true;
-			//immediately check for UI5 to be loaded, to intercept any hashchanges
-			checkForUI5ScriptLoaded();
 		}
 
 		function checkForUI5ScriptLoaded () {

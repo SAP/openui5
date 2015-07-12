@@ -136,33 +136,36 @@
 		});
 	});
 
-	QUnit.asyncTest("Should throw error if the iframe throws an error", function (assert) {
-		// Arrange
-		jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
-		var $Frame = jQuery("#OpaFrame").on("load", function () {
-			var fnSpy = sinon.spy();
-			$Frame[0].contentWindow.onerror = fnSpy;
+	// For IE 9 errors in frame are disabled see comment in OPA5.js
+	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9)) {
+		QUnit.asyncTest("Should throw error if the iframe throws an error", function (assert) {
+			// Arrange
+			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
+			var $Frame = jQuery("#OpaFrame").on("load", function () {
+				var fnSpy = sinon.spy();
+				$Frame[0].contentWindow.onerror = fnSpy;
 
-			// System under Test
-			var oOpa5 = new Opa5();
+				// System under Test
+				var oOpa5 = new Opa5();
 
-			oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
-				// Act + Assert
-				assert.throws(function () {
-					Opa5.getWindow().onerror("Errormessage", "Url", 31);
-				},"OpaFrame error message: Errormessage url: Url line: 31" , "Did throw an error");
+				oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+					// Act + Assert
+					assert.throws(function () {
+						Opa5.getWindow().onerror("Errormessage", "Url", 31);
+					},"OpaFrame error message: Errormessage url: Url line: 31" , "Did throw an error");
 
-				assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
+					assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
+				});
+
+				oOpa5.iTeardownMyAppFrame();
+
+				oOpa5.emptyQueue().done(function () {
+					QUnit.start();
+				});
 			});
 
-			oOpa5.iTeardownMyAppFrame();
-
-			oOpa5.emptyQueue().done(function () {
-				QUnit.start();
-			});
 		});
-
-	});
+	}
 
 	asyncTest("Should Navigate in an Iframe", function() {
 		// System under Test
