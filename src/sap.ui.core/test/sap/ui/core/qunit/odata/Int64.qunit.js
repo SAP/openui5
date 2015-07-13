@@ -11,9 +11,9 @@
 		NUMBER_MIN_SAFE_INTEGER = -9007199254740991,
 		NUMBER_MAX_SAFE_INTEGER = 9007199254740991;
 
-
-	jQuery.sap.require("sap.ui.model.odata.type.Int64");
 	jQuery.sap.require("sap.ui.core.Control");
+	jQuery.sap.require("sap.ui.model.odata.type.Int64");
+	jQuery.sap.require("sap.ui.test.TestUtils");
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Int64", {

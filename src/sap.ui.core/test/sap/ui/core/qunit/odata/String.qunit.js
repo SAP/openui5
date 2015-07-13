@@ -8,6 +8,7 @@
 	"use strict";
 
 	jQuery.sap.require("sap.ui.model.odata.type.String");
+	jQuery.sap.require("sap.ui.test.TestUtils");
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.String");
