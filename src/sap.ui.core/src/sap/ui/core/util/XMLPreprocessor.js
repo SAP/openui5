@@ -320,12 +320,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			process : function(oRootElement, oViewInfo, mSettings) {
 				var sCaller,
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
+					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 					aFragmentNames = [], // stack of view and fragment names
 					iNestingLevel = 0,
-					sName;
+					sName,
+					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
 
 				/*
-				 * Outputs a debug message with the given nesting level; takes care not to
+				 * Outputs a debug message with the current nesting level; takes care not to
 				 * construct the message or serialize XML in vain.
 				 *
 				 * @param {Element} [oElement]
@@ -450,8 +452,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					if (vBindingInfo.functionsNotFound) {
 						if (bMandatory) {
-							warn('Function name(s) ' + vBindingInfo.functionsNotFound.join(", ")
-								+ ' not found in ', oElement, null);
+							warn(oElement, 'Function name(s)',
+								vBindingInfo.functionsNotFound.join(", "), 'not found');
 						}
 						return oUNBOUND; // treat incomplete bindings as unrelated
 					}
@@ -459,7 +461,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					if (typeof vBindingInfo === "object") {
 						vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings);
 						if (bMandatory && vBindingInfo === oUNBOUND) {
-							warn('Binding not ready in ', oElement, null);
+							warn(oElement, 'Binding not ready');
 						}
 					} else if (fnCallIfConstant) { // string
 						fnCallIfConstant();
@@ -542,7 +544,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				function performTest(oElement, oWithControl) {
 					// constant test conditions are suspicious, but useful during development
 					var fnCallIfConstant
-							= warn.bind(null, 'Constant test condition in ', oElement, null),
+							= warn.bind(null, oElement, 'Constant test condition'),
 						bResult,
 						sTest = oElement.getAttribute("test"),
 						vTest;
@@ -554,7 +556,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							vTest = false;
 						}
 					} catch (ex) {
-						warn('Error in formatter of ', oElement, ex);
+						warn(oElement, 'Error in formatter:', ex);
 						vTest = false;
 					}
 					bResult = !!vTest && vTest !== "false";
@@ -603,12 +605,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						}
 					} catch (ex) {
 						// just don't replace XML attribute value
-						if (bDebug) {
-							jQuery.sap.log.debug(
-								sCaller + ': Error in formatter of '
-									+ serializeSingleElement(oElement),
-								ex, "sap.ui.core.util.XMLPreprocessor");
-						}
+						debug(oElement, 'Error in formatter:', ex);
 					}
 				}
 
@@ -638,7 +635,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							debug(oElement, "name =", vName);
 						}
 					} catch (ex) {
-						warn('Error in formatter of ', oElement, ex);
+						warn(oElement, 'Error in formatter:', ex);
 					}
 
 					if (oViewInfo && vName !== oUNBOUND && sap.ui.core.CustomizingConfiguration) {
@@ -670,7 +667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						vFragmentName
 							= getResolvedBinding(sFragmentName, oElement, oWithControl, true);
 					} catch (ex) {
-						warn('Error in formatter of ', oElement, ex);
+						warn(oElement, 'Error in formatter:', ex);
 						return;
 					}
 
@@ -852,7 +849,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						// Warn and ignore the new "with" control when its binding context is
 						// the same as a previous one.
 						// We test identity because models cache and reuse binding contexts.
-						warn("Set unchanged path '" + sResolvedPath + "' in ", oElement, null);
+						warn(oElement, 'Set unchanged path:', sResolvedPath);
 						oNewWithControl = oWithControl;
 					}
 
@@ -947,21 +944,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					visitChildNodes(oNode, oWithControl);
 				}
 
-				/**
-				 * Outputs a warning; takes care not to serialize XML in vain.
+				/*
+				 * Outputs a warning message with the current nesting level; takes care not to
+				 * construct the message or serialize XML in vain.
 				 *
-				 * @param {string} sText
-				 *   the main text of the warning
-				 * @param {Element} oElement
-				 *   a DOM element
-				 * @param {string} sDetails
-				 *   the details of the warning
+				 * @param {Element} [oElement]
+				 *   a DOM element which is serialized to the details
+				 * @param {...string} aTexts
+				 *   the main text of the message is constructed from the rest of the arguments by
+				 *   joining them separated by single spaces
 				 */
-				function warn(sText, oElement, sDetails) {
-					if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+				function warn(oElement) {
+					if (bWarning) {
+						if (!bCallerLoggedForWarnings) {
+							bCallerLoggedForWarnings = true;
+							jQuery.sap.log.warning("Warning(s) during processing of " + sCaller,
+								null, "sap.ui.core.util.XMLPreprocessor");
+						}
 						jQuery.sap.log.warning(
-							sCaller + ": " + sText + serializeSingleElement(oElement),
-							sDetails, "sap.ui.core.util.XMLPreprocessor");
+							(iNestingLevel < 10 ? "[ " : "[") + iNestingLevel + "] "
+								+ Array.prototype.slice.call(arguments, 1).join(" "),
+							oElement && serializeSingleElement(oElement),
+							"sap.ui.core.util.XMLPreprocessor");
 					}
 				}
 
@@ -975,6 +979,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					aFragmentNames.push(oViewInfo.name);
 				}
 				mSettings = mSettings || {};
+
 				if (bDebug) {
 					debug(undefined, "Start processing", sCaller);
 					if (mSettings.bindingContexts instanceof Context)  {
@@ -990,6 +995,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					bindingContexts : mSettings.bindingContexts
 				}));
 				debug(undefined, "Finished processing", sCaller);
+
 				return oRootElement;
 			}
 		};
