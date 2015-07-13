@@ -329,6 +329,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Escapes special characters
+	 * 
+	 * @private
+	 * @param {string} sToEscape contains the content that shall be escaped
+	 */
+	P13nColumnsPanel.prototype._escapeRegExp = function(sToEscape) {
+		if (sToEscape) {
+			return sToEscape.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+		}
+	};
+
+	/**
 	 * Filters items by its selection status
 	 * 
 	 * @private
@@ -356,8 +368,10 @@ sap.ui.define([
 				sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
 			}
 			// create RegEx for search only if a searchText exist!!
-			if (sSearchText !== null && sSearchText !== undefined) { // " " is a VALID value!!!
-				regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
+			if (sSearchText !== null && sSearchText !== undefined) {// " " is a VALID value!!!
+				sSearchText = this._escapeRegExp(sSearchText); // escape user input
+				sSearchText = regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
+
 			}
 		}
 
