@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta charset="UTF-8">
+	<title>SAPUI5 Data Binding Tutorial</title>
+	<script
+		id="sap-ui-bootstrap"
+		src="../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-preload="async"
+		>
+	</script>
+	<script>
+		// Attach an anonymous function to the SAPUI5 'init' event
+		sap.ui.getCore().attachInit(function () {
+		    // Create a JSON model from an object literal
+			var oModel = new sap.ui.model.json.JSONModel({
+				greetingText: "Hi, my name is Harry Hawk"
+			});
+			// Assign the model object to the SAPUI5 core
+			sap.ui.getCore().setModel(oModel);
+
+			// Create a text UI element that displays a hardcoded text string
+			new sap.m.Text({text: "{/greetingText}"})
+				.placeAt("content");
+		});
+	</script>
+</head>
+<body class="sapUiBody" id="content">
+</body>
+</html>
