@@ -9,7 +9,6 @@
 				position: absolute;
 				left: 400px;
 				top : 10px;
-				z-index: 1000;
 			}
 		</style>
 
@@ -125,6 +124,16 @@
 				this.oOverlay.setSelected(true);
 				assert.ok(!this.oOverlay.isSelected(), 'and the state of the overlay is "not selected"');
 				assert.ok(!bFired, 'and no "selection change" event is fired');
+			});
+
+			QUnit.test("when the overlay is focused", function(assert) {
+				this.oOverlay.focus();
+				var that = this;
+				var done = assert.async();
+				setTimeout(function() {
+					assert.ok(that.oOverlay.hasFocus(), 'then the state of the overlay is "focused"');
+					done();
+				},0);
 			});
 
 			QUnit.module("Given that an Overlay is created for a layout with child controls", {

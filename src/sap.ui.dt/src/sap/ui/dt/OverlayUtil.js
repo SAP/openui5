@@ -105,5 +105,65 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		return oOverlay && oOverlay.isScrollable ? oOverlay : null;
 	};
 
+	/**
+	 * 
+	 */
+	OverlayUtil.getNextOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		var aAggregationOverlays = oOverlay.getAggregationOverlays();
+		if (aAggregationOverlays.length > 0) {
+			for (var i = 0; i < aAggregationOverlays.length; i++) {
+				var oAggregationOverlay = aAggregationOverlays[i];
+				var aChildren = oAggregationOverlay.getChildren();
+				if (aChildren.length > 0) {
+					return aChildren[0];
+				}
+			}
+		}
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		var aAggregationOverlays = oParentAggregationOverlay.getChildren();
+		var iIndex = aAggregationOverlays.indexOf(oOverlay);
+		if (iIndex !== aAggregationOverlays.length - 1) {
+			return aAggregationOverlays[iIndex + 1];
+		}
+		return;
+
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getPreviousOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		if (!oParentAggregationOverlay) {
+			return;
+		}
+		var aAggregationOverlays = oParentAggregationOverlay.getChildren();
+		var iIndex = aAggregationOverlays.indexOf(oOverlay);
+		if (aAggregationOverlays.length - 1 > 0 && iIndex !== 0) {
+			return aAggregationOverlays[iIndex - 1];
+		}
+
+		return oOverlay.getParentOverlay();
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getRootOverlay = function(oOverlay) {
+		var oParentOverlay = oOverlay;
+		do {
+			oOverlay = oParentOverlay;
+			oParentOverlay = oOverlay.getParentOverlay();
+		} while (oParentOverlay);
+
+		return oOverlay;
+	};
+
 	return OverlayUtil;
 }, /* bExport= */ true);
