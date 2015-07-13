@@ -87,12 +87,12 @@
 					"transition": "show"
 				},
 				"employees": {
-					"viewPath": "sap.ui.demo.nav.view.employees",
+					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "EmployeeList",
 					"viewLevel" : 2
 				},
 				"employee": {
-					"viewName": "employees.Employee",
+					"viewName": "employee.Employee",
 					"viewLevel" : 3
 				}
 			}

@@ -2,12 +2,14 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer"
 ], function (MockServer) {
 	"use strict";
-	var _sAppModulePath = "sap/ui/demo/nav/manifest";
+	var _sAppModulePath = "sap/ui/demo/nav/",
+		_sJsonFilesModulePath = _sAppModulePath + "localService/mockdata";
 
 	return {
 
 		init: function () {
-			var sManifestUrl = jQuery.sap.getModulePath(_sAppModulePath, ".json"),
+			var sManifestUrl = jQuery.sap.getModulePath(_sAppModulePath + "manifest", ".json"),
+				sJsonFilesUrl = jQuery.sap.getModulePath(_sJsonFilesModulePath),
 				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
 				oMainDataSource = oManifest["sap.app"].dataSources.employeeRemote,
 				sMetadataUrl = jQuery.sap.getModulePath(_sAppModulePath + oMainDataSource.settings.localUri.replace(".xml", ""), ".xml");
@@ -24,8 +26,9 @@ sap.ui.define([
 			});
 
 			// simulate
-			var sPath = jQuery.sap.getModulePath("sap.ui.demo.nav.test.service");
-			oMockServer.simulate(sMetadataUrl, sPath);
+			oMockServer.simulate(sMetadataUrl, {
+				sMockdataBaseUrl : sJsonFilesUrl
+			});
 
 			// start
 			oMockServer.start();
