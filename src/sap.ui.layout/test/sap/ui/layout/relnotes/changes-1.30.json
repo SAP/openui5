@@ -80,5 +80,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "25605728396dbef80d7df8f639995e9631057872",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Correctly resize Splitter bars",
+        "references": []
+      }
+    ]
   }
 }

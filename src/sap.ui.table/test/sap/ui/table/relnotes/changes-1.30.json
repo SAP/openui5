@@ -379,5 +379,45 @@
         "references": []
       }
     ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "895c1e9fab0ca40ba5ac2184d424f0b40ebbc950",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.AnalyticalTable: Adds Screen Reader Support",
+        "references": []
+      },
+      {
+        "id": "4963d644605a9e52c630122cd7bdb1281442c0e3",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: ClearSelection removes selectAllMode from root node",
+        "references": []
+      },
+      {
+        "id": "ddff4c9a0daf00d86db71ed5d46dddfcda414af8",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes selection of fixedBottomRows",
+        "references": []
+      },
+      {
+        "id": "59d4e18248d5cabb972f18c3b64d4ddf2a91279f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fixes that expand/collapse icons display",
+        "references": []
+      },
+      {
+        "id": "8d0a61ba2a142bef75ecc04935db292a14963176",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fixes rendering information of fixed bottom rows",
+        "references": []
+      }
+    ]
   }
 }

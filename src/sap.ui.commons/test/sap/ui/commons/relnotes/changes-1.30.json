@@ -347,5 +347,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "33daaa4610a0e96c3aafb93aaf960a198aa99a3d",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: In modal mode can be dragged properly in scrolled page",
+        "references": []
+      },
+      {
+        "id": "02259e48f3cb896be26370bd9e91f4457385d376",
+        "author": "Diana Shtilyanova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Implement F2 keyboard handling",
+        "references": []
+      }
+    ]
   }
 }

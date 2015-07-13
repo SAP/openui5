@@ -1540,14 +1540,103 @@
         "id": "75ddb9ede714bb5b45345a93335415fe52b688ce",
         "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
-        "text": "DebugEnv: properly declare dependencies in ControlTree",
+        "text": "DebugEnv: Properly declare dependencies in ControlTree",
         "references": []
       },
       {
         "id": "f580719babe110681d6b93fa41ba2b29fd156640",
         "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
         "type": "FIX",
-        "text": "ExtensionPoint: fixed non-working ExtensionPoints in Fragments",
+        "text": "ExtensionPoint: Fixed non-working ExtensionPoints in Fragments",
+        "references": []
+      }
+    ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "482ded637aa82e7268b3a7790e8b66060f322713",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Controller: Allow instance specific controller extensions",
+        "references": []
+      },
+      {
+        "id": "967e7a121de4d5fe868d28405dc55e475a4971f3",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: RemoveAssociation corrected to return null when association does not exists or is never used",
+        "references": []
+      },
+      {
+        "id": "2ca19e60a663ce1e45f9281e9f4214de1d3960c5",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Handle Null Element correctly",
+        "references": []
+      },
+      {
+        "id": "2db5c25e0bbbd1529d6f2434a5d472f01ce637a9",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: IE does not parse XML with namespace declaration",
+        "references": []
+      },
+      {
+        "id": "e3e2268b8f9f03c893d4d8308e1cc115f0c77ea0",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Annotations in Record element correctly",
+        "references": []
+      },
+      {
+        "id": "f8532d14acf7c171fe3c357f3acbcf464f7b65e4",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: v1 tests and synchronous metamodel",
+        "references": []
+      },
+      {
+        "id": "919bf54634b4273b03cd4a0cec4c52fa3e8d098a",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Legacy IE and EntitySet path resolution",
+        "references": []
+      },
+      {
+        "id": "4963d644605a9e52c630122cd7bdb1281442c0e3",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: ClearSelection removes selectAllMode from root node",
+        "references": []
+      },
+      {
+        "id": "d5fb6974901547bf25322a3400bf0bf795a72aa2",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: Webkit Version Check fixed for system detection",
+        "references": []
+      },
+      {
+        "id": "5651ccdd326898f6e7f5a23b2be9080724c3d74e",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.ScrollBar: Correction for ScrollBar in FireFox in a case of invisible window content.",
+        "references": []
+      },
+      {
+        "id": "a43dc7fc15c16a88729148c9edad026d728ffa82",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.NotificationBar: Notifications are not shown",
+        "references": []
+      },
+      {
+        "id": "8c240094527061dbf519525a36424e0ec85198c2",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Wrong payload format in batch requests",
         "references": []
       }
     ]

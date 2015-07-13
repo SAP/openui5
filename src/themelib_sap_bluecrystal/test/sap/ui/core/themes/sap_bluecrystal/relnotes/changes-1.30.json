@@ -449,5 +449,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "57d1dbf936052b5a097e83708577a73822cb652f",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Display of buttons for width equal 30rem corrected",
+        "references": []
+      },
+      {
+        "id": "831b2d407b003164f3cc3a8e790ffdf84ac62b61",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.searchField: Incorrect button state in Firefox",
+        "references": []
+      }
+    ]
   }
 }
