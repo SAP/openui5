@@ -11,11 +11,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * Constructor for a new DisplayListItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The display list item consists of a label and a value.
+	 * <code>sap.m.DisplayListItem</code> can be used to represent a label and a value.
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
@@ -32,17 +32,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		properties : {
 	
 			/**
-			 * List item label
+			 * Defines the label of the list item.
 			 */
 			label : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * List item value
+			 * Defines the value of the list item.
 			 */
 			value : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * This property specifies the value text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * Defines the <code>value</code> text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
 			valueTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}

@@ -8,20 +8,20 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ColumnListItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * ColumnListItem can be used with cells aggregation to create rows for the Table control.
-	 * The columns aggregation of the Table should match with the cells aggregation.
-	 * 
-	 * NOTE: This control should only be used within the sap.m.Table control.
-	 * Please also note that the counter property of the ListItemBase is not supported by ColumnListItem. 
-	 * 
+	 * <code>sap.m.ColumnListItem</code> can be used with the <code>cells</code> aggregation to create rows for the <code>sap.m.Table</code> control.
+	 * The <code>columns</code> aggregation of the <code>sap.m.Table</code> should match with the cells aggregation.
+	 *
+	 * <b>Note:</b> This control should only be used within the <code>sap.m.Table</code> control.
+	 * The inherited <code>counter</code> property of <code>sap.m.ListItemBase</code> is not supported.
+	 *
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
@@ -34,50 +34,50 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnListItem = ListItemBase.extend("sap.m.ColumnListItem", /** @lends sap.m.ColumnListItem.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
-			 * Sets the vertical alignment of the all cells in a table row(including selection and navigation). Possible values are "Inherit", "Top", "Middle", "Bottom"
-			 * Note: Column's "vAlign" property is stronger than this one.
+			 * Sets the vertical alignment of all the cells within the table row (including selection and navigation).
+			 * <b>Note:</b> <code>vAlign</code> property of <code>sap.m.Column</code> overrides the property for cell vertical alignment if both are set.
 			 * @since 1.20
 			 */
 			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : sap.ui.core.VerticalAlign.Inherit}
 		},
 		defaultAggregation : "cells",
 		aggregations : {
-	
+
 			/**
-			 * Every item inside the cells aggregation defines one column of the row.
-			 * The order of the cells aggregation must match the order of the columns aggregation of the Table.
+			 * Every <code>control</code> inside the <code>cells</code> aggregation defines one cell of the row.
+			 * <b>Note:</b> The order of the <code>cells</code> aggregation must match the order of the <code>columns</code> aggregation of <code>sap.m.Table</code>.
 			 */
 			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell", bindable : "bindable"}
 		}
 	}});
-	
-	
+
+
 	// prototype lookup for pop-in id
 	ColumnListItem.prototype._popinId = "";
-	
+
 	// initialization hook
 	ColumnListItem.prototype.init = function() {
 		sap.m.ListItemBase.prototype.init.call(this);
 		this._bNeedsTypeColumn = false;
 		this._aClonedHeaders = [];
 	};
-	
+
 	ColumnListItem.prototype.onAfterRendering = function() {
 		sap.m.ListItemBase.prototype.onAfterRendering.call(this);
 		this._checkTypeColumn();
 	};
-	
+
 	// informs the table when item's type column requirement is changed
 	ColumnListItem.prototype._checkTypeColumn = function(bNeedsTypeColumn) {
 		if (bNeedsTypeColumn == undefined) {
 			bNeedsTypeColumn = this.needsTypeColumn();
 		}
-	
+
 		if (this._bNeedsTypeColumn != bNeedsTypeColumn) {
 			this._bNeedsTypeColumn = bNeedsTypeColumn;
 			this.informList("TypeColumnChange", bNeedsTypeColumn);
