@@ -10,7 +10,7 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/mvc/View',
-		'sap/ui/core/sample/ViewTemplate/Component',
+		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
 		'jquery.sap.script'
 	], function (jQuery, View, BaseComponent, MockServer/*, jQuerySapScript*/) {

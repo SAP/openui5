@@ -71,7 +71,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 			Then.iTeardownMyAppFrame();
 		}
 
-		Given.iStartMyAppInAFrame("../index.html?component=scenario");
+		Given.iStartMyAppInAFrame("../../common/index.html?component=ViewTemplate.scenario");
 
 		// wait for application to load before any interaction
 		Then.waitFor({
