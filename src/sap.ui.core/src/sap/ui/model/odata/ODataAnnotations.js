@@ -1186,34 +1186,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @private
 	 */
 	ODataAnnotations.prototype.getPropertyValues = function(oXmlDocument, oParentElement, mAlias) {
-		var mProperties = {}, i;
+		var mProperties = {}, i, xPath = this.xPath;
 
-		var oAnnotationNodes = this.xPath.selectNodes(oXmlDocument, "./d:Annotation", oParentElement);
-		var oPropertyValueNodes = this.xPath.selectNodes(oXmlDocument, "./d:PropertyValue", oParentElement);
+		var oAnnotationNodes = xPath.selectNodes(oXmlDocument, "./d:Annotation", oParentElement);
+		var oPropertyValueNodes = xPath.selectNodes(oXmlDocument, "./d:PropertyValue", oParentElement);
 
-		jQuery.sap.assert(
-			oAnnotationNodes.length === 0 || oPropertyValueNodes.length === 0,
-			"Record contains PropertyValue and Annotation elements, this is not allowed and might lead to " +
-			"annotation values being overwritten. Element: " + this.xPath.getPath(oParentElement)
-		);
+		jQuery.sap.assert(oAnnotationNodes.length === 0 || oPropertyValueNodes.length === 0, function () {
+			return (
+				"Record contains PropertyValue and Annotation elements, this is not allowed and might lead to " +
+				"annotation values being overwritten. Element: " + xPath.getPath(oParentElement)
+			);
+		});
 
 		if (oAnnotationNodes.length === 0 && oPropertyValueNodes.length === 0) {
 			mProperties = this.getPropertyValue(oXmlDocument, oParentElement, mAlias);
 		} else {
 			for (i = 0; i < oAnnotationNodes.length; i++) {
-				var oAnnotationNode = this.xPath.nextNode(oAnnotationNodes, i);
+				var oAnnotationNode = xPath.nextNode(oAnnotationNodes, i);
 				var sTerm = this.replaceWithAlias(oAnnotationNode.getAttribute("Term"), mAlias);
 				mProperties[sTerm] = this.getPropertyValue(oXmlDocument, oAnnotationNode, mAlias);
 			}
 
 			for (i = 0; i < oPropertyValueNodes.length; i++) {
-				var oPropertyValueNode = this.xPath.nextNode(oPropertyValueNodes, i);
+				var oPropertyValueNode = xPath.nextNode(oPropertyValueNodes, i);
 				var sPropertyName = oPropertyValueNode.getAttribute("Property");
 				mProperties[sPropertyName] = this.getPropertyValue(oXmlDocument, oPropertyValueNode, mAlias);
 				
-				var oApplyNodes = this.xPath.selectNodes(oXmlDocument, "./d:Apply", oPropertyValueNode);
+				var oApplyNodes = xPath.selectNodes(oXmlDocument, "./d:Apply", oPropertyValueNode);
 				for (var n = 0; n < oApplyNodes.length; n += 1) {
-					var oApplyNode = this.xPath.nextNode(oApplyNodes, n);
+					var oApplyNode = xPath.nextNode(oApplyNodes, n);
 					mProperties[sPropertyName] = {};
 					mProperties[sPropertyName]['Apply'] = this.getApplyFunctions(oXmlDocument, oApplyNode, mAlias);
 				}
