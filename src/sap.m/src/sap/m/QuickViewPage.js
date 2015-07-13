@@ -374,19 +374,22 @@ sap.ui.define([
 			QuickViewPage.prototype._crossApplicationNavigation = function (that) {
 				return function () {
 					if (that.getCrossAppNavCallback() && that.oCrossAppNavigator) {
-						var targetConfig = that.getCrossAppNavCallback();
-						var href = that.oCrossAppNavigator.hrefForExternal(
-							{
-								target : {
-									semanticObject : targetConfig.target.semanticObject,
-									action : targetConfig.target.action
-								},
-								params : targetConfig.params
-							}
-						);
+						var targetConfigCallback = that.getCrossAppNavCallback();
+						if (typeof targetConfigCallback == "function") {
+							var targetConfig = targetConfigCallback();
+							var href = that.oCrossAppNavigator.hrefForExternal(
+								{
+									target : {
+										semanticObject : targetConfig.target.semanticObject,
+										action : targetConfig.target.action
+									},
+									params : targetConfig.params
+								}
+							);
 
-						sap.m.URLHelper.redirect(href);
-					} else if (that.getTitleUrl()) {
+							sap.m.URLHelper.redirect(href);
+						}
+					} else  if (that.getTitleUrl()) {
 						window.open(that.getTitleUrl(), "_blank");
 					}
 				};
