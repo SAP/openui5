@@ -225,7 +225,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				id: this.getId() + "-pageIcon",
 				src: this.getIcon(),
 				height: "8rem",
-				useIconTooltip: false
+				useIconTooltip: false,
+				decorative: false
 			}, sap.m.Image).addStyleClass("sapMMessagePageIcon");
 
 			return this._oIconControl;
