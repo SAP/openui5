@@ -256,28 +256,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	 */
 	UploadCollectionItem.prototype._updateDeprecatedProperties = function() {
 		var aProperties = ["uploadedDate", "contributor", "fileSize"];
-		this.removeAllAggregation("_propertyAttributes");
+		this.removeAllAggregation("_propertyAttributes", true);
 		jQuery.each(aProperties, function(i, sName) {
 			var sValue = this.getProperty(sName),
-				oAttribute = this._mDeprecatedProperties[sName];
-			if (sValue) {
-				if (oAttribute) {
-					oAttribute.setText(sValue);
-				} else {
+					oAttribute = this._mDeprecatedProperties[sName];
+			if (jQuery.type(sValue) === "number" || sValue) {
+				if (!oAttribute) {
 					oAttribute = new ObjectAttribute({
-						active : false,
-						text : sValue
+						active : false
 					});
 					this._mDeprecatedProperties[sName] = oAttribute;
+					this.addAggregation("_propertyAttributes", oAttribute, true);
+					oAttribute.setText(sValue);
+				} else {
+					oAttribute.setText(sValue);
+					this.addAggregation("_propertyAttributes", oAttribute, true);
 				}
-				this.addAggregation("_propertyAttributes", oAttribute);
-			} else {
-				if (oAttribute) {
-					oAttribute.destroy();
-					delete this._mDeprecatedProperties[sName];
-				}
+			} else if (oAttribute) {
+				oAttribute.destroy();
+				delete this._mDeprecatedProperties[sName];
 			}
 		}.bind(this));
+		this.invalidate();
 	};
 
 	/**

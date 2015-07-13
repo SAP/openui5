@@ -830,13 +830,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			oFileName = sap.ui.getCore().byId(sItemId + "-ta_filenameHL");
 			if (!oFileName) {
 				oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
-					text : sFileNameLong,
 					enabled : bEnabled,
 					press : function(oEvent) {
 						sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
 					}
 				}).addStyleClass("sapMUCFileName");
+				oFileName.setModel(oItem.getModel());
+				oFileName.setText(sFileNameLong);
 			} else {
+					oFileName.setModel(oItem.getModel());
 					oFileName.setText(sFileNameLong);
 					oFileName.setEnabled(bEnabled);
 			}
@@ -868,10 +870,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					valueState : sValueState,
 					valueStateText : sValueStateText,
 					showValueStateMessage: bShowValueStateMessage,
-					value : sFileName,
 					description: oFile.extension
 				}).addStyleClass("sapMUCEditBox");
+				oFileNameEditBox.setModel(oItem.getModel());
+				oFileNameEditBox.setValue(sFileName);
 			} else {
+				oFileNameEditBox.setModel(oItem.getModel());
 				oFileNameEditBox.setValueState(sValueState);
 				oFileNameEditBox.setFieldWidth("75%");
 				oFileNameEditBox.setValueStateText(sValueStateText);
