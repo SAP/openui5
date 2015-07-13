@@ -45,8 +45,8 @@
 			.replace(/ xmlns.*?=\".+?\"/g, "")
 			// Note: browsers differ in whitespace for empty HTML(!) tags
 			.replace(/ \/>/g, '/>');
-		if (sap.ui.Device.browser.msie) {
-			// IE shuffles attribute order
+		if (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge) {
+			// Microsoft shuffles attribute order
 			// remove helper, type and var, then no tag should have more that one attribute
 			sXml = sXml.replace(/ (helper|type|var)=".*?"/g, "")
 		}
