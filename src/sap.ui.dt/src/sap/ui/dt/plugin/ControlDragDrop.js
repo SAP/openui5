@@ -144,7 +144,7 @@ function(DragDrop, ElementUtil, DOMUtil) {
 
 		if (oTargetParentElement !== oSourceParentElement) {
 			var sAggregationName = oAggregationOverlay.getAggregationName();
-			ElementUtil.addAggregation(oSourceParentElement, sAggregationName, oDraggedElement);
+			ElementUtil.addAggregation(oTargetParentElement, sAggregationName, oDraggedElement);
 		}
 	};
 
