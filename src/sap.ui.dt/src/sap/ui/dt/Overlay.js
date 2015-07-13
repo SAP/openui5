@@ -77,6 +77,13 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				draggable : {
 					type : "boolean",
 					defaultValue : false
+				},
+				/** 
+				 * Whether the Overlay is editable
+				 */
+				editable : {
+					type : "boolean",
+					defaultValue : false
 				}
 			},
 			associations : {
@@ -125,6 +132,16 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				draggableChange : {
 					parameters : {
 						draggable : { type : "boolean" }
+					}
+				},
+				/**
+				 * Event fired when the property "Editable" is changed
+				 */
+				editableChange : {
+					parameters : {
+						selected : {
+							editable : "boolean"
+						}
 					}
 				},
 				/**
@@ -327,7 +344,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * Sets wether the Overlay is draggable and toggles corresponding css class
+	 * Sets whether the Overlay is draggable and toggles corresponding css class
 	 * @param {boolean} bDraggable if the Overlay is draggable
 	 * @returns {sap.ui.dt.Overlay} returns this	 	 
 	 * @public
@@ -338,6 +355,23 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			
 			this.setProperty("draggable", bDraggable);
 			this.fireDraggableChange({draggable : bDraggable});
+		}
+
+		return this;
+	};	
+
+	/** 
+	 * Sets whether the Overlay is editable and toggles corresponding css class
+	 * @param {boolean} bEditable if the Overlay is editable
+	 * @returns {sap.ui.dt.Overlay} returns this	 	 
+	 * @public
+	 */
+	Overlay.prototype.setEditable = function(bEditable) {
+		if (this.getEditable() !== bEditable) {
+			this.toggleStyleClass("sapUiDtOverlayEditable", bEditable);
+			
+			this.setProperty("editable", bEditable);
+			this.fireEditableChange({editable : bEditable});
 		}
 
 		return this;
@@ -653,6 +687,15 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 */
 	Overlay.prototype.isDraggable = function() {
 		return this.getDraggable();
+	};
+
+	/** 
+	 * Returns if the Overlay is editable
+	 * @public
+	 * @return {boolean} if the Overlay is editable
+	 */
+	Overlay.prototype.isEditable = function() {
+		return this.getEditable();
 	};
 
 	/** 
