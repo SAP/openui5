@@ -375,8 +375,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		if (!oBinding) {
 			return;
 		}
-		
-		var iFirstLabelWidth = 0;
 
 		var aRows = this.getRows();
 		for (var iRow = 0, l = Math.min(iCount, aRows.length); iRow < l; iRow++) {
@@ -385,8 +383,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				oRow = aRows[iRow],
 				$row = oRow.$(),
 				$fixedRow = oRow.$("fixed"),
-				$rowHdr = this.$().find("div[data-sap-ui-rowindex=" + $row.attr("data-sap-ui-rowindex") + "]"),
-				iFirstThPos = 0;
+				$rowHdr = this.$().find("div[data-sap-ui-rowindex=" + $row.attr("data-sap-ui-rowindex") + "]");
 
 			var oContextInfo;
 			if (bIsFixedRow && oBinding.bProvideGrandTotals) {
@@ -396,17 +393,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			
 			var iLevel = oContextInfo ? oContextInfo.level : 0;
-
-			var $FirstCellLabel;
-			if (this.getFixedColumnCount() > 0) {
-				$FirstCellLabel = $fixedRow.find(".sapUiTableTdFirst .sapUiTableCell > *");
-			} else {
-				$FirstCellLabel = $row.find(".sapUiTableTdFirst .sapUiTableCell > *");
-			}
-			$FirstCellLabel.width('auto');
-			// 40 is standard space between the group header content and the sum label
-			iFirstLabelWidth = $FirstCellLabel.outerWidth() + 40;
-			$FirstCellLabel.width('');
 
 			if (!oContextInfo || !oContextInfo.context) {
 				$row.removeAttr("data-sap-ui-level");
@@ -431,39 +417,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					$rowHdr.html('<div class="sapUiAnalyticalTableLoading">' + this._oResBundle.getText("TBL_CELL_LOADING") + '</div>');
 				}
 				continue;
-			}
-			
-			var iGroupHeaderBoundColumnIndex = 0;
-
-			// If group header is expanded, we grant the whole row space
-			if (oContextInfo.nodeState.expanded && !this.getSumOnTop()) {
-				iFirstLabelWidth = 0;
-				iGroupHeaderBoundColumnIndex = this._getVisibleColumnCount() - 1;
-			}
-			
-			// if first measure column index is not the first column, we don't need to shrink the size about the sum text
-			if (this._getFirstMeasureColumnIndex() !== 0) {
-				iFirstLabelWidth = 0;
-			}
-			
-			if (iGroupHeaderBoundColumnIndex > -1) {
-				var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-				var $ths = this.$().find(".sapUiTableCtrlFirstCol > th");
-				if (bHasRowHeader) {
-					$ths = $ths.not(":nth-child(1)");
-				}
-				var $firstTh = $ths.get(iGroupHeaderBoundColumnIndex);
-				if (!$firstTh) {
-					//it might happen, that the first TH is not defined, because the table did not yet render any columns
-					//columns can be added asynchronously after the table was instantiated
-					return;
-				}
-
-				if (this._bRtlMode) {
-					iFirstThPos = $firstTh.getBoundingClientRect().left;
-				} else {
-					iFirstThPos = $firstTh.getBoundingClientRect().right;
-				}
 			}
 
 			var aAriaLabelledByParts = [this.getId() + "-rownumberofrows"];
@@ -549,25 +502,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$row.attr('aria-level', iLevel + 1);
 			$fixedRow.attr('aria-level', iLevel + 1);
 			
-			// Shrink GroupIcon width from left bound to right bound of first column.
-
-			var iRowHeaderOffset, iRowHdrWidth;
-
-			// -2 because of Border
-			if (this._bRtlMode) {
-				iRowHeaderOffset = $rowHdr[0].getBoundingClientRect().right;
-				iRowHdrWidth = iRowHeaderOffset - iFirstThPos - iFirstLabelWidth - 2;
-			} else {
-				iRowHeaderOffset = $rowHdr[0].getBoundingClientRect().left;
-				iRowHdrWidth = iFirstThPos - iRowHeaderOffset - iFirstLabelWidth - 2;
-			}
-			
 			//set the level of the node as a data-* attribute
 			$row.data("sap-ui-level", iLevel);
 			$fixedRow.data("sap-ui-level", iLevel);
 			$rowHdr.data("sap-ui-level", iLevel);
-			
-			$rowHdr.find(".sapUiTableGroupIcon").width(iRowHdrWidth + "px");
 			
 			if (sap.ui.Device.system.tablet) {
 				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
@@ -624,7 +562,73 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			// update aria description for row selection
 			$rowHdr.attr("aria-labelledby", aAriaLabelledByParts.join(" "));
+			
+			var $targetRow = this.getFixedColumnCount() > 0 ? $fixedRow : $row;
+			this._resizeGroupHeader($rowHdr, $targetRow, oContextInfo.nodeState.expanded);
 		}
+	};
+	
+	/*
+	 * Calculates how much width is available for the group header title.
+	 * Logic tries to grant as much space as possible. Especially to use every gap between each sum/dimension label.
+	 * This is important for users for making sure that they can read the group title even when they scrolled horizontally.
+	 * @param {jQuery} $rowHdr the current row header wrapped by jQuery. 
+	 * @param {jQuery} $row jQuery collection of the current processed row. 
+	 * @param {Boolean} bIsExpanded
+	 *         flag whether the current node is expanded or not. 
+	 */
+	AnalyticalTable.prototype._resizeGroupHeader = function($rowHdr, $row, bIsExpanded) {
+		// Group Icon Layouting logic
+		var $groupIcon = $rowHdr.find(".sapUiTableGroupIcon");
+		if ($groupIcon.length === 0 || bIsExpanded) {
+			return;
+		}
+		
+		var $MeasureAndSumLabels =  $row.find(".sapUiTableCell > *");
+		var oTableClientRect = this.getDomRef().getBoundingClientRect();
+		$groupIcon.width('');
+		var iGroupPosition = this._bRtlMode ? $groupIcon[0].getBoundingClientRect().left : $groupIcon[0].getBoundingClientRect().right;
+		var iGroupIconWidth = $groupIcon.width();
+		
+		var bIsRtlMode = this._bRtlMode;
+		
+		$MeasureAndSumLabels.each(function(index) {
+			var $this = jQuery(this);
+			if ($this.text().length === 0) {
+				return true;
+			}
+			var oClientRect = $this[0].getBoundingClientRect();
+			$this.width('auto');
+			var iLabelWidth = $this.width();
+			$this.width('');
+			
+			var iOverlap = 0;
+			var bDoResize = false;
+			var sTextAlign = $this.css('text-align');
+			if (!bIsRtlMode) {
+				if (sTextAlign === "left") {
+					iOverlap = iGroupPosition - oClientRect.left;
+					bDoResize = (iOverlap > 0 && oClientRect.left + iLabelWidth > oTableClientRect.left);
+				} else if (sTextAlign === "right") {
+					iOverlap = iGroupPosition - oClientRect.right + iLabelWidth;
+					bDoResize = (iOverlap > 0 && oClientRect.right > oTableClientRect.left);
+				}
+			} else {
+				if (sTextAlign === "left") {
+					iOverlap = oClientRect.left + iLabelWidth - iGroupPosition;
+					bDoResize = (iOverlap > 0 && oClientRect.left < oTableClientRect.right);
+				} else if (sTextAlign === "right") {
+					iOverlap = oClientRect.right - iGroupPosition;
+					bDoResize = (iOverlap > 0 && oClientRect.right < oTableClientRect.right);
+				}
+			}
+			
+			if (bDoResize) {
+				$groupIcon.width(iGroupIconWidth - iOverlap);
+				// break loop
+				return false;
+			}
+		});
 	};
 
 	AnalyticalTable.prototype.onclick = function(oEvent) {
