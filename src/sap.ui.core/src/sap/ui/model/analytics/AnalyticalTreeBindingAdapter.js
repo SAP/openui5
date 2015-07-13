@@ -492,7 +492,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		}
 		
 		// add up the total number of sum rows (expanded nodes with at least one child)
-		if (oNode.sumNode || oNode === this._oRootNode) {
+		// the number of totals for the root node is always 1 except in case the grand totals were not requested
+		if (oNode.sumNode || (oNode === this._oRootNode && this.bProvideGrandTotals)) {
 			oNode.numberOfTotals += 1;
 		}
 		
