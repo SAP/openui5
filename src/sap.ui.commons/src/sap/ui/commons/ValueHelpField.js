@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ValueHelpField.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,22 +28,22 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ValueHelpField = TextField.extend("sap.ui.commons.ValueHelpField", /** @lends sap.ui.commons.ValueHelpField.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Url of the standard icon for the value help. If no parameter is supplied the default icon image will be shown.
 			 * This can be an URI to an image or an icon font URI.
 			 */
 			iconURL : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * URL of the icon for the value help when hovered. If no parameter is supplied the standard icon image will be shown.
 			 * If a icon font icon is used, this property is ignored.
 			 */
 			iconHoverURL : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * URL of the icon for the value help when disabled. If no parameter is supplied the default icon image will be shown.
 			 * If a icon font icon is used, this property is ignored.
@@ -51,28 +51,28 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 			iconDisabledURL : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null}
 		},
 		events : {
-	
+
 			/**
 			 * Event which is fired when the ValueHelp is requested.
 			 */
 			valueHelpRequest : {}
 		}
 	}});
-	
-	
+
+
 	ValueHelpField.prototype.onBeforeRendering = function(){
 		var sIcon = Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconDsblUrl');
 		this.sIconDsblUrl = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon;
-	
+
 		sIcon = Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconRegularUrl');
 		this.sIconRegularUrl = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon;
-		
+
 		sIcon = Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconHoverUrl');
 		this.sIconHoverUrl = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon;
 	};
-	
+
 	ValueHelpField.prototype.onmouseover = function (oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + '-icon' && this.getEnabled() && this.getEditable() && !this.bIsIconURI) {
 			if (this.getIconHoverURL()) {
 				this.sIconHoverUrl = this.getIconHoverURL();
@@ -86,24 +86,24 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 			oIcon.attr( 'src', this.sIconHoverUrl );
 		}
 	};
-	
+
 	ValueHelpField.prototype.onmouseout = function (oEvent) {
 		if (oEvent.target.id == this.getId() + '-icon' && this.getEnabled() && this.getEditable() && !this.bIsIconURI) {
 			var oIcon = jQuery.sap.byId(oEvent.target.id);
 			oIcon.attr( 'src', this.sIconRegularUrl );
 		}
 	};
-	
+
 	ValueHelpField.prototype.onclick = function(oEvent){
 	if (oEvent.target.id == this.getId() + '-icon' && this.getEnabled() && this.getEditable()) {
 			this.fireValueHelpRequest({/* no parameters */});
 		}
 	};
-	
+
 	ValueHelpField.prototype.setEnabled = function(bEnabled) {
 		var bOldEnabled = this.getEnabled();
 		TextField.prototype.setEnabled.apply(this, arguments);
-	
+
 		if (this.getDomRef() && bOldEnabled != bEnabled && !this.bIsIconURI) {
 			var oIcon = this.$("icon");
 			if (bEnabled) {
@@ -117,11 +117,11 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 			}
 		}
 	};
-	
+
 	ValueHelpField.prototype.setEditable = function(bEditable) {
 		var bOldEditable = this.getEditable();
 		TextField.prototype.setEditable.apply(this, arguments);
-	
+
 		if (this.getDomRef() && bOldEditable != bEditable && !this.bIsIconURI) {
 			var oIcon = this.$("icon");
 			if (bEditable) {
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 			}
 		}
 	};
-	
+
 	/**
 	 * Handle F4 event
 	 * @param {jQuery.Event} oEvent the occurring event
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	/*
 	 * Extends the method inherited from sap.ui.core.Element by providing information on Search Help access
 	 *
@@ -157,15 +157,13 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 		if (this.getEnabled() && this.getEditable()) {
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 			// ResourceBundle always returns the key if the text is not found
-			var sSearchHelp = rb.getText("DDBX_SHI_ARIA");
-			sSearchHelp = sSearchHelp === "DDBX_SHI_ARIA" ? "Open search help via {0}" : sSearchHelp;
-			sSearchHelp = sSearchHelp.replace("{0}", rb.getText("DDBX_SHIF4"));
+			var sSearchHelp = rb.getText("VHF_TOOLTIP");
 			return (sTooltipString ? sTooltipString + " - " : "") + sSearchHelp;
 		} else {
 			return sTooltipString;
 		}
 	};
-	
+
 	/**
 	 * Called after the theme has been switched. Some adjustments required.
 	 * @private
@@ -175,7 +173,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 			this.invalidate();
 		}
 	};
-	
+
 	ValueHelpField.prototype.exit = function(){
 		this.sIconRegularUrl = undefined;
 		this.sIconHoverUrl = undefined;
