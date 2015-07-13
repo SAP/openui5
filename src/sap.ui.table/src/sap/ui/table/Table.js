@@ -1072,7 +1072,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		
 		// re-initialize the selection model, might be necessary in case the table gets "rebound"
 		this._initSelectionModel(sap.ui.model.SelectionModel.MULTI_SELECTION);
-		
+
+		// currently only required for TreeBindings, will be relevant for ListBindings later
+		if (oBinding && this.isTreeBinding("rows") && !oBinding.hasListeners("selectionChanged")) {
+			oBinding.attachSelectionChanged(this._onSelectionChanged, this);
+		}
 		return this;
 	};
 
