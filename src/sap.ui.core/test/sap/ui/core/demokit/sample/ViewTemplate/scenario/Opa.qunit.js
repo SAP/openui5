@@ -1,11 +1,16 @@
 /*!
  * ${copyright}
  */
-sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
+sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5) {
 	"use strict";
 	module("sap.ui.core.sample.ViewTemplate.scenario");
 
-	opaTest("Find view elements", function(Given, When, Then) {
+	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
+		// Bug Fix: IE9 >>> http://bugs.jquery.com/ticket/13378
+		return;
+	}
+
+	opaTest("Find view elements", function (Given, When, Then) {
 		function onLoad() {
 			Then.waitFor({
 				controlType: "sap.m.CheckBox",
@@ -34,7 +39,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 				{controlType: "sap.m.Text", text: "Email"},
 				{controlType: "sap.m.Text", text: "Category"}
 
-			].forEach(function(oFixture) {
+			].forEach(function (oFixture) {
 				Then.waitFor({
 					controlType: oFixture.controlType,
 					matchers : new sap.ui.test.matchers.Properties({ text: oFixture.text}),
@@ -52,7 +57,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function(Opa5) {
 				id: /selectInstance/,
 				success : function (oControl) {
 					// check no warnings and errors
-					Opa5.getWindow().jQuery.sap.log.getLog().forEach(function(oLog) {
+					Opa5.getWindow().jQuery.sap.log.getLog().forEach(function (oLog) {
 						var sComponent = oLog.component || "";
 
 						if (( sComponent === "sap.ui.core.util.XMLPreprocessor"
