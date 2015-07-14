@@ -158,6 +158,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this.scrollToItem(oItem);
 		}
 
+		Select.prototype._handleFocusout = function() {
+
+			this._bFocusoutDueRendering = this._bRenderingPhase;
+
+			if (!this._bFocusoutDueRendering) {
+
+				if (this._bProcessChange) {
+					this._checkSelectionChange();
+				}
+
+				this._bProcessChange = true;
+			}
+		};
+
 		Select.prototype._checkSelectionChange = function() {
 			var oItem = this.getSelectedItem();
 
@@ -485,8 +499,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype._createPopover = function() {
 
-			// initialize Popover
-			var oPicker = new Popover({
+			var that = this,
+				oPicker = new Popover({
 				showHeader: false,
 				placement: sap.m.PlacementType.Vertical,
 				offsetX: 0,
@@ -494,6 +508,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				initialFocus: this,
 				bounce: false
 			});
+
+			// detect when the scrollbar is pressed
+			oPicker.addEventDelegate({
+				ontouchstart: function(oEvent) {
+					var oPickerDomRef = this.getDomRef("cont");
+
+					if (oEvent.target === oPickerDomRef) {
+						that._bProcessChange = false;
+					}
+				}
+			}, oPicker);
 
 			this._decoratePopover(oPicker);
 			return oPicker;
@@ -613,10 +638,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype._onBeforeOpenDialog = function() {
-			var oHeader = this.getPicker().getCustomHeader();
-			oHeader.getContentLeft()[0].setValue(this.getSelectedItem().getText());
-			oHeader.getContentLeft()[0].setTextDirection(this.getTextDirection());
-			oHeader.getContentLeft()[0].setTextAlign(this.getTextAlign());
+			var oInput = this.getPicker().getCustomHeader().getContentLeft()[0];
+			oInput.setValue(this.getSelectedItem().getText());
+			oInput.setTextDirection(this.getTextDirection());
+			oInput.setTextAlign(this.getTextAlign());
 		};
 
 		/* =========================================================== */
@@ -638,6 +663,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// selected item on focus
 			this._oSelectionOnFocus = null;
+
+			// to detect when the control is in the rendering phase
+			this._bRenderingPhase = false;
+
+			// to detect if the focusout event is triggered due a rendering
+			this._bFocusoutDueRendering = false;
+
+			// used to prevent the change event from firing when the user scrolls
+			// the picker popup (dropdown) list using the mouse
+			this._bProcessChange = true;
 		};
 
 		/**
@@ -646,8 +681,27 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.onBeforeRendering = function() {
-			this._oSelectionOnFocus = this.getSelectedItem();
+
+			// rendering phase is started
+			this._bRenderingPhase = true;
+
+			// note: in IE11 and Firefox 38, the focusout event is not fired when the select is removed
+			if (this.getFocusDomRef() === document.activeElement) {
+				this._handleFocusout();
+			}
+
 			this.synchronizeSelection();
+		};
+
+		/**
+		 * Required adaptations after rendering.
+		 *
+		 * @private
+		 */
+		Select.prototype.onAfterRendering = function() {
+
+			// rendering phase is finished
+			this._bRenderingPhase = false;
 		};
 
 		/**
@@ -1010,7 +1064,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.onfocusin = function(oEvent) {
 
-			this._oSelectionOnFocus = this.getSelectedItem();
+			if (!this._bFocusoutDueRendering && !this._bProcessChange) {
+				this._oSelectionOnFocus = this.getSelectedItem();
+			}
 
 			// note: in some circumstances IE browsers focus non-focusable elements
 			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
@@ -1029,7 +1085,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @function
 		 */
 		Select.prototype.onfocusout = function(oEvent) {
-			this._checkSelectionChange();
+			this._handleFocusout();
 		};
 
 		/**
