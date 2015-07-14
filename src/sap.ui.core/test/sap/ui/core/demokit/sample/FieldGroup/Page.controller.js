@@ -17,15 +17,15 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 		},
 		onValidateFieldGroup : function (oEvt) {
 			//currently there is no actual validation triggered
-			var sFieldGroup = oEvt.getParameters().fieldGroupId,
-				sMessage = "Group '"+ sFieldGroup + "' Validation:",
-				sType = this.mMessageMapping[sFieldGroup].type,
-				sMessageId = this.mMessageMapping[sFieldGroup].id;
+			var aFieldGroup = oEvt.getParameters().fieldGroupIds,
+				sMessage = "Group '"+ aFieldGroup[0] + "' Validation:",
+				sType = this.mMessageMapping[aFieldGroup[0]].type,
+				sMessageId = this.mMessageMapping[aFieldGroup[0]].id;
 			
 			//display a sample message
 			this.getView().byId(sMessageId).setType(sType).setText(sMessage + sType).setVisible(true);
 			//deliver toast
-			MessageToast.show("Validation of field group '" + sFieldGroup + "' triggered.",{duration:500});
+			MessageToast.show("Validation of field group '" + aFieldGroup[0] + "' triggered.",{duration:500});
 		},
 		onMsgStripClose : function (oEvt) {
 			oEvt.oSource.setVisible(false);

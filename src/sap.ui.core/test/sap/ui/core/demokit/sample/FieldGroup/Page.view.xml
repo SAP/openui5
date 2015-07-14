@@ -13,29 +13,29 @@
 					<!-- Billing Information -->
 					<core:Title text="Billing Information" />
 					<Label text="Name" />
-					<Input fieldGroupId="Billing Information" value="{BillingName}"
+					<Input fieldGroupIds="Billing Information" value="{BillingName}"
 						id="BillingName" />
 					<Label text="Street/No." />
-					<Input fieldGroupId="Billing Information" value="{BillingStreet}"
+					<Input fieldGroupIds="Billing Information" value="{BillingStreet}"
 						id="BillingStreet">
 					</Input>
-					<Input fieldGroupId="Billing Information" value="{BillingStreetNumber}"
+					<Input fieldGroupIds="Billing Information" value="{BillingStreetNumber}"
 						id="BillingStreetNumber">
 						<layoutData>
 							<l:GridData span="L3 M3 S4" />
 						</layoutData>
 					</Input>
 					<Label text="ZIP Code/City" />
-					<Input fieldGroupId="Billing Information" value="{BillingZipCode}"
+					<Input fieldGroupIds="Billing Information" value="{BillingZipCode}"
 						id="BillingZipCode">
 						<layoutData>
 							<l:GridData span="L3 M3 S4" />
 						</layoutData>
 					</Input>
-					<Input fieldGroupId="Billing Information" value="{BillingCity}"
+					<Input fieldGroupIds="Billing Information" value="{BillingCity}"
 						id="BillingCity" />
 					<Label text="Country" />
-					<Select fieldGroupId="Billing Information" width="100%"
+					<Select fieldGroupIds="Billing Information" width="100%"
 						selectedKey="{BillingCountry}" id="BillingCountry">
 						<items>
 							<core:Item text="Germany" key="Germany" />
@@ -46,13 +46,13 @@
 
 					<!-- Discount -->
 					<core:Title text="Discount Code" />
-					<Input fieldGroupId="Discount Code" value="{DiscountCode}"
+					<Input fieldGroupIds="Discount Code" value="{DiscountCode}"
 						placeholder="Enter your discout code here..." id="DiscountCode" />
 
 					<!-- Credit Card -->
 					<core:Title text="Credit Card" />
 					<Label text="Vendor" />
-					<ComboBox fieldGroupId="Credit Card" width="100%"
+					<ComboBox fieldGroupIds="Credit Card" width="100%"
 						placeholder="Choose your card vendor..." value="{CreditCardVendor}"
 						id="CreditCardVendor">
 						<items>
@@ -63,10 +63,10 @@
 						</items>
 					</ComboBox>
 					<Label text="Credit Card Number" />
-					<Input fieldGroupId="Credit Card" value="{CreditCardNumber}"
+					<Input fieldGroupIds="Credit Card" value="{CreditCardNumber}"
 						maxLength="16" id="CreditCardNumber" />
 					<Label text="Expiry Date" />
-					<ComboBox fieldGroupId="Credit Card" placeholder="Month..."
+					<ComboBox fieldGroupIds="Credit Card" placeholder="Month..."
 						value="{CreditCardMonth}" id="CreditCardMonth">
 						<items>
 							<core:Item text="01" />
@@ -84,7 +84,7 @@
 							<core:Item text="12" />
 						</items>
 					</ComboBox>
-					<ComboBox fieldGroupId="Credit Card" placeholder="Year..."
+					<ComboBox fieldGroupIds="Credit Card" placeholder="Year..."
 						value="{CreditCardYear}" id="CreditCardYear">
 						<items>
 							<core:Item text="2015" />
@@ -96,14 +96,14 @@
 						</items>
 					</ComboBox>
 					<Label text="Validation Code" />
-					<Input fieldGroupId="Credit Card" maxLength="3"
+					<Input fieldGroupIds="Credit Card" maxLength="3"
 						value="{CreditCardValidationCode}" id="CreditCardValidationCode" />
 					<!-- Online Info -->
 					<core:Title text="Online" />
 					<Label text="E-Mail" />
-					<Input fieldGroupId="Online" value="{OnlineMail}" id="OnlineMail" />
+					<Input fieldGroupIds="Online" value="{OnlineMail}" id="OnlineMail" />
 					<Label text="Twitter" />
-					<Input fieldGroupId="Online" value="{OnlineTwitter}" id="OnlineTwitter" />
+					<Input fieldGroupIds="Online" value="{OnlineTwitter}" id="OnlineTwitter" />
 				</f:content>
 			</f:SimpleForm>
 			<MessageStrip id="BillingInformationMessage" visible="false"

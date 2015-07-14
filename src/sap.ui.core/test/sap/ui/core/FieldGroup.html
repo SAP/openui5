@@ -18,26 +18,26 @@
 	
 	var oVerticalLayout = new sap.ui.commons.layout.VerticalLayout();
 	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
-		jQuery.sap.log.info("Validate " + oEvent.mParameters.fieldGroupId);
+		jQuery.sap.log.info("Validate " + oEvent.mParameters.fieldGroupIds[0]);
 	});
 	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
 	oMatrixLayout.setLayoutFixed(false);
 
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 1 of group1",labelFor:"field11"}),
-			new sap.ui.commons.TextField({id:"field11",width:"200px",fieldGroupId:"group1"})
+			new sap.ui.commons.TextField({id:"field11",width:"200px",fieldGroupIds:["group1"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 2 of group1",labelFor:"field12"}),
-			new sap.ui.commons.TextField({id:"field12",width:"200px",fieldGroupId:"group1"})
+			new sap.ui.commons.TextField({id:"field12",width:"200px",fieldGroupIds:["group1"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 3 of group1",labelFor:"field13"}), 
-			new sap.ui.commons.TextField({id:"field13",width:"200px",fieldGroupId:"group1"})
+			new sap.ui.commons.TextField({id:"field13",width:"200px",fieldGroupIds:["group1"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 1 of group2",labelFor:"field21"}),
-			new sap.ui.commons.CheckBox({id:"field21",width:"200px",fieldGroupId:"group2"})
+			new sap.ui.commons.CheckBox({id:"field21",width:"200px",fieldGroupIds:["group2"]})
 	);
 	oVerticalLayout.addContent(oMatrixLayout);
 	
@@ -45,7 +45,7 @@
 	oMatrixLayout.setLayoutFixed(false);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 2 of group2",labelFor:"field22"}),
-			new sap.ui.commons.TextField({id:"field22",width:"200px",fieldGroupId:"group2"})
+			new sap.ui.commons.TextField({id:"field22",width:"200px",fieldGroupIds:["group2"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 1 with no group",labelFor:"field1"}),
@@ -53,23 +53,23 @@
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 3 of group2",labelFor:"field23"}),
-			new sap.ui.commons.TextField({id:"field23",width:"200px",fieldGroupId:"group2"})
+			new sap.ui.commons.TextField({id:"field23",width:"200px",fieldGroupIds:["group2"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 1 of group3",labelFor:"field31"}),
-			new sap.ui.commons.TextField({id:"field31",width:"200px",fieldGroupId:"group3"})
+			new sap.ui.commons.TextField({id:"field31",width:"200px",fieldGroupIds:["group3"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 2 of group3",labelFor:"field32"}),
-			new sap.ui.commons.CheckBox({id:"field32",width:"200px",fieldGroupId:"group3"})
+			new sap.ui.commons.CheckBox({id:"field32",width:"200px",fieldGroupIds:["group3"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 3 of group3",labelFor:"field33"}),
-			new sap.ui.commons.CheckBox({id:"field33",width:"200px",fieldGroupId:"group3"})
+			new sap.ui.commons.CheckBox({id:"field33",width:"200px",fieldGroupIds:["group3"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 4 with group3",labelFor:"field34"}),
-			new sap.m.DateTimeInput({id:"field34",width:"200px",fieldGroupId:"group3"})
+			new sap.m.DateTimeInput({id:"field34",width:"200px",fieldGroupIds:["group3"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 2 with no group",labelFor:"field2"}),
