@@ -2254,7 +2254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var iInvisibleColWidth = 0;
 		
 		var bRtl = this._bRtlMode;
-		var iLeftAway = bRtl ? "99000px" : "-99000px";
+		var iLeftAway = bRtl ? 99000 : -99000;
 		
 		// Select only table headers (identified by data-sap-ui-headcolindex attribute). Not the row header.
 		var $colHeaderContainer = $this.find(".sapUiTableColHdr");
@@ -2354,6 +2354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			if (!iResizerPositionLeft || iResizerPositionLeft <= 0 || iResizerPositionLeft >= iTableWidth) {
 				iResizerPositionLeft = iLeftAway;
 			}
+
 			mHeader.domRefColumnResizerPosition = iResizerPositionLeft;
 		});
 
