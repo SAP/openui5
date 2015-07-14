@@ -838,7 +838,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeAllItems = function() {
-			var aItems = this.removeAllAggregation("items");
+			var aItems = this.removeAllAggregation("items", true);
 
 			// clear the selection
 			this.clearSelection();
