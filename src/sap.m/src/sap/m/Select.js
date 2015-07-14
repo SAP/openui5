@@ -276,12 +276,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.setValue = function(sValue) {
-			var $Label = this.$().children("." + SelectRenderer.CSS_CLASS + "Label");
-
-			// change the label text
-			if ($Label && $Label.length) {
-				$Label.text(sValue);
-			}
+			this.$("label").text(sValue);
 		};
 
 		/**
