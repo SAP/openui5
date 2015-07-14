@@ -1587,7 +1587,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 */
 	Popover.prototype._adaptPositionParams = function () {
 		if (this.getShowArrow()) {
-			this._marginTop = 48;
 			this._marginLeft = 10;
 			this._marginRight = 10;
 			this._marginBottom = 10;
