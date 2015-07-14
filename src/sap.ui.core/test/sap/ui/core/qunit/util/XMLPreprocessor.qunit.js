@@ -1911,10 +1911,11 @@
 
 	//*********************************************************************************************
 	test("<ExtensionPoint>: no (supported) configuration", function () {
-		var oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration);
+		var oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration),
+			oLogMock = this.mock(jQuery.sap.log);
 
 		function checkNoReplacement() {
-			check.call(this, [
+			check.call(oLogMock, [
 					mvcView(),
 					'<ExtensionPoint name="myExtensionPoint">',
 					'<template:if test="true">', // checks that content is processed

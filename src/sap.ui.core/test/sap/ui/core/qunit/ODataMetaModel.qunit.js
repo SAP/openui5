@@ -482,7 +482,6 @@ sap.ui.require([
 	function setupSandbox(oSandbox) {
 		var oServer = oSandbox.useFakeServer(), sUrl;
 
-		//TODO how to properly tear down this stuff?
 		sinon.FakeXMLHttpRequest.useFilters = true;
 		sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
 			return mFixture[sUrl] === undefined; // do not fake if URL is unknown
@@ -561,6 +560,7 @@ sap.ui.require([
 			ODataModel.mServiceData = {}; // clear cache
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
+			sinon.FakeXMLHttpRequest.filters = [];
 		}
 	});
 
