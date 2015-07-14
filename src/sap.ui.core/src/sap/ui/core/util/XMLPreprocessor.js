@@ -361,7 +361,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				/**
 				 * Throws an error with the given message, prefixing it with the caller
 				 * identification (separated by a colon) and appending the serialization of the
-				 * given DOM element.
+				 * given DOM element. Additionally logs the message and serialization as error with
+				 * caller identification as details.
 				 *
 				 * @param {string} sMessage
 				 *   some error message which must end with a space (and take into account, that
@@ -370,7 +371,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 *   the DOM element
 				 */
 				function error(sMessage, oElement) {
-					throw new Error(sCaller + ": " + sMessage + serializeSingleElement(oElement));
+					sMessage = sMessage + serializeSingleElement(oElement);
+					jQuery.sap.log.error(sMessage, sCaller, "sap.ui.core.util.XMLPreprocessor");
+					throw new Error(sCaller + ": " + sMessage);
 				}
 
 				/**
@@ -483,13 +486,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					// "with" control. A context change will create a new one.
 					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
 					if (oWithControl.$mFragmentContexts[sFragmentName]) {
-						oElement.appendChild(oElement.ownerDocument.createTextNode(
-							"Error: Stopped due to cyclic fragment reference"));
-						jQuery.sap.log.error(
-							'Stopped due to cyclic reference in fragment: ' + sFragmentName,
-							jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
-							"sap.ui.core.util.XMLPreprocessor");
-						return;
+						error("Cyclic reference to fragment '" + sFragmentName + "' ", oElement);
 					}
 
 					iNestingLevel++;
@@ -672,11 +669,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					try {
 						vFragmentName
 							= getResolvedBinding(sFragmentName, oElement, oWithControl, true);
-						if (vFragmentName !== oUNBOUND) {
-							insertFragment(vFragmentName, oElement, oWithControl);
-						}
 					} catch (ex) {
 						warn('Error in formatter of ', oElement, ex);
+						return;
+					}
+
+					if (vFragmentName !== oUNBOUND) {
+						insertFragment(vFragmentName, oElement, oWithControl);
 					}
 				}
 
