@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write("</label>");
 			}
 		
-			rm.write('<input type="search" autocorrect="off"');
+			rm.write('<input type="search" autocorrect="off" autocomplete="off"');
 			rm.writeAttribute("id", oSF.getId() + "-I");
 		
 			rm.addClass("sapMSFI");
