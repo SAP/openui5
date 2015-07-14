@@ -156,9 +156,25 @@ sap.ui.define([
 				return this._mNavContext;
 			};
 
+			/**
+			 * Sets page title control.
+			 * @private
+			 */
+			QuickViewPage.prototype.setPageTitleControl = function (title) {
+				this._oPageTitle = title;
+			};
+
+			/**
+			 * Returns page title control.
+			 * @private
+			 */
+			QuickViewPage.prototype.getPageTitleControl = function () {
+				return this._oPageTitle;
+			};
+
 			QuickViewPage.prototype._createPage = function () {
-				var oForm = this._createForm(),
-					oHeaderContent = this._getPageHeaderContent();
+
+				var mPageContent = this._createPageContent();
 
 				var mNavContext = this.getNavContext();
 
@@ -166,11 +182,11 @@ sap.ui.define([
 					customHeader : new Bar()
 				});
 
-				if (oHeaderContent) {
-					oPage.addContent(oHeaderContent);
+				if (mPageContent.header) {
+					oPage.addContent(mPageContent.header);
 				}
 
-				oPage.addContent(oForm);
+				oPage.addContent(mPageContent.form);
 
 				var oCustomHeader = oPage.getCustomHeader();
 
@@ -212,12 +228,20 @@ sap.ui.define([
 
 			QuickViewPage.prototype._createPageContent = function () {
 
-				var mPageContent = {
-					form : this._createForm(),
-					header : this._getPageHeaderContent()
-				};
+				var oForm = this._createForm();
+				var oHeader = this._getPageHeaderContent();
 
-				return mPageContent;
+				// add ARIA title to the form
+				var oPageTitleControl = this.getPageTitleControl();
+				if (oHeader && oPageTitleControl) {
+					var oInnerFrom = oForm.getAggregation("form");
+					oInnerFrom.addAriaLabelledBy(oPageTitleControl);
+				}
+
+				return {
+					form : oForm,
+					header : oHeader
+				};
 			};
 
 			QuickViewPage.prototype._createForm = function () {
@@ -262,6 +286,7 @@ sap.ui.define([
 					} else {
 						oIcon = new Image({
 							src: sIcon,
+							decorative : false,
 							tooltip : sTitle
 						}).addStyleClass("sapUiIcon");
 					}
@@ -294,6 +319,8 @@ sap.ui.define([
 						level	: CoreTitleLevel.H1
 					});
 				}
+
+				this.setPageTitleControl(oTitle);
 
 				var oDescription = new Text({
 					text	: sDescription
