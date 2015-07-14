@@ -448,7 +448,8 @@
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
 				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
 				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/parent/path/to/local/odata/annotations/2' ],
-				useBatch: false,
+				useBatch: true,
+				skipMetadataAnnotationParsing: true,
 				refreshAfterChange: false,
 				json: true
 			});
@@ -527,7 +528,7 @@
 
 			// model: "resourceBundle-legacy-uri"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "v2models/extension/i18n.properties"
+				bundleUrl: "v2models/parent/i18n.properties"
 			});
 
 
