@@ -37,9 +37,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 				role: "button"
 			});
 		} else {
-			rm.writeAccessibilityState(oToolbar, {
-				role: "toolbar"
-			});
+			oToolbar._writeLandmarkInfo(rm, oToolbar);
 		}
 
 
