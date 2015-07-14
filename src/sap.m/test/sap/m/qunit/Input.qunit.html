@@ -915,8 +915,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}",
-					wrapping : true
+					text: "{qty}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -1245,7 +1244,6 @@
 
 		var oInput = new sap.m.Input({
 			width: "100px",
-			suggestionWidth: "500px",
 			suggestionColumns: [
 				new sap.m.Column({
 					styleClass: "name",
@@ -1295,8 +1293,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}",
-					wrapping : true
+					text: "{qty}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -1441,8 +1438,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}",
-					wrapping : true
+					text: "{qty}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -1562,7 +1558,7 @@
 		var oInput = new sap.m.Input({
 			showSuggestion: true,
 			width: "100px",
-			suggestionWidth: "500px",
+			maxSuggestionWidth: "500px",
 			suggestionColumns: [
 				new sap.m.Column({
 					styleClass: "name",
@@ -1612,8 +1608,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}",
-					wrapping : true
+					text: "{qty}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -1735,7 +1730,7 @@
 		var oInput = new sap.m.Input({
 			showSuggestion: true,
 			width: "100px",
-			suggestionWidth: "500px",
+			maxSuggestionWidth: "500px",
 			suggestionColumns: [
 				new sap.m.Column({
 					styleClass: "name",
@@ -1785,8 +1780,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}",
-					wrapping : true
+					text: "{qty}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -1953,7 +1947,7 @@
 	test("The order of setting properties: showValueHelp, bindAggregation and showSuggestion", function(){
 		var oInput = new sap.m.Input({
 			width: "100px",
-			suggestionWidth: "500px",
+			maxSuggestionWidth: "500px",
 			suggestionColumns: [
 				new sap.m.Column({
 					styleClass: "name",
@@ -2003,8 +1997,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}",
-					wrapping : true
+					text: "{qty}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -2058,7 +2051,7 @@
 	test("The order of setting properties: showValueHelp, showSuggestion after bindAggregation", function(){
 		var oInput = new sap.m.Input({
 			width: "100px",
-			suggestionWidth: "500px",
+			maxSuggestionWidth: "500px",
 			suggestionColumns: [
 				new sap.m.Column({
 					styleClass: "name",
@@ -2108,8 +2101,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}",
-					wrapping : true
+					text: "{qty}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
