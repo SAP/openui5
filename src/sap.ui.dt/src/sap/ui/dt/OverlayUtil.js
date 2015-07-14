@@ -33,6 +33,9 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 * 
 	 */
 	OverlayUtil.getClosestOverlayFor = function(oElement) {
+		if (!oElement || !oElement.getParent) {
+			return null;
+		}
 		var oParent = oElement.getParent();
 		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
 		while (oParent && !oParentOverlay) {
