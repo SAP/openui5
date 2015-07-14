@@ -3003,7 +3003,7 @@ sap.ui.define([
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,
 			oAggregationInfo = this.getMetadata().getAggregation(sName),  // TODO fix handling of hidden aggregations
-			sGroup = null,
+			sGroup,
 			bGrouped,
 			aContexts,
 			sGroupFunction = oAggregationInfo._sMutator + "Group",
@@ -3044,12 +3044,7 @@ sap.ui.define([
 		// Check the current context for its group. If the group key changes, call the 
 		// group function on the control.
 		function updateGroup(oContext) {
-			var oNewGroup = oBinding.aSorters[0].fnGroup(oContext);
-			if (typeof oNewGroup == "string") {
-				oNewGroup = {
-					key: oNewGroup
-				};
-			}
+			var oNewGroup = oBinding.aSorters[0].getGroup(oContext);
 			if (oNewGroup.key !== sGroup) {
 				var oGroupHeader;
 				//If factory is defined use it

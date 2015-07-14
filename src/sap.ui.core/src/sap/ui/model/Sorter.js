@@ -22,7 +22,9 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @param {boolean|function} vGroup configure grouping of the content, can either be true to enable grouping
 	 *        based on the raw model property value, or a function which calculates the group value out of the 
 	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
-	 *        implement the grouping behaviour for the aggregation which you want to group.
+	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function 
+	 *        is provided it must either return a primitive type value as the group key or an object containing
+	 *        a "key" property an may contain additional properties needed for group visualization.
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 */
@@ -53,6 +55,24 @@ sap.ui.define(['sap/ui/base/Object'],
 			if (typeof vGroup == "function") {
 				this.fnGroup = vGroup;
 			}
+		},
+		
+		/**
+		 * Returns a group object, at least containing a key property for group detection.
+		 * May contain additional properties as provided by a custom group function.
+		 * 
+		 * @param {sap.ui.model.Context} oContext the binding context
+		 * @return {object} An object containing a key property and optional custom properties
+		 * @public
+		 */
+		getGroup : function(oContext) {
+			var oGroup = this.fnGroup(oContext);
+			if (typeof oGroup === "string" || typeof oGroup === "number" || typeof oGroup === "boolean" || oGroup == null) {
+				oGroup = {
+					key: oGroup
+				};
+			} 
+			return oGroup;
 		}
 	
 	});
