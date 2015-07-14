@@ -619,7 +619,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)
 		var aCSSLibs = this.oConfiguration['preloadLibCss'];
-		if (!aCSSLibs.appManaged) {
+		if (aCSSLibs && aCSSLibs.length > 0 && !aCSSLibs.appManaged) {
 			this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
 		}
 
