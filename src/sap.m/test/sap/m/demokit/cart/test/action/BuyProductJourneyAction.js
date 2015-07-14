@@ -28,21 +28,21 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 			},
 
 			iAddTheDisplayedProductToTheCart : function () {
-				var oAddButton= null;
+				var oAddButton = null;
 				return this.waitFor({
 					viewName : "Product",
 					controlType : "sap.m.Button",
 					check : function (aButtons) {
 						return aButtons && aButtons.some(function (oButton) {
-							if(oButton.getText() === "Add to Cart") {
+							if (oButton.getText() === "Add to Cart") {
 								oAddButton = oButton;
-								return true;
+								return !!oAddButton.getBindingContext();
 							}
 							return false;
 						}, this);
 					},
 					success : function () {
-						Opa5.getUtils().triggerTouchEvent("tap", oAddButton.getDomRef());
+						oAddButton.$().trigger("tap");
 					},
 					errorMessage : "Did not find the Add to Cart button"
 				});
@@ -56,7 +56,7 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 						value : "sap-icon://cart"
 					}),
 					success : function (aButtons) {
-						Opa5.getUtils().triggerTouchEvent("tap", aButtons[0].getDomRef());
+						aButtons[0].$().trigger("tap");
 					},
 					errorMessage : "did not find the cart button"
 				});
@@ -99,12 +99,12 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 					matchers : [
 						new sap.ui.test.matchers.PropertyStrictEquals({
 							name : "text",
-							value : "Order Now",
+							value : "Order Now"
 						}),
 						new sap.ui.test.matchers.PropertyStrictEquals({
 							name : "enabled",
-							value : true,
-						}),
+							value : true
+						})
 					],
 					success : function (aButtons) {
 						aButtons[0].$().trigger("tap");

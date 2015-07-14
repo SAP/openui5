@@ -568,6 +568,8 @@ sap.ui.define(['jquery.sap.global',
 
 		function handleFrameLoad () {
 
+			oFrameWindow = $Frame[0].contentWindow;
+
 			registerOnError();
 
 			bFrameLoaded = true;
@@ -581,8 +583,6 @@ sap.ui.define(['jquery.sap.global',
 			if (Device.browser.internet_explorer && Device.browser.version === 9) {
 				return;
 			}
-
-			oFrameWindow = $Frame[0].contentWindow;
 
 			var fnFrameOnError = oFrameWindow.onerror;
 
