@@ -67,7 +67,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					placement: {type: "sap.m.VerticalPlacementType", group: "Behavior", defaultValue: "Vertical"},
 
 					/**
-					 * Sets the initial state of the control – expanded or collapsed. By default the control opens as expanded.
+					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded.
 					 */
 					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
@@ -955,29 +955,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * Decorates internal popover to remove its arrow and adjust position for the toolbar mode
-		 *
-		 * @param {sap.m.ResponsivePopover} oPopover Internal ResponsivePopover
-		 * @private
-		 */
-		MessagePopover.prototype._decoratePopover = function (oPopover) {
-			// adding additional capabilities to the Popover
-			oPopover._marginTop = 0;
-			oPopover._marginLeft = 0;
-			oPopover._marginRight = 0;
-			oPopover._marginBottom = 0;
-			oPopover._arrowOffset = 0;
-			oPopover._offsets = ["0 0", "0 0", "0 0", "0 0"];
-			oPopover._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
-			oPopover._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
-
-			oPopover.addStyleClass(CSS_CLASS + '-ModeToolbar');
-
-			oPopover._setArrowPosition = function () {
-			};
-		};
-
-		/**
 		 * Sets initial focus of the control
 		 *
 		 * @private
@@ -1059,10 +1036,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		MessagePopover.prototype.openBy = function (oControl) {
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup");
 
-			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover
+			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover remove the Arrow
 			if (oControl.getParent() instanceof sap.m.Toolbar &&
 				oResponsivePopoverControl instanceof sap.m.Popover) {
-				this._decoratePopover(oResponsivePopoverControl);
+				oResponsivePopoverControl.setShowArrow(false);
+			} else {
+				oResponsivePopoverControl.setShowArrow(true);
 			}
 
 			if (this._oPopover) {
