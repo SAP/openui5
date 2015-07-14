@@ -74,8 +74,8 @@
 				"target": "employees"
 			}, {
 				"pattern": "employees/overview:?query:",
-				"name": "employeesOverview",
-				"target": ["employeesOverviewTop", "employeesOverviewContent"]
+				"name": "employeeOverview",
+				"target": ["EmployeeOverviewTop", "EmployeeOverviewContent"]
 			}, {
 				"pattern": "employees/{employeeId}",
 				"name": "employee",
@@ -95,22 +95,22 @@
 					"transition": "show"
 				},
 				"employees": {
-					"viewPath": "sap.ui.demo.nav.view.employees",
+					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "EmployeeList",
 					"viewLevel" : 2
 				},
 				"employee": {
-					"viewName": "employees.Employee",
+					"viewName": "employee.Employee",
 					"viewLevel" : 3
 				},
 				"employeeResume": {
-					"viewName": "employees.Resume",
+					"viewName": "employee.Resume",
 					"viewLevel" : 4,
 					"transition": "flip"
 				},
 				"resumeTabHobbies": {
 					"parent": "employeeResume",
-					"viewPath": "sap.ui.demo.nav.view.employees",
+					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "ResumeHobbies",
 					"viewId": "thisIsMyCustomIdToBeUsedForResumeHobbies",
 					"controlId": "hobbiesTab",
@@ -118,28 +118,28 @@
 				},
 				"resumeTabNotes": {
 					"parent": "employeeResume",
-					"viewPath": "sap.ui.demo.nav.view.employees",
+					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "ResumeNotes",
 					"controlId": "notesTab",
 					"controlAggregation": "content"
 				},
-				"employeesOverview": {
-					"viewPath": "sap.ui.demo.nav.view.employees.overview",
-					"viewName": "EmployeesOverview",
+				"EmployeeOverview": {
+					"viewPath": "sap.ui.demo.nav.view.employee.overview",
+					"viewName": "EmployeeOverview",
 					"viewLevel" : 2
 				},
-				"employeesOverviewTop": {
-					"parent": "employeesOverview",
-					"viewPath": "sap.ui.demo.nav.view.employees.overview",
-					"viewName": "EmployeesOverviewTop",
-					"controlId": "employeesOverviewParent",
+				"EmployeeOverviewTop": {
+					"parent": "EmployeeOverview",
+					"viewPath": "sap.ui.demo.nav.view.employee.overview",
+					"viewName": "EmployeeOverviewTop",
+					"controlId": "EmployeeOverviewParent",
 					"controlAggregation": "content"
 				},
-				"employeesOverviewContent": {
-					"parent": "employeesOverview",
-					"viewPath": "sap.ui.demo.nav.view.employees.overview",
-					"viewName": "EmployeesOverviewContent",
-					"controlId": "employeesOverviewParent",
+				"EmployeeOverviewContent": {
+					"parent": "EmployeeOverview",
+					"viewPath": "sap.ui.demo.nav.view.employee.overview",
+					"viewName": "EmployeeOverviewContent",
+					"controlId": "EmployeeOverviewParent",
 					"controlAggregation": "content"
 				}
 			}
