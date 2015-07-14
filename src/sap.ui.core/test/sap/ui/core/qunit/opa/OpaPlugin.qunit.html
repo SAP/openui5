@@ -287,10 +287,11 @@ module("Controls in a view", {
 				'</Button>',
 				'<Button id="baz">',
 				'</Button>',
+				'<Image id="boo"></Image>',
 			'</core:View>'
 		].join('');
 
-		this.oView = sap.ui.xmlview({ viewContent : sView });
+		this.oView = sap.ui.xmlview({id: "myViewWithAb", viewContent : sView });
 		this.oView.setViewName("bar");
 
 		// System under Test
@@ -337,6 +338,7 @@ test("Should get multiple controls of a view", function() {
 	assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("bar").getId(), "did return the bar button as second element");
 });
 
+
 test("Should get multiple invisible controls of a view", function() {
 	//Act
 	var aRetrievedButtons = this.oPlugin.getMatchingControls({
@@ -350,7 +352,39 @@ test("Should get multiple invisible controls of a view", function() {
 	assert.strictEqual(aRetrievedButtons.length, 3, "did return all the buttons");
 	assert.strictEqual(aRetrievedButtons[0].getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
 	assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("bar").getId(), "did return the bar button as second element");
-	assert.strictEqual(aRetrievedButtons[2].getId(), this.oView.byId("baz").getId(), "did return the bar button as second element");
+	assert.strictEqual(aRetrievedButtons[2].getId(), this.oView.byId("baz").getId(), "did return the baz button as third element");
+});
+
+test("Should get multiple controls wih an id regex in a view", function() {
+	//Act
+	var aRetrievedButtons = this.oPlugin.getMatchingControls({
+		viewNamespace : "",
+		viewName : "bar",
+		id: /b/,
+		visible: false
+	});
+
+	// Assert
+	assert.strictEqual(aRetrievedButtons.length, 3, "did return all controls with b in the id");
+	assert.strictEqual(aRetrievedButtons[0].getId(), this.oView.byId("bar").getId(), "did return the bar button as first element");
+	assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("baz").getId(), "did return the baz button as second element");
+	assert.strictEqual(aRetrievedButtons[2].getId(), this.oView.byId("boo").getId(), "did return the boo image as third element");
+});
+
+test("Should get multiple controls wih an id regex and control type in a view", function() {
+	//Act
+	var aRetrievedButtons = this.oPlugin.getMatchingControls({
+		viewNamespace : "",
+		viewName : "bar",
+		id: /b/,
+		controlType : sap.ui.commons.Button,
+		visible: false
+	});
+
+	// Assert
+	assert.strictEqual(aRetrievedButtons.length, 2, "did return all buttons with b in the id");
+	assert.strictEqual(aRetrievedButtons[0].getId(), this.oView.byId("bar").getId(), "did return the bar button as first element");
+	assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("baz").getId(), "did return the baz button as second element");
 });
 
 QUnit.module("Core init", {
