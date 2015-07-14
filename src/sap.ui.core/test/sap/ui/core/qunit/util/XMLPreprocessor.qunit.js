@@ -188,7 +188,7 @@
 		return oLogMock.expects("warning")
 			// do not construct arguments in vain!
 			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING) ? 1 : 0)
-			.withExactArgs(matchArg(sExpectedWarning), vDetails || null,
+			.withExactArgs(matchArg(sExpectedWarning), matchArg(vDetails || null),
 				"sap.ui.core.util.XMLPreprocessor");
 	}
 
@@ -243,7 +243,7 @@
 				oLogMock.expects("warning").never();
 				aViewContent.forEach(function (sLine) {
 					if (/if test="(false|true|\{= false \})"/.test(sLine)) {
-						warn(oLogMock, 'qux: Constant test condition in ' + sLine);
+						warn(oLogMock, sinon.match(/\[ \d\] Constant test condition/), sLine);
 					}
 				});
 			}
@@ -310,10 +310,9 @@
 	 * @param {boolean} bDebug
 	 *   whether debug output is accepted and expected (sets the log level accordingly)
 	 * @param {object[]} aExpectedMessages
-	 *   a array of expected debug messages with the message in <code>m</code>, optional details in
-	 *   <code>d</code> and an optional count in <code>c</code> (default is 1). <code>m</code> may
-	 *   also contain a Sinon matcher, <code>d</code> a number which is interpreted as index into
-	 *   <code>aViewContent</code>.
+	 *   a array of expected debug messages with the message in <code>m</code> and optional details
+	 *   in <code>d</code>. <code>m</code> may also contain a Sinon matcher, <code>d</code> a
+	 *   number which is interpreted as index into <code>aViewContent</code>.
 	 * @param {string[]} aViewContent
 	 *   the original view content
 	 * @param {object} [mSettings={}]
@@ -339,7 +338,6 @@
 					vExpectedDetail = matchArg(aViewContent[vExpectedDetail]);
 				}
 				oLogMock.expects("debug")
-					.exactly(oExpectedMessage.c || 1)
 					.withExactArgs(matchArg(oExpectedMessage.m), vExpectedDetail, sComponent);
 			});
 		}
@@ -431,6 +429,27 @@
 			'</template:if>',
 			'</mvc:View>'
 		]);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bIsLoggable) {
+		test("Warnings w/o debug output should log caller, warn = " + bIsLoggable, function () {
+			var oLogMock = this.mock(jQuery.sap.log);
+
+			// no debug output --> caller information should be logged once
+			jQuery.sap.log.setLevel(bIsLoggable
+				? jQuery.sap.log.Level.WARNING
+				: jQuery.sap.log.Level.ERROR);
+			warn(oLogMock, "Warning(s) during processing of qux")
+				.exactly(bIsLoggable ? 1 : 0);
+
+			check.call(oLogMock, [
+				mvcView(),
+				'<template:if test="true"/>', // 1st warning
+				'<template:if test="true"/>', // 2nd warning
+				'</mvc:View>'
+			]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -586,7 +605,9 @@
 				if (!bIsLoggable) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
 				}
-				warn(oLogMock, 'qux: Error in formatter of ' + aViewContent[1], oError)
+				warn(oLogMock,
+						sinon.match(/\[ \d\] Error in formatter: Error: deliberate failure/),
+						aViewContent[1])
 					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
 				window.foo = {
@@ -621,7 +642,7 @@
 			'</template:if>',
 			'</mvc:View>'
 		],
-		sMessage : 'qux: Function name(s) .someMethod not found in '
+		sMessage : '[ 1] Function name(s) .someMethod not found'
 	}, {
 		aViewContent : [
 			mvcView(),
@@ -632,7 +653,7 @@
 			'</template:if>',
 			'</mvc:View>'
 		],
-		sMessage : 'qux: Function name(s) .someMethod, foo.bar not found in '
+		sMessage : '[ 1] Function name(s) .someMethod, foo.bar not found'
 	}, {
 		aViewContent : [
 			mvcView(),
@@ -654,8 +675,7 @@
 	}].forEach(function (oFixture) {
 		[false, true].forEach(function (bIsLoggable) {
 			var aViewContent = oFixture.aViewContent,
-				vExpected = oFixture.vExpected && oFixture.vExpected.slice(),
-				sMessage = (oFixture.sMessage || 'qux: Binding not ready in ') + aViewContent[1];
+				vExpected = oFixture.vExpected && oFixture.vExpected.slice();
 
 			test(aViewContent[1] + ", warn = " + bIsLoggable, function () {
 				var oLogMock = this.mock(jQuery.sap.log);
@@ -666,7 +686,9 @@
 				if (!bIsLoggable) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
 				}
-				warn(oLogMock, sMessage)
+				warn(oLogMock,
+						oFixture.sMessage || sinon.match(/\[ \d\] Binding not ready/),
+						aViewContent[1])
 					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
 				check.call(oLogMock, aViewContent, {}, vExpected);
@@ -1164,7 +1186,8 @@
 
 			checkTracing.call(this, bIsLoggable, [
 				{m: "[ 0] Start processing qux"},
-				{m: sinon.match(/qux: Error in formatter of <In text=".*"\/>/), d: oError, c: 2},
+				{m: "[ 0] Error in formatter: Error: deliberate failure", d: 1},
+				{m: "[ 0] Error in formatter: Error: deliberate failure", d: 2},
 				{m: "[ 0] Finished processing qux"}
 			], [
 				mvcView(),
@@ -1389,9 +1412,9 @@
 			return "/my/path";
 		};
 
-		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate1);
-		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate2);
-		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate3);
+		warn(oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate1);
+		warn(oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate2);
+		warn(oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate3);
 
 		check.call(oLogMock, [
 			mvcView(),
@@ -1757,8 +1780,8 @@
 			oLogMock = this.mock(jQuery.sap.log),
 			oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
 
-		warn(oLogMock, "qux: Set unchanged path '/foo' in " + aFragmentContent[1]);
-		warn(oLogMock, "qux: Set unchanged path '/bar' in " + aFragmentContent[2]);
+		warn(oLogMock, "[ 6] Set unchanged path: /foo", aFragmentContent[1]);
+		warn(oLogMock, "[ 7] Set unchanged path: /bar", aFragmentContent[2]);
 
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("A", "fragment")
@@ -1828,7 +1851,10 @@
 					'</mvc:View>'
 				];
 
-			warn(oLogMock, 'qux: Binding not ready in ' + aViewContent[19]);
+			if (!bIsLoggable) {
+				warn(oLogMock, "Warning(s) during processing of qux");
+			}
+			warn(oLogMock, '[ 0] Binding not ready', aViewContent[19]);
 			this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 				.returns(xml(['<FragmentDefinition xmlns="sap.ui.core">',
 					'<In src="fragment"/>',
@@ -1925,6 +1951,12 @@
 		test("<ExtensionPoint name='" + sName + "'>: XML fragment configured", function () {
 			var oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration),
 				oLogMock = this.mock(jQuery.sap.log),
+				aOuterReplacement = [
+					'<template:if test="true" xmlns="sap.ui.core" xmlns:template='
+						+'"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">',
+					'<ExtensionPoint name="outerReplacement"/>',
+					'</template:if>'
+				],
 				oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
 
 			// <ExtensionPoint name="outerExtensionPoint">
@@ -1937,14 +1969,9 @@
 				});
 			oXMLTemplateProcessorMock.expects("loadTemplate")
 				.withExactArgs("acme.OuterReplacement", "fragment")
-				.returns(xml([
-					'<template:if test="true" xmlns="sap.ui.core" xmlns:template='
-						+'"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">',
-					'<ExtensionPoint name="outerReplacement"/>',
-					'</template:if>'
-				]));
+				.returns(xml(aOuterReplacement));
 			// Note: mock result of loadTemplate() is not analyzed by check() method, of course
-			warn(oLogMock, 'qux: Constant test condition in <template:if test="true">');
+			warn(oLogMock, '[ 2] Constant test condition', aOuterReplacement[0]);
 
 			// <ExtensionPoint name="outerReplacement">
 			// --> nothing configured, just check that it is processed
@@ -2003,7 +2030,7 @@
 	test("Legacy signature support", function () {
 		var aViewContent = [
 				mvcView(),
-				'<template:if test="false">', // warning 'qux: Constant test condition in ...'
+				'<template:if test="false">', // warning 'Constant test condition'
 				'<Out/>',
 				'<\/template:if>',
 				'<ExtensionPoint name="myExtensionPoint">',
