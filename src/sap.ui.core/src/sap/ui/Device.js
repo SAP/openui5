@@ -630,15 +630,18 @@ if (typeof window.sap.ui !== "object") {
 					return {
 						name: BROWSER.SAFARI,
 						versionStr: "" + version,
+						fullscreen: false,
 						version: version,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion,
 						phantomJS: aParts[1] === "PhantomJS"
 					};
-				} else {
-					// unknown webkit browser
+				} else { // other webkit based browser
+					var bFullScreenSafari = window.navigator.standalone && /iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua));
 					return {
+						name: bFullScreenSafari ? BROWSER.SAFARI : undefined,
+						fullscreen: bFullScreenSafari ? bFullScreenSafari : undefined,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion
