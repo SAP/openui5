@@ -145,6 +145,20 @@
 
 		equals(oTable.getBinding("rows").iLength, 200, "RowCount beforeFiltering ok");
 		oTable.filter(oColFirstName, "M*");
+
+		// check that the column menu filter input field was updated
+		var oMenu = oColFirstName.getMenu();
+		// open and close the menu to let it generate its items
+		oMenu.open();
+		oMenu.close();
+
+		var oFilterField = sap.ui.getCore().byId(oMenu.getId() + "-filter");
+		if (oFilterField) {
+			equals(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
+			oTable.filter(oColFirstName, "D*");
+			equals(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
+		}
+
 		equals(oTable.getBinding("rows").iLength, 20, "RowCount after filtering FirstName 'M*'");
 		oTable.filter(oColFirstName, "Mo*");
 		equals(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Mo*''");
