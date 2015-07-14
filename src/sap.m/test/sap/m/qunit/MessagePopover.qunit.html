@@ -249,6 +249,24 @@
 			this.oMessagePopover.close();
 			this.clock.tick(500);
 			assert.strictEqual(this.oMessagePopover.isOpen(), false, "message popover should be closed");
+		})
+
+		QUnit.test("openBy() should open the popover with arrow", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			assert.equal(this.oMessagePopover.$("arrow").length, 1, "message popover should has arrow");
+		});
+
+		QUnit.test("openBy() called from sap.m.Toolbar button should open the popover without arrow", function (assert) {
+			var oToolbar = new sap.m.Toolbar({ content: this.oButton });
+			oToolbar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			assert.equal(this.oMessagePopover.$("arrow").length, 0, "message popover should not has arrow");
+
+			oToolbar.destroy();
 		});
 
 		QUnit.test("beforeOpen callback should be called with correct parameter and this binding", function (assert) {
@@ -391,7 +409,7 @@
 
 			this.oMessagePopover.openBy(this.oButton);
 			this.oMessagePopover.close();
-			
+
 			assert.strictEqual(shrinkSpy.calledOnce, true, "_collapseMsgPopover() is called the first time");
 
 			this.oMessagePopover.openBy(this.oButton);
