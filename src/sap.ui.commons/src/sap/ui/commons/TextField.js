@@ -666,10 +666,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	TextField.prototype.setTooltip = function(oTooltip) {
 		this._refreshTooltipBaseDelegate(oTooltip);
 		this.setAggregation("tooltip", oTooltip, true);
+		var oInputDomRef = this.getInputDomRef();
 
-		if (this.getInputDomRef()) {
+		if (oInputDomRef) {
 			var sTooltip = ValueStateSupport.enrichTooltip(this, this.getTooltip_AsString());
-			jQuery(this.getInputDomRef()).attr("title", sTooltip || "");
+			jQuery(oInputDomRef).attr("title", sTooltip || "");
+
+			if (this._getRenderOuter()) {
+				// if InputDomRef exits DomRef must exist too
+				jQuery(this.getDomRef()).attr("title", sTooltip || "");
+			}
 		}
 
 		return this;
