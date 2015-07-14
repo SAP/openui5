@@ -215,6 +215,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getListProperty("mode", "");
 	};
 	
+	/*
+	 * Updates the accessibility state of the control.
+	 * 
+	 * @param {Object} [mAccessibility] a map of accessibility properties
+	 * @protected
+	 */
+	ListItemBase.prototype.updateAccessibilityState = function(mAccessibility) {
+		var $This = this.$();
+		if (!$This.length) {
+			return;
+		}
+		
+		var $Items = $This.parent().find(".sapMLIB");
+		$This.attr(jQuery.extend({
+			"aria-setsize": $Items.length,
+			"aria-posinset": $Items.index($This) + 1
+		}, mAccessibility));
+	};
+	
 	/**
 	 * Returns the delete icon when mode is Delete
 	 * 
