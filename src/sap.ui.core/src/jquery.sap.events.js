@@ -195,6 +195,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 			
 		}());
 	}
+	
+	if (!jQuery.sap.disableTouchToMouseHandling) {
+		jQuery.sap.disableTouchToMouseHandling = function() {};
+	}
 
 	/**
 	 * List of DOM events that a UIArea automatically takes care of.
