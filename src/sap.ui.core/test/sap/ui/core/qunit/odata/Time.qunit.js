@@ -7,11 +7,11 @@
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.core.format.DateFormat");
-
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		oCircular = {},
-		TestUtils = sap.ui.test.TestUtils;
+		oCircular = {};
+
+	jQuery.sap.require("sap.ui.core.format.DateFormat");
+	jQuery.sap.require("sap.ui.test.TestUtils");
 
 	oCircular.self = oCircular;
 
@@ -26,7 +26,7 @@
 	 * Tests that the given value leads to a ParseException.
 	 */
 	function parseError(oType, oValue, sReason) {
-		TestUtils.withNormalizedMessages(function () {
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue(oValue, "string");
 				ok(false);
@@ -183,7 +183,7 @@
 
 	//*********************************************************************************************
 	test("validate: nullable", function () {
-		TestUtils.withNormalizedMessages(function () {
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			var oType = new sap.ui.model.odata.type.Time({}, {nullable: false});
 			try {
 				oType.validateValue(null);

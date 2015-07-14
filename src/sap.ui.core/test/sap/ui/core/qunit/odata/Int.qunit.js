@@ -9,6 +9,8 @@
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
+	jQuery.sap.require("sap.ui.test.TestUtils");
+
 	function anyInt(sName, iMin, iMax) {
 		var oType;
 
