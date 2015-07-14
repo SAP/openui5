@@ -720,6 +720,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 				this.setProperty("filtered", !!sValue, true);
 				this.setProperty("filterValue", sValue, true);
+				if (this.getMenu()) {
+					// update column menu input field
+					this.getMenu()._setFilterValue(sValue);
+				}
 
 				var aFilters = [];
 				var aCols = oTable.getColumns();
