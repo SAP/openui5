@@ -377,8 +377,7 @@
 	checkFixtures("Unary +, -, typeof", [
 		{ expression: "{=+true}", result: "1" },
 		{ expression: "{=--42}", result: "42" },
-		{ expression: "{=typeof 42}", result: "number" },
-		{ expression: "{=typeof42}", result: "undefined" } // typeof is no fix length token
+		{ expression: "{=typeof 42}", result: "number" } 
 	]);
 
 	//*********************************************************************************************
@@ -425,12 +424,19 @@
 
 	//*********************************************************************************************
 	test("Warning for undefined global identifier", function () {
-		this.mock(jQuery.sap.log).expects("warning")
-			.withExactArgs(
-				"Unsupported global identifier 'foo' in expression parser input '{=42 === foo}'",
-				undefined, "sap.ui.base.ExpressionParser");
+		var oLogMock = this.mock(jQuery.sap.log);
+
+		oLogMock.expects("warning").withExactArgs(
+			"Unsupported global identifier 'foo' in expression parser input '{=42 === foo}'",
+			undefined, "sap.ui.base.ExpressionParser");
 
 		check("{=42 === foo}", "false");
+
+		oLogMock.expects("warning").withExactArgs(
+			"Unsupported global identifier 'typeof42' in expression parser input '{=typeof42}'",
+			undefined, "sap.ui.base.ExpressionParser");
+
+		check("{=typeof42}", "undefined"); // typeof is no fix length token
 	});
 
 	//*********************************************************************************************

@@ -1144,7 +1144,7 @@ sap.ui.require([
 		});
 	}
 
-	compareWithNull("Edm.String	", "edm:Null", "p0", "null");
+	compareWithNull("Edm.String", "edm:Null", "p0", "null");
 	compareWithNull("edm:Null", "Edm.String", "null", "p1");
 	// TODO learn about operator precedence and avoid unnecessary "()" around expressions
 
@@ -1358,23 +1358,22 @@ sap.ui.require([
 				getPath: function () { return ""; }
 			},
 			oParser = ManagedObject.bindingParser,
-			oPathValue = {
-				path: "/my/path",
-				value: { Bool: "true"}
+			oRawValue = {
+				Bool: "true"
 			};
 
 		this.mock(jQuery.sap.log).expects("warning")
 			.withExactArgs(
 				"Complex binding syntax not active", null, "sap.ui.model.odata.AnnotationHelper")
-			.once();
+			.once(); // just a single warning, no matter how many calls to getExpression()!
 
 		// preparation
 		ManagedObject.bindingParser = BindingParser.simpleParser;
 
 		try {
 			// code under test
-			Expression.getExpression(oInterface, oPathValue, false);
-			Expression.getExpression(oInterface, oPathValue, false);
+			Expression.getExpression(oInterface, oRawValue, false);
+			Expression.getExpression(oInterface, oRawValue, false);
 		}
 		finally {
 			// clean up
