@@ -1,0 +1,54 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="view.Game">
+	<Page title="Match" showNavButton="true" navButtonPress="handleBack">
+		<content>
+
+			<ObjectHeader
+					title="{rounds>team1_title} : {rounds>team2_title}"
+					intro="{rounds>play_at}"
+					responsive="true"
+					number="{parts:[{path:'rounds>score1'},{path:'rounds>score1ot'},{path:'rounds>score1p'},{path:'rounds>score2'},{path:'rounds>score2ot'},{path:'rounds>score2p'}], formatter:'util.Formatter.formatScore'}">
+				<statuses>
+					<ObjectStatus visible="false" title="Date" text="{rounds>play_at}" /> <!-- one status required for correct responsive behavior -->
+				</statuses>
+				<headerContainer>
+					<IconTabBar id="itb" expandable="false" select="handleTabClick">
+						<items>
+							<IconTabFilter text="{rounds>team1_title}" icon="{path:'rounds>team1_title', formatter:'util.Formatter.getFlagUrl'}" key="{rounds>team1_title}"></IconTabFilter>
+							<IconTabFilter text="{rounds>team2_title}" icon="{path:'rounds>team2_title', formatter:'util.Formatter.getFlagUrl'}" key="{rounds>team2_title}"></IconTabFilter>
+						</items>
+
+						<content>
+
+							<Table id="teamTable" items="{path:'teams>players', sorter:{path: 'games'}}">  <!-- this is only an initial default binding... -->
+
+								<columns>
+									<Column>
+										<Label text="Player" />
+									</Column>
+									<Column minScreenWidth="Tablet" demandPopin="true">
+										<Label text="Birthdate" />
+									</Column>
+									<Column minScreenWidth="Desktop">
+										<Label text="Matches for Country" />
+									</Column>
+								</columns>
+
+								<items>
+									<ColumnListItem>
+										<ObjectIdentifier title="{teams>name}" text="{teams>number}" />
+										<Text text="{teams>birthDate}" />
+										<Text text="{teams>games}" />
+									</ColumnListItem>
+								</items>
+
+							</Table>
+
+						</content>
+
+					</IconTabBar>
+				</headerContainer>
+			</ObjectHeader >
+
+		</content>
+	</Page>
+</mvc:View>

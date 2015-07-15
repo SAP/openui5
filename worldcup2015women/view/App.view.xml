@@ -1,0 +1,15 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="view.App" displayBlock="true">
+		
+		<SplitApp id="splitApp" initialMaster="masterView">
+			<masterPages>
+				<mvc:JSView id="masterView" viewName="view.Master"/>
+			</masterPages>
+			<detailPages>
+				<!--  <mvc:TemplateView viewName="view.Welcome"/>  -->
+				<mvc:XMLView id="Empty" viewName="view.Empty"/>
+				<mvc:XMLView id="Detail" viewName="view.Detail"/>
+				<mvc:XMLView id="Game" viewName="view.Game"/>
+			</detailPages>
+		</SplitApp>
+
+</mvc:View>

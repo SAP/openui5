@@ -1,0 +1,44 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 18,
+    "title": "Semi-finals",
+    "start_at": "2015/06/30",
+    "end_at": "2015/07/01"
+  },
+  "games": [
+    {
+      "team1_key": "usa",
+      "team1_title": "United States",
+      "team1_code": "USA",
+      "team2_key": "ger",
+      "team2_title": "Germany",
+      "team2_code": "GER",
+      "play_at": "2015/06/30",
+      "score1": 2,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "jpn",
+      "team1_title": "Japan",
+      "team1_code": "JPN",
+      "team2_key": "eng",
+      "team2_title": "England",
+      "team2_code": "ENG",
+      "play_at": "2015/07/01",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+           "score2ot": null,
+           "score1p": null,
+           "score2p": null
+    }
+  ]
+}

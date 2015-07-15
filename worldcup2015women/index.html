@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<script src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+
+		<script>
+				sap.ui.localResources("view");
+				sap.ui.localResources("util");
+				var app = sap.ui.view({id:"idMain1", viewName:"view.App", type:sap.ui.core.mvc.ViewType.XML});
+				var shell = new sap.m.Shell({app: app} );
+				shell.placeAt("content");
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application" id="content">
+	</body>
+</html>

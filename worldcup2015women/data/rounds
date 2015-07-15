@@ -1,0 +1,98 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "rounds": [
+    {
+      "pos": 1,
+      "title": "Matchday 1",
+      "start_at": "2015/06/06",
+      "end_at": "2015/06/06"
+    },
+    {
+      "pos": 2,
+      "title": "Matchday 2",
+      "start_at": "2015/06/07",
+      "end_at": "2015/06/07"
+    },
+    {
+      "pos": 3,
+      "title": "Matchday 3",
+      "start_at": "2015/06/08",
+      "end_at": "2015/06/08"
+    },
+    {
+      "pos": 4,
+      "title": "Matchday 4",
+      "start_at": "2015/06/09",
+      "end_at": "2015/06/09"
+    },
+    {
+      "pos": 5,
+      "title": "Matchday 5",
+      "start_at": "2015/06/11",
+      "end_at": "2015/06/11"
+    },
+    {
+      "pos": 6,
+      "title": "Matchday 6",
+      "start_at": "2015/06/12",
+      "end_at": "2015/06/12"
+    },
+    {
+      "pos": 7,
+      "title": "Matchday 7",
+      "start_at": "2015/06/13",
+      "end_at": "2015/06/13"
+    },
+    {
+      "pos": 8,
+      "title": "Matchday 8",
+      "start_at": "2015/06/15",
+      "end_at": "2015/06/15"
+    },
+    {
+      "pos": 9,
+      "title": "Matchday 9",
+      "start_at": "2015/06/16",
+      "end_at": "2015/06/16"
+    },
+    {
+      "pos": 10,
+      "title": "Matchday 10",
+      "start_at": "2015/06/17",
+      "end_at": "2015/06/17"
+    },
+    {
+      "pos": 11,
+      "title": "Round of 16",
+      "start_at": "2015/06/20",
+      "end_at": "2015/06/23"
+    },
+    {
+      "pos": 12,
+      "title": "Quarter-finals",
+      "start_at": "2015/06/26",
+      "end_at": "2015/06/27"
+    },
+    {
+      "pos": 13,
+      "title": "Semi-finals",
+      "start_at": "2015/06/30",
+      "end_at": "2015/07/01"
+    },
+    {
+      "pos": 14,
+      "title": "Match for third place",
+      "start_at": "2015/07/04",
+      "end_at": "2015/07/04"
+    },
+    {
+      "pos": 15,
+      "title": "Final",
+      "start_at": "2015/07/05",
+      "end_at": "2015/07/05"
+    }
+  ]
+}
