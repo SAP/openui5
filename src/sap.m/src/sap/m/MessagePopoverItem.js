@@ -59,6 +59,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 			});
 
 		MessagePopoverItem.prototype.setDescription = function(sDescription) {
+			// Avoid showing result of '' + undefined
+			if (typeof sDescription === 'undefined') {
+				sDescription = '';
+			}
+
 			if (this.getMarkupDescription()) {
 				this.setProperty("description", jQuery.sap._sanitizeHTML(sDescription), true);
 			} else {
