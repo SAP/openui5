@@ -111,10 +111,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	/**
 	 * 
 	 */
-	OverlayUtil.getNextOverlay = function(oOverlay) {
-		if (!oOverlay) {
-			return;
-		}
+	OverlayUtil.getFirstChildOverlay = function(oOverlay) {
 		var aAggregationOverlays = oOverlay.getAggregationOverlays();
 		if (aAggregationOverlays.length > 0) {
 			for (var i = 0; i < aAggregationOverlays.length; i++) {
@@ -125,13 +122,56 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 				}
 			}
 		}
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getPreviousSiblingOverlay = function(oOverlay) {
 		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
-		var aAggregationOverlays = oParentAggregationOverlay.getChildren();
-		var iIndex = aAggregationOverlays.indexOf(oOverlay);
-		if (iIndex !== aAggregationOverlays.length - 1) {
-			return aAggregationOverlays[iIndex + 1];
+		if (oParentAggregationOverlay) {
+			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
+			var iIndex = aAggregationOverlays.indexOf(oOverlay);
+			if (iIndex > 0) {
+				return aAggregationOverlays[iIndex - 1];
+			}
 		}
-		return;
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getNextSiblingOverlay = function(oOverlay) {
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		if (oParentAggregationOverlay) {
+			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
+			var iIndex = aAggregationOverlays.indexOf(oOverlay);
+			if (iIndex !== aAggregationOverlays.length - 1) {
+				return aAggregationOverlays[iIndex + 1];
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getNextOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+
+		var oFirstChildOverlay = this.getFirstChildOverlay(oOverlay);
+		if (oFirstChildOverlay) {
+			return oFirstChildOverlay;
+		}
+
+		var oNextSiblingOverlay = this.getNextSiblingOverlay(oOverlay);
+		if (oNextSiblingOverlay) {
+			return oNextSiblingOverlay;
+		}
+
+		var oParentOverlay = oOverlay.getParentOverlay();
+		return this.getNextSiblingOverlay(oParentOverlay);
 
 	};
 
@@ -142,14 +182,15 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		if (!oOverlay) {
 			return;
 		}
+
 		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
 		if (!oParentAggregationOverlay) {
 			return;
 		}
-		var aAggregationOverlays = oParentAggregationOverlay.getChildren();
-		var iIndex = aAggregationOverlays.indexOf(oOverlay);
-		if (aAggregationOverlays.length - 1 > 0 && iIndex !== 0) {
-			return aAggregationOverlays[iIndex - 1];
+
+		var oPreviousSiblingOverlay = this.getPreviousSiblingOverlay(oOverlay);
+		if (oPreviousSiblingOverlay) {
+			return oPreviousSiblingOverlay;
 		}
 
 		return oOverlay.getParentOverlay();

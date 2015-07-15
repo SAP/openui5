@@ -43,8 +43,12 @@
 					this.oButton02 = new sap.m.Button({
 						text : "Button2"
 					});
+					this.oButton03 = new sap.m.Button({
+						text : "Button3"
+					});
 					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oButton01, this.oButton02]});
-					this.oLayout.placeAt("content");
+					this.oOuterLayout = new sap.ui.layout.VerticalLayout({content : [this.oLayout, this.oButton03]});
+					this.oOuterLayout.placeAt("content");
 					sap.ui.dt.Preloader.load(["sap.ui.layout.VerticalLayout", "sap.m.Button"]).then(function() {
 						that.oButton01Overlay = new sap.ui.dt.Overlay({
 							element : that.oButton01
@@ -52,8 +56,14 @@
 						that.oButton02Overlay = new sap.ui.dt.Overlay({
 							element : that.oButton02
 						});
+						that.oButton03Overlay = new sap.ui.dt.Overlay({
+							element : that.oButton03
+						});
 						that.oLayoutOverlay = new sap.ui.dt.Overlay({
 							element : that.oLayout
+						});
+						that.oOuterLayoutOverlay = new sap.ui.dt.Overlay({
+							element : that.oOuterLayout
 						});
 						done();
 						sap.ui.getCore().applyChanges();
@@ -71,24 +81,26 @@
 			QUnit.test("when Overlays are created and the getNextOverlay function is called", function(assert) {
 				var oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oLayoutOverlay);
 				assert.strictEqual(oNextOverlay, this.oButton01Overlay, "with the layout overlay, then the first Button Overlay is returned");
-				var oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButton01Overlay);
+				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButton01Overlay);
 				assert.strictEqual(oNextOverlay, this.oButton02Overlay, "with the first button overlay, then the second Button Overlay is returned");
-				var oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButton02Overlay);
-				assert.ok(!oNextOverlay, "with the second button overlay, then undefined is returned");
+				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButton02Overlay);
+				assert.strictEqual(oNextOverlay, this.oButton03Overlay, "with the second button overlay, then the third Button Overlay is returned");
+				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButton03Overlay);
+				assert.ok(!oNextOverlay, "with the third button overlay, then undefined is returned");
 			});
 
 			QUnit.test("when Overlays are created and the getPreviousOverlay function is called", function(assert) {
-				var oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oLayoutOverlay);
+				var oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oOuterLayoutOverlay);
 				assert.ok(!oPreviousOverlay, "with the layout overlay, then undefined is returned");
-				var oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oButton01Overlay);
+				oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oButton01Overlay);
 				assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay, "with the first button overlay, then layout overlay is returned");
-				var oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oButton02Overlay);
+				oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oButton02Overlay);
 				assert.strictEqual(oPreviousOverlay, this.oButton01Overlay, "with the second button overlay, then the first button overlay is returned");
 			});
 
 			QUnit.test("when Overlays are created and the getRootOverlay function is called", function(assert) {
 				var oRootOverlay = sap.ui.dt.OverlayUtil.getRootOverlay(this.oButton02Overlay);
-				assert.strictEqual(oRootOverlay, this.oLayoutOverlay, "with the second button overlay, then the layout root overlay is returned");
+				assert.strictEqual(oRootOverlay, this.oOuterLayoutOverlay, "with the second button overlay, then the layout root overlay is returned");
 			});
 
 
