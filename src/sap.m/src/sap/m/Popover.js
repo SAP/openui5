@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/**
 	 * Constructor for a new Popover.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Popover is used to present information temporarily but in a way that does not take over the entire screen. The popover content is layered on top of your existing content and it remains visible until the user taps outside of the popover (when modal is set to false) or you explicitly dismiss it (when modal is set to true). The switching between modal and non-modal can also be done when the popover is already opened.
@@ -245,7 +245,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	Popover._bIOS7 = sap.ui.Device.os.ios && sap.ui.Device.os.version >= 7 && sap.ui.Device.os.version < 8 && sap.ui.Device.browser.name === "sf";
 
 	/**
-	 * Initializes the popover control
+	 * Initializes the popover control.
+	 *
 	 * @private
 	 */
 	Popover.prototype.init = function(){
@@ -417,6 +418,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 	};
 
+	/**
+	 * Required adaptations before rendering of the Popover.
+	 *
+	 * @private
+	 */
 	Popover.prototype.onBeforeRendering = function() {
 		var oNavContent, oPageContent;
 
@@ -472,6 +478,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		}
 	};
 
+	/**
+	 * Required adaptations after rendering of the Popover.
+	 *
+	 * @private
+	 */
 	Popover.prototype.onAfterRendering = function(){
 		var $openedBy, $page, $header;
 
@@ -497,7 +508,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Destroys the popover control
+	 * Destroys all related objects to the Popover.
+	 *
 	 * @private
 	 */
 	Popover.prototype.exit = function(){
@@ -541,13 +553,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/*                   begin: API method                         */
 	/* =========================================================== */
 	/**
-	 * Opens the popover and set the popover position according to the {@link #getPlacement() placement} property
-	 * around the <code>oControl</code> parameter.
+	 * Opens the Popover and set the Popover position according to the {@link #getPlacement() placement} property around the <code>oControl</code> parameter.
 	 *
-	 * @param {object} oControl
-	 *         This is the control to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover.
+	 * @param {object} oControl This is the control to which the Popover will be placed. It can be not only a UI5 control, but also an existing DOM reference. The side of the placement depends on the placement property set in the Popover.
 	 * @param {boolean} bSkipInstanceManager
-	 * @type sap.m.Popover
+	 * @returns {sap.m.Popover} Reference to the control instance for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -649,7 +659,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/**
 	 * Closes the popover when it's already opened.
 	 *
-	 * @return {sap.m.Popover} The popover itself for method chaining
+	 * @return {sap.m.Popover} Reference to the control instance for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -695,12 +705,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * The followOf feature closes the Popover when the change of the open by control's position is no less than 32 pixels when runs on desktop browsers. This may leads to unwanted close.
+	 * The followOf feature closes the Popover when the position of the control that opened the Popover changes by at least  32 pixels (on desktop browsers). This may lead to unwanted closing of the Popover.
 	 *
 	 * This function is for enabling/disabling the followOf feature.
 	 *
-	 * @param {boolean} bValue enables the followOf feature when set to true and disable the followOf when set to false
-	 * @return {sap.m.Popover} The popover itself for method chaining
+	 * @param {boolean} bValue Enables the followOf feature
+	 * @return {sap.m.Popover} Reference to the control instance for chaining
 	 * @protected
 	 * @since 1.16.8
 	 */
@@ -718,8 +728,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 *
 	 * Default value is empty
 	 *
-	 * @param {boolean} bBounce  new value for property <code>bounce</code>
-	 * @return {sap.m.Popover} <code>this</code> to allow method chaining
+	 * @param {boolean} bBounce New value for property <code>bounce</code>
+	 * @return {sap.m.Popover} Reference to the control instance for chaining
 	 * @protected
 	 * @name sap.m.Popover#setBounce
 	 * @function
@@ -786,7 +796,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Register the listener to close the popover when user taps outside both of the popover and the control that opens the popover.
+	 * Register the listener to close the Popover when user taps outside both of the Popover and the control that opens the Popover.
+	 *
 	 * @private
 	 */
 	Popover.prototype._handleOpened = function(){
@@ -820,6 +831,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/**
 	 * Event handler for the focusin event.
 	 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
+	 *
 	 * @param {jQuery.EventObject} oEvent The event object
 	 * @private
 	 */
@@ -839,6 +851,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		}
 	};
 
+	/**
+	 * Event handler for the keydown event.
+	 *
+	 * @param {jQuery.EventObject} oEvent The event object
+	 * @private
+	 */
 	Popover.prototype.onkeydown = function(oEvent){
 		var oKC = jQuery.sap.KeyCodes,
 			iKC = oEvent.which || oEvent.keyCode,
@@ -868,8 +886,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/*                      begin: internal methods                  */
 	/* =========================================================== */
 	/**
-	 * This method detects if there's a sap.m.NavContainer instance added as a single child into popover's content aggregation or through one or more sap.ui.mvc.View controls.
+	 * This method detects if there's a sap.m.NavContainer instance added as a single child into Popover's content aggregation or through one or more sap.ui.mvc.View controls.
 	 * If there is, sapMPopoverNav style class will be added to the root node of the control in order to apply some special css styles to the inner dom nodes.
+	 * @returns {boolean}
 	 */
 	Popover.prototype._hasSingleNavContent = function(){
 		return !!this._getSingleNavContent();
@@ -906,6 +925,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/**
 	 * This method detects if there's a sap.m.Page instance added as a single child into popover's content aggregation or through one or more sap.ui.mvc.View controls.
 	 * If there is, sapMPopoverPage style class will be added to the root node of the control in order to apply some special css styles to the inner dom nodes.
+	 *
+	 * @returns {boolean}
 	 */
 	Popover.prototype._hasSinglePageContent = function(){
 		var aContent = this._getAllContent();
@@ -926,6 +947,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 * the scrolling inside popover will be disabled in order to avoid wrapped scrolling areas.
 	 *
 	 * If more than one scrollable control is added to popover, the scrolling needs to be disabled manually.
+	 *
+	 * @returns {boolean}
 	 */
 	Popover.prototype._hasSingleScrollableContent = function(){
 		var aContent = this._getAllContent(), i;
@@ -947,8 +970,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Returns the offsetX value by negating the value when in RTL mode
+	 * Returns the offsetX value by negating the value when in RTL mode.
 	 *
+	 * @returns {number} OffsetX
 	 * @private
 	 */
 	Popover.prototype._getOffsetX = function() {
@@ -957,8 +981,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * This is only a wrapper of getOffsetY for possbile future usage
+	 * This is only a wrapper of getOffsetY for possible future usage.
 	 *
+	 * @returns {number} OffsetY
 	 * @private
 	 */
 	Popover.prototype._getOffsetY = function() {
@@ -1170,7 +1195,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Return width of the element, for IE specific return the float number of width
+	 * Return width of the element, for IE specific return the float number of width.
+	 *
 	 * @protected
 	*/
 	Popover.width = function(oElement) {
@@ -1184,7 +1210,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * calculate outerWidth of the element, for IE specific return the float number of width
+	 * Calculate outerWidth of the element, for IE specific return the float number of width.
+	 *
 	 * @protected
 	*/
 	Popover.outerWidth = function(oElement, bIncludeMargin) {
@@ -1256,7 +1283,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Recalculate the margin offsets so the Popover will never covers the control that opens it
+	 * Recalculate the margin offsets so the Popover will never cover the control that opens it.
 	 *
 	 * @param {sap.m.PlacementType} sCalculatedPlacement Calculated placement of the Popover
 	 * @param {object} oPosParams used to calculate actual values for the screen margins, so the Popover will never cover the Opener control or goes outside of the viewport
@@ -1291,7 +1318,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets the styles for positioning the Popover
+	 * Gets the styles for positioning the Popover.
 	 *
 	 * @param {object} oPosParams used to calculate actual values for the Popover's top, left, right and bottom properties
 	 * @returns {object} Values for positioning the Popover
@@ -1357,7 +1384,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets styles for the content area
+	 * Gets styles for the content area.
 	 *
 	 * @param {object} oPosParams used to calculate the content dimension (width, height, max-height) values
 	 * @returns {object} Calculated styles for content area
@@ -1387,10 +1414,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets max content width
+	 * Gets max content width.
 	 *
 	 * @param {object} oPosParams Parameters used from the method to calculate the right values
-	 * @returns {number} Calculated max content height
+	 * @returns {number} Calculated max content width
 	 * @private
 	 */
 	Popover.prototype._getMaxContentWidth = function (oPosParams) {
@@ -1398,7 +1425,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets max content height
+	 * Gets max content height.
 	 *
 	 * @param {object} oPosParams Parameters used from the method to calculate the right values
 	 * @returns {number} Calculated max content height
@@ -1409,7 +1436,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Checks if there is need from a scrollbar or not
+	 * Checks if there is need from a scrollbar or not.
 	 *
 	 * @param {object} oPosParams Parameters used from the method to calculate the right values
 	 *
@@ -1426,7 +1453,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets arrow offset styles
+	 * Gets arrow offset styles.
 	 *
 	 * @param {sap.m.PlacementType} sCalculatedPlacement Calculated placement of the Popover
 	 * @param {object} oPosParams Parameters used from the method to calculate the right values
@@ -1464,7 +1491,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets the CSS class for positioning the arrow
+	 * Gets the CSS class for positioning the arrow.
 	 *
 	 * @param {sap.m.PlacementType} sCalculatedPlacement Calculated placement of the Popover
 	 *
@@ -1488,7 +1515,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets the CSS class for arrow if crosses header or footer
+	 * Gets the CSS class for arrow if it crosses header or footer.
 	 *
 	 * @param {object} oPosParams Parameters used from the method to calculate the right values
 	 *
@@ -1518,7 +1545,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Gets the calculated placement of the Popover
+	 * Gets the calculated placement of the Popover.
 	 *
 	 * @returns {sap.m.PlacementType}
 	 * @private
@@ -1529,6 +1556,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 	/**
 	 * Rearrange the arrow and the popover position.
+	 *
 	 * @private
 	 */
 	Popover.prototype._adjustPositionAndArrow = function() {
@@ -1581,7 +1609,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Adapt position and offsets variables if the Popover is used without arrow
+	 * Adapt position and offsets variables if the Popover is used without arrow.
 	 *
 	 * @private
 	 */
@@ -1611,14 +1639,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	/**
-	 * Hook called after adjusment of the Popover position
+	 * Hook called after adjusment of the Popover position.
 	 *
 	 * @protected
 	 */
 	Popover.prototype._afterAdjustPositionAndArrowHook = function () { };
 
 	/**
-	 * Determine if the <code>oDomNode</code> is inside the popover or inside the control that opens the popover
+	 * Determine if the <code>oDomNode</code> is inside the Popover or inside the control that opens the Popover.
 	 * @private
 	 */
 	Popover.prototype._isPopupElement = function(oDOMNode) {
@@ -1856,9 +1884,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/*                      begin: Setters                  */
 	/* ==================================================== */
 	/**
-	 * Set the placement of the popover.
-	 * @param {sap.m.PlacementType} sPlacement
-	 * @returns {sap.m.Popover} <code>this</this> to facilitate method chaining
+	 * Set the placement of the Popover.
+	 *
+	 * @param {sap.m.PlacementType} sPlacement The position of the Popover
+	 * @returns {sap.m.Popover} Reference to the control instance for chaining
 	 * @public
 	 */
 	Popover.prototype.setPlacement = function(sPlacement){
@@ -1876,8 +1905,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 *
 	 * If you want to show a header in the popover, don't forget to set the
 	 * {@link #setShowHeader showHeader} property to true.
-	 * @param {string} sTitle
-	 * @returns {sap.m.Popover} <code>this</this> to facilitate method chaining
+	 * @param {string} sTitle The title to be set
+	 * @returns {sap.m.Popover} Reference to the control instance for chaining
 	 * @public
 	 */
 	Popover.prototype.setTitle = function(sTitle){
@@ -2000,9 +2029,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 *
 	 * Default value is <code>false</code>
 	 *
-	 * @param {boolean} bModal  new value for property <code>modal</code>.
-	 * @param {string} [sModalCSSClass] a CSS class (or space-separated list of classes) that should be added to the block layer.
-	 * @return {sap.m.Popover} <code>this</code> to allow method chaining.
+	 * @param {boolean} bModal New value for property <code>modal</code>.
+	 * @param {string} [sModalCSSClass] A CSS class (or space-separated list of classes) that should be added to the block layer.
+	 * @return {sap.m.Popover} Reference to the control instance for chaining
 	 * @public
 	 */
 	Popover.prototype.setModal = function(bModal, sModalCSSClass) {
