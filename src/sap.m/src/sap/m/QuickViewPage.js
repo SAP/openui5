@@ -177,10 +177,21 @@ sap.ui.define([
 				var mPageContent = this._createPageContent();
 
 				var mNavContext = this.getNavContext();
+				var oPage;
 
-				var oPage = new Page(mNavContext.quickViewId + '-' + this.getPageId(), {
-					customHeader : new Bar()
-				});
+				if (this._oPage) {
+					oPage = this._oPage;
+					oPage.destroyContent();
+					oPage.setCustomHeader(new Bar());
+				} else {
+					oPage = this._oPage = new Page(mNavContext.quickViewId + '-' + this.getPageId(), {
+						customHeader : new Bar()
+					});
+
+					oPage.addEventDelegate({
+						onAfterRendering: this.onAfterRenderingPage
+					}, this);
+				}
 
 				if (mPageContent.header) {
 					oPage.addContent(mPageContent.header);
@@ -224,6 +235,17 @@ sap.ui.define([
 				oPage.addStyleClass('sapMQuickViewPage');
 
 				return oPage;
+			};
+
+			QuickViewPage.prototype.onAfterRenderingPage = function () {
+				if (this._bItemsChanged) {
+					var mNavContext = this.getNavContext();
+					if (mNavContext) {
+						mNavContext.quickView._restoreFocus();
+					}
+
+					this._bItemsChanged = false;
+				}
 			};
 
 			QuickViewPage.prototype._createPageContent = function () {
@@ -428,6 +450,7 @@ sap.ui.define([
 
 			QuickViewPage.prototype.exit = function() {
 				this._oResourceBundle = null;
+				this._oPage = null;
 			};
 
 			QuickViewPage.prototype._attachPressLink = function (that) {
@@ -446,6 +469,40 @@ sap.ui.define([
 			QuickViewPage.prototype._mobilePress = function () {
 				var sms = "sms://" + jQuery.sap.encodeURL(this.getCustomData()[0].getValue());
 				window.location.replace(sms);
+			};
+
+			QuickViewPage.prototype._updatePage = function () {
+				var mNavContext = this.getNavContext();
+				if (mNavContext && mNavContext.quickView._bRendered) {
+
+					this._bItemsChanged = true;
+
+					mNavContext.popover.focus();
+					this._createPage();
+					mNavContext.quickView._restoreFocus();
+				}
+			};
+
+			["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
+				"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+					QuickViewPage.prototype["_" + sFuncName + "Old"] = QuickViewPage.prototype[sFuncName];
+					QuickViewPage.prototype[sFuncName] = function () {
+						var result = QuickViewPage.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+
+						this._updatePage();
+
+						if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+							return result;
+						}
+
+						return this;
+					};
+				});
+
+			QuickViewPage.prototype.setProperty = function () {
+				Control.prototype.setProperty.apply(this, arguments);
+
+				this._updatePage();
 			};
 
 			return QuickViewPage;
