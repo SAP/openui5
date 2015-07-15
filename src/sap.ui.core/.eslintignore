@@ -2,6 +2,3 @@
 src/sap/ui/thirdparty
 target
 test
-
-# exclude these files from ignore, i.e. check them; but only in Eclipse
-+test/sap/ui/core/qunit/odata/v4
