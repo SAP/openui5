@@ -94,6 +94,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.mEntityKey = {};
 			    /* increased load factor due to ratio of non-multi-unit entities versus loaded entities */
 
+			// custom parameters which will be send with every request
+			// the custom parameters are extracted from the mParameters object, because the SmartTable does some weird things to the parameters
+			this.sCustomParams = this.oModel.createCustomParams({custom: this.mParameters.custom});
+			
 			// attribute members for maintaining structure details requested by the binding consumer
 			this.oAnalyticalQueryResult = null; //will be initialized via the "initialize" function of the binding
 
@@ -2025,12 +2029,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					//V1 - use createBatchOperation
 					aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
 				}else if (this.iModelVersion === AnalyticalVersionInfo.V2) {
+					var aUrlParameters = this._getQueryODataRequestOptions(oAnalyticalQueryRequest, {encode: true});
+					if (this.sCustomParams) {
+						aUrlParameters.push(this.sCustomParams);
+					}
 					//V2 - use read()
 					var oRequestHandle = this.oModel.read(sPath.replace(/\ /g, "%20"), {
 						success: fnSingleBatchSucess, // relays the success to the BatchResponseCollector
 						error: fnSingleBatchError,
 						context: this.oContext,
-						urlParameters: this._getQueryODataRequestOptions(oAnalyticalQueryRequest, {encode: true})
+						urlParameters: aUrlParameters
 					});
 					aBatchQueryRequest.push(oRequestHandle);
 				}
@@ -2244,6 +2252,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			//trigger data loading, the request handle is registered during the fnHandleUpdate callback, used by the V1 model
 			this.oModel._loadData(sPath, aParam, fnSuccess, fnError, false, fnUpdateHandle, fnCompleted);
 		} else {
+			if (this.sCustomParams) {
+				aParam.push(this.sCustomParams);
+			}
 			var oRequestHandle = this.oModel.read(sPath, {
 				success: fnSuccess,
 				error: fnError,
