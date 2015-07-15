@@ -666,6 +666,16 @@ html[dir=rtl] .sapUiTableColRsz {
 	}
 }
 
+// Mirror arrow of closed tree node
+html[dir=rtl] {
+	.sapUiSizeCompact, .sapUiSizeCozy {
+		.sapUiTableGroupIcon.sapUiTableGroupIconClosed::before,
+		.sapUiTableTreeIconNodeClosed::before {
+			content: '\e067';
+		}
+	}
+}
+
 .sapUiTableGroupIcon {
 	line-height: @sapUiTableRowHeight;
 }
