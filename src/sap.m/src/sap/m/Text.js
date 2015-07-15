@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.hasNativeLineClamp = (function() {
 		return (typeof document.documentElement.style.webkitLineClamp != "undefined");
 	})();
-	
+
 	/**
 	 * To prevent from the layout thrashing of the textContent call, this method
 	 * first tries to set the nodeValue of the first child when exist.
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// check text dom ref
 		var oDomRef = this.getTextDomRef();
 		if (oDomRef) {
-			// update the node value of the DOM text 
+			// update the node value of the DOM text
 			Text.setNodeValue(oDomRef, this.getText(true));
 
 			// Toggles the sapMTextBreakWord class when the text value is changed
@@ -168,7 +168,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// handle line ending characters for renderer
 		if (bNormalize) {
-			return sText.replace(/\r\n/g, "\n");
+			return sText.replace(/\\r\\n|\\n/g, "\n");
 		}
 
 		return sText;
