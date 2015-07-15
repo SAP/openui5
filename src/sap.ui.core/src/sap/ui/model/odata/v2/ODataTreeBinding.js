@@ -862,7 +862,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.oFinalLengths = {};
 			this.oRootContext = null;
 			this._bRootMissing = false;
+			
+			// abort running request and clear the map afterwards
+			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
+				if (oRequestHandle) {
+					oRequestHandle.abort();
+				}
+			});
 			this.mRequestHandles = {};
+			
 			this._mLoadedSections = {};
 			this._iPageSize = 0;
 			this.sFilterParams = "";
