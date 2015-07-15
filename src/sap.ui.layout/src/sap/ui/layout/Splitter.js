@@ -1100,7 +1100,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		this._switchOrientation();
 		this._delayedResize();
-		
+
+		this.$().find(".sapUiLoSplitterBar").attr("aria-orientation", this._bHorizontal ? "vertical" : "horizontal");
+
 		return vReturn;
 	};
 	
