@@ -1,0 +1,3986 @@
+{
+	"Canada": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Erin McLeod",
+				"birthDate": "1983-02-26",
+				"games": "104"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Emily Zurrer",
+				"birthDate": "1987-07-12",
+				"games": "82"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Kadeisha Buchanan",
+				"birthDate": "1995-11-05",
+				"games": "34"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Carmelina Moscato",
+				"birthDate": "1984-05-02",
+				"games": "91"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Robyn Gayle",
+				"birthDate": "1985-10-31",
+				"games": "81"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Kaylyn Kyle",
+				"birthDate": "1988-10-06",
+				"games": "95"
+			},
+			{
+				"number": "7",
+				"positionCode": "2",
+				"name": "Rhian Wilkinson",
+				"birthDate": "1982-05-12",
+				"games": "163"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Diana Matheson",
+				"birthDate": "1984-04-06",
+				"games": "166"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Josée Bélanger",
+				"birthDate": "1986-05-14",
+				"games": "29"
+			},
+			{
+				"number": "10",
+				"positionCode": "2",
+				"name": "Lauren Sesselmann",
+				"birthDate": "1983-08-14",
+				"games": "41"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Desiree Scott",
+				"birthDate": "1987-07-31",
+				"games": "89"
+			},
+			{
+				"number": "12",
+				"positionCode": "4",
+				"name": "Christine Sinclair",
+				"birthDate": "1983-06-12",
+				"games": "222"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Sophie Schmidt",
+				"birthDate": "1988-06-28",
+				"games": "131"
+			},
+			{
+				"number": "14",
+				"positionCode": "4",
+				"name": "Melissa Tancredi",
+				"birthDate": "1981-12-27",
+				"games": "99"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Allysha Chapman",
+				"birthDate": "1989-01-25",
+				"games": "11"
+			},
+			{
+				"number": "16",
+				"positionCode": "4",
+				"name": "Jonelle Filigno",
+				"birthDate": "1990-09-24",
+				"games": "68"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Jessie Fleming",
+				"birthDate": "1998-03-11",
+				"games": "15"
+			},
+			{
+				"number": "18",
+				"positionCode": "3",
+				"name": "Selenia Iacchelli",
+				"birthDate": "1986-06-05",
+				"games": "4"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Adriana Leon",
+				"birthDate": "1992-10-02",
+				"games": "33"
+			},
+			{
+				"number": "20",
+				"positionCode": "2",
+				"name": "Marie-Ève Nault",
+				"birthDate": "1982-02-16",
+				"games": "67"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Stephanie Labbé",
+				"birthDate": "1986-10-10",
+				"games": "20"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Ashley Lawrence",
+				"birthDate": "1995-06-11",
+				"games": "17"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Karina LeBlanc",
+				"birthDate": "1980-03-30",
+				"games": "110"
+			}
+		]
+	},
+	"China PR": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Zhang Yue",
+				"birthDate": "1990-09-30",
+				"games": "48"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Liu Shanshan",
+				"birthDate": "1992-03-16",
+				"games": "33"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Pang Fengyue",
+				"birthDate": "1989-01-19",
+				"games": "50"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Li Jiayue",
+				"birthDate": "1990-06-08",
+				"games": "45"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Wu Haiyan",
+				"birthDate": "1993-02-26",
+				"games": "50"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Li Dongna",
+				"birthDate": "1988-12-06",
+				"games": "50"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Xu Yanlu",
+				"birthDate": "1991-09-16",
+				"games": "27"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Ma Jun",
+				"birthDate": "1989-03-06",
+				"games": "50"
+			},
+			{
+				"number": "9",
+				"positionCode": "2",
+				"name": "Wang Shanshan",
+				"birthDate": "1990-01-27",
+				"games": "41"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Li Ying",
+				"birthDate": "1993-01-07",
+				"games": "8"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Wang Shuang",
+				"birthDate": "1995-01-23",
+				"games": "11"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Wang Fei",
+				"birthDate": "1990-03-22",
+				"games": "52"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Tang Jiali",
+				"birthDate": "1995-03-16",
+				"games": "10"
+			},
+			{
+				"number": "14",
+				"positionCode": "4",
+				"name": "Zhao Rong",
+				"birthDate": "1991-08-02",
+				"games": "14"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Lei Jiahui",
+				"birthDate": "1995-09-22",
+				"games": "6"
+			},
+			{
+				"number": "16",
+				"positionCode": "4",
+				"name": "Lou Jiahui",
+				"birthDate": "1991-05-26",
+				"games": "45"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Gu Yasha",
+				"birthDate": "1990-11-28",
+				"games": "87"
+			},
+			{
+				"number": "18",
+				"positionCode": "3",
+				"name": "Han Peng",
+				"birthDate": "1989-12-20",
+				"games": "52"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Tan Ruyin",
+				"birthDate": "1994-07-17",
+				"games": "8"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Zhang Rui",
+				"birthDate": "1989-01-17",
+				"games": "60"
+			},
+			{
+				"number": "21",
+				"positionCode": "3",
+				"name": "Wang Lisi",
+				"birthDate": "1991-11-28",
+				"games": "45"
+			},
+			{
+				"number": "22",
+				"positionCode": "1",
+				"name": "Zhao Lina",
+				"birthDate": "1991-09-18",
+				"games": "0"
+			},
+			{
+				"number": "23",
+				"positionCode": "3",
+				"name": "Ren Guixin",
+				"birthDate": "1988-12-19",
+				"games": "45"
+			}
+		]
+	},
+	"Netherlands": {
+		"trainer": "Claudia van den HeiligenbergShanice van de Sanden",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Loes Geurts",
+				"birthDate": "1986-01-12",
+				"games": "103"
+			},
+			{
+				"number": "2",
+				"positionCode": "3",
+				"name": "Desiree van Lunteren",
+				"birthDate": "1992-12-30",
+				"games": "21"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Stefanie van der Gragt",
+				"birthDate": "1992-08-16",
+				"games": "22"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Mandy van den Berg",
+				"birthDate": "1990-08-26",
+				"games": "57"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Petra Hogewoning",
+				"birthDate": "1986-03-26",
+				"games": "96"
+			},
+			{
+				"number": "6",
+				"positionCode": "4",
+				"name": "Anouk Dekker",
+				"birthDate": "1986-11-15",
+				"games": "38"
+			},
+			{
+				"number": "7",
+				"positionCode": "4",
+				"name": "Manon Melis",
+				"birthDate": "1986-08-31",
+				"games": "123"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Sherida Spitse",
+				"birthDate": "1990-05-29",
+				"games": "104"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Vivianne Miedema",
+				"birthDate": "1996-07-15",
+				"games": "23"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Daniëlle van de Donk",
+				"birthDate": "1991-08-05",
+				"games": "35"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Lieke Martens",
+				"birthDate": "1992-12-16",
+				"games": "49"
+			},
+			{
+				"number": "12",
+				"positionCode": "2",
+				"name": "Dyanne Bito",
+				"birthDate": "1981-08-10",
+				"games": "146"
+			},
+			{
+				"number": "13",
+				"positionCode": "2",
+				"name": "Dominique Janssen",
+				"birthDate": "1995-01-17",
+				"games": "6"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Anouk Hoogendijk",
+				"birthDate": "1985-05-06",
+				"games": "101"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Merel van Dongen",
+				"birthDate": "1993-02-11",
+				"games": "4"
+			},
+			{
+				"number": "16",
+				"positionCode": "1",
+				"name": "Sari van Veenendaal",
+				"birthDate": "1990-04-03",
+				"games": "13"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Tessel Middag",
+				"birthDate": "1992-12-23",
+				"games": "24"
+			},
+			{
+				"number": "18",
+				"positionCode": "2",
+				"name": "Maran van Erp",
+				"birthDate": "1990-12-03",
+				"games": "1"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Kirsten van de Ven",
+				"birthDate": "1985-05-11",
+				"games": "82"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Jill Roord",
+				"birthDate": "1997-04-22",
+				"games": "5"
+			},
+			{
+				"number": "21",
+				"positionCode": "3",
+				"name": "Vanity Lewerissa",
+				"birthDate": "1991-04-01",
+				"games": "4"
+			},
+			{
+				"number": "22",
+				"positionCode": "4",
+				"name": "Shanice van de Sanden",
+				"birthDate": "1992-10-02",
+				"games": "15"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Angela Christ",
+				"birthDate": "1989-03-06",
+				"games": "13"
+			}
+		]
+	},
+	"New Zealand": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Erin Nayler",
+				"birthDate": "1992-04-17",
+				"games": "28"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Ria Percival",
+				"birthDate": "1989-12-07",
+				"games": "103"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Anna Green",
+				"birthDate": "1990-08-20",
+				"games": "55"
+			},
+			{
+				"number": "4",
+				"positionCode": "3",
+				"name": "Katie Hoyle",
+				"birthDate": "1988-02-01",
+				"games": "102"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Abby Erceg",
+				"birthDate": "1989-11-20",
+				"games": "113"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Rebekah Stott",
+				"birthDate": "1993-06-17",
+				"games": "39"
+			},
+			{
+				"number": "7",
+				"positionCode": "2",
+				"name": "Ali Riley",
+				"birthDate": "1987-10-30",
+				"games": "92"
+			},
+			{
+				"number": "8",
+				"positionCode": "4",
+				"name": "Jasmine Pereira",
+				"birthDate": "1996-07-20",
+				"games": "8"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Amber Hearn",
+				"birthDate": "1984-11-28",
+				"games": "99"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Sarah Gregorius",
+				"birthDate": "1987-08-06",
+				"games": "66"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Kirsty Yallop",
+				"birthDate": "1986-11-04",
+				"games": "89"
+			},
+			{
+				"number": "12",
+				"positionCode": "3",
+				"name": "Betsy Hassett",
+				"birthDate": "1990-08-04",
+				"games": "79"
+			},
+			{
+				"number": "13",
+				"positionCode": "4",
+				"name": "Rosie White",
+				"birthDate": "1993-06-06",
+				"games": "69"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Katie Bowen",
+				"birthDate": "1994-04-15",
+				"games": "26"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Meikayla Moore",
+				"birthDate": "1996-06-04",
+				"games": "10"
+			},
+			{
+				"number": "16",
+				"positionCode": "3",
+				"name": "Annalie Longo",
+				"birthDate": "1991-07-01",
+				"games": "78"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Hannah Wilkinson",
+				"birthDate": "1992-05-28",
+				"games": "69"
+			},
+			{
+				"number": "18",
+				"positionCode": "2",
+				"name": "Catherine Bott",
+				"birthDate": "1995-04-22",
+				"games": "1"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Evie Millynn",
+				"birthDate": "1994-11-23",
+				"games": "2"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Daisy Cleverley",
+				"birthDate": "1997-04-30",
+				"games": "3"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Rebecca Rolls",
+				"birthDate": "1975-08-22",
+				"games": "21"
+			},
+			{
+				"number": "22",
+				"positionCode": "4",
+				"name": "Emma Kete",
+				"birthDate": "1987-09-01",
+				"games": "48"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Cushla Lichtwark",
+				"birthDate": "1980-11-29",
+				"games": "0"
+			}
+		]
+	},
+	"Germany": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Nadine Angerer",
+				"birthDate": "1978-11-10",
+				"games": "139"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Bianca Schmidt",
+				"birthDate": "1990-01-23",
+				"games": "48"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Saskia Bartusiak",
+				"birthDate": "1982-09-09",
+				"games": "80"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Leonie Maier",
+				"birthDate": "1992-09-29",
+				"games": "25"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Annike Krahn",
+				"birthDate": "1985-07-01",
+				"games": "117"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Simone Laudehr",
+				"birthDate": "1986-07-12",
+				"games": "88"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Melanie Behringer",
+				"birthDate": "1985-11-18",
+				"games": "104"
+			},
+			{
+				"number": "8",
+				"positionCode": "4",
+				"name": "Pauline Bremer",
+				"birthDate": "1996-04-10",
+				"games": "5"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Lena Lotzen",
+				"birthDate": "1993-09-11",
+				"games": "22"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Dzsenifer Marozsán",
+				"birthDate": "1992-04-18",
+				"games": "48"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Anja Mittag",
+				"birthDate": "1985-05-16",
+				"games": "120"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Almuth Schult",
+				"birthDate": "1991-02-09",
+				"games": "20"
+			},
+			{
+				"number": "13",
+				"positionCode": "4",
+				"name": "Célia Šašić",
+				"birthDate": "1988-06-27",
+				"games": "104"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Babett Peter",
+				"birthDate": "1988-05-12",
+				"games": "89"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Jennifer Cramer",
+				"birthDate": "1993-02-24",
+				"games": "21"
+			},
+			{
+				"number": "16",
+				"positionCode": "3",
+				"name": "Melanie Leupolz",
+				"birthDate": "1994-04-14",
+				"games": "28"
+			},
+			{
+				"number": "17",
+				"positionCode": "2",
+				"name": "Josephine Henning",
+				"birthDate": "1989-09-08",
+				"games": "25"
+			},
+			{
+				"number": "18",
+				"positionCode": "4",
+				"name": "Alexandra Popp",
+				"birthDate": "1991-04-06",
+				"games": "54"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Lena Petermann",
+				"birthDate": "1994-02-05",
+				"games": "2"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Lena Goeßling",
+				"birthDate": "1986-03-08",
+				"games": "72"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Laura Benkarth",
+				"birthDate": "1992-10-14",
+				"games": "0"
+			},
+			{
+				"number": "22",
+				"positionCode": "2",
+				"name": "Tabea Kemme",
+				"birthDate": "1991-12-14",
+				"games": "13"
+			},
+			{
+				"number": "23",
+				"positionCode": "3",
+				"name": "Sara Däbritz",
+				"birthDate": "1995-02-15",
+				"games": "16"
+			}
+		]
+	},
+	"Ivory Coast": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Lydie Saki",
+				"birthDate": "1984-12-22",
+				"games": "27"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Fatou Coulibaly",
+				"birthDate": "1987-02-13",
+				"games": "31"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Djelika Coulibaly",
+				"birthDate": "1984-02-22",
+				"games": "29"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Nina Kpaho",
+				"birthDate": "1996-12-30",
+				"games": "12"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Mariam Diakité",
+				"birthDate": "1995-04-11",
+				"games": "12"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Rita Akaffou",
+				"birthDate": "1986-12-05",
+				"games": "33"
+			},
+			{
+				"number": "7",
+				"positionCode": "4",
+				"name": "Nadege Essoh",
+				"birthDate": "1990-05-05",
+				"games": "29"
+			},
+			{
+				"number": "8",
+				"positionCode": "4",
+				"name": "Ines Nrehy",
+				"birthDate": "1993-10-01",
+				"games": "17"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Sandrine Niamien",
+				"birthDate": "1994-08-30",
+				"games": "2"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Ange N'Guessan",
+				"birthDate": "1990-11-18",
+				"games": "19"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Rebecca Elloh",
+				"birthDate": "1994-12-25",
+				"games": "15"
+			},
+			{
+				"number": "12",
+				"positionCode": "3",
+				"name": "Ida Guehai",
+				"birthDate": "1994-07-15",
+				"games": "22"
+			},
+			{
+				"number": "13",
+				"positionCode": "2",
+				"name": "Fernande Tchetche",
+				"birthDate": "1988-06-20",
+				"games": "19"
+			},
+			{
+				"number": "14",
+				"positionCode": "4",
+				"name": "Josée Nahi",
+				"birthDate": "1989-05-29",
+				"games": "18"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Christine Lohoues",
+				"birthDate": "1992-10-18",
+				"games": "22"
+			},
+			{
+				"number": "16",
+				"positionCode": "1",
+				"name": "Dominique Thiamale",
+				"birthDate": "1982-05-20",
+				"games": "27"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Nadège Cissé",
+				"birthDate": "1997-04-04",
+				"games": "6"
+			},
+			{
+				"number": "18",
+				"positionCode": "3",
+				"name": "Binta Diakité",
+				"birthDate": "1988-05-07",
+				"games": "20"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Jessica Aby",
+				"birthDate": "1998-06-16",
+				"games": "1"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Aminata Haidara",
+				"birthDate": "1997-05-13",
+				"games": "4"
+			},
+			{
+				"number": "21",
+				"positionCode": "2",
+				"name": "Sophie Aguie",
+				"birthDate": "1996-12-31",
+				"games": "4"
+			},
+			{
+				"number": "22",
+				"positionCode": "2",
+				"name": "Raymonde Kacou",
+				"birthDate": "1987-01-07",
+				"games": "6"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Cynthia Djohore",
+				"birthDate": "1987-12-16",
+				"games": "27"
+			}
+		]
+	},
+	"Norway": {
+		"trainer": "Caroline Graham HansenAnja Sønstevold",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Ingrid Hjelmseth",
+				"birthDate": "1980-04-10",
+				"games": "92"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Maria Thorisdottir",
+				"birthDate": "1993-06-05",
+				"games": "5"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Marita Skammelsrud Lund",
+				"birthDate": "1989-01-29",
+				"games": "62"
+			},
+			{
+				"number": "4",
+				"positionCode": "3",
+				"name": "Gry Tofte Ims",
+				"birthDate": "1986-03-02",
+				"games": "42"
+			},
+			{
+				"number": "5",
+				"positionCode": "4",
+				"name": "Lisa-Marie Karlseng Utland",
+				"birthDate": "1992-09-19",
+				"games": "1"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Maren Mjelde",
+				"birthDate": "1989-11-06",
+				"games": "87"
+			},
+			{
+				"number": "7",
+				"positionCode": "2",
+				"name": "Trine Rønning",
+				"birthDate": "1982-06-14",
+				"games": "153"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Solveig Gulbrandsen",
+				"birthDate": "1981-01-12",
+				"games": "179"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Isabell Herlovsen",
+				"birthDate": "1988-06-23",
+				"games": "100"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Anja Sønstevold",
+				"birthDate": "1992-06-21",
+				"games": "3"
+			},
+			{
+				"number": "11",
+				"positionCode": "2",
+				"name": "Nora Holstad Berge",
+				"birthDate": "1987-03-26",
+				"games": "46"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Silje Vesterbekkmo",
+				"birthDate": "1983-06-22",
+				"games": "8"
+			},
+			{
+				"number": "13",
+				"positionCode": "2",
+				"name": "Ingrid Moe Wold",
+				"birthDate": "1990-01-29",
+				"games": "10"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Ingrid Schjelderup",
+				"birthDate": "1987-12-21",
+				"games": "9"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Marit Sandvei",
+				"birthDate": "1987-05-21",
+				"games": "7"
+			},
+			{
+				"number": "16",
+				"positionCode": "4",
+				"name": "Elise Thorsnes",
+				"birthDate": "1988-08-14",
+				"games": "81"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Lene Mykjåland",
+				"birthDate": "1987-02-20",
+				"games": "78"
+			},
+			{
+				"number": "18",
+				"positionCode": "4",
+				"name": "Melissa Bjånesøy",
+				"birthDate": "1992-04-18",
+				"games": "20"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Kristine Minde",
+				"birthDate": "1992-08-08",
+				"games": "47"
+			},
+			{
+				"number": "20",
+				"positionCode": "4",
+				"name": "Emilie Haavi",
+				"birthDate": "1992-06-16",
+				"games": "40"
+			},
+			{
+				"number": "21",
+				"positionCode": "4",
+				"name": "Ada Hegerberg",
+				"birthDate": "1995-07-10",
+				"games": "34"
+			},
+			{
+				"number": "22",
+				"positionCode": "4",
+				"name": "Hege Hansen",
+				"birthDate": "1990-10-24",
+				"games": "9"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Cecilie Fiskerstrand",
+				"birthDate": "1996-03-20",
+				"games": "3"
+			}
+		]
+	},
+	"Thailand": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Waraporn Boonsing",
+				"birthDate": "1990-02-16",
+				"games": "84"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Darut Changplook",
+				"birthDate": "1988-02-03",
+				"games": "20"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Natthakarn Chinwong",
+				"birthDate": "1992-03-15",
+				"games": "8"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Duangnapa Sritala",
+				"birthDate": "1986-02-04",
+				"games": "22"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Ainon Phancha",
+				"birthDate": "1992-01-27",
+				"games": "7"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Pikul Khueanpet",
+				"birthDate": "1988-09-20",
+				"games": "41"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Silawan Intamee",
+				"birthDate": "1994-01-22",
+				"games": "11"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Naphat Seesraum",
+				"birthDate": "1987-05-11",
+				"games": "83"
+			},
+			{
+				"number": "9",
+				"positionCode": "2",
+				"name": "Warunee Phetwiset",
+				"birthDate": "1990-12-13",
+				"games": "41"
+			},
+			{
+				"number": "10",
+				"positionCode": "2",
+				"name": "Sunisa Srangthaisong",
+				"birthDate": "1988-05-06",
+				"games": "24"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Alisa Rukpinij",
+				"birthDate": "1995-02-02",
+				"games": "3"
+			},
+			{
+				"number": "12",
+				"positionCode": "3",
+				"name": "Rattikan Thongsombut",
+				"birthDate": "1991-07-07",
+				"games": "18"
+			},
+			{
+				"number": "13",
+				"positionCode": "4",
+				"name": "Orathai Srimanee",
+				"birthDate": "1988-06-12",
+				"games": "5"
+			},
+			{
+				"number": "14",
+				"positionCode": "4",
+				"name": "Thanatta Chawong",
+				"birthDate": "1989-06-19",
+				"games": "66"
+			},
+			{
+				"number": "15",
+				"positionCode": "4",
+				"name": "Irravadee Makris",
+				"birthDate": "1992-01-20",
+				"games": "0"
+			},
+			{
+				"number": "16",
+				"positionCode": "2",
+				"name": "Khwanruedi Saengchan",
+				"birthDate": "1993-09-10",
+				"games": "20"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Anootsara Maijarern",
+				"birthDate": "1986-02-14",
+				"games": "80"
+			},
+			{
+				"number": "18",
+				"positionCode": "1",
+				"name": "Yada Sengyong",
+				"birthDate": "1993-09-10",
+				"games": "3"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Taneekarn Dangda",
+				"birthDate": "1992-12-15",
+				"games": "16"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Wilaiporn Boothduang",
+				"birthDate": "1987-06-25",
+				"games": "45"
+			},
+			{
+				"number": "21",
+				"positionCode": "3",
+				"name": "Kanjana Sungngoen",
+				"birthDate": "1986-09-21",
+				"games": "44"
+			},
+			{
+				"number": "22",
+				"positionCode": "1",
+				"name": "Sukanya Chor Charoenying",
+				"birthDate": "1987-11-24",
+				"games": "8"
+			},
+			{
+				"number": "23",
+				"positionCode": "4",
+				"name": "Nisa Romyen",
+				"birthDate": "1990-01-18",
+				"games": "47"
+			}
+		]
+	},
+	"Cameroon": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Annette Ngo Ndom",
+				"birthDate": "1985-06-02",
+				"games": "40"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Christine Manie",
+				"birthDate": "1984-05-04",
+				"games": "59"
+			},
+			{
+				"number": "3",
+				"positionCode": "4",
+				"name": "Ajara Nchout",
+				"birthDate": "1993-01-12",
+				"games": "39"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Yvonne Leuko",
+				"birthDate": "1991-11-20",
+				"games": "23"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Augustine Ejangue",
+				"birthDate": "1989-01-19",
+				"games": "56"
+			},
+			{
+				"number": "6",
+				"positionCode": "4",
+				"name": "Francine Zouga",
+				"birthDate": "1987-11-09",
+				"games": "52"
+			},
+			{
+				"number": "7",
+				"positionCode": "4",
+				"name": "Gabrielle Onguene",
+				"birthDate": "1989-02-25",
+				"games": "49"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Raissa Feudjio",
+				"birthDate": "1995-10-29",
+				"games": "40"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Madeleine Ngono",
+				"birthDate": "1983-10-16",
+				"games": "72"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Jeannette Yango",
+				"birthDate": "1993-06-12",
+				"games": "31"
+			},
+			{
+				"number": "11",
+				"positionCode": "2",
+				"name": "Aurelle Awona",
+				"birthDate": "1993-02-02",
+				"games": "2"
+			},
+			{
+				"number": "12",
+				"positionCode": "2",
+				"name": "Claudine Meffometou",
+				"birthDate": "1990-07-01",
+				"games": "21"
+			},
+			{
+				"number": "13",
+				"positionCode": "2",
+				"name": "Cathy Bou Ndjouh",
+				"birthDate": "1987-11-07",
+				"games": "52"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Ninon Abena",
+				"birthDate": "1994-09-05",
+				"games": "3"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Ysis Sonkeng",
+				"birthDate": "1989-09-20",
+				"games": "42"
+			},
+			{
+				"number": "16",
+				"positionCode": "1",
+				"name": "Thècle Mbororo",
+				"birthDate": "1989-09-24",
+				"games": "5"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Gaëlle Enganamouit",
+				"birthDate": "1992-06-09",
+				"games": "39"
+			},
+			{
+				"number": "18",
+				"positionCode": "3",
+				"name": "Henriette Akaba",
+				"birthDate": "1992-06-07",
+				"games": "31"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Agathe Ngani",
+				"birthDate": "1992-05-26",
+				"games": "3"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Genevieve Ngo",
+				"birthDate": "1993-03-10",
+				"games": "6"
+			},
+			{
+				"number": "21",
+				"positionCode": "4",
+				"name": "Rose Bella",
+				"birthDate": "1994-05-05",
+				"games": "7"
+			},
+			{
+				"number": "22",
+				"positionCode": "2",
+				"name": "Rita Wanki Awachwi",
+				"birthDate": "1994-01-06",
+				"games": "5"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Flore Enyegue",
+				"birthDate": "1991-07-09",
+				"games": "9"
+			}
+		]
+	},
+	"Ecuador": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Shirley Berruz",
+				"birthDate": "1991-01-06",
+				"games": "25"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Katherine Ortíz",
+				"birthDate": "1991-02-16",
+				"games": "23"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Nancy Aguilar",
+				"birthDate": "1985-07-06",
+				"games": "46"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Merly Zambrano",
+				"birthDate": "1981-12-07",
+				"games": "11"
+			},
+			{
+				"number": "5",
+				"positionCode": "3",
+				"name": "Mayra Olvera",
+				"birthDate": "1992-08-22",
+				"games": "33"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Angie Ponce",
+				"birthDate": "1996-07-14",
+				"games": "28"
+			},
+			{
+				"number": "7",
+				"positionCode": "2",
+				"name": "Ingrid Rodríguez",
+				"birthDate": "1991-11-24",
+				"games": "34"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Erika Vásquez",
+				"birthDate": "1992-08-04",
+				"games": "32"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Giannina Lattanzio",
+				"birthDate": "1993-05-19",
+				"games": "13"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Ámbar Torres",
+				"birthDate": "1994-12-21",
+				"games": "23"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Mónica Quinteros",
+				"birthDate": "1988-07-05",
+				"games": "42"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Irene Tobar",
+				"birthDate": "1989-05-05",
+				"games": "10"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Madelin Riera",
+				"birthDate": "1989-08-07",
+				"games": "32"
+			},
+			{
+				"number": "14",
+				"positionCode": "4",
+				"name": "Carina Caicedo",
+				"birthDate": "1987-07-23",
+				"games": "8"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Ana Palacios",
+				"birthDate": "1991-02-16",
+				"games": "30"
+			},
+			{
+				"number": "16",
+				"positionCode": "2",
+				"name": "Ligia Moreira",
+				"birthDate": "1992-03-19",
+				"games": "44"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Alexandra Salvador",
+				"birthDate": "1995-08-11",
+				"games": "13"
+			},
+			{
+				"number": "18",
+				"positionCode": "3",
+				"name": "Adriana Barré",
+				"birthDate": "1995-04-04",
+				"games": "23"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Kerlly Real",
+				"birthDate": "1998-11-07",
+				"games": "24"
+			},
+			{
+				"number": "20",
+				"positionCode": "4",
+				"name": "Denise Pesántes",
+				"birthDate": "1988-01-14",
+				"games": "32"
+			},
+			{
+				"number": "21",
+				"positionCode": "3",
+				"name": "Mabel Velarde",
+				"birthDate": "1988-12-04",
+				"games": "13"
+			},
+			{
+				"number": "22",
+				"positionCode": "1",
+				"name": "Andrea Vera",
+				"birthDate": "1993-04-10",
+				"games": "2"
+			},
+			{
+				"number": "23",
+				"positionCode": "4",
+				"name": "Mariela Jácome",
+				"birthDate": "1996-03-06",
+				"games": "1"
+			}
+		]
+	},
+	"Japan": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Miho Fukumoto",
+				"birthDate": "1983-10-02",
+				"games": "77"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Yukari Kinga",
+				"birthDate": "1984-05-02",
+				"games": "94"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Azusa Iwashimizu",
+				"birthDate": "1986-10-14",
+				"games": "111"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Saki Kumagai",
+				"birthDate": "1990-10-17",
+				"games": "65"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Aya Sameshima",
+				"birthDate": "1987-06-16",
+				"games": "60"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Mizuho Sakaguchi",
+				"birthDate": "1987-10-15",
+				"games": "89"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Kozue Ando",
+				"birthDate": "1982-07-09",
+				"games": "123"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Aya Miyama",
+				"birthDate": "1985-01-28",
+				"games": "147"
+			},
+			{
+				"number": "9",
+				"positionCode": "3",
+				"name": "Nahomi Kawasumi",
+				"birthDate": "1985-09-23",
+				"games": "70"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Homare Sawa",
+				"birthDate": "1978-09-06",
+				"games": "197"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Shinobu Ohno",
+				"birthDate": "1984-01-23",
+				"games": "128"
+			},
+			{
+				"number": "12",
+				"positionCode": "2",
+				"name": "Megumi Kamionobe",
+				"birthDate": "1986-03-15",
+				"games": "29"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Rumi Utsugi",
+				"birthDate": "1988-12-05",
+				"games": "78"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Asuna Tanaka",
+				"birthDate": "1988-04-23",
+				"games": "33"
+			},
+			{
+				"number": "15",
+				"positionCode": "4",
+				"name": "Yuika Sugasawa",
+				"birthDate": "1990-10-05",
+				"games": "28"
+			},
+			{
+				"number": "16",
+				"positionCode": "4",
+				"name": "Mana Iwabuchi",
+				"birthDate": "1993-03-18",
+				"games": "25"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Yūki Ōgimi",
+				"birthDate": "1987-07-15",
+				"games": "115"
+			},
+			{
+				"number": "18",
+				"positionCode": "1",
+				"name": "Ayumi Kaihori",
+				"birthDate": "1986-09-04",
+				"games": "47"
+			},
+			{
+				"number": "19",
+				"positionCode": "2",
+				"name": "Saori Ariyoshi",
+				"birthDate": "1987-11-01",
+				"games": "34"
+			},
+			{
+				"number": "20",
+				"positionCode": "2",
+				"name": "Yuri Kawamura",
+				"birthDate": "1989-05-17",
+				"games": "13"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Erina Yamane",
+				"birthDate": "1990-12-20",
+				"games": "14"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Asano Nagasato",
+				"birthDate": "1989-01-24",
+				"games": "10"
+			},
+			{
+				"number": "23",
+				"positionCode": "2",
+				"name": "Kana Kitahara",
+				"birthDate": "1988-12-17",
+				"games": "14"
+			}
+		]
+	},
+	"Switzerland": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Gaëlle Thalmann",
+				"birthDate": "1986-01-18",
+				"games": "36"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Nicole Remund",
+				"birthDate": "1989-12-31",
+				"games": "42"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Sandra Betschart",
+				"birthDate": "1989-03-30",
+				"games": "66"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Rachel Rinast",
+				"birthDate": "1991-06-02",
+				"games": "6"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Noëlle Maritz",
+				"birthDate": "1995-12-23",
+				"games": "29"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Selina Kuster",
+				"birthDate": "1991-08-08",
+				"games": "59"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Martina Moser",
+				"birthDate": "1986-04-09",
+				"games": "105"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Cinzia Zehnder",
+				"birthDate": "1997-08-04",
+				"games": "6"
+			},
+			{
+				"number": "9",
+				"positionCode": "3",
+				"name": "Lia Wälti",
+				"birthDate": "1994-04-19",
+				"games": "42"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Ramona Bachmann",
+				"birthDate": "1990-12-25",
+				"games": "61"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Lara Dickenmann",
+				"birthDate": "1985-11-27",
+				"games": "99"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Stenia Michel",
+				"birthDate": "1987-10-23",
+				"games": "11"
+			},
+			{
+				"number": "13",
+				"positionCode": "4",
+				"name": "Ana-Maria Crnogorčević",
+				"birthDate": "1990-10-03",
+				"games": "69"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Rahel Kiwic",
+				"birthDate": "1991-01-05",
+				"games": "28"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Caroline Abbé",
+				"birthDate": "1988-01-13",
+				"games": "105"
+			},
+			{
+				"number": "16",
+				"positionCode": "3",
+				"name": "Fabienne Humm",
+				"birthDate": "1986-12-20",
+				"games": "35"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Florijana Ismaili",
+				"birthDate": "1995-01-01",
+				"games": "10"
+			},
+			{
+				"number": "18",
+				"positionCode": "3",
+				"name": "Vanessa Bürki",
+				"birthDate": "1986-04-01",
+				"games": "68"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Eseosa Aigbogun",
+				"birthDate": "1993-05-23",
+				"games": "19"
+			},
+			{
+				"number": "20",
+				"positionCode": "2",
+				"name": "Daniela Schwarz",
+				"birthDate": "1985-09-09",
+				"games": "23"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Jennifer Oehrli",
+				"birthDate": "1989-01-13",
+				"games": "15"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Vanessa Bernauer",
+				"birthDate": "1988-03-23",
+				"games": "50"
+			},
+			{
+				"number": "23",
+				"positionCode": "4",
+				"name": "Barla Deplazes",
+				"birthDate": "1995-11-14",
+				"games": "1"
+			}
+		]
+	},
+	"Australia": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Lydia Williams",
+				"birthDate": "1988-05-13",
+				"games": "40"
+			},
+			{
+				"number": "2",
+				"positionCode": "4",
+				"name": "Larissa Crummer",
+				"birthDate": "1996-01-10",
+				"games": "4"
+			},
+			{
+				"number": "3",
+				"positionCode": "4",
+				"name": "Ashleigh Sykes",
+				"birthDate": "1991-12-15",
+				"games": "12"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Clare Polkinghorne",
+				"birthDate": "1989-02-01",
+				"games": "78"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Laura Alleway",
+				"birthDate": "1989-11-28",
+				"games": "30"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Servet Uzunlar",
+				"birthDate": "1989-03-08",
+				"games": "45"
+			},
+			{
+				"number": "7",
+				"positionCode": "2",
+				"name": "Steph Catley",
+				"birthDate": "1994-01-26",
+				"games": "32"
+			},
+			{
+				"number": "8",
+				"positionCode": "2",
+				"name": "Elise Kellond-Knight",
+				"birthDate": "1990-08-10",
+				"games": "55"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Caitlin Foord",
+				"birthDate": "1994-11-11",
+				"games": "28"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Emily van Egmond",
+				"birthDate": "1993-07-12",
+				"games": "39"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Lisa De Vanna",
+				"birthDate": "1984-11-14",
+				"games": "97"
+			},
+			{
+				"number": "12",
+				"positionCode": "4",
+				"name": "Leena Khamis",
+				"birthDate": "1986-06-19",
+				"games": "23"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Tameka Butt",
+				"birthDate": "1991-06-16",
+				"games": "45"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Alanna Kennedy",
+				"birthDate": "1995-01-21",
+				"games": "27"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Teresa Polias",
+				"birthDate": "1990-05-16",
+				"games": "8"
+			},
+			{
+				"number": "16",
+				"positionCode": "4",
+				"name": "Hayley Raso",
+				"birthDate": "1994-09-05",
+				"games": "12"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Kyah Simon",
+				"birthDate": "1991-06-25",
+				"games": "49"
+			},
+			{
+				"number": "18",
+				"positionCode": "1",
+				"name": "Melissa Barbieri",
+				"birthDate": "1980-01-20",
+				"games": "84"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Katrina Gorry",
+				"birthDate": "1992-08-13",
+				"games": "29"
+			},
+			{
+				"number": "20",
+				"positionCode": "4",
+				"name": "Samantha Kerr",
+				"birthDate": "1993-09-10",
+				"games": "36"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Mackenzie Arnold",
+				"birthDate": "1994-02-25",
+				"games": "6"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Nicola Bolger",
+				"birthDate": "1993-03-03",
+				"games": "5"
+			},
+			{
+				"number": "23",
+				"positionCode": "4",
+				"name": "Michelle Heyman",
+				"birthDate": "1988-07-04",
+				"games": "33"
+			}
+		]
+	},
+	"Nigeria": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Precious Dede",
+				"birthDate": "1980-01-18",
+				"games": "96"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Blessing Edoho",
+				"birthDate": "1992-09-05",
+				"games": "4"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Osinachi Ohale",
+				"birthDate": "1991-12-21",
+				"games": "24"
+			},
+			{
+				"number": "4",
+				"positionCode": "4",
+				"name": "Perpetua Nkwocha",
+				"birthDate": "1976-01-03",
+				"games": "98"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Onome Ebi",
+				"birthDate": "1983-05-08",
+				"games": "48"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Josephine Chukwunonye",
+				"birthDate": "1992-03-19",
+				"games": "22"
+			},
+			{
+				"number": "7",
+				"positionCode": "4",
+				"name": "Esther Sunday",
+				"birthDate": "1992-03-13",
+				"games": "23"
+			},
+			{
+				"number": "8",
+				"positionCode": "4",
+				"name": "Asisat Oshoala",
+				"birthDate": "1994-10-09",
+				"games": "14"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Desire Oparanozie",
+				"birthDate": "1993-12-17",
+				"games": "32"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Courtney Dike",
+				"birthDate": "1995-02-03",
+				"games": "0"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Iniabasi Umotong",
+				"birthDate": "1994-05-15",
+				"games": "0"
+			},
+			{
+				"number": "12",
+				"positionCode": "3",
+				"name": "Halimatu Ayinde",
+				"birthDate": "1995-05-16",
+				"games": "9"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Ngozi Okobi",
+				"birthDate": "1993-12-14",
+				"games": "22"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Evelyn Nwabuoku",
+				"birthDate": "1985-11-14",
+				"games": "39"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Ugo Njoku",
+				"birthDate": "1994-11-27",
+				"games": "6"
+			},
+			{
+				"number": "16",
+				"positionCode": "1",
+				"name": "Ibubeleye Whyte",
+				"birthDate": "1992-01-09",
+				"games": "6"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Francisca Ordega",
+				"birthDate": "1993-10-19",
+				"games": "23"
+			},
+			{
+				"number": "18",
+				"positionCode": "4",
+				"name": "Loveth Ayila",
+				"birthDate": "1994-09-06",
+				"games": "3"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Martina Ohadugha",
+				"birthDate": "1991-05-05",
+				"games": "35"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Cecilia Nku",
+				"birthDate": "1992-10-26",
+				"games": "8"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Christy Ohiaeriaku",
+				"birthDate": "1996-12-13",
+				"games": "0"
+			},
+			{
+				"number": "22",
+				"positionCode": "2",
+				"name": "Sarah Nnodim",
+				"birthDate": "1995-12-25",
+				"games": "1"
+			},
+			{
+				"number": "23",
+				"positionCode": "2",
+				"name": "Ngozi Ebere",
+				"birthDate": "1991-08-05",
+				"games": "17"
+			}
+		]
+	},
+	"Sweden": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Hedvig Lindahl",
+				"birthDate": "1983-04-29",
+				"games": "107"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Charlotte Rohlin",
+				"birthDate": "1980-12-02",
+				"games": "77"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Linda Sembrant",
+				"birthDate": "1987-05-15",
+				"games": "55"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Emma Berglund",
+				"birthDate": "1988-12-19",
+				"games": "35"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Nilla Fischer",
+				"birthDate": "1984-08-02",
+				"games": "130"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Sara Thunebro",
+				"birthDate": "1979-04-26",
+				"games": "131"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Lisa Dahlkvist",
+				"birthDate": "1987-02-06",
+				"games": "95"
+			},
+			{
+				"number": "8",
+				"positionCode": "4",
+				"name": "Lotta Schelin",
+				"birthDate": "1984-02-27",
+				"games": "149"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Kosovare Asllani",
+				"birthDate": "1989-07-29",
+				"games": "76"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Sofia Jakobsson",
+				"birthDate": "1990-04-23",
+				"games": "56"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Jenny Hjohlman",
+				"birthDate": "1990-02-13",
+				"games": "12"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Hilda Carlén",
+				"birthDate": "1991-08-13",
+				"games": "1"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Malin Diaz",
+				"birthDate": "1994-01-03",
+				"games": "11"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Amanda Ilestedt",
+				"birthDate": "1993-01-17",
+				"games": "6"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Therese Sjögran",
+				"birthDate": "1977-04-08",
+				"games": "209"
+			},
+			{
+				"number": "16",
+				"positionCode": "2",
+				"name": "Lina Nilsson",
+				"birthDate": "1987-06-17",
+				"games": "64"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Caroline Seger",
+				"birthDate": "1985-03-19",
+				"games": "137"
+			},
+			{
+				"number": "18",
+				"positionCode": "2",
+				"name": "Jessica Samuelsson",
+				"birthDate": "1993-01-30",
+				"games": "21"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Emma Lundh",
+				"birthDate": "1989-06-26",
+				"games": "11"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Emilia Appelqvist",
+				"birthDate": "1990-02-11",
+				"games": "4"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Carola Söberg",
+				"birthDate": "1982-07-29",
+				"games": "11"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Olivia Schough",
+				"birthDate": "1991-03-11",
+				"games": "22"
+			},
+			{
+				"number": "23",
+				"positionCode": "2",
+				"name": "Elin Rubensson",
+				"birthDate": "1993-05-11",
+				"games": "18"
+			}
+		]
+	},
+	"United States": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Solo, Hope",
+				"birthDate": "1981-07-30",
+				"games": "170"
+			},
+			{
+				"number": "2",
+				"positionCode": "4",
+				"name": "Leroux, Sydney",
+				"birthDate": "1990-05-07",
+				"games": "71"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Rampone, Christie",
+				"birthDate": "1975-06-24",
+				"games": "306"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Sauerbrunn, Becky",
+				"birthDate": "1985-06-06",
+				"games": "81"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Ohara",
+				"birthDate": "1988-08-04",
+				"games": "60"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Engen, Whitney",
+				"birthDate": "1987-11-28",
+				"games": "26"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Boxx, Shannon",
+				"birthDate": "1977-06-29",
+				"games": "190"
+			},
+			{
+				"number": "8",
+				"positionCode": "4",
+				"name": "Rodriguez, Amy",
+				"birthDate": "1987-02-17",
+				"games": "123"
+			},
+			{
+				"number": "9",
+				"positionCode": "3",
+				"name": "Oreilly",
+				"birthDate": "1985-01-02",
+				"games": "219"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Lloyd, Carli",
+				"birthDate": "1982-07-16",
+				"games": "195"
+			},
+			{
+				"number": "11",
+				"positionCode": "2",
+				"name": "Krieger, Ali",
+				"birthDate": "1984-07-28",
+				"games": "66"
+			},
+			{
+				"number": "12",
+				"positionCode": "3",
+				"name": "Holiday, Lauren",
+				"birthDate": "1987-09-30",
+				"games": "124"
+			},
+			{
+				"number": "13",
+				"positionCode": "4",
+				"name": "Morgan, Alex",
+				"birthDate": "1989-07-02",
+				"games": "84"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Brian, Morgan",
+				"birthDate": "1993-02-26",
+				"games": "29"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Rapinoe, Megan",
+				"birthDate": "1985-07-05",
+				"games": "102"
+			},
+			{
+				"number": "16",
+				"positionCode": "2",
+				"name": "Chalupny, Lori",
+				"birthDate": "1984-01-29",
+				"games": "102"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Heath, Tobin",
+				"birthDate": "1988-05-29",
+				"games": "92"
+			},
+			{
+				"number": "18",
+				"positionCode": "1",
+				"name": "Harris, Ashlyn",
+				"birthDate": "1985-10-19",
+				"games": "6"
+			},
+			{
+				"number": "19",
+				"positionCode": "2",
+				"name": "Johnston, Julie",
+				"birthDate": "1992-04-06",
+				"games": "12"
+			},
+			{
+				"number": "20",
+				"positionCode": "4",
+				"name": "Wambach, Abby",
+				"birthDate": "1980-06-02",
+				"games": "242"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Naeher, Alyssa",
+				"birthDate": "1988-04-20",
+				"games": "1"
+			},
+			{
+				"number": "22",
+				"positionCode": "2",
+				"name": "Klingenberg, Meghan",
+				"birthDate": "1988-08-02",
+				"games": "34"
+			},
+			{
+				"number": "23",
+				"positionCode": "4",
+				"name": "Press, Christen",
+				"birthDate": "1988-12-29",
+				"games": "45"
+			}
+		]
+	},
+	"Brazil": {
+		"trainer": "RafinhaÉrika",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Luciana",
+				"birthDate": "1987-07-24",
+				"games": "33"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Fabiana",
+				"birthDate": "1989-08-04",
+				"games": "53"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Monica",
+				"birthDate": "1987-04-21",
+				"games": "21"
+			},
+			{
+				"number": "4",
+				"positionCode": "4",
+				"name": "Rafinha",
+				"birthDate": "1988-08-18",
+				"games": "0"
+			},
+			{
+				"number": "5",
+				"positionCode": "3",
+				"name": "Andressinha",
+				"birthDate": "1995-05-01",
+				"games": "17"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Tamires",
+				"birthDate": "1987-10-10",
+				"games": "31"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Bia",
+				"birthDate": "1993-12-17",
+				"games": "16"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Thaisa",
+				"birthDate": "1988-12-17",
+				"games": "26"
+			},
+			{
+				"number": "9",
+				"positionCode": "3",
+				"name": "Andressa",
+				"birthDate": "1992-11-10",
+				"games": "36"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Marta",
+				"birthDate": "1986-02-19",
+				"games": "92"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Cristiane",
+				"birthDate": "1985-05-15",
+				"games": "106"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Bárbara",
+				"birthDate": "1988-04-04",
+				"games": "22"
+			},
+			{
+				"number": "13",
+				"positionCode": "2",
+				"name": "Poliana",
+				"birthDate": "1991-02-06",
+				"games": "32"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Géssica",
+				"birthDate": "1991-03-19",
+				"games": "0"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Tayla",
+				"birthDate": "1992-05-09",
+				"games": "31"
+			},
+			{
+				"number": "16",
+				"positionCode": "2",
+				"name": "Rafaelle",
+				"birthDate": "1991-06-18",
+				"games": "3"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Rosana",
+				"birthDate": "1982-07-07",
+				"games": "111"
+			},
+			{
+				"number": "18",
+				"positionCode": "4",
+				"name": "Raquel",
+				"birthDate": "1991-03-21",
+				"games": "18"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Maurine",
+				"birthDate": "1986-01-14",
+				"games": "56"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Formiga",
+				"birthDate": "1978-03-03",
+				"games": "131"
+			},
+			{
+				"number": "21",
+				"positionCode": "3",
+				"name": "Gabi Zanotti",
+				"birthDate": "1985-02-28",
+				"games": "20"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Darlene",
+				"birthDate": "1990-01-11",
+				"games": "31"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Letícia Izidoro",
+				"birthDate": "1994-08-13",
+				"games": "0"
+			}
+		]
+	},
+	"Costa Rica": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Dinnia Díaz",
+				"birthDate": "1988-01-14",
+				"games": "21"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Gabriela Guillén",
+				"birthDate": "1992-03-01",
+				"games": "10"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Emilie Valenciano",
+				"birthDate": "1997-02-15",
+				"games": "4"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Mariana Benavidez",
+				"birthDate": "1994-12-26",
+				"games": "12"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Diana Sáenz",
+				"birthDate": "1989-04-15",
+				"games": "48"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Carol Sánchez",
+				"birthDate": "1986-04-16",
+				"games": "33"
+			},
+			{
+				"number": "7",
+				"positionCode": "4",
+				"name": "Melissa Herrera",
+				"birthDate": "1996-10-10",
+				"games": "20"
+			},
+			{
+				"number": "8",
+				"positionCode": "2",
+				"name": "Daniela Cruz",
+				"birthDate": "1991-03-08",
+				"games": "33"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Carolina Venegas",
+				"birthDate": "1989-06-12",
+				"games": "35"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Shirley Cruz Traña",
+				"birthDate": "1985-08-28",
+				"games": "60"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Raquel Rodríguez",
+				"birthDate": "1993-10-28",
+				"games": "37"
+			},
+			{
+				"number": "12",
+				"positionCode": "2",
+				"name": "Lixy Rodríguez",
+				"birthDate": "1990-11-04",
+				"games": "47"
+			},
+			{
+				"number": "13",
+				"positionCode": "1",
+				"name": "Noelia Bermúdez",
+				"birthDate": "1994-09-20",
+				"games": "1"
+			},
+			{
+				"number": "14",
+				"positionCode": "4",
+				"name": "María Barrantes",
+				"birthDate": "1996-01-25",
+				"games": "20"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Cristin Granados",
+				"birthDate": "1989-08-19",
+				"games": "53"
+			},
+			{
+				"number": "16",
+				"positionCode": "3",
+				"name": "Katherine Alvarado",
+				"birthDate": "1991-04-11",
+				"games": "47"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Karla Villalobos",
+				"birthDate": "1989-07-16",
+				"games": "6"
+			},
+			{
+				"number": "18",
+				"positionCode": "1",
+				"name": "Yirlania Arroyo",
+				"birthDate": "1986-05-28",
+				"games": "40"
+			},
+			{
+				"number": "19",
+				"positionCode": "2",
+				"name": "Fabiola Sánchez",
+				"birthDate": "1993-04-09",
+				"games": "10"
+			},
+			{
+				"number": "20",
+				"positionCode": "4",
+				"name": "Wendy Acosta",
+				"birthDate": "1989-12-19",
+				"games": "38"
+			},
+			{
+				"number": "21",
+				"positionCode": "4",
+				"name": "Adriana Venegas",
+				"birthDate": "1991-09-28",
+				"games": "10"
+			},
+			{
+				"number": "22",
+				"positionCode": "2",
+				"name": "María Coto",
+				"birthDate": "1998-03-02",
+				"games": "3"
+			},
+			{
+				"number": "23",
+				"positionCode": "3",
+				"name": "Gloriana Villalobos",
+				"birthDate": "1999-08-20",
+				"games": "12"
+			}
+		]
+	},
+	"South Korea": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Jun Min-kyung",
+				"birthDate": "1985-01-16",
+				"games": "45"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Lee Eun-mi",
+				"birthDate": "1988-08-18",
+				"games": "60"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Lim Seon-joo",
+				"birthDate": "1990-11-27",
+				"games": "44"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Shim Seo-yeon",
+				"birthDate": "1989-04-15",
+				"games": "48"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Kim Do-yeon",
+				"birthDate": "1988-12-07",
+				"games": "60"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Hwang Bo-ram",
+				"birthDate": "1987-06-10",
+				"games": "32"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Jeon Ga-eul",
+				"birthDate": "1988-09-14",
+				"games": "67"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Cho So-hyun",
+				"birthDate": "1988-06-24",
+				"games": "78"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Park Eun-sun",
+				"birthDate": "1986-12-25",
+				"games": "32"
+			},
+			{
+				"number": "10",
+				"positionCode": "4",
+				"name": "Ji So-yun",
+				"birthDate": "1991-02-21",
+				"games": "74"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Jung Seol-bin",
+				"birthDate": "1990-06-01",
+				"games": "40"
+			},
+			{
+				"number": "12",
+				"positionCode": "4",
+				"name": "Yoo Young-a",
+				"birthDate": "1988-04-15",
+				"games": "63"
+			},
+			{
+				"number": "13",
+				"positionCode": "3",
+				"name": "Kwon Hah-nul",
+				"birthDate": "1988-03-07",
+				"games": "94"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Song Su-ran",
+				"birthDate": "1990-09-07",
+				"games": "20"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Park Hee-young",
+				"birthDate": "1991-03-21",
+				"games": "38"
+			},
+			{
+				"number": "16",
+				"positionCode": "3",
+				"name": "Kang Yu-mi",
+				"birthDate": "1991-10-05",
+				"games": "2"
+			},
+			{
+				"number": "17",
+				"positionCode": "2",
+				"name": "Kim Hye-yeong",
+				"birthDate": "1995-02-26",
+				"games": "7"
+			},
+			{
+				"number": "18",
+				"positionCode": "1",
+				"name": "Kim Jung-mi",
+				"birthDate": "1984-10-16",
+				"games": "89"
+			},
+			{
+				"number": "19",
+				"positionCode": "2",
+				"name": "Kim Soo-yun",
+				"birthDate": "1989-08-30",
+				"games": "43"
+			},
+			{
+				"number": "20",
+				"positionCode": "2",
+				"name": "Kim Hye-ri",
+				"birthDate": "1990-06-25",
+				"games": "45"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Yoon Young-guel",
+				"birthDate": "1987-10-28",
+				"games": "1"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Lee So-dam",
+				"birthDate": "1994-10-12",
+				"games": "17"
+			},
+			{
+				"number": "23",
+				"positionCode": "3",
+				"name": "Lee Geum-min",
+				"birthDate": "1994-04-07",
+				"games": "6"
+			}
+		]
+	},
+	"Spain": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Ainhoa Tirapu",
+				"birthDate": "1984-09-04",
+				"games": "43"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Celia Jiménez",
+				"birthDate": "1995-06-20",
+				"games": "3"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Leire Landa",
+				"birthDate": "1986-12-19",
+				"games": "20"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Melanie Serrano",
+				"birthDate": "1989-10-12",
+				"games": "9"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Ruth García",
+				"birthDate": "1987-04-26",
+				"games": "45"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Virginia Torrecilla",
+				"birthDate": "1994-09-04",
+				"games": "13"
+			},
+			{
+				"number": "7",
+				"positionCode": "4",
+				"name": "Natalia Pablos",
+				"birthDate": "1985-10-15",
+				"games": "17"
+			},
+			{
+				"number": "8",
+				"positionCode": "4",
+				"name": "Sonia Bermúdez",
+				"birthDate": "1984-11-18",
+				"games": "50"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Verónica Boquete",
+				"birthDate": "1987-04-09",
+				"games": "46"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Jennifer Hermoso",
+				"birthDate": "1990-05-09",
+				"games": "24"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Priscila Borja",
+				"birthDate": "1985-04-28",
+				"games": "22"
+			},
+			{
+				"number": "12",
+				"positionCode": "3",
+				"name": "Marta Corredera",
+				"birthDate": "1991-08-08",
+				"games": "25"
+			},
+			{
+				"number": "13",
+				"positionCode": "1",
+				"name": "Dolores Gallardo",
+				"birthDate": "1993-06-10",
+				"games": "7"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Victoria Losada",
+				"birthDate": "1991-03-05",
+				"games": "22"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Silvia Meseguer",
+				"birthDate": "1989-03-12",
+				"games": "35"
+			},
+			{
+				"number": "16",
+				"positionCode": "2",
+				"name": "Ivana Andrés",
+				"birthDate": "1994-07-01",
+				"games": "1"
+			},
+			{
+				"number": "17",
+				"positionCode": "2",
+				"name": "Elixabet Ibarra",
+				"birthDate": "1981-06-29",
+				"games": "42"
+			},
+			{
+				"number": "18",
+				"positionCode": "2",
+				"name": "Marta Torrejón",
+				"birthDate": "1990-02-27",
+				"games": "48"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Erika Vázquez",
+				"birthDate": "1983-02-16",
+				"games": "45"
+			},
+			{
+				"number": "20",
+				"positionCode": "2",
+				"name": "Irene Paredes",
+				"birthDate": "1991-07-04",
+				"games": "22"
+			},
+			{
+				"number": "21",
+				"positionCode": "3",
+				"name": "Alexia Putellas",
+				"birthDate": "1994-02-04",
+				"games": "19"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Amanda Sampedro",
+				"birthDate": "1993-06-26",
+				"games": "4"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Sandra Paños",
+				"birthDate": "1992-11-04",
+				"games": "3"
+			}
+		]
+	},
+	"Colombia": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Stefany Castaño",
+				"birthDate": "1994-01-11",
+				"games": "7"
+			},
+			{
+				"number": "2",
+				"positionCode": "3",
+				"name": "Carolina Arbeláez",
+				"birthDate": "1995-03-08",
+				"games": "1"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Natalia Gaitán",
+				"birthDate": "1991-04-03",
+				"games": "35"
+			},
+			{
+				"number": "4",
+				"positionCode": "3",
+				"name": "Diana Ospina",
+				"birthDate": "1989-03-03",
+				"games": "29"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Lina Granados",
+				"birthDate": "1994-05-19",
+				"games": "0"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Daniela Montoya",
+				"birthDate": "1990-08-22",
+				"games": "32"
+			},
+			{
+				"number": "7",
+				"positionCode": "4",
+				"name": "Ingrid Vidal",
+				"birthDate": "1991-04-22",
+				"games": "50"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Mildrey Pineda",
+				"birthDate": "1989-10-01",
+				"games": "25"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Oriánica Velásquez",
+				"birthDate": "1989-08-01",
+				"games": "37"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Yoreli Rincón",
+				"birthDate": "1993-07-27",
+				"games": "45"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Catalina Usme",
+				"birthDate": "1989-12-25",
+				"games": "40"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Sandra Sepúlveda",
+				"birthDate": "1988-03-03",
+				"games": "37"
+			},
+			{
+				"number": "13",
+				"positionCode": "2",
+				"name": "Angela Clavijo",
+				"birthDate": "1993-09-01",
+				"games": "15"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Nataly Arias",
+				"birthDate": "1986-04-02",
+				"games": "43"
+			},
+			{
+				"number": "15",
+				"positionCode": "4",
+				"name": "Tatiana Ariza",
+				"birthDate": "1991-02-21",
+				"games": "35"
+			},
+			{
+				"number": "16",
+				"positionCode": "4",
+				"name": "Lady Andrade",
+				"birthDate": "1992-01-10",
+				"games": "41"
+			},
+			{
+				"number": "17",
+				"positionCode": "2",
+				"name": "Carolina Arias",
+				"birthDate": "1990-09-02",
+				"games": "38"
+			},
+			{
+				"number": "18",
+				"positionCode": "4",
+				"name": "Yisela Cuesta",
+				"birthDate": "1991-09-27",
+				"games": "4"
+			},
+			{
+				"number": "19",
+				"positionCode": "3",
+				"name": "Leicy Santos",
+				"birthDate": "1996-05-16",
+				"games": "13"
+			},
+			{
+				"number": "20",
+				"positionCode": "4",
+				"name": "Laura Cosme",
+				"birthDate": "1992-03-05",
+				"games": "5"
+			},
+			{
+				"number": "21",
+				"positionCode": "3",
+				"name": "Isabella Echeverri",
+				"birthDate": "1994-06-16",
+				"games": "14"
+			},
+			{
+				"number": "22",
+				"positionCode": "1",
+				"name": "Catalina Pérez",
+				"birthDate": "1994-11-08",
+				"games": "4"
+			},
+			{
+				"number": "23",
+				"positionCode": "4",
+				"name": "Manuela González",
+				"birthDate": "1995-08-29",
+				"games": "1"
+			}
+		]
+	},
+	"England": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Karen Bardsley",
+				"birthDate": "1984-10-14",
+				"games": "43"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Alex Scott",
+				"birthDate": "1984-10-14",
+				"games": "123"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Claire Rafferty",
+				"birthDate": "1989-01-11",
+				"games": "9"
+			},
+			{
+				"number": "4",
+				"positionCode": "3",
+				"name": "Fara Williams",
+				"birthDate": "1984-01-25",
+				"games": "139"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Steph Houghton",
+				"birthDate": "1988-04-23",
+				"games": "53"
+			},
+			{
+				"number": "6",
+				"positionCode": "2",
+				"name": "Laura Bassett",
+				"birthDate": "1983-08-02",
+				"games": "49"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Jordan Nobbs",
+				"birthDate": "1992-12-08",
+				"games": "21"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Jill Scott",
+				"birthDate": "1987-02-02",
+				"games": "90"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Eniola Aluko",
+				"birthDate": "1987-02-21",
+				"games": "90"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Karen Carney",
+				"birthDate": "1987-08-01",
+				"games": "103"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Jade Moore",
+				"birthDate": "1990-10-22",
+				"games": "16"
+			},
+			{
+				"number": "12",
+				"positionCode": "2",
+				"name": "Lucy Bronze",
+				"birthDate": "1991-10-28",
+				"games": "16"
+			},
+			{
+				"number": "13",
+				"positionCode": "1",
+				"name": "Siobhan Chamberlain",
+				"birthDate": "1983-08-15",
+				"games": "33"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Alex Greenwood",
+				"birthDate": "1993-09-07",
+				"games": "12"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Casey Stoney",
+				"birthDate": "1982-05-13",
+				"games": "118"
+			},
+			{
+				"number": "16",
+				"positionCode": "3",
+				"name": "Katie Chapman",
+				"birthDate": "1982-06-15",
+				"games": "85"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Josanne Potter",
+				"birthDate": "1984-11-13",
+				"games": "19"
+			},
+			{
+				"number": "18",
+				"positionCode": "4",
+				"name": "Toni Duggan",
+				"birthDate": "1991-07-25",
+				"games": "25"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Jodie Taylor",
+				"birthDate": "1986-05-17",
+				"games": "8"
+			},
+			{
+				"number": "20",
+				"positionCode": "4",
+				"name": "Lianne Sanderson",
+				"birthDate": "1988-02-03",
+				"games": "46"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Carly Telford",
+				"birthDate": "1987-07-07",
+				"games": "5"
+			},
+			{
+				"number": "22",
+				"positionCode": "4",
+				"name": "Fran Kirby",
+				"birthDate": "1993-06-29",
+				"games": "8"
+			},
+			{
+				"number": "23",
+				"positionCode": "4",
+				"name": "Ellen White",
+				"birthDate": "1989-05-09",
+				"games": "50"
+			}
+		]
+	},
+	"France": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Céline Deville",
+				"birthDate": "1982-01-24",
+				"games": "65"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Wendie Renard",
+				"birthDate": "1990-07-20",
+				"games": "65"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Laure Boulleau",
+				"birthDate": "1986-10-22",
+				"games": "57"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Laura Georges",
+				"birthDate": "1984-08-20",
+				"games": "158"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Sabrina Delannoy",
+				"birthDate": "1986-05-18",
+				"games": "25"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Amandine Henry",
+				"birthDate": "1989-09-28",
+				"games": "39"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Kenza Dali",
+				"birthDate": "1991-07-31",
+				"games": "11"
+			},
+			{
+				"number": "8",
+				"positionCode": "2",
+				"name": "Jessica Houara",
+				"birthDate": "1987-09-29",
+				"games": "32"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Eugénie Le Sommer",
+				"birthDate": "1989-05-18",
+				"games": "104"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Camille Abily",
+				"birthDate": "1984-12-05",
+				"games": "145"
+			},
+			{
+				"number": "11",
+				"positionCode": "3",
+				"name": "Claire Lavogez",
+				"birthDate": "1994-06-18",
+				"games": "9"
+			},
+			{
+				"number": "12",
+				"positionCode": "3",
+				"name": "Élodie Thomis",
+				"birthDate": "1986-08-13",
+				"games": "116"
+			},
+			{
+				"number": "13",
+				"positionCode": "4",
+				"name": "Kadidiatou Diani",
+				"birthDate": "1995-04-01",
+				"games": "5"
+			},
+			{
+				"number": "14",
+				"positionCode": "3",
+				"name": "Louisa Nécib",
+				"birthDate": "1987-01-23",
+				"games": "125"
+			},
+			{
+				"number": "15",
+				"positionCode": "3",
+				"name": "Élise Bussaglia",
+				"birthDate": "1985-09-24",
+				"games": "143"
+			},
+			{
+				"number": "16",
+				"positionCode": "1",
+				"name": "Sarah Bouhaddi",
+				"birthDate": "1986-10-17",
+				"games": "93"
+			},
+			{
+				"number": "17",
+				"positionCode": "4",
+				"name": "Gaëtane Thiney",
+				"birthDate": "1985-10-28",
+				"games": "122"
+			},
+			{
+				"number": "18",
+				"positionCode": "4",
+				"name": "Marie-Laure Delie",
+				"birthDate": "1988-01-29",
+				"games": "85"
+			},
+			{
+				"number": "19",
+				"positionCode": "2",
+				"name": "Griedge Mbock Bathy",
+				"birthDate": "1995-02-26",
+				"games": "9"
+			},
+			{
+				"number": "20",
+				"positionCode": "2",
+				"name": "Anaïg Butel",
+				"birthDate": "1992-02-15",
+				"games": "8"
+			},
+			{
+				"number": "21",
+				"positionCode": "1",
+				"name": "Méline Gérard",
+				"birthDate": "1990-05-30",
+				"games": "1"
+			},
+			{
+				"number": "22",
+				"positionCode": "2",
+				"name": "Amel Majri",
+				"birthDate": "1993-01-25",
+				"games": "7"
+			},
+			{
+				"number": "23",
+				"positionCode": "3",
+				"name": "Kheira Hamraoui",
+				"birthDate": "1990-01-13",
+				"games": "15"
+			}
+		]
+	},
+	"Mexico": {
+		"trainer": "",
+		"players": [
+			{
+				"number": "1",
+				"positionCode": "1",
+				"name": "Cecilia Santiago",
+				"birthDate": "1994-10-19",
+				"games": "39"
+			},
+			{
+				"number": "2",
+				"positionCode": "2",
+				"name": "Kenti Robles",
+				"birthDate": "1991-02-15",
+				"games": "40"
+			},
+			{
+				"number": "3",
+				"positionCode": "2",
+				"name": "Christina Murillo",
+				"birthDate": "1993-01-28",
+				"games": "22"
+			},
+			{
+				"number": "4",
+				"positionCode": "2",
+				"name": "Alina Garciamendez",
+				"birthDate": "1991-04-16",
+				"games": "46"
+			},
+			{
+				"number": "5",
+				"positionCode": "2",
+				"name": "Valeria Miranda",
+				"birthDate": "1992-08-18",
+				"games": "12"
+			},
+			{
+				"number": "6",
+				"positionCode": "3",
+				"name": "Jennifer Ruiz",
+				"birthDate": "1983-08-09",
+				"games": "31"
+			},
+			{
+				"number": "7",
+				"positionCode": "3",
+				"name": "Nayeli Rangel",
+				"birthDate": "1992-02-28",
+				"games": "67"
+			},
+			{
+				"number": "8",
+				"positionCode": "3",
+				"name": "Teresa Noyola",
+				"birthDate": "1990-04-15",
+				"games": "38"
+			},
+			{
+				"number": "9",
+				"positionCode": "4",
+				"name": "Charlyn Corral",
+				"birthDate": "1991-09-11",
+				"games": "28"
+			},
+			{
+				"number": "10",
+				"positionCode": "3",
+				"name": "Stephany Mayor",
+				"birthDate": "1991-09-23",
+				"games": "50"
+			},
+			{
+				"number": "11",
+				"positionCode": "4",
+				"name": "Mónica Ocampo",
+				"birthDate": "1987-01-04",
+				"games": "73"
+			},
+			{
+				"number": "12",
+				"positionCode": "1",
+				"name": "Pamela Tajonar",
+				"birthDate": "1984-12-02",
+				"games": "37"
+			},
+			{
+				"number": "13",
+				"positionCode": "2",
+				"name": "Greta Espinoza",
+				"birthDate": "1995-06-05",
+				"games": "11"
+			},
+			{
+				"number": "14",
+				"positionCode": "2",
+				"name": "Arianna Romero",
+				"birthDate": "1992-07-29",
+				"games": "29"
+			},
+			{
+				"number": "15",
+				"positionCode": "2",
+				"name": "Bianca Sierra",
+				"birthDate": "1992-06-25",
+				"games": "30"
+			},
+			{
+				"number": "16",
+				"positionCode": "3",
+				"name": "Mónica Alvarado",
+				"birthDate": "1991-01-11",
+				"games": "20"
+			},
+			{
+				"number": "17",
+				"positionCode": "3",
+				"name": "Veronica Perez",
+				"birthDate": "1988-05-18",
+				"games": "73"
+			},
+			{
+				"number": "18",
+				"positionCode": "3",
+				"name": "Amanda Perez",
+				"birthDate": "1994-07-31",
+				"games": "4"
+			},
+			{
+				"number": "19",
+				"positionCode": "4",
+				"name": "Renae Cuéllar",
+				"birthDate": "1990-06-24",
+				"games": "26"
+			},
+			{
+				"number": "20",
+				"positionCode": "3",
+				"name": "Maria Sánchez",
+				"birthDate": "1996-02-20",
+				"games": "0"
+			},
+			{
+				"number": "21",
+				"positionCode": "4",
+				"name": "Anisa Guajardo",
+				"birthDate": "1991-03-10",
+				"games": "13"
+			},
+			{
+				"number": "22",
+				"positionCode": "3",
+				"name": "Fabiola Ibarra",
+				"birthDate": "1994-02-02",
+				"games": "3"
+			},
+			{
+				"number": "23",
+				"positionCode": "1",
+				"name": "Emily Alvarado",
+				"birthDate": "1998-06-09",
+				"games": "0"
+			}
+		]
+	}
+}

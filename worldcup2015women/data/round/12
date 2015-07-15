@@ -1,0 +1,74 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 17,
+    "title": "Quarter-finals",
+    "start_at": "2015/06/26",
+    "end_at": "2015/06/27"
+  },
+  "games": [
+    {
+      "team1_key": "ger",
+      "team1_title": "Germany",
+      "team1_code": "GER",
+      "team2_key": "fra",
+      "team2_title": "France",
+      "team2_code": "FRA",
+      "play_at": "2015/06/26",
+      "score1": 1,
+      "score2": 1,
+      "score1ot": 1,
+      "score2ot": 1,
+      "score1p": 5,
+      "score2p": 4
+    },
+    {
+      "team1_key": "chn",
+      "team1_title": "China PR",
+      "team1_code": "CHN",
+      "team2_key": "usa",
+      "team2_title": "United States",
+      "team2_code": "USA",
+      "play_at": "2015/06/26",
+      "score1": 0,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "aus",
+      "team1_title": "Australia",
+      "team1_code": "AUS",
+      "team2_key": "jpn",
+      "team2_title": "Japan",
+      "team2_code": "JPN",
+      "play_at": "2015/06/27",
+      "score1": 0,
+      "score2": 1,
+     "score1ot": null,
+           "score2ot": null,
+           "score1p": null,
+           "score2p": null
+    },
+    {
+      "team1_key": "eng",
+      "team1_title": "England",
+      "team1_code": "ENG",
+      "team2_key": "can",
+      "team2_title": "Canada",
+      "team2_code": "CAN",
+      "play_at": "2015/06/27",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+}
