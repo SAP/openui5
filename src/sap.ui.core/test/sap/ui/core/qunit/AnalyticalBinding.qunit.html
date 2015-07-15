@@ -42,8 +42,6 @@
 	o4aFakeService.fake({
 		baseURI: sServiceURI
 	});
-
-	//sServiceURI = "../../../../../proxy/http/dewdflhanaui5.emea.global.corp.sap:8000/tmp/d041558/cca/CCA.xsodata/";
 	
 	sinon.config.useFakeTimers = false;
 	
@@ -102,7 +100,8 @@
 			}],
 			useBatchRequests: true,
 			numberOfExpandedLevels: mParameters.numberOfExpandedLevels || 0,
-			noPaging: mParameters.noPaging || false
+			noPaging: mParameters.noPaging || false,
+			custom: mParameters.custom || undefined
 		});
 		sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
 		
@@ -247,7 +246,7 @@
 				equal(sURL.indexOf("$skip") == -1, true, "URL was created without $skip value");
 				
 				return vReturn;
-			}
+			};
 			
 			var iChangeHandlerCounter = 0;
 			function fnChangeHandler1() {
@@ -299,6 +298,47 @@
 		});
 	});
 
+	asyncTest("Check if custom URL parameters are attached", function() {
+		var that = this;
+		
+		setupAnalyticalBinding(2, {
+				custom: {
+					"search": "ABTestString"
+				}
+			}, function () {
+			
+			oBinding.attachChange(fnChangeHandler1);
+			var aContexts = oBinding.getContexts(0, 20, 100);
+			
+			equal(oBinding.sCustomParams, "search=ABTestString", "Internally the custom parameters are set");
+			
+			// simple hook to check if the URLs are correctly created
+			oModel.read = function () {
+				var vReturn = sap.ui.model.odata.v2.ODataModel.prototype.read.apply(this, arguments);
+				var sURL = arguments[0];
+				var mParameters = arguments[1];
+				
+				// check if custom parameter is contained in the URL
+				equal(mParameters.urlParameters.indexOf("search=ABTestString") >= 0, true, "custom parameter 'search' was added to the URL");
+				
+				// check if $search is NOT contained in the URL, this should not be allowed
+				equal(mParameters.urlParameters.indexOf("$search") == -1, true, "No $search was added");
+				
+				return vReturn;
+			};
+			
+			//just start() the test after the URL has been checked
+			var iChangeHandlerCounter = 0;
+			function fnChangeHandler1() {
+				iChangeHandlerCounter++;
+				if (iChangeHandlerCounter == 2) {
+					start();
+				}
+			}
+		
+		});
+	});
+	
 </script>
 
 </head>
