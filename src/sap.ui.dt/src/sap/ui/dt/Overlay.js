@@ -245,6 +245,14 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
+	 * @return {boolean} if the Overlay has focus	
+	 * @override
+	 */
+	Overlay.prototype.hasFocus = function() {
+		return document.activeElement === this.getFocusDomRef();
+	};
+
+	/** 
 	 * Sets an associated Element to create an overlay for
 	 * @param {string|sap.ui.core.Element} vElement element or element's id
 	 * @returns {sap.ui.dt.Overlay} returns this

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.OverlayUtil</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.Preloader");
+			jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.OverlayUtil");
+			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
+
+
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+					this.oButton01 = new sap.m.Button({
+						text : "Button1"
+					});
+					this.oButton02 = new sap.m.Button({
+						text : "Button2"
+					});
+					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oButton01, this.oButton02]});
+					this.oLayout.placeAt("content");
+					sap.ui.dt.Preloader.load(["sap.ui.layout.VerticalLayout", "sap.m.Button"]).then(function() {
+						that.oButton01Overlay = new sap.ui.dt.Overlay({
+							element : that.oButton01
+						});
+						that.oButton02Overlay = new sap.ui.dt.Overlay({
+							element : that.oButton02
+						});
+						that.oLayoutOverlay = new sap.ui.dt.Overlay({
+							element : that.oLayout
+						});
+						done();
+						sap.ui.getCore().applyChanges();
+					});
+				},
+				afterEach : function() {
+					this.oButton01.destroy();
+					this.oButton02.destroy();
+					this.oLayoutOverlay.destroy();
+					this.oButton01Overlay.destroy();
+					this.oButton02Overlay.destroy();
+				}
+			});
+
+			QUnit.test("when Overlays are created and the getNextOverlay function is called", function(assert) {
+				var oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oLayoutOverlay);
+				assert.strictEqual(oNextOverlay, this.oButton01Overlay, "with the layout overlay, then the first Button Overlay is returned");
+				var oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButton01Overlay);
+				assert.strictEqual(oNextOverlay, this.oButton02Overlay, "with the first button overlay, then the second Button Overlay is returned");
+				var oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButton02Overlay);
+				assert.ok(!oNextOverlay, "with the second button overlay, then undefined is returned");
+			});
+
+			QUnit.test("when Overlays are created and the getPreviousOverlay function is called", function(assert) {
+				var oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oLayoutOverlay);
+				assert.ok(!oPreviousOverlay, "with the layout overlay, then undefined is returned");
+				var oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oButton01Overlay);
+				assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay, "with the first button overlay, then layout overlay is returned");
+				var oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oButton02Overlay);
+				assert.strictEqual(oPreviousOverlay, this.oButton01Overlay, "with the second button overlay, then the first button overlay is returned");
+			});
+
+			QUnit.test("when Overlays are created and the getRootOverlay function is called", function(assert) {
+				var oRootOverlay = sap.ui.dt.OverlayUtil.getRootOverlay(this.oButton02Overlay);
+				assert.strictEqual(oRootOverlay, this.oLayoutOverlay, "with the second button overlay, then the layout root overlay is returned");
+			});
+
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.OverlayUtil</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>
