@@ -5,10 +5,11 @@
 // Provides control sap.m.MessagePopover.
 sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer", "./List",
 		"./StandardListItem", "./library", "sap/ui/core/Control", "sap/m/PlacementType", "sap/ui/core/IconPool",
-		"sap/ui/core/HTML", "sap/m/Text", "sap/ui/core/Icon", "sap/m/SegmentedButton", "sap/m/Page", "sap/m/NavContainer"],
+		"sap/ui/core/HTML", "sap/m/Text", "sap/ui/core/Icon", "sap/m/SegmentedButton", "sap/m/Page", "sap/m/NavContainer",
+		"sap/m/semantic/SemanticPage"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, List,
 			  StandardListItem, library, Control, PlacementType, IconPool,
-			  HTML, Text, Icon, SegmentedButton, Page, NavContainer) {
+			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage) {
 		"use strict";
 
 		/**
@@ -1063,8 +1064,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		MessagePopover.prototype.openBy = function (oControl) {
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup");
 
-			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover
-			if (oControl.getParent() instanceof sap.m.Toolbar &&
+			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover remove the Arrow
+			if ((oControl.getParent() instanceof sap.m.Toolbar || oControl.getParent() instanceof sap.m.semantic.SemanticPage) &&
 				oResponsivePopoverControl instanceof sap.m.Popover) {
 				this._decoratePopover(oResponsivePopoverControl);
 			}
