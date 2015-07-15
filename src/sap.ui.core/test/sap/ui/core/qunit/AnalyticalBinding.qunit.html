@@ -42,13 +42,15 @@
 	o4aFakeService.fake({
 		baseURI: sServiceURI
 	});
-
+	
 	sinon.config.useFakeTimers = false;
 	
 	var oModel,
 		oBinding;
 
-	var setupAnalyticalBinding = function(iVersion, fnODataV2Callback) {
+	var setupAnalyticalBinding = function(iVersion, mParameters, fnODataV2Callback) {
+		mParameters = mParameters || {};
+		
 		if (iVersion === 1) {
 			oModel = new sap.ui.model.odata.ODataModel(sServiceURI, {
 				json: true, 
@@ -97,7 +99,9 @@
 				visible: true
 			}],
 			useBatchRequests: true,
-			numberOfExpandedLevels: 0
+			numberOfExpandedLevels: mParameters.numberOfExpandedLevels || 0,
+			noPaging: mParameters.noPaging || false,
+			custom: mParameters.custom || undefined
 		});
 		sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
 		
@@ -113,7 +117,7 @@
 	};
 
 	asyncTest("Eventing - ODataModel V1 - DataRequested and DataReceived", function() {
-		setupAnalyticalBinding(1);
+		setupAnalyticalBinding(1, {});
 		
 		var that = this;
 		
@@ -135,7 +139,7 @@
 			equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
 			
 			equal(oRequestSentSpy.callCount, 1, "After Initial Loading: Number of requestSent Events = 1");
-			equal(oRequestCompletedSpy.callCount, 1, "After Initial Loading: Number of requestCompleted Events = 1")
+			equal(oRequestCompletedSpy.callCount, 1, "After Initial Loading: Number of requestCompleted Events = 1");
 		
 			oBinding.attachChange(fnChangeHandler2);
 			oBinding.expand(0);
@@ -173,7 +177,7 @@
 	asyncTest("Eventing - ODataModel V2 - DataRequested and DataReceived", function() {
 		var that = this;
 		
-		setupAnalyticalBinding(2, function () {
+		setupAnalyticalBinding(2, {}, function () {
 			var oRequestedSpy = sinon.spy(oBinding, 'fireDataRequested');
 			var oReceivedSpy = sinon.spy(oBinding, 'fireDataReceived');
 			
@@ -223,6 +227,47 @@
 		});
 	});
 
+	asyncTest("Check if custom URL parameters are attached", function() {
+		var that = this;
+		
+		setupAnalyticalBinding(2, {
+				custom: {
+					"search": "ABTestString"
+				}
+			}, function () {
+			
+			oBinding.attachChange(fnChangeHandler1);
+			var aContexts = oBinding.getContexts(0, 20, 100);
+			
+			equal(oBinding.sCustomParams, "search=ABTestString", "Internally the custom parameters are set");
+			
+			// simple hook to check if the URLs are correctly created
+			oModel.read = function () {
+				var vReturn = sap.ui.model.odata.v2.ODataModel.prototype.read.apply(this, arguments);
+				var sURL = arguments[0];
+				var mParameters = arguments[1];
+				
+				// check if custom parameter is contained in the URL
+				equal(mParameters.urlParameters.indexOf("search=ABTestString") >= 0, true, "custom parameter 'search' was added to the URL");
+				
+				// check if $search is NOT contained in the URL, this should not be allowed
+				equal(mParameters.urlParameters.indexOf("$search") == -1, true, "No $search was added");
+				
+				return vReturn;
+			};
+			
+			//just start() the test after the URL has been checked
+			var iChangeHandlerCounter = 0;
+			function fnChangeHandler1() {
+				iChangeHandlerCounter++;
+				if (iChangeHandlerCounter == 2) {
+					start();
+				}
+			}
+		
+		});
+	});
+	
 </script>
 
 </head>
