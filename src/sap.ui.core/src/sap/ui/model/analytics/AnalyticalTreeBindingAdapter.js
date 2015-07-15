@@ -618,7 +618,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		// this prevents the table from rerendering because, the autoExpand logic
 		// uses the same collapse/expand functions as the user interactions
 		if (!bAutoExpandRequestTriggered) {
-			this._fireChange(ChangeReason.Collapse);
+			this._fireChange({reason: ChangeReason.Collapse});
 		}
 	};
 
