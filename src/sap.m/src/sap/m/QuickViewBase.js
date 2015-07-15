@@ -257,12 +257,16 @@ sap.ui.define([
 			for (var i = 0; i < aPages.length; i++) {
 				var oQuickViewPage = aPages[i];
 
+				// clear the previously stored page
+				oQuickViewPage._oPage = null;
+
 				// create and set navigation information to the page
 				var mNavContext = {
 					hasBackButton : i > 0,
 					popover : this._oPopover,
 					navContainer : oNavContainer,
-					quickViewId : sId
+					quickViewId : sId,
+					quickView : this
 				};
 
 				oQuickViewPage.setNavContext(mNavContext);
