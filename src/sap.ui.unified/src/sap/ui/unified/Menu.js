@@ -173,6 +173,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	 * @private
 	 */
 	Menu.prototype.onAfterRendering = function() {
+		if (this.$().parent().attr("id") != "sap-ui-static") {
+			jQuery.sap.log.error("sap.ui.unified.Menu: The Menu is popup based and must not be rendered directly as content of the page.");
+			this.close();
+			this.$().remove();
+		}
+		
 		var aItems = this.getItems();
 
 		for (var i = 0; i < aItems.length; i++) {
