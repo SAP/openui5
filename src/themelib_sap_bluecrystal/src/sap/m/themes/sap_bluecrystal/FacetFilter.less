@@ -69,7 +69,7 @@
 }
 
 .sapMFF .sapMTB-Info-CTX .sapMBtnIcon .sapUiIcon {
-	color: @sapUiTextInverted;
+	color: @sapUiInvertedElement;
 }
 
 /* Move the reset button to the end of the toolbar */
@@ -86,7 +86,7 @@
 }
 
 .sap-desktop .sapMFFRefresh .sapMBtnTransparent > .sapMBtnIcon {
-	color: #ffffff;
+	color: @sapUiInvertedElement;
 }
 
 .sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:active {
@@ -102,10 +102,10 @@
 }
 
 .sapMFF .sapMFFArrowScroll:hover {
-	background-color: @sapUiButtonHoverBackground;
+	background-color: @sapUiButtonLiteHoverBackground;
 }
 
 .sapMFF .sapMFFArrowScroll:active {
-	background-color: @sapUiButtonActiveBackground;
-	color: @sapUiButtonActiveTextColor;
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiInvertedElement;
 }

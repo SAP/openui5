@@ -7,11 +7,11 @@
 
 /* List Header */
 .sapMTB.sapMUCListHeader {
-	background-color:		fade(@sapUiLightestBG,0%);
-	border-bottom-color:	@sapUiMediumBorder;
+	background-color:		@sapUiGroupTitleBackground;
+	border-bottom-color:	@sapUiGroupTitleBorderColor;
 	font-size:				@sapMFontHeader4Size;
 	font-weight:			@sapUiFontHeaderWeight;
-	color:					@sapUiHeaderText;
+	color:					@sapUiGroupTitleTextColor;
 	text-shadow:			0.0625rem 0rem @sapUiLightShadowTint;
 	font-family:			@sapUiFontHeaderFamily;
 }
@@ -20,7 +20,7 @@
 .sapMLIB.sapMUCListFirstItem,
 .sapMLIB.sapMUCListLastItem,
 .sapMLIB.sapMUCListItem {
-	border-bottom-color:	@sapUiExtraLightBorder;
+	border-bottom-color:	@sapUiListBorderColor;
 }
 
 /* Item Icon */
@@ -30,13 +30,13 @@
 
 /*if no image is provided a standard placeholder is displayed */
 .sapMUCItemPlaceholder {
-	background-color: @sapUiExtraLightBG;
+	background-color: darken(@sapUiGroupContentBackground, 5);
 }
 
 
 /*if no link is provided the file name is displayed as an disabled link */
 .sapMLnkDsbl.sapMUCFileName {
-	color: @sapUiDarkText;
+	color: @sapUiListTextColor;
 }
 
 /* regular and hover state */
@@ -46,7 +46,7 @@
 
 /* disabled state */
 .sapMBtnDisabled.sapMUCDeleteBtn > .sapMBtnInner > .sapMBtnIcon {
-	color: @sapUiBtnIcon;
+	color: @sapUiElement;
 }
 
 /*for width > 30rem the buttons should be displayed as buttons of type transparent */
@@ -80,7 +80,7 @@
 }
 
 .sapMUCAttrContainer {
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 }
 
 /* Text: Filename */

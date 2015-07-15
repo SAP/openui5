@@ -10,7 +10,7 @@
 }
 
 .sapMSliderInner {
-	background-color: @sapUiSliderBG;
+	background-color: lighten(@sapUiFieldBorderColor, 11.8);
 }
 
 .sapMSliderInner,
@@ -21,7 +21,7 @@
 /* slider progress bar */
 
 .sapMSliderProgress {
-	background-color: @sapUiSliderProgressBG;
+	background-color: @sapUiFieldActiveBorderColor;
 }
 
 /* slider handle */
@@ -39,14 +39,14 @@
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
 
-	background-color: @sapUiSliderHandleBG;
-	border: 0.125rem solid @sapUiSliderHandleBorder;
+	background-color: fade(darken(@sapUiFieldBorderColor, 15), 30);
+	border: 0.125rem solid darken(@sapUiFieldBorderColor, 15);
 }
 
 /* hover */
 
 .sap-desktop .sapMSliderHandle:hover {
-	background-color: @sapUiSliderHandleBGHover;
+	background-color: fade(darken(@sapUiFieldBorderColor, 15), 60);
 }
 
 /* focus */
@@ -58,8 +58,8 @@
 /* pressed */
 
 .sapMSliderPressed:not(.sapMSliderInnerDisabled) > .sapMSliderHandle {
-	background-color: @sapUiSliderHandleBGPressed;
-	border: 0.125rem solid @sapUiSliderHandleBorderPressed;
+	background-color: fade(@sapUiFieldActiveBorderColor, 30);
+	border: 0.125rem solid @sapUiFieldActiveBorderColor;
 }
 
 /* disabled */

@@ -54,23 +54,23 @@
 /* background */
 
 .sapMSwtOn:not(.sapMSwtAcceptReject) {
-	background: @sapUiSwitchOnBG;
-	border-color: @sapUiSwitchOnBorder;
+	background: @sapUiFieldActiveBackground;
+	border-color: @sapUiFieldActiveBorderColor;
 }
 
 .sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: @sapUiSwitchOffBG;
-	border-color: @sapUiSwitchOffBorder;
+	background: @sapUiFieldBackground;
+	border-color: @sapUiFieldBorderColor;
 }
 
 /* hover */
 
 .sapMSwt.sapMSwtHoverable:hover {
-	border-color: @sapUiSwitchBorderColorHover;
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 .sapMSwtHoverable.sapMSwtOn:not(.sapMSwtAcceptReject):hover {
-	background: @sapUiSwitchOnHoverBG;
+	background: darken(@sapUiFieldActiveBackground, 5);
 }
 
 /* disabled */
@@ -114,11 +114,11 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 }
 
 .sapMSwtOn .sapMSwtText {
-	color: @sapUiSwitchTextOn;
+	color: @sapUiContentContrastTextColor;
 }
 
 .sapMSwtOff .sapMSwtText {
-	color: @sapUiSwitchTextOff;
+	color: @sapUiContentLabelColor;
 }
 
 .sapMSwtTextOff {
@@ -159,11 +159,11 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 /* background */
 
 .sapMSwtOn .sapMSwtHandle {
-	background: @sapUiSwitchHandleOnBG;
+	background: @sapUiInvertedElement;
 }
 
 .sapMSwtOff .sapMSwtHandle {
-	background: @sapUiSwitchHandleOffBG;
+	background: @sapUiFieldBorderColor;
 }
 
 /* ====================================================== */
@@ -191,7 +191,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 /* background */
 
 .sapMSwtAcceptReject.sapMSwt {
-	background: @sapUiSwitchAcceptRejectBG;
+	background: @sapUiFieldBackground;
 }
 
 /* ------------------------------ */
@@ -219,7 +219,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 /* ------------------------------ */
 
 .sapMSwtAcceptReject .sapMSwtHandle {
-	background: @sapUiSwitchAcceptRejectBG;
+	background: @sapUiFieldBackground;
 	border-style: solid;
 	border-width: 0.125rem;
 }
