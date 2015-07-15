@@ -201,6 +201,8 @@
 			equals(oSearch1.getVisible(), true, "Default 'visible'");
 			equals(oSearch1.getEnableFilterMode(), false, "Default 'enableFilterMode'");
 			equals(oSearch1.getMaxLength(), 0, "Default 'maxLength'");
+			equals(oSearch1.getPlaceholder(), "", "Default 'placeholder'");
+			equals(oSearch1.getValueState(), sap.ui.core.ValueState.None, "Default 'valueState'");
 			equals(oSearch1.getTextAlign(), "Begin", "Default 'textAlign'");
 			equals(oSearch1.getVisibleItemCount(), 20, "Default 'visibleItemCount'");
 			equals(oSearch1.getStartSuggestion(), 3, "Default 'startSuggestion'");
@@ -221,6 +223,8 @@
 			oSearch1.setVisible(false);
 			oSearch1.setEnableFilterMode(true);
 			oSearch1.setMaxLength(5);
+			oSearch1.setPlaceholder("Click to search");
+			oSearch1.setValueState(sap.ui.core.ValueState.Error);
 			oSearch1.setTextAlign("End");
 			oSearch1.setVisibleItemCount(10);
 			oSearch1.setStartSuggestion(5);
@@ -239,6 +243,8 @@
 			equals(oSearch1.getVisible(), false, "Custom 'visible'");
 			equals(oSearch1.getEnableFilterMode(), true, "Custom 'enableFilterMode'");
 			equals(oSearch1.getMaxLength(), 5, "Custom 'maxLength'");
+			equals(oSearch1.getPlaceholder(), "Click to search", "Custom 'placeholder'");
+			equals(oSearch1.getValueState(), sap.ui.core.ValueState.Error, "Custom 'valueState'");
 			equals(oSearch1.getTextAlign(), "End", "Custom 'textAlign'");
 			equals(oSearch1.getVisibleItemCount(), 10, "Custom 'visibleItemCount'");
 			equals(oSearch1.getStartSuggestion(), 5, "Custom 'startSuggestion'");
@@ -275,6 +281,19 @@
 			checkWidth(false, true);
 			checkWidth(true, false);
 			checkWidth(true, true);
+		});
+		
+		test("ValueState", function() {
+			var iNumberOfClasses;
+			oSearch1.setValueState(sap.ui.core.ValueState.None);
+			sap.ui.getCore().applyChanges();
+			iNumberOfClasses = jQuery("#" + oSearch1._ctrl.getId()).attr("class").split(" ").length;
+			oSearch1.setValueState(sap.ui.core.ValueState.Error);
+			sap.ui.getCore().applyChanges();
+			ok(iNumberOfClasses < jQuery("#" + oSearch1._ctrl.getId()).attr("class").split(" ").length, "style class added for error state");
+			oSearch1.setValueState(sap.ui.core.ValueState.None);
+			sap.ui.getCore().applyChanges();
+			ok(iNumberOfClasses === jQuery("#" + oSearch1._ctrl.getId()).attr("class").split(" ").length, "error state style class removed again");
 		});
 		
 		test("List Expander Visibility", function() {

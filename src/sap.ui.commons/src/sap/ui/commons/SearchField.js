@@ -93,6 +93,18 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 	
 			/**
+			 * Visualizes warnings or errors related to the input field. Possible values: Warning, Error, Success, None.
+			 * @since 1.32
+			 */
+			valueState: {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
+
+			/**
+			 * Placeholder for the input field.
+			 * @since 1.32
+			 */
+			placeholder: {type : "string", group : "Appearance", defaultValue : ""},
+			
+			/**
 			 * Sets the horizontal alignment of the text
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
@@ -387,6 +399,22 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		return _set(this, "MaxLength", iMaxLength, false, true);
 	};
 	
+	SearchField.prototype.getValueState = function() {
+		return _get(this, "ValueState");
+	};
+	
+	SearchField.prototype.setValueState = function(sValueState) {
+		return _set(this, "ValueState", sValueState, false, true);
+	};
+	
+	SearchField.prototype.getPlaceholder = function() {
+		return _get(this, "Placeholder");
+	};
+	
+	SearchField.prototype.setPlaceholder = function(sText) {
+		return _set(this, "Placeholder", sText, false, true);
+	};
+	
 	SearchField.prototype.getTextAlign = function() {
 		return _get(this, "TextAlign");
 	};
@@ -527,6 +555,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			oNewControl.setEnabled(oOldControl.getEnabled());
 			oNewControl.setEditable(oOldControl.getEditable());
 			oNewControl.setMaxLength(oOldControl.getMaxLength());
+			oNewControl.setValueState(oOldControl.getValueState());
+			oNewControl.setPlaceholder(oOldControl.getPlaceholder());
 			oNewControl.setTextAlign(oOldControl.getTextAlign());
 			oNewControl.setTooltip(oOldControl.getTooltip());
 			oNewControl.setMaxPopupItems(oOldControl.getMaxPopupItems());
