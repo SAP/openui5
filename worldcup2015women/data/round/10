@@ -1,0 +1,74 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 11,
+    "title": "Matchday 11",
+    "start_at": "2015/06/17",
+    "end_at": "2015/06/17"
+  },
+  "games": [
+    {
+      "team1_key": "crc",
+      "team1_title": "Costa Rica",
+      "team1_code": "CRC",
+      "team2_key": "bra",
+      "team2_title": "Brazil",
+      "team2_code": "BRA",
+      "play_at": "2015/06/17",
+      "score1": 0,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "kor",
+      "team1_title": "South Korea",
+      "team1_code": "KOR",
+      "team2_key": "esp",
+      "team2_title": "Spain",
+      "team2_code": "ESP",
+      "play_at": "2015/06/17",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "mex",
+      "team1_title": "Mexico",
+      "team1_code": "MEX",
+      "team2_key": "fra",
+      "team2_title": "France",
+      "team2_code": "FRA",
+      "play_at": "2015/06/17",
+      "score1": 0,
+      "score2": 5,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+         {
+           "team1_key": "eng",
+           "team1_title": "England",
+           "team1_code": "ENG",
+           "team2_key": "col",
+           "team2_title": "Colombia",
+           "team2_code": "COL",
+           "play_at": "2015/06/17",
+           "score1": 2,
+           "score2": 1,
+           "score1ot": null,
+           "score2ot": null,
+           "score1p": null,
+           "score2p": null
+         }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 2,
+    "title": "Matchday 2",
+    "start_at": "2015/06/07",
+    "end_at": "2015/06/07"
+  },
+  "games": [
+    {
+      "team1_key": "nor",
+      "team1_title": "Norway",
+      "team1_code": "NOR",
+      "team2_key": "cmr",
+      "team2_title": "Cameroon",
+      "team2_code": "CMR",
+      "play_at": "2015/06/07",
+      "score1": 1,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "nor",
+      "team1_title": "Norway",
+      "team1_code": "NOR",
+      "team2_key": "tha",
+      "team2_title": "Thailand",
+      "team2_code": "THA",
+      "play_at": "2015/06/07",
+      "score1": 4,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "ger",
+      "team1_title": "Germany",
+      "team1_code": "GER",
+      "team2_key": "civ",
+      "team2_title": "Ivory Coast",
+      "team2_code": "CIV",
+      "play_at": "2015/06/07",
+      "score1": 10,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+}

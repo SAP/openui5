@@ -1,0 +1,74 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 5,
+    "title": "Matchday 5",
+    "start_at": "2015/06/11",
+    "end_at": "2015/06/11"
+  },
+  "games": [
+    {
+      "team1_key": "chn",
+      "team1_title": "China PR",
+      "team1_code": "CHN",
+      "team2_key": "ned",
+      "team2_title": "Netherlands",
+      "team2_code": "NED",
+      "play_at": "2015/06/11",
+      "score1": 1,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "can",
+      "team1_title": "Canada",
+      "team1_code": "CAN",
+      "team2_key": "nzl",
+      "team2_title": "New Zealand",
+      "team2_code": "NZL",
+      "play_at": "2015/06/11",
+      "score1": 0,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "ger",
+      "team1_title": "Germany",
+      "team1_code": "GER",
+      "team2_key": "nor",
+      "team2_title": "Norway",
+      "team2_code": "NOR",
+      "play_at": "2015/06/11",
+      "score1": 1,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+         {
+           "team1_key": "civ",
+           "team1_title": "Ivory Coast",
+           "team1_code": "CIV",
+           "team2_key": "tha",
+           "team2_title": "Thailand",
+           "team2_code": "THA",
+           "play_at": "2015/06/11",
+           "score1": 2,
+           "score2": 3,
+           "score1ot": null,
+           "score2ot": null,
+           "score1p": null,
+           "score2p": null
+         }
+  ]
+}

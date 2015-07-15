@@ -1,0 +1,74 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 3,
+    "title": "Matchday 3",
+    "start_at": "2015/06/08",
+    "end_at": "2015/06/08"
+  },
+  "games": [
+    {
+      "team1_key": "cmr",
+      "team1_title": "Cameroon",
+      "team1_code": "CMR",
+      "team2_key": "ecu",
+      "team2_title": "Ecuador",
+      "team2_code": "ECU",
+      "play_at": "2015/06/08",
+      "score1": 6,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "jpn",
+      "team1_title": "Japan",
+      "team1_code": "JPN",
+      "team2_key": "sui",
+      "team2_title": "Switzerland",
+      "team2_code": "SUI",
+      "play_at": "2015/06/08",
+      "score1": 1,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+     {
+          "team1_key": "swe",
+          "team1_title": "Sweden",
+          "team1_code": "SWE",
+          "team2_key": "nga",
+          "team2_title": "Nigeria",
+          "team2_code": "NGA",
+          "play_at": "2015/06/08",
+          "score1": 3,
+          "score2": 3,
+          "score1ot": null,
+          "score2ot": null,
+          "score1p": null,
+          "score2p": null
+        },
+        {
+          "team1_key": "usa",
+          "team1_title": "United States",
+          "team1_code": "USA",
+          "team2_key": "aus",
+          "team2_title": "Australia",
+          "team2_code": "AUS",
+          "play_at": "2015/06/08",
+          "score1": 3,
+          "score2": 1,
+          "score1ot": null,
+          "score2ot": null,
+          "score1p": null,
+          "score2p": null
+        }
+  ]
+}

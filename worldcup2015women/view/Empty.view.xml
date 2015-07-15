@@ -1,0 +1,5 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="view.Empty">
+	<Page title="FIFA World Cup&#8482; 2015" enableScrolling="false">
+		<Image width="100%" src="img/football.png" />
+	</Page>
+</mvc:View>

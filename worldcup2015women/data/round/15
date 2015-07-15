@@ -1,0 +1,29 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 20,
+    "title": "Final",
+    "start_at": "2015/07/05",
+    "end_at": "2015/07/05"
+  },
+  "games": [
+    {
+      "team1_key": "usa",
+      "team1_title": "United States",
+      "team1_code": "USA",
+      "team2_key": "jpn",
+      "team2_title": "Japan",
+      "team2_code": "JPN",
+      "play_at": "2015/07/05",
+      "score1": 5,
+      "score2": 2,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+}

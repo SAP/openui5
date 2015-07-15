@@ -1,0 +1,44 @@
+{
+  "event": {
+    "key": "world.2015",
+    "title": "World Cup 2015"
+  },
+  "round": {
+    "pos": 1,
+    "title": "Matchday 1",
+    "start_at": "2015/06/06",
+    "end_at": "2015/06/06"
+  },
+  "games": [
+    {
+      "team1_key": "can",
+      "team1_title": "Canada",
+      "team1_code": "CAN",
+      "team2_key": "chn",
+      "team2_title": "China PR",
+      "team2_code": "CHN",
+      "play_at": "2015/06/06",
+      "score1": 1,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+          "team1_key": "nzl",
+          "team1_title": "New Zealand",
+          "team1_code": "NZL",
+          "team2_key": "ned",
+          "team2_title": "Netherlands",
+          "team2_code": "NED",
+          "play_at": "2015/06/06",
+          "score1": 0,
+          "score2": 1,
+          "score1ot": null,
+          "score2ot": null,
+          "score1p": null,
+          "score2p": null
+        }
+  ]
+}
