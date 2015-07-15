@@ -403,7 +403,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @function
 		 */
 		ComboBoxBase.prototype.onsaphide = ComboBoxBase.prototype.onsapshow;
 
@@ -561,8 +560,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @returns {boolean} Whether the item is selected.
 		 * @protected
 		 * @since 1.24.0
-		 * @name sap.m.ComboBoxBase#isItemSelected
-		 * @function
 		 */
 		ComboBoxBase.prototype.isItemSelected = function() {};
 
@@ -573,8 +570,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @return {string[]}
 		 * @protected
 		 * @since 1.24.0
-		 * @name sap.m.ComboBoxBase#getKeys
-		 * @function
 		 */
 		ComboBoxBase.prototype.getKeys = function(aItems) {
 			for (var i = 0, aKeys = [], aItems = aItems || this.getItems(); i < aItems.length; i++) {
