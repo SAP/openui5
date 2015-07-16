@@ -542,6 +542,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
 
 		rm.addClass("sapUiTableCol");
+		if (oTable.getFixedColumnCount() === iIndex + 1) {
+			rm.addClass("sapUiTableColLastFixed");
+		}
+		
 		rm.writeClasses();
 		rm.addStyle("width", oColumn.getWidth());
 		if (oTable.getColumnHeaderHeight() > 0) {
