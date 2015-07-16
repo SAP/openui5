@@ -14,6 +14,7 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -69,6 +70,7 @@
 				strictEqual(oInput.getName(), "", 'The default name is ""');
 				strictEqual(oInput.getPlaceholder(), "", 'The default placeholder value is ""');
 				strictEqual(oInput.getEditable(), true, 'By default the input field is editable');
+				strictEqual(oInput.getTooltip(), null);
 
 				// cleanup
 				oInput.destroy();
@@ -1711,6 +1713,87 @@
 				var $Reference = jQuery.sap.byId($Input.attr("aria-describedby"));
 				strictEqual($Reference.text(), sTooltip, "Tooltip is added into aria-describedby");
 
+				oInput.destroy();
+			});
+
+			test("it should render the tooltip and the invisible element with the same value (test case 1)", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase({
+					tooltip: "tooltip"
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oInput.$().attr("title"), "tooltip");
+				strictEqual(oInput.$("describedby").text(), "tooltip");
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("it should render the tooltip and the invisible element with the same value (test case 2)", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.setTooltip("tooltip");
+
+				// assert
+				strictEqual(oInput.$().attr("title"), "tooltip");
+				strictEqual(oInput.$("describedby").text(), "tooltip");
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("it should not render the tooltip and the invisible element", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.setTooltip("");
+
+				// assert
+				strictEqual(oInput.$().attr("title"), undefined);
+				strictEqual(oInput.$("describedby").length, 0);
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("it should not render the tooltip and the invisible element (test case 2)", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase({
+					tooltip: "tooltip"
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.setTooltip("");
+
+				// assert
+				strictEqual(oInput.$().attr("title"), undefined);
+				strictEqual(oInput.$("describedby").length, 0);
+
+				// cleanup
 				oInput.destroy();
 			});
 
