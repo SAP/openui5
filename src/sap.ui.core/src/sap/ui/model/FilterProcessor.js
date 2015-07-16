@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/UnicodeNormalizer'],
+	function(jQuery, UnicodeNormalizer) {
 	"use strict";
-	
+
 	/**
 	 * Clientside Filter processor
 	 * @namespace sap.ui.model.FilterProcessor
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Usually this means, all filters applied to a single table column
 	 * are ORed, while filters on different table columns are ANDed.
 	 * Multiple MultiFilters are ORed.
-	 * 
+	 *
 	 * @param {array} aData the data array to be filtered
 	 * @param {array} aFilters the filter array
 	 * @param {function} fnGetValue the method to get the actual value to filter on
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global'],
 			aFiltered = [],
 			bGroupFiltered = false,
 			bFiltered = true;
-	
+
 		jQuery.each(aFilters, function(j, oFilter) {
 			if (oFilter.sPath !== undefined) {
 				aFilterGroup = oFilterGroups[oFilter.sPath];
@@ -89,11 +89,16 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Normalize filter value
-	 * 
+	 *
 	 * @private
 	 */
 	FilterProcessor.normalizeFilterValue = function(oValue){
 		if (typeof oValue == "string") {
+			// use canonical composition as recommended by W3C
+			// http://www.w3.org/TR/2012/WD-charmod-norm-20120501/#sec-ChoiceNFC
+			if (String.prototype.normalize) {
+				oValue = oValue.normalize("NFC");
+			}
 			return oValue.toUpperCase();
 		}
 		if (oValue instanceof Date) {
@@ -101,7 +106,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return oValue;
 	};
-	
+
 	/**
 	 * Resolve the client list binding and check if an index matches
 	 *
@@ -111,7 +116,7 @@ sap.ui.define(['jquery.sap.global'],
 		var that = this,
 			bMatched = false,
 			aFilters = oMultiFilter.aFilters;
-		
+
 		if (aFilters) {
 			jQuery.each(aFilters, function(i, oFilter) {
 				var bLocalMatch = false;
@@ -136,10 +141,10 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			});
 		}
-		
+
 		return bMatched;
 	};
-	
+
 	/**
 	 * Provides a JS filter function for the given filter
 	 */
@@ -149,7 +154,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		var oValue1 = this.normalizeFilterValue(oFilter.oValue1),
 			oValue2 = this.normalizeFilterValue(oFilter.oValue2);
-	
+
 		switch (oFilter.sOperator) {
 			case "EQ":
 				oFilter.fnTest = function(value) { return value == oValue1; }; break;
@@ -207,8 +212,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return oFilter.fnTest;
 	};
-	
+
 	return FilterProcessor;
-	
+
 });
-	
