@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	
 			this._oTable = this._oColumn.getParent();
 			if (this._oTable) {
-				jQuery.sap.assert(this._oTable instanceof sap.ui.table.Table, "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
+				jQuery.sap.assert(this._oTable instanceof sap.ui.table.Table || this._oTable instanceof sap.ui.table.DataTable, "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
 			}
 		}
 	};
@@ -382,7 +382,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 				if (bVisible || this._oTable._getVisibleColumnCount() > 1) {
 					var oTable = oColumn.getParent();
 					var bExecuteDefault = true;
-					if (oTable && oTable instanceof sap.ui.table.Table) {
+					if (oTable && (oTable instanceof sap.ui.table.Table || oTable instanceof sap.ui.table.DataTable)) {
 						bExecuteDefault = oTable.fireColumnVisibility({
 							column: oColumn,
 							newVisible: bVisible
