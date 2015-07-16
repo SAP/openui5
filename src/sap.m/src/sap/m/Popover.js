@@ -1505,7 +1505,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		if (oNavContent || oPageContent) {
 			oPageContent = oPageContent || oNavContent.getCurrentPage();
-			iPageHeaderHeight = oPageContent._getAnyHeader().$().outerHeight();
+
+			if (oPageContent) {
+				iPageHeaderHeight = oPageContent._getAnyHeader().$().outerHeight();
+			}
 		}
 
 		if ((oArrowPos.top + oPosParams._fArrowHeight) < (oPosParams._fHeaderHeight + oPosParams._fSubHeaderHeight) || ((oArrowPos.top + oPosParams._fArrowHeight) < iPageHeaderHeight)) {
