@@ -100,6 +100,10 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 * 
 	 */
 	OverlayUtil.getClosestScrollable = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
 		oOverlay = oOverlay.getParent();
 		while (oOverlay && oOverlay.isScrollable && !oOverlay.isScrollable()) {
 			oOverlay = oOverlay.getParent();
@@ -112,6 +116,10 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 * 
 	 */
 	OverlayUtil.getFirstChildOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
 		var aAggregationOverlays = oOverlay.getAggregationOverlays();
 		if (aAggregationOverlays.length > 0) {
 			for (var i = 0; i < aAggregationOverlays.length; i++) {
@@ -127,7 +135,31 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	/**
 	 * 
 	 */
+	OverlayUtil.getLastChildOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
+		var aAggregationOverlays = oOverlay.getAggregationOverlays();
+		if (aAggregationOverlays.length > 0) {
+			for (var i = 0; i < aAggregationOverlays.length; i++) {
+				var oAggregationOverlay = aAggregationOverlays[i];
+				var aChildren = oAggregationOverlay.getChildren();
+				if (aChildren.length > 0) {
+					return aChildren[aChildren.length - 1];
+				}
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
 	OverlayUtil.getPreviousSiblingOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
 		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
 		if (oParentAggregationOverlay) {
 			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
@@ -142,6 +174,10 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 * 
 	 */
 	OverlayUtil.getNextSiblingOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+
 		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
 		if (oParentAggregationOverlay) {
 			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
@@ -170,9 +206,12 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 			return oNextSiblingOverlay;
 		}
 
-		var oParentOverlay = oOverlay.getParentOverlay();
-		return this.getNextSiblingOverlay(oParentOverlay);
+		do {
+			oOverlay = oOverlay.getParentOverlay();
+			oNextSiblingOverlay = this.getNextSiblingOverlay(oOverlay);
+		} while (oOverlay && !oNextSiblingOverlay);
 
+		return oNextSiblingOverlay;
 	};
 
 	/**
@@ -190,6 +229,12 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 
 		var oPreviousSiblingOverlay = this.getPreviousSiblingOverlay(oOverlay);
 		if (oPreviousSiblingOverlay) {
+			var oLastChildOverlay = oPreviousSiblingOverlay;
+			do {
+				oPreviousSiblingOverlay = oLastChildOverlay;
+				oLastChildOverlay = this.getLastChildOverlay(oPreviousSiblingOverlay);
+			} while (oLastChildOverlay);
+
 			return oPreviousSiblingOverlay;
 		}
 
