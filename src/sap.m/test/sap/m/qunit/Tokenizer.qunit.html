@@ -342,6 +342,60 @@
 		equals(aTextArray1[2], "3)\t(/&%$)", "text separated");
 	});
 	
+	test("copy to clipboard", function() {
+		for (var i = 0; i < 4; i++) {
+			tokenizer1.addToken(new sap.m.Token({text: "Token " + i, key: "000" + i}));
+		}
+		
+		sap.ui.getCore().applyChanges();
+		
+		if (!sap.ui.Device.system.desktop && !sap.ui.Device.system.combi) {
+			ok(!tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
+			return;
+		} else {
+			ok(tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
+		}
+		
+		function testCopiedText(sText) {
+			equals(sText, "Token 0\r\nToken 1\r\nToken 2\r\nToken 3", "Copied text is correct");
+		}
+		
+		tokenizer1.focus();
+		tokenizer1.selectAllTokens(true);
+		
+		if (!sap.ui.Device.browser.phantomJS) {
+			try {
+				var oRange = window.getSelection().getRangeAt(0);
+				var oClipRef = tokenizer1.getDomRef("clip");
+				ok(oRange.startContainer === oClipRef, "Dummy Clip Element is start of selection");
+				ok(oRange.endContainer === oClipRef, "Dummy Clip Element is start of selection");
+			} catch (e) {
+				jQuery.sap.log.warning(e);
+				ok(false, "Problems with selection");
+			}
+		}
+
+		var oCopyEvent = jQuery.Event("copy");
+		oCopyEvent.originalEvent = {
+			clipboardData : {
+				setData : function(sType, sSelectedText) {
+					testCopiedText(sSelectedText);
+					equals(sType, "text/plain", "Copied text type is correct");
+				}
+			}
+		};
+		tokenizer1.$("clip").trigger(oCopyEvent);
+		
+		if (window.clipboardData) {
+			testCopiedText(window.clipboardData.getData("text"));
+			
+			//Reset clipboad again
+			window.clipboardData.setData("text", "Hello");
+		}
+
+		tokenizer1.destroyTokens();
+	});
+	
 </script>
 
 </head>
