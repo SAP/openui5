@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		metadata : {
 			stereotype : "control",
 			"abstract" : true,
-			publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getControlsByFieldGroup"],
+			publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getControlsByFieldGroup", "triggerValidateFieldGroup", "checkFieldGroupIds"],
 			library: "sap.ui.core",
 			properties : {
 
@@ -62,18 +62,18 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				"visible" : { type: "boolean", group : "Appearance", defaultValue: true },
 
 				/**
-				 * The id of a logical field group that this control belongs to. All fields in a logicalfield group should share the same fieldGroupId.
-				 * Once a logical field group is left, the validateFieldGroup event is fired.
+				 * The IDs of a logical field group that this control belongs to. All fields in a logical field group should share the same <code>fieldGroupId</code>.
+				 * Once a logical field group is left, the validateFieldGroup event is raised.
 				 *
 				 * @see {sap.ui.core.Control.attachValidateFieldGroup}
 				 * @since 1.31
 				 */
-				"fieldGroupId" : { type: "string", defaultValue: "" }
+				"fieldGroupIds" : { type: "string[]", defaultValue: [] }
 
 			},
 			events : {
 				/**
-				 * Event is fired if a logical field group defined by a fieldGroupId of a control was left or the user explicitly pressed a validation key combination.
+				 * Event is fired if a logical field group defined by <code>fieldGroupIds</code> of a control was left or the user explicitly pressed a validation key combination.
 				 * Use this event to validate data of the controls belonging to a field group.
 				 * @see {sap.ui.core.Control.setFieldGroupId}
 				 */
@@ -82,9 +82,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 					parameters : {
 
 						/**
-						 * Field group id of the logical field group to validate
+						 * field group IDs of the logical field groups to validate
 						 */
-						fieldGroupId : {type : "string"}
+						fieldGroupIds : {type : "string[]"}
 					}
 				}
 			}
@@ -838,18 +838,66 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		};
 
 		/**
-		 * Returns a list of all control with a field group id or the controls with the given field group id.
+		 * Returns a copy of the field group IDs array. Modification of the field group IDs
+		 * need to call {@link #setFieldGroupIds setFieldGroupIds} to apply the changes.
 		 *
-		 * @param {string} sFieldGroupId optional id of the field group
-		 * @return {array} The list of controls with a field group id
+		 * @name sap.ui.core.Control.prototype.getFieldGroupIds
+		 * @function
+		 *
+		 * @return {string[]} copy of the field group IDs
 		 * @public
 		 */
-		Control.prototype.getControlsByFieldGroupId = function(sFieldGroupId) {
-			return this.findAggregatedObjects(true, function(oObject) {
-				return oObject instanceof sap.ui.core.Control && 
-						oObject.getFieldGroupId &&
-						((typeof sFieldGroupId !== "string" && oObject.getFieldGroupId()) || (oObject.getFieldGroupId() === sFieldGroupId));
+
+		/**
+		 * Returns a list of all child controls with a field group ID.
+		 * See {@link #checkFieldGroupIds checkFieldGroupIds} for a description of the
+		 * <code>vFieldGroupIds</code> parameter.
+		 * Associated controls are not taken into account.
+		 * 
+		 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+		 * @return {sap.ui.core.Control[]} The list of controls with a field group ID
+		 * @public
+		 */
+		Control.prototype.getControlsByFieldGroupId = function(vFieldGroupIds) {
+			return this.findAggregatedObjects(true, function(oElement) {
+				if (oElement instanceof Control) {
+					return oElement.checkFieldGroupIds(vFieldGroupIds);
+				}
+				return false;
 			});
+		};
+
+		/**
+		 * Returns whether the control has a given field group.
+		 * If <code>vFieldGroupIds</code> is not given it checks whether at least one field group ID is given for this control.
+		 * If <code>vFieldGroupIds</code> is an empty array or empty string, true is returned if there is no field group ID set for this control.
+		 * If <code>vFieldGroupIds</code> is a string array or a string all expected field group IDs are checked and true is returned if all are contained for given for this control.
+		 * The comma delimiter can be used to seperate multiple field group IDs in one string.
+		 * 
+		 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+		 * @return {boolean} true if a field group ID matches
+		 * @public
+		 */
+		Control.prototype.checkFieldGroupIds = function(vFieldGroupIds) {
+			if (typeof vFieldGroupIds === "string") {
+				if (vFieldGroupIds === "") {
+					return this.checkFieldGroupIds([]);
+				}
+				return this.checkFieldGroupIds(vFieldGroupIds.split(","));
+			}
+			var aFieldGroups = this.getFieldGroupIds();
+			if (jQuery.isArray(vFieldGroupIds)) {
+				var iFound = 0;
+				for (var i = 0; i < vFieldGroupIds.length; i++) {
+					if (aFieldGroups.indexOf(vFieldGroupIds[i]) > -1) {
+						iFound++;
+					}
+				}
+				return iFound === vFieldGroupIds.length;
+			} else if (!vFieldGroupIds && aFieldGroups.length > 0) {
+				return true;
+			}
+			return false;
 		};
 
 		/**
@@ -859,16 +907,15 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		 *
 		 * @see {sap.ui.core.Control.attachValidateFieldGroup}
 		 *
-		 * @protected
+		 * @public
 		 */
-		Control.prototype.triggerValidateFieldGroup = function() {
+		Control.prototype.triggerValidateFieldGroup = function(aFieldGroupIds) {
 			this.fireValidateFieldGroup({
-				fieldGroupId : this.getFieldGroupId()
+				fieldGroupIds : aFieldGroupIds
 			});
 		};
 
 	})();
-
 
 	return Control;
 

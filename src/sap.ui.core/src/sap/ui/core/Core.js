@@ -353,7 +353,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 							 "attachLocalizationChanged", "detachLocalizationChanged",
 							 "attachLibraryChanged", "detachLibraryChanged",
 							 "isStaticAreaRef", "createComponent", "getRootComponent", "getApplication",
-							 "setMessageManager", "getMessageManager"]
+							 "setMessageManager", "getMessageManager","byFieldGroupId"]
 		}
 
 	});
@@ -2516,6 +2516,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this.oMessageManager = new MessageManager();
 		}
 		return this.oMessageManager;
+	};
+
+	/**
+	 * Returns a list of all controls with a field group ID.
+	 * See {@link sap.ui.core.Control#checkFieldGroupIds Control.prototype.checkFieldGroupIds} for a description of the
+	 * <code>vFieldGroupIds</code> parameter.
+	 * 
+	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+	 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
+	 * @public
+	 */
+	Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
+		var aResult = [];
+		for (var n in this.mElements) {
+			var oElement = this.mElements[n];
+			if (oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds)) {
+				aResult.push(oElement);
+			}
+		}
+		return aResult;
 	};
 
 	/**

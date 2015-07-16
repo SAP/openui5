@@ -925,7 +925,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			if (UIArea._iFieldGroupTriggerDelay) {
 				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupTriggerDelay);
 			}
-			this.getFieldGroupControl().triggerValidateFieldGroup();
+			var oCurrentControl = this.getFieldGroupControl(),
+				aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []);
+			if (aCurrentGroupIds.length > 0) {
+				oCurrentControl.triggerValidateFieldGroup(aCurrentGroupIds);
+			}
 			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
 		}
 		return false;
@@ -966,12 +970,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					return oElement instanceof sap.ui.core.Control;
 				});
 			}
-			var sCurrentGroupId = oCurrentControl ? oCurrentControl.getFieldGroupId() : "", 
-				sNewGroupId = oControl ? oControl.getFieldGroupId() : "";
-			if (sCurrentGroupId !== sNewGroupId) {
-				if (oCurrentControl && sCurrentGroupId) {
-					oCurrentControl.triggerValidateFieldGroup();
+			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []), 
+				aNewGroupIds = (oControl ? oControl.getFieldGroupIds() : []),
+				aTargetFieldGroupIds = [];
+			for (var i = 0; i < aCurrentGroupIds.length; i++) {
+				var sCurrentGroupId = aCurrentGroupIds[i];
+				if (aNewGroupIds.indexOf(sCurrentGroupId) === -1) {
+					aTargetFieldGroupIds.push(sCurrentGroupId);
 				}
+			}
+			if (aTargetFieldGroupIds.length > 0) {
+				oCurrentControl.triggerValidateFieldGroup(aTargetFieldGroupIds);
 			}
 			UIArea._oFieldGroupControl = oControl;
 		} 
