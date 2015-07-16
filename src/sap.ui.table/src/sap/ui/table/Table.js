@@ -108,7 +108,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			navigationMode : {type : "sap.ui.table.NavigationMode", group : "Behavior", defaultValue : sap.ui.table.NavigationMode.Scrollbar},
 
 			/**
-			 * Threshold to fetch the next chunk of data. The minimal threshold can be the visible row count of the Table. If the value is 0 then the thresholding is disabled.
+			 * The <code>threshold</code> defines how many additional (not yet visible records) shall be pre-fetched to enable smooth
+			 * scrolling. The threshold is always added to the <code>visibleRowCount</code>. If the <code>visibleRowCount</code> is 10 and the
+			 * <code>threshold</code> is 100, there will be 110 records fetched with the initial load.
+			 * If the <code>threshold</code> is lower than the <code>visibleRowCount</code>, the <code>visibleRowCount</code> will be used as
+			 * the <code>threshold</code>. If the value is 0 then the thresholding is disabled.
 			 */
 			threshold : {type : "int", group : "Appearance", defaultValue : 100},
 
@@ -484,7 +488,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 * This event is triggered when the custom filter item of the column menu is pressed. The column on which the event was triggered is passed as parameter.
 			 * @since 1.23.0
 			 */
-			customFilter : {}
+			customFilter : {
+				/**
+				 * The column instance on which the custom filter button was pressed
+				 */
+				column : {type : "sap.ui.table.Column"},
+
+				/**
+				 * The ID of the table instance
+				 */
+				id : {type : "String"}
+			}
 		}
 	}});
 
@@ -3984,10 +3998,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 
 	/**
-	 * Returns the context of a row by its index. Please note that for server based models like OData
-	 * the supplied index might not have been loaded yet. If the context is not available at the client
+	 * Returns the context of a row by its index. Please note that for server-based models like OData,
+	 * the supplied index might not have been loaded yet. If the context is not available at the client,
 	 * the binding will trigger a backend request and request this single context. Although this API
 	 * looks synchronous it may not return a context but load it and fire a change event on the binding.
+	 *
+	 * For server-based models you should consider to only make this API call when the index is within
+	 * the currently visible scroll area.
 	 *
 	 * @param {int} iIndex
 	 *         Index of the row to return the context from.
