@@ -3447,6 +3447,33 @@
 			}
 		});
 	});
+	
+	asyncTest("test oDataModel dataReceived event count", function() {
+		var iCount = 0;
+		var oInput1;
+		
+		oInput1 = new sap.m.Input();
+		oInput1.setModel(oModel);
+	
+		new sap.m.Input({
+			models: oModel,
+			objectBindings: {
+				undefined: {
+					path: "/ProductSet('HT-1000')",
+					events: {
+						dataReceived: function() {
+							ok(iCount == 0, "dataReceived called once");
+							iCount++;
+							oModel.setProperty("/ProductSet('HT-1000')/Name", "Test");
+							start();
+						}
+					}
+				}
+			},
+			value: "{Name}"
+		})
+	});
+	
 	asyncTest("test oDataModel listbinding with table - event order change/dataReceived", function() {
 		var iCount = 0,
 			iChange = 0,
