@@ -65,10 +65,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 			}
 
 			if (this.getMarkupDescription()) {
-				this.setProperty("description", jQuery.sap._sanitizeHTML(sDescription), true);
-			} else {
-				this.setProperty("description", sDescription, true);
+				sDescription = jQuery.sap._sanitizeHTML(sDescription);
 			}
+
+			this.setProperty("description", sDescription, true);
 
 			return this;
 		};
