@@ -422,7 +422,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		//If group mode is enabled nodes which have children are visualized as if they were group header
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
-			iCount = this.getVisibleRowCount();
+			iCount = this.getVisibleRowCount(),
+			aRows = this.getRows();
 
 		for (var iRow = 0; iRow < iCount; iRow++) {
 			var sFixed = "";
@@ -430,7 +431,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 				sFixed = "-fixed";
 			}
 			var oContext = this.getContextByIndex(iFirstRow + iRow),
-				$row = jQuery.sap.byId(this.getRows()[iRow] + sFixed),
+				$row = jQuery.sap.byId(aRows[iRow].getId() + sFixed),
 				$rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
 
 			if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
