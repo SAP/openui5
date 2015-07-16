@@ -247,7 +247,7 @@ sap.ui.define([
 				this.oHeaders["Content-Type"] = "application/json";
 			} else {
 				this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
-				this.oHeaders["Content-Type"] = "application/atom+xml;";
+				this.oHeaders["Content-Type"] = "application/atom+xml";
 			}
 
 			// Get CSRF token, if already available
