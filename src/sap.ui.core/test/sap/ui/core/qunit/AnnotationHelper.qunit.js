@@ -93,14 +93,12 @@ sap.ui.require([
 				<!-- standalone fillUriTemplate -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
 					<PropertyValue Property="Url">\
-						<UrlRef>\
-							<Apply Function="odata.fillUriTemplate">\
-								<String><![CDATA[#BusinessPartner-displayFactSheet?BusinessPartnerID={ID1}]]></String>\
-								<LabeledElement Name="ID1">\
-									<Path>BusinessPartnerID</Path>\
-								</LabeledElement>\
-							</Apply>\
-						</UrlRef>\
+						<Apply Function="odata.fillUriTemplate">\
+							<String><![CDATA[#BusinessPartner-displayFactSheet?BusinessPartnerID={ID1}]]></String>\
+							<LabeledElement Name="ID1">\
+								<Path>BusinessPartnerID</Path>\
+							</LabeledElement>\
+						</Apply>\
 					</PropertyValue>\
 					<PropertyValue Property="Value" String="n/a"/>\
 				</Record>\
@@ -156,99 +154,95 @@ sap.ui.require([
 				<!-- fillUriTemplate w/ constants -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
 					<PropertyValue Property="Url">\
-						<UrlRef>\
-							<Apply Function="odata.fillUriTemplate">\
-								<String><![CDATA[#{Bool}/{Date}/{DateTimeOffset}/{Decimal}/{Float}/{Guid}/{Int}/{String}/{TimeOfDay}]]></String>\
-								<LabeledElement Name="Bool">\
-									<Bool>true</Bool>\
-								</LabeledElement>\
-								<LabeledElement Name="Date">\
-									<Date>2015-03-24</Date>\
-								</LabeledElement>\
-								<LabeledElement Name="DateTimeOffset">\
-									<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
-								</LabeledElement>\
-								<LabeledElement Name="Decimal">\
-									<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
-								</LabeledElement>\
-								<LabeledElement Name="Float">\
-									<Float>-7.4503e-36</Float>\
-								</LabeledElement>\
-								<LabeledElement Name="Guid">\
-									<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
-								</LabeledElement>\
-								<LabeledElement Name="Int">\
-									<Int>9007199254740992</Int>\
-								</LabeledElement>\
-								<LabeledElement Name="String">\
-									<String>hello, world</String>\
-								</LabeledElement>\
-								<LabeledElement Name="TimeOfDay">\
-									<TimeOfDay>13:57:06</TimeOfDay>\
-								</LabeledElement>\
-							</Apply>\
-						</UrlRef>\
+						<Apply Function="odata.fillUriTemplate">\
+							<String><![CDATA[#{Bool}/{Date}/{DateTimeOffset}/{Decimal}/{Float}/{Guid}/{Int}/{String}/{TimeOfDay}]]></String>\
+							<LabeledElement Name="Bool">\
+								<Bool>true</Bool>\
+							</LabeledElement>\
+							<LabeledElement Name="Date">\
+								<Date>2015-03-24</Date>\
+							</LabeledElement>\
+							<LabeledElement Name="DateTimeOffset">\
+								<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+							</LabeledElement>\
+							<LabeledElement Name="Decimal">\
+								<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+							</LabeledElement>\
+							<LabeledElement Name="Float">\
+								<Float>-7.4503e-36</Float>\
+							</LabeledElement>\
+							<LabeledElement Name="Guid">\
+								<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+							</LabeledElement>\
+							<LabeledElement Name="Int">\
+								<Int>9007199254740992</Int>\
+							</LabeledElement>\
+							<LabeledElement Name="String">\
+								<String>hello, world</String>\
+							</LabeledElement>\
+							<LabeledElement Name="TimeOfDay">\
+								<TimeOfDay>13:57:06</TimeOfDay>\
+							</LabeledElement>\
+						</Apply>\
 					</PropertyValue>\
 					<PropertyValue Property="Value" String="n/a"/>\
 				</Record>\
 				<!-- fillUriTemplate + uriEncode w/ constants -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
 					<PropertyValue Property="Url">\
-						<UrlRef>\
-							<Apply Function="odata.fillUriTemplate">\
-								<String>/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection?\
+						<Apply Function="odata.fillUriTemplate">\
+							<String>/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection?\
 $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffset}\
 +and+Decimal+eq+{Decimal}+and+Double+eq+{Float}+and+GlobalUID+eq+{Guid}+and+Int64+eq+{Int}\
 +and+String40+eq+{String}+and+Time+eq+{TimeOfDay}</String>\
-								<LabeledElement Name="Bool">\
-									<Apply Function="odata.uriEncode">\
-										<Bool>false</Bool>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="Date">\
-									<Apply Function="odata.uriEncode">\
-										<Date>2099-03-25</Date>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="DateTimeOffset">\
-									<Apply Function="odata.uriEncode">\
-										<!-- TODO split seconds, e.g. ".123456789012" -->\
-										<DateTimeOffset>2099-01-06T07:25:21Z</DateTimeOffset>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="Decimal">\
-									<Apply Function="odata.uriEncode">\
-										<Decimal>-12345678901234567.12345678901234</Decimal>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="Float">\
-									<Apply Function="odata.uriEncode">\
-										<Float>1.69E+308</Float>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="Guid">\
-									<Apply Function="odata.uriEncode">\
-										<Guid>0050568D-393C-1EE4-A5AE-9AAE85248FF1</Guid>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="Int">\
-									<Apply Function="odata.uriEncode">\
-										<Int>-9223372036854775800</Int>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="String">\
-									<Apply Function="odata.uriEncode">\
-										<String>String Filtered Maxlength 40</String>\
-									</Apply>\
-								</LabeledElement>\
-								<LabeledElement Name="TimeOfDay">\
-									<Apply Function="odata.uriEncode">\
-										<!-- TODO split seconds, e.g. ".123456789012" -->\
-										<TimeOfDay>11:11:11</TimeOfDay>\
-									</Apply>\
-								</LabeledElement>\
-							</Apply>\
-						</UrlRef>\
+							<LabeledElement Name="Bool">\
+								<Apply Function="odata.uriEncode">\
+									<Bool>false</Bool>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="Date">\
+								<Apply Function="odata.uriEncode">\
+									<Date>2099-03-25</Date>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="DateTimeOffset">\
+								<Apply Function="odata.uriEncode">\
+									<!-- TODO split seconds, e.g. ".123456789012" -->\
+									<DateTimeOffset>2099-01-06T07:25:21Z</DateTimeOffset>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="Decimal">\
+								<Apply Function="odata.uriEncode">\
+									<Decimal>-12345678901234567.12345678901234</Decimal>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="Float">\
+								<Apply Function="odata.uriEncode">\
+									<Float>1.69E+308</Float>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="Guid">\
+								<Apply Function="odata.uriEncode">\
+									<Guid>0050568D-393C-1EE4-A5AE-9AAE85248FF1</Guid>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="Int">\
+								<Apply Function="odata.uriEncode">\
+									<Int>-9223372036854775800</Int>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="String">\
+								<Apply Function="odata.uriEncode">\
+									<String>String Filtered Maxlength 40</String>\
+								</Apply>\
+							</LabeledElement>\
+							<LabeledElement Name="TimeOfDay">\
+								<Apply Function="odata.uriEncode">\
+									<!-- TODO split seconds, e.g. ".123456789012" -->\
+									<TimeOfDay>11:11:11</TimeOfDay>\
+								</Apply>\
+							</LabeledElement>\
+						</Apply>\
 					</PropertyValue>\
 					<PropertyValue Property="Value" String="n/a"/>\
 				</Record>\
@@ -339,19 +333,17 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				<PropertyValue Property="ImageUrl">\
 					<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
 						<PropertyValue Property="Url">\
-							<UrlRef>\
-								<If>\
-									<Ne>\
-										<Path>EmailAddress</Path>\
-										<Null/>\
-									</Ne>\
-									<Apply Function="odata.concat">\
-										<String>mailto:</String>\
-										<Path>EmailAddress</Path>\
-									</Apply>\
+							<If>\
+								<Ne>\
+									<Path>EmailAddress</Path>\
 									<Null/>\
-								</If>\
-							</UrlRef>\
+								</Ne>\
+								<Apply Function="odata.concat">\
+									<String>mailto:</String>\
+									<Path>EmailAddress</Path>\
+								</Apply>\
+								<Null/>\
+							</If>\
 						</PropertyValue>\
 						<PropertyValue Property="Value" String="n/a"/>\
 					</Record>\
@@ -1036,7 +1028,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
+					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
 				oContext = oMetaModel.getContext(sMetaPath);
 
 			testBinding(oContext,
@@ -1050,7 +1042,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			strictEqual(format(oContext.getObject(), oContext), "{=odata.fillUriTemplate(${path:"
 				+ "'/##/dataServices/schema/[${namespace}===\\'GWSAMPLE_BASIC\\']/entityType/"
 				+ "[$\{name}===\\'BusinessPartner\\']/com.sap.vocabularies.UI.v1.Identification/"
-				+ "0/Url/UrlRef/Apply/Parameters/0/Value'},{'ID1':${BusinessPartnerID}})}")
+				+ "0/Url/Apply/Parameters/0/Value'},{'ID1':${BusinessPartnerID}})}")
 		});
 	});
 
@@ -1058,7 +1050,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	test("14.5.3.1.2 odata.fillUriTemplate: various constants", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/4/Url/UrlRef",
+					+ "/com.sap.vocabularies.UI.v1.Identification/4/Url",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
@@ -1088,7 +1080,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			return withGwsampleModel(function (oMetaModel) {
 				var oExpectedResult,
 					sMetaPath = sPath2BusinessPartner
-						+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
+						+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
 					oCurrentContext = oMetaModel.getContext(sMetaPath),
 					oRawValue = {
 						Apply: {
@@ -1112,7 +1104,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	test("14.5.3.1.3 Function odata.uriEncode", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
-					+ "/Url/UrlRef/Apply/Parameters/1/Value";
+					+ "/Url/Apply/Parameters/1/Value";
 
 			testBinding(oMetaModel.getContext(sMetaPath), "'Domplatz'", {
 				Address: {
@@ -1140,7 +1132,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function () {
 			return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 				var sMetaPath = sPath2BusinessPartner
-						+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/UrlRef/Apply/"
+						+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/Apply/"
 						+ "Parameters/" + (index + 1) + "/Value",
 					oCurrentContext = oMetaModel.getContext(sMetaPath),
 					oRawValue = oMetaModel.getObject(sMetaPath);
@@ -1159,7 +1151,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sExpectedUrl,
 				sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/UrlRef",
+					+ "/com.sap.vocabularies.UI.v1.Identification/5/Url",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
@@ -1192,7 +1184,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
-					+ "/Url/UrlRef";
+					+ "/Url";
 
 			testBinding(oMetaModel.getContext(sMetaPath),
 				"https://www.google.de/maps/place/%27Domplatz%27,%27Speyer%27",
@@ -1211,7 +1203,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
-					+ "/Url/UrlRef",
+					+ "/Url",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = {
 					Apply : {
@@ -1348,7 +1340,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	test("14.5.10 Expression edm:Null", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2Contact
-					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/Url/UrlRef",
+					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/Url",
 				oCurrentContext = oMetaModel.getContext(sMetaPath);
 
 			testBinding(oCurrentContext, undefined, {EmailAddress: null},

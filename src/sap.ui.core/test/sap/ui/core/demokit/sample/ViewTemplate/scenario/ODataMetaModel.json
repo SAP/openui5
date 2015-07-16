@@ -380,38 +380,36 @@
 								"String" : "Google Maps"
 							},
 							"Url" : {
-								"UrlRef" : {
-									"Apply" : {
-										"Name" : "odata.fillUriTemplate",
-										"Parameters" : [{
-											"Type" : "String",
-											"Value" : "https://www.google.de/maps/place/{street},{city}"
-										}, {
-											"Type" : "LabeledElement",
-											"Value" : {
-												"Apply" : {
-													"Name" : "odata.uriEncode",
-													"Parameters" : [{
-														"Type" : "Path",
-														"Value" : "Address/Street"
-													}]
-												}
-											},
-											"Name" : "street"
-										}, {
-											"Type" : "LabeledElement",
-											"Value" : {
-												"Apply" : {
-													"Name" : "odata.uriEncode",
-													"Parameters" : [{
-														"Type" : "Path",
-														"Value" : "Address/City"
-													}]
-												}
-											},
-											"Name" : "city"
-										}]
-									}
+								"Apply" : {
+									"Name" : "odata.fillUriTemplate",
+									"Parameters" : [{
+										"Type" : "String",
+										"Value" : "https://www.google.de/maps/place/{street},{city}"
+									}, {
+										"Type" : "LabeledElement",
+										"Value" : {
+											"Apply" : {
+												"Name" : "odata.uriEncode",
+												"Parameters" : [{
+													"Type" : "Path",
+													"Value" : "Address/Street"
+												}]
+											}
+										},
+										"Name" : "street"
+									}, {
+										"Type" : "LabeledElement",
+										"Value" : {
+											"Apply" : {
+												"Name" : "odata.uriEncode",
+												"Parameters" : [{
+													"Type" : "Path",
+													"Value" : "Address/City"
+												}]
+											}
+										},
+										"Name" : "city"
+									}]
 								}
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldWithUrl"
