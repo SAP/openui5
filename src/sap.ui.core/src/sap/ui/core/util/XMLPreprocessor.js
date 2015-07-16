@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			});
 
 		/**
-		 * Returns the callback interface for a call to the given control's formatter of the
+		 * Creates the callback interface for a call to the given control's formatter of the
 		 * binding part with given index.
 		 *
 		 * @param {sap.ui.core.util._with} oWithControl
@@ -54,21 +54,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 		 *   map/JSON-object with initial property values, etc.
 		 * @param {number} [i]
 		 *   index of part inside a composite binding
+		 * @param {sap.ui.model.Binding|sap.ui.model.Binding[]|sap.ui.model.Context}
+		 *   [vBindingOrContext]
+		 *   single binding or model context or array of parts; if this parameter is given,
+		 *   "oWithControl" and "i" are ignored, else it is lazily computed from those two
 		 * @returns {object}
 		 *   the callback interface
 		 */
-		function getInterface(oWithControl, mSettings, i) {
+		function createInterface(oWithControl, mSettings, i, vBindingOrContext) {
 			/*
-			 * Returns the binding related to the current formatter call.
+			 * Returns the single binding or model context related to the current formatter call.
+			 *
 			 * @param {number} [iPart]
-			 *   index of part in case of a root formatter for a composite binding
-			 * @returns {sap.ui.model.PropertyBinding}
+			 *   index of part in case of the root formatter of a composite binding
+			 * @returns {sap.ui.model.Binding|sap.ui.model.Context}
+			 *   single binding or model context
 			 */
-			function getBinding(iPart) {
-				var oBinding = oWithControl.getBinding("any");
-				return oBinding instanceof CompositeBinding
-					? oBinding.getBindings()[i === undefined/*root formatter*/ ? iPart : i]
-					: oBinding;
+			function getBindingOrContext(iPart) {
+				if (!vBindingOrContext) {
+					// lazy initialization
+					// BEWARE: this is not yet defined when createInterface() is called!
+					vBindingOrContext = oWithControl.getBinding("any");
+
+					if (vBindingOrContext instanceof CompositeBinding) {
+						vBindingOrContext = vBindingOrContext.getBindings();
+
+						if (i !== undefined) { // not a root formatter
+							vBindingOrContext = vBindingOrContext[i];
+						}
+					}
+				}
+
+				return Array.isArray(vBindingOrContext)
+					? vBindingOrContext[iPart]
+					: vBindingOrContext;
+			}
+
+			/**
+			 * Returns the resolved path for the given single binding or model context.
+			 *
+			 * @param {sap.ui.model.Binding|sap.ui.model.Context} oBindingOrContext
+			 *   single binding or model context
+			 * @returns {string}
+			 *   the resolved path
+			 */
+			function getPath(oBindingOrContext) {
+				return oBindingOrContext instanceof Context
+					? oBindingOrContext.getPath()
+					: oBindingOrContext.getModel().resolve(
+						oBindingOrContext.getPath(), oBindingOrContext.getContext());
 			}
 
 			/**
@@ -114,16 +148,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * the root of the composite binding in order to aggregate all parts like <code>
 			 * &lt;Text text="{parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'}"/>
 			 * </code>. In this case <code>oInterface.getPath(0)</code> refers to ".../Label" and
-			 * <code>oInterface.getPath(1)</code> refers to ".../Value". This means a root
-			 * formatter can access the ith part of the composite binding at will (since 1.31.0).
+			 * <code>oInterface.getPath(1)</code> refers to ".../Value". This means, the root
+			 * formatter can access the ith part of the composite binding at will (since 1.31.0);
+			 * see also {@link #getInterface getInterface}.
 			 * The function <code>foo</code> is called with arguments such that <code>
 			 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
 			 * holds.
 			 *
 			 * To distinguish those two use cases, just check whether
 			 * <code>oInterface.getModel() === undefined</code>, in which case the formatter is
-			 * called on root level. To find out the number of parts, probe for the smallest
-			 * non-negative integer where <code>oInterface.getModel(i) === undefined</code>.
+			 * called on root level of a composite binding. To find out the number of parts, probe
+			 * for the smallest non-negative integer where
+			 * <code>oInterface.getModel(i) === undefined</code>.
 			 * This additional functionality is, of course, not available from
 			 * {@link sap.ui.model.Context}, i.e. such formatters MUST be called with an instance
 			 * of this context interface.
@@ -135,38 +171,115 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 */
 			return /** @lends sap.ui.core.util.XMLPreprocessor.IContext */ {
 				/**
+				 * Returns a context interface for the indicated part in case of the root formatter
+				 * of a composite binding. The new interface provides access to the original
+				 * settings, but only to the model and path of the indicated part:
+				 * <pre>
+				 * this.getInterface(i).getSetting(sName) === this.getSetting(sName);
+				 * this.getInterface(i).getModel() === this.getModel(i);
+				 * this.getInterface(i).getPath() === this.getPath(i);
+				 * </pre>
+				 *
+				 * If a path is given, the new interface points to the resolved path as follows:
+				 * <pre>
+				 * this.getInterface(i, "foo/bar").getPath() === this.getPath(i) + "/foo/bar";
+				 * this.getInterface(i, "/absolute/path").getPath() === "/absolute/path";
+				 * </pre>
+				 * A formatter which is not at the root level of a composite binding can also
+				 * provide a path, but must not provide an index:
+				 * <pre>
+				 * this.getInterface("foo/bar").getPath() === this.getPath() + "/foo/bar";
+				 * this.getInterface("/absolute/path").getPath() === "/absolute/path";
+				 * </pre>
+				 * Note that at least one argument must be present.
+				 *
+				 * @param {number} [iPart]
+				 *   index of part in case of the root formatter of a composite binding
+				 * @param {string} [sPath]
+				 *   a path, interpreted relative to <code>this.getPath(iPart)</code>
+				 * @returns {sap.ui.core.util.XMLPreprocessor.IContext}
+				 *   the context interface related to the indicated part
+				 * @throws {Error} in case an index is given but the current interface does not
+				 *   belong to the root formatter of a composite binding, or in case the given
+				 *   index is invalid (e.g. missing or out of range), or in case a path is missing
+				 *   because no index is given, or in case a path is given but the model cannot not
+				 *   create a binding context synchronously
+				 * @public
+				 * @since 1.31.0
+				 */
+				getInterface : function (iPart, sPath) {
+					var oBaseContext, oBindingOrContext, oModel;
+
+					if (typeof iPart === "string") {
+						sPath = iPart;
+						iPart = undefined;
+					}
+
+					getBindingOrContext(); // initialize vBindingOrContext
+					if (Array.isArray(vBindingOrContext)) {
+						if (iPart >= 0 && iPart < vBindingOrContext.length) {
+							oBindingOrContext = vBindingOrContext[iPart];
+						} else {
+							throw new Error("Invalid index of part: " + iPart);
+						}
+					} else if (iPart !== undefined) {
+						throw new Error("Not the root formatter of a composite binding");
+					} else if (sPath) {
+						oBindingOrContext = vBindingOrContext;
+					} else {
+						throw new Error("Missing path");
+					}
+
+					if (sPath) {
+						oModel = oBindingOrContext.getModel();
+						if (sPath.charAt(0) !==  '/') { // relative path needs a base context
+							oBaseContext = oBindingOrContext instanceof Context
+								? oBindingOrContext
+								: oModel.createBindingContext(oBindingOrContext.getPath(),
+									oBindingOrContext.getContext());
+						}
+						oBindingOrContext = oModel.createBindingContext(sPath, oBaseContext);
+						if (!oBindingOrContext) {
+							throw new Error(
+								"Model could not create binding context synchronously: " + oModel);
+						}
+					}
+
+					return createInterface(null, mSettings, undefined, oBindingOrContext);
+				},
+
+				/**
 				 * Returns the model related to the current formatter call.
 				 *
-				 * @param {number} [i]
-				 *   index of part in case of a root formatter for a composite binding
+				 * @param {number} [iPart]
+				 *   index of part in case of the root formatter of a composite binding
 				 *   (since 1.31.0)
 				 * @returns {sap.ui.model.Model}
 				 *   the model related to the current formatter call, or (since 1.31.0)
-				 *   <code>undefined</code> in case of a root formatter if no <code>i</code> is
-				 *   given or if <code>i</code> is out of range
+				 *   <code>undefined</code> in case of a root formatter if no <code>iPart</code> is
+				 *   given or if <code>iPart</code> is out of range
 				 * @public
 				 */
-				getModel : function (i) {
-					var oBinding = getBinding(i);
-					return oBinding && oBinding.getModel();
+				getModel : function (iPart) {
+					var oBindingOrContext = getBindingOrContext(iPart);
+					return oBindingOrContext && oBindingOrContext.getModel();
 				},
 
 				/**
 				 * Returns the absolute path related to the current formatter call.
 				 *
-				 * @param {number} [i]
-				 *   index of part in case of a root formatter for a composite binding
+				 * @param {number} [iPart]
+				 *   index of part in case of the root formatter of a composite binding
 				 *   (since 1.31.0)
 				 * @returns {string}
 				 *   the absolute path related to the current formatter call, or (since 1.31.0)
-				 *   <code>undefined</code> in case of a root formatter if no <code>i</code> is
-				 *   given or if <code>i</code> is out of range
+				 *   <code>undefined</code> in case of a root formatter if no <code>iPart</code> is
+				 *   given or if <code>iPart</code> is out of range
 				 * @public
 				 */
-				getPath : function (i) {
-					var oBinding = getBinding(i);
-					return oBinding
-						&& oBinding.getModel().resolve(oBinding.getPath(), oBinding.getContext());
+				getPath : function (iPart) {
+					var oBindingOrContext = getBindingOrContext(iPart);
+					return oBindingOrContext && getPath(oBindingOrContext);
 				},
 
 				/**
@@ -220,7 +333,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				oInfo.mode = BindingMode.OneTime;
 				if (fnFormatter && fnFormatter.requiresIContext === true) {
 					oInfo.formatter
-					= fnFormatter.bind(null, getInterface(oWithControl, mSettings, i));
+					= fnFormatter.bind(null, createInterface(oWithControl, mSettings, i));
 				}
 			}
 
@@ -338,8 +451,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function debug(oElement) {
 					if (bDebug) {
-						jQuery.sap.log.debug((iNestingLevel < 10 ? "[ " : "[") + iNestingLevel
-							+ "] " + Array.prototype.slice.call(arguments, 1).join(" "),
+						jQuery.sap.log.debug(getNestingLevel()
+							+ Array.prototype.slice.call(arguments, 1).join(" "),
 							oElement && serializeSingleElement(oElement),
 							"sap.ui.core.util.XMLPreprocessor");
 					}
@@ -354,8 +467,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function debugFinished(oElement) {
 					if (bDebug) {
-						jQuery.sap.log.debug((iNestingLevel < 10 ? "[ " : "[") + iNestingLevel
-							+ "] Finished", "</" + oElement.nodeName + ">",
+						jQuery.sap.log.debug(getNestingLevel()
+							+ "Finished", "</" + oElement.nodeName + ">",
 							"sap.ui.core.util.XMLPreprocessor");
 					}
 				}
@@ -419,6 +532,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						}
 					}
 					return aChildren;
+				}
+
+				/**
+				 * Returns the current nesting level as a string in square brackets with proper
+				 * spacing.
+				 *
+				 * @returns {string}
+				 *   "[<level>] "
+				 */
+				function getNestingLevel() {
+					return (iNestingLevel < 10 ? "[ " : "[") + iNestingLevel + "] ";
 				}
 
 				/**
@@ -961,9 +1085,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							jQuery.sap.log.warning("Warning(s) during processing of " + sCaller,
 								null, "sap.ui.core.util.XMLPreprocessor");
 						}
-						jQuery.sap.log.warning(
-							(iNestingLevel < 10 ? "[ " : "[") + iNestingLevel + "] "
-								+ Array.prototype.slice.call(arguments, 1).join(" "),
+						jQuery.sap.log.warning(getNestingLevel()
+							+ Array.prototype.slice.call(arguments, 1).join(" "),
 							oElement && serializeSingleElement(oElement),
 							"sap.ui.core.util.XMLPreprocessor");
 					}

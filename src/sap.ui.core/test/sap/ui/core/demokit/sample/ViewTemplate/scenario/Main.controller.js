@@ -172,20 +172,20 @@ sap.ui.define([
 	 *   the resulting string value to write into the processed XML
 	 */
 	sap.ui.core.sample.ViewTemplate.scenario.formatParts = function (oInterface, vRawValue) {
-		var oContext, i, aResult;
+		var i, aResult;
 
 		/*
 		 * Delegates to {@link sap.ui.model.odata.AnnotationHelper#format} and wraps label texts
 		 * in square brackets.
 		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 * @param {sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
-		 * @param {any} [vRawValue]
+		 * @param {any} [vRawValue0]
 		 *   the raw value from the meta model
 		 * @returns {string}
 		 */
-		function formatLabelValue(oInterface, vRawValue) {
-			var sResult = sap.ui.model.odata.AnnotationHelper.format(oInterface, vRawValue);
+		function formatLabelValue(oInterface, vRawValue0) {
+			var sResult = sap.ui.model.odata.AnnotationHelper.format(oInterface, vRawValue0);
 			return jQuery.sap.endsWith(oInterface.getPath(), "/Label")
 				? "[" + sResult + "]"
 				: sResult;
@@ -199,9 +199,10 @@ sap.ui.define([
 				aResult = [];
 				// "probe for the smallest non-negative integer"
 				for (i = 0; oInterface.getModel(i); i += 1) {
-					oContext = oInterface.getModel(i).createBindingContext(oInterface.getPath(i));
-					// Note: arguments[i + 1] is the raw value of the ith part!
-					aResult.push(formatLabelValue(oContext, arguments[i + 1]));
+					aResult.push(
+						// Note: arguments[i + 1] is the raw value of the ith part!
+						formatLabelValue(oInterface.getInterface(i), arguments[i + 1])
+					);
 				}
 				return aResult.join(" ");
 			}
