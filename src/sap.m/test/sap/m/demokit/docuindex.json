@@ -1030,8 +1030,8 @@
 		},
 		{
 		  "id": "sap.m.sample.ToolbarShrinkable",
-		  "name": "Toolbar - Shrinkable",
-		  "description": "Toolbar items can be set as shrinkable to fit items into the container when overflow happens. You can configure this feature with providing ToolbarLayoutData which can enable/disable the shrinking or define shrinking priority with min/max width."
+		  "name": "Toolbar - Shrinkable items",
+		  "description": "Toolbar items can shrink/expand when the toolbar is resized. This behavior is enabled/disabled via the ToolbarLayoutData layout. It is also possible to set min/max width for shrinkable items."
 		},
 		{
 		  "id": "sap.m.sample.Link",
