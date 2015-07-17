@@ -1,0 +1,260 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/ReleaseNotes/ReleaseNotes-1.26
+    </title>
+        
+        
+        
+        
+        
+        
+        
+
+    <link rel="stylesheet" type="text/css" href="https://openui5.hana.ondemand.com/docs/guide/css/relnotes.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="ReleaseNotesfor1.26">Release Notes for 1.26</h1>
+<p>
+This page contains the release notes for the patches of the 1.26 release.
+</p>
+<h2 id="Version1.26.12June2015">Version 1.26.12 (June 2015)</h2>
+<p>
+A patch for the rel-1.26 code line. It contains the following fixes for the UI5 Core and Controls:
+</p>
+<p>
+<strong>Core</strong><br />
+</p>
+<ul><li>[FIX] core.Popup: Setting Focus in Internet Explorer After Open Fixed
+</li></ul><p>
+<strong>Inbox</strong><br />
+</p>
+<ul><li>[FIX] Close button on WebDynpro closes entire NWBC tab
+</li></ul>
+<h2 id="Version1.26.11April2015">Version 1.26.11 (April 2015)</h2>
+<p>
+A patch for the rel-1.26 code line. It contains the following fixes for the UI5 Core and Controls:
+</p>
+<p>
+<strong>Core</strong><br />
+</p>
+<ul><li>[FIX] DeriveMetamodel: Restore 'id' property in metamodel and templates
+</li><li>[FIX] ODataAnnotations: Alias replacement in AnnotationsPath Collections
+</li><li>[FIX] ODataModel: Don't destroy metadata when model is destroyed
+</li><li>[FIX] v2.ODataModel: Fix autorefresh with GET parameters
+</li><li>[FIX] v2.ODataModel: callFunction prameter not recognized if mode not set in metadata
+</li></ul><p>
+<strong>Mobile</strong><br />
+</p>
+<ul><li>[FIX] m.ListBase: Swipe content changes should not invalidate the list.
+</li><li>[FIX] sap.m.Dialog: Opening animation is changed from css to jquery animation
+</li><li>[FIX] sap.m.IconTabBar: Left padding is now correct
+</li><li>[FIX] sap.m.Input:  Changed ValueHelp icon size in compact mode
+</li><li>[FIX] sap.m.Link: Link without href doesn't trigger beforeunload anymore
+</li><li>[FIX] sap.m.NavContainer - removes removed pages from its navigation stack.
+</li><li>[FIX] sap.m.Tile: Proper handling of events onsapspace and onsapenter
+</li></ul><p>
+<strong>Others</strong><br />
+</p>
+<ul><li>[FIX] sap.ui.unified.FileUploader: Setting content-type for IE repaired
+</li></ul>
+<h2 id="Version1.26.10April2015">Version 1.26.10 (April 2015)</h2>
+<p>
+A patch for the rel-1.26 code line. It contains the following fixes for the UI5 Core and Controls:
+</p>
+<p>
+<strong>Core</strong><br />
+</p>
+<ul><li>[FIX] Device API: Windows 8 with touch is now recognized as a tablet
+</li><li>[FIX] sap.ui.core.Popup: Saving of "_followOfHandler" fixed
+</li><li>[FIX] sap.ui.core.RenderManager: Visible DOM elements in preserve area avoided
+</li></ul><p>
+<strong>Desktop</strong><br />
+</p>
+<ul><li>[FIX] sap.ui.commons.Dialog: Inital setting of focus fixed
+</li><li>[FIX] sap.ui.ux3.ToolPopup: Fixed popup position after changing its size
+</li></ul><p>
+<strong>Mobile</strong><br />
+</p>
+<ul><li>[FIX] sap.m.ListBase: Swipe content changes do not invalidate the list
+</li><li>[FIX] sap.m.Input: Width of F4 button on compact mode adjusted
+</li><li>[FIX] sap.m.Input: Suggestion opens only if minimal input was made
+</li><li>[FIX] sap.m.Popover: Closes if virtual keyboard is open and 'of' element is out of viewport
+</li><li>[FIX] sap.m.Popover: Arrow color corrected
+</li><li>[FIX] sap.m.Text: When text in an editable form is empty, min-height is added
+</li><li>[FIX] sap.m.UploadCollection: Fix for search and in app item navigation
+</li><li>[FIX] sap.m.ViewSettingsDialog: Sorting options are now clearly separated
+</li></ul><p>
+<strong>Others</strong><br />
+</p>
+<ul><li>[FIX] sap.ui.commons.ComboBox: Fixed text alignment in Internet Explorer 10
+</li><li>[FIX] sap.ui.unified.FileUploader: Internet Explorer change event handling fixed
+</li><li>[FIX] sap.ui.unified.FileUploader: Setting content-type for Internet Explorer repaired
+</li></ul>
+<h2 id="Version1.26.9March2015">Version 1.26.9 (March 2015)</h2>
+<p>
+A patch for the rel-1.26 code line. It contains the following fixes for the UI5 Core and Controls:
+</p>
+<p>
+<strong>Core</strong><br />
+</p>
+<ul><li>[FIX] Handlebars Templating: Support for named models in properties
+</li><li>[FIX] ODataListBinding: Fire change event if context is set to null 
+</li><li>[FIX] Refresh ODataContextBinding now refreshes dependent bindings
+</li><li>[FIX] sap.ui.core.routing.Router: Hash is not parsed if router is destroyed
+</li><li>[FIX] v2.ODataModel: URL parameters in callFunction encoded
+</li></ul><p>
+<strong>Desktop</strong><br />
+</p>
+<ul><li>[FIX] SimpleForm: Fixes problem with empty form containers on removeContent
+</li><li>[FIX] Splitter: Autoresize on bar move end enabled
+</li><li>[FIX] sap.ui.commons.RoadMap: Error avoided when scrolling to first visible step, in case the step is not yet rendered
+</li><li>[FIX] sap.ui.commons.TextField /ComboBox /DropdownBox: liveChange event
+</li><li>[FIX] sap.ui.table.*: The row header tooltip is corrected (for rows without binding context)
+</li><li>[FIX] ux3.ToolPopup & sap.ui.commons.Dialog: Focusable elements fixed
+</li></ul><p>
+<strong>Mobile</strong><br />
+</p>
+<ul><li>[FIX] sap.m.Input: removeAggreagtion: Returns correct value
+</li><li>[FIX] sap.m.ComboBox: Input events suppressed of read-only fields (Internet Explorer 11)
+</li><li>[FIX] sap.m.ComboBoxBase: Overlapping issue of the text on Internet Explorer 10 fixed (sap_bluecrystal theme)
+</li><li>[FIX] sap.m.DateRangeSelection: Change event not fired if nothing is changed
+</li><li>[FIX] sap.m.IconTabBar: Corrected invalidation flow
+</li><li>[FIX] sap.m.MultiInput: Placeholder covering ValueHelp button in Internet Explorer fixed
+</li><li>[Fix] sap.m.FacetFilter: Icon issue solved
+</li></ul><p>
+<strong>Others</strong><br />
+</p>
+<ul><li>[FIX] sap.ui.unified.FileUploader: Invisible + % width bug solved
+</li></ul>
+<h2 id="Version1.26.8March2015">Version 1.26.8 (March 2015)</h2>
+<p>
+A patch for the rel-1.26 code line. It contains the following fixes for the UI5 Core and Controls:
+</p>
+<p>
+<strong>Core</strong>
+</p>
+<ul><li>[FIX] Coldwater: Non-empty name prefixes now end with '/'
+</li><li>[FIX] Internet Explorer 9: Theme-Parameters when stylesheet limit reached are now loaded
+</li><li>[FIX] datajs: withCredentials flag after xhr.open call is set
+</li><li>[FIX] sap.ui.core.Device: Tablet with Samsung stock browser is now recognized correctly
+</li><li>[FIX] sap.ui.core.IconPool: Incorrectly mirrored icons in RTL (right-to-left) mode fixed
+</li><li>[FIX] sap.ui.core.Popup: autoclose now works when popup opened from another popup
+</li><li>[FIX] ux3.ToolPopup: TabChaining with TabStrip implemented
+</li></ul><p>
+<strong>Desktop</strong>
+</p>
+<ul><li>[FIX] Tree: Selection after model change restored
+</li><li>[FIX] sap.ui.commons.Dialog: Unnecessary CSS-class removed
+</li><li>[FIX] sap.m.DatePicker, sap.ui.commons.DatePicker: Keyboard navigation issues corrected
+</li><li>[FIX] sap.ui.AnalyticalTable: Selection of rows is now usable
+</li><li>[FIX] sap.ui.Table: Problem with toggling scrollbars solved
+</li><li>[FIX] sap.ui.Table: GroupHeader label no longer has incorrect positioning
+</li><li>[FIX] sap.ui.Table: Icons are now placed in the middle
+</li><li>[FIX] sap.ui.Table: Issue when resizing columns with frozen cols solved
+</li><li>[FIX] sap.ui.layout.form.Form: Keyboard navigation issues solved
+</li><li>[FIX] sap.ui.table.*: SHIFT+TAB now works (except for the column header)
+</li><li>[FIX] sap.ui.table.*: The table can be tabbed in non-accessibility mode
+</li><li>[FIX] sap.ui.table.AnalyticalTable: Row selection when grouped columns are invisible corrected
+</li><li>[FIX] ux3.ToolPopup: TabChaining with TabStrip implemented
+</li></ul><p>
+<strong>Mobile</strong>
+</p>
+<ul><li>[FIX] sap.m.CustomListItem: Text selection is now allowed
+</li><li>[FIX] sap.m.Table: Table popins fields are now positioned in the middle
+</li><li>[FIX] sap.sap.m.Bar: Issue when used in the context of sap.m.Dialog solved 
+</li><li>[FIX] sap.m.Button: In HCB in Compact mode line height is now fixed
+</li><li>[FIX] sap.m.DatePicker, sap.ui.commons.DatePicker: Keyboard navigation issues solved
+</li><li>[FIX] sap.m.Dialog: Horizontal scrolling is now kept after dialog reposition
+</li><li>[FIX] sap.m.FeedListItem: Long name and text cut off on popover corrected
+</li><li>[FIX] sap.m.FeedListItem: Text wrapping for Internet Explorer 10 solved
+</li><li>[FIX] sap.m.IconTabBar: Invalidation flow is now correct
+</li><li>[FIX] sap.m.IconTabBar: The first text is no longer clipped on mobile devices when the first filter is "showAll:true"
+</li><li>[FIX] sap.m.Input: The selected suggestion item can now be used
+</li><li>[FIX] sap.m.Input: ValueHelp icon on incorrect position if description used corrected
+</li><li>[FIX] sap.m.Input: Suggestion popup on tablets is no longer used
+</li><li>[FIX] sap.m.Popover: Popover is no longer closed when the right border of openby control stays 
+</li><li>[FIX] sap.m.Popover: No error is now logged when popover is autoclosed
+</li><li>[FIX] sap.m.UploadCollection: CSS adaptation for the first and last list item - the space between the items fits
+</li><li>[FIX] sap.m.UploadCollection: Call of Method setFileType with undefined parameter no longer triggers error
+</li><li>[FIX] sap.m.UploadCollection: Default tooltip of the FileUploader suppressed; Filename without any dot now possible
+</li><li>[FIX] sap.m.UploadCollection: Buttons no longer lie over text at resizing
+</li><li>[FIX] sap.m.UploadCollection: Conversion of file extension to lower case solved
+</li></ul><p>
+<strong>Others</strong>
+</p>
+<ul><li>[FIX] sap.m.Select: Overlapping issue of the text solved (sap_bluecrystal theme)
+</li><li>[FIX] sap.ui.AnalyticalTable: Rendering in non-compact mode corrected
+</li><li>[FIX] sap.ui.unified.FileUploader: buttonOnly mode when container is invisible corrected
+</li><li>[Fix] sap.ui.unified.FileUploader: Width for buttonOnly mode corrected
+</li></ul>
+<h2 id="Version1.26.7February2015">Version 1.26.7 (February 2015)</h2>
+<p>
+A patch for the rel-1.26 code line. It contains the following fixes for the UI5 Core and Controls:
+</p>
+<p>
+<strong>Core</strong><br />
+</p>
+<ul><li>[FIX] Keyboard handling: F6 navigation enabled for nested tabbable elements
+</li><li>[FIX] ODataMetadata: Check added to get navigation properties
+</li><li>[FIX] QUnit error reporting: Source info added
+</li><li>[FIX] sap.ui.core.Popup: Removal of the Old DOM-Ref
+</li><li>[FIX] sap.ui.core.ScrollEnablement: Resize listener de-registered during cleanup
+</li><li>[FIX] sap.ui.test.Opa5: waitFor#visible now also works if you only specify view or control type and the controls were not rendered yet
+</li><li>[FIX] v2.OdataModel: urlParameters not included in request url
+</li></ul><p>
+<strong>Desktop</strong><br />
+</p>
+<ul><li>[FIX] SimpleForm: Explored examples corrected
+</li><li>[FIX] ux3.NavigationBar: Overflow not checked if in inactive state
+</li><li>[FIX] ux3.NavigationBar: Overflow check removed on exit
+</li></ul><p>
+<strong>Mobile</strong><br />
+</p>
+<ul><li>[FIX] sap.m.Input: Home and End key brings error
+</li><li>[FIX] !P13nColumnsPanel.qunit.html: Reset stubbed timer functionality
+</li><li>[FIX] sap.m.FeedInput: Removed "&hellip;" from placeholder text
+</li><li>[FIX] sap.m.MultiComboBox: Placeholder overlays token (Internet Explorer)
+</li><li>[FIX] sap.m.SelectDialog: Focus changed after fixing liveChange event 
+</li><li>[FIX] sap.m.SplitContainer: Master button handled when nav container is added to detail area
+</li><li>[FIX] sap.m.UploadCollection: Last item in the list deleted
+</li><li>[FIX] sap.m.UploadCollection: Link opens in a new tab
+</li><li>[FIX] sap.m.UploadCollection: qUnits - 'Display' replaced by 'display'
+</li><li>[FIX] sap.m.UploadCollection: Set multiple to 'false' for 1.26 version
+</li><li>[FIX] sap.m.UploadCollection: 'fileName' and 'files' used instead of value
+</li></ul><p>
+<strong>Others</strong><br />
+</p>
+<ul><li>[FIX] sap.ui.unified.FileUploader: Content-Type for Internet Explorer header added
+</li><li>[FIX] sap.ui.unified.Menu: Scrolling in Platinum Theme enabled
+</li></ul>
+
+
+Older patches and the initial 1.26 release can be found <a href="https://openui5.hana.ondemand.com/#docs/guide/relnotes/ReleaseNotes-1.26.html">here</a>.
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>
