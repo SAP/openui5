@@ -43,7 +43,7 @@
 }
 
 .sapUiTreeNodeSelectedParent:Hover, .sapUiTreeNodeSelected:Hover {
-	background-color: @sapUiListHoverBackground;
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 .sapUiTreeNodeSelectedParent, .sapUiTreeNodeSelected {
@@ -58,6 +58,11 @@
 
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent:Hover,
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelected:Hover,
+.sapUiTreeNodeExpanded.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	background-image: url(img/tree/TreeNode_Exp.gif);
+}
+
 .sapUiTreeNodeExpanded.sapUiTreeNode:Hover{
 	background-color: @sapUiListHoverBackground;
 	background-image: url(img/tree/TreeNode_Exp.gif);
@@ -70,7 +75,12 @@
 
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent:Hover,
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelected:Hover,
-.sapUiTreeNodeCollapsed.sapUiTreeNode:Hover{
+.sapUiTreeNodeCollapsed.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	background-image: url(img/tree/TreeNode_Coll.gif);
+}
+
+.sapUiTreeNodeCollapsed.sapUiTreeNode:Hover {
 	background-color: @sapUiListHoverBackground;
 	background-image: url(img/tree/TreeNode_Coll.gif);
 }
