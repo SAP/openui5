@@ -585,21 +585,19 @@
               <PropertyValue Property="Label" String="Link to"/>
               <PropertyValue Property="Value" String="Google Maps"/>
               <PropertyValue Property="Url">
-                <UrlRef>
-                  <Apply Function="odata.fillUriTemplate">
-                    <String>https://www.google.de/maps/place/{street},{city}</String>
-                    <LabeledElement Name="street">
-                      <Apply Function="odata.uriEncode">
-                        <Path>Address/Street</Path>
-                      </Apply>
-                    </LabeledElement>
-                    <LabeledElement Name="city">
-                      <Apply Function="odata.uriEncode">
-                        <Path>Address/City</Path>
-                      </Apply>
-                    </LabeledElement>
-                  </Apply>
-                </UrlRef>
+                 <Apply Function="odata.fillUriTemplate">
+                   <String>https://www.google.de/maps/place/{street},{city}</String>
+                   <LabeledElement Name="street">
+                     <Apply Function="odata.uriEncode">
+                       <Path>Address/Street</Path>
+                     </Apply>
+                   </LabeledElement>
+                   <LabeledElement Name="city">
+                     <Apply Function="odata.uriEncode">
+                       <Path>Address/City</Path>
+                     </Apply>
+                   </LabeledElement>
+                 </Apply>
               </PropertyValue>
             </Record>
           </Collection>
