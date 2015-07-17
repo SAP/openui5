@@ -444,7 +444,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			iFirstFixedBottomRowIndex = iCount - iFixedBottomRowCount;
 
 		var iIndex = iFirstRow;
-
 		if (oBinding) {
 			for (var iRow = 0; iRow < iCount; iRow++) {
 				if (iFixedBottomRowCount > 0 && iRow >= iFirstFixedBottomRowIndex) {
