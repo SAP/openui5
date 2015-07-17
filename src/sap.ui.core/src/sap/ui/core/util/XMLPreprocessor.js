@@ -779,11 +779,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
 				function visitAttributes(oNode, oWithControl) {
-					var i, n,
+					var i,
 						oAttributesList = oNode.attributes;
 
 					if (oAttributesList) { // only if oNode is an Element
-						for (i = 0, n = oAttributesList.length; i < n; i += 1) {
+						// Note: iterate backwards to account for removal of attributes!
+						for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
 							resolveAttributeBinding(oNode, oAttributesList.item(i), oWithControl);
 						}
 					}
