@@ -22,12 +22,23 @@ sap.ui.require([
 		}
 	});
 
-	// Creates a jQuery.promise as mock for DataCache.readRange which is fulfilled asynchronously
-	// with the given vResult. The result either holds a number determining the length of the
-	// array with which the promise is resolved or an Error object with which it is rejected.
-	function createDeferredResult(vResult) {
+	/**
+	 * Creates a jQuery promise as mock for DataCache.readRange which is fulfilled
+	 * asynchronously with the given vResult. vResult either holds a number determining the length
+	 * of the array with which the promise is resolved or an Error object with which it is rejected.
+	 * iStart determines the start index for the records contained in the result.
+	 *
+	 * @param {number|Error} vResult
+	 *   array length if the promise is to be resolved or Error object if it is to be rejected
+	 * @param {number} [iStart=0]
+	 *   start index
+	 * @return {jQuery.Promise}
+	 *   the jQuery promise which is fulfilled as specified
+	 */
+	function createDeferredResult(vResult, iStart) {
 		var oDeferred = odatajs.deferred.createDeferred();
 
+		iStart = iStart || 0;
 		setTimeout(function () {
 			var oData,
 				i;
@@ -39,7 +50,12 @@ sap.ui.require([
 
 			oData = {value : []};
 			for (i = 0; i < vResult; i += 1) {
-				oData.value[i] = {Name : "Name " + i};
+				oData.value[i] = {
+					Name : "Name " + (iStart + i),
+					LOCATION : {
+						COUNTRY : "COUNTRY " + (iStart + i)
+					}
+				};
 			}
 			oDeferred.resolve(oData);
 		}, 0);
@@ -57,7 +73,7 @@ sap.ui.require([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
 
-			// create ODataModel and mock Olingo DataCache for source /service/Products
+			// create ODataModel and mock Olingo DataCache for source /service/EMPLOYEES
 			this.oModel = new ODataModel("/service");
 			this.oModel.setSizeLimit(3);
 			this.oDataCacheMock = this.oSandbox.mock(oDataCache);
@@ -73,12 +89,12 @@ sap.ui.require([
 	QUnit.test("getContexts creates cache once", function (assert) {
 		this.oDataCacheMock.expects("readRange").returns(createDeferredResult(0));
 
-		this.oModel.bindList("/Products").getContexts();
+		this.oModel.bindList("/EMPLOYEES").getContexts();
 
 		assert.ok(odatajs.cache.createDataCache.calledWithExactly({
 			mechanism : "memory",
-			name : "/service/Products",
-			source : "/service/Products"
+			name : "/service/EMPLOYEES",
+			source : "/service/EMPLOYEES"
 		}), odatajs.cache.createDataCache.printf("cache creation settings %C"));
 	});
 
@@ -134,7 +150,7 @@ sap.ui.require([
 
 				assert.strictEqual(aChildControls.length, iEntityCount, "# child controls");
 				for (i = 0; i < iEntityCount; i += 1) {
-					sExpectedPath = "/Products[" + (i + iStartIndex) + "];list=" + iListIndex;
+					sExpectedPath = "/EMPLOYEES[" + (i + iStartIndex) + "];list=" + iListIndex;
 					assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
 						sExpectedPath, "child control binding path: " + sExpectedPath);
 				}
@@ -153,12 +169,12 @@ sap.ui.require([
 			// code under test
 			oControl.setModel(this.oModel);
 			oControl.bindAggregation("items", jQuery.extend({
-				path : "/Products",
+				path : "/EMPLOYEES",
 				template : new TestControl()
 			}, oRange));
 
 			// check v4 ODataModel APIs are called as expected from ManagedObject
-			checkCall(this.oModel.bindList, "/Products", undefined, undefined, undefined,
+			checkCall(this.oModel.bindList, "/EMPLOYEES", undefined, undefined, undefined,
 				undefined);
 			checkCall(ODataListBinding.prototype.checkUpdate, true);
 			checkCall(ODataListBinding.prototype.getContexts, oRange.startIndex, oRange.length);
@@ -184,7 +200,7 @@ sap.ui.require([
 	QUnit.test("getContexts called directly provides contexts as return value and in change event",
 		function (assert) {
 		var done = assert.async(),
-			oListBinding = this.oModel.bindList("/Products"),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			iSizeLimit = this.oModel.iSizeLimit,
 			iRangeIndex = 0;
 
@@ -220,13 +236,13 @@ sap.ui.require([
 
 			for (i = 0; i < iLength; i += 1) {
 				sMessage = (bSync ? "Synchronous" : "Asynchronous") + " result"
-					+ "/Products[" + (iStart + i) + "], getContexts("
+					+ "/EMPLOYEES[" + (iStart + i) + "], getContexts("
 					+ iStart + "," + iLength + ")";
 				if (bSync && !oFixture[iRangeIndex].sync[i]) {
 					assert.strictEqual(aContexts[i], undefined, sMessage);
 				} else {
 					assert.strictEqual(aContexts[i].getPath(),
-						"/Products[" + (iStart + i)  + "];list=" + oListBinding.iIndex,
+						"/EMPLOYEES[" + (iStart + i)  + "];list=" + oListBinding.iIndex,
 						sMessage);
 				}
 			}
@@ -252,7 +268,7 @@ sap.ui.require([
 			function (assert) {
 		var done = assert.async(),
 			oError = new Error("Intentionally failed"),
-			oListBinding = this.oModel.bindList("/Products"),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oPromise = createDeferredResult(oError);
 
 		function onChange() {
@@ -266,7 +282,7 @@ sap.ui.require([
 		this.oDataCacheMock.expects("readRange").once().returns(createDeferredResult(2));
 		this.oDataCacheMock.expects("readRange").once().returns(oPromise);
 		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/Products with start index 1 and "
+			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 1 and "
 					+ "length 2",
 				oError, "sap.ui.model.odata.v4.ODataListBinding");
 
@@ -282,11 +298,11 @@ sap.ui.require([
 	QUnit.skip("getContexts handles error in change event handler", function (assert) {
 		var done = assert.async(),
 			oError = new SyntaxError("Intentionally failed"),
-			oListBinding = this.oModel.bindList("/Products");
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		this.oDataCacheMock.expects("readRange").once().returns(createDeferredResult(1));
 		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/Products with start index 0 and "
+			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 					+ "length 1",
 				oError, "sap.ui.model.odata.v4.ODataListBinding");
 		oListBinding.attachChange(function () {
@@ -298,7 +314,65 @@ sap.ui.require([
 		setTimeout(done, 10); //TODO Is there a better way to finalize the test after console log?
 	});
 
-	//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link
+
+	//*********************************************************************************************
+	QUnit.test("readValue accesses path with one segment on cached record", function (assert) {
+		var iIndex = Math.floor(Math.random() * 10), // some index
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(0, 10)
+			.once()
+			.returns(createDeferredResult(10));
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(iIndex, 1)
+			.thrice()
+			.returns(createDeferredResult(1, iIndex));
+		this.oLogMock.expects("warning")
+			.withExactArgs("Invalid segment Bar",
+				"path: Foo1/Bar" , "sap.ui.model.odata.v4.ODataListBinding");
+		oListBinding.getContexts(0, 10); // creates cache
+
+		return Promise.all([
+			oListBinding.readValue(iIndex, "LOCATION/COUNTRY").then(function (oValue) {
+				assert.strictEqual(oValue, "COUNTRY " + iIndex, "LOCATION/COUNTRY");
+			}),
+			oListBinding.readValue(iIndex, "Foo").then(function (oValue) {
+				assert.strictEqual(oValue, undefined, "Foo");
+			}),
+			oListBinding.readValue(iIndex, "Foo1/Bar").then(function (oValue) {
+				assert.strictEqual(oValue, undefined, "Foo1/Bar");
+			})
+		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("readValue rejects when accessing cached record", function (assert) {
+		var oError = new Error(),
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(0, 10)
+			.once()
+			.returns(createDeferredResult(10));
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(0, 1)
+			.once()
+			.returns(createDeferredResult(oError));
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES",
+				oError, "sap.ui.model.odata.v4.ODataListBinding");
+		oListBinding.getContexts(0, 10); // creates cache
+
+		return oListBinding.readValue(0, "foo/bar").then(
+			function () { assert.ok(false, "Unexpected success"); },
+			function (oError0) { assert.strictEqual(oError0, oError); }
+		);
+	});
+
+
+	//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
+	//  there is no jsdoc for v4.ODataModel
 	//TODO lists within lists for navigation properties contained in cache via $expand
 	//     enhance integration test first!
 	//TODO lists within lists for deferred navigation or structural properties

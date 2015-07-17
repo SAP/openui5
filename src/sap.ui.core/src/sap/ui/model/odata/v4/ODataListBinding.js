@@ -85,10 +85,10 @@ sap.ui.define([
 				source : sUrl
 			});
 		}
-		this.oCache.readRange(iStart, iLength).then(function (mResult) {
+		this.oCache.readRange(iStart, iLength).then(function (oResult) {
 			var bChanged = false;
 
-			mResult.value.forEach(function (oEntity, i) {
+			oResult.value.forEach(function (oEntity, i) {
 				var iIndex = iStart + i;
 
 				if (that.aContexts[iIndex] === undefined) {
@@ -107,6 +107,47 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.ODataListBinding");
 		});
 		return this.aContexts.slice(iStart, iStart + iLength);
+	};
+
+	/**
+	 * Returns a promise to read the value for the given path in the list binding item with the
+	 * given index.
+	 *
+	 * @param {number} iIndex
+	 *   the item's index
+	 * @param {string} sPath
+	 *   the path to the property
+	 * @return {Promise}
+	 *   the promise which is resolved with the value
+	 * @private
+	 */
+	ODataListBinding.prototype.readValue = function (iIndex, sPath) {
+		var that = this;
+
+		return new Promise(function (fnResolve, fnReject) {
+			that.oCache.readRange(iIndex, 1).then(function (oData) {
+				var oResult = oData.value[0];
+
+				sPath.split("/").every(function (sSegment) {
+					if (!oResult){
+						jQuery.sap.log.warning("Invalid segment " + sSegment, "path: " + sPath,
+							"sap.ui.model.odata.v4.ODataListBinding");
+						return false;
+					}
+					oResult = oResult[sSegment];
+					return true;
+				});
+				fnResolve(oResult);
+			}, function (oError) {
+				var oModel = that.getModel(),
+					sUrl = oModel.sServiceUrl + oModel.resolve(that.getPath(), that.getContext());
+
+				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
+					+ sUrl,
+					oError, "sap.ui.model.odata.v4.ODataListBinding");
+				fnReject(oError);
+			});
+		});
 	};
 
 	return ODataListBinding;

@@ -158,15 +158,17 @@ sap.ui.define([
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
-			var oListCache,
-				aMatches = rListBindingPath.exec(sPath), // /TEAMS[2];list=0/Name
+			var aMatches = rListBindingPath.exec(sPath), // /TEAMS[2];list=0/Name
 				sRequestUri;
 
-			if (aMatches) { // path resolves to cache of a list binding
-				oListCache = that.aLists[Number(aMatches[2])].oCache;
-				oListCache.readRange(Number(aMatches[1]), 1).then(function (oData) {
-					fnResolve({value: oData.value[0][aMatches[3]]});
-				});
+			if (aMatches) { // use list binding to retrieve the value
+				that.aLists[Number(aMatches[2])].readValue(Number(aMatches[1]), aMatches[3]).then(
+					function (oValue) {
+						fnResolve({value : oValue});
+					},
+					function (oError) {
+						fnReject(oError);
+					});
 				return;
 			}
 

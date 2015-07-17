@@ -223,23 +223,38 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read with list binding specific path reads from list binding cache",
-		function (assert) {
-			var iIndex = Math.floor(Math.random() * 50), // some index
-				oModel = createModel(),
-				oListBinding = oModel.bindList("/TEAMS"),
-				oResult = {value : [{"Name" : "Business Suite"}]};
+	QUnit.test("read for list binding path uses ODataListBinding#readValue", function (assert) {
+		var iIndex = Math.floor(Math.random() * 50), // some index
+			oModel = createModel(),
+			oListBinding = oModel.bindList("/TEAMS"),
+			oResult = {};
 
-			oListBinding.oCache = {readRange : function () {}};
-			this.oSandbox.mock(oListBinding.oCache).expects("readRange").withExactArgs(iIndex, 1)
-				.once().returns(Promise.resolve(oResult));
+		this.oSandbox.mock(oListBinding).expects("readValue").withExactArgs(iIndex, "foo/bar")
+			.returns(Promise.resolve(oResult));
+		this.oSandbox.mock(odatajs.oData).expects("read").never();
+
+		return oModel.read("/TEAMS[" + iIndex + "];list=0/foo/bar").then(function (oData) {
+			assert.deepEqual(oData, {value : oResult});
+			assert.strictEqual(oData.value, oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read for list binding path propagates ODataListBinding#readValue failure",
+		function (assert) {
+			var oModel = createModel(),
+				oListBinding = oModel.bindList("/TEAMS"),
+				oError = new Error("Intentionally failed");
+
+			this.oSandbox.mock(oListBinding).expects("readValue").returns(Promise.reject(oError));
 			this.oSandbox.mock(odatajs.oData).expects("read").never();
 
-			return oModel.read("/TEAMS[" + iIndex + "];list=0/Name").then(function (oData) {
-				assert.deepEqual(oData, {value : oResult.value[0]["Name"]});
-			});
-			//TODO support complex type properties, e.g. EMPLOYEE/Location/COUNTRY ../City/POSTALCODE
-		});
+			return oModel.read("/TEAMS[0];list=0/foo/bar").then(
+				function () { assert.ok(false, "Unexpected success"); },
+				function (oError0) { assert.strictEqual(oError0, oError); }
+			);
+		}
+	);
 
 	// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 	// TODO constructor: test that the service URL is absolute?
