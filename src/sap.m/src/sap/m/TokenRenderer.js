@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapMToken");
 		oRm.writeClasses();
 		
+		oRm.writeAttribute("role", "listitem");
 		oRm.writeAttribute("aria-readonly", !oControl.getEditable());
 		oRm.writeAttribute("aria-selected", oControl.getSelected());
 		
@@ -41,6 +42,17 @@ sap.ui.define(['jquery.sap.global'],
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
+		
+		var oAccAttributes = {}; // additional accessibility attributes
+
+		//ARIA attributes
+		oAccAttributes.describedby = {
+			value: oControl._sAriaTokenLabelId,
+			append: true
+		};
+
+		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		
 		oRm.write(">");
 	
 		TokenRenderer._renderInnerControl(oRm, oControl);
