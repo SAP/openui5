@@ -57,7 +57,7 @@ module.exports = function(grunt) {
 							'*.js',
 
 							// files are already part of sap-ui-core.js
-							'!jquery.sap.promise.js',
+							'!sap/ui/thirdparty/es6-promise.js',
 							'!jquery.sap.global.js',
 							'!sap-ui-*.js',
 
