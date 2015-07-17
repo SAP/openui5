@@ -978,9 +978,9 @@
 			mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
 			'<Label text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
-			'<Text text="{formatter: \'foo.Helper.help\','
-				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
-			'<Text text="{formatter: \'foo.Helper.nil\','
+			'<Text maxLines="{formatter: \'foo.Helper.nil\','
+				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"'
+				+ ' text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
 			'<Label text="A \\{ is a special character"/>', // escaping MUST NOT be changed!
 			'<Text text="{unrelated>/some/path}"/>', // unrelated binding MUST NOT be changed!
@@ -1007,8 +1007,7 @@
 			})
 		}, [ // Note: XML serializer outputs &gt; encoding...
 			'<Label text="Customer"/>',
-			'<Text text="{CustomerName}"/>',
-			'<Text/>',
+			'<Text text="{CustomerName}"/>', // "maxLines" has been removed
 			'<Label text="A \\{ is a special character"/>',
 			'<Text text="{unrelated&gt;/some/path}"/>',
 			'<Text text="' + "{path:'/some/path',formatter:'.someMethod'}" + '"/>',
