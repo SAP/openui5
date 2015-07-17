@@ -847,7 +847,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		ComboBoxBase.prototype.removeItem = function(vItem) {
 
 			// remove the item from the aggregation items
-			vItem = this.removeAggregation("items", vItem);
+			vItem = this.removeAggregation("items", vItem, true);
 
 			if (vItem) {
 				vItem.detachEvent("_change", this.onItemChange, this);
