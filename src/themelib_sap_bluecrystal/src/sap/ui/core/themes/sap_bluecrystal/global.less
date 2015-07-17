@@ -305,6 +305,7 @@
 @sapUiErrorBorder:    @sapErrorBorderColor;   //  #e52929;
 @sapUiWarningBorder:  @sapWarningBorderColor; //  #f0ab00;
 @sapUiSuccessBorder:  @sapSuccessBorderColor; //  #008a3b;
+@sapUiNeutralBorder:  @sapNeutralColor;       //  #007cc0;
 
 /* Semantic Background Colors            */
 
@@ -698,9 +699,9 @@
 @sapUiListFooterBackground: lighten(@sapUiExtraLightBG, 2);
 @sapUiListFooterTextColor: @sapUiLightText;
 @sapUiListGroupHeaderBackground: lighten(@sapUiExtraLightBG, 2);
-//@sapUiListGroupHeaderBorderColor:
-//@sapUiListGroupHeaderTextColor:
 @sapUiListTableGroupHeaderBackground: @sapUiExtraLightBG;
+@sapUiListTableGroupHeaderBorderColor: @sapUiListBorderColor;
+@sapUiListTableGroupHeaderTextColor: contrast(@sapUiListTableGroupHeaderBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiListTableFooterBorder: @sapUiMediumBorder;
 @sapUiListTableFixedBorder: @sapUiExtraDarkBorder;
 @sapUiListTableTextSize: 0.875rem;

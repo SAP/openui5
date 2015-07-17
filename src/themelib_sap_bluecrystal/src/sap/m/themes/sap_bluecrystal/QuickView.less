@@ -22,7 +22,7 @@
 	font-size: @sapMFontHeader3Size;
 	font-weight: @sapUiFontHeaderWeight;
 	line-height: normal;
-	color: @sapUiHeaderText;
+	color: @sapUiGroupTitleTextColor;
 	padding-left: 0;
 }
 
@@ -40,7 +40,7 @@
 .sapMQuickViewPage .sapUiVlt .sapMText {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 }
 
 .sapMQuickViewPage .sapMFlexItem:last-child {
@@ -48,8 +48,8 @@
 }
 
 .sapMQuickViewPage .sapMQuickViewThumbnail {
-	background-color: @sapUiExtraLightBG;
-	color: darken(@sapUiExtraLightBG, 20);
+	background-color: darken(@sapUiGroupContentBackground, 5);
+	color: darken(@sapUiGroupContentBackground, 25);
 }
 
 .sapMQuickViewPage .sapUiIcon:focus {
