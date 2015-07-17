@@ -26,8 +26,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMTokenizer");
 		oRm.writeClasses();
-		oRm.write(">"); // div element
 		
+		oRm.writeAttribute("role", "list");		
+		oRm.write(">"); // div element
+
 		if (Device.system.desktop || Device.system.combi) {
 			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
 			if (window.clipboardData) { //IE
