@@ -83,8 +83,9 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.write(
 					"<div id=\"" + sId + "-splitbar-" + i + "\" " +
 						"role=\"separator\" " +
-						"title=\"" + oControl._getText("SPLITTER_MOVE") + "\"" +
+						"title=\"" + oControl._getText("SPLITTER_MOVE") + "\" " +
 						"class=\"sapUiLoSplitterBar\" " +
+						"aria-orientation=\"" + (bHorizontal ? "vertical" : "horizontal") + "\" " +
 						"tabindex=\"0\">"
 				);
 				// Icon ID must start with sId + "-splitbar-" + i so that the target is recognized for resizing
