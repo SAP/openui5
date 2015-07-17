@@ -35,7 +35,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @param {int} [mParameters.rootLevel=0] The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
 	 *                                        Conforming to the "SAP Annotations for OData Version 2.0" Specification, the root level must start at 0. 
 	 *                                        Default value is thus 0.
-	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: sets the batch group id to be used for requests originating from this binding
+	 * @param {string} [mParameters.groupId] sets the group id to be used for requests originating from this binding
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
 	 * 
 	 * @public
@@ -50,8 +51,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			//make sure we have at least an empty parameter object
 			this.mParameters = this.mParameters || mParameters || {};
 			
-			this.sBatchGroupId;
-			this.sRefreshBatchGroupId;
+			this.sGroupId;
+			this.sRefreshGroupId;
 			this.oFinalLengths = {};
 			this.oLengths = {};
 			this.oKeys = {};
@@ -76,7 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			}
 			
 			if (mParameters) {
-				this.sBatchGroupId = mParameters.batchGroupId;
+				this.sBatchGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
 			//this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			this.bInitial = true;
@@ -137,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._loadSingleRootByHierarchyNodeID = function (sRootNodeID, sRequestKey) {
 		var that = this,
-			sBatchGroupId;
+			sGroupId;
 		
 		var _handleSuccess = function (oData) {
 			if (oData.results && oData.results.length > 0) {
@@ -186,13 +187,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.mRequestHandles[sRequestKey].abort();
 		}
 		this.fireDataRequested();
-		sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+		sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
 			urlParameters: aParams, 
 			success: _handleSuccess, 
 			error: _handleError,
 			sorters: this.aSorters,
-			batchGroupId: sBatchGroupId
+			groupId: sGroupId
 		});
 	};
 	
@@ -210,14 +211,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties = function (sNodeId, sRequestKey) {
 		var that = this,
-			sBatchGroupId;
+			sGroupId;
 		
 		if (this.mRequestHandles[sRequestKey]) {
 			this.mRequestHandles[sRequestKey].abort();
 		}
-		sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+		sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 		this.mRequestHandles[sRequestKey] = this.oModel.read(sNodeId, {
-			batchGroupId: sBatchGroupId,
+			groupId: sGroupId,
 			success: function (oData) {
 				var sNavPath = that._getNavPath(that.getPath());
 				
@@ -613,7 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._getCountForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mParameters) {
 		var that = this,
-			sBatchGroupId;
+			sGroupId;
 		
 		// create a request object for the data request
 		var aParams = [];
@@ -665,13 +666,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	
 		// Only send request, if path is defined
 		if (sPath) {
-			sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 			this.oModel.read(sPath + "/$count", {
 				urlParameters: aParams,
 				success: _handleSuccess,
 				error: _handleError,
 				sorters: this.aSorters,
-				batchGroupId: sBatchGroupId
+				groupId: sGroupId
 			});
 		}
 	};
@@ -693,7 +694,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters, oRequestedSection) {
 		var that = this,
-			sBatchGroupId,
+			sGroupId,
 			bInlineCountRequested = false;
 
 		if (iStartIndex || iLength) {
@@ -835,13 +836,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				if (this.mRequestHandles[sRequestKey]) {
 					this.mRequestHandles[sRequestKey].abort();
 				}
-				sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 					urlParameters: aParams,
 					success: fnSuccess,
 					error: fnError,
 					sorters: this.aSorters,
-					batchGroupId: sBatchGroupId
+					groupId: sGroupId
 				});
 			}
 		}
@@ -891,17 +892,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * validation, please use the parameter bForceUpdate.
 	 * 
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
-	 * @param {string} [sBatchGroupId] The batch group Id for the refresh
+	 * @param {string} [sGroupId] The  group Id for the refresh
 	 * 
 	 * @public
 	 */
-	ODataTreeBinding.prototype.refresh = function(bForceUpdate, sBatchGroupId) {
+	ODataTreeBinding.prototype.refresh = function(bForceUpdate, sGroupId) {
 		if (typeof bForceUpdate === "string") {
-			sBatchGroupId = bForceUpdate;
+			sGroupId = bForceUpdate;
 		}
-		this.sRefreshBatchGroup = sBatchGroupId;
+		this.sRefreshGroup = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshBatchGroup = undefined;
+		this.sRefreshGroup = undefined;
 	};
 	
 	/**

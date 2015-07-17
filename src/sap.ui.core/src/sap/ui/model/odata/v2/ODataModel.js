@@ -115,8 +115,7 @@ sap.ui.define([
 			this.mDeferredRequests = {};
 			this.mChangedEntities = {};
 			this.mChangeHandles = {};
-			this.mDeferredBatchGroups = {};
-			this.mChangeBatchGroups = {'*' : {batchGroupId:undefined, single: true}};
+			this.mDeferredGroups = {};
 			this.sDefaultUpdateMethod = sDefaultUpdateMethod || UpdateMethod.Merge;
 
 			this.bTokenHandling = bTokenHandling !== false;
@@ -131,7 +130,7 @@ sap.ui.define([
 			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Server;
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
-			this.sRefreshBatchGroupId = undefined;
+			this.sRefreshGroupId = undefined;
 			this.bIncludeInCurrentBatch = false;
 			this.bSkipMetadataAnnotationParsing = bSkipMetadataAnnotationParsing;
 
@@ -140,10 +139,10 @@ sap.ui.define([
 			}
 			this.oMessageParser = oMessageParser;
 
-			//collect internal changes in a deferred batchgroup as default
-			this.sDefaultChangeBatchGroup = "changes";
-			this.setDeferredBatchGroups([this.sDefaultChangeBatchGroup]);
-			this.setChangeBatchGroups({"*":{batchGroupId: this.sDefaultChangeBatchGroup}});
+			//collect internal changes in a deferred group as default
+			this.sDefaultChangeGroup = "changes";
+			this.setDeferredGroups([this.sDefaultChangeGroup]);
+			this.setChangeGroups({"*":{groupId: this.sDefaultChangeGroup}});
 
 			this.oData = {};
 			this.oMetadata = null;
@@ -1210,13 +1209,13 @@ sap.ui.define([
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
 	 * @param {boolean} [bRemoveData=false] If set to true then the model data will be removed/cleared.
 	 * 					Please note that the data might not be there when calling e.g. getProperty too early before the refresh call returned.
-	 * @param {string} [sBatchGroupId] The batchGroupId
+	 * @param {string} [sGroupId] The GroupId
 	 *
 	 * @public
 	 */
-	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData, sBatchGroupId) {
+	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData, sGroupId) {
 		if (typeof bForceUpdate === "string") {
-			sBatchGroupId = bForceUpdate;
+			sGroupId = bForceUpdate;
 			bForceUpdate = false;
 			bRemoveData = false;
 		}
@@ -1225,25 +1224,25 @@ sap.ui.define([
 		if (bRemoveData) {
 			this.removeData();
 		}
-		this._refresh(bForceUpdate, sBatchGroupId);
+		this._refresh(bForceUpdate, sGroupId);
 	};
 
 	/**
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
-	 * @param {string} [sBatchGroupId] The batchGroupId
+	 * @param {string} [sGroupId] The GroupId
 	 * @param {map} mChangedEntities map of changed entities
 	 * @param {map} mEntityTypes map of changed entityTypes
 	 * @private
 	 */
-	ODataModel.prototype._refresh = function(bForceUpdate, sBatchGroupId, mChangedEntities, mEntityTypes) {
+	ODataModel.prototype._refresh = function(bForceUpdate, sGroupId, mChangedEntities, mEntityTypes) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		var aBindings = this.aBindings.slice(0);
-		//the refresh calls read synchronous; we use this.sRefreshBatchGroupId in this case
-		this.sRefreshBatchGroupId = sBatchGroupId;
+		//the refresh calls read synchronous; we use this.sRefreshGroupId in this case
+		this.sRefreshGroupId = sGroupId;
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding._refresh(bForceUpdate, mChangedEntities, mEntityTypes);
 		});
-		this.sRefreshBatchGroupId = undefined;
+		this.sRefreshGroupId = undefined;
 	};
 
 	/**
@@ -1365,7 +1364,7 @@ sap.ui.define([
 		var oData = this._getObject(sPath, oContext),
 		sKey,
 		oNewContext,
-		sBatchGroupId,
+		sGroupId,
 		that = this;
 
 		if (!bReload) {
@@ -1389,8 +1388,8 @@ sap.ui.define([
 				if (sCustomParams) {
 					aParams.push(sCustomParams);
 				}
-				if (mParameters && mParameters.batchGroupId) {
-					sBatchGroupId = mParameters.batchGroupId;
+				if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
+					sGroupId = mParameters.groupId || mParameters.batchGroupId;
 				}
 				var handleSuccess = function(oData) {
 					sKey = oData ? that._getKey(oData) : undefined;
@@ -1418,7 +1417,7 @@ sap.ui.define([
 					}
 					fnCallBack(null); // error - notify to recreate contexts
 				};
-				this.read(sFullPath, {batchGroupId: sBatchGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
+				this.read(sFullPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
 			}
@@ -2174,20 +2173,20 @@ sap.ui.define([
 	 * push request to internal request queue
 	 *
 	 * @param {map} mRequests Request queue
-	 * @param {string} sBatchGroupId The batch group Id
+	 * @param {string} sGroupId The group Id
 	 * @param {string} [sChangeSetId] The changeSet Id
 	 * @param {oRequest} oRequest The request
 	 * @param {function} fnSuccess The success callback function
 	 * @param {function} fnError The error callback function
 	 * @private
 	 */
-	ODataModel.prototype._pushToRequestQueue = function(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError) {
-		var oChangeGroup, oRequestGroup = mRequests[sBatchGroupId];
+	ODataModel.prototype._pushToRequestQueue = function(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError) {
+		var oChangeGroup, oRequestGroup = mRequests[sGroupId];
 
 		if (!oRequestGroup) {
 			oRequestGroup = {};
 			oRequestGroup.requests = [];
-			mRequests[sBatchGroupId] = oRequestGroup;
+			mRequests[sGroupId] = oRequestGroup;
 		}
 		if (oRequest.method !== "GET") {
 			if (!oRequestGroup.changes) {
@@ -2271,13 +2270,13 @@ sap.ui.define([
 	 * Request queue processing
 	 *
 	 * @param {map} mRequests Request queue
-	 * @param {string} sBatchGroupId The batchGroupId
+	 * @param {string} sGroupId The GroupId
 	 * @param {function} fnSuccess Success callback function
 	 * @param {function} fnError Erro callback function
 	 * @returns {object|array} oRequestHandle The request handle: array if multiple request will be sent
 	 * @private
 	 */
-	ODataModel.prototype._processRequestQueue = function(mRequests, sBatchGroupId, fnSuccess, fnError){
+	ODataModel.prototype._processRequestQueue = function(mRequests, sGroupId, fnSuccess, fnError){
 		var that = this,
 			oRequestHandle = [];
 
@@ -2288,23 +2287,23 @@ sap.ui.define([
 		if (this.bUseBatch) {
 			//auto refresh for batch / for single requests we refresh after the request was successful
 			if (that.bRefreshAfterChange) {
-				jQuery.each(mRequests, function(sGroupId, oGroup) {
-					if (sGroupId === sBatchGroupId || !sBatchGroupId) {
+				jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
+					if (sRequestGroupId === sGroupId || !sGroupId) {
 						var mChangedEntities = {},
 							mEntityTypes = {};
-						that._collectChangedEntities(oGroup, mChangedEntities, mEntityTypes);
+						that._collectChangedEntities(oRequestGroup, mChangedEntities, mEntityTypes);
 						that.bIncludeInCurrentBatch = true;
 						that._refresh(false, sGroupId, mChangedEntities, mEntityTypes);
 						that.bIncludeInCurrentBatch = false;
 					}
 				});
 			}
-			jQuery.each(mRequests, function(sGroupId, oGroup) {
-				if (sGroupId === sBatchGroupId || !sBatchGroupId) {
+			jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
+				if (sRequestGroupId === sGroupId || !sGroupId) {
 					var aReadRequests = [], aBatchGroup = [], /* aChangeRequests, */ oChangeSet, aChanges;
 
-					if (oGroup.changes) {
-						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
+					if (oRequestGroup.changes) {
+						jQuery.each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
 							oChangeSet = {__changeRequests:[]};
 							aChanges = [];
 							for (var i = 0; i < aChangeSet.length; i++) {
@@ -2325,8 +2324,8 @@ sap.ui.define([
 							}
 						});
 					}
-					if (oGroup.requests) {
-						var aRequests = oGroup.requests;
+					if (oRequestGroup.requests) {
+						var aRequests = oRequestGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
 							if (aRequests[i].request._aborted) {
 								that._processAborted(aRequests[i].request, null, aRequests[i].fnError);
@@ -2340,16 +2339,14 @@ sap.ui.define([
 						var oBatchRequest = that._createBatchRequest(aReadRequests, true);
 						oRequestHandle.push(that._submitBatchRequest(oBatchRequest, aBatchGroup, fnSuccess, fnError));
 					}
-					delete mRequests[sGroupId];
+					delete mRequests[sRequestGroupId];
 				}
 			});
 		} else  {
-			jQuery.each(mRequests, function(sGroupId, oGroup) {
-				if (sGroupId === sBatchGroupId || !sBatchGroupId) {
-					//var aReadRequests = [], aBatchGroup = [], aChangeRequests, oChangeSet;
-
-					if (oGroup.changes) {
-						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
+			jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
+				if (sRequestGroupId === sGroupId || !sGroupId) {
+					if (oRequestGroup.changes) {
+						jQuery.each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
 							for (var i = 0; i < aChangeSet.length; i++) {
 								// store last request Handle. If no batch there will be only 1 and we cpould return it?
 								if (aChangeSet[i].request._aborted) {
@@ -2361,8 +2358,8 @@ sap.ui.define([
 							}
 						});
 					}
-					if (oGroup.requests) {
-						var aRequests = oGroup.requests;
+					if (oRequestGroup.requests) {
+						var aRequests = oRequestGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
 							// store last request Handle. If no batch there will be only 1 and we cpould return it?
 							if (aRequests[i].request._aborted) {
@@ -2373,7 +2370,7 @@ sap.ui.define([
 							}
 						}
 					}
-					delete mRequests[sGroupId];
+					delete mRequests[sRequestGroupId];
 				}
 			});
 		}
@@ -2628,22 +2625,22 @@ sap.ui.define([
 	 * @function
 	 */
 	ODataModel.prototype._resolveGroup = function(sKey) {
-		var oChangeGroup, oEntityType, sBatchGroupId, sChangeSetId;
+		var oChangeGroup, oEntityType, sGroupId, sChangeSetId;
 
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
 
-		//resolve batchGroupId/changeSetId
-		if (this.mChangeBatchGroups[oEntityType.name]) {
-			oChangeGroup = this.mChangeBatchGroups[oEntityType.name];
-			sBatchGroupId = oChangeGroup.batchGroupId;
+		//resolve groupId/changeSetId
+		if (this.mChangeGroups[oEntityType.name]) {
+			oChangeGroup = this.mChangeGroups[oEntityType.name];
+			sGroupId = oChangeGroup.groupId;
 			sChangeSetId = oChangeGroup.single ? jQuery.sap.uid() : oChangeGroup.changeSetId;
-		} else if (this.mChangeBatchGroups['*']) {
-			oChangeGroup = this.mChangeBatchGroups['*'];
-			sBatchGroupId = oChangeGroup.batchGroupId;
+		} else if (this.mChangeGroups['*']) {
+			oChangeGroup = this.mChangeGroups['*'];
+			sGroupId = oChangeGroup.groupId;
 			sChangeSetId = oChangeGroup.single ? jQuery.sap.uid() : oChangeGroup.changeSetId;
 		}
 
-		return {batchGroupId: sBatchGroupId, changeSetId: sChangeSetId};
+		return {groupId: sGroupId, changeSetId: sChangeSetId};
 	};
 
 	/**
@@ -2911,7 +2908,8 @@ sap.ui.define([
 	 * 		the request was completed before continuing to work with the data.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request 
+	 * @param {string} [mParameters.groupId] groupId for this request
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
@@ -2920,13 +2918,13 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
-			oStoredEntry, sKey, aUrlParams, sBatchGroupId, sChangeSetId,
+			oStoredEntry, sKey, aUrlParams, sGroupId, sChangeSetId,
 			mUrlParams, mHeaders, sMethod, mRequests,
 			oKeys = {},
 			that = this;
 
 		if (mParameters) {
-			sBatchGroupId = mParameters.batchGroupId;
+			sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId = mParameters.changeSetId;
 			oContext  = mParameters.context;
 			fnSuccess = mParameters.success;
@@ -2956,10 +2954,10 @@ sap.ui.define([
 			oRequest.keys = oKeys;
 
 			mRequests = that.mRequests;
-			if (sBatchGroupId in that.mDeferredBatchGroups) {
+			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
 
 			return oRequest;
 		});
@@ -2983,7 +2981,8 @@ sap.ui.define([
 	 *		The handler can have the parameter <code>oError</code> which contains additional error information.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
+	 * @param {string} [mParameters.groupId] groupId for this request
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -2992,7 +2991,7 @@ sap.ui.define([
 	ODataModel.prototype.create = function(sPath, oData, mParameters) {
 		var oRequest, sUrl, oEntityMetadata,
 		oContext, fnSuccess, fnError, mUrlParams, mRequests,
-		mHeaders, aUrlParams, sEtag, sBatchGroupId, sMethod, sChangeSetId,
+		mHeaders, aUrlParams, sEtag, sGroupId, sMethod, sChangeSetId,
 		that = this;
 
 		// The object parameter syntax has been used.
@@ -3001,7 +3000,7 @@ sap.ui.define([
 			mUrlParams = mParameters.urlParameters;
 			fnSuccess  = mParameters.success;
 			fnError    = mParameters.error;
-			sBatchGroupId	= mParameters.batchGroupId;
+			sGroupId	= mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId	= mParameters.changeSetId;
 			sEtag		= mParameters.eTag;
 			mHeaders	= mParameters.headers;
@@ -3023,10 +3022,10 @@ sap.ui.define([
 			}
 
 			mRequests = that.mRequests;
-			if (sBatchGroupId in that.mDeferredBatchGroups) {
+			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
 
 			return oRequest;
 		});
@@ -3045,7 +3044,8 @@ sap.ui.define([
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
+	 * @param {string} [mParameters.groupId] groupId for this request
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
@@ -3053,13 +3053,13 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.remove = function(sPath, mParameters) {
-		var oContext, sEntry, fnSuccess, fnError, oRequest, sUrl, sBatchGroupId,
+		var oContext, sEntry, fnSuccess, fnError, oRequest, sUrl, sGroupId,
 		sChangeSetId, sETag, handleSuccess,
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
 		that = this;
 
 		if (mParameters) {
-			sBatchGroupId = mParameters.batchGroupId;
+			sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId = mParameters.changeSetId;
 			oContext  = mParameters.context;
 			fnSuccess = mParameters.success;
@@ -3093,11 +3093,11 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined, sETag);
 
 			mRequests = that.mRequests;
-			if (sBatchGroupId in that.mDeferredBatchGroups) {
+			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
 
-			that._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, handleSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError);
 
 			return oRequest;
 		});
@@ -3119,7 +3119,8 @@ sap.ui.define([
 	 *        the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
-	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
+	 * @param {string} [mParameters.groupId] groupId for this request
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} oRequestHandle An object which has an <code>abort</code> function to abort the current request.
@@ -3136,13 +3137,13 @@ sap.ui.define([
 			sMethod = "GET",
 			aUrlParams,
 			mInputParams = {},
-			sBatchGroupId,
+			sGroupId,
 			sChangeSetId,
 			mHeaders,
 			that = this;
 
 		if (mParameters) {
-			sBatchGroupId 	= mParameters.batchGroupId;
+			sGroupId 		= mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId 	= mParameters.changeSetId;
 			sMethod			= mParameters.method ? mParameters.method : sMethod;
 			mUrlParams		= mParameters.urlParameters;
@@ -3184,10 +3185,10 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined);
 
 			mRequests = that.mRequests;
-			if (sBatchGroupId in that.mDeferredBatchGroups) {
+			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
 
 			return oRequest;
 		});
@@ -3211,7 +3212,8 @@ sap.ui.define([
 	 *		following parameters: oData and response.
 	 * @param {function} [mParameters.error] a callback function which is called when the request
 	 * 		failed. The handler can have the parameter: oError which contains additional error information.
-	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
+	 * @param {string} [mParameters.groupId] groupId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3223,24 +3225,24 @@ sap.ui.define([
 		aFilters, aSorters, sFilterParams, sSorterParams,
 		oEntityType, sNormalizedPath,
 		aUrlParams, mHeaders, sMethod,
-		sBatchGroupId, sETag,
+		sGroupId, sETag,
 		mRequests,
 		that = this;
 
 		// The object parameter syntax has been used.
 		if (mParameters) {
-			oContext   = mParameters.context;
-			mUrlParams = mParameters.urlParameters;
-			fnSuccess  = mParameters.success;
-			fnError    = mParameters.error;
-			aFilters   = mParameters.filters;
-			aSorters   = mParameters.sorters;
-			sBatchGroupId = mParameters.batchGroupId;
-			mHeaders = mParameters.headers;
+			oContext	= mParameters.context;
+			mUrlParams	= mParameters.urlParameters;
+			fnSuccess	= mParameters.success;
+			fnError		= mParameters.error;
+			aFilters	= mParameters.filters;
+			aSorters	= mParameters.sorters;
+			sGroupId 	= mParameters.groupId || mParameters.batchGroupId;
+			mHeaders 	= mParameters.headers;
 		}
-		//if the read is triggered via a refresh we should use the refreshBatchGroupId instead
-		if (this.sRefreshBatchGroupId) {
-			sBatchGroupId = this.sRefreshBatchGroupId;
+		//if the read is triggered via a refresh we should use the refreshGroupId instead
+		if (this.sRefreshGroupId) {
+			sGroupId = this.sRefreshGroupId;
 		}
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
@@ -3273,10 +3275,10 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, null, sETag);
 
 			mRequests = that.mRequests;
-			if (sBatchGroupId in that.mDeferredBatchGroups) {
+			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sBatchGroupId, null, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, null, oRequest, fnSuccess, fnError);
 
 			return oRequest;
 		}
@@ -3437,7 +3439,8 @@ sap.ui.define([
 	 * Changes to this entries should be done on the entry itself. So no deep updates are supported.
 	 *
 	 * @param {object} [mParameters] a map which contains the following parameter properties:
-	 * @param {string} [mParameters.batchGroupId] defines the batchGroup that should be submitted. If not specified all deferred groups will be submitted
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: defines the batchGroup that should be submitted. If not specified all deferred groups will be submitted
+	 * @param {string} [mParameters.groupId] defines the group that should be submitted. If not specified all deferred groups will be submitted
 	 * @param {function} [mParameters.success] a callback function which is called when the data has
 	 *            					 been successfully updated. The handler can have the
 	 *            	                 following parameters: oData
@@ -3452,13 +3455,13 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
+		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
 			oRequestHandle, vRequestHandleInternal,
 			bAborted = false, sMethod,
 			that = this;
 
 		if (mParameters) {
-			sBatchGroupId = mParameters.batchGroupId;
+			sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			fnSuccess =	mParameters.success;
 			fnError = mParameters.error;
 			// ensure merge paramater backwards compatibility
@@ -3467,23 +3470,23 @@ sap.ui.define([
 			}
 		}
 
-		if (sBatchGroupId && !this.mDeferredBatchGroups[sBatchGroupId]) {
-			jQuery.sap.log.fatal(this + " submitChanges: \"" + sBatchGroupId + "\" is not a deferred batch group!");
+		if (sGroupId && !this.mDeferredGroups[sGroupId]) {
+			jQuery.sap.log.fatal(this + " submitChanges: \"" + sGroupId + "\" is not a deferred group!");
 		}
 
 		this.oMetadata.loaded().then(function() {
 			jQuery.each(that.mChangedEntities, function(sKey, oData) {
 				oGroupInfo = that._resolveGroup(sKey);
-				if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
+				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
 					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
-					if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
-						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
+					if (oGroupInfo.groupId in that.mDeferredGroups) {
+						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
 					}
 				}
 			});
 
-			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sBatchGroupId, fnSuccess, fnError);
+			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError);
 
 			if (bAborted) {
 				oRequestHandle.abort();
@@ -3632,7 +3635,7 @@ sap.ui.define([
 
 		mRequests = this.mRequests;
 
-		if (oGroupInfo.batchGroupId in this.mDeferredBatchGroups) {
+		if (oGroupInfo.groupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
 			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
 			oRequest.key = sKey;
@@ -3650,16 +3653,12 @@ sap.ui.define([
 			this.mChangeHandles[sKey] = oRequestHandle;
 		}
 
-		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
+		this._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
 
-		if (this.bUseBatch) {
-			if (!this.oRequestTimer) {
-				this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
-			}
-		} else {
-			this._processRequestQueue(this.mRequests);
+		if (!this.oRequestTimer) {
+			this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
 		}
-
+		
 		mChangedEntities[sKey] = true;
 		this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
 		return true;
@@ -3848,7 +3847,8 @@ sap.ui.define([
 	 * @param {String} sPath Name of the path to the EntitySet
 	 * @param {map} mParameters A map of the following parameters:
 	 * @param {array|object} [mParameters.properties] An array that specifies a set of properties or the entry
-	 * @param {string} [mParameters.batchGroupId] The batchGroupId
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: The batchGroupId
+	 * @param {string} [mParameters.groupId] The GroupId
 	 * @param {string} [mParameters.changeSetId] The changeSetId
 	 * @param {sap.ui.model.Context} [mParameters.context] The binding context
 	 * @param {function} [mParameters.success] The success callback function
@@ -3861,7 +3861,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, sETag, oContext,
-			sKey, aUrlParams, sBatchGroupId, sChangeSetId, oRequestHandle,
+			sKey, aUrlParams, sGroupId, sChangeSetId, oRequestHandle,
 			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
 			fnCreated,
 			sMethod = "POST",
@@ -3869,7 +3869,7 @@ sap.ui.define([
 
 		if (mParameters) {
 			vProperties = mParameters.properties;
-			sBatchGroupId = mParameters.batchGroupId;
+			sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId = mParameters.changeSetId;
 			oContext  = mParameters.context;
 			fnSuccess = mParameters.success;
@@ -3880,7 +3880,7 @@ sap.ui.define([
 			mUrlParams = mParameters.urlParameters;
 		}
 
-		sBatchGroupId = sBatchGroupId ? sBatchGroupId : this.sDefaultChangeBatchGroup;
+		sGroupId = sGroupId ? sGroupId : this.sDefaultChangeGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
 
@@ -3928,11 +3928,11 @@ sap.ui.define([
 			oRequest.key = sKey;
 
 			mRequests = that.mRequests;
-			if (sBatchGroupId in that.mDeferredBatchGroups) {
+			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
 
-			that._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
 
 			oRequestHandle = {
 					abort: function() {
@@ -3942,14 +3942,10 @@ sap.ui.define([
 
 			that.mChangeHandles[sKey] = oRequestHandle;
 
-			if (that.bUseBatch) {
-				if (!that.oRequestTimer) {
-					that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
-				}
-			} else {
-				that._processRequestQueue(that.mRequests);
+			if (!that.oRequestTimer) {
+				that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
 			}
-
+		
 			return oCreatedContext;
 		}
 
@@ -4148,26 +4144,49 @@ sap.ui.define([
 	 * via a submitChanges call.
 	 *
 	 * @param {array} aGroupIds Array of batchGroupIds that should be set as deferred
+	 * @deprecated Deprecated since 1.32 use 
 	 * @public
 	 */
 	ODataModel.prototype.setDeferredBatchGroups = function(aGroupIds) {
+		this.setDeferredGroups(aGroupIds);
+	};
+	
+	/**
+	 * Setting request groups as deferred. Requests that belongs to a deferred group will be sent manually
+	 * via a submitChanges call.
+	 *
+	 * @param {array} aGroupIds Array of GroupIds that should be set as deferred
+	 * @public
+	 */
+	ODataModel.prototype.setDeferredGroups = function(aGroupIds) {
 		var that = this;
-		this.mDeferredBatchGroups = {};
-		jQuery.each(aGroupIds, function(iIndex,sBatchGroupId){
-			that.mDeferredBatchGroups[sBatchGroupId] = sBatchGroupId;
+		this.mDeferredGroups = {};
+		jQuery.each(aGroupIds, function(iIndex,sGroupId){
+			that.mDeferredGroups[sGroupId] = sGroupId;
 		});
 	};
-
+	
 	/**
 	 * Returns the array of batchGroupIds that are set as deferred
 	 *
 	 * @returns {array} aGroupIds The array of deferred batchGroupIds
+	 * @deprecated Deprecated since 1.32 use 
 	 * @public
 	 */
 	ODataModel.prototype.getDeferredBatchGroups = function() {
+		return this.getDeferredGroups();
+	};
+	
+		/**
+	 * Returns the array of GroupIds that are set as deferred
+	 *
+	 * @returns {array} aGroupIds The array of deferred GroupIds
+	 * @public
+	 */
+	ODataModel.prototype.getDeferredGroups = function() {
 		var aGroupIds = [], i = 0;
-		jQuery.each(this.mDeferredBatchGroups, function(sKey, sBatchGroupId){
-			aGroupIds[i] = sBatchGroupId;
+		jQuery.each(this.mDeferredGroups, function(sKey, sGroupId){
+			aGroupIds[i] = sGroupId;
 			i++;
 		});
 		return aGroupIds;
@@ -4188,19 +4207,53 @@ sap.ui.define([
 	 * bacthGroupId: Defines the bacthGroup for changes of the defined EntityTypeName
 	 * changeSetId: Defines a changeSetId wich bundles the changes for the EntityType.
 	 * single: Defines if every change will get an own changeSet (true)
+	 * @deprecated Deprecated since 1.32 use 
 	 * @public
 	 */
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
-		this.mChangeBatchGroups = mGroups;
+		jQuery.each(mGroups, function(sEntityName, oGroup) {
+			oGroup.groupId = oGroup.batchGroupId;
+		});
+		this.setChangeGroups(mGroups);
 	};
-
+	
+	/**
+	 * Definition of batchGroups per EntityType for "TwoWay" changes
+	 *
+	 * @param {map} mGroups A map containing the definition of bacthGroups for TwoWay changes. The Map has the
+	 * following format:
+	 * {
+	 * 		"EntityTypeName": {
+	 * 			groupId: "ID",
+	 * 			[changeSetId: "ID",]
+	 * 			[single: true/false,]
+	 * 		}
+	 * }
+	 * GroupId: Defines the Group for changes of the defined EntityTypeName
+	 * changeSetId: Defines a changeSetId wich bundles the changes for the EntityType.
+	 * single: Defines if every change will get an own changeSet (true)
+	 * @public
+	 */
+	ODataModel.prototype.setChangeGroups = function(mGroups) {
+		this.mChangeGroups = mGroups;
+	};
+	
 	/**
 	 * Returns the definition of batchGroups per EntityType for TwoWay changes
 	 * @returns {map} mChangeBatchGroups Definition of bactchGRoups for "TwoWay" changes
 	 * @public
 	 */
 	ODataModel.prototype.getChangeBatchGroups = function() {
-		return this.mChangeBatchGroups;
+		return this.getChangeGroups();
+	};
+	
+	/**
+	 * Returns the definition of groups per EntityType for TwoWay changes
+	 * @returns {map} mChangeGroups Definition of Groups for "TwoWay" changes
+	 * @public
+	 */
+	ODataModel.prototype.getChangeGroups = function() {
+		return this.mChangeGroups;
 	};
 
 	/**
