@@ -6,35 +6,30 @@ sap.ui.require([
 	"sap/ui/model/odata/type/ODataType"
 ], function (DateFormat, DateType, ODataType) {
 	/*global QUnit */
+	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
 	/*
-	 * Tests whether the given value throws a ParseException.
+	 * Tests whether the given value causes a validation or parse exception to be thrown,
+	 * depending on sAction.
+	 * @param {string} sAction
+	 *   validateValue to check for a validate exception
+	 *   parseValue to check for a parse exception
 	 */
-	function parseError(assert, oType, oValue, sReason) {
+	function checkError(assert, oType, oValue, sReason, sAction) {
+		var fnExpectedException;
 		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			try {
-				oType.parseValue(oValue, "string");
+				if (sAction === "parseValue") {
+					fnExpectedException = sap.ui.model.ParseException;
+					oType[sAction](oValue, "string")
+				} else if (sAction === "validateValue") {
+					fnExpectedException = sap.ui.model.ValidateException;
+					oType[sAction](oValue);
+				}
 				assert.ok(false);
 			} catch (e) {
-				assert.ok(e instanceof sap.ui.model.ParseException, sReason + ": exception");
-				assert.strictEqual(e.message, "EnterDate Nov 27, 2014", sReason + ": message");
-			}
-		});
-	}
-
-	/*
-	 * Tests whether the given value throws a ValidateException.
-	 */
-	function validateError(assert, oType, oValue, sReason) {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			try {
-				oType.validateValue(oValue);
-				assert.ok(false);
-			} catch (e) {
-				assert.ok(e instanceof sap.ui.model.ValidateException, sReason + ": exception");
+				assert.ok(e instanceof fnExpectedException, sReason + ": exception");
 				assert.strictEqual(e.message, "EnterDate Nov 27, 2014", sReason + ": message");
 			}
 		});
@@ -46,8 +41,11 @@ sap.ui.require([
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach: function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
+			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
+		},
+
+		sDefaultLanguage: sap.ui.getCore().getConfiguration().getLanguage()
+
 	});
 
 	//*********************************************************************************************
@@ -168,8 +166,8 @@ sap.ui.require([
 			}
 		});
 
-		parseError(assert, oType, "foo", "not a date");
-		parseError(assert, oType, "Feb 29, 2015", "invalid date");
+		checkError(assert, oType, "foo", "not a date", "parseValue");
+		checkError(assert, oType, "Feb 29, 2015", "invalid date", "parseValue");
 	});
 
 	//*********************************************************************************************
@@ -182,7 +180,7 @@ sap.ui.require([
 		oConstraints.nullable = false;
 		oType = new DateType({}, oConstraints);
 
-		validateError(assert, oType, null, "nullable: false");
+		checkError(assert, oType, null, "nullable: false", "validateValue");
 
 		try {
 			oType.validateValue("foo");
