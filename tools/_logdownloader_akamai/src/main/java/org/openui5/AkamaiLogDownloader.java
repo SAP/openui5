@@ -40,8 +40,8 @@ import org.json.JSONObject;
 public class AkamaiLogDownloader {
 
 	// this is the Akamai server+path to use
-	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "saphcp.upload.akamai.com", "/341459/333580");
-	private static final ApplicationConfig sapui5_config = new ApplicationConfig("sapui5", "saphcp.upload.akamai.com", "/341459/333584");
+	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "saphcp.upload.akamai.com", "/341459/eu1/openui5/openui5/web");
+	private static final ApplicationConfig sapui5_config = new ApplicationConfig("sapui5", "saphcp.upload.akamai.com", "/341459/eu1/services/sapui5/web");
 	
 	private static final ApplicationConfig[] APPLICATION_CONFIGS = { openui5_config };
 	
