@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global URI, Promise, alert, confirm, console, XMLHttpRequest */
+/*global URI, Promise, ES6Promise, alert, confirm, console, XMLHttpRequest */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -30,6 +30,11 @@
 	// ensure not to initialize twice
 	if (jQuery.sap) {
 		return;
+	}
+
+	// Enable promise polyfill if native promise is not available
+	if (!window.Promise) {
+		ES6Promise.polyfill();
 	}
 
 	/**
@@ -1511,6 +1516,10 @@
 				'sap/ui/thirdparty/datajs.js': {
 					amd: true,
 					exports: 'OData' // 'datajs'
+				},
+				'sap/ui/thirdparty/es6-promise.js' : { 
+					amd: true,
+					exports: 'ES6Promise'
 				},
 				'sap/ui/thirdparty/flexie.js': {
 					exports: 'Flexie'

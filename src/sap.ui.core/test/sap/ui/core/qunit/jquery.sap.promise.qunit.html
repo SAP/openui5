@@ -42,16 +42,12 @@
 	}
 	
 	sap.ui.getCore().attachInit(function() {
-		if (hasNativePromiseSupport()) {
-			jQuery.sap.require("jquery.sap.script");
-			// If native Promise support is available test it as well as the polyfill
+		var bNativePromise = window.Promise !== window.ES6Promise.Promise;
+		if (bNativePromise) {
 			testPromise(window.Promise, "Native: ");
 		}
-		
-		// Test the UI5 promise polyfill in any case window._UI5Promise is defined due to 
-		// window.sap.__ui5PublishPromisePolyfill being set to true in the first script tag of this page (before the
-		// UI5 bootstrap)
-		testPromise(window._UI5Promise, "Polyfill: ");
+
+		testPromise(window.ES6Promise.Promise, "Polyfill: ");
 	});
 	
 	</script>
@@ -121,20 +117,22 @@
 		// qutils.delayTestStart();
 
 		module(sTestPrefix + "Basics");
-		
-		var bNative = P !== window._UI5Promise;
-		
+
+		var bNative = P !== window.ES6Promise.Promise;
+
 		test((bNative ? "Native" : "Custom") +" API tested", function() {
-			var p = new P(function(res, rej){rej();});
-			ok(!p._deferred && bNative || p._deferred && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
+			var p = new P(function(res, rej) {
+				rej();
+			});
+			ok(!p._subscribers && bNative || p._subscribers && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
 		});
 		
 		test(sTestPrefix + "Native Support", function() {
 			doOnNativeSupport(function(){
-				ok(window.Promise != window._UI5Promise, "Firefox, Chrome and Safari support Promises natively.");
+				ok(window.Promise != window.ES6Promise.Promise, "Firefox, Chrome and Safari support Promises natively.");
 			}, function(){
-				ok(window.Promise == window._UI5Promise, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
-			});	
+				ok(window.Promise == window.ES6Promise.Promise, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
+			});
 		});
 		
 		
@@ -549,7 +547,7 @@
 				ok(false, "Success should not be called");
 				start();
 			}, function(oVal){
-				ok(oVal instanceof TypeError, "Fail should be called with an TypeError");
+				ok(oVal instanceof Error, "Fail should be called with an Error");
 				start();
 			});
 		});
