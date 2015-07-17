@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	
 	MultiInputRenderer.openInputTag = function(oRm, oControl) {
 		
-		if (oControl.getEnableMultiLineMode()){
+		if (oControl.getEnableMultiLineMode() || oControl._bUseDialog){
 			
 			oControl._isMultiLineMode = true;
 			
@@ -46,10 +46,10 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	
 	MultiInputRenderer._renderInput = function(oRm, oControl) {
 		
-		if ( oControl.getEnableMultiLineMode() && oControl._bShowIndicator === false ) {
+		if ( oControl._isMultiLineMode && oControl._bShowIndicator === false ) {
 			oRm.write("<div class=\"sapMMultiInputInputContainer sapMMultiInputMultiModeInputContainer\">");
 		} else {
-			if ( oControl.getEnableMultiLineMode() && oControl._bShowIndicator === true) {
+			if ( oControl._isMultiLineMode && oControl._bShowIndicator === true) {
 				var iTokens = oControl.getTokens().length;
 				oRm.write("<span class=\"sapMMultiInputIndicator\">");
 				if (iTokens > 1) {

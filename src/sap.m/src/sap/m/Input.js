@@ -1161,7 +1161,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 				}).attachAfterClose(function() {
 
-					if (oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode()) {
+					if (oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode) {
 
 						oInput._updateTokenizerInMultiInput();
 						oInput._tokenizerInPopup.destroy();
@@ -1250,7 +1250,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 							oInput._changeProxy();
 						}
 						oInput._iPopupListSelectedIndex = -1;
-						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
 							oInput._closeSuggestionPopup();
 						}
 						if (!sap.ui.Device.support.touch) {
@@ -1560,7 +1560,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					}
 					that._iPopupListSelectedIndex = -1;
 
-					if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+					if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
 						oInput._closeSuggestionPopup();
 					}
 

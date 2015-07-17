@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					that.focus();
 				}
 				
-				if (args.getParameter("type") === "removed" && that.getEnableMultiLineMode() ) {
+				if (args.getParameter("type") === "removed" && that._isMultiLineMode ) {
 					
 					var iLength = that.getTokens().length;
 					if (iLength > 1) {
@@ -408,6 +408,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		this.closeMultiLine();
 		var that = this;
+		
+		//only show multiline mode in phone mode
+		if (this._bUseDialog) {
+			bMultiLineMode = true;
+		}
+		
 		if (bMultiLineMode){
 			
 			this._showIndicator();
@@ -588,7 +594,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 		
 		//truncate token in multi-line mode
-		if (this._bUseDialog && this.getEnableMultiLineMode() 
+		if (this._bUseDialog && this._isMultiLineMode
 				&& this._oSuggestionPopup.isOpen() && this._tokenizerInPopup && this._tokenizerInPopup.getTokens().length > 0) {
 			
 			var iPopupTokens = this._tokenizerInPopup.getTokens().length,
@@ -918,7 +924,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	
 		if (!this._bUseDialog && !bNewFocusIsInSuggestionPopup && oEvent.relatedControlId !== this.getId()
 				&& oEvent.relatedControlId !== this._tokenizer.getId() && !bNewFocusIsInTokenizer
-					&& !(this.getEnableMultiLineMode() && this._bShowIndicator) 
+					&& !(this._isMultiLineMode && this._bShowIndicator) 
 					) { // leaving control, validate latest text, not validate the indicator		
 				this._validateCurrentText(true);
 		}
@@ -1112,7 +1118,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				that._bIsValidating = false;
 				if (validated) {
 					that.setValue("");
-					if (that._bUseDialog && that.getEnableMultiLineMode() && that._oSuggestionTable.getItems().length === 0) {
+					if (that._bUseDialog && that._isMultiLineMode && that._oSuggestionTable.getItems().length === 0) {
 						var iNewLength = that._tokenizer.getTokens().length;
 						if ( iOldLength < iNewLength ) {
 							var oNewToken = that._tokenizer.getTokens()[iNewLength - 1];
