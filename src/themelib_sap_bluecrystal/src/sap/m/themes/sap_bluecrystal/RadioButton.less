@@ -23,6 +23,10 @@
 	padding: 1px; /* using padding here so that margin won't collide */
 }
 
+.sapMRb:focus:before {
+	border: .0625rem dotted @sapUiFocus;
+}
+
 .sapMLIBActive .sapMRbB .sapMRbBOut{
 	border: 2px solid @sapUiLightestBorder;
 }
@@ -38,14 +42,6 @@
 	padding: 1px;
 	border-radius: 1em;
 	margin: 0.1875em;
-}
-
-.sapMRb:focus .sapMRbBOut {
-	outline: 1px dotted @sapUiFocus;
-}
-
-.sapMRbDis:focus .sapMRbBOut {
-	outline: none;
 }
 
 .sapMRbHoverable:hover {
@@ -131,6 +127,10 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	.sapMRbBLabel {
 		line-height: 2rem;
 		height: 2rem;
+	}
+	
+	.sapMRbHasLabel.sapMRb:focus:before {
+		right: -.0625rem;
 	}
 }
 
