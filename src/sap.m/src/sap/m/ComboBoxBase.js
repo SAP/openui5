@@ -932,7 +932,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.destroyItems = function() {
-			this.destroyAggregation("items");
+			this.destroyAggregation("items", true);
 
 			if (this.getList()) {
 				this.getList().destroyItems();
