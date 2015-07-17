@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
+	function(jQuery, Device) {
 	"use strict";
 
 
@@ -27,6 +27,15 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapMTokenizer");
 		oRm.writeClasses();
 		oRm.write(">"); // div element
+		
+		if (Device.system.desktop || Device.system.combi) {
+			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
+			if (window.clipboardData) { //IE
+				oRm.writeAttribute("contenteditable", "true");
+				oRm.writeAttribute("tabindex", "-1");
+			}
+			oRm.write(">&nbsp;</div>");
+		}
 	
 		var sClass = "class=\"sapMTokenizerScrollContainer\">";
 		var sSpace = " ";

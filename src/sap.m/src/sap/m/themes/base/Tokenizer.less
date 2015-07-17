@@ -2,7 +2,8 @@
 /* CSS for control sap.m/Tokenizer.control */
 /* ============================================= */
 
-.sapMTokenizer{ 
+.sapMTokenizer {
+	position: relative;
 	display: inline-block;
 	white-space: nowrap;
 	overflow: hidden;
@@ -17,6 +18,26 @@
 	padding-bottom: 0;
 	height: 1.625rem;
 	display: inline-block;
+}
+
+.sapMTokenizerClip {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 1px;
+	height: 1px;
+	display: block;
+	font-size: 1px;
+	z-index: -1;
+	color: transparent;
+	background: transparent;
+	overflow: hidden;
+	border: none;
+	padding: 0;
+	resize: none;
+	outline: none;
+	-webkit-user-select: text;
+	user-select: text;
 }
 
 .sapMTokenTruncate {
