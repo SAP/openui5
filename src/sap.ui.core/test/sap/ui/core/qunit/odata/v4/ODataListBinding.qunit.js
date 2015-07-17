@@ -9,7 +9,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
 ], function (ManagedObject, ChangeReason, Context, Model, ODataListBinding, ODataModel) {
-	/*global QUnit, sinon */
+	/*global odatajs, QUnit, sinon */
+	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	// create a result for DataCache.readRange mock of given length
@@ -24,7 +25,7 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.v4.ODataListBinding", {
+	QUnit.module("sap.ui.model.odata.v4.ODataListBinding", {
 		beforeEach : function () {
 			var oDataCache = {readRange : function() {}};
 
@@ -54,7 +55,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getContexts creates cache once", function (assert) {
+	QUnit.test("getContexts creates cache once", function (assert) {
 		this.oDataCacheMock.expects("readRange").returns(Promise.resolve(createResult(0)));
 
 		this.oModel.bindList("/Products").getContexts();
@@ -67,7 +68,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getContexts creates cache once for list with context", function (assert) {
+	QUnit.test("getContexts creates cache once for list with context", function (assert) {
 		var oContext = new Context(this.oModel, "/Products(1)");
 
 		this.oDataCacheMock.expects("readRange").returns(Promise.resolve(createResult(0)));
@@ -92,7 +93,7 @@ sap.ui.require([
 		{range : {startIndex : 1, length : 3}},
 		{range : {startIndex : 1, length : 3}, entityCount : 2}
 	].forEach(function (oFixture) {
-		test("getContexts satisfies contract of ManagedObject#bindAggregation "
+		QUnit.test("getContexts satisfies contract of ManagedObject#bindAggregation "
 			+ JSON.stringify(oFixture),
 		function (assert) {
 			var oControl = new this.TestControl(),
@@ -154,7 +155,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("checkUpdate fires change event", function () {
+	QUnit.test("checkUpdate fires change event", function () {
 		var oListBinding = this.oModel.bindList("/Products");
 
 		this.mock(oListBinding).expects("_fireChange")
@@ -166,10 +167,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getContexts called directly provides contexts as return value and in change event",
+	QUnit.test("getContexts called directly provides contexts as return value and in change event",
 		function (assert) {
-		var aContexts,
-			done = assert.async(),
+		var done = assert.async(),
 			oListBinding = this.oModel.bindList("/Products"),
 			iSizeLimit = this.oModel.iSizeLimit,
 			iRangeIndex = 0;
@@ -207,7 +207,7 @@ sap.ui.require([
 			for (i = 0; i < iLength; i += 1) {
 				sMessage = (bSync ? "Synchronous" : "Asynchronous") + " result"
 					+ "/Products[" + (iStart + i) + "], getContexts("
-					+ iStart + "," + iLength + ")"
+					+ iStart + "," + iLength + ")";
 				if (bSync && !oFixture[iRangeIndex].sync[i]) {
 					assert.strictEqual(aContexts[i], undefined, sMessage);
 				} else {
@@ -234,7 +234,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getContexts sends no change event on failure of DataCache#readRange and logs error",
+	QUnit.test("getContexts sends no change event on failure of DataCache#readRange and logs error",
 			function (assert) {
 		var done = assert.async(),
 			oError = new Error("Intentionally failed"),
@@ -264,7 +264,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getContexts handles error in change event handler", function (assert) {
+	QUnit.test("getContexts handles error in change event handler", function (assert) {
 		var done = assert.async(),
 			oError = new SyntaxError("Intentionally failed"),
 			oListBinding = this.oModel.bindList("/Products"),
