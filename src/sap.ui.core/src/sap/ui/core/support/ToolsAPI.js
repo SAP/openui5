@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 		var frameworkInformation = {
 
 			commonInformation: {
-				frameWorkName: _getFrameworkName(),
+				frameworkName: _getFrameworkName(),
 				version: Global.version,
 				buildTime: Global.buildinfo.buildtime,
 				lastChange: Global.buildinfo.lastchange,
