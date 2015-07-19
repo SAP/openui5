@@ -178,14 +178,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			}
 		};
 
+		/**
+		 * @private
+		 */
 		FixFlex.prototype.exit = function () {
 			this._deregisterControl();
 		};
 
+		/**
+		 * @private
+		 */
 		FixFlex.prototype.onBeforeRendering = function () {
 			this._deregisterControl();
 		};
 
+		/**
+		 * @private
+		 */
 		FixFlex.prototype.onAfterRendering = function () {
 			// Fallback for older browsers
 			if (!jQuery.support.hasFlexBoxSupport) {
@@ -201,6 +210,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			}
 		};
 
+		/**
+		 * @private
+		 * @param {Object} oEvent
+		 */
 		FixFlex.prototype.ontouchmove = function (oEvent) {
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
