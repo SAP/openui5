@@ -749,13 +749,13 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * If a new tooltip is set, any previously set tooltip is deactivated.
 	 *
-	 * @param {string|sap.ui.core.TooltipBase} oTooltip
+	 * @param {string|sap.ui.core.TooltipBase} vTooltip
 	 * @public
 	 */
-	Element.prototype.setTooltip = function(oTooltip) {
+	Element.prototype.setTooltip = function(vTooltip) {
 
-		this._refreshTooltipBaseDelegate(oTooltip);
-		this.setAggregation("tooltip", oTooltip);
+		this._refreshTooltipBaseDelegate(vTooltip);
+		this.setAggregation("tooltip", vTooltip);
 
 		return this;
 	};
