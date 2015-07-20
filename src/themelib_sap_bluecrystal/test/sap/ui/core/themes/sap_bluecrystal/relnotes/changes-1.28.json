@@ -652,5 +652,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "ce6b0dd8b897fcd95f0827ca012f2ca4172488d1",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fix left paddings",
+        "references": []
+      }
+    ]
   }
 }

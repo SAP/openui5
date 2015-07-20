@@ -2066,5 +2066,108 @@
         "references": []
       }
     ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "e14f25937bd352c6d1142e80ca6726760cbcfb96",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Controller: Allow instance specific controller extensions",
+        "references": []
+      },
+      {
+        "id": "5d722192e443ce860ef511336d3d425faa5c305d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Touch-To-Mouse Handling: Improve performance (esp. on Blackberry devices)",
+        "references": []
+      },
+      {
+        "id": "0bccb387276cbb60ba289adcc7b7352f33a7a53c",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: RemoveAssociation corrected to return null when association does not exists or is never used",
+        "references": []
+      },
+      {
+        "id": "b29e8d73b62ae4bf9953e96d297ad331654324f3",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Annotations in Record element correctly",
+        "references": []
+      },
+      {
+        "id": "5431c6b0f7e9fd3803c27965d1e8da5ca97f98e1",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Legacy IE support for XML parsing",
+        "references": []
+      },
+      {
+        "id": "1a8b87642cd83e82ce7e24207f123d84019d236a",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: ClearSelection removes selectAllMode from root node",
+        "references": []
+      },
+      {
+        "id": "eab100483531b5e5c225db759ecc11900f284070",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: Webkit Version Check fixed for system detection",
+        "references": []
+      },
+      {
+        "id": "1e375cd238b7476cc89db8964f58fbcb749e2344",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa: Internet Explorer 9 fails when active element is called",
+        "references": []
+      },
+      {
+        "id": "eb24575a2cf38733627bd4cafd07ef8ce33592a1",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.OpaPlugin: Now finds controls with an id as regex in a view",
+        "references": []
+      },
+      {
+        "id": "698ce1bdf5bd98ae0e6ce2c11e1a8e1e8614020b",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.NotificationBar: Notifications are not shown",
+        "references": []
+      },
+      {
+        "id": "5579a8bcd15eb1f2267386a18fe8c60f9bc43a8c",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Wrong payload format in batch requests",
+        "references": []
+      },
+      {
+        "id": "7b96f10be258dc1924ab516fe9d9d4b77e43356b",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Recursive dataReceived calls",
+        "references": []
+      },
+      {
+        "id": "4d3a96d85060057421303d6dabe908c5a847fa0e",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Unnecessary \u0027;\u0027 in Content-Type header using xml",
+        "references": []
+      },
+      {
+        "id": "03e22a90e5f6aabd8e053e95815583c77cbcb88f",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding.js: Abort pending requests in resetData()",
+        "references": []
+      }
+    ]
   }
 }

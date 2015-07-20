@@ -780,5 +780,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "21d0ca777d0627f6923f899e01e4973f2bd2d9e3",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: In modal mode can be dragged properly in scrolled page",
+        "references": []
+      },
+      {
+        "id": "64e9c9aa4e035b3af0493d05daf29b96b076d380",
+        "author": "Diana Shtilyanova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Implement F2 keyboard handling",
+        "references": []
+      },
+      {
+        "id": "7c7ae3215304132e39783276408a1917365b6c77",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField, ComboBox, DropdownBox: Wrong tooltip",
+        "references": []
+      }
+    ]
   }
 }
