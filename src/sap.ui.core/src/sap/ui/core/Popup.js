@@ -627,6 +627,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		var _oPosition;
 		if (my || at || of || offset || collision) {
 			_oPosition = this._createPosition(my, at, of, offset, collision);
+			// position object has to be set accordingly otherwise "oPosition.of" of a DOM-reference
+			// would be the "document" even if a proper "of" was provided
+			this._oPosition = _oPosition;
 		} else {
 			_oPosition = this._oPosition;
 		}
@@ -995,6 +998,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				this._oBottomShieldLayer = null;
 				this._iBottomShieldRemoveTimer = null;
 			});
+		}
+
+		// Check if this instance is a child Popup. If true de-register this from
+		// the parent
+		if (this.isInPopup(this._oLastPosition.of)) {
+			var sParentId = this.getParentPopupId(this._oLastPosition.of);
+			var sChildId = "";
+
+			var oContent = this.getContent();
+			if (oContent instanceof sap.ui.core.Element) {
+				sChildId = oContent.getId();
+			} else if (typeof oContent === "object") {
+				sChildId = oContent.id;
+			}
+
+			this.removeChildFromPopup(sParentId, sChildId);
+			this.removeChildFromPopup(sParentId, this._popupUID);
 		}
 
 		var fnClosed = function() { // the function to call when the popup closing animation has completed
