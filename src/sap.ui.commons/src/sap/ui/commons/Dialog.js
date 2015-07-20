@@ -11,14 +11,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Constructor for a new Dialog.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
 		 * An interactive window appearing on request displaying information to the user. The API supports features such as popups with fixed sizes, popups with unlimited width, scrolling bars for large windows, and control nesting (for example, a drop-down list can be included in the window).
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.PopupInterface
 		 *
+		 * @namespace
 		 * @author SAP SE
 		 * @version ${version}
 		 *
@@ -37,7 +38,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				properties: {
 
 					/**
-					 *
 					 * Outer width of dialog window. When not set and not constrained by one of the width parameters (minWidth/maxWidth), the window size is automatically adapted to the content.
 					 */
 					width: {
@@ -47,7 +47,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Outer height of dialog window. When not set and not constrained by one of the height parameters (minHeight/maxHeight), the window size is automatically adapted to the content.
 					 */
 					height: {
@@ -57,7 +56,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Scroll position from left to right. "0" means leftmost position.
 					 */
 					scrollLeft: {
@@ -67,7 +65,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Scroll position from top to bottom. "0" means topmost position.
 					 */
 					scrollTop: {
@@ -77,7 +74,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Dialog title displayed in the header.
 					 */
 					title: {
@@ -87,7 +83,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Padding is theme-dependent. When set to "false", the content extends to the dialog borders.
 					 */
 					applyContentPadding: {
@@ -97,7 +92,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Displays a close button in the title bar.
 					 */
 					showCloseButton: {
@@ -107,7 +101,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Specifies whether the dialog window can be resized by the user. The dialog frame contains the visual symbol.
 					 */
 					resizable: {
@@ -117,7 +110,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Minimum outer width of the dialog window. When set, neither the user nor some layout settings can make the window smaller.
 					 */
 					minWidth: {
@@ -127,7 +119,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Minimum outer height of the dialog window. When set, neither the user nor some layout settings can make the window smaller.
 					 */
 					minHeight: {
@@ -137,7 +128,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Maximum outer width of the dialog window. If set, neither the user nor some layout settings can make the window larger.
 					 */
 					maxWidth: {
@@ -147,7 +137,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Maximum outer height of the dialog window. If set, neither the user nor some layout settings can make the window larger.
 					 */
 					maxHeight: {
@@ -157,8 +146,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
-					 * Border design is theme-dependent.
+					 * Specifies the border design. Border design is theme dependent.
 					 */
 					contentBorderDesign: {
 						type: "sap.ui.commons.enums.BorderDesign",
@@ -167,7 +155,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 * Specify whether the dialog should be modal, or not. In case of <code>true</code> the focus is kept inside the dialog.
+					 * Specifies whether the dialog should be modal, or not. In case of <code>true</code> the focus is kept inside the dialog.
 					 */
 					modal: {
 						type: "boolean",
@@ -185,7 +173,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 * Whether Dialog movement should be restricted to the visible area of the window. This only affects drag&drop movements by the user. This doesn't affect modal dialogs -> modal dialogs always stay in the window.
+					 * Specifies whether Dialog movement should be restricted to the visible area of the window. This only affects drag&drop movements by the user. This doesn't affect modal dialogs -> modal dialogs always stay in the window.
 					 * @since 1.9.0
 					 */
 					keepInWindow: {
@@ -208,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				aggregations: {
 
 					/**
-					 * Aggregating the buttons to display at the bottom of the dialog, for example OK and Cancel. Association defaultButton can be used for one of the defined buttons.
+					 * Aggregation of the buttons to display at the bottom of the dialog, for example OK and Cancel. Association defaultButton can be used for one of the defined buttons.
 					 */
 					buttons: {
 						type: "sap.ui.core.Control",
@@ -217,9 +205,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 * Aggregating the content of the dialog (one or more controls).
+					 * Aggregation of the content of the dialog (one or more controls).
 					 *
-					 * Caveat: when content is added with width given as a percentage, the Dialog itself should have a width set.
+					 * Warning: when content is added with width given as a percentage, the Dialog itself should have a width set.
 					 */
 					content: {
 						type: "sap.ui.core.Control",
@@ -230,7 +218,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				associations: {
 
 					/**
-					 *
 					 * Defines one of the buttons that have been provided via button aggregation to be the default button. This default button is initially selected, if no control is set via the initialFocus association explicitly. The default button is activated when Enter is pressed in the context of the dialog and when the currently selected element does not handle the Enter event itself.
 					 */
 					defaultButton: {
@@ -239,7 +226,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 *
 					 * Defines the control that shall get the focus when the dialog is opened.
 					 */
 					initialFocus: {
@@ -250,35 +236,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				events: {
 
 					/**
-					 *
 					 * Event is fired when the dialog has been closed (after closing-animation etc.). Event parameters provide information about last position and last size.
 					 */
 					closed: {
 						parameters: {
 
 							/**
-							 * the width of the dialog when closed
+							 * The width of the dialog when closed
 							 */
 							width: {
 								type: "int"
 							},
 
 							/**
-							 * the height of the dialog when closed
+							 * The height of the dialog when closed
 							 */
 							height: {
 								type: "int"
 							},
 
 							/**
-							 * the top position of the dialog when closed
+							 * The top position of the dialog when closed
 							 */
 							top: {
 								type: "int"
 							},
 
 							/**
-							 * the left position of the dialog when closed
+							 * The left position of the dialog when closed
 							 */
 							left: {
 								type: "int"
@@ -323,6 +308,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Required adaptations after rendering.
+		 *
 		 * @private
 		 */
 		Dialog.prototype.onAfterRendering = function () {
@@ -404,9 +390,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Opens the dialog control instance.
 		 *
-		 * @type void
-		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 * @public
 		 */
 		Dialog.prototype.open = function () {
 			if (!this.oPopup) {
@@ -425,15 +410,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Re-renders the control when the theme is changed
-		 *
-		 * @param oEvent
+		 * Re-renders the control when the theme is changed.
 		 */
-		Dialog.prototype.onThemeChanged = function (oEvent) {
+		Dialog.prototype.onThemeChanged = function () {
 			this.invalidate();
 		};
 
 		/**
+		 * Makes sure the dialog is shown and the focus is properly set.
+		 *
 		 * @private
 		 */
 		Dialog.prototype._handleOpened = function () {
@@ -470,6 +455,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		};
 
+		/**
+		 * Handles the opening procedure for the dialog considering the underlying Popup.
+		 *
+		 * @private
+		 */
 		Dialog.prototype.handleOpened = function () {
 			this.oPopup.detachEvent("opened", this.handleOpened, this);
 
@@ -488,9 +478,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Closes the dialog control instance.
 		 *
-		 * @type void
-		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 * @public
 		 */
 		Dialog.prototype.close = function () {
 
@@ -516,6 +505,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oRect = oRect;
 		};
 
+		/**
+		 * Handles the closing procedure for the dialog.
+		 *
+		 * @private
+		 */
 		Dialog.prototype.handleClosed = function () {
 			this.oPopup.detachEvent("closed", this.handleClosed, this);
 
@@ -535,8 +529,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * restore the focus when the dialog was closed to the control which opened the dialog.
+		 * Restore the focus when the dialog was closed to the control which opened the dialog.
 		 * This is independent of the dialogs modal state. The popup also restores focus when using modal popups/dialogs.
+		 *
 		 * @private
 		 */
 		Dialog.prototype.restorePreviousFocus = function () {
@@ -551,7 +546,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Destroys this instance of dialog, called by Element#destroy()
+		 * Destroys this instance of dialog, called by Element#destroy().
+		 *
 		 * @private
 		 */
 		Dialog.prototype.exit = function () {
@@ -578,7 +574,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Checks whether the given sCssSize is an explicit value, or not (e.g. auto, inherit).
 		 *
 		 * @param {string} sCssSize The CSS string to check for being explicit value.
-		 * @return {boolean} whether The given sCssSize is an explicit value, or not (e.g. auto, inherit).
+		 * @returns {boolean} whether The given sCssSize is an explicit value, or not (e.g. auto, inherit).
 		 * @private
 		 */
 		Dialog._isSizeSet = function (sCssSize) {
@@ -587,6 +583,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Handles the sapescape event, triggers closing of the window.
+		 *
 		 * @param {jQuery.EventObject} oEvent The event object
 		 * @private
 		 */
@@ -599,6 +596,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Handles the sapenter event, triggers the default button of the dialog.
+		 *
 		 * @param {jQuery.EventObject} oEvent The event object
 		 * @private
 		 */
@@ -622,6 +620,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Event handler for the focusin event.
+		 *
 		 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
 		 * @param {jQuery.EventObject} oEvent The event object
 		 * @private
@@ -642,7 +641,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Restores the focus to the dialog after it has been moved or resized
+		 * Restores the focus to the dialog after it has been moved or resized.
+		 *
 		 * @param {jQuery.EventObject} oEvent The event object
 		 * @private
 		 */
@@ -657,6 +657,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Handles or cancels the selectstart event when occuring in parts of the dialog.
+		 *
 		 * @param {jQuery.EventObject} oEvent The event object
 		 * @private
 		 */
@@ -670,7 +671,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Get minimal reasonable size of the dialog given its inner elements. Call is recommended after rendering.
 		 *
-		 * @return {Object} An object with inner structure {width:{int}, height:{int}}
+		 * @returns {Object} An object with inner structure {width:{int}, height:{int}}
 		 * @private
 		 */
 		Dialog.prototype.getMinSize = function () {
@@ -725,11 +726,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Implementation of API method isOpen
 
 		/**
-		 * Returns whether the Dialog is open (this includes opening and closing animations). For more detailed information about the current state check Dialog.getOpenState().
+		 * Indicates whether the Dialog is open (this includes opening and closing animations).
+		 * For more detailed information about the current state check Dialog.getOpenState().
 		 *
-		 * @type boolean
-		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 * @returns {boolean}
+		 * @public
 		 */
 		Dialog.prototype.isOpen = function () {
 			return this.oPopup.isOpen();
@@ -738,18 +740,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Implementation of API method isOpen
 
 		/**
-		 * Returns whether the Dialog is currently open, closed, or transitioning between these states.
+		 * Indicates whether the Dialog is currently open, closed, or transitioning between these states.
 		 *
-		 * @type sap.ui.core.OpenState
-		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 * @returns {sap.ui.core.OpenState}
+		 * @public
 		 */
 		Dialog.prototype.getOpenState = function () {
 			return this.oPopup.getOpenState();
 		};
 
 		/**
-		 * Whether the dialog is currently enabled or not.
+		 * Determines whether the dialog is currently enabled or not.
 		 *
 		 * Applications can't control the enabled state via a property. A dialog is implicitly
 		 * enabled depending on its <code>openState</code>. Descendant controls that honor the
@@ -770,7 +772,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * for content that becomes hidden soon. Should this show to be confusing for end users, it might
 		 * be changed.
 		 *
-		 * @return {boolean} whether the dialog is currently enabled or not.
+		 * @returns {boolean} indicates whether the dialog is currently enabled or not.
 		 * @public
 		 */
 		Dialog.prototype.getEnabled = function () {
@@ -788,7 +790,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handles the dragstart event.
 		 * In case of resize currently ongoing, this cancels the dragstart.
-		 * @param {sap.ui.core.BroserEvent} oEvent The forwarded browser event
+		 *
+		 * @param {sap.ui.core.BrowserEvent} oEvent The forwarded browser event
 		 * @private
 		 */
 		Dialog.prototype.ondragstart = function (oEvent) {
@@ -800,7 +803,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Initializes drag and move capabilities.
-
+		 *
 		 * @param {jQuery.EventObject} oEvent The event object
 		 * @private
 		 */
@@ -869,9 +872,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 		/**
-		 * Returns the document of the parent window which is highest up in the hierarchy of parent windows, but still belongs
-		 * to the same domain (so its document is accessible)
+		 * Returns the document of the parent window which is highest up in the hierarchy of parent windows but still belongs
+		 * to the same domain (so its document is accessible).
 		 *
+		 * @returns {Object} outerDoc
 		 * @private
 		 */
 		Dialog._findSameDomainParentWinDoc = function () {
@@ -894,7 +898,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Handles the move event taking the current dragMode into account.
+		 * Also stops propagation of the event.
+		 *
 		 * @param {DOMEvent} event The event raised by the browser.
+		 * @returns {boolean}
 		 * @private
 		 */
 		Dialog.prototype.handleMove = function (event) {
@@ -963,7 +970,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * This function checks if the "keepInWindow" property is set or if the Dialog is modal.
+		 * Indicates whether the "keepInWindow" property is set or if the Dialog is modal.
 		 * Modal Dialogs mustn't not leave the window also.
 		 *
 		 * @returns {boolean} if the Dialog must leave the window area
