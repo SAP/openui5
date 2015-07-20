@@ -212,6 +212,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.Token",
+			"url": "../Token.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Tokenizer",
 			"url": "../Tokenizer.html",
 			"appComponent": "CA-UI5-CTR-WDF"
