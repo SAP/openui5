@@ -2155,6 +2155,9 @@
 		window.sap = window.sap || {};
 		sap.ui = sap.ui || {};
 
+		var rDotsAnywhere = /(?:^|\/)\.+/;
+		var r2DotsAnywhere = /(?:^|\/)\.{2,}/;
+		
 		/**
 		 * Defines a Javascript module with its name, its dependencies and a module value or factory.
 		 *
@@ -2408,6 +2411,14 @@
 				// resolve relative module names
 				var sPackage = sResourceName.slice(0,1 + sResourceName.lastIndexOf('/'));
 				for (i = 0; i < aDependencies.length; i++) {
+					if ( r2DotsAnywhere.test(aDependencies[i]) ) {
+						log.error(
+							"In UI5 1.28, relative module names using '../' are not supported by sap.ui.define. " +
+							"Code that uses them might fail with release 1.30 or later even if that code seems to work now. " +
+							"In 1.28, the browser might resolve the '../', but that resolution differs significantly from the " + 
+							"AMD compliant resolution implemented in 1.30 and later. " +
+							"It is therefore strongly discouraged in version 1.28 to use '../' in the module dependencies for a sap.ui.define call.");
+					}
 					if ( /^\.\//.test(aDependencies[i]) ) {
 						aDependencies[i] = sPackage + aDependencies[i].slice(2); // 2 == length of './' prefix
 					}
@@ -2516,6 +2527,12 @@
 
 				return oModule ? (oModule.content || jQuery.sap.getObject(urnToUI5(sModuleName))) : undefined;
 
+			}
+
+			for (var i = 0; i < vDependencies.length; i++) {
+				if ( rDotsAnywhere.test(vDependencies[i]) ) {
+					log.error("sap.ui.require does not support relative names using './' or '..'/'");
+				}
 			}
 
 			requireAll(vDependencies, function(aModules) {

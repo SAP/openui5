@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8" />
 
 <!--
   JSUNIT:
@@ -8,25 +10,27 @@
     Author:
  -->
 
-		<title>Test Page for SAPUI5 Global functionality (from Global.js)</title>
+		<title>Test Page for SAPUI5 Global functionality (from jquery.sap.global.js and sap/ui/Global.js)</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
-				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.core"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css" type="text/css" data-marker="42" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
-
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script >
+			sinon.config.useFakeTimers = false;
+			
 			/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */
 			jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript");
 			jQuery.sap.includeStyleSheet("testdata/testA.css", "jsunitIncludeStyleSheetTest");
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
 
 			module("Basic", {
 				setup : function() {
@@ -234,7 +238,7 @@
 
 			module("sap.ui.require");
 
-			test("basic functionality", 3, function () {
+			test("basic functionality", 6, function () {
 
 				var server = sinon.fakeServer.create();
 				server.respondWith(/first/, 'sap.ui.define([], function () {' +
@@ -243,19 +247,50 @@
 				server.respondWith(/second/, 'sap.ui.define([], function () {' +
 						'return {my : "secondmodule"}' +
 						'}, /* bExport= */ true);');
+				server.respondWith(/third\/module/, 'sap.ui.define([ "../second/module", "deep/../second/module", "./helper"], function () {' +
+						'return {my : "thirdmodule"}' +
+						'}, /* bExport= */ true);');
+				server.respondWith(/third\/helper/, 'sap.ui.define([], function () {' +
+						'return {my : "helper"}' +
+						'}, /* bExport= */ true);');
 				server.autoRespond = true;
 
 				stop();
+
+				// spy on all log entries, esp. those with level error and the expected text
+				var oLogListener = {
+					onLogEntry : sinon.spy()
+				};
+				var match1 = sinon.match({
+					level: jQuery.sap.log.Level.ERROR,
+					message: sinon.match(/relative module names using '\.\.\/' are not supported/i),
+					component: 'sap.ui.ModuleSystem'
+				});
+				var match2 = sinon.match({
+					level: jQuery.sap.log.Level.ERROR,
+					message: "sap.ui.require does not support relative names using './' or '..'/'",
+					component: 'sap.ui.ModuleSystem'
+				});
+				oLogListener.onLogEntry.withArgs(match1);
+				oLogListener.onLogEntry.withArgs(match2);
+				jQuery.sap.log.addLogListener(oLogListener);
+				
 				var calledBack = false;
-				sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
+				
+				sap.ui.require(["my/first/module", "my/second/module", "my/third/module", "./my/first/module", "../my/first/module"], function (firstModule, secondModule, thirdModule) {
 					strictEqual(firstModule.my, "firstmodule");
 					strictEqual(secondModule.my, "secondmodule");
+					strictEqual(thirdModule.my, "thirdmodule");
 					calledBack = true;
+					ok(oLogListener.onLogEntry.withArgs(match1).calledTwice, "usage of '../' in sap.ui.define should have been reported twice with level error");
+					ok(oLogListener.onLogEntry.withArgs(match2).calledTwice, "usage of './' or '../' in sap.ui.require should have been reported twice with level error");
+					jQuery.sap.log.removeLogListener(oLogListener);
+					server.restore();
 					start();
 				});
+				
 				equal(calledBack, false, "callback must not have been called synchronously");
 
-				server.restore();
 			});
 
 
