@@ -1581,6 +1581,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				oItem = new sap.m.UploadCollectionItem({
 					fileName: sFileName
 				});
+				oItem._status = sStatus;
 				if (!this.getInstantUpload()) {
 					oItem.setAssociation("fileUploader",this._oFileUploader, true);
 					this.insertItem(oItem);
