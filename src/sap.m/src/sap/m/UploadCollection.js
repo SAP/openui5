@@ -622,19 +622,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				bEnabled = false;
 			}
 			oFileNameLabel = new sap.m.Link(sItemId + "-ta_filenameHL", {
-				text : sFileNameLong,
 				enabled : bEnabled,
 				target : "_blank",
 				press : function(oEvent) {
 					sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
 				}
 			}).addStyleClass("sapMUCFileName");
+			oFileNameLabel.setModel(oItem.getModel());
+			oFileNameLabel.setText(sFileNameLong);
 		}
 
 		if (sStatus === UploadCollection._displayStatus) {
-			oUploadedDateLabel = new sap.m.Label(sItemId + "-ta_date", {
-				text : oItem.getUploadedDate() + " " + oItem.getContributor()
-			});
+			oUploadedDateLabel = new sap.m.Label(sItemId + "-ta_date");
+			oUploadedDateLabel.setModel(oItem.getModel());
+			oUploadedDateLabel.setText(oItem.getUploadedDate() + " " + oItem.getContributor());
 		}
 
 		if (sStatus === UploadCollection._uploadingStatus && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
@@ -674,9 +675,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				valueState : sValueState,
 				valueStateText : sValueStateText,
 				showValueStateMessage: bShowValueStateMessage,
-				value : sFileName,
 				description: oFile.extension
 			}).addStyleClass("sapMUCEditBox");
+			oFileNameEditBox.setModel(oItem.getModel());
+			oFileNameEditBox.setValue(sFileName);
 
 			if ((iMaxLength - oFile.extension.length) > 0) {
 				oFileNameEditBox.setProperty("maxLength", iMaxLength - oFile.extension.length, true);
