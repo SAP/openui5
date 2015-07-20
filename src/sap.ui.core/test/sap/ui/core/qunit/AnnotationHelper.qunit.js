@@ -7,9 +7,8 @@ sap.ui.require([
 	"sap/ui/model/odata/_AnnotationHelperExpression", "sap/ui/model/odata/v2/ODataModel"
 ], function(BindingParser, ManagedObject, JSONModel, AnnotationHelper, Basics, Expression,
 		ODataModel) {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+	/*global deepEqual, ok, QUnit, sinon, strictEqual */
+	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
 	//TODO remove this workaround in IE9 for
@@ -480,7 +479,6 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	</edmx:DataServices>\
 </edmx:Edmx>\
 		',
-		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
 		sPath2BusinessPartner = "/dataServices/schema/0/entityType/0",
 		sPath2Product = "/dataServices/schema/0/entityType/1",
 		sPath2SalesOrder = "/dataServices/schema/0/entityType/2",
@@ -490,7 +488,6 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		fnGetNavigationPath = AnnotationHelper.getNavigationPath,
 		fnIsMultiple = AnnotationHelper.isMultiple,
 		fnSimplePath = AnnotationHelper.simplePath,
-		fnText = AnnotationHelper.text,
 		TestControl = ManagedObject.extend("TestControl", {
 			metadata: {
 				properties: {
@@ -506,7 +503,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sAnnotations],
 			"/GWSAMPLE_BASIC/test_annotations" : [200, mHeaders, sGwsampleTestAnnotations],
 			"/test/$metadata" : [200, mHeaders, sTestMetadata],
-			"/test/annotations" : [200, mHeaders, sTestAnnotations],
+			"/test/annotations" : [200, mHeaders, sTestAnnotations]
 		},
 		oGlobalSandbox; // global sandbox for async tests
 
@@ -539,8 +536,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * Formats the value using the AnnotationHelper. Provides access to the given current context.
 	 *
 	 * @param {any} vValue
+	 *   the value
 	 * @param {sap.ui.model.Context} [oCurrentContext]
-	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 *   the given current context
+	 * @param {function} [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
 	 *   the custom formatter function to call
 	 * @param {boolean} [bSkipRawValue=false]
 	 *   do not pass raw value to format function
@@ -548,16 +547,15 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 *   a binding string
 	 */
 	function format(vValue, oCurrentContext, fnMethod, bSkipRawValue) {
-		var sResult;
-
 		if (typeof oCurrentContext === "function") { // allow oCurrentContext to be omitted
 			fnMethod = oCurrentContext;
 			oCurrentContext = null;
 		}
 		fnMethod = fnMethod || AnnotationHelper.format;
-		return fnMethod.requiresIContext === true
-			? (bSkipRawValue ? fnMethod(oCurrentContext) : fnMethod(oCurrentContext, vValue))
-			: fnMethod(vValue);
+		if (fnMethod.requiresIContext === true) {
+			return bSkipRawValue ? fnMethod(oCurrentContext) : fnMethod(oCurrentContext, vValue);
+		}
+		return fnMethod(vValue);
 	}
 
 	/**
@@ -578,7 +576,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * parser. Provides access to the given current context.
 	 *
 	 * @param {any} vValue
+	 *   the value
 	 * @param {sap.ui.model.Context} [oCurrentContext]
+	 *   the given current context
 	 * @param {function} [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
 	 *   the custom formatter function to call
 	 * @param {boolean} [bSkipRawValue=false]
@@ -639,6 +639,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * Runs the given code under test with the <code>GWSAMPLE_BASIC</code> meta model.
 	 *
 	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
+	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
@@ -652,6 +653,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * <code>sGwsampleTestAnnotations</code>.
 	 *
 	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
+	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
@@ -665,6 +667,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * <code>sTestMetaData</code> and <code>sTestMetaAnnotations</code>.
 	 *
 	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
+	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
@@ -681,6 +684,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * @param {string|string[]} vAnnotationUrl
 	 *   the (array of) annotation URLs
 	 * @param {function} fnCodeUnderTest
+	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
@@ -713,7 +717,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bWithRawValue) {
-		test("forward to getExpression: with RawValue " + bWithRawValue, function () {
+		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function () {
 			var oInterface = {
 					getObject: function () {/* will be overwritten by mock*/}
 				},
@@ -740,7 +744,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'].forEach(function (sString) {
-		test("14.4.11 Expression edm:String: " + sString, function () {
+		QUnit.test("14.4.11 Expression edm:String: " + sString, function () {
 			return withGwsampleModel(function (oMetaModel) {
 				var sMetaPath = sPath2Product
 						+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
@@ -756,7 +760,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("forward to getExpression: raw value automatically determined", function () {
+	QUnit.test("forward to getExpression: raw value automatically determined", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2Product
 				+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
@@ -772,7 +776,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.4.11 Expression edm:String: references", function () {
+	QUnit.test("14.4.11 Expression edm:String: references", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2Product
 					+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
@@ -831,7 +835,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		{typeName: "Int", result: "9007199254740992"},
 		{typeName: "TimeOfDay", result: "13:57:06"}
 	].forEach(function (oFixture, index) {
-		test("14.4.x Constant Expression edm:" + oFixture.typeName, function () {
+		QUnit.test("14.4.x Constant Expression edm:" + oFixture.typeName, function () {
 			return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 				var sMetaPath = sPath2BusinessPartner
 						+ "/com.sap.vocabularies.UI.v1.Identification/3/Value/Apply/Parameters/"
@@ -846,7 +850,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
-		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
+		QUnit.test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
 			var oMetaModel = new JSONModel({
 					"Value" : {
 						"Path" : sPath
@@ -885,7 +889,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i
 				+ "/Value/Eq/0";
 
-		test("14.5.12 Expression edm:Path w/ type, path = " + sPath + ", type = " + oType.name,
+		QUnit.test("14.5.12 Expression edm:Path w/ type, path = " + sPath
+			+ ", type = " + oType.name,
 			function () {
 				return withTestModel(function (oMetaModel) {
 					var oCurrentContext = oMetaModel.getContext(sPath),
@@ -935,7 +940,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	].forEach(function (oApply) {
 		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
-		test("14.5.3 Expression edm:Apply: " + sError, function () {
+		QUnit.test("14.5.3 Expression edm:Apply: " + sError, function () {
 			oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 			return withGwsampleModel(function (oMetaModel) {
@@ -948,7 +953,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.1 Function odata.concat", function () {
+	QUnit.test("14.5.3.1.1 Function odata.concat", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.Badge/Title/Value",
 				oRawValue = oMetaModel.getObject(sPath);
@@ -964,7 +969,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
+	QUnit.test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
 		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 		return withGwsampleModel(function (oMetaModel) {
@@ -986,7 +991,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.1 Function odata.concat: null parameter", function () {
+	QUnit.test("14.5.3.1.1 Function odata.concat: null parameter", function () {
 		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 		return withGwsampleModel(function (oMetaModel) {
@@ -1005,7 +1010,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.1 Function odata.concat: various constants", function () {
+	QUnit.test("14.5.3.1.1 Function odata.concat: various constants", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/3/Value",
@@ -1025,7 +1030,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
+	QUnit.test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
@@ -1038,16 +1043,18 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			// test that the binding still works with bindTexts
 			// testBinding cannot be used because it uses a JSONModel w/o meta model
-			oContext.getSetting = function (sSetting) { return sSetting === "bindTexts"};
+			oContext.getSetting = function (sSetting) {
+				return sSetting === "bindTexts";
+			};
 			strictEqual(format(oContext.getObject(), oContext), "{=odata.fillUriTemplate(${path:"
 				+ "'/##/dataServices/schema/[${namespace}===\\'GWSAMPLE_BASIC\\']/entityType/"
 				+ "[$\{name}===\\'BusinessPartner\\']/com.sap.vocabularies.UI.v1.Identification/"
-				+ "0/Url/Apply/Parameters/0/Value'},{'ID1':${BusinessPartnerID}})}")
+				+ "0/Url/Apply/Parameters/0/Value'},{'ID1':${BusinessPartnerID}})}");
 		});
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.2 odata.fillUriTemplate: various constants", function () {
+	QUnit.test("14.5.3.1.2 odata.fillUriTemplate: various constants", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/4/Url",
@@ -1072,36 +1079,38 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		{type: "String", value: "foo\\bar", result: "'foo\\bar'"},
 		{type: "Unsupported", value: "foo\\bar", error: true}
 	].forEach(function (oFixture) {
-		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
-			if (oFixture.error) {
-				oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+		QUnit.test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type),
+			function () {
+				if (oFixture.error) {
+					oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+				}
+
+				return withGwsampleModel(function (oMetaModel) {
+					var oExpectedResult,
+						sMetaPath = sPath2BusinessPartner
+							+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
+						oCurrentContext = oMetaModel.getContext(sMetaPath),
+						oRawValue = {
+							Apply: {
+								Name: "odata.uriEncode",
+								Parameters: [{
+									Type: oFixture.type,
+									Value: oFixture.value
+								}]
+							}
+						};
+
+					oExpectedResult = oFixture.error
+						? "Unsupported: " + Basics.toErrorString(oRawValue)
+						: oFixture.result;
+					strictEqual(formatAndParse(oRawValue, oCurrentContext), oExpectedResult);
+				});
 			}
-
-			return withGwsampleModel(function (oMetaModel) {
-				var oExpectedResult,
-					sMetaPath = sPath2BusinessPartner
-						+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
-					oCurrentContext = oMetaModel.getContext(sMetaPath),
-					oRawValue = {
-						Apply: {
-							Name: "odata.uriEncode",
-							Parameters: [{
-								Type: oFixture.type,
-								Value: oFixture.value
-							}]
-						}
-					};
-
-				oExpectedResult = oFixture.error
-					? "Unsupported: " + Basics.toErrorString(oRawValue)
-					: oFixture.result;
-				strictEqual(formatAndParse(oRawValue, oCurrentContext), oExpectedResult);
-			});
-		});
+		);
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.3 Function odata.uriEncode", function () {
+	QUnit.test("14.5.3.1.3 Function odata.uriEncode", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url/Apply/Parameters/1/Value";
@@ -1129,7 +1138,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		//TODO split seconds, e.g. ".123456789012"
 		{type: "TimeOfDay", result: "time'PT11H11M11S'"}
 	].forEach(function (oFixture, index) {
-		test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function () {
+		QUnit.test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function () {
 			return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 				var sMetaPath = sPath2BusinessPartner
 						+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/Apply/"
@@ -1143,7 +1152,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.3 odata.uriEncode: integration-like test", function () {
+	QUnit.test("14.5.3.1.3 odata.uriEncode: integration-like test", function () {
 		function encode(s) {
 			return encodeURIComponent(s).replace(/'/g, "%27");
 		}
@@ -1181,7 +1190,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
+	QUnit.test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url";
@@ -1198,7 +1207,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
+	QUnit.test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
 		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 		return withGwsampleModel(function (oMetaModel) {
@@ -1226,7 +1235,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.3 Nested apply (concat embeds concat & uriEncode)", function () {
+	QUnit.test("14.5.3 Nested apply (concat embeds concat & uriEncode)", function () {
 		// This test is important to show that a nested concat must be expression
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
@@ -1234,26 +1243,26 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			testBinding(oMetaModel.getContext(sMetaPath), "SAP 'SE'", {
 				CompanyName: "SAP",
-				LegalForm: "SE",
+				LegalForm: "SE"
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("14.5.3 Nested apply (uriEncode embeds concat)", function () {
+	QUnit.test("14.5.3 Nested apply (uriEncode embeds concat)", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/2/Value";
 
 			testBinding(oMetaModel.getContext(sMetaPath), "'SAP SE'", {
 				CompanyName: "SAP",
-				LegalForm: "SE",
+				LegalForm: "SE"
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("14.5.1 Comparison and Logical Operators: part 1, comparison", function () {
+	QUnit.test("14.5.1 Comparison and Logical Operators: part 1, comparison", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/6/Value",
@@ -1271,7 +1280,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.1 Comparison and Logical Operators: part 2, logical", function () {
+	QUnit.test("14.5.1 Comparison and Logical Operators: part 2, logical", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/7/Value",
@@ -1307,7 +1316,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	    {path: "_String80", value: "bar"},
 	    {path: "_Time", value: {__edmType: "Edm.Time", ms: Date.UTC(1970, 0, 1, 12, 43, 7, 236)}}
 	].forEach(function (oFixture, i) {
-		test("14.5.1 Comparison and Logical Operators: Eq on" + oFixture.path, function () {
+		QUnit.test("14.5.1 Comparison and Logical Operators: Eq on" + oFixture.path, function () {
 			return withTestModel(function (oMetaModel) {
 				var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i
 						+ "/Value/",
@@ -1324,7 +1333,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.6 Expression edm:If", function () {
+	QUnit.test("14.5.6 Expression edm:If", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2Contact
 					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
@@ -1337,7 +1346,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	test("14.5.10 Expression edm:Null", function () {
+	QUnit.test("14.5.10 Expression edm:Null", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath = sPath2Contact
 					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/Url",
@@ -1354,7 +1363,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bWithRawValue) {
-		test("forward to getExpression: with RawValue " + bWithRawValue, function () {
+		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function () {
 			var oInterface = {
 					getObject: function () {/* will be overwritten by mock*/}
 				},
@@ -1381,7 +1390,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
-		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
+		QUnit.test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
 			var oMetaModel = new JSONModel({
 					"Value" : {
 						"Path" : sPath
@@ -1541,7 +1550,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			oFixture.isMultiple = false;
 		}
 
-		test(sTitle, function () {
+		QUnit.test(sTitle, function () {
 			return withGwsampleModel(function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
@@ -1629,7 +1638,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		navigationPath : undefined,
 		resolvedPath : undefined
 	}].forEach(function (oFixture) {
-		test("Missing path expression, context: " + oFixture.metaPath, function () {
+		QUnit.test("Missing path expression, context: " + oFixture.metaPath, function () {
 			return withGwsampleModel(function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath);
@@ -1637,7 +1646,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				if (oRawValue) {
 					// evil, test code only: write into ODataMetaModel
 					delete oRawValue.AnnotationPath;
-				} else if (oFixture.metaPath = "/dataServices/schema/0/@foo.Bar") {
+				} else if (oFixture.metaPath === "/dataServices/schema/0/@foo.Bar") {
 					oRawValue = {
 						"AnnotationPath" : "n/a"
 					};
@@ -1676,7 +1685,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
 
 	//*********************************************************************************************
-	test("gotoEntityType called directly on the entity type's qualified name", function () {
+	QUnit.test("gotoEntityType called directly on the entity type's qualified name", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = "/dataServices/schema/0/entityContainer/0/entitySet/0/entityType",
 				sQualifiedName = "GWSAMPLE_BASIC.BusinessPartner",
@@ -1693,7 +1702,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntitySet");
 
 	//*********************************************************************************************
-	test("gotoEntitySet called directly on the entity set's name", function () {
+	QUnit.test("gotoEntitySet called directly on the entity set's name", function () {
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath
 					= "/dataServices/schema/0/entityContainer/0/associationSet/1/end/1/entitySet",
@@ -1710,7 +1719,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	module("sap.ui.model.odata.AnnotationHelper.gotoFunctionImport");
 
 	//*********************************************************************************************
-	test("gotoFunctionImport", function () {
+	QUnit.test("gotoFunctionImport", function () {
 		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
 			var sMetaPath =
 					sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Description/Action",
