@@ -633,12 +633,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			sRegion = oLocale.getRegion() || "",
 			mData;
 
+		/*
+		 * Merge a CLDR delta file and a CLDR fallback file.
+		 *  
+		 * Note: the contract of this method reg. null values differs from both, 
+		 * jQuery.extend as well as jQuery.sap.extend.
+		 */
+		function merge(obj, fallbackObj) {
+			var name, value, fallbackValue;
+
+			if ( !fallbackObj ) {
+				return;
+			}
+			
+			for ( name in fallbackObj ) {
+
+				if ( fallbackObj.hasOwnProperty(name) ) {
+					
+					value = obj[ name ];
+					fallbackValue = fallbackObj[ name ];
+
+					if ( value === undefined ) {
+						// 'undefined': value doesn't exist in delta, so take it from the fallback object 
+						// Note: undefined is not a valid value in JSON, so we can't misunderstand an existing undefined
+						obj[name] = fallbackValue;
+					} else if ( value === null ) {
+						// 'null' is used by the delta tooling as a marker that a value must not be taken form the fallback
+						delete obj[name];
+					} else if ( typeof value === 'object' && typeof fallbackValue === 'object' ) {
+						// both values are objects, merge them recursively
+						merge(value, fallbackValue);
+					}
+
+				}
+
+			}
+
+		}
+
 		function getOrLoad(sId) {
 			if ( !mLocaleDatas[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true) ) {
-				mLocaleDatas[sId] = jQuery.sap.loadResource("sap/ui/core/cldr/" + sId + ".json", {
+				var data = mLocaleDatas[sId] = jQuery.sap.loadResource("sap/ui/core/cldr/" + sId + ".json", {
 					dataType: "json",
 					failOnError : false
 				});
+				
+				// check if the data is a minified delta file. 
+				// If so, load the corresponding fallback data as well, merge it and remove the fallback marker
+				if ( data && data.__fallbackLocale ) {
+					merge(data, getOrLoad(data.__fallbackLocale));
+					delete data.__fallbackLocale;
+				}
+				
 				// if load fails, null is returned 
 				// -> caller will process the fallback chain, in the end a result is identified and stored in mDatas under the originally requested ID
 			}
