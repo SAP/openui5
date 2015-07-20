@@ -157,10 +157,10 @@ sap.ui.define([
 			function binding(bAddType) {
 				var sConstraints, sResult;
 
-				bAddType = bAddType && !oResult.ignoreTypeInPath;
-				if (rBadChars.test(vValue) || bAddType) {
+				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
+				if (bAddType || rBadChars.test(vValue)) {
 					sResult = "{path:" + Basics.toJSON(vValue);
-					if (bAddType && oResult.type) {
+					if (bAddType) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
 						sConstraints = Basics.toJSON(oResult.constraints);
 						if (sConstraints && sConstraints !== "{}") {
@@ -175,20 +175,25 @@ sap.ui.define([
 			switch (oResult.result) {
 			case "binding":
 				return bExpression ?  "$" + binding(false) : binding(bWithType);
+
 			case "composite":
 				if (bExpression) {
 					throw new Error(
 						"Trying to embed a composite binding into an expression binding");
 				}
 				return vValue;
+
 			case "constant":
 				if (oResult.type === "edm:Null") {
 					return bExpression ? "null" : null;
 				}
-				return bExpression ? Basics.toJSON(vValue)
-						: BindingParser.complexParser.escape(vValue);
+				return bExpression
+					? Basics.toJSON(vValue)
+					: BindingParser.complexParser.escape(vValue);
+
 			case "expression":
 				return bExpression ? vValue : "{=" + vValue + "}";
+
 			// no default
 			}
 		},

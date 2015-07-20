@@ -662,8 +662,8 @@
       <Annotations Target="GWSAMPLE_BASIC.Contact">
         <Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
           <Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
-            <PropertyValue Property="TypeName" String="Contact"/>
-            <PropertyValue Property="TypeNamePlural" String="Contacts"/>
+            <PropertyValue Property="TypeName" String="{@i18n>@Contact}"/>
+            <PropertyValue Property="TypeNamePlural" String="{@i18n>@Contacts}"/>
             <PropertyValue Property="Title">
               <Record Type="com.sap.vocabularies.UI.v1.DataField">
                 <PropertyValue Property="Label" String="Name"/>
@@ -674,18 +674,19 @@
                         <Path>Sex</Path>
                         <String>M</String>
                       </Eq>
-                      <String>Mr. </String>
+                      <String>{@i18n>@Mr}</String>
                       <If>
                         <Eq>
                           <Path>Sex</Path>
                           <String>F</String>
                         </Eq>
-                        <String>Mrs. </String>
+                        <String>{@i18n>@Mrs}</String>
                         <String></String>
                       </If>
                     </If>
+                    <String> </String>
                     <Path>FirstName</Path>
-                    <String/>
+                    <String> </String>
                     <Path>LastName</Path>
                   </Apply>
                 </PropertyValue>
