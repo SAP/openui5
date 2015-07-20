@@ -17,9 +17,9 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Toolbar control is a horizontal items container that can be used to get an input from a user or just to display output.
+	 * The Toolbar control is a horizontal container that is most commonly used to display buttons, labels, selects and various other input controls.
 	 *
-	 * By default, when the Toolbar overflows, it provides shrinking for the controls which have percentual width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behaviour can be overwritten by providing {@link sap.m.ToolbarLayoutData} for the toolbar items.
+	 * By default, Toolbar items are shrinkable if they have percent-based width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behavior can be overridden by providing {@link sap.m.ToolbarLayoutData} for the Toolbar items.
 	 *
 	 * Note: It is recommended that you use {@link sap.m.OverflowToolbar} over Toolbar, unless you want to avoid overflow in favor of shrinking.
 	 * @extends sap.ui.core.Control
@@ -45,29 +45,31 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 			/**
 			 * Defines the width of the control.
-			 * By default the Toolbar is block element, if the the width is not explicitly set, control will simply have its own natural size.
+			 * By default, Toolbar is a block element. If the the width is not explicitly set, the control will assume its natural size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 			/**
-			 * Indicates that the whole toolbar is clickable. Press event of this control is fired only if this property is set "true"
-			 * Note: This property should be used when there is no interactive control inside the toolbar but to make the toolbar itself interactive.
+			 * Indicates that the whole toolbar is clickable. The Press event is fired only if Active is set to true.
+			 * Note: This property should be used when there are no interactive controls inside the toolbar and the toolbar itself is meant to be interactive.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Sets the enabled property of all controls defined in the content aggregation. Note: This property is not for the toolbar itself. See also the "active" property.
+			 * Sets the enabled property of all controls defined in the content aggregation.
+			 * Note: This property does not apply to the toolbar itself, but rather to its items.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * Defines the height of the control.
-			 * Note: By default, the height property depends on the theme and the design property.
+			 * Note: By default, the Height property depends on the used theme and the Design property.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''},
 
 			/**
-			 * Defines the toolbar design. Design settings are theme-dependent and can also define the default height of the toolbar.
+			 * Defines the toolbar design.
+			 * Note: Design settings are theme-dependent. They also determine the default height of the toolbar.
 			 * @since 1.16.8
 			 */
 			design : {type : "sap.m.ToolbarDesign", group : "Appearance", defaultValue : ToolbarDesign.Auto}
@@ -83,13 +85,13 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		events : {
 
 			/**
-			 * If "active" property is set "true" then "press" event is fired when user clicks on the toolbar.
+			 * Fired when the user clicks on the toolbar, if the Active property is set to "true".
 			 */
 			press : {
 				parameters : {
 
 					/**
-					 * The control which caused the press event within the toolbar.
+					 * The toolbar item that was pressed
 					 */
 					srcControl : {type : "sap.ui.core.Control"}
 				}
@@ -116,7 +118,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 	/*
 	 * This sets inner controls to the initial width and
-	 * checks the given element horizontally overflows
+	 * checks the given element overflows horizontally
 	 *
 	 * @static
 	 * @protected
@@ -141,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * TODO: This function is not smart enough to detect DOM width changes
 	 * But tracking width changes is also expensive
 	 * (last and original width values must be keep in DOM and need update)
-	 * For now we assume app developers call setWidth from the control
+	 * For now we only support calling setWidth from the control
 	 * And controls return correct width values even default value applied with CSS
 	 *
 	 * @static
@@ -159,7 +161,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	};
 
 	/*
-	 * Checks given control whether shrinkable or not and marks according to second param
+	 * Checks if the given control is shrinkable or not and marks according to second param
 	 * Percent widths and text nodes(without fixed width) are shrinkable
 	 * Controls that implement IShrinkable interface should shrink
 	 * ToolbarSpacer is already shrinkable if it does not have fixed width
@@ -167,7 +169,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @static
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl UI5 Control
-	 * @param {String} [sShrinkClass] shrink item class name
+	 * @param {String} [sShrinkClass] Shrink item class name
 	 * @returns {true|false|undefined|Object}
 	 */
 	Toolbar.checkShrinkable = function(oControl, sShrinkClass) {
@@ -211,8 +213,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @static
 	 * @protected
 	 * @param {jQuery} $Element The container of flex items
-	 * @param {String} [sFlexClass] flexable item class
-	 * @param {String} [sShrinkClass] shrinkable item class
+	 * @param {String} [sFlexClass] Flexible item class
+	 * @param {String} [sShrinkClass] Shrinkable item class
 	 */
 	Toolbar.flexie = function($Element, sFlexClass, sShrinkClass) {
 
