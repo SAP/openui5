@@ -266,5 +266,53 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "b7c0c1dcc8201367e0a6c8a5950f511935997750",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Fixes a constant increase in height for the control triggered by first resize",
+        "references": []
+      }
+    ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "f84a0f52ed5cf3db08efa2187c36d9e40e857c33",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Renew DOM-reference When Used in \"checkDocking\"",
+        "references": []
+      }
+    ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "fecca435e47d9d66a1d0cf1d723435dff7256472",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: Remove DOM when hiding ToolPopup",
+        "references": []
+      }
+    ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1922ecc3934e3dfba8013c3f2907988784629616",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell: Set a static z-index for NotificationBar",
+        "references": []
+      }
+    ]
   }
 }
