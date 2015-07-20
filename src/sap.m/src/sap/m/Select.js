@@ -673,7 +673,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// used to prevent the change event from firing when the user scrolls
 			// the picker popup (dropdown) list using the mouse
-			this._bProcessChange = true;
+			this._bProcessChange = false;
 		};
 
 		/**
@@ -1068,6 +1068,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			if (!this._bFocusoutDueRendering && !this._bProcessChange) {
 				this._oSelectionOnFocus = this.getSelectedItem();
 			}
+
+			this._bProcessChange = true;
 
 			// note: in some circumstances IE browsers focus non-focusable elements
 			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
