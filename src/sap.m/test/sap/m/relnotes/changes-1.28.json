@@ -1,5 +1,4 @@
-{
-  "1.28.0": {
+si  "1.28.0": {
     "date": "January 2015",
     "notes": [
       {
@@ -2981,7 +2980,7 @@
         "id": "1dc0bdda5cdaa7c9f185f8342223066857fdf839",
         "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
         "type": "FIX",
-        "text": "ComboBox: Arrow button height corrected (downport)",
+        "text": "ComboBox: Arrow button height corrected",
         "references": []
       },
       {
@@ -3291,6 +3290,116 @@
         "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
         "type": "FIX",
         "text": "sap.m.Popover: Typo in explored app corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "93fd2f9d998bb9470b99017ad982f1a4c5b9c225",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateRangeSelection: Control key should be allowed.",
+        "references": []
+      },
+      {
+        "id": "ce6b0dd8b897fcd95f0827ca012f2ca4172488d1",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fix left paddings",
+        "references": []
+      },
+      {
+        "id": "b3b7e1d8ac9514cacca1c1fdcafe69463c107c57",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Item text can\u0027t be selected accidentally any more",
+        "references": []
+      },
+      {
+        "id": "215edb981a5bd58a3f27977a8defb517bd25d29e",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Custom suggestion value is ignored",
+        "references": []
+      },
+      {
+        "id": "964945fb76563ba871c5bae09099a9a1dea66d92",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Do not try to retain value when DOM is not exist.",
+        "references": []
+      },
+      {
+        "id": "4ba64927f8cf5b47a9fe885a9ed9ba375d78630b",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: ariaDescribedBy added",
+        "references": []
+      },
+      {
+        "id": "8662463f6f42f8bd81176c2b2e1ebf4887644a27",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: Fix auto close issue of the picker popup",
+        "references": []
+      },
+      {
+        "id": "c85f6e51613777913dd9a19d3ffddd366dc8797e",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Switch: Extending the switch should not throw an error",
+        "references": []
+      },
+      {
+        "id": "bfb6b913d6f261186c36d752a95e15d5b13ed427",
+        "author": "Evgeni Katsarski \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TableSelectDialog: Data forwarding when dialog is open from fragment corrected",
+        "references": []
+      },
+      {
+        "id": "5a307c4fa79eb66c73fe57f23fbad28cc69da961",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text: Issue with newline displaying as an escaped character fixed.",
+        "references": []
+      },
+      {
+        "id": "dea567decc99e326cf5080c972deaa682522bfbd",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: The implementation of passing on models to sub controls has been enhanced.",
+        "references": []
+      },
+      {
+        "id": "369251a190655519c6b173f928036b2b29304a00",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: On re-open of non-existing filter detail page, the dialog opens the parent filter page.",
+        "references": []
+      },
+      {
+        "id": "ae2a9a5962d8d5e4c28279852d090a3c064df608",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.TargetHandler: Dialogs are not closed if no navigation occurred",
+        "references": []
+      },
+      {
+        "id": "1e375cd238b7476cc89db8964f58fbcb749e2344",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa: Internet Explorer 9 fails when active element is called",
+        "references": []
+      },
+      {
+        "id": "698ce1bdf5bd98ae0e6ce2c11e1a8e1e8614020b",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.NotificationBar: Notifications are not shown",
         "references": []
       }
     ]

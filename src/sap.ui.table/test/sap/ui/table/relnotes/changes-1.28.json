@@ -410,5 +410,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1a8b87642cd83e82ce7e24207f123d84019d236a",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: clearSelection removes selectAllMode from root node",
+        "references": []
+      },
+      {
+        "id": "f0d1b242e31d1d9c3b6a5626d2ad6b07a899d0ca",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Added check for onClick event to see if it was handled already",
+        "references": []
+      },
+      {
+        "id": "6f294d93a6e6c90eb814d2002c451ccd1ecc98d8",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fixes that expand/collapse icons display",
+        "references": []
+      },
+      {
+        "id": "c1ee791a209cf345ff21856d6ccb196bf875e1b5",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fixes useGroupMode for TreeTable",
+        "references": []
+      }
+    ]
   }
 }

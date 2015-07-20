@@ -187,5 +187,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "c3d5711de6920b7e308785823dfd77a0a21ad687",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Added Splitter Bar Accessibility Information",
+        "references": []
+      }
+    ]
   }
 }
