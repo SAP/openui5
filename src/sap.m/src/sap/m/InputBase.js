@@ -127,30 +127,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Private properties                                          */
 	/* ----------------------------------------------------------- */
 
-	// use labels as placeholder configuration
-	InputBase.prototype._bShowLabelAsPlaceholder = (function(oDevice) {
-
-		// check native placeholder support first
-		if (!oDevice.support.input.placeholder) {
-			return true;
-		}
-
-		// according to HTML 5 placeholder specification,
-		// http://www.w3.org/html/wg/drafts/html/master/single-page.html#the-placeholder-attribute
-		// the placeholder attribute is only shown before the user enters a value
-		// but IE removes placeholder when the user puts focus on the field
-		// http://msdn.microsoft.com/en-us/library/ie/hh772942(v=vs.85).aspx
-		if (oDevice.browser.msie) {
-			return true;
-		}
-
-		// we exclude not right alignable placeholders
-		// check test page : http://jsfiddle.net/89FhB/
-		if (oDevice.os.android && oDevice.os.version < 4.4) {
-			return true;
-		}
-
-	}(sap.ui.Device));
+	/**
+	 * Use labels as placeholder configuration.
+	 * It can be necessary for the subclasses to overwrite this when
+	 * native placeholder usage causes undesired input events or when
+	 * placeholder attribute is not supported for the specified type.
+	 * https://html.spec.whatwg.org/multipage/forms.html#input-type-attr-summary
+	 * 
+	 * @see sap.m.InputBase#oninput
+	 * @protected
+	 */
+	InputBase.prototype._bShowLabelAsPlaceholder = !sap.ui.Device.support.input.placeholder;
 
 	/* ----------------------------------------------------------- */
 	/* Private methods                                             */
