@@ -125,7 +125,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 			for (var i = 0; i < aAggregationOverlays.length; i++) {
 				var oAggregationOverlay = aAggregationOverlays[i];
 				var aChildren = oAggregationOverlay.getChildren();
-				if (aChildren.length > 0) {
+				if (aChildren.length) {
 					return aChildren[0];
 				}
 			}
@@ -145,8 +145,39 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 			for (var i = 0; i < aAggregationOverlays.length; i++) {
 				var oAggregationOverlay = aAggregationOverlays[i];
 				var aChildren = oAggregationOverlay.getChildren();
-				if (aChildren.length > 0) {
+				if (aChildren.length) {
 					return aChildren[aChildren.length - 1];
+				}
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getNextSiblingOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		if (oParentAggregationOverlay) {
+			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
+			var iIndex = aAggregationOverlays.indexOf(oOverlay);
+			// get next sibling in the same aggregation
+			if (iIndex !== aAggregationOverlays.length - 1) {
+				return aAggregationOverlays[iIndex + 1];
+			} else {
+				//get next sibling from next aggregation in the same parent
+				if (iIndex === aAggregationOverlays.length - 1) {
+					var oParent = oOverlay.getParentOverlay();
+					aAggregationOverlays = oParent.getAggregationOverlays();
+					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) + 1; iIndex < aAggregationOverlays.length; iIndex++) {
+						var aOverlays = aAggregationOverlays[iIndex].getChildren();
+						if (aOverlays.length) {
+							return aOverlays[0];
+						}
+					}
 				}
 			}
 		}
@@ -164,26 +195,21 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		if (oParentAggregationOverlay) {
 			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
 			var iIndex = aAggregationOverlays.indexOf(oOverlay);
+			//get previous sibling from the same aggregation
 			if (iIndex > 0) {
 				return aAggregationOverlays[iIndex - 1];
-			}
-		}
-	};
-
-	/**
-	 * 
-	 */
-	OverlayUtil.getNextSiblingOverlay = function(oOverlay) {
-		if (!oOverlay) {
-			return;
-		}
-
-		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
-		if (oParentAggregationOverlay) {
-			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
-			var iIndex = aAggregationOverlays.indexOf(oOverlay);
-			if (iIndex !== aAggregationOverlays.length - 1) {
-				return aAggregationOverlays[iIndex + 1];
+			} else {
+				//get previous sibling from previous aggregation in the same parent
+				if (iIndex === 0) {
+					var oParent = oOverlay.getParentOverlay();
+					aAggregationOverlays = oParent.getAggregationOverlays();
+					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) - 1; iIndex >= 0; iIndex--) {
+						var aOverlays = aAggregationOverlays[iIndex].getChildren();
+						if (aOverlays.length) {
+							return aOverlays[0];
+						}
+					}
+				}
 			}
 		}
 	};
