@@ -7,8 +7,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	function(jQuery, library, Control, IconPool) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new Panel.
 	 *
@@ -16,7 +14,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The Panel control is a container for controls with a solid background and a header text.
+	 * The Panel control is a container for controls which has a header and content.
+	 * The header is always visible while the content can be collapsed if the Panel is expandable.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -29,42 +28,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Panel = Control.extend("sap.m.Panel", /** @lends sap.m.Panel.prototype */ { metadata : {
-
 		library : "sap.m",
 		properties : {
 
 			/**
-			 * Sets the header text.
+			 * This property is used to set the header text of the Panel.
+			 * The "headerText" is visible in both expanded and collapsed state.
+			 * Note: This property is overwritten by the "headerToolbar" aggregation.
 			 */
 			headerText : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * The Panel width.
+			 * Determines the Panel width.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "100%"},
 
 			/**
-			 * The Panel height.
+			 * Determines the Panel height.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "auto"},
 
 			/**
 			 * Specifies whether the control is expandable.
-			 * If expandable is set to false, the expanded property is always set to true, if expandable is set to false, then the expanded property can be set either true or false.
+			 * This allows for collapsing or expanding the infoToolbar (if available) and content of the Panel.
+			 * Note: If expandable is set to false, the Panel will always be rendered expanded.
 			 * @since 1.22
 			 */
 			expandable : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * Indicates whether the state of the sap.m.Panel is expanded or not, if the expandable property is set to true.
+			 * Indicates whether the Panel is expanded or not.
 			 * If expanded is set to true, then both the infoToolbar (if available) and the content are rendered.
-			 * If expanded is set to false, then only the headerText/headerToolbar is rendered.
+			 * If expanded is set to false, then only the headerText or headerToolbar is rendered.
 			 * @since 1.22
 			 */
 			expanded : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * Indicates whether the transition between the expanded and the hidden state of the control is animated.
+			 * Indicates whether the transition between the expanded and the collapsed state of the control is animated.
 			 * By default the animation is enabled.
 			 * @since 1.26
 			 */
@@ -81,19 +82,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * Content for the Panel
+			 * Determines the content of the Panel.
+			 * The content will be visible only when the Panel is expanded.
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
 
 			/**
-			 * Header can be used as a Toolbar to add extra controls for user interactions.
+			 * This aggregation allows the use of a custom Toolbar as header for the Panel.
+			 * The "headerToolbar" is visible in both expanded and collapsed state.
+			 * Use it when you want to add extra controls for user interactions in the header.
 			 * Note: This aggregation overwrites "headerText" property.
 			 * @since 1.16
 			 */
 			headerToolbar : {type : "sap.m.Toolbar", multiple : false},
 
 			/**
-			 * InfoBar is placed below the header and can be used to show extra information to the user.
+			 * This aggregation allows the use of a custom Toolbar as information bar for the Panel.
+			 * The "infoToolbar" is placed below the header and is visible only in expanded state.
+			 * Use it when you want to show extra information to the user.
 			 * @since 1.16
 			 */
 			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
@@ -108,7 +114,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				parameters : {
 
 					/**
-					 * If the panel will expand, this is true. If the panel will collapse, this is false.
+					 * If the panel will expand, this is true.
+					 * If the panel will collapse, this is false.
 					 */
 					expand : {type : "boolean"}
 				}
@@ -116,19 +123,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-	Panel.prototype.init = function() {
+	Panel.prototype.init = function () {
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
 	/**
 	 * Sets the width of the panel.
-	 *
-	 * @param {sap.ui.core.CSSSize}
-	 *          sWidth the width of the panel as CSS size
-	 * @return {sap.m.Panel} <code>this</code> to allow method chaining
+	 * @param {sap.ui.core.CSSSize} sWidth The width of the Panel as CSS size.
+	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
-	Panel.prototype.setWidth = function(sWidth) {
+	Panel.prototype.setWidth = function (sWidth) {
 		this.setProperty("width", sWidth, true);
 
 		var oDomRef = this.getDomRef();
@@ -141,13 +146,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Sets the height of the panel.
-	 *
-	 * @param {sap.ui.core.CSSSize}
-	 *          sHeight the height of the panel as CSS size
-	 * @return {sap.m.Panel} <code>this</code> to allow method chaining
+	 * @param {sap.ui.core.CSSSize} sHeight The height of the panel as CSS size.
+	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
-	Panel.prototype.setHeight = function(sHeight) {
+	Panel.prototype.setHeight = function (sHeight) {
 		this.setProperty("height", sHeight, true);
 
 		var oDomRef = this.getDomRef();
@@ -161,14 +164,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Sets the expandable property of the control.
-	 *
-	 * @param {boolean}
-	 *          bExpandable defining whether control "expandable" - if yes infoToolbar (if available) and content can be
-	 *          collapsed/expanded
-	 * @return {sap.m.Panel} <code>this</code> to allow method chaining
+	 * @param {boolean} bExpandable Defines whether the control is expandable or not.
+	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
-	Panel.prototype.setExpandable = function(bExpandable) {
+	Panel.prototype.setExpandable = function (bExpandable) {
 		this.setProperty("expandable", bExpandable, false); // rerender since we set certain css classes
 
 		if (bExpandable && !this.oIconCollapsed) {
@@ -180,13 +180,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Sets the expanded property of the control.
-	 *
-	 * @param {boolean}
-	 *          bExpanded defining whether control is expanded or not
-	 * @return {sap.m.Panel} <code>this</code> to allow method chaining
+	 * @param {boolean} bExpanded Defines whether control is expanded or not.
+	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
-	Panel.prototype.setExpanded = function(bExpanded) {
+	Panel.prototype.setExpanded = function (bExpanded) {
 		if (bExpanded === this.getExpanded()) {
 			return this;
 		}
