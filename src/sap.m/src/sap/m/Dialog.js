@@ -680,7 +680,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			}
 
 			//set max height and width smaller that the screen
-			oStyles["max-width"] = bMessageType ? '480px' : iMaxWidth + 'px';
+			oStyles["max-width"] = bMessageType && !jQuery.device.is.iphone ? '480px' : iMaxWidth + 'px';
 			oStyles["max-height"] = iMaxHeight + 'px';
 
 			//set the max-height so contents with defined height and width can be displayed with scroller when the height/width is smaller than the content
