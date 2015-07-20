@@ -7,17 +7,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	function(jQuery, library, Control) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new ProgressIndicator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Shows the progress of a process in a graphical way. The indicator can be displayed with or without numerical values.
-	 * The filling can be displayed in color only, or additionally with the percentage rate. The indicator status can be interactive.
+	 * Shows the progress of a process in a graphical way.
+	 * The indicator can be displayed with or without numerical values.
+	 * The filling can be displayed in color only, or additionally with the percentage rate.
+	 * The indicator status can be interactive.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -29,37 +29,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ProgressIndicator = Control.extend("sap.ui.commons.ProgressIndicator", /** @lends sap.ui.commons.ProgressIndicator.prototype */ { metadata : {
-
 		library : "sap.ui.commons",
 		properties : {
 
 			/**
-			 * Switches enabled state of the control. Disabled fields have different colors, and can not be focused.
+			 * Determines whether the control is enabled or not.
+			 * Disabled controls have different colors, and can not be focused.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * The color of the bar. Enumeration sap.ui.core.BarColor provides CRITICAL (yellow), NEGATIVE (red), POSITIVE (green), NEUTRAL (blue) (default value).
+			 * Determines the color of the bar which visualizes the progress.
+			 * Possible values defined in the sap.ui.core.BarColor enumeration are the following:
+			 * CRITICAL (yellow), NEGATIVE (red), POSITIVE (green), NEUTRAL (blue) (default value).
 			 */
 			barColor : {type : "sap.ui.core.BarColor", group : "Appearance", defaultValue : sap.ui.core.BarColor.NEUTRAL},
 
 			/**
-			 * The text value to be displayed in the bar.
+			 * Determines the text value that will be displayed in the bar.
 			 */
 			displayValue : {type : "string", group : "Appearance", defaultValue : '0%'},
 
 			/**
-			 * The numerical value for the displayed length of the progress bar.
+			 * Determines the numerical value for the displayed length of the progress bar.
 			 */
 			percentValue : {type : "int", group : "Data", defaultValue : 0},
 
 			/**
-			 * Specifies whether the current value shall be rendered inside the bar.
+			 * Determines whether the percent value shall be rendered inside the bar.
 			 */
 			showValue : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * The width of the control.
+			 * Determines the width of the control.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'}
 		}
@@ -78,6 +80,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	};
 
+	/**
+	 * Function is called when the value of the ProgressIndicator goes beyond 100 and
+	 * the outer bar needs to be shrinked.
+	 * @private
+	 */
 	ProgressIndicator.prototype.setEndBar = function () {
 
 		var widthBar = this.getPercentValue();
@@ -137,6 +144,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	};
 
+	/**
+	 * Function is called when the value of the ProgressIndicator goes down to 100 or below and
+	 * the outer bar needs to be maximized to the to take the whole width of the ProgressIndicator.
+	 * @param {int} iPercentValue
+	 * @private
+	 */
 	ProgressIndicator.prototype.setEndBarGoesBack = function (iPercentValue) {
 
 		var widthBar = this.getPercentValue();
@@ -197,11 +210,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Property setter for the PercentValue
+	 * Sets the new percent value which the ProgressIndicator should display.
 	 * A new rendering is not necessary, only the bar has to be moved.
 	 *
-	 * @param {int} iPercentValue
-	 * @return {sap.ui.commons.ProgressIndicator} <code>this</code> to allow method chaining
+	 * @param {int} iPercentValue The new percent value of the ProgressIndicator.
+	 * @return {sap.ui.commons.ProgressIndicator} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ProgressIndicator.prototype.setPercentValue = function(iPercentValue) {
