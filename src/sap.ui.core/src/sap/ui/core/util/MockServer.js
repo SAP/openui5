@@ -940,27 +940,28 @@ sap.ui
 
 				// helper function to find the entity set and property reference
 				// for the given role name
-				var fnResolveNavProp = function(sRole, bFrom) {
-					var aRoleEnd = jQuery(oMetadata).find("End[Role=" + sRole + "]");
-					var sEntitySet;
-					var sMultiplicity;
-					jQuery.each(aRoleEnd, function(i, oValue) {
-						if (!!jQuery(oValue).attr("EntitySet")) {
-							sEntitySet = jQuery(oValue).attr("EntitySet");
-						} else {
-							sMultiplicity = jQuery(oValue).attr("Multiplicity");
-						}
-					});
+				var fnResolveNavProp = function(sRole, aAssociation, aAssociationSet, bFrom) {
+					var sEntitySet = jQuery(aAssociationSet).find("End[Role=" + sRole + "]").attr("EntitySet");
+					var sMultiplicity = jQuery(aAssociation).find("End[Role=" + sRole + "]").attr("Multiplicity");
+					
 					var aPropRef = [];
-					var oPrinDeps = (bFrom) ? oPrincipals : oDependents;
-					jQuery(oPrinDeps).each(function(iIndex, oPrinDep) {
-						if (sRole === (jQuery(oPrinDep).attr("Role"))) {
-							jQuery(oPrinDep).children("PropertyRef").each(function(iIndex, oPropRef) {
-								aPropRef.push(jQuery(oPropRef).attr("Name"));
-							});
-							return false;
-						}
-					});
+					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role=" + sRole + "]");
+					if (aConstraint && aConstraint.length > 0) {
+						jQuery(aConstraint[0]).children("PropertyRef").each(function(iIndex, oPropRef) {
+							aPropRef.push(jQuery(oPropRef).attr("Name"));
+						});
+					} else {
+						var oPrinDeps = (bFrom) ? oPrincipals : oDependents;
+						jQuery(oPrinDeps).each(function(iIndex, oPrinDep) {
+							if (sRole === (jQuery(oPrinDep).attr("Role"))) {
+								jQuery(oPrinDep).children("PropertyRef").each(function(iIndex, oPropRef) {
+									aPropRef.push(jQuery(oPropRef).attr("Name"));
+								});
+								return false;
+							}
+						});
+					}
+					
 					return {
 						"role": sRole,
 						"entitySet": sEntitySet,
@@ -972,7 +973,7 @@ sap.ui
 				// find the keys and the navigation properties of the entity types
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					// find the keys
-					var $EntityType = jQuery(oMetadata).find("EntityType[Name=" + oEntitySet.type + "]");
+					var $EntityType = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "']");
 					var aKeys = jQuery($EntityType).find("PropertyRef");
 					jQuery.each(aKeys, function(iIndex, oPropRef) {
 						var sKeyName = jQuery(oPropRef).attr("Name");
@@ -981,12 +982,17 @@ sap.ui
 					});
 					// resolve the navigation properties
 					var aNavProps = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "'] NavigationProperty");
+					
 					jQuery.each(aNavProps, function(iIndex, oNavProp) {
 						var $NavProp = jQuery(oNavProp);
+						var aRelationship  = $NavProp.attr("Relationship").split(".");
+						var aAssociation = jQuery(oMetadata).find("Association[Name = '" + aRelationship[1] + "']" );
+						//TODO find a better soultion
+						var aAssociationSet = jQuery(oMetadata).find("AssociationSet[Association = '" + aRelationship[0] + "\\." + aRelationship[1] + "']" );
 						oEntitySet.navprops[$NavProp.attr("Name")] = {
 							"name": $NavProp.attr("Name"),
-							"from": fnResolveNavProp($NavProp.attr("FromRole"), true),
-							"to": fnResolveNavProp($NavProp.attr("ToRole"), false)
+							"from": fnResolveNavProp($NavProp.attr("FromRole"), aAssociation,aAssociationSet, true),
+							"to": fnResolveNavProp($NavProp.attr("ToRole"),aAssociation, aAssociationSet, false)
 						};
 					});
 				});
