@@ -1,0 +1,16 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ActionSheet
+		title="Choose Your Action"
+		showCancelButton="true"
+		placement="Top">
+		<buttons>
+			<Button text="Feed" icon="sap-icon://feed" />
+			<Button text="Email" icon="sap-icon://email" />
+			<Button text="Comment" icon="sap-icon://post" />
+			<Button text="Bookmark" icon="sap-icon://bookmark" />
+			<Button text="Download" icon="sap-icon://download" />
+		</buttons>
+	</ActionSheet>
+</core:FragmentDefinition>

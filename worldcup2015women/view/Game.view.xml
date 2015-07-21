@@ -1,7 +1,14 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="view.Game">
 	<Page title="Match" showNavButton="true" navButtonPress="handleBack">
 		<content>
-
+			<MessageStrip
+				id="editError"
+				text="Sorry, this game cannot be edited anymore"
+				type="Error"
+				showIcon="true"
+				showCloseButton="true"
+				visible="false">
+			</MessageStrip>
 			<ObjectHeader
 					title="{rounds>team1_title} : {rounds>team2_title}"
 					intro="{rounds>play_at}"
@@ -48,7 +55,13 @@
 					</IconTabBar>
 				</headerContainer>
 			</ObjectHeader >
-
 		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://edit" text="Edit" press="onEdit"/>
+				<Button icon="sap-icon://action" text="Share" press="onShare"/>
+			</Toolbar>
+		</footer>
 	</Page>
 </mvc:View>
