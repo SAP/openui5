@@ -781,32 +781,34 @@
 			destroyTable();
 		}
 	});
-
-	asyncTest("Export filtered table with named model", function() {
-		oExport
-		.generate()
-		.done(function(sContent) {
-			var sExpected =
-			"Last Name,First Name,Checked,Web Site,Gender,Rating,Money\r\n" +
-			"Dente - 0,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 20,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 40,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 60,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 80,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 100,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 120,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 140,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 160,Al,true,www.sap.com,male,4,3.45\r\n" +
-			"Dente - 180,Al,true,www.sap.com,male,4,3.45";
-			equal(sContent, sExpected, "Generated file content should be correct.");
-		})
-		.fail(function() {
-			ok(false, 'Generate should not fail.');
-		})
-		.always(function() {
-			start();
+	
+	if (!sap.ui.Device.browser.msie) {
+		asyncTest("Export filtered table with named model", function() {
+			oExport
+			.generate()
+			.then(function(sContent) {
+				var sExpected =
+				"Last Name,First Name,Checked,Web Site,Gender,Rating,Money\r\n" +
+				"Dente - 0,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 20,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 40,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 60,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 80,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 100,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 120,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 140,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 160,Al,true,www.sap.com,male,4,3.45\r\n" +
+				"Dente - 180,Al,true,www.sap.com,male,4,3.45";
+				equal(sContent, sExpected, "Generated file content should be correct.");
+			})
+			.catch(function() {
+				ok(false, 'Generate should not fail.');
+			})
+			.then(function() {
+				start();
+			});
 		});
-	});
+	}
 
 	</script>
 </head>
