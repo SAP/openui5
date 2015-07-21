@@ -165,7 +165,12 @@
 }
 
 // Fixed Left Row Indicator
-.sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child {
+.sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child,
+.sapUiTableColHdrFixed .sapUiTableColLastFixed {
+	border-right: 1px solid @sapUiListTableFixedBorder;
+}
+
+.sapUiTableColHdrFixed .sapUiTableColLastFixed  {
 	border-right: 1px solid @sapUiListTableFixedBorder;
 }
 
@@ -177,6 +182,7 @@
 // Hide last row bottom cell border
 .sapUiTableRowHdr:last-child,
 .sapUiTableCtrl:last-child tr:not(.sapUiTableFixedLastTopRow):last-child > td,
+.sapUiTableCtrlScrFixed tr:not(.sapUiTableFixedLastTopRow):last-child > td,
 .sapUiTableCtrlRowFixedBottom tr:not(.sapUiTableFixedLastTopRow):last-child > td
 {
 	border-bottom: none;
