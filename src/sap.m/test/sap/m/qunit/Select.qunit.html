@@ -6902,12 +6902,38 @@
 				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 				oSelect.rerender();
+				sap.ui.getCore().applyChanges();
 
 				// act
 				oSelect.getFocusDomRef().blur();
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("it should not fire the change event", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item()
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+				// act
+				oSelect.getFocusDomRef().blur();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0);
 
 				// cleanup
 				oSelect.destroy();
