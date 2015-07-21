@@ -98,7 +98,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 
 		/**
 		 * Name space for all methods related to control trees
-		 * @type {{_createRenderedTreeModel: Function}}
 		 */
 		var controlTree = {
 
@@ -111,19 +110,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				var node = nodeElement,
 					childNode = node.firstElementChild,
 					results = resultArray,
-					subResult;
+					subResult = results,
+					control = sap.ui.getCore().byId(node.id);
 
-				if (node.getAttribute('data-sap-ui') && sap.ui.getCore().byId(node.id)) {
+				if (node.getAttribute('data-sap-ui') && control) {
+					results.push({
+						id: control.getId(),
+						name: control.getMetadata().getName(),
+						type: 'sap-ui-control',
+						content: []
+					});
+
+					subResult = results[results.length - 1].content;
+				} else if (node.getAttribute('data-sap-ui-area')) {
 					results.push({
 						id: node.id,
-						name: sap.ui.getCore().byId(node.id).getMetadata().getName(),
+						name: 'sap-ui-area',
 						type: 'data-sap-ui',
 						content: []
 					});
 
 					subResult = results[results.length - 1].content;
-				} else {
-					subResult = results;
 				}
 
 				while (childNode) {
@@ -139,7 +146,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 
 		/**
 		 * Name space for all information relevant for UI5 control
-		 * @type {{_getOwnProperties: Function, _copyInheritedProperties: Function, _getInheritedProperties: Function, _getProperties: Function}}
 		 */
 		var controlInformation = {
 
@@ -149,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			/**
 			 *
 			 * @param control
-			 * @returns {null}
+			 * @returns {Object|null}
 			 * @private
 			 */
 			_getOwnProperties: function (control) {
@@ -169,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 *
 			 * @param control
 			 * @param inheritedMetadata
-			 * @returns {null}
+			 * @returns {Object}
 			 * @private
 			 */
 			_copyInheritedProperties: function (control, inheritedMetadata) {
@@ -209,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			/**
 			 *
 			 * @param {string} controlId
-			 * @returns {null}
+			 * @returns {Object}
 			 * @private
 			 */
 			_getProperties: function (controlId) {
@@ -229,7 +235,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 
 			/**
 			 * @param {Object} bindingContext
-			 * @returns {{name: string, path: *}}
+			 * @returns {Object}
 			 * @private
 			 */
 			_getModelFromContext: function (bindingContext) {
@@ -254,8 +260,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * @private
 			 */
 			_getBindDataForProperties: function (control) {
-				// TODO need some default value if there is no available data
-
 				var properties = control.getMetadata().getAllProperties();
 				var propertiesBindingData = Object.create(null);
 
@@ -282,8 +286,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * @private
 			 */
 			_getBindDataForAggregations: function (control) {
-				// TODO need some default value if there is no available data
-
 				var aggregations = control.getMetadata().getAllAggregations();
 				var aggregationsBindingData = Object.create(null);
 
@@ -341,7 +343,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			/**
 			 *
 			 * @param control
-			 * @returns {*}
+			 * @returns {Object}
 			 */
 			getControlBindingData: function (controlId) {
 				var control = sap.ui.getCore().byId(controlId);
@@ -353,7 +355,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				var bindingData = Object.create(null);
 				var bindingContext = control.getBindingContext();
 
-				// TODO need some default value if there is no available data
 				if (bindingContext) {
 					bindingData.contextPath = bindingContext.sPath;
 				}
