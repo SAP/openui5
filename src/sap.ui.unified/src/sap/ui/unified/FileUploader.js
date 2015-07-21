@@ -989,20 +989,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 							});
 							this._aXhr[j].xhr.open("POST", this.getUploadUrl(), true);
 							if (this.getHeaderParameters()) {
-								var oHeaderParams = this.getHeaderParameters();
-								for (var i = 0; i < oHeaderParams.length; i++) {
-									var sHeader = oHeaderParams[i].getName();
-									var sValue = oHeaderParams[i].getValue();
-									this._aXhr[j].xhr.setRequestHeader(sHeader, sValue);
-									this._aXhr[j].requestHeaders.push({name: sHeader, value: sValue});
+								var aHeaderParams = this.getHeaderParameters();
+								for (var i = 0; i < aHeaderParams.length; i++) {
+									var sHeader = aHeaderParams[i].getName();
+									var sValue = aHeaderParams[i].getValue();
+									this._aXhr[j].requestHeaders.push({
+										name: sHeader, 
+										value: sValue
+									});
 								}
 							}
 							var sFilename = aFiles[j].name;
-							var oRequestHeaders = this._aXhr[j].requestHeaders;
+							var aRequestHeaders = this._aXhr[j].requestHeaders;
 							this.fireUploadStart({
 								"fileName": sFilename,
-								"requestHeaders": oRequestHeaders
+								"requestHeaders": aRequestHeaders
 							});
+							for (var i = 0; i < aRequestHeaders.length; i++) {
+								// Check if request is still open in case abort() was called.
+								if (this._aXhr[j].xhr.readyState === 0) {
+									break;
+								}
+								var sHeader = aRequestHeaders[i].name;
+								var sValue = aRequestHeaders[i].value;
+								this._aXhr[j].xhr.setRequestHeader(sHeader, sValue);
+							}
 						}
 						if (this.getUseMultipart()) {
 							var formData = new window.FormData();
@@ -1062,6 +1073,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 						var sValue = this._aXhr[i].requestHeaders[j].value;
 						if (sHeader == sHeaderCheck && sValue == sValueCheck) {
 							this._aXhr[i].xhr.abort();
+							jQuery.sap.log.info("File upload aborted.");
 						}
 					}
 				} else {
