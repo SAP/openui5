@@ -208,16 +208,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 
 			/**
 			 *
-			 * @param controlId
+			 * @param {string} controlId
 			 * @returns {null}
 			 * @private
 			 */
 			_getProperties: function (controlId) {
-				var control =  sap.ui.getCore().byId(controlId);
-
+				var control = sap.ui.getCore().byId(controlId);
 				var properties = Object.create(null);
-				properties.own = this._getOwnProperties(control);
-				properties.inherited = this._getInheritedProperties(control);
+
+				if (control) {
+					properties.own = this._getOwnProperties(control);
+					properties.inherited = this._getInheritedProperties(control);
+				}
 
 				return properties;
 			},
@@ -342,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * @returns {*}
 			 */
 			getControlBindingData: function (controlId) {
-				var control =  sap.ui.getCore().byId(controlId);
+				var control = sap.ui.getCore().byId(controlId);
 
 				if (!control) {
 					return Object.create(null);
