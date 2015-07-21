@@ -372,15 +372,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/* ----------------------------------------------------------- */
 
 		/*
-		 * Overwrites use labels as placeholder configuration of the InputBase.
-		 * IE9 does not have a native placeholder support.
-		 * IE10+ fires the input event when an input field with a native placeholder is focused.
-		 *
-		 * @protected
-		 */
-		ComboBoxBase.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
-
-		/*
 		 * Hook method, can be used to add additional content to the control's picker pop-up.
 		 *
 		 * @param {sap.m.Dialog | sap.m.Popover} [oPicker]
