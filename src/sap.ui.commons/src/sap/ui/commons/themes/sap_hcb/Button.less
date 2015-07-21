@@ -11,11 +11,19 @@
 	-moz-border-radius: 2px;
 	-webkit-border-radius: 2px;
 	padding: 0 4px 0 5px;
+	color: @sapHCStandardFG;
 }
 
 .sapUiBtnS.sapUiBtnLite,
 .sapUiBtnS.sapUiBtnLite > .sapUiBtnTxt {
 	text-decoration: underline;
+}
+
+.sapUiBtnS.sapUiBtnStd {
+	&.sapUiBtnReject,
+	&.sapUiBtnAccept {
+		color: @sapHCStandardFG;
+	}
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiBtnS {
