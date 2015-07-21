@@ -269,15 +269,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				var propertiesBindingData = Object.create(null);
 
 				for (var key in properties) {
-					if (properties.hasOwnProperty(key)) {
-						if (control.getBinding(key)) {
-							propertiesBindingData[key] = Object.create(null);
-							propertiesBindingData[key].path = control.getBinding(key).sPath;
-							propertiesBindingData[key].value = control.getBinding(key).oValue;
-							propertiesBindingData[key].type = control.getBinding(key).sInternalType;
-							propertiesBindingData[key].mode = control.getBinding(key).sMode;
-							propertiesBindingData[key].model = this._getModelFromContext(control.getBinding(key));
-						}
+					if (properties.hasOwnProperty(key) && control.getBinding(key)) {
+						propertiesBindingData[key] = Object.create(null);
+						propertiesBindingData[key].path = control.getBinding(key).sPath;
+						propertiesBindingData[key].value = control.getBinding(key).oValue;
+						propertiesBindingData[key].type = control.getBinding(key).sInternalType;
+						propertiesBindingData[key].mode = control.getBinding(key).sMode;
+						propertiesBindingData[key].model = this._getModelFromContext(control.getBinding(key));
 					}
 				}
 
@@ -295,11 +293,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				var aggregationsBindingData = Object.create(null);
 
 				for (var key in aggregations) {
-					if (aggregations.hasOwnProperty(key)) {
-						if (control.getBinding(key)) {
-							aggregationsBindingData[key] = Object.create(null);
-							aggregationsBindingData[key].model = this._getModelFromContext(control.getBinding(key));
-						}
+					if (aggregations.hasOwnProperty(key) && control.getBinding(key)) {
+						aggregationsBindingData[key] = Object.create(null);
+						aggregationsBindingData[key].model = this._getModelFromContext(control.getBinding(key));
 					}
 				}
 
@@ -350,24 +346,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * @param control
 			 * @returns {Object}
 			 */
-			getControlBindingData: function (controlId) {
-				var control = sap.ui.getCore().byId(controlId);
+			getControlBindings: function (controlId) {
+				var result = Object.create(null),
+					control = sap.ui.getCore().byId(controlId),
+					bindingContext;
 
 				if (!control) {
-					return Object.create(null);
+					return result;
 				}
 
-				var bindingData = Object.create(null);
-				var bindingContext = control.getBindingContext();
+				bindingContext = control.getBindingContext();
 
-				if (bindingContext) {
-					bindingData.contextPath = bindingContext.sPath;
-				}
+				result.meta = Object.create(null);
+				result.contextPath = bindingContext ? bindingContext.sPath : null;
+				result.aggregations = controlInformation._getBindDataForAggregations(control);
+				result.properties = controlInformation._getBindDataForProperties(control);
 
-				bindingData.aggregations = controlInformation._getBindDataForAggregations(control);
-				bindingData.properties = controlInformation._getBindDataForProperties(control);
-
-				return bindingData;
+				return result;
 			}
 		};
 
