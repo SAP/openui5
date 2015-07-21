@@ -8,7 +8,7 @@ sap.ui.controller("view.Master", {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 		var oRoundsModel = new sap.ui.model.json.JSONModel();
-		
+
 		// fallback to local data
 		if (jQuery.sap.getUriParameters().get("responderOff") !== "true") {
 			this.callbackString = ""; // no JSONP
@@ -21,6 +21,22 @@ sap.ui.controller("view.Master", {
 		});
 
 		sap.ui.getCore().setModel(oRoundsModel, "rounds");
+	},
+
+	onRefresh: function(oEvent) {
+		sap.m.MessageToast.show("Refreshing data...");
+
+		setTimeout(function () {
+			this.byId("pull2Refresh").hide();
+		}.bind(this), 1000);
+	},
+
+	onSearch: function(oEvent) {
+		var sSearchValue = this.byId("searchField").getValue();
+
+		this.byId("masterList").getBinding("items").filter([
+			new sap.ui.model.Filter("title", sap.ui.model.FilterOperator.Contains, sSearchValue)
+		]);
 	},
 
 	onSelectionChange: function(oEvent){
