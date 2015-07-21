@@ -15,8 +15,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Constructor for a new MessagePopover
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
 		 * A MessagePopover is a Popover containing a summarized list with messages.
@@ -29,46 +29,43 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @public
 		 * @since 1.28
 		 * @alias sap.m.MessagePopover
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 * @ui5-metamodel This control also will be described in the legacy UI5 design-time metamodel
 		 */
 		var MessagePopover = Control.extend("sap.m.MessagePopover", /** @lends sap.m.MessagePopover.prototype */ {
 			metadata: {
 				library: "sap.m",
 				properties: {
 					/**
-					 * Async handler function for resolving asynchronous description loading via HTTP request
-					 * It is defined as a function with a single parameter 'config'
-					 * config: {
-					 * 	item: MessagePopoverItem,
-					 * 	promise: Object {
-					 * 	  resolve: Promise.resolve
-					 * 	  reject: Promise.reject
-					 * 	}
-					 * }
+					 * Callback function for resolving a promise after description has been asynchronously loaded inside this function
+					 * @callback sap.m.MessagePopover~asyncDescriptionHandler
+					 * @param {object} config A single parameter object
+					 * @param {MessagePopoverItem} config.item Reference to respective MessagePopoverItem instance
+					 * @param {object} config.promise Object grouping a promise's reject and resolve methods
+					 * @param {function} config.promise.resolve Method to resolve promise
+					 * @param {function} config.promise.reject Method to reject promise
 					 */
 					asyncDescriptionHandler: {type: "any", group: "Behavior", defaultValue: null},
 
 					/**
-					 * Async handler function for resolving asynchronous link validation via HTTP request
-					 * It is defined as a function with a single parameter 'config'
-					 * config: {
-					 * 	url: String,
-					 * 	id: String|Int,
-					 * 	promise: Object {
-					 * 	  resolve: Promise.resolve
-					 * 	  reject: Promise.reject
-					 * 	}
-					 * }
+					 * Callback function for resolving a promise after a link has been asynchronously validated inside this function
+					 * @callback sap.m.MessagePopover~asyncURLHandler
+					 * @param {object} config A single parameter object
+					 * @param {string} config.url URL to validate
+					 * @param {string|Int} config.id ID of the validation job
+					 * @param {object} config.promise Object grouping a promise's reject and resolve methods
+					 * @param {function} config.promise.resolve Method to resolve promise
+					 * @param {function} config.promise.reject Method to reject promise
 					 */
 					asyncURLHandler: {type: "any", group: "Behavior", defaultValue: null},
 
 					/**
-					 * Determines the position, where the control will appear on the screen. Possible values are: Top, Bottom and Vertical. The default value is sap.m.VerticalPlacementType.Vertical. Setting this property while the control is open, will not cause any re-rendering and changing of the position. Changes will be applied with the next interaction.
+					 * Determines the position, where the control will appear on the screen. Possible values are: sap.m.VerticalPlacementType.Top, sap.m.VerticalPlacementType.Bottom and sap.m.VerticalPlacementType.Vertical.
+					 * The default value is sap.m.VerticalPlacementType.Vertical. Setting this property while the control is open, will not cause any re-rendering and changing of the position. Changes will only be applied with the next interaction.
 					 */
 					placement: {type: "sap.m.VerticalPlacementType", group: "Behavior", defaultValue: "Vertical"},
 
 					/**
-					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded.
+					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded
 					 */
 					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
@@ -81,49 +78,49 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				},
 				events: {
 					/**
-					 * This event will be fired after the popover is opened.
+					 * This event will be fired after the popover is opened
 					 */
 					afterOpen: {
 						parameters: {
 							/**
-							 * This refers to the control which opens the popover.
+							 * This refers to the control which opens the popover
 							 */
 							openBy: {type: "sap.ui.core.Control"}
 						}
 					},
 
 					/**
-					 * This event will be fired after the popover is closed.
+					 * This event will be fired after the popover is closed
 					 */
 					afterClose: {
 						parameters: {
 							/**
-							 * This refers to the control which opens the popover.
+							 * Refers to the control which opens the popover
 							 */
 							openBy: {type: "sap.ui.core.Control"}
 						}
 					},
 
 					/**
-					 * This event will be fired before the popover is opened.
+					 * This event will be fired before the popover is opened
 					 */
 					beforeOpen: {
 						parameters: {
 							/**
-							 * This refers to the control which opens the popover.
+							 * Refers to the control which opens the popover
 							 */
 							openBy: {type: "sap.ui.core.Control"}
 						}
 					},
 
 					/**
-					 * This event will be fired before the popover is closed.
+					 * This event will be fired before the popover is closed
 					 */
 					beforeClose: {
 						parameters: {
 							/**
-							 * This refers to the control which opens the popover.
-							 * See sap.ui.core.MessageType values for types.
+							 * Refers to the control which opens the popover
+							 * See sap.ui.core.MessageType enum values for types
 							 */
 							openBy: {type: "sap.ui.core.Control"}
 						}
@@ -135,12 +132,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					itemSelect: {
 						parameters: {
 							/**
-							 * This refers to the message popover item that is being presented
+							 * Refers to the message popover item that is being presented
 							 */
 							item: {type: "sap.m.MessagePopoverItem"},
 							/**
-							 * This parameter refers to the type of messages being shown.
-							 * See sap.ui.core.MessageType values for types.
+							 * Refers to the type of messages being shown
+							 * See sap.ui.core.MessageType values for types
 							 */
 							messageTypeFilter: {type: "sap.ui.core.MessageType"}
 
@@ -178,12 +175,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			DEFAULT_ASYNC_HANDLERS = {};
 
 		/**
-		 * Setter for default async handlers for all instances of MessagePopover
+		 * Setter for default description and URL validation callbacks across all instances of MessagePopover
 		 * @static
 		 * @protected
-		 * @param {object} mDefaultHandlers
-		 * @param {function} [mDefaultHandlers.asyncDescriptionHandler]
-		 * @param {function} [mDefaultHandlers.asyncURLHandler]
+		 * @param {object} mDefaultHandlers An object setting default callbacks
+		 * @param {function} mDefaultHandlers.asyncDescriptionHandler
+		 * @param {function} mDefaultHandlers.asyncURLHandler
 		 */
 		MessagePopover.setDefaultHandlers = function (mDefaultHandlers) {
 			ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
@@ -272,10 +269,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				this._destroyLists();
 			}
 
-			// Destroys ResponsivePopover control, used in the MessagePopover.
-			// This will walk through all aggregations in the Popover and destroys them (in our case this is NavContainer).
-			// After that this will wal through all aggregation in the NavContainer etc.. down to the last control we used
-			// in the Messagepopover.
+			// Destroys ResponsivePopover control that is used by MessagePopover
+			// This will walk through all aggregations in the Popover and destroy them (in our case this is NavContainer)
+			// Next this will walk through all aggregations in the NavContainer, etc.
 			if (this._oPopover) {
 				this._oPopover.destroy();
 				this._oPopover = null;
@@ -283,12 +279,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * Required adaptations before rendering of the MessagePopover
+		 * Required adaptations before rendering MessagePopover
 		 *
 		 * @private
 		 */
 		MessagePopover.prototype.onBeforeRenderingPopover = function () {
-			// Update lists only if items aggregation is changed
+			// Update lists only if 'items' aggregation is changed
 			if (this._bItemsChanged) {
 				this._clearLists();
 				this._fillLists(this.getItems());
@@ -303,7 +299,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Handles keyup event
 		 *
-		 * @param {jQuery.Event} oEvent keyup event object
+		 * @param {jQuery.Event} oEvent - keyup event object
 		 * @private
 		 */
 		MessagePopover.prototype._onkeypress = function (oEvent) {
@@ -333,7 +329,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * Creates header of the MessagePopover's ListPage
+		 * Creates header of MessagePopover's ListPage
 		 *
 		 * @returns {sap.m.Toolbar} ListPage header
 		 * @private
@@ -371,7 +367,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * Creates header of the MessagePopover's ListPage
+		 * Creates header of MessagePopover's ListPage
 		 *
 		 * @returns {sap.m.Toolbar} DetailsPage header
 		 * @private
@@ -414,7 +410,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Creates navigation pages
 		 *
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @private
 		 */
 		MessagePopover.prototype._createNavigationPages = function () {
@@ -458,7 +454,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Creates Lists of the MessagePopover
 		 *
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @private
 		 */
 		MessagePopover.prototype._createLists = function () {
@@ -480,7 +476,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Destroy items in the MessagePopover's Lists
 		 *
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @private
 		 */
 		MessagePopover.prototype._clearLists = function () {
@@ -524,7 +520,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * Map an MessagePopoverItem to the StandardListItem
+		 * Map a MessagePopoverItem to StandardListItem
 		 *
 		 * @param {sap.m.MessagePopoverItem} oMessagePopoverItem Base information to generate the list items
 		 * @returns {sap.m.StandardListItem | null} oListItem List item which will be displayed
@@ -550,8 +546,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Map an MessageType to the Icon URL.
 		 *
-		 * @param {sap.ui.core.ValueState} sIcon type of Error
-		 * @returns {string | null} icon string
+		 * @param {sap.ui.core.ValueState} sIcon Type of Error
+		 * @returns {string | null} Icon string
 		 * @private
 		 */
 		MessagePopover.prototype._mapIcon = function (sIcon) {
@@ -565,7 +561,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Destroy the buttons in the SegmentedButton
 		 *
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @private
 		 */
 		MessagePopover.prototype._clearSegmentedButton = function () {
@@ -579,7 +575,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Fill SegmentedButton with needed Buttons for filtering
 		 *
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @private
 		 */
 		MessagePopover.prototype._fillSegmentedButton = function () {
@@ -1030,7 +1026,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * Opens the MessagePopover
 		 *
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @public
 		 * @ui5-metamodel
 		 */
@@ -1056,7 +1052,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		/**
 		 * Closes the MessagePopover
 		 *
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @public
 		 */
 		MessagePopover.prototype.close = function () {
@@ -1080,10 +1076,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 
 		/**
 		 * This method toggles between open and closed state of the MessagePopover instance.
-		 * oControl parameter is mandatory the same way as in 'openBy' method
+		 * oControl parameter is mandatory in the same way as in 'openBy' method
 		 *
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 * @public
 		 */
 		MessagePopover.prototype.toggle = function (oControl) {
@@ -1097,11 +1093,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * The method sets placement position of the MessagePopover. Only accepted Values are:
+		 * The method sets the placement position of the MessagePopover. Only accepted Values are:
 		 * sap.m.PlacementType.Top, sap.m.PlacementType.Bottom and sap.m.PlacementType.Vertical
 		 *
 		 * @param {sap.m.PlacementType} sPlacement Placement type
-		 * @returns {sap.m.MessagePopover} this pointer for chaining
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 */
 		MessagePopover.prototype.setPlacement = function (sPlacement) {
 			this.setProperty("placement", sPlacement, true); // no re-rendering
