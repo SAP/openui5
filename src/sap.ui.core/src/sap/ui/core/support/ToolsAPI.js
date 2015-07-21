@@ -159,13 +159,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * @private
 			 */
 			_getOwnProperties: function (control) {
-				var result = Object.create(null);
-				var controlPropertiesFromMetadata = control.getMetadata().getProperties();
+				var result = Object.create(null),
+					controlPropertiesFromMetadata = control.getMetadata().getProperties();
 
+				result.meta = Object.create(null);
+				result.meta.controlName = control.getMetadata().getName();
+
+				result.properties = Object.create(null);
 				Object.keys(controlPropertiesFromMetadata).forEach(function (key) {
-					result[key] = Object.create(null);
-					result[key].value = control.getProperty(key);
-					result[key].type = controlPropertiesFromMetadata[key].type;
+					result.properties[key] = Object.create(null);
+					result.properties[key].value = control.getProperty(key);
+					result.properties[key].type = controlPropertiesFromMetadata[key].type;
 				});
 
 				return result;
@@ -179,16 +183,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * @private
 			 */
 			_copyInheritedProperties: function (control, inheritedMetadata) {
-				var inheritedMetadataProperties = inheritedMetadata.getProperties();
+				var inheritedMetadataProperties = inheritedMetadata.getProperties(),
+					result = Object.create(null);
 
-				var result = Object.create(null);
-				result.controlName = inheritedMetadata.getName();
-				result.controlProperties = Object.create(null);
+				result.meta = Object.create(null);
+				result.meta.controlName = inheritedMetadata.getName();
 
+				result.properties = Object.create(null);
 				Object.keys(inheritedMetadataProperties).forEach(function (key) {
-					result.controlProperties[key] = Object.create(null);
-					result.controlProperties[key].value = inheritedMetadataProperties[key].get(control);
-					result.controlProperties[key].type = inheritedMetadataProperties[key].type;
+					result.properties[key] = Object.create(null);
+					result.properties[key].value = inheritedMetadataProperties[key].get(control);
+					result.properties[key].type = inheritedMetadataProperties[key].type;
 				});
 
 				return result;
