@@ -95,6 +95,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 	}});
 	
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an ARIA announcement and remember its ID for later use in the renderer:
+	MultiInput.prototype._sAriaMultiInputContainTokenId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN")
+	}).toStatic().getId();
 	
 	// **
 	// * This file defines behavior for the control,
