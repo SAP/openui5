@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 	/**
 	 * Constructor for a new ValueHelpField.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * A TextField with an attached icon which triggeres an event.
@@ -33,20 +33,20 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 		properties : {
 
 			/**
-			 * Url of the standard icon for the value help. If no parameter is supplied the default icon image will be shown.
+			 * URL of the standard icon for the value help. If no parameter is supplied the default icon image will be shown.
 			 * This can be an URI to an image or an icon font URI.
 			 */
 			iconURL : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
 			/**
 			 * URL of the icon for the value help when hovered. If no parameter is supplied the standard icon image will be shown.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 */
 			iconHoverURL : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
 			/**
 			 * URL of the icon for the value help when disabled. If no parameter is supplied the default icon image will be shown.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 */
 			iconDisabledURL : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null}
 		},
