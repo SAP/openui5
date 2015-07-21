@@ -178,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.write("<span class='sapMITBFilterNoIcon'> </span>");
 				}
 
-				if (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal) {
+				if (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal && !oItem.getShowAll()) {
 					oRM.write("</div>");
 					oRM.write("<div class='sapMITBHorizontalWrapper'>");
 				}
