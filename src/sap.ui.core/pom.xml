@@ -92,7 +92,7 @@
 										<file name="sap/ui/thirdparty/jqueryui/jquery-ui-position.js"/>
 										<file name="sap/ui/Device.js"/>
 										<file name="sap/ui/thirdparty/URI.js"/>
-										<file name="jquery.sap.promise.js"/>
+										<file name="sap/ui/thirdparty/es6-promise.js"/>
 										<file name="jquery.sap.global.js"/>
 									</filelist>
 								</concat>
@@ -102,7 +102,7 @@
 									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
 										<file name="sap/ui/Device.js"/>
 										<file name="sap/ui/thirdparty/URI.js"/>
-										<file name="jquery.sap.promise.js"/>
+										<file name="sap/ui/thirdparty/es6-promise.js"/>
 										<file name="jquery.sap.global.js"/>
 									</filelist>
 								</concat>

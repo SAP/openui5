@@ -92,7 +92,7 @@ public class ConcatFilter implements Filter {
             IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
-            IOUtils.write(this.loadResource("/resources/jquery.sap.promise.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
             IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
             IOUtils.closeQuietly(os);
@@ -114,7 +114,7 @@ public class ConcatFilter implements Filter {
             OutputStream os = response.getOutputStream();
             IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
-            IOUtils.write(this.loadResource("/resources/jquery.sap.promise.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
             IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
             IOUtils.closeQuietly(os);
