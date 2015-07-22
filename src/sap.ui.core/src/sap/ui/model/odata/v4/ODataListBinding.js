@@ -125,6 +125,15 @@ sap.ui.define([
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
+			function reject(oError) {
+				var oModel = that.getModel(),
+					sUrl = oModel.sServiceUrl + oModel.resolve(that.getPath(), that.getContext());
+				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
+					+ sUrl + " and path " + sPath,
+					oError, "sap.ui.model.odata.v4.ODataListBinding");
+				fnReject(oError);
+			}
+
 			that.oCache.readRange(iIndex, 1).then(function (oData) {
 				var oResult = oData.value[0];
 
@@ -137,16 +146,12 @@ sap.ui.define([
 					oResult = oResult[sSegment];
 					return true;
 				});
+				if (typeof oResult === "object") {
+					reject(new Error("Accessed value is not primitive"));
+					return;
+				}
 				fnResolve(oResult);
-			}, function (oError) {
-				var oModel = that.getModel(),
-					sUrl = oModel.sServiceUrl + oModel.resolve(that.getPath(), that.getContext());
-
-				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
-					+ sUrl,
-					oError, "sap.ui.model.odata.v4.ODataListBinding");
-				fnReject(oError);
-			});
+			}, reject);
 		});
 	};
 

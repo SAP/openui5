@@ -228,7 +228,6 @@ sap.ui.require([
 
 			that.oDataCacheMock.expects("readRange")
 				.withExactArgs(iStart, iLength)
-				.once()
 				.returns(createDeferredResult(iLength));
 
 			// code under test, read synchronously with previous range
@@ -322,7 +321,6 @@ sap.ui.require([
 
 		this.oDataCacheMock.expects("readRange")
 			.withExactArgs(0, 10)
-			.once()
 			.returns(createDeferredResult(10));
 		this.oDataCacheMock.expects("readRange")
 			.withExactArgs(iIndex, 1)
@@ -353,14 +351,13 @@ sap.ui.require([
 
 		this.oDataCacheMock.expects("readRange")
 			.withExactArgs(0, 10)
-			.once()
 			.returns(createDeferredResult(10));
 		this.oDataCacheMock.expects("readRange")
 			.withExactArgs(0, 1)
-			.once()
 			.returns(createDeferredResult(oError));
 		this.oLogMock.expects("error")
-			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES",
+			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES and "
+				+ "path foo/bar",
 				oError, "sap.ui.model.odata.v4.ODataListBinding");
 		oListBinding.getContexts(0, 10); // creates cache
 
@@ -370,7 +367,33 @@ sap.ui.require([
 		);
 	});
 
+	//*********************************************************************************************
+	QUnit.test("readValue rejects when accessing non-primitive value", function (assert) {
+		var sMessage = "Accessed value is not primitive",
+			oError = new Error(sMessage),
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(0, 10)
+			.returns(createDeferredResult(10));
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(0, 1)
+			.returns(createDeferredResult(1));
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES and "
+					+ "path LOCATION",
+				oError, "sap.ui.model.odata.v4.ODataListBinding");
+		oListBinding.getContexts(0, 10); // creates cache
+
+		return oListBinding.readValue(0, "LOCATION").then(
+			function () {
+				assert.ok(false, "Unexpected success");
+			},
+			function (oError0) {
+				assert.strictEqual(oError0.message, sMessage);
+			}
+		);
+	});
 	//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
 	//  there is no jsdoc for v4.ODataModel
 	//TODO lists within lists for navigation properties contained in cache via $expand

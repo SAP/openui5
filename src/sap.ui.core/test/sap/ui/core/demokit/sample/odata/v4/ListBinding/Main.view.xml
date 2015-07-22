@@ -14,6 +14,9 @@
 				<Column>
 					<Text text="City"/>
 				</Column>
+				<Column>
+					<Text text="Entry Date"/>
+				</Column>
 			</columns>
 			<items>
 				<ColumnListItem>
@@ -25,6 +28,9 @@
 					</cells>
 					<cells>
 						<Text text="{LOCATION/City/CITYNAME}"/>
+					</cells>
+					<cells>
+						<Text text="{ENTRYDATE}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
