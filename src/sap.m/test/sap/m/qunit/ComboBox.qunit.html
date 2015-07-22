@@ -897,6 +897,34 @@
 				oComboBox.destroy();
 			});
 
+			// BCP 1570460580
+			test("it should synchronize property changes of items to the combo box control", function() {
+
+				// system under test
+				var oItem;
+				var oSelect = new sap.m.ComboBox({
+					items: [
+						oItem = new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					],
+					selectedKey: "CU"
+				});
+
+				// act
+				oItem.setKey("GER");
+				oItem.setText("Germany");
+
+				// assert
+				strictEqual(oSelect.getSelectedKey(), "GER");
+				strictEqual(oSelect.getSelectedItem().getText(), "Germany");
+				strictEqual(oSelect.getValue(), "Germany");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			/* ------------------------------ */
 			/* getSelectedItemId()            */
 			/* ------------------------------ */
