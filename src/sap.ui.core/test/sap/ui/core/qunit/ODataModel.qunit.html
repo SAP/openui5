@@ -35,6 +35,7 @@
 
 <!-- Test functions -->
 <script language="javascript">
+	sinon.config.useFakeTimers = false;
 
 	//TODO currently we rely on northwind odata service for tests...
 	//TODO tests depends on server response time and northwind content...so tests may be unstable
@@ -130,7 +131,6 @@
 					metadataDfd.reject();
 				}
 			});
-			that.clock.tick(1);
 			jQuery.when(metadataDfd).done(function(e){
 					ok(true, 'Metadata loaded fired at model only');
 					start();
@@ -140,7 +140,6 @@
 					clock.restore();
 				});
 		});
-		this.clock.tick(1);
 	});
 	
 	asyncTest("test _isReloadNeeded() - __list check", function(){
@@ -1116,7 +1115,7 @@
 		
 	});
 	
-	test("test ODataModel destroy cancel load data", function(){
+	asyncTest("test ODataModel destroy cancel load data", function(){
 		var oModel = initModel(sURI, true, "Categories");
 		//var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: false });
 		sap.ui.getCore().setModel(oModel);
@@ -1125,7 +1124,6 @@
 		var handler1 = function() { // delay the following test
 			ok(false, "Data should not be loaded");
 			oBinding.detachChange(handler1);
-			start();
 		};
 		oBinding.attachChange(handler1);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
@@ -1146,6 +1144,11 @@
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 		
 		oBinding.detachChange(handler1);
+		
+		setTimeout(function() {
+			oModel.destroy();
+			start();
+		}, 100);
 		
 	});
 
