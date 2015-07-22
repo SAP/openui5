@@ -314,8 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * Only call when grouped
 		 */
 		_getGroupForContext : function(oContext) {
-			// TODO: we should document that group header depends on the first sorter
-			return this._oControl.getBinding("items").aSorters[0].getGroup(oContext);
+			return this._oControl.getBinding("items").getGroup(oContext);
 		},
 
 		/**

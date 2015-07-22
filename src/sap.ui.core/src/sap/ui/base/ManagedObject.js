@@ -3044,7 +3044,7 @@ sap.ui.define([
 		// Check the current context for its group. If the group key changes, call the 
 		// group function on the control.
 		function updateGroup(oContext) {
-			var oNewGroup = oBinding.aSorters[0].getGroup(oContext);
+			var oNewGroup = oBinding.getGroup(oContext);
 			if (oNewGroup.key !== sGroup) {
 				var oGroupHeader;
 				//If factory is defined use it
@@ -3071,9 +3071,11 @@ sap.ui.define([
 		if (oBinding instanceof ListBinding) {
 			// If grouping is enabled, use updateGroup as fnBefore to create groups
 			bGrouped = oBinding.isGrouped() && sGroupFunction;
-			if (bGrouped) {
+			// Destroy children if binding is grouped or was grouped last time
+			if (bGrouped || oBinding.bWasGrouped) {
 				this[oAggregationInfo._sDestructor]();
 			}
+			oBinding.bWasGrouped = bGrouped;
 			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 			update(this, aContexts, bGrouped ? updateGroup : null);
 		} else if (oBinding instanceof TreeBinding) {
