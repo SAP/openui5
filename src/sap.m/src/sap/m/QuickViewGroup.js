@@ -62,6 +62,35 @@ sap.ui.define([
 				}
 			});
 
+
+		["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
+			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+				Group.prototype["_" + sFuncName + "Old"] = Group.prototype[sFuncName];
+				Group.prototype[sFuncName] = function () {
+					var result = Group.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+
+					var oPage = this.getParent();
+					if (oPage) {
+						oPage._updatePage();
+					}
+
+					if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+						return result;
+					}
+
+					return this;
+				};
+			});
+
+		Group.prototype.setProperty = function () {
+			Element.prototype.setProperty.apply(this, arguments);
+
+			var oPage = this.getParent();
+			if (oPage) {
+				oPage._updatePage();
+			}
+		};
+
 		return Group;
 
 	}, /* bExport= */true);
