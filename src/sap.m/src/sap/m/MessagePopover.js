@@ -3,10 +3,10 @@
  */
 
 // Provides control sap.m.MessagePopover.
-sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer", "./List",
-		"./StandardListItem", "./library", "sap/ui/core/Control", "sap/m/PlacementType", "sap/ui/core/IconPool",
-		"sap/ui/core/HTML", "sap/m/Text", "sap/ui/core/Icon", "sap/m/SegmentedButton", "sap/m/Page", "sap/m/NavContainer",
-		"sap/m/semantic/SemanticPage"],
+sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./List",
+		"./StandardListItem", "./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
+		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
+		"./semantic/SemanticPage"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, List,
 			  StandardListItem, library, Control, PlacementType, IconPool,
 			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage) {
@@ -204,7 +204,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 
 			this._oPopover = new ResponsivePopover(this.getId() + "-messagePopover", {
 				showHeader: false,
-				contentWidth: "340px",
+				contentWidth: "440px",
 				placement: this.getPlacement(),
 				showCloseButton: false,
 				modal: false,
@@ -221,8 +221,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				beforeClose: function (oEvent) {
 					that.fireBeforeClose({openBy: oEvent.getParameter("openBy")});
 				}
-			})
-				.addStyleClass(CSS_CLASS);
+			}).addStyleClass(CSS_CLASS);
 
 			this._createNavigationPages();
 			this._createLists();
