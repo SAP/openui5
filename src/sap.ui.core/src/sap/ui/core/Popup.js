@@ -499,6 +499,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	// End of Popup-Stacking facilites
 
 	/**
+	 * This function compares two different objects (created via jQuery(DOM-ref).rect()).
+	 * If the left, top, width or height differs more than a set puffer this function
+	 * will return false.
+	 *
+	 * @param {object} oRectOne the first object
+	 * @param {object} oRectTwo the other object
+	 * @return {boolean} if the given objects are equal
+	 * @private
+	 */
+	var fnRectEqual = function(oRectOne, oRectTwo) {
+		var iPuffer = 3;
+		var iLeft = Math.abs(oRectOne.left - oRectTwo.left);
+		var iTop = Math.abs(oRectOne.top - oRectTwo.top);
+		var iWidth = Math.abs(oRectOne.width - oRectTwo.width);
+		var iHeight = Math.abs(oRectOne.height - oRectTwo.height);
+
+		// check if the of has moved more pixels than set in the puffer
+		// Puffer is needed if the opener changed its position only by 1 pixel:
+		// this happens in IE if a control was clicked (is a reported IE bug)
+		if (iLeft > iPuffer || iTop > iPuffer || iWidth > iPuffer || iHeight > iPuffer) {
+			return false;
+		}
+		return true;
+	};
+
+	/**
 	 * Opens the popup's content at the position either specified here or beforehand via {@link #setPosition}.
 	 * Content must be capable of being positioned via "position:absolute;"
 	 * All parameters are optional (open() may be called without any parameters). iDuration may just be omitted, but if any of "at", "of", "offset", "collision" is given, also the preceding positioning parameters ("my", at",...) must be given.
@@ -698,6 +724,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				}
 
 				jQuery.sap.focus(domRefToFocus || $Ref.firstFocusableDomRef());
+				// if the opener was focused but it exceeds the current window width
+				// the window will scroll/reposition accordingly.
+				// When this popup registers the followOf-Handler the check if the
+				// opener moved will result in that the opener moved due to the focus
+				// and scrolling of the browser. So it is necessary to resize/reposition
+				// the popup right after the focus.
+
+				var oCurrentOfRef = that._getOfDom(that._oLastPosition.of);
+				var oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+				if (!fnRectEqual(that._oLastOfRect, oCurrentOfRect)) {
+					that._applyPosition(that._oLastPosition);
+				}
 			}
 
 			that.eOpenState = sap.ui.core.OpenState.OPEN;
@@ -2118,32 +2156,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	//Handling of movement of the dock references
 	//****************************************************
 	Popup.DockTrigger = new IntervalTrigger(200);
-
-	/**
-	 * This function compares two different objects (created via jQuery(DOM-ref).rect()).
-	 * If the left, top, width or height differs more than a set puffer this function
-	 * will return false.
-	 *
-	 * @param {object} oRectOne the first object
-	 * @param {object} oRectTwo the other object
-	 * @return {boolean} if the given objects are equal
-	 * @private
-	 */
-	var fnRectEqual = function(oRectOne, oRectTwo) {
-		var iPuffer = 3;
-		var iLeft = Math.abs(oRectOne.left - oRectTwo.left);
-		var iTop = Math.abs(oRectOne.top - oRectTwo.top);
-		var iWidth = Math.abs(oRectOne.width - oRectTwo.width);
-		var iHeight = Math.abs(oRectOne.height - oRectTwo.height);
-
-		// check if the of has moved more pixels than set in the puffer
-		// Puffer is needed if the opener changed its position only by 1 pixel:
-		// this happens in IE if a control was clicked (is a reported IE bug)
-		if (iLeft > iPuffer || iTop > iPuffer || iWidth > iPuffer || iHeight > iPuffer) {
-			return false;
-		}
-		return true;
-	};
 
 	Popup.checkDocking = function(){
 		if (this.getOpenState() === sap.ui.core.OpenState.OPEN) {
