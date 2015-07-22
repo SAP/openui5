@@ -702,6 +702,26 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", mOptions.suppressInvalidate);
 
 			oListItem = this.getListItem(vItem);
+
+			// update the selection in the List
+			if (!mOptions.listItemUpdated) {
+
+				if (oListItem) {
+
+					// set the item selected and update accessibility state
+					oListItem.setSelected(true).updateAccessibilityState();
+				} else if (this.getList()) {
+
+					if (this.getDefaultSelectedItem()) {
+						this.getListItem(this.getDefaultSelectedItem()).setSelected(true).updateAccessibilityState();
+					} else if (this.getList().getSelectedItem()) {
+
+						this.getList().getSelectedItem().setSelected(false);
+					}
+				}
+			}
+
+			// update aria active descendant
 			oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
@@ -711,24 +731,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 					oDomRef.setAttribute(sActivedescendant, oListItem.getId());
 				} else {
 					oDomRef.removeAttribute(sActivedescendant);
-				}
-			}
-
-			// update the selection in the List
-			if (!mOptions.listItemUpdated) {
-
-				if (oListItem) {
-
-					// set the selected item of the List
-					this.getList().setSelectedItem(oListItem, true);
-				} else if (this.getList()) {
-
-					if (this.getDefaultSelectedItem()) {
-						this.getList().setSelectedItem(this.getListItem(this.getDefaultSelectedItem()), true);
-					} else if (this.getList().getSelectedItem()) {
-
-						this.getList().setSelectedItem(this.getList().getSelectedItem(), false);
-					}
 				}
 			}
 		};
