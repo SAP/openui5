@@ -37,7 +37,7 @@
 			<Text text="{Is_Manager}"/>
 
 			<Label text="Entry date"/>
-			<Text text="{path: 'ENTRYDATE', type: 'sap.ui.model.odata.type.Date'}"/>
+			<Text id="ENTRYDATE" text="{ENTRYDATE}"/>
 
 			<Label text="Location"/>
 			<Text text="{LOCATION/City/POSTALCODE} {LOCATION/City/CITYNAME} {LOCATION/COUNTRY}"/>

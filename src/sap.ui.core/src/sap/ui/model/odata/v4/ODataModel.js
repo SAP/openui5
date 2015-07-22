@@ -14,9 +14,16 @@
 
 sap.ui.define([
 	//FIX4MASTER open source approval for Olingo missing
-	"jquery.sap.global", "sap/ui/model/Model", "./ODataContextBinding", "./ODataListBinding",
-	"./ODataPropertyBinding", "sap/ui/thirdparty/odatajs-4.0.0"
-], function(jQuery, Model, ODataContextBinding, ODataListBinding, ODataPropertyBinding, Olingo) {
+	"jquery.sap.global",
+	"sap/ui/model/Model",
+	"./ODataContextBinding",
+	"./ODataDocumentModel",
+	"./ODataListBinding",
+	"./ODataMetaModel",
+	"./ODataPropertyBinding",
+	"sap/ui/thirdparty/odatajs-4.0.0"
+], function(jQuery, Model, ODataContextBinding, ODataDocumentModel, ODataListBinding,
+		ODataMetaModel, ODataPropertyBinding, Olingo) {
 	"use strict";
 
 	/*global odatajs */
@@ -68,6 +75,8 @@ sap.ui.define([
 						throw new Error("Missing service URL");
 					}
 					this.sServiceUrl = sServiceUrl.replace(rTrailingSlash, "");
+					this.oMetaModel = new ODataMetaModel(
+						new ODataDocumentModel(this.sServiceUrl + "/$metadata"));
 				}
 			});
 
@@ -140,6 +149,17 @@ sap.ui.define([
 		notImplemented("destroyBindingContext", arguments);
 	};
 
+	/**
+	 * Returns the meta model for this ODataModel
+	 *
+	 * @returns {sap.ui.model.odata.v4.ODataMetaModel}
+	 *   The meta model for this ODataModel
+	 * @public
+	 */
+	ODataModel.prototype.getMetaModel = function () {
+		return this.oMetaModel;
+	};
+
 	ODataModel.prototype.getProperty = function () {
 		notImplemented("getProperty", arguments);
 	};
@@ -189,6 +209,46 @@ sap.ui.define([
 				fnReject(oError);
 			});
 		});
+	};
+
+	/**
+	 * Requests the object for the given path relative to the given context.
+	 *
+	 * If the path does not contain a <code>/#</code>, path and context are used to get the object
+	 * from the data model.
+	 * If the path contains <code>/#</code>, it will be split into a data model path and a meta
+	 * model path.
+	 * For example:
+	 * /path/in/data/model/#path/in/metadata/model
+	 * For the given context and data model path, the corresponding meta model context is
+	 * determined. This context is used to retrieve the meta model object following the meta model
+	 * path.
+	 *
+	 * Returns a <code>Promise</code>, which is resolved with the requested object or rejected with
+	 * an error.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context in the data model to be used as a starting point in case of a relative path
+	 * @returns {Promise}
+	 *   A promise which is resolved with the requested object as soon as it is available
+	 */
+	ODataModel.prototype.requestObject = function (sPath, oContext) {
+		var iMeta = sPath.indexOf('/#'),
+			sMetaModelPath,
+			sModelPath,
+			that = this;
+
+		if (iMeta >= 0) {
+			sModelPath = this.resolve(sPath.substring(0, iMeta), oContext);
+			sMetaModelPath = sPath.substring(iMeta + 2);
+			return this.getMetaModel().requestMetaContext(sModelPath)
+				.then(function (oMetaContext) {
+					return that.getMetaModel().requestObject(sMetaModelPath, oMetaContext);
+				});
+		}
+		notImplemented("requestObject", arguments);
 	};
 
 	return ODataModel;

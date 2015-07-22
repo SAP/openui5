@@ -5,11 +5,12 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, ODataContextBinding, ODataListBinding, ODataModel, ODataPropertyBinding,
-		TestUtils) {
+], function (Model, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
+		ODataPropertyBinding, TestUtils) {
 	/*global odatajs, QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -192,6 +193,33 @@ sap.ui.require([
 			);
 		}
 	);
+
+	//*********************************************************************************************
+	QUnit.test("getMetaModel", function (assert) {
+		var oMetaModel = createModel().getMetaModel();
+
+		assert.ok(oMetaModel instanceof ODataMetaModel);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestObject to metamodel", function (assert) {
+		var oModel = createModel(),
+			oMetaModel = oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel),
+			oMetaContext = oMetaModel.getContext("/path/into/metamodel");
+
+		oMetaModelMock.expects("requestMetaContext")
+			.withExactArgs("/EMPLOYEES(ID='1')/ENTRYDATE")
+			.returns(Promise.resolve(oMetaContext));
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs("Type/QualifiedName", oMetaContext)
+			.returns(Promise.resolve("Edm.Date"));
+		return oModel.requestObject(
+			"ENTRYDATE/#Type/QualifiedName", oModel.getContext("/EMPLOYEES(ID='1')")
+		).then(function (sResult) {
+			assert.strictEqual(sResult, "Edm.Date");
+		});
+	});
 
 	// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 	// TODO constructor: test that the service URL is absolute?
