@@ -1023,6 +1023,37 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		};
 
 		/**
+		 * Handle properties changes of items in the aggregation named <code>items</code>.
+		 *
+		 * @private
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @since 1.28
+		 */
+		ComboBox.prototype.onItemChange = function(oControlEvent) {
+			var sSelectedItemId = this.getAssociation("selectedItem"),
+				sNewValue = oControlEvent.getParameter("newValue"),
+				sProperty = oControlEvent.getParameter("name");
+
+			// if the selected item has not changed, no synchronization is needed
+			if (sSelectedItemId !== oControlEvent.getParameter("id")) {
+				return;
+			}
+
+			// synchronize properties
+			switch (sProperty) {
+				case "text":
+					this.setValue(sNewValue);
+					break;
+
+				case "key":
+					this.setSelectedKey(sNewValue);
+					break;
+
+				// no default
+			}
+		};
+
+		/**
 		 * Sets the start and end positions of the current text selection.
 		 *
 		 * @param {integer} iSelectionStart The index into the text at which the first selected character is located.
