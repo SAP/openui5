@@ -1893,6 +1893,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				fileType : this.getFileType(),
 				icon : "sap-icon://add",
 				iconFirst : false,
+				style : "Transparent",
 				maximumFilenameLength : this.getMaximumFilenameLength(),
 				maximumFileSize : this.getMaximumFileSize(),
 				mimeType : this.getMimeType(),
