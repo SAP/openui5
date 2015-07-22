@@ -12,12 +12,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new ProgressIndicator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Shows the progress of a process in a graphical way. To indicate the progress, the inside of the ProgressIndicator is filled with a color.
-	 * Additionally, a user defined string can be displayed on the ProgressIndicator.
+	 * Additionally, a user-defined string can be displayed on the ProgressIndicator.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -34,43 +34,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		library : "sap.m",
 		properties : {
 			/**
-			 * Switches enabled state of the control. Disabled fields have different colors, and can not be focused.
+			 * Switches enabled state of the control. Disabled fields have different colors, and cannot be focused.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * The state of the bar. Enumeration sap.ui.core.ValueState provides Error (red), Warning (yellow), Success (green), None (blue) (default value).
+			 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error (red), Warning (yellow), Success (green), None (blue) (default value).
 			 */
 			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
 
 			/**
-			 * The text value to be displayed in the bar.
+			 * Specifies the text value to be displayed in the bar.
 			 */
 			displayValue : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * The numerical value for the displayed length of the progress bar.
+			 * Specifies the numerical value in percent for the length of the progress bar.
 			 */
 			percentValue : {type : "float", group : "Data", defaultValue : 0},
 
 			/**
-			 * Specifies whether the current value shall be rendered inside the bar.
+			 * Indicates whether the displayValue should be shown in the ProgressIndicator.
 			 */
 			showValue : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * The width of the control.
+			 * Specifies the width of the control.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
 			/**
-			 * The height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
+			 * Specifies the height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
 			 * @since 1.15.0
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * Specifies the element's text directionality with enumerated options (RTL or LTR). By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
