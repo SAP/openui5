@@ -1815,6 +1815,7 @@ sap.ui.define([
 	ODataModel.prototype.resetSecurityToken = function() {
 		delete this.oServiceData.securityToken;
 		delete this.oHeaders["x-csrf-token"];
+		delete this.pSecurityToken;
 	};
 
 	/**
@@ -1834,6 +1835,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise, which will resolve with the security token as soon as it is available
+	 *
+	 * @returns {Promise} the CSRF security token
+	 *
+	 * @public
+	 */
+	ODataModel.prototype.securityTokenAvailable = function() {
+		if (!this.pSecurityToken) {
+			if (this.oServiceData.securityToken) {
+				this.pSecurityToken = Promise.resolve(this.oServiceData.securityToken);
+			} else {
+				this.pSecurityToken = new Promise(function(resolve, reject) {
+					this.refreshSecurityToken(function() {
+						resolve(this.oServiceData.securityToken);
+					}.bind(this),function(){
+						reject();
+					}, true);
+				}.bind(this));
+			}
+		}
+		return this.pSecurityToken;
+	};
+
+	/**
 	 * refresh XSRF token by performing a GET request against the service root URL.
 	 *
 	 * @param {function} [fnSuccess] a callback function which is called when the data has
@@ -1845,15 +1870,12 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError) {
+	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError, bAsync) {
 		var that = this, sUrl, sToken;
-
-		// bAsync default is false ?!
-		//var bAsync = false;
 
 		// trigger a read to the service url to fetch the token
 		sUrl = this._createRequestUrl("/");
-		var oRequest = this._createRequest(sUrl, "GET", this._getHeaders(), null, null, false);
+		var oRequest = this._createRequest(sUrl, "GET", this._getHeaders(), null, null, !!bAsync);
 		oRequest.headers["x-csrf-token"] = "Fetch";
 
 		function _handleSuccess(oData, oResponse) {
@@ -1861,6 +1883,7 @@ sap.ui.define([
 				sToken = that._getHeader("x-csrf-token", oResponse.headers);
 				if (sToken) {
 					that.oServiceData.securityToken = sToken;
+					that.pSecurityToken = Promise.resolve(sToken);
 					// For compatibility with applications, that are using getHeaders() to retrieve the current
 					// CSRF token additionally keep it in the oHeaders object
 					that.oHeaders["x-csrf-token"] = sToken;
@@ -1899,7 +1922,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitRequest = function(oRequest, fnSuccess, fnError){
-		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler;
+		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler, oRequestHandle, bAborted;
 
 		function _handleSuccess(oData, oResponse) {
 			//if batch the responses are handled by the batch success handler
@@ -1927,19 +1950,33 @@ sap.ui.define([
 		}
 
 		function _submit() {
+			//handler only needed for $batch; datajs gets the handler from the accept header
+			oHandler = that._getODataHandler(oRequest.requestUri);
+			
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
 			if (that.bTokenHandling && oRequest.method !== "GET") {
-				that.updateSecurityToken();
-				// Check bTokenHandling again, as updateSecurityToken() might disable token handling
-				if (that.bTokenHandling) {
-					oRequest.headers["x-csrf-token"] = that.oServiceData.securityToken;
-				}
+				that.securityTokenAvailable().then(function(sToken) {
+					// Check bTokenHandling again, as updating the token might disable token handling
+					if (that.bTokenHandling) {
+						oRequest.headers["x-csrf-token"] = sToken;
+					}
+					oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+					if (bAborted) {
+						oRequestHandle.abort();
+					}
+				});
+				return {
+					abort: function() {
+						if (oRequestHandle) {
+							oRequestHandle.abort();
+						}
+						bAborted = true;
+					}
+				};
+			} else {
+				return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
 			}
-			//handler only needed for $batch; datajs gets the handler from the accept header
-			oHandler = that._getODataHandler(oRequest.requestUri);
-
-			return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
 		}
 
 		return _submit();

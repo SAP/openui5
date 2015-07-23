@@ -2137,6 +2137,25 @@
 		});
 	});
 
+	asyncTest("Token request, manual refresh", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
+			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				updateCsrfToken();
+				this.oModel.refreshSecurityToken();
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(!resetSpy.called, "No reset, as token was explicitely refreshed before");
+						ok(refreshSpy.calledTwice, "Token was fetched in explicit refresh call");
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
+
 	module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI);
