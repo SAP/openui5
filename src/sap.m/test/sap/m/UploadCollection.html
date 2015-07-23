@@ -527,18 +527,6 @@
 		}, 3000);
 	};
 
-	var fnBeforeUploadStarts = function(oEvent) {
-		var sHeaderParameterName = "timestamp";
-		if (!oEvent.getParameter("getHeaderParameter")(sHeaderParameterName)) {
-			var oHeaderParameter = new sap.m.UploadCollectionParameter({
-				name: sHeaderParameterName, value: jQuery.now()});
-			oEvent.getParameter("addHeaderParameter")(oHeaderParameter);
-		}
-		setTimeout(function () {
-			sap.m.MessageToast.show("BeforeUploadStarts event triggered.");
-		}, 2000);
-	};
-
 	var oAttributeTemplate = new sap.m.ObjectAttribute({
 		title : "{title}",
 		text : "{text}",
@@ -595,8 +583,7 @@
 		fileRenamed : fnFileRenamed,
 		fileSizeExceed : fnFileSizeExceed,
 		typeMissmatch : fnTypeMissmatch,
-		uploadComplete : fnUploadComplete,
-		beforeUploadStarts : fnBeforeUploadStarts
+		uploadComplete : fnUploadComplete
 	});
 
 	oUploadCollection.setShowSeparators(oComboBox.getSelectedKey());
