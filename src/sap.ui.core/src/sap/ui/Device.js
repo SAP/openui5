@@ -1200,7 +1200,7 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Removes a previously attached event handler from the event change events of the screen width.
+	 * Removes a previously attached event handler from the change events of the screen width.
 	 * 
 	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
 	 *
@@ -1408,10 +1408,54 @@ if (typeof window.sap.ui !== "object") {
 //******** System Detection ********
 
 	/**
-	 * Contains information about the system.
+	 * Provides a basic categorization of the used device based on various indicators.
+	 * 
+	 * These indicators are for example the support of touch events, the screen size, the used operation system or
+	 * the user agent of the browser.
+	 * 
+	 * <b>Note:</b> Depending on the capabilities of the device it is also possible that multiple flags are set to <code>true</code>.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.system
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a tablet.
+	 * 
+	 * Furthermore, a CSS class <code>sap-tablet</code> is added to the document root element.
+	 *
+	 * @name sap.ui.Device.system#tablet
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a phone.
+	 * 
+	 * Furthermore, a CSS class <code>sap-phone</code> is added to the document root element.
+	 *
+	 * @name sap.ui.Device.system#phone
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a desktop system.
+	 * 
+	 * Furthermore, a CSS class <code>sap-desktop</code> is added to the document root element.
+	 *
+	 * @name sap.ui.Device.system#desktop
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a combination of a desktop system and tablet.
+	 * 
+	 * Furthermore, a CSS class <code>sap-combi</code> is added to the document root element.
+	 * 
+	 * <b>Note:</b> This property is mainly for Microsoft Windows 8 (and following) devices where the mouse and touch event may be supported
+	 * natively by the browser being used. This property is set to <code>true</code> only when both mouse and touch event are natively supported.
+	 *
+	 * @alias sap.ui.Device.system#combi
+	 * @type boolean
 	 * @public
 	 */
 	/**
@@ -1419,40 +1463,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.system.SYSTEMTYPE
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a tablet.
-	 *
-	 * @name sap.ui.Device.system#tablet
-	 * @type boolean
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a phone.
-	 *
-	 * @name sap.ui.Device.system#phone
-	 * @type boolean
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a desktop.
-	 *
-	 * @name sap.ui.Device.system#desktop
-	 * @type boolean
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a combination of desktop and tablet.
-	 *
-	 * This property is mainly targeting the windows 8 devices where the mouse and touch event may supported
-	 * natively by the browser.
-	 *
-	 * This property is set to true only when both mouse and touch event are natively supported.
-	 *
-	 * @alias sap.ui.Device.system#combi
-	 * @type boolean
-	 * @public
+	 * @private
 	 */
 
 	var SYSTEMTYPE = {
@@ -1549,34 +1560,75 @@ if (typeof window.sap.ui !== "object") {
 //******** Orientation Detection ********
 
 	/**
-	 * Orientation Change Event API.
+	 * Common API for orientation change notifications across all platforms.
+	 * 
+	 * For browsers or devices that do not provide native support for orientation change events
+	 * the API simulates them based on the ratio of the document's width and height.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.orientation
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the screen is currently in portrait mode (the height is greater than the width).
+	 *
+	 * @name sap.ui.Device.orientation#portrait
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the screen is currently in landscape mode (the width is greater than the height).
+	 *
+	 * @name sap.ui.Device.orientation#landscape
+	 * @type boolean
 	 * @public
 	 */
 
 	device.orientation = {};
 
 	/**
-	 * Resize Event API.
+	 * Common API for document window size change notifications across all platforms.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.resize
 	 * @public
 	 */
+	/**
+	 * The current height of the document's window in pixels.
+	 *
+	 * @name sap.ui.Device.resize#height
+	 * @type integer
+	 * @public
+	 */
+	/**
+	 * The current width of the document's window in pixels.
+	 *
+	 * @name sap.ui.Device.resize#width
+	 * @type integer
+	 * @public
+	 */
+	
 	device.resize = {};
 
 	/**
-	 * Registers the given handler to the orientation change event.
+	 * Registers the given event handler to orientation change events of the document's window.
+	 * 
+	 * The event is fired whenever the screen orientation changes and the width of the document's window
+	 * becomes greater than its height or the other way round.
 	 *
-	 * The handler has one map parameter <code>mParams</code>:
+	 * The event handler is called with a single argument: a map <code>mParams</code> which provides the following information:
 	 * <ul>
-	 * <li>mParams.landscape: whether the orientation is currently landscape</li>
+	 * <li><code>mParams.landscape</code>: If this flag is set to <code>true</code>, the screen is currently in landscape mode, otherwise in portrait mode.</li>
 	 * </ul>
 	 *
-	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {function}
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the <code>window</code> instance. A map with information
+	 *                       about the orientation is provided as a single argument to the handler (see details above).
+	 * @param {object}
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
+	 * 
 	 * @name sap.ui.Device.orientation#attachHandler
 	 * @function
 	 * @public
@@ -1586,16 +1638,24 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Registers the given handler to the resize event.
+	 * Registers the given event handler to resize change events of the document's window.
+	 * 
+	 * The event is fired whenever the document's window size changes.
 	 *
-	 * The handler has one map parameter <code>mParams</code>:
+	 * The event handler is called with a single argument: a map <code>mParams</code> which provides the following information:
 	 * <ul>
-	 * <li>mParams.height: new height of the window</li>
-	 * <li>mParams.width: new width of the window</li>
+	 * <li><code>mParams.height</code>: The height of the document's window in pixels.</li>
+	 * <li><code>mParams.width</code>: The width of the document's window in pixels.</li>
 	 * </ul>
 	 *
-	 * @param {Function} fnFunction The function to call, when the resize event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {function}
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the <code>window</code> instance. A map with information
+	 *                       about the size is provided as a single argument to the handler (see details above).
+	 * @param {object}
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
+	 * 
 	 * @name sap.ui.Device.resize#attachHandler
 	 * @function
 	 * @public
@@ -1605,9 +1665,15 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Deregisters a previously registered handler from the orientation change event.
-	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * Removes a previously attached event handler from the orientation change events.
+	 * 
+	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
+	 *
+	 * @param {function}
+	 *            fnFunction The handler function to detach from the event
+	 * @param {object}
+	 *            [oListener] The object that wanted to be notified when the event occurred
+	 * 
 	 * @name sap.ui.Device.orientation#detachHandler
 	 * @function
 	 * @public
@@ -1617,9 +1683,15 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Deregisters a previously registered handler from the resize event.
-	 * @param {Function} fnFunction The function to call, when the resize event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * Removes a previously attached event handler from the resize events.
+	 * 
+	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
+	 *
+	 * @param {function}
+	 *            fnFunction The handler function to detach from the event
+	 * @param {object}
+	 *            [oListener] The object that wanted to be notified when the event occurred
+	 * 
 	 * @name sap.ui.Device.resize#detachHandler
 	 * @function
 	 * @public
