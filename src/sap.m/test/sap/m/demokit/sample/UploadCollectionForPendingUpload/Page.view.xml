@@ -39,8 +39,7 @@
 				filenameLengthExceed="onFilenameLengthExceed"
 				fileSizeExceed="onFileSizeExceed"
 				typeMissmatch="onTypeMissmatch"
-				uploadComplete="onUploadComplete"
-				beforeUploadStarts="onBeforeUploadStarts">
+				uploadComplete="onUploadComplete">
 			</UploadCollection>
 			<Button
 				id="Button"

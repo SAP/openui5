@@ -377,40 +377,6 @@ QUnit.test("uploadComplete", function(assert) {
 	this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 });
 
-QUnit.test("Event beforeUploadStarts for instantUpload = false", function(assert) {
-	var sFileName = "someFileName", sRequestId = "1",  aRequestHeaders = [{
-		name: this.oUploadCollection._headerParamConst.requestIdName,
-		value: sRequestId
-	}];
-	var sSlugName = "slug", sSlugValueBefore = jQuery.now(), sSlugValueAfter, sSecurityTokenName = "securuityToken", sSecurityTokenValueBefore = jQuery.now(), sSecurityTokenValueAfter;
-	function onBeforeUploadStarts(oEvent) {
-		var oHeaderParameter1 = new sap.m.UploadCollectionParameter({name: sSlugName, value: sSlugValueBefore});
-		oEvent.getParameter("addHeaderParameter")(oHeaderParameter1);
-		var oHeaderParameter2 = new sap.m.UploadCollectionParameter({name: sSecurityTokenName, value: sSecurityTokenValueBefore});
-		oEvent.getParameter("addHeaderParameter")(oHeaderParameter2);
-		assert.equal(oEvent.getParameter("fileName"), sFileName, "Correct FileName in beforeUploadStarts event for instantUpload = false");
-		assert.ok(oEvent.getParameter("addHeaderParameter"), "Correct method 'addHeaderParameter' in parameters of beforeUploadStarts event for instantUpload = false");
-		assert.ok(oEvent.getParameter("getHeaderParameter"), "Correct method 'getHeaderParameter' in parameters of beforeUploadStarts event");
-		assert.equal(oEvent.getParameter("getHeaderParameter")(sSlugName).getValue(), sSlugValueBefore, "Value of the header parameter1 retrieved correctly");
-		assert.equal(oEvent.getParameter("getHeaderParameter")(sSecurityTokenName).getValue(), sSecurityTokenValueBefore, "Value of the header parameter2 retrieved correctly");
-	}
-	this.oUploadCollection.attachBeforeUploadStarts(onBeforeUploadStarts);
-	this.oUploadCollection._getFileUploader().fireUploadStart({
-		fileName : sFileName,
-		requestHeaders: aRequestHeaders});
-	var iParamCounter = aRequestHeaders.length;
-	for (var i = 0; i < iParamCounter; i++ ) {
-		if (aRequestHeaders[i].name === sSlugName) {
-			sSlugValueAfter = aRequestHeaders[i].value;
-		}
-		if (aRequestHeaders[i].name === sSecurityTokenName) {
-			sSecurityTokenValueAfter = aRequestHeaders[i].value;
-		}
-	}
-	assert.equal(sSlugValueBefore, sSlugValueAfter, "Slug value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event for instantUpload = false");
-	assert.equal(sSecurityTokenValueBefore, sSecurityTokenValueAfter, "SecurityToken value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event for instantUpload = false");
-});
-
 QUnit.module("Delete PendingUpload Item", {
 	setup : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
