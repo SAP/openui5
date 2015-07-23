@@ -6,8 +6,10 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v4/ODataPropertyBinding"
-], function (Model, ODataContextBinding, ODataListBinding, ODataModel, ODataPropertyBinding) {
+	"sap/ui/model/odata/v4/ODataPropertyBinding",
+	"sap/ui/test/TestUtils"
+], function (Model, ODataContextBinding, ODataListBinding, ODataModel, ODataPropertyBinding,
+		TestUtils) {
 	/*global odatajs, QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -20,8 +22,9 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name": "Name.json",
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')": [404, "TEAMS('UNKNOWN').json"]
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name": {source: "Name.json"},
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')":
+				{code: 404, source: "TEAMS('UNKNOWN').json"}
 		},
 		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
 		TestControl = sap.ui.core.Element.extend("TestControl", {
@@ -31,76 +34,6 @@ sap.ui.require([
 				}
 			}
 		});
-
-	/**
-	 * Prepare Sinon fake server for the given fixture.
-	 *
-	 * @param {string} sBase
-	 *   The base URI for the response files.
-	 * @param {object} mFixture
-	 *   The fixture with the URLs to fake as keys and the URIs of the fake responses (relative to
-	 *   sBase) as values. The content type is determined from the response file's extension.
-	 */
-	function setupFakeServer(sBase, mFixture) {
-		var iCode,
-			mHeaders,
-			sMessage,
-			vResponse,
-			oServer,
-			sSource,
-			sUrl,
-			mUrls = {};
-
-		function contentType(sName) {
-			if (/\.xml$/.test(sName)) {
-				return "application/xml";
-			}
-			if (/\.json$/.test(sName)) {
-				return "application/json";
-			}
-			return "application/x-octet-stream";
-		}
-
-		for (sUrl in mFixture) {
-			vResponse = mFixture[sUrl];
-			if (typeof vResponse === "number") {
-				iCode = vResponse;
-				sMessage = "";
-				mHeaders = {};
-			} else {
-				if (typeof vResponse === "string") {
-					iCode = 200;
-					sSource = vResponse;
-				} else {
-					iCode = vResponse[0];
-					sSource = vResponse[1];
-				}
-				sSource = sBase + '/' + sSource;
-				sMessage = jQuery.sap.syncGetText(sSource, "", null);
-				mHeaders = {"Content-Type": contentType(sSource)};
-			}
-			mUrls[sUrl] = [iCode, mHeaders, sMessage];
-		}
-
-		//TODO remove this workaround in IE9 for
-		// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
-		sinon.xhr.supportsCORS = true;
-
-		oServer = sinon.fakeServer.create();
-		sinon.FakeXMLHttpRequest.useFilters = true;
-		sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
-			return !(sUrl in mFixture); // do not fake if URL is unknown
-		});
-
-		for (sUrl in mUrls) {
-			oServer.respondWith(sUrl, mUrls[sUrl]);
-		}
-		oServer.autoRespond = true;
-	}
-
-	if (!bRealOData) {
-		setupFakeServer("data", mFixture);
-	}
 
 	/**
 	 * Gets the correct service URL. Adjusts it in case of <code>bRealOData</code>, so that it is
@@ -129,6 +62,9 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
+			if (!bRealOData) {
+				TestUtils.useFakeServer(this.oSandbox, mFixture, "data");
+			}
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
