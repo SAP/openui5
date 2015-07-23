@@ -1443,7 +1443,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 			}
 
 			// TODO replace 100000 when there is something smart to handle the z-index centrally
-			$notify.css("height", iHeight + "px").css("z-index", 100000);
+			if (sVisibleStatus === sap.ui.ux3.NotificationBarStatus.Min) {
+				// this enables the NotificationBar to be usable if it's minimized.
+				// If there is a ComboBox in the content area the NotificationBar should
+				// be behind the ComboBox if the NotificationBar is minimized. Otherwise
+				// the NotificationBar must cover all content.
+				$notify.css("height", iHeight + "px").css("z-index", 1);
+			} else {
+				$notify.css("height", iHeight + "px").css("z-index", 100000);
+			}
 
 			if (iHeight > 0 && !this.$().hasClass("sapUiUx3ShellNotifyVisible")) {
 				this.$().addClass("sapUiUx3ShellNotifyVisible");
