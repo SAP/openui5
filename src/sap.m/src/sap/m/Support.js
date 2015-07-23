@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
+	function(jQuery, ToolsAPI) {
 	"use strict";
 
 
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global'],
 				buffer.push("<table class='sapMSupportTable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody>");
 				$.each(content, function(i, v) {
 					var val = "";
-					if (v) {
+					if (v !== undefined && v !== null) {
 						if (typeof (v) == "string" || typeof (v) == "boolean" || ($.isArray(v) && v.length == 1)) {
 							val = v;
 						} else if (($.isArray(v) || $.isPlainObject(v)) && window.JSON) {
@@ -102,39 +102,23 @@ sap.ui.define(['jquery.sap.global'],
 
 		// copied from core
 		function getTechnicalContent() {
-			var html,
-				oConfig = sap.ui.getCore().getConfiguration();
-			var oLoadedLibs = {};
-			jQuery.each(sap.ui.getCore().getLoadedLibraries(), function(sName, oLibInfo) {
-				oLoadedLibs[sName] = oLibInfo.version;
-			});
+			var oCfg = ToolsAPI.getFrameworkInformation();
 			oData = {
-					version: sap.ui.version,
-					build: sap.ui.buildinfo.buildtime,
-					change: sap.ui.buildinfo.lastchange,
-					useragent: navigator.userAgent,
-					docmode: document.documentMode ||  "",
-					debug: $.sap.debug(),
-					bootconfig: window["sap-ui-config"] || {},
-					modules: $.sap.getAllDeclaredModules(),
-					loadedlibs: oLoadedLibs,
-					uriparams: $.sap.getUriParameters().mParams,
-					appurl: window.location.href,
-					config: {
-						theme: oConfig.getTheme(),
-						language: oConfig.getLanguage(),
-						formatLocale: oConfig.getFormatLocale(),
-						accessibility: "" + oConfig.getAccessibility(),
-						animation: "" + oConfig.getAnimation(),
-						rtl: "" + oConfig.getRTL(),
-						debug: "" + oConfig.getDebug(),
-						inspect: "" + oConfig.getInspect(),
-						originInfo: "" + oConfig.getOriginInfo(),
-						noDuplicateIds: "" + oConfig.getNoDuplicateIds()
-					}
+				version: oCfg.commonInformation.version,
+				build: oCfg.commonInformation.buildTime,
+				change: oCfg.commonInformation.lastChange,
+				useragent: oCfg.commonInformation.userAgent,
+				docmode: oCfg.commonInformation.documentMode,
+				debug: oCfg.commonInformation.debugMode,
+				bootconfig: oCfg.configurationBootstrap,
+				config:  oCfg.configurationComputed,
+				loadedlibs: oCfg.loadedLibraries,
+				modules: oCfg.loadedModules,
+				uriparams: oCfg.URLParameters,
+				appurl: oCfg.commonInformation.applicationHREF
 			};
 
-			html = ["<table class='sapUiSelectable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody class='sapUiSelectable'>"];
+			var html = ["<table class='sapUiSelectable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody class='sapUiSelectable'>"];
 			line(html, true, true, "SAPUI5 Version", function(buffer) {
 				buffer.push(oData.version, " (built at ", oData.build, ", last change ", oData.change, ")");
 			});
