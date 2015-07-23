@@ -315,13 +315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 */
 		_getGroupForContext : function(oContext) {
 			// TODO: we should document that group header depends on the first sorter
-			var oNewGroup = this._oControl.getBinding("items").aSorters[0].fnGroup(oContext);
-			if (typeof oNewGroup == "string") {
-				oNewGroup = {
-					key: oNewGroup
-				};
-			}
-			return oNewGroup;
+			return this._oControl.getBinding("items").aSorters[0].getGroup(oContext);
 		},
 
 		/**
