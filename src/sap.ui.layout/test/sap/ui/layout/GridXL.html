@@ -55,39 +55,44 @@
 					})
 				}),
 				new sap.ui.core.HTML({
-					content: '<p>XL2 L2 M2<br />Indent XL2 L5 M5</p>',
+					content: '<p>XL2 L2 M2<br />Indent XL2 L5 M5 and linebreakXL true, L false</p>',
 					width: "100%",
 					layoutData: new sap.ui.layout.GridData({
 						span: "XL2 L2 M2",
 						indent: "XL2 L5 M5",
 						linebreakL: false,
+						linebreakXL: true,
 						linebreakM: true,
 						visibleOnSmall: false
 					})
 				}),
 
 				new sap.ui.core.HTML({
-					content: '<p>XL2 L6 M6 S6<br />Indent XL6 L3 M3 S3<br />linebreakL linebreakM linebreakS</p>',
+					content: '<p>XL2 L6 M6 S6<br />Indent XL6 L3 M3 S3<br />linebreakL linebreakM linebreakS = true and linebreakXL = false</p>',
 					width: "100%",
 					layoutData: new sap.ui.layout.GridData({
 						span: "XL2 L6 M6 S6",
 						indent: "XL6 L3 M3 S3",
 						linebreakL: true,
 						linebreakM: true,
-						linebreakS: true
+						linebreakS: true,
+						linebreakXL: false
 					})
 				}),
 
 				// visisble
 
 				new sap.ui.core.HTML({
-					content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall</p>',
+					content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall and linebreak for XL same as L  ( L = true)</p>',
 					width: "100%",
 					layoutData: new sap.ui.layout.GridData({
 						span: "L12 M12 S12",
 						visibleL: true,
 						visibleM: true,
-						visibleS: true
+						visibleS: true,
+						linebreakL: true,
+						linebreakM: true,
+						linebreakS: true
 					})
 				}),
 				new sap.ui.core.HTML({
