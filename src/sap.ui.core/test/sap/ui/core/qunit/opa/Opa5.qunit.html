@@ -25,9 +25,9 @@
 	var Opa5 = sap.ui.test.Opa5;
 	var Opa = sap.ui.test.Opa;
 
-	module("iframe");
+	module("IFrame");
 
-	asyncTest("Should find an iframe in the dom instead of creating it", function() {
+	asyncTest("Should find an IFrame in the dom instead of creating it", function() {
 		// System under Test
 		var oOpa5 = new Opa5();
 		jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
@@ -81,7 +81,7 @@
 			oOpa5.emptyQueue();
 		});
 
-		asyncTest("Should Create and destroy an iframe", function() {
+		asyncTest("Should Create and destroy an IFrame", function() {
 			// System under Test
 			var oOpa5 = new Opa5(),
 				oWindowOpaPlugin = Opa5.getPlugin();
@@ -138,7 +138,7 @@
 
 	// For IE 9 errors in frame are disabled see comment in OPA5.js
 	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9)) {
-		QUnit.asyncTest("Should throw error if the iframe throws an error", function (assert) {
+		QUnit.asyncTest("Should throw error if the IFrame throws an error", function (assert) {
 			// Arrange
 			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
 			var $Frame = jQuery("#OpaFrame").on("load", function () {
@@ -167,68 +167,146 @@
 		});
 	}
 
-	asyncTest("Should Navigate in an Iframe", function() {
-		// System under Test
-		var oOpa5 = new Opa5();
+	QUnit.module("IFrame navigation", {
+		beforeEach: function (assert) {
+			this.oOpa5 = new Opa5();
+			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
 
-		// Act
-		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
-			// Act + Assert
-			var oHashChanger = Opa5.getHashChanger();
-
-			strictEqual(oHashChanger.getHash(), "");
-			oHashChanger.setHash("buz");
-			oHashChanger.replaceHash("baz");
-			oHashChanger.replaceHash("foo");
-			strictEqual(oHashChanger.getHash(), "foo");
-			oHashChanger.setHash("bar");
-			strictEqual(oHashChanger.getHash(), "bar");
-			Opa5.getWindow().history.back();
-			strictEqual(oHashChanger.getHash(), "foo");
-
-			oHashChanger.setHash("baz");
-			strictEqual(oHashChanger.getHash(), "baz");
-			Opa5.getWindow().history.go(-1);
-
-			strictEqual(oHashChanger.getHash(), "foo");
-
-		});
-
-		oOpa5.iTeardownMyAppFrame();
-
-		oOpa5.emptyQueue().done(function () {
-			start();
-		});
+			this.oOpa5.waitFor({
+				success: function () {
+					this.oHashChanger = Opa5.getHashChanger();
+					this.oHashChanger.init();
+				}.bind(this)
+			});
+		}
 	});
 
-	asyncTest("Should Navigate forwards in an Iframe", function(assert) {
-		// System under Test
-		var oOpa5 = new Opa5();
+	QUnit.test("Should be able to set and replace hashes in an IFrame", function() {
 
-		// Act
-		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
-			// Act + Assert
-			var oHashChanger = Opa5.getHashChanger();
+		this.oOpa5.waitFor({
+			success: function () {
+				// Act + Assert
+				assert.strictEqual(this.oHashChanger.getHash(), "", "the initial hash is empty");
 
-			assert.strictEqual(oHashChanger.getHash(), "");
-			oHashChanger.setHash("buz");
-			oHashChanger.setHash("foo");
-			oHashChanger.replaceHash("baz");
-			assert.strictEqual(oHashChanger.getHash(), "baz");
-			Opa5.getWindow().history.go(-1);
-			Opa5.getWindow().history.go(1);
-			assert.strictEqual(oHashChanger.getHash(), "baz");
+				this.oHashChanger.setHash("buz");
+				assert.strictEqual(this.oHashChanger.getHash(), "buz", "recorded one hash set");
 
-			oHashChanger.setHash("bar");
-			Opa5.getWindow().history.go(-1);
-			Opa5.getWindow().history.forward();
+				this.oHashChanger.replaceHash("baz");
+				this.oHashChanger.replaceHash("foo");
+				assert.strictEqual(this.oHashChanger.getHash(), "foo", "recorded two replacements");
 
+				this.oHashChanger.setHash("bar");
+				assert.strictEqual(this.oHashChanger.getHash(), "bar", "recorded a setting after replacements");
+			}.bind(this)
 		});
 
-		oOpa5.iTeardownMyAppFrame();
+		this.oOpa5.iTeardownMyAppFrame();
 
-		oOpa5.emptyQueue().done(function () {
-			start();
+		return new Promise(function (fnResolve) {
+			Opa5.emptyQueue().done(fnResolve);
+		});
+
+	});
+
+	QUnit.test("Should be able to go back in an IFrame", function(assert) {
+		// Arrange
+		var bAssertionDone = false;
+
+		// Act
+		this.oOpa5.waitFor({
+			success: function () {
+				// Act + Assert
+				this.oHashChanger.setHash("bar");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					assert.strictEqual(this.oHashChanger.getHash(), "", "went back in the history");
+					bAssertionDone = true;
+				}, this);
+
+				Opa5.getWindow().history.back();
+			}.bind(this)
+		});
+
+		this.oOpa5.waitFor({
+			check: function () {
+				return bAssertionDone;
+			}
+		});
+
+		this.oOpa5.iTeardownMyAppFrame();
+
+		return new Promise(function (fnResolve) {
+			Opa5.emptyQueue().done(fnResolve);
+		});
+
+	});
+
+	QUnit.test("Should be able to go newHash back sameNewHash in an IFrame", function(assert) {
+		// Arrange
+		var fnChangedSpy = sinon.spy(),
+			bAssertionDone = false;
+
+		// Act
+		this.oOpa5.waitFor({
+			success: function () {
+				this.oHashChanger.setHash("foo");
+				this.oHashChanger.setHash("baz");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					assert.strictEqual(this.oHashChanger.getHash(), "foo", "went back in the history");
+
+					// test for a bug - baz back forward to baz didn't fire the changed event of hasher
+					// this is problematic since the old hash cannot be determined, so it will not work for app to app navigation in the ushell
+					Opa5.getWindow().hasher.changed.addOnce(fnChangedSpy);
+					this.oHashChanger.setHash("baz");
+
+					assert.strictEqual(fnChangedSpy.callCount, 1, "Dispatched the changed signal of hasher");
+					assert.strictEqual(fnChangedSpy.getCall(0).args[0], "baz", "the new hash is baz");
+					assert.strictEqual(fnChangedSpy.getCall(0).args[1], "foo", "the old hash is foo");
+					bAssertionDone = true;
+				}, this);
+
+				Opa5.getWindow().history.go(-1);
+			}.bind(this)
+		});
+
+		this.oOpa5.waitFor({
+			check: function () {
+				return bAssertionDone;
+			}
+		});
+
+		this.oOpa5.iTeardownMyAppFrame();
+
+		return new Promise(function (fnResolve) {
+			Opa5.emptyQueue().done(fnResolve);
+		});
+
+	});
+
+	QUnit.test("Should Navigate forwards in an IFrame", function(assert) {
+		// Act
+		this.oOpa5.waitFor({
+			success: function () {
+						// Act + Assert
+						this.oHashChanger.setHash("buz");
+						this.oHashChanger.setHash("foo");
+						this.oHashChanger.replaceHash("baz");
+						assert.strictEqual(this.oHashChanger.getHash(), "baz", "replaced to baz");
+						Opa5.getWindow().history.go(-1);
+						Opa5.getWindow().history.go(1);
+						assert.strictEqual(this.oHashChanger.getHash(), "baz", "go(-1) and go(1) resulted in the same entry");
+
+						this.oHashChanger.setHash("bar");
+						Opa5.getWindow().history.back();
+						Opa5.getWindow().history.forward();
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "back and forward resulted in the same entry");
+					}.bind(this)
+		});
+		this.oOpa5.iTeardownMyAppFrame();
+
+		return new Promise(function (fnResolve) {
+			Opa5.emptyQueue().done(fnResolve);
 		});
 	});
 
