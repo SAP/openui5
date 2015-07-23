@@ -3,6 +3,7 @@
  */
 
 (function() {
+	"use strict";
 
 	// If running in top window redirect to testrunner
 	if (!parent.jsUnitTestSuite) {

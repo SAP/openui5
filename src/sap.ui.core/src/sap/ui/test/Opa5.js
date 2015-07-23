@@ -17,6 +17,8 @@ sap.ui.define(['jquery.sap.global',
 			'./matchers/Ancestor',
 			'./matchers/AggregationContainsPropertyEqual'],
 	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, Matcher, AggregationFilled, PropertyStrictEquals) {
+		"use strict";
+
 		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
 			oFrameJQuery = null,

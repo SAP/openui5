@@ -3,6 +3,7 @@
  */
 
 sap.ui.define(['sap/ui/base/ManagedObject'], function (fnManagedObject) {
+	"use strict";
 
 	/**
 	 * @class Matchers for Opa5 - needs to implement an isMatching function that returns a boolean and will get a control instance as parameter

@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([], function () {
+	"use strict";
 
 	/**
 	 * @class Properties - checks if a control's properties have the following values

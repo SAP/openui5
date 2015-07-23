@@ -22,6 +22,7 @@
  */
 
 (function() {
+	"use strict";
 
 	if (!window.jQuery ) {
 		throw new Error("SAPUI5 requires jQuery as a prerequisite (>= version 1.7)");
@@ -4310,6 +4311,8 @@
  * @SecSink {0|XSS} Parameter is evaluated
  */
 jQuery.sap.globalEval = function() {
+	"use strict";
+
 	/*eslint-disable no-eval */
 	eval(arguments[0]);
 	/*eslint-enable no-eval */

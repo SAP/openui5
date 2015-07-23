@@ -3,6 +3,7 @@
  */
 
 sap.ui.define(['./Matcher'], function (Matcher) {
+	"use strict";
 
 	/**
 	 * BindingPath - checks if a control has a binding context with the exact same binding path.
