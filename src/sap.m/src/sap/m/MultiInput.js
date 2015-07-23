@@ -290,26 +290,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 	
 	/**
-	 * Set the last token in tokenizer to show indicator in multi-line mode.
-	 *
-	 * @since 1.28
-	 * @private
-	 */
-	MultiInput.prototype._setLastTokenVisible = function() {
-		this._tokenizer.setVisible(true);
-		var aTokens = this.getTokens();
-
-		if (aTokens.length > 1) {
-			var i = 0;
-			for ( i = 0; i < aTokens.length - 1; i++ ) {
-				aTokens[i].setVisible(false);
-			}
-		} else {
-		this.setValue("");
-		}
-	};
-	
-	/**
 	 * Set all tokens in tokenizer visible in multi-line mode.
 	 *
 	 * @since 1.28
@@ -354,20 +334,27 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 */
 	MultiInput.prototype._showIndicator = function() {
 		
-		this._setLastTokenVisible();
+		var aTokens = this.getTokens(),
+		    iToken = aTokens.length;
 		
-		// no value is allowed to show in the input when multiline is closed
-		if (this.getValue() !== "") {
-			this.setValue() === "";
-		}
+		this._tokenizer.setVisible(true);
 		
-		var iTokens = this.getTokens().length;
-		
-		if (iTokens > 1) {
+		if (iToken > 1) {
+			// no value is allowed to show in the input when multiline is closed
+			if (this.getValue() !== "") {
+				this.setValue() === "";
+			}
+			
+			var i = 0;
+			for ( i = 0; i < iToken - 1; i++ ) {
+				aTokens[i].setVisible(false);
+			}
+			
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iTokens - 1) + "</span>";
+			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
 			
 			this.$().find(".sapMTokenizer").after(sSpanText);
+
 		}
 		
 		this._bShowIndicator = true;
