@@ -71,12 +71,12 @@
 	}
 	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
 
-	function removeSharedMetadata(sURI){
+	function removeSharedServicedata(sURI){
 		var aParts = sURI.split('?');
 		var sServiceURI = aParts[0].replace(/\/$/, "");
 		
 		if(sap.ui.model.odata.v2.ODataModel.mServiceData && sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]){
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
+			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI];
 		}
 	}
 
@@ -89,7 +89,7 @@
 		bRemoveMetadata = bRemoveMetadata !== false;
 		
 		if (bRemoveMetadata) {
-			removeSharedMetadata(sURI);
+			removeSharedServicedata(sURI);
 		}
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, mParameters);
 		return oModel;
@@ -1341,7 +1341,7 @@
 
 	asyncTest("async test request events - aborted requests single", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1379,7 +1379,7 @@
 
 	asyncTest("async test request events - aborted requests single after sent", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1426,7 +1426,7 @@
 
 	asyncTest("async test request events - aborted requests batch", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1469,7 +1469,7 @@
 	
 	asyncTest("async test request events - aborted requests batch after sent", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1522,7 +1522,7 @@
 	
 	asyncTest("async test request events - aborted deferred requests batch", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1568,7 +1568,7 @@
 	
 	asyncTest("async test request events - aborted deferred requests batch after sent", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1624,7 +1624,7 @@
 	
 	asyncTest("async test request events - auto refresh element binding", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1668,7 +1668,7 @@
 	
 	asyncTest("async test request events - auto refresh list binding", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -2070,6 +2070,73 @@
 		});
 	});
 	
+	module("CSRF Token handling", {
+		setup: function() {
+			this.oModel = initModel(sURI, true);
+			updateCsrfToken();
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			removeSharedServicedata(sURI);
+			delete this.oModel;
+			deleteCsrfToken();
+		}
+	});
+	
+	asyncTest("No token request for GET requests", function() {
+		this.oModel.setUseBatch(false);
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.read("/Categories(1)", {
+			success: function() {
+				ok(!refreshSpy.called, "No security token needed for GET requests")
+				start();
+			}
+		});
+	});
+	
+	asyncTest("Token request for GET request inside batch", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.read("/Categories(1)", {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
+				start();
+			}
+		});
+	});
+	
+	asyncTest("Token request for POST requests", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(refreshSpy.calledOnce, "No additional token request")
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request, automatic resubmit", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
+			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				updateCsrfToken();
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
+						ok(refreshSpy.calledTwice, "Token was fetched again after update");
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
+
 	module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI);

@@ -1,7 +1,26 @@
 var xhr = sinon.useFakeXMLHttpRequest(),
 	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 	responseDelay = 10,
-	_setTimeout = window.setTimeout;
+	_setTimeout = window.setTimeout,
+	csrfToken;
+
+function updateCsrfToken() {
+	csrfToken = "" + Math.floor(Math.random() * 1000000000);
+}
+
+function deleteCsrfToken() {
+	csrfToken = undefined;
+}
+
+function getHeader(headers, header) {
+	header = header.toLowerCase();
+	for (var i in headers) {
+		if (i.toLowerCase() == header) {
+			return headers[i];
+		}
+	}
+	return undefined;
+}
 
 xhr.useFilters = true;
 xhr.addFilter(function(method, url) {
@@ -207,7 +226,7 @@ xhr.onCreate = function(request) {
 			case "MERGE":
 				return [204, oJSONHeaders, ""];
 			case "POST":
-				return [201, oJSONHeaders, ""];
+				return [201, oJSONHeaders, sCategory1JSON];
 			case "DELETE":
 				return [204, oJSONHeaders, ""];
 			default:
@@ -229,6 +248,20 @@ xhr.onCreate = function(request) {
 				}
 			}
 		}	
+		
+		// CSRF Token handling
+		if (request.method != "GET" && csrfToken) {
+			if (getHeader(request.requestHeaders, "X-CSRF-Token") != csrfToken) {
+				respond(403, oCsrfRequireHeaders, "");
+				return;
+			}
+		}
+		if (request.url == baseURL) {
+			oCsrfResponseHeaders["X-CSRF-Token"] = csrfToken;
+			respond(200, oCsrfResponseHeaders, sServiceDocXML);
+			return;
+		}
+		
 		
 		// Special handling based on headers
 		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
@@ -406,7 +439,102 @@ var oBatchHeaders = 	{
 var oHTMLHeaders = 	{
 		"Content-Type": "text/html"
 	};
+var oCsrfRequireHeaders = 	{
+		"Content-Type": "text/plain;charset=utf-8",
+		"DataServiceVersion": "2.0",
+		"X-CSRF-Token": "required" 
+	};
+var oCsrfResponseHeaders = 	{
+		"Content-Type": "application/xml;charset=utf-8",
+		"DataServiceVersion": "1.0",
+		"X-CSRF-Token": "" 
+	};
 
+var sServiceDocXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+	<service xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns="http://www.w3.org/2007/app">\
+	  <workspace>\
+	    <atom:title>Default</atom:title>\
+	    <collection href="Categories">\
+	      <atom:title>Categories</atom:title>\
+	    </collection>\
+	    <collection href="CustomerDemographics">\
+	      <atom:title>CustomerDemographics</atom:title>\
+	    </collection>\
+	    <collection href="Customers">\
+	      <atom:title>Customers</atom:title>\
+	    </collection>\
+	    <collection href="Employees">\
+	      <atom:title>Employees</atom:title>\
+	    </collection>\
+	    <collection href="Order_Details">\
+	      <atom:title>Order_Details</atom:title>\
+	    </collection>\
+	    <collection href="Orders">\
+	      <atom:title>Orders</atom:title>\
+	    </collection>\
+	    <collection href="Products">\
+	      <atom:title>Products</atom:title>\
+	    </collection>\
+	    <collection href="Regions">\
+	      <atom:title>Regions</atom:title>\
+	    </collection>\
+	    <collection href="Shippers">\
+	      <atom:title>Shippers</atom:title>\
+	    </collection>\
+	    <collection href="Suppliers">\
+	      <atom:title>Suppliers</atom:title>\
+	    </collection>\
+	    <collection href="Territories">\
+	      <atom:title>Territories</atom:title>\
+	    </collection>\
+	    <collection href="Alphabetical_list_of_products">\
+	      <atom:title>Alphabetical_list_of_products</atom:title>\
+	    </collection>\
+	    <collection href="Category_Sales_for_1997">\
+	      <atom:title>Category_Sales_for_1997</atom:title>\
+	    </collection>\
+	    <collection href="Current_Product_Lists">\
+	      <atom:title>Current_Product_Lists</atom:title>\
+	    </collection>\
+	    <collection href="Customer_and_Suppliers_by_Cities">\
+	      <atom:title>Customer_and_Suppliers_by_Cities</atom:title>\
+	    </collection>\
+	    <collection href="Invoices">\
+	      <atom:title>Invoices</atom:title>\
+	    </collection>\
+	    <collection href="Order_Details_Extendeds">\
+	      <atom:title>Order_Details_Extendeds</atom:title>\
+	    </collection>\
+	    <collection href="Order_Subtotals">\
+	      <atom:title>Order_Subtotals</atom:title>\
+	    </collection>\
+	    <collection href="Orders_Qries">\
+	      <atom:title>Orders_Qries</atom:title>\
+	    </collection>\
+	    <collection href="Product_Sales_for_1997">\
+	      <atom:title>Product_Sales_for_1997</atom:title>\
+	    </collection>\
+	    <collection href="Products_Above_Average_Prices">\
+	      <atom:title>Products_Above_Average_Prices</atom:title>\
+	    </collection>\
+	    <collection href="Products_by_Categories">\
+	      <atom:title>Products_by_Categories</atom:title>\
+	    </collection>\
+	    <collection href="Sales_by_Categories">\
+	      <atom:title>Sales_by_Categories</atom:title>\
+	    </collection>\
+	    <collection href="Sales_Totals_by_Amounts">\
+	      <atom:title>Sales_Totals_by_Amounts</atom:title>\
+	    </collection>\
+	    <collection href="Summary_of_Sales_by_Quarters">\
+	      <atom:title>Summary_of_Sales_by_Quarters</atom:title>\
+	    </collection>\
+	    <collection href="Summary_of_Sales_by_Years">\
+	      <atom:title>Summary_of_Sales_by_Years</atom:title>\
+	    </collection>\
+	  </workspace>\
+	</service>\
+';
 
 var sMetaData = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\
