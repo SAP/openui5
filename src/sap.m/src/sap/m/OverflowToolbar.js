@@ -74,12 +74,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			// When set to true, the recalculation algorithm will bypass an optimization to determine if anything moved from/to the action sheet
 			this._bSkipOptimization = false;
 
-			// Load the resources, needed for the text of the overflow button
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			// Init static hidden text for ARIA
+			if (!OverflowToolbar._sAriaOverflowButtonLabelId) {
 
-			OverflowToolbar.prototype._sAriaOverflowButtonLabelId = new InvisibleText({
-				text: this._oResourceBundle.getText("LOAD_MORE_DATA")
-			}).toStatic().getId();
+				// Load the resources, needed for the text of the overflow button
+				var oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+
+				// Use Icon-Font text
+				OverflowToolbar._sAriaOverflowButtonLabelId = new InvisibleText({
+					text: oCoreResourceBundle.getText("Icon.overflow")
+				}).toStatic().getId();
+
+			}
+
 		};
 
 		/**
@@ -406,11 +413,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			if (!this.getAggregation("_overflowButton")) {
 
 				// Create the overflow button
+				// A tooltip will be used automatically by the button
+				// using to the icon-name provided
 				oOverflowButton = new ToggleButton({
 					icon: "sap-icon://overflow",
 					press: this._overflowButtonPressed.bind(this),
 					ariaLabelledBy: this._sAriaOverflowButtonLabelId,
-					tooltip: this._oResourceBundle.getText("LOAD_MORE_DATA"),
 					type: sap.m.ButtonType.Transparent
 				});
 
