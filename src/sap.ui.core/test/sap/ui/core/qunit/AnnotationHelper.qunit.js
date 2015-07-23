@@ -4,9 +4,10 @@
 sap.ui.require([
 	"sap/ui/base/BindingParser", "sap/ui/base/ManagedObject", "sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/AnnotationHelper", "sap/ui/model/odata/_AnnotationHelperBasics",
-	"sap/ui/model/odata/_AnnotationHelperExpression", "sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/_AnnotationHelperExpression", "sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/PropertyBinding"
 ], function(BindingParser, ManagedObject, JSONModel, AnnotationHelper, Basics, Expression,
-		ODataModel) {
+		ODataModel, PropertyBinding) {
 	/*global deepEqual, ok, QUnit, sinon, strictEqual */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
@@ -515,21 +516,39 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 *
 	 * @param {string} sTitle
 	 *   the module's title
+	 * @param {object} [oEnvironment]
+	 *   the test environment
+	 * @param {function} [oEnvironment.afterEach]
+	 *   setup
+	 * @param {function} [oEnvironment.beforeEach]
+	 *   teardown
 	 */
-	function module(sTitle) {
-		QUnit.module(sTitle, {
-			beforeEach : function () {
-				oGlobalSandbox = sinon.sandbox.create();
-				setupSandbox(oGlobalSandbox);
-			},
-			afterEach : function () {
-				ODataModel.mServiceData = {}; // clear cache
-				// I would consider this an API,
-				// see https://github.com/cjohansen/Sinon.JS/issues/614
-				oGlobalSandbox.verifyAndRestore();
-				sinon.FakeXMLHttpRequest.filters = [];
+	function module(sTitle, oEnvironment) {
+		var fnAfterEach, fnBeforeEach;
+
+		oEnvironment = oEnvironment || {};
+		fnAfterEach = oEnvironment.afterEach;
+		fnBeforeEach = oEnvironment.beforeEach;
+
+		oEnvironment.beforeEach = function () {
+			oGlobalSandbox = sinon.sandbox.create();
+			setupSandbox(oGlobalSandbox);
+			if (fnBeforeEach) {
+				fnBeforeEach.apply(this, arguments);
 			}
-		});
+		};
+		oEnvironment.afterEach = function () {
+			if (fnAfterEach) {
+				fnAfterEach.apply(this, arguments);
+			}
+			ODataModel.mServiceData = {}; // clear cache
+			// I would consider this an API,
+			// see https://github.com/cjohansen/Sinon.JS/issues/614
+			oGlobalSandbox.verifyAndRestore();
+			sinon.FakeXMLHttpRequest.filters = [];
+		};
+
+		QUnit.module(sTitle, oEnvironment);
 	}
 
 	/**
@@ -1729,4 +1748,222 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oMetaModel.getODataFunctionImport("RegenerateAllData", true));
 		});
 	});
+
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.createBindingInfo", {
+		afterEach : function afterEach() {
+			delete window.foo;
+		},
+
+		beforeEach : function beforeEach() {
+			var oModel = new JSONModel({bar : "world", foo : "hello"}),
+				oControl = new TestControl({
+					models: {
+						"undefined" : oModel,
+						"model" : oModel
+					}
+				});
+
+			// control instance for integration-like tests
+			this.oControl = oControl;
+			// candidate for a root formatter, joins its arguments and adds asterisks
+			this.formatter = function formatter() {
+				strictEqual(this, oControl, "formatter: 'this' is kept");
+				return "*" + Array.prototype.join.call(arguments) + "*";
+			}
+			// candidate for a leaf formatter, also inside a composite binding
+			window.foo = {
+				Helper : {
+					help : function help(oRawValue) {
+						ok(this instanceof PropertyBinding || this === oControl,
+							"foo.Helper.help: 'this' is kept");
+						return "_" + oRawValue + "_";
+					}
+				}
+			};
+		},
+
+		/**
+		 * Checks that createBindingInfo() works as expected for multiple bindings.
+		 *
+		 * @param {string[]} aParts
+		 *   non-empty array of data binding expressions
+		 * @param {string[]} aExpectedText
+		 *   the expected value of each part
+		 */
+		checkMultiple : function checkMultiple(aParts, aExpectedTexts) {
+			var oControl = this.oControl;
+
+			// test without and with root formatter
+			[undefined, this.formatter].forEach(function (fnRootFormatter) {
+				var sExpectedText = fnRootFormatter
+					? "*" + aExpectedTexts.join() + "*"
+					// @see sap.ui.model.CompositeBinding#getExternalValue
+					// "default: multiple values are joined together as space separated list if no
+					// formatter or type specified"
+					: aExpectedTexts.join(" ");
+
+				oControl.bindProperty("text",
+					AnnotationHelper.createBindingInfo(aParts, fnRootFormatter));
+				strictEqual(oControl.getText(), sExpectedText);
+			});
+		},
+
+		/*
+		 * Checks that createBindingInfo() works as expected for a single binding.
+		 *
+		 * @param {string} sBinding
+		 *   a data binding expression
+		 * @param {string} sExpectedText
+		 *   the expected value of the test control's "text" property
+		 */
+		checkSingle : function checkSingle(sBinding, sExpectedText) {
+			var oControl = this.oControl;
+
+			[undefined, this.formatter].forEach(function (fnRootFormatter) {
+				if (fnRootFormatter) {
+					sExpectedText = "*" + sExpectedText + "*";
+				}
+
+				// {string} vParts
+				oControl.bindProperty("text",
+					AnnotationHelper.createBindingInfo(sBinding, fnRootFormatter));
+				strictEqual(oControl.getText(), sExpectedText, "{string} vParts");
+
+				// {object[]} vParts
+				oControl.bindProperty("text",
+					AnnotationHelper.createBindingInfo([
+						AnnotationHelper.createBindingInfo(sBinding)
+					], fnRootFormatter));
+				strictEqual(oControl.getText(), sExpectedText, "{object[]} vParts");
+
+				// {string[]} vParts
+				oControl.bindProperty("text",
+					AnnotationHelper.createBindingInfo([sBinding], fnRootFormatter));
+				strictEqual(oControl.getText(), sExpectedText, "{string[]} vParts");
+			});
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("some basics", function () {
+		// see sap.ui.base.BindingParser: makeSimpleBindingInfo
+		deepEqual(AnnotationHelper.createBindingInfo("{/foo/bar}"), {
+			path : "/foo/bar"
+		}, "{/foo/bar}");
+		deepEqual(AnnotationHelper.createBindingInfo("{meta>foo/bar}"), {
+			model : "meta",
+			path : "foo/bar"
+		}, "{meta>foo/bar}");
+
+		// complex binding syntax
+		deepEqual(AnnotationHelper.createBindingInfo("{path:'foo/bar'}"), {
+			path : "foo/bar"
+		}, "{path:'foo/bar'}");
+		deepEqual(AnnotationHelper.createBindingInfo("{path:'meta>/foo/bar'}"), {
+			path : "meta>/foo/bar"
+		}, "{path:'meta>/foo/bar'}");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("copy 'textFragments' property only if present", function () {
+		var oBindingInfo = AnnotationHelper.createBindingInfo(
+				"{path : 'model>/bar', formatter : 'foo.Helper.help'}", this.formatter);
+
+		strictEqual("textFragments" in oBindingInfo.formatter, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("simple binding syntax", function () {
+		this.checkSingle("{/foo}", "hello");
+		this.checkSingle("{model>/foo}", "hello");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("complex binding syntax", function () {
+		this.checkSingle("{path : 'model>/bar', formatter : 'foo.Helper.help'}", "_world_");
+		this.checkSingle("{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
+			"_world_");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("composite binding", function () {
+		this.checkSingle("hello {path : '/bar', formatter : 'foo.Helper.help'}", "hello _world_");
+		this.checkSingle("hello {path : 'model>/bar', formatter : 'foo.Helper.help'}",
+			"hello _world_");
+		this.checkSingle("hello {model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
+			"hello _world_");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expression binding", function () {
+		this.checkSingle("{:= ${/foo} + ' ' + ${path:'/bar'}}", "hello world");
+		this.checkSingle("{:= ${model>/foo} + ' ' + ${path:'model>/bar'}}", "hello world");
+		this.checkSingle("{:= ${model>/foo} + ' ' + ${model:'model',path:'/bar'}}", "hello world");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("empty array of parts", function () {
+		throws(function () {
+			AnnotationHelper.createBindingInfo([]);
+		}, new Error("Missing parts"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Not a data binding expression", function () {
+		["", "foo", "{:= 'foo'}"].forEach(function (vPart) {
+			var oExpectedError = new Error("Not a data binding expression: " + vPart);
+
+			throws(function () {
+				AnnotationHelper.createBindingInfo(vPart);
+			}, oExpectedError, "" + vPart);
+			throws(function () {
+				AnnotationHelper.createBindingInfo([vPart]);
+			}, oExpectedError, "[" + vPart + "]");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Unsupported part", function () {
+		[undefined, null, false, true, 0, 1, NaN, []].forEach(function (vPart) {
+			throws(function () {
+				AnnotationHelper.createBindingInfo([vPart]);
+			}, new Error("Unsupported part: " + vPart), "Unsupported part: " + vPart);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("multiple parts: simple binding syntax", function () {
+		this.checkMultiple(["{/foo}", "{model>/bar}"], ["hello", "world"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("multiple parts: complex binding syntax", function () {
+		this.checkMultiple([
+				"{path : '/foo', formatter : 'foo.Helper.help'}",
+				"{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}"
+			], ["_hello_", "_world_"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("multiple parts: composite binding", function () {
+		this.checkMultiple([
+				"hello {model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
+				"{path : 'model>/foo', formatter : 'foo.Helper.help'} world"
+			], ["hello _world_", "_hello_ world"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("multiple parts: expression binding", function () {
+		this.checkMultiple([
+				"{:= ${/foo} + '>' + ${path:'/bar'}}",
+				"{:= ${model>/bar} + '<' + ${model:'model',path:'/foo'}}"
+			], ["hello>world", "world<hello"]);
+	});
+
+	//TODO constant strings
+	//TODO
+//		// @see applySettings: complex parser returns undefined if there is nothing to unescape
+//		return BindingParser.complexParser(sBinding, undefined, true) || sBinding;
+	//TODO check JsDoc of ManagedObject.prototype.bindProperty to learn more about binding infos
 });

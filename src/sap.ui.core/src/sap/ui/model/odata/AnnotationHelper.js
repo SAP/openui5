@@ -4,13 +4,42 @@
 
 // Provides object sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
-	"jquery.sap.global", "./_AnnotationHelperBasics", "./_AnnotationHelperExpression"
-], function(jQuery, Basics, Expression) {
+	"jquery.sap.global",
+	"sap/ui/base/BindingParser",
+	"./_AnnotationHelperBasics",
+	"./_AnnotationHelperExpression"
+], function(jQuery, BindingParser, Basics, Expression) {
 		'use strict';
 
 		var AnnotationHelper,
 			// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 			rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/;
+
+		/**
+		 * Returns a function representing the composition <code>fnAfter</code> after
+		 * <code>fnBefore</code>.
+		 *
+		 * @param {function} fnAfter
+		 *   the second function, taking a single argument
+		 * @param {function} [fnBefore]
+		 *   the optional first function, taking multiple arguments
+		 * @returns {function}
+		 *   the composition <code>fnAfter</code> after <code>fnBefore</code>
+		 */
+		function chain(fnAfter, fnBefore) {
+			if (!fnBefore) {
+				return fnAfter;
+			}
+
+			function formatter() {
+				return fnAfter.call(this, fnBefore.apply(this, arguments));
+			}
+			if (fnBefore.textFragments) {
+				// @see sap.ui.core.ManagedObject#_bindProperty
+				formatter.textFragments = fnBefore.textFragments;
+			}
+			return formatter;
+		}
 
 		/**
 		 * Follows the dynamic "14.5.12 Expression edm:Path" (or variant thereof) contained within
@@ -135,6 +164,81 @@ sap.ui.define([
 		 * @namespace sap.ui.model.odata.AnnotationHelper
 		 */
 		AnnotationHelper = /** @lends sap.ui.model.odata.AnnotationHelper */ {
+			/**
+			 * Creates a binding info from the given parts and optional root formatter function.
+			 * Each part can have one of the following types:
+			 * <ul>
+			 *   <li><code>string</code>: The part is assumed to be a data binding expression with
+			 *   complex binding syntax and is parsed accordingly to create a binding info object.
+			 *   <li><code>object</code>: The part is assumed to be a binding info object. If it
+			 *   is not the only part and has a "parts" property itself, then it must have no other
+			 *   properties except "formatter".
+			 * </ul>
+			 *
+			 * @param {string|any[]} vParts
+			 *   a single data binding expression or a non-empty array of parts
+			 * @param {function} [fnRootFormatter]
+			 *   root level formatter function; default: <code>Array.prototype.join(., " ")</code>
+			 * @returns {object}
+			 *   a binding info as expected by e.g.
+			 *   {@link sap.ui.base.ManagedObject#bindProperty bindProperty}
+			 * @throws {Error}
+			 *   if an empty array of parts is given, or if some part has an unsupported type or
+			 *   content
+			 * @public
+			 * @since 1.31.0
+			 */
+			createBindingInfo : function (vParts, fnRootFormatter) {
+				var bMergeNeeded = false,
+					oBindingInfo;
+
+				if (typeof vParts === "string") {
+					vParts = [vParts];
+				} else if (!vParts.length) {
+					throw new Error("Missing parts");
+				}
+
+				vParts.forEach(function (vPart, i) {
+					switch (typeof vPart) {
+					case "string":
+						oBindingInfo = BindingParser.complexParser(vPart);
+						if (!oBindingInfo) {
+							throw new Error("Not a data binding expression: " + vPart);
+						}
+						vParts[i] = vPart = oBindingInfo;
+						break;
+
+					case "object":
+						if (vPart !== null && !Array.isArray(vPart)) {
+							break;
+						}
+						// falls through
+					default:
+						throw new Error("Unsupported part: " + vPart);
+					}
+					// merge is needed if some parts again have parts
+					bMergeNeeded = bMergeNeeded || "parts" in vPart;
+				});
+
+				if (vParts.length === 1) {
+					// special case: a single binding only
+					oBindingInfo = vParts[0];
+					if (fnRootFormatter) {
+						oBindingInfo.formatter = chain(fnRootFormatter, oBindingInfo.formatter);
+					}
+				} else {
+					oBindingInfo = {
+						formatter : fnRootFormatter,
+						parts : vParts
+					};
+					if (bMergeNeeded) {
+						BindingParser.mergeParts(oBindingInfo);
+					}
+				}
+
+				return oBindingInfo;
+			},
+
 			/**
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about
