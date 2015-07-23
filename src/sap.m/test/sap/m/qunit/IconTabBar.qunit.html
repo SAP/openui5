@@ -605,6 +605,58 @@
 				oIconTabHeader.destroy();
 			});
 
+			test("IconTabBar is sap.m.List", function() {
+
+				var oModel = new sap.ui.model.json.JSONModel({
+					records: [
+						{
+							text: 'a'
+						},
+						{
+							text: 'b'
+						}
+					]
+				});
+
+				var oListItemTemplate = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: '{text}',
+							content: new sap.m.Label({
+								text: '{text}'
+							})
+						}),
+						new sap.m.IconTabFilter({
+							text: '{text}',
+							content: new sap.m.Label({
+								text: '{text}'
+							})
+						}),
+						new sap.m.IconTabFilter({
+							text: '{text}',
+							content: new sap.m.Label({
+								text: '{text}'
+							})
+						})
+					]
+				});
+
+				var oList = new sap.m.List({
+					items: {
+						path: '/records',
+						template: new sap.m.CustomListItem({
+							content: oListItemTemplate
+						})
+					}
+				});
+				oList.setModel(oModel);
+
+				oList.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				ok (jQuery('.sapMITBFilter').length > 0, 'IconTabFilters are rendered')
+			});
+
 			module("icon color");
 
 			test("Default", function() {
