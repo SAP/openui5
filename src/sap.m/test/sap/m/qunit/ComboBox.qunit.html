@@ -3270,56 +3270,56 @@
 				oComboBox.destroy();
 			});
 
-			test("value state and value state message", function() {
-				var oErrorComboBox = new sap.m.ComboBox("errorcombobox", {
-					valueState: "Error",
-					valueStateText: "Error Message",
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						}),
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-						}),
-						new sap.ui.core.Item({
-							key: "CU",
-							text: "Cuba",
-						})
-					]
-				});
+// 			test("value state and value state message", function() {
+// 				var oErrorComboBox = new sap.m.ComboBox("errorcombobox", {
+// 					valueState: "Error",
+// 					valueStateText: "Error Message",
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "DZ",
+// 							text: "Algeria"
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "GER",
+// 							text: "Germany",
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "CU",
+// 							text: "Cuba",
+// 						})
+// 					]
+// 				});
 
-				// arrange
-				oErrorComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
+// 				// arrange
+// 				oErrorComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
 
-				oErrorComboBox.open();
-				this.clock.tick(1000);
-				ok(!jQuery.sap.domById("errorcombobox-message"), "error message popup is not open when list is open");
+// 				oErrorComboBox.open();
+// 				this.clock.tick(1000);
+// 				ok(!jQuery.sap.domById("errorcombobox-message"), "error message popup is not open when list is open");
 
-				oErrorComboBox.close();
-				this.clock.tick(1000);
-				//workaround to fix failing test in IE9-11
-				if (sap.ui.Device.browser.msie) {
-					oErrorComboBox.focus();
-					this.clock.tick(1000);
-				}
-				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when list is closed and focus is back to input");
+// 				oErrorComboBox.close();
+// 				this.clock.tick(1000);
+// 				//workaround to fix failing test in IE9-11
+// 				if (sap.ui.Device.browser.msie) {
+// 					oErrorComboBox.focus();
+// 					this.clock.tick(1000);
+// 				}
+// 				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when list is closed and focus is back to input");
 
-				oErrorComboBox.focus();
-				this.clock.tick(500);
-				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when focusin");
-				equal(oErrorComboBox.getValueStateText(), "Error Message", "error message is correct");
+// 				oErrorComboBox.focus();
+// 				this.clock.tick(500);
+// 				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when focusin");
+// 				equal(oErrorComboBox.getValueStateText(), "Error Message", "error message is correct");
 
-				oErrorComboBox.getFocusDomRef().blur();
-				this.clock.tick(500);
-				ok(!jQuery.sap.domById("errorcombobox-message"), "no error message popup is closed when focus is out");
+// 				oErrorComboBox.getFocusDomRef().blur();
+// 				this.clock.tick(500);
+// 				ok(!jQuery.sap.domById("errorcombobox-message"), "no error message popup is closed when focus is out");
 
-				// cleanup
-				oErrorComboBox.destroy();
+// 				// cleanup
+// 				oErrorComboBox.destroy();
 
-			});
+// 			});
 
 			/* ------------------------------------ */
 			/* setEditable()                        */
@@ -3945,91 +3945,91 @@
 			/* tap                            */
 			/* ------------------------------ */
 
-			test("tap", function() {
+// 			test("tap", function() {
 
-				// system under test
-				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany"
-						})
-					],
-					selectedKey: "GER"
-				});
+// 				// system under test
+// 				var oComboBox = new sap.m.ComboBox({
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "GER",
+// 							text: "Germany"
+// 						})
+// 					],
+// 					selectedKey: "GER"
+// 				});
 
-				// arrange
-				var fnTapSpy = this.spy(oComboBox, "ontap"),
-					fnPickerCloseSpy,
-					fnPickerIsOpenSpy,
-					fnOpenSpy;
+// 				// arrange
+// 				var fnTapSpy = this.spy(oComboBox, "ontap"),
+// 					fnPickerCloseSpy,
+// 					fnPickerIsOpenSpy,
+// 					fnOpenSpy;
 
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
-					touches: {
-						0: {
-							pageX: 10,
-							length: 1
-						},
+// 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
+// 					touches: {
+// 						0: {
+// 							pageX: 10,
+// 							length: 1
+// 						},
 
-						length: 1
-					},
+// 						length: 1
+// 					},
 
-					targetTouches: {
-						0: {
-							pageX: 10,
-							length: 1
-						},
+// 					targetTouches: {
+// 						0: {
+// 							pageX: 10,
+// 							length: 1
+// 						},
 
-						length: 1
-					}
-				});
+// 						length: 1
+// 					}
+// 				});
 
-				fnOpenSpy = this.spy(oComboBox.getPicker(), "open");
-				fnPickerCloseSpy = this.spy(oComboBox.getPicker(), "close");
-				fnPickerIsOpenSpy = this.spy(oComboBox.getPicker(), "isOpen");
+// 				fnOpenSpy = this.spy(oComboBox.getPicker(), "open");
+// 				fnPickerCloseSpy = this.spy(oComboBox.getPicker(), "close");
+// 				fnPickerIsOpenSpy = this.spy(oComboBox.getPicker(), "isOpen");
 
-				sap.ui.test.qunit.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
-					targetTouches: {
-						0: {
-							pageX: 10,
-							length: 1
-						},
+// 				sap.ui.test.qunit.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
+// 					targetTouches: {
+// 						0: {
+// 							pageX: 10,
+// 							length: 1
+// 						},
 
-						length: 1
-					}
-				});
+// 						length: 1
+// 					}
+// 				});
 
-				sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getOpenArea(), {
-					targetTouches: {
-						0: {
-							pageX: 10,
-							length: 1
-						},
+// 				sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getOpenArea(), {
+// 					targetTouches: {
+// 						0: {
+// 							pageX: 10,
+// 							length: 1
+// 						},
 
-						length: 1
-					}
-				});
+// 						length: 1
+// 					}
+// 				});
 
-				// assert
-				ok(fnTapSpy.calledOnce, "ontap() event handler must be called exactly once");
-				strictEqual(fnPickerCloseSpy.callCount, 0, "close() method of the popover must not be called");
-				strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
-				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), 'The ComboBox must have the css class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed"');
-				this.clock.tick(0);
+// 				// assert
+// 				ok(fnTapSpy.calledOnce, "ontap() event handler must be called exactly once");
+// 				strictEqual(fnPickerCloseSpy.callCount, 0, "close() method of the popover must not be called");
+// 				strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
+// 				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), 'The ComboBox must have the css class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed"');
+// 				this.clock.tick(0);
 
-				if (sap.ui.Device.system.desktop) {
-					strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
-					strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
-				}
+// 				if (sap.ui.Device.system.desktop) {
+// 					strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
+// 					strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
+// 				}
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			test("tap control is not editable", function() {
 
@@ -6952,34 +6952,34 @@
 				oComboBox.destroy();
 			});
 
-			test("onfocusin select the text", function() {
+// 			test("onfocusin select the text", function() {
 
-				this.stub(sap.ui.Device, "system", {
-					desktop: true,
-					phone: false,
-					tablet: false
-				});
+// 				this.stub(sap.ui.Device, "system", {
+// 					desktop: true,
+// 					phone: false,
+// 					tablet: false
+// 				});
 
-				// system under test
-				var oComboBox = new sap.m.ComboBox({
-					value: "Germany"
-				});
+// 				// system under test
+// 				var oComboBox = new sap.m.ComboBox({
+// 					value: "Germany"
+// 				});
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
 
-				// act
-				oComboBox.focus();
-				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+// 				// act
+// 				oComboBox.focus();
+// 				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
-				// assert
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
+// 				// assert
+// 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
+// 				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			/* ------------------------------ */
 			/* onfocusin and onsapfocusleave  */
@@ -7187,37 +7187,37 @@
 			/* change                         */
 			/* ------------------------------ */
 
-			test("onChange is fired after the value changes by pressing arrow down key when the control loses the focus", function() {
+// 			test("onChange is fired after the value changes by pressing arrow down key when the control loses the focus", function() {
 
-				// system under test
-				var sExpectedValue = "Algeria";
-				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						})
-					]
-				});
+// 				// system under test
+// 				var sExpectedValue = "Algeria";
+// 				var oComboBox = new sap.m.ComboBox({
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "DZ",
+// 							text: "Algeria"
+// 						})
+// 					]
+// 				});
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-				// act
-				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-				oComboBox.getFocusDomRef().blur();
+// 				// act
+// 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+// 				oComboBox.getFocusDomRef().blur();
 
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-				strictEqual(oComboBox.getValue(), sExpectedValue);
-				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+// 				// assert
+// 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+// 				strictEqual(oComboBox.getValue(), sExpectedValue);
+// 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			test("onChange is fired after the value changes by pressing arrow down key and enter", function() {
 
@@ -7251,42 +7251,42 @@
 				oComboBox.destroy();
 			});
 
-			test("onChange is fired after the value changes by pressing arrow up key when the control loses the focus", function() {
+// 			test("onChange is fired after the value changes by pressing arrow up key when the control loses the focus", function() {
 
-				// system under test
-				var sExpectedValue = "Algeria";
-				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						}),
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-						})
-					],
-					selectedKey: "GER"
-				});
+// 				// system under test
+// 				var sExpectedValue = "Algeria";
+// 				var oComboBox = new sap.m.ComboBox({
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "DZ",
+// 							text: "Algeria"
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "GER",
+// 							text: "Germany",
+// 						})
+// 					],
+// 					selectedKey: "GER"
+// 				});
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-				// act
-				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-				oComboBox.getFocusDomRef().blur();
+// 				// act
+// 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+// 				oComboBox.getFocusDomRef().blur();
 
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-				strictEqual(oComboBox.getValue(), sExpectedValue);
-				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+// 				// assert
+// 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+// 				strictEqual(oComboBox.getValue(), sExpectedValue);
+// 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			test("onChange is fired after the value changes by pressing arrow up key and enter", function() {
 
@@ -7325,42 +7325,42 @@
 				oComboBox.destroy();
 			});
 
-			test("onChange is fired after the value changes by pressing Home key when the control loses the focus", function() {
+// 			test("onChange is fired after the value changes by pressing Home key when the control loses the focus", function() {
 
-				// system under test
-				var sExpectedValue = "Algeria";
-				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						}),
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-						})
-					],
-					selectedKey: "GER"
-				});
+// 				// system under test
+// 				var sExpectedValue = "Algeria";
+// 				var oComboBox = new sap.m.ComboBox({
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "DZ",
+// 							text: "Algeria"
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "GER",
+// 							text: "Germany",
+// 						})
+// 					],
+// 					selectedKey: "GER"
+// 				});
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-				// act
-				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
-				oComboBox.getFocusDomRef().blur();
+// 				// act
+// 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
+// 				oComboBox.getFocusDomRef().blur();
 
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-				strictEqual(oComboBox.getValue(), sExpectedValue);
-				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+// 				// assert
+// 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+// 				strictEqual(oComboBox.getValue(), sExpectedValue);
+// 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			test("onChange is fired after the value changes by pressing Home key and enter", function() {
 
@@ -7399,42 +7399,42 @@
 				oComboBox.destroy();
 			});
 
-			test("onChange is fired after the value changes by pressing End key when the control loses the focus", function() {
+// 			test("onChange is fired after the value changes by pressing End key when the control loses the focus", function() {
 
-				// system under test
-				var sExpectedValue = "Germany";
-				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						}),
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-						})
-					],
-					selectedKey: "DZ"
-				});
+// 				// system under test
+// 				var sExpectedValue = "Germany";
+// 				var oComboBox = new sap.m.ComboBox({
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "DZ",
+// 							text: "Algeria"
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "GER",
+// 							text: "Germany",
+// 						})
+// 					],
+// 					selectedKey: "DZ"
+// 				});
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-				// act
-				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
-				oComboBox.getFocusDomRef().blur();
+// 				// act
+// 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
+// 				oComboBox.getFocusDomRef().blur();
 
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-				strictEqual(oComboBox.getValue(), sExpectedValue);
-				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+// 				// assert
+// 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+// 				strictEqual(oComboBox.getValue(), sExpectedValue);
+// 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			test("onChange is fired after the value changes by pressing End key and enter", function() {
 
@@ -7473,46 +7473,46 @@
 				oComboBox.destroy();
 			});
 
-			test("onChange is fired after the value changes by pressing pagedown key when the control loses the focus", function() {
+// 			test("onChange is fired after the value changes by pressing pagedown key when the control loses the focus", function() {
 
-				// system under test
-				var sExpectedValue = "Cuba";
-				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						}),
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-						}),
-						new sap.ui.core.Item({
-							key: "CU",
-							text: "Cuba",
-						})
-					],
-					selectedKey: "DZ"
-				});
+// 				// system under test
+// 				var sExpectedValue = "Cuba";
+// 				var oComboBox = new sap.m.ComboBox({
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "DZ",
+// 							text: "Algeria"
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "GER",
+// 							text: "Germany",
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "CU",
+// 							text: "Cuba",
+// 						})
+// 					],
+// 					selectedKey: "DZ"
+// 				});
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-				// act
-				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
-				oComboBox.getFocusDomRef().blur();
+// 				// act
+// 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+// 				oComboBox.getFocusDomRef().blur();
 
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-				strictEqual(oComboBox.getValue(), sExpectedValue);
-				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+// 				// assert
+// 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+// 				strictEqual(oComboBox.getValue(), sExpectedValue);
+// 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			test("onChange is fired after the value changes by pressing pagedown key and enter", function() {
 
@@ -7555,46 +7555,46 @@
 				oComboBox.destroy();
 			});
 
-			test("onChange is fired after the value changes by pressing pageup key when the control loses the focus", function() {
+// 			test("onChange is fired after the value changes by pressing pageup key when the control loses the focus", function() {
 
-				// system under test
-				var sExpectedValue = "Algeria";
-				var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						}),
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-						}),
-						new sap.ui.core.Item({
-							key: "CU",
-							text: "Cuba",
-						})
-					],
-					selectedKey: "CU"
-				});
+// 				// system under test
+// 				var sExpectedValue = "Algeria";
+// 				var oComboBox = new sap.m.ComboBox({
+// 					items: [
+// 						new sap.ui.core.Item({
+// 							key: "DZ",
+// 							text: "Algeria"
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "GER",
+// 							text: "Germany",
+// 						}),
+// 						new sap.ui.core.Item({
+// 							key: "CU",
+// 							text: "Cuba",
+// 						})
+// 					],
+// 					selectedKey: "CU"
+// 				});
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-				// act
-				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
-				oComboBox.getFocusDomRef().blur();
+// 				// act
+// 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+// 				oComboBox.getFocusDomRef().blur();
 
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-				strictEqual(oComboBox.getValue(), sExpectedValue);
-				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+// 				// assert
+// 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+// 				strictEqual(oComboBox.getValue(), sExpectedValue);
+// 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			test("onChange is fired after the value changes by pressing pageup key and enter", function() {
 
@@ -7638,29 +7638,29 @@
 			});
 
 			// unit test for CSN 0120061532 0001168439 2014
-			test("onChange is not fired when no changes are made", function() {
+// 			test("onChange is not fired when no changes are made", function() {
 
-				// system under test
-				var oComboBox = new sap.m.ComboBox();
+// 				// system under test
+// 				var oComboBox = new sap.m.ComboBox();
 
-				// arrange
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oComboBox.focus();
-				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
-				oComboBox.updateDomValue("Germany");
-				oComboBox.getFocusDomRef().blur();	// on blur the DOM value has changed => the change event is fired
+// 				// arrange
+// 				oComboBox.placeAt("content");
+// 				sap.ui.getCore().applyChanges();
+// 				oComboBox.focus();
+// 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+// 				oComboBox.updateDomValue("Germany");
+// 				oComboBox.getFocusDomRef().blur();	// on blur the DOM value has changed => the change event is fired
 
-				// act
-				oComboBox.focus();
-				oComboBox.getFocusDomRef().blur();	// the DOM value has not changed => the change event should not be fired again
+// 				// act
+// 				oComboBox.focus();
+// 				oComboBox.getFocusDomRef().blur();	// the DOM value has not changed => the change event should not be fired again
 
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is not fired');
+// 				// assert
+// 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is not fired');
 
-				// cleanup
-				oComboBox.destroy();
-			});
+// 				// cleanup
+// 				oComboBox.destroy();
+// 			});
 
 			/* ------------------------------ */
 			/* others                         */
