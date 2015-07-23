@@ -26,8 +26,7 @@ sap.ui.define(['jquery.sap.global',
 			oFrameUtils = null,
 			$Frame = null,
 			bFrameLoaded = false,
-			bUi5Loaded = false,
-			oHashChanger = null;
+			bUi5Loaded = false;
 
 		/**
 		 * Helps you writing tests for UI5 applications.
@@ -343,12 +342,17 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
+		 * Returns Hashchanger object of the iframe. If the iframe is not loaded it will return null.
 		 * @public
-		 * @returns {sap.ui.core.routing.HashChanger} the hashchange
+		 * @returns {sap.ui.core.routing.HashChanger} the hashchanger instance
 		 */
 		Opa5.getHashChanger = function () {
-			return oHashChanger;
+			if (!oFrameWindow) {
+				return null;
+			}
+			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
+
+			return oFrameWindow.sap.ui.core.routing.HashChanger.getInstance();
 		};
 
 
@@ -546,9 +550,6 @@ sap.ui.define(['jquery.sap.global',
 			registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 			oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 			oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
-
-			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
-			modifyHashChanger(oFrameWindow.sap.ui.core.routing.HashChanger.getInstance());
 		}
 
 		function registerAbsoluteModulePathInIframe(sModule) {
@@ -600,38 +601,84 @@ sap.ui.define(['jquery.sap.global',
 
 		function handleUi5Loaded () {
 			setFrameVariables();
+			modifyIFrameNavigation();
+		}
 
+		/**
+		 * Disables most of the navigations in an iframe, only setHash has an effect on the real iframe history after running this function.
+		 * Reason: replace hash does not work in an iframe so it may not be called at all.
+		 * This makes it necessary to hook into all navigation methods
+		 * @private
+		 */
+		function modifyIFrameNavigation () {
+			oFrameWindow.jQuery.sap.require("sap.ui.thirdparty.hasher");
 			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.History");
+			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
-			var oHistory = oFrameWindow.sap.ui.core.routing.History.getInstance(),
-				fnOriginalGo = oFrameWindow.history.go,
-				fnOriginalReplaceHashChanger = oFrameWindow.sap.ui.core.routing.HashChanger.replaceHashChanger;
+			var oHashChanger = new oFrameWindow.sap.ui.core.routing.HashChanger(),
+				oHistory = new oFrameWindow.sap.ui.core.routing.History(oHashChanger),
+				oHasher = oFrameWindow.hasher,
+				fnOriginalSetHash = oHasher.setHash,
+				fnOriginalGetHash = oHasher.getHash,
+				sCurrentHash,
+				fnOriginalGo = oFrameWindow.history.go;
 
-			// also patch new hashChangers
-			oFrameWindow.sap.ui.core.routing.HashChanger.replaceHashChanger = function (oNewHashChanger) {
-				modifyHashChanger(oNewHashChanger);
-				fnOriginalReplaceHashChanger.apply(this,arguments);
+			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
+			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
+			oHasher.replaceHash = function (sHash) {
+				var sOldHash = this.getHash();
+				sCurrentHash = sHash;
+				oHashChanger.fireEvent("hashReplaced",{ sHash : sHash });
+				this.changed.dispatch(sHash, sOldHash);
+			};
+
+			oHasher.setHash = function (sHash) {
+				var sRealCurrentHash = fnOriginalGetHash.call(this);
+
+				sCurrentHash = sHash;
+				oHashChanger.fireEvent("hashSet", { sHash : sHash });
+				fnOriginalSetHash.apply(this, arguments);
+
+				// Happens when setHash("a") back setHash("a") is called.
+				// Then dispatch the previous hash as new one because hasher does not dispatch if the real hash stays the same
+				if (sRealCurrentHash === this.getHash()) {
+					// always dispatch the current position of the history, since this can only happen in the backwards / forwards direction
+					this.changed.dispatch(sRealCurrentHash, oHistory.aHistory[oHistory.iHistoryPosition]);
+				}
+
+			};
+
+			// This function also needs to be manipulated since hasher does not know about our intercepted replace
+			oHasher.getHash = function() {
+				//initial hash
+				if (sCurrentHash === undefined) {
+					return fnOriginalGetHash.apply(this, arguments);
+				}
+
+				return sCurrentHash;
 			};
 
 			oHashChanger.init();
 
 			function goBack () {
-				var sCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition];
-				oHashChanger._sCurrentHash = oHistory.getPreviousHash();
-				oHashChanger.fireEvent("hashChanged", { newHash : oHistory.getPreviousHash(), oldHash : sCurrentHash });
+				var sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition],
+					sNewCurrentHash = oHistory.getPreviousHash();
+
+				sCurrentHash = sNewCurrentHash;
+				oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
 			}
 
 			function goForward () {
-				var sNextHash = oHistory.aHistory[oHistory.iHistoryPosition + 1],
-					sCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition];
+				var sNewCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition + 1],
+					sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition];
 
-				if (sNextHash === undefined) {
-					jQuery.sap.log.info("Could not navigate forwards, there is no history entry in the forwards direction", this);
+				if (sNewCurrentHash === undefined) {
+					jQuery.sap.log.error("Could not navigate forwards, there is no history entry in the forwards direction", this);
 					return;
 				}
 
-				oHashChanger._sCurrentHash = sNextHash;
-				oHashChanger.fireEvent("hashChanged", { newHash : sNextHash, oldHash : sCurrentHash });
+				sCurrentHash = sNewCurrentHash;
+				oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
 			}
 
 			oFrameWindow.history.back = goBack;
@@ -646,45 +693,8 @@ sap.ui.define(['jquery.sap.global',
 					return;
 				}
 
-				jQuery.sap.log.warning("Using history.go with a number greater than 1 is not supported by OPA5", this);
-				return fnOriginalGo.apply(this, arguments);
-			};
-
-		}
-
-		function modifyHashChanger (oNewHashChanger) {
-			oHashChanger = oNewHashChanger;
-
-			var fnOriginalSetHash = oHashChanger.setHash,
-				fnOriginalGetHash = oHashChanger.getHash;
-
-			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
-			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
-			oHashChanger.replaceHash = function (sHash) {
-				var sOldHash = oHashChanger.getHash();
-				this.fireEvent("hashReplaced", { sHash : sHash });
-				this._sCurrentHash = sHash;
-				oHashChanger.fireEvent("hashChanged", { newHash : sHash, oldHash : sOldHash });
-
-			};
-
-			oHashChanger.setHash = function (sHash) {
-
-				this._sCurrentHash = sHash;
-				fnOriginalSetHash.apply(this, arguments);
-
-			};
-
-			// This function also needs to be manipulated since hasher does not know about our intercepted replace hashgetHash
-			oHashChanger.getHash = function() {
-
-				//initial hash
-				if (this._sCurrentHash === undefined) {
-					return fnOriginalGetHash.apply(this, arguments);
-				}
-
-				return this._sCurrentHash;
-
+				jQuery.sap.log.error("Using history.go with a number greater than 1 is not supported by OPA5", this);
+				return fnOriginalGo.apply(oFrameWindow.history, arguments);
 			};
 		}
 
@@ -694,7 +704,6 @@ sap.ui.define(['jquery.sap.global',
 			oFrameJQuery = null;
 			oFramePlugin = null;
 			oFrameUtils = null;
-			oHashChanger = null;
 		}
 
 		$(function () {
