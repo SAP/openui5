@@ -505,7 +505,11 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			var sTreeIconClass = "sapUiTableTreeIconLeaf";
 			var $FirstTd = $row.children("td.sapUiTableTdFirst");
 			if (!this.getUseGroupMode()) {
-				$TreeIcon.css("marginLeft", iLevel * 17);
+				if (this._bRtlMode === true) {
+					$TreeIcon.css("marginRight", iLevel * 17);
+				} else {
+					$TreeIcon.css("marginLeft", iLevel * 17);
+				}
 			}
 			if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
 				sTreeIconClass = bIsExpanded ? "sapUiTableTreeIconNodeOpen" : "sapUiTableTreeIconNodeClosed";
