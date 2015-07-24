@@ -4,16 +4,15 @@
 sap.ui.require([
 	'sap/ui/model/odata/_AnnotationHelperBasics'
 ], function(Basics) {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+	/*global deepEqual, ok, QUnit, sinon, strictEqual, throws */
+	/*eslint no-warning-comments: 0*/
 	"use strict";
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata._AnnotationHelperBasics");
+	QUnit.module("sap.ui.model.odata._AnnotationHelperBasics");
 
 	//*********************************************************************************************
-	test("toJSON, toErrorString", function () {
+	QUnit.test("toJSON, toErrorString", function () {
 		var oCircular = {},
 			fnTestFunction = function () {};
 
@@ -53,7 +52,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("error", function () {
+	QUnit.test("error", function () {
 		var sErrorText = "Wrong! So wrong!",
 			oPathValue = {path: "/path/to/foo", value: {foo: "bar"}},
 			sMessage = oPathValue.path + ": " + sErrorText;
@@ -67,7 +66,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("expectType", function () {
+	QUnit.test("expectType", function () {
 		var aArray = [],
 			oObject = {},
 			sString = "foo",
@@ -76,7 +75,7 @@ sap.ui.require([
 		[
 			{type: "array", ok: aArray},
 			{type: "object", ok: oObject},
-			{type: "string", ok: sString},
+			{type: "string", ok: sString}
 		].forEach(function (oFixture) {
 			aTests.forEach(sinon.test(function (vTest) {
 				var oPathValue = {
@@ -100,7 +99,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bTestProperty) {
-		test("descend, bTestProperty=" + bTestProperty, function () {
+		QUnit.test("descend, bTestProperty=" + bTestProperty, function () {
 			[
 				{type: "object", property: "p", value: {p: "foo"}},
 				{type: "array", property: 0, value: ["foo"]}
@@ -132,7 +131,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("property", function () {
+	QUnit.test("property", function () {
 		var oPathValue = {};
 
 		this.mock(Basics).expects("descend").once().withExactArgs(oPathValue, "p", "string")
@@ -142,8 +141,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Note: there is another test for resultToString in _AnnotationHelperExpressions.qunit.js
-	test("resultToString", function () {
+	QUnit.test("resultToString", function () {
 		[{
 			value: {result: "binding", value: "path"},
 			binding: "{path}",
@@ -175,13 +173,13 @@ sap.ui.require([
 			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, false),
 			"{FirstName} {LastName}", "composite to binding");
 		throws(function () {
-			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, true)
+			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, true);
 		}, /Trying to embed a composite binding into an expression binding/,
 			"composite to expression");
 	});
 
 	//*********************************************************************************************
-	test("resultToString with type", function () {
+	QUnit.test("resultToString with type", function () {
 		[{
 			value: {type: "Edm.Boolean", constraints: {}},
 			binding: ",type:'sap.ui.model.odata.type.Boolean'"

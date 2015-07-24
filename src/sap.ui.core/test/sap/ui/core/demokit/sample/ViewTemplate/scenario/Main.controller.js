@@ -19,6 +19,8 @@ sap.ui.define([
 	"use strict";
 
 	function alertError(oError) {
+		jQuery.sap.log.error(oError, oError.stack,
+			"sap.ui.core.sample.ViewTemplate.scenario.Main");
 		MessageBox.alert(oError.message, {
 			icon: sap.m.MessageBox.Icon.ERROR,
 			title: "Error"});

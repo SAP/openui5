@@ -9,7 +9,7 @@
  */
 sap.ui.define([
 		'jquery.sap.global',
-		'sap/ui/core/mvc/View',
+		'sap/ui/core/mvc/View', // sap.ui.view()
 		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
 		'jquery.sap.script'
@@ -30,8 +30,7 @@ sap.ui.define([
 				fnModel = oUriParameters.get("oldOData") === "true"
 					? sap.ui.model.odata.ODataModel
 					: sap.ui.model.odata.v2.ODataModel,
-				oModel,
-				oMetaModel;
+				oModel;
 
 			// GWSAMPLE_BASIC with external annotations
 			sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
