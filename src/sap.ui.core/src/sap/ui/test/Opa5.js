@@ -182,9 +182,25 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) specifies how long the waitFor function polls before it fails.
 		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) specifies how often the waitFor function polls.
 		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
-		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked.
+		 * The first parameter passed into the function is the same value that gets passed to the success function.
+		 * Returning something different than boolean in check will not change the first parameter of success.
+		 * @param {function} [oOptions.success] Will get invoked after
+		 * <ol>
+		 *     <li>
+		 *         One or multiple controls where found using controlType, Id, viewName. If visible is true (it is by default), the controls also need to be rendered.
+		 *     </li>
+		 *     <li>
+		 *          the whole matcher pipeline returned true for at least one control, or there are no matchers
+		 *     </li>
+		 *     <li>
+		 *         the check function returns true, or there is no check function
+		 *     </li>
+		 * </ol>
+		 * The first parameter passed into the function is either a single control (when a single string id was used),
+		 *  or an array of controls (viewName, controlType, multiple id's, regex id's) that matched all matchers.
+		 * Matchers can alter the array or single control to something different. Please read the matcher documentation.
 		 * @param {function} [oOptions.error] Will get invoked, when the timeout is reached and check did never return a true.
-		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is qunit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
+		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is QUnit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 */
