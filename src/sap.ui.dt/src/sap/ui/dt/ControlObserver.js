@@ -27,7 +27,7 @@ function(jQuery, ManagedObjectObserver) {
 	 * @constructor
 	 * @private
 	 * @since 1.30
-	 * @alias sap.ui.dt.Overlay
+	 * @alias sap.ui.dt.ControlObserver
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ControlObserver = ManagedObjectObserver.extend("sap.ui.dt.ControlObserver", /** @lends sap.ui.dt.ControlObserver.prototype */ {

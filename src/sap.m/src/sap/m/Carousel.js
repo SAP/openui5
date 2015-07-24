@@ -939,7 +939,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Returns the last element that has been focus in the curent active page
-	 * @returns {Element || undefined}  HTML DOM or undefined
+	 * @returns {Element | undefined}  HTML DOM or undefined
 	 * @private
 	 */
 	Carousel.prototype._getActivePageLastFocusedElement = function() {
