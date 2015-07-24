@@ -124,7 +124,8 @@
 .sapUiTable > .sapUiTableHdr {
 	border: none;
 	border-bottom: 0.188rem solid @sapHCStandardFG;
-	height: 25px;
+	min-height: 25px;
+	height: auto;
 	padding: 0;
 	margin-bottom: 2px;
 }
@@ -135,8 +136,8 @@
 }
 
 .sapUiTable > .sapUiTableFtr {
-	height: 28px;
-	line-height: 28px;
+	height: auto;
+	min-height: 28px;
 	background-color: @sapHCStandardBG;
 	padding-top: 4px;
 }
