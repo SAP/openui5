@@ -29,6 +29,9 @@ sap.ui.define([
 		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 		Expression,
+		// a simple binding (see sap.ui.base.BindingParser.simpleParser) to "@i18n" model
+		// w/o bad chars (see _AnnotationHelperBasics: rBadChars) inside path!
+		rI18n = /^\{@i18n>[^\\\{\}:]+\}$/,
 		rInteger = /^\d+$/,
 		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
 			And: "&&",
@@ -258,7 +261,14 @@ sap.ui.define([
 			Basics.expectType(oPathValue, "string");
 
 			if (sEdmType === "String") {
-				if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
+				if (rI18n.test(sValue)) { // a simple binding to "@i18n" model
+					return {
+						ignoreTypeInPath: true,
+						result : "binding",
+						type: "Edm.String",
+						value : sValue.slice(1, -1) // cut off "{" and "}"
+					};
+				} else if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
 					// We want a model binding to the path in the metamodel (which is
 					// oPathValue.path)
 					// "/##" is prepended because it leads from model to metamodel

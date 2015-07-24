@@ -148,7 +148,11 @@ sap.ui.define([
 			 *   </code>). Data binding expressions are used in case XML template processing has
 			 *   been started with the setting <code>bindTexts : true</code>. The purpose is to
 			 *   reference translatable texts from OData v4 annotations, especially for XML
-			 *   template processing at design time.
+			 *   template processing at design time. Since 1.31.0, string constants that contain a
+			 *   simple binding <code>"{@i18n>...}"</code> to the hard-coded model name "@i18n"
+			 *   with arbitrary path are not turned into a fixed text, but kept as a data binding
+			 *   expression; this allows local annotation files to refer to a resource bundle for
+			 *   internationalization.
 			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": These are turned into
 			 *   expression bindings to perform the operations at run-time.
 			 *   <li> the dynamic "14.5.3 Expression edm:Apply":

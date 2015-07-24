@@ -476,6 +476,55 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("String constants {@i18n>...} turned into a binding", function () {
+		var oInterface = {
+				getSetting : function (sName) {}
+			};
+
+		// make sure that setting 'bindTexts' has no influence at all
+		this.mock(oInterface).expects("getSetting").never();
+
+		deepEqual(Expression.constant(oInterface, {value : "{@i18n>foo/bar}"}, "String"), {
+			ignoreTypeInPath: true,
+			result : "binding",
+			type: "Edm.String",
+			value : "@i18n>foo/bar"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Only simple binding syntax allowed for {@i18n>...}", function () {
+		var oInterface = {
+				getSetting : function (sName) {}
+			};
+
+		/*
+		 * @param {string} sValue
+		 */
+		function check(sValue) {
+			deepEqual(Expression.constant(oInterface, {value : sValue}, "String"), {
+				result : "constant",
+				type: "Edm.String",
+				value : sValue
+			});
+		}
+
+		// make sure that setting 'bindTexts' does not complicate result
+		this.mock(oInterface).expects("getSetting").atLeast(0).returns(false);
+
+		// leading/trailing whitespace or empty path
+		[" {@i18n>foo/bar}", "{@i18n>foo/bar} ", "{@i18n>}"].forEach(function (sValue) {
+			check(sValue);
+		});
+
+		// Bad chars would need escaping and complex syntax... Keep it simple!
+		// (see _AnnotationHelperBasics: rBadChars)
+		["\\", "{", "}", ":"].forEach(function (sBadChar) {
+			check("{@i18n>foo" + sBadChar + "bar}");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("apply: unknown", function () {
 		var oInterface = {},
 			oPathValue = {path: "/my/path", value: {Name: "foo", Parameters: []}},

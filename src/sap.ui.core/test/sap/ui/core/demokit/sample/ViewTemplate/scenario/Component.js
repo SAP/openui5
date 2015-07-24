@@ -17,7 +17,9 @@ sap.ui.define([
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
-		metadata : "json", //TODO Use component metadata from manifest file
+		metadata : {
+			manifest: "json"
+		},
 
 		createContent : function () {
 			var sAnnotationUri,

@@ -224,9 +224,6 @@ sap.ui.require([
 		}, {
 			value: {type: "Edm.Time"},
 			binding: ",type:'sap.ui.model.odata.type.Time'"
-		}, {
-			value: {/*no type*/},
-			binding: ""
 		}].forEach(function (oFixture) {
 			oFixture.value.result = "binding";
 			oFixture.value.value = "foo/'bar'";
@@ -248,5 +245,11 @@ sap.ui.require([
 			type: "Edm.String",
 			ignoreTypeInPath: true
 		}, false, true), "{path:'foo:bar'}");
+
+		strictEqual(Basics.resultToString({
+			result: "binding",
+			value: "foo/bar"
+			/*no type*/
+		}, false, true), "{foo/bar}", "complex binding syntax not needed w/o type");
 	});
 });
