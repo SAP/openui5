@@ -343,6 +343,16 @@
 	});
 	
 	test("copy to clipboard", function() {
+		if (window.clipboardData) {
+			jQuery.sap.require("jquery.sap.script");
+			var sParam = jQuery.sap.getUriParameters().get("testIE");
+			sParam = sParam ? sParam.trim().toLowerCase() : null;
+			if (sParam != "x" && sParam != "true") {
+				ok(true, "Test on IE skipped");
+				return;
+			}
+		}
+		
 		for (var i = 0; i < 4; i++) {
 			tokenizer1.addToken(new sap.m.Token({text: "Token " + i, key: "000" + i}));
 		}
