@@ -28,6 +28,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		oRm.writeClasses();
 		
 		oRm.writeAttribute("role", "list");		
+		
+		var oAccAttributes = {}; // additional accessibility attributes
+		
+		//ARIA attributes
+		oAccAttributes.labelledby = {
+			value: oControl._sAriaTokenizerLabelId,
+			append: true
+		};
+		
+		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		
 		oRm.write(">"); // div element
 
 		if (Device.system.desktop || Device.system.combi) {
