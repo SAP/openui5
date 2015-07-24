@@ -1054,7 +1054,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		aSrcIdElements = aSrcIdElements.slice(0, 3);
 		oContext.sFocusId = aSrcIdElements.join("-") + "-cli";
 
-		if (sNewFileName.length > 0) {
+		if (!!sNewFileName && (sNewFileName.length > 0)) {
 			var iSourceLine = sSourceId.split("-").pop();
 			oContext.aItems[iSourceLine]._status = UploadCollection._displayStatus;
 			// get original file name
