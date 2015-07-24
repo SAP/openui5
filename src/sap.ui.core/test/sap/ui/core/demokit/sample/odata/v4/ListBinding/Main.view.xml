@@ -3,13 +3,16 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	>
 	<VBox>
-		<Table items="{/TEAMS}">
+		<Table items="{/EMPLOYEES}">
 			<columns>
 				<Column>
-					<Text text="Team name"/>
+					<Text text="Name"/>
 				</Column>
 				<Column>
-					<Text text="Employee count"/>
+					<Text text="Age"/>
+				</Column>
+				<Column>
+					<Text text="City"/>
 				</Column>
 			</columns>
 			<items>
@@ -18,7 +21,10 @@
 						<Text text="{Name}"/>
 					</cells>
 					<cells>
-						<Text text="{MEMBER_COUNT}"/>
+						<Text text="{AGE}"/>
+					</cells>
+					<cells>
+						<Text text="{LOCATION/City/CITYNAME}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
