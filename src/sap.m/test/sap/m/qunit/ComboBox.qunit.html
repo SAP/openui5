@@ -18,6 +18,12 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
+			window._setTimeout = this.setTimeout;
+			sinon.config.useFakeTimers = true;
+			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+			jQuery.now = function() {
+				return Date.now();
+			};
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -3702,7 +3708,6 @@
 				});
 
 				var oComboBox8 = new sap.m.ComboBox({
-					icon: sap.ui.core.IconPool.getIconURI("add"),
 					items: [
 						new sap.ui.core.Item({
 							key: "52",
@@ -3757,6 +3762,49 @@
 					// cleanup
 					oComboBox.destroy();
 				});
+			});
+
+			asyncTest("Check Busy State", function() {
+				expect(9);
+
+				var oComboBox = new sap.m.ComboBox("busyCheck", {
+					busyIndicatorDelay : 0,
+				}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				window._setTimeout(function() {
+					var $Box = oComboBox.$();
+					var $Input = oComboBox.$("inner");
+					var $Arrow = oComboBox.$("arrow");
+
+					// there should be no tabindex for the root DOM-ref and the input field
+					// for the arrow there is a tabindex=-1 per default
+					equal($Box.attr("tabindex"), undefined, "No tabindex at root DOM-ref");
+					equal($Input.attr("tabindex"), undefined, "No tabindex for Input field");
+					equal($Arrow.attr("tabindex"), -1, "Tabindex set for Arrow");
+
+					oComboBox.setBusy(true)
+
+					window._setTimeout(function() {
+						// check whether all element do have a tabindex now
+						equal($Box.attr("tabindex"), -1, "Tabindex set to -1 at root DOM-ref");
+						equal($Input.attr("tabindex"), -1, "Tabindex set to -1 for Input field");
+						equal($Arrow.attr("tabindex"), -1, "Still tabindex set for Arrow");
+
+						oComboBox.setBusy(false);
+
+						window._setTimeout(function() {
+							// check whether all element have their default tabindex value
+							equal($Box.attr("tabindex"), undefined, "Tabindex removed from root DOM-ref");
+							equal($Input.attr("tabindex"), undefined, "Tabindex removed from Input field");
+							equal($Arrow.attr("tabindex"), -1, "Still Tabindex set for Arrow");
+
+							start();
+							// cleanup
+							oComboBox.destroy();
+						}, 10)
+					}, 10);
+				}, 10);
 			});
 
 			/* =========================================================== */
