@@ -691,9 +691,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			oBusyIndicator = new sap.m.BusyIndicator(sItemId + "-ia_indicator", {
 				visible: true
 			}).addStyleClass("sapMUCloadingIcon");
+		} else {
+			oItemIcon = this._createIcon(oItem, sItemId, sFileNameLong, that);
 		}
-
-		oItemIcon = this._createIcon(oItem, sItemId, sFileNameLong, that);
 
 		sContainerId = sItemId + "-container";
 		// we have to destroy the container ourselves as sap.ui.core.HTML is preserved by default which leads to problems at rerendering
