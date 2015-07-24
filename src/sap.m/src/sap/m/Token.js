@@ -103,6 +103,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		text: oRb.getText("TOKEN_ARIA_LABEL")
 	}).toStatic().getId();
 
+	Token.prototype._sAriaTokenDeletableId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKEN_ARIA_DELETABLE")
+	}).toStatic().getId();
 	
 	///**
 	// * This file defines behavior for the control,

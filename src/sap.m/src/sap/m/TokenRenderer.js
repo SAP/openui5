@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMToken");
 		oRm.writeClasses();
-		
+
 		oRm.writeAttribute("role", "listitem");
 		oRm.writeAttribute("aria-readonly", !oControl.getEditable());
 		oRm.writeAttribute("aria-selected", oControl.getSelected());
@@ -50,6 +50,13 @@ sap.ui.define(['jquery.sap.global'],
 			value: oControl._sAriaTokenLabelId,
 			append: true
 		};
+		
+		if (oControl.getEditable()) {
+			oAccAttributes.describedby = {
+					value: oControl._sAriaTokenDeletableId,
+					append: true
+			};
+		}
 
 		oRm.writeAccessibilityState(oControl, oAccAttributes);
 		
@@ -59,7 +66,6 @@ sap.ui.define(['jquery.sap.global'],
 		
 		if (oControl.getEditable()) {
 			oRm.renderControl(oControl._deleteIcon);
-			
 		}
 		
 		oRm.write("</div>");
