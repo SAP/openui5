@@ -141,6 +141,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			this._iBreakPointTablet = breakPoint;
 		};
 		
+		Grid.prototype._setBreakPointDesktop = function( breakPoint) {
+			this._iBreakPointDesktop = breakPoint;
+		};
+		
+		Grid.prototype._setBreakPointLargeDesktop = function( breakPoint) {
+			this._iBreakPointLargeDesktop = breakPoint;
+		};
+		
 		Grid.prototype.setDefaultIndent = function( sDefaultIndent) {
 			if (/XL/gi.test(sDefaultIndent)) {
 				this._setIndentXLChanged(true);
@@ -170,14 +178,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		Grid.prototype._getSpanXLChanged = function() {
 			return this._spanXLChanged;
-		};
-		
-		Grid.prototype._setBreakPointDesktop = function( breakPoint) {
-			this._iBreakPointDesktop = breakPoint;
-		};
-		
-		Grid.prototype._setBreakPointXL = function( breakPoint) {
-			this._iBreakPointLargeDesktop = breakPoint;
 		};
 		
 		Grid.prototype._onParentResize = function() {

@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 * This file defines behavior for the control
 	 */
 	(function() {
-	
+		
 		GridData.prototype._setStylesInternal = function(sStyles) {
 			if (sStyles && sStyles.length > 0) {
 				this._sStylesInternal = sStyles;
@@ -328,7 +328,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 			return undefined;
 		};
 		
+		// Identifier for explicit changed line break property for XL size
+		var _bLinebreakXLChanged = false;
 		
+		// Finds out if the line break for XL was explicitly set
+		GridData.prototype.setLinebreakXL = function(bLinebreak) {
+			//set property XL
+			this.setProperty("linebreakXL", bLinebreak);
+			_bLinebreakXLChanged = true;
+		};
+		
+		// Internal function. Informs the Grid Renderer if the line break property for XL size was changed explicitly
+		GridData.prototype._getLinebreakXLChanged = function(bLinebreak) {
+			return _bLinebreakXLChanged;
+		};
+			
 		// Deprecated properties handling
 		//Setter
 		GridData.prototype.setSpanLarge = function(iSpan) {
