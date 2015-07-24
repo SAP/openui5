@@ -9,19 +9,19 @@
  * @name sap.m.semantic
  */
 
-// Provides class sap.m.semantic.SemanticPageSegment
+// Provides class sap.m.semantic.SemanticConfiguration
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText"],
 	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText) {
 	"use strict";
 
 	/**
-	 * Constructor for a sap.m.semantic.SemanticPageSegment.
+	 * Constructor for a sap.m.semantic.SemanticConfiguration.
 	 *
-	 * @class Abstraction for a segment in a SegmentedContainer
+	 * @class Defines the visual properties and positioning for each supported semantic type
 	 * @version ${version}
 	 * @private
 	 * @since 1.30.0
-	 * @alias sap.m.semantic.SemanticPageSegment
+	 * @alias sap.m.semantic.SemanticConfiguration
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 

@@ -9,18 +9,18 @@
  * @name sap.m.semantic
  */
 
-// Provides class sap.m.semantic.SemanticPageSegment
+// Provides class sap.m.semantic.Segment
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Metadata) {
 	"use strict";
 
 	/**
-	 * Constructor for a sap.m.semantic.SemanticPageSegment.
+	 * Constructor for a sap.m.semantic.Segment.
 	 *
 	 * @class Abstraction for a segment in a SegmentedContainer
 	 * @version ${version}
 	 * @private
 	 * @since 1.30.0
-	 * @alias sap.m.semantic.SemanticPageSegment
+	 * @alias sap.m.semantic.Segment
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
