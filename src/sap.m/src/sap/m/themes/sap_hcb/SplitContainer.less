@@ -9,7 +9,7 @@
 
 /* separator line over the content of the master page */
 
-.sapMSplitContainerMaster:not(.sapMSplitContainerMasterVisible):after{
+.sapMSplitContainerMaster:after{
 	content: "";
 	position: absolute;
 	width: 0px;
@@ -22,7 +22,7 @@
 
 /* 4px border for the branding bar */
 
-.sapMSplitContainerMaster:not(.sapMSplitContainerMasterVisible):before{
+.sapMSplitContainerMaster:before{
 	content: "";
 	position: absolute;
 	width: 0px;
@@ -33,16 +33,26 @@
 	z-index: 6;
 }
 
+/* reset the separator and branding bar when master is shown in an overlay */
+
+.sapMSplitContainerShowHide.sapMSplitContainerPortrait,
+.sapMSplitContainerHideMode {
+	> .sapMSplitContainerMaster:after,
+	> .sapMSplitcontainerMaster:before {
+		display: none;
+	}
+}
+
 .sapUiUfdShell,
 .sapMPopoverCont {
-	.sapMSplitContainerMaster:not(.sapMSplitContainerMasterVisible):before{
+	.sapMSplitContainerMaster:before{
 		display: none; /* do not show in a popover */
 	}
 }
 
 @media (min-height: @sapMShellMinHeightForHeader) {
 	/* Shell draws its own branding bar */
-	.sap-desktop .sapMShell .sapMSplitContainerMaster:not(.sapMSplitContainerMasterVisible):before{
+	.sap-desktop .sapMShell .sapMSplitContainerMaster:before{
 		display: none;
 	}
 }
