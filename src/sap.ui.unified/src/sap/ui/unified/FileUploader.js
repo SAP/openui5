@@ -1160,6 +1160,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 			var sFileString = '';
 
+			var uploadForm = this.getDomRef("fu_form");
+
 			if (window.File) {
 				var aFiles = oEvent.target.files;
 
@@ -1176,6 +1178,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 							fileName:sName,
 							fileSize:fSize
 						});
+						uploadForm.reset();
+						this.setValue("", false, true);
 						return;
 					}
 					//check if the filename is too long and fire the corresponding event if necessary
@@ -1183,6 +1187,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 						this.fireFilenameLengthExceed({
 							fileName: sName
 						});
+						uploadForm.reset();
+						this.setValue("", false, true);
 						return;
 					}
 					//check allowed mime-types for potential mismatches
@@ -1199,6 +1205,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 								fileName:sName,
 								mimeType:sType
 							});
+							uploadForm.reset();
+							this.setValue("", false, true);
 							return;
 						}
 					}
@@ -1218,6 +1226,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 								fileName:sName,
 								fileType:sFileEnding
 							});
+							uploadForm.reset();
+							this.setValue("", false, true);
 							return;
 						}
 					}
@@ -1244,6 +1254,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 						fileName:sName,
 						fileType:sFileEnding
 					});
+					uploadForm.reset();
+					this.setValue("", false, true);
 					return;
 				}
 				//check if the filename is too long and fire the corresponding event if necessary
@@ -1251,6 +1263,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					this.fireFilenameLengthExceed({
 						fileName: sName
 					});
+					uploadForm.reset();
+					this.setValue("", false, true);
 					return;
 				}
 				if (sName) {
