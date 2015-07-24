@@ -227,6 +227,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				}
 			} else {
 				that._setContainerSizes();
+				that._tokenizer.scrollToStart();
 			}
 			
 		});
@@ -1000,12 +1001,14 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					if ( oEvent.target === this._$input[0] 
 							||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
 								||  oEvent.target.className.indexOf("sapMTokenText") > -1){
+						
 						this.openMultiLine();
 						this._showAllTokens(this._tokenizer);
 						
 						var that = this;
 						setTimeout(function() {
 							that._setContainerSizes();
+							that._tokenizer.scrollToStart();
 						}, 0);
 					}
 			}
