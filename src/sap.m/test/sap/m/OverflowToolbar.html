@@ -38,35 +38,63 @@
 
 	var toolbarContent1 = [
 		new sap.m.Label({
-			text : "This is an old player"
+			text : "Priority Toolbar"
 		}),
 		new sap.m.ToolbarSpacer(),
 		new sap.m.Button({
-			text : "Fast Rewind"
+			text : "Always 1",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Rewind"
+			text : "Always 2",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Record"
+			text : "High 1",
+			icon: sRequestIconURI,
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Play",
-			type : sap.m.ButtonType.Accept
+			text : "Low 1",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Low}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Pause",
-			type : sap.m.ButtonType.Emphasized
+			text : "Never 1",
+			icon: sNotesIconURI,
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Stop",
-			type : sap.m.ButtonType.Reject
+			text : "Never 2",
+			icon: sNotesIconURI,
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Forward"
+			text : "Low 2",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Low}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Fast Forward"
+			text : "Disappear",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Disappear}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "High 2",
+			icon: sRequestIconURI,
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}),
+			width: "125px"
 		})
 	];
 
@@ -202,11 +230,11 @@
 		new sap.m.ToolbarSeparator(),
 		new sap.m.Button({
 			text : "VERY LONG ACCEPT TEXT",
-			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow})
 		}),
 		new sap.m.Button({
 			text : "VERY LONG REJECT TEXT",
-			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow})
 		})
 	];
 
@@ -218,7 +246,7 @@
 			layoutData : new sap.m.OverflowToolbarLayoutData({
 				shrinkable : true,
 				minWidth: "100px",
-				moveToOverflow: false
+				priority: sap.m.OverflowToolbarPriority.NeverOverflow
 			})
 		}),
 
@@ -359,7 +387,6 @@
 			width: 'auto',
 			content : toolbarContent2
 		}),
-
 		new sap.m.OverflowToolbar("otb3", {
 			width: 'auto',
 			content : toolbarContent3
@@ -461,11 +488,11 @@
 		]
 	});
 
-//	oWorkExample.placeAt("body");
-	oApp.addPage(oPage).placeAt("body");
+	oApp.addPage(oPage).placeAt("content");
 
 </script>
 </head>
 <body id="body" class="sapUiBody">
+	<div id="content"></div>
 </body>
 </html>

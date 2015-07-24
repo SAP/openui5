@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
+			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
 			"sap.m.PlacementType",
@@ -1027,8 +1028,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Defines the mode of the list. 
-	 * 
+	 * Defines the mode of the list.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1058,7 +1059,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 * @public
 		 */
 		SingleSelectMaster : "SingleSelectMaster",
-		
+
 		/**
 		 * Multi selection mode (more than one list item can be selected).
 		 * @public
@@ -1106,7 +1107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Defines the visual indication and behaviour of the list items. 
+	 * Defines the visual indication and behaviour of the list items.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1148,6 +1149,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
+		/**
+		 * Defines the priorities of the controls within sap.m.OverflowToolbar
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.32
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		sap.m.OverflowToolbarPriority = {
+
+			/**
+			 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
+			 * @public
+			 */
+			NeverOverflow : "Never",
+
+			/**
+			 * High priority OverflowToolbar items overflow after the items with lower priority
+			 * @public
+			 */
+			High : "High",
+
+			/**
+			 * Low priority  OverflowToolbar items overflow before the items with higher priority sich as High priority items
+			 * @public
+			 */
+			Low : "Low",
+
+			/**
+			 * Disappear priority  OverflowToolbar items overflow before the items with higher priority sich as Low and High priority items and remain hidden in the overflow area
+			 * @public
+			 */
+			Disappear : "Disappear",
+
+			/**
+			 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
+			 * @public
+			 */
+			AlwaysOverflow : "Always"
+
+		};
 
 	/**
 	 * Marker interface for controls which are suitable as items for the ObjectHeader.
@@ -2281,7 +2323,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 */
 			renderBackgroundImageTag: function(rm, oControl, vCssClass, sBgImgUrl, bRepeat, fOpacity) {
 				rm.write("<div id='" + oControl.getId() + "-BG' ");
-				
+
 				if (jQuery.isArray(vCssClass)) {
 					for (var i = 0; i < vCssClass.length; i++) {
 						rm.addClass(vCssClass[i]);
@@ -2289,7 +2331,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				} else {
 					rm.addClass(vCssClass);
 				}
-				
+
 				rm.addClass("sapUiGlobalBackgroundImage"); // this adds the background image from the theme
 
 				if (sBgImgUrl) { // use the settings only if a background image is configured
