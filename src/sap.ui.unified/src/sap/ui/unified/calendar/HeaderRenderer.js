@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAttribute('tabindex', "-1");
 		oRm.writeClasses();
 		oRm.write(">"); // button element
-		oRm.writeIcon("sap-icon://slim-arrow-left");
+		oRm.writeIcon("sap-icon://slim-arrow-left", null, { title: null });
 		oRm.write("</button>");
 
 		oRm.write("<button");
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAttribute('tabindex', "-1");
 		oRm.writeClasses();
 		oRm.write(">"); // button element
-		oRm.writeIcon("sap-icon://slim-arrow-right");
+		oRm.writeIcon("sap-icon://slim-arrow-right", null, { title: null });
 		oRm.write("</button>");
 
 		oRm.write("</div>");
