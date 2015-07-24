@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegmentedContainer', 'sap/m/semantic/SemanticConfiguration','sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject'],
+sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SegmentedContainer', 'sap/m/semantic/SemanticConfiguration','sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject'],
 function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, ActionSheet, Page, OverflowToolbar, OverflowToolbarButton, OverflowToolbarLayoutData, ToolbarSpacer, Bar, CustomData, ManagedObject) {
 	"use strict";
 
@@ -617,7 +617,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	/**
 	 * Returns the internal footer
 	 * @private
-	 * @returns {sap.m.semantic.SemanticPageSegmentedContainer}
+	 * @returns {sap.m.semantic.SegmentedContainer}
 	 */
 	SemanticPage.prototype._getSegmentedHeader = function() {
 
@@ -643,7 +643,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	/**
 	 * Returns the internal footer
 	 * @private
-	 * @returns {sap.m.semantic.SemanticPageSegmentedContainer}
+	 * @returns {sap.m.semantic.SegmentedContainer}
 	 */
 	SemanticPage.prototype._getSegmentedFooter = function() {
 

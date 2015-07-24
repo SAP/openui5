@@ -9,19 +9,19 @@
  * @name sap.m.semantic
  */
 
-// Provides class sap.m.semantic.SemanticPageSegmentedContainer
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment', 'sap/ui/base/Metadata'], function(jQuery, Segment, Metadata) {
+// Provides class sap.m.semantic.SegmentedContainer
+sap.ui.define(['jquery.sap.global', 'sap/m/semantic/Segment', 'sap/ui/base/Metadata'], function(jQuery, Segment, Metadata) {
 	"use strict";
 
 
 	/**
-	 * Constructor for a sap.m.semantic.SemanticPageSegmentedContainer.
+	 * Constructor for a sap.m.semantic.SegmentedContainer.
 	 *
 	 * @class text
 	 * @version ${version}
 	 * @private
 	 * @since 1.30.0
-	 * @alias sap.m.semantic.SemanticPageSegmentedContainer
+	 * @alias sap.m.semantic.SegmentedContainer
 	 */
 	var SegmentedContainer = Metadata.createClass("sap.m.semantic.SegmentedContainer", {
 
