@@ -227,37 +227,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			 * height. Since a single message could contain no, little or much text.
 			 * So the messages' heights may vary.
 			 */
-			var $viewContent = this.$("content");
-			var $aChildren = $viewContent.children();
-	
-			var iTotalHeight = 0, iCount = 0;
-			// Used to prevent unneeded method calls within loop
-			var iVisibleItems = this.getVisibleItems();
-	
-			// i=1 since view's title should be skipped for
-			// calculation
-			for (var i = 1; i < $aChildren.length; i++) {
-				var child = jQuery($aChildren[i]);
-	
-				if (child.hasClass("sapUiNotifierMessage")) {
-					iCount++;
-				}
-	
-				var height = child.outerHeight(true);
-				iTotalHeight += height;
-	
-				if (iCount == iVisibleItems) {
-					// I don't know why these 2 pixels are needed
-					// additionally
-					// but
-					// it works :-)
-					iTotalHeight += 2;
-					$viewContent.css("max-height", iTotalHeight);
-				}
+			var $viewContent = this.$("content"),
+				$aChildrenMessages = $viewContent.children(".sapUiNotifierMessage"),
+				iChildrenMessagesCount = $aChildrenMessages.length,
+				iVisibleItems = this.getVisibleItems();
+
+			if (iChildrenMessagesCount > iVisibleItems) {
+				jQuery.sap.delayedCall(0, this, this._fnAfterRenderingCallback, [$aChildrenMessages, $viewContent, iVisibleItems]);
 			}
+		},
+
+		_fnAfterRenderingCallback: function ($aChildrenMessages, $viewContent, iVisibleItems) {
+			var iTotalHeight = iVisibleItems - 1,
+				iCounter = 0;
+			$aChildrenMessages.each(function() {
+				if (iCounter === iVisibleItems) {
+					$viewContent.css("max-height", iTotalHeight);
+					return;
+				}
+				iTotalHeight += jQuery(this).outerHeight();
+				iCounter++;
+			});
 		}
 	});
-	
+
 	/**
 	 * Internal control that renders a single message for the NotificationBar
 	 * corresponding to its needs
