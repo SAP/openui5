@@ -91,34 +91,34 @@
 				equal(aMonths.length, 1, "1 month rendered");
 				var $FocusedDay = jQuery(jQuery("#Cal1--Month0-days").find("[tabindex='0']"));
 				equal($FocusedDay.attr("data-sap-day"), oFormatYyyymmdd.format(oToday), "curent date has tabindex 0");
-				var $Today = jQuery(jQuery("#Cal1--Month0-days").find(".sapUiCalDayToday"));
+				var $Today = jQuery(jQuery("#Cal1--Month0-days").find(".sapUiCalItemNow"));
 				equal($Today.attr("data-sap-day"), oFormatYyyymmdd.format(oToday), "current date is marked as today");
-				ok(!$Today.hasClass(".sapUiCalDayOtherMonth"), "current date is not in other month");
+				ok(!$Today.hasClass(".sapUiCalItemOtherMonth"), "current date is not in other month");
 
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown");
 				$FocusedDay = jQuery(jQuery("#Cal2--Month0-days").find("[tabindex='0']"));
 				equal($FocusedDay.attr("data-sap-day"), "20110110", "day 10 has tabindex 0");
-				var aSelectedDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDaySel");
+				var aSelectedDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItemSel");
 				equal(aSelectedDays.length, 4, "4 days selected");
 				equal(jQuery(aSelectedDays[0]).attr("data-sap-day"), "20110110", "first day selected: 10");
-				ok(jQuery(aSelectedDays[0]).hasClass("sapUiCalDaySelStart"), "first selected day marked as selction start");
+				ok(jQuery(aSelectedDays[0]).hasClass("sapUiCalItemSelStart"), "first selected day marked as selction start");
 				equal(jQuery(aSelectedDays[3]).attr("data-sap-day"), "20110113", "last day selected: 13");
-				ok(jQuery(aSelectedDays[3]).hasClass("sapUiCalDaySelEnd"), "last selected day marked as selction end");
-				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				ok(jQuery(aSelectedDays[3]).hasClass("sapUiCalItemSelEnd"), "last selected day marked as selction end");
+				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101227", "first displayed day");
 				equal(jQuery(aDays[0]).attr("id"), "Cal2--Month0-20101227", "first displayed day has right ID");
-				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110206", "last displayed day");
-				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is in other month");
+				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
 				var bOK = false;
-				if(!jQuery(aDays[0]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[1]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[2]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[3]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[4]).hasClass("sapUiCalDayWeekEnd") &&
-				   jQuery(aDays[5]).hasClass("sapUiCalDayWeekEnd") &&
-				   jQuery(aDays[6]).hasClass("sapUiCalDayWeekEnd")){
+				if(!jQuery(aDays[0]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[1]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[2]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[3]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[4]).hasClass("sapUiCalItemWeekEnd") &&
+				   jQuery(aDays[5]).hasClass("sapUiCalItemWeekEnd") &&
+				   jQuery(aDays[6]).hasClass("sapUiCalItemWeekEnd")){
 					bOK = true;
 				}
 				ok(bOK, "Only Saturday and Sunday are Weekend");
@@ -131,15 +131,15 @@
 				equal($FocusedDay.attr("data-sap-day"), "20150105", "first Month: day 2015-01-05 has tabindex 0");
 				$FocusedDay = jQuery(jQuery("#Cal3--Month1-days").find("[tabindex='0']"));
 				equal($FocusedDay.attr("data-sap-day"), "20150201", "second Month: day 2015-02-01 has tabindex 0");
-				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 				bOK = false;
-				if(!jQuery(aDays[0]).hasClass("sapUiCalDayWeekEnd") &&
-				   jQuery(aDays[1]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[2]).hasClass("sapUiCalDayWeekEnd") &&
-				   jQuery(aDays[3]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[4]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[5]).hasClass("sapUiCalDayWeekEnd") &&
-				   !jQuery(aDays[6]).hasClass("sapUiCalDayWeekEnd")){
+				if(!jQuery(aDays[0]).hasClass("sapUiCalItemWeekEnd") &&
+				   jQuery(aDays[1]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[2]).hasClass("sapUiCalItemWeekEnd") &&
+				   jQuery(aDays[3]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[4]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[5]).hasClass("sapUiCalItemWeekEnd") &&
+				   !jQuery(aDays[6]).hasClass("sapUiCalItemWeekEnd")){
 					bOK = true;
 				}
 				ok(bOK, "Custom weekend used");
@@ -149,7 +149,7 @@
 				oCal2.focusDate(new Date(2012, 11, 12));
 				equal(jQuery("#Cal2--Head-B1").text(), "Dezember", "December shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2012", "year 2012 shown");
-				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				var bFound = false;
 				for(var i=0; i<aDays.length; i++){
 					if(jQuery(aDays[i]).attr("tabindex") == "0"){
@@ -165,34 +165,34 @@
 			test("week number calculation", function() {
 				// en-US
 				oCal1.focusDate(new Date(2011, 0, 10));
-				var aDays = jQuery("#Cal1--Month0-days").find(".sapUiCalDay");
+				var aDays = jQuery("#Cal1--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2011 first week for en-US");
 				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "2", "week number 2011 second week for en-US");
 				oCal1.focusDate(new Date(2014, 0, 10));
-				aDays = jQuery("#Cal1--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal1--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2014 first week for en-US");
 				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "2", "week number 2014 second week for en-US");
 				oCal1.focusDate(new Date());
 
 				// de-DE
-				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "52", "week number 2011 first week for de-DE");
 				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2011 second week for de-DE");
 				oCal2.focusDate(new Date(2014, 0, 10));
-				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2011 first week for de-DE");
 				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "2", "week number 2011 second week for de-DE");
 				oCal2.focusDate(new Date(2011, 0, 10));
 			});
 
 			test("special days", function() {
-				ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalDayType01"), "20110101 is special day of Type01");
+				ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
 				ok(jQuery("#Cal2--Month0-20110101").attr("title", "Text"), "20110101 has special days tooltip");
-				ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalDayType02"), "20110102 is special day of Type02");
+				ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalItemType02"), "20110102 is special day of Type02");
 				ok(jQuery("#Cal2--Month0-20110102").attr("title", "Text"), "20110102 has special days tooltip");
-				ok(jQuery("#Cal2--Month0-20110103").hasClass("sapUiCalDayType02"), "20110103 is special day of Type02");
+				ok(jQuery("#Cal2--Month0-20110103").hasClass("sapUiCalItemType02"), "20110103 is special day of Type02");
 				ok(jQuery("#Cal2--Month0-20110103").attr("title", "Text"), "20110103 has special days tooltip");
-				ok(jQuery("#Cal2--Month0-20110104").hasClass("sapUiCalDayType02"), "20110104 is special day of Type02");
+				ok(jQuery("#Cal2--Month0-20110104").hasClass("sapUiCalItemType02"), "20110104 is special day of Type02");
 				ok(jQuery("#Cal2--Month0-20110104").attr("title", "Text"), "20110104 has special days tooltip");
 			});
 
@@ -202,20 +202,20 @@
 				qutils.triggerEvent("click", "Cal2--Head-prev");
 				equal(jQuery("#Cal2--Head-B1").text(), "Dezember", "December shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2010", "year 2010 shown");
-				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101129", "first displayed day");
-				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110102", "last displayed day");
-				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is in other month");
+				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
 
 				qutils.triggerEvent("click", "Cal2--Head-next");
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "january shown again");
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown again");
-				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101227", "first displayed day");
-				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110206", "last displayed day");
-				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is in other month");
+				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
 
 				qutils.triggerEvent("click", "Cal2--Head-B1");
 				ok(jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Month picker rendered");
@@ -224,11 +224,11 @@
 				qutils.triggerKeyboardEvent($July.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(!jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Month picker removed after selecting month");
 				equal(jQuery("#Cal2--Head-B1").text(), "Juli", "July shown");
-				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20110627", "first displayed day");
-				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110731", "last displayed day");
-				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is not in other month");
+				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is not in other month");
 
 				// go back to january
 				qutils.triggerEvent("click", "Cal2--Head-B1");
@@ -239,16 +239,16 @@
 				qutils.triggerEvent("click", "Cal3--Head-prev");
 				equal(jQuery("#Cal3--Head-B1").text(), "November - Dezember", "November - December shown");
 				equal(jQuery("#Cal3--Head-B2").text(), "2014", "year 2014 shown");
-				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141028", "first displayed day");
-				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150105", "last displayed day");
 				qutils.triggerEvent("click", "Cal3--Head-next");
 				equal(jQuery("#Cal3--Head-B1").text(), "Januar - Februar", "january - february shown again");
 				equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown again");
-				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141230", "first displayed day");
-				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalDay");
+				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150302", "last displayed day");
 
 			});
@@ -257,13 +257,13 @@
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 				ok(jQuery("#Cal2--YP").get(0), "Year picker rendered");
 				ok(jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker visible");
-				var aYears = jQuery("#Cal2--YP").find(".sapUiCalYear");
+				var aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
 				equal(aYears.length, 20, "20 years rendered");
 				equal(jQuery(aYears[0]).text(), "2001", "first rendered year");
 				equal(jQuery(aYears[aYears.length-1]).text(), "2020", "last rendered year");
 
 				qutils.triggerEvent("click", "Cal2--Head-prev");
-				aYears = jQuery("#Cal2--YP").find(".sapUiCalYear");
+				aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
 				equal(jQuery(aYears[0]).text(), "1981", "first rendered year after prev clicked");
 				equal(jQuery(aYears[aYears.length-1]).text(), "2000", "last rendered year after prev clicked");
 
@@ -273,21 +273,21 @@
 				ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January still shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "1999", "year 1999 shown");
-				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalDay");
+				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "19981228", "first displayed day");
-				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "19990131", "last displayed day");
-				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is not in other month");
+				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is not in other month");
 
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 				ok(jQuery("#Cal2--YP").get(0), "Year picker rendered");
 				ok(jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker visible");
-				var aYears = jQuery("#Cal2--YP").find(".sapUiCalYear");
+				var aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
 				equal(jQuery(aYears[0]).text(), "1989", "first rendered year");
 				equal(jQuery(aYears[aYears.length-1]).text(), "2008", "last rendered year");
 
 				qutils.triggerEvent("click", "Cal2--Head-next");
-				aYears = jQuery("#Cal2--YP").find(".sapUiCalYear");
+				aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
 				equal(jQuery(aYears[0]).text(), "2009", "first rendered year after prev clicked");
 				equal(jQuery(aYears[aYears.length-1]).text(), "2028", "last rendered year after prev clicked");
 
@@ -300,7 +300,7 @@
 			});
 
 			test("select event", function() {
-				var $Today = jQuery(jQuery("#Cal1--Month0-days").find(".sapUiCalDayToday"));
+				var $Today = jQuery(jQuery("#Cal1--Month0-days").find(".sapUiCalItemNow"));
 				var oToday = new Date();
 				bSelectFired = false;
 				oSelectedDate = undefined;
@@ -308,7 +308,7 @@
 				qutils.triggerKeyboardEvent($Today[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(bSelectFired, "Select event fired");
 				equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
-				ok($Today.hasClass("sapUiCalDaySel"), "Today marked as selected");
+				ok($Today.hasClass("sapUiCalItemSel"), "Today marked as selected");
 			});
 
 		</script>

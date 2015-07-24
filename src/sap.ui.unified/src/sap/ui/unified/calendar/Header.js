@@ -8,14 +8,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	"use strict";
 
 	/**
-	 * Constructor for a new MonthPicker.
+	 * Constructor for a new Header.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * renders a calendar header
-	 * This is used inside the calendar. Not for stand alone usage
+	 *
+	 * The calendar header consists of 3 buttons where the text can be set and a previous and a next button.
+	 * In the normal calendar the fist button contains the displayed day, the second button the displayed month and the third button the displayed year.
+	 *
+	 * <b>Note:</b> This is used inside the calendar. Not for stand alone usage
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -31,24 +35,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		properties : {
 
 			/**
-			 * Text of the first button (normally month)
+			 * Text of the first button (normally day)
+			 * @since 1.32.0
+			 */
+			textButton0 : {type : "string", group : "Misc"},
+
+			/**
+			 * aria-label of the first button (normally day)
+			 * @since 1.32.0
+			 */
+			ariaLabelButton0 : {type : "string", group : "Misc"},
+
+			/**
+			 * If set, the first button will be displayed
+			 *
+			 * <b>Note:</b> the default is set to false to be compatible to older versions
+			 * @since 1.32.0
+			 */
+			visibleButton0 : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Text of the second button (normally month)
 			 */
 			textButton1 : {type : "string", group : "Misc"},
 
 			/**
-			 * aria-label of the first button (normally month)
+			 * aria-label of the second button (normally month)
 			 */
 			ariaLabelButton1 : {type : "string", group : "Misc"},
 
 			/**
-			 * Text of the second button (normally year)
+			 * If set, the second button will be displayed
+			 * @since 1.32.0
+			 */
+			visibleButton1 : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Text of the third button (normally year)
 			 */
 			textButton2 : {type : "string", group : "Misc"},
 
 			/**
-			 * aria-label of the second button (normally year)
+			 * aria-label of the third button (normally year)
 			 */
 			ariaLabelButton2 : {type : "string", group : "Misc"},
+
+			/**
+			 * If set, the third button will be displayed
+			 * @since 1.32.0
+			 */
+			visibleButton2 : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
 			 * enables the previous button
@@ -81,7 +117,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * second button pressed (normally year)
 			 */
-			pressButton2 : {}
+			pressButton2 : {},
+
+			/**
+			 * third button pressed
+			 * @since 1.32.0
+			 */
+			pressButton3 : {}
 
 		}
 	}});
@@ -98,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("textButton1", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton1()) {
 				this.$("B1").text(sText);
 			}
 
@@ -108,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("ariaLabelButton1", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton1()) {
 				if (sText) {
 					this.$("B1").attr("aria-label", sText);
 				} else {
@@ -122,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("textButton2", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton2()) {
 				this.$("B2").text(sText);
 			}
 
@@ -132,11 +174,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("ariaLabelButton2", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton2()) {
 				if (sText) {
 					this.$("B2").attr("aria-label", sText);
 				} else {
 					this.$("B2").removeAttr("aria-label");
+				}
+			}
+
+		};
+
+		Header.prototype.setTextButton3 = function(sText){
+
+			this.setProperty("textButton3", sText, true);
+
+			if (this.getDomRef() && this.getVisibleButton3()) {
+				this.$("B3").text(sText);
+			}
+
+		};
+
+		Header.prototype.setAriaLabelButton3 = function(sText){
+
+			this.setProperty("ariaLabelButton3", sText, true);
+
+			if (this.getDomRef() && this.getVisibleButton3()) {
+				if (sText) {
+					this.$("B3").attr("aria-label", sText);
+				} else {
+					this.$("B3").removeAttr("aria-label");
 				}
 			}
 

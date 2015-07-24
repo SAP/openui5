@@ -137,13 +137,13 @@
 
 		for (var i = 1; i < 9; i++) {
 			//compare specialDates of Calendar
-			ok(jQuery("#Cal--Month0-2014080" + i).hasClass("sapUiCalDayType0" + i), "2014080" + i + " is special day of Type0" + i);
+			ok(jQuery("#Cal--Month0-2014080" + i).hasClass("sapUiCalItemType0" + i), "2014080" + i + " is special day of Type0" + i);
 			//with categories in CalendarLegend //skipping standard categories
 			ok(($Leg[i + 3].textContent == "Type0" + i), "Type0" + i + " is present in Legend");
 			equal($Leg[i + 3].textContent,specialDates[i-1].getTooltip(),"Type0" + i +" matches");
 		}
 		//compare specialDates of Calendar
-		ok(jQuery("#Cal--Month0-20140810").hasClass("sapUiCalDayType10"), "201408010 is special day of Type10");
+		ok(jQuery("#Cal--Month0-20140810").hasClass("sapUiCalItemType10"), "201408010 is special day of Type10");
 		//with categories in CalendarLegend //skipping standard categories
 		ok(($Leg[13].textContent == "Type10"), "Type10 is present in Legend");
 		equal($Leg[13].textContent,specialDates[9].getTooltip(),"Type10 matches");

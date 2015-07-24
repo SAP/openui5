@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			var iYear = oThis.getYear();
 			var iYears = oThis.getYears();
 			var oRootDomRef = oThis.getDomRef();
-			var aDomRefs = oThis.$().find(".sapUiCalYear");
+			var aDomRefs = oThis.$().find(".sapUiCalItem");
 			var iIndex = Math.floor(iYears / 2);
 
 			if (iYear > 10000 - Math.floor(iYears / 2)) {
@@ -280,9 +280,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRef = jQuery(aDomRefs[i]);
 				if ($DomRef.attr("id") == sId) {
-					$DomRef.addClass("sapUiCalYearSel");
+					$DomRef.addClass("sapUiCalItemSel");
 				}else {
-					$DomRef.removeClass("sapUiCalYearSel");
+					$DomRef.removeClass("sapUiCalItemSel");
 				}
 			}
 
@@ -324,10 +324,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				var $DomRef = jQuery(aDomRefs[i]);
 				$DomRef.attr("id", oThis.getId() + "-y" + iYear);
 				$DomRef.text(iYear);
-				if ($DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() != sCurrentYear) {
-					$DomRef.removeClass("sapUiCalYearSel");
-				} else if (!$DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() == sCurrentYear) {
-					$DomRef.addClass("sapUiCalYearSel");
+				if ($DomRef.hasClass("sapUiCalItemSel") && $DomRef.text() != sCurrentYear) {
+					$DomRef.removeClass("sapUiCalItemSel");
+				} else if (!$DomRef.hasClass("sapUiCalItemSel") && $DomRef.text() == sCurrentYear) {
+					$DomRef.addClass("sapUiCalItemSel");
 				}
 				iYear++;
 			}
