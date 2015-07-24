@@ -64,14 +64,6 @@
 				customIcon="sap-icon://locked">
 			</MessageStrip>
 
-			<Label text="Warning with custom icon" />
-			<MessageStrip
-				text="Warning: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
-				type="Warning"
-				showIcon="true"
-				customIcon="sap-icon://warning">
-			</MessageStrip>
-
 			<Label text="Error with link" />
 			<MessageStrip
 				text="Error: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam pretium blandit sapien at pellentesque. Pellentesque tincidunt pretium justo at pharetra."
