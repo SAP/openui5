@@ -177,13 +177,11 @@ sap.ui.define([
 				rm.write("<li id=\"sap-debug-controltree-" + mElement.id + "\" class=\"sapUiControlTreeElement\">");
 				var sImage = bHasChildren ? "minus" : "space";
 				rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/" + sImage + ".gif\" />");
-				var sPath = mElement.library.replace(/\./g, "/") + "/images/controls/" + mElement.type + ".gif";
 
 				if (mElement.isAssociation) {
 					rm.write("<img title=\"Association\" class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/link.gif\" />");
 				}
 
-				rm.write("<img class=\"sapUiControlPicture\" style=\"height: 16px; width: 16px;\" src=\"../../../../../test-resources/" + sPath + "\" />");
 				var sClass = mElement.type.lastIndexOf(".") > 0 ? mElement.type.substring(mElement.type.lastIndexOf(".") + 1) : mElement.type;
 
 				rm.write('<div>');
