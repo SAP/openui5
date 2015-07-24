@@ -1,7 +1,5 @@
 /*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
- * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ * ${copyright}
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
@@ -13,8 +11,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 * Adapter for TreeBindings to add the ListBinding functionality and use the
 		 * tree structure in list based controls.
 		 *
-		 * @alias sap.ui.model.analytics.TreeBindingAdapter
-		 * @function
+		 * @alias sap.ui.model.ClientTreeBindingAdapter
+		 * @class
 		 * @experimental This module is only for experimental use!
 		 * @protected
 		 */

@@ -11,8 +11,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * Adapter for TreeBindings to add the ListBinding functionality and use the 
 	 * tree structure in list based controls.
 	 *
-	 * @alias sap.ui.model.analytics.TreeBindingAdapter
-	 * @function
+	 * @alias sap.ui.model.analytics.AnalyticalTreeBindingAdapter
+	 * @class
 	 * @experimental This module is only for experimental use!
 	 * @protected
 	 */

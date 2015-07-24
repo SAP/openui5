@@ -811,7 +811,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @description Gets a file name which is a sap.m.Link in display mode and a sap.m.Input with a description (file extension) in edit mode
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {object} that Context
-	 * @return {sap.m.Link || sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
+	 * @return {sap.m.Link | sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
 	 * @private
 	 */
 	UploadCollection.prototype._getFileNameControl = function(oItem, that) {
@@ -917,7 +917,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {string} sItemId ID of the item being processed
 	 * @param {string} sFileNameLong file name
 	 * @param {object} that Context
-	 * @return {sap.m.Image || sap.ui.core.Icon} oItemIcon
+	 * @return {sap.m.Image | sap.ui.core.Icon} oItemIcon
 	 * @private
 	 */
 	UploadCollection.prototype._createIcon = function(oItem, sItemId, sFileNameLong, that) {

@@ -11,8 +11,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 * Adapter for TreeBindings to add the ListBinding functionality and use the
 		 * tree structure in list based controls.
 		 *
-		 * @alias sap.ui.model.odata.TreeBindingAdapter
-		 * @function
+		 * @alias sap.ui.model.TreeBindingAdapter
+		 * @class
 		 * @experimental This module is only for experimental and internal use!
 		 * @protected
 		 */
@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		TreeBindingAdapter.prototype._createTreeState = function (bReset) {
 			if (!this._mTreeState || bReset) {
-				//general tree status information, the nodes are referenced by their groupID 
+				//general tree status information, the nodes are referenced by their groupID
 				this._mTreeState = {
 					expanded: {}, // a map of all expanded nodes
 					collapsed: {}, // a map of all collapsed nodes
@@ -1147,7 +1147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 								aChangedIndices.push(iNodeCounter);
 							}
 
-							// remember the old lead selection index if we encounter it 
+							// remember the old lead selection index if we encounter it
 							// (might not happen if the lead selection is outside the newly set range)
 							if (oNode.groupID === this._sLeadSelectionGroupID) {
 								iOldLeadIndex = iNodeCounter;
