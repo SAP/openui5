@@ -180,6 +180,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 		};
 
+		Select.prototype._getSelectedItemText = function(vItem) {
+			vItem = vItem || this.getSelectedItem();
+
+			if (!vItem) {
+				vItem = this.getDefaultSelectedItem();
+			}
+
+			if (vItem) {
+				return vItem.getText();
+			}
+
+			return "";
+		};
+
 		Select.prototype._callMethodInControl = function(sFunctionName, aArgs) {
 			var oList = this.getList();
 
@@ -754,20 +768,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this.close();
 			this.setSelection(oItem);
 			this.fireChange({ selectedItem: oItem });
-			oItem = this.getSelectedItem();
 
 			// update the label text
 			// note: if, due to invalid databinding, the selectedKey cannot be changed and is reset to null,
 			// oNewSelectedItem does not match getSelectedItem() and a wrong text is displayed in the Select field
-			if (oItem) {
-				this.setValue(oItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (oItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(oItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText());
 		};
 
 		/* ----------------------------------------------------------- */
@@ -1608,17 +1613,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// update and synchronize "selectedItem" association,
 			// "selectedKey" and "selectedItemId" properties
 			this.setSelection(vItem);
-
-			// update the label text
-			if (vItem) {
-				this.setValue(vItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText(vItem));
 
 			return this;
 		};
@@ -1643,18 +1638,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			this.setSelection(vItem);
-			vItem = this.getSelectedItem();
-
-			// update the label text
-			if (vItem) {
-				this.setValue(vItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText());
 
 			return this;
 		};
@@ -1689,17 +1673,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				// update and synchronize "selectedItem" association,
 				// "selectedKey" and "selectedItemId" properties
 				this.setSelection(oItem);
-
-				// update the label text
-				if (oItem) {
-					this.setValue(oItem.getText());
-				/*eslint-disable no-cond-assign */
-				} else if (oItem = this.getDefaultSelectedItem()) {
-				/*eslint-enable no-cond-assign */
-					this.setValue(oItem.getText());
-				} else {
-					this.setValue("");
-				}
+				this.setValue(this._getSelectedItemText(oItem));
 
 				return this;
 			}
@@ -1834,18 +1808,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				}
 			}
 
-			oItem = this.getSelectedItem();
-
-			// update the label text
-			if (oItem) {
-				this.setValue(oItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (oItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(oItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText());
 
 			if (vItem) {
 				vItem.detachEvent("_change", this.onItemChange, this);
