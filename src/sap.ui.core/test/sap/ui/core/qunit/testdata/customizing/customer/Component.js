@@ -113,7 +113,15 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						"controllerName": "testdata.customizing.customer.Sub2ControllerExtension"
 					},
 					"testdata.customizing.sap.Sub4": {
-						"controllerName": "testdata.customizing.customer.Sub4ControllerExtension"
+						"controllerNames": [
+							"testdata.customizing.customer.Sub4ControllerExtension"
+						]
+					},
+					"testdata.customizing.sap.Sub6": {
+						"controllerName": "testdata.customizing.customer.Sub6ControllerExtension",
+						"controllerNames": [
+							"testdata.customizing.customer.Sub6AnotherControllerExtension"
+						]
 					}
 				}
 			}

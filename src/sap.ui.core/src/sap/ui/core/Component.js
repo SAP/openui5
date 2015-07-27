@@ -104,9 +104,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						type: "XML"
 					}
 				},
-				"sap.ui.controllerReplacements": {
-					"sap.xx.org.Main": "sap.xx.new.Main"
-				},
 				"sap.ui.viewExtensions": {
 					"sap.xx.new.Main": {
 						"extensionX": {
@@ -116,6 +113,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						"extensionY": {
 							...
 						}
+					}
+				},
+				"sap.ui.controllerExtensions": {
+					"sap.xx.org.Main": {
+						"controllerName": "sap.xx.new.Main",
+						"controllerNames": ["sap.xx.new.Sub1", "sap.xx.new.Sub2"]
 					}
 				},
 				"sap.ui.viewModification": {
