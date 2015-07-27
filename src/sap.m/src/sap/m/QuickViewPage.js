@@ -256,8 +256,7 @@ sap.ui.define([
 				// add ARIA title to the form
 				var oPageTitleControl = this.getPageTitleControl();
 				if (oHeader && oPageTitleControl) {
-					var oInnerFrom = oForm.getAggregation("form");
-					oInnerFrom.addAriaLabelledBy(oPageTitleControl);
+					oForm.addAriaLabelledBy(oPageTitleControl);
 				}
 
 				return {
