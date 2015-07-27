@@ -239,20 +239,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			//================================================================================
 
 			/**
-			 * @param {Object} bindingContext
+			 *
+			 * @param {Object} control
+			 * @param {string} controlProperty
 			 * @returns {Object}
 			 * @private
 			 */
-			_getModelFromContext: function (bindingContext) {
+			_getModelFromContext: function (control, controlProperty) {
+				var bindingContext = control.getBinding(controlProperty),
+					bindingContextModel = bindingContext.getModel(),
+					bindingInfoParts = control.getBindingInfo(controlProperty).parts,
+					modelNames = [];
+
+				for (var i = 0; i < bindingInfoParts.length; i++) {
+					modelNames.push(bindingInfoParts[i].model);
+				}
+
 				var model = {
-					name: (!bindingContext.sModelName) ? 'default' : bindingContext.sModelName,
+					names: modelNames,
 					path: bindingContext.getPath()
 				};
 
-				if (bindingContext.oModel) {
-					model.mode = bindingContext.oModel.sDefaultBindingMode;
-					model.type = bindingContext.oModel.getMetadata()._sClassName;
-					model.data = bindingContext.oModel.oData;
+				if (bindingContextModel) {
+					model.mode = bindingContextModel.getDefaultBindingMode();
+					model.type = bindingContextModel.getMetadata().getName();
+					model.data = bindingContextModel.getData ? bindingContextModel.getData() : undefined;
 				}
 
 				return model;
@@ -271,11 +282,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				for (var key in properties) {
 					if (properties.hasOwnProperty(key) && control.getBinding(key)) {
 						propertiesBindingData[key] = Object.create(null);
-						propertiesBindingData[key].path = control.getBinding(key).sPath;
-						propertiesBindingData[key].value = control.getBinding(key).oValue;
-						propertiesBindingData[key].type = control.getBinding(key).sInternalType;
-						propertiesBindingData[key].mode = control.getBinding(key).sMode;
-						propertiesBindingData[key].model = this._getModelFromContext(control.getBinding(key));
+						propertiesBindingData[key].path = control.getBinding(key).getPath();
+						propertiesBindingData[key].value = control.getBinding(key).getValue();
+						propertiesBindingData[key].type =  control.getMetadata().getProperty(key).getType().getName();
+						propertiesBindingData[key].mode = control.getBinding(key).getBindingMode();
+						propertiesBindingData[key].model = this._getModelFromContext(control, key);
 					}
 				}
 
