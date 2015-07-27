@@ -614,6 +614,94 @@
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});
+
+		QUnit.module("Internal ResponsivePopover");
+
+		QUnit.test("openBy method should not call setShowArrow on phone", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			});
+
+			var oMessagePopover = new sap.m.MessagePopover(),
+				oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
+			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
+
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+
+			assert.equal(spySetShowArrow.callCount, 0, "setShowArrow should not be called when opened on phone");
+
+			oMessagePopover.destroy();
+			oButton.destroy();
+			spySetShowArrow.restore();
+		});
+
+		QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: true,
+				tablet: false,
+				phone: false
+			});
+
+			var oMessagePopover = new sap.m.MessagePopover(),
+					oButton = new sap.m.Button({
+						text: "Show MessagePopover"
+					});
+
+			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
+			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
+
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+
+			assert.equal(spySetShowArrow.callCount, 1, "setShowArrow should be called once when opened on desktop");
+			assert.ok(spySetShowArrow.calledWith(true), "setShowArrow should be called once when opened from button which is not part of toolbar or SemanticPage");
+
+			oMessagePopover.destroy();
+			oButton.destroy();
+			spySetShowArrow.restore();
+		});
+
+		QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: true,
+				tablet: false,
+				phone: false
+			});
+
+			var oMessagePopover = new sap.m.MessagePopover(),
+					oButton = new sap.m.Button({
+						text: "Show MessagePopover"
+					}),
+					oToolbar = new sap.m.Toolbar({
+						content: oButton
+					});
+
+			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
+			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
+
+			oToolbar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+
+			assert.equal(spySetShowArrow.callCount, 1, "setShowArrow should be called once when opened on desktop");
+			assert.ok(spySetShowArrow.calledWith(false), "setShowArrow should be called once when opened from button which in Toolbar or SemanticPage");
+
+			oMessagePopover.destroy();
+			oToolbar.destroy();
+			spySetShowArrow.restore();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
