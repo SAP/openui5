@@ -932,6 +932,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		sap.m.Tokenizer.prototype.onsapfocusleave.apply(this._tokenizer, arguments);
 
+		if (!this._bUseDialog && this._isMultiLineMode && this._bShowIndicator) {
+			var $multiInputScroll = this.$().find(".sapMMultiInputBorder");
+			$multiInputScroll.scrollTop(0);
+		}
 	};
 	
 	
