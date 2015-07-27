@@ -461,7 +461,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				}
 				
 				var sGroupHeaderMenuButton = "";
-				if (sap.ui.Device.system.tablet) {
+				if ('ontouchstart' in document) {
 					sGroupHeaderMenuButton = "<div class='sapUiTableGroupMenuButton'></div>";
 				}
 				$rowHdr.html("<div id=\"" + oRow.getId() + "-groupHeader\" class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
@@ -528,7 +528,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$fixedRow.data("sap-ui-level", iLevel);
 			$rowHdr.data("sap-ui-level", iLevel);
 			
-			if (sap.ui.Device.system.tablet) {
+			if ('ontouchstart' in document) {
 				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
 				
 				if (this._bRtlMode) {
