@@ -41,7 +41,7 @@
 		
 		rm.write(">");
 		
-		sap.m.BackgroundHelper.renderBackgroundImageTag(rm, oControl, "sapMShellBG",  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
+		sap.m.BackgroundHelper.renderBackgroundImageTag(rm, oControl, ["sapMShellBG", "sapUiGlobalBackgroundImageForce"],  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
 		
 		rm.write("<div class='sapMShellBrandingBar'></div>");
 		
@@ -53,7 +53,7 @@
 		var extraHeaderClass = "", extraBGClass = "";
 		if (!oControl.getBackgroundImage()) {
 			extraHeaderClass = "sapMShellBackgroundColorOnlyIfDefault";
-			extraBGClass = "sapMGlobalBackgroundImageOnlyIfDefault";
+			extraBGClass = "sapUiGlobalBackgroundImageOnlyIfDefault";
 		}
 		rm.write("<header class='sapMShellHeader " + extraHeaderClass + "' id='" + oControl.getId() + "-hdr'>");
 		rm.write("<div class='" + extraBGClass + "'></div>");

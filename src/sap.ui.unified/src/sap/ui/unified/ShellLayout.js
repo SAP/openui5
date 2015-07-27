@@ -423,7 +423,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	/*Restricted API for Launchpad to set a Strong BG style*/
 	ShellLayout.prototype._setStrongBackground = function(bUseStongBG){
 		this._useStrongBG = !!bUseStongBG;
-		this.$("strgbg").toggleClass("sapMGlobalBackgroundColorStrong", this._useStrongBG);
+		this.$("strgbg").toggleClass("sapUiStrongBackgroundColor", this._useStrongBG);
 	};
 	
 	

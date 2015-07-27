@@ -61,9 +61,9 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("<span id='", id, "-curt-focusDummyOut' tabindex='0'></span>");
 		rm.write("</section>");
 		
-		rm.write("<div id='", id, "-cntnt' class='sapUiUfdShellCntnt sapUiUfdShellCanvas sapUiUfdShellBackground'>");
-		rm.write("<div id='", id, "-strgbg' class='sapUiUfdShellBG" + (oShell._useStrongBG ? " sapMGlobalBackgroundColorStrong" : "") + "'></div>");
-		rm.write("<div class='sapMGlobalBackgroundImage sapUiUfdShellBG'></div>");
+		rm.write("<div id='", id, "-cntnt' class='sapUiUfdShellCntnt sapUiUfdShellCanvas sapUiGlobalBackgroundColor sapUiGlobalBackgroundColorForce'>");
+		rm.write("<div id='", id, "-strgbg' class='sapUiUfdShellBG" + (oShell._useStrongBG ? " sapUiStrongBackgroundColor" : "") + "'></div>");
+		rm.write("<div class='sapUiGlobalBackgroundImage sapUiGlobalBackgroundImageForce sapUiUfdShellBG'></div>");
 		rm.renderControl(oShell._cont);
 		rm.write("</div>");
 		

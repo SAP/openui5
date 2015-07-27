@@ -2234,7 +2234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * @function
 			 */
 			addBackgroundColorStyles: function(rm, sBgColor, sBgImgUrl, sCustomBGClass) {
-				rm.addClass(sCustomBGClass || "sapMGlobalBackgroundColor");
+				rm.addClass(sCustomBGClass || "sapUiGlobalBackgroundColor");
 
 				if (sBgColor || sBgImgUrl) { // when an image or color is configured, the gradient needs to be removed, so the color can be seen behind the image
 					rm.addStyle("background-image", "none");
@@ -2270,7 +2270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 *
 			 * @param rm the RenderManager
 			 * @param {sap.ui.core.Control} oControl the control within which the tag will be rendered; its ID will be used to generate the element ID
-			 * @param {String}  sCssClass a css class to add to the element
+			 * @param {String|String[]}  vCssClass a css class or an array of css classes to add to the element
 			 * @param {sap.ui.core.URI}  [sBgImgUrl] the image of a configured background image; if this is not given, the theme background will be used and also the other settings are ignored.
 			 * @param {boolean} [bRepeat] whether the background image should be repeated/tiled (or stretched)
 			 * @param {float}   [fOpacity] the background image opacity, if any
@@ -2279,10 +2279,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * @name sap.m.BackgroundHelper#renderBackgroundImageTag
 			 * @function
 			 */
-			renderBackgroundImageTag: function(rm, oControl, sCssClass, sBgImgUrl, bRepeat, fOpacity) {
+			renderBackgroundImageTag: function(rm, oControl, vCssClass, sBgImgUrl, bRepeat, fOpacity) {
 				rm.write("<div id='" + oControl.getId() + "-BG' ");
-				rm.addClass(sCssClass);
-				rm.addClass("sapMGlobalBackgroundImage"); // this adds the background image from the theme
+				
+				if (jQuery.isArray(vCssClass)) {
+					for (var i = 0; i < vCssClass.length; i++) {
+						rm.addClass(vCssClass[i]);
+					}
+				} else {
+					rm.addClass(vCssClass);
+				}
+				
+				rm.addClass("sapUiGlobalBackgroundImage"); // this adds the background image from the theme
 
 				if (sBgImgUrl) { // use the settings only if a background image is configured
 					rm.addStyle("display", "block"); // enforce visibility even if a parent has also a background image
