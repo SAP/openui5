@@ -52,5 +52,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "5604426a0e9f36e04a71b2423288fe9dce6c66e0",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit tree expand collapse buttons changed position",
+        "references": []
+      }
+    ]
   }
 }

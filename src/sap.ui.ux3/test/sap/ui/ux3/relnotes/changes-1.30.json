@@ -104,5 +104,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1f3349328a0e6faa4d49f3d5537c386b305b5985",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell \u0026 NotificationBar: Reducing the z-index if NotificationBar is minimized",
+        "references": []
+      },
+      {
+        "id": "0523abe54b8adce240c1f0d7cfaa74cb85906e46",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell: Set a static z-index for NotificationBar",
+        "references": []
+      }
+    ]
   }
 }

@@ -253,5 +253,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "dc13daa6767d232b14fee9d357d72a7cab8972a4",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker/sap.ui.unified.calendar.Header: prevent default icon tooltip",
+        "references": []
+      }
+    ]
   }
 }

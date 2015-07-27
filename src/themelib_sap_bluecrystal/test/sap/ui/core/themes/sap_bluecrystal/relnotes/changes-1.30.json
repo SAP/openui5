@@ -468,5 +468,59 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "cd9ac18c540acf81dd6e0b7494262405a19fe870",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fix left paddings",
+        "references": []
+      },
+      {
+        "id": "8a03b5e56cce368d770290ffb0fcea2f34902056",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
+        "references": []
+      },
+      {
+        "id": "07926fc03f88f9282bc966615bbb4078d41aa045",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Style of \u0027Upload File\u0027 button has been corrected.",
+        "references": []
+      },
+      {
+        "id": "2dcce75a95ca28862a699d7b24635dce1e734eff",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: full size labels",
+        "references": []
+      },
+      {
+        "id": "489cec9c661f44134f67509d2ca5286fa34e2911",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: issue with grouping header of smart table",
+        "references": []
+      },
+      {
+        "id": "7eaa61da7dece4b66050f239c4e4894f63636c20",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes for HCB theme",
+        "references": []
+      },
+      {
+        "id": "a210097bba6a055fe7f3b5b2c8d2ccb9e55ee9eb",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Sorting Indicator overlaps with column header text",
+        "references": []
+      }
+    ]
   }
 }

@@ -92,5 +92,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1a1e12e530326b98a6ffa6dfffb506ad09d3b800",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Added Splitter Bar Accessibility Information",
+        "references": []
+      },
+      {
+        "id": "2dcce75a95ca28862a699d7b24635dce1e734eff",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: full size labels",
+        "references": []
+      }
+    ]
   }
 }

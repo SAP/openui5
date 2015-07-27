@@ -419,5 +419,94 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "98f2cccb63419ce474fe41a8a1326f495dfdf3d2",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable - Hide Grand-Total Row if no total sum was requested",
+        "references": []
+      },
+      {
+        "id": "7d38d2dd1897c67d6019f7c7bdd95f28848848ea",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTreeBindingAdapter: corrects change reason for collapse event",
+        "references": []
+      },
+      {
+        "id": "1d6014e753253687fd0819a9e67dd08f8d1c31b9",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: expand/collapse icon not indented correctly in RTL mode",
+        "references": []
+      },
+      {
+        "id": "b4af0392fd2569f7a2675ea1af5af3d17a0b3eb6",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: added check for onClick event to see if it was handled already",
+        "references": []
+      },
+      {
+        "id": "489cec9c661f44134f67509d2ca5286fa34e2911",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: issue with grouping header of smart table",
+        "references": []
+      },
+      {
+        "id": "af288adfebce0b7bc8573c0d2185f7f2a639a9ca",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Column Resizer rendered at wrong position",
+        "references": []
+      },
+      {
+        "id": "7eaa61da7dece4b66050f239c4e4894f63636c20",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes for HCB theme",
+        "references": []
+      },
+      {
+        "id": "1080074fcd12b886171169cf99a825cefcc056ce",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Grouping text is too big in HCB and BC",
+        "references": []
+      },
+      {
+        "id": "79611df25f7f61e8930020420c0179c0367b034e",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: mirror tree table chevron in RTL mode",
+        "references": []
+      },
+      {
+        "id": "0304c54a5b0611fea98aff3e1a346e4416b78fb6",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: node label alignment issue",
+        "references": []
+      },
+      {
+        "id": "2111d7de65fdf62a05e9ab86a6e6b477f610523f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: updates filterValue input field of column menu when filtering column by API",
+        "references": []
+      },
+      {
+        "id": "494271a06aca534ec35305c37c6afe645f495528",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: checks for defined Binding in _updateTableContent of TreeTable",
+        "references": []
+      }
+    ]
   }
 }
