@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+
+<!--
+  Test for jquery.sap.unicode
+  Author: d061987
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8"/>
+	<title>qUnit Page for jquery.sap.unicode</title>
+
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script>
+		jQuery.sap.require("jquery.sap.unicode");
+		jQuery.sap.require("sap.ui.Device");
+
+		var aData, UNorm;
+		aData = [
+			{form:"NFC", string:"ẛ̣", representation:"\\u1E9B\\u0323"},
+			{form:"NFD", string:"ẛ̣", representation:"\\u017F\\u0323\\u0307"},
+			{form:"NFKC", string:"ṩ", representation:"\\u1E69", compatible:true},
+			{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307", compatible:true},
+		];
+
+		// helper function for retreiving char representations
+		function toCharCodes(s) {
+			function pad(s) {
+				while(s.length < 4) {
+					s = ("0" + s);
+				}
+				return s;
+			}
+			var chars = "";
+			for (var i = 0; i < s.length; i++) {
+				chars += "\\u" + pad(s.charCodeAt(i).toString(16).toUpperCase());
+			}
+			return chars;
+		}
+
+		QUnit.module("UNorm");
+
+		QUnit.test("test dependencies", function() {
+			ok(sap.ui.Device, "Device API loaded");
+		});
+
+		QUnit.test("conditional polyfill", function() {
+			UNorm = window.UNorm;
+			if (UNorm) {
+				assert.ok(UNorm, "unorm is loaded");
+				assert.ok(UNorm.UChar.udata, "unormdata is loaded");
+				assert.ok(String.prototype.normalize, "String.prototype.normalize is polyfilled");
+			} else {
+				if (sap.ui.Device.browser.mobile) {
+					// polyfill should not be loaded for mobile browsers
+					assert.ok(!UNorm, "unorm not loaded");
+				} else {
+					assert.ok(String.prototype.normalize, "String.prototype.normalize browser implementation");
+					// browser implementation, no further testing is required
+				}
+			}
+		});
+
+		if (UNorm) {
+			QUnit.test("reference data", function() {
+				assert.expect(8);
+				jQuery.each(aData, function(i, o) {
+					assert.equal(toCharCodes(o.string), o.representation, "\"" + o.form + "\"" + " string is valid");
+					assert.equal(o.string.normalize(o.form), o.string, "\"" + o.form + "\"" + " string is \"" +o.form + "\"" );
+				});
+			});
+
+			jQuery.each(aData, function(i, o) {
+				QUnit.module(o.form, {
+					beforeEach: function() {
+						this.s = aData[0].string + aData[1].string + aData[2].string + aData[3].string;
+					}
+				});
+
+				// ref: http://unicode.org/reports/tr15/#Design_Goals
+				QUnit.test("chaining", function() {
+					o.compatible ? assert.expect(6) : assert.expect(2);
+					var sRef = this.s.normalize(o.form);
+					assert.equal(this.s.normalize("NFC").normalize(o.form), sRef, "\"NFC\"");
+					assert.equal(this.s.normalize("NFD").normalize(o.form), sRef, "\"NFD\"");
+					if(o.compatible) {
+						// compatibility normalizations
+						assert.equal(this.s.normalize("NFKC").normalize(o.form), sRef, "\"NFKC\"");
+						assert.equal(this.s.normalize("NFKD").normalize(o.form), sRef, "\"NFKD\"");
+						// and corresponding standard normalization
+						assert.equal(this.s.normalize("NFKC").normalize(o.form.replace("K","")), sRef, "\"NFKC\"");
+						assert.equal(this.s.normalize("NFKD").normalize(o.form.replace("K","")), sRef, "\"NFKD\"");
+					}
+				});
+			});
+		}
+
+		// do not perform tests on mobiles without native support
+		if(!sap.ui.Device.browser.mobile || String.prototype.normalize) {
+			QUnit.module("Quick check NFC", {
+				beforeEach: function() {
+					// blind test, no relevant characters
+					this.sBlind = "ABC";
+					// some random combined characters
+					this.sSomething = "Améliè";
+					// all forms different character
+					this.sNFC = "\u1E9B\u0323";
+					this.sNFC = "\u1E9B\u0323";
+					this.sNFD = "\u017F\u0323\u0307";
+					this.sNFKC = "\u1E69";
+					this.sNFKD = "\u0073\u0323\u0307";
+					this.s = this.sNFC + this.sNFD + this.sNFKC + this.sNFKD;
+				},
+				afterEach: function() {}
+			});
+
+			QUnit.test("verify test string", function() {
+				assert.strictEqual(this.sBlind, this.sBlind.normalize("NFC"), "NFC verified");
+				assert.strictEqual(this.sSomething, this.sSomething.normalize("NFC"), "NFC verified");
+				assert.strictEqual(this.sNFC, this.sNFC.normalize("NFC"), "NFC verified");
+				assert.strictEqual(this.sNFD, this.sNFD.normalize("NFD"), "NFD verified");
+				assert.strictEqual(this.sNFKC, this.sNFKC.normalize("NFKC"), "NFKC verified");
+				assert.strictEqual(this.sNFKD, this.sNFKD.normalize("NFKD"), "NFKD verified");
+				assert.notStrictEqual(this.s, this.s.normalize("NFC"), "not NFC verified");
+				assert.notStrictEqual(this.s, this.s.normalize("NFD"), "not NFD verified");
+				assert.notStrictEqual(this.s, this.s.normalize("NFKC"), "not NFKC verified");
+				assert.notStrictEqual(this.s, this.s.normalize("NFKD"), "not NFKD verified");
+				assert.strictEqual(this.sNFC + this.sNFC + this.sNFKC + this.sNFKC, this.s.normalize("NFC"), "NFC concatenation verified");
+				assert.strictEqual(this.sNFD + this.sNFD + this.sNFKD + this.sNFKD, this.s.normalize("NFD"), "NFD concatenation verified");
+				assert.strictEqual(this.sNFKC + this.sNFKC + this.sNFKC + this.sNFKC, this.s.normalize("NFKC"), "NFKC concatenation verified");
+				assert.strictEqual(this.sNFKD + this.sNFKD + this.sNFKD + this.sNFKD, this.s.normalize("NFKD"), "NFKD concatenation verified");
+			});
+
+			QUnit.test("isStringNFC", function() {
+				assert.ok(jQuery.sap.isStringNFC("ABC"), "NFC is NFC");
+				assert.ok(jQuery.sap.isStringNFC("Améliè"), "NFC is NFC");
+				assert.ok(!jQuery.sap.isStringNFC(this.sNFC) || jQuery.sap.isStringNFC(this.sNFC), "NFC maybe NFC");
+				assert.ok(!jQuery.sap.isStringNFC(this.sNFD), "NFD is not NFC");
+				assert.ok(jQuery.sap.isStringNFC(this.sNFKC), "NFKC is also NFC");
+				assert.ok(!jQuery.sap.isStringNFC(this.sNFKD), "NFKD is not NFC");
+				assert.ok(!jQuery.sap.isStringNFC(this.s), "concatenation is not NFC");
+			});
+		}
+	</script>
+
+</head>
+
+<body>
+	<h1 id="qunit-header">qUnit Page for jquery.sap.unicode</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+
+</html>
