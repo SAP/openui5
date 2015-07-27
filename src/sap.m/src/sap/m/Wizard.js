@@ -49,10 +49,10 @@ sap.ui.define([
 					 */
 					showNextButton : {type : "boolean", group : "Behavior", defaultValue : true},
 					/**
-					 * Changes the text of the finish button for the last step. By default is "Finish".
+					 * Changes the text of the finish button for the last step. By default is "Review".
 					 * This property can be used only if showNextButton is set to true.
 					 */
-					finishButtonText: {type: "string", group: "Appearance", defaultValue: "Finish"},
+					finishButtonText: {type: "string", group: "Appearance", defaultValue: "Review"},
 					/**
 					 * Enables the branching functionality of the Wizard.
 					 * If this property is set to false, the 'next', and 'subSequentSteps' associations of the
@@ -313,7 +313,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the text for the finish button. By default it is "Finish".
+		 * Sets the text for the finish button. By default it is "Review".
 		 * @param {string} value - The text of the finish button
 		 * @returns {sap.m.Wizard} Reference to the control instance for chaining
 		 * @public
@@ -331,7 +331,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.getFinishButtonText = function ()  {
-			if (this.getProperty("finishButtonText") === "Finish") {
+			if (this.getProperty("finishButtonText") === "Review") {
 				return this._oResourceBundle.getText("WIZARD_FINISH");
 			} else {
 				return this.getProperty("finishButtonText");

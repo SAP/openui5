@@ -10,6 +10,11 @@ sap.ui.define([
 	var WizardController = Controller.extend("sap.m.sample.Wizard.C", {
 		onInit: function () {
 			this._wizard = this.getView().byId("CreateProductWizard");
+			this._oNavContainer = this.getView().byId("wizardNavContainer");
+			this._oWizardContentPage = this.getView().byId("wizardContentPage");
+			this._oWizardReviewPage = sap.ui.xmlfragment("sap.m.sample.Wizard.ReviewPage", this);
+
+			this._oNavContainer.addPage(this._oWizardReviewPage);
 			this.model = new sap.ui.model.json.JSONModel();
 			this.model.setData({
 				productNameState:"Error",
@@ -18,6 +23,10 @@ sap.ui.define([
 			this.getView().setModel(this.model);
 			this.model.setProperty("/productType", "Mobile");
 			this.model.setProperty("/navApiEnabled", true);
+			this.model.setProperty("/productVAT", false);
+			this._setEmptyValue("/productManufacturer");
+			this._setEmptyValue("/productDescription");
+			this._setEmptyValue("/productPrice");
 		},
 		setProductType: function (evt) {
 			var productType = evt.getSource().getTitle();
@@ -62,25 +71,64 @@ sap.ui.define([
 			this._wizard.goToStep(this.getView().byId("ProductInfoStep"));
 		},
 		goFrom4to3 : function () {
-			if(this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
+			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
 				this._wizard.previousStep();
 		},
 		goFrom4to5 : function () {
-			if(this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
+			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
 				this._wizard.nextStep();
 		},
-		wizardCompletedHandler: function () {
-			MessageBox.show(
-				'This event is fired on complete of the whole process.',
-				{
-					icon: MessageBox.Icon.INFORMATION,
-					title: "Wizard completed event",
-					actions: [MessageBox.Action.OK]
-				}
-			);
+		wizardCompletedHandler : function () {
+			this._oNavContainer.to(this._oWizardReviewPage);
+		},
+		backToWizardContent : function () {
+			this._oNavContainer.backToPage(this._oWizardContentPage.getId());
+		},
+		editStepOne : function () {
+			this._handleNavigationToStep(0);
+		},
+		editStepTwo : function () {
+			this._handleNavigationToStep(1);
+		},
+		editStepThree : function () {
+			this._handleNavigationToStep(2);
+		},
+		editStepFour : function () {
+			this._handleNavigationToStep(3);
+		},
+		_handleNavigationToStep : function (iStepNumber) {
+			var that = this;
+			function fnAfterNavigate () {
+				that._wizard.goToStep(that._wizard.getSteps()[iStepNumber]);
+				that._oNavContainer.detachAfterNavigate(fnAfterNavigate);
+			}
+
+			this._oNavContainer.attachAfterNavigate(fnAfterNavigate);
+			this.backToWizardContent();
+		},
+		_handleMessageBoxOpen : function (sMessage, sMessageBoxType) {
+			var that = this;
+			MessageBox[sMessageBoxType](sMessage, {
+				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+				onClose: function (oAction) {
+					if (oAction === MessageBox.Action.YES) {
+						that._handleNavigationToStep(0);
+						that._wizard.discardProgress(that._wizard.getSteps()[0]);
+					}
+				},
+			});
+		},
+		_setEmptyValue : function (sPath) {
+			this.model.setProperty(sPath, "n/a");
+		},
+		handleWizardCancel : function () {
+			this._handleMessageBoxOpen("Are you sure you want to cancel your report?", "warning");
+		},
+		handleWizardSubmit : function () {
+			this._handleMessageBoxOpen("Are you sure you want to submit your report?", "confirm");
 		},
 		productWeighStateFormatter: function (val) {
-			return isNaN(val)?"Error":"None";
+			return isNaN(val) ? "Error" : "None";
 		},
 		discardProgress: function () {
 			this._wizard.discardProgress(this.getView().byId("ProductTypeStep"));
