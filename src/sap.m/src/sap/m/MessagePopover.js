@@ -1033,11 +1033,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup");
 
 			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover remove the Arrow
-			if ((oControl.getParent() instanceof sap.m.Toolbar || oControl.getParent() instanceof sap.m.semantic.SemanticPage) &&
-				oResponsivePopoverControl instanceof sap.m.Popover) {
-				oResponsivePopoverControl.setShowArrow(false);
-			} else {
-				oResponsivePopoverControl.setShowArrow(true);
+			if (oResponsivePopoverControl instanceof sap.m.Popover) {
+				if ((oControl.getParent() instanceof sap.m.Toolbar || oControl.getParent() instanceof sap.m.semantic.SemanticPage)) {
+					oResponsivePopoverControl.setShowArrow(false);
+				} else {
+					oResponsivePopoverControl.setShowArrow(true);
+				}
 			}
 
 			if (this._oPopover) {
