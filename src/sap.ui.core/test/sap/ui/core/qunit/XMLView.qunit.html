@@ -198,8 +198,8 @@ sap.ui.core.mvc.Controller</title>
 		XMLView.registerPreprocessor("xml", oPreprocessor, false, {type: "xml"});
 		XMLView.registerPreprocessor("controls", oPreprocessor, false, {type: "controls"});
 
-		strictEqual(View._mPreprocessors["XML"]["xml"].type, "xml", "Registration for xml successful");
-		strictEqual(View._mPreprocessors["XML"]["controls"].type, "controls", "Registration for content successful");
+		strictEqual(View._mPreprocessors["XML"]["xml"].settings.type, "xml", "Registration for xml successful");
+		strictEqual(View._mPreprocessors["XML"]["controls"].settings.type, "controls", "Registration for content successful");
 
 		assert.throws(XMLView.registerPreprocessor("unknown", oPreprocessor, false, {type: "unknown"}), "Error thrown when registering invalid type");
 
