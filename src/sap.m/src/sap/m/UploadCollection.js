@@ -1818,7 +1818,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 
 		function checkRequestStatus () {
-			var sRequestStatus = oEvent.getParameter("status") || "200"; // In case of IE < 10 this will not work.
+			var sRequestStatus = oEvent.getParameter("status").toString() || "200"; // In case of IE version < 10, this function will not work.
 			if (sRequestStatus[0] === "2" || sRequestStatus[0] === "3") {
 				return true;
 			} else {
