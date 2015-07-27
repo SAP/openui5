@@ -222,10 +222,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				that.onControllerConnected(that.oController);
 			}
 		};
-		
+
 		var fnPropagateOwner = function(fn) {
 			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
-			
+
 			var Component = sap.ui.require("sap/ui/core/Component");
 			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
 			if (oOwnerComponent) {
@@ -427,6 +427,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			},
 			//global preprocessor availability
 			oConfig = View._mPreprocessors[sViewType] ? View._mPreprocessors[sViewType][sType] : undefined,
+			//settings passed to the preprocessor
+			oSettings = oConfig ? oConfig.settings : {},
 			//local preprocessor availability
 			oLocalConfig = this.mPreprocessors[sType],
 			fnProcess;
@@ -442,11 +444,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		// determine preprocessor type (local || onDemand || global)
 		if (oLocalConfig && oLocalConfig.preprocessor) {
-			// local preprocessor
+			// local preprocessor, settings are equal to configuration
 			oConfig = oLocalConfig;
+			oSettings = oLocalConfig;
 		} else if (oLocalConfig && (oConfig && oConfig.onDemand)) {
-			// onDemand activated, enrich default config with locally supplied infos
-			 jQuery.extend(true, oConfig, oLocalConfig);
+			// onDemand activated, enrich local config with globally provided settings
+			 oSettings = jQuery.extend(oLocalConfig, oSettings);
 		} else if (oConfig && oConfig.onDemand) {
 			// default not activated
 				return fnResult(vSource);
@@ -466,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			}
 			// determine preprocessor validity (only syncSupport preprocessors when in sync mode)
 			if (fnProcess && (!bSync || oConfig.syncSupport == bSync)) {
-				return fnResult(fnProcess(vSource, oViewInfo, oConfig));
+				return fnResult(fnProcess(vSource, oViewInfo, oSettings));
 			}
 		}
 		// no valid preprocessor found
@@ -521,9 +524,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			} else if (!View._mPreprocessors[sViewType][sType]) {
 				View._mPreprocessors[sViewType][sType] = {};
 			}
-			View._mPreprocessors[sViewType][sType] = {preprocessor: vPreprocessor, onDemand: bOnDemand, syncSupport: bSyncSupport};
-			// to be consistent with local preprocessors, everything in one config object
-			jQuery.extend(true, View._mPreprocessors[sViewType][sType], mSettings);
+			View._mPreprocessors[sViewType][sType] = {preprocessor: vPreprocessor, onDemand: bOnDemand, syncSupport: bSyncSupport, settings: mSettings};
 		} else {
 			jQuery.sap.log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
 		}
