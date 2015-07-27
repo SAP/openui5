@@ -3135,6 +3135,27 @@
 				oComboBox.destroy();
 			});
 
+			// BCP 1570763824
+			test("it should add the corresponding CSS classes", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oComboBox.setValueState(sap.ui.core.ValueState.Error);
+
+				// assert
+				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS));
+				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Error"));
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* destroy()                      */
 			/* ------------------------------ */

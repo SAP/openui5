@@ -798,6 +798,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	InputBase.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
+		var mValueState = sap.ui.core.ValueState,
+			$This = this.$(),
+			$Input = jQuery(this.getFocusDomRef());
+
+		if (sOldValueState !== mValueState.None) {
+			$This.removeClass("sapMInputBaseState sapMInputBase" + sOldValueState);
+			$Input.removeClass("sapMInputBaseStateInner sapMInputBase" + sOldValueState + "Inner");
+		}
+
+		if (sValueState !== mValueState.None) {
+			$This.addClass("sapMInputBaseState sapMInputBase" + sValueState);
+			$Input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
+		}
+	};
+
 	/* ----------------------------------------------------------- */
 	/* public methods                                              */
 	/* ----------------------------------------------------------- */
@@ -823,18 +839,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this.setProperty("valueState", sValueState);
 		}
 
-		var $container = this.$();
 		this.setProperty("valueState", sValueState, true);
-
-		if (sOldValueState !== sap.ui.core.ValueState.None) {
-			$container.removeClass("sapMInputBaseState sapMInputBase" + sOldValueState);
-			this._$input.removeClass("sapMInputBaseStateInner sapMInputBase" + sOldValueState + "Inner");
-		}
-
-		if (sValueState  !== sap.ui.core.ValueState.None) {
-			$container.addClass("sapMInputBaseState sapMInputBase" + sValueState);
-			this._$input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
-		}
+		this.updateValueStateClasses(sValueState, sOldValueState);
 
 		// set tooltip based on state (will be undefined when state is None)
 		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(this, this.getTooltip_AsString());
