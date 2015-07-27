@@ -324,6 +324,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			this.setSelected(false);
 		}
 
+		this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);		
 		this.setProperty("selectable", bSelectable);
 
 		return this;

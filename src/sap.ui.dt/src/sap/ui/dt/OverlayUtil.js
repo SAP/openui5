@@ -142,7 +142,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		
 		var aAggregationOverlays = oOverlay.getAggregationOverlays();
 		if (aAggregationOverlays.length > 0) {
-			for (var i = 0; i < aAggregationOverlays.length; i++) {
+			for (var i = aAggregationOverlays.length - 1; i >= 0 ; i--) {
 				var oAggregationOverlay = aAggregationOverlays[i];
 				var aChildren = oAggregationOverlay.getChildren();
 				if (aChildren.length) {
@@ -206,7 +206,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) - 1; iIndex >= 0; iIndex--) {
 						var aOverlays = aAggregationOverlays[iIndex].getChildren();
 						if (aOverlays.length) {
-							return aOverlays[0];
+							return aOverlays[aOverlays.length - 1];
 						}
 					}
 				}
