@@ -305,235 +305,235 @@
 
 			});
 			
-			module("keyboard handling")
-
-			asyncTest('PageDown keyboard handling mobile phone', function(){
-				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
-						// this test is not supported by IE9
-						expect(0);
-						start();
-						return;
-				}
-				
-				var oSystem = {
-						desktop: false,
-						phone: true,
-						tablet: false
-				};
-
-				this.stub(sap.ui.Device, "system", oSystem);
-				expect(2);
-				var oButton = new sap.m.Button({
-					text : "Open ActionSheet",
-					press : function() {
-						oActionSheet.openBy(this);
-					}
-				});
-				
-				var oActionSheet = new sap.m.ActionSheet({
-					showCancelButton: true,
-					buttons: [
-						new sap.m.Button({
-							id: 'oButton1',
-							type: sap.m.ButtonType.Reject,
-							text: "Reject Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Accept,
-							text: "Accept Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							id: 'oButton6',
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							id: 'oButton7',
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						})
-					]
-				});
-				
-				page.addContent(oButton);
-				sap.ui.getCore().applyChanges();
-				oButton.firePress();
-				
-				setTimeout(function(){
-					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-
-					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
-					
-					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
-					start();
-					oActionSheet.close();
-					
-					oButton.destroy();
-					oActionSheet.destroy();
-				}, 500)
-			}); 
-			
-			asyncTest('PageDown keyboard handling desktop', function(){
-				var oSystem = {
-						desktop: true,
-						phone: false
-				};
-				
-				this.stub(sap.ui.Device, "system", oSystem);
-				expect(2);
-				var oButton = new sap.m.Button({
-					text : "Open ActionSheet",
-					press : function() {
-						oActionSheet.openBy(this);
-					}
-				});
-				
-				var oActionSheet = new sap.m.ActionSheet({
-					showCancelButton: true,
-					buttons: [
-						new sap.m.Button({
-							id: 'oButton1',
-							type: sap.m.ButtonType.Reject,
-							text: "Reject Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Accept,
-							text: "Accept Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							id: 'oButton6',
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							id: 'oButton7',
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						})
-					]
-				});
-				
-				page.addContent(oButton);
-				sap.ui.getCore().applyChanges();
-				oButton.firePress();
-				
-				setTimeout(function(){
-					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-
-					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
-					
-					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					
-					ok(jQuery.sap.byId('oButton7').is(":focus"), 'The 7th button should be focused');
-					
-					start();
-					oActionSheet.close();
-					
-					oButton.destroy();
-					oActionSheet.destroy();
-				}, 500)
-			});
-			
-			asyncTest('PageUp keyboard handling', function(){
-				expect(2);
-				var oButton = new sap.m.Button({
-					text : "Open ActionSheet",
-					press : function() {
-						oActionSheet.openBy(this);
-					}
-				});
-				
-				var oActionSheet = new sap.m.ActionSheet({
-					showCancelButton: true,
-					buttons: [
-						new sap.m.Button({
-							id: 'oButton1',
-							type: sap.m.ButtonType.Reject,
-							text: "Reject Action"
-						}),
-						new sap.m.Button({
-							id: 'oButton2',
-							type: sap.m.ButtonType.Accept,
-							text: "Accept Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							id: 'oButton6',
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						}),
-						new sap.m.Button({
-							id: 'oButton7',
-							type: sap.m.ButtonType.Default,
-							text: "Default Action"
-						})
-					]
-				});
-				
-				page.addContent(oButton);
-				sap.ui.getCore().applyChanges();
-				oButton.firePress();
-				
-				setTimeout(function(){
-					jQuery.sap.byId('oButton7').focus();
-					
-					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
-					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
-
-					ok(jQuery.sap.byId('oButton2').is(":focus"), 'The 2nd button should be focused');
-					
-					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
-					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
-
-					ok(jQuery.sap.byId('oButton1').is(":focus"), 'The first button should be focused');
-					start();
-					oActionSheet.close();
-					
-					oButton.destroy();
-					oActionSheet.destroy();
-				}, 500)
-		
-			});
+			// module("keyboard handling")
+			// 
+			// asyncTest('PageDown keyboard handling mobile phone', function(){
+			// 	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+			// 			// this test is not supported by IE9
+			// 			expect(0);
+			// 			start();
+			// 			return;
+			// 	}
+			// 	
+			// 	var oSystem = {
+			// 			desktop: false,
+			// 			phone: true,
+			// 			tablet: false
+			// 	};
+			// 
+			// 	this.stub(sap.ui.Device, "system", oSystem);
+			// 	expect(2);
+			// 	var oButton = new sap.m.Button({
+			// 		text : "Open ActionSheet",
+			// 		press : function() {
+			// 			oActionSheet.openBy(this);
+			// 		}
+			// 	});
+			// 	
+			// 	var oActionSheet = new sap.m.ActionSheet({
+			// 		showCancelButton: true,
+			// 		buttons: [
+			// 			new sap.m.Button({
+			// 				id: 'oButton1',
+			// 				type: sap.m.ButtonType.Reject,
+			// 				text: "Reject Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Accept,
+			// 				text: "Accept Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				id: 'oButton6',
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				id: 'oButton7',
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			})
+			// 		]
+			// 	});
+			// 	
+			// 	page.addContent(oButton);
+			// 	sap.ui.getCore().applyChanges();
+			// 	oButton.firePress();
+			// 	
+			// 	setTimeout(function(){
+			// 		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 		sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 
+			// 		ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
+			// 		
+			// 		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 		sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 		ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
+			// 		start();
+			// 		oActionSheet.close();
+			// 		
+			// 		oButton.destroy();
+			// 		oActionSheet.destroy();
+			// 	}, 500)
+			// }); 
+			// 
+			// asyncTest('PageDown keyboard handling desktop', function(){
+			// 	var oSystem = {
+			// 			desktop: true,
+			// 			phone: false
+			// 	};
+			// 	
+			// 	this.stub(sap.ui.Device, "system", oSystem);
+			// 	expect(2);
+			// 	var oButton = new sap.m.Button({
+			// 		text : "Open ActionSheet",
+			// 		press : function() {
+			// 			oActionSheet.openBy(this);
+			// 		}
+			// 	});
+			// 	
+			// 	var oActionSheet = new sap.m.ActionSheet({
+			// 		showCancelButton: true,
+			// 		buttons: [
+			// 			new sap.m.Button({
+			// 				id: 'oButton1',
+			// 				type: sap.m.ButtonType.Reject,
+			// 				text: "Reject Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Accept,
+			// 				text: "Accept Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				id: 'oButton6',
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				id: 'oButton7',
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			})
+			// 		]
+			// 	});
+			// 	
+			// 	page.addContent(oButton);
+			// 	sap.ui.getCore().applyChanges();
+			// 	oButton.firePress();
+			// 	
+			// 	setTimeout(function(){
+			// 		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 		sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 
+			// 		ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
+			// 		
+			// 		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 		sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+			// 		
+			// 		ok(jQuery.sap.byId('oButton7').is(":focus"), 'The 7th button should be focused');
+			// 		
+			// 		start();
+			// 		oActionSheet.close();
+			// 		
+			// 		oButton.destroy();
+			// 		oActionSheet.destroy();
+			// 	}, 500)
+			// });
+			// 
+			// asyncTest('PageUp keyboard handling', function(){
+			// 	expect(2);
+			// 	var oButton = new sap.m.Button({
+			// 		text : "Open ActionSheet",
+			// 		press : function() {
+			// 			oActionSheet.openBy(this);
+			// 		}
+			// 	});
+			// 	
+			// 	var oActionSheet = new sap.m.ActionSheet({
+			// 		showCancelButton: true,
+			// 		buttons: [
+			// 			new sap.m.Button({
+			// 				id: 'oButton1',
+			// 				type: sap.m.ButtonType.Reject,
+			// 				text: "Reject Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				id: 'oButton2',
+			// 				type: sap.m.ButtonType.Accept,
+			// 				text: "Accept Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				id: 'oButton6',
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			}),
+			// 			new sap.m.Button({
+			// 				id: 'oButton7',
+			// 				type: sap.m.ButtonType.Default,
+			// 				text: "Default Action"
+			// 			})
+			// 		]
+			// 	});
+			// 	
+			// 	page.addContent(oButton);
+			// 	sap.ui.getCore().applyChanges();
+			// 	oButton.firePress();
+			// 	
+			// 	setTimeout(function(){
+			// 		jQuery.sap.byId('oButton7').focus();
+			// 		
+			// 		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
+			// 		sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
+			// 
+			// 		ok(jQuery.sap.byId('oButton2').is(":focus"), 'The 2nd button should be focused');
+			// 		
+			// 		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
+			// 		sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
+			// 
+			// 		ok(jQuery.sap.byId('oButton1').is(":focus"), 'The first button should be focused');
+			// 		start();
+			// 		oActionSheet.close();
+			// 		
+			// 		oButton.destroy();
+			// 		oActionSheet.destroy();
+			// 	}, 500)
+			// 
+			// });
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
