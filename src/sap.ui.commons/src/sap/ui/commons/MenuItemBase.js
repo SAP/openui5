@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/MenuItemBase'],
-	function(jQuery, MenuItemBase) {
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 	"use strict";
 	
 	/**
@@ -35,8 +35,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/MenuItemBase'],
 		jQuery.sap.log.error("The controls/elements 'sap.ui.commons.Menu*' needs library 'sap.ui.unified'.");
 		throw (e);
 	}
-	
-	
-	return MenuItemBase;
+
+	//Using sap.ui.require avoids global access but does not load the module, therefore jQuery.sap.require is necessary too
+	jQuery.sap.require("sap.ui.unified.MenuItemBase");
+	return sap.ui.require("sap/ui/unified/MenuItemBase");
 
 }, /* bExport= */ true);
