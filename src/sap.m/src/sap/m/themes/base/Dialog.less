@@ -3,7 +3,7 @@
 /* ============================================= */
 
 @SapBarHeight: 3rem;
-@SapBarCompactHeight: 2rem;
+@SapBarCompactHeight: 2.5rem;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -321,6 +321,13 @@
 		padding-bottom: @SapBarCompactHeight;
 		padding-top: @SapBarCompactHeight;
 
+		.sapMBarLeft,
+		.sapMBarRight,
+		.sapMBarPH {
+			height: @SapBarCompactHeight;
+			line-height: @SapBarCompactHeight;
+		}
+
 		&.sapMDialogWithSubHeader {
 			padding-top: @SapBarCompactHeight + @SapBarCompactHeight;
 		}
@@ -371,7 +378,6 @@
 			.sapMBarLeft,
 			.sapMBarRight,
 			.sapMBarPH {
-				height: 2.5rem;
 				padding-bottom: 0.25rem;
 				padding-top: 0.25rem;
 			}
