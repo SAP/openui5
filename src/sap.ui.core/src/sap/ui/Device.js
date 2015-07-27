@@ -5,7 +5,7 @@
 /**
  * Device and Feature Detection API: Provides information about the used browser / device and cross platform support for certain events
  * like media queries, orientation change or resizing.
- * 
+ *
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
@@ -165,7 +165,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * The version of the operating system as <code>string</code>.
-	 * 
+	 *
 	 * Might be empty if no version can be determined.
 	 *
 	 * @name sap.ui.Device.os#versionStr
@@ -174,7 +174,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * The version of the operating system as <code>float</code>.
-	 * 
+	 *
 	 * Might be <code>-1</code> if no version can be determined.
 	 *
 	 * @name sap.ui.Device.os#version
@@ -366,8 +366,8 @@ if (typeof window.sap.ui !== "object") {
 		return getDesktopOS();
 	}
 
-	function setOS() {
-		device.os = getOS() || {};
+	function setOS(customUA) {
+		device.os = getOS(customUA) || {};
 		device.os.OS = OS;
 		device.os.version = device.os.versionStr ? parseFloat(device.os.versionStr) : -1;
 
@@ -380,6 +380,8 @@ if (typeof window.sap.ui !== "object") {
 		}
 	}
 	setOS();
+	// expose for unit test
+	device._setOS = setOS;
 
 
 
@@ -411,7 +413,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * The version of the browser as <code>string</code>.
-	 * 
+	 *
 	 * Might be empty if no version can be determined.
 	 *
 	 * @name sap.ui.Device.browser#versionStr
@@ -420,7 +422,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * The version of the browser as <code>float</code>.
-	 * 
+	 *
 	 * Might be <code>-1</code> if no version can be determined.
 	 *
 	 * @name sap.ui.Device.browser#version
@@ -429,7 +431,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the mobile variant of the browser is used.
-	 * 
+	 *
 	 * <b>Note:</b> This information might not be available for all browsers.
 	 *
 	 * @name sap.ui.Device.browser#mobile
@@ -454,7 +456,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the Microsoft Edge browser is used.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#edge
 	 * @type boolean
 	 * @since 1.30.0
@@ -477,9 +479,9 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the Apple Safari browser is used.
-	 * 
+	 *
 	 * <b>Note:</b> Please also note the flag {@link sap.ui.Device.browser#fullscreen}.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#safari
 	 * @type boolean
 	 * @public
@@ -494,7 +496,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the Safari browser runs in standalone fullscreen mode on iOS.
-	 * 
+	 *
 	 * <b>Note:</b> This flag is only available if the Safari browser was detected. Furthermore, if this mode is detected,
 	 * technically a WebView is used and not a standard Safari. There might be slight differences in behavior and detection, e.g.
 	 * the availability of {@link sap.ui.Device.browser#version}.
@@ -769,7 +771,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * If this flag is set to <code>true</code>, the used browser supports touch events.
-	 * 
+	 *
 	 * <b>Note:</b> This flag indicates whether the used browser supports touch events or not.
 	 * This does not necessarily mean that the used device has a touchable screen.
 	 *
@@ -786,7 +788,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the used browser natively supports media queries via JavaScript.
-	 * 
+	 *
 	 * <b>Note:</b> The {@link sap.ui.Device.media media queries API} of the device API can also be used when there is no native support.
 	 *
 	 * @name sap.ui.Device.support#matchmedia
@@ -795,7 +797,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the used browser natively supports events of media queries via JavaScript.
-	 * 
+	 *
 	 * <b>Note:</b> The {@link sap.ui.Device.media media queries API} of the device API can also be used when there is no native support.
 	 *
 	 * @name sap.ui.Device.support#matchmedialistener
@@ -804,7 +806,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the used browser natively supports the <code>orientationchange</code> event.
-	 * 
+	 *
 	 * <b>Note:</b> The {@link sap.ui.Device.orientation orientation event} of the device API can also be used when there is no native support.
 	 *
 	 * @name sap.ui.Device.support#orientation
@@ -868,16 +870,16 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Event API for screen width changes.
-	 * 
+	 *
 	 * This API is based on media queries but can also be used if media queries are not natively supported by the used browser.
 	 * In this case, the behavior of media queries is simulated by this API.
-	 * 
+	 *
 	 * There are several predefined {@link sap.ui.Device.media.RANGESETS range sets} available. Each of them defines a
 	 * set of intervals for the screen width (from small to large). Whenever the screen width changes and the current screen width is in
 	 * a different interval to the one before the change, the registered event handlers for the range set are called.
-	 * 
+	 *
 	 * If needed, it is also possible to define a custom set of intervals.
-	 * 
+	 *
 	 * The following example shows a typical use case:
 	 * <pre>
 	 * function sizeChanged(mParams) {
@@ -892,13 +894,13 @@ if (typeof window.sap.ui !== "object") {
 	 *             // Do what is needed for a large screen
 	 *     }
 	 * }
-	 * 
+	 *
 	 * // Register an event handler to changes of the screen size
 	 * sap.ui.Device.media.attachHandler(sizeChanged, null, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 	 * // Do some initialization work based on the current size
 	 * sizeChanged(sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD));
 	 * </pre>
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.media
 	 * @public
@@ -915,25 +917,25 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * A 3-step range set (S-L).
-	 * 
+	 *
 	 * The ranges of this set are:
 	 * <ul>
 	 * <li><code>"S"</code>: For screens smaller than 520 pixels.</li>
 	 * <li><code>"M"</code>: For screens greater than or equal to 520 pixels and smaller than 960 pixels.</li>
 	 * <li><code>"L"</code>: For screens greater than or equal to 960 pixels.</li>
 	 * </ul>
-	 * 
+	 *
 	 * To use this range set, you must initialize it explicitly ({@link sap.ui.Device.media.html#initRangeSet}).
-	 * 
+	 *
 	 * If this range set is initialized, a CSS class is added to the page root (<code>html</code> tag) which indicates the current
 	 * screen width range: <code>sapUiMedia-3Step-<i>NAME_OF_THE_INTERVAL</i></code>.
-	 * 
+	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_3STEPS
 	 * @public
 	 */
 	/**
 	 * A 4-step range set (S-XL).
-	 * 
+	 *
 	 * The ranges of this set are:
 	 * <ul>
 	 * <li><code>"S"</code>: For screens smaller than 520 pixels.</li>
@@ -941,18 +943,18 @@ if (typeof window.sap.ui !== "object") {
 	 * <li><code>"L"</code>: For screens greater than or equal to 760 pixels and smaller than 960 pixels.</li>
 	 * <li><code>"XL"</code>: For screens greater than or equal to 960 pixels.</li>
 	 * </ul>
-	 * 
+	 *
 	 * To use this range set, you must initialize it explicitly ({@link sap.ui.Device.media.html#initRangeSet}).
-	 * 
+	 *
 	 * If this range set is initialized, a CSS class is added to the page root (<code>html</code> tag) which indicates the current
 	 * screen width range: <code>sapUiMedia-4Step-<i>NAME_OF_THE_INTERVAL</i></code>.
-	 * 
+	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_4STEPS
 	 * @public
 	 */
 	/**
 	 * A 6-step range set (XS-XXL).
-	 * 
+	 *
 	 * The ranges of this set are:
 	 * <ul>
 	 * <li><code>"XS"</code>: For screens smaller than 241 pixels.</li>
@@ -962,9 +964,9 @@ if (typeof window.sap.ui !== "object") {
 	 * <li><code>"XL"</code>: For screens greater than or equal to 768 pixels and smaller than 960 pixels.</li>
 	 * <li><code>"XXL"</code>: For screens greater than or equal to 960 pixels.</li>
 	 * </ul>
-	 * 
+	 *
 	 * To use this range set, you must initialize it explicitly ({@link sap.ui.Device.media.html#initRangeSet}).
-	 * 
+	 *
 	 * If this range set is initialized, a CSS class is added to the page root (<code>html</code> tag) which indicates the current
 	 * screen width range: <code>sapUiMedia-6Step-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
@@ -973,16 +975,16 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * A 3-step range set (Phone, Tablet, Desktop).
-	 * 
+	 *
 	 * The ranges of this set are:
 	 * <ul>
 	 * <li><code>"Phone"</code>: For screens smaller than 600 pixels.</li>
 	 * <li><code>"Tablet"</code>: For screens greater than or equal to 600 pixels and smaller than 1024 pixels.</li>
 	 * <li><code>"Desktop"</code>: For screens greater than or equal to 1024 pixels.</li>
 	 * </ul>
-	 * 
+	 *
 	 * This range set is initialized by default. An initialization via {@link sap.ui.Device.media.html#initRangeSet} is not needed.
-	 * 
+	 *
 	 * A CSS class is added to the page root (<code>html</code> tag) which indicates the current
 	 * screen width range: <code>sapUiMedia-Std-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 * Furthermore there are 5 additional CSS classes to hide elements based on the width of the screen:
@@ -994,14 +996,14 @@ if (typeof window.sap.ui !== "object") {
 	 * <li><code>sapUiVisibleOnlyOnTablet</code>: Will be visible if the screen has 600px or more but less than 1024px</li>
 	 * <li><code>sapUiVisibleOnlyOnDesktop</code>: Will be visible if the screen has 1024px or more</li>
 	 * </ul>
-	 * 
+	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_STANDARD
 	 * @public
 	 */
 
 	/**
 	 * A 4-step range set (Phone, Tablet, Desktop, LargeDesktop).
-	 * 
+	 *
 	 * The ranges of this set are:
 	 * <ul>
 	 * <li><code>"Phone"</code>: For screens smaller than 600 pixels.</li>
@@ -1009,12 +1011,12 @@ if (typeof window.sap.ui !== "object") {
 	 * <li><code>"Desktop"</code>: For screens greater than or equal to 1024 pixels and smaller than 1440 pixels.</li>
 	 * <li><code>"LargeDesktop"</code>: For screens greater than or equal to 1440 pixels.</li>
 	 * </ul>
-	 * 
+	 *
 	 * This range set is initialized by default. An initialization via {@link sap.ui.Device.media.html#initRangeSet} is not needed.
-	 * 
+	 *
 	 * A CSS class is added to the page root (<code>html</code> tag) which indicates the current
 	 * screen width range: <code>sapUiMedia-StdExt-<i>NAME_OF_THE_INTERVAL</i></code>.
-	 * 
+	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_STANDARD_EXTENDED
 	 * @public
 	 */
@@ -1165,7 +1167,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Registers the given event handler to change events of the screen width based on the range set with the specified name.
-	 * 
+	 *
 	 * The event is fired whenever the screen width changes and the current screen width is in
 	 * a different interval of the given range set than before the width change.
 	 *
@@ -1189,7 +1191,7 @@ if (typeof window.sap.ui !== "object") {
 	 *            sName The name of the range set to listen to. The range set must be initialized beforehand
 	 *                  ({@link sap.ui.Device.media.html#initRangeSet}). If no name is provided, the
 	 *                  {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
-	 * 
+	 *
 	 * @name sap.ui.Device.media#attachHandler
 	 * @function
 	 * @public
@@ -1211,7 +1213,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {String}
 	 *             sName The name of the range set to listen to. If no name is provided, the
 	 *                   {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
-	 * 
+	 *
 	 * @name sap.ui.Device.media#detachHandler
 	 * @function
 	 * @public
@@ -1223,16 +1225,16 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Initializes a screen width media query range set.
-	 * 
+	 *
 	 * This initialization step makes the range set ready to be used for one of the other functions in namespace <code>sap.ui.Device.media</code>.
 	 * The most important {@link sap.ui.Device.media.RANGESETS predefined range sets} are initialized automatically.
-	 * 
+	 *
 	 * To make a not yet initialized {@link sap.ui.Device.media.RANGESETS predefined range set} ready to be used, call this function with the
 	 * name of the range set to be initialized:
 	 * <pre>
 	 * sap.ui.Device.media.initRangeSet(sap.ui.Device.media.RANGESETS.SAP_3STEPS);
 	 * </pre>
-	 * 
+	 *
 	 * Alternatively it is possible to define custom range sets as shown in the following example:
 	 * <pre>
 	 * sap.ui.Device.media.initRangeSet("MyRangeSet", [200, 400], "px", ["Small", "Medium", "Large"]);
@@ -1245,7 +1247,7 @@ if (typeof window.sap.ui !== "object") {
 	 * </ul>
 	 * The range names are optional. If they are specified a CSS class (e.g. <code>sapUiMedia-MyRangeSet-Small</code>) is also
 	 * added to the document root depending on the current active range. This can be suppressed via parameter <code>bSuppressClasses</code>.
-	 * 
+	 *
 	 * @param {String}
 	 *             sName The name of the range set to be initialized - either a {@link sap.ui.Device.media.RANGESETS predefined} or custom one.
 	 *                   The name must be a valid id and consist only of letters and numeric digits.
@@ -1262,7 +1264,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {boolean}
 	 *             [bSuppressClasses] Whether or not writing of CSS classes to the document root should be suppressed when
 	 *             <code>aRangeNames</code> are provided
-	 * 
+	 *
 	 * @name sap.ui.Device.media#initRangeSet
 	 * @function
 	 * @public
@@ -1333,7 +1335,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Returns information about the current active range of the range set with the given name.
 	 *
 	 * @param {String} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.html#initRangeSet})
-	 * 
+	 *
 	 * @name sap.ui.Device.media#getCurrentRange
 	 * @return {map} Information about the current active interval of the range set. The returned map has the same structure as the argument of the event handlers ({link sap.ui.Device.media#attachHandler})
 	 * @function
@@ -1350,7 +1352,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Returns <code>true</code> if a range set with the given name is already initialized.
 	 *
 	 * @param {String} sName The name of the range set.
-	 * 
+	 *
 	 * @name sap.ui.Device.media#hasRangeSet
 	 * @return {boolean} Returns <code>true</code> if a range set with the given name is already initialized
 	 * @function
@@ -1367,7 +1369,7 @@ if (typeof window.sap.ui !== "object") {
 	 * ({@link sap.ui.Device.media#RANGESETS}) cannot be removed.
 	 *
 	 * @param {String} sName The name of the range set which should be removed.
-	 * 
+	 *
 	 * @name sap.ui.Device.media#removeRangeSet
 	 * @function
 	 * @protected
@@ -1473,13 +1475,12 @@ if (typeof window.sap.ui !== "object") {
 			"COMBI" : "combi"
 	};
 
-	var isWin8 = !!device.os.windows && device.os.version === 8;
-	var isWin7 = !!device.os.windows && device.os.version === 7;
-
 	device.system = {};
 
-	function getSystem(_simMobileOnDesktop) {
-		var t = isTablet();
+	function getSystem(_simMobileOnDesktop, customUA) {
+		var t = isTablet(customUA);
+		var isWin8 = device.os.windows && device.os.version === 8;
+		var isWin7 = device.os.windows && device.os.version === 7;
 
 		var s = {};
 		s.tablet = ((device.support.touch && !isWin7) || isWin8 || !!_simMobileOnDesktop) && t;
@@ -1494,24 +1495,27 @@ if (typeof window.sap.ui !== "object") {
 		return s;
 	}
 
-	function isTablet() {
-		var android_phone = (/(?=android)(?=.*mobile)/i.test(navigator.userAgent));
-		// According to google documentation: https://developer.chrome.com/multidevice/webview/overview, the WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android.
-		// If you're attempting to differentiate between the WebView and Chrome for Android, you should look for the presence of the Version/_X.X_ string in the WebView user-agent string
-		// The stock browser of Samsung device uses Chrome kernal from Android version 4.4. It behaves differently than the Chrome Webview, therefore it's excluded from this check by checking the 'SAMSUNG'
-		// string in the user agent.
-		var bChromeWebView = device.os.android && device.browser.chrome && (device.os.version >= 4.4) && /Version\/\d.\d/.test(navigator.userAgent) && !/SAMSUNG/.test(navigator.userAgent);
+	function isTablet(customUA) {
+		var ua = customUA || navigator.userAgent;
+		var isWin8 = device.os.windows && device.os.version === 8;
 		if (device.os.name === device.os.OS.IOS) {
-			return /ipad/i.test(navigator.userAgent);
+			return /ipad/i.test(ua);
 		} else {
+			//in real mobile device
 			if (device.support.touch) {
 				if (isWin8) {
 					return true;
 				}
 
-				//in real mobile device
-				var densityFactor = window.devicePixelRatio ? window.devicePixelRatio : 1; // may be undefined in Windows Phone devices
-				if (!bChromeWebView && (device.os.name === device.os.OS.ANDROID) && device.browser.webkit && (parseFloat(device.browser.webkitVersion) > 537.10)) {
+				if (device.browser.chrome && device.os.android && device.os.version >= 4.4) {
+					// From Android version 4.4, WebView also uses Chrome as Kernel.
+					// We can use the user agent pattern defined in Chrome to do phone/tablet detection
+					// According to the information here: https://developer.chrome.com/multidevice/user-agent#chrome_for_android_user_agent,
+					//  the existence of "Mobile" indicates it's a phone. But because the crosswalk framework which is used in Fiori Client
+					//  inserts another "Mobile" to the user agent for both tablet and phone, we need to check whether "Mobile Safari/<Webkit Rev>" exists.
+					return !/Mobile Safari\/[.0-9]+/.test(ua);
+				} else {
+					var densityFactor = window.devicePixelRatio ? window.devicePixelRatio : 1; // may be undefined in Windows Phone devices
 					// On Android sometimes window.screen.width returns the logical CSS pixels, sometimes the physical device pixels;
 					// Tests on multiple devices suggest this depends on the Webkit version.
 					// The Webkit patch which changed the behavior was done here: https://bugs.webkit.org/show_bug.cgi?id=106460
@@ -1519,43 +1523,48 @@ if (typeof window.sap.ui !== "object") {
 					// Chrome 18 with Webkit 535.19 returns the physical pixels.
 					// The BlackBerry 10 browser with Webkit 537.10+ returns the physical pixels.
 					// So it appears like somewhere above Webkit 537.10 we do not hve to divide by the devicePixelRatio anymore.
+					if (device.os.android && device.browser.webkit && (parseFloat(device.browser.webkitVersion) > 537.10)) {
+						densityFactor = 1;
+					}
 
-					// update: Chrome WebView returns physical pixels therefore it's excluded from this special check
-					densityFactor = 1;
+					//this is how android distinguishes between tablet and phone
+					//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
+					var bTablet = (Math.min(window.screen.width / densityFactor, window.screen.height / densityFactor) >= 600);
+
+					// special workaround for Nexus 7 where the window.screen.width is 600px or 601px in portrait mode (=> tablet)
+					// but window.screen.height 552px in landscape mode (=> phone), because the browser UI takes some space on top.
+					// So the detected device type depends on the orientation :-(
+					// actually this is a Chrome bug, as "width"/"height" should return the entire screen's dimensions and
+					// "availWidth"/"availHeight" should return the size available after subtracting the browser UI
+					if (isLandscape()
+							&& (window.screen.height === 552 || window.screen.height === 553) // old/new Nexus 7
+							&& (/Nexus 7/i.test(ua))) {
+						bTablet = true;
+					}
+
+					return bTablet;
 				}
 
-				//this is how android distinguishes between tablet and phone
-				//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
-				var bTablet = (Math.min(window.screen.width / densityFactor, window.screen.height / densityFactor) >= 600);
-
-				// special workaround for Nexus 7 where the window.screen.width is 600px or 601px in portrait mode (=> tablet)
-				// but window.screen.height 552px in landscape mode (=> phone), because the browser UI takes some space on top.
-				// So the detected device type depends on the orientation :-(
-				// actually this is a Chrome bug, as "width"/"height" should return the entire screen's dimensions and
-				// "availWidth"/"availHeight" should return the size available after subtracting the browser UI
-				if (isLandscape()
-						&& (window.screen.height === 552 || window.screen.height === 553) // old/new Nexus 7
-						&& (/Nexus 7/i.test(navigator.userAgent))) {
-					bTablet = true;
-				}
-
-				return bTablet;
 			} else {
+				// This simple android phone detection can be used here because this is the mobile emulation mode in desktop browser
+				var android_phone = (/(?=android)(?=.*mobile)/i.test(ua));
 				// in desktop browser, it's detected as tablet when
 				// 1. Windows 8 device with a touch screen where "Touch" is contained in the userAgent
 				// 2. Android emulation and it's not an Android phone
-				return (device.browser.msie && ua.indexOf("Touch") !== -1) || (device.os.name === device.os.OS.ANDROID && !android_phone);
+				return (device.browser.msie && ua.indexOf("Touch") !== -1) || (device.os.android && !android_phone);
 			}
 		}
 	}
 
-	function setSystem(_simMobileOnDesktop) {
-		device.system = getSystem(_simMobileOnDesktop);
+	function setSystem(_simMobileOnDesktop, customUA) {
+		device.system = getSystem(_simMobileOnDesktop, customUA);
 		if (device.system.tablet || device.system.phone) {
 			device.browser.mobile = true;
 		}
 	}
 	setSystem();
+	// expose the function for unit test
+	device._getSystem = getSystem;
 
 //******** Orientation Detection ********
 
