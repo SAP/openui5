@@ -209,8 +209,8 @@ function(Plugin, DOMUtil) {
 
 		oEvent.stopPropagation();
 
-		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setData) {
-			// Fix for Firfox - Firefox only fires drag events when data is set
+		// Fix for Firfox - Firefox only fires drag events when data is set
+		if (sap.ui.Device.browser.firefox) {
 			oEvent.originalEvent.dataTransfer.setData('text/plain', '');		
 		}
 
