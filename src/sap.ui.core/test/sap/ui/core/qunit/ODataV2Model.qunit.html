@@ -2072,6 +2072,8 @@
 	
 	module("CSRF Token handling", {
 		setup: function() {
+			window.odataFakeServiceData.forbidHeadRequest = false;
+			window.odataFakeServiceData.csrfRequests = [];
 			this.oModel = initModel(sURI, true);
 			updateCsrfToken();
 		},
@@ -2152,6 +2154,75 @@
 						start();
 					}
 				});					
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request using HEAD method", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF Request sent");
+				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
+
+				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF request replied to");
+						ok(refreshSpy.calledOnce, "No additional token request");
+						start();
+					}
+				});
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request trying HEAD, then fallback to GET method", function() {
+		window.odataFakeServiceData.forbidHeadRequest = true;
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests sent");
+				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
+				equals(window.odataFakeServiceData.csrfRequests[1], "GET", "CSRF-Token requested using GET method");
+
+				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests replied to");
+						ok(refreshSpy.calledOnce, "No additional token request");
+						start();
+					}
+				});
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request using only GET method", function() {
+		// Replace model with model that should not use HEAD
+		this.oModel.destroy();
+		this.oModel = initModel(sURI, {
+			json: true,
+			disableHeadRequestForToken: true
+		});
+		updateCsrfToken();
+		
+		
+		window.odataFakeServiceData.forbidHeadRequest = false; // !
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests sent");
+				equals(window.odataFakeServiceData.csrfRequests[0], "GET", "CSRF-Token requested using GET method");
+
+				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests replied to");
+						ok(refreshSpy.calledOnce, "No additional token request");
+						start();
+					}
+				});
 			}.bind(this)
 		});
 	});
