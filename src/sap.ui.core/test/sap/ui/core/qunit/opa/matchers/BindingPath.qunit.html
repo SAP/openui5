@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>qUnit Page for sap.ui.test.matchers.BindingPath</title>
+
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			QUnit.config.autostart = false;
+
+			sap.ui.require(['sap/ui/test/matchers/BindingPath', 'sap/m/List', 'sap/m/StandardListItem', 'sap/ui/model/json/JSONModel'],
+				function (BindingPath, List, StandardListItem, JSONModel) {
+
+					function generateJSONModel() {
+						// Arrange
+						// Create JSON-Data
+						var oJSONData = [
+							{
+								name: "Barbara"
+							},
+							{
+								name: "Gerry"
+							},
+							{
+								name: "Susan"
+							}
+						];
+						return new JSONModel(oJSONData);
+					}
+
+					QUnit.module("Using two models at the same time", {
+
+						beforeEach: function () {
+							this.oModel = generateJSONModel.call(this);
+							this.oModel2 = generateJSONModel.call(this);
+							this.oBindingPath = new BindingPath();
+							// Create new control
+							this.oList = new List();
+							this.oList.setModel(this.oModel, "JSONModel");
+							this.oList.setModel(this.oModel2);
+							this.oList.bindAggregation("items", {
+								path: "JSONModel>/",
+								template: new StandardListItem()
+							});
+						},
+
+						afterEach: function () {
+							// Cleanup
+							this.oModel.destroy();
+							this.oModel2.destroy();
+							this.oList.destroy();
+							this.oBindingPath.destroy();
+						}
+					});
+
+					QUnit.test("Should not match an incorrect binding path", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("");
+						this.oBindingPath.setModelName("JSONModel");
+						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(!bResult, "Did not match because the binding path is incorrect");
+					});
+
+					QUnit.test("Should not match an incorrect binding path despite of using correct model name", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("/1");
+						this.oBindingPath.setModelName("JSONModel");
+						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(!bResult, "Did not match because the binding path is incorrect");
+					});
+
+					QUnit.test("Should match an correct model name and binding path", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("/0");
+						this.oBindingPath.setModelName("JSONModel");
+						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(bResult, "Matched because the binding path and model name are correct");
+					});
+
+					QUnit.test("Should not match an incorrect model name despite of using correct binding path", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("/0");
+						this.oBindingPath.setModelName("Model");
+						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(!bResult, "Did not match because the model name is incorrect");
+					});
+
+					QUnit.test("Should not match no model name despite of using correct binding path", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("/0");
+						this.oBindingPath.setModelName("");
+						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(!bResult, "Did not match because no model name was set");
+					});
+
+
+					QUnit.module("Using an unnamed model", {
+
+						beforeEach: function () {
+							this.oModel = generateJSONModel.call(this);
+							this.oBindingPath = new BindingPath();
+							// Create new control
+							this.oList = new List();
+							this.oList.setModel(this.oModel);
+							this.oList.bindAggregation("items", {
+								path: "/",
+								template: new StandardListItem()
+							});
+						},
+
+						afterEach: function () {
+							// Cleanup
+							this.oModel.destroy();
+							this.oList.destroy();
+						}
+					});
+
+					QUnit.test("Should not match an incorrect model name despite of using correct binding path", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("/0");
+						this.oBindingPath.setModelName("Model");
+						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(!bResult, "Did not match because the model name is incorrect");
+					});
+
+					QUnit.test("Should match a correct binding path", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("/0");
+						this.oBindingPath.setModelName("");
+						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(bResult, "Matched because the binding path is correct");
+					});
+
+					QUnit.test("Should not match an incorrect binding path", function (assert) {
+						// System under Test
+						this.oBindingPath.setPath("/");
+						this.oBindingPath.setModelName("");
+						var bResult =this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						// Assert
+						assert.ok(!bResult, "Did not match because the biding path is incorrect");
+					});
+					QUnit.start();
+				});
+		</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for sap.ui.test.matchers.BindingPath</h1>
+
+		<h2 id="qunit-banner"></h2>
+
+		<h2 id="qunit-userAgent"></h2>
+
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+
+</html>
