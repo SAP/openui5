@@ -35,9 +35,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @public
 	 * @since 1.27.1
 	 */
-	var Byte = Int.extend("sap.ui.model.odata.type.Byte",
-		/** @lends sap.ui.model.odata.type.Byte.prototype */
-		{
+	var Byte = Int.extend("sap.ui.model.odata.type.Byte", {
 			constructor : function () {
 				Int.apply(this, arguments);
 			}

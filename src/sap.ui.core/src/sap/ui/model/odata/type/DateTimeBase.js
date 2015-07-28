@@ -117,9 +117,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @abstract
 	 * @since 1.27.0
 	 */
-	var DateTimeBase = ODataType.extend("sap.ui.model.odata.type.DateTimeBase",
-			/** @lends sap.ui.model.odata.type.DateTimeBase.prototype */
-			{
+	var DateTimeBase = ODataType.extend("sap.ui.model.odata.type.DateTimeBase", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);
