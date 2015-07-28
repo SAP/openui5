@@ -1095,7 +1095,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (!this.getEnabled()) {
 			return;
 		}
-		if (this.getSameFilenameAllowed()) {
+		if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
 			this.setValue("", true);
 		}
 		var iKeyCode = oEvent.keyCode,
