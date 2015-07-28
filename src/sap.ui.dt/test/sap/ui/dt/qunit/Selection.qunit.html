@@ -28,7 +28,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
-		jQuery.sap.require("sap.ui.dt.Overlay");
+		jQuery.sap.require("sap.ui.dt.ElementOverlay");
 		jQuery.sap.require("sap.ui.dt.Selection");
 
 		QUnit.module("Given that an Selection is initialized with mode SingleSelection", {
@@ -46,7 +46,7 @@
 
 		QUnit.test("when overlay is added to selection", function(assert) {
 			var done = assert.async();
-			var oOverlay = new sap.ui.dt.Overlay();
+			var oOverlay = new sap.ui.dt.ElementOverlay();
 
 			this.oSelection.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelection.getSelection(), "selection change event is fired with a correct selection");
@@ -62,7 +62,7 @@
 		QUnit.test("when overlay is added to selection and then removed from selection", function(assert) {
 			var done = assert.async();
 
-			var oOverlay = new sap.ui.dt.Overlay();
+			var oOverlay = new sap.ui.dt.ElementOverlay();
 			this.oSelection.add(oOverlay);
 
 			this.oSelection.attachEventOnce("change", function(oEvent) {
@@ -78,8 +78,8 @@
 
 
 		QUnit.test("when two overlay are added to selection", function(assert) {
-			var oOverlay1 = new sap.ui.dt.Overlay();
-			var oOverlay2 = new sap.ui.dt.Overlay();
+			var oOverlay1 = new sap.ui.dt.ElementOverlay();
+			var oOverlay2 = new sap.ui.dt.ElementOverlay();
 			this.oSelection.add(oOverlay1);
 			this.oSelection.add(oOverlay2);
 			assert.strictEqual(this.oSelection.getSelection().length, 1, "one overlay is selected");
@@ -98,8 +98,8 @@
 		});
 
 		QUnit.test("when two overlays are added to selection", function(assert) {
-			var oOverlay1 = new sap.ui.dt.Overlay();
-			var oOverlay2 = new sap.ui.dt.Overlay();
+			var oOverlay1 = new sap.ui.dt.ElementOverlay();
+			var oOverlay2 = new sap.ui.dt.ElementOverlay();
 			this.oSelection.add(oOverlay1);
 			this.oSelection.add(oOverlay2);
 			assert.strictEqual(this.oSelection.getSelection().length, 2, "two overlays are selected");
@@ -108,8 +108,8 @@
 		});
 
 		QUnit.test("when two overlays are added to selection and then a second one is removed from selection", function(assert) {
-			var oOverlay1 = new sap.ui.dt.Overlay();
-			var oOverlay2 = new sap.ui.dt.Overlay();
+			var oOverlay1 = new sap.ui.dt.ElementOverlay();
+			var oOverlay2 = new sap.ui.dt.ElementOverlay();
 			this.oSelection.set(oOverlay1, true); //.	 add
 			this.oSelection.set(oOverlay2, true); //.add
 			this.oSelection.set(oOverlay2, false); //.remove
@@ -120,9 +120,9 @@
 		});
 
 		QUnit.test("when more 3 overlays are added to selection, selectionMode is switched to Single and one more overlay is added", function(assert) {
-			var oOverlay1 = new sap.ui.dt.Overlay();
-			var oOverlay2 = new sap.ui.dt.Overlay();
-			var oOverlay3 = new sap.ui.dt.Overlay();
+			var oOverlay1 = new sap.ui.dt.ElementOverlay();
+			var oOverlay2 = new sap.ui.dt.ElementOverlay();
+			var oOverlay3 = new sap.ui.dt.ElementOverlay();
 			this.oSelection.add(oOverlay1);
 			this.oSelection.add(oOverlay2); 
 			this.oSelection.setMode("Single");
@@ -136,8 +136,8 @@
 		});
 
 		QUnit.test("when more 3 overlays are added to selection, selectionMode is switched to Single and one overlay is removed from selection", function(assert) {
-			var oOverlay1 = new sap.ui.dt.Overlay();
-			var oOverlay2 = new sap.ui.dt.Overlay();
+			var oOverlay1 = new sap.ui.dt.ElementOverlay();
+			var oOverlay2 = new sap.ui.dt.ElementOverlay();
 			this.oSelection.add(oOverlay1);
 			this.oSelection.add(oOverlay2); 
 			this.oSelection.setMode("Single");

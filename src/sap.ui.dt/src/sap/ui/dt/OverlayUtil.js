@@ -90,7 +90,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 */
 	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
 		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElementInstance(), sType)) {
-			oOverlay = oOverlay.getParentOverlay();
+			oOverlay = oOverlay.getParentElementOverlay();
 		}
 
 		return oOverlay;
@@ -170,7 +170,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 			} else {
 				//get next sibling from next aggregation in the same parent
 				if (iIndex === aAggregationOverlays.length - 1) {
-					var oParent = oOverlay.getParentOverlay();
+					var oParent = oOverlay.getParentElementOverlay();
 					aAggregationOverlays = oParent.getAggregationOverlays();
 					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) + 1; iIndex < aAggregationOverlays.length; iIndex++) {
 						var aOverlays = aAggregationOverlays[iIndex].getChildren();
@@ -201,7 +201,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 			} else {
 				//get previous sibling from previous aggregation in the same parent
 				if (iIndex === 0) {
-					var oParent = oOverlay.getParentOverlay();
+					var oParent = oOverlay.getParentElementOverlay();
 					aAggregationOverlays = oParent.getAggregationOverlays();
 					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) - 1; iIndex >= 0; iIndex--) {
 						var aOverlays = aAggregationOverlays[iIndex].getChildren();
@@ -233,7 +233,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		}
 
 		do {
-			oOverlay = oOverlay.getParentOverlay();
+			oOverlay = oOverlay.getParentElementOverlay();
 			oNextSiblingOverlay = this.getNextSiblingOverlay(oOverlay);
 		} while (oOverlay && !oNextSiblingOverlay);
 
@@ -264,7 +264,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 			return oPreviousSiblingOverlay;
 		}
 
-		return oOverlay.getParentOverlay();
+		return oOverlay.getParentElementOverlay();
 	};
 
 	/**
@@ -274,7 +274,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		var oParentOverlay = oOverlay;
 		do {
 			oOverlay = oParentOverlay;
-			oParentOverlay = oOverlay.getParentOverlay();
+			oParentOverlay = oOverlay.getParentElementOverlay();
 		} while (oParentOverlay);
 
 		return oOverlay;
