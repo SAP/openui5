@@ -8,12 +8,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new MessageToast.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Responsible for displaying the new incoming messages, one at the time, on top of the MessageBar.
@@ -22,39 +22,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.4.0. 
+	 * @deprecated Since version 1.4.0.
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
 	 * @alias sap.ui.commons.MessageToast
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */
 	var MessageToast = Control.extend("sap.ui.commons.MessageToast", /** @lends sap.ui.commons.MessageToast.prototype */ { metadata : {
-	
+
 		deprecated : true,
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
-			 * Id of the anchor on top of which the MessageToast is to render.
+			 * ID of the anchor on top of which the MessageToast is to render.
 			 */
 			anchorId : {type : "string", group : "Misc", defaultValue : null}
 		},
 		events : {
-	
+
 			/**
-			 * Fired once the "toast()" method is over, so that the MessageBar can toast() another message if needed.
+			 * Fired once the <code>toast()</code> method is over, so that the MessageBar can "toast" another message if needed.
 			 */
 			next : {}
 		}
 	}});
-	
-	
+
+	/**
+	 * Initializes the control
+	 *
+	 * @override
+	 * @private
+	 */
 	MessageToast.prototype.init = function(){
 		// Local variables...
 		this.oMessage    = null;
 		this.sAnchorId   = "";
 		this.bIdle       = true;
 		this.sLeftOffset = "";
-	
+
 		// Popup(oContent, bModal, bShadow, bAutoClose) container initialization:
 		// - oModal: "true/false" : For blocking the background window.
 		// - bShadow: "false" as the MessageBar Popup is displayed without shadow in all themes.
@@ -64,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Asking the Popup to fire our "next" event once a "toast()" is over.
 		this.oPopup.attachClosed(this.next, this);
 	};
-	
+
 	/**
 	 * Destroys this Control instance, called by Element#destroy()
 	 * @private
@@ -73,11 +78,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (!this.bIdle) {
 		this.close();
 	  }
-	
+
 		this.oPopup.destroy();
 		this.oPopup = null;
 	};
-	
+
 	/**
 	 * This utility makes sure that the Toast is pointing down towards
 	 * the right MessageBar Icon.
@@ -88,9 +93,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  // The MessageToast has a minWidth matching that of the MessageBar.
 	  // (That allows us to position the down-arrow without moving the MessageToast.)
 	  // The MessageToast Arrow aligns towards the proper MessageBar Icon.
-	
+
 	  var rtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 	  // 1) Calculating the distance between the Icon and the right side of its MessageBar container:
 	  var jIcon = jQuery.sap.byId(this.sAnchorId); // Anchor against which our Arrow has to align
 	//if (!jIcon) return;
@@ -101,20 +106,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (iconPosition) {
 		  var targetRightOffset = rtl ? iconPosition.left + jIcon.outerWidth()
 									  : barWidth - iconPosition.left;
-	
-	
+
+
 		  // 2) Calculating the default distance between the Arrow and the right side of our Toast:
 			var jToast = this.$();  // = jQuery.sap.byId(this.getId());
 		  var toastWidth = jToast.width();
 		  var defaultArrowRightOffset = Math.max(toastWidth,barWidth);
-	
+
 		  // 3) Taking care of too-small a Toast:
 		  var delta = barWidth - toastWidth;
 			if (delta > 0) {
 			// Making the Toast as wide as the Bar:
 			jToast.css('minWidth', barWidth);
 			}
-	
+
 		  // 4) Now, we need to move our Arrow right, by what is missing:
 		  var moveRightOffset = rtl ? (defaultArrowRightOffset - targetRightOffset + 2) + "px"
 									: (defaultArrowRightOffset - targetRightOffset - 2) + "px";
@@ -130,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	// #############################################################################
 	// Internal Utilities
 	// #############################################################################
@@ -144,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  this.bIdle = true;
 	  this.fireNext();
 	}
-	
+
 	/**
 	 * This utility opens the MessageToast Popup.
 	 * @private
@@ -154,12 +159,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (!this.bIdle) {
 		this.oPopup.close(0);
 	  }
-	
+
 		// Toast start (allows for no interruption):
 	  this.bIdle = false;
-	
+
 	  var rtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		// Defining or fetching the Popup attributes:
 	  var popupSnapPoint  = rtl ? sap.ui.core.Popup.Dock.LeftBottom : sap.ui.core.Popup.Dock.RightBottom;
 	  var anchorSnapPoint = rtl ? sap.ui.core.Popup.Dock.LeftTop    : sap.ui.core.Popup.Dock.RightTop;
@@ -175,7 +180,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  // Invoking the MsgBar Popup open function(iDuration, my, at, of, offset):
 	  this.oPopup.open(iDuration, popupSnapPoint, anchorSnapPoint, anchor, relativeAnchorPosition);
 	};
-	
+
 	/**
 	 * This utility closes the MessageToast Popup.
 	 * @private
@@ -184,7 +189,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  // Invoking the Popup close = function(iDuration):
 	  this.oPopup.close(iDuration);
 	};
-	
+
 	/**
 	 * This utility returns the class of the MessageToast container,
 	 * which changes according to the displayed message TYPE/PRIORITY
@@ -200,16 +205,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  }
 	  return css;
 	};
-	
+
 	// #############################################################################
 	// Public APIs
 	// #############################################################################
 	/**
-	 * This public API receives the list of Messages to be displayed,
-	 * and re-render this Control if visible.
-	 * 
 	 * Triggers the toasting of a message, on top of the MessageBar.
 	 * If no message is supplied, displays the "Multiple new messages..." message.
+	 *
+	 * Receives the list of Messages to be displayed,
+	 * and re-renders this Control if it is visible.
 	 *
 	 * @param {sap.ui.commons.Message} oMessage
 	 *         The Message to be toasted.
@@ -217,7 +222,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *         DOM ID of the anchor against which the Toast Arrow should align for a given Toast.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This method also will be described in the UI5 design-time metamodel
 	 */
 	MessageToast.prototype.toast = function(oMessage, sAnchorId) {
 	  // Storing the supplied data:
@@ -227,16 +232,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
 	  this.open(750);
 	  this.close(2250); // <-- CAN BE COMMENTED OUT WHILE STYLING THE TOAST...
-	
+
 		return this;
 	};
-	
+
 	/**
-	 * Returns true if no message is being toasted.
+	 * Returns the idle state of the control. Returns true if no message is being toasted.
 	 *
 	 * @type boolean
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This method also will be described in the UI5 design-time metamodel
 	 */
 	MessageToast.prototype.isIdle = function() {
 	  return this.bIdle;
