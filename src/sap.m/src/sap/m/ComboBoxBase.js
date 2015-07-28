@@ -669,6 +669,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 */
 		ComboBoxBase.prototype.clearSelection = function() {};
 
+		ComboBoxBase.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
+			InputBase.prototype.updateValueStateClasses.apply(this, arguments);
+
+			var mValueState = sap.ui.core.ValueState,
+				CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS,
+				$DomRef = this.$();
+
+			if (sOldValueState !== mValueState.None) {
+				$DomRef.removeClass(CSS_CLASS + "State " + CSS_CLASS + sOldValueState);
+			}
+
+			if (sValueState !== mValueState.None) {
+				$DomRef.addClass(CSS_CLASS + "State " + CSS_CLASS + sValueState);
+			}
+		};
+
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */

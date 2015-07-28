@@ -3178,6 +3178,83 @@
 			});
 
 			/* ------------------------------ */
+			/* setValueState()                */
+			/* ------------------------------ */
+
+			test("value state and value state message", function() {
+				var oErrorComboBox = new sap.m.ComboBox("errorcombobox", {
+					valueState: "Error",
+					valueStateText: "Error Message",
+					items: [
+						new sap.ui.core.Item({
+							key: "DZ",
+							text: "Algeria"
+						}),
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany",
+						}),
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba",
+						})
+					]
+				});
+
+				// arrange
+				oErrorComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				oErrorComboBox.open();
+				this.clock.tick(1000);
+				ok(!jQuery.sap.domById("errorcombobox-message"), "error message popup is not open when list is open");
+
+				oErrorComboBox.close();
+				this.clock.tick(1000);
+
+				// workaround to fix failing test in IE9-11
+				if (sap.ui.Device.browser.msie) {
+					oErrorComboBox.focus();
+					this.clock.tick(1000);
+				}
+
+				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when list is closed and focus is back to input");
+
+				oErrorComboBox.focus();
+				this.clock.tick(500);
+				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when focusin");
+				equal(oErrorComboBox.getValueStateText(), "Error Message", "error message is correct");
+
+				oErrorComboBox.getFocusDomRef().blur();
+				this.clock.tick(500);
+				ok(!jQuery.sap.domById("errorcombobox-message"), "no error message popup is closed when focus is out");
+
+				// cleanup
+				oErrorComboBox.destroy();
+			});
+
+			// BCP 1570763824
+			test("it should add the corresponding CSS classes", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oComboBox.setValueState(sap.ui.core.ValueState.Error);
+
+				// assert
+				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS));
+				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Error"));
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------ */
 			/* destroy()                      */
 			/* ------------------------------ */
 
@@ -3316,57 +3393,6 @@
 
 				// cleanup
 				oComboBox.destroy();
-			});
-
-			test("value state and value state message", function() {
-				var oErrorComboBox = new sap.m.ComboBox("errorcombobox", {
-					valueState: "Error",
-					valueStateText: "Error Message",
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria"
-						}),
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-						}),
-						new sap.ui.core.Item({
-							key: "CU",
-							text: "Cuba",
-						})
-					]
-				});
-
-				// arrange
-				oErrorComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				oErrorComboBox.open();
-				this.clock.tick(1000);
-				ok(!jQuery.sap.domById("errorcombobox-message"), "error message popup is not open when list is open");
-
-				oErrorComboBox.close();
-				this.clock.tick(1000);
-				//workaround to fix failing test in IE9-11
-				if (sap.ui.Device.browser.msie) {
-					oErrorComboBox.focus();
-					this.clock.tick(1000);
-				}
-				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when list is closed and focus is back to input");
-
-				oErrorComboBox.focus();
-				this.clock.tick(500);
-				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when focusin");
-				equal(oErrorComboBox.getValueStateText(), "Error Message", "error message is correct");
-
-				oErrorComboBox.getFocusDomRef().blur();
-				this.clock.tick(500);
-				ok(!jQuery.sap.domById("errorcombobox-message"), "no error message popup is closed when focus is out");
-
-				// cleanup
-				oErrorComboBox.destroy();
-
 			});
 
 			/* ------------------------------------ */
