@@ -431,10 +431,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * @private
 			 */
 			process : function(oRootElement, oViewInfo, mSettings) {
-				var sCaller,
+				var sCaller = oViewInfo.caller,
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
-					aFragmentNames = [], // stack of view and fragment names
+					aFragmentNames = [oViewInfo.name], // stack of view and fragment names
 					iNestingLevel = 0,
 					sName,
 					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
@@ -762,7 +762,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						warn(oElement, 'Error in formatter:', ex);
 					}
 
-					if (oViewInfo && vName !== oUNBOUND && sap.ui.core.CustomizingConfiguration) {
+					if (vName !== oUNBOUND && sap.ui.core.CustomizingConfiguration) {
 						oViewExtension = sap.ui.core.CustomizingConfiguration.getViewExtension(
 							aFragmentNames[aFragmentNames.length - 1], vName,
 							oViewInfo.componentId);
@@ -1093,15 +1093,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					}
 				}
 
-				//TODO remove this legacy compatibility for design time templating
-				if (typeof mSettings === "string") {
-					sCaller = mSettings;
-					mSettings = oViewInfo;
-					oViewInfo = null; // not available
-				} else {
-					sCaller = oViewInfo.caller;
-					aFragmentNames.push(oViewInfo.name);
-				}
 				mSettings = mSettings || {};
 
 				if (bDebug) {
