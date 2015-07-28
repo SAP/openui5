@@ -759,6 +759,13 @@
 		  "samples": ["sap.m.sample.TileContainer"]
 		},
 		{
+		"id": "sap.m.TimePicker",
+		"name": "Time Picker",
+		"category": "User Input",
+		"since": "1.30",
+		"samples": ["sap.m.sample.TimePicker"]
+	  },
+		{
 		  "id": "sap.m.Title",
 		  "name": "Title",
 		  "category": "Display",
@@ -1836,6 +1843,11 @@
 		  "id": "sap.m.sample.StandardNoMargins",
 		  "name": "Remove Margins",
 		  "description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
+		},
+		{
+		"id": "sap.m.sample.TimePicker",
+		"name": "Time Picker",
+		"description": "TimePicker examples displaying the four time formats: \nHH : mm, \nHH : mm : ss, \nHH : mm : pp, \nHH : mm : ss : pp"
 		},
 		{
 		  "id": "sap.m.sample.ContainerNoPadding",
