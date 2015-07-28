@@ -109,7 +109,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		var sIconUrl = oLabel.getIcon();
 		var oConfig = oRenderManager.getConfiguration();
 		var aClasses = [];
-		var mAttributes = {};
+		var mAttributes = {
+			"title": null
+		};
 	
 		aClasses.push("sapUiLblIco");
 		if ((oLabel.getTextDirection() == sap.ui.core.TextDirection.RTL && !oConfig.getRTL()) || (oLabel.getTextDirection() == sap.ui.core.TextDirection.LTR && oConfig.getRTL())) {
