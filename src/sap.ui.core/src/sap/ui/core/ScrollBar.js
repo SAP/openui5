@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.ScrollBar.
-sap.ui.define(['jquery.sap.global', './Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
+	function(jQuery, Device, Control, library) {
 	"use strict";
 
 
@@ -172,12 +172,20 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		var stepSize = null;
 	
 		var $ffsize = this.$("ffsize");
-		if (!!sap.ui.Device.browser.firefox) {
+		if (!!Device.browser.firefox) {
 			stepSize = $ffsize.outerHeight();
+			if ( stepSize === 0) {
+				// the following code is used if a container of the scrollbar is rendered invisible and afterwards is set to visible
+				stepSize = window.getComputedStyle(jQuery("body").get(0))["font-size"];
+				if (jQuery.sap.endsWith(stepSize,"px")) {
+					stepSize = stepSize.substr(0, stepSize.length - 2);
+				}
+				stepSize = parseInt(stepSize, 10);
+			}
 		}
 		$ffsize.remove();
 	
-		if (!!sap.ui.Device.browser.webkit) {
+		if (!!Device.browser.webkit) {
 			// document.width - was not supported by Chrome 17 anymore, but works again with Chrome from 18 to 30, and does not work in chrom 31.
 			if  (!document.width) {
 				stepSize = Math.round(40 / (window.outerWidth / jQuery(document).width()));
@@ -188,19 +196,19 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		}
 	
 		if (this.getVertical()) {
-			if (!!sap.ui.Device.browser.firefox) {
+			if (!!Device.browser.firefox) {
 				this._iFactor = stepSize;
-			} else if (!!sap.ui.Device.browser.webkit) {
+			} else if (!!Device.browser.webkit) {
 				this._iFactor = stepSize;
 			} else {
 				this._iFactor = Math.floor(iScrollBarSize  * 0.125);
 			}
-			this._iFactorPage = !!sap.ui.Device.browser.firefox ? iScrollBarSize - stepSize : Math.floor(iScrollBarSize * 0.875);
+			this._iFactorPage = !!Device.browser.firefox ? iScrollBarSize - stepSize : Math.floor(iScrollBarSize * 0.875);
 		} else {
-			if (!!sap.ui.Device.browser.firefox) {
+			if (!!Device.browser.firefox) {
 				this._iFactor = 10;
 				this._iFactorPage = Math.floor(iScrollBarSize * 0.8);
-			} else if (!!sap.ui.Device.browser.webkit) {
+			} else if (!!Device.browser.webkit) {
 				this._iFactor = stepSize;
 				this._iFactorPage = Math.floor(iScrollBarSize  * 0.875);
 			} else {
@@ -378,9 +386,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 				iScrollPos = Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
 				iScrollPos = Math.round(this._$ScrollDomRef.scrollLeft());
-				if ( !!sap.ui.Device.browser.firefox && this._bRTL ) {
+				if ( !!Device.browser.firefox && this._bRTL ) {
 					iScrollPos = Math.abs(iScrollPos);
-				} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
+				} else if ( !!Device.browser.webkit && this._bRTL ) {
 					var oScrollDomRef = this._$ScrollDomRef.get(0);
 					iScrollPos = oScrollDomRef.scrollWidth - oScrollDomRef.clientWidth - oScrollDomRef.scrollLeft;
 				}
@@ -456,7 +464,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		if (oOwnerDomRef) {
 			this._$OwnerDomRef = jQuery(oOwnerDomRef);
 			if (this.getVertical()) {
-				this._$OwnerDomRef.unbind(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this.onmousewheel);
+				this._$OwnerDomRef.unbind(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this.onmousewheel);
 			}
 			
 			if (jQuery.sap.touchEventMode === "ON") {
@@ -480,7 +488,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		if (oOwnerDomRef) {
 			this._$OwnerDomRef = jQuery(oOwnerDomRef);
 			if (this.getVertical()) {
-				this._$OwnerDomRef.bind(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this.onmousewheel, this));
+				this._$OwnerDomRef.bind(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this.onmousewheel, this));
 			}
 	
 			if (jQuery.sap.touchEventMode === "ON") {
@@ -570,9 +578,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		if ( this.getVertical()) {
 				this._$ScrollDomRef.scrollTop(iScrollPos);
 			} else {
-			if ( !!sap.ui.Device.browser.firefox && this._bRTL ) {
+			if ( !!Device.browser.firefox && this._bRTL ) {
 				this._$ScrollDomRef.scrollLeft(-iScrollPos);
-			} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
+			} else if ( !!Device.browser.webkit && this._bRTL ) {
 				var oScrollDomRef = this._$ScrollDomRef.get(0);
 				this._$ScrollDomRef.scrollLeft(oScrollDomRef.scrollWidth - oScrollDomRef.clientWidth - iScrollPos);
 			} else {
@@ -629,9 +637,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 				iScrollPos = Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
 				iScrollPos = Math.round(this._$ScrollDomRef.scrollLeft());
-				if (!!sap.ui.Device.browser.firefox && this._bRTL ) {
+				if (!!Device.browser.firefox && this._bRTL ) {
 					iScrollPos = Math.abs(iScrollPos);
-				} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
+				} else if ( !!Device.browser.webkit && this._bRTL ) {
 					var oScrollDomRef = this._$ScrollDomRef.get(0);
 					iScrollPos = oScrollDomRef.scrollWidth - oScrollDomRef.clientWidth - oScrollDomRef.scrollLeft;
 				}
@@ -710,4 +718,4 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 
 	return ScrollBar;
 
-}, /* bExport= */ true);
+});

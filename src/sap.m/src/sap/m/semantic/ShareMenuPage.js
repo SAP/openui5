@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/semantic/SemanticPageSegmentedContainer", "sap/m/semantic/ShareMenu", "sap/m/ActionSheet", "sap/m/Button"],
+sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/semantic/SegmentedContainer", "sap/m/semantic/ShareMenu", "sap/m/ActionSheet", "sap/m/Button"],
 		function(jQuery, SemanticPage, SemanticConfiguration, SemanticPageRenderer, SegmentedContainer, ShareMenu, ActionSheet, Button) {
 	"use strict";
 

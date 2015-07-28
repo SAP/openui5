@@ -439,29 +439,41 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		//If group mode is enabled nodes which have children are visualized as if they were group header
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
-			iCount = this.getVisibleRowCount();
-		
-		for (var iRow = 0; iRow < iCount; iRow++) {
-			var oContext = this.getContextByIndex(iFirstRow + iRow),
-				$row = this.getRows()[iRow].$();
-			
-			this._updateExpandIcon($row, oContext, iFirstRow + iRow);
-			
-			if (this.getUseGroupMode()) {
-				var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
-				if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
-					// modify the rows
-					$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
-					var sClass = oBinding.isExpanded(iFirstRow + iRow) ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
-					$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\">" + this.getModel().getProperty(this.getGroupHeaderProperty(), oContext) + "</div>");
-					$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
+			iCount = this.getVisibleRowCount(),
+			iFixedBottomRowCount = this.getFixedBottomRowCount(),
+			iFirstFixedBottomRowIndex = iCount - iFixedBottomRowCount;
+
+		var iIndex = iFirstRow;
+		if (oBinding) {
+			for (var iRow = 0; iRow < iCount; iRow++) {
+				if (iFixedBottomRowCount > 0 && iRow >= iFirstFixedBottomRowIndex) {
+					iIndex = oBinding.getLength() - iCount + iRow;
 				} else {
-					$row.removeClass("sapUiTableGroupHeader");
-					if (oContext) {
-						$row.removeClass("sapUiTableRowHidden");
+					iIndex = iFirstRow + iRow;
+				}
+
+				var oContext = this.getContextByIndex(iIndex),
+					$DomRefs = this.getRows()[iRow].getDomRefs(true),
+					$row = $DomRefs.rowFixedPart || $DomRefs.rowScrollPart;
+
+				this._updateExpandIcon($row, oContext, iIndex);
+
+				if (this.getUseGroupMode()) {
+					var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
+					if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
+						// modify the rows
+						$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
+						var sClass = oBinding.isExpanded(iFirstRow + iRow) ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
+						$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\">" + this.getModel().getProperty(this.getGroupHeaderProperty(), oContext) + "</div>");
+						$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
+					} else {
+						$row.removeClass("sapUiTableGroupHeader");
+						if (oContext) {
+							$row.removeClass("sapUiTableRowHidden");
+						}
+						$rowHdr.html("");
+						$rowHdr.removeClass("sapUiTableGroupHeader");
 					}
-					$rowHdr.html("");
-					$rowHdr.removeClass("sapUiTableGroupHeader");
 				}
 			}
 		}
@@ -491,21 +503,26 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			
 			var $TreeIcon = $row.find(".sapUiTableTreeIcon");
 			var sTreeIconClass = "sapUiTableTreeIconLeaf";
+			var $FirstTd = $row.children("td.sapUiTableTdFirst");
 			if (!this.getUseGroupMode()) {
-				$TreeIcon.css("marginLeft", iLevel * 17);
+				if (this._bRtlMode === true) {
+					$TreeIcon.css("marginRight", iLevel * 17);
+				} else {
+					$TreeIcon.css("marginLeft", iLevel * 17);
+				}
 			}
 			if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
 				sTreeIconClass = bIsExpanded ? "sapUiTableTreeIconNodeOpen" : "sapUiTableTreeIconNodeClosed";
-				$row.attr('aria-expanded', bIsExpanded);
+				$FirstTd.attr('aria-expanded', bIsExpanded);
 				var sNodeText = bIsExpanded ? this._oResBundle.getText("TBL_COLLAPSE") : this._oResBundle.getText("TBL_EXPAND");
 				$TreeIcon.attr('title', sNodeText);
 			} else {
-				$row.attr('aria-expanded', false);
+				$FirstTd.attr('aria-expanded', false);
 				$TreeIcon.attr('aria-label', this._oResBundle.getText("TBL_LEAF"));
 			}
 			$TreeIcon.removeClass("sapUiTableTreeIconLeaf sapUiTableTreeIconNodeOpen sapUiTableTreeIconNodeClosed").addClass(sTreeIconClass);
 			$row.attr("data-sap-ui-level", iLevel);
-			$row.attr('aria-level', iLevel + 1);
+			$FirstTd.attr('aria-level', iLevel + 1);
 		}
 
 	};

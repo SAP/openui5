@@ -46,7 +46,9 @@ function(ManagedObject) {
 			aggregations : {},
 			events : {
 				"change" : {
-					type : "sap.ui.dt.Overlay[]"
+					parameters : {
+						selection : { type : "sap.ui.dt.Overlay[]" }
+					}
 				}
 			}
 		}
@@ -106,10 +108,10 @@ function(ManagedObject) {
 		var iIndex = this._aSelection.indexOf(oOverlay);
 		if (iIndex !== -1) {
 			this._aSelection.splice(iIndex, 1);
-			this.fireChange({
-				selection : this.getSelection()
-			});
 		}
+		this.fireChange({
+			selection : this.getSelection()
+		});
 	};	
 
 	/**

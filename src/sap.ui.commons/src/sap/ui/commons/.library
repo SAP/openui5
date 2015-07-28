@@ -15,6 +15,9 @@
     <dependency>
       <libraryName>sap.ui.layout</libraryName>
     </dependency>
+    <dependency>
+      <libraryName>sap.ui.unified</libraryName>
+    </dependency>
   </dependencies>
   
   <appData>

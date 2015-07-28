@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.FocusHandler
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/Object', 'jquery.sap.script'],
-	function(jQuery, Device, Global, BaseObject/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.script'],
+	function(jQuery, Device, BaseObject/* , jQuerySap */) {
 	"use strict";
 
 
@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * @param {Element} oRootRef e.g. document.body
 		 * @param {sap.ui.core.Core} oCore Reference to the Core implementation
 		 * @alias sap.ui.core.FocusHandler
+		 * @private
 		 */
 		var FocusHandler = BaseObject.extend("sap.ui.core.FocusHandler", /** @lends sap.ui.core.FocusHandler.prototype */ {
 			constructor : function(oRootRef, oCore) {
@@ -336,4 +337,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 	return FocusHandler;
 
-}, /* bExport= */ true);
+});

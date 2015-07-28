@@ -26,6 +26,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	}
 
 	/**
+	 * Util function which merges/creates a map of property definitions to track
+	 * from which "source" a property was defined.
+	 *
+	 * This function gets used to find out which Component has defined
+	 * which "dataSource/model".
+	 *
+	 * @param {object} mDefinitions Map with definitions to check
+	 * @param {object} mDefinitionSource Object to extend with definition - source mapping
+	 * @param {object} mSourceData Actual map with definitions
+	 * @param {object} oSource Corresponding source object which should be assigened to the definitions-source map
+	 * @private
+	 */
+	function mergeDefinitionSource(mDefinitions, mDefinitionSource, mSourceData, oSource) {
+		if (mSourceData) {
+			for (var sName in mDefinitions) {
+				if (!mDefinitionSource[sName] && mSourceData[sName] && mSourceData[sName].uri) {
+					mDefinitionSource[sName] = oSource;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Creates and initializes a new component with the given <code>sId</code> and
 	 * settings.
 	 * 
@@ -81,9 +104,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						type: "XML"
 					}
 				},
-				"sap.ui.controllerReplacements": {
-					"sap.xx.org.Main": "sap.xx.new.Main"
-				},
 				"sap.ui.viewExtensions": {
 					"sap.xx.new.Main": {
 						"extensionX": {
@@ -93,6 +113,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						"extensionY": {
 							...
 						}
+					}
+				},
+				"sap.ui.controllerExtensions": {
+					"sap.xx.org.Main": {
+						"controllerName": "sap.xx.new.Main",
+						"controllerNames": ["sap.xx.new.Sub1", "sap.xx.new.Sub2"]
 					}
 				},
 				"sap.ui.viewModification": {
@@ -380,26 +406,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 */
 	Component.prototype.initComponentModels = function() {
 
+		// retrieve the merged sap.app and sap.ui5 sections of the manifest
+		// to create the models for the component + inherited ones
 		var oMetadata = this.getMetadata();
-		var oAppManifest = oMetadata.getManifestEntry("sap.app");
-		var oUI5Manifest = oMetadata.getManifestEntry("sap.ui5");
+		var oAppManifest = oMetadata.getManifestEntry("sap.app", true);
+		var oUI5Manifest = oMetadata.getManifestEntry("sap.ui5", true);
 
-		var mModelConfigs = oUI5Manifest && oUI5Manifest["models"];
-		if (!mModelConfigs) {
+		var mConfig = {
+
+			// ui5 model definitions
+			models: oUI5Manifest["models"],
+
+			// optional dataSources from "sap.app" manifest
+			dataSources: oAppManifest["dataSources"] || {},
+
+			// to identify where the dataSources/models have been orginally defined
+			origin: {
+				dataSources: {},
+				models: {}
+			}
+
+		};
+
+		if (!mConfig.models) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
 			return;
 		}
 
-		// optional dataSources from "sap.app" manifest
-		var mDataSources = (oAppManifest && oAppManifest["dataSources"]) ? oAppManifest["dataSources"] : null;
+		var oMeta = oMetadata;
+		while (oMeta && oMeta instanceof ComponentMetadata) {
+
+			var mCurrentDataSources = oMeta.getManifestEntry("sap.app")["dataSources"];
+			mergeDefinitionSource(mConfig.dataSources, mConfig.origin.dataSources, mCurrentDataSources, oMeta);
+
+			var mCurrentModelConfigs = oMeta.getManifestEntry("sap.ui5")["models"];
+			mergeDefinitionSource(mConfig.models, mConfig.origin.models, mCurrentModelConfigs, oMeta);
+
+			oMeta = oMeta.getParent();
+		}
 
 		// read current URI params to mix them into model URI
 		var oUriParams = jQuery.sap.getUriParameters();
 
 		// create a model for each ["sap.ui5"]["models"] entry
-		for (var sModelName in mModelConfigs) {
+		for (var sModelName in mConfig.models) {
 
-			var oModelConfig = mModelConfigs[sModelName];
+			var oModelConfig = mConfig.models[sModelName];
+			var bIsDataSourceUri = false;
 
 			// normalize dataSource shorthand, e.g.
 			// "myModel": "myDataSource" => "myModel": { dataSource: "myDataSource" }
@@ -413,7 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			// if not already provided in model config
 			if (oModelConfig.dataSource) {
 
-				var oDataSource = mDataSources && mDataSources[oModelConfig.dataSource];
+				var oDataSource = mConfig.dataSources && mConfig.dataSources[oModelConfig.dataSource];
 				if (typeof oDataSource === 'object') {
 
 					// default type is OData
@@ -442,6 +495,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					// use dataSource uri if it isn't already defined in model config
 					if (!oModelConfig.uri) {
 						oModelConfig.uri = oDataSource.uri;
+						bIsDataSourceUri = true;
 					}
 
 					// read out OData annotations and create ODataModel settings for it
@@ -449,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						var aAnnotations = oDataSource.settings.annotations;
 
 						for (var i = 0; i < aAnnotations.length; i++) {
-							var oAnnotation = mDataSources[aAnnotations[i]];
+							var oAnnotation = mConfig.dataSources[aAnnotations[i]];
 
 							// dataSource entry should be defined!
 							if (!oAnnotation) {
@@ -470,7 +524,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 							}
 
 							// resolve relative to component
-							var oAnnotationUri = oMetadata._resolveUri(new URI(oAnnotation.uri)).toString();
+							var oAnnotationUri = mConfig.origin.dataSources[aAnnotations[i]]._resolveUri(new URI(oAnnotation.uri)).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -523,8 +577,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				// parse model URI to be able to modify it
 				var oUri = new URI(oModelConfig.uri);
 
-				// resolve URI relative to component
-				oUri = oMetadata._resolveUri(oUri);
+				// resolve URI relative to component which defined it
+				var oUriSourceComponent = (bIsDataSourceUri) ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName];
+				oUri = oUriSourceComponent._resolveUri(oUri);
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
@@ -801,6 +856,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 *     in some library preload. If components are listed in the hints section, they will be preloaded.</li>
 	 * <li><code>oConfig.asyncHints.libs : string[]</code>libraries needed by the component and its subcomponents.
 	 *     The framework will asynchronously load those libraries, if they're not loaded yet.</li>
+	 * <li><code>oConfig.asyncHints.preloadBundles : string[]</code>a list of additional preload bundles
+	 *     The framework will try to load these bundles asynchronously before requiring the component, errors will be ignored.
+	 *     The named modules must only represent preload bundles. If they are normal modules, their dependencies
+	 *     will be loaded with the normal synchronous request mechanism and performance might degrade.</li>
+	 * <li><code>oConfig.asyncHints.preloadOnly : boolean (default: false)</code> whether only the preloads should be done, 
+	 *     but not the loading of the Component controller class itself.
 	 * </ul>
 	 * 
 	 * If components and/or libraries are listed in the hints section, all the corresponding preload files will 
@@ -910,26 +971,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					}
 				};
 
+			// load any required preload bundles
+			if ( hints.preloadBundles ) {
+				jQuery.each(hints.preloadBundles, function(i, vBundle) {
+					collect(jQuery.sap._loadJSResourceAsync(registerPath(vBundle), true));
+				});
+			}
+
 			// preload required libraries 
 			if ( hints.libs ) {
 				collect(sap.ui.getCore().loadLibraries( hints.libs.map(registerPath) ));
 			}
 
-			if ( bComponentPreload ) {
-				collect(preload(sName, true));
+			// preload the component itself
+			collect(preload(sName, true));
 
-				// if a hint about "used" components is given, preload those components
-				if ( hints.components ) {
-					jQuery.each(hints.components, function(i, vComp) {
-						collect(preload(registerPath(vComp), true));
-					});
-				}
+			// if a hint about "used" components is given, preload those components
+			if ( hints.components ) {
+				jQuery.each(hints.components, function(i, vComp) {
+					collect(preload(registerPath(vComp), true));
+				});
 			}
 
 			// combine given promises
 			return Promise.all(promises).then(function(v) {
 				jQuery.sap.log.debug("Component.load: all promises fulfilled, then " + v);
-				return getControllerClass();
+				return hints.preloadOnly ? true : getControllerClass();
 			});
 
 		}
@@ -940,4 +1007,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 	return Component;
 
-}, /* bExport= */ true);
+});

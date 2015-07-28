@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType'],
-	function(jQuery, NumberFormat, SimpleType) {
+sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException'],
+	function(SimpleType, FormatException, ParseException) {
 	"use strict";
 
 
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "int": // TODO return 1 for true?!
 			case "float":
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format Boolean to " + sInternalType);
+				throw new FormatException("Don't know how to format Boolean to " + sInternalType);
 		}
 	};
 
@@ -70,11 +70,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 					return false;
 				}
 				oBundle = sap.ui.getCore().getLibraryResourceBundle();
-				throw new sap.ui.model.ParseException(oBundle.getText("Boolean.Invalid"));
+				throw new ParseException(oBundle.getText("Boolean.Invalid"));
 			case "int": // TODO return 1 for true?!
 			case "float":
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse Boolean from " + sInternalType);
+				throw new ParseException("Don't know how to parse Boolean from " + sInternalType);
 		}
 	};
 
@@ -89,4 +89,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	return BooleanType;
 
-}, /* bExport= */ true);
+});

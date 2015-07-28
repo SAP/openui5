@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 				buttonType: oControl.getType()
 			};
 
-			if (oControl.getType() !== sap.m.ButtonType.Default) {
+			if (oControl.getType() === sap.m.ButtonType.Transparent) {
 				oControl.setProperty("type", sap.m.ButtonType.Default, true);
 			}
 
@@ -40,6 +40,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 			} else {
 				oControl.addStyleClass("sapMOTAPButtonNoIcon");
 			}
+
+			oControl.attachEvent("_change", this._onSapMButtonUpdated, this);
 		};
 
 		OverflowToolbarAssociativePopoverControls.prototype._postProcessSapMButton = function(oControl) {
@@ -51,6 +53,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 
 			oControl.removeStyleClass("sapMOTAPButtonNoIcon");
 			oControl.removeStyleClass("sapMOTAPButtonWithIcon");
+
+			oControl.detachEvent("_change", this._onSapMButtonUpdated, this);
+		};
+
+		OverflowToolbarAssociativePopoverControls.prototype._onSapMButtonUpdated = function(oEvent) {
+			var sParameterName = oEvent.getParameter("name"),
+				oButton = oEvent.getSource(),
+				sButtonId = oButton.getId();
+
+			if (typeof this._mControlsCache[sButtonId] === "undefined") {
+				return;
+			}
+
+			if (sParameterName === "type") {
+				this._mControlsCache[sButtonId]["buttonType"] = oButton.getType();
+			}
 		};
 
 
@@ -118,12 +136,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 			"sap.m.Button": {
 				canOverflow: true,
 				listenForEvents: ["press"],
-				noInvalidationProps: ["enabled"]
+				noInvalidationProps: ["enabled", "type"]
 			},
 			"sap.m.OverflowToolbarButton": {
 				canOverflow: true,
 				listenForEvents: ["press"],
-				noInvalidationProps: ["enabled"]
+				noInvalidationProps: ["enabled", "type"]
 			},
 			"sap.m.CheckBox": {
 				canOverflow: true,

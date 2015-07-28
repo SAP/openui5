@@ -17,7 +17,7 @@
 				visibleRowCount="7"
 				sort="sortDeliveryDate">
 				<toolbar>
-					<m:ToolBar>
+					<m:Toolbar>
 						<m:Title text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:Button
@@ -32,7 +32,7 @@
 							icon="sap-icon://decline"
 							tooltip="Clear all sortings"
 							press="clearAllSortings"/>
-					</m:ToolBar>
+					</m:Toolbar>
 				</toolbar>
 				<columns>
 					<Column
@@ -88,13 +88,13 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:ToolBar>
+					<m:Toolbar>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://hint"
 							tooltip="Show information"
 							press="showInfo"/>
-					</m:ToolBar>
+					</m:Toolbar>
 				</footer>
 			</Table>
 		</m:content>

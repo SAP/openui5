@@ -3,8 +3,8 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataListBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/OperationMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterProcessor', 'sap/ui/model/SorterProcessor'],
-		function(jQuery, DateFormat, FilterType, ListBinding, ODataUtils, CountMode, OperationMode, ChangeReason, Filter, FilterProcessor, SorterProcessor) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/Filter', 'sap/ui/model/odata/OperationMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterProcessor', 'sap/ui/model/Sorter', 'sap/ui/model/SorterProcessor'],
+		function(jQuery, FilterType, ListBinding, ODataUtils, CountMode, ODataFilter, OperationMode, ChangeReason, Filter, FilterProcessor, Sorter, SorterProcessor) {
 	"use strict";
 
 
@@ -21,7 +21,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] defines the count mode of this binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] defines the operation mode of this binding
 	 * @param {boolean} [mParameters.faultTolerant] turns on the fault tolerance mode, data is not reset if a backend request returns an error
-	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: sets the batch group id to be used for requests originating from this binding
+	 * @param {string} [mParameters.groupId] sets the group id to be used for requests originating from this binding
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
@@ -47,8 +48,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.bNeedsUpdate = false;
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
-			this.sBatchGroupId = undefined;
-			this.sRefreshBatchGroupId = undefined;
+			this.sGroupId = undefined;
+			this.sRefreshGroupId = undefined;
 			this.bLengthRequestd = false;
 			this.bUseExtendedChangeDetection = true;
 			this.bFaultTolerant = mParameters && mParameters.faultTolerant;
@@ -59,8 +60,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.bInitial = true;
 			this.mRequestHandles = {};
 
-			if (mParameters && mParameters.batchGroupId) {
-				this.sBatchGroupId = mParameters.batchGroupId;
+			if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
+				this.sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
 
 			// if nested list is already available and no filters or sorters are set,
@@ -370,7 +371,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 		var that = this,
 		bInlineCountRequested = false,
-		sBatchGroupId;
+		sGroupId;
 
 		// create range parameters and store start index for sort/filter requests
 		if (iStartIndex || iLength) {
@@ -511,9 +512,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				// Execute the request and use the metadata if available
 				this.bPendingRequest = true;
 				this.fireDataRequested();
-				//if load is triggered by a refresh we have to check the refreshBatchGroup
-				sBatchGroupId = this.sRefreshBatchGroup ? this.sRefreshBatchGroup : this.sBatchGroupId;
-				this.mRequestHandles[sPath] = this.oModel.read(sPath, {batchGroupId: sBatchGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
+				//if load is triggered by a refresh we have to check the refreshGroup
+				sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
+				this.mRequestHandles[sPath] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 			}
 		}
 
@@ -555,7 +556,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	ODataListBinding.prototype._getLength = function() {
 
 		var that = this;
-		var sBatchGroupId;
+		var sGroupId;
 		
 		if (this.sCountMode !== CountMode.Request && this.sCountMode !== CountMode.Both) {
 			return;
@@ -599,9 +600,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (sPath) {
 			// execute the request and use the metadata if available
 			sPath = sPath + "/$count";
-			//if load is triggered by a refresh we have to check the refreshBatchGroup
-			sBatchGroupId = this.sRefreshBatchGroup ? this.sRefreshBatchGroup : this.sBatchGroupId;
-			this.mRequestHandles[sPath] = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, batchGroupId: sBatchGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError}); //;, undefined, undefined, this.oModel.getServiceMetadata());
+			//if load is triggered by a refresh we have to check the refreshGroup
+			sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
+			this.mRequestHandles[sPath] = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, groupId: sGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError});
 		}
 	};
 
@@ -612,18 +613,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * validation, please use the parameter bForceUpdate.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
-	 * @param {string} [sBatchGroupId] The batch group Id for the refresh
+	 * @param {string} [sGroupId] The group Id for the refresh
 	 *
 	 * @public
 	 */
-	ODataListBinding.prototype.refresh = function(bForceUpdate, sBatchGroupId) {
+	ODataListBinding.prototype.refresh = function(bForceUpdate, sGroupId) {
 		if (typeof bForceUpdate === "string") {
-			sBatchGroupId = bForceUpdate;
+			sGroupId = bForceUpdate;
 			bForceUpdate = false;
 		}
-		this.sRefreshBatchGroup = sBatchGroupId;
+		this.sRefreshGroup = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshBatchGroup = undefined;
+		this.sRefreshGroup = undefined;
 	};
 	
 	/**
@@ -657,7 +658,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (bForceUpdate || bChangeDetected) {
 			this.abortPendingRequest();
 			this.resetData();
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 
@@ -781,6 +782,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 */
 	ODataListBinding.prototype.resetData = function() {
 		this.aKeys = [];
+		this.aAllKeys = null;
 		this.iLength = 0;
 		this.bLengthFinal = false;
 		this.sChangeReason = undefined;
@@ -847,7 +849,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 		var bSuccess = false;
 
-		if (aSorters instanceof sap.ui.model.Sorter) {
+		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
 		}
 
@@ -919,7 +921,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			aFilters = [];
 		}
 
-		if (aFilters instanceof sap.ui.model.Filter) {
+		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
 
@@ -974,7 +976,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			aConvertedFilters = [];
 
 		jQuery.each(aFilters, function(i, oFilter) {
-			if (oFilter instanceof sap.ui.model.odata.Filter) {
+			if (oFilter instanceof ODataFilter) {
 				aConvertedFilters.push(oFilter.convert());
 			} else {
 				aConvertedFilters.push(oFilter);
@@ -1025,4 +1027,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 	return ODataListBinding;
 
-}, /* bExport= */ true);
+});

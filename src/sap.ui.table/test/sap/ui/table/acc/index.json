@@ -1,0 +1,16 @@
+{
+	"tests" : [
+		{
+			"control" : "sap.ui.table.Table",
+			"url" : "Table.html",
+			"desc" : "Cozy Table with sap.m Controls",
+			"appComponent" : "CA-UI5-CTR-WDF"
+		},
+		{
+			"control" : "sap.ui.table.TreeTable",
+			"url" : "TreeTable.html",
+			"desc" : "Compact TreeTable with sap.m Controls",
+			"appComponent" : "CA-UI5-CTR-WDF"
+		}
+	]
+}

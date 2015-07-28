@@ -26,7 +26,7 @@
       // Instead we use the standard init code and only expose the result via define()
       // The (optional) dependencies are lost or must be loaded in advance
       root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
-      define([], function() { return root.URI; });
+      define('sap/ui/thirdparty/URI', [], function() { return root.URI; });
       // ##### END: MODIFIED BY SAP
     } else {
         // Browser globals (root is window)

@@ -1,0 +1,37 @@
+<mvc:View
+	controllerName="sap.ui.demo.nav.controller.employee.Resume"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+	busyIndicatorDelay="0">
+	<Page
+		title="{i18n>ResumeOf} {FirstName} {LastName}"
+		id="employeeResumePage"
+		showNavButton="true"
+		navButtonPress="onNavBack"
+		class="sapUiResponsiveContentPadding">
+		<content>
+			<IconTabBar
+				id="iconTabBar"
+				class="sapUiResponsiveContentPadding"
+				binding="{Resume}"
+				select="onTabSelect"
+				selectedKey="{view>/selectedTabKey}">
+				<items>
+					<IconTabFilter id="infoTab" text="{i18n>Info}" key="Info">
+						<Text text="{Information}" />
+					</IconTabFilter>
+					<IconTabFilter id="projectsTab" text="{i18n>Projects}" key="Projects">
+						<mvc:XMLView viewName="sap.ui.demo.nav.view.employee.ResumeProjects"></mvc:XMLView>
+					</IconTabFilter>
+					<IconTabFilter id="hobbiesTab" text="{i18n>Hobbies}" key="Hobbies">
+						<!-- place content via lazy loading -->
+					</IconTabFilter>
+					<IconTabFilter id="notesTab" text="{i18n>Notes}" key="Notes">
+						<!-- place content via lazy loading -->
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+	</Page>
+</mvc:View>

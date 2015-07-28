@@ -10,10 +10,6 @@ sap.ui.define([
 
 	var PageController = Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
 
-		onInit: function () {
-			this.uploadedContent = new sap.m.List();
-		},
-
 		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
@@ -65,27 +61,12 @@ sap.ui.define([
 		    }
 
 			MessageToast.show("Method Upload is called (" + uploadInfo + ")");
-
-			this.uploadedContent.insertItem(new sap.m.StandardListItem( {
-				title: uploadInfo,
-				description: new Date().toLocaleString()
-			}, 0));
+			sap.m.MessageBox.information(
+				"Uploaded " + uploadInfo
+			);
 
 			oTextArea.setValue("");
 
-			var oDialog = new sap.m.Dialog({
-		        title: 'Uploaded Content',
-		        content: this.uploadedContent,
-
-		        beginButton: new sap.m.Button({
-		          text: 'Close',
-		          press: function () {
-		            oDialog.close();
-		          }
-		        })
-		    });
-
-			oDialog.open();
 		},
 
 		onUploadComplete: function(oEvent) {

@@ -3,8 +3,8 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './ElementMetadata', 'sap/ui/model/SimpleType', 'jquery.sap.strings'],
-	function(jQuery, ManagedObject, Core, ElementMetadata, SimpleType/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings'],
+	function(jQuery, BaseObject, ManagedObject, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -253,7 +253,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 */
 	Element.defineClass = function(sClassName, oStaticInfo, fnMetaImpl) {
 		// create and attach metadata but with an Element specific implementation
-		return sap.ui.base.Object.defineClass(sClassName, oStaticInfo, fnMetaImpl || ElementMetadata);
+		return BaseObject.defineClass(sClassName, oStaticInfo, fnMetaImpl || ElementMetadata);
 	};
 
 	/**
@@ -567,8 +567,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 		// TODO 'id' is somewhat redundant to getSource(), but it is commonly used - fade out with next major release?
 		aArgs[1] = mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
-		// 'aArgs' is necessary, as the EventProvider.fireEvent signature has more parameters
-		return sap.ui.base.EventProvider.prototype.fireEvent.apply(this, aArgs);
+		// 'aArgs' is necessary, as the ManagedObject.fireEvent signature has more parameters
+		return ManagedObject.prototype.fireEvent.apply(this, aArgs);
 	};
 
 
@@ -749,13 +749,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 *
 	 * If a new tooltip is set, any previously set tooltip is deactivated.
 	 *
-	 * @param {string|sap.ui.core.TooltipBase} oTooltip.
+	 * @param {string|sap.ui.core.TooltipBase} vTooltip
 	 * @public
 	 */
-	Element.prototype.setTooltip = function(oTooltip) {
+	Element.prototype.setTooltip = function(vTooltip) {
 
-		this._refreshTooltipBaseDelegate(oTooltip);
-		this.setAggregation("tooltip", oTooltip);
+		this._refreshTooltipBaseDelegate(vTooltip);
+		this.setAggregation("tooltip", vTooltip);
 
 		return this;
 	};
@@ -1075,4 +1075,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 
 	return Element;
 
-}, /* bExport= */ true);
+});

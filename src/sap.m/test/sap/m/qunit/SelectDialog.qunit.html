@@ -90,6 +90,17 @@
 					oSelectDialog.bindAggregation("items", oConfiguration);
 				}
 
+				function notSupportedIE(bAsync){
+					// this test is not supported by IE9
+					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+						QUnit.expect(0);
+						if (bAsync) {
+							QUnit.start();
+						}
+						return;
+					}
+				}
+
 				QUnit.module("API", {
 					setup: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
@@ -221,6 +232,7 @@
 				});
 
 				QUnit.asyncTest("Remember Selections after Cancel", function (assert) {
+					notSupportedIE(true);
 
 					// arrange
 					this.oSelectDialog.setRememberSelections(true);
@@ -368,6 +380,8 @@
 				});
 
 				QUnit.test("liveChange event", function (assert) {
+					notSupportedIE(false);
+
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
 						// Asert
@@ -386,6 +400,7 @@
 				});
 
 				QUnit.asyncTest("Confirm Event", function (assert) {
+					notSupportedIE(true);
 
 					var that = this;
 					this.oSelectDialog.setMultiSelect(true);
@@ -418,6 +433,7 @@
 				});
 
 				QUnit.asyncTest("Cancel Event with unfiltered selection", function (assert) {
+					notSupportedIE(true);
 
 					var that = this;
 					this.oSelectDialog.setMultiSelect(true);
@@ -444,6 +460,7 @@
 				});
 
 				QUnit.asyncTest("Cancel Event with pre-filtered selection", function (assert) {
+					notSupportedIE(true);
 
 					var that = this,
 					clock = this.clock,
@@ -476,6 +493,7 @@
 				});
 
 				QUnit.asyncTest("Cancel Event with user-filtered selection", function (assert) {
+					notSupportedIE(true);
 
 					var that = this,
 					clock = this.clock,
@@ -506,6 +524,7 @@
 				});
 
 				QUnit.asyncTest("Cancel on key ESCAPE event", function (assert) {
+					notSupportedIE(true);
 
 					this.oSelectDialog.setMultiSelect(true);
 
@@ -553,6 +572,7 @@
 				});
 
 				QUnit.asyncTest("Destroy SelectDialog", function (assert) {
+					notSupportedIE(true);
 
 					var that = this;
 					this.oSelectDialog.setMultiSelect(true);
@@ -647,6 +667,7 @@
 				});
 
 				QUnit.asyncTest("Check height of content", function(assert) {
+					notSupportedIE(true);
 
 					var that = this;
 					this.oSelectDialog.setContentHeight("150px");
@@ -719,6 +740,8 @@
 				});
 
 				QUnit.asyncTest("focus on SearchField after liveChange", function (assert) {
+					notSupportedIE(true);
+
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
 						var sValue = oEvent.getParameter("value");

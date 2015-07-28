@@ -9,8 +9,8 @@
 	font-size: 0.875rem;
 	overflow: hidden;
 	cursor: pointer;
-	color: @sapUiPullToRefreshText;
-	background-color: @sapUiPullToRefreshBG;
+	color: @sapUiContentLabelColor;
+	background-color: darken(@sapUiGroupContentBackground, 5);
 }
 .sapMPullDownNontouch {
 	min-height: 2rem;
@@ -21,7 +21,7 @@
 }
 .sapMPullDownTouch {
 	min-height: 3rem;
-	border-bottom: 1px solid @sapUiLightBorder;
+	border-bottom: 1px solid @sapUiGroupContentBorderColor;
 }
 
 .sapMPullDownTouch.sapMPullDownLogo {
@@ -71,7 +71,7 @@
 .sapMPullDownInfo {
 	font-size: 0.75rem;
 	vertical-align: middle;
-	color: @sapUiDarkText;
+	color: @sapUiListTextColor;
 }
 
 
@@ -95,13 +95,13 @@
 }
 .sapMPullDownTouch > .sapMPullDownIcon::before {  /* animated arrow */
 	font-size: 2em;
-	color: @sapUiPullToRefreshArrow;
+	color: @sapUiHighlight;
 	content: '\e089';
-	
+
 	-webkit-transform-origin: center center;
 	-webkit-transition-duration: 250ms;
 	-webkit-transition-property: -webkit-transform;
-	
+
 	transfrom-origin: center center;
 	transition-duration: 250ms;
 	transition-property: transform;

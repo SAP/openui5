@@ -22,7 +22,7 @@
 							<template:then>
 								<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
 									target="_blank"
-									href="{path: 'field>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+									href="{path: 'field>Url', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 							</template:then>
 							<template:else>
 								<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />

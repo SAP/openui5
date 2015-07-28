@@ -1,192 +1,218 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<title>Busy Indicator - sap.m - qUnit test</title>
 
-		<script id="sap-ui-bootstrap" 
-			type="text/javascript"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.m" >
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m">
 		</script>
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		
+
 		<script>
-		sinon.config.useFakeTimers = false;
-		QUnit.config.autostart = false;
-		jQuery(document).ready(function() {
-			QUnit.start();
-		});
-		var app = new sap.m.App("myApp", {
-			initPage: "myFirstPage"
-		});
-		var page = new sap.m.Page("myFirstPage", {
-			title : "BusyDialog Test",
-			showNavButton : true,
-			enableScrolling : true,
-			content : []
-		});
-		var busyDialog1 = busyDialog1 ? busyDialog1 : new sap.m.BusyDialog('busyDialog1',{text:'i am a busy screen with text and a cancel button', 
-			title: 'Loading . . .',
-			showCancelButton: true,
-			cancelButtonText: 'Abort',
-			close: function(oEvent){jQuery.sap.log.info(oEvent, 'closed')}
-		})
-		var busyDialog2 = (busyDialog2) ? busyDialog2 : new sap.m.BusyDialog('busyDialog2',{text:'i am soo busy doing stuff', title: 'Busy'})
-		var busyDialog3 = (busyDialog3) ? busyDialog3 : new sap.m.BusyDialog('busyDialog3',{customIcon: '../images/settings_64.png'})
-		var busyDialog4 = (busyDialog4) ? busyDialog4 : new sap.m.BusyDialog('busyDialog4',{
-			text:'cancel detection test', 
-			title: 'Busy Dialog', 
-			showCancelButton: true,
-			cancelButtonText: 'Cancel'
+			<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
+			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			}
+
+			sinon.config.useFakeTimers = false;
+			QUnit.config.autostart = false;
+
+			jQuery(document).ready(function () {
+				QUnit.start();
 			});
-		
-		app.addPage(page).placeAt("content");
-		
-		module("Initial Check");
 
-		test("Initialization", function() {
-			ok(!jQuery.sap.domById("busyDialog1"), "busyDialog1 is not rendered in the beginning.");
-			ok(!jQuery.sap.domById("busyDialog2"), "busyDialog2 is not rendered in the beginning.");
-			ok(!jQuery.sap.domById("busyDialog3"), "busyDialog3 is not rendered in the beginning.");
-		});	
-		
-		module("Open and Close");
-		
-		test("Open with Title, Text and Button", function(){
-			busyDialog1.open();
-			var $busyDialog1 = jQuery.sap.byId("busyDialog1");
-			ok(jQuery.sap.domById("busyDialog1"), "busyDialog1 is rendered after it's opened.");
-			equal($busyDialog1.css("display"), "block", "Busy dialog opened");
-			equal($busyDialog1.children('header').length, 1, "busyDialog1 is rendered after it's opened.");
-			equal($busyDialog1.children('label').length, 1, "busyDialog1 is rendered after it's opened.");
-			equal($busyDialog1.children('footer').children().length, 3, "toolbar is rendered.");
-            equal($busyDialog1.children('footer').children()[0].id, "busyDialog1-toolbar-ariaLabel", "aria label rendered.");
-			equal($busyDialog1.children('footer').children()[1].id, "busyDialog1-toolbarspacer", "spacer is rendered.");
-			equal($busyDialog1.children('footer').children()[2].id, "busyDialog1busyCancelBtn", "cancel button is rendered.");
-			equal($busyDialog1.children('footer').children().eq(2).text(), "Abort", "button text should be'Abort'.");
-		});
-		
-		test("Open with Title, Text and Button - Phone", function(){
-			var oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
+			var app = new sap.m.App("myApp", {
+				initPage: "myFirstPage"
+			});
 
-			this.stub(sap.ui.Device, "system", oSystem);
-			this.stub(jQuery.device, "is", oSystem);
+			var page = new sap.m.Page("myFirstPage", {
+				title: "BusyDialog Test",
+				showNavButton: true,
+				enableScrolling: true,
+				content: []
+			});
 
-			var busyDialog5 = (busyDialog5) ? busyDialog5 : new sap.m.BusyDialog('busyDialog5',{
+			var busyDialog1 = busyDialog1 ? busyDialog1 : new sap.m.BusyDialog('busyDialog1', {
+				text: 'i am a busy screen with text and a cancel button',
+				title: 'Loading . . .',
+				showCancelButton: true,
+				cancelButtonText: 'Abort',
+				close: function (oEvent) {
+					jQuery.sap.log.info(oEvent, 'closed')
+				}
+			});
+
+			var busyDialog2 = (busyDialog2) ? busyDialog2 : new sap.m.BusyDialog('busyDialog2', {
+				text: 'i am soo busy doing stuff',
+				title: 'Busy'
+			});
+
+			var busyDialog3 = (busyDialog3) ? busyDialog3 : new sap.m.BusyDialog('busyDialog3', {customIcon: '../images/settings_64.png'})
+			var busyDialog4 = (busyDialog4) ? busyDialog4 : new sap.m.BusyDialog('busyDialog4', {
+				text: 'cancel detection test',
 				title: 'Busy Dialog',
-				text:'loading for phone test...', 
 				showCancelButton: true,
 				cancelButtonText: 'Cancel'
 			});
-			
-			busyDialog5.open();
-			var $busyDialog5 = jQuery.sap.byId("busyDialog5");
-			ok(jQuery.sap.domById("busyDialog5"), "busyDialog5 is rendered after it's opened.");
-			equal(jQuery.sap.byId("busyDialog5").css("display"), "block", "Busy dialog opened");
-			equal(jQuery("#busyDialog5").children('header').length, 1, "busyDialog5 is rendered after it's opened.");
-			equal(jQuery("#busyDialog5").children('label').length, 1, "busyDialog5 is rendered after it's opened.");
-			equal(jQuery("#busyDialog5").children('footer').children().length, 1, "toolbar is rendered.");
-			equal(jQuery("#busyDialog5").children('footer').children()[0].id, "busyDialog5busyCancelBtn", "cancel button is rendered.");
-			equal(jQuery("#busyDialog5").children('footer').text(), "Cancel", "button text should Cancel'.");
-			busyDialog5.close();
-			});
-		
-		asyncTest("Close", function(){
-			setTimeout(function() {
-				start();
-				busyDialog1.close();
-				equal(jQuery.sap.byId("busyDialog1").css("display"), "none", "Dialog closed");
-			}, 1000);
-		});
-		
-		test("Open with Title and Text", function(){
-			busyDialog2.open();
-			var $busyDialog2 = jQuery.sap.byId("busyDialog2");
-			ok(jQuery.sap.domById("busyDialog2"), "busyDialog2 is rendered after it's opened.");
-			equal(jQuery("#busyDialog2").children('header').length, 1, "busyDialog1 is rendered after it's opened.");
-			equal(jQuery("#busyDialog2").children('label').length, 1, "busyDialog1  label is rendered after it's opened.");
-			equal(jQuery("#busyDialog2").children('footer').length, 0, "busyDialog1 no button should be rendered.");
-		});
-		
-		asyncTest("Close", function(){
-			setTimeout(function() {
-				start();
-				busyDialog2.close();
-				equal(jQuery.sap.byId("busyDialog2").css("display"), "none", "Dialog closed");
-			},1000);
-		});
-		
-		test("Open with icon", function(){		
-			busyDialog3.open();
-			var $busyDialog3 = jQuery.sap.byId("busyDialog3");
-			ok(jQuery.sap.domById("busyDialog3"), "busyDialog3 is rendered after it's opened.");
-			equal(jQuery("#busyDialog3").children().children('img').length, 1, "busyDialog1 image is rendered.");
-			equal(jQuery("#busyDialog2").children('footer').length, 0, "busyDialog1 no button should be rendered.");
-		});
-		
-		asyncTest("Close", function(){
-			setTimeout(function() {
-				start();
-				busyDialog3.close();
-				equal(jQuery.sap.byId("busyDialog3").css("display"), "none", "Dialog closed");
-			},1000)
-		});
 
-		test("Close event fired because cancel cancel button is pressed", function(){
-			busyDialog4.open();
-			var bCancelPressed = false;
-			busyDialog4.attachEvent("close", function(oEvent){
-				bCancelPressed = oEvent.getParameter("cancelPressed"); 
+			app.addPage(page).placeAt("content");
+
+			module("Initial Check");
+
+			test("Initialization", function () {
+				ok(!jQuery.sap.domById("busyDialog1"), "busyDialog1 is not rendered in the beginning.");
+				ok(!jQuery.sap.domById("busyDialog2"), "busyDialog2 is not rendered in the beginning.");
+				ok(!jQuery.sap.domById("busyDialog3"), "busyDialog3 is not rendered in the beginning.");
 			});
-			
-			busyDialog4.$().find("button").control(0).firePress();
-			ok(bCancelPressed, "Dialog closed");
-		}); 
-		
-		test("Close event fired because cancel esc key is pressed", function(){
-			busyDialog4.open();
-			var bCancelPressed = false;
-			busyDialog4.attachEvent("close", function(oEvent){
-				bCancelPressed = oEvent.getParameter("cancelPressed"); 
+
+			module("Open and Close");
+
+			test("Open with Title, Text and Button", function () {
+				busyDialog1.open();
+				var $busyDialog1 = jQuery.sap.byId("busyDialog1"),
+						$header = $busyDialog1.children('header'),
+						sHeaderId = "busyDialog1-header";
+				ok(jQuery.sap.domById("busyDialog1"), "busyDialog1 is rendered after it's opened.");
+				equal($busyDialog1.css("display"), "block", "Busy dialog opened");
+				equal($busyDialog1.attr("role"), "dialog", "The role attribute is set to dialog");
+				equal($header.length, 1, "busyDialog1 is rendered after it's opened.");
+				equal($header.attr("id"), sHeaderId, "header has a stable ID");
+				equal($header.attr("role"), "heading", "Dom node header has role heading");
+				equal($header.attr("aria-level"), "1", "header level is set to 1");
+				equal($busyDialog1.attr("aria-labelledBy"), sHeaderId, "The dialog is labelled by the header");
+				equal($busyDialog1.children('label').length, 1, "busyDialog1 is rendered after it's opened.");
+				equal($busyDialog1.children('footer').children().length, 3, "toolbar is rendered.");
+				equal($busyDialog1.children('footer').children()[0].id, "busyDialog1-toolbar-ariaLabel", "aria label rendered.");
+				equal($busyDialog1.children('footer').children()[1].id, "busyDialog1-toolbarspacer", "spacer is rendered.");
+				equal($busyDialog1.children('footer').children()[2].id, "busyDialog1busyCancelBtn", "cancel button is rendered.");
+				equal($busyDialog1.children('footer').children().eq(2).text(), "Abort", "button text should be'Abort'.");
 			});
-			
-			sap.ui.test.qunit.triggerKeydown(busyDialog4.$().find("button"), jQuery.sap.KeyCodes.ESCAPE);
-			
-			ok(bCancelPressed, "Dialog closed");
-		});
-		
-		asyncTest("Close event fired because operation terminates", function(){
-			busyDialog4.open();
-			var bCancelPressed = true;
-			busyDialog4.attachEvent("close", function(oEvent){
-				bCancelPressed = oEvent.getParameter("cancelPressed"); 
+
+			test("Open with Title, Text and Button - Phone", function () {
+				var oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(jQuery.device, "is", oSystem);
+
+				var busyDialog5 = (busyDialog5) ? busyDialog5 : new sap.m.BusyDialog('busyDialog5', {
+					title: 'Busy Dialog',
+					text: 'loading for phone test...',
+					showCancelButton: true,
+					cancelButtonText: 'Cancel'
+				});
+
+				busyDialog5.open();
+				var $busyDialog5 = jQuery.sap.byId("busyDialog5");
+				ok(jQuery.sap.domById("busyDialog5"), "busyDialog5 is rendered after it's opened.");
+				equal(jQuery.sap.byId("busyDialog5").css("display"), "block", "Busy dialog opened");
+				equal(jQuery("#busyDialog5").children('header').length, 1, "busyDialog5 is rendered after it's opened.");
+				equal(jQuery("#busyDialog5").children('label').length, 1, "busyDialog5 is rendered after it's opened.");
+				equal(jQuery("#busyDialog5").children('footer').children().length, 1, "toolbar is rendered.");
+				equal(jQuery("#busyDialog5").children('footer').children()[0].id, "busyDialog5busyCancelBtn", "cancel button is rendered.");
+				equal(jQuery("#busyDialog5").children('footer').text(), "Cancel", "button text should Cancel'.");
+				busyDialog5.close();
 			});
-			setTimeout(function() {
-				start();
-				busyDialog4.close();
-				ok(!bCancelPressed, "Dialog closed");
-			},1000);
-		});
-		
-		module("Property Setter");
+
+			asyncTest("Close", function () {
+				setTimeout(function () {
+					start();
+					busyDialog1.close();
+					equal(jQuery.sap.byId("busyDialog1").css("display"), "none", "Dialog closed");
+				}, 1000);
+			});
+
+			test("Open with Title and Text", function () {
+				busyDialog2.open();
+				var $busyDialog2 = jQuery.sap.byId("busyDialog2");
+				ok(jQuery.sap.domById("busyDialog2"), "busyDialog2 is rendered after it's opened.");
+				equal(jQuery("#busyDialog2").children('header').length, 1, "busyDialog1 is rendered after it's opened.");
+				equal(jQuery("#busyDialog2").children('label').length, 1, "busyDialog1  label is rendered after it's opened.");
+				equal(jQuery("#busyDialog2").children('footer').length, 0, "busyDialog1 no button should be rendered.");
+			});
+
+			asyncTest("Close", function () {
+				setTimeout(function () {
+					start();
+					busyDialog2.close();
+					equal(jQuery.sap.byId("busyDialog2").css("display"), "none", "Dialog closed");
+				}, 1000);
+			});
+
+			test("Open with icon", function () {
+				busyDialog3.open();
+				var $busyDialog3 = jQuery.sap.byId("busyDialog3");
+				ok(jQuery.sap.domById("busyDialog3"), "busyDialog3 is rendered after it's opened.");
+				equal(jQuery("#busyDialog3").children().children('img').length, 1, "busyDialog1 image is rendered.");
+				equal(jQuery("#busyDialog2").children('footer').length, 0, "busyDialog1 no button should be rendered.");
+			});
+
+			asyncTest("Close", function () {
+				setTimeout(function () {
+					start();
+					busyDialog3.close();
+					equal(jQuery.sap.byId("busyDialog3").css("display"), "none", "Dialog closed");
+				}, 1000)
+			});
+
+			test("Close event fired because cancel cancel button is pressed", function () {
+				busyDialog4.open();
+				var bCancelPressed = false;
+				busyDialog4.attachEvent("close", function (oEvent) {
+					bCancelPressed = oEvent.getParameter("cancelPressed");
+				});
+
+				busyDialog4.$().find("button").control(0).firePress();
+				ok(bCancelPressed, "Dialog closed");
+			});
+
+			test("Close event fired because cancel esc key is pressed", function () {
+				busyDialog4.open();
+				var bCancelPressed = false;
+				busyDialog4.attachEvent("close", function (oEvent) {
+					bCancelPressed = oEvent.getParameter("cancelPressed");
+				});
+
+				sap.ui.test.qunit.triggerKeydown(busyDialog4.$().find("button"), jQuery.sap.KeyCodes.ESCAPE);
+
+				ok(bCancelPressed, "Dialog closed");
+			});
+
+			asyncTest("Close event fired because operation terminates", function () {
+				busyDialog4.open();
+				var bCancelPressed = true;
+				busyDialog4.attachEvent("close", function (oEvent) {
+					bCancelPressed = oEvent.getParameter("cancelPressed");
+				});
+				setTimeout(function () {
+					start();
+					busyDialog4.close();
+					ok(!bCancelPressed, "Dialog closed");
+				}, 1000);
+			});
+
+			module("Property Setter");
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
 		<h1 id="qunit-header">qUnit Page for sap.m.BusyDialogr</h1>
+
 		<h2 id="qunit-banner"></h2>
+
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
 		<div id="content"></div>

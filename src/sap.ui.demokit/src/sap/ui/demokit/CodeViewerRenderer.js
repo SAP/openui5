@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRM.writeStyles();
 		oRM.write(">");
 		if ( oControl.getSource() ) {
-			oRM.write(oControl.getSource().replace(/</g,'&lt;')); // this is fake escaping?
+			oRM.write(jQuery.sap.encodeHTML(oControl.getSource()));
 		}
 		oRM.write("</pre>");
 	};

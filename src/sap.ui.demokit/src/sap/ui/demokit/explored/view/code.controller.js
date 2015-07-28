@@ -20,11 +20,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 		onRouteMatched : function (oEvt) {
 
 			// get params
-			if (oEvt.getParameter("name") !== "code") {
+			if (oEvt.getParameter("name") !== "code" && oEvt.getParameter("name") !== "code_file") {
 				return;
 			}
 
 			this._sId = oEvt.getParameter("arguments").id;
+			var sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
 
 			// retrieve sample object
 			var oSample = sap.ui.demokit.explored.data.samples[this._sId];
@@ -33,47 +34,54 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 				return;
 			}
 
-			// get component
-			var sCompId = 'sampleComp-' + this._sId;
-			var sCompName = this._sId;
-			var oComp = sap.ui.component(sCompId);
-			if (!oComp) {
-				oComp = sap.ui.getCore().createComponent({
-					id : sCompId,
-					name : sCompName
-				});
-			}
+			// cache the data to be reused
+			if (!this._oData || oSample.id !== this._oData.id) {
 
-			// create data object
-			var oMetadata = oComp.getMetadata();
-			var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
-			var oData = {
-				id : oSample.id,
-				title : "Code: " + oSample.name,
-				name : oSample.name,
-				stretch : oConfig.sample ? oConfig.sample.stretch : false,
-				files : [],
-				iframe : oConfig.sample.iframe
-			};
-
-			// retrieve files
-			// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
-			if (oConfig && oConfig.sample && oConfig.sample.files) {
-				var sRef = jQuery.sap.getModulePath(oSample.id);
-				for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
-					var sFile = oConfig.sample.files[i];
-					var sContent = this.fetchSourceFile(sRef, sFile);
-
-					oData.files.push({
-						name : sFile,
-						raw : sContent,
-						code : this._convertCodeToHtml(sContent)
+				// get component and data when sample is changed or nothing exists so far
+				var sCompId = 'sampleComp-' + this._sId;
+				var sCompName = this._sId;
+				var oComp = sap.ui.component(sCompId);
+				if (!oComp) {
+					oComp = sap.ui.getCore().createComponent({
+						id : sCompId,
+						name : sCompName
 					});
 				}
-			}
 
+				// create data object
+				var oMetadata = oComp.getMetadata();
+				var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
+				this._oData = {
+					id : oSample.id,
+					title : "Code: " + oSample.name,
+					name : oSample.name,
+					stretch : oConfig.sample ? oConfig.sample.stretch : false,
+					files : [],
+					iframe : oConfig.sample.iframe,
+					fileName: sFileName,
+					includeInDownload: oConfig.sample.additionalDownloadFiles
+				};
+
+				// retrieve files
+				// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
+				if (oConfig && oConfig.sample && oConfig.sample.files) {
+					var sRef = jQuery.sap.getModulePath(oSample.id);
+					for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
+						var sFile = oConfig.sample.files[i];
+						var sContent = this.fetchSourceFile(sRef, sFile);
+
+						this._oData.files.push({
+							name : sFile,
+							raw : sContent,
+							code : this._convertCodeToHtml(sContent)
+						});
+					}
+				}
+			} else {
+				this._oData.fileName = sFileName;
+			}
 			// set model
-			this.getView().setModel(new sap.ui.model.json.JSONModel(oData));
+			this.getView().setModel(new sap.ui.model.json.JSONModel(this._oData));
 
 			// scroll to top of page
 			var page = this.getView().byId("page");
@@ -130,12 +138,19 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 				}
 			}
 
-			var sRef = jQuery.sap.getModulePath(this._sId);
+			var sRef = jQuery.sap.getModulePath(this._sId),
+				aExtraFiles = oData.includeInDownload || [],
+				that = this;
 			oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
 
 			if (!oData.iframe) {
 				oZipFile.file("index.html", this.createIndexFile(oData));
 			}
+
+			// add extra download files
+			aExtraFiles.forEach(function(sFileName, index) {
+				oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+			});
 
 			var oContent = oZipFile.generate();
 
@@ -182,7 +197,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 		},
 
 		onNavBack : function () {
-			this.router.myNavBack("sample", { id : this._sId }, true);
+			this.router.navTo("sample", { id : this._sId }, true);
 		},
 
 		/**
@@ -207,13 +222,23 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			// Improve indentation for display
 			code = code.replace(/\t/g, "  ");
 
-			return '<pre><code>' + jQuery.sap.encodeHTML(code) + '</code></pre>';
+			return code;
 		},
 
 		_changeIframeBootstrapToCloud : function (sRawIndexFileHtml) {
 			var rReplaceIndex = /src=["|']([^"|^']*sap-ui-core\.js)["|']/;
 			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"');
+		},
+
+		handleTabSelectEvent: function(oEvent) {
+			var sFileName = oEvent.getParameter("selectedKey");
+			this.router.navTo("code_file", {
+				id : this._sId,
+				fileName: encodeURIComponent(sFileName)
+			}, false);
 		}
+
+
 	});
 
 }, /* export= */true);

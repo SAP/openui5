@@ -504,27 +504,11 @@ html[dir=rtl][data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .s
 
 .sapMOHR .sapMObjectNumber {
 	display: inline-block;
-	white-space: normal;
 	padding: 0.4rem 0 0 1rem;
 }
 
-.sapMOHR .sapMObjectNumberText {
-	display: inline-block;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	box-sizing: border-box;
-	max-width: 100%;
-}
-
 .sapMOHR .sapMObjectNumberUnit {
-	display: inline-block;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	line-height: 1.6;
-	box-sizing: border-box;
-	max-width: 100%;
+	padding-top: 0.4375rem;
 }
 
 .sap-desktop .sapMOHR .sapMObjectNumber {
@@ -548,16 +532,6 @@ html[dir=rtl][data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .s
 .sap-phone .sapMOHR .sapMObjectNumber.sapMObjectNumberBelowTitle {
 	width: 100%;
 	padding: 0.5rem 0 0 0;
-}
-
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumberText,
-.sap-phone .sapMOHR .sapMObjectNumberText {
-	display: inline-block;
-}
-
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumberUnit,
-.sap-phone .sapMOHR .sapMObjectNumberUnit {
-	display: inline-block;
 }
 
 .sap-desktop.sapUiMedia-Std-Phone .sapMOHRNumberWrap,
@@ -674,8 +648,8 @@ div[class*='sapMOHRStatesCont'] > div:last-child {
 
 .sapMOHR .sapMITH {
 	position: relative;
-	margin-left: -1.8rem;
-	margin-right: -1.8rem;
+	margin-left: -2rem;
+	margin-right: -2rem;
 }
 
 .sap-phone .sapMOHRTabs .sapMITH,
@@ -683,6 +657,39 @@ div[class*='sapMOHRStatesCont'] > div:last-child {
 	position: relative;
 	margin-left: -1rem;
 	margin-right: -1rem;
+}
+
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBHead {
+	margin: 1rem 1rem 0 1rem;
+}
+
+html[data-sap-ui-os=win8].sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBHead {
+	margin: 1rem 0 0;
+}
+
+.sap-phone .sapMOHRTabs .sapMITBScrollContainer,
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBScrollContainer {
+	margin: 0 1rem;
+}
+
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeft {
+	left: 0.25rem;
+	padding: 1rem 0;
+}
+
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRight {
+	padding: 1rem 0;
+	right: 0.25rem;
+}
+
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
+	left: 0.25rem;
+	padding: 1.25rem 0 0.75rem;
+}
+
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
+	padding: 1.25rem 0 0.75rem;
+	right: 0.25rem;
 }
 
 .sapMOHRTabs {
@@ -710,7 +717,6 @@ div[class*='sapMOHRStatesCont'] > div:last-child {
 .sapMOHR .sapMITBHead {
 	display: block;
 	font-size: 0.75rem;
-	margin: 0 1.25rem 0;
 	overflow: hidden;
 	position: relative;
 	white-space: nowrap;

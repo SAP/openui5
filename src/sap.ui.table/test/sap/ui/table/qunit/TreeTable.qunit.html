@@ -98,6 +98,7 @@
 	});
 	
 	test("ExpandRow", 2, function() {
+		oTable.unbindRows().bindRows("/root");
 		oTable.expand(0);
 		equal(oTable.getBinding("rows").getLength(), 5, "Row count is correct!");
 		equal(oTable.isExpanded(0), true, "Expanded state is correct!");

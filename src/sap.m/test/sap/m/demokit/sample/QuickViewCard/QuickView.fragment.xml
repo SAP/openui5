@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<Panel width="320px">
+	<Panel id="quickViewCardContainer" height="600px" width="320px">
 		<QuickViewCard id="quickViewCard" pages="{/pages}" afterNavigate="onNavigate">
 			<QuickViewPage
 					pageId="{pageId}"

@@ -6,8 +6,8 @@
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([
 	'jquery.sap.global', './_AnnotationHelperBasics', 'sap/ui/base/BindingParser',
-	'sap/ui/core/format/DateFormat'
-], function(jQuery, Basics, BindingParser, DateFormat) {
+	'sap/ui/base/ManagedObject', 'sap/ui/core/format/DateFormat'
+], function(jQuery, Basics, BindingParser, ManagedObject, DateFormat) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
@@ -29,6 +29,9 @@ sap.ui.define([
 		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 		Expression,
+		// a simple binding (see sap.ui.base.BindingParser.simpleParser) to "@i18n" model
+		// w/o bad chars (see _AnnotationHelperBasics: rBadChars) inside path!
+		rI18n = /^\{@i18n>[^\\\{\}:]+\}$/,
 		rInteger = /^\d+$/,
 		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
 			And: "&&",
@@ -183,7 +186,10 @@ sap.ui.define([
 					// the expression might have a lower operator precedence than '+'
 					Expression.wrapExpression(oResult);
 				}
-				aParts.push(Basics.resultToString(oResult, bExpression, true));
+				if (oResult.type !== 'edm:Null') {
+					// ignore null (otherwise the string 'null' would appear in expressions)
+					aParts.push(Basics.resultToString(oResult, bExpression, true));
+				}
 			});
 			oResult = bExpression
 				? {result: "expression", value: aParts.join("+")}
@@ -255,7 +261,14 @@ sap.ui.define([
 			Basics.expectType(oPathValue, "string");
 
 			if (sEdmType === "String") {
-				if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
+				if (rI18n.test(sValue)) { // a simple binding to "@i18n" model
+					return {
+						ignoreTypeInPath: true,
+						result : "binding",
+						type: "Edm.String",
+						value : sValue.slice(1, -1) // cut off "{" and "}"
+					};
+				} else if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
 					// We want a model binding to the path in the metamodel (which is
 					// oPathValue.path)
 					// "/##" is prepended because it leads from model to metamodel
@@ -419,10 +432,22 @@ sap.ui.define([
 		 * @param {boolean} bWithType
 		 *   if <code>true</code>, embedded bindings contain type information
 		 * @returns {string}
-		 *   the expression value or "Unsupported: oRawValue" in case of an error.
+		 *   the expression value or "Unsupported: oRawValue" in case of an error or
+		 *   <code>undefined</code> in case the raw value is undefined.
 		 */
 		getExpression: function (oInterface, oRawValue, bWithType) {
 			var oResult;
+
+			if (oRawValue === undefined) {
+				return undefined;
+			}
+
+			if ( !Expression.simpleParserWarningLogged &&
+					ManagedObject.bindingParser === BindingParser.simpleParser) {
+				jQuery.sap.log.warning("Complex binding syntax not active", null,
+					"sap.ui.model.odata.AnnotationHelper");
+				Expression.simpleParserWarningLogged = true;
+			}
 
 			try {
 				oResult = Expression.expression(oInterface, {
@@ -763,6 +788,13 @@ sap.ui.define([
 			}
 			return aParts.join('/');
 		},
+
+		/**
+		 * Flag indicating that warning for missing complex binding parser has already been logged.
+		 *
+		 * @type {boolean}
+		*/
+		simpleParserWarningLogged : false,
 
 		/**
 		 * Handling of "14.5.3.1.3 Function odata.uriEncode".

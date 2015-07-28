@@ -31,12 +31,6 @@ sap.ui.define([
 				// sap.ui.core.mvc.JSView._unregisterView("sap.ui.core.sample.View.async.Async");
 				// oSampleView.byId("js_sample").destroy();
 				// jQuery.sap.unloadResources("sap/ui/core/sample/View/async/Async.view.js", false, true, true);
-
-				// *** Sample.view.xml ***
-				// <Panel>
-				// 	<mvc:JSView viewName="sap.ui.core.sample.View.async.Async" id="js_sample" async="{mode>/async}"></mvc:JSView>
-				// </Panel>
-
 				return sap.ui.jsview("sap.ui.core.sample.View.async.Root", true);
 			},
 			init: function() {
@@ -49,10 +43,9 @@ sap.ui.define([
 				mResponses = {};
 
 				// delay sync request execution
-				function forceDelay() {
-					var start, now = 0;
-					start = Date.now();
-					while (now - start < fnDelay()) {
+				function forceDelay(delay) {
+					var start = Date.now(), now = 0;
+					while (now - start < delay) {
 						now = Date.now();
 					}
 				}
@@ -89,7 +82,7 @@ sap.ui.define([
 								}, mResponses[sType]);
 							}, fnDelay());
 						} else {
-							forceDelay();
+							forceDelay(fnDelay());
 							request.respond(200, {
 								"Content-Type": "application/" + (sType == "js" ? "javascript" : sType),
 								"Cache-Control": "no-cache, no-store, must-revalidate",

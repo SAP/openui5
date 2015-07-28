@@ -9,6 +9,8 @@
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
+	jQuery.sap.require("sap.ui.test.TestUtils");
+
 	function anyInt(sName, iMin, iMax) {
 		var oType;
 
@@ -184,12 +186,22 @@
 		test("nullable", function () {
 			oType.validateValue(null);
 
-			this.mock(jQuery.sap.log).expects("warning").never();
+			this.mock(jQuery.sap.log).expects("warning").withExactArgs("Illegal nullable: 42",
+				null, sName);
+
+			oType = new (jQuery.sap.getObject(sName))({});
+			strictEqual(oType.oConstraints, undefined);
 
 			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
 			strictEqual(oType.oConstraints, undefined);
 
 			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
+			strictEqual(oType.oConstraints, undefined);
+
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: undefined});
+			strictEqual(oType.oConstraints, undefined);
+
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: 42});
 			strictEqual(oType.oConstraints, undefined);
 
 			oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
@@ -197,12 +209,6 @@
 
 			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "false"});
 			strictEqual(oType.oConstraints.nullable, false);
-
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
-			strictEqual(oType.oConstraints, undefined);
-
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
-			strictEqual(oType.oConstraints, undefined);
 
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				oType = createType({}, {nullable: false});

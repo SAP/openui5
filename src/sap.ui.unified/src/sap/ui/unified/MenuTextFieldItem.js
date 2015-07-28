@@ -10,23 +10,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 
 	
 	/**
-	 * Constructor for a new MenuTextFieldItem.
+	 * Constructor for a new MenuTextFieldItem element.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Menu item which contains an text field. This menu item is e.g. helpful for filters.
-	 * The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
+	 * Special menu item which contains a label and a text field. This menu item is e.g. helpful for filter implementations.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @extends sap.ui.unified.MenuItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.21.0
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.unified.MenuTextFieldItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var MenuTextFieldItem = MenuItemBase.extend("sap.ui.unified.MenuTextFieldItem", /** @lends sap.ui.unified.MenuTextFieldItem.prototype */ { metadata : {
 	
@@ -34,22 +35,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		properties : {
 	
 			/**
-			 * The label of the contained text field.
+			 * Defines the label of the text field of the item.
 			 */
 			label : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * Icon to be displayed.
+			 * Defines the icon of the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * Value of the contained text field.
+			 * Defines the value of the text field of the item.
 			 */
 			value : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Visualizes warnings or errors.
+			 * Defines the value state of the text field of the item. This allows you to visualize e.g. warnings or errors.
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None}
 		}
@@ -58,10 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	
 	(function() {
 	
-	/**
-	 * Called by the Menu renderer when the item should be rendered.
-	 * @private
-	 */
 	MenuTextFieldItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
 		var rm = oRenderManager,
 			bIsEnabled = oMenu.checkEnabled(oItem),
@@ -98,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		// icon/check column 
 		rm.write("<div class=\"sapUiMnuItmIco\">");
 		if (oItem.getIcon()) {
-			rm.writeIcon(oItem.getIcon());
+			rm.writeIcon(oItem.getIcon(), null, {title: null});
 		}
 		rm.write("</div>");
 		
@@ -133,10 +130,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	};
 	
 	
-	/**
-	 * Called by the Menu renderer when the item is hovered.
-	 * @private
-	 */
 	MenuTextFieldItem.prototype.hover = function(bHovered, oMenu){
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
 		
@@ -147,10 +140,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	};
 	
 	
-	/**
-	 * Called by the Menu renderer after the item is rendered.
-	 * @private
-	 */
 	MenuTextFieldItem.prototype.onAfterRendering = function(){
 		this._adaptSizes();
 		this.setValueState(this.getValueState());
@@ -231,32 +220,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	// ************ Overridden API functions *************
 	
 	/**
-	 * Getter for aggregation <code>submenu</code>.<br/>
-	 * Aggregation of a menu item's sub menu.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * 
 	 * @return {sap.ui.unified.Menu}
 	 * @public
 	 * @name sap.ui.unified.MenuTextFieldItem#getSubmenu
-	 * @deprecated The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @function
 	 */
 	 
 	/**
-	 * Destroys the submenu in the aggregation 
-	 * named <code>submenu</code>.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * 
 	 * @return {sap.ui.unified.MenuTextFieldItem} <code>this</code> to allow method chaining
 	 * @public
 	 * @name sap.ui.unified.MenuTextFieldItem#destroySubmenu
-	 * @deprecated The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @function
 	 */
 	
 	/**
-	 * Setter for the aggregated <code>submenu</code>.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * 
 	 * @param {sap.ui.unified.Menu} oSubmenu
 	 * @return {sap.ui.unified.MenuTextFieldItem} <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 */
 	MenuTextFieldItem.prototype.setSubmenu = function(oMenu){
 		jQuery.sap.log.warning("The aggregation 'submenu' is not supported for this type of menu item.", "", "sap.ui.unified.MenuTextFieldItem");

@@ -323,5 +323,29 @@
         "references": []
       }
     ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "62908d5e3ec15696eb218289343978e69c72a8d7",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Fixes Dialog resizing beyond minimum size",
+        "references": []
+      }
+    ]
+  },
+  "1.30.2": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "fd9d53e102a7917b28be343f665b7fcebd46f73e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      }
+    ]
   }
 }

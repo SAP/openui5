@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.util.ExportTypeCSV
-sap.ui.define(['jquery.sap.global', './ExportType'],
-	function(jQuery, ExportType) {
+sap.ui.define(['./ExportType'],
+	function(ExportType) {
 	'use strict';
 
 	/**
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './ExportType'],
 	var CSV = ExportType.extend('sap.ui.core.util.ExportTypeCSV', {
 
 		metadata: {
-
+			library: "sap.ui.core",
 			properties: {
 				
 				/**
@@ -153,5 +153,5 @@ sap.ui.define(['jquery.sap.global', './ExportType'],
 
 	return CSV;
 
-}, /* bExport= */ true
+}
 );

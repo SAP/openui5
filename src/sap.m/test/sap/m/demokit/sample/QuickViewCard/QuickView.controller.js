@@ -8,9 +8,11 @@ sap.ui.define([
 
 	var CController = Controller.extend("sap.m.sample.QuickViewCard.QuickView", {
 
+		_mData : null,
+		_oModel : null,
 		onInit: function() {
 			//	create JSON model instance
-			var oModel = new JSONModel();
+			this._oModel = new JSONModel();
 
 			// JSON sample data
 			var mData = {
@@ -114,9 +116,11 @@ sap.ui.define([
 				]
 			};
 
+			this._mData = mData;
+
 			// set the data for the model
-			oModel.setData(mData);
-			this.getView().setModel(oModel);
+			this._oModel.setData(this._mData);
+			this.getView().setModel(this._oModel);
 		},
 
 		onBeforeRendering: function() {
@@ -127,6 +131,50 @@ sap.ui.define([
 		onButtonBackClick : function() {
 			var oQuickViewCard = this.getView().byId('quickViewCard');
 			oQuickViewCard.navigateBack();
+		},
+
+		onHideScrollClick : function() {
+			var oQuickViewCard = this.getView().byId('quickViewCard');
+			oQuickViewCard.setShowVerticalScrollBar(false);
+		},
+
+		onShowScrollClick : function() {
+			var oQuickViewCard = this.getView().byId('quickViewCard');
+			oQuickViewCard.setShowVerticalScrollBar(true);
+		},
+
+		onHideHeaderClick : function() {
+			this._mData.pages[0].title = "";
+			this._mData.pages[0].icon = "";
+			this._mData.pages[0].description = "";
+			this._oModel.setData(this._mData);
+		},
+
+		onShowHeaderClick : function() {
+			this._mData.pages[0].title = "Adventure Company";
+			this._mData.pages[0].icon = "sap-icon://building";
+			this._mData.pages[0].description = "John Doe";
+			this._oModel.setData(this._mData);
+		},
+
+		onScrollSwitchChange : function(oEvent) {
+			var oQuickViewCard = this.getView().byId('quickViewCard');
+
+			oQuickViewCard.setShowVerticalScrollBar(oEvent.getParameters().state);
+		},
+
+		onHeaderSwitchChange : function(oEvent) {
+			if (oEvent.getParameters().state) {
+				this._mData.pages[0].title = "Adventure Company";
+				this._mData.pages[0].icon = "sap-icon://building";
+				this._mData.pages[0].description = "John Doe";
+			} else {
+				this._mData.pages[0].title = "";
+				this._mData.pages[0].icon = "";
+				this._mData.pages[0].description = "";
+			}
+
+			this._oModel.setData(this._mData);
 		},
 
 		onNavigate : function(oEvent) {

@@ -78,11 +78,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			if (oBinding) {
 				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
 			} else {
-				oControl.updateMessages(aParts[1], aMessages);
+				oControl.propagateMessages(aParts[1], aMessages);
 			}
 		});
 	};
 	
 	return ControlMessageProcessor;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides the OData model implementation of a tree binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/CountMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/TreeBindingUtils'],
-	function(jQuery, TreeBinding, CountMode, ChangeReason, ODataUtils, TreeBindingUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/CountMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/Sorter',  'sap/ui/model/odata/ODataUtils', 'sap/ui/model/TreeBindingUtils'],
+	function(jQuery, TreeBinding, CountMode, ChangeReason, Sorter, ODataUtils, TreeBindingUtils) {
 	"use strict";
 
 
@@ -35,8 +35,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @param {int} [mParameters.rootLevel=0] The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
 	 *                                        Conforming to the "SAP Annotations for OData Version 2.0" Specification, the root level must start at 0. 
 	 *                                        Default value is thus 0.
-	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: sets the batch group id to be used for requests originating from this binding
+	 * @param {string} [mParameters.groupId] sets the group id to be used for requests originating from this binding
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
+	 * 
+	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
@@ -48,8 +51,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			//make sure we have at least an empty parameter object
 			this.mParameters = this.mParameters || mParameters || {};
 			
-			this.sBatchGroupId;
-			this.sRefreshBatchGroupId;
+			this.sGroupId;
+			this.sRefreshGroupId;
 			this.oFinalLengths = {};
 			this.oLengths = {};
 			this.oKeys = {};
@@ -68,13 +71,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.iNumberOfExpandedLevels = (mParameters && mParameters.numberOfExpandedLevels) || 0;
 			this.iRootLevel =  (mParameters && mParameters.rootLevel) || 0;
 			
-			if (mParameters && mParameters.countMode && mParameters.countMode !== CountMode.Inline) {
-				jQuery.log.fatal("ODataTreeBinding only supports CountMode.Inline!");
-			} else { 
-				this.sCountMode = CountMode.Inline;
+			this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
+			if (this.sCountMode == CountMode.None) {
+				jQuery.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
 			}
+			
 			if (mParameters) {
-				this.sBatchGroupId = mParameters.batchGroupId;
+				this.sBatchGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
 			//this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			this.bInitial = true;
@@ -135,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._loadSingleRootByHierarchyNodeID = function (sRootNodeID, sRequestKey) {
 		var that = this,
-			sBatchGroupId;
+			sGroupId;
 		
 		var _handleSuccess = function (oData) {
 			if (oData.results && oData.results.length > 0) {
@@ -171,8 +174,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		};
 		
 		var aParams = [];
+		
+		// build filter statement containing the node filter for the root AND the application/control filters
+		var sNodeFilterParams = this._getNodeFilterParams({id: sRootNodeID, isRoot: true});
 		var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
-		aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-node-for"] + " eq '" + sRootNodeID + "'") + sFilterParams);
+		aParams.push("$filter=" + sNodeFilterParams + sFilterParams);
+		
 		// make sure to abort previous requests, with the same paging parameters
 		// this is necessary to make sure, that only the most recent request gets processed
 		// e.g. the (Tree)Table performs multiple calls to the binding (see BindingTimer in Table.js) 
@@ -180,31 +187,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.mRequestHandles[sRequestKey].abort();
 		}
 		this.fireDataRequested();
-		sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+		sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
 			urlParameters: aParams, 
 			success: _handleSuccess, 
 			error: _handleError,
 			sorters: this.aSorters,
-			batchGroupId: sBatchGroupId
+			groupId: sGroupId
 		});
+	};
+	
+	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
+		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"] : this.oTreeProperties["hierarchy-parent-node-for"];
+		var oEntityType = this._getEntityType();
+		return ODataUtils._createFilterParams([new sap.ui.model.Filter(sPropName, "EQ", mParams.id)], this.oModel.oMetadata, oEntityType);
 	};
 	
 	/**
 	 * Retrieves the root node given through sNodeId
 	 * @param {string} sNodeId the ID od the root node which should be loaded (e.g. when bound to a single entity)
 	 * @param {string} sRequestKey a key string used to store/clean-up request handles
+	 * @private
 	 */
 	ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties = function (sNodeId, sRequestKey) {
 		var that = this,
-			sBatchGroupId;
+			sGroupId;
 		
 		if (this.mRequestHandles[sRequestKey]) {
 			this.mRequestHandles[sRequestKey].abort();
 		}
-		sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+		sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 		this.mRequestHandles[sRequestKey] = this.oModel.read(sNodeId, {
-			batchGroupId: sBatchGroupId,
+			groupId: sGroupId,
 			success: function (oData) {
 				var sNavPath = that._getNavPath(that.getPath());
 				
@@ -247,7 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 *                  A higher threshold reduces the number of backend requests, yet these request blow up in size, since more data is loaded.
 	 * @return {sap.ui.model.Context[]} an array containing the contexts for the entities returned by the backend, might be fewer than requested 
 	 *                                  if the backend does not have enough data.
-	 * @protected
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength, iThreshold) {
 		
@@ -335,7 +349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @param {integer} iLength the requested amount of contexts
 	 * @param {integer} iThreshold
 	 * @return {sap.ui.model.Context[]} the contexts array
-	 * @protected
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength, iThreshold) {
 		
@@ -463,8 +477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._getContextsForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mRequestParameters) {
 		var aContexts = [],
-			sKey,
-			iRootLevel;
+			sKey;
 		
 		// Set default values if startindex, threshold or length are not defined
 		iStartIndex = iStartIndex || 0;
@@ -475,13 +488,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this._mLoadedSections[sNodeId] = [];
 		}
 
-		if (this.bHasTreeAnnotations) {
-			//the ID of the root node must be defined via parameters in case we use an annotated service
-			if (sNodeId == null) {
-				iRootLevel = this.iRootLevel;
-			}
-		}
-	
 		// make sure we only request the maximum length available (length is known and final)
 		if (this.oFinalLengths[sNodeId] && this.oLengths[sNodeId] < iStartIndex + iLength) {
 			iLength = Math.max(this.oLengths[sNodeId] - iStartIndex, 0);
@@ -571,13 +577,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			if (aMissingSections.length > 0) {
 				var aParams = [];
 				if (this.bHasTreeAnnotations) {
+					// application/control filter parameters, will be added to the node/level filter
 					var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
 					if (sNodeId) {
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
+						var sNodeFilterParams = this._getNodeFilterParams({id: sNodeId});
+						aParams.push("$filter=" + sNodeFilterParams + sFilterParams);
 					} else {
 						// no root node id is given: sNodeId === null
 						// in this case we use the root level
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + iRootLevel) + sFilterParams);
+						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel()) + sFilterParams);
 					}
 				}
 				/*else {
@@ -600,9 +608,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		return aContexts;
 	};
 	
+	/**
+	 * Issues a $count request for the given node-id/odata-key
+	 * @private
+	 */
 	ODataTreeBinding.prototype._getCountForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mParameters) {
 		var that = this,
-			sBatchGroupId;
+			sGroupId;
 		
 		// create a request object for the data request
 		var aParams = [];
@@ -625,23 +637,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		}
 		
 		var sPath;
+		
+		var sFilterParams = this.getFilterParams() || "";
+		var sNodeFilter = "";
 		if (this.bHasTreeAnnotations) {
 			sPath = this.oModel.resolve(this.getPath(), this.getContext());
-			var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
-			aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
+			// only filter for the parent node if the given node is not the root (null)
+			// if root and we $count the collection
+			if (sNodeId != null) {
+				sNodeFilter = this._getNodeFilterParams({id: sNodeId});
+			} else {
+				sNodeFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel());
+			}
+			
 		} else {
 			sPath = sNodeId;
+		}
+		
+		if (sNodeFilter || sFilterParams) {
+			var sAnd = "";
+			if (sNodeFilter && sFilterParams) {
+				sAnd = "%20and%20";
+			}
+			
+			sFilterParams = "$filter=" + sFilterParams + sAnd + sNodeFilter;
+			aParams.push(sFilterParams);
 		}
 	
 		// Only send request, if path is defined
 		if (sPath) {
-			sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 			this.oModel.read(sPath + "/$count", {
 				urlParameters: aParams,
 				success: _handleSuccess,
 				error: _handleError,
 				sorters: this.aSorters,
-				batchGroupId: sBatchGroupId
+				groupId: sGroupId
 			});
 		}
 	};
@@ -663,16 +694,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters, oRequestedSection) {
 		var that = this,
-			sBatchGroupId,
+			sGroupId,
 			bInlineCountRequested = false;
 
 		if (iStartIndex || iLength) {
 			aParams.push("$skip=" + iStartIndex + "&$top=" + (iLength + iThreshold));
 		}
 		
-		if (!this.oFinalLengths[sNodeId] && (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.Both)) {
-			aParams.push("$inlinecount=allpages");
-			bInlineCountRequested = true;
+		//check if we already have a count
+		if (!this.oFinalLengths[sNodeId]) {
+			// issue $inlinecount
+			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.Both) {
+				aParams.push("$inlinecount=allpages");
+				bInlineCountRequested = true;
+			} else if (this.sCountMode == CountMode.Request) {
+				//... or $count request
+				that._getCountForNodeId(sNodeId);
+			}
 		}
 		
 		var sRequestKey = "" + sNodeId + "-" + iStartIndex + "-" + this._iPageSize + "-" + iThreshold;
@@ -710,22 +748,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 							if (bInlineCountRequested && oData.__count) {
 								that.oLengths[sEntryNodeId] = parseInt(oData.__count, 10);
 								that.oFinalLengths[sEntryNodeId] = true;
-							} else {
-								//calculate the number of children for this node/context
-								var iResultLength = parseInt(oData.results.length, 10);
-								that.oLengths[sEntryNodeId] = Math.max(that.oLengths[sEntryNodeId] || 0, iStartIndex + iResultLength);
-								
-								// if we received fewer items than requested, the length is final
-								if (iResultLength < iLength) {
-									that.oFinalLengths[sEntryNodeId] = true;
-								}
-								
-								//send an additional count request, in case no inline count was sent
-								if (!that.oFinalLengths[sEntryNodeId] && that.oModel.isCountSupported()) {
-									that._getCountForNodeId(sEntryNodeId);
-								}
 							}
-							
 						}
 						
 						that.oKeys[sEntryNodeId][mLastNodeIdIndices[sEntryNodeId]] = that.oModel._getKey(oEntry);
@@ -736,10 +759,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 					if (bInlineCountRequested && oData.__count) {
 						that.oLengths[sNodeId] = parseInt(oData.__count, 10);
 						that.oFinalLengths[sNodeId] = true;
-					} else {
-						if (that.oModel.isCountSupported()) {
-							that._getCountForNodeId(sNodeId);
-						}
 					}
 					
 					that.oKeys[sNodeId] = [];
@@ -817,13 +836,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				if (this.mRequestHandles[sRequestKey]) {
 					this.mRequestHandles[sRequestKey].abort();
 				}
-				sBatchGroupId = this.sRefreshBatchGroupId ? this.sRefreshBatchGroupId : this.sBatchGroupId;
+				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 					urlParameters: aParams,
 					success: fnSuccess,
 					error: fnError,
 					sorters: this.aSorters,
-					batchGroupId: sBatchGroupId
+					groupId: sGroupId
 				});
 			}
 		}
@@ -851,7 +870,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.oFinalLengths = {};
 			this.oRootContext = null;
 			this._bRootMissing = false;
+			
+			// abort running request and clear the map afterwards
+			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
+				if (oRequestHandle) {
+					oRequestHandle.abort();
+				}
+			});
 			this.mRequestHandles = {};
+			
 			this._mLoadedSections = {};
 			this._iPageSize = 0;
 			this.sFilterParams = "";
@@ -865,17 +892,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * validation, please use the parameter bForceUpdate.
 	 * 
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
-	 * @param {string} [sBatchGroupId] The batch group Id for the refresh
+	 * @param {string} [sGroupId] The  group Id for the refresh
 	 * 
 	 * @public
 	 */
-	ODataTreeBinding.prototype.refresh = function(bForceUpdate, sBatchGroupId) {
+	ODataTreeBinding.prototype.refresh = function(bForceUpdate, sGroupId) {
 		if (typeof bForceUpdate === "string") {
-			sBatchGroupId = bForceUpdate;
+			sGroupId = bForceUpdate;
 		}
-		this.sRefreshBatchGroup = sBatchGroupId;
+		this.sRefreshGroup = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshBatchGroup = undefined;
+		this.sRefreshGroup = undefined;
 	};
 	
 	/**
@@ -925,7 +952,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.resetData();
 			this.bNeedsUpdate = false;
 			this.bRefresh = true;
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 	
@@ -953,7 +980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 
 		var bSuccess = false;
 
-		if (aSorters instanceof sap.ui.model.Sorter) {
+		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
 		}
 
@@ -986,6 +1013,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * 
 	 * @param {boolean} bForceUpdate
 	 * 
+	 * @private
 	 */
 	ODataTreeBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities){
 		var bChangeDetected = false;
@@ -1085,6 +1113,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * Checks the metadata for Hierarchy Tree Annotations.
 	 * The property mapping describing the tree will be placed in "this.oTreeProperties".
 	 * Also checks if clientside property mappings are given.
+	 * 
+	 * The extracted hierarchy informations will be stored in "this.oTreeProperties" (if any)
+	 * 
+	 * @private
 	 */
 	ODataTreeBinding.prototype._hasTreeAnnotations = function() {
 		var oModel = this.oModel,
@@ -1148,7 +1180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			return false;
 		}
 
-		//Check if all required proeprties are available
+		//Check if all required properties are available
 		jQuery.each(oEntityType.property, function(iIndex, oProperty) {
 			if (!oProperty.extensions) {
 				return true;
@@ -1170,7 +1202,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * Initialize binding. Fires a change if data is already available ($expand) or a refresh.
 	 * If metadata is not yet available, do nothing, method will be called again when
 	 * metadata is loaded.
-	 *  
+	 * 
+	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding} The binding instance
 	 * @public
 	 */
 	ODataTreeBinding.prototype.initialize = function() {
@@ -1179,7 +1212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
 			this._processSelectParameters();
 			this.oEntityType = this._getEntityType();
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 		return this;
 	};
@@ -1239,7 +1272,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	
 	/**
 	 * Builds a download URL
+	 * TODO: Make this public as soon as the download URL feature is implemented correctly
 	 * @param {string} sFormat The format for the result data, when accessing the Download-URL
+	 * 
+	 * @private
 	 */
 	ODataTreeBinding.prototype.getDownloadUrl = function(sFormat) {
 		var aParams = [],
@@ -1304,7 +1340,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	/**
 	 * Sets the rootLevel
 	 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
+	 * This is only possible (and necessary) for OData services implementing the hierarchy annotation specification,
+	 * or when providing the annotation information locally as a binding parameter. See the constructor for API documentation on this.
 	 * @param {int} iRootLevel
+	 * 
+	 * @public
 	 */
 	ODataTreeBinding.prototype.setRootLevel = function(iRootLevel) {
 		iRootLevel = parseInt(iRootLevel || 0, 10);
@@ -1320,11 +1360,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	/**
 	 * Returns the rootLevel
 	 * @returns {int}
+	 * 
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getRootLevel = function() {
 		return this.iRootLevel;
 	};
 
+	/**
+	 * Retrieves the EntityType of the bindings path, resolved with the current context.
+	 * @private
+	 */
 	ODataTreeBinding.prototype._getEntityType = function(){
 		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
@@ -1337,6 +1383,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		return undefined;
 	};
 
+	/**
+	 * Retrieves a string concatenation of the filter parameters given in "this.aFilters".
+	 * Also sets the created filter-string to "this.sFilterParams".
+	 * Filters will be ANDed and ORed by the ODataUtils. 
+	 * @returns {string} the concatenated OData filters
+	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
 		if (this.aFilters && this.aFilters.length > 0) {
 			if (!this.sFilterParams) {
@@ -1352,4 +1404,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 
 	return ODataTreeBinding;
 
-}, /* bExport= */ true);
+});

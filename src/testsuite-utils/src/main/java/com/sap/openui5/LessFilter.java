@@ -33,11 +33,11 @@ import org.mozilla.javascript.tools.shell.Global;
 
 
 /**
- * The class <code>LessFilter</code> is used to compile CSS for Less files 
+ * The class <code>LessFilter</code> is used to compile CSS for Less files
  * on the fly - once they are requested by the application.
  * <p>
  * <i>This class must not be used in productive systems.</i>
- * 
+ *
  * @author Peter Muessig, Matthias Osswald
  */
 public class LessFilter implements Filter {
@@ -84,13 +84,13 @@ public class LessFilter implements Filter {
    */
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    
+
     // keep the filter configuration
     this.config = filterConfig;
-    
+
     // initialize the Less Compiler in the Rhino container
     try {
-      
+
       // create a new JS execution context
       Context context = Context.enter();
       context.setOptimizationLevel(9);
@@ -110,20 +110,20 @@ public class LessFilter implements Filter {
         Reader reader = new InputStreamReader(url.openStream(), "UTF-8");
         context.evaluateReader(this.scope, reader, script, 1, null);
       }
-      
+
       // get environment object and set the resource loader used in less (see less-api.js)
       Scriptable env = (Scriptable) this.scope.get("__env", this.scope);
       env.put("resourceLoader", env, Context.javaToJS(new ResourceLoader(), this.scope));
 
       // keep the reference to the JS less API
       this.parse = (Function) this.scope.get("parse", this.scope);
-      
-      // exit the context
-      Context.exit();
-      
+
     } catch (Exception ex) {
       String message = "Failed to initialize LESS compiler!";
       throw new ServletException(message, ex);
+    } finally {
+      // exit the context
+      Context.exit();
     }
 
   } // method: init
@@ -145,67 +145,67 @@ public class LessFilter implements Filter {
    */
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    
+
     // make sure that the request/response are http request/response
     if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-      
+
       // determine the path of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
       String method = httpRequest.getMethod().toUpperCase(); // NOSONAR
       String path = httpRequest.getServletPath() + httpRequest.getPathInfo();
-      
+
       // only process GET or HEAD requests
       if (method.matches("GET|HEAD")) {
-        
+
         // compile the less if required (up-to-date check happens in the compile function)
         Matcher m = PATTERN_THEME_REQUEST.matcher(path);
         if (m.matches()) {
-          
+
           // check for existence of the resource
           URL url = this.findResource(path);
           if (url == null) {
-            
+
             String prefixPath = m.group(1);
             String sourcePath = prefixPath + "/library.source.less";
-            
+
             this.compile(sourcePath, false, false);
-            
+
             // return the cached CSS or JSON file
             if (this.cache.containsKey(path)) {
-              
+
               httpResponse.setStatus(HttpServletResponse.SC_OK);
               response.setContentType(this.config.getServletContext().getMimeType(path));
               httpResponse.addDateHeader("Last-Modified", this.lastModified.get(sourcePath));
-              
+
               if ("GET".equals(method)) {
                 OutputStream os = response.getOutputStream();
                 IOUtils.write(this.cache.get(path), os, "UTF-8");
                 IOUtils.closeQuietly(os);
-                
+
                 os.flush();
                 os.close();
               }
-              
+
               return;
-              
+
             }
-              
+
           } else {
-            
+
             this.log("The resource " + path + " already exists and will not be compiled on-the-fly.");
-            
+
           }
-          
+
         }
-        
+
       }
-      
+
     }
-    
+
     // proceed in the filter chain
     chain.doFilter(request, response);
-    
+
   } // method: doFilter
 
 
@@ -216,7 +216,7 @@ public class LessFilter implements Filter {
   private void log(String msg) {
     this.config.getServletContext().log(this.config.getFilterName() + ": "+ msg);
   } // method: log
-  
+
   /**
    * logs the message and <code>Throwable</code> prepended by the filter name (copy of {@link GenericServlet#log(String, Throwable)})
    * @param msg the message
@@ -225,8 +225,8 @@ public class LessFilter implements Filter {
   private void log(String msg, Throwable t) {
     this.config.getServletContext().log(this.config.getFilterName() + ": "+ msg, t);
   } // method: log
-  
-  
+
+
   /**
    * finds the resource for the given path
    * @param path path of the resource
@@ -234,13 +234,13 @@ public class LessFilter implements Filter {
    * @throws MalformedURLException
    */
   private URL findResource(String path) throws MalformedURLException {
-    
+
     // normalize the path (JarURLConnection cannot resolve non-normalized paths)
     String normalizedPath = URI.create(path).normalize().toString();
-    
+
     // define the classpath for the classloader lookup
     String classPath = CLASSPATH_PREFIX + normalizedPath;
-    
+
     // first lookup the resource in the web context path
     URL url = this.config.getServletContext().getResource(normalizedPath);
 
@@ -255,10 +255,10 @@ public class LessFilter implements Filter {
     }
 
     return url;
-    
+
   } // method: findResource
 
-  
+
   /**
    * determines the max last modified timestamp for the given paths
    * @param paths array of paths
@@ -289,45 +289,45 @@ public class LessFilter implements Filter {
    * @param compressJSON true if JSON should be compressed
    */
   private void compile(String sourcePath, boolean compressCSS, boolean compressJSON) {
-    
+
     Matcher m = PATTERN_THEME_REQUEST_PARTS.matcher(sourcePath);
     if (m.matches()) {
-      
+
       // extract the relevant parts from the request path
       String prefixPath = m.group(1);
       String library = m.group(2);
       String libraryName = library.replace('/', '.');
       String theme = m.group(3);
       String path = prefixPath + theme + "/";
-      
+
       try {
-        
+
         URL url = this.findResource(sourcePath);
         if (url != null) {
-          
+
           // read the library.source.less
           URLConnection conn = url.openConnection();
           conn.connect();
-          
+
           // up-to-date check
           String resources = this.cache.get(path + "resources");
           long lastModified = resources != null ? this.getMaxLastModified(resources.split(";")) : -1;
           if (!this.lastModified.containsKey(sourcePath) || this.lastModified.get(sourcePath) < lastModified) {
-            
+
             // some info
             this.log("Compiling CSS/JSON of library " + libraryName + " for theme " + theme);
-            
+
             // read the content
             InputStream is = conn.getInputStream();
             String input = IOUtils.toString(is, "UTF-8");
             IOUtils.closeQuietly(is);
-            
+
             // time measurement begin
             long millis = System.currentTimeMillis();
-            
+
             // compile the CSS/JSON
             Scriptable result = this.compileCSS(input, path, compressCSS, compressJSON, libraryName);
-            
+
             // cache the result
             String css = Context.toString(ScriptableObject.getProperty((Scriptable) result, "css"));
             this.cache.put(path + "library.css", css);
@@ -337,19 +337,19 @@ public class LessFilter implements Filter {
             this.cache.put(path + "library-parameters.json", json);
             resources = Context.toString(ScriptableObject.getProperty((Scriptable) result, "resources"));
             this.cache.put(path + "resources", resources);
-            
+
             // log the compile duration
             this.log("  => took " + (System.currentTimeMillis() - millis) + "ms");
-            
+
             // store when the resource has been compiled
             this.lastModified.put(sourcePath, this.getMaxLastModified(resources.split(";")));
-            
+
           }
-          
+
         } else {
           this.log("The less source file cannot be found: " + sourcePath);
         }
-      
+
       } catch (Exception ex) {
         // in case of error we also cleanup the cache!
         this.log("Failed to compile CSS for " + sourcePath, ex);
@@ -359,9 +359,9 @@ public class LessFilter implements Filter {
         this.cache.remove(path + "resources");
         this.lastModified.remove(sourcePath);
       }
-      
+
     }
-    
+
   } // method: compile
 
 
@@ -381,10 +381,10 @@ public class LessFilter implements Filter {
 
   /**
    * The <code>ResourceLoader</code> is used to load dedicated resources
-   * requested by Rhino out of the classpath. 
+   * requested by Rhino out of the classpath.
    */
   public class ResourceLoader {
-    
+
     /**
      * loads a resource for the specified path
      * @param path path of the resource
@@ -399,7 +399,7 @@ public class LessFilter implements Filter {
       }
       return content;
     } // method: load
-    
+
   } // inner class: ResourceLoader
 
 

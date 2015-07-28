@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">
+		<Schema Namespace="NavigationModel" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+
+			<EntityType Name="Employee">
+				<Key>
+					<PropertyRef Name="EmployeeID" />
+				</Key>
+				<Property Name="EmployeeID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+				<Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
+				<Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
+				<Property Name="Address" Type="Edm.String" Nullable="true" MaxLength="60" Unicode="true" FixedLength="false" />
+				<Property Name="City" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
+				<Property Name="Region" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
+				<Property Name="PostalCode" Type="Edm.String" Nullable="true" MaxLength="10" Unicode="true" FixedLength="false" />
+				<Property Name="Country" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
+				<Property Name="HomePhone" Type="Edm.String" Nullable="true" MaxLength="24" Unicode="true" FixedLength="false" />
+				<Property Name="ResumeID" Type="Edm.Int32" Nullable="true"/>
+				<NavigationProperty Name="Resume" Relationship="NavigationModel.FK_Employees_Resumes" FromRole="Employees" ToRole="Resumes"/>
+			</EntityType>
+
+			<EntityType Name="Resume">
+				<Key>
+					<PropertyRef Name="ResumeID"/>
+				</Key>
+				<Property Name="ResumeID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation"/>
+				<Property Name="Information" Type="Edm.String" Nullable="true" Unicode="true"/>
+				<Property Name="Projects" Type="Edm.String" Nullable="true" Unicode="true"/>
+				<Property Name="Hobbies" Type="Edm.String" Nullable="true" Unicode="true"/>
+				<Property Name="Notes" Type="Edm.String" Nullable="true" Unicode="true"/>
+			</EntityType>
+
+			<Association Name="NavigationModel.FK_Employees_Resumes">
+				<End Role="Resumes" Type="NavigationModel.Resume" Multiplicity="0..1"/>
+				<End Role="Employees" Type="NavigationModel.Employee" Multiplicity="1"/>
+				<ReferentialConstraint>
+					<Dependent Role="Resumes">
+						<PropertyRef Name="ResumeID"/>
+					</Dependent>
+					<Principal Role="Employees">
+						<PropertyRef Name="ResumeID"/>
+					</Principal>
+				</ReferentialConstraint>
+			</Association>
+
+			<EntityContainer Name="NavigationEntities" p7:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true" xmlns:p7="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+
+				<EntitySet Name="Employees" EntityType="NavigationModel.Employee" />
+				<EntitySet Name="Resumes" EntityType="NavigationModel.Resume" />
+
+				<AssociationSet Name="FK_Employees_Resumes" Association="NavigationModel.FK_Employees_Resumes">
+					<End EntitySet="Employees" Role="Employees"/>
+					<End EntitySet="Resumes" Role="Resumes"/>
+				</AssociationSet>
+
+			</EntityContainer>
+
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

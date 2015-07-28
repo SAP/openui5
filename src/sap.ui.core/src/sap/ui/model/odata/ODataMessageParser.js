@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, coreLibrary, URI, MessageParser, Message) {
+sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, Device, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
 
 /**
@@ -194,6 +194,17 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 		var sTarget = aMessages[i].getTarget();
 
 		if (sTarget) {
+			// Add all "parents" of the current target to the list of affected targets
+			var sTrimmedTarget = sTarget.replace(/^\/+|\/$/g, "");
+			mAffectedTargets[sTrimmedTarget] = true;
+			var iPos = sTrimmedTarget.lastIndexOf("/");
+			while (iPos > -1) {
+				sTrimmedTarget = sTrimmedTarget.substr(0, iPos);
+				mAffectedTargets[sTrimmedTarget] = true;
+				iPos = sTrimmedTarget.lastIndexOf("/");
+			}
+			
+			// Add the Entityset itself
 			mEntitySet = this._metadata._getEntitySetByPath(sTarget);
 			if (mEntitySet) {
 				mAffectedTargets[mEntitySet.name] = true;
@@ -225,7 +236,13 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must 
 		// be trimmed here
 		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
-		
+
+		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
+		var iPropertyPos = sTarget.lastIndexOf(")/");
+		if (iPropertyPos > 0) {
+			sTarget = sTarget.substr(0, iPropertyPos + 1);
+		}
+
 		if (mAffectedTargets[sTarget]) {
 			// Message belongs to targets handled/requested by this request
 			aRemovedMessages.push(this._lastMessages[i]);
@@ -294,6 +311,8 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mRequestInfo, mUrlData) {
 	var sTarget = "";
 	
+	var i;
+	
 	// In case of a function import the location header may point to the corrrect entry in the service.
 	// This should be the case for writing/changing operations using POST
 	if (mRequestInfo.response && mRequestInfo.response.headers && mRequestInfo.response.headers["location"]) {
@@ -304,14 +323,31 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
 		}
 	} else {
+		
+		// Search for "action-for" annotation
+		var sActionFor = null;
+		if (mFunctionInfo.extensions) {
+			for (i = 0; i < mFunctionInfo.extensions.length; ++i) {
+				if (mFunctionInfo.extensions[i].name === "action-for") {
+					sActionFor = mFunctionInfo.extensions[i].value;
+					break;
+				}
+			}
+		}
+		
 		var mEntityType;
-		if (mFunctionInfo.entitySet) {
+		if (sActionFor) {
+			mEntityType = this._metadata._getEntityTypeByName(sActionFor);
+		} else if (mFunctionInfo.entitySet) {
 			mEntityType = this._metadata._getEntityTypeByPath(mFunctionInfo.entitySet);
 		} else if (mFunctionInfo.returnType) {
 			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
 		}
 		
-		if (mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
+		var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
+		
+		if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
+			
 			var sId = "";
 			var sParam;
 
@@ -324,7 +360,7 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 			} else {
 				// Build ID string from keys
 				var aKeys = [];
-				for (var i = 0; i < mEntityType.key.propertyRef.length; ++i) {
+				for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
 					sParam = mEntityType.key.propertyRef[i].name;
 					if (mUrlData.parameters[sParam]) {
 						aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
@@ -332,8 +368,10 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 				}
 				sId = aKeys.join(",");
 			}
-
-			sTarget = "/" + mFunctionInfo.entitySet + "(" + sId + ")";
+			
+			sTarget = "/" + mEntitySet.name + "(" + sId + ")";
+		} else if (!mEntitySet) {
+			jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
 		} else {
 			jQuery.sap.log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
 		}
@@ -492,20 +530,12 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  */
 ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType) {
 	try {
-		var oDomParser = new DOMParser();
-		var oDoc = oDomParser.parseFromString(oResponse.body, sContentType);
+		// TODO: I do not have a v4 service to test this with.
 
-		var sPath =
-			"//*[local-name()='error'] | " + // Main Error - v2 and v4
-			"//*[local-name()='errordetails']/*[local-name()='errordetail'] | " + // v2 further errors
-			"//*[local-name()='details']/*[local-name()='error']"; // v4 further errrors
-		// TODO: I do not have a v4 service to test this. Is the v4 further errors path really "//details/detail"?
-
-		var oXPath = getXPath();
-		var oNodes = oXPath.selectNodes(oDoc, sPath);
-
-		for (var i = 0; i < oNodes.length; ++i) {
-			var oNode = oXPath.nextNode(oNodes, i);
+		var oDoc = new DOMParser().parseFromString(oResponse.body, sContentType);
+		var aElements = getAllElements(oDoc, [ "error", "errordetail" ]);
+		for (var i = 0; i < aElements.length; ++i) {
+			var oNode = aElements[i];
 
 			var oError = {};
 			// Manually set severity in case we get an error response
@@ -524,11 +554,11 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 					// Special case for v2 error message - the message is in the child node "value"
 					for (var m = 0; m < oChildNode.childNodes.length; ++m) {
 						if (oChildNode.childNodes[m].nodeName === "value") {
-							oError["message"] = oXPath.getNodeText(oChildNode.childNodes[m]);
+							oError["message"] = oChildNode.childNodes[m].text || oChildNode.childNodes[m].textContent;
 						}
 					}
 				} else {
-					oError[oChildNode.nodeName] = oXPath.getNodeText(oChildNode);
+					oError[oChildNode.nodeName] = oChildNode.text || oChildNode.textContent;
 				}
 			}
 
@@ -556,7 +586,7 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 			// v4 response according to OData specification or v2 response according to MS specification and SAP message specification
 			oError = oErrorResponse["error"];
 		} else {
-			// Actual v2 response in all tested services
+			// Actual v2 response in some tested services
 			oError = oErrorResponse["odata.error"];
 		}
 
@@ -697,41 +727,46 @@ function getRelativeServerUrl(sUrl) {
 	return URI.parse(oLinkElement.href).path;
 }
 
-
-var xPath = null;
-function getXPath() {
-	if (xPath === null) {
-		xPath = {};
-		if (sap.ui.Device.browser.msie) {// IE
-			xPath = {
-				selectNodes : function(oSearchNode, sPath) {
-					return oSearchNode.selectNodes(sPath);
-				},
-				nextNode : function(oNode) {
-					return oNode.nextNode();
-				},
-				getNodeText : function(oNode) {
-					return oNode.text;
+/**
+ * Returns all elements in the given document (or node) that match the given elementnames
+ *
+ * @param {Node} oDocument - The start node from where to search for elements
+ * @param {string[]} aElementNames - The names of the elements to search for
+ * @returns {HTMLElement[]} The matching elements
+ * @private
+ */
+function getAllElements(oDocument, aElementNames) {
+	var aElements = [];
+	
+	var mElementNames = {};
+	for (var i = 0; i < aElementNames.length; ++i) {
+		mElementNames[aElementNames[i]] = true;
+	}
+	
+	var oElement = oDocument;
+	while (oElement) {
+		if (mElementNames[oElement.tagName]) {
+			aElements.push(oElement);
+		}
+		
+		if (oElement.hasChildNodes()) {
+			oElement = oElement.firstChild;
+		} else {
+			while (!oElement.nextSibling) {
+				oElement = oElement.parentNode;
+				
+				if (!oElement || oElement === oDocument) {
+					oElement = null;
+					break;
 				}
-			};
-		} else {// Chrome, Firefox, Opera, etc.
-			xPath = {
-				selectNodes : function(oSearchNode, sPath) {
-					var xmlNodes = oSearchNode.evaluate(sPath, oSearchNode, null, /* ORDERED_NODE_SNAPSHOT_TYPE: */ 7, null);
-					xmlNodes.length = xmlNodes.snapshotLength;
-					return xmlNodes;
-				},
-				nextNode : function(oNode, oItem) {
-					return oNode.snapshotItem(oItem);
-				},
-				getNodeText : function(oNode) {
-					return oNode.textContent;
-				}
-			};
+			}
+			if (oElement) {
+				oElement = oElement.nextSibling;
+			}
 		}
 	}
-
-	return xPath;
+	
+	return aElements;
 }
 
 //////////////////////////////////////// Overridden Methods ////////////////////////////////////////

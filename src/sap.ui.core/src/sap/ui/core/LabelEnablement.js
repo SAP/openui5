@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.core.LabelEnablement
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
+	function(jQuery, ManagedObject) {
 	"use strict";
 
 	// Mapping between controls and labels
@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global'],
 		
 		// Alternative to apply a for reference without influencing the labelFor association of the API (see e.g. FormElement)
 		oControl.setAlternativeLabelFor = function(sId) {
-			if (sId instanceof sap.ui.base.ManagedObject) {
+			if (sId instanceof ManagedObject) {
 				sId = sId.getId();
 			} else if (sId != null && typeof sId !== "string") {
 				jQuery.sap.assert(false, "setAlternativeLabelFor(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");

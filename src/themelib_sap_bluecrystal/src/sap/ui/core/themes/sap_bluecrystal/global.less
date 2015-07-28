@@ -76,6 +76,7 @@
 @sapUiListBorderColor: @sapList_BorderColor;
 @sapUiListHighlightColor: @sapList_HighlightColor;
 @sapUiListSelectionBackgroundColor: @sapList_SelectionBackgroundColor;
+@sapUiListBackground: @sapList_Background;
 @sapUiListHoverBackground: @sapList_Hover_Background;
 
 @sapUiScrollBarFaceColor: @sapScrollBar_FaceColor;
@@ -304,6 +305,7 @@
 @sapUiErrorBorder:    @sapErrorBorderColor;   //  #e52929;
 @sapUiWarningBorder:  @sapWarningBorderColor; //  #f0ab00;
 @sapUiSuccessBorder:  @sapSuccessBorderColor; //  #008a3b;
+@sapUiNeutralBorder:  @sapNeutralColor;       //  #007cc0;
 
 /* Semantic Background Colors            */
 
@@ -683,8 +685,28 @@
 @sapUiSegmentedButtonFooterHoverBackground: fade(darken(@sapUiButtonBackground, 5), 10);
 @sapUiFooterButtonHoverColor: contrast(@sapUiFooterOnDesktopBG, darken(@sapUiFooterOnDesktopBG, 3), lighten(@sapUiFooterOnDesktopBG, 6));
 
-@sapUiFieldtextColor: @sapUiBaseText;
+@sapUiFieldTextColor: @sapUiBaseText;
 @sapUiFieldPlaceholderTextColor: @sapUiExtraLightText;
+@sapUiFieldActiveBackground: @sapUiHighlight;
+@sapUiFieldActiveBorderColor: @sapUiHighlight;
+@sapUiFieldActiveTextColor: @sapUiContentContrastTextColor;
+
+@sapUiListTextColor: @sapUiDarkText;
+@sapUiListVerticalBorderColor: @sapUiLightBorder;
+@sapUiListActiveBackground: @sapUiListHighlightColor;
+@sapUiListActiveTextColor: contrast(@sapUiListActiveBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@sapUiListSelectionHoverBackground: contrast(@sapUiListSelectionBackgroundColor, darken(@sapUiListSelectionBackgroundColor, 3), lighten(@sapUiListSelectionBackgroundColor, 6));
+@sapUiListFooterBackground: lighten(@sapUiExtraLightBG, 2);
+@sapUiListFooterTextColor: @sapUiLightText;
+@sapUiListGroupHeaderBackground: lighten(@sapUiExtraLightBG, 2);
+@sapUiListTableGroupHeaderBackground: @sapUiExtraLightBG;
+@sapUiListTableGroupHeaderBorderColor: @sapUiListBorderColor;
+@sapUiListTableGroupHeaderTextColor: contrast(@sapUiListTableGroupHeaderBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@sapUiListTableFooterBorder: @sapUiMediumBorder;
+@sapUiListTableFixedBorder: @sapUiExtraDarkBorder;
+@sapUiListTableTextSize: 0.875rem;
+@sapUiListTableIconSize: 1rem;
+
 
 @sapUiCalendarColorToday: #ffc51c;
 
@@ -882,7 +904,6 @@
 @sapUiListFooterText: @sapUiLightText;
 @sapUiListSingleSelectMasterAsActive: false;
 @sapUiListHeaderBorder: @sapUiLightBorder;
-@sapUiListTextColor: @sapUiDarkText;
 @sapUiGroupHeaderBG: lighten(@sapUiExtraLightBG,2);
 @sapUiListNoDataTextColor: @sapUiDarkText;
 

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.View.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/ExtensionPoint', 'sap/ui/core/library'],
-	function(jQuery, ManagedObject, Control, ExtensionPoint, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/library'],
+	function(jQuery, ManagedObject, Control, library) {
 	"use strict";
 
 
@@ -198,14 +198,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 
 		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
-		if (sap.ui.core.CustomizingConfiguration && sap.ui.core.CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
+		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+		if (CustomizingConfiguration && CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
 			this._fnSettingsPreprocessor = function(mSettings) {
 				var sId = this.getId();
 				if (sap.ui.core.CustomizingConfiguration && sId) {
 					if (that.isPrefixedId(sId)) {
 						sId = sId.substring((that.getId() + "--").length);
 					}
-					var mCustomSettings = sap.ui.core.CustomizingConfiguration.getCustomProperties(that.sViewName, sId, that);
+					var mCustomSettings = CustomizingConfiguration.getCustomProperties(that.sViewName, sId, that);
 					if (mCustomSettings) {
 						mSettings = jQuery.extend(mSettings, mCustomSettings); // override original property initialization with customized property values
 					}
@@ -221,16 +222,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				that.onControllerConnected(that.oController);
 			}
 		};
+		
+		var fnPropagateOwner = function(fn) {
+			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+			
+			var Component = sap.ui.require("sap/ui/core/Component");
+			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
+			if (oOwnerComponent) {
+				return oOwnerComponent.runAsOwner(fn);
+			} else {
+				return fn.call();
+			}
+		};
 
 		if (this.initViewSettings) {
 			if (mSettings.async) {
 				this.initViewSettings(mSettings)
-					.then(fnInitController)
+					.then(function() {
+						return fnPropagateOwner(fnInitController);
+					})
 					.then(function() {
 						return that.runPreprocessor("controls", that);
 					})
 					.then(function() {
-						that.fireAfterInit();
+						fnPropagateOwner(that.fireAfterInit.bind(that));
 						// resolve View.prototype.loaded() methods promise
 						that._oAsyncState.resolve(that);
 					});
@@ -406,6 +421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		var sViewType = this.getMetadata().getClass()._sType ,
 			oViewInfo = {
 				name: this.sViewName,
+				componentId: this._sOwnerId,
 				id: this.getId(),
 				caller: this + " (" + this.sViewName + ")",
 				sync: !!bSync
@@ -750,6 +766,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @param {object} oViewInfo identification information about the calling instance
 	 * @param {string} oViewInfo.id the id
 	 * @param {string} oViewInfo.name the name
+	 * @param {string} oViewInfo.componentId the id of the owning Component
 	 * @param {string} oViewInfo.caller
 	 * 		identifies the caller of this preprocessor; basis for log or exception messages
 	 * @param {object} [mSettings]
@@ -761,4 +778,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 	return View;
 
-}, /* bExport= */ true);
+});

@@ -62,6 +62,7 @@ sap.ui.define([
 
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 			oUploadCollection.addHeaderParameter(oCustomerHeaderSlug);
+
 			MessageToast.show("Change event triggered.");
 		},
 
@@ -77,6 +78,8 @@ sap.ui.define([
 			this.getView().byId("UploadCollection").getModel().setData({
 				"items" : aItems
 			});
+			var oUploadCollection = oEvent.getSource();
+			oUploadCollection.setNumberOfAttachmentsText("Uploaded (" +  oUploadCollection.getItems().length + ")");
 			MessageToast.show("FileDeleted event triggered.");
 		},
 
@@ -142,6 +145,8 @@ sap.ui.define([
 			this.getView().byId("UploadCollection").getModel().setData({
 				"items" : aItems
 			});
+			var oUploadCollection = oEvent.getSource();
+			oUploadCollection.setNumberOfAttachmentsText("Uploaded (" +  oUploadCollection.getItems().length + ")");
 			// delay the success message for to notice onChange message
 			setTimeout(function() {
 				MessageToast.show("UploadComplete event triggered.");

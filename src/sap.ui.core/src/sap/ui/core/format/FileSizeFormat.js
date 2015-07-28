@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.format.FileSizeFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/format/NumberFormat', 'jquery.sap.strings'],
-	function(jQuery, LocaleData, NumberFormat, jQuerySapStrings) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleData', 'sap/ui/core/format/NumberFormat'],
+	function(jQuery, BaseObject, LocaleData, NumberFormat) {
 	"use strict";
 
 
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	 * @public
 	 * @alias sap.ui.core.format.FileSizeFormat
 	 */
-	var FileSizeFormat = sap.ui.base.Object.extend("sap.ui.core.format.FileSizeFormat", /** @lends sap.ui.core.format.FileSizeFormat.prototype */ {
+	var FileSizeFormat = BaseObject.extend("sap.ui.core.format.FileSizeFormat", /** @lends sap.ui.core.format.FileSizeFormat.prototype */ {
 		constructor : function(oFormatOptions) {
 			// Do not use the constructor
 			throw new Error();
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
-		oFormat.oNumberFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oFormatOptions, oLocale);
+		oFormat.oNumberFormat = NumberFormat.getFloatInstance(oFormatOptions, oLocale);
 		oFormat.oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", oLocale.toString());
 		
 		oFormat.bBinary = oFormatOptions ? !!oFormatOptions.binaryFilesize : false;
@@ -225,4 +225,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	
 	return FileSizeFormat;
 
-}, /* bExport= */ true);
+});

@@ -36,11 +36,14 @@
 }
 
 .sapUiLbxI:hover:not(.sapUiLbxIDis),
-.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover,
 .sapUiLbx:not(.sapUiLbxDis) > ul > .sapUiLbxI:hover:not(.sapUiLbxISel):not(.sapUiLbxIDis) > span {  /* Fix for IE10 :hover bug - need to set the color on children as well */
 	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover {
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 /*

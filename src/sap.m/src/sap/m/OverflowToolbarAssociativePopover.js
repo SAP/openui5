@@ -42,11 +42,6 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	OverflowToolbarAssociativePopover.prototype.init = function() {
 		Popover.prototype.init.apply(this, arguments);
 
-		// Workaround - no arrow when on mobile so that the popover can snap to the opening button
-		if (sap.ui.Device.system.phone) {
-			this._removeOffsetTakenByTheArrow();
-		}
-
 		// Instantiate the helper that will manage controls entering/leaving the popover
 		this.oControlsManager = new OverflowToolbarAssociativePopoverControls();
 	};
@@ -64,22 +59,6 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		} else {
 			this.removeStyleClass("sapMOTAPButtonsWithIcons");
 		}
-	};
-
-	/**
-	 * Removes the offset taken by the arrow (should be only used on mobile devices where the arrow is hidden)
-	 * @returns {*}
-	 * @private
-	 */
-	OverflowToolbarAssociativePopover.prototype._removeOffsetTakenByTheArrow = function () {
-		this._marginTop = 0;
-		this._marginLeft = 0;
-		this._marginRight = 0;
-		this._marginBottom = 0;
-		this._arrowOffset = 0;
-		this._offsets = ["0 0", "0 0", "0 0", "0 0"];
-		this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
-		this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
 	};
 
 	/* Override API methods */

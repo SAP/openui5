@@ -276,6 +276,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		// Show suggestions in a full screen dialog on phones:
 		this._bFullScreen = sap.ui.Device.system.phone;
+
+		// Counter for concurrent issues with setValue:
+		this._iSetCount = 0;
 	};
 
 	/**
@@ -390,7 +393,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			var sURI = IconPool.getIconURI("value-help");
 			this._oValueHelpIcon = IconPool.createControlByURI({
 				id: this.getId() + "__vhi",
-				src: sURI
+				src: sURI,
+				useIconTooltip: false,
+				noTabStop: true
 			});
 
 			this._oValueHelpIcon.addStyleClass("sapMInputValHelpInner");
@@ -834,7 +839,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (this._oList instanceof Table) {
 				// CSN# 1421140/2014: hide the table for empty/initial results to not show the table columns
 				this._oList.addStyleClass("sapMInputSuggestionTableHidden");
-			} else {
+			} else if (this._oList && this._oList.destroyItems) {
 				this._oList.destroyItems();
 			}
 		} else if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
@@ -1107,6 +1112,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			oInput._oSuggestionPopup = !oInput._bUseDialog ?
 				(new Popover(oInput.getId() + "-popup", {
+					showArrow: false,
 					showHeader : false,
 					placement : sap.m.PlacementType.Vertical,
 					initialFocus : oInput
@@ -1155,7 +1161,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 				}).attachAfterClose(function() {
 
-					if (oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode()) {
+					if (oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode) {
 
 						oInput._updateTokenizerInMultiInput();
 						oInput._tokenizerInPopup.destroy();
@@ -1179,7 +1185,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					var sValue = oInput.getValue();
 
 					oInput._oPopupInput.setValue(sValue);
-					oInput.fireSuggest({suggestValue : sValue});
+					oInput._triggerSuggest(sValue);
 					refreshListItems(oInput);
 				}));
 
@@ -1214,7 +1220,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					rememberSelections : false,
 					selectionChange : function(oEvent) {
 						var oListItem = oEvent.getParameter("listItem"),
-							sOriginalValue = oInput.getValue(),
+							iCount = oInput._iSetCount,
 							sNewValue;
 
 						// fire suggestion item select event
@@ -1223,7 +1229,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						});
 
 						// choose which field should be used for the value
-						if (sOriginalValue !== oInput.getValue()) {
+						if (iCount !== oInput._iSetCount) {
 							// if the event handler modified the input value we take this one as new value
 							sNewValue = oInput.getValue();
 						} else if (oListItem instanceof sap.m.DisplayListItem) {
@@ -1244,7 +1250,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 							oInput._changeProxy();
 						}
 						oInput._iPopupListSelectedIndex = -1;
-						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
 							oInput._closeSuggestionPopup();
 						}
 						if (!sap.ui.Device.support.touch) {
@@ -1309,16 +1315,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		function overwritePopover(oPopover, oInput) {
-			// overwrite the internal properties to not to show the arrow in popover.
-			oPopover._marginTop = 0;
-			oPopover._marginLeft = 0;
-			oPopover._marginRight = 0;
-			oPopover._marginBottom = 0;
-			oPopover._arrowOffset = 0;
-			oPopover._offsets = [ "0 0", "0 0", "0 0", "0 0" ];
-			oPopover._myPositions = [ "begin bottom", "begin center", "begin top", "end center" ];
-			oPopover._atPositions = [ "begin top", "end center", "begin bottom", "begin center" ];
-
 			oPopover.open = function() {
 				this.openBy(oInput, false, true);
 			};
@@ -1497,7 +1493,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @private
 	 */
 	Input.prototype.onsapshow = function (oEvent) {
-		if (!this.getEnabled() || !this.getShowValueHelp()) {
+		if (!this.getEnabled() || !this.getEditable() || !this.getShowValueHelp()) {
 			return;
 		}
 
@@ -1535,7 +1531,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				rememberSelections : false,
 				selectionChange: function (oEvent) {
 					var oInput = that,
-						sOriginalValue = oInput.getValue(),
+						iCount = oInput._iSetCount,
 						oSelectedListItem = oEvent.getParameter("listItem"),
 						sNewValue;
 
@@ -1545,7 +1541,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					});
 
 					// choose which field should be used for the value
-					if (sOriginalValue !== oInput.getValue()) {
+					if (iCount !== oInput._iSetCount) {
 						// if the event handler modified the input value we take this one as new value
 						sNewValue = oInput.getValue();
 					} else {
@@ -1564,7 +1560,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					}
 					that._iPopupListSelectedIndex = -1;
 
-					if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+					if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
 						oInput._closeSuggestionPopup();
 					}
 
@@ -1689,6 +1685,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	/*           end: forward aggregation methods to table         */
 	/* =========================================================== */
 
+	/**
+	 * Setter for property <code>value</code>.
+	 *
+	 * Default value is empty/<code>undefined</code>.
+	 *
+	 * @param {string} sValue New value for property <code>value</code>.
+	 * @return {sap.m.Input} <code>this</code> to allow method chaining.
+	 * @public
+	 */
+	Input.prototype.setValue = function(sValue) {
+		this._iSetCount++;
+		InputBase.prototype.setValue.call(this, sValue);
+		return this;
+	};
 
 	/**
 	 * Getter for property <code>valueStateText</code>.

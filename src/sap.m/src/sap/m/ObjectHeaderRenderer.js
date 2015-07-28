@@ -91,6 +91,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	};
 	
 	/**
+	 * Gather all controls that should be rendered inside Object Header.
+	 *
+	 * @param {sap.m.ObjectHeader}
+	 *            oControl the ObjectHeader
+	 * @private
+	 */
+	ObjectHeaderRenderer._computeChildControlsToBeRendered = function(oOH){
+		oOH.__controlsToBeRendered = {};
+		var aChildren = oOH.getAttributes();
+		for (var i = 0; i < aChildren.length; i++) {
+			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
+		}
+		aChildren = oOH.getStatuses();
+		for (var i = 0; i < aChildren.length; i++) {
+			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
+		}
+		var oChild = oOH.getFirstStatus();
+		if (oChild) {
+			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
+		}
+		oChild = oOH.getSecondStatus();
+		if (oChild) {
+			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
+		}
+		oChild = oOH.getAggregation("_objectNumber");
+		if (oChild) {
+			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
+		}
+	};
+	
+	/**
+	 * Delete all controls that were empty and were not rendered inside Object Header.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 *
+	 * @param {sap.m.ObjectHeader}
+	 *            oControl the ObjectHeader
+	 * @private
+	 */
+	ObjectHeaderRenderer._cleanupNotRenderedChildControls = function(oRM, oOH){
+		for (var id in oOH.__controlsToBeRendered) {
+			oRM.cleanupControlWithoutRendering(oOH.__controlsToBeRendered[id]);
+		}
+		delete oOH.__controlsToBeRendered;
+	};
+	
+	/**
 	 * Renders hidden div with ARIA descriptions of the favorite and flag icons.
 	 *
 	 * @param {sap.ui.core.RenderManager}
@@ -271,13 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		for (var j = 0; j < aAttribs.length; j++) {
 			if (aAttribs[j].getVisible()) {
-				if (aAttribs[j] instanceof sap.m.ObjectAttribute || aAttribs[j] instanceof sap.m.Link) {
-					aVisibleAttribs.push(aAttribs[j]);
-				} else {
-					jQuery.sap.log.warning("Only sap.m.ObjectAttribute or instance of sap.m.Link (including sap.ui.comp.navpopover.SmartLink are allowed in \"sap.m.ObjectHeader.attributes\" aggregation." + " Current object is "
-							+ aAttribs[j].constructor.getMetadata().getName() + " with id \"" + aAttribs[j].getId() + "\"");
-				}
-				
+				aVisibleAttribs.push(aAttribs[j]);
 			}
 		}
 
@@ -646,9 +688,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			this._renderResponsive(oRM, oOH);
 			return;
 		}
-
+		
 		// === old renderer, no changes here for downwards compatibility
 
+		this._computeChildControlsToBeRendered(oOH);
+		
 		var bCondensed = oOH.getCondensed();
 
 		oRM.write("<div"); // Start Main container
@@ -684,6 +728,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div class=\"sapMOHLastDivider\"/>");
 
 		oRM.write("</div>"); // End Main container\
+		
+		this._cleanupNotRenderedChildControls(oRM, oOH);
 
 	};
 

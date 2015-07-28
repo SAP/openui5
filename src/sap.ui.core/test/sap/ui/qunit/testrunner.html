@@ -86,6 +86,7 @@
 		jQuery("#testPage").val(sap.ui.qunit.TestRunner.getTestPageUrl());
 
 		function find() {
+			prepareNewRun();
 			var oDeferred = jQuery.Deferred();
 			sap.ui.qunit.TestRunner.checkTestPage(jQuery("#testPage").val()).done(function(aTestPages) {
 				window.aTestPages = aTestPages;
@@ -135,39 +136,42 @@
 		jQuery("#removeall").click(removeAll);
 
 		function run() {
+			var $this = jQuery("#run");
+			if ($this.val() === "Run") {
+				//$this.val("Stop");
+				var aTests = [];
+				var aSelectedTests = jQuery("#selectedTests")[0].children;
+				for (var i = 0; i < aSelectedTests.length; i++) {
+					aTests.push(jQuery(aSelectedTests[i]).text());
+				}
+				var nStep = 100 / aTests.length;
+				console.log(aTests.length);
+				console.log(nStep);
+				jQuery("#reportingHeader").toggle();
+				sap.ui.qunit.TestRunner.runTests(aTests, nStep).then(function(oResult) {
+					$this.val("Run");
+					jQuery("#stop").toggle();
+					if (sap.ui.qunit.TestRunner.hasCoverage() && window.blanket) {
+						window.blanket.report({});
+						jQuery("div.test-coverage").toggle();
+					}
+				}).always(function() {
+					$this.val("Run");
+				});
+
+			} else {
+				sap.ui.qunit.TestRunner.stopTests();
+			}
+		}
+
+		jQuery("#run").click(function () {
 			if(jQuery("#selectedTests>option").length === 0) {
 				alert("Please select at least on test to execute");
 			} else {
 				prepareNewRun();
-				var $this = jQuery("#run");
-				if ($this.val() === "Run") {
-					//$this.val("Stop");
-					var aTests = [];
-					var aSelectedTests = jQuery("#selectedTests")[0].children;
-					for (var i = 0; i < aSelectedTests.length; i++) {
-						aTests.push(jQuery(aSelectedTests[i]).text());
-					}
-					var nStep = 100 / aTests.length;
-					console.log(aTests.length);
-					console.log(nStep);
-					jQuery("#reportingHeader").toggle();
-					sap.ui.qunit.TestRunner.runTests(aTests, nStep).then(function(oResult) {
-						$this.val("Run");
-						jQuery("#stop").toggle();
-						if (sap.ui.qunit.TestRunner.hasCoverage() && window.blanket) {
-							window.blanket.report({});
-							jQuery("div.test-coverage").toggle();
-						}
-					}).always(function() {
-						$this.val("Run");
-					});
-
-				} else {
-					sap.ui.qunit.TestRunner.stopTests();
-				}
+				run();
 			}
-		}
-		jQuery("#run").click(run);
+		});
 
 		function open() {
 			if(jQuery("div#test-selection").css("height")=== "300px") {

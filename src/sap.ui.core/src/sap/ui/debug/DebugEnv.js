@@ -3,8 +3,8 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', './ControlTree', './Highlighter', './LogViewer', './PropertyList'],
-	function(jQuery, ControlTree, Highlighter, LogViewer, PropertyList) {
+sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList'],
+	function(jQuery, Interface, ControlTree, LogViewer, PropertyList) {
 	"use strict";
 
 
@@ -314,7 +314,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', './ControlTree', '.
 	(function(){
 		var oThis = new DebugEnv();
 		sap.ui.getCore().registerPlugin(oThis);
-		DebugEnv.getInstance = jQuery.sap.getter(new sap.ui.base.Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]));
+		DebugEnv.getInstance = jQuery.sap.getter(new Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]));
 	}());
 
 	return DebugEnv;

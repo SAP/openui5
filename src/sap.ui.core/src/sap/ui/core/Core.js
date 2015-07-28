@@ -270,13 +270,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				oSyncPoint1.finishTask(iDocumentReadyTask);
 			});
 
-			// sync point 2 synchronizes all preload script loads and the end of the bootstrap script
+			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
 			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot();
 				oSyncPoint1.finishTask(iCoreBootTask);
 			});
 
+			// a helper task to prevent the premature completion of oSyncPoint2
+			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
+			
 			// when a boot task is configured, add it to syncpoint2
 			var fnCustomBootTask = this.oConfiguration["xx-bootTask"];
 			if ( fnCustomBootTask ) {
@@ -329,6 +332,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sap.ui.core.AppCacheBuster.boot(oSyncPoint2);
 			}
 
+			oSyncPoint2.finishTask(iCreateTasksTask);
+
 		},
 
 		metadata : {
@@ -348,7 +353,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 							 "attachLocalizationChanged", "detachLocalizationChanged",
 							 "attachLibraryChanged", "detachLibraryChanged",
 							 "isStaticAreaRef", "createComponent", "getRootComponent", "getApplication",
-							 "setMessageManager", "getMessageManager"]
+							 "setMessageManager", "getMessageManager","byFieldGroupId"]
 		}
 
 	});
@@ -396,6 +401,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			that.registerObject(this);
 		};
 		Component.prototype.deregister = function() {
+			var sComponentId = this.sId;
+			for (var sElementId in that.mElements) {
+				var oElement = that.mElements[sElementId];
+				if ( oElement._sapui_candidateForDestroy && oElement._sOwnerId === sComponentId && !oElement.getParent() ) {
+					jQuery.sap.log.debug("destroying dangling template " + oElement + " when destroying the owner component");
+					oElement.destroy();
+				}
+			}
 			that.deregisterObject(this);
 		};
 
@@ -606,26 +619,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)
 		var aCSSLibs = this.oConfiguration['preloadLibCss'];
-		if ( aCSSLibs.length > 0 ) {
-			// a leading "!" denotes that the application has loaded the file already
-			var bAppManaged = aCSSLibs[0].slice(0,1) === "!";
-			if ( bAppManaged ) {
-				aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in this.oConfiguration!
-			}
-			if ( aCSSLibs[0] === "*" ) {
-				// replace with configured libs
-				aCSSLibs.splice(0,1); // remove *
-				var pos = 0;
-				jQuery.each(this.oConfiguration.modules, function(i,mod) {
-					var m = mod.match(/^(.*)\.library$/);
-					if ( m ) {
-						aCSSLibs.splice(pos,0,m[1]);
-					}
-				});
-			}
-			if ( !bAppManaged ) {
-				this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
-			}
+		if (aCSSLibs && aCSSLibs.length > 0 && !aCSSLibs.appManaged) {
+			this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
 		}
 
 		// load all modules now
@@ -1520,8 +1515,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.sap.includeStyleSheet(cssPathAndName, "sap-ui-theme-" + sLibId);
 
 			// if parameters have been used, update them with the new style sheet
-			if (sap.ui.core.theming && sap.ui.core.theming.Parameters) {
-				sap.ui.core.theming.Parameters._addLibraryTheme(sLibId, cssPathAndName);
+			var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+			if (Parameters) {
+				Parameters._addLibraryTheme(sLibId, cssPathAndName);
 			}
 		}
 
@@ -1808,8 +1804,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
-		if (sap.ui.core.theming && sap.ui.core.theming.Parameters) {
-			sap.ui.core.theming.Parameters.reset(/* bOnlyWhenNecessary= */ true);
+		var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+		if (Parameters) {
+			Parameters.reset(/* bOnlyWhenNecessary= */ true);
 		}
 
 		// notify all elements/controls via a pseudo browser event
@@ -2039,6 +2036,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.registerElement = function(oElement) {
 		var oldElement = this.byId(oElement.getId());
 		if ( oldElement && oldElement !== oElement ) {
+			if ( oldElement._sapui_candidateForDestroy ) {
+				jQuery.sap.log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
+				oldElement.destroy();
+				oldElement = null;
+			}
+		}
+		if ( oldElement && oldElement !== oElement ) {
+
 			// duplicate ID detected => fail or at least log a warning
 			if (this.oConfiguration.getNoDuplicateIds()) {
 				jQuery.sap.log.error("adding element with duplicate id '" + oElement.getId() + "'");
@@ -2514,6 +2519,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * Returns a list of all controls with a field group ID.
+	 * See {@link sap.ui.core.Control#checkFieldGroupIds Control.prototype.checkFieldGroupIds} for a description of the
+	 * <code>vFieldGroupIds</code> parameter.
+	 * 
+	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+	 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
+	 * @public
+	 */
+	Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
+		var aResult = [];
+		for (var n in this.mElements) {
+			var oElement = this.mElements[n];
+			if (oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds)) {
+				aResult.push(oElement);
+			}
+		}
+		return aResult;
+	};
+
+	/**
 	 * Get the model with the given model name.
 	 *
 	 * The name can be omitted to reference the default model or it must be a non-empty string.
@@ -2979,4 +3004,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	return new Core().getInterface();
 
-}, /* bExport= */ false);
+});

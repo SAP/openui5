@@ -2,11 +2,11 @@
 /* Theme CSS for control sap.m/Panel.control     */
 /* ============================================= */
 .sapMPanelBGSolid {
-	background-color: @sapUiPanelBG;
+	background-color: @sapUiGroupContentBackground;
 }
 
 .sapMPanelBGTranslucent {
-	background-color: fade(@sapUiPanelBG, 80%);
+	background-color: fade(@sapUiGroupContentBackground, 80%);
 }
 
 .sapMPanelBGTransparent {
@@ -19,20 +19,20 @@
 .sapMPanelWrappingDiv,
 /* do not want border if expanded and if only header text */
 .sapMPanelWrappingDivTb {
-	border-bottom: 1px solid @sapUiToolbarBorder;
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
 }
 
 .sapMPanelHdr {
 	font-weight: @sapUiFontHeaderWeight;
-	font-size: @sapMFontHeader5Size;
+	font-size: @sapMFontHeader4Size;
 	font-family: @sapUiFontHeaderFamily;
 	text-shadow: 0 0.0625rem 0 @sapUiLightShadowTint;
-	color: @sapUiHeaderText;
-	background-color: fade(@sapUiLightestBG, 0%);
+	color: @sapUiGroupTitleTextColor;
+	background-color: @sapUiGroupTitleBackground;
 }
 
 .sapMPanelContent {
-	border-bottom: 1px solid @sapUiExtraLightBorder;
+	border-bottom: 1px solid @sapUiGroupContentBorderColor;
 }
 
 .sapMPanelExpandableIcon {

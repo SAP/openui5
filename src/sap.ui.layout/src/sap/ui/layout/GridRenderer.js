@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridBreakXL");
 					}
 					if (oLay.getLinebreakL() === true) {
-						if (!bBreakXLChanged){
+						if (!bBreakXLChanged && !oLay._getLinebreakXLChanged()){
 							oRm.addClass("sapUiRespGridBreakXL");
 						}
 						oRm.addClass("sapUiRespGridBreakL");

@@ -213,6 +213,114 @@
 
 		</profile>
 
+		<profile>
+
+			<!--
+				This profile can be used to run an embedded Jetty with the UI5 testsuite.
+				To start the Jetty you can run the following Maven command: 
+					
+					mvn clean integration-test -P jetty
+				
+				The Jetty will be started on port 8080 and block the console as long as
+				the Jetty is running and can be stopped with CTRL+C.
+				
+				BUT: before this will work you need to install the UI5 libraries into 
+				your local Maven repository once with: mvn clean install within the 
+				reactor of the openui5 project in the root folder of this Git repository.
+				
+				In order to execute the build and run the Jetty afterwards you can do
+				so by executing the following Maven command in the root folder of this
+				Git repository: 
+				
+					mvn clean integration-test -P jetty,testsuite.build
+				
+				This will build all UI5 libraries and the Java artifacts and finally 
+				the build results will be used for the deployment into the Jetty server.
+				Again you can stop the Jetty with CTRL-C once you need to rebuild or
+				retest.
+				
+				INFO: since this server is using the build artifacts changes in the 
+				source code will not directly get reflected in the server without 
+				rebuilding the UI5 library (mvn clean install) which has been changed
+				or execute the build on the full project.
+			-->
+
+			<id>jetty</id>
+
+			<build>
+				<plugins>
+
+					<!-- create the tmpdir for the Jetty container -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>create-temp-dir</id>
+								<phase>initialize</phase>
+								<configuration>
+									<target>
+										<delete dir="${project.build.directory}/temp/"/>
+										<mkdir dir="${project.build.directory}/temp/"/>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Usage of embedded Jetty for deploying test applications -->
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<version>1.4.13</version>
+						<executions>
+							<execution>
+								<id>start-container</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>run</goal><!-- start (non-blocking) || run (blocking) -->
+								</goals>
+							</execution>
+							<execution>
+								<id>stop-container</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<container>
+								<containerId>jetty8x</containerId>
+								<type>embedded</type>
+								<systemProperties>
+									<java.io.tmpdir>${project.build.directory}/temp/</java.io.tmpdir>
+								</systemProperties>
+							</container>
+							<configuration>
+								<properties>
+									<cargo.servlet.port>8080</cargo.servlet.port>
+								</properties>
+							</configuration>
+							<deployables>
+								<deployable>
+									<location>${project.build.directory}/${project.build.finalName}.${project.packaging}</location>
+									<properties>
+										<context>${project.artifactId}</context>
+									</properties>
+								</deployable>
+							</deployables>
+						</configuration>
+					</plugin> 
+
+				</plugins>
+			</build>
+
+		</profile>
+
 	</profiles>
 
 </project>

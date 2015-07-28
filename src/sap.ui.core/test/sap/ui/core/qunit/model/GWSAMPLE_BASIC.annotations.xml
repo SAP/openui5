@@ -178,7 +178,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Dimensions">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Dimensions"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -200,6 +200,7 @@
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.Chart" Qualifier="Dimensions">
 					<Record>
+						<PropertyValue Property="Title" String="Product Dimensions"/>
 						<PropertyValue Property="Dimensions">
 							<Collection>
 								<PropertyPath>ProductID</PropertyPath>
@@ -410,7 +411,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Note">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Order Note"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -550,7 +551,7 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Note">
-					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+					<Record>
 						<PropertyValue Property="Label" String="Order Note"/>
 						<PropertyValue Property="Data">
 							<Collection>
@@ -633,21 +634,19 @@
 							<PropertyValue Property="Label" String="Link to"/>
 							<PropertyValue Property="Value" String="Google Maps"/>
 							<PropertyValue Property="Url">
-								<UrlRef>
-									<Apply Function="odata.fillUriTemplate">
-										<String>https://www.google.de/maps/place/{street},{city}</String>
-										<LabeledElement Name="street">
-											<Apply Function="odata.uriEncode">
-												<Path>Address/Street</Path>
-											</Apply>
-										</LabeledElement>
-										<LabeledElement Name="city">
-											<Apply Function="odata.uriEncode">
-												<Path>Address/City</Path>
-											</Apply>
-										</LabeledElement>
-									</Apply>
-								</UrlRef>
+								<Apply Function="odata.fillUriTemplate">
+									<String>https://www.google.de/maps/place/{street},{city}</String>
+									<LabeledElement Name="street">
+										<Apply Function="odata.uriEncode">
+											<Path>Address/Street</Path>
+										</Apply>
+									</LabeledElement>
+									<LabeledElement Name="city">
+										<Apply Function="odata.uriEncode">
+											<Path>Address/City</Path>
+										</Apply>
+									</LabeledElement>
+								</Apply>
 							</PropertyValue>
 						</Record>
 					</Collection>

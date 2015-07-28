@@ -34,7 +34,8 @@
 				fileSizeExceed="onFileSizeExceed"
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
-				items="{/items}">
+				items="{/items}"
+				numberOfAttachmentsText="Uploaded (8)">
 				<items>
 					<UploadCollectionItem
 						documentId="{documentId}"

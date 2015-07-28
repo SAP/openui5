@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<!-- 
+    Tested module: sap-ui-core in general
+    -->
+
+		<title>Test Page for the SAPUI5 Bootstrap functionality with custom boot task and preload lib css</title>
+		<script>
+			window["sap-ui-config"] = {
+				"preloadLibCss": [ "!sap.ui.core", "sap.ui.testlib" ],
+				"xx-bootTask" : function(callback) {
+					sap.ui.getCore().loadLibrary("sap.ui.testlib", "../testdata/uilib");
+					callback();
+				}
+			};
+		</script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.core"
+				src="../../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		/**
+		 * Test that no theme css was loaded as the "preloadLibCss" configuration should prevent it
+		 */
+		test("No Library CSS loaded", function(assert) {
+			assert.equal(jQuery.sap.domById("sap-ui-theme-sap.ui.core"), null, "'sap.ui.core' theme should not be included");
+			assert.equal(jQuery.sap.domById("sap-ui-theme-sap.ui.testlib"), null, "'sap.ui.testlib' theme should not be included");
+		});
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

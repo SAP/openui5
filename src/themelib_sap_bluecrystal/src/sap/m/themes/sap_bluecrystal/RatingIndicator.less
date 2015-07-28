@@ -15,21 +15,21 @@
 }
 
 .sapMRIIconSel {
-	color: lighten(@sapUiRIIconColor,12);
-	-webkit-text-stroke: 1px darken(@sapUiAccent1,3);
+	color: lighten(@sapUiAccent1, 12);
+	-webkit-text-stroke: 1px darken(@sapUiAccent1, 3);
 }
 
 .sapMRIIconUnsel  {
-	color: darken(@sapUiLightBG,10);
-	-webkit-text-stroke: 1px darken(@sapUiLightBG,15);
+	color: darken(@sapUiContentForegroundColor, 10);
+	-webkit-text-stroke: 1px darken(@sapUiContentForegroundColor, 15);
 }
 
 /* gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry*/
 .sapMRIGrd > .sapMRIIconSel {
-	.sapMRIGradient(@sapUiRIIconColor);
+	.sapMRIGradient(@sapUiAccent1);
 }
 .sapMRIGrd > .sapMRIIconUnsel  {
-	.sapMRIGradient(@sapUiLightBG, 10);
+	.sapMRIGradient(@sapUiContentForegroundColor, 10);
 }
 
 .sapMRIDisabled{
@@ -38,25 +38,25 @@
 }
 
 html[data-sap-ui-browser^='ie10'] .sapMRIDisabled .sapMRIIconSel {
-	text-shadow: 0px 0px 0px @sapUiBlack;
+	text-shadow: 0px 0px 0px @sapUiDarkShadowTint;
 }
 
 .sapMRIIconHov {
-	color: @sapUiRIIconColor;
-	-webkit-text-stroke: 1px darken(@sapUiAccent1,3);
+	color: @sapUiAccent1;
+	-webkit-text-stroke: 1px darken(@sapUiAccent1, 3);
 }
 
 html[data-sap-ui-browser^='ie10'] .sapMRIIconHov {
-	text-shadow: 0px 0px 0px @sapUiBlack;
+	text-shadow: 0px 0px 0px @sapUiDarkShadowTint;
 }
 
 html[data-sap-ui-browser^='ie10'] .sapMRIIconUnsel {
-	text-shadow: 0px 0px 0px @sapUiBlack;
+	text-shadow: 0px 0px 0px @sapUiDarkShadowTint;
 }
 
 .sapMRI .sapUiIcon,
 .sapMRI .sapMImg {
-	padding-right: @sapUiRIIconPadding;
+	padding-right: 0.25rem;
 }
 
 .sapMRI .sapUiIcon:last-child,

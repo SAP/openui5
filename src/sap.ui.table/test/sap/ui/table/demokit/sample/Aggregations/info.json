@@ -1,0 +1,24 @@
+[
+	{
+		"title" : "Aggregation 'title'",
+		"text"	: "The value for the 'title' aggregation can be either a string value or a control instance. The title section is the topmost section of the table. If no title is set the section is hidden."
+	},{
+		"title" : "Aggregation 'toolbar'",
+		"text"	: "An optional toolbar section above the table."
+	},{
+		"title" : "Aggregation 'extension'",
+		"text"	: "Additional section between toolbar and table which e.g. can be used for a seconadry toolbar or a facet filtzer like in this example. If no extension is given the section is hidden."
+	},{
+		"title" : "Aggregation 'columns'",
+		"text"	: "Aggregation to define the columns of the table incl. their headers and the data cell templates."
+	},{
+		"title" : "Aggregation 'rows'",
+		"text"	: "The data aggregation of the table. This aggregation MUST be bound to some data model."
+	},{
+		"title" : "Aggregation 'noData'",
+		"text"	: "The value for the 'noData' aggregation can be either a string value or a control instance. It is shown, in case there is no data for the Table available."
+	},{
+		"title" : "Aggregation 'footer'",
+		"text"	: "The value for the 'footer' aggregation can also be either a string value or a control instance. The footer section is rendered below the table. If no footer is given the section is hidden."
+	}
+]

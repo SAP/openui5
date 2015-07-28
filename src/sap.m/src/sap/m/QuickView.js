@@ -205,16 +205,28 @@ sap.ui.define([
 	};
 
 	QuickView.prototype.onBeforeRenderingPopover = function() {
-		this._initPages();
 
-		// add a close button on phone devices when there are no pages
-		var aPages = this.getAggregation("pages");
-		if (!aPages && sap.ui.Device.system.phone) {
-			this._addEmptyPage();
+		this._bRendered = true;
+
+		// Update pages only if items aggregation is changed
+		if (this._bItemsChanged) {
+			this._initPages();
+
+			// add a close button on phone devices when there are no pages
+			var aPages = this.getAggregation("pages");
+			if (!aPages && sap.ui.Device.system.phone) {
+				this._addEmptyPage();
+			}
+
+			this._bItemsChanged = false;
 		}
 	};
 
 	QuickView.prototype.exit = function() {
+
+		this._bRendered = false;
+		this._bItemsChanged = true;
+
 		if (this._oPopover) {
 			this._oPopover.destroy();
 		}
@@ -319,6 +331,36 @@ sap.ui.define([
 
 		return this;
 	};
+
+	["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass"].forEach(function(sName){
+		QuickView.prototype[sName] = function() {
+			if (this._oPopover && this._oPopover[sName]) {
+				var res = this._oPopover[sName].apply(this._oPopover, arguments);
+				return res === this._oPopover ? this : res;
+			}
+		};
+	});
+
+	["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
+		"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+			QuickView.prototype["_" + sFuncName + "Old"] = QuickView.prototype[sFuncName];
+			QuickView.prototype[sFuncName] = function () {
+				var result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+
+				// Marks items aggregation as changed and invalidate popover to trigger rendering
+				this._bItemsChanged = true;
+
+				if (this._bRendered && this._oPopover) {
+					this._oPopover.invalidate();
+				}
+
+				if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+					return result;
+				}
+
+				return this;
+			};
+		});
 
 	return QuickView;
 

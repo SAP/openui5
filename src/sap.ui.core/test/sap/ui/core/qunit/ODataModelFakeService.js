@@ -1,7 +1,26 @@
 var xhr = sinon.useFakeXMLHttpRequest(),
 	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 	responseDelay = 10,
-	_setTimeout = window.setTimeout;
+	_setTimeout = window.setTimeout,
+	csrfToken;
+
+function updateCsrfToken() {
+	csrfToken = "" + Math.floor(Math.random() * 1000000000);
+}
+
+function deleteCsrfToken() {
+	csrfToken = undefined;
+}
+
+function getHeader(headers, header) {
+	header = header.toLowerCase();
+	for (var i in headers) {
+		if (i.toLowerCase() == header) {
+			return headers[i];
+		}
+	}
+	return undefined;
+}
 
 xhr.useFilters = true;
 xhr.addFilter(function(method, url) {
@@ -31,6 +50,10 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sRegionsXML],
 		"Products(2)":
 			[200, oXMLHeaders, sProducts2XML],
+		"Invoices/$count":
+			[200, oCountHeaders, "9"],
+		"Invoices?$skip=0&$top=100":
+			[200, oJSONHeaders, sInvoicesJSON],
 		"Categories(2)":
 			[200, oXMLHeaders, sCategories2XML],
 		"Categories(7)":
@@ -119,6 +142,10 @@ xhr.onCreate = function(request) {
 			[200, oCountHeaders, "5"],
 		"Categories(1)":
 			[200, oJSONHeaders, sCategory1JSON],
+		"Categories(3)":
+			[200, oJSONHeaders, sCategory3JSON],
+		"Categories(4)":
+			[200, oJSONHeaders, sCategory4JSON],
 		"Categories?$skip=0&$top=8&$select=CategoryName":
 			[200, oJSONHeaders, sCategorySelectJSON],
 		"Categories?$skip=0&$top=100&$select=CategoryName":
@@ -199,7 +226,7 @@ xhr.onCreate = function(request) {
 			case "MERGE":
 				return [204, oJSONHeaders, ""];
 			case "POST":
-				return [201, oJSONHeaders, ""];
+				return [201, oJSONHeaders, sCategory1JSON];
 			case "DELETE":
 				return [204, oJSONHeaders, ""];
 			default:
@@ -221,6 +248,20 @@ xhr.onCreate = function(request) {
 				}
 			}
 		}	
+		
+		// CSRF Token handling
+		if (request.method != "GET" && csrfToken) {
+			if (getHeader(request.requestHeaders, "X-CSRF-Token") != csrfToken) {
+				respond(403, oCsrfRequireHeaders, "");
+				return;
+			}
+		}
+		if (request.url == baseURL) {
+			oCsrfResponseHeaders["X-CSRF-Token"] = csrfToken;
+			respond(200, oCsrfResponseHeaders, sServiceDocXML);
+			return;
+		}
+		
 		
 		// Special handling based on headers
 		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
@@ -398,7 +439,102 @@ var oBatchHeaders = 	{
 var oHTMLHeaders = 	{
 		"Content-Type": "text/html"
 	};
+var oCsrfRequireHeaders = 	{
+		"Content-Type": "text/plain;charset=utf-8",
+		"DataServiceVersion": "2.0",
+		"X-CSRF-Token": "required" 
+	};
+var oCsrfResponseHeaders = 	{
+		"Content-Type": "application/xml;charset=utf-8",
+		"DataServiceVersion": "1.0",
+		"X-CSRF-Token": "" 
+	};
 
+var sServiceDocXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+	<service xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns="http://www.w3.org/2007/app">\
+	  <workspace>\
+	    <atom:title>Default</atom:title>\
+	    <collection href="Categories">\
+	      <atom:title>Categories</atom:title>\
+	    </collection>\
+	    <collection href="CustomerDemographics">\
+	      <atom:title>CustomerDemographics</atom:title>\
+	    </collection>\
+	    <collection href="Customers">\
+	      <atom:title>Customers</atom:title>\
+	    </collection>\
+	    <collection href="Employees">\
+	      <atom:title>Employees</atom:title>\
+	    </collection>\
+	    <collection href="Order_Details">\
+	      <atom:title>Order_Details</atom:title>\
+	    </collection>\
+	    <collection href="Orders">\
+	      <atom:title>Orders</atom:title>\
+	    </collection>\
+	    <collection href="Products">\
+	      <atom:title>Products</atom:title>\
+	    </collection>\
+	    <collection href="Regions">\
+	      <atom:title>Regions</atom:title>\
+	    </collection>\
+	    <collection href="Shippers">\
+	      <atom:title>Shippers</atom:title>\
+	    </collection>\
+	    <collection href="Suppliers">\
+	      <atom:title>Suppliers</atom:title>\
+	    </collection>\
+	    <collection href="Territories">\
+	      <atom:title>Territories</atom:title>\
+	    </collection>\
+	    <collection href="Alphabetical_list_of_products">\
+	      <atom:title>Alphabetical_list_of_products</atom:title>\
+	    </collection>\
+	    <collection href="Category_Sales_for_1997">\
+	      <atom:title>Category_Sales_for_1997</atom:title>\
+	    </collection>\
+	    <collection href="Current_Product_Lists">\
+	      <atom:title>Current_Product_Lists</atom:title>\
+	    </collection>\
+	    <collection href="Customer_and_Suppliers_by_Cities">\
+	      <atom:title>Customer_and_Suppliers_by_Cities</atom:title>\
+	    </collection>\
+	    <collection href="Invoices">\
+	      <atom:title>Invoices</atom:title>\
+	    </collection>\
+	    <collection href="Order_Details_Extendeds">\
+	      <atom:title>Order_Details_Extendeds</atom:title>\
+	    </collection>\
+	    <collection href="Order_Subtotals">\
+	      <atom:title>Order_Subtotals</atom:title>\
+	    </collection>\
+	    <collection href="Orders_Qries">\
+	      <atom:title>Orders_Qries</atom:title>\
+	    </collection>\
+	    <collection href="Product_Sales_for_1997">\
+	      <atom:title>Product_Sales_for_1997</atom:title>\
+	    </collection>\
+	    <collection href="Products_Above_Average_Prices">\
+	      <atom:title>Products_Above_Average_Prices</atom:title>\
+	    </collection>\
+	    <collection href="Products_by_Categories">\
+	      <atom:title>Products_by_Categories</atom:title>\
+	    </collection>\
+	    <collection href="Sales_by_Categories">\
+	      <atom:title>Sales_by_Categories</atom:title>\
+	    </collection>\
+	    <collection href="Sales_Totals_by_Amounts">\
+	      <atom:title>Sales_Totals_by_Amounts</atom:title>\
+	    </collection>\
+	    <collection href="Summary_of_Sales_by_Quarters">\
+	      <atom:title>Summary_of_Sales_by_Quarters</atom:title>\
+	    </collection>\
+	    <collection href="Summary_of_Sales_by_Years">\
+	      <atom:title>Summary_of_Sales_by_Years</atom:title>\
+	    </collection>\
+	  </workspace>\
+	</service>\
+';
 
 var sMetaData = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\
@@ -4586,7 +4722,44 @@ var sCategory1JSON = "{\n" +
 		"	}\n" + 
 		"}"
 	; 
-
+var sCategory3JSON = "{\n" + 
+		"	\"d\" : {\n" + 
+		"		\"__metadata\" : {\n" + 
+		"			\"id\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(3)\",\n" + 
+		"			\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(3)\",\n" + 
+		"			\"type\" : \"NorthwindModel.Category\"\n" + 
+		"		},\n" + 
+		"		\"Products\" : {\n" + 
+		"			\"__deferred\" : {\n" + 
+		"				\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(3)/Products\"\n" + 
+		"			}\n" + 
+		"		},\n" + 
+		"		\"CategoryID\" : 3,\n" + 
+		"		\"CategoryName\" : \"Confections\",\n" + 
+		"		\"Description\" : \"Desserts, candies, and sweet breads\",\n" + 
+		"		\"Picture\" : \"\"\n" + 
+		"	}\n" + 
+		"}"
+	; 
+var sCategory4JSON = "{\n" + 
+		"	\"d\" : {\n" + 
+		"		\"__metadata\" : {\n" + 
+		"			\"id\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(4)\",\n" + 
+		"			\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(4)\",\n" + 
+		"			\"type\" : \"NorthwindModel.Category\"\n" + 
+		"		},\n" + 
+		"		\"Products\" : {\n" + 
+		"			\"__deferred\" : {\n" + 
+		"				\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(4)/Products\"\n" + 
+		"			}\n" + 
+		"		},\n" + 
+		"		\"CategoryID\" : 4,\n" + 
+		"		\"CategoryName\" : \"Dairy Products\",\n" + 
+		"		\"Description\" : \"Cheeses\",\n" + 
+		"		\"Picture\" : \"\"\n" + 
+		"	}\n" + 
+		"}"
+	; 
 var sCategorySelectJSON = "\n" + 
 		"\n" + 
 		"{\n" + 
@@ -6456,3 +6629,42 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"		</Schema>\n" + 
 				"	</edmx:DataServices>\n" + 
 				"</edmx:Edmx>";
+var sInvoicesJSON = "{\n" + 
+		"\"d\" : {\n" +
+		"\"results\" : [\n" +
+		"{\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0f,OrderID=10692,ProductID=63,ProductName=\'Vegie-spread\',Quantity=20,Salesperson=\'Margaret%20Peacock\',ShipperName=\'United%20Package\',UnitPrice=43.9000M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Margaret Peacock\", \"OrderID\": 10692, \"OrderDate\": \"\\/Date(875836800000)\\/\", \"RequiredDate\": \"\\/Date(878256000000)\\/\", \"ShippedDate\": \"\\/Date(876700800000)\\/\", \"ShipperName\": \"United Package\", \"ProductID\": 63, \"ProductName\": \"Vegie-spread\", \"UnitPrice\": \"43.9000\", \"Quantity\": 20, \"Discount\": 0, \"ExtendedPrice\": \"878.0000\", \"Freight\": \"61.0200\"\n" + 
+		"}, {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0f,OrderID=10702,ProductID=3,ProductName=\'Aniseed%20Syrup\',Quantity=6,Salesperson=\'Margaret%20Peacock\',ShipperName=\'Speedy%20Express\',UnitPrice=10.0000M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Margaret Peacock\", \"OrderID\": 10702, \"OrderDate\": \"\\/Date(876700800000)\\/\", \"RequiredDate\": \"\\/Date(880329600000)\\/\", \"ShippedDate\": \"\\/Date(877392000000)\\/\", \"ShipperName\": \"Speedy Express\", \"ProductID\": 3, \"ProductName\": \"Aniseed Syrup\", \"UnitPrice\": \"10.0000\", \"Quantity\": 6, \"Discount\": 0, \"ExtendedPrice\": \"60.0000\", \"Freight\": \"23.9400\"\n" + 
+		"}, {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0f,OrderID=10702,ProductID=76,ProductName=\'Lakkalik%C3%B6%C3%B6ri\',Quantity=15,Salesperson=\'Margaret%20Peacock\',ShipperName=\'Speedy%20Express\',UnitPrice=18.0000M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Margaret Peacock\", \"OrderID\": 10702, \"OrderDate\": \"\\/Date(876700800000)\\/\", \"RequiredDate\": \"\\/Date(880329600000)\\/\", \"ShippedDate\": \"\\/Date(877392000000)\\/\", \"ShipperName\": \"Speedy Express\", \"ProductID\": 76, \"ProductName\": \"Lakkalik\\u00f6\\u00f6ri\", \"UnitPrice\": \"18.0000\", \"Quantity\": 15, \"Discount\": 0, \"ExtendedPrice\": \"270.0000\", \"Freight\": \"23.9400\"\n" + 
+		"}, {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0f,OrderID=10835,ProductID=59,ProductName=\'Raclette%20Courdavault\',Quantity=15,Salesperson=\'Nancy%20Davolio\',ShipperName=\'Federal%20Shipping\',UnitPrice=55.0000M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Nancy Davolio\", \"OrderID\": 10835, \"OrderDate\": \"\\/Date(884822400000)\\/\", \"RequiredDate\": \"\\/Date(887241600000)\\/\", \"ShippedDate\": \"\\/Date(885340800000)\\/\", \"ShipperName\": \"Federal Shipping\", \"ProductID\": 59, \"ProductName\": \"Raclette Courdavault\", \"UnitPrice\": \"55.0000\", \"Quantity\": 15, \"Discount\": 0, \"ExtendedPrice\": \"825.0000\", \"Freight\": \"69.5300\"\n" + 
+		"}, {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0f,OrderID=10952,ProductID=28,ProductName=\'R%C3%B6ssle%20Sauerkraut\',Quantity=2,Salesperson=\'Nancy%20Davolio\',ShipperName=\'Speedy%20Express\',UnitPrice=45.6000M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Nancy Davolio\", \"OrderID\": 10952, \"OrderDate\": \"\\/Date(890006400000)\\/\", \"RequiredDate\": \"\\/Date(893635200000)\\/\", \"ShippedDate\": \"\\/Date(890697600000)\\/\", \"ShipperName\": \"Speedy Express\", \"ProductID\": 28, \"ProductName\": \"R\\u00f6ssle Sauerkraut\", \"UnitPrice\": \"45.6000\", \"Quantity\": 2, \"Discount\": 0, \"ExtendedPrice\": \"91.2000\", \"Freight\": \"40.4200\"\n" + 
+		"}, {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0f,OrderID=11011,ProductID=71,ProductName=\'Flotemysost\',Quantity=20,Salesperson=\'Janet%20Leverling\',ShipperName=\'Speedy%20Express\',UnitPrice=21.5000M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Janet Leverling\", \"OrderID\": 11011, \"OrderDate\": \"\\/Date(892080000000)\\/\", \"RequiredDate\": \"\\/Date(894499200000)\\/\", \"ShippedDate\": \"\\/Date(892425600000)\\/\", \"ShipperName\": \"Speedy Express\", \"ProductID\": 71, \"ProductName\": \"Flotemysost\", \"UnitPrice\": \"21.5000\", \"Quantity\": 20, \"Discount\": 0, \"ExtendedPrice\": \"430.0000\", \"Freight\": \"1.2100\"\n" + 
+		"}, {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0.05f,OrderID=10952,ProductID=6,ProductName=\'Grandma\'\'s%20Boysenberry%20Spread\',Quantity=16,Salesperson=\'Nancy%20Davolio\',ShipperName=\'Speedy%20Express\',UnitPrice=25.0000M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Nancy Davolio\", \"OrderID\": 10952, \"OrderDate\": \"\\/Date(890006400000)\\/\", \"RequiredDate\": \"\\/Date(893635200000)\\/\", \"ShippedDate\": \"\\/Date(890697600000)\\/\", \"ShipperName\": \"Speedy Express\", \"ProductID\": 6, \"ProductName\": \"Grandma\'s Boysenberry Spread\", \"UnitPrice\": \"25.0000\", \"Quantity\": 16, \"Discount\": 0.05, \"ExtendedPrice\": \"380.0000\", \"Freight\": \"40.4200\"\n" + 
+		"}, {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Invoices(CustomerName=\'Alfreds%20Futterkiste\',Discount=0.05f,OrderID=11011,ProductID=58,ProductName=\'Escargots%20de%20Bourgogne\',Quantity=40,Salesperson=\'Janet%20Leverling\',ShipperName=\'Speedy%20Express\',UnitPrice=13.2500M)\", \"type\": \"NorthwindModel.Invoice\"\n" + 
+		"}, \"ShipName\": \"Alfred\'s Futterkiste\", \"ShipAddress\": \"Obere Str. 57\", \"ShipCity\": \"Berlin\", \"ShipRegion\": null, \"ShipPostalCode\": \"12209\", \"ShipCountry\": \"Germany\", \"CustomerID\": \"ALFKI\", \"CustomerName\": \"Alfreds Futterkiste\", \"Address\": \"Obere Str. 57\", \"City\": \"Berlin\", \"Region\": null, \"PostalCode\": \"12209\", \"Country\": \"Germany\", \"Salesperson\": \"Janet Leverling\", \"OrderID\": 11011, \"OrderDate\": \"\\/Date(892080000000)\\/\", \"RequiredDate\": \"\\/Date(894499200000)\\/\", \"ShippedDate\": \"\\/Date(892425600000)\\/\", \"ShipperName\": \"Speedy Express\", \"ProductID\": 58, \"ProductName\": \"Escargots de Bourgogne\", \"UnitPrice\": \"13.2500\", \"Quantity\": 40, \"Discount\": 0.05, \"ExtendedPrice\": \"503.5000\", \"Freight\": \"1.2100\"\n" + 
+		"}\n" + 
+		"]\n" +
+		"}\n" +
+		"}";

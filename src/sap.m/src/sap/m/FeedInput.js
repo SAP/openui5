@@ -248,7 +248,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				src : sIconSrc,
 				alt : this.getAriaLabelForPicture(),
 				densityAware : this.getIconDensityAware(),
-				decorative : false
+				decorative : false,
+				useIconTooltip: false
 			},
 			aCssClasses = ['sapMFeedInImage'];
 

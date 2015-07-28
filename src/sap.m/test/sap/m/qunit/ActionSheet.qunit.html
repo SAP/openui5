@@ -63,7 +63,7 @@
 					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
 				},
 				afterClose: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "hidden", "ActionSheet should be hidden after it's closed");
+					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
 					ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
 					start();
 				}

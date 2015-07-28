@@ -1,0 +1,123 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.Menus.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				selectionMode="MultiToggle"
+				rows="{/ProductCollection}"
+				visibleRowCount="7"
+				showColumnVisibilityMenu="{ui>/showVisibilityMenuEntry}"
+				enableColumnFreeze="{ui>/showFreezeMenuEntry}"
+				enableCellFilter="{ui>/enableCellFilter}"
+				columnSelect="onColumnSelect"
+				cellContextmenu="onProductIdCellContextMenu">
+				<toolbar>
+					<m:Toolbar>
+						<m:Title text="Products"></m:Title>
+						<m:ToolbarSpacer/>
+						<m:ToggleButton
+							icon="sap-icon://show"
+							tooltip="Enable / Disable Visibility Menu Entries"
+							pressed="{ui>/showVisibilityMenuEntry}"/>
+						<m:ToggleButton
+							icon="sap-icon://resize-horizontal"
+							tooltip="Enable / Disable Freezing Menu Entries"
+							pressed="{ui>/showFreezeMenuEntry}"/>
+						<m:ToggleButton
+							icon="sap-icon://grid"
+							tooltip="Enable / Disable Cell Filter"
+							pressed="{ui>/enableCellFilter}"/>
+					</m:Toolbar>
+				</toolbar>
+				<columns>
+					<Column
+						id="name"
+						width="11rem"
+						sortProperty="Name"
+						filterProperty="Name"
+						showFilterMenuEntry="true"
+						showSortMenuEntry="true">
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}"/>
+						</template>
+					</Column>
+					<Column
+						id="productId"
+						filterProperty="ProductId"
+						sortProperty="ProductId"
+						width="11rem">
+						<m:Label text="Product Id" />
+						<template>
+							<m:Text text="{ProductId}"/>
+						</template>
+					</Column>
+					<Column
+						id="image"
+						width="9rem">
+						<m:Label text="Image" />
+						<template>
+							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</template>
+					</Column>
+					<Column
+						id="quantity"
+						width="6rem"
+						hAlign="End"
+						sortProperty="Quantity">
+						<m:Label text="Quantity" />
+						<template>
+							<m:Label text="{
+								path: 'Quantity',
+								type: 'sap.ui.model.type.Integer'
+							}" />
+						</template>
+						<menu>
+							<u:Menu ariaLabelledBy="quantity">
+								<u:items>
+									<u:MenuItem
+										text="My custom menu entry"
+										select="onQuantityCustomItemSelect"
+										/>
+									<u:MenuItem
+										text="Sort"
+										select="onQuantitySort"
+										icon="sap-icon://sort"
+										/>
+								</u:items>
+							</u:Menu>
+						</menu>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Delivery Date" />
+						<template>
+							<m:Text text="{
+								path: 'DeliveryDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'timestamp'}}
+							}"/>
+						</template>
+					</Column>
+				</columns>
+				<footer>
+					<m:Toolbar>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://hint"
+							tooltip="Show information"
+							press="showInfo"/>
+					</m:Toolbar>
+				</footer>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

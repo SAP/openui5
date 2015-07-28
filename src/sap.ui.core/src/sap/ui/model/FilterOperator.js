@@ -3,8 +3,7 @@
  */
 
 // Provides enumeration sap.ui.model.FilterOperator
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 

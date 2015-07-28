@@ -127,7 +127,7 @@ oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.ObjectStatus
 oTable.addColumn(oColumn);
 
 // sap.ui.core.Icon
-oControl = new sap.ui.core.Icon({src: "sap-icon://account"});
+oControl = new sap.ui.core.Icon({src: "sap-icon://account", decorative: false});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "core.Icon"}), template: oControl, width: "80px", hAlign: sap.ui.core.HorizontalAlign.Center});
 oTable.addColumn(oColumn);
 

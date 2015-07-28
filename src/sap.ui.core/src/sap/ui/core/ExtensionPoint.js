@@ -5,9 +5,6 @@
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 
-	// TODO: the existing dependencies to ./Fragment and ./View can't be declared as they would result in a new cyclic dependency
-	// Note: the dependency to CustomizingConfiguration is not declared in order not to enforce the loading of CustomizingConfiguration
-
 	"use strict";
 
 	/**
@@ -39,15 +36,22 @@ sap.ui.define(['jquery.sap.global'],
 	sap.ui.extensionpoint = function(oContainer, sExtName, fnCreateDefaultContent,  oTargetControl, sAggregationName) {
 		var extensionConfig, oView, vResult;
 
+		// Note: the existing dependencies to ./Fragment and ./View are not statically declared to avoid cyclic dependencies
+		// Note: the dependency to CustomizingConfiguration is not statically declared to not enforce the loading of that module
+
+		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration'),
+			View = sap.ui.require('sap/ui/core/mvc/View'),
+			Fragment = sap.ui.require('sap/ui/core/Fragment');
+
 		// Extension Point - is something configured?
-		if (sap.ui.core.CustomizingConfiguration) {
+		if (CustomizingConfiguration) {
 
 			// do we have a view to check or do we need to check for configuration for a fragment?
-			if (oContainer instanceof sap.ui.core.mvc.View){
-				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName, oContainer);
+			if (View && oContainer instanceof View){
+				extensionConfig = CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName, oContainer);
 				oView = oContainer;
-			} else if (oContainer instanceof sap.ui.core.Fragment) {
-				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.getFragmentName(), sExtName, oContainer);
+			} else if (Fragment && oContainer instanceof Fragment) {
+				extensionConfig = CustomizingConfiguration.getViewExtension(oContainer.getFragmentName(), sExtName, oContainer);
 				oView = oContainer._oContainingView;
 			}
 

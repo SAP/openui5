@@ -3,8 +3,8 @@
  */
 
 // Provides the XML model implementation of a property binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientPropertyBinding'],
-	function(jQuery, ClientPropertyBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/ClientPropertyBinding'],
+	function(jQuery, ChangeReason, ClientPropertyBinding) {
 	"use strict";
 
 
@@ -44,10 +44,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientPropertyBinding'],
 		var oValue = this._getValue();
 		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;
-			this._fireChange({reason: sap.ui.model.ChangeReason.Change});
+			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
 
 	return XMLPropertyBinding;
 
-}, /* bExport= */ true);
+});

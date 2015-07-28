@@ -94,7 +94,7 @@
 			var ww = document.body.getBoundingClientRect().width;
 			var wh = document.documentElement.getBoundingClientRect().height;
 			equal(appDom.getBoundingClientRect().width, ww, "width should be the complete window width");
-			equal(appDom.getBoundingClientRect().height, wh, "height should be the complete window height");
+			equal(Math.round(appDom.getBoundingClientRect().height), Math.round(wh), "height should be the complete window height"); // rounding needed for IE11
 			});
 		
 		test("destroy", function() {

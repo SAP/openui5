@@ -1,0 +1,66 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.MultiHeader.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+
+		<Table id="table1" selectionMode="MultiToggle" rows="{/modelData}" visibleRowCount="5">
+			
+			<columns>
+				<Column width="11rem">
+					<multiLabels>
+						<m:Label text="Supplier" textAlign="Center" width="100%"/>
+					</multiLabels>
+					
+					<template>
+						<m:Text text="{supplier}"/>
+					</template>
+				</Column>
+				
+				<Column width="11rem" id="multiheader">
+						<multiLabels>
+							<m:Label text="Contact" textAlign="Center" width="100%"/>
+							<m:Label text="Address" textAlign="Center" width="100%"/>
+							<m:Label text="Street" textAlign="Center" width="100%"/>
+						</multiLabels>
+						
+						<template>
+							<m:Text text="{street}"/>
+						</template>
+					</Column>
+					
+				<Column width="11rem">
+					<multiLabels>
+						<m:Label text="Contact" />
+						<m:Label text="Address" />
+						<m:Label text="City" textAlign="Center" width="100%"/>
+					</multiLabels>
+					<template>
+						<m:Input value="{city}"/>
+					</template>
+				</Column>
+					
+				<Column width="11rem">
+					<multiLabels>
+						<m:Label text="Contact" />
+						<m:Label text="Phone" textAlign="Center" width="100%"/>
+					</multiLabels>
+					<template>
+						<m:Input value="{phone}"/>
+					</template>
+				</Column>
+					
+			</columns>
+			
+		</Table>
+		
+		</m:content>
+	</m:Page>
+</mvc:View>

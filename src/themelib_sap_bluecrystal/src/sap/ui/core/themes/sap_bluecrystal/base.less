@@ -122,9 +122,9 @@
 @sapLightestBorderColor:   lighten(@sapBaseBorderColor, 100); // #ffffff
 @sapExtraLightBorderColor: lighten(@sapBaseBorderColor, 39.7); // #e5e5e5
 @sapLightBorderColor:      lighten(@sapBaseBorderColor, 36.5); // #dddddd
-@sapMediumBorderColor:     lighten(@sapBaseBorderColor, 30); // #cccccc
-@sapDarkBorderColor:       lighten(@sapBaseBorderColor, 25); // #bfbfbf
-@sapExtraDarkBorderColor:  lighten(@sapBaseBorderColor, 10); // #999999
+@sapMediumBorderColor:     lighten(@sapBaseBorderColor, 29.8); // #cccccc
+@sapDarkBorderColor:       lighten(@sapBaseBorderColor, 24.8); // #bfbfbf
+@sapExtraDarkBorderColor:  lighten(@sapBaseBorderColor, 9.8); // #999999
 @sapDarkestBorderColor:    darken(@sapBaseBorderColor, 100); // #000000
 
 
@@ -254,7 +254,7 @@
 // [Label "Content Label Color"]
 // [Description "The color of labels in the content area."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_LabelColor: @sapMediumTextColor;
+@sapContent_LabelColor: @sapLightTextColor;
 
 // [Label "Content Monospace Font Family"]
 // [Description "Defines which monospaced font is used for specific texts in the content area."]
@@ -520,7 +520,7 @@
 // [Label "Group Title Border Color"]
 // [Description "The color of the borders of the group header area."]
 // [Tags "Base", "Group", "Color"]
-@sapGroup_TitleBorderColor: transparent;
+@sapGroup_TitleBorderColor: @sapMediumBorderColor;
 
 // [Label "Group Title Text Color"]
 // [Description "The text color of the group title. The text color of the title of a group."]
@@ -540,7 +540,7 @@
 // [Label "Group Content Border Color"]
 // [Description "The color of the borders of a group's content area."]
 // [Tags "Base", "Group", "Color", "Protected"]
-@sapGroup_ContentBorderColor: darken(desaturate(@sapGroup_TitleBorderColor,9),9);
+@sapGroup_ContentBorderColor: @sapLightBorderColor;
 
 // [Label "Group Border Thickness"]
 // [Description "The thickness of the borders of a group's content area."]
@@ -560,12 +560,12 @@
 // [Label "Toolbar Background Color"]
 // [Description "The background color of the toolbar."]
 // [Tags "Base", "Toolbar", "Color"]
-@sapToolbar_Background: #fff;
+@sapToolbar_Background: transparent;
 
 // [Label "Toolbar Separator Color"]
 // [Description "The color of a toolbar's separators."]
 // [Tags "Base", "Toolbar", "Color"]
-@sapToolbar_SeparatorColor: #c2c2c2;
+@sapToolbar_SeparatorColor: @sapDarkBorderColor;
 
 // [Label "List Header Background Color"]
 // [Description "The background color of the header area of lists."]
@@ -585,7 +585,7 @@
 // [Label "List Border Color"]
 // [Description "The color of the border in a list separating the entries."]
 // [Tags "Base", "List", "Color"]
-@sapList_BorderColor: @sapLightBorderColor;
+@sapList_BorderColor: @sapExtraLightBorderColor;
 
 // [Label "List Grid Thickness"]
 // [Description "The thickness of the border in a list separating the entries."]
@@ -603,10 +603,15 @@
 // [Tags "Base", "List", "Color"]
 @sapList_SelectionBackgroundColor: mix(@sapSelectedColor, #fff, 10);
 
+// [Label "List Background Color"]
+// [Description "The background color of lists."]
+// [Tags "Base", "List", "Color"]
+@sapList_Background: @sapGroup_ContentBackground;
+
 // [Label "List Hover Background Color"]
 // [Description "The background color of lists on hover."]
 // [Tags "Base", "List", "Color"]
-@sapList_Hover_Background: contrast(@sapExtraLightBackground, darken(@sapExtraLightBackground, 6), lighten(@sapExtraLightBackground, 6));
+@sapList_Hover_Background: contrast(@sapList_Background, darken(@sapList_Background, 6), lighten(@sapList_Background, 6));
 
 // [Label "Scrollbar Face Color"]
 // [Description "The color of the surface of a scrollbar."]

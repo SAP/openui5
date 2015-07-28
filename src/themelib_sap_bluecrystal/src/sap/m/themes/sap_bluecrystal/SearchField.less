@@ -55,13 +55,16 @@
 	white-space: nowrap;
 }
 
-.sapMFocus>.sapMSFF,
+.sapMFocus>.sapMSFF{
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
 :not(.sapMSFDisabled) > .sapMSFF:hover{
-	border-color: @sapUiHighlight;
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 .sapMSFI{
-	color: @sapUiLightText;
+	color: @sapUiElement;
 	font-family: @sapUiFontFamily;
 	background: transparent;
 	width: 100%;
@@ -127,8 +130,8 @@
 	background-color: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA,
-.sapMSFB:active{
+.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
+.sapMSFF>.sapMSFB.sapMSFBA{
 	background-color: @sapUiButtonLiteActiveBackground;
 	color: @sapUiButtonActiveTextColor;
 }
@@ -171,12 +174,6 @@
 /* refresh icon in some cases */
 :not(.sapMFocus)>.sapMSFReload>.sapMSFS:after{
 	content: "\e00a";
-}
-
-
-/* active state colors */
-.sapMSFI:focus{
-	color: @sapUiDarkText;
 }
 
 /*grouping is not allowed here*/

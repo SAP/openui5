@@ -33,24 +33,24 @@ sap.ui.define([
 	},
 	onSemanticButtonPress: function (oEvent) {
 
-		var sAction = oEvent.oSource.getMetadata().getName();
-		sAction = sAction.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+		var sAction = oEvent.getSource().getMetadata().getName();
+		sAction = sAction.replace(oEvent.getSource().getMetadata().getLibraryName() + ".", "");
 
 		sap.m.MessageToast.show("Pressed: " + sAction);
 	},
 	onSemanticSelectChange: function (oEvent, oData) {
-		var sAction = oEvent.oSource.getMetadata().getName();
-		sAction = sAction.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+		var sAction = oEvent.getSource().getMetadata().getName();
+		sAction = sAction.replace(oEvent.getSource().getMetadata().getLibraryName() + ".", "");
 
-		var sStatusText = sAction + " by " + oEvent.oSource.getSelectedItem().getText();
+		var sStatusText = sAction + " by " + oEvent.getSource().getSelectedItem().getText();
 		sap.m.MessageToast.show("Selected: " + sStatusText);
 	},
-	onNavButtonPress: function () {
-		sap.m.MessageToast.show("Pressed navigation button");
+	onPositionChange: function (oEvent) {
+		sap.m.MessageToast.show("Positioned changed to " + oEvent.getParameter("newPosition"));
 	},
 	onMessagesButtonPress: function(oEvent) {
 
-		var oMessagesButton = oEvent.oSource;
+		var oMessagesButton = oEvent.getSource();
 		if (!this._messagePopover) {
 			this._messagePopover = new MessagePopover({
 				items: {

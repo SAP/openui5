@@ -77,6 +77,13 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				draggable : {
 					type : "boolean",
 					defaultValue : false
+				},
+				/** 
+				 * Whether the Overlay is editable
+				 */
+				editable : {
+					type : "boolean",
+					defaultValue : false
 				}
 			},
 			associations : {
@@ -116,9 +123,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 */
 				selectionChange : {
 					parameters : {
-						selected : {
-							type : "boolean"
-						}
+						selected : { type : "boolean" }
 					}
 				},
 				/**
@@ -126,8 +131,16 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 */
 				draggableChange : {
 					parameters : {
+						draggable : { type : "boolean" }
+					}
+				},
+				/**
+				 * Event fired when the property "Editable" is changed
+				 */
+				editableChange : {
+					parameters : {
 						selected : {
-							draggable : "boolean"
+							editable : "boolean"
 						}
 					}
 				},
@@ -136,10 +149,10 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 */
 				elementModified : {
 					parameters : {
-						type : "string",
-						value : "any",
-						oldValue : "any",
-						target : "sap.ui.core.Element"
+						type : { type : "string" },
+						value : { type : "any" },
+						oldValue : { type : "any" },
+						target : { type : "sap.ui.core.Element" }
 					}
 				}
 			}
@@ -232,6 +245,14 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
+	 * @return {boolean} if the Overlay has focus	
+	 * @override
+	 */
+	Overlay.prototype.hasFocus = function() {
+		return document.activeElement === this.getFocusDomRef();
+	};
+
+	/** 
 	 * Sets an associated Element to create an overlay for
 	 * @param {string|sap.ui.core.Element} vElement element or element's id
 	 * @returns {sap.ui.dt.Overlay} returns this
@@ -249,6 +270,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		delete this._elementId;
 		
 		this.setAssociation("element", vElement);
+		// TODO: designTimeMetadata aggregation is NOT ready in this moment... how we can make it consistent?
 		this._createAggregationOverlays();
 
 		var oElement = this.getElementInstance();
@@ -302,6 +324,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			this.setSelected(false);
 		}
 
+		this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);		
 		this.setProperty("selectable", bSelectable);
 
 		return this;
@@ -330,7 +353,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * Sets wether the Overlay is draggable and toggles corresponding css class
+	 * Sets whether the Overlay is draggable and toggles corresponding css class
 	 * @param {boolean} bDraggable if the Overlay is draggable
 	 * @returns {sap.ui.dt.Overlay} returns this	 	 
 	 * @public
@@ -346,19 +369,36 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return this;
 	};	
 
+	/** 
+	 * Sets whether the Overlay is editable and toggles corresponding css class
+	 * @param {boolean} bEditable if the Overlay is editable
+	 * @returns {sap.ui.dt.Overlay} returns this	 	 
+	 * @public
+	 */
+	Overlay.prototype.setEditable = function(bEditable) {
+		if (this.getEditable() !== bEditable) {
+			this.toggleStyleClass("sapUiDtOverlayEditable", bEditable);
+			
+			this.setProperty("editable", bEditable);
+			this.fireEditableChange({editable : bEditable});
+		}
+
+		return this;
+	};	
+
 	/**
 	 * Returns the DesignTime metadata of this Overlay, if no DT metadata exists, creates and returns the default DT metadata object
 	 * @return {sap.ui.DesignTimeMetadata} DT metadata of the Overlay
 	 * @public
 	 */
 	Overlay.prototype.getDesignTimeMetadata = function() {
-		var oDesignTimeMetdata = this.getAggregation("designTimeMetadata");
-		if (!oDesignTimeMetdata && !this._oDefaultDesignTimeMetadata) {
+		var oDesignTimeMetadata = this.getAggregation("designTimeMetadata");
+		if (!oDesignTimeMetadata && !this._oDefaultDesignTimeMetadata) {
 			this._oDefaultDesignTimeMetadata = new DesignTimeMetadata({
-				data : this._getElementDesignTimeMetadata()
+				data : ElementUtil.getDesignTimeMetadata(this.getElementInstance())
 			});
 		}
-		return oDesignTimeMetdata || this._oDefaultDesignTimeMetadata;
+		return oDesignTimeMetadata || this._oDefaultDesignTimeMetadata;
 	};
 
 	/**
@@ -491,15 +531,6 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			this._oDefaultDesignTimeMetadata.destroy();
 			this._oDefaultDesignTimeMetadata = null;
 		}
-	};
-
-	/**
-	 * @return {map} returns the design time metadata of the associated element
-	 * @private
-	 */
-	Overlay.prototype._getElementDesignTimeMetadata = function() {
-		var oElement = this.getElementInstance();
-		return oElement ? oElement.getMetadata().getDesignTime() : {};
 	};
 
 	/**
@@ -665,6 +696,15 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 */
 	Overlay.prototype.isDraggable = function() {
 		return this.getDraggable();
+	};
+
+	/** 
+	 * Returns if the Overlay is editable
+	 * @public
+	 * @return {boolean} if the Overlay is editable
+	 */
+	Overlay.prototype.isEditable = function() {
+		return this.getEditable();
 	};
 
 	/** 

@@ -226,7 +226,13 @@
 			}),
 			logSpy = this.spy(jQuery.sap.log, "debug");
 
-		var oViewInfo = { caller: oView + " (foo)", id: oView.getId(), name: oView.sViewName, sync: false };
+		var oViewInfo = {
+			caller: oView + " (foo)",
+			id: oView.getId(),
+			name: oView.sViewName,
+			componentId: undefined,
+			sync: false
+		};
 		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo).returns(Promise.resolve(oResult));
 
 		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
@@ -389,7 +395,7 @@
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call by init
-		var oView = new sap.ui.xmlview({
+		var oView = sap.ui.xmlview({
 			viewContent : this.sViewContent,
 			async : true
 		});
@@ -406,7 +412,7 @@
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// init view
-		var oView = new sap.ui.xmlview({
+		var oView = sap.ui.xmlview({
 			viewContent : this.sViewContent,
 			async : true
 		});
@@ -428,7 +434,7 @@
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call via init
-		var oView = new sap.ui.xmlview({
+		var oView = sap.ui.xmlview({
 			viewContent : this.sViewContent,
 			async : true
 		});
@@ -456,7 +462,7 @@
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call via init
-		var oView = new sap.ui.xmlview({
+		var oView = sap.ui.xmlview({
 			viewContent: this.sViewContent,
 			preprocessors:{
 				xml: {
@@ -487,7 +493,7 @@
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call via init
-		var oView = new sap.ui.xmlview({
+		var oView = sap.ui.xmlview({
 			viewContent: this.sViewContent,
 			preprocessors:{
 				controls: {
@@ -513,7 +519,7 @@
 			logSpy = this.spy(jQuery.sap.log, "debug");
 
 		// call via init
-		var oView = new sap.ui.xmlview({
+		var oView = sap.ui.xmlview({
 			viewContent: this.sViewContent,
 			// provide anonymous xml preprocessor
 			preprocessors:{
@@ -540,7 +546,7 @@
 			logSpy = this.spy(jQuery.sap.log, "debug");
 
 		// call via init
-		var oView = new sap.ui.xmlview({
+		var oView = sap.ui.xmlview({
 			// do not provide preprocessor here
 			viewContent: this.sViewContent,
 			async: true
@@ -554,9 +560,7 @@
 	});
 
 	asyncTest("sap.ui.core.mvc.Preprocessor extending module", 2, function() {
-		var sUrl = "test-resources/";
-
-		jQuery.sap.registerModulePath("", "../../../../../" + sUrl);
+		jQuery.sap.registerModulePath("sap.ui.core.qunit.mvc", "./mvc");
 
 		mSettings = {
 			message: "TestPreprocessor executed",
@@ -566,7 +570,11 @@
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", "sap.ui.core.qunit.mvc.TestPreprocessor", true, mSettings);
 
 		// call via init
-		var oView = new sap.ui.xmlview({viewContent: this.sViewContent, async: true});
+		var oView = sap.ui.xmlview({
+			viewContent: this.sViewContent,
+			async: true
+		});
+
 		// twice, default + the registered one
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);

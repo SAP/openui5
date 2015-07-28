@@ -10,24 +10,26 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 
 	
 	/**
-	 * Constructor for a new Menu.
+	 * Constructor for a new Menu control.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A container for menu items. When the space in the browser is not large enough to display all defined items, a scroll bar is provided.
+	 * A menu is an interactive element which provides a choice of different actions to the user. These actions (items) can also be organized in submenus.
+	 * Like other dialog-like controls, the menu is not rendered within the control hierarchy. Instead it can be opened at a specified position via a function call. 
 	 * @extends sap.ui.unified.Menu
 	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.0.0
 	 *
 	 * @constructor
 	 * @public
 	 * @deprecated Since version 1.21.0. 
 	 * Please use the control sap.ui.unified.Menu of the library sap.ui.unified instead.
 	 * @alias sap.ui.commons.Menu
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var Menu = Menu1.extend("sap.ui.commons.Menu", /** @lends sap.ui.commons.Menu.prototype */ { metadata : {
 	

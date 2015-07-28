@@ -348,10 +348,10 @@
 		var oHistory = new sap.ui.core.routing.History(oHashChanger);
 
 		// Make the History think the history length is very small to make the test independent from the actual history of the browser
-		oHistory._iHistoryLength = history.length -1;
+		oHistory._iHistoryLength = history.length - 1;
 
 		// Act -> fire hash changed to simulate a browser forward or backwards button
-		oHashChanger.fireEvent("hashSet", "foo");
+		oHashChanger.fireEvent("hashSet", { sHash : "foo" });
 		oHashChanger.fireHashChanged("foo");
 
 		//Assert
@@ -384,5 +384,30 @@
 		assert.strictEqual(oHistory.aHistory.length, 3, "should have 3 entries in the history");
 		assert.strictEqual(oHistory.aHistory[2], "bar", "Did add an entry bar to the history");
 
+	});
+
+	QUnit.test("Should return forward if you go back and ask for the direction of the next hash, before the hash is actually set", function (assert) {
+		var oHashChanger = new sap.ui.core.routing.HashChanger();
+
+		// System under test
+		var oHistory = new sap.ui.core.routing.History(oHashChanger);
+
+		// Arrange - setup a history
+		oHashChanger.fireEvent("hashSet", { sHash : "foo" });
+		oHashChanger.fireHashChanged("foo");
+
+		oHashChanger.fireEvent("hashSet", { sHash : "bar" });
+		oHashChanger.fireHashChanged("bar");
+
+		// go back
+		oHashChanger.fireHashChanged("foo");
+
+		// Simulate hash is changing to bar again
+		oHashChanger.fireEvent("hashSet", { sHash : "bar" });
+
+		// Act
+		var sDirection = oHistory.getDirection("bar");
+
+		assert.strictEqual(sDirection, "Forwards", "After going back to foo, bar should be forwards");
 	});
 }());

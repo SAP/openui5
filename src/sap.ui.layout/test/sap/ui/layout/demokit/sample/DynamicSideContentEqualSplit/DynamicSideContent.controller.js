@@ -8,10 +8,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			var oImgModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/img.json"));
 			this.getView().setModel(oImgModel, "img");
 		},
-		onAfterRendering: function (oEvent) {
-			// Get the initial breakpoint here.
-			this.updateToggleButtonState();
-		},
 		handleSliderChange: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
 			this.updateControlWidth(iValue);
@@ -20,14 +16,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			var $DSCContainer = this.getView().byId("sideContentContainer").$();
 			if (iValue) {
 				$DSCContainer.width(iValue + "%");
-				this.updateToggleButtonState();
 			}
 		},
-		updateToggleButtonState: function () {
+		updateToggleButtonState: function (oEvent) {
 			var oToggleButton = this.getView().byId("equalSplitToggleButton"),
-				oDSC = this.getView().byId("DynamicSideContent");
+				sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint");
 
-			if (oDSC.getCurrentBreakpoint() === "S") {
+			if (sCurrentBreakpoint === "S") {
 				oToggleButton.setEnabled(true);
 			} else {
 				oToggleButton.setEnabled(false);

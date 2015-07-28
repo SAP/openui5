@@ -335,4 +335,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	};
 
 	return Export;
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.format.NumberFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
-	function(jQuery, LocaleData) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleData'],
+	function(jQuery, BaseObject, LocaleData) {
 	"use strict";
 
 
@@ -48,10 +48,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * @param {boolean} [oFormatOptions.currencyCode] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there's symbol defined
 	 *  for the given currency code.
 	 * @param {string} [oFormatOptions.currencyContext] It can be set either with 'standard' (the default value) or with 'accounting' for an accounting specific currency display
-
+	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are only NaN, null or 0.
+	 *  The 'format' and 'parse' are done in a symmetric way which means when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 *
 	 * @alias sap.ui.core.format.NumberFormat
 	 */
-	var NumberFormat = sap.ui.base.Object.extend("sap.ui.core.format.NumberFormat", /** @lends sap.ui.core.format.NumberFormat.prototype */ {
+	var NumberFormat = BaseObject.extend("sap.ui.core.format.NumberFormat", /** @lends sap.ui.core.format.NumberFormat.prototype */ {
 		constructor : function(oFormatOptions) {
 			// Do not use the constructor
 			throw new Error();
@@ -151,7 +153,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 
 	/*
 	 * Default format options for Integer
-	 * @name sap.ui.core.format.NumberFormat.oDefaultIntegerFormat
 	 */
 	NumberFormat.oDefaultIntegerFormat = {
 		minIntegerDigits: 1,
@@ -169,12 +170,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO
+		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO,
+		emptyString: NaN
 	};
 
 	/*
 	 * Default format options for Float
-	 * @name sap.ui.core.format.NumberFormat.oDefaultFloatFormat
 	 */
 	NumberFormat.oDefaultFloatFormat = {
 		minIntegerDigits: 1,
@@ -192,12 +193,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
+		emptyString: NaN
 	};
 
 	/*
 	* Default format options for Percent
-	* @name sap.ui.core.format.NumberFormat.oDefaultFloatFormat
 	*/
 	NumberFormat.oDefaultPercentFormat = {
 		minIntegerDigits: 1,
@@ -216,7 +217,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
+		emptyString: NaN
 	};
 
 	/*
@@ -241,7 +243,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		currencyContext: 'standard',
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
+		emptyString: NaN
 	};
 
 	/**
@@ -383,12 +386,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
 
 		// If a pattern is defined in the format option, parse it and add options
-		if (oFormatOptions && oFormatOptions.pattern) {
-			oPatternOptions = this.parseNumberPattern(oFormatOptions.pattern);
-			jQuery.each(oPatternOptions, function(sName, vOption) {
-				oFormatOptions[sName] = vOption;
-			});
+		if (oFormatOptions) {
+			if (oFormatOptions.pattern) {
+				oPatternOptions = this.parseNumberPattern(oFormatOptions.pattern);
+				jQuery.each(oPatternOptions, function(sName, vOption) {
+					oFormatOptions[sName] = vOption;
+				});
+			}
+			if (oFormatOptions.emptyString !== undefined) {
+				jQuery.sap.assert(typeof oFormatOptions.emptyString !== "string", "The format option 'emptyString' can not be with type 'string'");
+				jQuery.sap.assert(oFormatOptions.emptyString === 0 || oFormatOptions.emptyString === null || /* check if it's NaN (only NaN doesn't equal to itself) */ oFormatOptions.emptyString !== oFormatOptions.emptyString, "The format option 'emptyString' must be either 0, null or NaN");
+			}
 		}
+
 		return oFormat;
 	};
 
@@ -530,6 +540,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			bNegative = oValue < 0,
 			iDotPos = -1,
 			oOptions = jQuery.extend({}, this.oFormatOptions), aPatternParts;
+
+		if (oValue === oOptions.emptyString || (isNaN(oValue) && isNaN(oOptions.emptyString))) {
+			// if the value equals the 'emptyString' format option, return empty string.
+			// the NaN case has to be checked by using isNaN because NaN !== NaN
+			return "";
+		}
 
 		if (oOptions.decimals !== undefined) {
 			oOptions.minFractionDigits = oOptions.decimals;
@@ -710,6 +726,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
 			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sCurrencyMeasure,
 			vResult = 0;
+
+		if (sValue === "") {
+			if (oOptions.type === mNumberType.CURRENCY) {
+				return [oOptions.emptyString, undefined];
+			} else {
+				return oOptions.emptyString;
+			}
+		}
 
 		if (sPercentPattern.charAt(0) === "%") {
 			sRegExpFloat = sRegExpFloat.slice(0, 1) + "%?" + sRegExpFloat.slice(1);
@@ -1088,4 +1112,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 
 	return NumberFormat;
 
-}, /* bExport= */ true);
+});

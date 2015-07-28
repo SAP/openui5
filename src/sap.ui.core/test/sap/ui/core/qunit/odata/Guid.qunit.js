@@ -9,6 +9,8 @@
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
+	jQuery.sap.require("sap.ui.test.TestUtils");
+
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Guid", {
 		beforeEach: function () {

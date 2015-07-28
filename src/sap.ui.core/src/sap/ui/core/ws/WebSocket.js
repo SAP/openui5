@@ -513,4 +513,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 
 	return WebSocket;
 
-}, /* bExport= */ true);
+});

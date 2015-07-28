@@ -110,8 +110,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Enables/Disables the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
+				 * Enables/Disables the Edit button.
+				 * If the value is true, the Edit button is enabled and the edit function can be used.
 				 * If the value is false, the edit function is not available.
 				 */
 				enableEdit : {
@@ -121,8 +121,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Enables/Disables the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
+				 * Enables/Disables the Edit button.
+				 * If the value is true, the Edit button is enabled and the edit function can be used.
 				 * If the value is false, the edit function is not available.
 				 */
 				enableDelete : {
@@ -132,9 +132,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Show/Hide the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is visible.
-				 * If the value is false, the Edit pushbutton is not visible.
+				 * Show/Hide the Edit button.
+				 * If the value is true, the Edit button is visible.
+				 * If the value is false, the Edit button is not visible.
 				 */
 				visibleEdit : {
 					type : "boolean",
@@ -143,14 +143,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Show/Hide the Delete pushbutton.
-				 * If the value is true, the Delete pushbutton is visible.
-				 * If the value is false, the Delete pushbutton is not visible.
+				 * Show/Hide the Delete button.
+				 * If the value is true, the Delete button is visible.
+				 * If the value is false, the Delete button is not visible.
 				 */
 				visibleDelete : {
 					type : "boolean",
 					group : "Behavior",
 					defaultValue : true
+				},
+
+				/**
+				 * Aria label for the icon (or for the image).
+				 * @experimental since version 1.30. The behavior of the property might change in the next version.
+				 */
+				ariaLabelForPicture : {type : "string",
+					group : "Accessibility",
+					defaultValue : null
 				}
 			},
 
@@ -159,11 +168,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
 				 * Attributes are displayed after an item has been uploaded.
 				 * The Active property of sap.m.ObjectAttribute is not supported.
-				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
 				 * Note that if one of the deprecated properties contributor, fileSize or UploadedDate is filled in addition to this attribute, two attributes with the same title
 				 * are displayed as these properties get displayed as an attribute.
 				 * Example: An application passes the property ‘contributor’ with the value ‘A’ and the aggregation attributes ‘contributor’: ‘B’. As a result, the attributes
 				 * ‘contributor’:’A’ and ‘contributor’:’B’ are displayed. To make sure the title does not appear twice, check if one of the properties is filled.
+				 * @since 1.30
 				 */
 				attributes : {
 					type : "sap.m.ObjectAttribute",
@@ -171,7 +180,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 				/**
 				 * Hidden aggregation for the attributes created from the deprecated properties uploadedDate, contributor and fileSize
-				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
+				 * @since 1.30
 				 */
 				_propertyAttributes : {
 					type : "sap.m.ObjectAttribute",
@@ -181,7 +190,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				/**
 				 * Statuses of an uploaded item
 				 * Statuses will be displayed after an item has been uploaded
-				 * @experimental since version 1.30. The behavior might change in the next version.
+				 * @since 1.30
 				 */
 				statuses : {
 					type : "sap.m.ObjectStatus",
@@ -210,6 +219,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated contributor property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setContributor = function(sContributor) {
 		this.setProperty("contributor", sContributor, false);
@@ -220,6 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated uploadedDate property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setUploadedDate = function(sUploadedDate) {
 		this.setProperty("uploadedDate", sUploadedDate, false);
@@ -230,6 +241,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated fileSize property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setFileSize = function(sFileSize) {
 		this.setProperty("fileSize", sFileSize, false);
@@ -240,38 +252,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Update deprecated properties aggregation
 	 * @private
-	 * @experimental since version 1.30. The behavior might change in the next version.
+	 * @since 1.30.
 	 */
 	UploadCollectionItem.prototype._updateDeprecatedProperties = function() {
 		var aProperties = ["uploadedDate", "contributor", "fileSize"];
-		this.removeAllAggregation("_propertyAttributes");
+		this.removeAllAggregation("_propertyAttributes", true);
 		jQuery.each(aProperties, function(i, sName) {
 			var sValue = this.getProperty(sName),
-				oAttribute = this._mDeprecatedProperties[sName];
-			if (sValue) {
-				if (oAttribute) {
-					oAttribute.setText(sValue);
-				} else {
+					oAttribute = this._mDeprecatedProperties[sName];
+			if (jQuery.type(sValue) === "number" && !!sValue  || !!sValue) {
+				if (!oAttribute) {
 					oAttribute = new ObjectAttribute({
-						active : false,
-						text : sValue
+						active : false
 					});
 					this._mDeprecatedProperties[sName] = oAttribute;
+					this.addAggregation("_propertyAttributes", oAttribute, true);
+					oAttribute.setText(sValue);
+				} else {
+					oAttribute.setText(sValue);
+					this.addAggregation("_propertyAttributes", oAttribute, true);
 				}
-				this.addAggregation("_propertyAttributes", oAttribute);
-			} else {
-				if (oAttribute) {
-					oAttribute.destroy();
-					delete this._mDeprecatedProperties[sName];
-				}
+			} else if (oAttribute) {
+				oAttribute.destroy();
+				delete this._mDeprecatedProperties[sName];
 			}
 		}.bind(this));
+		this.invalidate();
 	};
 
 	/**
 	 * @description Return all attributes, the deprecated property attributes and the aggregated attributes in one array
 	 * @private
-	 * @experimental since version 1.30. The behavior might change in the next version.
+	 * @since 1.30.
 	 */
 	UploadCollectionItem.prototype.getAllAttributes = function() {
 		return this.getAggregation("_propertyAttributes", []).concat(this.getAttributes());

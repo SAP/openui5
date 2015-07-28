@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType'],
-	function(jQuery, NumberFormat, SimpleType) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, NumberFormat, SimpleType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		if (this.oInputFormat) {
 			iValue = this.oInputFormat.parse(vValue);
 			if (iValue == null) {
-				throw new sap.ui.model.FormatException("Cannot format float: " + vValue + " has the wrong format");
+				throw new FormatException("Cannot format float: " + vValue + " has the wrong format");
 			}
 		}
 		switch (this.getPrimitiveType(sInternalType)) {
@@ -60,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "any":
 				return iValue;
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format Integer to " + sInternalType);
+				throw new FormatException("Don't know how to format Integer to " + sInternalType);
 		}
 	};
 
@@ -74,21 +74,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				iResult = this.oOutputFormat.parse(String(vValue));
 				if (isNaN(iResult)) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new sap.ui.model.ParseException(oBundle.getText("Integer.Invalid"));
+					throw new ParseException(oBundle.getText("Integer.Invalid"));
 				}
 				break;
 			case "float":
 				iResult = Math.floor(vValue);
 				if (iResult != vValue) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new sap.ui.model.ParseException(oBundle.getText("Integer.Invalid"));
+					throw new ParseException(oBundle.getText("Integer.Invalid"));
 				}
 				break;
 			case "int":
 				iResult = vValue;
 				break;
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse Integer from " + sInternalType);
+				throw new ParseException("Don't know how to parse Integer from " + sInternalType);
 		}
 		if (this.oInputFormat) {
 			iResult = this.oInputFormat.format(iResult);
@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
@@ -162,4 +162,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	return Integer;
 
-}, /* bExport= */ true);
+});

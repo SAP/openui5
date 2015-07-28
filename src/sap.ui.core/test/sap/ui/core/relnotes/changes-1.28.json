@@ -1897,5 +1897,174 @@
         "references": []
       }
     ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "cab84139c4a3f2409743fc62ed72363de2589c87",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Support Tool: Control-Tree \"Binding\" Tab",
+        "references": []
+      }
+    ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "9684485dec92d99556ee170fa4bca6f0d8a7dcfb",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Device-API: Correctly identify Windows 7 vs. 8",
+        "references": []
+      },
+      {
+        "id": "90701c8fb1b90a52b59db892fd7fba84e6ce9606",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Handly Apply in Dynamic Expressions correctly",
+        "references": []
+      },
+      {
+        "id": "66a33a43150c8a4d37e1bfeec87bbf03fa75d869",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "OPA - returns the correct hash when there is no change yet and running with ushell",
+        "references": []
+      },
+      {
+        "id": "941ca86b3bd126b133576df232d5c956da9718f5",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Relative URLs in less.js theming parameters",
+        "references": []
+      },
+      {
+        "id": "c0d6487b3bf3159cd04645ffb9788d95fc2b63cb",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Remove document.write for compatibility with Cordova in WP8.1",
+        "references": []
+      },
+      {
+        "id": "5f82dbc35a81defc88c1dc2cea59c49953692950",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Control: All Focusable Elements Blocked by LocalBusyIndicator",
+        "references": []
+      },
+      {
+        "id": "f84a0f52ed5cf3db08efa2187c36d9e40e857c33",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Renew DOM-reference When Used in \"checkDocking\"",
+        "references": []
+      },
+      {
+        "id": "68d874b2a3e39b2291e6d2a7c181d27752e766f5",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event was fired but Popover was not closed",
+        "references": []
+      },
+      {
+        "id": "825a4da61b893c6eb652b916c4b1d8ad8eb918d7",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: OS detection - support for future Windows versions",
+        "references": []
+      },
+      {
+        "id": "edf1b3d9d37f5701444d6bf302b509b5d289205e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: remove the shieldlayer from mobile browsers which fires mouse events without 300ms delay",
+        "references": []
+      },
+      {
+        "id": "cc1d9a165c1fba3bff76f4a41576e22c97d3027f",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.HashChanger.replaceHashChanger - now copies all events",
+        "references": []
+      },
+      {
+        "id": "7b5a92a6063d13fffca67c4239539b256f4ea1f5",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History - now replaces the global hashchanger too",
+        "references": []
+      },
+      {
+        "id": "38f3f419d4f6f3aba78070a5ec7139c176caf966",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.test.Opa5 - iframe loading works with defaults that search for controls",
+        "references": []
+      },
+      {
+        "id": "38be9f1e304f6105727d7569cea80c7710cd91f1",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.Export: add library metadata",
+        "references": []
+      },
+      {
+        "id": "f8a9f7904f9ebcf924d22adb9e28ac2d88fe75eb",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Fixed handling of aborted requests",
+        "references": []
+      }
+    ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "6e8aa210febc967145d01e7cd044b6c5e10c79b9",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding: make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "5b33a70470de761bd645fad0233ae011e5e4d61e",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Anonymous define in URI.js breaks CVOM charts",
+        "references": []
+      },
+      {
+        "id": "d33568629bf70c22aa634cb5e34aef74a1027b0b",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: IE does not parse XML with namespace declaration",
+        "references": []
+      },
+      {
+        "id": "ce05c735246ea5401d264f415a32c119ea074ecb",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataListBinding: make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "a3b0d795dae89ff1bc5d91d535d2bcbb9338fe67",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.ScrollBar: Correction for ScrollBar in FireFox in a case of invisible window content.",
+        "references": []
+      },
+      {
+        "id": "e21e6562d6c990f3b439741a86214d229c12c756",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding - OperationMode.Client + refresh()",
+        "references": []
+      }
+    ]
   }
 }

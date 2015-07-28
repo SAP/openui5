@@ -48,6 +48,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			tokens : {type : "sap.m.Token", multiple : true, singularName : "token"}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -90,7 +102,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
+
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an ARIA announcement and remember its ID for later use in the renderer:
+	Tokenizer.prototype._sAriaTokenizerLabelId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKENIZER_ARIA_LABEL")
+	}).toStatic().getId();
+
 	///**
 	// * This file defines behavior for the control,
 	// */
@@ -196,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		
 		var widthOfLastToken = $LastToken.width();
-		if (!lastToken.getSelected() && nWidth < widthOfLastToken) {
+		if (!lastToken.getSelected() && nWidth >= 0 && widthOfLastToken >= 0 && nWidth < widthOfLastToken) {
 			// truncate last token if not selected and not completely visible
 			$LastToken.outerWidth(nWidth, true);
 			lastToken.addStyleClass("sapMTokenTruncate");
@@ -300,13 +319,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (Control.prototype.onAfterRendering) {
 			Control.prototype.onAfterRendering.apply(this, arguments);
 		}
+		
+		var that = this;
 	
 		if (this._bScrollToEndIsActive) {
-			var that = this;
 			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
 					that._doScrollToEnd();
 			});
 		}
+		
+		this._bCopyToClipboardSupport = !!this.getDomRef("clip");
+		if (this._bCopyToClipboardSupport) {
+			this.$().on("copy", function(oEvent){
+				that.oncopy(oEvent);
+			});
+		}
+	};
+	
+	/**
+	 * Handles the copy event
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Tokenizer.prototype.oncopy = function(oEvent) {
+		var aSelectedTokens = this.getSelectedTokens();
+		var sSelectedText = "";
+		for (var i = 0; i < aSelectedTokens.length; i++) {
+			sSelectedText = sSelectedText + (i > 0 ? "\r\n" : "") + aSelectedTokens[i].getText();
+		}
+		
+		if (!sSelectedText) {
+			return;
+		}
+		
+		if (window.clipboardData) {
+			window.clipboardData.setData("text", sSelectedText);
+		} else {
+			oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
+		}
+		oEvent.preventDefault();
 	};
 	
 	/**
@@ -317,10 +370,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype.onsapfocusleave = function(oEvent) {
-		var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
-		
 		//when focus goes to token, keep the select status, otherwise deselect all tokens
-		if (!oRelatedControl || oRelatedControl.getParent() !== this){
+		if (!this._checkFocus()) {
 			this.selectAllTokens(false);
 		}
 	};
@@ -693,6 +744,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
+	 * Checks whether the Tokenizer or one of its internal DOM elements has the focus.
+	 * 
+	 * @private
+	 */
+	Tokenizer.prototype._checkFocus = function() {
+		return this.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+	};
+	
+	
+	/**
 	 * Function checks if a given token already exists in the tokens aggregation based on their keys
 	 * 
 	 * @private
@@ -836,6 +897,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			removedTokens : tokensToBeDeleted,
 			type : Tokenizer.TokenChangeType.TokensChanged
 		});
+		
+		this._doSelect();
 	
 		return this;
 	};
@@ -860,6 +923,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			token = tokens[i];
 			token.setSelected(bSelect, true);
 		}
+		
+		this._doSelect();
 	
 		return this;
 	};
@@ -967,6 +1032,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._sResizeHandlerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeHandlerId);
 			delete this._sResizeHandlerId;
+		}
+	};
+	
+	/**
+	 * Selects the hidden clip div to enable copy to clipboad.
+	 * 
+	 * @private
+	 */
+	Tokenizer.prototype._doSelect = function(){
+		if (this._checkFocus() && this._bCopyToClipboardSupport) {
+			var oFocusRef = document.activeElement;
+			var oSelection = window.getSelection();
+			oSelection.removeAllRanges();
+			if (this.getSelectedTokens().length) {
+				var oRange = document.createRange();
+				oRange.selectNodeContents(this.getDomRef("clip"));
+				oSelection.addRange(oRange);
+			}
+			if (window.clipboardData && document.activeElement.id == this.getId() + "-clip") {
+				jQuery.sap.focus(oFocusRef.id == this.getId() + "-clip" ? this.getDomRef() : oFocusRef);
+			}
 		}
 	};
 	

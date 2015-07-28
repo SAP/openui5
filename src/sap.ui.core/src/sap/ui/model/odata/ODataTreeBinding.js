@@ -648,4 +648,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 	return ODataTreeBinding;
 
-}, /* bExport= */ true);
+});

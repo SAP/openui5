@@ -1,0 +1,121 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.OData.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				selectionMode="MultiToggle"
+				visibleRowCount="7"
+				enableSelectAll="false"
+				rows="{
+					path: '/ProductSet',
+					parameters: {operationMode: 'Server'}
+				}"
+				threshold="15"
+				enableBusyIndicator="true">
+				<noData>
+					<m:BusyIndicator class="sapUiMediumMargin"/>
+				</noData>
+				<toolbar>
+					<m:Toolbar>
+						<m:Title text="Products"></m:Title>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://refresh"
+							tooltip="Reinitialize Model"
+							press="onModelRefresh"/>
+					</m:Toolbar>
+				</toolbar>
+				<columns>
+					<Column
+						sortProperty="Name"
+						filterProperty="Name"
+						autoResizable="true"
+						width="11rem">
+						<m:Label text="{/#Product/Name/@sap:label}" />
+						<template>
+							<m:Text text="{Name}"/>
+						</template>
+					</Column>
+					<Column
+						sortProperty="ProductID"
+						filterProperty="ProductID"
+						autoResizable="true"
+						width="6rem">
+						<m:Label text="{/#Product/ProductID/@sap:label}" />
+						<template>
+							<m:Text text="{ProductID}"/>
+						</template>
+					</Column>
+					<Column
+						sortProperty="Category"
+						filterProperty="Category"
+						autoResizable="true"
+						width="11rem">
+						<m:Label text="{/#Product/Category/@sap:label}" />
+						<template>
+							<m:Text text="{Category}"/>
+						</template>
+					</Column>
+					<Column
+						sortProperty="SupplierName"
+						filterProperty="SupplierName"
+						autoResizable="true"
+						width="12rem">
+						<m:Label text="{/#Product/SupplierName/@sap:label}" />
+						<template>
+							<m:Text text="{SupplierName}"/>
+						</template>
+					</Column>
+					<Column
+						filterProperty="Price"
+						width="9rem">
+						<m:Label text="{/#Product/Price/@sap:label}" />
+						<template>
+							<u:Currency value="{
+								path: 'Price',
+								type: 'sap.ui.model.type.String'
+							}" currency="{CurrencyCode}"/>
+						</template>
+					</Column>
+					<Column
+						hAlign="End"
+						autoResizable="true"
+						width="9rem">
+						<m:Label text="{/#Product/Width/@sap:label}" />
+						<template>
+							<m:Text text="{Width}x{Height}x{Depth} {DimUnit}"/>
+						</template>
+					</Column>
+				</columns>
+				<footer>
+					<m:Toolbar>
+						<m:Label text="OData Model Operation Mode:" labelFor="operationMode"/>
+						<m:SegmentedButton
+							id="operationMode"
+							select="onOperationModeChange"
+							selectedKey="{ui>selectedOperationMode}"
+							items="{ui>/operationModes}">
+							<m:items>
+								<m:SegmentedButtonItem text="{ui>name}" key="{ui>name}"/>
+							</m:items>
+						</m:SegmentedButton>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://hint"
+							tooltip="Show information"
+							press="showInfo"/>
+					</m:Toolbar>
+				</footer>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

@@ -61,8 +61,12 @@
 							formatter: 'sap.m.sample.Table.Formatter.weightState'
 						}" />
 					<ObjectNumber
-					number="{Price}"
-					unit="{CurrencyCode}" />
+							number="{
+								parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+							unit="{CurrencyCode}" />
 				</cells>
 			</ColumnListItem>
 		</items>

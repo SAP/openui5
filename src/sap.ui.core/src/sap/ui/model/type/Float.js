@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType'],
-	function(jQuery, NumberFormat, SimpleType) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, NumberFormat, SimpleType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		if (this.oInputFormat) {
 			fValue = this.oInputFormat.parse(vValue);
 			if (fValue == null) {
-				throw new sap.ui.model.FormatException("Cannot format float: " + vValue + " has the wrong format");
+				throw new FormatException("Cannot format float: " + vValue + " has the wrong format");
 			}
 		}
 		switch (this.getPrimitiveType(sInternalType)) {
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "any":
 				return fValue;
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format Float to " + sInternalType);
+				throw new FormatException("Don't know how to format Float to " + sInternalType);
 		}
 	};
 
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				fResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(fResult)) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new sap.ui.model.ParseException(oBundle.getText("Float.Invalid"));
+					throw new ParseException(oBundle.getText("Float.Invalid"));
 				}
 				break;
 			case "int":
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				fResult = vValue;
 				break;
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse Float from " + sInternalType);
+				throw new ParseException("Don't know how to parse Float from " + sInternalType);
 		}
 		if (this.oInputFormat) {
 			fResult = this.oInputFormat.format(fResult);
@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
@@ -157,4 +157,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	return Float;
 
-}, /* bExport= */ true);
+});

@@ -15,8 +15,10 @@ module.exports = function(grunt, config) {
 	return {
 
 		options: {
-
-			port: '<%= grunt.option("port") %>',
+			// set default port
+			port: typeof grunt.option('port') === 'number' ? grunt.option('port') : 8080,
+			// use the next best port if specified port is already in use
+			useAvailablePort: true,
 			hostname: '<%= grunt.option("hostname") %>'
 
 		},

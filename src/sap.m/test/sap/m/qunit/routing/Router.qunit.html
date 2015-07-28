@@ -6,7 +6,7 @@
 
 		<script src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
-				data-sap-ui-resourceroots='{"test": "./", "sap.ui.demo.app" : "../../webapp/"}'>
+				data-sap-ui-resourceroots='{"qunit": "../"}'>
 		</script>
 
 		<script>
@@ -17,6 +17,7 @@
 				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 				jQuery.sap.require("sap.ui.thirdparty.sinon");
 				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+				sinon.config.useFakeTimers = true;
 
 				sap.ui.require([
 							"sap/m/routing/Router",
@@ -25,7 +26,7 @@
 							"sap/m/SplitContainer",
 							"sap/m/Page",
 							"sap/ui/core/routing/Views",
-							"test/commonIntegrationTests"
+							"qunit/routing/commonIntegrationTests"
 						],
 						function (Router, TargetHandler, NavContainer, SplitContainer, Page, Views, integrationTests) {
 							"use strict";
@@ -92,6 +93,7 @@
 
 								//Act
 								this.oRouter.parse("some/myData");
+								this.clock.tick(0);
 
 								//Assert
 								assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
@@ -163,6 +165,7 @@
 
 								// Act
 								oRouter.parse("anyPattern");
+								this.clock.tick(0);
 
 								// Assert
 								assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
@@ -202,6 +205,7 @@
 
 								// Act
 								oRouter.parse("5");
+								this.clock.tick(0);
 
 								// Assert
 								assert.strictEqual(data, "5", "should pass 5 to the page");
@@ -262,6 +266,7 @@
 
 							QUnit.test("Should be able to handle the mixed case", function (assert) {
 								this.oRouter.parse(this.sPattern);
+								this.clock.tick(0);
 
 								assert.strictEqual(this.oSplitContainer.getCurrentDetailPage(), this.oDetailView, "Did navigate to detail");
 								assert.strictEqual(this.oSplitContainer.getCurrentMasterPage(), this.oMasterView, "Did navigate to master");
@@ -277,6 +282,7 @@
 								},
 								act: function (sPatternOrName) {
 									this.oRouter.parse(sPatternOrName);
+									this.clock.tick(0);
 								},
 								teardown: function () {
 									this.oRouter.destroy();

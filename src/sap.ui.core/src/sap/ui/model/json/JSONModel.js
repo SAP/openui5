@@ -11,8 +11,8 @@
  */
 
 // Provides the JSON object based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBinding', './JSONPropertyBinding', './JSONTreeBinding'],
-	function(jQuery, ClientModel, JSONListBinding, JSONPropertyBinding, JSONTreeBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Context', './JSONListBinding', './JSONPropertyBinding', './JSONTreeBinding'],
+	function(jQuery, ClientModel, Context, JSONListBinding, JSONPropertyBinding, JSONTreeBinding) {
 	"use strict";
 
 
@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 */
 	JSONModel.prototype._getObject = function (sPath, oContext) {
 		var oNode = this.isLegacySyntax() ? this.oData : null;
-		if (oContext instanceof sap.ui.model.Context) {
+		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext) {
 			oNode = oContext;
@@ -282,4 +282,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 
 	return JSONModel;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested classes: sap.ui.core.support.Support/Plugin, sap.ui.core.support.plugins.*
+-->
+
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>QUnit tests: Support Tool</title>
+
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+	<script>
+
+	jQuery.sap.registerModulePath("sap.ui.test", "./");
+
+	sap.ui.require([
+		"jquery.sap.global",
+		"sap/ui/thirdparty/qunit",
+		"sap/ui/core/support/Support"
+	],
+	function(jQuery, __QUnit__, Support) {
+
+		QUnit.test("Load Support module and check App plugins", function(assert) {
+
+			// save plugin module names which will be replaced with the actual instances
+			var aPluginModuleNames = Support.APP_SIDE_PLUGINS.slice();
+
+			var oSupport = Support.getStub();
+			assert.equal(oSupport.getType(), Support.StubType.APPLICATION, "Support stub type equals APPLICATION");
+
+			// Unable to open real window here as this causes problems in test execution (popup-blocker, ...)
+			//oSupport.openSupportTool();
+
+			// Fake SETUP event which will be fired from the popup window
+			oSupport.fireEvent("sapUiSupportSetup");
+
+			// check if all App plugins could be loaded
+			for (var i = 0; i < aPluginModuleNames.length; i++) {
+				assert.equal(Support.APP_SIDE_PLUGINS[i].getMetadata().getName(), aPluginModuleNames[i], "Plugin '" + aPluginModuleNames[i] + "' loaded successfully");
+			}
+
+		});
+
+	});
+
+	</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

@@ -39,7 +39,7 @@
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/model/xml/XMLModel",
 		"sap/ui/model/resource/ResourceModel",
-		"sap/ui/test/v2models/CustomModel"
+		"sap/ui/test/v2models/parent/CustomModel"
 	],
 	function(jQuery, URI) {
 
@@ -51,8 +51,20 @@
 					json: this.spy(sap.ui.model.json, "JSONModel"),
 					xml: this.spy(sap.ui.model.xml, "XMLModel"),
 					resource: this.spy(sap.ui.model.resource, "ResourceModel"),
-					custom: this.spy(sap.ui.test.v2models, "CustomModel")
+					custom: this.spy(sap.ui.test.v2models.parent, "CustomModel")
 				};
+			},
+			mockGetUriParameters: function() {
+				var oGetParameterStub = this.stub();
+
+				// returns sap-client=foo, sap-server=bar
+				[ 'sap-client', 'sap-server' ].forEach(function(sName, i) {
+					oGetParameterStub.withArgs(sName).returns(i ? 'bar': 'foo');
+				});
+
+				this.stub(jQuery.sap, 'getUriParameters').returns({
+					get: oGetParameterStub
+				});
 			},
 			assertModelInstances: function(mClasses) {
 				this.mModels = {};
@@ -70,18 +82,6 @@
 					QUnit.assert.ok(oModel.bDestroyed,
 						'Expected model "' + sName + '" to be destroyed');
 				}
-			},
-			mockGetUriParameters: function() {
-				var oGetParameterStub = this.stub();
-
-				// returns sap-client=foo, sap-server=bar
-				[ 'sap-client', 'sap-server' ].forEach(function(sName, i) {
-					oGetParameterStub.withArgs(sName).returns(i ? 'bar': 'foo');
-				});
-
-				this.stub(jQuery.sap, 'getUriParameters').returns({
-					get: oGetParameterStub
-				});
 			}
 		});
 
@@ -92,7 +92,7 @@
 			var oLogSpy = this.spy(jQuery.sap.log, "error");
 
 			this.oComponent = sap.ui.component({
-				name: "sap.ui.test.v2models"
+				name: "sap.ui.test.v2models.parent"
 			});
 
 			// sap.ui.model.odata.ODataModel
@@ -101,7 +101,7 @@
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
 				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/path/to/local/odata/annotations/2' ],
+				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/parent/path/to/local/odata/annotations/2' ],
 				useBatch: false,
 				refreshAfterChange: false,
 				json: true
@@ -114,7 +114,7 @@
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
-				annotationURI: [ 'v2models/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ]
+				annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ]
 			});
 
 			// model: "old-uri-syntax"
@@ -148,10 +148,10 @@
 			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
 
 			// model: "json-relative"
-			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/path/to/local/data.json?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/parent/path/to/local/data.json?sap-client=foo&sap-server=bar');
 
 			// model: "json-relative-2"
-			sinon.assert.calledWithExactly(this.modelSpy.json, '../path/to/other/data.json?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'path/to/other/data.json?sap-client=foo&sap-server=bar');
 
 
 			// sap.ui.model.xml.XMLModel
@@ -161,7 +161,7 @@
 			sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml?sap-client=foo&sap-server=bar');
 
 			// model: "xml-relative"
-			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
 
 
 			// sap.ui.model.resource.ResourceModel
@@ -169,23 +169,23 @@
 
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "sap.ui.test.v2models.i18n"
+				bundleName: "sap.ui.test.v2models.parent.i18n"
 			});
 
 			// model: "resourceBundle-legacy-uri"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "v2models/i18n.properties"
+				bundleUrl: "v2models/parent/i18n.properties"
 			});
 
 
-			// sap.ui.test.v2models.CustomModel
+			// sap.ui.test.v2models.parent.CustomModel
 			sinon.assert.callCount(this.modelSpy.custom, 7);
 
 			// model: "custom-uri-string"
 			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar');
 
 			// model: "custom-uri-relative-string"
-			sinon.assert.calledWithExactly(this.modelSpy.custom, 'v2models/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.custom, 'v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
 
 			// model: "custom-uri-string-with-settings"
 			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar', {
@@ -214,9 +214,8 @@
 
 			// jQuery.sap.log.error
 			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"type\" for model \"no-model-type\"", "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent);
-			sinon.assert.calledWithExactly(oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded. " +
-				"Error: failed to load 'sap/ui/not/defined/Model.js' from ../../../../../../resources/sap/ui/not/defined/Model.js: 404"), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent);
-			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded."), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent);
 			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: ODataAnnotation \"undefined\" for dataSource \"odata-invalid-annotations\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"undefined\"]", this.oComponent);
 			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"uri\" for ODataAnnotation \"annotation-without-uri\"", "[\"sap.app\"][\"dataSources\"][\"annotation-without-uri\"]", this.oComponent);
 			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent);
@@ -239,13 +238,367 @@
 				"xml-relative": sap.ui.model.xml.XMLModel,
 				"resourceBundle-name": sap.ui.model.resource.ResourceModel,
 				"resourceBundle-legacy-uri": sap.ui.model.resource.ResourceModel,
-				"custom-uri-string": sap.ui.test.v2models.CustomModel,
-				"custom-relative-uri-string": sap.ui.test.v2models.CustomModel,
-				"custom-uri-string-with-settings": sap.ui.test.v2models.CustomModel,
-				"custom-without-args": sap.ui.test.v2models.CustomModel,
-				"custom-uri-setting-name": sap.ui.test.v2models.CustomModel,
-				"custom-uri-setting-merge": sap.ui.test.v2models.CustomModel,
-				"custom-uri-setting-already-defined": sap.ui.test.v2models.CustomModel
+				"custom-uri-string": sap.ui.test.v2models.parent.CustomModel,
+				"custom-relative-uri-string": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-string-with-settings": sap.ui.test.v2models.parent.CustomModel,
+				"custom-without-args": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-name": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-merge": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-already-defined": sap.ui.test.v2models.parent.CustomModel
+			});
+
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		});
+
+		QUnit.test("metadata v2 with dataSources (empty inheritance)", function(assert) {
+			this.mockGetUriParameters();
+			this.mockModels();
+
+			var oLogSpy = this.spy(jQuery.sap.log, "error");
+
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v2models.empty"
+			});
+
+			// sap.ui.model.odata.ODataModel
+			sinon.assert.callCount(this.modelSpy.odata, 1);
+
+			// model: "ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/parent/path/to/local/odata/annotations/2' ],
+				useBatch: false,
+				refreshAfterChange: false,
+				json: true
+			});
+
+
+			// sap.ui.model.odata.v2.ODataModel
+			sinon.assert.callCount(this.modelSpy.odataV2, 5);
+
+			// model: "default-with-annotations"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
+				annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ]
+			});
+
+			// model: "old-uri-syntax"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service'
+			});
+
+			// model: ""
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar'
+			});
+
+			// model: "v2-ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service',
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			// model: "invalid-annotations"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+				annotationURI: [ '/path/to/odata/annotations/1' ]
+			});
+
+
+			// sap.ui.model.json.JSONModel
+			sinon.assert.callCount(this.modelSpy.json, 3);
+
+			// model: "json"
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
+
+			// model: "json-relative"
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/parent/path/to/local/data.json?sap-client=foo&sap-server=bar');
+
+			// model: "json-relative-2"
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'path/to/other/data.json?sap-client=foo&sap-server=bar');
+
+
+			// sap.ui.model.xml.XMLModel
+			sinon.assert.callCount(this.modelSpy.xml, 2);
+
+			// model: "xml"
+			sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml?sap-client=foo&sap-server=bar');
+
+			// model: "xml-relative"
+			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+
+
+			// sap.ui.model.resource.ResourceModel
+			sinon.assert.callCount(this.modelSpy.resource, 2);
+
+			// model: "resourceBundle-name"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleName: "sap.ui.test.v2models.parent.i18n"
+			});
+
+			// model: "resourceBundle-legacy-uri"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleUrl: "v2models/parent/i18n.properties"
+			});
+
+
+			// sap.ui.test.v2models.parent.CustomModel
+			sinon.assert.callCount(this.modelSpy.custom, 7);
+
+			// model: "custom-uri-string"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar');
+
+			// model: "custom-uri-relative-string"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, 'v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
+
+			// model: "custom-uri-string-with-settings"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar', {
+				foo: 'bar'
+			});
+
+			// model: "custom-without-args"
+			sinon.assert.calledWithExactly(this.modelSpy.custom);
+
+			// model: "custom-uri-setting-name"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, {
+				myUri: '/path/to/custom.datatype?sap-client=foo&sap-server=bar'
+			});
+
+			// model: "custom-uri-setting-merge"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, {
+				uri: '/path/to/custom.datatype?sap-client=foo&sap-server=bar',
+				foo: 'bar'
+			});
+
+			// model: "custom-uri-setting-already-defined"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, {
+				uri: 'foo'
+			});
+
+
+			// jQuery.sap.log.error
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"type\" for model \"no-model-type\"", "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded."), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: ODataAnnotation \"undefined\" for dataSource \"odata-invalid-annotations\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"undefined\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"uri\" for ODataAnnotation \"annotation-without-uri\"", "[\"sap.app\"][\"dataSources\"][\"annotation-without-uri\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"invalid\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"does-not-exist\"]", this.oComponent);
+
+
+			// check if models are set on component (and save them internally)
+			this.assertModelInstances({
+				"": sap.ui.model.odata.v2.ODataModel,
+				"default-with-annotations": sap.ui.model.odata.v2.ODataModel,
+				"old-uri-syntax": sap.ui.model.odata.v2.ODataModel,
+				"ODataModel": sap.ui.model.odata.ODataModel,
+				"v2-ODataModel": sap.ui.model.odata.v2.ODataModel,
+				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
+				"json": sap.ui.model.json.JSONModel,
+				"json-relative": sap.ui.model.json.JSONModel,
+				"json-relative-2": sap.ui.model.json.JSONModel,
+				"xml": sap.ui.model.xml.XMLModel,
+				"xml-relative": sap.ui.model.xml.XMLModel,
+				"resourceBundle-name": sap.ui.model.resource.ResourceModel,
+				"resourceBundle-legacy-uri": sap.ui.model.resource.ResourceModel,
+				"custom-uri-string": sap.ui.test.v2models.parent.CustomModel,
+				"custom-relative-uri-string": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-string-with-settings": sap.ui.test.v2models.parent.CustomModel,
+				"custom-without-args": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-name": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-merge": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-already-defined": sap.ui.test.v2models.parent.CustomModel
+			});
+
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		});
+
+		QUnit.test("metadata v2 with dataSources (extension inheritance)", function(assert) {
+			this.mockGetUriParameters();
+			this.mockModels();
+
+			var oLogSpy = this.spy(jQuery.sap.log, "error");
+
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v2models.extension"
+			});
+
+			// sap.ui.model.odata.ODataModel
+			sinon.assert.callCount(this.modelSpy.odata, 1);
+
+			// model: "ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/parent/path/to/local/odata/annotations/2' ],
+				useBatch: true,
+				skipMetadataAnnotationParsing: true,
+				refreshAfterChange: false,
+				json: true
+			});
+
+
+			// sap.ui.model.odata.v2.ODataModel
+			sinon.assert.callCount(this.modelSpy.odataV2, 5);
+
+			// model: "default-with-annotations"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
+				annotationURI: [
+					'v2models/parent/path/to/local/odata/annotations/2',
+					'/path/to/odata/annotations/1',
+					'v2models/extension/path/to/local/extension/annotation'
+				]
+			});
+
+			// model: "old-uri-syntax"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service'
+			});
+
+			// model: ""
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/default/extension/datasource?sap-client=foo&sap-server=bar'
+			});
+
+			// model: "v2-ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service',
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			// model: "invalid-annotations"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+				annotationURI: [ '/path/to/odata/annotations/1' ]
+			});
+
+
+			// sap.ui.model.json.JSONModel
+			sinon.assert.callCount(this.modelSpy.json, 3);
+
+			// model: "json"
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
+
+			// model: "json-relative"
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/extension/path/to/extension/data.json?sap-client=foo&sap-server=bar');
+
+			// model: "json-relative-2"
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'path/to/other/data.json?sap-client=foo&sap-server=bar');
+
+
+			// sap.ui.model.xml.XMLModel
+			sinon.assert.callCount(this.modelSpy.xml, 3);
+
+			// model: "xml"
+			sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml?sap-client=foo&sap-server=bar');
+
+			// model: "xml-relative"
+			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+
+			// model: "xml-extension"
+			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/extension/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+
+
+			// sap.ui.model.resource.ResourceModel
+			sinon.assert.callCount(this.modelSpy.resource, 2);
+
+			// model: "resourceBundle-name"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleName: "sap.ui.test.v2models.parent.i18n"
+			});
+
+			// model: "resourceBundle-legacy-uri"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleUrl: "v2models/parent/i18n.properties"
+			});
+
+
+			// sap.ui.test.v2models.parent.CustomModel
+			sinon.assert.callCount(this.modelSpy.custom, 7);
+
+			// model: "custom-uri-string"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar');
+
+			// model: "custom-uri-relative-string"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, 'v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
+
+			// model: "custom-uri-string-with-settings"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar', {
+				foo: 'bar'
+			});
+
+			// model: "custom-without-args"
+			sinon.assert.calledWithExactly(this.modelSpy.custom);
+
+			// model: "custom-uri-setting-name"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, {
+				myUri: '/path/to/custom.datatype?sap-client=foo&sap-server=bar'
+			});
+
+			// model: "custom-uri-setting-merge"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, {
+				uri: '/path/to/custom.datatype?sap-client=foo&sap-server=bar',
+				foo: 'bar'
+			});
+
+			// model: "custom-uri-setting-already-defined"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, {
+				uri: 'foo'
+			});
+
+
+			// jQuery.sap.log.error
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"type\" for model \"no-model-type\"", "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded."), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: ODataAnnotation \"undefined\" for dataSource \"odata-invalid-annotations\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"undefined\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"uri\" for ODataAnnotation \"annotation-without-uri\"", "[\"sap.app\"][\"dataSources\"][\"annotation-without-uri\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"invalid\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"does-not-exist\"]", this.oComponent);
+
+
+			// check if models are set on component (and save them internally)
+			this.assertModelInstances({
+				"": sap.ui.model.odata.v2.ODataModel,
+				"default-with-annotations": sap.ui.model.odata.v2.ODataModel,
+				"old-uri-syntax": sap.ui.model.odata.v2.ODataModel,
+				"ODataModel": sap.ui.model.odata.ODataModel,
+				"v2-ODataModel": sap.ui.model.odata.v2.ODataModel,
+				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
+				"json": sap.ui.model.json.JSONModel,
+				"json-relative": sap.ui.model.json.JSONModel,
+				"json-relative-2": sap.ui.model.json.JSONModel,
+				"xml": sap.ui.model.xml.XMLModel,
+				"xml-relative": sap.ui.model.xml.XMLModel,
+				"resourceBundle-name": sap.ui.model.resource.ResourceModel,
+				"resourceBundle-legacy-uri": sap.ui.model.resource.ResourceModel,
+				"custom-uri-string": sap.ui.test.v2models.parent.CustomModel,
+				"custom-relative-uri-string": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-string-with-settings": sap.ui.test.v2models.parent.CustomModel,
+				"custom-without-args": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-name": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-merge": sap.ui.test.v2models.parent.CustomModel,
+				"custom-uri-setting-already-defined": sap.ui.test.v2models.parent.CustomModel
 			});
 
 			// destroy the component

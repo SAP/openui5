@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			});
 
 		/**
-		 * Returns the callback interface for a call to the given control's formatter of the
+		 * Creates the callback interface for a call to the given control's formatter of the
 		 * binding part with given index.
 		 *
 		 * @param {sap.ui.core.util._with} oWithControl
@@ -53,20 +53,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 		 * @param {object} mSettings
 		 *   map/JSON-object with initial property values, etc.
 		 * @param {number} [i]
-		 *   index of part in case of a composite binding
+		 *   index of part inside a composite binding
+		 * @param {sap.ui.model.Binding|sap.ui.model.Binding[]|sap.ui.model.Context}
+		 *   [vBindingOrContext]
+		 *   single binding or model context or array of parts; if this parameter is given,
+		 *   "oWithControl" and "i" are ignored, else it is lazily computed from those two
 		 * @returns {object}
 		 *   the callback interface
 		 */
-		function getInterface(oWithControl, mSettings, i) {
+		function createInterface(oWithControl, mSettings, i, vBindingOrContext) {
 			/*
-			 * Returns the binding related to the current formatter call.
-			 * @returns {sap.ui.model.PropertyBinding}
+			 * Returns the single binding or model context related to the current formatter call.
+			 *
+			 * @param {number} [iPart]
+			 *   index of part in case of the root formatter of a composite binding
+			 * @returns {sap.ui.model.Binding|sap.ui.model.Context}
+			 *   single binding or model context
 			 */
-			function getBinding() {
-				var oBinding = oWithControl.getBinding("any");
-				return oBinding instanceof CompositeBinding
-					? oBinding.getBindings()[i]
-					: oBinding;
+			function getBindingOrContext(iPart) {
+				if (!vBindingOrContext) {
+					// lazy initialization
+					// BEWARE: this is not yet defined when createInterface() is called!
+					vBindingOrContext = oWithControl.getBinding("any");
+
+					if (vBindingOrContext instanceof CompositeBinding) {
+						vBindingOrContext = vBindingOrContext.getBindings();
+
+						if (i !== undefined) { // not a root formatter
+							vBindingOrContext = vBindingOrContext[i];
+						}
+					}
+				}
+
+				return Array.isArray(vBindingOrContext)
+					? vBindingOrContext[iPart]
+					: vBindingOrContext;
+			}
+
+			/**
+			 * Returns the resolved path for the given single binding or model context.
+			 *
+			 * @param {sap.ui.model.Binding|sap.ui.model.Context} oBindingOrContext
+			 *   single binding or model context
+			 * @returns {string}
+			 *   the resolved path
+			 */
+			function getPath(oBindingOrContext) {
+				return oBindingOrContext instanceof Context
+					? oBindingOrContext.getPath()
+					: oBindingOrContext.getModel().resolve(
+						oBindingOrContext.getPath(), oBindingOrContext.getContext());
 			}
 
 			/**
@@ -77,29 +113,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * instructions like <code>&lt;template:if></code>. The formatter function needs to be
 			 * marked with a property <code>requiresIContext = true</code> to express that it
 			 * requires this extended signature (compared to ordinary formatter functions). The
-			 * usual arguments will be provided after the first one (currently: the raw value from
-			 * the model).
+			 * usual arguments are provided after the first one (currently: the raw value from the
+			 * model).
 			 *
 			 * This interface provides callback functions to access the model and path  which are
 			 * needed to process OData v4 annotations. It initially offers a subset of methods
 			 * from {@link sap.ui.model.Context} so that formatters might also be called with a
-			 * context object for convenience, e.g. outside of XML template processing.
+			 * context object for convenience, e.g. outside of XML template processing (see below
+			 * for an exception to this rule).
 			 *
-			 * Example: Suppose you have a formatter function called "foo" like this
+			 * <b>Example:</b> Suppose you have a formatter function called "foo" like below
+			 * and it is used within an XML template like
+			 * <code>&lt;template:if test="{path: '...', formatter: 'foo'}"></code>.
+			 * In this case <code>foo</code> is called with arguments
+			 * <code>oInterface, vRawValue</code> such that
+			 * <code>oInterface.getModel().getObject(oInterface.getPath()) === vRawValue</code>
+			 * holds.
 			 * <pre>
 			 * window.foo = function (oInterface, vRawValue) {
 			 *     //TODO ...
 			 * };
 			 * window.foo.requiresIContext = true;
 			 * </pre>
-			 * and it is used within an XML template like this
-			 * <pre>
-			 * &lt;template:if test="{path: '...', formatter: 'foo'}">
-			 * </pre>
-			 * Then <code>foo</code> will be called with arguments
-			 * <code>oInterface, vRawValue</code> such that
-			 * <code>oInterface.getModel().getObject(oInterface.getPath()) === vRawValue</code>
+			 *
+			 * <b>Composite Binding Examples:</b> Suppose you have the same formatter function and
+			 * it is used in a composite binding like <code>&lt;Text text="{path: 'Label',
+			 * formatter: 'foo'}: {path: 'Value', formatter: 'foo'}"/></code>.
+			 * In this case <code>oInterface.getPath()</code> refers to ".../Label" in the 1st call
+			 * and ".../Value" in the 2nd call. This means each formatter call knows which part of
+			 * the composite binding it belongs to and behaves just as if it was an ordinary
+			 * binding.
+			 *
+			 * Suppose your formatter is not used within a part of the composite binding, but at
+			 * the root of the composite binding in order to aggregate all parts like <code>
+			 * &lt;Text text="{parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'}"/>
+			 * </code>. In this case <code>oInterface.getPath(0)</code> refers to ".../Label" and
+			 * <code>oInterface.getPath(1)</code> refers to ".../Value". This means, the root
+			 * formatter can access the ith part of the composite binding at will (since 1.31.0);
+			 * see also {@link #getInterface getInterface}.
+			 * The function <code>foo</code> is called with arguments such that <code>
+			 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
 			 * holds.
+			 *
+			 * To distinguish those two use cases, just check whether
+			 * <code>oInterface.getModel() === undefined</code>, in which case the formatter is
+			 * called on root level of a composite binding. To find out the number of parts, probe
+			 * for the smallest non-negative integer where
+			 * <code>oInterface.getModel(i) === undefined</code>.
+			 * This additional functionality is, of course, not available from
+			 * {@link sap.ui.model.Context}, i.e. such formatters MUST be called with an instance
+			 * of this context interface.
 			 *
 			 * @interface
 			 * @name sap.ui.core.util.XMLPreprocessor.IContext
@@ -108,26 +171,115 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 */
 			return /** @lends sap.ui.core.util.XMLPreprocessor.IContext */ {
 				/**
+				 * Returns a context interface for the indicated part in case of the root formatter
+				 * of a composite binding. The new interface provides access to the original
+				 * settings, but only to the model and path of the indicated part:
+				 * <pre>
+				 * this.getInterface(i).getSetting(sName) === this.getSetting(sName);
+				 * this.getInterface(i).getModel() === this.getModel(i);
+				 * this.getInterface(i).getPath() === this.getPath(i);
+				 * </pre>
+				 *
+				 * If a path is given, the new interface points to the resolved path as follows:
+				 * <pre>
+				 * this.getInterface(i, "foo/bar").getPath() === this.getPath(i) + "/foo/bar";
+				 * this.getInterface(i, "/absolute/path").getPath() === "/absolute/path";
+				 * </pre>
+				 * A formatter which is not at the root level of a composite binding can also
+				 * provide a path, but must not provide an index:
+				 * <pre>
+				 * this.getInterface("foo/bar").getPath() === this.getPath() + "/foo/bar";
+				 * this.getInterface("/absolute/path").getPath() === "/absolute/path";
+				 * </pre>
+				 * Note that at least one argument must be present.
+				 *
+				 * @param {number} [iPart]
+				 *   index of part in case of the root formatter of a composite binding
+				 * @param {string} [sPath]
+				 *   a path, interpreted relative to <code>this.getPath(iPart)</code>
+				 * @returns {sap.ui.core.util.XMLPreprocessor.IContext}
+				 *   the context interface related to the indicated part
+				 * @throws {Error} in case an index is given but the current interface does not
+				 *   belong to the root formatter of a composite binding, or in case the given
+				 *   index is invalid (e.g. missing or out of range), or in case a path is missing
+				 *   because no index is given, or in case a path is given but the model cannot not
+				 *   create a binding context synchronously
+				 * @public
+				 * @since 1.31.0
+				 */
+				getInterface : function (iPart, sPath) {
+					var oBaseContext, oBindingOrContext, oModel;
+
+					if (typeof iPart === "string") {
+						sPath = iPart;
+						iPart = undefined;
+					}
+
+					getBindingOrContext(); // initialize vBindingOrContext
+					if (Array.isArray(vBindingOrContext)) {
+						if (iPart >= 0 && iPart < vBindingOrContext.length) {
+							oBindingOrContext = vBindingOrContext[iPart];
+						} else {
+							throw new Error("Invalid index of part: " + iPart);
+						}
+					} else if (iPart !== undefined) {
+						throw new Error("Not the root formatter of a composite binding");
+					} else if (sPath) {
+						oBindingOrContext = vBindingOrContext;
+					} else {
+						throw new Error("Missing path");
+					}
+
+					if (sPath) {
+						oModel = oBindingOrContext.getModel();
+						if (sPath.charAt(0) !==  '/') { // relative path needs a base context
+							oBaseContext = oBindingOrContext instanceof Context
+								? oBindingOrContext
+								: oModel.createBindingContext(oBindingOrContext.getPath(),
+									oBindingOrContext.getContext());
+						}
+						oBindingOrContext = oModel.createBindingContext(sPath, oBaseContext);
+						if (!oBindingOrContext) {
+							throw new Error(
+								"Model could not create binding context synchronously: " + oModel);
+						}
+					}
+
+					return createInterface(null, mSettings, undefined, oBindingOrContext);
+				},
+
+				/**
 				 * Returns the model related to the current formatter call.
 				 *
+				 * @param {number} [iPart]
+				 *   index of part in case of the root formatter of a composite binding
+				 *   (since 1.31.0)
 				 * @returns {sap.ui.model.Model}
-				 *   the model related to the current formatter call
+				 *   the model related to the current formatter call, or (since 1.31.0)
+				 *   <code>undefined</code> in case of a root formatter if no <code>iPart</code> is
+				 *   given or if <code>iPart</code> is out of range
 				 * @public
 				 */
-				getModel : function () {
-					return getBinding().getModel();
+				getModel : function (iPart) {
+					var oBindingOrContext = getBindingOrContext(iPart);
+					return oBindingOrContext && oBindingOrContext.getModel();
 				},
 
 				/**
 				 * Returns the absolute path related to the current formatter call.
 				 *
+				 * @param {number} [iPart]
+				 *   index of part in case of the root formatter of a composite binding
+				 *   (since 1.31.0)
 				 * @returns {string}
-				 *   the absolute path related to the current formatter call
+				 *   the absolute path related to the current formatter call, or (since 1.31.0)
+				 *   <code>undefined</code> in case of a root formatter if no <code>iPart</code> is
+				 *   given or if <code>iPart</code> is out of range
 				 * @public
 				 */
-				getPath : function () {
-					var oBinding = getBinding();
-					return oBinding.getModel().resolve(oBinding.getPath(), oBinding.getContext());
+				getPath : function (iPart) {
+					var oBindingOrContext = getBindingOrContext(iPart);
+					return oBindingOrContext && getPath(oBindingOrContext);
 				},
 
 				/**
@@ -181,7 +333,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				oInfo.mode = BindingMode.OneTime;
 				if (fnFormatter && fnFormatter.requiresIContext === true) {
 					oInfo.formatter
-					= fnFormatter.bind(null, getInterface(oWithControl, mSettings, i));
+					= fnFormatter.bind(null, createInterface(oWithControl, mSettings, i));
 				}
 			}
 
@@ -263,6 +415,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * @param {string} oViewInfo.caller
 			 *   identifies the caller of this preprocessor; used as a prefix for log or
 			 *   exception messages
+			 * @param {string} oViewInfo.componentId
+			 *   ID of the owning component (since 1.31; needed for extension point support)
+			 * @param {string} oViewInfo.name
+			 *   the view name (since 1.31; needed for extension point support)
 			 * @param {object} [mSettings={}]
 			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
@@ -277,23 +433,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			process : function(oRootElement, oViewInfo, mSettings) {
 				var sCaller,
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
+					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
+					aFragmentNames = [], // stack of view and fragment names
 					iNestingLevel = 0,
-					sName;
+					sName,
+					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
 
 				/*
-				 * Outputs a debug message with the given nesting level; takes care not to
+				 * Outputs a debug message with the current nesting level; takes care not to
 				 * construct the message or serialize XML in vain.
 				 *
 				 * @param {Element} [oElement]
 				 *   a DOM element which is serialized to the details
-				 * @param {string...} aTexts
+				 * @param {...string} aTexts
 				 *   the main text of the message is constructed from the rest of the arguments by
 				 *   joining them separated by single spaces
 				 */
 				function debug(oElement) {
 					if (bDebug) {
-						jQuery.sap.log.debug((iNestingLevel < 10 ? "[ " : "[") + iNestingLevel
-							+ "] " + Array.prototype.slice.call(arguments, 1).join(" "),
+						jQuery.sap.log.debug(getNestingLevel()
+							+ Array.prototype.slice.call(arguments, 1).join(" "),
 							oElement && serializeSingleElement(oElement),
 							"sap.ui.core.util.XMLPreprocessor");
 					}
@@ -308,8 +467,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function debugFinished(oElement) {
 					if (bDebug) {
-						jQuery.sap.log.debug((iNestingLevel < 10 ? "[ " : "[") + iNestingLevel
-							+ "] Finished", "</" + oElement.nodeName + ">",
+						jQuery.sap.log.debug(getNestingLevel()
+							+ "Finished", "</" + oElement.nodeName + ">",
 							"sap.ui.core.util.XMLPreprocessor");
 					}
 				}
@@ -317,7 +476,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				/**
 				 * Throws an error with the given message, prefixing it with the caller
 				 * identification (separated by a colon) and appending the serialization of the
-				 * given DOM element.
+				 * given DOM element. Additionally logs the message and serialization as error with
+				 * caller identification as details.
 				 *
 				 * @param {string} sMessage
 				 *   some error message which must end with a space (and take into account, that
@@ -326,7 +486,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 *   the DOM element
 				 */
 				function error(sMessage, oElement) {
-					throw new Error(sCaller + ": " + sMessage + serializeSingleElement(oElement));
+					sMessage = sMessage + serializeSingleElement(oElement);
+					jQuery.sap.log.error(sMessage, sCaller, "sap.ui.core.util.XMLPreprocessor");
+					throw new Error(sCaller + ": " + sMessage);
 				}
 
 				/**
@@ -373,6 +535,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				}
 
 				/**
+				 * Returns the current nesting level as a string in square brackets with proper
+				 * spacing.
+				 *
+				 * @returns {string}
+				 *   "[<level>] "
+				 */
+				function getNestingLevel() {
+					return (iNestingLevel < 10 ? "[ " : "[") + iNestingLevel + "] ";
+				}
+
+				/**
 				 * Interprets the given value as a binding and returns the resulting value; takes
 				 * care of unescaping and thus also of constant expressions.
 				 *
@@ -403,21 +576,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					if (vBindingInfo.functionsNotFound) {
 						if (bMandatory) {
-							warn('Function name(s) ' + vBindingInfo.functionsNotFound.join(", ")
-								+ ' not found in ', oElement, null);
+							warn(oElement, 'Function name(s)',
+								vBindingInfo.functionsNotFound.join(", "), 'not found');
 						}
 						return oUNBOUND; // treat incomplete bindings as unrelated
 					}
 
 					if (typeof vBindingInfo === "object") {
 						vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings);
-						if (vBindingInfo === oUNBOUND) {
-							warn('Binding not ready in ', oElement, null);
+						if (bMandatory && vBindingInfo === oUNBOUND) {
+							warn(oElement, 'Binding not ready');
 						}
 					} else if (fnCallIfConstant) { // string
 						fnCallIfConstant();
 					}
 					return vBindingInfo;
+				}
+
+				/**
+				 * Inserts the fragment with the given name in place of the given <core:Fragment>
+				 * or <core:ExtensionPoint> element.
+				 *
+				 * @param {string} sFragmentName
+				 *   the fragment's resolved name
+				 * @param {Element} oElement
+				 *   the <sap.ui.core:Fragment> or <core:ExtensionPoint> element
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the parent's "with" control
+				 */
+				function insertFragment(sFragmentName, oElement, oWithControl) {
+					var oFragmentElement;
+
+					// Note: It is perfectly valid to include the very same fragment again, as
+					// long as the context is changed. So we check for cycles at the current
+					// "with" control. A context change will create a new one.
+					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
+					if (oWithControl.$mFragmentContexts[sFragmentName]) {
+						error("Cyclic reference to fragment '" + sFragmentName + "' ", oElement);
+					}
+
+					iNestingLevel++;
+					debug(oElement, "fragmentName =", sFragmentName);
+					oWithControl.$mFragmentContexts[sFragmentName] = true;
+					aFragmentNames.push(sFragmentName);
+
+					oFragmentElement
+						= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+					if (oFragmentElement.namespaceURI === "sap.ui.core"
+							&& localName(oFragmentElement) === "FragmentDefinition") {
+						liftChildNodes(oFragmentElement, oWithControl, oElement);
+					} else {
+						oElement.parentNode.insertBefore(oFragmentElement, oElement);
+						visitNode(oFragmentElement, oWithControl);
+					}
+					oElement.parentNode.removeChild(oElement);
+
+					aFragmentNames.pop();
+					oWithControl.$mFragmentContexts[sFragmentName] = false;
+					debugFinished(oElement);
+					iNestingLevel--;
 				}
 
 				/**
@@ -451,7 +668,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				function performTest(oElement, oWithControl) {
 					// constant test conditions are suspicious, but useful during development
 					var fnCallIfConstant
-							= warn.bind(null, 'Constant test condition in ', oElement, null),
+							= warn.bind(null, oElement, 'Constant test condition'),
 						bResult,
 						sTest = oElement.getAttribute("test"),
 						vTest;
@@ -463,7 +680,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							vTest = false;
 						}
 					} catch (ex) {
-						warn('Error in formatter of ', oElement, ex);
+						warn(oElement, 'Error in formatter:', ex);
 						vTest = false;
 					}
 					bResult = !!vTest && vTest !== "false";
@@ -497,7 +714,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					try {
 						vValue = getResolvedBinding(sValue, oElement, oWithControl, false);
-						if (vValue !== oUNBOUND) {
+						if (vValue === oUNBOUND) {
+							debug(oElement, 'Binding not ready for attribute', oAttribute.name);
+						} else if (vValue === undefined) {
+							// if the formatter returns null, the value becomes undefined
+							// (the default value of _With.any)
+							debug(oElement, "Removed attribute", oAttribute.name);
+							oElement.removeAttribute(oAttribute.name);
+						} else {
 							if (bDebug && vValue !== oAttribute.value) {
 								debug(oElement, oAttribute.name, "=", vValue);
 							}
@@ -505,13 +729,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						}
 					} catch (ex) {
 						// just don't replace XML attribute value
-						if (bDebug) {
-							jQuery.sap.log.debug(
-								sCaller + ': Error in formatter of '
-									+ serializeSingleElement(oElement),
-								ex, "sap.ui.core.util.XMLPreprocessor");
+						debug(oElement, 'Error in formatter:', ex);
+					}
+				}
+
+				/**
+				 * Replaces a <sap.ui.core:ExtensionPoint> element with the content of an XML
+				 * fragment configured as a replacement (via component meta data, "customizing" and
+				 * "sap.ui.viewExtensions"), or leaves it untouched in case no such replacement is
+				 * currently configured.
+				 *
+				 * @param {Element} oElement
+				 *   the <sap.ui.core:ExtensionPoint> element
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the parent's "with" control
+				 * @returns {boolean}
+				 *   whether the <sap.ui.core:ExtensionPoint> element has been replaced
+				 */
+				function templateExtensionPoint(oElement, oWithControl) {
+					var sName = oElement.getAttribute("name"),
+						vName = oUNBOUND,
+						oViewExtension;
+
+					try {
+						// resolve name, no matter if CustomizingConfiguration is present!
+						vName = getResolvedBinding(sName, oElement, oWithControl, true);
+						if (vName !== oUNBOUND && vName !== sName) {
+							// debug trace for dynamic names only
+							debug(oElement, "name =", vName);
+						}
+					} catch (ex) {
+						warn(oElement, 'Error in formatter:', ex);
+					}
+
+					if (oViewInfo && vName !== oUNBOUND && sap.ui.core.CustomizingConfiguration) {
+						oViewExtension = sap.ui.core.CustomizingConfiguration.getViewExtension(
+							aFragmentNames[aFragmentNames.length - 1], vName,
+							oViewInfo.componentId);
+						if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
+								&& oViewExtension.type === "XML") {
+							insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
+							return true;
 						}
 					}
+					return false;
 				}
 
 				/**
@@ -526,57 +787,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					var sFragmentName = oElement.getAttribute("fragmentName"),
 						vFragmentName;
 
-					/**
-					 * Inserts the fragment with the given name in place of the <core:Fragment>
-					 * element.
-					 *
-					 * @param {string} sFragmentName
-					 *   the fragment's resolved name
-					 */
-					function insertFragment(sFragmentName) {
-						var oFragmentElement
-							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
-
-						// Note: It is perfectly valid to include the very same fragment again, as long
-						// as the context is changed. So we check for cycles at the current "with"
-						// control. A context change will create a new one.
-						oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
-						if (oWithControl.$mFragmentContexts[sFragmentName]) {
-							oElement.appendChild(oElement.ownerDocument.createTextNode(
-								"Error: Stopped due to cyclic fragment reference"));
-							jQuery.sap.log.error(
-								'Stopped due to cyclic reference in fragment: ' + sFragmentName,
-								jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
-								"sap.ui.core.util.XMLPreprocessor");
-							return;
-						}
-
-						iNestingLevel++;
-						debug(oElement, "fragmentName =", sFragmentName);
-						oWithControl.$mFragmentContexts[sFragmentName] = true;
-
-						if (localName(oFragmentElement) === "FragmentDefinition" &&
-								oFragmentElement.namespaceURI === "sap.ui.core") {
-							liftChildNodes(oFragmentElement, oWithControl, oElement);
-						} else {
-							oElement.appendChild(oFragmentElement);
-							liftChildNodes(oElement, oWithControl);
-						}
-						oElement.parentNode.removeChild(oElement);
-
-						oWithControl.$mFragmentContexts[sFragmentName] = false;
-						debugFinished(oElement);
-						iNestingLevel--;
-					}
-
 					try {
 						vFragmentName
 							= getResolvedBinding(sFragmentName, oElement, oWithControl, true);
-						if (vFragmentName !== oUNBOUND) {
-							insertFragment(vFragmentName);
-						}
 					} catch (ex) {
-						warn('Error in formatter of ', oElement, ex);
+						warn(oElement, 'Error in formatter:', ex);
+						return;
+					}
+
+					if (vFragmentName !== oUNBOUND) {
+						insertFragment(vFragmentName, oElement, oWithControl);
 					}
 				}
 
@@ -753,7 +973,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						// Warn and ignore the new "with" control when its binding context is
 						// the same as a previous one.
 						// We test identity because models cache and reuse binding contexts.
-						warn("Set unchanged path '" + sResolvedPath + "' in ", oElement, null);
+						warn(oElement, 'Set unchanged path:', sResolvedPath);
 						oNewWithControl = oWithControl;
 					}
 
@@ -770,11 +990,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
 				function visitAttributes(oNode, oWithControl) {
-					var i, n,
+					var i,
 						oAttributesList = oNode.attributes;
 
 					if (oAttributesList) { // only if oNode is an Element
-						for (i = 0, n = oAttributesList.length; i < n; i += 1) {
+						// Note: iterate backwards to account for removal of attributes!
+						for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
 							resolveAttributeBinding(oNode, oAttributesList.item(i), oWithControl);
 						}
 					}
@@ -825,32 +1046,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						default:
 							error("Unexpected tag ", oNode);
 						}
-					} else if (oNode.namespaceURI === "sap.ui.core"
-						&& localName(oNode) === "Fragment"
-						&& oNode.getAttribute("type") === "XML") {
-						templateFragment(oNode, oWithControl);
-						return;
+					} else if (oNode.namespaceURI === "sap.ui.core") {
+						switch (localName(oNode)) {
+						case "ExtensionPoint":
+							if (templateExtensionPoint(oNode, oWithControl)) {
+								return;
+							}
+							break;
+
+						case "Fragment":
+							if (oNode.getAttribute("type") === "XML") {
+								templateFragment(oNode, oWithControl);
+								return;
+							}
+							break;
+
+						// no default
+						}
 					}
 
 					visitAttributes(oNode, oWithControl);
 					visitChildNodes(oNode, oWithControl);
 				}
 
-				/**
-				 * Outputs a warning; takes care not to serialize XML in vain.
+				/*
+				 * Outputs a warning message with the current nesting level; takes care not to
+				 * construct the message or serialize XML in vain.
 				 *
-				 * @param {string} sText
-				 *   the main text of the warning
-				 * @param {Element} oElement
-				 *   a DOM element
-				 * @param {string} sDetails
-				 *   the details of the warning
+				 * @param {Element} [oElement]
+				 *   a DOM element which is serialized to the details
+				 * @param {...string} aTexts
+				 *   the main text of the message is constructed from the rest of the arguments by
+				 *   joining them separated by single spaces
 				 */
-				function warn(sText, oElement, sDetails) {
-					if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-						jQuery.sap.log.warning(
-							sCaller + ": " + sText + serializeSingleElement(oElement),
-							sDetails, "sap.ui.core.util.XMLPreprocessor");
+				function warn(oElement) {
+					if (bWarning) {
+						if (!bCallerLoggedForWarnings) {
+							bCallerLoggedForWarnings = true;
+							jQuery.sap.log.warning("Warning(s) during processing of " + sCaller,
+								null, "sap.ui.core.util.XMLPreprocessor");
+						}
+						jQuery.sap.log.warning(getNestingLevel()
+							+ Array.prototype.slice.call(arguments, 1).join(" "),
+							oElement && serializeSingleElement(oElement),
+							"sap.ui.core.util.XMLPreprocessor");
 					}
 				}
 
@@ -858,10 +1097,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				if (typeof mSettings === "string") {
 					sCaller = mSettings;
 					mSettings = oViewInfo;
+					oViewInfo = null; // not available
 				} else {
 					sCaller = oViewInfo.caller;
+					aFragmentNames.push(oViewInfo.name);
 				}
 				mSettings = mSettings || {};
+
 				if (bDebug) {
 					debug(undefined, "Start processing", sCaller);
 					if (mSettings.bindingContexts instanceof Context)  {
@@ -877,6 +1119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					bindingContexts : mSettings.bindingContexts
 				}));
 				debug(undefined, "Finished processing", sCaller);
+
 				return oRootElement;
 			}
 		};

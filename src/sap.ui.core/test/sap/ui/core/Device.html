@@ -7,10 +7,57 @@
 	
 	<!-- Needed, otherwise iPad does rescaling on orientation change - What's with other devices? see jquery.sap.mobile.js (initMobile -> viewport) -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 	<!-- Needed for Windows Phone -->
 	<style>@-ms-viewport{width:device-width;}</style>
 
 	<title>Device - sap.ui.core</title>
+	
+	<script>
+	
+	function uriParams() {
+		var mParams = {};
+		var sQueryString = window.location.href;
+		if ( sQueryString.indexOf('#') >= 0 ) {
+			sQueryString = sQueryString.slice(0, sQueryString.indexOf('#'));
+		}
+		if(sQueryString.indexOf("?") >= 0){
+			sQueryString = sQueryString.slice(sQueryString.indexOf("?") + 1);
+			var aParameters = sQueryString.split("&"),
+				mParameters = {},
+				aParameter,
+				sName,
+				sValue;
+			for(var i=0; i<aParameters.length; i++){
+				aParameter = aParameters[i].split("=");
+				sName = decodeURIComponent(aParameter[0]);
+				sValue = aParameter.length > 1 ? decodeURIComponent(aParameter[1].replace(/\+/g,' ')) : "";
+				if(sName){
+					if(!Object.prototype.hasOwnProperty.call(mParameters, sName)){
+						mParameters[sName] = [];
+					}
+					mParameters[sName].push(sValue);
+				}
+			}
+			mParams = mParameters;
+		}
+		return mParams;
+	};
+	
+	function uriParam(sName){
+		var p = uriParams();
+		if(p[sName] && p[sName][0]){
+			return p[sName][0];
+		}
+		return null;
+	};
+	
+	//Enable this to activate Fullscreen mode on iOS in combination with the "Add to home screen" feature
+	if (uriParam("ios-fullscreen") == "x" || uriParam("ios-fullscreen") == "X" || uriParam("ios-fullscreen") == "true") {
+		document.write('<meta name="apple-mobile-web-app-capable" content="yes" />');
+	}
+	
+	</script>
 	
 	<script src="../../../../resources/sap/ui/Device.js"></script>
 	
@@ -29,43 +76,6 @@
 			html.push(">", "<label class='label'>", sLabel, ":</label>", sVal, "</div>");
 			
 			return html.join("");
-		};
-		
-		function uriParams() {
-			var mParams = {};
-			var sQueryString = window.location.href;
-			if ( sQueryString.indexOf('#') >= 0 ) {
-				sQueryString = sQueryString.slice(0, sQueryString.indexOf('#'));
-			}
-			if(sQueryString.indexOf("?") >= 0){
-				sQueryString = sQueryString.slice(sQueryString.indexOf("?") + 1);
-				var aParameters = sQueryString.split("&"),
-					mParameters = {},
-					aParameter,
-					sName,
-					sValue;
-				for(var i=0; i<aParameters.length; i++){
-					aParameter = aParameters[i].split("=");
-					sName = decodeURIComponent(aParameter[0]);
-					sValue = aParameter.length > 1 ? decodeURIComponent(aParameter[1].replace(/\+/g,' ')) : "";
-					if(sName){
-						if(!Object.prototype.hasOwnProperty.call(mParameters, sName)){
-							mParameters[sName] = [];
-						}
-						mParameters[sName].push(sValue);
-					}
-				}
-				mParams = mParameters;
-			}
-			return mParams;
-		};
-		
-		function uriParam(sName){
-			var p = uriParams();
-			if(p[sName] && p[sName][0]){
-				return p[sName][0];
-			}
-			return null;
 		};
 		
 		function initMedia(sSetName, sPoints, sUnit){
@@ -148,6 +158,9 @@
 			prop(_html, "firefox", !!d.browser.firefox);
 			prop(_html, "chrome", !!d.browser.chrome);
 			prop(_html, "safari", !!d.browser.safari);
+			if (!!d.browser.safari) {
+				prop(_html, "fullscreen", !!d.browser.fullscreen);
+			}
 			prop(_html, "android", !!d.browser.android);
 			prop(_html, "webkit", !!d.browser.webkit);
 			prop(_html, "mozilla", !!d.browser.mozilla);

@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			defaultSpan : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : "XL3 L3 M6 S12"},
 	
 			/**
-			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins. It can be defined for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 0 to 11 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
+			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins. It can be defined for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 0 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
 			 */
 			defaultIndent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : "XL0 L0 M0 S0"},
 	
@@ -141,6 +141,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			this._iBreakPointTablet = breakPoint;
 		};
 		
+		Grid.prototype._setBreakPointDesktop = function( breakPoint) {
+			this._iBreakPointDesktop = breakPoint;
+		};
+		
+		Grid.prototype._setBreakPointLargeDesktop = function( breakPoint) {
+			this._iBreakPointLargeDesktop = breakPoint;
+		};
+		
 		Grid.prototype.setDefaultIndent = function( sDefaultIndent) {
 			if (/XL/gi.test(sDefaultIndent)) {
 				this._setIndentXLChanged(true);
@@ -170,14 +178,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		Grid.prototype._getSpanXLChanged = function() {
 			return this._spanXLChanged;
-		};
-		
-		Grid.prototype._setBreakPointDesktop = function( breakPoint) {
-			this._iBreakPointDesktop = breakPoint;
-		};
-		
-		Grid.prototype._setBreakPointXL = function( breakPoint) {
-			this._iBreakPointLargeDesktop = breakPoint;
 		};
 		
 		Grid.prototype._onParentResize = function() {

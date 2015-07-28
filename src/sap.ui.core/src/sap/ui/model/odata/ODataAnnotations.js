@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'],
+	function(jQuery, Device, EventProvider) {
 	"use strict";
 
 	/*global ActiveXObject */
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @alias sap.ui.model.odata.ODataAnnotations
 	 * @extends sap.ui.base.Object
 	 */
-	var ODataAnnotations = sap.ui.base.EventProvider.extend("sap.ui.model.odata.ODataAnnotations", /** @lends sap.ui.model.odata.ODataAnnotations.prototype */
+	var ODataAnnotations = EventProvider.extend("sap.ui.model.odata.ODataAnnotations", /** @lends sap.ui.model.odata.ODataAnnotations.prototype */
 	{
 
 		constructor : function(aAnnotationURI, oMetadata, mParams) {
@@ -513,7 +513,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	ODataAnnotations.prototype.getXPath = function() {
 		var xPath = {};
 
-		if (sap.ui.Device.browser.internet_explorer) {// old IE
+		if (Device.browser.internet_explorer) {// old IE
 			xPath = {
 				setNameSpace : function(outNode) {
 					outNode.setProperty("SelectionNamespaces",
@@ -565,9 +565,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		    if (sId) {
 				// If node has an ID, use that
 				sPath = 'id("' + sId + '")';
-			} else if (oNode === document) {
+			} else if (oNode instanceof Document) {
 				sPath = "/";
-			} else if (oNode === document.body) {
+			} else if (sTagName.toLowerCase() === "body") {
 				// If node is the body element, just return its tag name
 				sPath = sTagName;
 			} else if (oNode.parentNode) {
@@ -624,12 +624,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		mOptions = jQuery.extend({}, mDefaultOptions, mOptions);
 
 		var oXMLDoc = null;
-		if (sap.ui.Device.browser.internet_explorer) {
+		if (Device.browser.internet_explorer) {
 			// IE creates an XML Document, but we cannot use it since it does not support the
 			// evaluate-method. So we have to create a new document from the XML string every time.
 			// This also leads to using a difference XPath implementation @see getXPath
 			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
 			oXMLDoc.preserveWhiteSpace = true;
+			
+			// The MSXML implementation does not parse documents with the technically correct "xmlns:xml"-attribute
+			// So if a document contains 'xmlns:xml="http://www.w3.org/XML/1998/namespace"', IE will stop working.
+			// This hack removes the XML namespace declaration which is then implicitly set to the default one.
+			if (sXMLContent.indexOf(" xmlns:xml=") > -1) {
+				sXMLContent = sXMLContent
+					.replace(' xmlns:xml="http://www.w3.org/XML/1998/namespace"', "")
+					.replace(" xmlns:xml='http://www.w3.org/XML/1998/namespace'", "");
+			}
+			
 			oXMLDoc.loadXML(sXMLContent);
 		} else if (oXMLDocument) {
 			oXMLDoc = oXMLDocument;
@@ -637,7 +647,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		} else {
 			jQuery.sap.log.fatal("The browser does not support XML parsing. Annotations are not available.");
-			return;
+			return false;
 		}
 
 		var fnParseDocument = function(oXMLDoc) {
@@ -1056,7 +1066,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		for (var i = 0; i < oNodeList.length; i += 1) {
 			var oNode = this.xPath.nextNode(oNodeList, i);
 			var oValue = {};
-			var sText = this.xPath.getNodeText(oNode); // TODO: Is nodeName correct or should we remove the namespace?
+			var sText = this.xPath.getNodeText(oNode);
+			// TODO: Is nodeName correct or should we remove the namespace?
 			oValue[oNode.nodeName] = mAlias ? this.replaceWithAlias(sText, mAlias) : sText;
 			aNodeValues.push(oValue);
 		}
@@ -1156,42 +1167,61 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 		} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
 			vPropertyValue = this._getTextValue(oDocumentNode, mAlias);
+		} else if (oDocumentNode.nodeName.toLowerCase() === "null") {
+			vPropertyValue = null;
 		} else {
 			vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 		}
 		return vPropertyValue;
 	};
 
-	ODataAnnotations.prototype.getPropertyValues = function(xmlDoc, documentNode, oAlias) {
-		var properties = {}, annotationNode = {}, annotationNodes, nodeIndexValue, termValue, propertyValueNodes, nodeIndex, propertyValueNode, propertyName, applyNodes, applyNode, applyNodeIndex;
-		annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
-		for (nodeIndexValue = 0; nodeIndexValue < annotationNodes.length; nodeIndexValue += 1) {
-			annotationNode = this.xPath.nextNode(annotationNodes, nodeIndexValue);
-			if (annotationNode.hasChildNodes() === false) {
-				termValue = this.replaceWithAlias(annotationNode.getAttribute("Term"), oAlias);
-				properties[termValue] = this.getPropertyValueAttributes(annotationNode, oAlias);
+	/**
+	 * Returns a map with all Annotation- and PropertyValue-elements of the given Node. The properties of the returned
+	 * map consist of the PropertyValue's "Property" attribute or the Annotation's "Term" attribute.
+	 * 
+	 * @param {Document} oXmlDocument - The document to use for the node search
+	 * @param {Element} oParentElement - The parent element in which to search
+	 * @param {map} mAlias - The alias map used in {@link ODataAnnotations#replaceWithAlias}
+	 * @returns {map} The collection of record values and annotations as a map
+	 * @private
+	 */
+	ODataAnnotations.prototype.getPropertyValues = function(oXmlDocument, oParentElement, mAlias) {
+		var mProperties = {}, i, xPath = this.xPath;
+
+		var oAnnotationNodes = xPath.selectNodes(oXmlDocument, "./d:Annotation", oParentElement);
+		var oPropertyValueNodes = xPath.selectNodes(oXmlDocument, "./d:PropertyValue", oParentElement);
+
+		jQuery.sap.assert(oAnnotationNodes.length === 0 || oPropertyValueNodes.length === 0, function () {
+			return (
+				"Record contains PropertyValue and Annotation elements, this is not allowed and might lead to " +
+				"annotation values being overwritten. Element: " + xPath.getPath(oParentElement)
+			);
+		});
+
+		if (oAnnotationNodes.length === 0 && oPropertyValueNodes.length === 0) {
+			mProperties = this.getPropertyValue(oXmlDocument, oParentElement, mAlias);
+		} else {
+			for (i = 0; i < oAnnotationNodes.length; i++) {
+				var oAnnotationNode = xPath.nextNode(oAnnotationNodes, i);
+				var sTerm = this.replaceWithAlias(oAnnotationNode.getAttribute("Term"), mAlias);
+				mProperties[sTerm] = this.getPropertyValue(oXmlDocument, oAnnotationNode, mAlias);
 			}
-		}
-		propertyValueNodes = this.xPath.selectNodes(xmlDoc, "./d:PropertyValue", documentNode);
-		if (propertyValueNodes.length > 0) {
-			for (nodeIndex = 0; nodeIndex < propertyValueNodes.length; nodeIndex += 1) {
-				propertyValueNode = this.xPath.nextNode(propertyValueNodes, nodeIndex);
-				propertyName = propertyValueNode.getAttribute("Property");
-				properties[propertyName] = this.getPropertyValue(xmlDoc, propertyValueNode, oAlias);
-				applyNodes = this.xPath.selectNodes(xmlDoc, "./d:Apply", propertyValueNode);
-				applyNode = null;
-				for (applyNodeIndex = 0; applyNodeIndex < applyNodes.length; applyNodeIndex += 1) {
-					applyNode = this.xPath.nextNode(applyNodes, applyNodeIndex);
-					if (applyNode) {
-						properties[propertyName] = {};
-						properties[propertyName]['Apply'] = this.getApplyFunctions(xmlDoc, applyNode, oAlias);
-					}
+
+			for (i = 0; i < oPropertyValueNodes.length; i++) {
+				var oPropertyValueNode = xPath.nextNode(oPropertyValueNodes, i);
+				var sPropertyName = oPropertyValueNode.getAttribute("Property");
+				mProperties[sPropertyName] = this.getPropertyValue(oXmlDocument, oPropertyValueNode, mAlias);
+				
+				var oApplyNodes = xPath.selectNodes(oXmlDocument, "./d:Apply", oPropertyValueNode);
+				for (var n = 0; n < oApplyNodes.length; n += 1) {
+					var oApplyNode = xPath.nextNode(oApplyNodes, n);
+					mProperties[sPropertyName] = {};
+					mProperties[sPropertyName]['Apply'] = this.getApplyFunctions(oXmlDocument, oApplyNode, mAlias);
 				}
 			}
-		} else {
-			properties = this.getPropertyValue(xmlDoc, documentNode, oAlias);
 		}
-		return properties;
+
+		return mProperties;
 	};
 
 	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode, mAlias) {
@@ -1294,7 +1324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 		}
 
-		sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+		EventProvider.prototype.destroy.apply(this, arguments);
 		if (this.oLoadEvent) {
 			jQuery.sap.clearDelayedCall(this.oLoadEvent);
 		}
@@ -1306,4 +1336,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return ODataAnnotations;
 
-}, /* bExport= */ true);
+});

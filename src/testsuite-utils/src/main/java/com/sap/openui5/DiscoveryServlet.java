@@ -240,18 +240,23 @@ public class DiscoveryServlet extends HttpServlet {
         // unlikely the FileURLConnection is not providing a public API
         // therefore we need to do some dirty tricks for the file listing
         connection.connect();
-        File file = (File) this.getDeclaredFieldValue(connection, "file");
-        if (file != null && file.exists()) {
-          if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (File f : files) {
-              if (f.isDirectory()) {
-                dirs.add(f.getName() + "/");
-              } else {
-                resources.add(path + f.getName());
+        Object fieldFile = this.getDeclaredFieldValue(connection, "file");
+        if (fieldFile instanceof File) {
+          File file = (File) fieldFile;
+          if (file != null && file.exists()) {
+            if (file.isDirectory()) {
+              File[] files = file.listFiles();
+              for (File f : files) {
+                if (f.isDirectory()) {
+                  dirs.add(f.getName() + "/");
+                } else {
+                  resources.add(path + f.getName());
+                }
               }
             }
           }
+        } else {
+          this.log("listClasspathResources: cannot list resources for path: \"" + path + "\"!");
         }
       }
     }

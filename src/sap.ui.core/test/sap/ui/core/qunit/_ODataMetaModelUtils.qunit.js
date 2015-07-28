@@ -53,8 +53,6 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"uri" : { "Path" : "Tel2" }
 			}, {
 				"uri" : { "Path" : "Tel3" }
-			}, {
-				"uri" : { "Path" : "Tel4" }
 			}],
 			"title" : { "Path" : "Title" }
 		},
@@ -197,11 +195,6 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			"name" : "Tel3" , "type" : "Edm.String",
 			"extensions" : [{
 				"name" : "semantics" , "value" : "tel", "namespace" : sNamespace
-			}]
-		}, {
-			"name" : "Tel4" , "type" : "Edm.String",
-			"extensions" : [{
-				"name" : "semantics" , "value" : "tel;type=foo", "namespace" : sNamespace
 			}]
 		}, {
 			"name" : "Title" , "type" : "Edm.String",
@@ -370,18 +363,6 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 								"namespace" : "http://www.sap.com/Protocols/SAPData"
 							}]
 						}, {
-							"name" : "ContactSet2",
-							"entityType" : "GWSAMPLE_BASIC.Contact",
-							"extensions" : [{
-								"name" : "deletable-path",
-								"value" : "Deletable2",
-								"namespace" : "http://www.sap.com/Protocols/SAPData"
-							}, {
-								"name" : "updatable-path",
-								"value" : "Updatable2",
-								"namespace" : "http://www.sap.com/Protocols/SAPData"
-							}]
-						}, {
 							"name" : "ProductSet",
 							"entityType" : "GWSAMPLE_BASIC.Product"
 						}],
@@ -449,7 +430,16 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata._ODataMetaModelUtils");
+	module("sap.ui.model.odata._ODataMetaModelUtils", {
+		beforeEach : function () {
+			this.iOldLogLevel = jQuery.sap.log.getLevel();
+			// do not rely on ERROR vs. DEBUG due to minified sources
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+		},
+		afterEach : function () {
+			jQuery.sap.log.setLevel(this.iOldLogLevel);
+		}
+	});
 	//*********************************************************************************************
 
 	//*********************************************************************************************
@@ -625,93 +615,76 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	});
 
 	//*********************************************************************************************
-	test("addSapSemantics: unsupported sap:semantics", function () {
-		var oLogMock = this.mock(jQuery.sap.log),
-			oType = {
-				"name" : "Foo",
-				"property" : [
-					{
-						"name" : "Bar",
-						"extensions" : [{
-							"name" : "semantics", "value" : "*", "namespace" : sNamespace
-						}]
-					}
-				]
-			};
+	[false, true].forEach(function (bIsLoggable) {
+		test("addSapSemantics: unsupported sap:semantics, log = " + bIsLoggable, function () {
+			var oLogMock = this.mock(jQuery.sap.log),
+				oType = {
+					"name" : "Foo",
+					"property" : [
+						{
+							"name" : "Bar",
+							"extensions" : [{
+								"name" : "semantics",
+								"value" : "*",
+								"namespace" : sNamespace
+							}]
+						}
+					]
+				};
 
-		// ensure that sap:semantics properties are available
-		oType.property.forEach(function (oProperty) {
-			Utils.liftSAPData(oProperty, "Property");
+			// ensure that sap:semantics properties are available
+			oType.property.forEach(function (oProperty) {
+				Utils.liftSAPData(oProperty, "Property");
+			});
+
+			oLogMock.expects("isLoggable")
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				// do not construct arguments in vain!
+				.exactly(bIsLoggable ? 1 : 0)
+				.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
+					"sap.ui.model.odata._ODataMetaModelUtils");
+
+			// code under test
+			Utils.addSapSemantics(oType);
 		});
-
-		oLogMock.expects("warning").once().withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
-			"sap.ui.model.odata._ODataMetaModelUtils");
-
-		// code under test
-		Utils.addSapSemantics(oType);
-
 	});
 
 	//*********************************************************************************************
-	test("convertEntitySetAnnotations", function () {
-		var aSchema = clone(oDataSchema).dataServices.schema,
-			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
-			oEntitySet2 = aSchema[0].entityContainer[0].entitySet[1],
-			oEntityType = aSchema[0].entityType[0],
-			oLogMock = this.mock(jQuery.sap.log);
+	[false, true].forEach(function (bIsLoggable) {
+		test("addSapSemantics: unsupported sap:semantics type, log = " + bIsLoggable, function () {
+			var oLogMock = this.mock(jQuery.sap.log),
+				oType = {
+					"name" : "Foo",
+					"property" : [
+						{
+							"name" : "Bar",
+							"extensions" : [{
+								"name" : "semantics",
+								"value" : "tel;type=foo",
+								"namespace" : sNamespace
+							}]
+						}
+					]
+				};
 
-		//Prepare data
-		Utils.liftSAPData(oEntitySet, "EntitySet");
-		Utils.liftSAPData(oEntitySet2, "EntitySet");
+			// ensure that sap:semantics properties are available
+			oType.property.forEach(function (oProperty) {
+				Utils.liftSAPData(oProperty, "Property");
+			});
+			oLogMock.expects("isLoggable")
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				// do not construct arguments in vain!
+				.exactly(bIsLoggable ? 1 : 0)
+				.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
+					"sap.ui.model.odata._ODataMetaModelUtils");
 
-		oLogMock.expects("isLoggable").exactly(2).withExactArgs(jQuery.sap.log.Level.WARNING)
-			.returns(true);
-		oLogMock.expects("warning").exactly(1)
-			.withExactArgs("Ignored 'sap:deletable-path' annotation (Deletable2) of ContactSet2",
-				"The entity type Contact contains a" +
-					" 'com.sap.vocabularies.Common.v1.Deletable' annotation with different" +
-					" path (Deletable)",
-				"sap.ui.model.odata._ODataMetaModelUtils");
-		oLogMock.expects("warning").exactly(1)
-			.withExactArgs("Ignored 'sap:updatable-path' annotation (Updatable2) of ContactSet2",
-				"The entity type Contact contains a" +
-					" 'com.sap.vocabularies.Common.v1.Updatable' annotation with different" +
-					" path (Updatable)",
-				"sap.ui.model.odata._ODataMetaModelUtils");
-
-		// code under test
-		Utils.convertEntitySetAnnotations(oEntitySet, oEntityType);
-		Utils.convertEntitySetAnnotations(oEntitySet2, oEntityType);
-
-		//verify results
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Deletable"],
-				{"Path" : "Deletable"}, "deletable-path");
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Updatable"],
-				{"Path" : "Updatable"}, "updatable-path");
-
-
-	});
-
-	//*********************************************************************************************
-	test("convertEntitySetAnnotations no overwrite", function () {
-		var aSchema = clone(oDataSchema).dataServices.schema,
-			oEntitySet = aSchema[0].entityContainer[0].entitySet[0],
-			oEntityType = aSchema[0].entityType[0];
-
-		//Prepare data
-		Utils.liftSAPData(oEntitySet, "EntitySet");
-		oEntityType["com.sap.vocabularies.Common.v1.Deletable"] = {"Path" : "bar"};
-		oEntityType["com.sap.vocabularies.Common.v1.Updatable"] = {"Path" : "foo"};
-
-		// code under test
-		Utils.convertEntitySetAnnotations(oEntitySet, oEntityType);
-
-		//verify results
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Deletable"],
-				{"Path" : "bar"}, "deletable-path not overwritten");
-		deepEqual(oEntityType["com.sap.vocabularies.Common.v1.Updatable"],
-				{"Path" : "foo"}, "updatable-path not overwritten");
-
+			// code under test
+			Utils.addSapSemantics(oType);
+		});
 	});
 
 	//*********************************************************************************************
@@ -798,29 +771,38 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	});
 
 	//*********************************************************************************************
-	test("addFilterRestriction: unsupported sap:filter-restriction", function () {
-		var oLogMock = this.mock(jQuery.sap.log),
-			oEntitySet = { entityType : "Baz" },
-			oProperty = {
-				"name" : "Foo",
-				"sap:filter-restriction" : "Bar"
-			};
+	[false, true].forEach(function (bIsLoggable) {
+		test("addFilterRestriction: unsupported sap:filter-restriction, log = " + bIsLoggable,
+			function () {
+				var oLogMock = this.mock(jQuery.sap.log),
+					oEntitySet = { entityType : "Baz" },
+					oProperty = {
+						"name" : "Foo",
+						"sap:filter-restriction" : "Bar"
+					};
 
-		oLogMock.expects("warning").once().withExactArgs("Unsupported sap:filter-restriction: "
-				+ "Bar", "Baz.Foo",
-			"sap.ui.model.odata._ODataMetaModelUtils");
+				oLogMock.expects("isLoggable")
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					// do not construct arguments in vain!
+					.exactly(bIsLoggable ? 1 : 0)
+					.withExactArgs("Unsupported sap:filter-restriction: " + "Bar", "Baz.Foo",
+						"sap.ui.model.odata._ODataMetaModelUtils");
 
-		// code under test
-		Utils.addFilterRestriction(oProperty, oEntitySet);
+				// code under test
+				Utils.addFilterRestriction(oProperty, oEntitySet);
 
-		deepEqual(oEntitySet, { entityType : "Baz" },
-			"No v4 annotation created in case of unsupported value")
+				deepEqual(oEntitySet, { entityType : "Baz" },
+					"No v4 annotation created in case of unsupported value")
+			}
+		);
 	});
 
 	//*********************************************************************************************
 	test("calculateEntitySetAnnotations: call addFilterRestriction", function () {
 		var aSchemas = clone(oDataSchema).dataServices.schema,
-			oEntitySet = aSchemas[0].entityContainer[0].entitySet[2], // ProductSet
+			oEntitySet = aSchemas[0].entityContainer[0].entitySet[1], // ProductSet
 			oEntityType = aSchemas[0].entityType[4], // Product
 			oProperty = oEntityType.property[0]; // Product.Foo
 
@@ -833,7 +815,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		});
 
 		// Define expectations
-		this.mock(Utils).expects("addFilterRestriction").once()
+		this.mock(Utils).expects("addFilterRestriction")
 			.withExactArgs(oProperty, oEntitySet).returns("");
 
 		// run code under test
@@ -862,7 +844,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				}}
 			},
 			oData = clone(oDataSchema),
-			oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[2];
+			oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[1];
 
 		// code under test
 		Utils.merge({}, oData);
@@ -881,7 +863,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 		// with annotations
 		oData = clone(oDataSchema),
-		oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[2];
+		oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[1];
 
 		// code under test
 		Utils.merge(oAnnotations, oData);

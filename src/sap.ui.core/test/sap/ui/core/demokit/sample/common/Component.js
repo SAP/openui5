@@ -9,7 +9,7 @@
  */
 sap.ui.define([
 		'sap/ui/core/UIComponent'
-	], function(UIComponent) {
+	], function (UIComponent) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.core.sample.common.Component", {
@@ -28,7 +28,8 @@ sap.ui.define([
 				alert("Cannot use a proxy for hosts other than localhost!");
 				return sAbsolutePath;
 			}
-			//for local testing prefix with proxy
+
+			// for local testing prefix with proxy
 			return "proxy" + sAbsolutePath;
 		}
 	});

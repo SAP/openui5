@@ -417,7 +417,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/* protected methods                                           */
 		/* ----------------------------------------------------------- */
 
-		/**
+		/*
 		 * Retrieves the first enabled item from the aggregation named <code>items</code>.
 		 *
 		 * @param {array} [aItems]
@@ -434,18 +434,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			}
 
 			return null;
-		};
-
-		/**
-		 * Retrieves the last enabled item from the aggregation named <code>items</code>.
-		 *
-		 * @param {array} [aItems]
-		 * @returns {sap.ui.core.Item | null}
-		 * @protected
-		 */
-		SelectList.prototype.findLastEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-			return this.findFirstEnabledItem(aItems.reverse());
 		};
 
 		/**
@@ -485,8 +473,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * Synchronize selected item and key.
 		 *
 		 * @protected
-		 * @name sap.m.SelectList#synchronizeSelection
-		 * @function
 		 */
 		SelectList.prototype.synchronizeSelection = function() {
 
@@ -522,33 +508,10 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {boolean}
 		 * @protected
-		 * @name sap.m.SelectList#isSelectionSynchronized
-		 * @function
 		 */
 		SelectList.prototype.isSelectionSynchronized = function() {
 			var vItem = this.getSelectedItem();
 			return this.getSelectedKey() === (vItem && vItem.getKey());
-		};
-
-		/*
-		 * Retrieves the first enabled item from the aggregation named <code>items</code>.
-		 *
-		 * @param {array} [aItems]
-		 * @returns {sap.ui.core.Item | null}
-		 * @protected
-		 * @name sap.m.SelectList#findFirstEnabledItem
-		 * @function
-		 */
-		SelectList.prototype.findFirstEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-
-			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i].getEnabled()) {
-					return aItems[i];
-				}
-			}
-
-			return null;
 		};
 
 		/*
@@ -557,8 +520,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {array} [aItems]
 		 * @returns {sap.ui.core.Item | null}
 		 * @protected
-		 * @name sap.m.SelectList#findLastEnabledItem
-		 * @function
 		 */
 		SelectList.prototype.findLastEnabledItem = function(aItems) {
 			aItems = aItems || this.getItems();
@@ -570,8 +531,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @return {sap.ui.core.Item[]}
 		 * @protected
-		 * @name sap.m.SelectList#getVisibleItems
-		 * @function
 		 */
 		SelectList.prototype.getVisibleItems = function() {
 			return this.getItems();
@@ -582,8 +541,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
 		 * @protected
-		 * @name sap.m.SelectList#getSelectableItems
-		 * @function
 		 */
 		SelectList.prototype.getSelectableItems = function() {
 			return this.getEnabledItems(this.getVisibleItems());
@@ -597,8 +554,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {string} sValue An item value that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 * @protected
-		 * @name sap.m.SelectList#findItem
-		 * @function
 		 */
 		SelectList.prototype.findItem = function(sProperty, sValue) {
 			var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
@@ -619,8 +574,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {string} sText An item value that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 * @protected
-		 * @name sap.m.SelectList#getItemByText
-		 * @function
 		 */
 		SelectList.prototype.getItemByText = function(sText) {
 			return this.findItem("text", sText);
@@ -632,8 +585,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {sap.ui.core.Item} oItem
 		 * @returns {boolean}
 		 * @protected
-		 * @name sap.m.SelectList#isItemSelected
-		 * @function
 		 */
 		SelectList.prototype.isItemSelected = function(oItem) {
 			return oItem && (oItem.getId() === this.getAssociation("selectedItem"));

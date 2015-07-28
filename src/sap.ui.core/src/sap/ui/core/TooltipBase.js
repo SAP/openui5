@@ -477,4 +477,4 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 
 	return TooltipBase;
 
-}, /* bExport= */ true);
+});

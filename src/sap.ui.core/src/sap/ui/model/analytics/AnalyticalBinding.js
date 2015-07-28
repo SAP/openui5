@@ -75,6 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
 			this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
 			this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
+			this.bNoPaging = (mParameters && mParameters.noPaging === true) ? true : false;
 
 			// attribute members for maintaining loaded data; mapping from groupId to related information
 			this.iTotalSize = -1;
@@ -94,6 +95,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.mEntityKey = {};
 			    /* increased load factor due to ratio of non-multi-unit entities versus loaded entities */
 
+			// custom parameters which will be send with every request
+			// the custom parameters are extracted from the mParameters object, because the SmartTable does some weird things to the parameters
+			this.sCustomParams = this.oModel.createCustomParams({custom: this.mParameters.custom});
+			
 			// attribute members for maintaining structure details requested by the binding consumer
 			this.oAnalyticalQueryResult = null; //will be initialized via the "initialize" function of the binding
 
@@ -1383,7 +1388,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
 		}
 		var oKeyIndexMapping = this._getKeyIndexMapping(sGroupId, iStartIndex);
-		oAnalyticalQueryRequest.setResultPageBoundaries(oKeyIndexMapping.iServiceKeyIndex + 1, oKeyIndexMapping.iServiceKeyIndex + iLength);
+		if (!this.bNoPaging) {
+			oAnalyticalQueryRequest.setResultPageBoundaries(oKeyIndexMapping.iServiceKeyIndex + 1, oKeyIndexMapping.iServiceKeyIndex + iLength);
+		}
 
 		// (8) request result entity count
 		oAnalyticalQueryRequest.setRequestOptions(null, !this.mFinalLength[sGroupId]);
@@ -1704,7 +1711,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				iEffectiveStartIndex = Math.max(iEffectiveStartIndex, iServiceLengthForGroupIdMissing);
 			}
 
-			oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+			if (!that.bNoPaging) {
+				oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+			}
 			
 			return {
 				iRequestType : iRequestType,
@@ -2025,12 +2034,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					//V1 - use createBatchOperation
 					aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
 				}else if (this.iModelVersion === AnalyticalVersionInfo.V2) {
+					var aUrlParameters = this._getQueryODataRequestOptions(oAnalyticalQueryRequest, {encode: true});
+					if (this.sCustomParams) {
+						aUrlParameters.push(this.sCustomParams);
+					}
 					//V2 - use read()
 					var oRequestHandle = this.oModel.read(sPath.replace(/\ /g, "%20"), {
 						success: fnSingleBatchSucess, // relays the success to the BatchResponseCollector
 						error: fnSingleBatchError,
 						context: this.oContext,
-						urlParameters: this._getQueryODataRequestOptions(oAnalyticalQueryRequest, {encode: true})
+						urlParameters: aUrlParameters
 					});
 					aBatchQueryRequest.push(oRequestHandle);
 				}
@@ -2244,6 +2257,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			//trigger data loading, the request handle is registered during the fnHandleUpdate callback, used by the V1 model
 			this.oModel._loadData(sPath, aParam, fnSuccess, fnError, false, fnUpdateHandle, fnCompleted);
 		} else {
+			if (this.sCustomParams) {
+				aParam.push(this.sCustomParams);
+			}
 			var oRequestHandle = this.oModel.read(sPath, {
 				success: fnSuccess,
 				error: fnError,
@@ -4069,9 +4085,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 
 	/**
-	 * Get URL for downloading the matching entities in the bound OData entity set 
-	 * @param {string} sFormat The required format for the download
+	 * Get a download URL with the specified format considering the
+	 * sort/filter/custom parameters.
+	 * 
+	 * The download URL also takes into account the selected dimensions and measures,
+	 * depending on the given column definitions of the AnalyticalTable.
+	 * This is based on the visible/inResult flags of the columns, as well as integrity dependencies,
+	 * e.g. for mandatory Unit properties.
+	 * 
+	 * @param {string} sFormat Value for the $format Parameter
+	 * @return {string} URL which can be used for downloading
 	 * @since 1.24
+	 * @public
 	 */
 	AnalyticalBinding.prototype.getDownloadUrl = function(sFormat) {
 
@@ -4267,5 +4292,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	**/
 	return AnalyticalBinding;
 
-}, /* bExport= */ true);
+});
 

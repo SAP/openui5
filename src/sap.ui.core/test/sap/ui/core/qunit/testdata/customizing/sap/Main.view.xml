@@ -17,5 +17,7 @@
 		<html:h2>HTML View Modification Tests start below:</html:h2>
 		<mvc:HTMLView viewName="testdata.customizing.sap.Sub5" />
 
+		<mvc:XMLView id="sub6View" viewName="testdata.customizing.sap.Sub6" />
+
 	</l:VerticalLayout>
 </mvc:View>

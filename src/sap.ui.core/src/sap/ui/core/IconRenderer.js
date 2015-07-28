@@ -1,8 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global"],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 	/**
@@ -27,17 +26,18 @@ sap.ui.define(["jquery.sap.global"],
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
 			sTooltip = oControl.getTooltip_AsString(),
-			bUseIconTooltip = oControl.getUseIconTooltip();
+			bUseIconTooltip = oControl.getUseIconTooltip(),
+			bNoTabStop = oControl.getNoTabStop();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
 		if (sTooltip || (bUseIconTooltip && oIconInfo)) {
-			oRm.writeAttribute("title", sTooltip || oIconInfo.text);
+			oRm.writeAttribute("title", sTooltip || oIconInfo.text || oIconInfo.name);
 		}
 
-		if (oControl.hasListeners("press")) {
+		if (oControl.hasListeners("press") && !bNoTabStop) {
 			oRm.writeAttribute("tabindex", 0);
 		}
 

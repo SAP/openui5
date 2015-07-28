@@ -8,16 +8,12 @@
 @sapMTitleSize4: @sapMFontHeader4Size;
 @sapMTitleSize5: @sapMFontHeader5Size;
 @sapMTitleSize6: @sapMFontHeader6Size;
-@sapMTitleColor: @sapUiHeaderText;
+@sapMTitleColor: @sapUiGroupTitleTextColor;
 @sapMTitleFontFamily: @sapUiFontHeaderFamily;
 @sapMTitleFontWeight: @sapUiFontHeaderWeight;
 
 .sapMTitle {
 	text-shadow: 0 0.0625rem 0 fade(@sapUiLightShadowTint, 50%);
-}
-
-.sapMTitleStyleAuto {
-	font-size: @sapMTitleSize5;
 }
 
 .sapMIBar-CTX .sapMTitle {
@@ -26,9 +22,5 @@
 }
 
 .sapMTB-Transparent-CTX .sapMTitle {
-	text-shadow: 0 1px 0 @sapUiLightShadowTint;
-}
-
-.sapMTB-Transparent-CTX > .sapMTitleTB.sapMTitleStyleAuto {
-	font-size: @sapMTitleSize4;
+	text-shadow: 0 0.0625rem 0 @sapUiLightShadowTint;
 }

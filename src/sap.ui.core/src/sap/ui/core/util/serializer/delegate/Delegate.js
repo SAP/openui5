@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['sap/ui/base/EventProvider'],
+	function(EventProvider) {
 	"use strict";
 
 
@@ -97,4 +97,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return Delegate;
 
-}, /* bExport= */ true);
+});

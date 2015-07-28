@@ -8,14 +8,31 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 
 	/**
 	 * Constructor for a new MasterPage
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A MasterPage is a {@link sap.m.semantic.SemanticPage} that is restricted to include only semantic controls of the following semantic types:
+	 * A MasterPage is a {@link sap.m.semantic.SemanticPage} that supports semantic content of the following types:
 	 *
 	 * <ul>
-
+	 * 	<li>{@link sap.m.semantic.AddAction}</li>
+	 * 	<li>{@link sap.m.semantic.MainAction}</li>
+	 * 	<li>{@link sap.m.semantic.PositiveAction}</li>
+	 * 	<li>{@link sap.m.semantic.NegativeAction}</li>
+	 * 	<li>{@link sap.m.semantic.ForwardAction}</li>
+	 * 	<li>{@link sap.m.semantic.EditAction}</li>
+	 * 	<li>{@link sap.m.semantic.SaveAction}</li>
+	 * 	<li>{@link sap.m.semantic.CancelAction}</li>
+	 * 	<li>{@link sap.m.semantic.MultiSelectAction}</li>
+	 * 	<li>{@link sap.m.semantic.FlagAction}</li>
+	 * 	<li>{@link sap.m.semantic.FavoriteAction}</li>
+	 * 	<li>{@link sap.m.semantic.SortAction}</li>
+	 * 	<li>{@link sap.m.semantic.SortSelect}</li>
+	 * 	<li>{@link sap.m.semantic.FilterAction}</li>
+	 * 	<li>{@link sap.m.semantic.FilterSelect}</li>
+	 * 	<li>{@link sap.m.semantic.GroupAction}</li>
+	 * 	<li>{@link sap.m.semantic.GroupSelect}</li>
+	 * 	<li>{@link sap.m.semantic.MessagesIndicator}</li>
 	 * </ul>
 	 *
 	 * @extends sap.m.semantic.SemanticPage

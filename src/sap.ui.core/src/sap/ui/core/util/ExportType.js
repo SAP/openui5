@@ -28,6 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	var ExportType = ManagedObject.extend('sap.ui.core.util.ExportType', {
 
 		metadata: {
+			library: "sap.ui.core",
 			properties: {
 				/**
 				 *  File extension.
@@ -278,4 +279,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	return ExportType;
 
-}, /* bExport= */ true);
+});

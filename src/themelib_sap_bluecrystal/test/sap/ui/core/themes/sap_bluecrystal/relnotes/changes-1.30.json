@@ -423,5 +423,31 @@
         "references": []
       }
     ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "296d4b2434a7621d870699fe1a453e00d1edc555",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: General Fixes for Cozy and Touch mode",
+        "references": []
+      },
+      {
+        "id": "85456c308ece55286234bdbce0eb17a1628ffd5f",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Multiple Fixes for Table and Touch",
+        "references": []
+      },
+      {
+        "id": "f739698888b05cdd4d32fcdeae7a5a3e83656e02",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Row header too small in cozy mode",
+        "references": []
+      }
+    ]
   }
 }

@@ -7,9 +7,6 @@
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.core.Control");
-	jQuery.sap.require("sap.ui.core.format.DateFormat");
-
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
@@ -19,6 +16,10 @@
 			"EnterDateTime": "EnterDateTime Nov 27, 2014, 1:47:26 PM",
 			"EnterDate": "EnterDate Nov 27, 2014"
 		};
+
+	jQuery.sap.require("sap.ui.core.Control");
+	jQuery.sap.require("sap.ui.core.format.DateFormat");
+	jQuery.sap.require("sap.ui.test.TestUtils");
 
 	function createInstance(sTypeName, oConstraints, oFormatOptions) {
 		return new (jQuery.sap.getObject(sTypeName))(oFormatOptions, oConstraints);

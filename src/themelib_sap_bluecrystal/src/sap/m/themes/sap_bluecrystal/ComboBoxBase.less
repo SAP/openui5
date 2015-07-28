@@ -13,7 +13,7 @@
 .sapMComboBoxBaseBar::before {
 	position: absolute;
 	text-align: center;
-	color: @sapUiSelectArrowColor;
+	color: @sapUiElement;
 }
 
 /* ------------------------------ */
@@ -40,7 +40,7 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 	right: 0.0625rem;
 
 	/* note: add a non-transparent background because the input field text overflows arrow button in IE10 */
-	background: @sapUiLightestBG;
+	background: @sapUiFieldBackground;
 }
 
 .sapMComboBoxBaseState .sapMComboBoxBaseArrow {
@@ -52,19 +52,19 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 /* hover */
 
 .sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	background: @sapUiSelectArrowBGHover;
+	background: contrast(@sapUiFieldHoverBackground, darken(@sapUiFieldHoverBackground, 6), lighten(@sapUiFieldHoverBackground, 6));
 }
 
 /* pressed */
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
 .sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	background: @sapUiSelectArrowBGActive;
+	background: @sapUiFieldActiveBackground;
 }
 
  /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
-	color: @sapUiSelectArrowColorActive;
+	color: @sapUiInvertedElement;
 }
 
 /* ------------------------------ */
@@ -72,7 +72,7 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 /* ------------------------------ */
 
 .sapMComboBoxBaseList {
-	border: 0.0625rem solid @sapUiSelectBorderColor;
+	border: 0.0625rem solid @sapUiFieldBorderColor;
 }
 
 .sapMComboBoxBaseItemDisabled {
@@ -94,12 +94,12 @@ li.sapMComboBoxBaseItem {
 }
 
 .sapMComboBoxBaseItem .sapMCb{
-	height: 2.5rem; 
+	height: 2.5rem;
 	line-height: 2.5rem;
 }
 
 .sapMComboBoxBaseItem .sapMCbBg{
-	top:0;	
+	top:0;
 	bottom:0;
 	margin:auto;
 }
@@ -129,12 +129,6 @@ div.sapMComboBoxBasePicker {
 	min-width: 0;	/* override the default min-width of the popover */
 }
 
-/* remove the Popover's arrow */
-
-.sapMComboBoxBasePicker .sapMPopoverArr {
-	display: none;
-}
-
 /* ------------------------------ */
 /* ComboBox's Dialog              */
 /* ------------------------------ */
@@ -155,15 +149,15 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	right: 0;
 	line-height: 3rem;
 	width: 3.5rem;
-	color: @sapUiSelectArrowColorActive;
-	background: @sapUiSelectArrowBGActive;
+	color: @sapUiInvertedElement;
+	background: @sapUiFieldActiveBackground;
 }
 
 /* Bar inside the ComboBox's Dialog */
 
 .sapMComboBoxBasePicker .sapMComboBoxBaseBar {
-	background: @sapUiSelectBG;
-	border: 0.0625rem solid @sapUiSelectBGActive;
+	background: @sapUiFieldBackground;
+	border: 0.0625rem solid @sapUiFieldActiveBorderColor;
 }
 
 /* Input inside the ComboBox's Dialog */

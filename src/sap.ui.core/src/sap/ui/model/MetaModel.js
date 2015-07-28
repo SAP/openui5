@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Model'],
-	function(jQuery, Model) {
+sap.ui.define(['./Model'],
+	function(Model) {
 	"use strict";
 
 	/**
@@ -82,4 +82,4 @@ sap.ui.define(['jquery.sap.global', './Model'],
 
 	return MetaModel;
 
-}, /* bExport= */ true);
+});

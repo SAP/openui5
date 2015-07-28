@@ -3,10 +3,6 @@
 /* SAP-HCB Theme                                */
 /* ============================================ */
 
-.sapUiTable {
-	font-size: @sapUiDesktopFontSize;
-}
-
 /*******************************************************************************
  * TABLE SECTIONS
  ******************************************************************************/
@@ -68,10 +64,6 @@
 	border-bottom: 0.0625rem solid @sapHCReducedAltFG;
 }
 
-.sapUiTableRowHdrScr div:last-child, .sapUiTableCtrlScr tr:last-child td {
-	border-bottom: none;
-}
-
 .sapUiTableRowHdrScr > .sapUiTableRowHdr {
 	outline-width: 0px;
 }
@@ -90,10 +82,6 @@
 .sapUiTableCtrl tr.sapUiTableRowSel.sapUiTableRowHvr,.sapUiTableRowHdr.sapUiTableRowSel.sapUiTableRowHvr  {
 	border-bottom-color: @sapHCReducedAltFG;
 	background-color:@sapHCHighlightBG;
-}
-
-.sapUiTableTreeIcon {
-	padding-top: 4px;
 }
 
 .sapUiTable > .sapUiTableFtr:last-child {
@@ -126,7 +114,6 @@
 
 .sapUiTable {
 	font-family: @sapUiDesktopFontFamily;
-	font-size: @sapUiDesktopFontSize;
 	color: @sapHCStandardFG;
 }
 
@@ -137,7 +124,8 @@
 .sapUiTable > .sapUiTableHdr {
 	border: none;
 	border-bottom: 0.188rem solid @sapHCStandardFG;
-	height: 25px;
+	min-height: 25px;
+	height: auto;
 	padding: 0;
 	margin-bottom: 2px;
 }
@@ -148,8 +136,8 @@
 }
 
 .sapUiTable > .sapUiTableFtr {
-	height: 28px;
-	line-height: 28px;
+	height: auto;
+	min-height: 28px;
 	background-color: @sapHCStandardBG;
 	padding-top: 4px;
 }
@@ -202,11 +190,6 @@
 
 .sapUiTableCtrl.sapUiTableCtrlRowFixedBottom {
 	margin-top: -1px;
-}
-
-.sapUiTableRowHdr:last-child,
-.sapUiTableCtrl tr:last-child > td {
-	border-bottom: none;
 }
 
 /* support for left border in RowOnly selection behavior */
@@ -404,7 +387,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 /* Table Row Tree Node */
 .sapUiTableTr {
 	color: @sapUiText;
-	font-size: 12px;
 	font-weight: normal;
 }
 
@@ -417,7 +399,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 .sapUiTableTreeIcon {
-	padding-top: 3px;
 	margin-right: 6px;
 }
 
@@ -470,4 +451,39 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 /* Keep sure that sap.m.Link is vertically aligned inside a table cell */
 .sapUiTableCell .sapUiLnk {
 	vertical-align: middle;
+}
+
+// Fixed Top Row Indicator
+.sapUiTableFixedLastTopRow, .sapUiTableFixedLastTopRow > td {
+	border-bottom: 0.188rem solid @sapHCStandardFG;
+}
+
+// Fixed Left Row Indicator
+.sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child,
+.sapUiTableColHdrFixed .sapUiTableColLastFixed {
+	border-right: 0.188rem solid @sapHCStandardFG;
+}
+
+// Fixed Bottom Row Indicator
+.sapUiTableFixedPreBottomRow > td, .sapUiTableRowHdr.sapUiTableFixedPreBottomRow {
+	border-bottom: 0.188rem solid @sapHCStandardFG;
+}
+
+// Hide last row bottom cell border
+.sapUiTableRowHdr:last-child,
+.sapUiTableCtrl:last-child tr:not(.sapUiTableFixedLastTopRow):last-child > td,
+.sapUiTableCtrlRowFixedBottom tr:not(.sapUiTableFixedLastTopRow):last-child > td
+{
+	border-bottom: none;
+}
+
+.sapUiTableTouch .sapUiScrollBar {
+	::-webkit-scrollbar-thumb {
+		background-color: @sapHCStandardFG;
+		
+	}
+
+	::-webkit-scrollbar {
+		background-color: @sapHCStandardBG;
+	}
 }

@@ -1,5 +1,6 @@
 jQuery.sap.declare("sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion");
 jQuery.sap.require("sap.ui.test.Opa5");
+jQuery.sap.require("sap.ui.test.matchers.AggregationFilled");
 
 sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.extend("sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion", {
 	iShouldSeeTheCategoryList : function () {
@@ -7,8 +8,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 			id : "categoryList",
 			viewName : "Home",
 			success : function (oList) {
-				this.getContext().oCategoryList = oList;
-				ok(oList, "Found the category List");
+				QUnit.ok(oList, "Found the category List");
 			}
 		});
 	},
@@ -36,11 +36,11 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 
 	theCategoryListShouldHaveSomeEntries : function () {
 		return this.waitFor({
-			check : function () {
-				return this.getContext().oCategoryList.getItems().length > 0;
-			},
+			id : "categoryList",
+			viewName : "Home",
+			matchers: new sap.ui.test.matchers.AggregationFilled({ name : "items" }),
 			success : function () {
-				ok(true, "CategoryList did contain entries");
+				QUnit.ok(true, "CategoryList did contain entries");
 			},
 			errorMessage : "The category list did not contain entries"
 		});

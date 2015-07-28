@@ -23,7 +23,7 @@
 }
 
 .sapMMsgPopoverItem .sapMSLIIconActive {
-	color: @sapUiSLIIconColorActive;
+	color: @sapUiInvertedElement;
 }
 
 .sapMPopover.sapMMsgPopover.sapMMsgPopover-init {
@@ -79,8 +79,22 @@
 			}
 		}
 	}
+
+	.sapMMsgPopoverTitleText {
+		font-size: @sapMFontHeader4Size;
+	}
+
+	.sapMMsgPopoverDescriptionText {
+		font-size: @sapMFontMediumSize;
+	}
 }
 
 .sapMMsgPopoverCloseBtn .sapMBtnIcon {
 	color: @sapUiElement;
+}
+
+.sapUiSizeCompact.sapMMsgPopover {
+	.sapMMsgPopoverTitleText {
+		font-size: @sapMFontMediumSize;
+	}
 }

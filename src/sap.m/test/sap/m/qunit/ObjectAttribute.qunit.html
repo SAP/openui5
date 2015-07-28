@@ -176,7 +176,7 @@
 	asyncTest("Attributes Wrapping in ObjectListItem", function() {
 		
 		// arrange
-		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectHeader wrapping test"});
+		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectListItem wrapping test"});
 		var oObjectListItem = new sap.m.ObjectListItem("oOL3", {
 			attributes : [oAttr]
 		});
@@ -197,6 +197,29 @@
 		setTimeout( function() {
 			start();
 		}, 500);
+	});
+	/******************************************************************/
+	
+	module("Aggregation attribute");
+	
+	test("Aggregation sap.m.Link", function() {
+		
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute("attr", {
+			text: "Joe Smith",
+			active: true,
+			attribute: new sap.m.Link("alink", {text: "this is sap.m.Link"})
+		});
+
+		oAttr.placeAt("objectAtrributesWrap");
+		
+		sap.ui.getCore().applyChanges();
+		
+		// assertions
+		ok(oAttr.$("attr").find(".sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
+		
+		//Cleanup
+		oAttr.destroy(); 
 	});
 	/******************************************************************/
 

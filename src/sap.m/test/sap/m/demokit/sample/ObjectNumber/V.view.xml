@@ -10,24 +10,40 @@
 			<ObjectNumber
 				class="sapUiSmallMarginBottom" 
 				binding="{/ProductCollection/0}"
-				number="{Price}"
+				number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
 				unit="{CurrencyCode}" />
 			<ObjectNumber
 				class="sapUiSmallMarginBottom" 
 				binding="{/ProductCollection/1}"
-				number="{Price}"
+				number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
 				unit="{CurrencyCode}"
 				state="Error" />
 			<ObjectNumber
 				class="sapUiSmallMarginBottom" 
 				binding="{/ProductCollection/2}"
-				number="{Price}"
+				number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
 				unit="{CurrencyCode}"
 				state="Warning" />
 			<ObjectNumber
 				class="sapUiSmallMarginBottom" 
 				binding="{/ProductCollection/3}"
-				number="{Price}"
+				number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
 				unit="{CurrencyCode}"
 				state="Success" />
 		</l:content>

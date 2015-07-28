@@ -1,0 +1,27 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Panel id="quickViewCardContainer" width="auto" height="264px">
+		<QuickViewCard id="quickViewCard" pages="{/pages}" afterNavigate="onNavigate">
+			<QuickViewPage
+					pageId="{pageId}"
+					header="{header}"
+					icon="{icon}"
+					title="{title}"
+					titleUrl="{titleUrl}"
+					description="{description}"
+					groups="{groups}">
+				<QuickViewGroup heading="{heading}" elements="{elements}">
+					<QuickViewGroupElement
+							label="{label}"
+							value="{value}"
+							url="{url}"
+							type="{elementType}"
+							pageLinkId="{pageLinkId}"
+							emailSubject="{emailSubject}"
+							target="{target}"
+							>
+					</QuickViewGroupElement>
+				</QuickViewGroup>
+			</QuickViewPage>
+		</QuickViewCard>
+	</Panel>
+</core:FragmentDefinition>

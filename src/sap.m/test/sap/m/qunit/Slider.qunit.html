@@ -858,6 +858,86 @@
 				oSlider.destroy();
 			});
 
+			/* ------------------------------ */
+			/* handle tooltip                 */
+			/* ------------------------------ */
+
+			test("it should render the handle tooltip (test case 1)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					showHandleTooltip: true
+				});
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(oSlider.getDomRef("handle").hasAttribute("title"));
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should render the handle tooltip (test case 2)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider();
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(5);
+
+				// assert
+				ok(oSlider.getDomRef("handle").hasAttribute("title"));
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should not render the handle tooltip (test case 1)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					showHandleTooltip: false
+				});
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should not render the handle tooltip (test case 2)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					showHandleTooltip: false
+				});
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(5);
+
+				// assert
+				strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			/* =========================================================== */
 			/* Events module                                               */
 			/* =========================================================== */

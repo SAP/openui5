@@ -62,14 +62,20 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 		};
 
 		TargetHandler.prototype.navigate = function(oDirectionInfo) {
-			var aResultingNavigations = this._createResultingNavigations(oDirectionInfo.navigationIdentifier);
+			var aResultingNavigations = this._createResultingNavigations(oDirectionInfo.navigationIdentifier),
+				bCloseDialogs = false,
+				bBack = this._getDirection(oDirectionInfo),
+				bNavigationOccurred;
 
-			this._closeDialogs();
 			while (aResultingNavigations.length) {
-				this._applyNavigationResult(aResultingNavigations.shift().oParams, this._getDirection(oDirectionInfo));
+				bNavigationOccurred = this._applyNavigationResult(aResultingNavigations.shift().oParams, bBack);
+				bCloseDialogs = bCloseDialogs || bNavigationOccurred;
+			}
+
+			if (bCloseDialogs) {
+				this._closeDialogs();
 			}
 		};
-
 
 		/* =================================
 		 * private
@@ -86,14 +92,12 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 
 			if (oDirectionInfo.direction === "Backwards") {
 				bBack = true;
-			} else {
-				if (isNaN(iTargetViewLevel) || isNaN(this._iCurrentViewLevel) || iTargetViewLevel === this._iCurrentViewLevel) {
-					if (oDirectionInfo.askHistory) {
-						bBack = oHistory.getDirection() === "Backwards";
-					}
-				} else {
-					bBack = iTargetViewLevel < this._iCurrentViewLevel;
+			} else if (isNaN(iTargetViewLevel) || isNaN(this._iCurrentViewLevel) || iTargetViewLevel === this._iCurrentViewLevel) {
+				if (oDirectionInfo.askHistory) {
+					bBack = oHistory.getDirection() === "Backwards";
 				}
+			} else {
+				bBack = iTargetViewLevel < this._iCurrentViewLevel;
 			}
 
 			this._iCurrentViewLevel = iTargetViewLevel;
@@ -201,6 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 		 * @param {object} oParams the navigation parameters
 		 * @param {boolean} bBack forces the nav container to show a backwards transition
 		 * @private
+		 * @returns {boolean} if an navigation occured - if the page is already displayed false is returned
 		 */
 		TargetHandler.prototype._applyNavigationResult = function(oParams, bBack) {
 			var oTargetControl = oParams.targetControl,
@@ -217,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			//It is already the current page, no need to navigate
 			if (oTargetControl.getCurrentPage(bNextPageIsMaster).getId() === sViewId) {
 				$.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.m.routing.TargetHandler");
-				return;
+				return false;
 			}
 
 			$.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
@@ -236,6 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 				oTargetControl.to(sViewId, sTransition, oArguments, oTransitionParameters);
 			}
 
+			return true;
 		};
 
 

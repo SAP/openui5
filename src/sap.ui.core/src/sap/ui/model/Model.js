@@ -606,7 +606,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
 			}
 		}
-
+		if (!sPath && oContext) {
+			sResolvedPath = oContext.getPath();
+		}
 		// invariant: path never ends with a slash ... if root is requested we return /
 		if (sResolvedPath && sResolvedPath !== "/" && jQuery.sap.endsWith(sResolvedPath, "/")) {
 			sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
@@ -824,4 +826,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 
 	return Model;
 
-}, /* bExport= */ true);
+});

@@ -56,6 +56,13 @@
 		equal(sap.ui.core.format.DateFormat.getTimeInstance(oLocale).format(oDateTime), "08:46:13", "time with defaults for given locale");
 	});
 
+	test("format date with custom pattern for a specific locale", function () {
+		var oLocale = new sap.ui.core.Locale("de-DE");
+		equal(sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd MMM yyyy"}, oLocale).format(oDateTime), "11 Sep. 2001", "date with custom pattern for given locale");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "dd MMM yyyy hh:mm:ss a"}, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 vorm.", "datetime with custom pattern for given locale");
+		equal(sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a"}, oLocale).format(oDateTime), "08:46:13 vorm.", "datetime with custom pattern for given locale");
+	});
+
 	test("format custom date", function(){
 		var oDate = new Date("Wed Jul 4 12:08:56 2001"),
 			sCustomPattern,
@@ -303,21 +310,21 @@
 		oDate = oFormat.parse(sDate);
 		equal(oDate.getFullYear(), 1, "Fullyear is still 1");
 	});
-	
+
 	test("parse and format quarters", function(){
 		var oDate = new Date("Wed Jul 4 2001"),
 			oQuarter1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qq"}),
 			oQuarter2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqq"}),
 			oQuarter3 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqqq"}),
 			oQuarterCombined = sap.ui.core.format.DateFormat.getDateInstance({pattern: "EEE, MMM d yyyy, QQQ"});
-		
+
 		equal(oQuarter1.format(oDate), "03", "03");
 		equal(oQuarter2.format(oDate), "Q3", "Q3");
 		equal(oQuarter3.format(oDate), "3rd quarter", "3rd quarter");
 		equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
 		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
 	});
-	
+
 	test("origin info", function() {
 		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")

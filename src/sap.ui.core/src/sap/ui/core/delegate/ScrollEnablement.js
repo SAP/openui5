@@ -9,8 +9,8 @@
  */
 
 // Provides class sap.ui.core.delegate.ScrollEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
+	function(jQuery, Device, BaseObject) {
 	"use strict";
 
 
@@ -467,7 +467,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			onfocusin: function(evt) {
 				// on Android Inputs need to be scrolled into view
-				if (ScrollEnablement._bScrollToInput && sap.ui.Device.os.android) {
+				if (ScrollEnablement._bScrollToInput && Device.os.android) {
 					var element = evt.srcElement;
 					this._sTimerId && jQuery.sap.clearDelayedCall(this._sTimerId);
 					if (element && element.nodeName &&
@@ -483,7 +483,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			onAfterRendering : function() {
 				var that = this,
-					bBounce = (this._bounce !== undefined) ? this._bounce : sap.ui.Device.os.ios;
+					bBounce = (this._bounce !== undefined) ? this._bounce : Device.os.ios;
 
 				var $Content = $.sap.byId(this._sContentId);
 
@@ -491,9 +491,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 				// Fix for displaced edit box overlay on scrolled pages in Android 4.x browser:
 				var bDontUseTransform = (
-						!!sap.ui.Device.os.android &&
-						!sap.ui.Device.browser.chrome &&
-						(sap.ui.Device.os.version == 4) &&
+						!!Device.os.android &&
+						!Device.browser.chrome &&
+						(Device.os.version == 4) &&
 						$Content.find("input,textarea").length
 					);
 
@@ -789,7 +789,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				}
 
 				// Let container scroll into the configured directions
-				if (sap.ui.Device.os.ios) {
+				if (Device.os.ios) {
 					$Container
 						.css("overflow-x", this._bHorizontal ? "scroll" : "hidden")
 						.css("overflow-y", this._bVertical ? "scroll" : "hidden")
@@ -821,7 +821,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 				if (!(this._oPullDown && this._oPullDown._bTouchMode)
 					&& !this._fnScrollLoadCallback
-					&& !!!sap.ui.Device.browser.internet_explorer) {
+					&& !!!Device.browser.internet_explorer) {
 					// for IE the resize listener must remain in place for the case when navigating away and coming back.
 					// For the other browsers it seems to work fine without.
 					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
@@ -867,7 +867,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				// Drag instead of native scroll
 				// 1. when requested explicitly
 				// 2. bypass Windows Phone 8.1 scrolling issues when soft keyboard is opened
-				this._bDoDrag = this._bDragScroll || sap.ui.Device.os.windows_phone && /(INPUT|TEXTAREA)/i.test(document.activeElement.tagName);
+				this._bDoDrag = this._bDragScroll || Device.os.windows_phone && /(INPUT|TEXTAREA)/i.test(document.activeElement.tagName);
 
 				// find if container is scrollable vertically or horizontally
 				if (!this._scrollable) {
@@ -1063,7 +1063,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._refresh();
 
 				if (!$Container.is(":visible")
-					|| !!sap.ui.Device.browser.internet_explorer
+					|| !!Device.browser.internet_explorer
 					|| this._oPullDown
 					|| this._fnScrollLoadCallback) {
 					// element may be hidden and have height 0
@@ -1072,7 +1072,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 				// Set event listeners
 				$Container.scroll(jQuery.proxy(this._onScroll, this));
-				if (sap.ui.Device.support.touch) {
+				if (Device.support.touch) {
 					$Container
 						.on("touchcancel touchend", jQuery.proxy(this._onEnd, this))
 						.on("touchstart", jQuery.proxy(this._onStart, this))
@@ -1114,7 +1114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		function initDelegateMembers(oScrollerInstance, oConfig) {
 			var oDelegateMembers;
 
-			if (sap.ui.Device.support.touch || $.sap.simulateMobileOnDesktop) {
+			if (Device.support.touch || $.sap.simulateMobileOnDesktop) {
 				$.sap.require("jquery.sap.mobile");
 			}
 
@@ -1174,11 +1174,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 							}
 							if (sap.ui.getCore().getConfiguration().getRTL()) {
 								this._scrollX = 9999; // in RTL case initially scroll to the very right
-								if (sap.ui.Device.browser.internet_explorer) {
+								if (Device.browser.internet_explorer) {
 									this._bFlipX = true; // in IE RTL, scrollLeft goes opposite direction
 								}
 							}
-							if (sap.ui.Device.os.ios) {
+							if (Device.os.ios) {
 								this._oIOSScroll = {
 									iTimeStamp : 0,
 									bMomentum : false
@@ -1200,4 +1200,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 	return ScrollEnablement;
 
-}, /* bExport= */ true);
+});

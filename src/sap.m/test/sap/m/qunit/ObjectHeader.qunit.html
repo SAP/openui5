@@ -44,7 +44,7 @@
 	}), new sap.m.ProgressIndicator(ohBasicId + "-pi", {
 		visible : true,
 		enabled : true,
-		barColor : sap.ui.core.BarColor.NEUTRAL,
+		state : sap.ui.core.ValueState.NEUTRAL,
 		displayValue : '80%',
 		percentValue : 80,
 		showValue : true,
@@ -224,6 +224,27 @@
 
 		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
 		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+	});
+	
+	test("Attribute rerendered after being empty", function() {
+		var oOA = new sap.m.ObjectAttribute({text: "Test"});
+		var oOH = new sap.m.ObjectHeader({attributes: [oOA]});
+
+		oOH.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oOH.invalidate();
+		oOA.setText("");
+		sap.ui.getCore().applyChanges();
+
+		oOA.setText("rerendered");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		strictEqual(oOA.$("text").html(), "rerendered", "Attribute is rendered inside ObjectHeader");
+
+		// cleanup
+		oOH.destroy();
 	});
 
 	test("StatusesRendered", function() {
@@ -879,5 +900,6 @@
 	<div id="destroy-oh"></div>
 	<div id="flagAndFavorite-oh"></div>
 	<div id="titleArrowOH-oh"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

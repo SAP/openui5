@@ -7,7 +7,8 @@
 <script
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs="sap.m">
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-resourceroots='{"qunit": "../"}'>
 </script>
 
 <script>
@@ -254,47 +255,76 @@
 						oTargets.destroy();
 					});
 
-					module("Dialog closing");
-
-					test("Should close all dialogs", function () {
-						//Arrange
-						var hasInstances = function () {
-									return true;
-								},
-								oCloseAllPopoversSpy = this.spy(sap.m.InstanceManager, "closeAllPopovers"),
-								oCloseAllDialogsSpy = this.spy(sap.m.InstanceManager, "closeAllDialogs");
-
-						this.stub(sap.m.InstanceManager, "hasOpenPopover", hasInstances);
-						this.stub(sap.m.InstanceManager, "hasOpenDialog", hasInstances);
-
-						//System under Test
-						var oTargets = new TargetHandler();
-
-						//Act
-						oTargets.navigate({});
-
-						//Assert
-						strictEqual(oCloseAllPopoversSpy.callCount, 1, "did close the popups");
-						strictEqual(oCloseAllDialogsSpy.callCount, 1, "did close the dialogs");
-
-						oTargets.destroy();
+					QUnit.module("Dialog closing", {
+						setup: function () {
+							this.oStartPage = new Page();
+							this.oNavContainer = new NavContainer({
+								pages: [
+									this.oStartPage
+								]
+							});
+							this.oTargetHandler = new TargetHandler();
+						},
+						teardown: function () {
+							this.oNavContainer.destroy();
+							this.oTargetHandler.destroy();
+						}
 					});
 
-					test("Should set close all dialogs", function () {
-							//System under Test
-							var oTargets = new TargetHandler();
+					QUnit.test("Should close all dialogs", function () {
+						// Arrange
+						var bHasInstances = function () {
+								return true;
+							},
+							oCloseAllPopoversSpy = this.spy(sap.m.InstanceManager, "closeAllPopovers"),
+							oCloseAllDialogsSpy = this.spy(sap.m.InstanceManager, "closeAllDialogs"),
+							oTargetPage = new Page();
 
+						this.stub(sap.m.InstanceManager, "hasOpenPopover", bHasInstances);
+						this.stub(sap.m.InstanceManager, "hasOpenDialog", bHasInstances);
+
+						// Act
+						this.oTargetHandler.addNavigation({
+							view: oTargetPage,
+							targetControl: this.oNavContainer
+						});
+						this.oTargetHandler.navigate({});
+
+						// Assert
+						QUnit.strictEqual(oCloseAllPopoversSpy.callCount, 1, "did close the popups");
+						QUnit.strictEqual(oCloseAllDialogsSpy.callCount, 1, "did close the dialogs");
+
+						// Cleanup
+						oTargetPage.destroy();
+					});
+
+					QUnit.test("Should not close dialogs, if the current page is already displayed", function () {
+						// System under test
+						var fnCloseSpy = this.spy(this.oTargetHandler, "_closeDialogs");
+
+						// Act
+						this.oTargetHandler.addNavigation({
+							view: this.oStartPage,
+							targetControl: this.oNavContainer
+						});
+						this.oTargetHandler.navigate({});
+
+
+						// Assert
+						QUnit.strictEqual(fnCloseSpy.callCount, 0, "did not close the dialogs");
+					});
+
+					QUnit.test("Should set close all dialogs", function () {
 							//Assert
-							ok(oTargets.getCloseDialogs(), "default value is true");
+							QUnit.ok(this.oTargetHandler.getCloseDialogs(), "default value is true");
 
 							//Act
-							oTargets.setCloseDialogs(false);
+							this.oTargetHandler.setCloseDialogs(false);
 
 							//Assert
-							ok(!oTargets.getCloseDialogs(), "should return false after set to false");
-
-							oTargets.destroy();
+							QUnit.ok(!this.oTargetHandler.getCloseDialogs(), "should return false after set to false");
 					});
+
 
 					module("Direction determinator",{
 						setup: function () {

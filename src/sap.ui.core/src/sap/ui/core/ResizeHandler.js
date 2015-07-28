@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ResizeHandler
-sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.script'],
-	function(jQuery, Global, BaseObject/* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.script'],
+	function(jQuery, BaseObject/* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
 	// local logger, by default only logging errors
@@ -17,13 +17,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jque
 	var oCoreRef = null;
 
 	/** 
-	 * API for resize handling on registered DOM elements and controls.
-	 * 
-	 * This API provides firing of resize events on all browsers by regularly 
-	 * checking width and height of registered DOM elements and controls and firing events accordingly.
+	 * The resize handling API provides firing of resize events on all browsers by regularly 
+	 * checking the width and height of registered DOM elements or controls and firing events accordingly.
 	 * 
 	 * @namespace
 	 * @alias sap.ui.core.ResizeHandler
+	 * @author SAP SE
+	 * @version ${version}
 	 * @public
 	 */
 	
@@ -186,15 +186,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jque
 	};
 
 	/**
-	 * Registers the given handler for resize events on the given
-	 * DOM reference or Control.
-	 * In case the core is not initialized yet, the timer cannot be registered and this method
-	 * will return null. Please use sap.ui.getCore().attachInit() with a callback as parameter 
-	 * that calls ResizeHandler.register().
-	 *
-	 * @param {Element|sap.ui.core.Control} oRef the Control or the DOM reference for which the given handler should be registered (beside the window)
-	 * @param {function} fHandler the handler which should be called on a resize event
-	 * @return {string} Registration ID which can be used for deregistering
+	 * Registers the given event handler for resize events on the given DOM element or control.
+	 * 
+	 * <b>Note:</b> This function must not be used before the UI5 framework is initialized.
+	 * Please use the {@link sap.ui.core.Core#attachInit init event} of UI5 if you are not sure whether this is the case.
+	 * 
+	 * The resize handler periodically checks the dimensions of the registered reference. Whenever it detects changes, an event is fired.
+	 * Be careful when changing dimensions within the event handler which might cause another resize event and so on.
+	 * 
+	 * The available parameters of the resize event are:
+	 * <ul>
+	 * <li><code>oEvent.target</code>: The DOM element of which the dimensions were checked</li>
+	 * <li><code>oEvent.size.width</code>: The current width of the DOM element in pixels</li>
+	 * <li><code>oEvent.size.height</code>: The current height of the DOM element in pixels</li>
+	 * <li><code>oEvent.oldSize.width</code>: The previous width of the DOM element in pixels</li>
+	 * <li><code>oEvent.oldSize.height</code>: The previous height of the DOM element in pixels</li>
+	 * <li><code>oEvent.control</code>: The control which was given during registration of the event handler (if present)</li>
+	 * </ul>
+	 * 
+	 * @param {DOMRef|sap.ui.core.Control} oRef The control or the DOM reference for which the given event handler should be registered (beside the window)
+	 * @param {function} fHandler
+	 *             The event handler which should be called whenever the size of the given reference is changed.
+	 *             The event object is passed as first argument to the event handler. See the description of this function for more details about the available parameters of this event.
+	 * @return {string}
+	 *             A registration ID which can be used for deregistering the event handler, see {@link sap.ui.core.ResizeHandler.deregister}.
+	 *             If the UI5 framework is not yet initialized <code>null</code> is returned.
 	 * @public
 	 */
 	ResizeHandler.register = function(oRef, fHandler) {
@@ -205,9 +221,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jque
 	};
 
 	/**
-	 * Deregisters the registered handler for resize events with the given ID.
+	 * Deregisters a previously registered handler for resize events with the given registration ID.
 	 *
-	 * @param {string} sId Registration ID
+	 * @param {string} sId
+	 *            The registration ID of the handler to deregister. The ID was provided by function {@link sap.ui.core.ResizeHandler.register}
+	 *            when the handler was registered.
 	 * @public
 	 */
 	ResizeHandler.deregister = function(sId) {
@@ -220,7 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jque
 	/**
 	 * Deregisters all registered handler for resize events for the given control.
 	 *
-	 * @param {string} sControlId the control Id
+	 * @param {string} sControlId The Id of the control.
 	 * @private
 	 */
 	ResizeHandler.deregisterAllForControl = function(sControlId) {
@@ -242,4 +260,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/base/Object', 'jque
 
 	return ResizeHandler;
 
-}, /* bExport= */ true);
+});

@@ -21,7 +21,10 @@
 
 <!-- Test functions -->
 <script language="javascript">
-	
+	// Enable code coverage
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+
 	var sServiceUri = "/MockSrv/";
 	var sServiceUri2 = "/MockSrv2/";
 	var sServiceUri3 = "/DOESNOTEXIST/";
@@ -108,6 +111,310 @@
 		oServer.stop();
 		oServer.destroy();
 	});
+	
+	// Usually we should not test internal methods, but these might be candidates to be made publicly available
+	module("Internal methods");
+	
+	var mInternalTests = {
+		// Test data to check for
+		flightEntity: {
+			path: "/FlightCollection(1)",
+			fullName: "RMTSAMPLEFLIGHT_2.Flight",
+			namespace: "RMTSAMPLEFLIGHT_2",
+			name: "Flight",
+			setName: "FlightCollection"
+		},
+		carrierEntity: {
+			fullName: "RMTSAMPLEFLIGHT_2.Carrier",
+			name: "Carrier",
+			namespace: "RMTSAMPLEFLIGHT_2",
+			setName: "CarrierCollection"
+		},
+
+
+		functionImports: [{
+			path: "/Validate",
+			method: "GET",
+			returnType: "RMTSAMPLEFLIGHT_2.Flight",
+			parameter: [{
+				mode: "In", name: "AirLineID", type: "Edm.String"
+			}, {
+				mode: "In", name: "FlightConnectionID", type: "Edm.String"
+			}, {
+				mode: "In", name: "FlightDate", type: "Edm.DateTime"
+			}]
+		}, {
+			path: "/Validate2",
+			method: "GET",
+			entitySet: "RMTSAMPLEFLIGHT_2.Flight",
+			parameter: [{
+				mode: "In", name: "AirLineID", type: "Edm.String"
+			}, {
+				mode: "In", name: "FlightConnectionID", type: "Edm.String"
+			}, {
+				mode: "In", name: "FlightDate", type: "Edm.DateTime"
+			}]
+		}, {
+			path: "/Validate3",
+			method: "GET",
+			actionFor: "FlightCollection",
+			parameter: [{
+				mode: "In", name: "AirLineID", type: "Edm.String"
+			}, {
+				mode: "In", name: "FlightConnectionID", type: "Edm.String"
+			}, {
+				mode: "In", name: "FlightDate", type: "Edm.DateTime"
+			}]
+		}],
+		
+		
+		// Begin test methods
+		
+		"_getEntitySetByType method": function(oModel) {
+			expect(4);
+			var oMetadata = oModel.oMetadata;
+
+			var mEntityType = oMetadata._getEntityTypeByName(this.flightEntity.fullName)
+			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			
+			var mEntitySet = oMetadata._getEntitySetByType(mEntityType);
+			equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			
+			start();
+		},
+
+		"_getEntityTypeByName method": function(oModel) {
+			expect(3);
+			var oMetadata = oModel.oMetadata;
+			
+			// The rest is tested in testcase "_getEntitySetByType method" already
+			var oNull = oMetadata._getEntityTypeByName("");
+			equals(oNull, null, "Method returns null for empty path");
+			
+			var oInvalidMetadata = new sap.ui.model.odata.ODataMetadata("INVALID", {});
+			oNull = oInvalidMetadata._getEntityTypeByName(this.flightEntity.fullName);
+			equals(oNull, null, "Method returns null when metadata is not loaded path");
+			oInvalidMetadata.destroy();
+			equals(oInvalidMetadata.oMetadata, undefined, "Internal metadata object deleted");
+			
+			start();
+		},
+		
+		"_getEntitySetByPath method": function(oModel) {
+			expect(4);
+			var oMetadata = oModel.oMetadata;
+			
+			var mEntitySet = oMetadata._getEntitySetByPath(this.flightEntity.path);
+			equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			
+			var mEntityType = oMetadata._getEntityTypeByName(mEntitySet.entityType)
+			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			
+			start();
+		},
+		
+		"_getEntityTypeByPath method": function(oModel) {
+			expect(15);
+			var oMetadata = oModel.oMetadata;
+
+			var mEntityType = oMetadata._getEntityTypeByPath(this.flightEntity.path);
+			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			
+			var mEntitySet = oMetadata._getEntitySetByType(mEntityType);
+			equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			
+			var oNull = oMetadata._getEntityTypeByPath("");
+			equals(oNull, null, "Method returns null for empty path");
+			
+			var oInvalidMetadata = new sap.ui.model.odata.ODataMetadata("INVALID", {});
+			oNull = oInvalidMetadata._getEntityTypeByPath(this.flightEntity.path);
+			equals(oNull, null, "Method returns null when metadata is not loaded path");
+			oInvalidMetadata.destroy();
+			equals(oInvalidMetadata.oMetadata, undefined, "Internal metadata object deleted");
+			
+			var mNavigEntityType = oMetadata._getEntityTypeByPath(this.flightEntity.path + "/FlightCarrier");
+			equals(mNavigEntityType.namespace, this.carrierEntity.namespace, "Entity namespace has correct value");
+			equals(mNavigEntityType.name, this.carrierEntity.name, "Entity name has correct value");
+			
+			var mNavigEntitySet = oMetadata._getEntitySetByType(mNavigEntityType);
+			equals(mNavigEntitySet.entityType, this.carrierEntity.fullName, "Full Entity name in EntitySet has correct value");
+			equals(mNavigEntitySet.name, this.carrierEntity.setName, "EntitySet name has correct value");
+
+			// TODO: Only "Validate2" works here because it has an EntitySet
+			var mFunctionEntityType = oMetadata._getEntityTypeByPath("/Validate2");
+			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			
+			var mFunctionEntitySet = oMetadata._getEntitySetByType(mFunctionEntityType);
+			equals(mFunctionEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			equals(mFunctionEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+
+			start();
+		},
+		
+		"_getFunctionImportMetadata method": function(oModel) {
+			expect(this.functionImports.length * (6 + /* numValidateParams: */ 3 * 3));
+			
+			var oMetadata = oModel.oMetadata;
+			var fnGetEntityType = function(mFunctionInfo) {
+				// Search for "action-for" annotation
+				var sActionFor = null;
+				if (mFunctionInfo.extensions) {
+					for (var i = 0; i < mFunctionInfo.extensions.length; ++i) {
+						if (mFunctionInfo.extensions[i].name === "action-for") {
+							sActionFor = mFunctionInfo.extensions[i].value;
+							break;
+						}
+					}
+				}
+				
+				var mEntityType;
+				if (sActionFor) {
+					mEntityType = oMetadata._getEntityTypeByName(sActionFor);
+				} else if (mFunctionInfo.entitySet) {
+					mEntityType = oMetadata._getEntityTypeByPath(mFunctionInfo.entitySet);
+				} else if (mFunctionInfo.returnType) {
+					mEntityType = oMetadata._getEntityTypeByName(mFunctionInfo.returnType);
+				}
+				
+				return mEntityType;
+			};
+			
+			for (var i = 0; i < this.functionImports.length; ++i) {
+				var mFunction = this.functionImports[i];
+				var mFunctionInfo = oMetadata._getFunctionImportMetadata(mFunction.path, mFunction.method);
+				
+				equals(mFunctionInfo.returnType, mFunction.returnType, "ReturnType is correctly set");
+				equals(mFunctionInfo.httpMethod, mFunction.method, "Method is correctly set");
+				
+				for (var n = 0; n < mFunction.parameter.length; ++n) {
+					equals(mFunctionInfo.parameter[n].mode, mFunction.parameter[n].mode, "Parameter " + (n + 1) + " mode is correctly set");
+					equals(mFunctionInfo.parameter[n].name, mFunction.parameter[n].name, "Parameter " + (n + 1) + " name is correctly set");
+					equals(mFunctionInfo.parameter[n].type, mFunction.parameter[n].type, "Parameter " + (n + 1) + " type is correctly set");
+				}
+
+				// All function imports always work on RMTSAMPLEFLIGHT_2.Flight
+				var mEntityType = fnGetEntityType(mFunctionInfo);
+				equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+				equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+				
+				var mEntitySet = oMetadata._getEntitySetByType(mEntityType);
+				equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+				equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			}
+			
+			start();
+		}
+	}
+	
+	
+	var oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
+
+	var oModelV1 = initModel(sServiceUri);
+	pModelV1MetadataLoaded = new Promise(function(fnResolve, fnReject) {
+		oModelV1.attachMetadataLoaded(fnResolve);
+		oModelV1.attachMetadataFailed(fnReject);
+	});
+	var oModelV2 = initModelV2(sServiceUri);
+	
+	
+	var fnWrapMetadataReady = function(fnRealTest) {
+		if (oModel instanceof sap.ui.model.odata.v2.ODataModel) {
+			oModel.metadataLoaded().then(fnRealTest);
+		} else {
+			pModelV1MetadataLoaded.then(fnRealTest);
+		}
+	};
+
+	for (var sTest in mInternalTests) {
+		if (typeof mInternalTests[sTest] !== "function") {
+			// Ignore test data
+			continue;
+		}
+
+		asyncTest("V1: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV1)));
+		asyncTest("V2: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV2)));
+	}
+	
+	
+	
+	
+	var fnTestAnnotations = function(oModel) {
+		expect(12);
+		var oMetadata = oModel.oMetadata;
+		
+		equals(
+			oMetadata._getAnnotation("/FlightCollection(1)/AirLineID/#@sap:label"),
+			"Airline",
+			"Airline label annotation correctly read"
+		);
+		equals(
+			oMetadata._getAnnotation("/FlightCollection(1)/TotalBookingsSum/#@sap:unit"),
+			"LocalCurrencyCode",
+			"Total Bookings Sum unit annotation correctly read"
+		);
+		equals(
+			oMetadata._getAnnotation("/FlightCollection(1)/FlightConnectionID/#@maxLength"),
+			"4",
+			"Flight Connection ID MaxLength attribute correctly read"
+		);
+		
+		equals(
+			oMetadata._getAnnotation("/#Flight/AirLineID/@sap:label"),
+			"Airline",
+			"Airline label annotation correctly read"
+		);
+		equals(
+			oMetadata._getAnnotation("/#Flight/TotalBookingsSum/@sap:unit"),
+			"LocalCurrencyCode",
+			"Total Bookings Sum unit annotation correctly read"
+		);
+		equals(
+			oMetadata._getAnnotation("/#Flight/FlightConnectionID/@maxLength"),
+			"4",
+			"Flight Connection ID MaxLength attribute correctly read"
+		);
+		
+		
+		var mEntityType = oMetadata._getEntityTypeByPath("/FlightCollection(1)");
+		var mObject = oMetadata._getPropertyMetadata(mEntityType, "AirLineID")
+		
+		var mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["com.sap.test.ui5"]);
+		ok(!!mAnnotation, "Annotation object found");
+		ok(!!mAnnotation.extensions, "Annotation extension object found");
+		ok(Array.isArray(mAnnotation.extensions) && !!mAnnotation.extensions.length > 0, "Filled annotation extension array found");
+		equals(mAnnotation.extensions[0].value, "AirLineID Annotation", "Correct value for AirLineID annotation");
+		
+		mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["AirLineID", "com.sap.test.ui5"]);
+		equals(mAnnotation, undefined, "No annotation object for multiple parts");
+		
+		
+		var mLabelAnnotation = oMetadata._getAnnotationObject(mEntityType, mObject, "sap:label")
+		deepEqual(
+			mLabelAnnotation,
+			{ name: "label", value: "Airline", namespace: "http://www.sap.com/Protocols/SAPData" },
+			"Label Annotation correctly resolved"
+		);
+		
+		start()
+	};
+	
+	asyncTest("V1: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
+	asyncTest("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
+	
+	
+	
+	
+	
+	
+	
+	
 	</script>
 
 </head>

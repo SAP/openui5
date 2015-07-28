@@ -43,6 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 			mAttributes["id"] = oDP.getId() + "-icon";
 			mAttributes["tabindex"] = "-1"; // to get focus events on it, needed for popup autoclose handling
+			mAttributes["title"] = null;
 			oRm.write('<div class="sapMInputValHelp">');
 			oRm.writeIcon("sap-icon://appointment-2", aClasses, mAttributes);
 			oRm.write("</div>");

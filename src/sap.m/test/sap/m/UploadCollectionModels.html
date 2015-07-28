@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>sap.m.UploadCollection Models Check</title>
+<script src="../../../resources/sap-ui-core.js" type="text/javascript"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-xx-bindingSyntax='complex'>
+</script>
+<script id="myXml" type="text/xmldata">
+   <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" displayBlock="true">
+	  <App>
+		 <Page title="The purpose of this page is to check the inheritance of models to sub controls.">
+			<UploadCollection fileType="undefined" maximumFilenameLength="0" maximumFileSize="0" id="__collection0" sameFilenameAllowed="true" showSeparators="All" items="{/itemCol}">
+				<items>
+					<UploadCollectionItem contributor="{lastName}" fileName="{name}" fileSize="0" id="__item0" uploadedDate="{rating}"/>
+				</items>
+			</UploadCollection>
+		 </Page>
+	  </App>
+   </mvc:View>
+  </script>
+
+<script>
+	sap.ui.controller("myController", {
+		onInit : function() {
+			var model = new sap.ui.model.json.JSONModel();
+			model.setData({
+				itemCol : [{
+					lastName : "{Dente}",
+					name : "{Al}",
+					checked : true,
+					linkText : "www.sap.com",
+					href : "http://www.sap.com",
+					rating : "{4}"
+				}, {
+					lastName : "{Doe}",
+					name : "{John}",
+					checked : true,
+					linkText : "www.sap.com",
+					href : "http://www.sap.com",
+					rating : "{5}"
+				}, {
+					lastName : "{Carlin}",
+					name : "{George}",
+					checked : true,
+					linkText : "www.sap.com",
+					href : "http://www.sap.com",
+					rating : "{4}"
+				}, {
+					lastName : "Dente",
+					name : "Al",
+					checked : true,
+					linkText : "www.sap.com",
+					href : "http://www.sap.com",
+					rating : "4"
+				}],
+				textExp : "{someBindingSyntax}",
+				textVal : "Proper text binding"
+			});
+			this.getView().setModel(model);
+		}
+	});
+	sap.ui.view({
+		viewContent : jQuery('#myXml').html(),
+		type : sap.ui.core.mvc.ViewType.XML
+	}).placeAt("content")
+</script>
+
+</head>
+<body class='sapUiBody'>
+	<div id='content'></div>
+</body>
+</html>

@@ -352,6 +352,7 @@
 
 			// Act
 			this.oTarget.display(oData);
+			this.clock.tick(0);
 
 			// Assert
 			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");

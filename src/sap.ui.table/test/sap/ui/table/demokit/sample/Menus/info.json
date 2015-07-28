@@ -1,0 +1,18 @@
+[
+	{
+		"title" : "Column 'Product Name'",
+		"text"	: "The header menu of column 1 shows all standard items for sorting, filtering, freezing (fixed columns, depends on toggle state of the button in the toolbar) and column visibility (depends also on toggle state of the button in the toolbar). If the cell filter is active (can also be switched on via a button) additionally a context menu is available on a cell of the column."
+	},{
+		"title" : "Column 'Product Id'",
+		"text"	: "Like Column 1, but instead of the default cell filter context menu the cellContextmenu event is used to implement a custom context menu."
+	},{
+		"title" : "Column 'Image'",
+		"text"	: "No header menu at all because the default of the columnSelect event is prevented."
+	},{
+		"title" : "Column 'Quantity'",
+		"text"	: "A custom header menu is implemented and replaces the default menu."
+	},{
+		"title" : "Column 'Delivery Date'",
+		"text"	: "The default header menu is used. The column does not allow sorting or filtering. Therefore a menu is only shown if freezing or the column visibility feature is activated."
+	}
+]

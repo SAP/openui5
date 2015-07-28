@@ -20,9 +20,11 @@
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 
 	<script type="text/javascript">
 		var core = sap.ui.getCore();
+		var delay = 500;
 
 		test("ShouldRenderNiceHtml", function() {
 			// SUT
@@ -105,14 +107,14 @@
 
 		});
 
-		test("ShouldMoveATile", function() {
+		test("ShouldMoveATile", function(assert) {
+			var done = assert.async();
 			// Arrange
 			var m = sap.m,
 				tile0 = new m.StandardTile(),
 				tile1 = new m.CustomTile(),
 				tiles = [tile0,tile1],
-				sut,
-				i;
+				sut;
 
 			// SUT
 			sut = new m.TileContainer({tiles : tiles});
@@ -120,15 +122,18 @@
 			// Act
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
-			sut.moveTile(tile0,1);
+			setTimeout(function(){
+				sut.moveTile(tile0,1);
 
-			// Assert
-			strictEqual(sut.getTiles()[0], tile1);
-			strictEqual(sut.getTiles()[1], tile0);
+				// Assert
+				strictEqual(sut.getTiles()[0], tile1);
+				strictEqual(sut.getTiles()[1], tile0);
 
 
-			// Cleanup
-			sut.destroy();
+				// Cleanup
+				sut.destroy();
+				done();
+			}.bind(this), delay);
 		});
 
 		test("ShouldInsertATile", function() {
@@ -146,7 +151,7 @@
 			sut.addTile(tileToAdd);
 
 			// Assert
-			strictEqual(sut.getTiles()[0], tileToAdd)
+			strictEqual(sut.getTiles()[0], tileToAdd);
 
 			// Cleanup
 			sut.destroy();
@@ -169,13 +174,14 @@
 			sut.deleteTile(tileToDelete);
 
 			// Assert
-			strictEqual(sut.getTiles().length, 0)
+			strictEqual(sut.getTiles().length, 0);
 
 			// Cleanup
 			sut.destroy();
 		});
 
-		asyncTest("ShouldApplyDimensions", function() {
+		test("ShouldApplyDimensions", function(assert) {
+			var done = assert.async();
 			// Arrange
 			var sut,
 				id,
@@ -220,14 +226,14 @@
 				equal($leftEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","left edge top");
 				equal($leftEdge.css("left"),expectedOffset + "px");
 
-				start();
 				// Cleanup
 				sut.destroy();
-
-			},100);
+				done();
+			}.bind(this),delay);
 		});
 
-		test("ShouldScrollIntoAView", function() {
+		test("ShouldScrollIntoAView", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var sut,
 				m = sap.m,
@@ -238,134 +244,32 @@
 			sut = new m.TileContainer({tiles : new m.StandardTile()});
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
-			sut._calculatePositions();
-
-			//Add one more Tile than total amount of Tiles fitting in the current container
-			while(sut._iMaxTiles +1 > sut.getTiles().length){
-				lastTile = new m.StandardTile();
-				sut.addTile(lastTile);
+			setTimeout(function() {
 				sut._calculatePositions();
-			}
 
-			//Act
-			sut.scrollIntoView(lastTile,false);
+				//Add one more Tile than total amount of Tiles fitting in the current container
+				while(sut._iMaxTiles +1 > sut.getTiles().length){
+					lastTile = new m.StandardTile();
+					sut.addTile(lastTile);
+					sut._calculatePositions();
+				}
 
-			//Assert
-			equal(sut._iCurrentPage, 1);
-			equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
+				//Act
+				sut.scrollIntoView(lastTile,false);
 
-			//Cleanup
-			sut.destroy();
+				//Assert
+				equal(sut._iCurrentPage, 1);
+				equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
+
+				//Cleanup
+				sut.destroy();
+				done();
+			}.bind(this), delay);
+
 		});
 
-
-		test('ShouldHaveAccessibilityAttributes', function () {
-			// SUT
-			var m 	  	= sap.m,
-				tile 	= new m.StandardTile(),
-				tiles 	= [tile],
-				sut 	= new m.TileContainer({tiles: tiles});
-
-			sut.placeAt("qunit-fixture");
-
-			// Act
-			core.applyChanges();
-
-			// Assert
-			equal(sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
-			equal(sut.$().attr('aria-multiselectable'), "false", 'false, false; equal success');
-			equal(sut.$().attr('aria-activedescendant'), tile.getId());
-
-			sut.destroy();
-		});
-
-
-		test('ShouldHaveProperAccessibilityAttributesValues', function () {
-			// SUT
-			var m 	  	= sap.m,
-					tile1 	= new m.StandardTile(),
-					tile2 	= new m.StandardTile(),
-					tiles 	= [tile1, tile2],
-					sut 	= new m.TileContainer({tiles: tiles});
-
-			sut.placeAt("qunit-fixture");
-
-			// Act
-			core.applyChanges();
-
-			// Assert
-			equal(tile1.$().attr('aria-posinset'), 1, '1, 1; equal success');
-			equal(tile1.$().attr('aria-setsize'), 2, '2, 2; equal success');
-
-			sut.destroy();
-		});
-
-
-		test('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function () {
-			// SUT
-			var m 	  	= sap.m,
-				sut 	= new m.TileContainer({
-					tiles: [
-						new m.StandardTile({id: 'first'}),
-						new m.StandardTile({id: 'second'}),
-						new m.StandardTile({id: 'third'}),
-						new m.StandardTile({id: 'fourth'}),
-						new m.StandardTile({id: 'fifth'}),
-						new m.StandardTile({id: 'sixth'})
-					]
-				});
-
-			sut.placeAt("qunit-fixture");
-
-			// Act
-			core.applyChanges();
-
-			// build an array with the posinset values for each tile
-			var aInsetPositions = [];
-			sut.getTiles().forEach(function (tile) {
-				aInsetPositions.push(tile.$().attr('aria-posinset'))
-			});
-
-			// Assert that there are 6 tiles with aria-posinset attribute
-			equal(aInsetPositions.length, "6", '6, 6; equal success');
-
-			// Assert that all tiles have aria-posinset attribute with proper values:
-			// no duplicates and proper numeric order
-			var aExpectedResult = ['1', '2', '3', '4', '5', '6'];
-			var aActualResult = [];
-			sut.getTiles().forEach(function (tile) {
-				aActualResult.push(tile.$().attr('aria-posinset'));
-			});
-			deepEqual(aActualResult, aExpectedResult);
-
-			// Assert that all tiles have aria-posinset attribute with proper values
-			// after a tile has changed its position from left to right
-			aActualResult = [];
-			sut.moveTile(sut.getTiles()[0], 3);
-			sut.getTiles().forEach(function (tile) {
-				aActualResult.push(tile.$().attr('aria-posinset'));
-			});
-			deepEqual(aActualResult, aExpectedResult);
-			// Assert that the tile was actually moved
-			equal(sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
-
-
-			// Assert that all tiles have aria-posinset attribute with proper values
-			// after a tile has changed its position from right to left
-			var aExpectedResult = ['1', '2', '3', '4', '5', '6'];
-			var aActualResult = [];
-			sut.moveTile(sut.getTiles()[4], 1);
-			sut.getTiles().forEach(function (tile) {
-				aActualResult.push(tile.$().attr('aria-posinset'));
-			});
-			deepEqual(aActualResult, aExpectedResult);
-			// Assert that the tile was actually moved
-			equal(sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
-
-			sut.destroy();
-		});
-
-		test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function () {
+		test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function (assert) {
+			var done = assert.async();
 			// SUT
 			var m 	  	= sap.m,
 				sut 	= new m.TileContainer('testOrder', {
@@ -383,15 +287,217 @@
 
 			// Act
 			core.applyChanges();
-			sut.moveTile(sut.getTiles()[0], 3);
-			var aTilesDom = jQuery('.sapMTile');
+			setTimeout(function() {
+				sut.moveTile(sut.getTiles()[0], 3);
+				var aTilesDom = jQuery('.sapMTile');
 
-			// Assert that the index of the tile in the DOM is the same as the index of aggregation
-			equal(sut.getTiles()[3].getId(), jQuery(aTilesDom[3]).attr('id'), 'first, first; equal success');
+				// Assert that the index of the tile in the DOM is the same as the index of aggregation
+				equal(sut.getTiles()[3].getId(), jQuery(aTilesDom[3]).attr('id'), 'first, first; equal success');
 
-			sut.destroy();
+				sut.destroy();
+				done();
+			}.bind(this), delay);
 		});
 
+		module("Tile common dimension calculation", {
+			beforeEach: function () {
+				this.prepare();
+			},
+			afterEach: function () {
+				this.clean();
+			},
+			prepare : function() {
+				this.sandbox = sinon.sandbox.create();
+				this.sOriginalTheme = sap.ui.getCore().getConfiguration().getTheme();
+				// SUT
+				this.sut = new sap.m.TileContainer('testOrder', {
+					tiles: [
+						new sap.m.StandardTile({id: 'first'}),
+						new sap.m.StandardTile({id: 'second'})
+					]
+				});
+			},
+			clean : function() {
+				sap.ui.getCore().applyTheme(this.sOriginalTheme);
+				this.sandbox.restore();
+				this.sut.destroy();
+			},
+			mockElementWidthAndHeight : function (iWidth, iHeight) {
+				if (this.oStubWidth) {
+					this.oStubWidth.restore();
+				}
+				this.oStubWidth = this.sandbox.stub(jQuery.fn, "outerWidth", function () {
+					return iWidth;
+				});
+
+				if (this.oStubHeight) {
+					this.oStubHeight.restore();
+				}
+				this.oStubHeight = this.sandbox.stub(jQuery.fn, "outerHeight", function () {
+					return iHeight;
+				});
+			},
+			callAndTest : function(oFnThatProvokesTileDimensionChanges, args, assert) {
+				var done = assert.async();
+				//mock
+				this.mockElementWidthAndHeight(3, 5);
+				// Act
+				this.sut.placeAt("qunit-fixture");
+				core.applyChanges();
+				setTimeout(function() {
+					var sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
+					equal(3, sRealTileDimension.width, "Width check");
+					equal(5, sRealTileDimension.height, "Height check");
+
+					// "change" the tile's dimension and verify they didn't take place unless an event that
+					// provokes change occurs
+					this.mockElementWidthAndHeight(30, 50);
+					sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
+					equal(sRealTileDimension.width, 3, "Tile's width should retain the same as before");
+					equal(sRealTileDimension.height, 5, "Tile's height should retain the same as before");
+
+					//provoke real tile dimension change
+
+					oFnThatProvokesTileDimensionChanges.apply(this.sut, args);
+					setTimeout(function() {
+						sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
+						equal(sRealTileDimension.width, 30, "Tile's width should be changed.");
+						equal(sRealTileDimension.height, 50, "Tile's height should be changed.");
+						done();
+					}.bind(this), 1000);
+				}.bind(this), 1000);
+			}
+		});
+		test('Tile dimension gets updated upon orientation changes', function (assert) {
+			var done = assert.async();
+			//emulate device that supports orientation change
+			var bOrigTablet = sap.ui.Device.system.tablet;
+			var bOrigDesktop = sap.ui.Device.system.desktop;
+			sap.ui.Device.system.tablet = true;
+			sap.ui.Device.system.desktop = false;
+
+			this.clean();
+			this.prepare();
+			setTimeout(function(){
+				this.callAndTest(this.sut._fnOrientationChange, [], assert);
+				sap.ui.Device.system.tablet = bOrigTablet;
+				sap.ui.Device.system.desktop = bOrigDesktop;
+				done();
+			}.bind(this), delay);
+		});
+
+		test('Tile dimension gets updated upon themeChanges handler called', function (assert) {
+			this.callAndTest(this.sut.onThemeChanged, [], assert);
+		});
+
+		test('Tile dimension gets updated upon real theme change', function (assert) {
+			this.callAndTest(sap.ui.getCore().applyTheme, ["sap_hcb"], assert);
+		});
+
+		module("Accessability attributes", {
+			getAriaPosInSetValues: function() {
+				return this.sut.getTiles().map(function (tile) {
+					return tile.$().attr('aria-posinset');
+				});
+			},
+			getExpectedAriaPositionInSetValues: function() {
+				return this.sut.getTiles().map(function(oTile, iIndex) {
+					return (iIndex + 1).toString();
+				});
+			},
+			beforeEach: function() {
+				var m = sap.m;
+				this.sut = new m.TileContainer("tcAcc", {
+					tiles: [
+						new m.StandardTile({id: 'first'}),
+						new m.StandardTile({id: 'second'}),
+						new m.StandardTile({id: 'third'}),
+						new m.StandardTile({id: 'fourth'}),
+						new m.StandardTile({id: 'fifth'}),
+						new m.StandardTile({id: 'sixth'})
+					]
+				});
+
+				// SUT
+				this.sut.placeAt("qunit-fixture");
+				// Act
+				core.applyChanges();
+			},
+			afterEach: function() {
+				this.sut.destroy();
+			}
+		});
+		test('ShouldHaveAccessibilityAttributes', function () {
+			var tile1 	= this.sut.getTiles()[0];
+			// Assert
+			equal(this.sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
+			equal(this.sut.$().attr('aria-multiselectable'), "false", 'false, false; equal success');
+			equal(this.sut.$().attr('aria-activedescendant'), "first");
+			// Assert
+			equal(tile1.$().attr('aria-posinset'), 1, '1, 1; equal success');
+			equal(tile1.$().attr('aria-setsize'), this.sut.getTiles().length, 'aria-setsize');
+		});
+
+		test('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function (assert) {
+			var done = assert.async();
+			// SUT
+			// build an array with the "aria-posinset" values for each tile
+			// Act
+			setTimeout(function(){
+				var aInsetPositions = this.getAriaPosInSetValues(),
+					aExpectedAriaPosInSetValues = this.getExpectedAriaPositionInSetValues();
+
+				// Assert that there are 6 tiles with aria-posinset attribute
+				equal(aInsetPositions.length, "6", '6, 6; equal success');
+
+				// Assert that all tiles have aria-posinset attribute with proper values:
+				// no duplicates and proper numeric order
+
+				deepEqual(aInsetPositions, aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+
+				// Assert that all tiles have aria-posinset attribute with proper values
+				// after a tile has changed its position from left to right
+				this.sut.moveTile(this.sut.getTiles()[0], 3);
+				deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+				// Assert that the tile was actually moved
+				equal(this.sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
+
+
+				// Assert that all tiles have aria-posinset attribute with proper values
+				// after a tile has changed its position from right to left
+				this.sut.moveTile(this.sut.getTiles()[4], 1);
+				deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+
+				// Assert that the tile was actually moved
+				equal(this.sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
+				done();
+			}.bind(this), delay);
+		});
+
+		test("Deletion of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
+			var done = assert.async();
+			var oTile2 = this.sut.getTiles()[2];
+
+			setTimeout(function(){
+				this.sut.deleteTile(oTile2);
+				deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+				oTile2.destroy();
+				done();
+			}.bind(this), delay);
+		});
+
+		test("Insert of tile updates the aria-posinset and aria-setsize attributes", function() {
+			var oNewTile = new sap.m.StandardTile();
+			this.sut.insertTile(oNewTile, 4);
+
+			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+		});
+
+		test("Add of tile updates the aria-posinset and aria-setsize attributes", function() {
+			var oNewTile = new sap.m.StandardTile();
+			this.sut.addTile(oNewTile);
+			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+		});
 	</script>
 </head>
 

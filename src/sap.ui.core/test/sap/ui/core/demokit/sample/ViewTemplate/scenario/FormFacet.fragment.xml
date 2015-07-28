@@ -8,6 +8,7 @@
 		<form:title>
 			<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 		</form:title>
+		<core:ExtensionPoint name="afterTitle"/>
 
 		<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
 			<template:if test="{target>Data}"><!-- TODO isArray?! -->

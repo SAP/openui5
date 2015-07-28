@@ -9,13 +9,13 @@
  */
 sap.ui.define([
 		'jquery.sap.global',
+		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
-		'sap/ui/core/UIComponent',
 		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, MockServer, UIComponent, ODataModel) {
+	], function(jQuery, BaseComponent, MockServer, ODataModel) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
+	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
 		metadata : "json",
 
 		createContent : function () {
@@ -29,7 +29,12 @@ sap.ui.define([
 				sClient = oUriParameters.get("sap-client"),
 				sValueList = oUriParameters.get("sap-value-list");
 
-			if (oUriParameters.get("realOData") !== "true") {
+			if (oUriParameters.get("realOData") === "true") {
+				if (sClient) {
+					sServiceUri += "?sap-client=" + sClient;
+				}
+				sServiceUri = this.proxy(sServiceUri);
+			} else {
 				oMockServer = new MockServer({rootUri : sServiceUri});
 				oMockServer.simulate(sMockServerBaseUri + (sValueList === "none" ?
 						"metadata_none.xml" : "metadata.xml"), {
@@ -122,13 +127,6 @@ sap.ui.define([
 						})
 					}).start();
 				}
-			} else {
-				if (sClient) {
-					sServiceUri += "?sap-client=" + sClient;
-				}
-				if (location.hostname === "localhost") { // for local testing prefix with proxy
-					sServiceUri = "proxy" + sServiceUri;
-				}
 			}
 			oModel = new ODataModel(sServiceUri, {
 				metadataUrlParams : sValueList ? {"sap-value-list" : sValueList} : undefined,
@@ -140,9 +138,12 @@ sap.ui.define([
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"
 			});
+		},
+
+		exit : function () {
+			MockServer.destroyAll();
 		}
 	});
 
 	return Component;
-
 });

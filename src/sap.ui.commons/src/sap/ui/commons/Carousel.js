@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new Carousel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {Object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Carousel holds multiple controls and displays them vertical or horizontal next to each other. You can define how many content items should be displayed at once or let the carousel determine that for you. Navigation is done through buttons or keys.
+	 * Carousel holds multiple controls and displays them vertically or horizontally next to each other. You can define how many content items should be displayed at once or let the Carousel determine that for you. Navigation is done through buttons or keys.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -34,32 +34,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * Can be either "horizontal" or "vertical"
+			 * Determines the orientation of the Carousel. Can be either "horizontal" or "vertical"
 			 */
 			orientation : {type : "sap.ui.commons.enums.Orientation", group : "Misc", defaultValue : sap.ui.commons.enums.Orientation.horizontal},
 
 			/**
-			 * Width of carousel
+			 * Determines the width of the Carousel
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
 			/**
-			 * Height of carousel
+			 * Determines the height of the Carousel
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
 			/**
-			 * Default height of item in carousel if no height can be determined
+			 * Default height of the item in a carousel if no height can be determined
 			 */
 			defaultItemHeight : {type : "int", group : "Misc", defaultValue : 150},
 
 			/**
-			 * Default width of item in carousel if no height can be determined
+			 * Default width of the item in a carousel if no height can be determined
 			 */
 			defaultItemWidth : {type : "int", group : "Misc", defaultValue : 150},
 
 			/**
-			 * Duration for animation when navigating through children
+			 * Duration for animation when navigating through the contents of the Carousel
 			 */
 			animationDuration : {type : "int", group : "Misc", defaultValue : 500},
 
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			visibleItems : {type : "int", group : "Misc", defaultValue : null},
 
 			/**
-			 * Size of the handle in pixels. (Height for vertical carousel, width for horizontal carousel)
+			 * Determines the size of the handle in pixels. (Height for vertical carousel, width for horizontal carousel)
 			 */
 			handleSize : {type : "int", group : "Misc", defaultValue : 22},
 
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * Controls which are displayed inside the carousel
+			 * Controls which are displayed inside the Carousel
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
 		}
@@ -92,7 +92,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Initialize the carousel control
-	 *
 	 * @private
 	 */
 	Carousel.prototype.init = function() {
@@ -103,7 +102,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Clean up control when it is destroyed
-	 *
 	 * @private
 	 */
 	Carousel.prototype.exit = function() {
@@ -117,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * If one of the navigation buttons is clicked we trigger the navigation
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onclick = function(oEvent) {
@@ -137,7 +135,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Used for before-rendering initialization.
-	 *
 	 * @private
 	 */
 	Carousel.prototype.onBeforeRendering = function() {
@@ -150,7 +147,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Used for after-rendering initialization.
-	 *
 	 * @private
 	 */
 	Carousel.prototype.onAfterRendering = function() {
@@ -176,7 +172,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Initialize item navigation
-	 *
 	 * @private
 	 */
 	Carousel.prototype._initItemNavigation = function() {
@@ -223,7 +218,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Destroy item navigation
-	 *
 	 * @private
 	 */
 	Carousel.prototype._destroyItemNavigation = function() {
@@ -235,7 +229,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Called after the theme has been switched. Some adjustments required.
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onThemeChanged = function (oEvent) {
@@ -245,7 +239,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Focus in handling
 	 * handles the focus when you tab into the control
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onfocusin = function(oEvent) {
@@ -266,7 +260,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * If we are in action mode we only allow tabbing within the selected element
 	 * else we focus on the next element in the tab chain (not in the carousel item)
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onsaptabnext = function(oEvent) {
@@ -289,7 +283,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * If we are in action mode we only allow tabbing within the selected element
 	 * else we focus on the previous element in the tab chain (not in the carousel item)
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onsaptabprevious = function(oEvent) {
@@ -311,8 +305,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * handle the ESCAPE key to leave the action mode
-	 *
+	 * Handle the ESCAPE key to leave the action mode
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onsapescape = function(oEvent) {
@@ -321,7 +315,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Trigger the navigation to the next item and stop current animations (if available)
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onsapnext = function(oEvent) {
@@ -336,7 +330,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Trigger the navigation to the previous item and stop current animations (if available)
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onsapprevious = function(oEvent) {
@@ -350,9 +344,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * If in action mode and F2 is pressed we leave the action mode
-	 * If not in action mode and F2 or enter is pressed we enter the action mode
-	 *
+	 * If in action mode and F2 or ENTER are pressed the user exits the action mode
+	 * If not in action mode and F2 or ENTER are pressed action mode is entered
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onkeydown = function(oEvent) {
@@ -373,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Handle clicking into elements
-	 *
+	 * @param {jQuery.Event} oEvent The triggered event
 	 * @private
 	 */
 	Carousel.prototype.onmouseup = function(oEvent) {
@@ -386,22 +380,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	// If the application supports touch gestures the event handlers are added to cath swiping right and left
 	if (sap.ui.Device.support.touch) {
 
+		/**
+		 * If the device supports touch gestures and left swipe is triggered shows the next carousel item
+		 * @param {jQuery.Event} oEvent
+		 * @public
+		 */
 		Carousel.prototype.onswipeleft = function(oEvent) {
 			this.showNext();
 		};
 
+		/**
+		 * If the device supports touch gestures and right swipe is triggered shows the previous carousel item
+		 * @param {jQuery.Event} oEvent
+		 * @public
+		 */
 		Carousel.prototype.onswiperight = function(oEvent) {
 			this.showPrevious();
 		};
-
 	}
 
-
 	/**
-	 * Enter action mode
-	 *
+	 * Enters action mode
+	 * @param {Object} oDomRef The HTML element to be focused
 	 * @private
 	 */
 	Carousel.prototype._enterActionMode = function(oDomRef) {
@@ -424,8 +427,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Leave action mode
-	 *
+	 * Leaves action mode
+	 * @param {jQuery.Event} oEvent The event that triggered leaving the action mode
 	 * @private
 	 */
 	Carousel.prototype._leaveActionMode = function(oEvent) {
@@ -464,9 +467,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function is called when window is resized
-	 *
-	 * @param {jQuery.Event}
-	 *            oEvent
+	 * @param {jQuery.Event} oEvent The event that triggered onresize
 	 * @private
 	 */
 	Carousel.prototype.onresize = function(oEvent) {
@@ -485,80 +486,95 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Shows previous item in carousel. This can be only used after the component is rendered.
-	 *
-	 * @type void
+	 * Shows the previous item in carousel. This can be only used after the component is rendered.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showPrevious = function() {
-		var mAnimationArguments = {};
+		var that = this,
+			mAnimationArguments = {},
+			$ScrollList = this.$("scrolllist");
+
+		var $lastItem, $firstItem;
 		mAnimationArguments[this._sAnimationAttribute] = 0;
-		var $ScrollList = this.$("scrolllist");
+
 		if ($ScrollList.children('li').length < 2) {
 			return;
 		}
+
 		$ScrollList.stop(true, true);
 		$ScrollList.css(this._sAnimationAttribute, -this._iMaxWidth);
-		var $lastItem = $ScrollList.children('li:last');
-		var $firstItem = $ScrollList.children('li:first');
+
+		$lastItem = $ScrollList.children('li:last');
+		$firstItem = $ScrollList.children('li:first');
+
 		this._showAllItems();
 		$lastItem.insertBefore($firstItem);
 		$ScrollList.append($lastItem.sapExtendedClone(true));
-		var that = this;
+
 		$ScrollList.animate(mAnimationArguments, this.getAnimationDuration(), function() {
-				$ScrollList.children('li:last').remove();
-				that.setProperty("firstVisibleIndex", that._getContentIndex($ScrollList.children('li:first').attr('id')), true);
-				that._hideInvisibleItems();
-			});
+			$ScrollList.children('li:last').remove();
+			that.setProperty("firstVisibleIndex", that._getContentIndex($ScrollList.children('li:first').attr('id')), true);
+			that._hideInvisibleItems();
+		});
 	};
 
 	/**
-	 * Shows next item in carousel. This can be only used after the component is rendered.
-	 *
-	 * @type void
+	 * Shows the next item in carousel. This can be only used after the component is rendered.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showNext = function() {
-		var mAnimationArguments = {};
+		var that = this,
+			mAnimationArguments = {},
+			sAnimationAttribute = this._sAnimationAttribute,
+			$ScrollList = this.$("scrolllist");
+
+		var $firstItem;
 		mAnimationArguments[this._sAnimationAttribute] = -this._iMaxWidth;
-		var $ScrollList = this.$("scrolllist");
+
 		if ($ScrollList.children('li').length < 2) {
 			return;
 		}
+
 		$ScrollList.stop(true, true);
 		this._showAllItems();
-		var sAnimationAttribute = this._sAnimationAttribute;
-		var that = this;
-		var $firstItem = $ScrollList.children('li:first');
+
+		$firstItem = $ScrollList.children('li:first');
 		$firstItem.appendTo($ScrollList);
 		$firstItem.sapExtendedClone(true).insertBefore($ScrollList.children('li:first'));
+
 		$ScrollList.animate(mAnimationArguments, this.getAnimationDuration(), function() {
-				$ScrollList.children('li:first').remove();
-				jQuery(this).css(sAnimationAttribute, '0px');
-				that.setProperty("firstVisibleIndex", that._getContentIndex($ScrollList.children('li:first').attr('id')), true);
-				that._hideInvisibleItems();
-			});
+			$ScrollList.children('li:first').remove();
+			jQuery(this).css(sAnimationAttribute, '0px');
+			that.setProperty("firstVisibleIndex", that._getContentIndex($ScrollList.children('li:first').attr('id')), true);
+			that._hideInvisibleItems();
+		});
 	};
 
 	/**
-	 * Shows the element with id specified. This can be only used after the component is rendered.
-	 *
+	 * Shows the element with the specified Id. This can be only used after the component is rendered.
 	 * @param {string} sElementId Id of the element to slide to.
-	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showElementWithId = function(sElementId) {
 		this._showAllItems();
-		var $ScrollList = this.$("scrolllist");
+
+		var $ScrollList = this.$("scrolllist"),
+			index;
+
 		sElementId = this.getId() + "-item-" + sElementId;
-		var index = $ScrollList.children('li').index(jQuery.sap.byId(sElementId));
+		index = $ScrollList.children('li').index(jQuery.sap.byId(sElementId));
+
 		$ScrollList.children('li:lt(' + index + ')').appendTo($ScrollList);
 		this._hideInvisibleItems();
 	};
 
+	/**
+	 * Calculates and sets the size of the carousel, its items and its buttons
+	 * @public
+	 */
 	Carousel.prototype.calculateAndSetSize = function() {
 		var aContent = this.getContent();
 		var sCarouselId = this.getId();
@@ -653,13 +669,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * Returns the focused DOM element
+	 * @returns {jQuery} The focused DOM element
+	 * @public
+	 */
 	Carousel.prototype.getFocusDomRef = function() {
 		return this.$("scrolllist");
 	};
 
 	/**
-	 * Make all carousel items visible
-	 *
+	 * Makes all carousel items visible
 	 * @private
 	 */
 	Carousel.prototype._showAllItems = function() {
@@ -668,8 +688,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Hide all carousel items
-	 *
+	 * Hides all carousel items
 	 * @private
 	 */
 	Carousel.prototype._hideInvisibleItems = function() {
@@ -677,6 +696,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		$ContentArea.find('.sapUiCrslItm:gt(' + (this._visibleItems - 1)  + ')').hide();
 	};
 
+	/**
+	 * Gets the current carousel item's index in the carousel based on its ID
+	 * @param {string} sId The item's ID
+	 * @returns {number|null} The item's index or null if nothing is found
+	 * @private
+	 */
 	Carousel.prototype._getContentIndex = function(sId) {
 		var aIdParts = sId.split("-item-");
 		return jQuery.inArray(sap.ui.getCore().byId(aIdParts[1]), this.getContent());
@@ -707,12 +732,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		this.setProperty("firstVisibleIndex", iFirstVisibleIndex, true);
 		this.showElementWithId(this._getItemIdByIndex(iFirstVisibleIndex));
+
 		if (this._oItemNavigation) {
 			this._oItemNavigation.focusItem(iFirstVisibleIndex);
 		}
+
 		return this;
 	};
-
 
 	//Fix because jQuery clone doesn't support cloning textarea values
 	//jQuery Ticket #3016 (http://bugs.jquery.com/ticket/3016)

@@ -19,9 +19,9 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<Label text="A Toolbars centering technique will be slightly off the center if there is a button on the left"></Label>
+            <MessageStrip text="A Toolbar's centering technique will be slightly off the center if there is a button on the left." class="sapUiTinyMargin" />
 			<Toolbar>
-				<Label text="Toolbar is pretty good if the content overflows">
+				<Label text="Toolbar can shrink content in case of overflow.">
 					<layoutData>
 							<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
@@ -31,7 +31,7 @@
 							<ToolbarLayoutData shrinkable="true" />
 					</layoutData>
 				</Button>
-				<Label text="A toolbar has a good performance">
+				<Label text="This is a long non-shrinkable label.">
 					<layoutData>
 							<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
@@ -47,18 +47,52 @@
 					</layoutData>
 				</Button>
 			</Toolbar>
+
+            <Label/>
+
 			<Bar>
 				<contentLeft>
-					<Label text="Bar cannot really handle overflow it just cuts the content"></Label>
+					<Label text="Bar cannot really handle overflow it just cuts the content."></Label>
 				</contentLeft>
 				<contentMiddle>
 					<Button text="Accept" type="Accept" />
-					<Label text="Bar is not very performant"></Label>
+					<Label text="Bar is not very performant."></Label>
 					<Button text="Reject" type="Reject" />
 					<Button text="Edit" />
 					<Button text="Big Big Big Big Big Big Big Big Button" />
 				</contentMiddle>
 			</Bar>
+
+            <Label/>
+
+            <OverflowToolbar>
+                <Label text="OverflowToolbar provides a See more (...) button for overflow.">
+                    <layoutData>
+                        <ToolbarLayoutData shrinkable="false" />
+                    </layoutData>
+                </Label>
+                <Button text="Accept" type="Accept">
+                    <layoutData>
+                        <ToolbarLayoutData shrinkable="true" />
+                    </layoutData>
+                </Button>
+                <Label text="This is a long non-shrinkable label">
+                    <layoutData>
+                        <ToolbarLayoutData shrinkable="false" />
+                    </layoutData>
+                </Label>
+                <Button text="Reject" type="Reject">
+                    <layoutData>
+                        <ToolbarLayoutData shrinkable="true" />
+                    </layoutData>
+                </Button>
+                <Button text="Big Big Big Big Big Big Big Big Button">
+                    <layoutData>
+                        <ToolbarLayoutData shrinkable="true" />
+                    </layoutData>
+                </Button>
+            </OverflowToolbar>
+
 		</content>
 		<footer>
 			<Toolbar>

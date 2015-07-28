@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.format.DateFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.strings', 'sap/ui/core/date/IslamicDate'],
-	function(jQuery, LocaleData, jQuerySapStrings, IslamicDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/date/IslamicDate', 'jquery.sap.strings'],
+	function(jQuery, LocaleData, IslamicDate/*, jQuerySap1 */) {
 	"use strict";
 
 
@@ -790,10 +790,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 						sPM = this.aDayPeriods[1];
 					if (oValue.indexOf(sAM, iIndex) == iIndex) {
 						bPM = false;
-						iIndex += 2;
+						iIndex += sAM.length;
 					} else if (oValue.indexOf(sPM, iIndex) == iIndex) {
 						bPM = true;
-						iIndex += 2;
+						iIndex += sPM.length;
 					}
 					break;
 				case "timezoneGeneral": //e.g. GMT-02:00 or GMT+02:00

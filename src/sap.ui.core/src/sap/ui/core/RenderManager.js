@@ -3,8 +3,12 @@
  */
 
 // Provides the render manager sap.ui.core.RenderManager
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/core/LabelEnablement', 'jquery.sap.act', 'jquery.sap.encoder'],
-	function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
+sap.ui.define([
+		'jquery.sap.global',
+		'../base/Interface', '../base/Object', 'sap/ui/core/LabelEnablement',
+		'jquery.sap.act', 'jquery.sap.encoder'
+	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
+
 	"use strict";
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
@@ -541,6 +545,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
 									jQuery(oldDomNode).html(sHTML);
+								} else if (this._isDomPathingEnabled()) {
+									jQuery.sap.replaceDOM(oldDomNode, sHTML, true);
 								} else {
 									jQuery(oldDomNode).replaceWith(sHTML);
 								}
@@ -1263,7 +1269,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			mDefaultAttributes = {
 				"data-sap-ui-icon-content": oIconInfo.content,
 				"role": "presentation",
-				"aria-label": oIconInfo.name
+				"aria-label": oIconInfo.text || oIconInfo.name,
+				"title": oIconInfo.text || oIconInfo.name
 			};
 
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
@@ -1279,7 +1286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 		if (typeof mAttributes === "object") {
 			for (sProp in mAttributes) {
-				if (mAttributes.hasOwnProperty(sProp)) {
+				if (mAttributes.hasOwnProperty(sProp) && mAttributes[sProp] !== null) {
 					this.writeAttributeEscaped(sProp, mAttributes[sProp]);
 				}
 			}
@@ -1288,6 +1295,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.write(bIconURI ? "></span>" : "/>");
 
 		return this;
+	};
+
+	/**
+	 * Determines whether Dom Patching is enabled or not
+	 * @returns {Boolean} 
+	 * @private
+	 */
+	RenderManager.prototype._isDomPathingEnabled = function() {
+		if (this._bDomPathing === undefined) {
+			this._bDomPathing = this.getConfiguration().getDomPatching();
+			if (this._bDomPathing) {
+				jQuery.sap.log.warning("DOM Patching is enabled: This feature should be used only for the testing purposes!");
+			}
+		}
+
+		return this._bDomPathing;
 	};
 
 	/**
@@ -1311,4 +1334,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 	return RenderManager;
 
-}, /* bExport= */ true);
+});

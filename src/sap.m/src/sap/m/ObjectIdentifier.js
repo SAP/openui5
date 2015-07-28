@@ -206,7 +206,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oImage = this._icon || IconPool.createControlByURI({
 			src : sURI,
 			id : sImageId + "-icon",
-			size : sSize
+			size : sSize,
+			useIconTooltip : false
 		}, sap.m.Image);
 
 		oImage.setSrc(sURI);

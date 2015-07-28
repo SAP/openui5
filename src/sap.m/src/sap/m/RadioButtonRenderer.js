@@ -31,10 +31,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		// Radio Button style class
 		oRm.addClass("sapMRb");
 
-		if (!bReadOnly) {
-			oRm.addClass("sapMPointer");
-		}
-
 		// write the HTML into the render manager
 		oRm.write("<div"); // Control - DIV
 		oRm.writeControlData(oRadioButton);

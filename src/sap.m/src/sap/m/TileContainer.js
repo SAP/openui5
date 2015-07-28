@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * The tiles to be displayed by the tile container
 			 */
-			tiles : {type : "sap.ui.core.Control", multiple : true, singularName : "tile"}
+			tiles : {type : "sap.m.Tile", multiple : true, singularName : "tile"}
 		},
 		events : {
 
@@ -368,6 +368,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		}
+
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			this._fnOrientationChange = function(oEvent) {
+				if (this.getDomRef()) {
+					this._oTileDimensionCalculator.calc();
+					//there is not need to call this._update, because resize event will be triggered also, where it is called
+				}
+			}.bind(this);
+		}
+
+		this._oTileDimensionCalculator = new TileDimensionCalculator(this);
 	};
 
 	/**
@@ -419,9 +430,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}, this._iInitialResizeTimeout);
 
 		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
-			if (this.getTiles().length > 0 && this._mFocusables) {
-				this._mFocusables[this.getTiles()[0].getId()].eq(0).attr('tabindex', '0');
+			var aTiles = this.getAggregation("tiles");
+			if (aTiles.length > 0 && this._mFocusables) {
+				this._mFocusables[aTiles[0].getId()].eq(0).attr('tabindex', '0');
 			}
+		}
+
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			sap.ui.Device.orientation.attachHandler(this._fnOrientationChange, this);
 		}
 	};
 
@@ -541,6 +557,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._sInitialResizeTimeoutId) {
 			clearTimeout(this._sInitialResizeTimeoutId);
 		}
+
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			sap.ui.Device.orientation.detachHandler(this._fnOrientationChange, this);
+		}
 	};
 
 	/**
@@ -558,6 +578,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
+		this._oTileDimensionCalculator.calc();
 		this._updateTilePositions();
 
 		if (!this._oDragSession) {
@@ -595,19 +616,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		}
 
-
-
-		// Save the initial ARIA position of the moved tile
-		var iOldPosInset = vTile.$().attr('aria-posinset');
-
 		this.deleteTile(vTile);
-		this.insertTile(vTile,iNewIndex);
-
-		// Update the aria-posinset HTML attribute for the tiles that changed position
-		var iNewPosInset = iNewIndex + 1;
-		if (typeof iOldPosInset !== undefined) {
-			this._updateTilesAriaPosition(parseInt(iOldPosInset, 10), iNewPosInset);
-		}
+		this.insertTile(vTile, iNewIndex);
 
 		return this;
 	};
@@ -622,7 +632,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype.addTile = function(oTile) {
 		this.insertTile(oTile,this.getTiles().length);
-		this._handleAriaSize();
 	};
 
 	/**
@@ -690,12 +699,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			//this._applyPageStartIndex(iIndex);
 			this._update(false);
+
+			// When the control is initialized/updated with data binding and optimization for rendering
+			// tile by tile is used we need to be sure we have a focusable tile.
+			if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+				this._updateTilesTabIndex();
+			}
 		} else {
 			this.insertAggregation("tiles",oTile,iIndex);
 		}
-		this._handleAriaSize();
+
+		handleAriaPositionInSet.call(this, iIndex, this.getTiles().length);
+		handleAriaSize.call(this);
 
 		return this;
+	};
+
+	/**
+	 * If there is no tile focusable e.g.tabindex = 0 update the first tile.
+	 * @private
+	 */
+	TileContainer.prototype._updateTilesTabIndex = function () {
+		var aTiles = this.getAggregation("tiles");
+		if (aTiles.length && aTiles.length > 0) {
+			for (var i = 0; i < aTiles.length; i++) {
+				if (aTiles[i].$().attr("tabindex") === "0") {
+					return;
+				}
+			}
+		}
+		aTiles[0].$().attr("tabindex", "0");
 	};
 
 	/**
@@ -736,9 +769,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.deleteTile = function(oTile) {
+		var iTileUnderDeletionIndex = this.indexOfAggregation("tiles",oTile);
 
 		if (this.getDomRef()) {
-			var iIndex = this.indexOfAggregation("tiles",oTile) - 1;
+			var iPreviousTileIndex = iTileUnderDeletionIndex - 1;
 			this.removeAggregation("tiles",oTile,true);
 
 			if (!this._oDragSession) {
@@ -750,12 +784,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}
 
-			this._applyPageStartIndex(iIndex < 0 ? 0 : iIndex);
+			this._applyPageStartIndex(iPreviousTileIndex < 0 ? 0 : iPreviousTileIndex);
 			this._update(false);
 		} else {
 			this.removeAggregation("tiles",oTile,false);
 		}
-		this._handleAriaSize();
+
+		handleAriaPositionInSet.call(this, iTileUnderDeletionIndex, this.getTiles().length);
+		handleAriaSize.call(this);
 		return this;
 	};
 
@@ -859,6 +895,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype._updateTilePositions = function(){
 
+		var oContentDimension = this._getContainerDimension();
+
+		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
+			return;
+		}
+
 		if (this.getTiles().length === 0) {	// no tiles
 			return;
 		}
@@ -871,6 +913,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._iPages = Math.ceil(aTiles.length / this._iMaxTiles);
 
+		var oTileDimension = this._oTileDimensionCalculator.getLastCalculatedDimension();
 		for (var i = 0; i < aTiles.length; i++) {
 
 			if (aTiles[i].isDragged()) {
@@ -879,15 +922,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var iPage =  Math.floor(i / this._iMaxTiles),
 				oTile = aTiles[i],
-				iLeft = (iPage * oContentDimension.outerwidth) + this._iOffsetX + i % this._iMaxTilesX * this._oTileDimension.width,
-				iTop =  this._iOffsetY + Math.floor(i / this._iMaxTilesX) * this._oTileDimension.height - (iPage * this._iMaxTilesY * this._oTileDimension.height);
+				iLeft = (iPage * oContentDimension.outerwidth) + this._iOffsetX + i % this._iMaxTilesX * oTileDimension.width,
+				iTop =  this._iOffsetY + Math.floor(i / this._iMaxTilesX) * oTileDimension.height - (iPage * this._iMaxTilesY * oTileDimension.height);
 
 			if (this._bRtl) {
-				iLeft = (this._iPages - iPage) * oContentDimension.outerwidth - this._iOffsetX - (i % this._iMaxTilesX  + 1) * this._oTileDimension.width;
+				iLeft = (this._iPages - iPage) * oContentDimension.outerwidth - this._iOffsetX - (i % this._iMaxTilesX  + 1) * oTileDimension.width;
 			}
 
 			oTile.setPos(iLeft,iTop);
-			oTile.setSize(this._oTileDimension.width, this._oTileDimension.height);
+			oTile.setSize(oTileDimension.width, oTileDimension.height);
 		}
 	};
 
@@ -1013,32 +1056,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns the dimension (width and height) of a tile.
-	 *
-	 * @returns {object} Width and height of a tile.
-	 * @private
-	 */
-	TileContainer.prototype._getTileDimension = function() {
-
-		if (!this.getDomRef()) {
-			return;
-		}
-
-		if (this._oTileDim) {
-			return this._oTileDim;
-		}
-
-		//TODO: Why the dimensions of the first Tile?
-		var oTile = this.getTiles()[0];
-		this._oTileDim = {
-			width  : Math.round(oTile.$().outerWidth(true)),
-			height : Math.round(oTile.$().outerHeight(true))
-		};
-
-		return this._oTileDim;
-	};
-
-	/**
 	 * Calculates the tile page sizes.
 	 *
 	 * @private
@@ -1048,8 +1065,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getTiles().length === 0) {	// no tiles
 			return;
 		}
-
-		this._oTileDimension = this._getTileDimension();
 
 		var oContentDimension = this._getContainerDimension(),
 			iTiles = this.getTiles().length,
@@ -1063,8 +1078,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oContentDimension.width  -= 45 * 2;
 		}
 
-		var iMaxTilesX = Math.max( Math.floor( oContentDimension.width / this._oTileDimension.width ),1), 		  //at least one tile needs to be visible
-			iMaxTilesY = Math.max( Math.floor((oContentDimension.height - iPagerHeight) / this._oTileDimension.height),1), //at least one tile needs to be visible
+		var oTileDimension = this._oTileDimensionCalculator.getLastCalculatedDimension(),
+			iMaxTilesX = Math.max( Math.floor( oContentDimension.width / oTileDimension.width ),1), 		  //at least one tile needs to be visible
+			iMaxTilesY = Math.max( Math.floor((oContentDimension.height - iPagerHeight) / oTileDimension.height),1), //at least one tile needs to be visible
 			iNumTileX = (iTiles < iMaxTilesX)  ? iTiles : iMaxTilesX,
 			iNumTileY = (iTiles / iNumTileX < iMaxTilesY)  ? Math.ceil(iTiles / iNumTileX) : iMaxTilesY;
 
@@ -1072,13 +1088,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iMaxTiles = iMaxTilesX * iMaxTilesY;
 		this._iMaxTilesX = iMaxTilesX;
 		this._iMaxTilesY = iMaxTilesY;
-		this._iOffsetX = Math.floor(( oContentDimension.width  -  (this._oTileDimension.width * iNumTileX)) / 2);
+		this._iOffsetX = Math.floor(( oContentDimension.width  -  (oTileDimension.width * iNumTileX)) / 2);
 
 		if (sap.ui.Device.system.desktop) {
 			this._iOffsetX += 45;
 		}
 
-		this._iOffsetY = Math.floor(( oContentDimension.height - iPagerHeight - (this._oTileDimension.height * iNumTileY )) / 2);
+		this._iOffsetY = Math.floor(( oContentDimension.height - iPagerHeight - (oTileDimension.height * iNumTileY )) / 2);
 
 	};
 
@@ -1126,6 +1142,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype._applyPageStartIndex = function(iIndex) {
+
+		var oContentDimension = this._getContainerDimension();
+
+		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
+			return;
+		}
+
 		this._calculatePositions();
 		var iLength = this.getTiles().length;
 
@@ -1666,55 +1689,86 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	TileContainer.prototype.onThemeChanged = function() {
+		if (this.getDomRef()) {
+			this.invalidate();
+		}
+	};
+
 	/**
-	 * Handles the WAI ARIA property aria-setsize after new tiles added
+	 * Calculates a common tile dimension (width and height),
+	 * that should be applied for all tiles.
+	 * Function {@link getLastCalculatedDimension} does not do the calculation,
+	 * the caller must explicitly call the {@link calc} function before it, or when he/she wants up-to-date dimension
+	 * @private
+	 */
+	var TileDimensionCalculator = function(oTileContainer) {
+		this._oDimension = null;
+		this._oTileContainer = oTileContainer;
+	};
+	/**
+	 * Calculates the dimension (width and height) of a tile.
+	 * @returns {object} Width and height of a tile.
+	 * @protected
+	 */
+	TileDimensionCalculator.prototype.calc = function() {
+		var oTile;
+
+		if (!this._oTileContainer.getDomRef()) {
+			return;
+		}
+
+		if (this._oTileContainer.getTiles().length) {
+			//All tiles have fixed with, defined in the corresponding tile css/less file. So use the first.
+			oTile = this._oTileContainer.getTiles()[0];
+			this._oDimension = {
+				width  : Math.round(oTile.$().outerWidth(true)),
+				height : Math.round(oTile.$().outerHeight(true))
+			};
+		}
+		return this._oDimension;
+	};
+	/**
+	 * Returns the current dimension (width and height) of a tile.
+	 *
+	 * @returns {object} Width and height of a tile.
+	 * @protected
+	 */
+	TileDimensionCalculator.prototype.getLastCalculatedDimension = function() {
+		return this._oDimension;
+	};
+
+	/**
+	 * Handles the WAI ARIA property "aria-setsize" after a change in the tile container
 	 *
 	 * @private
 	 */
-	TileContainer.prototype._handleAriaSize = function () {
-		var iTilesCount = this.getTiles().length;
-		/* All the tiles in TileContainer have to be updated */
-		for (var iIndex = 0; iIndex < iTilesCount; iIndex++) {
-			var oTile = this.getTiles()[iIndex].getDomRef();
+	function handleAriaSize () {
+		var iTilesCount = this.getTiles().length,
+			oDomRef = null;
+		this.getTiles().forEach(function(oTile) {
+			oDomRef = oTile.getDomRef();
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-setsize", iTilesCount);
+			}
+		});
+	}
+	/**
+	 * Handles the WAI ARIA property "aria-posinset" after a change in the tile container
+	 * @param {int} iStartIndex the index of the tile to start with
+	 * @param {int} iEndIndex the index of the tile to complete with
+	 * @private
+	 */
+	function handleAriaPositionInSet(iStartIndex, iEndIndex) {
+		var aTiles = this.getTiles(),
+			i, oTile = null;
+		for (var i = iStartIndex; i < iEndIndex; i++) {
+			oTile = aTiles[i];
 			if (oTile) {
-				oTile.setAttribute("aria-setsize", iTilesCount);
+				oTile._updateAriaPosition();
 			}
 		}
-	};
-
-	/**
-	 * Synchronize the 'aria-posinset' attribute of the tiles with the respective
-	 * index of aggregation.
-	 *
-	 * @private
-	 * @param iOldPosInset The old posinset index
-	 * @param iNewPosInset The new posinset index
-	 * @returns {sap.m.TileContainer} This tile container.
-	 */
-	TileContainer.prototype._updateTilesAriaPosition = function (iOldPosInset, iNewPosInset) {
-		if (!iOldPosInset) {
-			jQuery.sap.log.warning("Cannot update ARIA posinset attribute. Missing old aria position inset.");
-			return this;
-		}
-
-		if (!iNewPosInset) {
-			jQuery.sap.log.warning("Cannot update ARIA posinset attribute. Missing new aria postion inset.");
-			return this;
-		}
-
-		var iLowerPosinset = Math.min(iOldPosInset, iNewPosInset);
-		var iHigherPosinset = Math.max(iOldPosInset, iNewPosInset);
-
-		if (iLowerPosinset !== iHigherPosinset) {
-			var tiles = this.getTiles();
-			for (var i = iLowerPosinset; i <= iHigherPosinset; i++) {
-				var iAggregationIndex = i - 1;
-				tiles[iAggregationIndex]._updateAriaPosition();
-			}
-		}
-
-		return this;
-	};
+	}
 
 	return TileContainer;
 

@@ -21,9 +21,13 @@
 	width: @sapUiTableRowHdrWidth;
 }
 
+.sapUiAnalyticalTable .sapUiTableGroupIcon {
+	padding-right: 10px;
+}
+
 // No checkboxes should be shown in group header of Analytical Table
 .sapUiAnalyticalTable .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableGroupHeader::after {
-	display:none;
+	display: none;
 }
 
 .sapUiAnalyticalTable .sapUiTableRSel .sapUiTableCtrlScr,
@@ -55,18 +59,23 @@
 .sapUiAnalyticalTable .sapUiTableColCell > .sapUiLbl {
 	font-weight: bold;
 	font-size: 0.875rem;
-	color: #6F6F6E;
+	color: @sapUiListTextColor;
 }
 
 .sapUiAnalyticalTable .sapUiTableCell > .sapUiTv {
 	font-size: 0.875rem;
 }
 
+// Shift last cell content to left, on the right edge the touch button is placed.
+.sapUiTableTouch .sapUiTableCtrlScroll .sapUiTableGroupHeader td:last-child {
+	padding-right: 3rem;
+}
+
 /* Hierarchical Support */
 
 .sapUiAnalyticalTable tr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable .sapUiTableRowHdr.sapUiAnalyticalTableSum {
-	background-color: @sapUiLightestBG;
+	background-color: @sapUiListBackground;
 }
 
 .sapUiAnalyticalTableSum .sapUiTv,
@@ -78,7 +87,7 @@
 .sapUiAnalyticalTable .sapUiTableRowHdr.sapUiAnalyticalTableDummy {
 	font-size: 14px;
 	line-height: 28px;
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 }
 
 .sapUiAnalyticalTable .sapUiTableColRsz {
@@ -97,31 +106,18 @@
 .sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk,
 .sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk:visited,
 .sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk:hover {
-	color: @sapUiStandardText;
-	background-color: @sapUiLightBG;
+	color: @sapUiListTextColor;
+	background-color: @sapUiListHoverBackground;
 }
 
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiAnalyticalTableSum.sapUiTableRowHdr::after {
-	display: none;
+.sapUiSizeCompact, .sapUiSizeCozy {
+	.sapUiTableSelModeMultiToggle .sapUiAnalyticalTableSum.sapUiTableRowHdr::after {
+		display: none;
+	}
 }
 
 .sapUiAnalyticalTable .sapUiTableTr > td:focus {
 	outline: 1px dotted @sapUiFocus;
-}
-
-.sapUiAnalyticalTable .sapUiTableCtrl tr.sapUiTableRowHvr,
-.sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLbl,
-.sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiTf,
-.sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk,
-.sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk:visited,
-.sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk:hover,
-.sapUiAnalyticalTable .sapUiTableCol:hover,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLbl,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiTf,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk:visited,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk:hover {
-	background-color: @sapUiLightBG;
 }
 
 .sapUiAnalyticalTable .sapUiTableRowHdr {
@@ -133,7 +129,7 @@
 	content: '';
 	display:block;
 	position: absolute;
-	background-color: @sapUiLightestBG;
+	background-color: @sapUiListBackground;
 	top: -1px;
 	bottom: -1px;
 	box-sizing: border-box;
@@ -160,63 +156,63 @@
 .sapUiAnalyticalTable [data-sap-ui-level="2"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="3"].sapUiTableRowHdr {
 	left: 24px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="3"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="3"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="4"].sapUiTableRowHdr {
 	left: 36px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="4"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="4"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="5"].sapUiTableRowHdr {
 	left: 44px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="5"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="5"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="6"].sapUiTableRowHdr {
 	left: 52px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="6"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="6"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="7"].sapUiTableRowHdr {
 	left: 60px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="7"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="7"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="8"].sapUiTableRowHdr {
 	left: 68px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="8"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="8"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="9"].sapUiTableRowHdr {
 	left: 76px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="9"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="9"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="10"].sapUiTableRowHdr {
 	left: 84px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="10"].sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiAnalyticalTable [data-sap-ui-level="10"].sapUiTableRowHdr.sapUiAnalyticalTableSum,
 .sapUiAnalyticalTable [data-sap-ui-level="11"].sapUiTableRowHdr {
 	left: 92px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="3"].sapUiTableRowHdr.sapUiTableGroupHeader::before,
@@ -224,7 +220,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="4"].sapUiTableRowHdr::before {
 	left: -13px;
 	width: 12px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="4"].sapUiTableRowHdr.sapUiTableGroupHeader::before,
@@ -232,7 +228,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="5"].sapUiTableRowHdr::before {
 	left: -21px;
 	width: 20px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="5"].sapUiTableRowHdr.sapUiTableGroupHeader::before,
@@ -240,7 +236,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="6"].sapUiTableRowHdr::before {
 	left: -29px;
 	width: 28px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="6"].sapUiTableRowHdr.sapUiTableGroupHeader::before,
@@ -248,7 +244,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="7"].sapUiTableRowHdr::before {
 	left: -37px;
 	width: 36px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="7"].sapUiTableRowHdr.sapUiTableGroupHeader::before,
@@ -256,7 +252,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="8"].sapUiTableRowHdr::before {
 	left: -45px;
 	width: 44px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 
@@ -265,7 +261,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="9"].sapUiTableRowHdr::before {
 	left: -53px;
 	width: 52px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 
@@ -274,7 +270,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="10"].sapUiTableRowHdr::before {
 	left: -61px;
 	width: 60px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiAnalyticalTable [data-sap-ui-level="10"].sapUiTableRowHdr.sapUiTableGroupHeader::before,
@@ -282,7 +278,7 @@
 .sapUiAnalyticalTable [data-sap-ui-level="11"].sapUiTableRowHdr::before {
 	left: -69px;
 	width: 68px;
-	border-left: 1px solid @sapUiMediumBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
 
 
@@ -333,5 +329,5 @@
 }
 
 .sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum td:last-child {
-	border-right: 1px solid @sapUiMediumBorder;
+	border-right: 1px solid @sapUiListVerticalBorderColor;
 }

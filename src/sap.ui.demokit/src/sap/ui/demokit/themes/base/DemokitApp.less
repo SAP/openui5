@@ -53,15 +53,62 @@ html[data-sap-ui-browser^="ie"] .sapDkShell .sapUiUx3ShellCanvas {
 .sapUiTreeWithHeader {
 	font-family: "Verdana",Arial,Helvetica,sans-serif;
 	color: #007CC0;
-	font-weight: bold;
 }
 
 .sapUiTreeWithHeader .sapUiTreeNodeSelected {
 	color: #007CC0;
 }
 
-.sapUiSearchField .sapUiTfInner.sapUiTf{
+.sapUiDemokitSearchField .sapUiTfInner.sapUiTf{
+	color: #333333;
+}
+
+.sapUiSearchFieldClear:not(.sapUiSearchFieldVal)>.sapUiSearchFieldTf>.sapUiSearchFieldIco.sapUiSearchFieldFilterIcon{
+	background-image: none;
+}
+
+.sapUiSearchFieldFilterIcon{
 	color: #666666;
+	font-size: small;
+	line-height: 1.1rem;
+}
+
+#demokitSplitter_firstPane > div:first-child  > div:first-child {
+	width: 100%;
+}
+
+.sapUiDemokitSearchField {
+	width: ~"calc(100% - 77px)";
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.sapUiDemokitCollapseButton {
+	margin-left: 3px;
+}
+
+.sapUiDemokitAbsLayoutFirtsRow {
+	margin-top: 5px;
+}
+
+.sapUiDemokitExpandCollapseButtons > span:first-child {
+	font-size: 0.9rem;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf::-webkit-input-placeholder {
+   font-style: italic;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf:-moz-placeholder {
+   font-style: italic;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf::-moz-placeholder {
+   font-style: italic;
+}
+
+.sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf:-ms-input-placeholder {
+   font-style: italic;
 }
 
 html[data-sap-ui-browser^="ie"] .sapDkShell .sapUiUx3ShellContent {

@@ -38,15 +38,27 @@
 
 		// prevent QUnit from atarting
 		QUnit.config.autostart = false;
+		
+		var aExcludes = [
+			"sap.m.sample.PageListReportIconTabBar",
+			"sap.m.sample.PageListReportToolbar"
+		];
+		
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+			aExcludes = aExcludes.concat([
+				//Flexbox not supported for IE 9
+				"sap.m.sample.FlexBoxBasicAlignment",
+				"sap.m.sample.FlexBoxCols",
+				"sap.m.sample.FlexBoxDirectionOrder",
+				"sap.m.sample.FlexBoxNav",
+				"sap.m.sample.FlexBoxNested",
+				"sap.m.sample.FlexBoxOpposingAlignment",
+				"sap.m.sample.FlexBoxSizeAdjustments"
+			]);
+		}
 
 		sap.ui.require(['sap/ui/demo/mock/qunit/SampleTester'], function(SampleTester) {
-			new SampleTester(
-				'sap.m',
-				[
-					'sap.m.sample.PageListReportIconTabBar',
-					'sap.m.sample.PageListReportToolbar'
-				]
-			).placeAt('content');
+			new SampleTester('sap.m', aExcludes).placeAt('content');
 		});
 
 	</script>

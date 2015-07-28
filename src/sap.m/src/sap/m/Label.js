@@ -2,21 +2,19 @@
  * ${copyright}
  */
 
-// Provides control sap.m.Label.
+// Provides control sap.m.Label
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement'],
 	function(jQuery, library, Control, LabelEnablement) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new Label.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Label control is used in a UI5 mobile application to provide label text for other controls. Design such as bold, and text alignment can be specified.
+	 * The Label control is used in a UI5 mobile application to provide label text for other controls. Design such as bold, and text alignment can be specified.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Label,sap.ui.core.IShrinkable
 	 *
@@ -38,12 +36,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * set design of a label to either Standard or Bold
+			 * Sets the design of a Label to either Standard or Bold.
 			 */
 			design : {type : "sap.m.LabelDesign", group : "Appearance", defaultValue : sap.m.LabelDesign.Standard},
 
 			/**
-			 * Label Text to be displayed
+			 * Determines the Label text to be displayed.
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
 
@@ -58,7 +56,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Width of Label
+			 * Determines the width of the label.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
@@ -71,12 +69,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Association to the labeled control.
-			 * By default the label set the for attribute to the ID of the labeled control. This can be changed implementing function getIdForLabel on the labelled control.
+			 * By default the label set the for attribute to the ID of the labeled control. This can be changed by implementing the function getIdForLabel on the labelled control.
 			 */
 			labelFor : {type : "sap.ui.core.Control", multiple : false}
 		}
 	}});
-	
 
 	Label.prototype.setText = function(sText) {
 		var sValue = this.getText();
@@ -101,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
-	//Enrich Label functionality
+	// enrich Label functionality
 	LabelEnablement.enrich(Label.prototype);
 
 	return Label;

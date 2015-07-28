@@ -343,6 +343,298 @@
 			oPage.destroy();
 		});
 
+		test("CustomHeaderContent", function () {
+
+			var oButton1 = new sap.m.Button(),
+					oButton2 = new sap.m.Button(),
+					oButton3 = new sap.m.Button(),
+					oTitle = new sap.m.Title(),
+					oConfig = {
+						customHeaderContent: [
+							oButton1, oButton2
+						]
+					},
+					oSemanticPage = createSemanticPageFactory(null, oConfig);
+
+			var iInitFooterContentLength = 0; //no other content in header
+
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
+
+			strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
+
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
+
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
+
+			var oInsertResult = oSemanticPage.insertCustomHeaderContent(oTitle, 1);
+			strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
+
+			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
+			strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
+			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
+
+			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
+			strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
+
+			var oAddResult = oSemanticPage.addCustomHeaderContent(oButton3);
+			strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
+
+			oSemanticPage.destroyCustomHeaderContent();
+			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
+
+			oSemanticPage.destroy();
+		});
+
+		test("CustomHeaderContent binding", function () {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel({
+				data: [{
+					text: "Custom",
+					tooltip: "Martin",
+					buttonType: "Reject"
+				}
+				]
+			});
+
+			var oPage = new sap.m.semantic.DetailPage({
+				customHeaderContent: {
+					path: "/data",
+					template: new sap.m.Button({
+								text: "{text}",
+								tooltip: "{tooltip}",
+								type: "{buttonType}"
+							}
+					)
+				}
+			});
+
+			oPage.setModel(oModel);
+
+			var iInitFooterContentLength = 0; //no init content
+
+			strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
+			strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
+
+			var oButton = oPage.getCustomHeaderContent()[0];
+			strictEqual(oButton.getText(), "Custom", "content has correct text");
+			strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+
+			var oInnerButton = oPage._getInternalHeader().getContentRight()[0];
+			strictEqual(oInnerButton, oButton, "inner header has correct content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("CustomHeaderContent with paging action", function () {
+
+			var oButton1 = new sap.m.Button(),
+					oButton2 = new sap.m.Button(),
+					oButton3 = new sap.m.Button(),
+					oTitle = new sap.m.Title(),
+					oConfig = {
+						customHeaderContent: [
+							oButton1, oButton2
+						],
+						pagingAction: new sap.m.PagingButton()
+					},
+					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
+
+			var iInitFooterContentLength = 1; //paging button
+
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
+
+			strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
+
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
+
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
+
+			var oInsertResult = oSemanticPage.insertCustomHeaderContent(oTitle, 1);
+			strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
+
+			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
+			strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
+			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
+
+			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
+			strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
+
+			var oAddResult = oSemanticPage.addCustomHeaderContent(oButton3);
+			strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
+
+			oSemanticPage.destroyCustomHeaderContent();
+			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
+
+			oSemanticPage.destroy();
+		});
+
+		test("CustomHeaderContent with multiSelect action", function () {
+
+			var oButton1 = new sap.m.Button(),
+					oButton2 = new sap.m.Button(),
+					oButton3 = new sap.m.Button(),
+					oTitle = new sap.m.Title(),
+					oConfig = {
+						customHeaderContent: [
+							oButton1, oButton2
+						],
+						multiSelectAction: new sap.m.semantic.MultiSelectAction()
+					},
+					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.master, oConfig);
+
+			var iInitFooterContentLength = 1; //multiselect action
+
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
+
+			strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
+
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
+
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
+
+			var oInsertResult = oSemanticPage.insertCustomHeaderContent(oTitle, 1);
+			strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
+			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
+			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
+
+			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
+			strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
+			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
+
+			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
+			strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
+
+			var oAddResult = oSemanticPage.addCustomHeaderContent(oButton3);
+			strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
+			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
+
+			oSemanticPage.destroyCustomHeaderContent();
+			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
+
+			oSemanticPage.destroy();
+		});
+
+		test("CustomHeaderContent binding for page with pagingAction", function () {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel({
+				data: [{
+					text: "Custom",
+					tooltip: "Martin",
+					buttonType: "Reject"
+				}
+				]
+			});
+
+			var oPage = new sap.m.semantic.DetailPage({
+				customHeaderContent: {
+					path: "/data",
+					template: new sap.m.Button({
+								text: "{text}",
+								tooltip: "{tooltip}",
+								type: "{buttonType}"
+							}
+					)
+				},
+				pagingAction: new sap.m.PagingButton()
+			});
+
+			oPage.setModel(oModel);
+
+			var iInitFooterContentLength = 1; //paging button
+
+			strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
+			strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
+
+			var oButton = oPage.getCustomHeaderContent()[0];
+			strictEqual(oButton.getText(), "Custom", "content has correct text");
+			strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+
+			var oInnerButton = oPage._getInternalHeader().getContentRight()[0];
+			strictEqual(oInnerButton, oButton, "inner header has correct content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("CustomHeaderContent binding for page with multiSelectAction", function () {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel({
+				data: [{
+					text: "Custom",
+					tooltip: "Martin",
+					buttonType: "Reject"
+				}
+				]
+			});
+
+			var oPage = new sap.m.semantic.MasterPage({
+				customHeaderContent: {
+					path: "/data",
+					template: new sap.m.Button({
+								text: "{text}",
+								tooltip: "{tooltip}",
+								type: "{buttonType}"
+							}
+					)
+				},
+				multiSelectAction: new sap.m.semantic.MultiSelectAction()
+			});
+
+			oPage.setModel(oModel);
+
+			var iInitFooterContentLength = 1; //multiselect button
+
+			strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
+			strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
+
+			var oButton = oPage.getCustomHeaderContent()[0];
+			strictEqual(oButton.getText(), "Custom", "content has correct text");
+			strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+
+			var oInnerButton = oPage._getInternalHeader().getContentRight()[0];
+			strictEqual(oInnerButton, oButton, "inner header has correct content");
+
+			// Clean up
+			oPage.destroy();
+		});
+
 		test("CustomFooterContent", function () {
 
 			var oButton1 = new sap.m.Button(),
@@ -714,9 +1006,81 @@
 			oPage.destroy();
 		});
 
+		test("add paging action", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPagingAction = new sap.m.PagingButton();
+
+			//act
+			oPage.setPagingAction(oPagingAction);
+
+			//check
+			strictEqual(oPage.getPagingAction(), oPagingAction, "page has paging action");
+			strictEqual(oPage._getInternalHeader().getContentRight().length, 1, "header has expected length");
+			strictEqual(oPage._getInternalHeader().getContentRight()[0], oPagingAction, "header contains paging button");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("remove paging action by setting it to null", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPagingAction = new sap.m.PagingButton();
+
+			//act
+			oPage.setPagingAction(oPagingAction);
+			oPage.setPagingAction(null);
+
+			//check
+			strictEqual(oPage.getPagingAction(), null, "page has paging action");
+			strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("remove paging action by setting it to undefined", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPagingAction = new sap.m.PagingButton();
+
+			//act
+			oPage.setPagingAction(oPagingAction);
+			oPage.setPagingAction(undefined);
+
+			//check
+			strictEqual(oPage.getPagingAction(), null, "page has paging action");
+			strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("destroy paging action", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPagingAction = new sap.m.PagingButton();
+
+			//act
+			oPage.setPagingAction(oPagingAction);
+			oPage.destroyPagingAction();
+
+			//check
+			strictEqual(oPage.getPagingAction(), null, "page has paging action");
+			strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
+			strictEqual(oPagingAction.bIsDestroyed, true, "button is destroyed");
+
+			// Clean up
+			oPage.destroy();
+		});
 
 		/*
-		//TODO: verity this test is probably not relevant anymore because we do not have multiple element semantic aggregations anymore
+		//TODO: verify this test is probably not relevant anymore because we do not have multiple element semantic aggregations anymore
 
 		test("SemanticControls binding", function () {
 			// Arrange
