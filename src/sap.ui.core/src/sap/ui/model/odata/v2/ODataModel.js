@@ -1726,12 +1726,13 @@ sap.ui.define([
 
 	/**
 	 * @param {string} sPath binding path
-	 * @param {object} oContext binding context
+	 * @param {object} [oContext] binding context
+	 * @param {boolean} [bOriginalValue] returns the original value read from the server even if changes where made
 	 * @returns {any} vValue the value for the given path/context
 	 * @private
 	 */
-	ODataModel.prototype._getObject = function(sPath, oContext) {
-		var oNode = this.isLegacySyntax() ? this.oData : null,
+	ODataModel.prototype._getObject = function(sPath, oContext, bOriginalValue) {
+		var oNode = this.isLegacySyntax() ? this.oData : null, oChangedNode, oOrigNode,
 			sResolvedPath = this.resolve(sPath, oContext),
 			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
@@ -1753,31 +1754,32 @@ sap.ui.define([
 				oNode = this.oMetadata._getAnnotation(sResolvedPath);
 			}
 		} else {
-			if (oContext) {
-				sKey = oContext.getPath();
-				// remove starting slash
-				sKey = sKey.substr(1);
-				oNode = this.mChangedEntities[sKey] ? this.mChangedEntities[sKey] : this.oData[sKey];
-			}
-			if (!sPath) {
+			if (!sResolvedPath) {
 				return oNode;
 			}
-			var aParts = sPath.split("/"),
+			var aParts = sResolvedPath.split("/"),
 			iIndex = 0;
-			if (!aParts[0]) {
-				// absolute path starting with slash
-				iIndex++;
-				if (this.mChangedEntities[aParts[iIndex]]) {
-					oNode = this.mChangedEntities;
-				} else {
-					oNode = this.oData;
-				}
+			// absolute path starting with slash
+			sKey = aParts[1];
+			aParts.splice(0,2);
+			
+			oChangedNode = this.mChangedEntities[sKey];
+			oOrigNode = this.oData[sKey];
+			if (!bOriginalValue) {
+				//if sKey is undefined (for example sPath = '/') we have to return the data container
+				oNode = !sKey ? this.oData : oChangedNode || oOrigNode;
+			} else {
+				oNode = !sKey ? this.oData : oOrigNode;
 			}
 			while (oNode && aParts[iIndex]) {
-				oNode = oNode[aParts[iIndex]];
+				oChangedNode = oChangedNode && oChangedNode[aParts[iIndex]];
+				oOrigNode = oOrigNode && oOrigNode[aParts[iIndex]];
+				oNode = bOriginalValue ? oOrigNode : oChangedNode || oOrigNode;
 				if (oNode) {
 					if (oNode.__ref) {
-						oNode = this.oData[oNode.__ref];
+						oChangedNode = this.mChangedEntities[oNode.__ref];
+						oOrigNode =  this.oData[oNode.__ref];
+						oNode =  bOriginalValue ? oOrigNode : oChangedNode || oOrigNode;
 					} else if (oNode.__list) {
 						oNode = oNode.__list;
 					} else if (oNode.__deferred) {
@@ -1787,6 +1789,10 @@ sap.ui.define([
 				}
 				iIndex++;
 			}
+		}
+		//if we have a changed Entity we need to extend it with the backend data
+		if (this._getKey(oChangedNode)) {
+			oNode =  bOriginalValue ? oOrigNode : jQuery.extend(true, {}, oOrigNode, oChangedNode);
 		}
 		return oNode;
 	};
@@ -3480,9 +3486,10 @@ sap.ui.define([
 		}
 
 		this.oMetadata.loaded().then(function() {
-			jQuery.each(that.mChangedEntities, function(sKey, oData) {
+			jQuery.each(that.mChangedEntities, function(sKey) {
 				oGroupInfo = that._resolveGroup(sKey);
 				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
+					var oData = that._getObject('/' + sKey);
 					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
 					if (oGroupInfo.groupId in that.mDeferredGroups) {
@@ -3540,22 +3547,44 @@ sap.ui.define([
 	 *
 	 * Resets the collected changes by the setProperty method.
 	 *
-	 * @param {array} [aKeys] 	Array of keys that should be resetted.
+	 * @param {array} [aPath] 	Array of paths that should be resetted.
 	 * 							If no array is passed all changes will be resetted.
 	 *
 	 * @public
 	 */
-	ODataModel.prototype.resetChanges = function(aKeys) {
-		var that = this;
+	ODataModel.prototype.resetChanges = function(aPath) {
+		var that = this, aParts, oEntityInfo = {}, oChangeObject, sKey, oEntityMetadata;
 
-		if (aKeys) {
-			jQuery.each(aKeys, function(iIndex, sKey) {
-				if (sKey in that.mChangedEntities) {
-					that.mChangeHandles[sKey].abort();
-					delete that.mChangeHandles[sKey];
-					delete that.mChangedEntities[sKey];
+		if (aPath) {
+			jQuery.each(aPath, function(iIndex, sPath) {
+				that.getEntityByPath(sPath, null, oEntityInfo);
+				aParts = oEntityInfo.propertyPath.split("/");
+				sKey = oEntityInfo.key;
+				oChangeObject = that.mChangedEntities[sKey];
+				for (var i = 0; i < aParts.length - 1; i++) {
+					if (oChangeObject.hasOwnProperty(aParts[i])) {
+						oChangeObject = oChangeObject[aParts[i]];
+					} else {
+						oChangeObject = undefined;
+					}
+				}
+				
+				if (oChangeObject) {
+					delete oChangeObject[aParts[aParts.length - 1]];
+				} 
+				
+				if (that.mChangedEntities[sKey]) {
+					//delete metadata to check if object has changes
+					oEntityMetadata = that.mChangedEntities[sKey].__metadata;
+					delete that.mChangedEntities[sKey].__metadata;
+					if (jQuery.isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
+						that.mChangeHandles[sKey].abort();
+						delete that.mChangedEntities[sKey];
+					} else {
+						that.mChangedEntities[sKey].__metadata = oEntityMetadata;
+					}
 				} else {
-					jQuery.sap.log.warning(that + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
+					jQuery.sap.log.warning(that + " - resetChanges: " + sPath + " is not changed");
 				}
 			});
 		} else {
@@ -3583,58 +3612,55 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 
-		var sProperty, mRequests, oRequest, oEntry = { }, oData = { },
-		sResolvedPath = this.resolve(sPath, oContext),
-		aParts,	sKey, oGroupInfo, oRequestHandle,
-		mChangedEntities = {},
-		sEntryPath;
-
-		// check if path / context is valid
-		if (!sResolvedPath) {
-			jQuery.sap.log.warning(this + " - TwoWay binding: path '" + sPath + "' not resolvable!");
+		var oOriginalValue, sPropertyPath, mRequests, oRequest, oEntry = { },
+		sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
+		mChangedEntities = {}, oEntityInfo = {};
+		
+		sResolvedPath = this.resolve(sPath, oContext);
+		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1); 
+		
+		var oEntry = this.getEntityByPath(sResolvedPath, null, oEntityInfo);
+		if (!oEntry) {
 			return false;
 		}
-
-		// extract the Url that points to the 'entry'. We need to do this if a complex type will be updated.
-		aParts = sResolvedPath.split("/");
-
-		//property is the last part
-		sProperty = aParts[aParts.length - 1]; //sPath.substr(sPath.lastIndexOf("/")+1);
-
-		//get object: cut of property part of resolved path before
-		oData = this._getObject(sResolvedPath.substr(0,sResolvedPath.lastIndexOf("/")));
-		if (!oData) {
-			return false;
-		}
-
-		//check all path segments to find the entity; The last segment can also point to a complex type (ignore property segment)
-		for (var i = aParts.length - 1; i >= 0; i--) {
-			sEntryPath = aParts.join("/");
-			oEntry = this._getObject(sEntryPath);
-			if (oEntry) {
-				sKey = this._getKey(oEntry);
-				if (sKey) {
-					break;
-				}
-			}
-			aParts.splice(i,1);
-		}
-
+		
+		sKey = oEntityInfo.key;
+		oOriginalValue = this._getObject(sPath, oContext, true);
+		
+		//clone property 
 		if (!this.mChangedEntities[sKey]) {
-			oEntry = jQuery.sap.extend(true,{},oEntry);
+			oEntityMetadata = oEntry.__metadata;
+			oEntry = {};
+			oEntry.__metadata = jQuery.extend({},oEntityMetadata);
+			this.mChangedEntities[sKey] = oEntry;
 		}
-		this.mChangedEntities[sKey] = oEntry;
-
-		var oChangeObject = oEntry;
+		
+		var oChangeObject = this.mChangedEntities[sKey];
+	
 		// if property is not available check if it is a complex type and update it
-		aParts = sResolvedPath.substr(sEntryPath.length).split("/");
-		for (var i = 1; i < aParts.length - 1; i++) {
+		aParts = oEntityInfo.propertyPath.split("/");
+		for (var i = 0; i < aParts.length - 1; i++) {
 			if (!oChangeObject.hasOwnProperty(aParts[i])) {
 				oChangeObject[aParts[i]] = {};
 			}
 			oChangeObject = oChangeObject[aParts[i]];
 		}
-		oChangeObject[sProperty] = oValue;
+		
+		//reset clone if oValue equals the original value
+		if (oValue == oOriginalValue) {
+			delete oChangeObject[sPropertyPath];
+			//delete metadata to check if object has changes
+			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
+			delete this.mChangedEntities[sKey].__metadata;
+			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
+				this.mChangeHandles[sKey].abort();
+				delete this.mChangedEntities[sKey];
+				return true;
+			}
+			this.mChangedEntities[sKey].__metadata = oEntityMetadata;
+		} else {
+			oChangeObject[sPropertyPath] = oValue;
+		}
 
 		oGroupInfo = this._resolveGroup(sKey);
 
@@ -4333,7 +4359,87 @@ sap.ui.define([
 		}
 		return this.oMetaModel;
 	};
-
+	
+	/**
+	 * Returns the original value for the property with the given path and context.
+	 * The original value is the value that was last responded by the server.
+	 * 
+	 * @param {string} sPath the path/name of the property
+	 * @param {object} [oContext] the context if available to access the property value
+	 * @returns {any} vValue the value of the property
+	 * @public
+	 */
+	ODataModel.prototype.getOriginalProperty = function(sPath, oContext) {
+		return this._getObject(sPath, oContext, true);
+	};
+	
+	/**
+	 * Returns the nearest entity of a path relative to the given context.
+	 * Additional entity information will be passed back to the given <code>oEntityInfo</code> object if
+	 * a nearest entity exists.
+	 * 
+	 * @param {string} sPath path to an entity
+	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @param {object} [oEntityInfo.key] The key of the entity.
+	 *                 [oEntityInfo.propertyPath] The propertyPath within the entity.
+	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @return {object} the nearest entity object or null if no entity can be resolved.
+	 */
+	ODataModel.prototype.getEntityByPath = function(sPath, oContext, oEntityInfo) {
+		var sResolvedPath = Model.prototype.resolve.call(this,sPath, oContext);
+		if (!sResolvedPath) {
+			return null;
+		}
+		var aParts = sResolvedPath.split("/"),
+			oEntity = null,
+			aPropertyPath = [];
+		while (aParts.length > 0)  {
+			var sEntryPath = aParts.join("/"),
+				oObject = this._getObject(sEntryPath);
+			if (oObject) {
+				var sKey = this._getKey(oObject);
+				if (sKey) {
+					oEntity = oObject;
+					break;
+				}
+			}
+			aPropertyPath.unshift(aParts.pop());
+		}
+		if (oEntity) {
+			oEntityInfo.propertyPath = aPropertyPath.join("/");
+			oEntityInfo.key = sKey;
+			return oEntity;
+		} 
+		return null;
+	};
+	
+	/**
+	 * Resolve the path relative to the given context.
+	 * In addition to {@link sap.ui.model.Model#resolve resolve} a
+	 * canonical path can be resolved that will not contain navigation properties.
+	 * 
+	 * @param {string} sPath path to resolve
+	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @param {boolean} [bCanonical] if true the canonical path is returned
+	 * @return {string} resolved path, canonical path or undefined
+	 */
+	ODataModel.prototype.resolve = function(sPath, oContext, bCanonical) {
+		var sResolvedPath = Model.prototype.resolve.call(this,sPath, oContext);
+		if (bCanonical) {
+			var oEntityInfo = {},
+				oEntity = this.getEntityByPath(sPath, oContext, oEntityInfo);
+			if (oEntity) {
+				if (oEntityInfo.propertyPath) {
+					return "/" + oEntityInfo.key + "/" + oEntityInfo.propertyPath;
+				} else {
+					return "/" + oEntityInfo.key;
+				}
+			} else {
+				return undefined;
+			}
+		}
+		return sResolvedPath;
+	};
+	
 	return ODataModel;
-
 });

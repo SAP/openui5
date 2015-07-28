@@ -2204,18 +2204,17 @@
 				}
 			};
 			oModel.setProperty("/Suppliers(0)/Name", "blabla");
-			var oSuppl = oModel.mChangedEntities["Suppliers(0)"];
-			equal(oSuppl.Name, "blabla", "set Property name check");
+			equal(oModel.getProperty("/Suppliers(0)/Name"), "blabla", "set Property name check");
 			oModel.setProperty("/Suppliers(0)/temp", "temp");
-			equal(oSuppl.temp, "temp", "set Property create non existent property");
+			equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create non existent property");
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
-			equal(oSuppl.Address.Street, "150th", "set Property modify complex type property check");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
 			oModel.setProperty("/Suppliers(0)/Address/notExist", "1337");
-			equal(oSuppl.Address.notExist, "1337", "set Property create new property in complex type");
+			equal(oModel.getProperty("/Suppliers(0)/Address/notExist"), "1337", "set Property create new property in complex type");
 			oModel.setProperty("/Suppliers(0)/Address/Plz/code", 3);
-			equal(oSuppl.Address.Plz.code, 3, "set Property modify complex type in complex type property check");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 3, "set Property modify complex type in complex type property check");
 			oModel.setProperty("/Suppliers(0)/Address/Plz/notExist2", "337");
-			equal(oSuppl.Address.Plz.notExist2, "337", "set Property create new property in complex type");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/notExist2"), "337", "set Property create new property in complex type");
 			oModel.setProperty("/Suppliers(0)/Address/", {
 				City: "Berlin",
 				Street: "Dorfgasse",
@@ -2224,30 +2223,25 @@
 					number: 12345
 				}
 			});
-			equal(oSuppl.Address.City, "Berlin", "set Property with complete complex type data structure");
-			equal(oSuppl.Address.Street, "Dorfgasse", "set Property with complete complex type data structure");
-			equal(oSuppl.Address.Plz.code, 4, "set Property with complete complex type data structure");
-			equal(oSuppl.Address.Plz.number, 12345, "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/City"), "Berlin", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "Dorfgasse", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 4, "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/number"), 12345, "set Property with complete complex type data structure");
 			var iCount = 0;
-			jQuery.each(oSuppl.Address, function(i, oValue){
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address"), function(i, oValue){
 				iCount++;
 			});
 			equal(iCount, 3, "number of properties in complex type");
 			iCount = 0;
-			jQuery.each(oSuppl.Address.Plz, function(i, oValue){
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address/Plz"), function(i, oValue){
 				iCount++;
 			});
 			equal(iCount, 2, "number of properties in sub complex type");
 			
 			oModel.setProperty("/Products(0)/Supplier/Name", "Juergen");
-			oSuppl = oModel.mChangedEntities["Suppliers(0)"];
-			equal(oSuppl.Name, "Juergen", "set Property on expanded nav property");
-			equal(oModel.oData["Suppliers(0)"].Name, "Juergen", "set Property on expanded nav property");
+			equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Juergen", "set Property on expanded nav property");
 			oModel.setProperty("/Products(0)/Supplier/Address/Street", "GatterStreet");
-			equal(oSuppl.Address.Street, "GatterStreet", "set Property on expanded nav property with complex type");
-			equal(oModel.oData["Suppliers(0)"].Address.Street, "GatterStreet", "set Property on expanded nav property with complex type");			
-			ok(oModel.mChangedEntities["Products(0)"] === undefined, "Check: Products(0) wasn't modified at all");
-			
+			equal(oModel.getProperty("/Products(0)/Supplier/Address/Street"), "GatterStreet", "set Property on expanded nav property with complex type");
 			
 			start();
 		});
