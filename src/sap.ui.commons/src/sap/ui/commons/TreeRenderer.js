@@ -183,7 +183,9 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");  //Node Content
 
 		if (oNode.getIcon()) {
-			rm.writeIcon(oNode.getIcon(), "sapUiTreeIcon");
+			rm.writeIcon(oNode.getIcon(), "sapUiTreeIcon", {
+				"title": null // prevent default icon tooltip
+			});
 		}
 
 		rm.writeEscaped( oNode.getText());
