@@ -4,28 +4,31 @@
 
 // Provides control sap.m.QuickViewBase.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', './NavContainer', './Page'],
-	function(jQuery, library, Control, NavContainer, Page) {
+	'jquery.sap.global', './library', 'sap/ui/core/Control'],
+	function(jQuery, library, Control) {
 	"use strict";
 
 	/**
 	 * Constructor for a new QuickViewBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class QuickViewBase class provides base functionality for QuickView and QuickViewCard.
 	 * Do not use it directly.
 	 *
 	 * @extends sap.ui.core.Control
+	 *
 	 * @author SAP SE
+	 * @version ${version}
+	 *
 	 * @constructor
 	 * @public
+	 * @since 1.28.11
 	 * @alias sap.m.QuickViewBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var QuickViewBase = Control.extend("sap.m.QuickViewBase",
-			{
+	var QuickViewBase = Control.extend("sap.m.QuickViewBase", /** @lends sap.m.QuickViewBase.prototype */ {
 				metadata: {
 
 					library: "sap.m",
@@ -59,71 +62,71 @@ sap.ui.define([
 							parameters : {
 
 								/**
-								 * The page which was shown before the current navigation.
+								 * The page which was displayed before the current navigation.
 								 */
 								from : {
 									type : "sap.ui.core.Control"
 								},
 
 								/**
-								 * The ID of the page which was shown before the current navigation.
+								 * The ID of the page which was displayed before the current navigation.
 								 */
 								fromId : {
 									type : "string"
 								},
 
 								/**
-								 * The page which will be shown after the current navigation.
+								 * The page which will be displayed after the current navigation.
 								 */
 								to : {
 									type : "sap.ui.core.Control"
 								},
 
 								/**
-								 * The ID of the page which will be shown after the current navigation.
+								 * The ID of the page which will be displayed after the current navigation.
 								 */
 								toId : {
 									type : "string"
 								},
 
 								/**
-								 * Whether the "to" page (more precisely: a control with the ID of the page
-								 * which is currently navigated to) has not been shown/navigated to before.
+								 * Determines whether the "to" page (a control with the ID of the page
+								 * which is currently navigated to) has not been displayed/navigated to before.
 								 */
 								firstTime : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether this is a forward navigation.
+								 * Determines whether this is a forward navigation.
 								 */
 								isTo : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether this is a back navigation.
+								 * Determines whether this is a back navigation.
 								 */
 								isBack : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether this is a navigation to the root page.
+								 * Determines  whether this is a navigation to the root page.
 								 */
 								isBackToTop : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether this was a navigation to a specific page.
+								 * Determines whether this was a navigation to a specific page.
 								 */
 								isBackToPage : {
 									type : "boolean"
 								},
 
 								/**
-								 * How the navigation was triggered, possible values are
+								 * Determines how the navigation was triggered, possible values are
 								 * "to", "back", "backToPage", and "backToTop".
 								 */
 								direction : {
@@ -141,71 +144,70 @@ sap.ui.define([
 							parameters : {
 
 								/**
-								 * The page which had been shown before navigation.
+								 * Determines the page, which has been displayed before navigation.
 								 */
 								from : {
 									type : "sap.ui.core.Control"
 								},
 
 								/**
-								 * The ID of the page which had been shown before navigation.
+								 * Determines the ID of the page, which has been displayed before navigation.
 								 */
 								fromId : {
 									type : "string"
 								},
 
 								/**
-								 * The page which is now shown after navigation.
+								 * Determines the page, which is now displayed after navigation.
 								 */
 								to : {
 									type : "sap.ui.core.Control"
 								},
 
 								/**
-								 * The ID of the page which is now shown after navigation.
+								 * Determines the ID of the page, which is now displayed after navigation.
 								 */
 								toId : {
 									type : "string"
 								},
 
 								/**
-								 * Whether the "to" page (more precisely: a control with the ID of
-								 * the page which has been navigated to) had not been shown/navigated to before.
+								 * Determines whether the "to" page (a control with the ID of the page, which has been navigated to) has not been displayed/navigated to before.
 								 */
 								firstTime : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether was a forward navigation.
+								 * Determines whether this was a forward navigation.
 								 */
 								isTo : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether this was a back navigation.
+								 * Determines whether this was a back navigation.
 								 */
 								isBack : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether this was a navigation to the root page.
+								 * Determines whether this was a navigation to the root page.
 								 */
 								isBackToTop : {
 									type : "boolean"
 								},
 
 								/**
-								 * Whether this was a navigation to a specific page.
+								 * Determines whether this was a navigation to a specific page.
 								 */
 								isBackToPage : {
 									type : "boolean"
 								},
 
 								/**
-								 * How the navigation was triggered, possible values are
+								 * Determines  how the navigation was triggered, possible values are
 								 * "to", "back", "backToPage", and "backToTop".
 								 */
 								direction : {
@@ -213,7 +215,7 @@ sap.ui.define([
 								},
 
 								/**
-								 * Whether this is a navigation to the top page.
+								 * Determines whether this is a navigation to the top page.
 								 */
 								isTopPage: {
 									type: "boolean"
@@ -224,18 +226,26 @@ sap.ui.define([
 				}
 			});
 
+		/**
+		 * Navigates to the previous page if there is such.
+		 * @public
+		 */
 		QuickViewBase.prototype.navigateBack = function() {
 			if (!this._oNavContainer.currentPageIsTopPage()) {
 				this._oNavContainer.back();
 			}
 		};
 
+		/**
+		 * Returns the NavContainer used in the QuickView.
+		 * @returns {sap.m.NavContainer} The NavContainer used in the control
+		 */
 		QuickViewBase.prototype.getNavContainer = function() {
 			return this._oNavContainer;
 		};
 
 		/**
-		 * Initialize pages.
+		 * Initializes the pages of the QuickView.
 		 * @private
 		 */
 		QuickViewBase.prototype._initPages = function() {
@@ -276,6 +286,11 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Helper function for processing keyboard events.
+		 * @param {sap.ui.base.Event} oEvent The event object for this event
+		 * @private
+		 */
 		QuickViewBase.prototype._processKeyboard = function(oEvent) {
 			if (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.ENTER) {
 
@@ -289,6 +304,11 @@ sap.ui.define([
 			return oQuickViewPage;
 		};
 
+		/**
+		 * Helper function, that adds class to the "From" or "To" page and fires navigate event.
+		 * @param {sap.ui.base.Event} oEvent The event object for this event.
+		 * @private
+		 */
 		QuickViewBase.prototype._navigate = function(oEvent) {
 			var oToPage = oEvent.getParameter('to');
 			var oFromPage = oEvent.getParameter('from');
@@ -308,6 +328,11 @@ sap.ui.define([
 			this.fireNavigate(oEvent.getParameters());
 		};
 
+		/**
+		 * Helper function, that adds class to the "From" or "To" page and fires after navigate event.
+		 * @param {sap.ui.base.Event} oEvent - The event object for this event.
+		 * @private
+		 */
 		QuickViewBase.prototype._afterNavigate = function(oEvent) {
 			var oToPage = oEvent.getParameter('to');
 			var oFromPage = oEvent.getParameter('from');
@@ -332,6 +357,11 @@ sap.ui.define([
 			jQuery.sap.delayedCall(0, this, this._restoreFocus);
 		};
 
+		/**
+		 * Helper function, that sets the focus to the element, that was focused the previous time the page was opened or to the first focusable element.
+		 * or to the first focusable element.
+		 * @private
+		 */
 		QuickViewBase.prototype._restoreFocus = function() {
 			var oPage = this._oNavContainer.getCurrentPage();
 			var oFocusDomRef = this._oNavContainer._mFocusObject[oPage.getId()];
