@@ -332,8 +332,9 @@
 			equals(token1.getSelected(), false, "Token1 is unselected");
 			equals(token2.getSelected(), false, "Token2 is unselected");
 			equals(token3.getSelected(), false, "Token3 is unselected");
+		} else {
+			ok(true, "Test on IE9 skipped");
 		}
-
 	});
 
 	test("esc key", function() {
