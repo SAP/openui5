@@ -53,9 +53,6 @@ function(Plugin, ElementUtil) {
 	 */
 	Rename.prototype.init = function() {
 		Plugin.prototype.init.apply(this, arguments);
-//		this._mEventDelegate = {
-//			"onclick" : this._onClick
-//		};
 	};
 
 	/**
