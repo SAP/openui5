@@ -16,9 +16,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 *
 		 * @class
 		 * A popup which the user can open from the Shell's tool pane. Generally, the starting point would be an icon.
-		 * For this pop up, buttons can be defined with any text; therefore, it has the same purpose and similar look like any common dialog box.
-		 * A ToolPopup can have any content. Depending on the application type and design, the structure of the texts and input fields can be for
-		 * example form-like.
+		 * For this pop up, buttons can be defined with any text; therefore, it has the same purpose
+		 * and similar look like any common dialog box.
+		 * A ToolPopup can have any content. Depending on the application type and design, the structure
+		 * of the texts and input fields can be for example form-like.
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.PopupInterface
 		 *
@@ -41,13 +42,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				properties: {
 
 					/**
-					 * The title displayed in the pop up window
+					 * Determines the title displayed in the pop up window
 					 */
 					title: {type: "string", group: "Misc", defaultValue: null},
 
 					/**
 					 * This property is relevant for Shell use:
-					 * The URL to the icon displayed in the tool area which is used to open the ToolPopup. The recommended size is 32x32px, including some transparent border. Therefore, the content will cover about 20x20px.
+					 * The URL to the icon displayed in the tool area which is used to open the ToolPopup.
+					 * The recommended size is 32x32px, including some transparent border. Therefore,
+					 * the content will cover about 20x20px.
 					 */
 					icon: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 
@@ -59,38 +62,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 					/**
 					 * This property is relevant for Shell use:
-					 * The URL to the icon in selected state displayed in the tool area which is used to open the popup. If no selected icon is given, the hover icon is used.
+					 * The URL to the icon in selected state displayed in the tool area which is used to open the popup.
+					 * If no selected icon is given, the hover icon is used.
 					 */
 					iconSelected: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 
 					/**
 					 * Specifies whether the popup is modal and blocks any user-interaction with controls in the background.
-					 * Changing this property while the ToolPopup will not have any effect.
-					 * Please don't use "modal" and "autoclose" at the same time. In this case a warning will be prompted to the console and "autoclose" won't be used.
+					 * Changing this property while the ToolPopup is open will not have any effect.
+					 * Please don't use "modal" and "autoclose" at the same time. In this case a warning will
+					 * be prompted to the console and "autoclose" won't be used.
 					 */
 					modal: {type: "boolean", group: "Behavior", defaultValue: false},
 
 					/**
-					 * Specifies whether the ToolPopup has a dark or bright background. If set to true the background and borders will be dark. If false they will be bright.
+					 * Specifies whether the ToolPopup has a dark or bright background. If set to true
+					 * the background and borders will be dark. If false they will be bright.
 					 * This property only has an effect for the GoldReflection-theme.
 					 * @since 1.11.1
 					 */
 					inverted: {type: "boolean", group: "Misc", defaultValue: true},
 
 					/**
-					 * This property tells the ToolPopup to close itself if the ToolPopup looses the focus. If the user e.g. clicks outside of the ToolPopup it will be closed. Please don't use "modal" and "autoclose" at the same time. In this case a warning will be prompted to the console and "autoclose" won't be used.
+					 * Determines whether the ToolPopup will auto close when it loses focus.
+					 * If the user e.g. clicks outside of the ToolPopup it will be closed.
+					 * Please don't use "modal" and "autoclose" at the same time.
+					 * In this case a warning will be prompted to the console and "autoclose" won't be used.
 					 * @since 1.13.2
 					 */
 					autoClose: {type: "boolean", group: "Misc", defaultValue: false},
 
 					/**
-					 * This property can be used to force a maximum height of the ToolPopup in pixels. If the ToolPopup content is higher than the ToolPopup, the content will be scrollable.
+					 * Forces a maximum height of the ToolPopup in pixels. If the ToolPopup content
+					 * is higher than the ToolPopup, the content will be scrollable.
 					 * @since 1.13.2
 					 */
 					maxHeight: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: null},
 
 					/**
-					 * This property can be used to force a maximum width of the ToolPopup in pixels.
+					 * Forces a maximum width of the ToolPopup in pixels.
 					 * @since 1.15.0
 					 */
 					maxWidth: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: null},
@@ -111,12 +121,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				aggregations: {
 
 					/**
-					 * The buttons to appear in the popup
+					 * Defines the buttons to appear in the popup
 					 */
 					buttons: {type: "sap.ui.core.Control", multiple: true, singularName: "button"},
 
 					/**
-					 * The content of the popup
+					 * Defines the content of the popup
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
 				},
@@ -129,12 +139,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 					/**
 					 * This property is relevant for stand-alone use:
-					 * This association needs to be set if the ToolPopup should not be opened by/with the Shell. This association contains the instance of the control that assigns the ToolPopup's position.
+					 * This association needs to be set if the ToolPopup should not be opened by/with
+					 * the Shell. This association contains the instance of the control that
+					 * assigns the ToolPopup's position.
 					 */
 					opener: {type: "sap.ui.core.Control", multiple: false},
 
 					/**
-					 * Defines one of the buttons that have been provided via button aggregation to be the default button. This default button is initially selected, if no control is set via the initialFocus association explicitly. The default button is activated when Enter is pressed in the context of the dialog and when the currently selected element does not handle the Enter event itself.
+					 * Defines one of the buttons that have been provided via button aggregation to be
+					 * the default button. This default button is initially selected, if no control
+					 * is set via the initialFocus association explicitly. The default button is activated
+					 * when Enter is pressed in the context of the dialog and when the currently selected element
+					 * does not handle the Enter event itself.
 					 * @since 1.20.1
 					 */
 					defaultButton: {type: "sap.ui.core.Control", multiple: false}
@@ -147,12 +163,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					open: {},
 
 					/**
-					 * Event is fired when the popup closes because the user pressed Escape or the ToolPopup Button in the Shell. This is called before the closing animation.
+					 * Event is fired when the popup closes because the user pressed Escape or the ToolPopup
+					 * Button in the Shell. This is called before the closing animation.
 					 */
 					close: {allowPreventDefault: true},
 
 					/**
-					 * Event is fired whenever the user clicks the Enter or the Return key inside the pop up
+					 * Event is fired whenever the user clicks the Enter or the Enter key inside the pop up
 					 */
 					enter: {
 						parameters: {
@@ -170,13 +187,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					},
 
 					/**
-					 * Event is fired when one of the icon properties is modified (Note: The icon is not rendered by the ToolPopup).
+					 * Event is fired when one of the icon properties is modified (Note: The icon is not
+					 * rendered by the ToolPopup).
 					 * To be used by other controls which want to update the icon in their UI.
 					 */
 					iconChanged: {},
 
 					/**
-					 * This event is fired after the ToolPopup has finished its closing animation. It is called for EVERY close, regardless of whether the user has triggered the close or whether the ToolPopup was closed via API call.
+					 * This event is fired after the ToolPopup has finished its closing animation.
+					 * It is called for EVERY close, regardless of whether the user has triggered the
+					 * close or whether the ToolPopup was closed via API call.
 					 */
 					closed: {},
 
@@ -507,15 +527,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			// first variant of the documentation: to be parsed by the metamodel derivation
 			/**
 			 * Opens the ToolPopup.
-			 * It is checked which control wants to open the ToolPopup. The Shell was previously set as parent so the
-			 * corresponding parent element is used to set the correct position of the ToolPopup.
-			 * If another control (i.e. a button) opens the ToolPopup, the control must be previously set as 'opener' via 'setOpener' to the
-			 * ToolPopup. Corresponding to this opener the position of the ToolPopup will be set.
-			 * It's also possible to set the position above, below or left from the opener. This can be done via the possible parameters 'my' and 'at'.
+			 * It is checked which control wants to open the ToolPopup. The Shell was previously
+			 * set as parent so the corresponding parent element is used to set the correct position of the ToolPopup.
+			 * If another control (i.e. a button) opens the ToolPopup, the control must be previously
+			 * set as <code>opener</code> via <code>setOpener</code> to the ToolPopup.
+			 * Corresponding to this opener the position of the ToolPopup will be set.
+			 * It's also possible to set the position above, below or left from the opener.
+			 * This can be done via the possible parameters <code>my</code> and <code>at</code>.
 			 * These parameters refers to work the same way as they do of sap.ui.core.Popup.open.
 			 *
-			 * @param {sap.ui.core.Popup.Dock} [my=sap.ui.core.Popup.Dock.CenterCenter] The ToolPopup's content reference position for docking
-			 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] The "of" element's reference point for docking to
+			 * @param {sap.ui.core.Popup.Dock} [my=sap.ui.core.Popup.Dock.CenterCenter] The ToolPopup's content
+			 * reference position for docking
+			 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] The "of" element's
+			 * reference point for docking to
 			 * @returns {sap.ui.ux3.ToolPopup}
 			 * @public
 			 */
@@ -527,7 +551,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				this.sOffset = "";
 				fnUpdateThemeInverted(this);
 
-				// if the popup position has not been (re-)initialized since the last time this was opened, try to apply the default position
+				// if the popup position has not been (re-)initialized since the last time this was opened,
+				// try to apply the default position
 				if (!this._bPositionSet) {
 					var iOffsetX = 0;
 					var iOffsetY = 0;
@@ -743,8 +768,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			/**
 			 * Calculates the desired arrow position related to the set docking and to the size of the popup.
-			 * This only works when "my" and "at" both use the jQuery-based docking which means they are strings like "begin top".
-			 * If there is no opener set properly an error is logged into the console and there will be no arrow for the ToolPopup.
+			 * This only works when "my" and "at" both use the jQuery-based docking which means they
+			 * are strings like "begin top".
+			 * If there is no opener set properly an error is logged into the console and there will
+			 * be no arrow for the ToolPopup.
 			 *
 			 * @param {sap.ui.ux3.ToolPopup} oThis
 			 * @private
@@ -903,7 +930,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			 * when the interaction in the pop up has been completed or canceled.
 			 *
 			 * @param {boolean} bPreventRestoreFocus
-			 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened. This makes sense when the ToolPopup is closed programmatically from a different area of the application (outside the ToolPopup) and the focus should not move aways from that place.
+			 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened.
+			 *         This makes sense when the ToolPopup is closed programmatically from a different area of the application
+			 *         (outside the ToolPopup) and the focus should not move aways from that place.
 			 * @returns {sap.ui.ux3.ToolPopup}
 			 * @public
 			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -929,7 +958,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			 * enabled depending on its <code>openState</code>. Descendant controls that honor the
 			 * enabled state of their ancestors will appear disabled after the ToolPopup is closed.
 			 *
-			 * @experimental Since 1.13.1. Whether a dialog is regarded as "enabled" during the state transitions
+			 * Since 1.13.1. Whether a dialog is regarded as "enabled" during the state transitions
 			 * (OPENING, CLOSING) is not fully decided. Currently, it is enabled during the OPENING phase
 			 * and disabled during the CLOSING phase. The only potential change would be to treat the
 			 * OPENING phase as disabled as well. Applications should be prepared to receive events from
@@ -950,7 +979,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 			 */
 			ToolPopup.prototype.getEnabled = function () {
-				var eState = this.oPopup ? this.oPopup.getOpenState() : sap.ui.core.OpenState.CLOSED; // assuming that a ToolPopup without a Popup can’t be open
+				// assuming that a ToolPopup without a Popup can’t be open
+				var eState = this.oPopup ? this.oPopup.getOpenState() : sap.ui.core.OpenState.CLOSED;
 
 				//TODO the check for state OPENING is a compromise. Without that, the content of the dialog will render
 				// in disabled state but will be enabled. As an alternative, the dialog could render again after OPEN is reached
@@ -1207,10 +1237,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			};
 
 			/**
-			 * Adds an ID to the Popup that should be focusable as well when using 'autoclose'.
+			 * Adds an ID to the Popup that should be focusable as well when using <code>autoclose</code>.
 			 * Chaining is only possible if a valid type (string) is given.
 			 *
-			 * @param {sap.ui.core.string} [sID] Id of the corresponding element that should be focusable as well
+			 * @param {sap.ui.core.string} [sID] ID of the corresponding element that should be focusable as well
 			 * @since 1.19.0
 			 * @public
 			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1230,10 +1260,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			};
 
 			/**
-			 * Removes an ID to the Popup that should be focusable as well when using 'autoclose'.
+			 * Removes an ID to the Popup that should be focusable as well when using <code>autoclose</code>.
 			 * Chaining is only possible if a valid type (string) is given.
 			 *
-			 * @param {sap.ui.core.string} [sID] of the corresponding element
+			 * @param {sap.ui.core.string} [sID] ID of the corresponding element
 			 * @since 1.19.0
 			 * @public
 			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
