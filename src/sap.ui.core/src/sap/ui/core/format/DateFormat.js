@@ -644,7 +644,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					checkValid(oPart.sType, sPart === "");
 					iIndex += sPart.length;
 					iDay = parseInt(sPart, 10);
-					if (bStrict && iDay > 31) {
+					if (bStrict && (iDay > 31 || iDay < 1)) {
 						bValid = false;
 					}
 					break;
@@ -663,7 +663,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 						checkValid(oPart.sType, sPart === "");
 						iMonth = parseInt(sPart, 10) - 1;
 						iIndex += sPart.length;
-						if (bStrict && iMonth > 11) {
+						if (bStrict && (iMonth > 11 || iMonth < 0)) {
 							bValid = false;
 						}
 					} else {
