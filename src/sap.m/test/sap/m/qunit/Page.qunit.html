@@ -328,7 +328,9 @@
 
 					oPage4.scrollToElement(this.oTestButton);
 
-					assert.equal(getScrollPos("myFourthPage"), -1200, "Page 2 should be scrolled to position 1200");
+					var scrollAsExpected = getScrollPos("myFourthPage") - -1200 > -1 || getScrollPos("myFourthPage") - -1200 < 2;
+
+					assert.ok(scrollAsExpected, "Page 2 should be scrolled to position 1200");
 
 					oPage4.destroy();
 				});
