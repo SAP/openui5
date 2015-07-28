@@ -2157,36 +2157,5 @@
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("Legacy signature support", function () {
-		var aViewContent = [
-				mvcView(),
-				'<template:if test="false">', // warning 'Constant test condition'
-				'<Out/>',
-				'<\/template:if>',
-				'<ExtensionPoint name="myExtensionPoint">',
-				'<In />',
-				'</ExtensionPoint>',
-				'<\/mvc:View>'
-			],
-			fnProcess = sap.ui.core.util.XMLPreprocessor.process;
-
-		this.stub(sap.ui.core.util.XMLPreprocessor, "process",
-			function (oRootElement, oViewInfo, mSettings) {
-				// simulate call with legacy signature
-				return fnProcess.call(this, oRootElement, mSettings, oViewInfo.caller);
-			}
-		);
-		// Note: w/o proper oViewInfo, extension point replacement is not supported
-		this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension").never();
-		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
-
-		check.call(this, aViewContent, {}, [
-			'<ExtensionPoint name="myExtensionPoint">',
-			'<In />',
-			'</ExtensionPoint>'
-		]);
-	});
-
 	//TODO we have completely missed support for unique IDs in fragments via the "id" property!
 }());
