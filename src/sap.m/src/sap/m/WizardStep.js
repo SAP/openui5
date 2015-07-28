@@ -10,13 +10,14 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 	/**
 	 * Constructor for a new WizardStep.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The WizardStep control is an aggregation of the Wizard control.
-	 * This Control is supposed to be used only inside the Wizard, and should not be used as standalone.
-	 * It aggregates the contents, and gives the developer the ability to validate, or invalidate the step.
+	 * The WizardStep is a container control which should be used mainly to aggregate user input controls.
+	 * It gives the developer the ability to validate, invalidate the step and define subsequent steps.
+	 * Note: The WizardStep control control is supposed to be used only as an aggregation of the Wizard control,
+	 * and should not be used as a standalone one.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -32,24 +33,26 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 		metadata: {
 			properties: {
 				/**
-				 * The title to be shown for the WizardStep control
+				 * Determines the title of the step.
+				 * The title is visualized in the Wizard control.
 				 */
 				title: {type: "string", group: "appearance", defaultValue: ""},
 				/**
-				 * Indicates whether or not the step is valid
+				 * Indicates whether or not the step is validated.
+				 * When a step is validated a Next button is visualized in the Wizard control.
 				 */
 				validated: {type: "boolean", group: "Behavior", defaultValue: true}
 			},
 			events: {
 				/**
 				 * This event is fired after the user presses the Next button in the Wizard,
-				 * or on nextStep() method call from the app developer
+				 * or on <code>nextStep</code> method call from the app developer.
 				 */
 				complete: {
 					parameters: {}
 				},
 				/**
-				 * This event is fired on next step activation from the Wizard
+				 * This event is fired on next step activation from the Wizard.
 				 */
 				activate: {
 					parameters: {}
@@ -58,18 +61,17 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 			defaultAggregation: "content",
 			aggregations: {
 				/**
-				 * The content of the Wizard Step
+				 * The content of the Wizard Step.
 				 */
 				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
 				/**
-				 * The edit button of the WizardStep
-				 * when autoLocking is set to true
+				 * The edit button of the WizardStep when autoLocking is set to true.
 				 */
 				_editButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 			},
 			associations: {
 				/**
-				 * This association is used only when the 'enableBranching' property of the Wizard is set to true.
+				 * This association is used only when the <code>enableBranching</code> property of the Wizard is set to true.
 				 * Use the association to store the next steps that are about to come after the current.
 				 * If this is going to be a final step - leave this association empty.
 				 */

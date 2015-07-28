@@ -13,12 +13,13 @@ sap.ui.define([
 		/**
 		 * Constructor for a new Wizard.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The Wizard control enables users to accomplish a single goal which consists of multiple
-		 * dependable sub-tasks.
+		 * The Wizard control enables users to accomplish a single goal
+		 * which consists of multiple dependable sub-tasks.
+		 * Each sub-task is provided in the form of a WizardStep.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -35,60 +36,66 @@ sap.ui.define([
 				library: "sap.m",
 				properties: {
 					/**
-					 * The Wizard width.
+					 * Determines the width of the Wizard.
 					 */
 					width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "auto"},
 					/**
-					 * The Wizard height.
+					 * Determines the height of the Wizard.
 					 */
 					height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "100%"},
 					/**
 					 * Controls the visibility of the next button. The developers can choose to control the flow of the
-					 * steps either through the API (with nextStep and previousStep methods) or let the user click
-					 * the next button, and control it with validateStep() or invalidateStep()
+					 * steps either through the API (with <code>nextStep</code> and <code>previousStep</code> methods) or let the user click
+					 * the next button, and control it with <code>validateStep</code> or <code>invalidateStep</code> methods.
 					 */
 					showNextButton : {type : "boolean", group : "Behavior", defaultValue : true},
 					/**
-					 * Changes the text of the finish button for the last step. By default is "Review".
-					 * This property can be used only if showNextButton is set to true.
+					 * Changes the text of the finish button for the last step.
+					 * This property can be used only if <code>showNextButton</code> is set to true.
+					 * By default the text of the button is "Review".
 					 */
 					finishButtonText: {type: "string", group: "Appearance", defaultValue: "Review"},
 					/**
 					 * Enables the branching functionality of the Wizard.
-					 * If this property is set to false, the 'next', and 'subSequentSteps' associations of the
-					 * WizardStep are being ignored
+					 * Branching gives the developer the ability to define multiple routes a user
+					 * is able to take based on the input in the current step.
+					 * It is up to the developer to programatically check for what is the input in the
+					 * current step and set a concrete next step amongs the available subsequent steps.
+					 * Note: If this property is set to false, <code>next</code> and <code>subSequentSteps</code>
+					 * associations of the WizardStep control are ignored.
 					 */
 					enableBranching : {type: "boolean", group: "Behavior", defaultValue : false}
 				},
 				defaultAggregation: "steps",
 				aggregations: {
 					/**
-					 * The wizard steps to be included in the content of the control
+					 * The wizard steps to be included in the content of the control.
 					 */
 					steps: {type: "sap.m.WizardStep", multiple: true, singularName: "step"},
 					/**
-					 * The internal container for the wizard
+					 * The internal container for the wizard.
 					 */
 					_page: {type: "sap.m.Page", multiple: false, visibility: "hidden"},
 					/**
-					 * The next button for the wizard
+					 * The next button for the wizard.
 					 */
 					_nextButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 				},
 				events: {
 					/**
-					 * The StepActivated event is fired every time a new step is being activated
+					 * The StepActivated event is fired every time a new step is activated.
 					 */
 					stepActivate: {
 						parameters: {
 							/**
-							 * The index of the activated step as a parameter
+							 * The index of the activated step as a parameter. One-based.
 							 */
 							index: {type: "int"}
 						}
 					},
 					/**
-					 * The complete event is fired when the user clicks the next button on the last step
+					 * The complete event is fired when the user clicks the finish button of the Wizard.
+					 * The finish button is only available on the last step of the Wizard.
 					 */
 					complete: {
 						parameters: {}
@@ -145,9 +152,9 @@ sap.ui.define([
 		/**************************************** PUBLIC METHODS ***************************************/
 
 		/**
-		 * Validates the step
-		 * @param {sap.m.WizardStep} step - The step to be validated.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * Validates the given step.
+		 * @param {sap.m.WizardStep} step The step to be validated.
+		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.validateStep = function (step) {
@@ -162,9 +169,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Invalidates the step
-		 * @param {sap.m.WizardStep} step - The step to be invalidated.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * Invalidates the given step.
+		 * @param {sap.m.WizardStep} step The step to be invalidated.
+		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.invalidateStep = function (step) {
@@ -179,8 +186,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Validates the current step, and moves 1 step further
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * Validates the current step, and moves one step further.
+		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.nextStep = function () {
@@ -192,8 +199,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Discards the current step and rolls 1 step back
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * Discards the current step and goes one step back.
+		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.previousStep = function () {
@@ -207,8 +214,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the number of the last activated step in the Wizard
-		 * @returns {number} The last activated step
+		 * Returns the number of the last activated step in the Wizard.
+		 * @returns {number} The last activated step.
 		 * @public
 		 */
 		Wizard.prototype.getProgress = function () {
@@ -216,8 +223,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the last activated step in the Wizard
-		 * @returns {sap.m.WizardStep} Pointer to the control instance for chaining
+		 * Returns the last activated step in the Wizard.
+		 * @returns {sap.m.WizardStep} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.getProgressStep = function () {
@@ -225,10 +232,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Goes to the given step
-		 * @param {sap.m.WizardStep} step - The step to go to.
-		 * @param {boolean} focusFirstStepElement - Defines whether the focus should be changed to the first element
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * Goes to the given step.
+		 * @param {sap.m.WizardStep} step The step to go to.
+		 * @param {boolean} focusFirstStepElement Defines whether the focus should be changed to the first element.
+		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.goToStep = function (step, focusFirstStepElement) {
@@ -254,8 +261,8 @@ sap.ui.define([
 		/**
 		 * Discards all progress done from the given step(incl.) to the end of the wizard.
 		 * The verified state of the steps is returned to the initial provided.
-		 * @param {step} The step after which the progress is discarded.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * @param {sap.m.WizardStep} step The step after which the progress is discarded.
+		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.discardProgress = function (step) {
@@ -299,9 +306,9 @@ sap.ui.define([
 		/**************************************** PROXY METHODS ***************************************/
 
 		/**
-		 * Sets the visiblity of the next button
-		 * @param {boolean} value - The new value to be set
-		 * @returns {sap.m.Wizard} Reference to the control instance for chaining
+		 * Sets the visiblity of the next button.
+		 * @param {boolean} value True to show the button or false to hide it.
+		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.setShowNextButton = function (value) {
@@ -314,8 +321,8 @@ sap.ui.define([
 
 		/**
 		 * Sets the text for the finish button. By default it is "Review".
-		 * @param {string} value - The text of the finish button
-		 * @returns {sap.m.Wizard} Reference to the control instance for chaining
+		 * @param {string} value The text of the finish button.
+		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.setFinishButtonText = function (value) {
@@ -325,9 +332,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the finish button text.
-		 * If the finishButtonText property value is set, then this value is returned, otherwise - the default value.
-		 * @returns {string}
+		 * Returns the finish button text which will be rendered.
+		 * @returns {string} The text which will be rendered in the finish button.
 		 * @public
 		 */
 		Wizard.prototype.getFinishButtonText = function ()  {
@@ -340,7 +346,7 @@ sap.ui.define([
 
 		/**
 		 * Returns all the steps in the wizard
-		 * @returns {Array} Array of sap.m.wizardStep
+		 * @returns {[sap.m.wizardStep]} All aggregated steps in the Wizard.
 		 * @public
 		 */
 		Wizard.prototype.getSteps = function () {
@@ -350,8 +356,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Adds a new step to the Wizard
-		 * @param {sap.m.WizardStep} wizardStep - New WizardStep to add to the Wizard
+		 * Adds a new step to the Wizard.
+		 * @param {sap.m.WizardStep} wizardStep New WizardStep to add to the Wizard
 		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
 		 * @public
 		 */
@@ -368,7 +374,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Dynamic step insertion is not yet supported
+		 * Dynamic step insertion is not yet supported.
+		 * @experimental
 		 * @public
 		 */
 		Wizard.prototype.insertStep = function (wizardStep, index) {
@@ -376,7 +383,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Dynamic step removal is not yet supported
+		 * Dynamic step removal is not yet supported.
+		 * @experimental
 		 * @public
 		 */
 		Wizard.prototype.removeStep = function (wizardStep) {
@@ -384,8 +392,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Removes all steps from the Wizard
-		 * @returns {sap.m.Control} Pointer to the Steps that were removed
+		 * Removes all steps from the Wizard.
+		 * @returns {sap.m.Control} Pointer to the Steps that were removed.
 		 * @public
 		 */
 		Wizard.prototype.removeAllSteps = function () {
@@ -394,8 +402,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Destroys all steps in the Wizard
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining
+		 * Destroys all aggregated steps in the Wizard.
+		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.destroySteps = function () {
