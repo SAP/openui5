@@ -691,7 +691,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		};
 
 		MessagePopover.prototype._getTagPolicy = function () {
-			var that = this;
+			var that = this,
+				i;
 
 			/*global html*/
 			var defaultTagPolicy = html.makeTagPolicy(this._validateURL());
@@ -702,7 +703,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 				if (tagName.toUpperCase() === "A") {
 
-					for (var i = 0; i < attrs.length;) {
+					for (i = 0; i < attrs.length;) {
 						// if there is href the link should be validated, href's value is on position(i+1)
 						if (attrs[i] === "href") {
 							validateLink = true;
@@ -728,7 +729,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 					var done = false;
 					// first check if there is a class attribute and enrich it with 'sapMMsgPopoverItemDisabledLink'
-					for (var i = 0; i < attrs.length; i += 2) {
+					for (i = 0; i < attrs.length; i += 2) {
 						if (attrs[i] === "class") {
 							attrs[i + 1] += "sapMMsgPopoverItemDisabledLink sapMMsgPopoverItemPendingLink";
 							done = true;
