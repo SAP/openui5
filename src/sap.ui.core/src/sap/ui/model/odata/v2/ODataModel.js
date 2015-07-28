@@ -2389,7 +2389,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
 		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
-		oEntityMetadata, that = this;
+		oEntityMetadata, mLocalGetEntities = {}, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
 
@@ -2397,7 +2397,7 @@ sap.ui.define([
 		// no data available
 		if (bContent && !oResultData && oResponse) {
 			// Parse error messages from the back-end
-			this._parseResponse(oResponse, oRequest, mGetEntities, mChangeEntities);
+			this._parseResponse(oResponse, oRequest);
 
 			jQuery.sap.log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + "'");
 			that.fireRequestCompleted({url : oResponse.requestUri, type : "GET", async : oResponse.async,
@@ -2412,7 +2412,7 @@ sap.ui.define([
 		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
 			//need a deep data copy for import
 			oResultData = jQuery.sap.extend(true, {}, oResultData);
-			that._importData(oResultData, mGetEntities);
+			that._importData(oResultData, mLocalGetEntities);
 		}
 
 		sUri = oRequest.requestUri;
@@ -2455,7 +2455,10 @@ sap.ui.define([
 		}
 
 		// Parse messages from the back-end
-		this._parseResponse(oResponse, oRequest, mGetEntities, mChangeEntities);
+		this._parseResponse(oResponse, oRequest, mLocalGetEntities, mChangeEntities);
+
+		// Add the Get-Entities from this request to the main ones (which differ in case of batch requests)
+		jQuery.extend(mGetEntities, mLocalGetEntities);
 
 		this._updateETag(oRequest, oResponse);
 

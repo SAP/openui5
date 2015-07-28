@@ -236,7 +236,13 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must 
 		// be trimmed here
 		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
-		
+
+		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
+		var iPropertyPos = sTarget.lastIndexOf(")/");
+		if (iPropertyPos > 0) {
+			sTarget = sTarget.substr(0, iPropertyPos + 1);
+		}
+
 		if (mAffectedTargets[sTarget]) {
 			// Message belongs to targets handled/requested by this request
 			aRemovedMessages.push(this._lastMessages[i]);
