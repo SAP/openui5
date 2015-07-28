@@ -12,12 +12,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	/**
 	 * Constructor for a new TableSelectDialog.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A TableSelectDialog provides you a easier way to create a dialog that contains a list with grouping and search functionality.
-	 * The Table used in a SelectDialog is a Table with Columns. After selecting an item, the dialog will be closed and a callback function will return the item being selected.
+	 * TableSelectDialog provides you with an easier way to create a dialog that contains a list with grouping and search functionalities.
+	 * The Table used in a SelectDialog is a Table with Columns. After selecting an item, the dialog is closed and a callback function returns the item being selected.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -35,40 +35,40 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		properties : {
 
 			/**
-			 * The title text appears in the dialog header.
+			 * Specifies the title text in the dialog header.
 			 */
 			title : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * This is the text shown when the table has no data.
+			 * Specifies the text displayed when the table has no data.
 			 */
 			noDataText : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * If on, the user can select several options from the table.
+			 * Enables the user to select several options from the table.
 			 */
 			multiSelect : {type : "boolean", group : "Dimension", defaultValue : false},
 
 			/**
-			 * Number of items initially displayed in the table
+			 * Determines the number of items initially displayed in the table.
 			 */
 			growingThreshold : {type : "int", group : "Misc", defaultValue : null},
 
 			/**
-			 * The content width of the inner dialog. For more information, see the dialog documentation.
+			 * Determines the content width of the inner dialog. For more information, see the Dialog documentation.
 			 * @since 1.18
 			 */
 			contentWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * This flag controls whether the dialog clears the selection or not. When the dialog is opened multiple times in the same context to allow for corrections of previous user inputs, set this flag to "true". When the dialog should reset the selection to allow for a new selection each time set it to "false"
-			 * Note: This property must be set before the dialog is opened to have an effect.
+			 * Controls whether the dialog clears the selection or not. When the dialog is opened multiple times in the same context to allow for corrections of previous user inputs, set this flag to "true". When the dialog should reset the selection to allow for a new selection each time set it to "false"
+			 * Note: This property must be set before the Dialog is opened to have an effect.
 			 * @since 1.18
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * The content height of the inner dialog. For more information, see the dialog documentation.
+			 * Specifies the content height of the inner dialog. For more information, see the Dialog documentation.
 			 */
 			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
 		},
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 			items : {type : "sap.m.ColumnListItem", multiple : true, singularName : "item", bindable : "bindable"},
 
 			/**
-			 * The internal dialog that will be shown when method open is called.
+			 * The internal dialog that is displayed when method open is called.
 			 */
 			_dialog : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		events : {
 
 			/**
-			 * This event will be fired when the dialog is confirmed by selecting an item in single selection mode or by pressing the confirmation button in multi selection mode. The items being selected are returned as event parameters.
+			 * Fires when the dialog is confirmed by selecting an item in single-selection mode or by pressing the confirmation button in multi-selection mode. The items being selected are returned as event parameters.
 			 */
 			confirm : {
 				parameters : {
@@ -110,50 +110,51 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 
 					/**
 					 * Returns the binding contexts of the selected items including the non-visible items.
-					 * Note: In contrast to the parameter "selectedItems", this parameter will also include the selected but NOT visible items (e.g. due to list filtering). An empty array will be set for this parameter if no Databinding is used.
+					 * Note: In contrast to the parameter "selectedItems", this parameter includes the selected but NOT visible items (due to list filtering). An empty array is set for this parameter if no Databinding is used.
 					 */
 					selectedContexts : {type : "string"}
 				}
 			},
 
 			/**
-			 * Fired when the search button has been clicked on dialog.
+			 * Fires when the search button has been clicked on dialog.
 			 */
 			search : {
 				parameters : {
 
 					/**
-					 * The value entered in the search field.
+					 * Specifies the value entered in the search field.
 					 */
 					value : {type : "string"},
 
 					/**
-					 * The Items binding of the Table Select Dialog. It will only be available if the items aggregation is bound to a model.
+					 * Determines the Items binding of the Table Select Dialog. Only available if the items aggregation is bound to a model.
 					 */
 					itemsBinding : {type : "any"}
 				}
 			},
 
 			/**
-			 * This event is fired when the value of the search field is changed by a user - e.g. at each key press.
+			 * Fires when the value of the search field is changed by a user (for example at each key press).
 			 */
 			liveChange : {
 				parameters : {
 
 					/**
-					 * The value entered in the search field.
+					 * Specifies the value entered in the search field.
 					 */
 					value : {type : "string"},
 
 					/**
-					 * The Items binding of the Table Select Dialog. It will only be available if the items aggregation is bound to a model.
+					 * The Items binding of the Table Select Dialog.
+					 * Only available if the items aggregation is bound to a model.
 					 */
 					itemsBinding : {type : "any"}
 				}
 			},
 
 			/**
-			 * This event will be fired when the cancel button is clicked.
+			 * Fires when the Cancel button is clicked.
 			 */
 			cancel : {}
 		}
@@ -165,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	/* =========================================================== */
 
 	/**
-	 * Initializes the control
+	 * Initializes the control.
 	 * @private
 	 */
 	TableSelectDialog.prototype.init = function () {
@@ -328,8 +329,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		this._dialog = null;
 	};
 
-	/*
-	* Is called after renderer is finished to show the busy state
+	/**
+	* Shows the busy state and is called after the renderer is finished.
 	* @overwrite
 	* @protected
 	* @returns {sap.m.TableSelectDialog} this pointer for chaining
@@ -344,8 +345,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		return this;
 	};
 
-	/*
-	* Invalidates the dialog instead of this control (we don't have a renderer)
+	/**
+	* Invalidates the dialog instead of this control, as there is no renderer.
 	* @overwrite
 	* @protected
 	* @returns {sap.m.TableSelectDialog} this pointer for chaining
@@ -417,7 +418,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Enable/Disable multi selection mode.
+	 * Enables/Disables multi selection mode.
 	 * @overwrite
 	 * @public
 	 * @param {boolean} bMulti flag for multi selection mode
@@ -439,7 +440,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Set the title of the internal dialog
+	 * Sets the title of the internal dialog
 	 * @overwrite
 	 * @public
 	 * @param {string} sTitle the title text for the dialog
@@ -453,7 +454,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Set the no data text of the internal table
+	 * Sets the no data text of the internal table
 	 * @overwrite
 	 * @public
 	 * @param {string} sNoDataText the no data text for the table
@@ -465,7 +466,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Get the internal List's no data text property
+	 * Retrieves the internal List's no data text property
 	 * @overwrite
 	 * @public
 	 * @returns {string} the current no data text
@@ -475,7 +476,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Get content width of the select dialog {@link sap.m.Dialog}
+	 * Retrieves content width of the select dialog {@link sap.m.Dialog}
 	 * @overwrite
 	 * @public
 	 * @returns {sap.ui.core.CSSSize} sWidth the content width of the internal dialog
@@ -485,7 +486,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Set content width of the select dialog {@link sap.m.Dialog}
+	 * Sets content width of the select dialog {@link sap.m.Dialog}
 	 * @param {sap.ui.core.CSSSize} sWidth the new content width value for the dialog
 	 * @public
 	 * @overwrite
@@ -498,7 +499,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Get content height of the select dialog {@link sap.m.Dialog}
+	 * Retrieves content height of the select dialog {@link sap.m.Dialog}
 	 * @overwrite
 	 * @public
 	 * @returns {sap.ui.core.CSSSize} sHeight the content height of the internal dialog
@@ -508,7 +509,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Set content height of the select dialog {@link sap.m.Dialog}
+	 * Sets content height of the select dialog {@link sap.m.Dialog}
 	 * @param {sap.ui.core.CSSSize} sHeight the new content height value for the dialog
 	 * @public
 	 * @overwrite
@@ -521,7 +522,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Forward method to the inner dialog: addStyleClass
+	 * Transfers method to the inner dialog: addStyleClass
 	 * @public
 	 * @override
 	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
@@ -532,7 +533,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Forward method to the inner dialog: removeStyleClass
+	 * Transfers method to the inner dialog: removeStyleClass
 	 * @public
 	 * @override
 	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
@@ -543,7 +544,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Forward method to the inner dialog: toggleStyleClass
+	 * Transfers method to the inner dialog: toggleStyleClass
 	 * @public
 	 * @override
 	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
@@ -554,7 +555,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Forward method to the inner dialog: hasStyleClass
+	 * Transfers method to the inner dialog: hasStyleClass
 	 * @public
 	 * @override
 	 * @returns {boolean} true if the class is set, false otherwise
@@ -564,7 +565,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Forward method to the inner dialog: getDomRef
+	 * Transfers method to the inner dialog: getDomRef
 	 * @public
 	 * @override
 	 * @return {Element} The Element's DOM Element sub DOM Element or null
@@ -581,14 +582,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	/*           begin: forward aggregation  methods to table      */
 	/* =========================================================== */
 
-	/*
-	 * Set the model for the internal table AND the current control so that
-	 * both controls can be used with data binding
+	/**
+	 * Sets the model for the internal table and the current control, so that both controls can be used with data binding.
 	 * @overwrite
 	 * @public
-	 * @param {sap.ui.Model} oModel the model that holds the data for the table
-	 * @param {string} sName the optional model name
-	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
+	 * @param {sap.ui.Model} oModel The model that holds the data for the table
+	 * @param {string} sName The optional model name
+	 * @returns {sap.m.TableSelectDialog} This pointer for chaining
 	 */
 	TableSelectDialog.prototype._setModel = TableSelectDialog.prototype.setModel;
 	TableSelectDialog.prototype.setModel = function (oModel, sModelName) {
@@ -615,13 +615,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		return this;
 	};
 
-	/*
+	/**
 	 * Forwards a function call to a managed object based on the aggregation name.
 	 * If the name is items, it will be forwarded to the table, otherwise called locally
 	 * @private
-	 * @param {string} sFunctionName the name of the function to be called
-	 * @param {string} sAggregationName the name of the aggregation asociated
-	 * @returns {mixed} the return type of the called function
+	 * @param {string} sFunctionName The name of the function to be called
+	 * @param {string} sAggregationName The name of the aggregation associated
+	 * @returns {mixed} The return type of the called function
 	 */
 	TableSelectDialog.prototype._callMethodInManagedObject = function (sFunctionName, sAggregationName) {
 		var aArgs = Array.prototype.slice.call(arguments);
@@ -642,8 +642,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Forwards aggregations with the name of items or columns to the internal table.
 	 * @overwrite
 	 * @protected
-	 * @param {string} sAggregationName the name for the binding
-	 * @param {object} oBindingInfo the configuration parameters for the binding
+	 * @param {string} sAggregationName The name for the binding
+	 * @param {object} oBindingInfo The configuration parameters for the binding
 	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.bindAggregation = function () {
@@ -711,13 +711,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		return this._oTable.getBindingContext(sModelName);
 	};
 
-	/*
-	 * Set the binding context for the internal table AND the current control so that
-	 * both controls can be used with the context
+	/**
+	 * Sets the binding context for the internal table AND the current control so that both controls can be used with the context.
 	 * @overwrite
 	 * @public
 	 * @param {sap.ui.model.Context} oContext the new context
-	 * @param {string} sModelName the optional model name
+	 * @param {string} sModelName The optional model name
 	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype._setBindingContext = TableSelectDialog.prototype.setBindingContext;
@@ -739,12 +738,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	/*           begin: internal methods and properties            */
 	/* =========================================================== */
 
-	/*
+	/**
 	 * Fires the search event on the internal when dialog is opened.
-	 * This function is also called whenever a search event on the searchfield is triggered
+	 * This function is also called whenever a search event on the "search field" is triggered
 	 * @private
-	 * @param {string} sValue the new Search value or undefined if called by management functions
-	 * @param {string} sEventType the search field event type that has been called (liveChange / search)
+	 * @param {string} sValue The new Search value or undefined if called by management functions
+	 * @param {string} sEventType The search field event type that has been called (liveChange / search)
 	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype._executeSearch = function (sValue, sEventType) {
@@ -786,9 +785,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		return this;
 	};
 
-	/*
-	 * Internal function that shows/hides a local busy indicator and hides/shows the list
-	 * based on the parameter flag. For the first request, the search field is also hidden.
+	/**
+	 * Shows/hides a local busy indicator and hides/shows the list based on the parameter flag. For the first request, the search field is also hidden.
 	 * @private
 	 * @param {boolean} bBusy flag (true = show, false = hide)
 	 */
@@ -810,9 +808,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		}
 	};
 
-	/*
-	 * Event function that is called when the model sent a request to update the data.
-	 * It shows a busy indicator and hides searchField and list in the dialog.
+	/**
+	 * Shows a busy indicator and hides searchField and list in the dialog.
+	 * Event function that is called when the model sends a request to update the data.
 	 * @private
 	 * @param {jQuery.EventObject} oEvent The event object
 	 */
@@ -827,9 +825,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		}
 	};
 
-	/*
+	/**
+	 * Hides the busy indicator and shows searchField and list in the dialog.
 	 * Event function that is called when the model request is finished.
-	 * It hides the busy indicator and shows searchField and list in the dialog.
 	 * @private
 	 * @param {jQuery.EventObject} oEvent The event object
 	 */
@@ -868,10 +866,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	this._iTableUpdateRequested = 0;
 	};
 
-	/*
-	 * Lazy load the ok button if needed for MultiSelect mode
+	/**
+	 * Lazy load the OK button if needed for MultiSelect mode.
 	 * @private
-	 * @return {sap.m.Button} the button
+	 * @return {sap.m.Button} The button
 	 */
 	TableSelectDialog.prototype._getOkButton = function () {
 		var that = this,
@@ -898,10 +896,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		return this._oOkButton;
 	};
 
-	/*
-	 * Lazy load the cancel button
+	/**
+	 * Lazy load the Cancel button
 	 * @private
-	 * @return {sap.m.Button} the button
+	 * @return {sap.m.Button} The button
 	 */
 	TableSelectDialog.prototype._getCancelButton = function () {
 		var that = this;
@@ -917,8 +915,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		return this._oCancelButton;
 	};
 
-	/*
-	 * Internal event handler for the cancel button and ESC key
+	/**
+	 * Internal event handler for the Cancel button and ESC key
 	 * @private
 	 */
 	TableSelectDialog.prototype._onCancel = function (oEvent) {
@@ -946,8 +944,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		this._oDialog.close();
 	};
 
-	/*
-	 * Internal function to update the selection indicator bar
+	/**
+	 * Updates the selection indicator bar
 	 * @private
 	 */
 	TableSelectDialog.prototype._updateSelectionIndicator = function () {
@@ -959,9 +957,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
 	};
 
-	/*
-	 * Internal function to fire the confirm event and to update the selection of the table.
-	 * The function is called on pressing ok and on close in single select mode
+	/**
+	 * Fires the confirm event and updates the selection of the table.
+	 * The function is called on pressing OK and on Close in single select mode
 	 * @private
 	 */
 	TableSelectDialog.prototype._fireConfirmAndUpdateSelection = function () {
@@ -974,12 +972,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		this._updateSelection();
 	};
 
-	/*
-	 * Internal function to remove/keep the table selection based on property "rememberSelection"
+	/**
+	 * Removes/keeps the table selection based on property "rememberSelection"
 	 * @private
 	 */
 	TableSelectDialog.prototype._updateSelection = function () {
-		// cleanup old selection on close to allow reuse of dialog
+		// cleanup old selection on Close to allow reuse of dialog
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.getRememberSelections() && !this.bIsDestroyed) {
 			this._oTable.removeSelections(true);
@@ -988,8 +986,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		}
 	};
 
-	/*
-	 * Internal function to reset the selection to the items that were selected when the dialog was opened
+	/**
+	 * Resets the selection to the items that were selected when the dialog was opened
 	 * @private
 	 */
 	TableSelectDialog.prototype._resetSelection = function () {
