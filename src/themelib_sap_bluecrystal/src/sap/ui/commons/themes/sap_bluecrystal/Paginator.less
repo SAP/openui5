@@ -67,8 +67,12 @@
 	text-decoration: none;
 }
 
-.sapUiPagCurrentPage > a:focus {
-	outline: 1px dashed @sapUiBaseText;
+.sapUiPagPage > a:focus {
+	outline: 1px dashed @sapUiFocus;
+}
+
+.sapUiPagPage:hover > a:focus {
+	outline-color: @sapUiInvertedFocus;
 }
 
 .sapUiPagBtn.sapUiLnk:active,
