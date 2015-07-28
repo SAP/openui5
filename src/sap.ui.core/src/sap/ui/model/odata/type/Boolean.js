@@ -92,9 +92,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmBoolean = ODataType.extend("sap.ui.model.odata.type.Boolean",
-			/** @lends sap.ui.model.odata.type.Boolean.prototype */
-			{
+	var EdmBoolean = ODataType.extend("sap.ui.model.odata.type.Boolean", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);

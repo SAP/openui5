@@ -170,9 +170,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.27.0
 	 */
-	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
-			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
-
+	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel", {
 			constructor : function (oMetadata, oAnnotations, oODataModelInterface) {
 				var that = this;
 
@@ -205,10 +203,6 @@ sap.ui.define([
 				this.mQName2PendingRequest = {};
 				this.oResolver = undefined;
 				this.mSupportedBindingModes = {"OneTime" : true};
-			},
-
-			metadata : {
-				publicMethods : ["loaded"]
 			}
 		});
 

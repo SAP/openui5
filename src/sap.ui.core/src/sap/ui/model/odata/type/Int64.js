@@ -141,9 +141,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	 * @public
 	 * @since 1.27.1
 	 */
-	var Int64 = ODataType.extend("sap.ui.model.odata.type.Int64",
-		/** @lends sap.ui.model.odata.type.Int64.prototype */
-		{
+	var Int64 = ODataType.extend("sap.ui.model.odata.type.Int64", {
 			constructor : function (oFormatOptions, oConstraints) {
 				ODataType.apply(this, arguments);
 				this.oFormatOptions = oFormatOptions;
