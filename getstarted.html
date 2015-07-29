@@ -125,13 +125,9 @@
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;script&gt;</span>
-    <span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.m.Button({
-        <span class="shAttr">text</span>:<span class="shString">'Press me!'</span>,
-        <span class="shAttr">press</span>: <span class="sh-js-keyword">function</span>() {
-            alert(<span class="shString">"Hello!"</span>)
-        }
-    });
-    btn.placeAt(<span class="shString">'content'</span>);
+         sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
+             <span class="sh-js-keyword">alert</span>(<span class="shString">"OpenUI5 is ready"</span>);
+         });
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;/head&gt;</span>
@@ -139,44 +135,22 @@
     <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
-				<p>Let's take a closer look at the code above. Here we're basically instantiating a simple control using these lines:</p>
-				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.m.Button({
-	<span class="shAttr">text</span>:<span class="shString">'Press me!'</span>,
-	<span class="shAttr">press</span>: <span class="sh-js-keyword">function</span>() {
-		alert(<span class="shString">"Hello!"</span>)
-	}
-    });</pre>
-				<p>What we're actually doing is creating a new instance of a control named Button, which is part of our sap.m library. 
-				Within the constructor call, we're making use of the JSON notation to pass some initial values to the control right away, namely: </p>
-				<ul><li>The value for the text displayed on the button </li>
-				<li>The handler attached to the button's "press" event, which in this case does nothing more than alerting "Hello" to the person who clicks the button.</li>
-				</ul>
-				<p>Note that we could have achieved the same output by doing something like this:</p>
-				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.m.Button();
-btn.setText(<span class="shString">'Press me!'</span>);
-btn.attachPress(<span class="sh-js-keyword">function</span>() {
-			alert(<span class="shString">"Hello!"</span>);
-		});
-</pre>
-				<p>For all controls in UI5, there are getters and setters for each public attribute as well as attach and detach methods for events.</p>
-				<p>However, this code alone does not display anything on screen just yet. To accomplish this, we need one more line from above's example, namely this: </p>
-<pre class="codeblock">
-btn.placeAt(<span class="shString">'content'</span>);
-</pre>
-				<p>This line tells UI5 to render this control inside the div tag with the id "content" in the HTML code below these lines.</p>
-				<div class="result">
-					<p>
-						By using these few simple lines of code, we've just created this button: <span class="smaller">(click to see the alert)</span>
+					<p>step we load the SAPUI5 framework from our local webserver and initialize the core modules with the following configuration options:
+						<ul>
+							<li>We specify the required UI library “sap.m” containing the UI controls we need for this tutorial.</li>
+							<li>The OpenUI5 controls support different themes, we choose “sap_bluecrystal” as our default theme.</li>
+							<li>To make use of the most recent functionality of OpenUI5 we define the compatibility version as “edge”</li>
+							<li>We configure the process of “bootstrapping” to run asynchronously</li>
+						</ul>
 					</p>
-					<div id="content">
-					</div>
-					
+					<p>The src attribute of the first <script> tag tells the browser where to find the OpenUI5 core library – it initializes the SAPUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded SAPUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing SAPUI5 is called bootstrapping. There are two versions of the SAPUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
+					In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons. Once the SAPUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the SAPUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In SAPUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
+					Our anonymous callback function is executed when the bootstrap of OpenUI5 is finished and displays a native JavaScript alert.</p>
 					<p>
 						Try it out yourself - feel free to modify and extend this example!
 					</p>
 					<div class="corset"> <!-- for Ipad -->
-						<a class="jsbin-embed" href="http://jsbin.com/jemepilelu/2/embed?html,output&height=600px&width=1000px">Hello World</a>
-						<script src="http://static.jsbin.com/js/embed.js"></script>
+						<iframe style="width: 100%; height: 400px" src="http://embed.plnkr.co/wzougZ" frameborder="0" allowfullscren="allowfullscren"></iframe>
 					</div>
 				</div>
 
@@ -186,12 +160,47 @@ btn.placeAt(<span class="shString">'content'</span>);
 					</p>
 				</div>
 
-				<h3>MVC in UI5</h3>
-				<p>While the code above is indeed already a very small UI5 application, you would probably expect a more sophisticated way to get your content on screen.
-				Let’s see how we could replace the simple control with a view, and find out how to use MVC in UI5.
-				We'll start with an XML view, which you'd usually define as a separate file to your index page.</p>
-				<p>Here’s the code for the view:</p>
+				<h3>Using OpenUI5 Controls</h3>
+				<p>Now it is time to build our first little UI by replacing the “Hello World” text in the HTML body by the OpenUI5 control sap.m.Text. For the beginning we use the JavaScript control interface to setup the UI. The control instance is then &quot;placed&quot; into the HTML body. Don’t forget to remove the line starting with &quot;jQuery(&quot;#content&quot;)... &quot;.</p>
+				<img src="./images/openui5-get-started-step2.png" alt="Preview Step 2">
+				<p>Here’s the code for this step:</p>
 				<pre class="codeblock">
+<span class="shTag">&lt;!DOCTYPE html&gt;</span>
+<span class="shTag">&lt;html&gt;&lt;head&gt;</span>
+<span class="shTag">&lt;meta </span><span class="shAttr">http-equiv</span>=<span class="shString">'X-UA-Compatible'</span> <span class="shAttr">content</span>=<span class="shString">'IE=edge'</span> <span class="shTag">/&gt;</span>
+<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
+
+<span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
+    <span class="shAttr">src</span>=<span class="shString">'resources/sap-ui-core.js'</span>
+    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_bluecrystal'</span>
+    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span><span class="shTag">&gt;</span>
+<span class="shTag">&lt;/script&gt;</span>
+
+<span class="shTag">&lt;script&gt;</span>
+         sap.ui.getCore().attachInit(function () {
+             	<span class="sh-js-keyword">new</span> sap.m.Text({
+			 <span class="shAttr">text</span>: &quot;<span class="shString">Hello World&quot;</span>
+		}).placeAt(&quot;content&quot;);
+         });
+<span class="shTag">&lt;/script&gt;</span>
+
+<span class="shTag">&lt;/head&gt;</span>
+<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span><span class="shTag">&gt;</span>
+    <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
+<span class="shTag">&lt;/body&gt;</span>
+<span class="shTag">&lt;/html&gt;</span></pre>
+</pre>				
+			<p>Instead of using native JavaScript to display a dialog we want to use a simple SAPUI5 control. Controls are used to define appearance and behavior of parts of the screen.
+In the example above the content of the init event handler is now replaced with an OpenUI5 text control. The name of the control is prefixed by the namespace of its control library “sap.m” and the options are passed to the constructor with a JavaScript object. For our control we set the “text” property to the value “Hello World”.
+We concatenate the constructor call of the control with the standard method “placeAt” that is used to position OpenUI5 controls inside a node of the DOM. As the target node we use the body tag of the HTML document with the id &quot;content&quot;. The class “sapUiBody” adds additional theme dependent styles for displaying OpenUI5 apps.
+All Controls of OpenUI have a fixed set of properties and methods to interact with, the public API of the control. You can it look up in the API reference that is linked below.</p>
+			<h4>Read more</h4
+				<ul>
+					<li><a href="https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html" target="_blank">OpenUI5 API Reference</a></li>
+					<li><a href="http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/explored.html#/entity/sap.m.Text/samples" target="_blank">sap.m.Text - API Overview &nbsp; Samples</a></li>
+					<li><a href="http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/#docs/api/symbols/sap.m.Text.html" target="_blank">sap.m.Text - API Reference</a></li>
+				</ul>
+
 <span class="shTag">&lt;mvc:View</span> <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> <span class="shAttr">xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> <span class="shAttr">xmlns</span>=<span class="shString">"sap.m"</span> 
 		<span class="shAttr">controllerName</span>=<span class="shString">"getStarted"</span> <span class="shAttr">xmlns:html</span>=<span class="shString">"http://www.w3.org/1999/xhtml"</span>&gt;
 	
