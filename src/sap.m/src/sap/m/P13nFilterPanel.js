@@ -379,7 +379,7 @@ sap.ui.define([
 
 		if (!this._aIncludeOperations) {
 			this.setIncludeOperations([
-			                           sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
 			]);
 		}
 
@@ -504,16 +504,48 @@ sap.ui.define([
 				operation: oFilterItem.getOperation(),
 				value1: oFilterItem.getValue1(),
 				value2: oFilterItem.getValue2()
-			}; 
+			};
 
 			this._addCondition(oCondition);
+
+			if (!oFilterItem.getKey()) {
+				oFilterItem.setKey(oCondition.key);
+			}
 		}
 	};
 
 	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
 		this.insertAggregation("filterItems", oFilterItem);
-		//TODO: implement this
+		// TODO: implement this
 		return this;
+	};
+
+	P13nFilterPanel.prototype.updateFilterItems = function(sReason) {
+		this.updateAggregation("filterItems");
+
+		if (sReason !== "change") {
+			return;
+		}
+		if (!this._bIgnoreBindCalls) {
+			var aConditions = [];
+			this.getFilterItems().forEach(function(oFilterItem_) {
+				// Note: current implementation assumes that the length of filterItems aggregation is equal
+				// to the number of corresponding model items.
+				// Currently the model data is up-to-date so we need to resort to the Binding Context;
+				// the "filterItems" aggregation data - obtained via getFilterItems() - has the old state !
+				var oContext = oFilterItem_.getBindingContext();
+				var oModelItem = oContext.getObject();
+				aConditions.push({
+					key: oFilterItem_.getKey(),
+					exclude: oModelItem.exclude,
+					keyField: oModelItem.columnKey,
+					operation: oModelItem.operation,
+					value1: oModelItem.value1,
+					value2: oModelItem.value2
+				});
+			});
+			this.setConditions(aConditions);
+		}
 	};
 
 	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
@@ -528,7 +560,7 @@ sap.ui.define([
 		if (!this._bIgnoreBindCalls) {
 			this.setConditions([]);
 		}
-		
+
 		return aFilterItems;
 	};
 

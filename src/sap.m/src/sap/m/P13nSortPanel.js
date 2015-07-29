@@ -1,5 +1,5 @@
-/*!
- * ${copyright}
+/*
+ * ! ${copyright}
  */
 
 // Provides control sap.m.P13nSortPanel.
@@ -11,15 +11,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nSortPanel.
 	 * 
-	 * @param {string}
-	 *            [sId] id for the new control, generated automatically if no id is given
-	 * @param {object}
-	 *            [mSettings] initial settings for the new control
-	 * 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nSortPanel control is used to define settings for sorting in table personalization.
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
-	 * 
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nSortPanel
@@ -33,8 +29,9 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the
-				 * ConditionPanel is used on a dialog the property should be set to true!
+				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the ConditionPanel is used on a dialog the
+				 * property should be set to true!
+				 * 
 				 * @since 1.26
 				 */
 				containerQuery: {
@@ -44,8 +41,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * can be used to control the layout behavior. Default is "" which will automatically change the
-				 * layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
+				 * can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table"
+				 * or"Phone" you can set a fixed layout.
+				 * 
 				 * @since 1.26
 				 */
 				layoutMode: {
@@ -68,6 +66,7 @@ sap.ui.define([
 
 				/**
 				 * defined Sort Items
+				 * 
 				 * @since 1.26
 				 */
 				sortItems: {
@@ -81,18 +80,21 @@ sap.ui.define([
 
 				/**
 				 * event raised when a SortItem was added
+				 * 
 				 * @since 1.26
 				 */
 				addSortItem: {},
 
 				/**
 				 * remove a sort item
+				 * 
 				 * @since 1.26
 				 */
 				removeSortItem: {},
 
-				/**								 
+				/**
 				 * update a sort item
+				 * 
 				 * @since 1.26
 				 */
 				updateSortItem: {}
@@ -122,8 +124,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and
-	 * opens a popup message dialog to give the user the feedback that some values are wrong or missing.
+	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and opens a popup message dialog to give the
+	 * user the feedback that some values are wrong or missing.
 	 * 
 	 * @public
 	 * @since 1.26
@@ -133,8 +135,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * removes all invalid sort conditions.					 
-	 *  
+	 * removes all invalid sort conditions.
+	 * 
 	 * @public
 	 * @since 1.28
 	 */
@@ -165,8 +167,7 @@ sap.ui.define([
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @param {array}
-	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @param {array} array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
 	P13nSortPanel.prototype.setOperations = function(aOperation) {
 		this._aOperations = aOperation;
@@ -261,8 +262,33 @@ sap.ui.define([
 
 	P13nSortPanel.prototype.insertSortItem = function(oSortItem) {
 		this.insertAggregation("sortItems", oSortItem);
-		//TODO: implement this
+		// TODO: implement this
 		return this;
+	};
+
+	P13nSortPanel.prototype.updateSortItems = function(sReason) {
+		this.updateAggregation("sortItems");
+
+		if (sReason !== "change") {
+			return;
+		}
+		if (!this._bIgnoreBindCalls) {
+			var aConditions = [];
+			this.getSortItems().forEach(function(oSortItem_) {
+				// Note: current implementation assumes that the length of sortItems aggregation is equal
+				// to the number of corresponding model items.
+				// Currently the model data is up-to-date so we need to resort to the Binding Context;
+				// the "sortItems" aggregation data - obtained via getSortItems() - has the old state !
+				var oContext = oSortItem_.getBindingContext();
+				var oModelItem = oContext.getObject();
+				aConditions.push({
+					key: oSortItem_.getKey(),
+					keyField: oModelItem.columnKey,
+					operation: oModelItem.operation
+				});
+			});
+			this._oSortPanel.setConditions(aConditions);
+		}
 	};
 
 	P13nSortPanel.prototype.removeSortItem = function(oSortItem) {
