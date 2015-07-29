@@ -135,7 +135,7 @@
     <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
-					<p>step we load the SAPUI5 framework from our local webserver and initialize the core modules with the following configuration options:
+					<p>In this step we load the SAPUI5 framework from our local webserver and initialize the core modules with the following configuration options:
 						<ul>
 							<li>We specify the required UI library “sap.m” containing the UI controls we need for this tutorial.</li>
 							<li>The OpenUI5 controls support different themes, we choose “sap_bluecrystal” as our default theme.</li>
@@ -143,7 +143,7 @@
 							<li>We configure the process of “bootstrapping” to run asynchronously</li>
 						</ul>
 					</p>
-					<p>The src attribute of the first <script> tag tells the browser where to find the OpenUI5 core library – it initializes the SAPUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded SAPUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing SAPUI5 is called bootstrapping. There are two versions of the SAPUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
+					<p>The src attribute of the first &lt;script&gt; tag tells the browser where to find the OpenUI5 core library – it initializes the SAPUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded SAPUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing SAPUI5 is called bootstrapping. There are two versions of the SAPUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
 					In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons. Once the SAPUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the SAPUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In SAPUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
 					Our anonymous callback function is executed when the bootstrap of OpenUI5 is finished and displays a native JavaScript alert.</p>
 					<p>
