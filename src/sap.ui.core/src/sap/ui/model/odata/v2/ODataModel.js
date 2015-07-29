@@ -1979,7 +1979,6 @@ sap.ui.define([
 						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 					}
 				}
-				that._updateChangedEntities(mChangeEntities);
 			};
 			that._processSuccess(oRequest, oResponse, fnSingleSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 		};
@@ -2876,7 +2875,7 @@ sap.ui.define([
 			oRequest = fnProcessRequest();
 
 			if (!that.oRequestTimer) {
-				that.oRequestTimer = jQuery.sap.delayedCall(0, that, that._processRequestQueue, [that.mRequests]);
+				that.oRequestTimer = jQuery.sap.delayedCall(0, that, that.submitChanges, [{queue: that.mRequests}]);
 			}
 
 			if (bAborted) {
@@ -3467,7 +3466,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
 		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
-			oRequestHandle, vRequestHandleInternal,
+			oRequestHandle, vRequestHandleInternal, mQueue,
 			bAborted = false, sMethod,
 			that = this;
 
@@ -3479,26 +3478,27 @@ sap.ui.define([
 			if (mParameters.merge !== undefined) {
 				sMethod =  mParameters.merge ? "MERGE" : "PUT";
 			}
+			mQueue = mParameters.queue;
 		}
-
-		if (sGroupId && !this.mDeferredGroups[sGroupId]) {
+		mQueue = mQueue || this.mDeferredRequests;
+		
+		if (!mQueue && sGroupId && !this.mDeferredGroups[sGroupId]) {
 			jQuery.sap.log.fatal(this + " submitChanges: \"" + sGroupId + "\" is not a deferred group!");
 		}
 
 		this.oMetadata.loaded().then(function() {
 			jQuery.each(that.mChangedEntities, function(sKey) {
 				oGroupInfo = that._resolveGroup(sKey);
-				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
-					var oData = that._getObject('/' + sKey);
-					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
-					oRequest.key = sKey;
-					if (oGroupInfo.groupId in that.mDeferredGroups) {
-						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
+				if (mQueue === that.mDeferredRequests) {
+					if (oGroupInfo.groupId === sGroupId || !sGroupId) {
+						var oData = that._getObject('/' + sKey);
+						oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
+						oRequest.key = sKey;
+						that._pushToRequestQueue(mQueue, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
 					}
 				}
 			});
-
-			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError);
+			vRequestHandleInternal = that._processRequestQueue(mQueue, sGroupId, fnSuccess, fnError);
 
 			if (bAborted) {
 				oRequestHandle.abort();
@@ -3668,11 +3668,13 @@ sap.ui.define([
 
 		if (oGroupInfo.groupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
-			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
-			oRequest.key = sKey;
-		} else {
-			oRequest = this._processChange(sKey, oEntry);
 		}
+		
+		oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
+		oRequest.key = sKey;
+		//} //else {
+		//	oRequest = this._processChange(sKey, oEntry);
+		//}//
 
 		if (!this.mChangeHandles[sKey]) {
 			oRequestHandle = {
@@ -3687,7 +3689,7 @@ sap.ui.define([
 		this._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
 
 		if (!this.oRequestTimer) {
-			this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
+			this.oRequestTimer = jQuery.sap.delayedCall(0,this, this.submitChanges, [{queue: this.mRequests}]);
 		}
 		
 		mChangedEntities[sKey] = true;
