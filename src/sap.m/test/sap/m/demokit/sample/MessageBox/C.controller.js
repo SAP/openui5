@@ -103,33 +103,6 @@ sap.ui.define([
 						initialFocus: "Custom Button"
 					}
 			);
-		},
-
-		handleShowMessageBoxPress_InitialFocus_Control: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			var oLayout = sap.ui.xmlfragment("sap.m.sample.MessageBox.Layout", this);
-
-			// get the view and add the layout as a dependent. Since the layout is being put
-			// into an aggregation any possible binding will be 'forwarded' to the layout.
-			var oView = this.getView();
-			oView.addDependent(oLayout);
-			var oCheck = sap.ui.getCore().byId("checkBoxId2");
-
-			MessageBox.show(oLayout, {
-				icon: MessageBox.Icon.WARNING,
-				title: "Focus on a Control",
-				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-				onClose: function (oAction) {
-					if (oAction === MessageBox.Action.YES) {
-						var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-						MessageBox.alert(sText, {
-							title: "Result of CheckBox"
-						});
-					}
-				},
-				dialogId: "messageBoxId1",
-				initialFocus: oCheck
-			});
 		}
 	});
 

@@ -353,8 +353,7 @@
 		  "samples": [
 			"sap.m.sample.MessageBox",
 			"sap.m.sample.MessageBoxInfo",
-			"sap.m.sample.MessageBoxTypes",
-			"sap.m.sample.MessageBoxCustom"
+			"sap.m.sample.MessageBoxTypes"
 		  ]
 		},
 		{
@@ -1666,11 +1665,6 @@
 		  "id": "sap.m.sample.MessageBoxTypes",
 		  "name": "Message Box Header Icons",
 		  "description": "MessageBox icons can be used to show the different value states that a MessageBox can display: success, warning, error, information and question."
-		},
-		{
-		  "id": "sap.m.sample.MessageBoxCustom",
-		  "name": "Message Box Custom Content",
-		  "description": "MessageBox with custom content (e.g. a layout or checkboxes). Additionally for large content horizontal and vertical scrolling can be enabled or disabled."
 		},
 		{
 		  "id": "sap.m.sample.MessagePopover",
