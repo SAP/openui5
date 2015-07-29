@@ -721,7 +721,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.insertItem = function(oItem, iIndex) {
-			this.insertAggregation("items", oItem, iIndex);
+			this.insertAggregation("items", oItem, iIndex, true);
 
 			if (this.getList()) {
 				this.getList().insertItem(this._mapItemToListItem(oItem), iIndex);
