@@ -1018,6 +1018,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	InputBase.prototype.setTooltip = function(vTooltip) {
+		var oDomRef = this.getDomRef(),
+			oDescribedByDomRef = null,
+			sAnnouncement;
+
+		this._refreshTooltipBaseDelegate(vTooltip);
+		this.setAggregation("tooltip", vTooltip, true);
+
+		if (!oDomRef) {
+			return this;
+		}
+
+		sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this);
+
+		if (sAnnouncement) {
+			oDomRef.setAttribute("title", this.getTooltip_AsString());
+		} else {
+			oDomRef.removeAttribute("title");
+		}
+
+		oDescribedByDomRef = this.getDomRef("describedby");
+
+		if (!oDescribedByDomRef && sAnnouncement) {
+			oDescribedByDomRef = document.createElement("span");
+			oDescribedByDomRef.setAttribute("id", this.getId() + "-describedby");
+			oDescribedByDomRef.setAttribute("aria-hidden", "true");
+			oDescribedByDomRef.setAttribute("class", "sapUiInvisibleText");
+			oDomRef.appendChild(oDescribedByDomRef);
+		}
+
+		if (oDescribedByDomRef && !sAnnouncement) {
+			oDomRef.removeChild(oDescribedByDomRef);
+		}
+
+		if (oDescribedByDomRef) {
+			oDescribedByDomRef.textContent = sAnnouncement;
+		}
+
+		return this;
+	};
+
 	return InputBase;
 
 }, /* bExport= */ true);
