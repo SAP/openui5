@@ -51,6 +51,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.defaultUpdateMethod] sets the default update method which is used for all update requests. If not set, sap.ui.model.odata.UpdateMethod.Merge is used.
 	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
+	 * @param {bolean} [mParameters.disableHeadRequestForToken=false] Set this flag to true if your service does not support HEAD requests for fetching the service document (and thus the CSRF-token) to avoid sending a HEAD-request before falling back to GET
 	 *
 	 * @class
 	 * Model implementation for oData format
@@ -75,7 +76,7 @@ sap.ui.define([
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
-			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod,
+			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod, bDisableHeadRequestForToken,
 			that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -104,6 +105,7 @@ sap.ui.define([
 				oMessageParser = mParameters.messageParser;
 				bSkipMetadataAnnotationParsing = mParameters.skipMetadataAnnotationParsing;
 				sDefaultUpdateMethod = mParameters.defaultUpdateMethod;
+				bDisableHeadRequestForToken = mParameters.disableHeadRequestForToken;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
@@ -133,6 +135,7 @@ sap.ui.define([
 			this.sRefreshGroupId = undefined;
 			this.bIncludeInCurrentBatch = false;
 			this.bSkipMetadataAnnotationParsing = bSkipMetadataAnnotationParsing;
+			this.bDisableHeadRequestForToken = !!bDisableHeadRequestForToken;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -1877,12 +1880,16 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError, bAsync) {
-		var that = this, sUrl, sToken;
+		var sToken;
+		var that = this;
+		var sUrl = this._createRequestUrl("/");
 
-		// trigger a read to the service url to fetch the token
-		sUrl = this._createRequestUrl("/");
-		var oRequest = this._createRequest(sUrl, "GET", this._getHeaders(), null, null, !!bAsync);
-		oRequest.headers["x-csrf-token"] = "Fetch";
+		var mTokenRequest = {
+			abort: function() {
+				this.request.abort();
+			}
+		};
+		
 
 		function _handleSuccess(oData, oResponse) {
 			if (oResponse) {
@@ -1905,7 +1912,7 @@ sap.ui.define([
 			}
 		}
 
-		function _handleError(oError) {
+		function _handleGetError(oError) {
 			// Disable token handling, if token request returns an error
 			that.resetSecurityToken();
 			that.bTokenHandling = false;
@@ -1915,8 +1922,28 @@ sap.ui.define([
 				fnError(oError);
 			}
 		}
+		
+		function _handleHeadError(oError) {
+			// Disable token handling, if token request returns an error
+			mTokenRequest.request = requestToken("GET", _handleGetError);
+		}
 
-		return this._request(oRequest, _handleSuccess, _handleError, undefined, undefined, this.getServiceMetadata());
+		function requestToken(sRequestType, fnError) {
+			// trigger a read to the service url to fetch the token
+			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(), null, null, !!bAsync);
+			oRequest.headers["x-csrf-token"] = "Fetch";
+			return that._request(oRequest, _handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
+		}
+
+
+		// Initially try method "HEAD", error handler falls back to "GET" unless the flag forbids HEAD request
+		if (this.bDisableHeadRequestForToken) {
+			mTokenRequest.request = requestToken("GET", _handleGetError);
+		} else {
+			mTokenRequest.request = requestToken("HEAD", _handleHeadError);
+		}
+		return mTokenRequest;
+
 	};
 
 	/**
