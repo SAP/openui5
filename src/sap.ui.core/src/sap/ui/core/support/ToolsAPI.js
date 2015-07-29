@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			_getModelFromContext: function (control, controlProperty) {
 				var bindingContext = control.getBinding(controlProperty),
 					bindingContextModel = bindingContext.getModel(),
-					bindingInfoParts = control.getBindingInfo(controlProperty).parts,
+					bindingInfoParts = (control.getBindingInfo(controlProperty).parts) ? control.getBindingInfo(controlProperty).parts : [],
 					modelNames = [];
 
 				for (var i = 0; i < bindingInfoParts.length; i++) {
@@ -306,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				for (var key in aggregations) {
 					if (aggregations.hasOwnProperty(key) && control.getBinding(key)) {
 						aggregationsBindingData[key] = Object.create(null);
-						aggregationsBindingData[key].model = this._getModelFromContext(control.getBinding(key));
+						aggregationsBindingData[key].model = this._getModelFromContext(control, key);
 					}
 				}
 
@@ -369,7 +369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				bindingContext = control.getBindingContext();
 
 				result.meta = Object.create(null);
-				result.contextPath = bindingContext ? bindingContext.sPath : null;
+				result.contextPath = bindingContext ? bindingContext.getPath() : null;
 				result.aggregations = controlInformation._getBindDataForAggregations(control);
 				result.properties = controlInformation._getBindDataForProperties(control);
 
