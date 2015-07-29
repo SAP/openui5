@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		
 		var bFontFaceInserted = false;
 		
-		var oCoreMessageBundle = null;
+		var oCoreResourceBundle = core.getLibraryResourceBundle("sap.ui.core");
 		
 		/**
 		 * Constructor for IconPool - must not be used: all of the methods that are under 
@@ -91,7 +91,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		 * @param {string|string[]} iconInfo.content is the special hexadecimal code without the prefix, for example "e000" or several of them
 		 * @param {boolean} [iconInfo.overWrite=false] indicates if already registered icons should be overwritten when the same name and collection are given. The built in icons can never be overwritten.
 		 * @param {boolean} [iconInfo.suppressMirroring=false] indicates whether this icon should NOT be mirrored in RTL (right to left) mode.
-		 * 
+		 * @param {jQuery.sap.util.ResourceBundle} [iconInfo.resourceBundle] ResourceBundle to be used for translation. Key format: "Icon.<iconName>".
+		 *
 		 * @return {object} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
 		 * @static
 		 * @public
@@ -134,19 +135,12 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				sContent += String.fromCharCode(parseInt(iconInfo.content[i], 16));
 			}
 
-			var sText = "";
-			if (!collectionName) {
-				// built-in collection => use sap.ui.core ResourceBundle
-				if (mIconI18nKey[iconName]) {
-					if (!oCoreMessageBundle) {
-						oCoreMessageBundle = core.getLibraryResourceBundle("sap.ui.core");
-					}
-					var sKey = "Icon." + iconName;
-					sText = oCoreMessageBundle.getText(sKey);
-				}
+			var sText;
+			if (jQuery.sap.resources.isBundle(iconInfo.resourceBundle)) {
+				var sKey = "Icon." + iconName;
+				sText = iconInfo.resourceBundle.getText(sKey);
 			} else {
-				// TODO: use custom ResourceBundles provided via new API
-				sText = iconName;
+				sText = "";
 			}
 
 			icon = {
@@ -164,7 +158,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			collection[iconName] = icon;
 			return icon;
 		};
-		
+
+
 		/**
 		 * Returns the URI of the icon which has the same given iconName and collectionName.
 		 *
@@ -311,17 +306,18 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		IconPool._isMirroringSkipped = function(iconName){
 			return !!mIconSuppressMirroring[iconName];
 		};
-		
-		//register the built in icons
-		jQuery.each(aIconNames, function(index, name){
+
+		// register the built in icons
+		for (var i = 0; i < aIconNames.length; i++) {
+			var name = aIconNames[i];
 			IconPool.addIcon(name, undefined, {
 				fontFamily: sapIconFamily,
-				content: aIconCodes[index],
-				suppressMirroring: IconPool._isMirroringSkipped(name)
+				content: aIconCodes[i],
+				suppressMirroring: IconPool._isMirroringSkipped(name),
+				resourceBundle: mIconI18nKey[name] ? oCoreResourceBundle : undefined
 			});
-		});
-		
-		
+		}
+
 		var mIconForMimeType = {
 			"application/msword": "sap-icon://doc-attachment",
 			"application/vnd.openxmlformats-officedocument.wordprocessingml.document": "sap-icon://doc-attachment",
