@@ -231,7 +231,7 @@
 			}		
 								
 			function renderTreeRecursion(content, parentPath, nodeName, node, level) {				
-				if (node.lib) {
+				if (typeof node.lib === "string") {
 					// node is a test 				
 					renderLeaf(content, node.url, nodeName, level);
 				} else if (node.entry) {

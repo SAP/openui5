@@ -7,6 +7,10 @@
 	white-space: nowrap;
 }
 
+.sapMQuickViewCard.sapMQuickViewCardNoScroll {
+	height: 100%;
+}
+
 .sapMQuickViewPage.sapMNavItem {
 	vertical-align: top;
 	display: inline-block;
@@ -31,7 +35,19 @@
 .sap-tablet .sapMQuickViewPage.sapMNavItem.sapMPage {
 	position: relative;
 	height: 100%;
-	box-sizing: content-box;
+	box-sizing: border-box;
+	padding-top: 3rem;
+}
+
+.sap-desktop .sapUiSizeCompact .sapMQuickViewPage.sapMNavItem.sapMScrollContScroll,
+.sap-tablet .sapUiSizeCompact .sapMQuickViewPage.sapMNavItem.sapMScrollContScroll,
+.sap-desktop .sapUiSizeCompact .sapMQuickViewPage.sapMNavItem.sapMPage,
+.sap-tablet .sapUiSizeCompact .sapMQuickViewPage.sapMNavItem.sapMPage {
+	padding-top: 2.5rem;
+}
+
+.sap-phone .sapMQuickViewPage.sapMNavItem.sapMPage {
+	position: relative;
 }
 
 .sap-desktop .sapMQuickViewPage.sapMPage > header,
@@ -59,11 +75,7 @@
 .sap-tablet .sapMQuickViewPage > section {
 	position: static;
 	height: 100%;
-	padding: 4rem 1rem 1rem 1rem;
-}
-
-.sapUiSizeCompact .sapMQuickViewPage > section {
-	padding-top: 3.5rem;
+	padding: 1rem;
 }
 
 .sapMQuickViewPage .sapUiFormResGridCont > div {
@@ -87,10 +99,6 @@
 
 .sapMQuickViewPage .sapUiFormResGrid > div {
 	background-color : transparent;
-}
-
-.sapMQuickViewPage .sapUiSimpleForm {
-	margin-top: 1rem;
 }
 
 .sapMQuickViewPage .sapUiSimpleForm .sapMTitle {
@@ -120,7 +128,7 @@
 }
 
 .sapMQuickViewPage .sapUiHLayout {
-	margin-bottom: 1rem;
+	margin-bottom: 2rem;
 }
 
 .sap-phone .sapMQuickViewPage .sapUiHLayout {

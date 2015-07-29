@@ -510,7 +510,7 @@ sap.ui.define([
 		if (sId && oContent) {
 			// move panel div into dialog content div.
 			var oPanel = jQuery.find("#" + sId);
-			jQuery(oPanel).insertAfter(jQuery(oContent));
+			jQuery(oPanel).appendTo(jQuery(oContent));
 		}
 	};
 
@@ -576,7 +576,8 @@ sap.ui.define([
 
 	/**
 	 * Calls the controller validation. Notifies the validation result to all registered panel listeners.
-     * @private
+	 * 
+	 * @private
 	 */
 	P13nDialog.prototype._callValidationExecutor = function() {
 		var fValidate = this.getValidationExecutor();
@@ -639,7 +640,7 @@ sap.ui.define([
 					fFireOK();
 				};
 				var aFailedPanelTypes = [];
-				var aValidationResult = null;
+				var aValidationResult = [];
 				// Execute validation of controller
 				var fValidate = that.getValidationExecutor();
 				if (fValidate) {

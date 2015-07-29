@@ -56,7 +56,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	};
 	
 	Utils.formatAvailableToIcon = function(bAvailable) {
-		return bAvailable ? "sap-icon://message-success" : "sap-icon://error";
+		return bAvailable ? "sap-icon://accept" : "sap-icon://decline";
 	};
 	
 	Utils.showInfo = function(aItems, oBy) {

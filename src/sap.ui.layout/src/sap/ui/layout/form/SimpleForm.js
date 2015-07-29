@@ -168,6 +168,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * @since 1.16.3
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.32.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		}
 	}});
 
@@ -200,6 +208,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 					oSimpleForm._formInvalidated(oOrigin);
 				}
 			};
+
+			oForm.getAriaLabelledBy = function(){
+				var oSimpleForm = this.getParent();
+				if (oSimpleForm) {
+					return oSimpleForm.getAriaLabelledBy();
+				}else {
+					return null;
+				}
+			};
+
 			this.setAggregation("form",oForm);
 			this._aElements = null;
 			this._aLayouts = [];

@@ -11,8 +11,7 @@
 /* ------------------------------ */
 
 .sapMSelectList {
-	border: 0.0625rem solid @sapUiSelectListBorder;
-	background: @sapUiSelectListLightestBG;
+	background: @sapUiListBackground;
 }
 
 /* ------------------------------ */
@@ -30,20 +29,20 @@
 /* selected */
 
 .sapMSelectListItemSelected {
-	background: @sapUiSelectListActiveBG;
+	background: @sapUiListSelectionBackgroundColor;
 }
 
 /* hover */
 
 .sapMSelectListItemHoverable:hover {
-	background: @sapUiSelectListLightestBGHover;
+	background: @sapUiListHoverBackground;
 }
 
 /* pressed */
 
 .sapMSelectListItem.sapMSelectListItemPressed {
-	color: @sapUiSelectListLITextInverted;
-	background: @sapUiSelectListHighlight;
+	color: @sapUiListActiveTextColor;
+	background: @sapUiListActiveBackground;
 }
 
 /* disabled */
@@ -63,7 +62,7 @@
 /* ------------------------------ */
 
 .sapMSelectListSeparatorItem {
-	border: 1px solid @sapUiSelectListMediumBorder;
+	border: 1px solid @sapUiToolbarSeparatorColor;
 }
 
 /* Compact size  */

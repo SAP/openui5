@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
-			this.bRefreshBatchGroupId = undefined;
+			this.bRefreshGroupId = undefined;
 		}
 	});
 
@@ -68,18 +68,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
 	 * 
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
-	 * @param {string} [sBatchGroupId] The batch group Id for the refresh
+	 * @param {string} [sGroupId] The group Id for the refresh
 	 * 
 	 * @public
 	 */
-	ODataContextBinding.prototype.refresh = function(bForceUpdate, sBatchGroupId) {
+	ODataContextBinding.prototype.refresh = function(bForceUpdate, sGroupId) {
 		if (typeof bForceUpdate === "string") {
-			sBatchGroupId = bForceUpdate;
+			sGroupId = bForceUpdate;
 			bForceUpdate = false;
 		}
-		this.sRefreshBatchGroup = sBatchGroupId;
+		this.sRefreshGroup = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshBatchGroup = undefined;
+		this.sRefreshGroup = undefined;
 	};
 	
 	/**
@@ -115,9 +115,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			if (sResolvedPath) {
 				this.fireDataRequested();
 			}
-			if (this.sRefreshBatchGroup) {
+			if (this.sRefreshGroup) {
 				mParameters = jQuery.extend({},this.mParameters);
-				mParameters.batchGroupId = this.sRefreshBatchGroup;
+				mParameters.groupId = this.sRefreshGroup;
 			} 
 			this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
 				if (that.oElementContext === oContext) {
@@ -184,4 +184,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 	return ODataContextBinding;
 
-}, /* bExport= */ true);
+});

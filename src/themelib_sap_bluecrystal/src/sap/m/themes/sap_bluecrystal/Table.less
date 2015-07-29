@@ -2,19 +2,19 @@
 .sapMListBGTransparent .sapMListTblHeader,
 .sapMListBGTransparent .sapMListTblFooter,
 .sapMListBGTransparent .sapMLIB.sapMListTblRow{
-	background-color: fade(@sapUiListBG, 0%);
+	background-color: fade(@sapUiListBackground, 0%);
 }
 
 .sapMListBGTranslucent .sapMListTblHeader,
 .sapMListBGTranslucent .sapMListTblFooter,
 .sapMListBGTranslucent .sapMLIB.sapMListTblRow{
-	background-color: fade(@sapUiListBG, @sapUiTranslucentBGOpacity);
+	background-color: fade(@sapUiListBackground, @sapUiTranslucentBGOpacity);
 }
 
 .sapMListBGSolid .sapMListTblHeader,
 .sapMListBGSolid .sapMListTblFooter,
 .sapMListBGSolid .sapMLIB.sapMListTblRow{
-	background-color: @sapUiListBG;
+	background-color: @sapUiListBackground;
 }
 
 .sapMListTblNavCol,
@@ -50,23 +50,23 @@
 }
 
 .sapMListTblHeader th{
-	border-bottom: 1px solid @sapUiListTblHeaderBorder;
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 }
 
 .sapMListTbl {
-	font-size: @sapUiListTblTextSize;
+	font-size: @sapUiListTableTextSize;
 }
 
 .sapMListTbl .sapMText,
 .sapMListTbl .sapMLabel {
 	padding-top: 1px;
-	font-size: @sapUiListTblTextSize;
-	color: @sapUiListTblTextColor;
+	font-size: @sapUiListTableTextSize;
+	color: @sapUiListTextColor;
 	font-weight: normal;
 }
 
 .sapMListTbl .sapUiIcon:not(.sapMLIBImgNav){
-	font-size: @sapUiListTblIconSize;
+	font-size: @sapUiListTableIconSize;
 }
 
 .sapMListTbl .sapMLIBSelectD > .sapUiIcon {
@@ -77,7 +77,7 @@
 .sapMListTblCell {
 	padding: .875rem .5rem;
 	vertical-align: top;
-	font-size: @sapUiListTblTextSize;
+	font-size: @sapUiListTableTextSize;
 }
 
 .sapMListTblCell.sapMListTblCellNoData {
@@ -85,7 +85,7 @@
 	padding-top: .75rem;
 	padding-bottom: .75rem;
 	line-height: 1.6;
-	border-bottom: 1px solid @sapUiListTblHeaderBorder;
+	border-bottom: 1px solid @sapUiListBorderColor;
 }
 
 .sapMListTblCell:first-child,
@@ -126,13 +126,13 @@
 
 /* table column header */
 .sapMListTbl th {
-	background: @sapUiLightBG;
-	border-bottom: 1px solid @sapUiMediumBorder;
+	background: @sapUiListHeaderBackground;
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 }
 
 /* table footer */
 .sapMListTblFooter > td {
-	border-top: 1px solid @sapUiMediumBorder;
+	border-top: 1px solid @sapUiListTableFooterBorder;
 }
 
 /* footer text should be bold */
@@ -151,7 +151,7 @@
 }
 
 .sapUiSizeCompact .sapMListTblCell.sapMListTblCellNoData {
-	font-size: @sapMFontMediumSize;
+	font-size: @sapUiListTableTextSize;
 }
 
 /* overwrite text control styles */

@@ -259,4 +259,4 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 
 	return SapPcpWebSocket;
 
-}, /* bExport= */ true);
+});

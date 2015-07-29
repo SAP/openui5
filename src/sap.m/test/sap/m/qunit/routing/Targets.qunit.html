@@ -7,7 +7,7 @@
 	<script src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{"test": "./", "sap.ui.demo.app" : "../../webapp/"}'>
+		data-sap-ui-resourceroots='{"qunit": "../"}'>
 </script>
 
 <script>
@@ -26,10 +26,11 @@
 					"sap/m/NavContainer",
 					"sap/m/Page",
 					"sap/ui/core/routing/Views",
-					"test/commonIntegrationTests",
-					"sap/ui/core/routing/Route"
+					"qunit/routing/commonIntegrationTests",
+					"sap/ui/core/routing/Route",
+					"qunit/routing/helpers"
 				],
-				function (Targets, NavContainer, Page, Views, integrationTests, Route) {
+				function (Targets, NavContainer, Page, Views, integrationTests, Route, helpers) {
 					"use strict";
 
 					module("add and execute navigations", {
@@ -98,6 +99,69 @@
 					///////////////////////////////////////////////////////
 					QUnit.module("Integration tests");
 
+
+
+					QUnit.test("Should respect the viewlevel with multiple navigations", function (assert) {
+						//Arrange
+						var oFirstNavContainer = new NavContainer(),
+								oSecondNavContainer = new NavContainer(),
+								fnFirstBackSpy = this.spy(oFirstNavContainer, "backToPage"),
+								fnSecondBackSpy = this.spy(oSecondNavContainer, "backToPage"),
+								oTargetConfig = {
+									first: {
+										controlId: oFirstNavContainer.getId(),
+										viewName: "FirstView",
+										viewLevel: 2
+									},
+									second: {
+										controlId: oFirstNavContainer.getId(),
+										viewName: "SecondView",
+										parent: "first",
+										viewLevel: 0
+									},
+									third: {
+										controlId: oSecondNavContainer.getId(),
+										viewName: "ThirdView",
+										parent: "second",
+										viewLevel: 2
+									},
+									fourth: {
+										controlId: oSecondNavContainer.getId(),
+										viewName: "FourthView",
+										parent: "third",
+										viewLevel: 1
+									}
+								},
+								oViews = new Views(),
+								oTargets = new Targets({
+									targets: oTargetConfig,
+									config: {
+										viewType: "JS",
+										controlAggregation: "pages"
+									},
+									views: oViews
+								});
+
+						//views
+						helpers.createViewAndController("FirstView");
+						helpers.createViewAndController("SecondView");
+						helpers.createViewAndController("ThirdView");
+						helpers.createViewAndController("FourthView");
+
+						//Act
+						oTargets.display("first");
+						oTargets.display("fourth");
+
+						//Assert
+						assert.strictEqual(fnFirstBackSpy.callCount, 1, "did a back navigation on the first container since a navigation from 2 to 1 took place");
+						assert.strictEqual(fnSecondBackSpy.callCount, 1, "did a back navigation on the second container since a navigation from 2 to 1 took place");
+
+						oViews.destroy();
+						oTargets.destroy();
+						oFirstNavContainer.destroy();
+						oSecondNavContainer.destroy();
+					});
+
 					/**
 					 * renames subroutes into parent
 					 * and renames routes params to target params
@@ -157,6 +221,7 @@
 							this.oViews.destroy();
 						}
 					});
+
 
 				});
 	})();

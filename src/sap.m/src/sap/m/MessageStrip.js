@@ -3,9 +3,8 @@
 */
 
 // Provides control sap.m.MessageStrip.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/MessageStripUtilities",
-				"sap/m/Text", "sap/m/Link"],
-	function (jQuery, library, Control, MSUtils, Text, Link) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./MessageStripUtilities",
+	"./Text", "./Link"], function (jQuery, library, Control, MSUtils, Text, Link) {
 	"use strict";
 
 	/**
@@ -47,8 +46,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 
 				/**
 				 * Determines a custom icon which is displayed.
-				 * Note: You can only set a custom icon for messages of type MessageType.Information.
-				 * All other message types use predefined icons.
+				 * If none is set, the default icon for this message type is used.
 				 */
 				customIcon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: "" },
 

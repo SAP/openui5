@@ -1,0 +1,138 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.TableFreeze.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+
+			<Table id="table1"
+				rows="{/ProductCollection}"
+				selectionMode="MultiToggle"
+				visibleRowCount="7">
+				<toolbar>
+					<m:Toolbar>
+						<m:content>
+							<m:Title text="Products" />
+							<m:ToolbarSpacer/>
+							<m:Input 
+								id="inputColumn"
+								width="20%"
+								placeholder="fixed column count"
+								tooltip="fixed column count"/>
+							<m:Input 
+								id="inputRow"
+								width="20%"
+								placeholder="fixed row count"
+								tooltip="fixed row count"/>
+							<m:Input 
+								id="inputButtomRow"
+								width="20%"
+								placeholder="fixed bottom row count"
+								tooltip="fixed bottom row count"/>
+							<m:Button id="button" text="Apply" press="buttonPress"/>
+						</m:content>
+					</m:Toolbar>
+				</toolbar>
+				
+				<columns>
+					<Column width="11rem">
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}"/>
+						</template>
+					</Column>
+					<Column width="11rem">
+						<m:Label text="Product Id" />
+						<template>
+							<m:Input value="{ProductId}"/>
+						</template>
+					</Column>
+					<Column width="6rem" hAlign="End">
+						<m:Label text="Quantity" />
+						<template>
+							<m:Label text="{Quantity}" />
+						</template>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Status" />
+						<template>
+							<m:ObjectStatus text="{Status}" state="{
+								path: 'Available',
+								formatter: 'sap.ui.table.sample.TableExampleUtils.formatAvailableToObjectState'
+							}"/>
+						</template>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Price" />
+						<template>
+							<u:Currency value="{Price}" currency="{CurrencyCode}"/>
+						</template>
+					</Column>
+					<Column width="12rem">
+						<m:Label text="Supplier" />
+						<template>
+							<m:ComboBox value="{SupplierName}" items="{/Suppliers}">
+								<c:Item text="{Name}"/>
+							</m:ComboBox>
+						</template>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Image" />
+						<template>
+							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</template>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Details" />
+						<template>
+							<m:Button text="Show Details" press="handleDetailsPress"/>
+						</template>
+					</Column>
+					<Column width="7rem">
+						<m:Label text="Heavy Weight" />
+						<template>
+							<m:CheckBox selected="{
+								path: 'Heavy',
+								type: 'sap.ui.model.type.String'
+							}"/>
+						</template>
+					</Column>
+					<Column width="12rem">
+						<m:Label text="Category" />
+						<template>
+							<m:Select selectedKey="{Category}" items="{/Categories}">
+								<c:Item text="{Name}" key="{Name}"/>
+							</m:Select>
+						</template>
+					</Column>
+					<Column width="6rem" hAlign="Center">
+						<m:Label text="Status" />
+						<template>
+							<c:Icon src="{
+								path: 'Available',
+								formatter: 'sap.ui.table.sample.TableExampleUtils.formatAvailableToIcon'
+							}"/>
+						</template>
+					</Column>
+					<Column width="11rem" hAlign="Center">
+						<m:Label text="Delivery Date" />
+						<template>
+							<m:DatePicker value="{
+								path: 'DeliveryDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'timestamp'}}
+							}"/>
+						</template>
+					</Column>
+				</columns>
+			</Table>
+			
+		</m:content>
+	</m:Page>
+</mvc:View>

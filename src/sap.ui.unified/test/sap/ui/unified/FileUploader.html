@@ -8,7 +8,7 @@
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				type="text/javascript"
-				data-sap-ui-libs="sap.ui.unified, sap.ui.commons, sap.m"
+				data-sap-ui-libs="sap.ui.unified, sap.m"
 				src="../../../../resources/sap-ui-core.js"
 				>
 		</script>
@@ -53,7 +53,7 @@
 				}
 			});
 
-			var oLabel = new sap.ui.commons.Label({ text: "Fileuploader to the local server (multiple allowed): ", labelFor: oFileUploader1});
+			var oLabel = new sap.m.Label({ text: "Fileuploader to the local server (multiple allowed): ", labelFor: oFileUploader1});
 			oLabel.placeAt("target1");
 			oFileUploader1.placeAt("target1");
 
@@ -99,7 +99,7 @@
 				}
 			});
 
-			var oLabel = new sap.ui.commons.Label({ text: "Fileuploader to the SAPUI5 Test-Server: ", labelFor: oFileUploader2});
+			var oLabel = new sap.m.Label({ text: "Fileuploader to the SAPUI5 Test-Server: ", labelFor: oFileUploader2});
 			oLabel.placeAt("target2");
 			oFileUploader2.placeAt("target2");
 
@@ -118,7 +118,7 @@
 				]
 			});
 
-			var oLabel3 = new sap.ui.commons.Label({ text: "Fileuploader to the local server (incl. parameters): ", labelFor: oFileUploader3});
+			var oLabel3 = new sap.m.Label({ text: "Fileuploader to the local server (incl. parameters): ", labelFor: oFileUploader3});
 			oLabel3.placeAt("target3");
 			oFileUploader3.placeAt("target3");
 
@@ -162,7 +162,7 @@
 				}
 			});
 
-			var oLabel4 = new sap.ui.commons.Label({ text: "Fileuploader to the local server (incl. header parameters): ", labelFor: oFileUploader4});
+			var oLabel4 = new sap.m.Label({ text: "Fileuploader to the local server (incl. header parameters): ", labelFor: oFileUploader4});
 			oLabel4.placeAt("target4");
 			oFileUploader4.placeAt("target4");
 
@@ -195,11 +195,11 @@
 				}
 			});
 
-			var oLabel5 = new sap.ui.commons.Label({ text: "Disabled FileUploader", labelFor: oFileUploader5});
+			var oLabel5 = new sap.m.Label({ text: "Disabled FileUploader", labelFor: oFileUploader5});
 			oLabel5.placeAt("target7");
 			oFileUploader5.placeAt("target7");
 
- 			var oButton = new sap.ui.commons.Button({
+ 			var oButton = new sap.m.Button({
 				text : "Upload Uploader 1",
 				press : function() {
 					oFileUploader1.upload();
@@ -207,7 +207,7 @@
 			});
 			oButton.placeAt("target5");
 
-			var oButton2 = new sap.ui.commons.Button({
+			var oButton2 = new sap.m.Button({
 				text : "Upload Uploader 2",
 				press : function() {
 					oFileUploader2.upload();
@@ -215,7 +215,7 @@
 			});
 			oButton2.placeAt("target5");
 
-			var oButton3 = new sap.ui.commons.Button({
+			var oButton3 = new sap.m.Button({
 				text : "Upload Uploader 3",
 				press : function() {
 					oFileUploader3.upload();
@@ -223,7 +223,7 @@
 			});
 			oButton3.placeAt("target5");
 
-			var oButton4 = new sap.ui.commons.Button({
+			var oButton4 = new sap.m.Button({
 				text : "Upload Uploader 4",
 				press : function() {
 					oFileUploader4.upload();
@@ -231,7 +231,7 @@
 			});
 			oButton4.placeAt("target5");
 
-			var oButton5 = new sap.ui.commons.Button({
+			var oButton5 = new sap.m.Button({
 				text: "Upload & Abort - Uploader 4",
 				press: function () {
 					oFileUploader4.upload();
@@ -240,7 +240,7 @@
 			});
 			oButton5.placeAt("target5");
 
-			var oButton6 = new sap.ui.commons.Button({
+			var oButton6 = new sap.m.Button({
 				text: "Toggle Value State of Uploader 4",
 				press: function () {
 					var sValStat;
@@ -267,7 +267,7 @@
 			});
 			oButton6.placeAt("target6");
 
-			var oButton7 = new sap.ui.commons.Button({
+			var oButton7 = new sap.m.Button({
 				text: "Upload",
 				press: function () {
 					oFileUploader5.setEnabled(false);
@@ -294,7 +294,7 @@
 				}
 			});
 
-			var oLabel6 = new sap.ui.commons.Label({ text: "Fileuploader to the local server (with icon): ", labelFor: oFileUploader6});
+			var oLabel6 = new sap.m.Label({ text: "Fileuploader to the local server (with icon): ", labelFor: oFileUploader6});
 			oLabel6.placeAt("target8");
 			oFileUploader6.placeAt("target8");
 
@@ -312,11 +312,11 @@
 				}
 			});
 
-			var oLabel7 = new sap.ui.commons.Label({ text: "Fileuploader to the local server (with icon font): ", labelFor: oFileUploader7});
+			var oLabel7 = new sap.m.Label({ text: "Fileuploader to the local server (with icon font): ", labelFor: oFileUploader7});
 			oLabel7.placeAt("target9");
 			oFileUploader7.placeAt("target9");
 
-			var oButton8 = new sap.ui.commons.Button({
+			var oButton8 = new sap.m.Button({
 				text : "Upload Uploader 6",
 				press : function() {
 					oFileUploader6.upload();
@@ -324,7 +324,7 @@
 			});
 			oButton8.placeAt("target10");
 
-			var oButton9 = new sap.ui.commons.Button({
+			var oButton9 = new sap.m.Button({
 				text : "Upload Uploader 7",
 				press : function() {
 					oFileUploader7.upload();
@@ -332,12 +332,12 @@
 			});
 			oButton9.placeAt("target10");
 
-			var oTVProgress = new sap.ui.commons.TextView({
+			var oTVProgress = new sap.m.Text({
 				text: "progress messages go here"
 			});
 			oTVProgress.placeAt("progressMsgs");
 
-			var oTVComplete = new sap.ui.commons.TextView({
+			var oTVComplete = new sap.m.Text({
 				text: "complete messages go here"
 			});
 			oTVComplete.placeAt("completeMsgs");

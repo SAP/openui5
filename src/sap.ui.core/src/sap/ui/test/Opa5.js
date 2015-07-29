@@ -9,13 +9,14 @@ sap.ui.define(['jquery.sap.global',
 			'./PageObjectFactory',
 			'sap/ui/qunit/QUnitUtils',
 			'sap/ui/base/Object',
+			'sap/ui/Device',
 			'./matchers/Matcher',
 			'./matchers/AggregationFilled',
 			'./matchers/PropertyStrictEquals',
 			'./matchers/Properties',
 			'./matchers/Ancestor',
 			'./matchers/AggregationContainsPropertyEqual'],
-	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
+	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
 			oFrameJQuery = null,
@@ -23,8 +24,7 @@ sap.ui.define(['jquery.sap.global',
 			oFrameUtils = null,
 			$Frame = null,
 			bFrameLoaded = false,
-			bUi5Loaded = false,
-			oHashChanger = null;
+			bUi5Loaded = false;
 
 		/**
 		 * Helps you writing tests for UI5 applications.
@@ -145,6 +145,33 @@ sap.ui.define(['jquery.sap.global',
 		 *
 		 * @param {object} oOptions an Object containing conditions for waiting and callbacks
 		 * @param {string|regexp} [oOptions.id] the global id of a control, or the id of a control inside of a view.
+		 * If a regex and a viewName is provided, Opa5 will only look for controls in the view with a matching id.<br/>
+		 * Example of a waitFor:
+		 * <pre>
+		 *     <code>
+		 *         this.waitFor({
+		 *             id: /my/,
+		 *             viewName: "myView"
+		 *         });
+		 *     </code>
+		 * </pre>
+		 * The view that is searched in:
+		 * <pre>
+		 *     <code>
+		 *         &lt;core:View xmlns:core="sap.ui.core" xmlns="sap.m"&gt;
+		 *             &lt;Button id="myButton"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="bar"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="baz"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Image id="myImage"&gt;&lt;/Image&gt;
+		 *         &lt;/core:View&gt;
+		 *     </code>
+		 * </pre>
+		 * Will result in matching two Controls, the image with the effective id myView--myImage and the button myView--myButton.
+		 * Although the ids of the controls myView--bar and myView--baz contain a my,
+		 * they will not be matched since only the part you really write in your views will be matched.
 		 * @param {string} [oOptions.viewName] the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
 		 * @param {string} [oOptions.viewNamespace] get appended before the viewName - should probably be set to the OPA config.
 		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers {@link sap.ui.test.matchers}. Matchers will be applied to an every control found by the waitFor function. The matchers are a pipeline, first matcher gets a control as an input parameter, each next matcher gets the same input, as the previous one, if the previous output is 'true'. If the previous output is a truthy value, the next matcher will receive this value as an input parameter. If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values. Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
@@ -154,9 +181,25 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) specifies how long the waitFor function polls before it fails.
 		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) specifies how often the waitFor function polls.
 		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
-		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked.
+		 * The first parameter passed into the function is the same value that gets passed to the success function.
+		 * Returning something different than boolean in check will not change the first parameter of success.
+		 * @param {function} [oOptions.success] Will get invoked after
+		 * <ol>
+		 *     <li>
+		 *         One or multiple controls where found using controlType, Id, viewName. If visible is true (it is by default), the controls also need to be rendered.
+		 *     </li>
+		 *     <li>
+		 *          the whole matcher pipeline returned true for at least one control, or there are no matchers
+		 *     </li>
+		 *     <li>
+		 *         the check function returns true, or there is no check function
+		 *     </li>
+		 * </ol>
+		 * The first parameter passed into the function is either a single control (when a single string id was used),
+		 *  or an array of controls (viewName, controlType, multiple id's, regex id's) that matched all matchers.
+		 * Matchers can alter the array or single control to something different. Please read the matcher documentation.
 		 * @param {function} [oOptions.error] Will get invoked, when the timeout is reached and check did never return a true.
-		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is qunit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
+		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is QUnit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 */
@@ -313,12 +356,17 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
+		 * Returns Hashchanger object of the iframe. If the iframe is not loaded it will return null.
 		 * @public
-		 * @returns {sap.ui.core.routing.HashChanger} the hashchange
+		 * @returns {sap.ui.core.routing.HashChanger} the hashchanger instance
 		 */
 		Opa5.getHashChanger = function () {
-			return oHashChanger;
+			if (!oFrameWindow) {
+				return null;
+			}
+			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
+
+			return oFrameWindow.sap.ui.core.routing.HashChanger.getInstance();
 		};
 
 
@@ -393,8 +441,8 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt;
 		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt;
 		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions]
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 1&gt;
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 2&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-1&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-2&gt;
 		 * @returns {map} mPageObject
 		 * @returns {map} mPageObject.&lt;your-page-object-name&gt;
 		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.actions an instance of baseClass or Opa5 with all the actions defined above
@@ -527,9 +575,6 @@ sap.ui.define(['jquery.sap.global',
 			registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 			oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 			oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
-
-			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
-			modifyHashChanger(oFrameWindow.sap.ui.core.routing.HashChanger.getInstance());
 		}
 
 		function registerAbsoluteModulePathInIframe(sModule) {
@@ -539,7 +584,22 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		function handleFrameLoad () {
+
 			oFrameWindow = $Frame[0].contentWindow;
+
+			registerOnError();
+
+			bFrameLoaded = true;
+			//immediately check for UI5 to be loaded, to intercept any hashchanges
+			checkForUI5ScriptLoaded();
+		}
+
+		function registerOnError () {
+			// In IE9 retrieving the active element in an iframe when it has no focus produces an error.
+			// Since we use it all over the UI5 libraries, the only solution is to ignore frame errors in IE9.
+			if (Device.browser.internet_explorer && Device.browser.version === 9) {
+				return;
+			}
 
 			var fnFrameOnError = oFrameWindow.onerror;
 
@@ -550,9 +610,6 @@ sap.ui.define(['jquery.sap.global',
 				throw "OpaFrame error message: " + sErrorMsg + " url: " + sUrl + " line: " + iLine;
 			};
 
-			bFrameLoaded = true;
-			//immediately check for UI5 to be loaded, to intercept any hashchanges
-			checkForUI5ScriptLoaded();
 		}
 
 		function checkForUI5ScriptLoaded () {
@@ -569,38 +626,84 @@ sap.ui.define(['jquery.sap.global',
 
 		function handleUi5Loaded () {
 			setFrameVariables();
+			modifyIFrameNavigation();
+		}
 
+		/**
+		 * Disables most of the navigations in an iframe, only setHash has an effect on the real iframe history after running this function.
+		 * Reason: replace hash does not work in an iframe so it may not be called at all.
+		 * This makes it necessary to hook into all navigation methods
+		 * @private
+		 */
+		function modifyIFrameNavigation () {
+			oFrameWindow.jQuery.sap.require("sap.ui.thirdparty.hasher");
 			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.History");
+			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
-			var oHistory = oFrameWindow.sap.ui.core.routing.History.getInstance(),
-				fnOriginalGo = oFrameWindow.history.go,
-				fnOriginalReplaceHashChanger = oFrameWindow.sap.ui.core.routing.HashChanger.replaceHashChanger;
+			var oHashChanger = new oFrameWindow.sap.ui.core.routing.HashChanger(),
+				oHistory = new oFrameWindow.sap.ui.core.routing.History(oHashChanger),
+				oHasher = oFrameWindow.hasher,
+				fnOriginalSetHash = oHasher.setHash,
+				fnOriginalGetHash = oHasher.getHash,
+				sCurrentHash,
+				fnOriginalGo = oFrameWindow.history.go;
 
-			// also patch new hashChangers
-			oFrameWindow.sap.ui.core.routing.HashChanger.replaceHashChanger = function (oNewHashChanger) {
-				modifyHashChanger(oNewHashChanger);
-				fnOriginalReplaceHashChanger.apply(this,arguments);
+			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
+			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
+			oHasher.replaceHash = function (sHash) {
+				var sOldHash = this.getHash();
+				sCurrentHash = sHash;
+				oHashChanger.fireEvent("hashReplaced",{ sHash : sHash });
+				this.changed.dispatch(sHash, sOldHash);
+			};
+
+			oHasher.setHash = function (sHash) {
+				var sRealCurrentHash = fnOriginalGetHash.call(this);
+
+				sCurrentHash = sHash;
+				oHashChanger.fireEvent("hashSet", { sHash : sHash });
+				fnOriginalSetHash.apply(this, arguments);
+
+				// Happens when setHash("a") back setHash("a") is called.
+				// Then dispatch the previous hash as new one because hasher does not dispatch if the real hash stays the same
+				if (sRealCurrentHash === this.getHash()) {
+					// always dispatch the current position of the history, since this can only happen in the backwards / forwards direction
+					this.changed.dispatch(sRealCurrentHash, oHistory.aHistory[oHistory.iHistoryPosition]);
+				}
+
+			};
+
+			// This function also needs to be manipulated since hasher does not know about our intercepted replace
+			oHasher.getHash = function() {
+				//initial hash
+				if (sCurrentHash === undefined) {
+					return fnOriginalGetHash.apply(this, arguments);
+				}
+
+				return sCurrentHash;
 			};
 
 			oHashChanger.init();
 
 			function goBack () {
-				var sCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition];
-				oHashChanger._sCurrentHash = oHistory.getPreviousHash();
-				oHashChanger.fireEvent("hashChanged", { newHash : oHistory.getPreviousHash(), oldHash : sCurrentHash });
+				var sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition],
+					sNewCurrentHash = oHistory.getPreviousHash();
+
+				sCurrentHash = sNewCurrentHash;
+				oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
 			}
 
 			function goForward () {
-				var sNextHash = oHistory.aHistory[oHistory.iHistoryPosition + 1],
-					sCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition];
+				var sNewCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition + 1],
+					sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition];
 
-				if (sNextHash === undefined) {
-					jQuery.sap.log.info("Could not navigate forwards, there is no history entry in the forwards direction", this);
+				if (sNewCurrentHash === undefined) {
+					jQuery.sap.log.error("Could not navigate forwards, there is no history entry in the forwards direction", this);
 					return;
 				}
 
-				oHashChanger._sCurrentHash = sNextHash;
-				oHashChanger.fireEvent("hashChanged", { newHash : sNextHash, oldHash : sCurrentHash });
+				sCurrentHash = sNewCurrentHash;
+				oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
 			}
 
 			oFrameWindow.history.back = goBack;
@@ -615,45 +718,8 @@ sap.ui.define(['jquery.sap.global',
 					return;
 				}
 
-				jQuery.sap.log.warning("Using history.go with a number greater than 1 is not supported by OPA5", this);
-				return fnOriginalGo.apply(this, arguments);
-			};
-
-		}
-
-		function modifyHashChanger (oNewHashChanger) {
-			oHashChanger = oNewHashChanger;
-
-			var fnOriginalSetHash = oHashChanger.setHash,
-				fnOriginalGetHash = oHashChanger.getHash;
-
-			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
-			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
-			oHashChanger.replaceHash = function (sHash) {
-				var sOldHash = oHashChanger.getHash();
-				this.fireEvent("hashReplaced", { sHash : sHash });
-				this._sCurrentHash = sHash;
-				oHashChanger.fireEvent("hashChanged", { newHash : sHash, oldHash : sOldHash });
-
-			};
-
-			oHashChanger.setHash = function (sHash) {
-
-				this._sCurrentHash = sHash;
-				fnOriginalSetHash.apply(this, arguments);
-
-			};
-
-			// This function also needs to be manipulated since hasher does not know about our intercepted replace hashgetHash
-			oHashChanger.getHash = function() {
-
-				//initial hash
-				if (this._sCurrentHash === undefined) {
-					return fnOriginalGetHash.apply(this, arguments);
-				}
-
-				return this._sCurrentHash;
-
+				jQuery.sap.log.error("Using history.go with a number greater than 1 is not supported by OPA5", this);
+				return fnOriginalGo.apply(oFrameWindow.history, arguments);
 			};
 		}
 
@@ -663,7 +729,6 @@ sap.ui.define(['jquery.sap.global',
 			oFrameJQuery = null;
 			oFramePlugin = null;
 			oFrameUtils = null;
-			oHashChanger = null;
 		}
 
 		$(function () {
@@ -674,4 +739,4 @@ sap.ui.define(['jquery.sap.global',
 		});
 
 		return Opa5;
-}, /* bExport= */ true);
+});

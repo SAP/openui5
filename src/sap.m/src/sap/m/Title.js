@@ -8,13 +8,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 	"use strict";
 	
 	/**
-	 * Constructor for a new Title Text Control.
+	 * Constructor for a new Title control.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Title control is used for header texts and title.
+	 * The Title control represents a single line of text with explicit header / title semantics.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
 	 *
@@ -36,27 +36,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 		properties : {
 			
 			/**
-			 * Title Text to be displayed
+			 * Defines the text which should be displayed as a title.
 			 */
 			text : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * Defines the semantic level of the title. Using 'Auto' no explicit level information is written.
+			 * Defines the semantic level of the title.
+			 * This information is e.g. used by assistive technologies like screenreaders to create a hierarchical site map for faster navigation.
+			 * Depending on this setting either a HTML h1-h6 element is used or when using level <code>Auto</code> no explicit level information is written (HTML5 header element).
 			 */
 			level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
 			
 			/**
-			 * Sets the style of the Title. Using 'Auto' the style is automatically set based on the current position of the title and the current theming.
+			 * Defines the style of the title.
+			 * When using the <code>Auto</code> styling, the appearance of the title depends on the current position of the title and the defined level. 
+			 * This automatism can be overridden by setting a different style explicitly.
+			 * The actual appearance of the title and the different styles always depends on the theme being used.
 			 */
 			titleStyle : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
 			
 			/**
-			 * Defines the width of the Title.
+			 * Defines the width of the title. 
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 	
 			/**
-			 * Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
+			 * Defines the alignment of the text within the title. <b>Note:</b> This property only has an effect if the overall width of the title control is
+			 * larger than the displayed text.
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Initial}
 			
@@ -64,8 +70,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 		associations : {
 
 			/**
-			 * Association to a generic title description.
-			 * If such a title element is associated the properties text, level and tooltip (text only) of this element are consumed.
+			 * Defines a relationship to a generic title description.
+			 * If such a title element is associated, the properties text, level and tooltip (text only) of this element are consumed.
 			 * The corresponding properties of the title control are ignored.
 			 */
 			title : {type : "sap.ui.core.Title", multiple : false}

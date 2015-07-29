@@ -104,7 +104,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	IconTabFilter.prototype._getImageControl = function(aCssClassesToAdd, oParent, aCssClassesToRemove) {
 		var mProperties = {
 			src : this.getIcon(),
-			densityAware : this.getIconDensityAware()
+			densityAware : this.getIconDensityAware(),
+			useIconTooltip : false
 		};
 		if (mProperties.src) {
 			this._oImageControl = sap.m.ImageHelper.getImageControl(this.getId() + "-icon", this._oImageControl, oParent, mProperties, aCssClassesToAdd, aCssClassesToRemove);

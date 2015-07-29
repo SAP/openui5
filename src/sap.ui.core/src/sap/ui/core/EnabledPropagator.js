@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.core.EnabledPropagator
-sap.ui.define(['jquery.sap.global', './Control'],
-	function(jQuery, Control) {
+sap.ui.define(['./Control'],
+	function(Control) {
 	"use strict";
 
 

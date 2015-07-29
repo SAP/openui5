@@ -63,6 +63,15 @@
 	-webkit-transition: opacity 0.1s;
 	transition: opacity 0.1s;
 
+	&::before {
+		content: "";
+		position: absolute;
+		width: 2rem;
+		height: 2rem;
+		top: -25%;
+		left: -25%;
+	}
+
 	&::after {
 		content: '\e03e';
 	}

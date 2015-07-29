@@ -12,13 +12,13 @@
  */
 function deepContains(oValue, oExpected, sMessage) {
 	for (var sKey in oExpected) {
-		ok(typeof oExpected[sKey] === typeof oValue[sKey], sMessage + "/" + sKey + " have same type");
+		equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
 		
 		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-			equal(oExpected[sKey].length, oValue[sKey].length, sMessage + "/" + sKey + " length matches");
+			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
 		}
 		
-		if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
 			// Go deeper
 			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
 		} else {
@@ -125,6 +125,12 @@ function runODataAnnotationTests() {
 	// Additional tests that have extra tests and should thus be referable by name. For this the name
 	// of the test is not added as property of the test but as key in the map
 	var mAdditionalTestsServices = {
+		"Default Annotated Service": {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : "fakeService://testdata/odata/northwind-annotations-normal.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
 		"Test 2014-12-08": {
 			service          : "fakeService://testdata/odata/northwind/",
 			annotations      : "fakeService://testdata/odata/2014-12-08-test.xml",
@@ -254,6 +260,17 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/apply-in-if.xml",
 			serviceValid     : true,
 			annotationsValid : "all",
+		},
+		"Joined Loading with automated $metadata parsing": {
+			service          : "fakeService://testdata/odata/northwind-annotated/",
+			annotations      : [
+				"fakeService://testdata/odata/northwind-annotations-normal.xml",
+				"fakeService://testdata/odata/multiple-annotations-01.xml",
+				"fakeService://testdata/odata/multiple-annotations-02.xml",
+				"fakeService://testdata/odata/multiple-annotations-03.xml"
+			],
+			serviceValid     : true,
+			annotationsValid : "all",
 		}
 		
 	};
@@ -325,6 +342,7 @@ function runODataAnnotationTests() {
 		// Check synchronous loading
 		mModelOptions.loadAnnotationsJoined = false;
 		mModelOptions.loadMetadataAsync = false;
+		mModelOptions.skipMetadataAnnotationParsing = true;
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
@@ -456,7 +474,8 @@ function runODataAnnotationTests() {
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = false;
 		mModelOptions.loadMetadataAsync = true;
-	
+		mModelOptions.skipMetadataAnnotationParsing = true;
+
 		sTestType = 
 			sTestName + " (" + 
 			(bServiceValid ? "Valid Service" : "Broken Service") + "/" + 
@@ -753,7 +772,7 @@ function runODataAnnotationTests() {
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = true;
 		mModelOptions.loadMetadataAsync = true;
-
+		mModelOptions.skipMetadataAnnotationParsing = true;
 
 		sTestType = 
 			sTestName + " (" +
@@ -926,6 +945,69 @@ function runODataAnnotationTests() {
 				"Asynchronous loading (joined events) - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
+		}
+	}
+
+
+	module("V1 only: Synchronous loading and MetaModel");
+	
+	var fnTestSynchronousLoading = function(mTest) {
+		expect(5);
+		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: false,
+			loadMetadataAsync: false
+		});
+		
+		
+		// Everything should be ready right now due to synchronous operation mode
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+		var oMetaModel = oModel.getMetaModel();
+		
+		ok(!!oMetadata, "Metadata is available.");
+		ok(!!oAnnotations, "Annotations are available.");
+		ok(!!oMetaModel, "MetaModel is available.");
+		
+		ok(oMetaModel.getProperty("/"), "Metamodel can be used");
+		ok(oMetaModel.getODataEntityContainer(), "Metamodel can be used");
+	};
+
+	
+	
+	for (i = 0; i < aServices.length; ++i) {
+		if (!aServices[i].serviceValid) {
+			// Only test valid services
+			continue;
+		}
+		
+		
+		sServiceURI = aServices[i].service;
+		mModelOptions = {
+			annotationURI : aServices[i].annotations,
+			json : true
+		};
+		sAnnotationsValid = aServices[i].annotationsValid;
+		bAnnotationsValid = sAnnotationsValid === "all" || sAnnotationsValid === "some";
+		sTestName = aServices[i].name ? aServices[i].name : "";
+
+		sTestType = 
+			sTestName + " (" + 
+			(bAnnotationsValid ? "Valid Annotations (" + sAnnotationsValid + ")" : "Broken Annotations") +
+			(bSharedMetadata ?  "/Shared Metadata" : "") + 
+			")";
+
+		// Check synchronous loading
+		mModelOptions.loadAnnotationsJoined = false;
+		mModelOptions.loadMetadataAsync = false;
+		mModelOptions.skipMetadataAnnotationParsing = true;
+
+		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
+
+		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
+		//  ==> PhantomJS doesn't fail when loading malformed XML!
+		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+			test("V1 only: Synchronous Metadata loading and Metamodel - " + sTestType, fnTestSynchronousLoading.bind(this, aServices[i]));	
 		}
 	}
 
@@ -3829,7 +3911,7 @@ function runODataAnnotationTests() {
 	});
 
 	asyncTest("Apply in If", function() {
-		expect(67);
+		expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -3854,7 +3936,7 @@ function runODataAnnotationTests() {
 								"Ne": [{
 									"Path": "EmailAddress"
 								}, {
-									"Null": {}
+									"Null": null
 								}]
 							}, {
 								"Apply": {
@@ -3868,7 +3950,7 @@ function runODataAnnotationTests() {
 									}]
 								}
 							}, {
-								"Null": {}
+								"Null": null
 							}]
 						},
 						"RecordType": "Value"
@@ -3880,7 +3962,7 @@ function runODataAnnotationTests() {
 									"Ne": [{
 										"Path":"EmailAddress"
 									}, {
-										"Null":{}
+										"Null": null
 									}]
 								}, {
 									"Apply": {
@@ -3894,7 +3976,7 @@ function runODataAnnotationTests() {
 										}]
 									}
 								}, {
-									"Null":{}
+									"Null": null
 								}]
 							}
 						},
@@ -3909,7 +3991,7 @@ function runODataAnnotationTests() {
 	});
 
 	asyncTest("V2: Apply in If", function() {
-		expect(67);
+		expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -3935,7 +4017,7 @@ function runODataAnnotationTests() {
 								"Ne": [{
 									"Path": "EmailAddress"
 								}, {
-									"Null": {}
+									"Null": null
 								}]
 							}, {
 								"Apply": {
@@ -3949,7 +4031,7 @@ function runODataAnnotationTests() {
 									}]
 								}
 							}, {
-								"Null": {}
+								"Null": null
 							}]
 						},
 						"RecordType": "Value"
@@ -3961,7 +4043,7 @@ function runODataAnnotationTests() {
 									"Ne": [{
 										"Path":"EmailAddress"
 									}, {
-										"Null":{}
+										"Null": null
 									}]
 								}, {
 									"Apply": {
@@ -3975,7 +4057,7 @@ function runODataAnnotationTests() {
 										}]
 									}
 								}, {
-									"Null":{}
+									"Null": null
 								}]
 							}
 						},
@@ -3989,4 +4071,147 @@ function runODataAnnotationTests() {
 		});
 	});
 	
+	
+	
+	asyncTest("V2: Joined Loading with automated $metadata parsing", function() {
+		expect(16);
+
+		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: false,
+			loadAnnotationsJoined: true
+		});
+		
+		
+		var oModel2 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+			annotationURI : mTest.annotations,
+			skipMetadataAnnotationParsing: false,
+			loadAnnotationsJoined: false
+		});
+
+		var iCount = 0;
+		var fnTestAllAnnotations = function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			equals(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path, "Annotations", "Annotation from correct source (Annotations)");
+			equals(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path, "Metadata", "Annotation from correct source (Metadata)");
+			equals(oAnnotations.UnitTest["Test.Merged"][0].Value.Path, "Annotations", "Merged annotations filled");
+			
+			
+			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
+			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
+			
+			++iCount;
+			if (iCount == 2) {
+				// Make sure no additional events are fired afterwards
+				setTimeout(start, 500);
+			} else if(iCount > 2) {
+				ok(false, "Too many events have been fired");
+			}
+		}
+		
+		oModel.attachMetadataLoaded(fnTestAllAnnotations);
+		oModel2.attachAnnotationsLoaded(fnTestAllAnnotations);
+	});
+
+
+
+	var fnTestAnnotationInRecord = function(iModelVersion) {
+		expect(54);
+
+		var mTest = mAdditionalTestsServices["Default Annotated Service"];
+		
+		var oModel;
+		if (iModelVersion == 1) {
+			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+				bAsync: true
+			});
+		} else if (iModelVersion == 2) {
+			oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+			});
+		} else {
+			ok(false, "Unknown ODataModel version requested for test");
+			return;
+		}
+
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			
+			ok(!!oAnnotations["Test.AnnotationInRecord"], "Outer Annotations container exists");
+			ok(!!oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case1"], "Outer Annotation exists");
+			
+			var mTestCase1 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case1"];
+			
+			deepContains(mTestCase1, {
+				"Test.AnnotationInRecord.Case1.Record.SubAnnotation1": {
+					"String": "SubAnnotation1"
+				},
+				"Label": {
+					"String": "Label1"
+				},
+				"Test.AnnotationInRecord.Case1.Record.SubAnnotation2": {
+					"If" : [{
+						"Eq": [{
+							"Path": "Condition" 
+						}, {
+							"Bool": "false"
+						}]
+					}, {
+						"String": "ConditionalValue"
+					}]
+				},
+				"RecordType": "Test.AnnotationInRecord.Case1.Record"
+			}, "Case 1 Annotation has correct values");
+
+			var mTestCase2 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case2"];
+			
+			deepContains(mTestCase2, {
+				"Test.AnnotationInRecord.Case2.Record.SubAnnotation1": {
+					"String": "SubAnnotation1"
+				},
+				"Label": {
+					"String": "Annotation"
+				},
+				"Test.AnnotationInRecord.Case2.Record.SubAnnotation2": {
+					"If" : [{
+						"Eq": [{
+							"Path": "Condition" 
+						}, {
+							"Bool": "false"
+						}]
+					}, {
+						"String": "ConditionalValue"
+					}]
+				},
+				"RecordType": "Test.AnnotationInRecord.Case2.Record"
+			}, "Case 2 Annotation has correct values");
+			
+			var mTestCase3 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case3"];
+
+			deepContains(mTestCase3, {
+				"Null": null,
+				"RecordType": "Test.AnnotationInRecord.Case3.Record"
+			}, "Case 3 has correct values");
+
+			oModel.destroy();
+			start();
+		});
+	}
+	
+	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
+	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
 }

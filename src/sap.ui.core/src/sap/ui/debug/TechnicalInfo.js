@@ -3,8 +3,8 @@
  */
 
 // Provides a popup with technical informations about the running SAPUI5 core
-sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/Popup', 'jquery.sap.strings'],
-	function(jQuery, Core, Popup/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Popup', 'jquery.sap.strings'],
+	function(jQuery, Device, Popup/* , jQuerySap */) {
 	"use strict";
 
 	/*global alert */
@@ -151,7 +151,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 			this._$Ref.find('#sap-ui-techinfo-weinre').click(jQuery.proxy(this.onOpenWebInspector, this));
 			this._$Ref.find('#sap-ui-techinfo-useStatistics').click(jQuery.proxy(this.onUseStatistics, this));
 			this._oPopup = new Popup(this._$Ref.get(0), /*modal*/true, /*shadow*/true, /*autoClose*/false);
-			var bValidBrowser = !!!sap.ui.Device.browser.internet_explorer || !!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version > 8;
+			var bValidBrowser = !!!Device.browser.internet_explorer || !!Device.browser.internet_explorer && Device.browser.version > 8;
 			var bDevAvailable = bValidBrowser && jQuery.sap.sjax({type: "HEAD", url: sap.ui.resource("sap.ui.dev", "library.js")}).success;
 			if (bDevAvailable) {
 				this._oPopup.attachOpened(function(oEvent) {
@@ -417,7 +417,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 			if (!sap.ui.getCore().getConfiguration().getWeinreServer()) {
 				alert("Cannot start Web Inspector - WEINRE server is not configured.");
 				e.preventDefault();
-			} else if (!!!sap.ui.Device.browser.webkit) {
+			} else if (!!!Device.browser.webkit) {
 				alert("Cannot start Web Inspector - WEINRE only runs on WebKit, please use Chrome or Safari.");
 				e.preventDefault();
 			}

@@ -1006,11 +1006,9 @@ function(jQuery, library, Control, IconPool) {
 				}
 			}).addStyleClass("sapMVSDSeg");
 
-			// workaround to fix flickering caused by css measurement in
-			// SegmentedButton
-			this._segmentedButton._fCalcBtnWidth = function() {
-				// do nothing here
-			};
+			// workaround to fix flickering caused by css measurement in SegmentedButton. Temporary solution that
+			// may be removed once VSD current page rendering implementation is changed.
+			this._segmentedButton._bPreventWidthRecalculationOnAfterRendering = true;
 		}
 		return this._segmentedButton;
 	};
@@ -1120,7 +1118,7 @@ function(jQuery, library, Control, IconPool) {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
-				that.setSortDescending(oEvent.getParameter("listItem").data("item"));
+				that.setProperty('sortDescending', oEvent.getParameter("listItem").data("item"), true);
 			}
 		}).addStyleClass("sapMVSDUpperList");
 		this._sortOrderList.addItem(new sap.m.StandardListItem({
@@ -1136,7 +1134,7 @@ function(jQuery, library, Control, IconPool) {
 			selectionChange : function(oEvent) {
 				var item = oEvent.getParameter("listItem").data("item");
 				if (item) {
-					item.setSelected(oEvent.getParameter("listItem").getSelected());
+					item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 				}
 				that.setAssociation("selectedSortItem", item, true);
 			}
@@ -1160,8 +1158,7 @@ function(jQuery, library, Control, IconPool) {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
-				that.setGroupDescending(oEvent.getParameter("listItem")
-					.data("item"));
+				that.setProperty('groupDescending', oEvent.getParameter("listItem").data("item"), true);
 			}
 		}).addStyleClass("sapMVSDUpperList");
 		this._groupOrderList.addItem(new sap.m.StandardListItem({
@@ -1178,8 +1175,7 @@ function(jQuery, library, Control, IconPool) {
 				selectionChange : function(oEvent) {
 					var item = oEvent.getParameter("listItem").data("item");
 					if (item) {
-						item.setSelected(oEvent.getParameter("listItem")
-							.getSelected());
+						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 					that.setAssociation("selectedGroupItem", item, true);
 				}
@@ -1207,8 +1203,7 @@ function(jQuery, library, Control, IconPool) {
 				selectionChange : function(oEvent) {
 					var item = oEvent.getParameter("listItem").data("item");
 					if (item) {
-						item.setSelected(oEvent.getParameter("listItem")
-							.getSelected());
+						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 					that.setAssociation("selectedPresetFilterItem", item, true);
 					that._clearSelectedFilters();
@@ -1617,6 +1612,46 @@ function(jQuery, library, Control, IconPool) {
 
 
 	/**
+	 * Overwrite the model setter in order to reset the remembered page in case it was a filter detail page to make sure
+	 * the dialog is not trying to re-open a page for a removed item BCP 1570030370
+	 *
+	 * @param oModel
+	 * @param sName
+	 * @returns {ViewSettingsDialog}
+	 */
+	ViewSettingsDialog.prototype.setModel = function (oModel, sName) {
+		if (this._vContentPage === 3 && this._oContentItem) {
+			resetFilterPage.call(this);
+		}
+		return sap.ui.base.ManagedObject.prototype.setModel.call(this, oModel, sName);
+	};
+
+	/**
+	 * Reset the remembered page if it was the filter detail page of the removed filter
+	 *
+	 * @param oFilterItem
+	 * @returns {ViewSettingsDialog}
+	 */
+	ViewSettingsDialog.prototype.removeFilterItem = function (oFilterItem) {
+		if (this._vContentPage === 3 && this._oContentItem && this._oContentItem.getId() === oFilterItem.getId()) {
+			resetFilterPage.call(this);
+		}
+		return this.removeAggregation('filterItems', oFilterItem);
+	};
+
+	/**
+	 * Reset the remembered page if it was a filter detail page and all filter items are being removed
+	 * @returns {ViewSettingsDialog}
+	 */
+	ViewSettingsDialog.prototype.removeAllFilterItems = function () {
+		if (this._vContentPage === 3 && this._oContentItem) {
+			resetFilterPage.call(this);
+		}
+		return this.removeAllAggregation('filterItems');
+	};
+
+
+	/**
 	 * Switches to a dialog page (0 = sort, 1 = group, 2 = filter, 3 = subfilter and custom pages)
 	 * @param {int|string} vWhich the page to be navigated to @param {sap.m.FilterItem}
 	 * oItem The filter item for the detail page (optional, only used for page 3)
@@ -1632,9 +1667,10 @@ function(jQuery, library, Control, IconPool) {
 		    oSubHeader      = this._getSubHeader(),
 		    oListItem;
 
-		// nothing to do if we are already on the requested page (except for filter
-		// detail page)
+
 		if (this._vContentPage === vWhich && vWhich !== 3) {
+					// nothing to do if we are already on the requested page (except for filter
+			// detail page)
 			return false;
 		}
 
@@ -1646,6 +1682,7 @@ function(jQuery, library, Control, IconPool) {
 		oSubHeader.removeAllContentRight();
 		this._vContentPage = vWhich;
 		this._oContentItem = oItem;
+
 
 		// purge the current content & reset pages
 		if (vWhich !== 3 /* filter detail */) {
@@ -1947,6 +1984,18 @@ function(jQuery, library, Control, IconPool) {
 	ViewSettingsDialog.prototype._hasSubHeader = function () {
 		return !(this._calculateNumberOfPages() < 2);
 	};
+
+	/**
+	 * Sets the current page to the filter page, clears info about the last opened page (content)
+	 * and navigates to the filter page
+	 * @private
+	 * @return
+	 */
+	function resetFilterPage() {
+		this._vContentPage = 2;
+		this._oContentItem = null;
+		jQuery.sap.delayedCall(0, this._navContainer, "to", [this._getPage1().getId(), "show"]);
+	}
 
 	/* =========================================================== */
 	/* end: internal methods */

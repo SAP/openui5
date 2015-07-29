@@ -24,6 +24,8 @@
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+	data-cover-flags="branchTracking"></script>
 <script>
 
 	jQuery.sap.require("sap.ui.base.ExpressionParser");
@@ -334,6 +336,13 @@
 		oControl.bindProperty("text", oBindingInfo);
 
 		strictEqual(oControl.getText(), "prefix foo 10", "prefix foo 10");
+
+		// composite binding with complex binding syntax
+		oBindingInfo = parse("prefix {= ${path:'/p1'} + 10} {path:'/p2'}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 10 foo",
+			"composite binding with complex binding syntax");
 
 		// constant expression
 		oBindingInfo = parse("prefix {= 10} {/p2}");

@@ -426,6 +426,66 @@
 			done();
 		});
 
+		QUnit.module("Change Data", {
+			setup: function () {
+				this.oQuickView = getQuickView();
+
+				this.oQuickView.setModel(oModel);
+				var that = this;
+				this.oButton = new sap.m.Button({
+					text: "Open Quick View",
+					press: function () {
+						that.oQuickView.openBy(this);
+					}
+				});
+
+				oPage.addContent(this.oButton);
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oButton.destroy();
+				this.oButton = null;
+
+				this.oQuickView.destroy();
+				this.oQuickView = null;
+			}
+		});
+
+		QUnit.test("Change Page Header", function (assert) {
+			this.oButton.firePress();
+
+			this.clock.tick(500);
+
+			var oTitle = jQuery('.sapMTitle').first();
+			assert.strictEqual(oTitle.text(), 'Employee Info', 'Original text is correct');
+
+			this.oQuickView.getModel().setProperty('/pages/0/header', 'New Header');
+
+			this.clock.tick(500);
+
+			oTitle = jQuery('.sapMTitle').first();
+			assert.strictEqual(oTitle.text(), 'New Header', 'New text is correct');
+		});
+
+		QUnit.test("Change Page Gourp Element", function (assert) {
+			this.oButton.firePress();
+
+			this.clock.tick(500);
+
+			var oText = jQuery('.sapUiRGLContainerCont .sapMText.sapMTextMaxWidth.sapUiSelectable').first();
+			assert.strictEqual(oText.text(), 'Sofia, Boris III, 136A', 'Original text is correct');
+
+			this.oQuickView.getModel().setProperty('/pages/0/groups/0/elements/1', {
+				label: "Company address",
+				value: "New Address"
+			});
+
+			this.clock.tick(500);
+
+			oText = jQuery('.sapUiRGLContainerCont .sapMText.sapMTextMaxWidth.sapUiSelectable').first();
+			assert.strictEqual(oText.text(), 'New Address', 'New text is correct');
+		});
+
 
 	</script>
 </head>

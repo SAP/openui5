@@ -26,6 +26,9 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.write("<div");
 			oRm.addClass("sapMQuickViewCard");
+			if (!oQuickViewCard.getShowVerticalScrollBar()) {
+				oRm.addClass("sapMQuickViewCardNoScroll");
+			}
 			oRm.writeControlData(oQuickViewCard);
 			oRm.writeClasses();
 			oRm.write(">");

@@ -236,13 +236,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// do not remove focus from the inner input but allow it to react on clicks
 		if (document.activeElement === this._inputElement && oEvent.target !== this._inputElement) {
 			oEvent.preventDefault();
-			
-			// FF does not set :active by preventDefault, use class:
-			if (sap.ui.Device.browser.firefox){ 
-				var button = jQuery(oEvent.target);
-				if (button.hasClass("sapMSFB")) {
-					button.addClass("sapMSFBA");
-				}
+		}
+		// FF does not set :active by preventDefault, use class:
+		if (sap.ui.Device.browser.firefox){
+			var button = jQuery(oEvent.target);
+			if (button.hasClass("sapMSFB")) {
+				button.addClass("sapMSFBA");
 			}
 		}
 	};

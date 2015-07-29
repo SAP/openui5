@@ -12,6 +12,7 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/Bootstrap.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapCustomBootTaskPreloadCss.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapLoadAll.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreload.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreloadAsync.qunit.html");
@@ -25,10 +26,10 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgFromTagAttributes.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/Configuration.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/PegasusEnvironment.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ConfiguratorURL.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ResourcesURL_Standard.qunit.html");
 			// TODO: check why the following tests do not work
 			if (window["sap-ui-bootstrap-tests"]) {
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ConfiguratorURL.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ResourcesURL_ResOnly.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiBootURL.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiBootWithExtURL.qunit.html");
@@ -39,7 +40,7 @@
 			}
 			return suite;
 		}
-		  
+
 		</script>
 	</head>
 	<body>

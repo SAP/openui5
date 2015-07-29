@@ -11,7 +11,11 @@
 					title="{Name}"
 					type="Active"
 					press="onListItemPress"
-					number="{Price}"
+					number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
 					numberUnit="{CurrencyCode}"
                     showMarkers="true"
                     markFlagged="{

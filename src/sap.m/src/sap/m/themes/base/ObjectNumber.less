@@ -4,11 +4,22 @@
 /* ============================================= */
 
 .sapMObjectNumber {
-	white-space: nowrap;
+	display: block;
+	white-space: normal;
+	max-width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	word-wrap: normal;
 	color: @sapUiDarkText;
+}
+
+.sapMObjectNumberText {
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	vertical-align: middle;
 }
 
 .sapMObjectNumberEmph > .sapMObjectNumberText {
@@ -16,11 +27,11 @@
 }
 
 .sapMObjectNumberUnit {
-	padding-left: .25rem;
-	font-size: .75rem;
-}
-
-.sapMObjectNumberUnit.sapMRTLOpposite {
-	padding-left: 0;
-	padding-right: .25rem;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	vertical-align: middle;
+	padding-top: 0.125rem;
 }

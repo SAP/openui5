@@ -12,6 +12,7 @@
 	jQuery.sap.require("sap.ui.core.Control");
 	jQuery.sap.require("sap.ui.core.LocaleData");
 	jQuery.sap.require("sap.ui.model.odata.type.Double");
+	jQuery.sap.require("sap.ui.test.TestUtils");
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Double", {

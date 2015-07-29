@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
+   'jquery.sap.global',
    'sap/ui/model/BindingMode', 'sap/ui/base/BindingParser', 'sap/ui/model/Context',
    'sap/ui/base/ManagedObject', 'sap/ui/model/ClientContextBinding',
    'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONModel',
    'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONPropertyBinding',
    'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel', './_ODataMetaModelUtils'
-], function (BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
+], function (jQuery, BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
 		FilterProcessor, JSONModel, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
 		MetaModel, Utils) {
 	"use strict";
@@ -38,9 +39,6 @@ sap.ui.define([
 			}
 		});
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaListBinding.prototype.applyFilter = function () {
 		var that = this;
 
@@ -196,7 +194,10 @@ sap.ui.define([
 				this.oLoadedPromise
 					= oODataModelInterface.annotationsLoadedPromise
 					? oODataModelInterface.annotationsLoadedPromise.then(load)
-					: Promise.resolve(load()); // call load() synchronously!
+					: new Promise(function (fnResolve, fnReject) {
+							load();
+							fnResolve();
+						}); // call load() synchronously!
 				this.oMetadata = oMetadata;
 				this.oODataModelInterface = oODataModelInterface;
 				this.mQueryCache = {};
@@ -287,8 +288,7 @@ sap.ui.define([
 				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 					jQuery.sap.log.warning("Invalid part: " + vPart,
 						"path: " + sPath + ", context: "
-						+ (oContext instanceof sap.ui.model.Context ?
-							oContext.getPath() : oContext),
+							+ (oContext instanceof Context ? oContext.getPath() : oContext),
 						"sap.ui.model.odata.ODataMetaModel");
 				}
 				break;
@@ -419,38 +419,23 @@ sap.ui.define([
 			);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ClientContextBinding(this, sPath, oContext, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
 		mParameters) {
 		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new JSONPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindTree = function (sPath, oContext, aFilters, mParameters) {
 		return new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
 		return this.oModel.destroy.apply(this.oModel, arguments);
@@ -857,16 +842,10 @@ sap.ui.define([
 		return oPromise;
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.getProperty = function () {
 		return this._getObject.apply(this, arguments);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.isList = function () {
 		return this.oModel.isList.apply(this.oModel, arguments);
 	};
@@ -920,4 +899,4 @@ sap.ui.define([
 	};
 
 	return ODataMetaModel;
-}, /* bExport= */ true);
+});

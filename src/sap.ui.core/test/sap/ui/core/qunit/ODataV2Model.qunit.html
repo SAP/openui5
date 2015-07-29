@@ -71,12 +71,12 @@
 	}
 	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
 
-	function removeSharedMetadata(sURI){
+	function removeSharedServicedata(sURI){
 		var aParts = sURI.split('?');
 		var sServiceURI = aParts[0].replace(/\/$/, "");
 		
 		if(sap.ui.model.odata.v2.ODataModel.mServiceData && sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]){
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
+			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI];
 		}
 	}
 
@@ -89,7 +89,7 @@
 		bRemoveMetadata = bRemoveMetadata !== false;
 		
 		if (bRemoveMetadata) {
-			removeSharedMetadata(sURI);
+			removeSharedServicedata(sURI);
 		}
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, mParameters);
 		return oModel;
@@ -1341,7 +1341,7 @@
 
 	asyncTest("async test request events - aborted requests single", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1379,7 +1379,7 @@
 
 	asyncTest("async test request events - aborted requests single after sent", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1426,7 +1426,7 @@
 
 	asyncTest("async test request events - aborted requests batch", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1441,14 +1441,14 @@
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
 			oRequest1.abort();
 			oRequest2.abort();
 			oModel.attachBatchRequestCompleted(function(oEvent) {
 				var oRequests = oEvent.getParameter('requests');
 				equal(oRequests.length, 1, "1 requests");
-				equal(oRequests[0].url, "Categories(7)", "request url check");
+				equal(oRequests[0].url, "Categories(4)", "request url check");
 				ok(oRequests[0].success, "request success check");
 				
 				setTimeout(function() {
@@ -1469,7 +1469,7 @@
 	
 	asyncTest("async test request events - aborted requests batch after sent", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1484,8 +1484,8 @@
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
 			oModel.attachBatchRequestSent(function() {
 				oRequest1.abort();
 				oRequest2.abort();
@@ -1497,11 +1497,11 @@
 				ok(!oRequests[0].success, "request success check");
 				equal(oRequests[0].response.statusCode, "0", "request aborted");
 				equal(oRequests[0].response.statusText, "abort", "request aborted");
-				equal(oRequests[1].url, "Categories(2)", "request url check");
+				equal(oRequests[1].url, "Categories(3)", "request url check");
 				ok(!oRequests[1].success, "request success check");
 				equal(oRequests[1].response.statusCode, "0", "request aborted");
 				equal(oRequests[1].response.statusText, "abort", "request aborted");
-				equal(oRequests[2].url, "Categories(7)", "request url check");
+				equal(oRequests[2].url, "Categories(4)", "request url check");
 				ok(oRequests[2].success, "request success check");
 				
 				setTimeout(function() {
@@ -1522,7 +1522,7 @@
 	
 	asyncTest("async test request events - aborted deferred requests batch", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1538,15 +1538,15 @@
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredBatchGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oRequest1.abort();
 			oRequest2.abort();
 			
 			oModel.attachBatchRequestCompleted(function(oEvent) {
 				var oRequests = oEvent.getParameter('requests');
 				equal(oRequests.length, 1, "1 requests");
-				equal(oRequests[0].url, "Categories(7)", "request url check");
+				equal(oRequests[0].url, "Categories(4)", "request url check");
 				ok(oRequests[0].success, "request success check");
 				
 				setTimeout(function() {
@@ -1568,7 +1568,7 @@
 	
 	asyncTest("async test request events - aborted deferred requests batch after sent", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1584,8 +1584,8 @@
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredBatchGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest2 = oModel.read("/Categories(2)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest3 = oModel.read("/Categories(7)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 
 			oModel.attachBatchRequestSent(function() {
 				oRequest1.abort();
@@ -1598,11 +1598,11 @@
 				ok(!oRequests[0].success, "request success check");
 				equal(oRequests[0].response.statusCode, "0", "request aborted");
 				equal(oRequests[0].response.statusText, "abort", "request aborted");
-				equal(oRequests[1].url, "Categories(2)", "request url check");
+				equal(oRequests[1].url, "Categories(3)", "request url check");
 				ok(!oRequests[1].success, "request success check");
 				equal(oRequests[1].response.statusCode, "0", "request aborted");
 				equal(oRequests[1].response.statusText, "abort", "request aborted");
-				equal(oRequests[2].url, "Categories(7)", "request url check");
+				equal(oRequests[2].url, "Categories(4)", "request url check");
 				ok(oRequests[2].success, "request success check");
 				
 				setTimeout(function() {
@@ -1624,7 +1624,7 @@
 	
 	asyncTest("async test request events - auto refresh element binding", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1668,7 +1668,7 @@
 	
 	asyncTest("async test request events - auto refresh list binding", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1676,7 +1676,7 @@
 		});
 		var oInfo = {}, oRequest, oBinding, fnHandler, oCount = 0;
 		fnHandler = attachRequestEvents(oModel, oInfo);
-		oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		oBinding = oModel.bindList("/Invoices", null, null, null, {countMode: "None"});
 		oBinding.attachChange(function(){});
 		oBinding.attachRefresh(function() {
 			this.getContexts();
@@ -1695,7 +1695,7 @@
 					detachRequestEvents(oModel, fnHandler);
 					oInfo = {};
 					fnHandler = attachRequestEvents(oModel, oInfo);
-					oRequest = oModel.update("/Categories(1)", {});
+					oRequest = oModel.update("/Invoices(CustomerName='Alfreds%20Futterkiste',Discount=0f,OrderID=10702,ProductID=3,ProductName='Aniseed%20Syrup',Quantity=6,Salesperson='Margaret%20Peacock',ShipperName='Speedy%20Express',UnitPrice=10.0000M)", {});
 				}, 0);
 			} else if (oCount == 2) { // Data updated and refreshed
 				setTimeout(function() {
@@ -2070,6 +2070,73 @@
 		});
 	});
 	
+	module("CSRF Token handling", {
+		setup: function() {
+			this.oModel = initModel(sURI, true);
+			updateCsrfToken();
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			removeSharedServicedata(sURI);
+			delete this.oModel;
+			deleteCsrfToken();
+		}
+	});
+	
+	asyncTest("No token request for GET requests", function() {
+		this.oModel.setUseBatch(false);
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.read("/Categories(1)", {
+			success: function() {
+				ok(!refreshSpy.called, "No security token needed for GET requests")
+				start();
+			}
+		});
+	});
+	
+	asyncTest("Token request for GET request inside batch", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.read("/Categories(1)", {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
+				start();
+			}
+		});
+	});
+	
+	asyncTest("Token request for POST requests", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(refreshSpy.calledOnce, "No additional token request")
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request, automatic resubmit", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
+			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				updateCsrfToken();
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
+						ok(refreshSpy.calledTwice, "Token was fetched again after update");
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
+
 	module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI);
@@ -2137,18 +2204,17 @@
 				}
 			};
 			oModel.setProperty("/Suppliers(0)/Name", "blabla");
-			var oSuppl = oModel.mChangedEntities["Suppliers(0)"];
-			equal(oSuppl.Name, "blabla", "set Property name check");
+			equal(oModel.getProperty("/Suppliers(0)/Name"), "blabla", "set Property name check");
 			oModel.setProperty("/Suppliers(0)/temp", "temp");
-			equal(oSuppl.temp, "temp", "set Property create non existent property");
+			equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create non existent property");
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
-			equal(oSuppl.Address.Street, "150th", "set Property modify complex type property check");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
 			oModel.setProperty("/Suppliers(0)/Address/notExist", "1337");
-			equal(oSuppl.Address.notExist, "1337", "set Property create new property in complex type");
+			equal(oModel.getProperty("/Suppliers(0)/Address/notExist"), "1337", "set Property create new property in complex type");
 			oModel.setProperty("/Suppliers(0)/Address/Plz/code", 3);
-			equal(oSuppl.Address.Plz.code, 3, "set Property modify complex type in complex type property check");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 3, "set Property modify complex type in complex type property check");
 			oModel.setProperty("/Suppliers(0)/Address/Plz/notExist2", "337");
-			equal(oSuppl.Address.Plz.notExist2, "337", "set Property create new property in complex type");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/notExist2"), "337", "set Property create new property in complex type");
 			oModel.setProperty("/Suppliers(0)/Address/", {
 				City: "Berlin",
 				Street: "Dorfgasse",
@@ -2157,30 +2223,25 @@
 					number: 12345
 				}
 			});
-			equal(oSuppl.Address.City, "Berlin", "set Property with complete complex type data structure");
-			equal(oSuppl.Address.Street, "Dorfgasse", "set Property with complete complex type data structure");
-			equal(oSuppl.Address.Plz.code, 4, "set Property with complete complex type data structure");
-			equal(oSuppl.Address.Plz.number, 12345, "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/City"), "Berlin", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "Dorfgasse", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 4, "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/number"), 12345, "set Property with complete complex type data structure");
 			var iCount = 0;
-			jQuery.each(oSuppl.Address, function(i, oValue){
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address"), function(i, oValue){
 				iCount++;
 			});
 			equal(iCount, 3, "number of properties in complex type");
 			iCount = 0;
-			jQuery.each(oSuppl.Address.Plz, function(i, oValue){
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address/Plz"), function(i, oValue){
 				iCount++;
 			});
 			equal(iCount, 2, "number of properties in sub complex type");
 			
 			oModel.setProperty("/Products(0)/Supplier/Name", "Juergen");
-			oSuppl = oModel.mChangedEntities["Suppliers(0)"];
-			equal(oSuppl.Name, "Juergen", "set Property on expanded nav property");
-			equal(oModel.oData["Suppliers(0)"].Name, "Juergen", "set Property on expanded nav property");
+			equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Juergen", "set Property on expanded nav property");
 			oModel.setProperty("/Products(0)/Supplier/Address/Street", "GatterStreet");
-			equal(oSuppl.Address.Street, "GatterStreet", "set Property on expanded nav property with complex type");
-			equal(oModel.oData["Suppliers(0)"].Address.Street, "GatterStreet", "set Property on expanded nav property with complex type");			
-			ok(oModel.mChangedEntities["Products(0)"] === undefined, "Check: Products(0) wasn't modified at all");
-			
+			equal(oModel.getProperty("/Products(0)/Supplier/Address/Street"), "GatterStreet", "set Property on expanded nav property with complex type");
 			
 			start();
 		});

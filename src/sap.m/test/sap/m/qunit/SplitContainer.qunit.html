@@ -26,36 +26,84 @@
 			// Setup viewport for mobile device because SplitContainer doesn't call this by default.
 			jQuery.sap.initMobile();
 
-			test("Should add a MasterPage only once", function() {
+			function splitContainerSetup(bNoPages) {
 				//System under Test
 				var	sut = new sap.m.SplitContainer();
 
-				var page = new sap.m.Page("master");
-				var page2 = new sap.m.Page("master2");
+				if (bNoPages) {
+					return sut;
+				}
 
-				//Act
-				sut.addMasterPage(page);
+				var page = new sap.m.Page("master"),
+					page2 = new sap.m.Page("master2");
+
+				//master pages
 				sut.addMasterPage(page);
 				sut.addMasterPage(page2);
 
-				//Assert
-				strictEqual(sut._aMasterPages.length, 2, "did add the master page only once");
-			});
+				//details pages
+				page = new sap.m.Page("detail"),
+				page2 = new sap.m.Page("detail2");
 
-			test("Should add a DetailPage only once", function() {
-				//System under Test
-				var	sut = new sap.m.SplitContainer();
-
-				var page = new sap.m.Page("detail");
-				var page2 = new sap.m.Page("detail2");
-
-				//Act
-				sut.addDetailPage(page);
 				sut.addDetailPage(page);
 				sut.addDetailPage(page2);
 
+				return sut;
+			};
+
+			module("SplitContainer API and default values", {
+				setup : function () {
+					this.sut = splitContainerSetup();
+//					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
+			});
+
+			test("Try add master page more than once", function() {
 				//Assert
-				strictEqual(sut._aDetailPages.length, 2, "did add the detail page only once");
+				var page = new sap.m.Page("master3");
+				strictEqual(this.sut.getMasterPages().length, 2, "initial master pages are 2");
+
+				this.sut.addMasterPage(page);
+				strictEqual(this.sut.getMasterPages().length, 3, "Now master pages are 3");
+
+				// try to add it again
+				this.sut.addMasterPage(page);
+				strictEqual(this.sut.getMasterPages().length, 3, "Now master pages should remain 3");
+
+			});
+
+			test("Properties default values", function() {
+				strictEqual(this.sut.getDefaultTransitionNameDetail(), "slide", "Default value of the property is 'slide'");
+
+				strictEqual(this.sut.getDefaultTransitionNameMaster(), "slide", "Default value of the property is 'slide'");
+
+				strictEqual(this.sut.getMode(), sap.m.SplitAppMode.ShowHideMode, "Default value of the property mode is 'ShowHideMode'");
+
+				strictEqual(this.sut.getMasterButtonText(), "", "Default value of the property masterButtonText is 'null'");
+
+				strictEqual(this.sut.getBackgroundColor(), "", "Default value of the property backgroundColor is 'null'");
+
+				strictEqual(this.sut.getBackgroundImage(), "", "Default value of the property backgroundImage is 'null'");
+
+				strictEqual(this.sut.getBackgroundRepeat(), false, "Default value of the property backgroundRepeat is 'false'");
+
+				strictEqual(this.sut.getBackgroundOpacity(), 1, "Default value of the property backgroundOpacity is '1'");
+			});
+
+			test("Try add detail page twice", function() {
+				var page = new sap.m.Page("detail3");
+				strictEqual(this.sut.getDetailPages().length, 2, "initial detail pages are 2");
+
+				this.sut.addDetailPage(page);
+				strictEqual(this.sut.getDetailPages().length, 3, "Now detail pages are 3");
+
+				// try to add it again
+				this.sut.addDetailPage(page);
+				strictEqual(this.sut.getDetailPages().length, 3, "Now details pages should remain 3");
 			});
 
 			asyncTest("Destroy showMasterBtn during page navigation", function(){
@@ -682,6 +730,237 @@
 
 				oSplitContainer.destroy();
 			});
+
+			module("SplitContainer Navigation test", {
+				setup : function () {
+					this.sut = splitContainerSetup();
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
+			});
+
+			test("Test go to page navigation", function() {
+				var MASTER_PAGE_ID = "master3",
+					DETAIL_PAGE_ID = "detail3";
+				//test master page navigation
+				var page = new sap.m.Page(MASTER_PAGE_ID);
+				this.sut.addMasterPage(page);
+				this.sut.to(MASTER_PAGE_ID);
+				deepEqual(this.sut.getCurrentMasterPage(), page, "Current page should be master3");
+
+				//test detail page navigation
+				page = new sap.m.Page(DETAIL_PAGE_ID);
+				this.sut.addDetailPage(page);
+				this.sut.to(DETAIL_PAGE_ID);
+				deepEqual(this.sut.getCurrentDetailPage(), page, "Current page should be detail3");
+			});
+
+			test("Test backToPage ", function() {
+				var MASTER_PAGE_ID = "master2",
+					DETAIL_PAGE_ID = "detail2";
+				//test master page navigation
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backToPage(MASTER_PAGE_ID);
+				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+
+				//test detail page navigation
+				this.sut.to(DETAIL_PAGE_ID);
+				this.sut.to("detail");
+				this.sut.backToPage(DETAIL_PAGE_ID);
+				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+			});
+
+			test("Test insertPreviousPage ", function() {
+				var MASTER_PAGE_ID = "master2",
+					DETAIL_PAGE_ID = "detail2";
+				//test master page navigation
+
+				this.sut.insertPreviousPage(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backToPage(MASTER_PAGE_ID);
+				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+
+				//test detail page navigation
+				this.sut.insertPreviousPage(DETAIL_PAGE_ID);
+				this.sut.to("detail");
+				this.sut.backToPage(DETAIL_PAGE_ID);
+				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+			});
+
+			test("Test backMaster  ", function() {
+				var MASTER_PAGE_ID = "master2";
+				//test master page navigation
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backMaster();
+				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+			});
+
+			test("Test backMasterToPage", function() {
+				var MASTER_PAGE_ID = "master2";
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backMasterToPage(MASTER_PAGE_ID);
+				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+			});
+
+			test("Test backDetailToPage  ", function() {
+				var DETAIL_PAGE_ID = "detail2";
+
+				//test detail page navigation
+				this.sut.to(DETAIL_PAGE_ID);
+				this.sut.to("detail");
+				this.sut.backDetailToPage(DETAIL_PAGE_ID);
+				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+			});
+
+			test("Test backToTopDetail   ", function() {
+				var DETAIL_PAGE_ID = "detail";
+
+				//test detail page navigation
+				this.sut.to(DETAIL_PAGE_ID);
+				this.sut.to("detail2");
+				this.sut.backToTopDetail ();
+				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail");
+			});
+
+			test("Test backToTopMaster ", function() {
+				var MASTER_PAGE_ID = "master";
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master2");
+				this.sut.backToTopMaster();
+				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master");
+			});
+
+			module("SplitContainer public API test", {
+				setup : function () {
+					this.sut = splitContainerSetup();
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
+			});
+
+			test("Test indexOfMasterPage ", function() {
+				var MASTER_PAGE_ID = "master3",
+					page = new sap.m.Page(MASTER_PAGE_ID);
+
+				this.sut.addMasterPage(page);
+
+				strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
+			});
+
+			test("Test indexOfDetailPage ", function() {
+				var page = page = new sap.m.Page("detail3");
+
+				this.sut.addDetailPage(page);
+				strictEqual(this.sut.indexOfDetailPage(page), 2, "Index should be 2");
+			});
+
+			test("Test addPage ", function() {
+				var page = new sap.m.Page("alabala");
+
+				this.sut.addPage(page, true);
+
+				strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
+				strictEqual(this.sut.getMasterPages().length, 3, "Master pages now are 3");
+
+				// remove page
+				this.sut.removeMasterPage(page, true);
+				strictEqual(this.sut.getMasterPages().length, 2, "Master pages now are 2");
+
+				// add Detail Page
+				this.sut.addPage(page, false);
+				strictEqual(this.sut.getDetailPages().length, 3, "Detail pages now are 3");
+			});
+
+			test("Test getCurrentPage ", function() {
+				strictEqual(this.sut.getCurrentPage(true).sId, "master", "Current master page is 'master'");
+
+				strictEqual(this.sut.getCurrentPage(false).sId, "detail", "Current detail page is 'detail'");
+			});
+
+			test("Test getPreviousPage ", function() {
+				this.sut.to("master2");
+				strictEqual(this.sut.getPreviousPage(true).sId, "master", "Current master page is 'master'");
+
+				this.sut.to("detail2");
+				strictEqual(this.sut.getPreviousPage(false).sId, "detail", "Current detail page is 'detail'");
+			});
+
+			test("Test getMasterPage / getDetailPage ", function() {
+				var PAGE_ID1 = "master",
+					PAGE_ID2 = "detail";
+
+				strictEqual(this.sut.getMasterPage(PAGE_ID1).sId, PAGE_ID1, "Expected page is is 'master'");
+
+				strictEqual(this.sut.getDetailPage(PAGE_ID2).sId, PAGE_ID2, "Expected page is is 'detail'");
+			});
+
+			test("Test getPage ", function() {
+				var PAGE_ID1 = "master",
+						PAGE_ID2 = "detail";
+
+				strictEqual(this.sut.getPage(PAGE_ID1, true).sId, PAGE_ID1, "Expected page is is 'master'");
+
+				strictEqual(this.sut.getPage(PAGE_ID2, false).sId, PAGE_ID2, "Expected page is is 'detail'");
+			});
+
+
+
+			module("Remove All pages API test", {
+				setup : function () {
+					this.sut = splitContainerSetup(true);
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
+			});
+
+			test("Test insertDetailPage / removeAllDetailPages ", function() {
+				var page = new sap.m.Page("detail3");
+
+				this.sut.insertDetailPage(page, 0, true);
+
+				strictEqual(this.sut.indexOfDetailPage(page), 0, "Index should be 0");
+				strictEqual(this.sut.getDetailPages().length, 1, "Detail pages now are 1");
+
+				// remove all detail pages
+				this.sut.removeAllDetailPages(false);
+				strictEqual(this.sut.getDetailPages().length, 0, "Detail pages now are 0");
+			});
+
+			test("Test insertMasterPage / removeMasterPage / removeAllMasterPages ", function() {
+				var page = new sap.m.Page("master3");
+
+				this.sut.insertMasterPage(page, 0, true);
+
+				strictEqual(this.sut.indexOfMasterPage(page), 0, "Index should be 0");
+				strictEqual(this.sut.getMasterPages().length, 1, "Master pages now are 1");
+
+				// remove page
+				this.sut.removeMasterPage(page, true);
+				strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
+
+				// remove all master pages
+				this.sut.insertMasterPage(page, 0, true);
+				this.sut.removeAllMasterPages(false);
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

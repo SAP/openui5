@@ -3,6 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
+	xmlns:d="sap.ui.demokit"
 	xmlns="sap.m">
 	<Page
 		id="page"
@@ -23,16 +24,17 @@
 		</headerContent>
 		<content>
 			<IconTabBar
-				expandable="false"
-				selectedKey="{/selectedTab}"
-				items="{/files}"
-				class="sapUiResponsiveContentPadding">
+					class="sapUiContentPadding"
+					expandable="false"
+					selectedKey="{/fileName}"
+					select="handleTabSelectEvent"
+					items="{/files}" >
 				<items>
 					<IconTabFilter
-						key="{name}"
-						text="{name}" >
+							key="{name}"
+							text="{name}" >
 						<content>
-							<core:HTML content="{code}" />
+							<d:CodeViewer class="sapUiExploredCodeViewer" source="{raw}"/>
 						</content>
 					</IconTabFilter>
 				</items>

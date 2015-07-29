@@ -10,12 +10,12 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 
 	/**
 	 * Creates an instance of EventProvider.
-	 * @class Provides internal eventing facilities for objects, so other objects can attach
-	 * and detach events, and are notified, when events are fired
+	 * 
+	 * @class Provides eventing capabilities for objects like attaching or detaching event handlers for events which are notified when events are fired.
 	 *
 	 * @abstract
 	 * @extends sap.ui.base.Object
-	 * @author Malte Wedel, Daniel Brinkmann
+	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @public
@@ -51,17 +51,20 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	EventProvider.prototype.oEventPool = new ObjectPool(Event);
 	
 	/**
-	 * Adds an event registration for the given object and given event name
+	 * Attaches an event handler to the event with the given identifier.
 	 *
 	 * @param {string}
 	 *            sEventId The identifier of the event to listen for
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event
+	 *            [oData] An object that will be passed to the handler along with the event object when the event is fired
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or on the event provider-instance
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the event provider instance. The event
+	 *                       object ({@link sap.ui.base.Event}) is provided as first argument of the handler. Handlers must not change
+	 *                       the content of the event. The second argument is the specified <code>oData</code> instance (if present).
 	 * @param {object}
-	 *            [oListener] The object, that wants to be notified, when the event occurs
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the event provider.
 	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -89,18 +92,22 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	};
 	
 	/**
-	 * Adds a one time event registration for the given object and given event name. When the event occurs, the handler function is called and removed
-	 * from registration.
+	 * Attaches an event handler, called one time only, to the event with the given identifier.
+	 * 
+	 * When the event occurs, the handler function is called and the handler registration is automatically removed afterwards.
 	 *
 	 * @param {string}
 	 *            sEventId The identifier of the event to listen for
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event
+	 *            [oData] An object that will be passed to the handler along with the event object when the event is fired
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or on the event provider-instance
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the event provider instance. The event
+	 *                       object ({@link sap.ui.base.Event}) is provided as first argument of the handler. Handlers must not change
+	 *                       the content of the event. The second argument is the specified <code>oData</code> instance (if present).
 	 * @param {object}
-	 *            [oListener] The object, that wants to be notified, when the event occurs
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the event provider.
 	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -119,16 +126,16 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	};
 	
 	/**
-	 * Removes an event registration for the given object and given event name.
+	 * Removes a previously attached event handler from the event with the given identifier.
 	 *
-	 * The passed parameters must match those used for registration with {@link #attachEvent } beforehand!
+	 * The passed parameters must match those used for registration with {@link #attachEvent} beforehand.
 	 *
 	 * @param {string}
 	 *            sEventId The identifier of the event to detach from
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The handler function to detach from the event
 	 * @param {object}
-	 *            [oListener] The object, that wants to be notified, when the event occurs
+	 *            [oListener] The object that wanted to be notified when the event occurred
 	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -168,15 +175,19 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	};
 	
 	/**
-	 * Fires the given event and notifies all listeners. Listeners must not change
-	 * the content of the event.
-	 *
-	 * @param {string} sEventId the event id
-	 * @param {object} [mParameters] the parameter map
-	 * @param {boolean} [bAllowPreventDefault] whether prevent default is allowed
-	 * @param {boolean} [bEnableEventBubbling] whether event bubbling is enabled
-	 * @return {sap.ui.base.EventProvider|boolean} Returns <code>this</code> to allow method chaining or
-	 *		   whether the default action should be executed, when bAllowPreventDefault has been set to true
+	 * Fires an {@link sap.ui.base.Event event} with the given settings and notifies all attached event handlers.
+	 * 
+	 * @param {string}
+	 *            sEventId The identifier of the event to fire
+	 * @param {object}
+	 *            [mParameters] The parameters which should be carried by the event
+	 * @param {boolean}
+	 *            [bAllowPreventDefault] Defines whether function <code>preventDefault</code> is supported on the fired event
+	 * @param {boolean}
+	 *            [bEnableEventBubbling] Defines whether event bubbling is enabled on the fired event. Set to <code>true</code> the event is also forwarded to the parent(s)
+	 *                                   of the event provider ({@link #getEventingParent}) until the bubbling of the event is stopped or no parent is available anymore.
+	 * @return {sap.ui.base.EventProvider|boolean} Returns <code>this</code> to allow method chaining. When <code>preventDefault</code> is supported on the fired event
+	 *                                             the function returns <code>true</code> if the default action should be executed, <code>false</code> otherwise.
 	 * @protected
 	 */
 	EventProvider.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
@@ -237,11 +248,11 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	};
 	
 	/**
-	 * Returns whether there are any listeners for the given event ID.
+	 * Returns whether there are any registered event handlers for the event with the given identifier.
 	 *
-	 * @param {string} sEventId the ID of the event
-	 * @return {boolean} whether there are any listeners
-	 * @private
+	 * @param {string} sEventId The identifier of the event
+	 * @return {boolean} Whether there are any registered event handlers
+	 * @protected
 	 */
 	EventProvider.prototype.hasListeners = function(sEventId) {
 		return !!this.mEventRegistry[sEventId];
@@ -271,7 +282,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * structured, this can be overwritten to make the object hierarchy visible to the eventing and
 	 * enables the use of event bubbling within this object hierarchy.
 	 *
-	 * @return {sap.ui.base.EventProvider} the parent event provider
+	 * @return {sap.ui.base.EventProvider} The parent event provider
 	 * @protected
 	 */
 	EventProvider.prototype.getEventingParent = function() {
@@ -284,7 +295,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * In case there is no class or id information, a simple static string is returned.
 	 * Subclasses should override this method.
 	 *
-	 * @return {string} a string description of this eventProvider
+	 * @return {string} A string description of this event provider
 	 * @public
 	 */
 	EventProvider.prototype.toString = function() {
@@ -297,7 +308,11 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	
 	
 	/**
-	 * @see sap.ui.base.Object.prototype.destroy
+	 * Cleans up the internal structures and removes all event handlers.
+	 * 
+	 * The object must not be used anymore after destroy was called.
+	 * 
+	 * @see sap.ui.base.Object#destroy
 	 * @public
 	 */
 	EventProvider.prototype.destroy = function() {
@@ -308,4 +323,4 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 
 	return EventProvider;
 
-}, /* bExport= */ true);
+});

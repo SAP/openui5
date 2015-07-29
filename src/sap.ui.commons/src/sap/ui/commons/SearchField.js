@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	/**
 	 * Constructor for a new SearchField.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Allows the user to type search queries and to trigger the search. Optionally, suggestions can be added.
@@ -93,6 +93,18 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 	
 			/**
+			 * Visualizes warnings or errors related to the input field. Possible values: Warning, Error, Success, None.
+			 * @since 1.32
+			 */
+			valueState: {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
+
+			/**
+			 * Placeholder for the input field.
+			 * @since 1.32
+			 */
+			placeholder: {type : "string", group : "Appearance", defaultValue : ""},
+			
+			/**
 			 * Sets the horizontal alignment of the text
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
@@ -132,12 +144,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		associations : {
 	
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
 	
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
@@ -387,6 +399,22 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		return _set(this, "MaxLength", iMaxLength, false, true);
 	};
 	
+	SearchField.prototype.getValueState = function() {
+		return _get(this, "ValueState");
+	};
+	
+	SearchField.prototype.setValueState = function(sValueState) {
+		return _set(this, "ValueState", sValueState, false, true);
+	};
+	
+	SearchField.prototype.getPlaceholder = function() {
+		return _get(this, "Placeholder");
+	};
+	
+	SearchField.prototype.setPlaceholder = function(sText) {
+		return _set(this, "Placeholder", sText, false, true);
+	};
+	
 	SearchField.prototype.getTextAlign = function() {
 		return _get(this, "TextAlign");
 	};
@@ -527,6 +555,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			oNewControl.setEnabled(oOldControl.getEnabled());
 			oNewControl.setEditable(oOldControl.getEditable());
 			oNewControl.setMaxLength(oOldControl.getMaxLength());
+			oNewControl.setValueState(oOldControl.getValueState());
+			oNewControl.setPlaceholder(oOldControl.getPlaceholder());
 			oNewControl.setTextAlign(oOldControl.getTextAlign());
 			oNewControl.setTooltip(oOldControl.getTooltip());
 			oNewControl.setMaxPopupItems(oOldControl.getMaxPopupItems());
@@ -773,6 +803,15 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 
 			if (oEvent) {
 				var oKC = jQuery.sap.KeyCodes;
+				if (oEvent.keyCode === oKC.F2) {
+					// toggle action mode
+					var $FocusDomRef = jQuery(this.getFocusDomRef());
+					var bDataInNavArea = $FocusDomRef.data("sap.InNavArea");
+					if (typeof bDataInNavArea === "boolean") {
+						$FocusDomRef.data("sap.InNavArea", !bDataInNavArea);
+					}
+				}
+
 				if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === oKC.F4 && oEvent.which === 0 /* this is the Firefox case and ensures 's' with same charCode is accepted */) {
 					return;
 				}
@@ -788,6 +827,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 					this._triggerValueHelp = true;
 					this._lastKeyIsDel = iKC == oKC.DELETE || iKC == oKC.BACKSPACE;
 				}
+
 			}
 
 			if (this._triggerValueHelp) {

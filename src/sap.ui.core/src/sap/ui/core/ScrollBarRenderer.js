@@ -3,8 +3,8 @@
  */
 
 // A renderer for the ScrollBar control
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
+	function(jQuery, Device) {
 	"use strict";
 
 
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addClass("sapUiScrollBar");
 		
 		var sScrollBarTouchClass;
-		if (sap.ui.Device.support.touch) {
+		if (Device.support.touch) {
 			sScrollBarTouchClass = "sapUiScrollBarTouch";
 			rm.addClass(sScrollBarTouchClass);
 		}
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write(" style=\"width:" + sWidth * 2 + "px;height:100%;overflow-y:scroll;overflow-x:hidden");
 			if (bRTL) {
 				//right to left mode. Special handling for mozilla 3.6 and safari - do not render right margin
-				if ((!(!!sap.ui.Device.browser.firefox && sap.ui.Device.browser.version == 3.6)) && (!!!sap.ui.Device.browser.safari)) {
+				if ((!(!!Device.browser.firefox && Device.browser.version == 3.6)) && (!!!Device.browser.safari)) {
 					rm.write(";margin-right:-" + sWidth + "px");
 				}
 			} else {

@@ -156,21 +156,48 @@ sap.ui.define([
 				return this._mNavContext;
 			};
 
+			/**
+			 * Sets page title control.
+			 * @private
+			 */
+			QuickViewPage.prototype.setPageTitleControl = function (title) {
+				this._oPageTitle = title;
+			};
+
+			/**
+			 * Returns page title control.
+			 * @private
+			 */
+			QuickViewPage.prototype.getPageTitleControl = function () {
+				return this._oPageTitle;
+			};
+
 			QuickViewPage.prototype._createPage = function () {
-				var oForm = this._createForm(),
-					oHeaderContent = this._getPageHeaderContent();
+
+				var mPageContent = this._createPageContent();
 
 				var mNavContext = this.getNavContext();
+				var oPage;
 
-				var oPage = new Page(mNavContext.quickViewId + '-' + this.getPageId(), {
-					customHeader : new Bar()
-				});
+				if (this._oPage) {
+					oPage = this._oPage;
+					oPage.destroyContent();
+					oPage.setCustomHeader(new Bar());
+				} else {
+					oPage = this._oPage = new Page(mNavContext.quickViewId + '-' + this.getPageId(), {
+						customHeader : new Bar()
+					});
 
-				if (oHeaderContent) {
-					oPage.addContent(oHeaderContent);
+					oPage.addEventDelegate({
+						onAfterRendering: this.onAfterRenderingPage
+					}, this);
 				}
 
-				oPage.addContent(oForm);
+				if (mPageContent.header) {
+					oPage.addContent(mPageContent.header);
+				}
+
+				oPage.addContent(mPageContent.form);
 
 				var oCustomHeader = oPage.getCustomHeader();
 
@@ -210,14 +237,32 @@ sap.ui.define([
 				return oPage;
 			};
 
+			QuickViewPage.prototype.onAfterRenderingPage = function () {
+				if (this._bItemsChanged) {
+					var mNavContext = this.getNavContext();
+					if (mNavContext) {
+						mNavContext.quickView._restoreFocus();
+					}
+
+					this._bItemsChanged = false;
+				}
+			};
+
 			QuickViewPage.prototype._createPageContent = function () {
 
-				var mPageContent = {
-					form : this._createForm(),
-					header : this._getPageHeaderContent()
-				};
+				var oForm = this._createForm();
+				var oHeader = this._getPageHeaderContent();
 
-				return mPageContent;
+				// add ARIA title to the form
+				var oPageTitleControl = this.getPageTitleControl();
+				if (oHeader && oPageTitleControl) {
+					oForm.addAriaLabelledBy(oPageTitleControl);
+				}
+
+				return {
+					form : oForm,
+					header : oHeader
+				};
 			};
 
 			QuickViewPage.prototype._createForm = function () {
@@ -255,11 +300,15 @@ sap.ui.define([
 				if (sIcon) {
 					if (this.getIcon().indexOf("sap-icon") == 0) {
 						oIcon = new Icon({
-							src: sIcon
+							src: sIcon,
+							useIconTooltip : false,
+							tooltip : sTitle
 						});
 					} else {
 						oIcon = new Image({
-							src: sIcon
+							src: sIcon,
+							decorative : false,
+							tooltip : sTitle
 						}).addStyleClass("sapUiIcon");
 					}
 
@@ -291,6 +340,8 @@ sap.ui.define([
 						level	: CoreTitleLevel.H1
 					});
 				}
+
+				this.setPageTitleControl(oTitle);
 
 				var oDescription = new Text({
 					text	: sDescription
@@ -354,6 +405,7 @@ sap.ui.define([
 					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile) {
 						var oSmsLink = new Icon({
 							src: IconPool.getIconURI("post"),
+							tooltip : this._oResourceBundle.getText("QUICKVIEW_SEND_SMS"),
 							decorative : false,
 							customData: [new CustomData({
 								key: "phoneNumber",
@@ -374,19 +426,22 @@ sap.ui.define([
 			QuickViewPage.prototype._crossApplicationNavigation = function (that) {
 				return function () {
 					if (that.getCrossAppNavCallback() && that.oCrossAppNavigator) {
-						var targetConfig = that.getCrossAppNavCallback();
-						var href = that.oCrossAppNavigator.hrefForExternal(
-							{
-								target : {
-									semanticObject : targetConfig.target.semanticObject,
-									action : targetConfig.target.action
-								},
-								params : targetConfig.params
-							}
-						);
+						var targetConfigCallback = that.getCrossAppNavCallback();
+						if (typeof targetConfigCallback == "function") {
+							var targetConfig = targetConfigCallback();
+							var href = that.oCrossAppNavigator.hrefForExternal(
+								{
+									target : {
+										semanticObject : targetConfig.target.semanticObject,
+										action : targetConfig.target.action
+									},
+									params : targetConfig.params
+								}
+							);
 
-						sap.m.URLHelper.redirect(href);
-					} else if (that.getTitleUrl()) {
+							sap.m.URLHelper.redirect(href);
+						}
+					} else  if (that.getTitleUrl()) {
 						window.open(that.getTitleUrl(), "_blank");
 					}
 				};
@@ -394,6 +449,7 @@ sap.ui.define([
 
 			QuickViewPage.prototype.exit = function() {
 				this._oResourceBundle = null;
+				this._oPage = null;
 			};
 
 			QuickViewPage.prototype._attachPressLink = function (that) {
@@ -412,6 +468,40 @@ sap.ui.define([
 			QuickViewPage.prototype._mobilePress = function () {
 				var sms = "sms://" + jQuery.sap.encodeURL(this.getCustomData()[0].getValue());
 				window.location.replace(sms);
+			};
+
+			QuickViewPage.prototype._updatePage = function () {
+				var mNavContext = this.getNavContext();
+				if (mNavContext && mNavContext.quickView._bRendered) {
+
+					this._bItemsChanged = true;
+
+					mNavContext.popover.focus();
+					this._createPage();
+					mNavContext.quickView._restoreFocus();
+				}
+			};
+
+			["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
+				"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+					QuickViewPage.prototype["_" + sFuncName + "Old"] = QuickViewPage.prototype[sFuncName];
+					QuickViewPage.prototype[sFuncName] = function () {
+						var result = QuickViewPage.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+
+						this._updatePage();
+
+						if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+							return result;
+						}
+
+						return this;
+					};
+				});
+
+			QuickViewPage.prototype.setProperty = function () {
+				Control.prototype.setProperty.apply(this, arguments);
+
+				this._updatePage();
 			};
 
 			return QuickViewPage;

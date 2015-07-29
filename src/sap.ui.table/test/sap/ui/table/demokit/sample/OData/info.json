@@ -1,0 +1,15 @@
+[
+	{
+		"title" : "Busy Indication",
+		"text"	: "The property 'enableBusyIndicator' is set. Therefore the table shows (with some delay) a busy indication overlay whenever new data is requested from the server (initially, sorting, filtering or scrolling)."
+	},{
+		"title" : "'No Data' Indication",
+		"text"	: "By default the table shows a text within the content area whenever no data is available. This default can be changed via aggregation 'noData' (also allows setting text). In this example this feature is used to show an inplace busy indicator on initial data loading. Only if there is really no data the default text is shown."
+	},{
+		"title" : "OData Model Operation Mode",
+		"text"	: "See documentation for 'sap.ui.model.odata.OperationMode'. Note: In client mode the initial request fetches the complete collection! This is not recommended for large collections due to performance reasons."
+	},{
+		"title" : "NOTE",
+		"text"	: "In this example the property 'threshold' of the table is set to a quite low value with intention to demonstrate (together with the long server delay of 2s) the loading and busy indication capabilities of the table."
+	}
+]

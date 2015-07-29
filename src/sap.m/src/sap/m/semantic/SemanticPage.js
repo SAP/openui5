@@ -2,22 +2,32 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegmentedContainer', 'sap/m/semantic/SemanticConfiguration','sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject'],
+sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SegmentedContainer', 'sap/m/semantic/SemanticConfiguration','sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject'],
 function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, ActionSheet, Page, OverflowToolbar, OverflowToolbarButton, OverflowToolbarLayoutData, ToolbarSpacer, Bar, CustomData, ManagedObject) {
 	"use strict";
 
 	/**
 	 * Constructor for a new SemanticPage
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * A semantic page is an enhanced {@link sap.m.Page}, that can contain controls with semantic meaning @see sap.m.semantic.SemanticControl.<br>
 	 *
-	 * Content specified to the {@link sap.m.semantic.SemanticPage#semanticControls} aggregation will be automatically positioned in dedicated sections of the footer or the header of the page, depending on the control's {@link sap.m.semantic.SemanticType}.<br>
-	 * For example, a semantic button of type {@link sap.m.SemanticType.Approve} will be positioned in the right side of the footer, and in logically correct sequence order with respect to any other included semantic controls.<br>
+	 * Content specified in the {@link sap.m.semantic.SemanticPage#semanticControls} aggregations will be automatically positioned in dedicated sections of the footer or the header of the page, depending on the control's semantics.<br>
+	 * For example, a semantic button of type {@link sap.m.semantic.PositiveAction} will be positioned in the right side of the footer, and in logically correct sequence order with respect to any other included semantic controls.<br>
 	 *
-	 * In addition to the predefined semantic controls, the SemanticPage can host also custom controls. It preserves most of the API of {@link sap.m.Page} for specifying page content.<br>
+	 * The full list of what we internally define for semantic content is:
+	 *  <ul>
+	 *      <li>Visual properties (e.g. AddAction will be styled as an icon button)</li>
+	 *      <li>Position in the page (UX guidelines specify that some buttons should be in the header only, while others are in the footer or the "share" menu, so we do the correct positioning)</li>
+	 *      <li>Sequence order (UX guidelines define a specific sequence order of semantic controls with respect to each other)</li>
+	 *      <li>Default localized tooltip for icon-only buttons</li>
+	 *      <li>Overflow behavior (UX quidelines define which buttons are allowed to go to the overflow of the toolbar when the screen gets narrower). For icon buttons, we ensure that the text label of the button appears when the button is in overflow, as specified by UX.</li>
+	 *      <li>Screen reader support (invisible text for reading the semantic type)</li>
+	 *  </ul>
+	 *
+	 * In addition to the predefined semantic controls, the SemanticPage can host also custom application-provided controls. It preserves most of the API of {@link sap.m.Page} for specifying page content.<br>
 	 *
 	 * @extends sap.ui.core.Control
 	 * @abstract
@@ -99,7 +109,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 					multiple: true,
 					singularName: "content"
 				},
-				
+
 				/**
 				 * Custom header buttons
 				 */
@@ -321,7 +331,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 		return this;
 	};
-	
+
 	/*
 
 	 HEADER RIGHT (CUSTOM CONTENT)
@@ -602,12 +612,12 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	SemanticPage.prototype._getAnyHeader = function () {
 		return this._getInternalHeader();
 	};
-	
-	
+
+
 	/**
 	 * Returns the internal footer
 	 * @private
-	 * @returns {sap.m.semantic.SemanticPageSegmentedContainer}
+	 * @returns {sap.m.semantic.SegmentedContainer}
 	 */
 	SemanticPage.prototype._getSegmentedHeader = function() {
 
@@ -633,7 +643,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	/**
 	 * Returns the internal footer
 	 * @private
-	 * @returns {sap.m.semantic.SemanticPageSegmentedContainer}
+	 * @returns {sap.m.semantic.SegmentedContainer}
 	 */
 	SemanticPage.prototype._getSegmentedFooter = function() {
 

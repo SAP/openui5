@@ -23,16 +23,16 @@
 			</Toolbar>
 			<Label text="Notes"/>
 			<TextArea
-			    id="TextArea"
-                cols="200"
-                height="100px" />
-            <UploadCollection
+				id="TextArea"
+				cols="200"
+				height="100px" />
+			<UploadCollection
 				id="UploadCollection"
 				maximumFilenameLength="55"
 				maximumFileSize="10"
 				multiple="true"
 				sameFilenameAllowed="true"
-		        instantUpload="false"
+				instantUpload="false"
 				showSeparators="All"
 				change="onChange"
 				fileDeleted="onFileDeleted"
@@ -42,9 +42,9 @@
 				uploadComplete="onUploadComplete">
 			</UploadCollection>
 			<Button
-			    id="Button"
-			    text="Upload Now"
-			    press="onStartUpload">
+				id="Button"
+				text="Upload Now"
+				press="onStartUpload">
 			</Button>
 		</content>
 	</Page>

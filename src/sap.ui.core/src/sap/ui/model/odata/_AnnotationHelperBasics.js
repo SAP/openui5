@@ -145,7 +145,7 @@ sap.ui.define([
 		 *   if true the value is to be embedded into a binding expression, otherwise in a
 		 *   composite binding
 		 * @param {boolean} [bWithType=false]
-		 * 	 if <code>true</code> and <code>oResult.result</code> is "binding" and
+		 *  if <code>true</code> and <code>oResult.result</code> is "binding" and
 		 *  <code>bExpression</code> is <code>false</code>, type and constraint information is
 		 *  written to the resulting binding string
 		 * @returns {string}
@@ -157,10 +157,10 @@ sap.ui.define([
 			function binding(bAddType) {
 				var sConstraints, sResult;
 
-				bAddType = bAddType && !oResult.ignoreTypeInPath;
-				if (rBadChars.test(vValue) || bAddType) {
+				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
+				if (bAddType || rBadChars.test(vValue)) {
 					sResult = "{path:" + Basics.toJSON(vValue);
-					if (bAddType && oResult.type) {
+					if (bAddType) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
 						sConstraints = Basics.toJSON(oResult.constraints);
 						if (sConstraints && sConstraints !== "{}") {
@@ -175,20 +175,25 @@ sap.ui.define([
 			switch (oResult.result) {
 			case "binding":
 				return bExpression ?  "$" + binding(false) : binding(bWithType);
+
 			case "composite":
 				if (bExpression) {
 					throw new Error(
 						"Trying to embed a composite binding into an expression binding");
 				}
 				return vValue;
+
 			case "constant":
 				if (oResult.type === "edm:Null") {
-					return bExpression ? "null" : "";
+					return bExpression ? "null" : null;
 				}
-				return bExpression ? Basics.toJSON(vValue)
-						: BindingParser.complexParser.escape(vValue);
+				return bExpression
+					? Basics.toJSON(vValue)
+					: BindingParser.complexParser.escape(vValue);
+
 			case "expression":
 				return bExpression ? vValue : "{=" + vValue + "}";
+
 			// no default
 			}
 		},

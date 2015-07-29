@@ -160,11 +160,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 		Select.prototype._handleFocusout = function() {
 
-			if (this._bRenderingPhase) {
-				this._bFocusoutDueRendering = true;
-			} else {
-				this._bFocusoutDueRendering = false;
-				this._checkSelectionChange();
+			this._bFocusoutDueRendering = this._bRenderingPhase;
+
+			if (!this._bFocusoutDueRendering) {
+
+				if (this._bProcessChange) {
+					this._checkSelectionChange();
+				}
+
+				this._bProcessChange = true;
 			}
 		};
 
@@ -174,6 +178,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			if (this._oSelectionOnFocus !== oItem) {
 				this.fireChange({ selectedItem: oItem });
 			}
+		};
+
+		Select.prototype._getSelectedItemText = function(vItem) {
+			vItem = vItem || this.getSelectedItem();
+
+			if (!vItem) {
+				vItem = this.getDefaultSelectedItem();
+			}
+
+			if (vItem) {
+				return vItem.getText();
+			}
+
+			return "";
 		};
 
 		Select.prototype._callMethodInControl = function(sFunctionName, aArgs) {
@@ -272,12 +290,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.setValue = function(sValue) {
-			var $Label = this.$().children("." + SelectRenderer.CSS_CLASS + "Label");
-
-			// change the label text
-			if ($Label && $Label.length) {
-				$Label.text(sValue);
-			}
+			this.$("label").text(sValue);
 		};
 
 		/**
@@ -495,8 +508,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype._createPopover = function() {
 
-			// initialize Popover
-			var oPicker = new Popover({
+			var that = this,
+				oPicker = new Popover({
+				showArrow: false,
 				showHeader: false,
 				placement: sap.m.PlacementType.Vertical,
 				offsetX: 0,
@@ -504,6 +518,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				initialFocus: this,
 				bounce: false
 			});
+
+			// detect when the scrollbar is pressed
+			oPicker.addEventDelegate({
+				ontouchstart: function(oEvent) {
+					var oPickerDomRef = this.getDomRef("cont");
+
+					if (oEvent.target === oPickerDomRef) {
+						that._bProcessChange = false;
+					}
+				}
+			}, oPicker);
 
 			this._decoratePopover(oPicker);
 			return oPicker;
@@ -518,44 +543,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype._decoratePopover = function(oPopover) {
 			var that = this;
 
-			// adding additional capabilities to the Popover
-			oPopover._removeArrow = function() {
-				this._marginTop = 0;
-				this._marginLeft = 0;
-				this._marginRight = 0;
-				this._marginBottom = 0;
-				this._arrowOffset = 0;
-				this._offsets = ["0 0", "0 0", "0 0", "0 0"];
-			};
-
-			oPopover._setPosition = function() {
-				this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
-				this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
-			};
-
 			oPopover._setMinWidth = function(sWidth) {
-				this.getDomRef().style.minWidth = sWidth;
-			};
+				var oPickerDomRef = this.getDomRef();
 
-			oPopover._setWidth = function(sWidth) {
-				var bAutoAdjustWidth = that.getAutoAdjustWidth(),
-					bIconOnly = that.getType() === "IconOnly",
-					oPickerDomRef = this.getDomRef();
-
-				// set the width of the content
-				if (sap.ui.Device.system.desktop || sap.ui.Device.system.tablet) {
-
-					if (bAutoAdjustWidth) {
-						oPickerDomRef.style.width = "auto";
-						oPickerDomRef.style.minWidth = sWidth;
-					} else {
-						oPickerDomRef.style.width = sWidth;
-					}
-				}
-
-				if (!bIconOnly) {
-
-					// set the width of the popover
+				if (oPickerDomRef) {
 					oPickerDomRef.style.minWidth = sWidth;
 				}
 			};
@@ -574,18 +565,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
-			// remove the Popover arrow
-			oPopover._removeArrow();
-
-			// position adaptations
-			oPopover._setPosition();
-
-			// width adaptations
-			if (sap.ui.Device.system.phone) {
-				oPopover._setMinWidth("100%");
-			} else {
-				oPopover._setWidth(sWidth);
-			}
+			oPopover._setMinWidth(sWidth);
 		};
 
 		/* ----------------------------------------------------------- */
@@ -625,10 +605,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype._onBeforeOpenDialog = function() {
-			var oHeader = this.getPicker().getCustomHeader();
-			oHeader.getContentLeft()[0].setValue(this.getSelectedItem().getText());
-			oHeader.getContentLeft()[0].setTextDirection(this.getTextDirection());
-			oHeader.getContentLeft()[0].setTextAlign(this.getTextAlign());
+			var oInput = this.getPicker().getCustomHeader().getContentLeft()[0];
+			oInput.setValue(this.getSelectedItem().getText());
+			oInput.setTextDirection(this.getTextDirection());
+			oInput.setTextAlign(this.getTextAlign());
 		};
 
 		/* =========================================================== */
@@ -656,6 +636,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// to detect if the focusout event is triggered due a rendering
 			this._bFocusoutDueRendering = false;
+
+			// used to prevent the change event from firing when the user scrolls
+			// the picker popup (dropdown) list using the mouse
+			this._bProcessChange = false;
 		};
 
 		/**
@@ -784,20 +768,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this.close();
 			this.setSelection(oItem);
 			this.fireChange({ selectedItem: oItem });
-			oItem = this.getSelectedItem();
 
 			// update the label text
 			// note: if, due to invalid databinding, the selectedKey cannot be changed and is reset to null,
 			// oNewSelectedItem does not match getSelectedItem() and a wrong text is displayed in the Select field
-			if (oItem) {
-				this.setValue(oItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (oItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(oItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText());
 		};
 
 		/* ----------------------------------------------------------- */
@@ -1042,14 +1017,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onfocusin
-		 * @function
 		 */
 		Select.prototype.onfocusin = function(oEvent) {
 
-			if (!this._bFocusoutDueRendering) {
+			if (!this._bFocusoutDueRendering && !this._bProcessChange) {
 				this._oSelectionOnFocus = this.getSelectedItem();
 			}
+
+			this._bProcessChange = true;
 
 			// note: in some circumstances IE browsers focus non-focusable elements
 			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
@@ -1064,8 +1039,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onfocusout
-		 * @function
 		 */
 		Select.prototype.onfocusout = function() {
 			this._handleFocusout();
@@ -1108,8 +1081,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {sap.ui.core.Item | null} vItem
 		 * @protected
-		 * @name sap.m.Select#setSelection
-		 * @function
 		 */
 		Select.prototype.setSelection = function(vItem) {
 			var oList = this.getList(),
@@ -1136,8 +1107,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {boolean}
 		 * @protected
-		 * @name sap.m.Select#isSelectionSynchronized
-		 * @function
 		 */
 		Select.prototype.isSelectionSynchronized = function() {
 			var vItem = this.getSelectedItem();
@@ -1151,8 +1120,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @param {string} sKey
 		 * @param {array} [aItems]
 		 * @protected
-		 * @name sap.m.Select#synchronizeSelection
-		 * @function
 		 */
 		Select.prototype.synchronizeSelection = function() {
 			SelectList.prototype.synchronizeSelection.call(this);
@@ -1163,8 +1130,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {sap.m.Dialog | sap.m.Popover} [oPicker]
 		 * @protected
-		 * @name sap.m.Select#addContent
-		 * @function
 		 */
 		Select.prototype.addContent = function(oPicker) {};
 
@@ -1213,8 +1178,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.ui.core.Item | null}
 		 * @protected
 		 * @since 1.26.0
-		 * @name sap.m.Select#findNextItemByFirstCharacter
-		 * @function
 		 */
 		Select.prototype.findNextItemByFirstCharacter = function(sChar) {
 			var aItems = this.getItems(),
@@ -1240,8 +1203,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.m.SelectList}
 		 * @protected
-		 * @name sap.m.Select#createList
-		 * @function
 		 */
 		Select.prototype.createList = function() {
 
@@ -1263,8 +1224,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {boolean}
 		 * @protected
-		 * @name sap.m.Select#hasContent
-		 * @function
 		 */
 		Select.prototype.hasContent = function() {
 			return !!this.getItems().length;
@@ -1274,8 +1233,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * This hook method is called before the control's picker pop-up is rendered.
 		 *
 		 * @protected
-		 * @name sap.m.Select#onBeforeRenderingPicker
-		 * @function
 		 */
 		Select.prototype.onBeforeRenderingPicker = function() {
 			var fnOnBeforeRenderingPickerType = this["_onBeforeRendering" + this.getPickerType()];
@@ -1286,8 +1243,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * This hook method is called after the control's picker pop-up is rendered.
 		 *
 		 * @protected
-		 * @name sap.m.Select#onAfterRenderingPicker
-		 * @function
 		 */
 		Select.prototype.onAfterRenderingPicker = function() {
 			var fnOnAfterRenderingPickerType = this["_onAfterRendering" + this.getPickerType()];
@@ -1300,8 +1255,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @protected
 		 * @since 1.16
-		 * @name sap.m.Select#open
-		 * @function
 		 */
 		Select.prototype.open = function() {
 			var oPicker = this.getPicker();
@@ -1319,8 +1272,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @protected
 		 * @since 1.26
-		 * @name sap.m.Select#toggleOpenState
-		 * @function
 		 */
 		Select.prototype.toggleOpenState = function() {
 			if (this.isOpen()) {
@@ -1338,8 +1289,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @return {sap.ui.core.Item[]}
 		 * protected
 		 * @since 1.22.0
-		 * @name sap.m.Select#getVisibleItems
-		 * @function
 		 */
 		Select.prototype.getVisibleItems = function() {
 			var oList = this.getList();
@@ -1353,8 +1302,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {boolean}
 		 * @protected
 		 * @since 1.24.0
-		 * @name sap.m.Select#isItemSelected
-		 * @function
 		 */
 		Select.prototype.isItemSelected = function(oItem) {
 			return oItem && (oItem.getId() === this.getAssociation("selectedItem"));
@@ -1366,8 +1313,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {int} An integer specifying the selected index, or -1 if no item is selected.
 		 * @protected
 		 * @since 1.26.0
-		 * @name sap.m.Select#getSelectedIndex
-		 * @function
 		 */
 		Select.prototype.getSelectedIndex = function() {
 			var oSelectedItem = this.getSelectedItem();
@@ -1380,8 +1325,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.ui.core.Item | null}
 		 * protected
 		 * @since 1.22.0
-		 * @name sap.m.Select#getDefaultSelectedItem
-		 * @function
 		 */
 		Select.prototype.getDefaultSelectedItem = function(aItems) {
 			return this.findFirstEnabledItem();
@@ -1393,8 +1336,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @return {sap.ui.core.Item[]} An array containing the selectables items.
 		 * @protected
 		 * @since 1.22.0
-		 * @name sap.m.Select#getSelectableItems
-		 * @function
 		 */
 		Select.prototype.getSelectableItems = function() {
 			var oList = this.getList();
@@ -1407,8 +1348,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {Element | null} Returns the element that is used as trigger to open the control's picker pop-up.
 		 * @protected
 		 * @since 1.22.0
-		 * @name sap.m.Select#getOpenArea
-		 * @function
 		 */
 		Select.prototype.getOpenArea = function() {
 			return this.getDomRef();
@@ -1421,8 +1360,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {boolean}
 		 * @protected
 		 * @since 1.22.0
-		 * @name sap.m.Select#isOpenArea
-		 * @function
 		 */
 		Select.prototype.isOpenArea = function(oDomRef) {
 			var oOpenAreaDomRef = this.getOpenArea();
@@ -1438,8 +1375,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 * @protected
 		 * @since 1.22.0
-		 * @name sap.m.Select#findItem
-		 * @function
 		 */
 		Select.prototype.findItem = function(sProperty, sValue) {
 			var oList = this.getList();
@@ -1451,8 +1386,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @protected
 		 * @since 1.22.0
-		 * @name sap.m.Select#clearSelection
-		 * @function
 		 */
 		Select.prototype.clearSelection = function() {
 			this.setSelection(null);
@@ -1680,17 +1613,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// update and synchronize "selectedItem" association,
 			// "selectedKey" and "selectedItemId" properties
 			this.setSelection(vItem);
-
-			// update the label text
-			if (vItem) {
-				this.setValue(vItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText(vItem));
 
 			return this;
 		};
@@ -1715,18 +1638,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			this.setSelection(vItem);
-			vItem = this.getSelectedItem();
-
-			// update the label text
-			if (vItem) {
-				this.setValue(vItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText());
 
 			return this;
 		};
@@ -1761,17 +1673,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				// update and synchronize "selectedItem" association,
 				// "selectedKey" and "selectedItemId" properties
 				this.setSelection(oItem);
-
-				// update the label text
-				if (oItem) {
-					this.setValue(oItem.getText());
-				/*eslint-disable no-cond-assign */
-				} else if (oItem = this.getDefaultSelectedItem()) {
-				/*eslint-enable no-cond-assign */
-					this.setValue(oItem.getText());
-				} else {
-					this.setValue("");
-				}
+				this.setValue(this._getSelectedItemText(oItem));
 
 				return this;
 			}
@@ -1906,18 +1808,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				}
 			}
 
-			oItem = this.getSelectedItem();
-
-			// update the label text
-			if (oItem) {
-				this.setValue(oItem.getText());
-			/*eslint-disable no-cond-assign */
-			} else if (oItem = this.getDefaultSelectedItem()) {
-			/*eslint-enable no-cond-assign */
-				this.setValue(oItem.getText());
-			} else {
-				this.setValue("");
-			}
+			this.setValue(this._getSelectedItemText());
 
 			if (vItem) {
 				vItem.detachEvent("_change", this.onItemChange, this);

@@ -96,6 +96,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an ARIA announcement and remember its ID for later use in the renderer:
+	Token.prototype._sAriaTokenLabelId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKEN_ARIA_LABEL")
+	}).toStatic().getId();
+
+	Token.prototype._sAriaTokenDeletableId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKEN_ARIA_DELETABLE")
+	}).toStatic().getId();
+	
 	///**
 	// * This file defines behavior for the control,
 	// */

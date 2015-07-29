@@ -58,6 +58,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			break;
 		case true:
 		case "true":
+		case undefined:
 			break;
 		default:
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());

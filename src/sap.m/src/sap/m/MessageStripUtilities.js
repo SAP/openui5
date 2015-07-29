@@ -40,8 +40,9 @@ sap.ui.define(function () {
 	};
 
 	/**
-	 * Calculate the icon uri that should be set to the control property. Custom icons are allowed
-	 * only when the type is sap.ui.core.MessageType.Information. Otherwise return an icon uri that
+	 * Calculate the icon uri that should be set to the control property.
+	 * Custom icons are allowed for all message types.
+	 * If no custom icon is specified a default one is used.
 	 * is defined by the control type.
 	 * @private
 	 * @returns {string} the icon uri that should be set to the control property
@@ -51,11 +52,7 @@ sap.ui.define(function () {
 			sCustomIconURI = this.getCustomIcon(),
 			sIconURI = "sap-icon://message-" + sType.toLowerCase();
 
-		if (sType === sap.ui.core.MessageType.Information) {
-			sIconURI = sCustomIconURI || sIconURI;
-		}
-
-		return sIconURI;
+		return sCustomIconURI || sIconURI;
 	};
 
 	MessageStripUtilities.getAriaTypeText = function () {

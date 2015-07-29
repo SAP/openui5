@@ -4,8 +4,8 @@
 
 .sapMToken {
 	font-size: @sapMFontMediumSize;
-	background: @sapUiButtonStandardBG;
-	border: darken(@sapUiButtonStandardBG,10) 1px solid;
+	background: @sapUiButtonBackground;
+	border: 1px solid darken(@sapUiButtonBackground, 10);
 	border-radius: 0.125rem;
 	color: @sapUiDarkText;
 	padding-left: 0.375rem;
@@ -19,8 +19,8 @@
 }
 
 .sap-desktop .sapMToken:hover {
-	background: darken(@sapUiButtonStandardBG, 5);
-	border: darken(@sapUiButtonStandardBG,10) 1px solid;
+	background: @sapUiButtonHoverBackground;
+	border: 1px solid darken(@sapUiButtonHoverBackground, 5);
 	border-radius: 0.125rem;
 }
 
@@ -29,15 +29,15 @@
 }
 
 .sapMTokenSelected {
-	color: @sapUiTextInverted;
-	background: @sapUiHighlight;
-	border: darken(@sapUiHighlight,5) 1px solid;
+	color: @sapUiButtonActiveTextColor;
+	background: @sapUiButtonActiveBackground;
+	border: 1px solid darken(@sapUiButtonActiveBackground, 5);
 	border-radius: 0.125rem;
 }
 
 .sapMToken.sapMTokenSelected:hover {
-	background: darken(@sapUiHighlight, 5);
-	border: darken(@sapUiHighlight,5) 1px solid;
+	background: darken(@sapUiButtonActiveBackground, 5);
+	border: 1px solid darken(@sapUiButtonActiveBackground, 5);
 	border-radius: 0.125rem;
 }
 
@@ -73,5 +73,5 @@
 }
 
 .sapMToken.sapMTokenActive {
-	background: darken(@sapUiButtonStandardBG, 5);
+	background: darken(@sapUiButtonBackground, 5);
 }

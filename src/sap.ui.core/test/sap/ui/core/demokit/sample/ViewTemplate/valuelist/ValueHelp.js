@@ -32,7 +32,6 @@ sap.ui.define(['sap/m/Column',
 					oMetaModel = oModel.getMetaModel(),
 					sAbsolutePath = oModel.resolve(oBinding.getPath(), oBinding.getContext()),
 					that = this;
-
 				oMetaModel.loaded().then(function () {
 					var oContext = oMetaModel.getMetaContext(sAbsolutePath);
 					if (oContext.getProperty("sap:value-list")) {
@@ -58,9 +57,10 @@ sap.ui.define(['sap/m/Column',
 									+ JSON.stringify(oValueList, undefined, 2));
 								that.setIconURL("sap-icon://value-help");
 								that.setEditable(true);
-						});
+							});
 					}
 				}, function (oError) {
+					//TODO errors cannot seriously be handled per _instance_ of a control
 					MessageBox.alert(oError.message, {
 						icon: MessageBox.Icon.ERROR,
 						title: "Error"});
@@ -72,7 +72,7 @@ sap.ui.define(['sap/m/Column',
 			_onValueHelp : function (oEvent) {
 				var oColumnListItem = new ColumnListItem(),
 					oControl = oEvent.getSource(),
-					oPopover = new Popover(),
+					oPopover = new Popover({placement : sap.m.PlacementType.Auto, modal : true}),
 					oTable = new Table(),
 					aVHTitle = [];
 

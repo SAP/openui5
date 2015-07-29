@@ -29,11 +29,6 @@
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
 
-<!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
-	sinon.config.useFakeTimers = true;
-</script>
-
 <!-- This test is not running against the real Northwind service, but a fake service based on
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
 <script type="text/javascript" src="ODataModelFakeService.js"></script>
@@ -61,10 +56,10 @@
 	}
 	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
 
-	function removeSharedMetadata(sURI){
+	function removeSharedServicedata(sURI){
 		var sServiceURI = sURI.replace(/\/$/, "");
 		if(sap.ui.model.odata.ODataModel.mServiceData && sap.ui.model.odata.ODataModel.mServiceData[sServiceURI]){
-			delete sap.ui.model.odata.ODataModel.mServiceData[sServiceURI].oMetadata;
+			delete sap.ui.model.odata.ODataModel.mServiceData[sServiceURI];
 		}
 	}
 
@@ -76,7 +71,7 @@
 			sURI = arguments[0].serviceUrl;
 		}
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		// create arguments array with leading "null" value so that it can be passed to the apply function
 		var aArgs = [null].concat(Array.prototype.slice.call(arguments, 0));
@@ -1024,7 +1019,7 @@
 	});
 
 	asyncTest("async metadata request check", function(){
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true, 
 			loadMetadataAsync: true
@@ -1041,7 +1036,7 @@
 
 
 	asyncTest("async metadata request check with bindings", function(){
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true, 
 			loadMetadataAsync: true
@@ -1076,7 +1071,7 @@
 
 	asyncTest("async metadata request check with bindings die zwote", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true, 
 			loadMetadataAsync: true
@@ -1106,7 +1101,7 @@
 	
 	asyncTest("async test createEntity", function(){
 
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
@@ -1213,7 +1208,7 @@
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var spy = this.spy(OData, "request");
-		removeSharedMetadata(sURI);
+		removeSharedServicedata(sURI);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: true });
 		oModel.attachMetadataLoaded(this, function(oEvent) {
 			ok(false, "Metadata should not be loaded");
@@ -1402,7 +1397,142 @@
 			}
 		});
 	});
+	
+	asyncTest("test metadata loading: sap-value-list",function(){
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.oMetadata.loaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl(sURI+"$metadata?sap-value-list=all").then(function(oParams) {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				ok(oParams.entitySets, "array of entitySets returned");
+				ok(oParams.entitySets.length === 1, "1 entitySet added");
+				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				start();
+			});
+		});
+	});
+	asyncTest("test metadata loading: sap-value-list",function(){
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.oMetadata.loaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				ok(oParams.entitySets, "array of entitySets returned");
+				ok(oParams.entitySets.length === 2, "2 entitySet added");
+				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
+				start();
+			});
+		});
+	});
+	
+	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.oMetadata.loaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				start();
+			});
+		});
+	});
 
+	module("CSRF Token handling", {
+		setup: function() {
+			this.oModel = initModel(sURI, true);
+			updateCsrfToken();
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			removeSharedServicedata(sURI);
+			delete this.oModel;
+			deleteCsrfToken();
+		}
+	});
+	
+	asyncTest("No token request for GET requests", function() {
+		this.oModel.oMetadata.loaded().then(function() {
+			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+			this.oModel.read("/Categories(1)", {
+				success: function() {
+					ok(!refreshSpy.called, "No security token needed for GET requests")
+					start();
+				}
+			});
+		}.bind(this));
+	});
+	
+	asyncTest("Token request for GET request inside batch", function() {
+		this.oModel.setUseBatch(true);
+		this.oModel.oMetadata.loaded().then(function() {
+			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+			this.oModel.read("/Categories(1)", {
+				success: function() {
+					ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
+					start();
+				}
+			});
+		}.bind(this));
+	});
+	
+	asyncTest("Token request for POST requests", function() {
+		this.oModel.oMetadata.loaded().then(function() {
+			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+			this.oModel.create("/Categories(1)", {}, {
+				success: function() {
+					ok(refreshSpy.calledOnce, "Token requested for POST request")
+					this.oModel.create("/Categories(1)", {}, {
+						success: function() {
+							ok(refreshSpy.calledOnce, "No additional token request")
+							start();
+						}
+					});					
+				}.bind(this)
+			});
+		}.bind(this));
+	});
+
+	asyncTest("Token request, automatic resubmit", function() {
+		this.oModel.oMetadata.loaded().then(function() {
+			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
+				resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
+			this.oModel.create("/Categories(1)", {}, {
+				success: function() {
+					ok(refreshSpy.calledOnce, "Token requested for POST request")
+					updateCsrfToken();
+					this.oModel.create("/Categories(1)", {}, {
+						success: function() {
+							ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
+							ok(refreshSpy.calledTwice, "Token was fetched again after update");
+							start();
+						}
+					});					
+				}.bind(this)
+			});
+		}.bind(this));
+	});
+	
 	module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI, true);

@@ -8,7 +8,7 @@
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{"test": "./", "sap.ui.demo.app" : "../../webapp/"}'>
+		data-sap-ui-resourceroots='{"qunit": "../"}'>
 </script>
 
 <script>
@@ -19,6 +19,7 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	sinon.config.useFakeTimers = true;
 
 	sap.ui.require([
 				"sap/m/routing/RouteMatchedHandler",
@@ -29,9 +30,10 @@
 				"sap/ui/core/routing/History",
 				"sap/m/routing/TargetHandler",
 				"sap/m/InstanceManager",
-				"test/commonIntegrationTests"
+				"qunit/routing/commonIntegrationTests",
+				"sap/m/Page"
 			],
-			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests) {
+			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests, Page) {
 				"use strict";
 
 				HashChanger.getInstance().init();
@@ -239,7 +241,27 @@
 					assert.strictEqual(oNavigateSpy.callCount, 1, "did call navigate");
 				});
 
-				module("Dialog closing");
+				module("Dialog closing", {
+					setup: function () {
+						var oPageToNavigateTo = new Page();
+						this.oNavContainer = new NavContainer({
+							pages: [ new Page(), oPageToNavigateTo ]
+						});
+						this.oEvent = {
+							targetControl: this.oNavContainer,
+							config: {},
+							view: oPageToNavigateTo,
+							name: "myRoute"
+						};
+						this.oRouter = new Router({
+							myRoute: {}
+						});
+					},
+					teardown: function () {
+						this.oNavContainer.destroy();
+						this.oRouter.destroy();
+					}
+				});
 
 				function closeDialogsTestCase (bCloseDialogs) {
 					//Arrange
@@ -249,15 +271,16 @@
 							iExpectedCallCount = bCloseDialogs ? 1 : 0,
 							oCloseAllPopoversSpy = this.spy(InstanceManager, "closeAllPopovers"),
 							oCloseAllDialogsSpy = this.spy(InstanceManager, "closeAllDialogs"),
-							oRouter = new Router(),
-					//System under Test
-							oRouteMatchedHandler = new RouteMatchedHandler(oRouter, bCloseDialogs);
+
+							//System under Test
+							oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter, bCloseDialogs);
 
 					this.stub(InstanceManager, "hasOpenPopover", bHasInstances);
 					this.stub(InstanceManager, "hasOpenDialog", bHasInstances);
 
 					//Act
-					oRouter.fireRoutePatternMatched({config: {}});
+					this.oRouter.fireRouteMatched(this.oEvent);
+					this.oRouter.fireRoutePatternMatched(this.oEvent);
 
 					//Assert
 					strictEqual(oCloseAllPopoversSpy.callCount, iExpectedCallCount, "did close the popups");
@@ -336,6 +359,7 @@
 
 					//Act
 					oRouter.parse(sPattern);
+					this.clock.tick(0);
 
 					//Assert
 					strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
@@ -385,6 +409,7 @@
 
 					// Act
 					oRouter.parse(sPattern);
+					this.clock.tick(0);
 
 					//Assert
 					assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
@@ -434,6 +459,7 @@
 
 					// Act
 					oRouter.parse("5");
+					this.clock.tick(0);
 
 					// Assert
 					assert.strictEqual(data, "5", "should pass 5 to the page");
@@ -452,6 +478,7 @@
 					},
 					act: function (sPatternOrName) {
 						this.oRouter.parse(sPatternOrName);
+						this.clock.tick(0);
 					},
 					teardown: function () {
 						this.oRouter.destroy();

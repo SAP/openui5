@@ -120,4 +120,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 
 	return TemplateView;
 
-}, /* bExport= */ true);
+});

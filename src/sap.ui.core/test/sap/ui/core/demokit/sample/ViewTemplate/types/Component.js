@@ -10,29 +10,32 @@ sap.ui.define([
 		'sap/m/FlexItemData',
 		'sap/m/HBox',
 		'sap/m/MessageBox',
-		'sap/ui/core/UIComponent',
 		'sap/ui/core/mvc/View',
+		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/odata/AnnotationHelper',
 		'sap/ui/model/odata/v2/ODataModel',
 		'jquery.sap.script'
-	], function(jQuery, FlexItemData, HBox, MessageBox, UIComponent, View, MockServer, JSONModel, AnnotationHelper, ODataModel/*, jQuerySapScript*/) {
+	], function(jQuery, FlexItemData, HBox, MessageBox, View, BaseComponent, MockServer, JSONModel,
+		AnnotationHelper, ODataModel/*, jQuerySapScript*/) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
+	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 		metadata: "json",
 		createContent: function () {
 			var sUri = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 				oLayout = new HBox(),
-				sMockServerBaseUri = 
+				sMockServerBaseUri =
 					jQuery.sap.getModulePath("sap.ui.core.sample.ViewTemplate.types.data", "/"),
 				oMockServer,
 				oModel,
 				bRealOData = (jQuery.sap.getUriParameters().get("realOData") === "true"),
 				oView;
 
-			if (!bRealOData) {
+			if (bRealOData) {
+				sUri = this.proxy(sUri);
+			} else {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
 
 				oMockServer = new MockServer({rootUri: sUri});
@@ -40,8 +43,6 @@ sap.ui.define([
 					sMockdataBaseUrl: sMockServerBaseUri
 				});
 				oMockServer.start();
-			} else if (location.hostname === "localhost") { //for local testing prefix with proxy
-				sUri = "proxy" + sUri;
 			}
 
 			oModel = new ODataModel(sUri, {
@@ -76,10 +77,12 @@ sap.ui.define([
 					title: "Error"});
 			});
 			return oLayout;
+		},
+
+		exit : function () {
+			MockServer.destroyAll();
 		}
 	});
 
-
 	return Component;
-
 });

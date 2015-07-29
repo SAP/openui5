@@ -7,9 +7,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	function(jQuery, Renderer) {
 	"use strict";
 
-
 	/**
-	 * Text renderer
+	 * Text renderer.
+	 *
 	 * @author SAP SE
 	 * @namespace
 	 */
@@ -17,6 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */
@@ -77,6 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	/**
 	 * Renders the max lines inner wrapper
+	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */
@@ -100,6 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	/**
 	 * Renders the normalized text property.
+	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */

@@ -373,6 +373,40 @@
 
 			$El.remove();
 		});
+		
+		test("DOMPatching", function() {
+			var $Ref = jQuery('' +
+			'<div id="id" title="Ref" style="color:black" class="x" tabindex="-1">' +
+				'<!--Ref-->' +
+				'<span title="Ref" style="color:black" class="x" tabindex="-1">Ref</span>' +
+				'Ref' +
+			'</div>').click(jQuery.noop);
+
+			var $New = jQuery('' +
+			'<div id="id" dir="rtl" style="color:blue" class="x y" tabindex="0">' +
+				'<!--New-->' +
+				'<span dir="rtl" style="color:blue" class="x y" tabindex="0">Something Deep</span>' +
+				'New' +
+			'</div>');
+
+			// let the reference have parent to replace
+			jQuery(document.body).append($Ref);
+
+			// test the patch
+			strictEqual(jQuery.sap.replaceDOM($Ref[0], $New.outerHTML(), true), true, "Should apply the patch");
+			ok($Ref[0].isEqualNode($New[0]), "Patch is applied correctly");
+			strictEqual($Ref._sapTest_dataEvents(), undefined, "Events are removed while patching");
+
+			// test replace
+			$Ref.append("<div></div>");
+			strictEqual(jQuery.sap.replaceDOM($Ref[0], $New[0]), false, "Should replace the reference DOM");
+			$Ref = jQuery("#id"); // get it again since it is replaced
+			ok($Ref[0].isEqualNode($New[0]), "Replace is done correctly");
+
+			$Ref.remove();
+		});
+		
+		
 		</script>
 	</head>
 	<body>

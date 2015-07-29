@@ -70,6 +70,9 @@
 				<semantic:messagesIndicator>
 					<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 				</semantic:messagesIndicator>
+				<semantic:pagingAction>
+					<PagingButton count="5" positionChange="onPositionChange"/>
+				</semantic:pagingAction>
 
 				<semantic:customFooterContent>
 					<OverflowToolbarButton icon="sap-icon://settings" text="Settings" press="onPress"/>

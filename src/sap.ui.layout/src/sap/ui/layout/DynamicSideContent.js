@@ -3,29 +3,9 @@
  */
 
 // Provides control sap.ui.layout.DynamicSideContent.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/Device'],
-	function (jQuery, Control, ResizeHandler, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler'],
+	function (jQuery, Control, ResizeHandler) {
 		"use strict";
-
-		var	S = "S",
-			M = "M",
-			L = "L",
-			XL = "XL",
-			HIDDEN_CLASS = "sapUiHidden",
-			SPAN_SIZE_12_CLASS = "sapUiSCSpan12",
-			SPAN_SIZE_3 = 3,
-			SPAN_SIZE_4 = 4,
-			SPAN_SIZE_6 = 6,
-			SPAN_SIZE_8 = 8,
-			SPAN_SIZE_9 = 9,
-			SPAN_SIZE_12 = 12,
-			INVALID_BREAKPOINT_ERROR_MSG = "Invalid Breakpoint. Expected: S, M, L or XL",
-			INVALID_PARENT_WIDTH_ERROR_MSG = "Invalid input. Only values greater then 0 are allowed",
-			SC_GRID_CELL_SELECTOR = "SCGridCell",
-			MC_GRID_CELL_SELECTOR = "MCGridCell",
-			S_M_BREAKPOINT = 720,
-			M_L_BREAKPOINT = 1053,
-			L_XL_BREAKPOINT = 1440;
 
 		/**
 		 * Constructor for a new DynamicSideContent control.
@@ -90,6 +70,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				containerQuery : {type : "boolean", group : "Behavior", defaultValue : false}
 			},
 			defaultAggregation : "mainContent",
+			events : {
+				/**
+				 * The event indicates that the current breakpoint has been changed.
+				 * @since 1.32
+				 */
+				breakpointChanged : {
+					parameters : {
+						currentBreakpoint : {type : "string"}
+					}
+				}
+			},
 			aggregations : {
 
 				/**
@@ -103,6 +94,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				sideContent : {type: "sap.ui.core.Control", multiple:  true}
 			}
 		}});
+
+		var	S = "S",
+			M = "M",
+			L = "L",
+			XL = "XL",
+			HIDDEN_CLASS = "sapUiHidden",
+			SPAN_SIZE_12_CLASS = "sapUiSCSpan12",
+			SPAN_SIZE_3 = 3,
+			SPAN_SIZE_4 = 4,
+			SPAN_SIZE_6 = 6,
+			SPAN_SIZE_8 = 8,
+			SPAN_SIZE_9 = 9,
+			SPAN_SIZE_12 = 12,
+			INVALID_BREAKPOINT_ERROR_MSG = "Invalid Breakpoint. Expected: S, M, L or XL",
+			INVALID_PARENT_WIDTH_ERROR_MSG = "Invalid input. Only values greater then 0 are allowed",
+			SC_GRID_CELL_SELECTOR = "SCGridCell",
+			MC_GRID_CELL_SELECTOR = "MCGridCell",
+			S_M_BREAKPOINT = 720,
+			M_L_BREAKPOINT = 1024,
+			L_XL_BREAKPOINT = 1440;
 
 		/**
 		 * Setter for the showSideContent property
@@ -338,12 +349,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			if (iWidth <= S_M_BREAKPOINT && this._currentBreakpoint !== S) {
+				this.fireBreakpointChanged({currentBreakpoint : S});
 				return S;
 			} else if ((iWidth > S_M_BREAKPOINT) && (iWidth <= M_L_BREAKPOINT) && this._currentBreakpoint !== M) {
+				this.fireBreakpointChanged({currentBreakpoint : M});
 				return M;
 			} else if ((iWidth > M_L_BREAKPOINT) && (iWidth <= L_XL_BREAKPOINT) && this._currentBreakpoint !== L) {
+				this.fireBreakpointChanged({currentBreakpoint : L});
 				return L;
 			} else if (iWidth > L_XL_BREAKPOINT && this._currentBreakpoint !== XL) {
+				this.fireBreakpointChanged({currentBreakpoint : XL});
 				return XL;
 			}
 			return this._currentBreakpoint;
@@ -485,11 +500,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				$sideContent.removeClass().addClass("sapUiDSCSpan" + this._iScSpan);
 
 				if (this._shouldSetHeight()) {
-					$sideContent.css("height", "100%");
-					$mainContent.css("height", "100%");
+					$sideContent.css("height", "100%").css("float", "left");
+					$mainContent.css("height", "100%").css("float", "left");
 				} else {
-					$sideContent.css("height", "auto");
-					$mainContent.css("height", "auto");
+					$sideContent.css("height", "auto").css("float", "none");
+					$mainContent.css("height", "auto").css("float", "none");
 				}
 			} else if (!this.getShowSideContent() && !this.getShowMainContent()) {
 				$mainContent.addClass(HIDDEN_CLASS);

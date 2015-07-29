@@ -12,10 +12,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		TestPreprocessor.process = function(vSource, sCaller, mSettings) {
 			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
 			mSettings.assert(true, "TestPreprocessor executed");
-			return new Promise(function(resolve) {
-				resolve(vSource);
-				mSettings.start();
-			});
+			if(mSettings.attach) {
+				vSource.attachAfterInit(mSettings.attach);
+			}
+			return Promise.resolve(vSource);
 		};
 
 		return TestPreprocessor;

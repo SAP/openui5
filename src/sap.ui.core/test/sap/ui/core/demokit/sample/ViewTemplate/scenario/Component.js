@@ -9,18 +9,17 @@
  */
 sap.ui.define([
 		'jquery.sap.global',
-		'sap/ui/core/UIComponent',
-		'sap/ui/core/mvc/View',
+		'sap/ui/core/mvc/View', // sap.ui.view()
+		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
-		'sap/ui/model/odata/AnnotationHelper',
-		'sap/m/HBox',
-		'sap/m/MessageBox',
 		'jquery.sap.script'
-	], function(jQuery, UIComponent, View, MockServer, AnnotationHelper, HBox, MessageBox/*, jQuerySapScript*/) {
+	], function (jQuery, View, BaseComponent, MockServer/*, jQuerySapScript*/) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
-		metadata : "json", //TODO Use component metadata from manifest file
+	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
+		metadata : {
+			manifest: "json"
+		},
 
 		createContent : function () {
 			var sAnnotationUri,
@@ -28,14 +27,12 @@ sap.ui.define([
 				sServiceUri,
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
-				oLayout = new HBox(),
 				oMockServer,
 				oUriParameters = jQuery.sap.getUriParameters(),
 				fnModel = oUriParameters.get("oldOData") === "true"
 					? sap.ui.model.odata.ODataModel
 					: sap.ui.model.odata.v2.ODataModel,
-				oModel,
-				oMetaModel;
+				oModel;
 
 			// GWSAMPLE_BASIC with external annotations
 			sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
@@ -43,7 +40,11 @@ sap.ui.define([
 			sAnnotationUri2 = "/sap(====)/bc/bsp/sap/zanno_gwsample/annotations.xml";
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
-			if (oUriParameters.get("realOData") !== "true") {
+			if (oUriParameters.get("realOData") === "true") {
+				sAnnotationUri = this.proxy(sAnnotationUri);
+				sAnnotationUri2 = this.proxy(sAnnotationUri2);
+				sServiceUri = this.proxy(sServiceUri);
+			} else {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
 
 				oMockServer = new MockServer({rootUri : sServiceUri});
@@ -72,10 +73,6 @@ sap.ui.define([
 						}
 					}]
 				}).start();
-			} else if (location.hostname === "localhost") { //for local testing prefix with proxy
-				sAnnotationUri = "proxy" + sAnnotationUri;
-				sAnnotationUri2 = "proxy" + sAnnotationUri2;
-				sServiceUri = "proxy" + sServiceUri;
 			}
 
 			oModel = new fnModel(sServiceUri, {
@@ -85,23 +82,17 @@ sap.ui.define([
 				skipMetadataAnnotationParsing : true
 			});
 
-			oModel.getMetaModel().loaded().then(function () {
-				oLayout.addItem(sap.ui.view({
+			return sap.ui.view({
 					type : sap.ui.core.mvc.ViewType.XML,
 					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
 					models : oModel
-				}));
-			}, function (oError) {
-				MessageBox.alert(oError.message, {
-					icon: sap.m.MessageBox.Icon.ERROR,
-					title: "Error"});
-			});
+				});
+		},
 
-			return oLayout;
+		exit : function () {
+			MockServer.destroyAll();
 		}
 	});
 
-
 	return Component;
-
 });

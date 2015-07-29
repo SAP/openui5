@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 				var oValue = oControl[sGetter]();
 				oValue = fnGetValue ? fnGetValue(sName, oValue) : oValue;
 				if (!oControl.getBindingInfo(sName)) {
-					if (oValue !== oProp.defaultValue) {
+					if (!jQuery.sap.equal(oValue,oProp.defaultValue)) {
 						if (!fnValueCheck || fnValueCheck(sName, oValue)) {
 							aHtml.push(this._createAttribute("data-" + this._createHtmlAttributeName(sName), oValue));
 						}
@@ -264,4 +264,4 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 
 	return HTML;
 
-}, /* bExport= */ true);
+});

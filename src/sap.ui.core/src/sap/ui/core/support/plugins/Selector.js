@@ -136,4 +136,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', 'sap/ui/core/support/Pl
 
 	return Selector;
 
-}, /* bExport= */ true);
+});

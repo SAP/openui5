@@ -95,6 +95,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 	}});
 	
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an ARIA announcement and remember its ID for later use in the renderer:
+	MultiInput.prototype._sAriaMultiInputContainTokenId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN")
+	}).toStatic().getId();
 	
 	// **
 	// * This file defines behavior for the control,
@@ -127,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					that.focus();
 				}
 				
-				if (args.getParameter("type") === "removed" && that.getEnableMultiLineMode() ) {
+				if (args.getParameter("type") === "removed" && that._isMultiLineMode ) {
 					
 					var iLength = that.getTokens().length;
 					if (iLength > 1) {
@@ -221,6 +227,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				}
 			} else {
 				that._setContainerSizes();
+				that._tokenizer.scrollToStart();
 			}
 			
 		});
@@ -290,26 +297,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 	
 	/**
-	 * Set the last token in tokenizer to show indicator in multi-line mode.
-	 *
-	 * @since 1.28
-	 * @private
-	 */
-	MultiInput.prototype._setLastTokenVisible = function() {
-		this._tokenizer.setVisible(true);
-		var aTokens = this.getTokens();
-
-		if (aTokens.length > 1) {
-			var i = 0;
-			for ( i = 0; i < aTokens.length - 1; i++ ) {
-				aTokens[i].setVisible(false);
-			}
-		} else {
-		this.setValue("");
-		}
-	};
-	
-	/**
 	 * Set all tokens in tokenizer visible in multi-line mode.
 	 *
 	 * @since 1.28
@@ -354,20 +341,27 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 */
 	MultiInput.prototype._showIndicator = function() {
 		
-		this._setLastTokenVisible();
+		var aTokens = this.getTokens(),
+		    iToken = aTokens.length;
 		
-		// no value is allowed to show in the input when multiline is closed
-		if (this.getValue() !== "") {
-			this.setValue() === "";
-		}
+		this._tokenizer.setVisible(true);
 		
-		var iTokens = this.getTokens().length;
-		
-		if (iTokens > 1) {
+		if (iToken > 1) {
+			// no value is allowed to show in the input when multiline is closed
+			if (this.getValue() !== "") {
+				this.setValue() === "";
+			}
+			
+			var i = 0;
+			for ( i = 0; i < iToken - 1; i++ ) {
+				aTokens[i].setVisible(false);
+			}
+			
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iTokens - 1) + "</span>";
+			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
 			
 			this.$().find(".sapMTokenizer").after(sSpanText);
+
 		}
 		
 		this._bShowIndicator = true;
@@ -408,6 +402,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		this.closeMultiLine();
 		var that = this;
+		
+		//only show multiline mode in phone mode
+		if (this._bUseDialog) {
+			bMultiLineMode = true;
+		}
+		
 		if (bMultiLineMode){
 			
 			this._showIndicator();
@@ -588,7 +588,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 		
 		//truncate token in multi-line mode
-		if (this._bUseDialog && this.getEnableMultiLineMode() 
+		if (this._bUseDialog && this._isMultiLineMode
 				&& this._oSuggestionPopup.isOpen() && this._tokenizerInPopup && this._tokenizerInPopup.getTokens().length > 0) {
 			
 			var iPopupTokens = this._tokenizerInPopup.getTokens().length,
@@ -918,7 +918,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	
 		if (!this._bUseDialog && !bNewFocusIsInSuggestionPopup && oEvent.relatedControlId !== this.getId()
 				&& oEvent.relatedControlId !== this._tokenizer.getId() && !bNewFocusIsInTokenizer
-					&& !(this.getEnableMultiLineMode() && this._bShowIndicator) 
+					&& !(this._isMultiLineMode && this._bShowIndicator) 
 					) { // leaving control, validate latest text, not validate the indicator		
 				this._validateCurrentText(true);
 		}
@@ -944,6 +944,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		sap.m.Tokenizer.prototype.onsapfocusleave.apply(this._tokenizer, arguments);
 
+		if (!this._bUseDialog && this._isMultiLineMode && this._bShowIndicator) {
+			var $multiInputScroll = this.$().find(".sapMMultiInputBorder");
+			$multiInputScroll.scrollTop(0);
+		}
 	};
 	
 	
@@ -1001,12 +1005,14 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					if ( oEvent.target === this._$input[0] 
 							||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
 								||  oEvent.target.className.indexOf("sapMTokenText") > -1){
+						
 						this.openMultiLine();
 						this._showAllTokens(this._tokenizer);
 						
 						var that = this;
 						setTimeout(function() {
 							that._setContainerSizes();
+							that._tokenizer.scrollToStart();
 						}, 0);
 					}
 			}
@@ -1112,7 +1118,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				that._bIsValidating = false;
 				if (validated) {
 					that.setValue("");
-					if (that._bUseDialog && that.getEnableMultiLineMode() && that._oSuggestionTable.getItems().length === 0) {
+					if (that._bUseDialog && that._isMultiLineMode && that._oSuggestionTable.getItems().length === 0) {
 						var iNewLength = that._tokenizer.getTokens().length;
 						if ( iOldLength < iNewLength ) {
 							var oNewToken = that._tokenizer.getTokens()[iNewLength - 1];

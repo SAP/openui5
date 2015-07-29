@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/SimpleType'],
-	function(jQuery, DateFormat, SimpleType) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, DateFormat, SimpleType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 					if (this.oFormatOptions.source.pattern == "timestamp") {
 						if (typeof (oValue) != "number") {
 							if (isNaN(oValue)) {
-								throw new sap.ui.model.FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
+								throw new FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
 							} else {
 								oValue = parseInt(oValue, 10);
 							}
@@ -68,13 +68,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 						}
 						oValue = this.oInputFormat.parse(oValue);
 						if (oValue == null) {
-							throw new sap.ui.model.FormatException("Cannot format date: " + oValue + " has the wrong format");
+							throw new FormatException("Cannot format date: " + oValue + " has the wrong format");
 						}
 					}
 				}
 				return this.oOutputFormat.format(oValue);
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format Date to " + sInternalType);
+				throw new FormatException("Don't know how to format Date to " + sInternalType);
 		}
 	};
 
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				var oResult = this.oOutputFormat.parse(oValue);
 				if (!oResult) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new sap.ui.model.ParseException(oBundle.getText(this.sName + ".Invalid"));
+					throw new ParseException(oBundle.getText(this.sName + ".Invalid"));
 				}
 				if (this.oInputFormat) {
 					if (this.oFormatOptions.source.pattern == "timestamp") {
@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				}
 				return oResult;
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse Date from " + sInternalType);
+				throw new ParseException("Don't know how to parse Date from " + sInternalType);
 		}
 	};
 
@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
@@ -189,4 +189,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	return Date1;
 
-}, /* bExport= */ true);
+});

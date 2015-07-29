@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}
 			
-			var oType = jQuery.sap.newObject(sap.ui.base.DataType.prototype);
+			var oType = jQuery.sap.newObject(DataType.prototype);
 
 			// getter for the name
 			oType.getName = function() { return sTypeName; };
@@ -372,7 +372,7 @@ sap.ui.define(['jquery.sap.global'],
 			if ( !oType ) {
 				// check for array types
 				if (sTypeName.indexOf("[]") > 0) {
-					var sComponentTypeName = sTypeName.substr(0, sTypeName.length - 2),
+					var sComponentTypeName = sTypeName.slice(0, -2),
 						oComponentType = this.getType(sComponentTypeName);
 					oType = oComponentType && createArrayType(oComponentType);
 					if ( oType ) {
@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global'],
 					return oType;
 				} else {
 					oType = jQuery.sap.getObject(sTypeName);
-					if ( oType instanceof sap.ui.base.DataType ) {
+					if ( oType instanceof DataType ) {
 						mTypes[sTypeName] = oType;
 					} else if ( jQuery.isPlainObject(oType) ) {
 						oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);

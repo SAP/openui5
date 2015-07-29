@@ -80,6 +80,10 @@ function(jQuery) {
 			}
 
 			if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
+				//This happens when the compontentConainer has not been rendered yet
+				if (!oElement.getComponentInstance()) {
+					return;
+				}
 				internalFind(oElement.getComponentInstance().getAggregation("rootControl"));
 			} else {
 				aFoundElements.push(oElement);
@@ -147,6 +151,21 @@ function(jQuery) {
 		});
 
 		return bFiltered;
+	};
+
+	/**
+	 * 
+	 */
+	ElementUtil.findClosestControlInDom = function(oNode) {
+		if (oNode && oNode.getAttribute("data-sap-ui")) {
+			return sap.ui.getCore().byId(oNode.getAttribute("data-sap-ui"));
+		} else {
+			if (oNode.parentNode) {
+				this.findClosestControlInDom(oNode.parentNode);
+			} else {
+				return null;
+			}
+		}
 	};
 
 	/**
@@ -237,6 +256,16 @@ function(jQuery) {
 			return false;
 		}
 	};		
+
+	/**
+	 * 
+	 */
+	ElementUtil.getDesignTimeMetadata = function(oElement) {
+		var oDTMetadata = oElement ? oElement.getMetadata().getDesignTime() : {};
+		return oDTMetadata || {};
+	};		
+
+	
 
 	return ElementUtil;
 }, /* bExport= */ true);

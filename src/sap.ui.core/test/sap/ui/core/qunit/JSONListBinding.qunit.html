@@ -44,6 +44,13 @@
 				{firstName:"Marc", lastName:"Green", gender:"male"},
 				{firstName:"Peter", lastName:"Franklin", gender:"male"}
 			],
+			filterData:[
+				{form:"Original", string:"ẛ̣", representation:"\\u1E9B\\u0323"},
+				{form:"NFC", string:"ẛ̣", representation:"\\u1E9B\\u0323"},
+				{form:"NFD", string:"ẛ̣", representation:"\\u017F\\u0323\\u0307"},
+				{form:"NFKC", string:"ṩ", representation:"\\u1E69"},
+				{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307"},
+			],
 			sortData:[
 				{word: "Fuß"},
 				{word: "Füssen"},
@@ -731,6 +738,31 @@
 
 		ok(attach, "change event fired with filter");
 	});
+
+	// only relevant for browsers supporting this
+	if (String.prototype.normalize) {
+		test("normalization", function() {
+			createListBinding("/filterData");
+
+			var mFilters = {}, listBinding = bindings[0];
+
+			mFilters["NFC"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u1E9B\u0323");
+			mFilters["NFD"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u017F\u0323\u0307");
+			// "NFKC" and "NFKD" are not supported for filter
+
+			function fnTest(sProp, sVal) {
+				listBinding.filter(sVal);
+				var filteredContexts = listBinding.getContexts();
+				var filtered = [];
+				jQuery(filteredContexts).each(function(i, context){
+					filtered[i] = oModel.getProperty(context.getPath());
+				});
+				equal(filtered.length, 3, "Filter working for " + sProp);
+			}
+
+			jQuery.each(mFilters, fnTest);
+		});
+	}
 
 	module("Listbinding general", {
 		beforeEach: function() {

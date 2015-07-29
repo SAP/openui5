@@ -720,6 +720,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 				this.setProperty("filtered", !!sValue, true);
 				this.setProperty("filterValue", sValue, true);
+				if (this.getMenu()) {
+					// update column menu input field
+					this.getMenu()._setFilterValue(sValue);
+				}
 
 				var aFilters = [];
 				var aCols = oTable.getColumns();
@@ -773,7 +777,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 		var oTable = this.getParent();
 		if (oTable && oTable.getDomRef()) {
 			var sCurrentTheme = sap.ui.getCore().getConfiguration().getTheme();
-			var oImage = sap.ui.getCore().byId(this.getId() + "-filterIcon") || sap.ui.table.TableHelper.createImage(this.getId() + "-filterIcon");
+			var oImage = sap.ui.getCore().byId(this.getId() + "-filterIcon") ||
+				sap.ui.table.TableHelper.createImage({
+					id: this.getId() + "-filterIcon",
+					decorative: false,
+					alt: oTable._oResBundle.getText("TBL_FILTER_ICON_TEXT")
+				});
 			oImage.$().remove();
 			oImage.addStyleClass("sapUiTableColIconsFilter");
 			if (this.getFiltered()) {

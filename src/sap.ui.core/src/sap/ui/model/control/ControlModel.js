@@ -92,4 +92,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 
 	return ControlModel;
 
-}, /* bExport= */ true);
+});

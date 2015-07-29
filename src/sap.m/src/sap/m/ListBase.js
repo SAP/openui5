@@ -12,13 +12,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	/**
 	 * Constructor for a new ListBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * sap.m.ListBase Control provides a basic functionality of List and Table. Selection, deletion, unread states and inset style are also maintained here.
+	 * The <code>sap.m.ListBase</code> control provides a base functionality of the <code>sap.m.List</code> and <code>sap.m.Table</code> controls. Selection, deletion, unread states and inset style are also maintained in <code>sap.m.ListBase</code>.
 	 * 
-	 * Note: The ListBase including all contained items is completely re-rendered when the data of a bound model is changed. Due to the limited hardware resources of mobile devices this can lead to longer delays for lists with many items. As such the usage of a list is not recommended for these use cases.
+	 * <b>Note:</b> The ListBase including all contained items may be completely re-rendered when the data of a bound model is changed. Due to the limited hardware resources of mobile devices this can lead to longer delays for lists that contain many items. As such the usage of a list is not recommended for these use cases.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -36,111 +36,112 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		properties : {
 	
 			/**
-			 * Inset style false/true
+			 * Defines the indentation of the container. Setting it to <code>true</code> indents the list.
 			 */
 			inset : {type : "boolean", group : "Appearance", defaultValue : false},
 	
 			/**
-			 * The header text appearing in the list/table header.
-			 * Note: if "headerToolbar" aggregation is set, then this property is ignored.
+			 * Defines the header text that appears in the control.
+			 * <b>Note:</b> If <code>headerToolbar</code> aggregation is set, then this property is ignored.
 			 */
 			headerText : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * List header style. Possible vales are "Standard" and "Plain"
+			 * Defines the header style of the control. Possible values are <code>Standard</code> and <code>Plain</code>.
 			 * @since 1.14
-			 * @deprecated Since version 1.16. 
-			 * Has no functionality since 1.16
+			 * @deprecated Since version 1.16. No longer has any functionality.
 			 */
 			headerDesign : {type : "sap.m.ListHeaderDesign", group : "Appearance", defaultValue : sap.m.ListHeaderDesign.Standard, deprecated: true},
 	
 			/**
-			 * Footer Text
+			 * Defines the footer text that appears in the control.
 			 */
 			footerText : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Mode of a list (e.g. None, SingleSelect, MultiSelect, Delete, etc.)
+			 * Defines the mode of the control (e.g. <code>None</code>, <code>SingleSelect</code>, <code>MultiSelect</code>, <code>Delete</code>).
 			 */
 			mode : {type : "sap.m.ListMode", group : "Behavior", defaultValue : sap.m.ListMode.None},
 	
 			/**
-			 * Sets the width of the list.
+			 * Sets the width of the control.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 	
 			/**
-			 * This property decides if the list item interacts with the selection. If it is "true", a tap on the item will set the selection control in front of the list item.
+			 * Defines whether the items are selectable by clicking on the item itself (<code>true</code>) rather than having to set the selection control first.
+			 * <b>Note:</b> The <code>SingleSelectMaster</code> mode also provides this functionality by default. 
 			 */
 			includeItemInSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 	
 			/**
-			 * Activates the unread feature for all items.
+			 * Activates the unread indicator for all items, if set to <code>true</code>.
 			 */
 			showUnread : {type : "boolean", group : "Misc", defaultValue : false},
 	
 			/**
-			 * This text is displayed when the control has no data.
+			 * This text is displayed when the control contains no items.
 			 */
 			noDataText : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Enables an information text(see "noDataText" property) when the control has no data.
+			 * Defines whether or not the text specified in the <code>noDataText</code> property is displayed. 
 			 */
 			showNoData : {type : "boolean", group : "Misc", defaultValue : true},
 	
 			/**
-			 * When this property is set to "true", the List/Table will automatically display a BusyIndicator when it detects that data is being loaded or filtered. This BusyIndicator blocks the interaction with the items until data loading is finished.
-			 * For the List/Table controls BusyIndicator will be shown after one second. This behavior can be customized by setting the "busyIndicatorDelay" property.
-			 * When this property is set to "false", items will stay on the List/Table until data loading is finished.
+			 * When this property is set to <code>true</code>, the control will automatically display a busy indicator when it detects that data is being loaded. This busy indicator blocks the interaction with the items until data loading is finished.
+			 * By default, the busy indicator will be shown after one second. This behavior can be customized by setting the <code>busyIndicatorDelay</code> property.
 			 * @since 1.20.2
 			 */
 			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Defines if animations will be shown when activating or deactivating selection modes.
+			 * Defines if animations will be shown while switching between modes.
 			 */
 			modeAnimationOn : {type : "boolean", group : "Misc", defaultValue : true},
 	
 			/**
-			 * Defines which separator style will be used.
+			 * Defines which item separator style will be used.
 			 */
 			showSeparators : {type : "sap.m.ListSeparators", group : "Appearance", defaultValue : sap.m.ListSeparators.All},
 	
 			/**
-			 * Direction of swipe(e.g LeftToRight, RightToLeft, Both) to bring in a control on the right hand side of the list item.
+			 * Defines the direction of the swipe movement (e.g LeftToRight, RightToLeft, Both) to display the control defined in the <code>swipeContent</code> aggregation.
 			 */
 			swipeDirection : {type : "sap.m.SwipeDirection", group : "Misc", defaultValue : sap.m.SwipeDirection.Both},
 	
 			/**
-			 * Sets the growing(paging) feature of control.
-			 * Note: This feature only works with item binding and should not be used with two way binding!
+			 * If set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the model. 
+			 * <b>Note:</b>: This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
 			 * @since 1.16
 			 */
 			growing : {type : "boolean", group : "Behavior", defaultValue : false},
 	
 			/**
-			 * Number of items requested from the server. To activate this you should set "growing" property to "true".
+			 * Defines the number of items to be requested from the model for each grow.
+			 * This property can only be used if the <code>growing</code> property is set to <code>true</code>.
 			 * @since 1.16
 			 */
 			growingThreshold : {type : "int", group : "Misc", defaultValue : 20},
 	
 			/**
-			 * This text is displayed on the trigger button which is responsible to load new page at the end of the list. The default is a translated text ("More") coming from the message bundle.
-			 * This property can be used only if "growing" property is set "true"
+			 * Defines the text displayed on the growing button. The default is a translated text ("More") coming from the message bundle.
+			 * This property can only be used if the <code>growing</code> property is set to <code>true</code>.
 			 * @since 1.16
 			 */
 			growingTriggerText : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * If true, user can scroll end to trigger a new page request. Otherwise a trigger button is displayed at the bottom of the list.
-			 * This property can be used only if "growing" property is set "true" and if you only have one instance of this control inside the scroll container(e.g Page).
+			 * If set to true, the user can scroll down to load more items. Otherwise a growing button is displayed at the bottom of the control.
+			 * <b>Note:</b> This property can only be used if the <code>growing</code> property is set to <code>true</code> and only if there is one instance of <code>sap.m.List</code> or <code>sap.m.Table</code> inside the scroll container (e.g <code>sap.m.Page</code>).
 			 * @since 1.16
 			 */
 			growingScrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false},
 	
 			/**
-			 * By default, if you have binding then the control remembers selections after binding update(sorting, filter, refresh). If this is not a desired behavior for your use case, you can switch this off with setting it to "false".
+			 * If set to true, this control remembers the selections after a binding update has been performed (e.g. sorting, filtering).
+			 * <b>Note:</b> If <code>items</code> aggregation is not bound then this property is ignored. 
 			 * @since 1.16.6
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -149,25 +150,25 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		aggregations : {
 	
 			/**
-			 * The items of this list or rows of the table.
+			 * Defines the items contained within this control.
 			 */
 			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", bindable : "bindable"}, 
 	
 			/**
-			 * User can swipe to bring in this control on the right hand side of a list item.
-			 * Note: This functionality gets disabled for non-touch devices.
+			 * User can swipe to bring in this control on the right hand side of an item.
+			 * <b>Note:</b> For non-touch devices, this functionality is ignored.
 			 */
 			swipeContent : {type : "sap.ui.core.Control", multiple : false}, 
 	
 			/**
-			 * Header can be used as a Toolbar to add extra controls for user interactions.
-			 * Note: This aggregation overwrites "headerText" property.
+			 * The header area can be used as a toolbar to add extra controls for user interactions.
+			 * <b>Note:</b> When set, this overwrites the <code>headerText</code> property.
 			 * @since 1.16
 			 */
 			headerToolbar : {type : "sap.m.Toolbar", multiple : false}, 
 	
 			/**
-			 * InfoBar is placed below the header and can be used to show extra information to the user.
+			 * A toolbar that is placed below the header to show extra information to the user.
 			 * @since 1.16
 			 */
 			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
@@ -183,85 +184,86 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		events : {
 	
 			/**
-			 * Event is fired when selection is changed by user interaction. In "multi-selection" mode, this event is also fired on "deselect"
+			 * Fires when selection is changed via user interaction. In <code>MultiSelect</code> mode, this event is also fired on deselection.
 			 * @deprecated Since version 1.16. 
-			 * Instead use "selectionChange" event.
+			 * Use the <code>selectionChange</code> event instead.
 			 */
 			select : {deprecated: true,
 				parameters : {
 	
 					/**
-					 * The list item which fired the select.
+					 * The item which fired the select event.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}
 				}
 			}, 
 	
 			/**
-			 * Event is fired when selection is changed via user interaction inside the control.
+			 * Fires when selection is changed via user interaction inside the control.
 			 * @since 1.16
 			 */
 			selectionChange : {
 				parameters : {
 	
 					/**
-					 * The list item whose selection has changed. In "multi-selection" mode, only the up-most selected item is returned. This parameter can be used for single-selection modes.
+					 * The item whose selection has changed. In <code>MultiSelect</code> mode, only the up-most selected item is returned. This parameter can be used for single-selection modes.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}, 
 	
 					/**
-					 * This parameter is filled with array of list items whose selection has changed. This parameter can be used for multi-selection mode.
+					 * Array of items whose selection has changed. This parameter can be used for <code>MultiSelect</code> mode.
 					 */
 					listItems : {type : "sap.m.ListItemBase[]"}, 
 	
 					/**
-					 * This flag indicates whether the "listItem" parameter is selected or not.
+					 * Indicates whether the <code>listItem</code> parameter is selected or not.
 					 */
 					selected : {type : "boolean"}
 				}
 			}, 
 	
 			/**
-			 * Event is fired when delete icon is pressed by user.
+			 * Fires when delete icon is pressed by user.
 			 */
 			"delete" : {
 				parameters : {
 	
 					/**
-					 * The list item which fired the delete.
+					 * The item which fired the delete event.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}
 				}
 			}, 
 	
 			/**
-			 * This event is fired when a user swipes to bring in a control and before swipeContent is shown on the right hand side of list item. So, you can easily change swipeContent according to swiped list item. Call the preventDefault method of the event object to disable swipe.
+			 * Fires after user's swipe action and before the <code>swipeContent</code> is shown. On the <code>swipe</code> event handler, <code>swipeContent</code> can be changed according to the swiped item. 
+			 * Calling the <code>preventDefault</code> method of the event cancels the swipe action.
 			 */
 			swipe : {allowPreventDefault : true,
 				parameters : {
 	
 					/**
-					 * The listitem which fired the swipe.
+					 * The item which fired the swipe.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}, 
 	
 					/**
-					 * Given swipeContent control to show on the right hand side of a list item.
+					 * Aggregated <code>swipeContent</code> control that is shown on the right hand side of the item.
 					 */
 					swipeContent : {type : "sap.ui.core.Control"}, 
 	
 					/**
-					 * Holds which control caused the swipe event in within the Item.
+					 * Holds which control caused the swipe event within the item.
 					 */
 					srcControl : {type : "sap.ui.core.Control"}
 				}
 			}, 
 	
 			/**
-			 * This event is called when "growing" feature is enabled and before new page loaded.
+			 * Fires before the new growing chunk is requested from the model.
 			 * @since 1.16
 			 * @deprecated Since version 1.16.3. 
-			 * Instead, use "updateStarted" event.
+			 * Instead, use <code>updateStarted</code> event with listening <code>changeReason</code>.
 			 */
 			growingStarted : {deprecated: true,
 				parameters : {
@@ -279,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			}, 
 	
 			/**
-			 * This event is called when "growing" feature is enabled and after new page loaded and DOM updated.
+			 * Fires after the new growing chunk has been fetched from the model and processed by the control.
 			 * @since 1.16
 			 * @deprecated Since version 1.16.3. 
 			 * Instead, use "updateFinished" event.
@@ -300,15 +302,16 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			}, 
 	
 			/**
-			 * This event is called before items binding is updated.
-			 * Note: Event handler should not invalidate the control.
+			 * Fires before <code>items</code> binding is updated (e.g. sorting, filtering)
+			 * 
+			 * <b>Note:</b> Event handler should not invalidate the control.
 			 * @since 1.16.3
 			 */
 			updateStarted : {
 				parameters : {
 	
 					/**
-					 * The reason of update. Possible values are "Binding", "Filter", "Sort", "Growing", "Change", "Refresh", "Context"
+					 * The reason of the update, e.g. Binding, Filter, Sort, Growing, Change, Refresh, Context.
 					 */
 					reason : {type : "string"}, 
 	
@@ -318,21 +321,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 					actual : {type : "int"}, 
 	
 					/**
-					 * The total count of bound items. This parameter can be used if "growing" feature is enabled.
+					 * The total count of bound items. This can be used if the <code>growing</code> property is set to <code>true</code>.
 					 */
 					total : {type : "int"}
 				}
 			}, 
 	
 			/**
-			 * This event is called after items binding and afterwards related DOM is updated.
+			 * Fires after <code>items</code> binding is updated and processed by the control.
 			 * @since 1.16.3
 			 */
 			updateFinished : {
 				parameters : {
 	
 					/**
-					 * The reason of update. Possible values are "Binding", "Filter", "Sort", "Growing", "Change", "Refresh", "Context"
+					 * The reason of the update, e.g. Binding, Filter, Sort, Growing, Change, Refresh, Context.
 					 */
 					reason : {type : "string"}, 
 	
@@ -342,23 +345,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 					actual : {type : "int"}, 
 	
 					/**
-					 * The total count of bound items. This parameter can be used if "growing" feature is enabled.
+					 * The total count of bound items. This can be used if the <code>growing</code> property is set to <code>true</code>.
 					 */
 					total : {type : "int"}
 				}
 			}, 
 	
 			/**
-			 * This event is called when an item is pressed regardless of the selection mode.
-			 * NOTE: This event is fired for all kind of list items unless the item's type is "Inactive".
+			 * Fires when an item is pressed unless the item's <code>type</code> property is <code>Inactive</code>.
 			 * @since 1.20
 			 */
 			itemPress : {
 				parameters : {
 	
 					/**
-					 * The list item which fired the pressed event.
-					 * NOTE: This event is fired also for "GroupHeaderListItem" which does not have binding context.
+					 * The item which fired the pressed event.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}, 
 	
@@ -664,16 +665,23 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ListBase.prototype.removeSelections = function(bAll, bFireEvent) {
+	ListBase.prototype.removeSelections = function(bAll, bFireEvent, bDetectBinding) {
 		var aChangedListItems = [];
 		this._oSelectedItem = null;
 		bAll && (this._aSelectedPaths = []);
 		this.getItems(true).forEach(function(oItem) {
-			if (oItem.getSelected()) {
-				oItem.setSelected(false, true);
-				aChangedListItems.push(oItem);
-				!bAll && this._updateSelectedPaths(oItem);
+			if (!oItem.getSelected()) {
+				return;
 			}
+			
+			// if the selected property is two-way bound then we do not need to update the selection
+			if (bDetectBinding && oItem.isSelectedBoundTwoWay()) {
+				return;
+			}
+			
+			oItem.setSelected(false, true);
+			aChangedListItems.push(oItem);
+			!bAll && this._updateSelectedPaths(oItem);
 		}, this);
 	
 		if (bFireEvent && aChangedListItems.length) {
@@ -745,7 +753,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		var aSelecteds = this.getSelectedItems();
 		if (aSelecteds.length > 1) {
 			// remove selection if there are more than one item is selected
-			// we cannot determine 
 			this.removeSelections(true);
 		} else if (sOldMode === sap.m.ListMode.MultiSelect) {
 			// if old mode is multi select then we need to remember selected item 
@@ -913,9 +920,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		if (this.isBound("items")) {
 			this._bUpdating = false;
 			this._bReceivingData = false;
-			this.removeSelections(true);
-			this._hideBusyIndicator();
+			this.removeSelections(true, false, true);
 			this._oGrowingDelegate && this._oGrowingDelegate.reset();
+			this._hideBusyIndicator();
 			
 			/* reset focused position */
 			if (this._oItemNavigation) {
@@ -984,12 +991,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	ListBase.prototype._hideBusyIndicator = function() {
 		if (this._bBusy) {
 			// revert busy state
+			this._bBusy = false;
 			this.setBusy(false, "listUl");
+			jQuery.sap.clearDelayedCall(this._sBusyTimer);
 	
 			// revert no data texts when necessary
-			jQuery.sap.clearDelayedCall(this._sBusyTimer);
-			this.$("nodata-text").text(this.getNoDataText());
-			this._bBusy = false;
+			if (!this.getItems(true).length) {
+				this.$("nodata-text").text(this.getNoDataText());
+			}
 		}
 	};
 	
@@ -999,9 +1008,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 		
-		// if selected property two-way bounded then we do not need to update the selection
-		var oSelectedBinding = oItem.getBinding("selected");
-		if (oSelectedBinding && oSelectedBinding.getBindingMode() == sap.ui.model.BindingMode.TwoWay) {
+		// if selected property two-way bound then we do not need to update the selection
+		if (oItem.isSelectedBoundTwoWay()) {
 			return;
 		}
 

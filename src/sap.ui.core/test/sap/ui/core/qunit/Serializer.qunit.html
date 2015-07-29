@@ -25,28 +25,59 @@
 	<script language="javascript">
 		jQuery.sap.require("sap.ui.core.util.serializer.Serializer");
 		jQuery.sap.require("sap.ui.core.util.serializer.delegate.HTML");
+		jQuery.sap.require("sap.ui.core.util.serializer.delegate.XML");
 
 		module("Simple", {
 			setup : function() {
-				this.oButton = new sap.ui.commons.Button({id:"myButton"});
-				this.oButton.placeAt("area1");
+				this.oButton1 = new sap.ui.commons.Button({id:"myButtonSimple1"});
+				this.oButton1.placeAt("area1");
+				this.oButton2 = new sap.ui.commons.Button({id:"myButtonSimple2", fieldGroupIds:["Test1,Test2"]});
+				this.oButton2.placeAt("area1");
+				this.oButton3 = new sap.ui.commons.Button({id:"myButtonSimple3", fieldGroupIds:null});
+				this.oButton3.placeAt("area1");
 			},
 			
 			teardown : function() {
-				this.oButton.destroy();
+				this.oButton1.destroy();
+				this.oButton2.destroy();
+				this.oButton3.destroy();
 			}
 		});
 
-		test("Generate & Call Delegate", function() {
+		test("Generate & Call Delegate HTML Serializing", function() {
 			var oHTML = new sap.ui.core.util.serializer.delegate.HTML();
-
+			var aResults = [
+				"<div id=\"myButtonSimple1\" data-sap-ui-type=\"sap.ui.commons.Button\"></div>",
+				"<div id=\"myButtonSimple2\" data-sap-ui-type=\"sap.ui.commons.Button\" data-field-group-ids=\"Test1,Test2\"></div>",
+				"<div id=\"myButtonSimple3\" data-sap-ui-type=\"sap.ui.commons.Button\"></div>"
+				];
+			
 			var aCode = [];
 			var aContent = sap.ui.getCore().getUIArea("area1").getContent();
 			for (var i=0; i < aContent.length; i++) {
 				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oHTML, false);
-				aCode.push(oControlSerializer.serialize());
+				var s = oControlSerializer.serialize();
+				equals(s, aResults[i], "The generated string is right for control " + aContent[i].getId());
 			}
-			equals(aCode.join(""), '<div id=\"myButton\" data-sap-ui-type=\"sap.ui.commons.Button\"></div>', "The generated string is right");
+			
+		});
+		
+		test("Generate & Call Delegate XML Serializing", function() {
+			var oXML = new sap.ui.core.util.serializer.delegate.XML();
+			var aResults = [
+							"<sap.ui.commons:Button id=\"myButtonSimple1\"></sap.ui.commons:Button>",
+							"<sap.ui.commons:Button id=\"myButtonSimple2\" fieldGroupIds=\"Test1,Test2\"></sap.ui.commons:Button>",
+							"<sap.ui.commons:Button id=\"myButtonSimple3\"></sap.ui.commons:Button>"
+							];
+						
+			var aCode = [];
+			var aContent = sap.ui.getCore().getUIArea("area1").getContent();
+			for (var i=0; i < aContent.length; i++) {
+				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oXML, false);
+				var s = oControlSerializer.serialize();
+				equals(s, aResults[i], "The generated string is right for control " + aContent[i].getId());
+			}
+			
 			
 		});
 
@@ -56,18 +87,19 @@
 				this.oPanel = new sap.ui.commons.Panel({id:"myPanel", title:oTitle});
 				var oButton = new sap.ui.commons.Button({id:"myButton"});
 				oButton.data("myCustomData", "myValue");
-				var oButton2 = new sap.ui.commons.Button({id:"myButton2"});
-				oButton.addAriaDescribedBy(oButton2);
+				this.oButton2 = new sap.ui.commons.Button({id:"myButton2"});
+				oButton.addAriaDescribedBy(this.oButton2);
 				this.oPanel.addContent(oButton);
 				this.oPanel.placeAt("area2");
 			},
 			
 			teardown : function() {
 				this.oPanel.destroy();
+				this.oButton2.destroy()
 			}
 		});
 
-		test("Complex", function() {
+		test("Complex HTML Serializing", function() {
 			var oHTML = new sap.ui.core.util.serializer.delegate.HTML();
 			
 			
@@ -78,6 +110,19 @@
 				aCode.push(oControlSerializer.serialize());
 			}
 			equals(aCode.join(""), '<div id=\"myPanel\" data-sap-ui-type=\"sap.ui.commons.Panel\" data-text=\"My Panel\"><div data-sap-ui-aggregation=\"customData\"><div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"sap-ui-fastnavgroup\" data-value=\"true\" data-write-to-dom=\"true\"></div></div><div data-sap-ui-aggregation=\"content\"><div id=\"myButton\" data-sap-ui-type=\"sap.ui.commons.Button\" data-aria-described-by=\"myButton2\"><div data-sap-ui-aggregation=\"customData\"><div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"myCustomData\" data-value=\"myValue\"></div></div></div></div><div data-sap-ui-aggregation=\"title\"><div id=\"myTitle\" data-sap-ui-type=\"sap.ui.commons.Title\" data-text=\"My Panel\"></div></div></div>', "The generated string is right");
+		});
+		
+		test("Complex XML Serializing", function() {
+			var oXML = new sap.ui.core.util.serializer.delegate.XML();
+			
+			
+			var aCode = [];
+			var aContent = sap.ui.getCore().getUIArea("area2").getContent();
+			for (var i=0; i < aContent.length; i++) {
+				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oXML, false);
+				aCode.push(oControlSerializer.serialize());
+			}
+			equals(aCode.join(""), '<sap.ui.commons:Panel id=\"myPanel\" text=\"My Panel\"><sap.ui.commons:customData><sap.ui.core:CustomData key=\"sap-ui-fastnavgroup\" value=\"true\" writeToDom=\"true\"></sap.ui.core:CustomData></sap.ui.commons:customData><sap.ui.commons:content><sap.ui.commons:Button id=\"myButton\" ariaDescribedBy=\"myButton2\"><sap.ui.commons:customData><sap.ui.core:CustomData key=\"myCustomData\" value=\"myValue\"></sap.ui.core:CustomData></sap.ui.commons:customData></sap.ui.commons:Button></sap.ui.commons:content><sap.ui.commons:title><sap.ui.commons:Title id=\"myTitle\" text=\"My Panel\"></sap.ui.commons:Title></sap.ui.commons:title></sap.ui.commons:Panel>', "The generated string is right");
 		});
 
 	</script>

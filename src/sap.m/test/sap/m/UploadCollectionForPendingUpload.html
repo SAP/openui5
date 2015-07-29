@@ -12,15 +12,35 @@
 
 <script type="text/javascript">
 
+	jQuery.sap.initMobile();
+	jQuery.sap.require("sap.m.MessageToast");
+
 /* =========================================================== */
 /* UploadCollection                                            */
 /* =========================================================== */
-// create JSON model instance
-	var oModel = new sap.ui.model.json.JSONModel();
-	// set the model to the core
-	sap.ui.getCore().setModel(oModel);
 
 	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
+
+	// create instance of UploadCollection
+	var oUploadCollection = new sap.m.UploadCollection({
+		id : "UploadCollection",
+		maximumFilenameLength : 55,
+		maximumFileSize: 50,
+		multiple : true,
+		fileType : aFileTypes,
+		sameFilenameAllowed : true,
+		instantUpload : false,
+	// events
+		change : fnChange,
+		fileDeleted : fnFileDeleted,
+		filenameLengthExceed : fnfilenameLengthExceed,
+		fileSizeExceed : fnFileSizeExceed,
+		typeMissmatch : fnTypeMissmatch,
+		uploadComplete : fnUploadComplete,
+		});
+
+	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
+
 	/* =========================================================== */
 	/* Handle UploadCollection Events                              */
 	/* =========================================================== */
@@ -45,12 +65,35 @@
 	}
 
 	function fnUploadComplete(oEvent) {
-		sap.m.MessageToast.show("Event uploadComplete triggered");
+		// destroy old UploadCollection instance and create a new one
+		oPage.removeContent(oUploadCollection);
+		oUploadCollection.destroy();
+		// create instance of UploadCollection
+		oUploadCollection = new sap.m.UploadCollection({
+			maximumFilenameLength : 55,
+			maximumFileSize: 50,
+			multiple : true,
+			fileType : aFileTypes,
+			sameFilenameAllowed : true,
+			instantUpload : false,
+		// events
+			change : fnChange,
+			fileDeleted : fnFileDeleted,
+			filenameLengthExceed : fnfilenameLengthExceed,
+			fileSizeExceed : fnFileSizeExceed,
+			typeMissmatch : fnTypeMissmatch,
+			uploadComplete : fnUploadComplete,
+			});
+		oPage.insertContent(oUploadCollection);
+		// delay the success message in order to see the 'Upload started' message
+		setTimeout(function() {
+			sap.m.MessageToast.show("Event uploadComplete triggered")
+		}, 4000);
 	}
 
 	function fnUpload(oEvent) {
 		oUploadCollection.upload();
-		sap.m.MessageToast.show("Method Upload is called");
+		sap.m.MessageToast.show("Upload has been started");
 	}
 
 	// create instance of UploadCollection and set model
@@ -61,7 +104,7 @@
 		fileType : aFileTypes,
 		sameFilenameAllowed : true,
 		instantUpload : false,
-	// events
+		// events
 		change : fnChange,
 		fileDeleted : fnFileDeleted,
 		filenameLengthExceed : fnfilenameLengthExceed,
@@ -72,18 +115,15 @@
 
 	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
 
-/* =========================================================== */
-/* Create Page                   */
-/* =========================================================== */
+	/* ============================================================	*/
+	/* Create Page                   								*/
+	/* ============================================================ */
+// as we use jQuery.sap.initMobile() we do not need to create an App and can put the page directly into the HTML document
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection with Pending Uploading Files",
 		content : oUploadCollection,
 		footer : new sap.m.Bar({
 			contentMiddle: oButton })
-		});
-// create a mobile App embedding the page and place the App into the HTML document
-	var app = new sap.m.App("myApp", {
-			pages : [oPage]
 		}).placeAt("body");
 
 </script>

@@ -22,22 +22,22 @@
 				<Slider value="100" liveChange="onSliderMoved"></Slider>
 			</VBox>
 
-            <OverflowToolbar id="otbSubheader">
-                <ToolbarSpacer/>
-                <SearchField id="maxPrice" liveChange="onFilter">
-                    <layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true"/></layoutData>
-                </SearchField>
-                <Button text="Reset" type="Transparent" press="onReset"/>
-                <OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
-                <OverflowToolbarButton type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>
-            </OverflowToolbar>
+
 
             <Label/>
 
             <Table id="idProductsTable"
                    items="{/ProductCollection}">
                 <headerToolbar>
-
+                    <OverflowToolbar id="otbSubheader">
+                        <ToolbarSpacer/>
+                        <SearchField id="maxPrice" liveChange="onFilter">
+                            <layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true"/></layoutData>
+                        </SearchField>
+                        <Button text="Reset" type="Transparent" press="onReset"/>
+                        <OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
+                        <OverflowToolbarButton type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>
+                    </OverflowToolbar>
                 </headerToolbar>
                 <columns>
                     <Column width="12em"><Text text="Product" /></Column>
@@ -52,13 +52,16 @@
                             <Text text="{SupplierName}" />
                             <Text text="{Width} x {Depth} x {Height} {DimUnit}" />
                             <ObjectNumber
-                                    number="{Price}"
+                                    number="{
+			                            parts:[{path:'Price'},{path:'CurrencyCode'}],
+			                            type: 'sap.ui.model.type.Currency',
+		                            	formatOptions: {showMeasure: false}
+		                            }"
                                     unit="{CurrencyCode}" />
                         </cells>
                     </ColumnListItem>
                 </items>
             </Table>
-
 		</content>
 		<footer>
             <OverflowToolbar id="otbFooter">

@@ -2,9 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings'], function(jQuery, URI/* , jQuerySap1 */) {
 	"use strict";
-	/*global URI */
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
 	//    see http://portal.acm.org/citation.cfm?id=512931
@@ -20,31 +19,45 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	//rbp = "right binding power"
 	var fnUndefined = CONSTANT.bind(null, undefined),
 		mDefaultGlobals = {
-			encodeURIComponent: encodeURIComponent,
-			Math: Math,
-			odata: {
-				compare: function () {
+			"Array": Array,
+			"Boolean": Boolean,
+			"Date": Date,
+			"encodeURIComponent": encodeURIComponent,
+			"Infinity": Infinity,
+			"isFinite": isFinite,
+			"isNaN": isNaN,
+			"JSON": JSON,
+			"Math": Math,
+			"NaN": NaN,
+			"Number": Number,
+			"Object": Object,
+			"odata": {
+				"compare": function () {
 					var ODataUtils;
 
 					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-					ODataUtils = sap.ui.model.odata.ODataUtils;
+					ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 					return ODataUtils.compare.apply(ODataUtils, arguments);
 				},
-				fillUriTemplate: function () {
+				"fillUriTemplate": function () {
 					if (!URI.expand) {
 						jQuery.sap.require("sap.ui.thirdparty.URITemplate");
 					}
 					return URI.expand.apply(URI, arguments).toString();
 				},
-				uriEncode: function () {
+				"uriEncode": function () {
 					var ODataUtils;
 
 					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-					ODataUtils = sap.ui.model.odata.ODataUtils;
+					ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 					return ODataUtils.formatValue.apply(ODataUtils, arguments);
 				}
 			},
-			RegExp: RegExp
+			"parseFloat": parseFloat,
+			"parseInt": parseInt,
+			"RegExp": RegExp,
+			"String": String,
+			"undefined": undefined
 		},
 		rDigit = /\d/,
 		rIdentifier = /[a-z]\w*/i,
@@ -59,15 +72,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			"IDENTIFIER": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					var vGlobal = oParser.globals[oToken.value];
-
-					if (vGlobal === undefined) {
+					if (!(oToken.value in oParser.globals)) {
 						jQuery.sap.log.warning("Unsupported global identifier '" + oToken.value
 								+ "' in expression parser input '" + oParser.input + "'",
 							undefined,
 							"sap.ui.base.ExpressionParser");
 					}
-					return CONSTANT.bind(null, vGlobal);
+					return CONSTANT.bind(null, oParser.globals[oToken.value]);
 				}
 			},
 			"CONSTANT": {

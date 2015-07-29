@@ -2,13 +2,13 @@
 	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Toolbar design="Transparent" height="3rem">
+	<OverflowToolbar design="Transparent" height="3rem">
 		<Title text="Title Only"/>
-	</Toolbar>
-	<Toolbar design="Transparent" height="3rem">
+	</OverflowToolbar>
+	<OverflowToolbar design="Transparent" height="3rem">
 		<Title text="Title and Actions"/>
 		<ToolbarSpacer/>
 		<Button icon="sap-icon://group-2"/>
 		<Button icon="sap-icon://action-settings"/>
-	</Toolbar>
+	</OverflowToolbar>
 </mvc:View>

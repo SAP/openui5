@@ -510,7 +510,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (sURI) {
 			oImage = IconPool.createControlByURI({
 				id: this.getId() + "__icon" + this._iIconCounter++,
-				src: sURI
+				src: sURI,
+				useIconTooltip: false
 			}, sap.m.Image);
 
 			// store the icons in the corresponding internal aggregation

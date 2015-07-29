@@ -87,7 +87,10 @@ QUnit.test("Test for method _onChange for instantUpload = false", function(asser
 		instantUpload : false
 	});
 	var oFileUploader = oUploadCollection._getFileUploader();
-	oFileUploader.fireChange({files: aFiles});
+	oFileUploader.fireChange({
+		files: aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	assert.deepEqual(oFileUploader, oUploadCollection._aFileUploadersForPendingUpload[0], "Array _aFileUploadersForPendingUpload should contain the FileUploader instance on which Change Event was fired");
 	assert.deepEqual(oFileUploader, sap.ui.getCore().byId(oUploadCollection.getItems()[0].getAssociation("fileUploader")), "Association fileUploader should contain the FileUploader instance with which the Change event was fired");
 	assert.equal(oUploadCollection.getItems()[0]._status, sap.m.UploadCollection._pendingUploadStatus, "Item should have the 'pendingUploadStatus'");
@@ -207,12 +210,15 @@ QUnit.test("Rendering after initial load", function(assert) {
 	assert.ok(this.oUploadCollection, "UploadCollection instantiated");
 	assert.ok(jQuery.sap.domById("uploadCollection1-list"), "Item list is rendered");
 	assert.ok(jQuery.sap.domById("uploadCollection1-toolbar"), "Toolbar of the item list is rendered");
-	assert.ok(jQuery.sap.domById("uploadCollection1-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
+	assert.ok(jQuery.sap.domById("uploadCollection1-numberOfAttachmentsTitle"), "Title Number of attachments is rendered");
 });
 
 QUnit.test("Rendering of an item after change event", function(assert) {
 	var oFileUploader = this.oUploadCollection._getFileUploader();
-	oFileUploader.fireChange({files: this.aFiles});
+	oFileUploader.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() +  "-ta_filenameHL"), "FileName is rendered");
 	assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId()+ "-ta_editFileName"), "No input field should be rendered if instantUpload = false ");
@@ -225,12 +231,18 @@ QUnit.test("Rendering of an item after change event", function(assert) {
 
 QUnit.test("Setting of 'hidden' property on FileUploader instances", function(assert) {
 	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
-	oFileUploader1.fireChange({files: this.aFiles});
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges(); // it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(':hidden'), "The first FileUploader instance should be set to hidden after the second instance has been created");
 	var oFileUploader2 = this.oUploadCollection._oFileUploader; // take the current FU instance
 	assert.ok(!jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(':hidden'), "The current FileUploader instance should not be hidden");
-	oFileUploader2.fireChange({files: this.aFiles});
+	oFileUploader2.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(':hidden'), "The first FileUploader instance should be still hidden");
 	assert.ok(jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(':hidden'), "The second  FileUploader instance should be hidden now");
@@ -244,10 +256,16 @@ QUnit.test("Setting of 'hidden' property on FileUploader instances", function(as
 
 QUnit.test("Positions of the FileUploader instances in the toolbar", function(assert) {
 	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
-	oFileUploader1.fireChange({files: this.aFiles});
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges(); // it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	var oFileUploader2 = this.oUploadCollection._oFileUploader; // take the current FU instance
-	oFileUploader2.fireChange({files: this.aFiles});
+	oFileUploader2.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	var oFileUploader3 = this.oUploadCollection._oFileUploader;
 	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[2], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
@@ -274,10 +292,16 @@ QUnit.module("PendingUpload",  {
 QUnit.test("test Upload", function(assert) {
 	var oFileUploader1 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
-	oFileUploader1.fireChange({files: this.aFiles});
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
-	oFileUploader2.fireChange({files: this.aFiles});
+	oFileUploader2.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	this.oUploadCollection.upload();
 	assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 	assert.ok(fnFUUpload2.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
@@ -285,7 +309,10 @@ QUnit.test("test Upload", function(assert) {
 
 QUnit.test("Creation of a new FileUploader Instance during rerendering" , function(assert) {
 	var oFileUploader1 = this.oUploadCollection._oFileUploader;
-	oFileUploader1.fireChange({files: this.aFiles});
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	assert.notEqual(oFileUploader1.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
 	oFileUploader1 = this.oUploadCollection._oFileUploader;
@@ -297,13 +324,22 @@ QUnit.test("Creation of a new FileUploader Instance during rerendering" , functi
 	assert.deepEqual(oFileUploader1, this.oUploadCollection._oFileUploader, "After an item has been deleted from the list no new FileUploader instance should be created, thus the current one should be used for the next upload");
 	//create two more items
 	oFileUploader1 = this.oUploadCollection._oFileUploader;
-	oFileUploader1.fireChange({files: this.aFiles});
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	var oFileUploader2 = this.oUploadCollection._oFileUploader;
-	oFileUploader2.fireChange({files: this.aFiles});
+	oFileUploader2.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	var oFileUploader3 = this.oUploadCollection._oFileUploader;
-	oFileUploader3.fireChange({files: this.aFiles});
+	oFileUploader3.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	assert.notEqual(oFileUploader1.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
 	assert.notEqual(oFileUploader2.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
@@ -357,7 +393,6 @@ QUnit.module("Delete PendingUpload Item", {
 
 QUnit.test("Check file list", function(assert) {
 	assert.expect(4);
-
 	var oFile0 = {
 			name : "Screenshot.ico",
 	};
@@ -372,16 +407,28 @@ QUnit.test("Check file list", function(assert) {
 	};
 	var aFiles = [oFile0];
 	var oFileUploader = this.oUploadCollection._oFileUploader;
-	oFileUploader.fireChange({files: aFiles});
+	oFileUploader.fireChange({
+		files: aFiles,
+		newValue : "Screenshot.ico"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	aFiles = [oFile1];
-	oFileUploader.fireChange({files: aFiles});
+	oFileUploader.fireChange({
+		files: aFiles,
+		newValue : "Notes.txt"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	aFiles = [oFile2];
-	oFileUploader.fireChange({files: aFiles});
+	oFileUploader.fireChange({
+		files: aFiles,
+		newValue : "Document.txt"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 	aFiles = [oFile3];
-	oFileUploader.fireChange({files: aFiles});
+	oFileUploader.fireChange({
+		files: aFiles,
+		newValue : "Picture of a woman.png"	// needed to enable IE9 support and non failing tests
+	});
 	sap.ui.getCore().applyChanges();
 
 	var fnTestHandleDelete = function(oEvent, oContext) {

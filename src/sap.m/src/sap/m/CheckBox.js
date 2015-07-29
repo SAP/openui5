@@ -7,16 +7,14 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	function(jQuery, Label, library, Control, EnabledPropagator) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new CheckBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] The ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] The Initial settings for the new control
 	 *
 	 * @class
-	 * CheckBox control
+	 * The CheckBox control allows the user to select one or multiple items from a list. To select each item the user has to select the square box in front of it.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -33,12 +31,12 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 		properties : {
 
 			/**
-			 * Contains the state of the control whether it is flagged with a check mark, or not
+			 * Stores the state of the checkbox whether it is selected or not.
 			 */
 			selected : {type : "boolean", group : "Data", defaultValue : false},
 
 			/**
-			 * Using this property, the control could be disabled, if required.
+			 * Disables the Checkbox. Disabled controls are not interactive and are rendered differently according to the theme.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -48,7 +46,7 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 			name : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Defines the text displayed next to the check box
+			 * Defines the text displayed next to the checkbox
 			 */
 			text : {type : "string", group : "Appearance", defaultValue : null},
 
@@ -63,17 +61,17 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
 
 			/**
-			 * Width of Label
+			 * Width of the checkbox`s label
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
-			 * this is a flag to switch on activeHandling, when it is switched off, there will not be visual changes on active state. Default value is 'true'
+			 * Flag to switch on activeHandling, when it is switched off, there will be no visual changes on active state. Default value is 'true'
 			 */
 			activeHandling : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Specifies whether the user shall be allowed to select the check box
+			 * Specifies whether the user shall be allowed to edit the state of the checkbox
 			 * @since 1.25
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -81,12 +79,12 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 		associations : {
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 		},
@@ -99,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 				parameters : {
 
 					/**
-					 * Checks whether the CheckBox is flagged or not flagged.
+					 * Checks whether the CheckBox is marked or not .
 					 */
 					selected : {type : "boolean"}
 				}
@@ -109,13 +107,12 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 
 	EnabledPropagator.call(CheckBox.prototype);
 
-
 	CheckBox.prototype.init = function() {
 		this.addActiveState(this);
 		jQuery.sap.require("sap.ui.core.IconPool");
 		sap.ui.core.IconPool.insertFontFaceStyle();
 	};
-	
+
 	CheckBox.prototype.onAfterRendering = function() {
 		if (!this.getText() && !this.$().attr("aria-labelledby")) {
 			this.$().attr("aria-label", " ");
@@ -161,10 +158,9 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	};
 
 	/**
-	 * add ActiveState to non-supported mobile platform
+	 * Add ActiveState to non-supported mobile platform
 	 * @private
 	 */
-
 	CheckBox.prototype.addActiveState = function(oControl) {
 		if (sap.ui.Device.os.blackberry) {
 			oControl.addDelegate({
@@ -179,7 +175,7 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	};
 
 	/**
-	 * sets a property of the label, and creates the label if it has not been initialized
+	 * Sets a property of the label, and creates the label if it has not been initialized
 	 * @private
 	 */
 	CheckBox.prototype._setLabelProperty = function (sPropertyName, vPropertyValue, bSupressRerendering) {
@@ -250,7 +246,7 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	/**
 	 * Sets the tab index of the control
 	 *
-	 * @param {int} iTabIndex  greater than or equal -1
+	 * @param {int} iTabIndex The tab index should be greater than or equal -1
 	 * @return {sap.m.CheckBox}
 	 * @since 1.16
 	 * @protected
@@ -261,12 +257,10 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 		return this;
 	};
 
-
-
 	/**
 	 * Gets the tab index of the control
 	 *
-	 * @return {integer} tabIndex for Checkbox
+	 * @return {integer} iTabIndex for Checkbox
 	 * @since 1.22
 	 * @protected
 	 */
@@ -276,8 +270,6 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 		}
 		return this.getEnabled() ? 0 : -1 ;
 	};
-
-
 
 	return CheckBox;
 

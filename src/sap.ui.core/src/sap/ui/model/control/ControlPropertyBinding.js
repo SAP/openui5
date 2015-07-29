@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a property binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
-	function(jQuery, PropertyBinding) {
+sap.ui.define(['sap/ui/model/PropertyBinding'],
+	function(PropertyBinding) {
 	"use strict";
 
 
@@ -74,4 +74,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 
 	return ControlPropertyBinding;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,19 @@
  */
 
 // Provides the base class for all objects with managed properties and aggregations.
-sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', 'sap/ui/model/BindingMode', 'sap/ui/model/CompositeBinding', 'sap/ui/model/ContextBinding', 'sap/ui/model/Model', 'sap/ui/model/Type', 'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'],
-	function(jQuery, BindingParser, DataType, EventProvider, ManagedObjectMetadata, BindingMode, CompositeBinding, ContextBinding, Model, Type/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
+sap.ui.define([
+		'jquery.sap.global',
+		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata',
+		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException', '../model/ListBinding',
+		'../model/Model', '../model/ParseException', '../model/TreeBinding', '../model/Type', '../model/ValidateException',
+		'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
+	], function(
+		jQuery,
+		BindingParser, DataType, EventProvider, ManagedObjectMetadata,
+		BindingMode, CompositeBinding, Context, FormatException, ListBinding,
+		Model, ParseException, TreeBinding, Type, ValidateException
+		/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
+
 	"use strict";
 
 
@@ -37,126 +48,126 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * <li>for events either a function (event handler) is accepted or an array of length 2
 	 *     where the first element is a function and the 2nd element is an object to invoke the method on.
 	 * </ul>
-	 * 
+	 *
 	 * Each subclass should document the name and type of its supported settings in its constructor documentation.
 	 *
 	 * Besides the settings documented below, ManagedObject itself supports the following special settings:
 	 * <ul>
-	 * <li><code>id : <i>sap.ui.core.ID</i></code> an ID for the new instance. Some subclasses (Element, Component) require the id 
+	 * <li><code>id : <i>sap.ui.core.ID</i></code> an ID for the new instance. Some subclasses (Element, Component) require the id
 	 *   to be unique in a specific scope (e.g. an Element Id must be unique across all Elements, a Component id must
 	 *   be unique across all Components).
-	 * <li><code>models : <i>object</i></code> a map of {@link sap.ui.model.Model} instances keyed by their model name (alias). 
+	 * <li><code>models : <i>object</i></code> a map of {@link sap.ui.model.Model} instances keyed by their model name (alias).
 	 *   Each entry with key <i>k</i> in this object has the same effect as a call <code>this.setModel(models[k], k);</code>.</li>
-	 * <li><code>bindingContexts : <i>object</i></code> a map of {@link sap.ui.model.Context} instances keyed by their model name. 
+	 * <li><code>bindingContexts : <i>object</i></code> a map of {@link sap.ui.model.Context} instances keyed by their model name.
 	 *   Each entry with key <i>k</i> in this object has the same effect as a call <code>this.setBindingContext(bindingContexts[k], k);</code></li>
-	 * <li><code>objectBindings : <i>object</i></code>  a map of binding paths keyed by the corresponding model name. 
+	 * <li><code>objectBindings : <i>object</i></code>  a map of binding paths keyed by the corresponding model name.
 	 *   Each entry with key <i>k</i> in this object has the same effect as a call <code>this.bindObject(objectBindings[k], k);</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
 	 * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
 	 *
 	 *
-	 * @class Base Class that introduces some basic concepts like state management or databinding. 
-	 * 
-	 * New subclasses of ManagedObject are created with a call to {@link .extend ManagedObject.extend} and can make use 
+	 * @class Base Class that introduces some basic concepts like state management or databinding.
+	 *
+	 * New subclasses of ManagedObject are created with a call to {@link .extend ManagedObject.extend} and can make use
 	 * of the following managed features:
-	 * 
+	 *
 	 * <b>Properties</b><br>
-	 * Managed properties represent the state of a ManagedObject. They can store a single value of a simple data type 
-	 * (like 'string' or 'int'). They have a <i>name</i> (e.g. 'size') and methods to get the current value (<code>getSize</code>) 
-	 * or to set a new value (<code>setSize</code>). When a property is modified, the ManagedObject is marked as invalidated. 
-	 * A managed property can be bound against a property in a {@link sap.ui.model.Model} by using the {@link #bindProperty} method. 
-	 * Updates to the model property will be automatically reflected in the managed property and - if TwoWay databinding is active, 
+	 * Managed properties represent the state of a ManagedObject. They can store a single value of a simple data type
+	 * (like 'string' or 'int'). They have a <i>name</i> (e.g. 'size') and methods to get the current value (<code>getSize</code>)
+	 * or to set a new value (<code>setSize</code>). When a property is modified, the ManagedObject is marked as invalidated.
+	 * A managed property can be bound against a property in a {@link sap.ui.model.Model} by using the {@link #bindProperty} method.
+	 * Updates to the model property will be automatically reflected in the managed property and - if TwoWay databinding is active,
 	 * changes to the managed property will be reflected in the model. An existing binding can be removed by calling {@link #unbindProperty}.
-	 * 
-	 * If a ManagedObject is cloned, the clone will have the same values for its managed properties as the source of the 
-	 * clone - if the property wasn't bound. If it is bound, the property in the clone will be bound to the same 
+	 *
+	 * If a ManagedObject is cloned, the clone will have the same values for its managed properties as the source of the
+	 * clone - if the property wasn't bound. If it is bound, the property in the clone will be bound to the same
 	 * model property as in the source.
-	 * 
-	 * Details about the declaration of a managed property, the metadata that describes it and the set of methods that are automatically 
+	 *
+	 * Details about the declaration of a managed property, the metadata that describes it and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend } method.
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>Aggregations</b><br>
-	 * Managed aggregations can store one or more references to other ManagedObjects. They are a mean to control the lifecycle 
+	 * Managed aggregations can store one or more references to other ManagedObjects. They are a mean to control the lifecycle
 	 * of the aggregated objects: one ManagedObject can be aggregated by at most one parent ManagedObject at any time.
-	 * When a ManagedObject is destroyed, all aggregated objects are destroyed as well and the object itself is removed from 
+	 * When a ManagedObject is destroyed, all aggregated objects are destroyed as well and the object itself is removed from
 	 * its parent. That is, aggregations won't contain destroyed objects or null/undefined.
-	 *  
-	 * Aggregations have a <i>name</i> ('e.g 'header' or 'items'), a <i>cardinality</i> ('0..1' or '0..n') and are of a specific 
-	 * <i>type</i> (which must be a subclass of ManagedObject as well or a UI5 interface). A ManagedObject will provide methods to 
-	 * set or get the aggregated object for a specific aggregation of cardinality 0..1 (e.g. <code>setHeader</code>, <code>getHeader</code> 
-	 * for an aggregation named 'header'). For an aggregation of cardinality 0..n, there are methods to get all aggregated objects 
-	 * (<code>getItems</code>), to locate an object in the aggregation (e.g. <code>indexOfItem</code>), to add, insert or remove 
-	 * a single aggregated object (<code>addItem</code>, <code>insertItem</code>, <code>removeItem</code>) or to remove or destroy 
+	 *
+	 * Aggregations have a <i>name</i> ('e.g 'header' or 'items'), a <i>cardinality</i> ('0..1' or '0..n') and are of a specific
+	 * <i>type</i> (which must be a subclass of ManagedObject as well or a UI5 interface). A ManagedObject will provide methods to
+	 * set or get the aggregated object for a specific aggregation of cardinality 0..1 (e.g. <code>setHeader</code>, <code>getHeader</code>
+	 * for an aggregation named 'header'). For an aggregation of cardinality 0..n, there are methods to get all aggregated objects
+	 * (<code>getItems</code>), to locate an object in the aggregation (e.g. <code>indexOfItem</code>), to add, insert or remove
+	 * a single aggregated object (<code>addItem</code>, <code>insertItem</code>, <code>removeItem</code>) or to remove or destroy
 	 * all objects from an aggregation (<code>removeAllItems</code>, <code>destroyItems</code>).
-	 *  
-	 * Details about the declaration of a managed aggregation, the metadata that describes it and the set of methods that are automatically 
+	 *
+	 * Details about the declaration of a managed aggregation, the metadata that describes it and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
-	 * 
-	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link bindAggregation} (and unbound again 
-	 * using {@link #unbindAggregation}. For each context in the model collection, a corresponding object will be created in the 
+	 *
+	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link bindAggregation} (and unbound again
+	 * using {@link #unbindAggregation}. For each context in the model collection, a corresponding object will be created in the
 	 * managed aggregation, either by cloning a template object or by calling a factory function.
-	 * 
-	 * Aggregations also control the databinding context of bound objects: by default, aggregated objects inherit all models 
+	 *
+	 * Aggregations also control the databinding context of bound objects: by default, aggregated objects inherit all models
 	 * and binding contexts from their parent object.
-	 * 
-	 * When a ManagedObject is cloned, all aggregated objects will be cloned as well - but only if they haven't been added by 
+	 *
+	 * When a ManagedObject is cloned, all aggregated objects will be cloned as well - but only if they haven't been added by
 	 * databinding. In that case, the aggregation in the clone will be bound to the same model collection.
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>Associations</b><br>
-	 * Managed associations also form a relationship between objects, but they don't define a lifecycle for the 
-	 * associated objects. They even can 'break' in the sense that an associated object might have been destroyed already 
-	 * although it is still referenced in an association. For the same reason, the internal storage for associations 
+	 * Managed associations also form a relationship between objects, but they don't define a lifecycle for the
+	 * associated objects. They even can 'break' in the sense that an associated object might have been destroyed already
+	 * although it is still referenced in an association. For the same reason, the internal storage for associations
 	 * are not direct object references but only the IDs of the associated target objects.
-	 * 
+	 *
 	 * Associations have a <i>name</i> ('e.g 'initialFocus'), a <i>cardinality</i> ('0..1' or '0..n') and are of a specific <i>type</i>
-	 * (which must be a subclass of ManagedObject as well or a UI5 interface). A ManagedObject will provide methods to set or get 
+	 * (which must be a subclass of ManagedObject as well or a UI5 interface). A ManagedObject will provide methods to set or get
 	 * the associated object for a specific association of cardinality 0..1 (e.g. <code>setInitialFocus</code>, <code>getInitialFocus</code>).
-	 * For an association of cardinality 0..n, there are methods to get all associated objects (<code>getRefItems</code>), 
+	 * For an association of cardinality 0..n, there are methods to get all associated objects (<code>getRefItems</code>),
 	 * to add, insert or remove a single associated object (<code>addRefItem</code>,
-	 * <code>insertRefItem</code>, <code>removeRefItem</code>) or to remove all objects from an association  
-	 * (<code>removeAllRefItems</code>). 
-	 * 
-	 * Details about the declaration of a managed association, the metadata that describes it and the set of methods that are automatically 
+	 * <code>insertRefItem</code>, <code>removeRefItem</code>) or to remove all objects from an association
+	 * (<code>removeAllRefItems</code>).
+	 *
+	 * Details about the declaration of a managed association, the metadata that describes it and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
 	 * Associations can't be bound to the model.
-	 * 
-	 * When a ManagedObject is cloned, the result for an association depends on the relationship between the associated target 
-	 * object and the root of the clone operation: if the associated object is part of the to-be-cloned object tree (reachable 
-	 * via aggregations from the root of the clone operation), then the cloned association will reference the clone of the 
+	 *
+	 * When a ManagedObject is cloned, the result for an association depends on the relationship between the associated target
+	 * object and the root of the clone operation: if the associated object is part of the to-be-cloned object tree (reachable
+	 * via aggregations from the root of the clone operation), then the cloned association will reference the clone of the
 	 * associated object. Otherwise it will reference the same object as in the original tree.
 	 * When a ManagedObject is destroyed, other objects that are only associated, are not affected by the destroy operation.
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>Events</b><br>
-	 * Managed events provide a mean for communicating important state changes to an arbitrary number of 'interested' listeners. 
-	 * Events have a <i>name</i> and (optionally) a set of <i>parameters</i>. For each event there will be methods to add or remove an event 
+	 * Managed events provide a mean for communicating important state changes to an arbitrary number of 'interested' listeners.
+	 * Events have a <i>name</i> and (optionally) a set of <i>parameters</i>. For each event there will be methods to add or remove an event
 	 * listener as well as a method to fire the event. (e.g. <code>attachChange</code>, <code>detachChange</code>, <code>fireChange</code>
 	 * for an event named 'change').
-	 * 
-	 * Details about the declaration of a managed events, the metadata that describes it and the set of methods that are automatically 
+	 *
+	 * Details about the declaration of a managed events, the metadata that describes it and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
-	 * When a ManagedObject is cloned, all listeners registered for any event in the clone source are also registered to the 
-	 * clone. Later changes are not reflect in any direction (neither from source to clone nor vice versa). 
+	 * When a ManagedObject is cloned, all listeners registered for any event in the clone source are also registered to the
+	 * clone. Later changes are not reflect in any direction (neither from source to clone nor vice versa).
 	 *
-	 * 
+	 *
 	 * <a name="lowlevelapi"><b>Low Level APIs:</b></a><br>
-	 * The prototype of ManagedObject provides several generic, low level APIs to manage properties, aggregations, associations 
-	 * and events. These generic methods are solely intended for implementing higher level, non-generic methods that manage 
+	 * The prototype of ManagedObject provides several generic, low level APIs to manage properties, aggregations, associations
+	 * and events. These generic methods are solely intended for implementing higher level, non-generic methods that manage
 	 * a single managed property etc. (e.g. a function <code>setSize(value)</code> that sets a new value for property 'size').
 	 * {@link sap.ui.base.ManagedObject.extend} creates default implementations of those higher level APIs for all managed aspects.
 	 * The implementation of a subclass then can override those default implementations with a more specific implementation,
 	 * e.g. to implement a side effect when a specific property is set or retrieved.
-	 * It is therefore important to understand that the generic low-level methods ARE NOT SUITABLE FOR GENERIC ACCESS to the 
+	 * It is therefore important to understand that the generic low-level methods ARE NOT SUITABLE FOR GENERIC ACCESS to the
 	 * state of a managed object, as that would bypass the overriding higher level methods and their side effects.
-	 * 
+	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
@@ -178,14 +189,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			associations : {},
 			events : {
 				/**
-				 * Fired after a new value for a bound property has been propagated to the model. 
-				 * Only fired, when the binding uses a data type. 
+				 * Fired after a new value for a bound property has been propagated to the model.
+				 * Only fired, when the binding uses a data type.
 				 */
 				"validationSuccess" : {
-					enableEventBubbling : true, 
+					enableEventBubbling : true,
 					parameters : {
 						/**
-						 * ManagedObject instance whose property initiated the model update. 
+						 * ManagedObject instance whose property initiated the model update.
 						 */
 						element : { type : 'sap.ui.base.ManagedObject' },
 						/**
@@ -193,32 +204,32 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						 */
 						property : { type : 'string' },
 						/**
-						 * Data type used in the binding. 
+						 * Data type used in the binding.
 						 */
 						type : { type : 'sap.ui.model.Type' },
 						/**
 						 * New value (external representation) as propagated to the model.
-						 * 
-						 * <b>Note: </b>the model might modify (normalize) the value again and this modification 
-						 * will be stored in the ManagedObject. The 'newValue' parameter of this event contains 
+						 *
+						 * <b>Note: </b>the model might modify (normalize) the value again and this modification
+						 * will be stored in the ManagedObject. The 'newValue' parameter of this event contains
 						 * the value <b>before</b> such a normalization.
 						 */
 						newValue : { type : 'any' },
 						/**
-						 * Old value (external representation) as previously stored in the ManagedObject. 
+						 * Old value (external representation) as previously stored in the ManagedObject.
 						 */
 						oldValue : { type : 'any' }
 					}
 				},
 				/**
 				 * Fired when a new value for a bound property should have been propagated to the model,
-				 * but validating the value failed with an exception. 
+				 * but validating the value failed with an exception.
 				 */
 				"validationError" : {
 					enableEventBubbling : true,
 					parameters : {
 						/**
-						 * ManagedObject instance whose property initiated the model update. 
+						 * ManagedObject instance whose property initiated the model update.
 						 */
 						element : { type : 'sap.ui.base.ManagedObject' },
 						/**
@@ -226,15 +237,15 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						 */
 						property : { type : 'string' },
 						/**
-						 * Data type used in the binding. 
+						 * Data type used in the binding.
 						 */
 						type : { type : 'sap.ui.model.Type' },
 						/**
 						 * New value (external representation) as parsed and validated by the binding.
 						 */
-						newValue : { type : 'any' }, 
+						newValue : { type : 'any' },
 						/**
-						 * Old value (external representation) as previously stored in the ManagedObject. 
+						 * Old value (external representation) as previously stored in the ManagedObject.
 						 */
 						oldValue : { type : 'any' },
 						/**
@@ -245,13 +256,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				},
 				/**
 				 * Fired when a new value for a bound property should have been propagated to the model,
-				 * but parsing the value failed with an exception. 
+				 * but parsing the value failed with an exception.
 				 */
-				"parseError" : { 
+				"parseError" : {
 					enableEventBubbling : true,
 					parameters : {
 						/**
-						 * ManagedObject instance whose property initiated the model update. 
+						 * ManagedObject instance whose property initiated the model update.
 						 */
 						element : { type : 'sap.ui.base.ManagedObject' },
 						/**
@@ -259,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						 */
 						property : { type : 'string' },
 						/**
-						 * Data type used in the binding. 
+						 * Data type used in the binding.
 						 */
 						type : { type : 'sap.ui.model.Type' },
 						/**
@@ -267,7 +278,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						 */
 						newValue : { type : 'any' },
 						/**
-						 * Old value (external representation) as previously stored in the ManagedObject. 
+						 * Old value (external representation) as previously stored in the ManagedObject.
 						 */
 						oldValue : { type : 'any' },
 						/**
@@ -278,9 +289,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				},
 				/**
 				 * Fired when a new value for a bound property should have been propagated from the model,
-				 * but formatting the value failed with an exception. 
+				 * but formatting the value failed with an exception.
 				 */
-				"formatError" : { 
+				"formatError" : {
 					enableEventBubbling : true,
 					parameters : {
 						/**
@@ -292,51 +303,51 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						 */
 						property : { type : 'string' },
 						/**
-						 * Data type used in the binding (if any). 
+						 * Data type used in the binding (if any).
 						 */
 						type : { type : 'sap.ui.model.Type' },
 						/**
 						 * New value (model representation) as propagated from the model.
 						 */
-						newValue : { type : 'any' }, 
+						newValue : { type : 'any' },
 						/**
-						 * Old value (external representation) as previously stored in the ManagedObject. 
+						 * Old value (external representation) as previously stored in the ManagedObject.
 						 */
 						oldValue : { type : 'any' }
 					}
 				}
 			},
 			specialSettings : {
-			  
+
 				/**
-				 * Unique ID of this instance. 
-				 * If not given, a so called autoID will be generated by the framework. 
+				 * Unique ID of this instance.
+				 * If not given, a so called autoID will be generated by the framework.
 				 * AutoIDs use a unique prefix that must not be used for Ids that the application (or other code) creates.
-				 * It can be configured option 'autoIDPrefix', see {@link sap.ui.core.Configuration}.	
+				 * It can be configured option 'autoIDPrefix', see {@link sap.ui.core.Configuration}.
 				 */
 				id : true,
 				//id : {type : "string", group : "Identification", defaultValue : '', readOnly : true}
 
 				/**
 				 * A map of model instances to which the object should be attached.
-				 * The models are keyed by their model name. For the default model, String(undefined) is expected. 
+				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
 				 */
 				models : true,
 
 				/**
 				 * A map of model instances to which the object should be attached.
-				 * The models are keyed by their model name. For the default model, String(undefined) is expected. 
+				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
 				 */
 				bindingContexts : true,
-				
+
 				/**
 				 * A map of model instances to which the object should be attached.
-				 * The models are keyed by their model name. For the default model, String(undefined) is expected. 
+				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
 				 */
 				objectBindings : true,
-				
+
 				/**
-				 * Used by ManagedObject.create. 
+				 * Used by ManagedObject.create.
 				 */
 				Type : true
 			}
@@ -374,7 +385,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			this.mAggregations = {};
 			this.mAssociations = {};
 			this.mMethods = {};
-			
+
 			// private properties
 			this.oParent = null;
 
@@ -436,30 +447,30 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/**
 	 * Returns the metadata for the ManagedObject class.
-	 * 
+	 *
 	 * @return {sap.ui.base.ManagedObjectMetadata} Metadata for the ManagedObject class.
 	 * @static
 	 * @public
 	 * @name sap.ui.base.ManagedObject.getMetadata
 	 * @function
 	 */
-	
+
 	/**
 	 * Returns the metadata for the class that this object belongs to.
-	 * 
+	 *
 	 * @return {sap.ui.base.ManagedObjectMetadata} Metadata for the class of the object
 	 * @public
 	 * @name sap.ui.base.ManagedObject#getMetadata
 	 * @function
 	 */
-	
+
 	/**
-	 * Defines a new subclass of ManagedObject with name <code>sClassName</code> and enriches it with 
+	 * Defines a new subclass of ManagedObject with name <code>sClassName</code> and enriches it with
 	 * the information contained in <code>oClassInfo</code>.
-	 * 
+	 *
 	 * <code>oClassInfo</code> can contain the same information that {@link sap.ui.base.Object.extend} already accepts,
 	 * plus the following new properties in the 'metadata' object literal:
-	 * 
+	 *
 	 * <ul>
 	 * <li><code>library : <i>string</i></code></li>
 	 * <li><code>properties : <i>object</i></code></li>
@@ -469,9 +480,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * <li><code>events : <i>object</i></code></li>
 	 * <li><code>specialSettings : <i>object</i></code>// this one is still experimental and not for public usage!</li>
 	 * </ul>
-	 * 
+	 *
 	 * Each of these properties is explained in more detail lateron.
-	 * 
+	 *
 	 * Example:
 	 * <pre>
 	 * ManagedObect.extend('sap.mylib.MyClass', {
@@ -485,7 +496,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *       header : { type: 'sap.mylib.FancyHeader', multiple : false }
 	 *       items : 'sap.ui.core.Control'
 	 *     },
-	 *     defaultAggregation : 'items', 
+	 *     defaultAggregation : 'items',
 	 *     associations : {
 	 *       initiallyFocused : { type: 'sap.ui.core.Control' }
 	 *     },
@@ -497,42 +508,42 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *       }
 	 *     },
 	 *   },
-	 *   
+	 *
 	 *   init: function() {
 	 *   }
-	 *   
+	 *
 	 * }); // end of 'extend' call
 	 * </pre>
-	 * 
+	 *
 	 * Detailed explanation of properties<br>
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>'library'</b> : <i>string</i><br>
-	 * Name of the library that the new subclass should belong to. If the subclass is a control or element, it will 
-	 * automatically register with that library so that authoring tools can discover it. 
-	 * By convention, the name of the subclass should have the library name as a prefix, e.g. 'sap.ui.commons.Panel' belongs 
+	 * Name of the library that the new subclass should belong to. If the subclass is a control or element, it will
+	 * automatically register with that library so that authoring tools can discover it.
+	 * By convention, the name of the subclass should have the library name as a prefix, e.g. 'sap.ui.commons.Panel' belongs
 	 * to library 'sap.ui.commons'.
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>'properties'</b> : <i>object</i><br>
-	 * An object literal whose properties each define a new managed property in the ManagedObject subclass. 
-	 * The value can either be a simple string which then will be assumed to be the type of the new property or it can be 
+	 * An object literal whose properties each define a new managed property in the ManagedObject subclass.
+	 * The value can either be a simple string which then will be assumed to be the type of the new property or it can be
 	 * an object literal with the following properties
 	 * <ul>
-	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types 'string', 'boolean', 'int', 'float', 'object' or 'any', or a 
-	 *     type created and registered with {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li> 
-	 * <li><code>group: ...</li>
+	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types 'string', 'boolean', 'int', 'float', 'object' or 'any', or a
+	 *     type created and registered with {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li>
+	 * <li><code>group: ...</code></li>
 	 * <li><code>defaultValue: <i>any</i></code> the default value for the property or null if there is no defaultValue.</li>
-	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable') 
-	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i> and <code>unbind<i>Name</i></code> are generated as convenience. 
-	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and 
+	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
+	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and
 	 *     {@link #unbindProperty} can always be used. </li>
 	 * </ul>
 	 * Property names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
 	 * be used as generic documentation of the aggregation.
-	 * 
-	 * For each public property 'foo', the following methods will be created by the "extend" method and will be added to the 
+	 *
+	 * For each public property 'foo', the following methods will be created by the "extend" method and will be added to the
 	 * prototype of the subclass:
 	 * <ul>
 	 * <li>getFoo() - returns the current value of property 'foo'. Internally calls {@link #getProperty}
@@ -540,8 +551,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}
 	 * <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}
 	 * </ul>
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>'aggregations'</b> : <i>object</i><br>
 	 * An object literal whose properties each define a new aggregation in the ManagedObject subclass.
 	 * The value can either be a simple string which then will be assumed to be the type of the new aggregation or it can be
@@ -549,15 +560,15 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * <ul>
 	 * <li><code>type: <i>string</i></code> type of the new aggregation. must be the full global name of a ManagedObject subclass (in dot notation, e.g. 'sap.m.Button')</li>
 	 * <li><code>[multiple]: <i>boolean</i></code> whether the aggregation is a 0..1 (false) or a 0..n aggregation (true), defaults to true </li>
-	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n aggregations. For 0..n aggregations the name by convention should be the plural name. 
-	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use 
+	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n aggregations. For 0..n aggregations the name by convention should be the plural name.
+	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
 	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine
 	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property. </li>
-	 * <li>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that belong to the API of a class must be 'public' whereas 
+	 * <li>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that belong to the API of a class must be 'public' whereas
 	 *     'hidden' aggregations typically are used for the implementation of composite classes (e.g. composite controls) </li>
-	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable') 
-	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i> and <code>unbind<i>Name</i></code> are generated as convenience. 
-	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and 
+	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
+	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and
 	 *     {@link #unbindAggregation} can always be used. </li>
 	 * </ul>
 	 * Aggregation names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
@@ -565,7 +576,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
 	 * be used as generic documentation of the aggregation.
 	 *
-	 * For each public aggregation 'item' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the 
+	 * For each public aggregation 'item' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the
 	 * prototype of the subclass:
 	 * <ul>
 	 * <li>getItem() - returns the current value of aggregation 'item'. Internally calls {@link #getAggregation} with a default value of <code>undefined</code></li>
@@ -586,38 +597,38 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * <li>unbindItems() - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #unbindAggregation}</li>
 	 * </ul>
 	 * For private or hidden aggregations, no methods are generated.
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>'defaultAggregation'</b> : <i>string</i><br>
-	 * When specified, the default aggregation must match the name of one of the aggregations defined for the new subclass (either own or inherited). 
-	 * The named aggregation will be used in contexts where no aggregation is specified. E,g. when an object in an XMLView embeds other objects without 
+	 * When specified, the default aggregation must match the name of one of the aggregations defined for the new subclass (either own or inherited).
+	 * The named aggregation will be used in contexts where no aggregation is specified. E,g. when an object in an XMLView embeds other objects without
 	 * naming an aggregation, as in the following example:
 	 * <pre>
 	 *  &lt;!-- assuming the defaultAggregation for Dialog is 'content' -->
-	 *  &lt;Dialog> 
+	 *  &lt;Dialog>
 	 *    &lt;Text/>
 	 *    &lt;Button/>
 	 *  &lt;/Dialog>
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>'associations'</b> : <i>object</i><br>
 	 * An object literal whose properties each define a new association of the ManagedObject subclass.
-	 * The value can either be a simple string which then will be assumed to be the type of the new association or it can be 
+	 * The value can either be a simple string which then will be assumed to be the type of the new association or it can be
 	 * an object literal with the following properties
 	 * <ul>
 	 * <li><code>type: <i>string</i></code> type of the new association</li>
 	 * <li><code>multiple: <i>boolean</i></code> whether the association is a 0..1 (false) or a 0..n association (true), defaults to false(1) for associations</li>
-	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n associations. For 0..n associations the name by convention should be the plural name. 
-	 *     Methods affecting multiple objects in an association will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use 
-	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine 
+	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n associations. For 0..n associations the name by convention should be the plural name.
+	 *     Methods affecting multiple objects in an association will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
+	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine
 	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property.</li>
 	 * </ul>
 	 * Association names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * If an association in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
 	 * be used as generic documentation of the association.
-	 * 
-	 * For each association 'ref' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the 
+	 *
+	 * For each association 'ref' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the
 	 * prototype of the subclass:
 	 * <ul>
 	 * <li>getRef() - returns the current value of association 'item'. Internally calls {@link #getAssociation} with a default value of <code>undefined</code></li>
@@ -630,8 +641,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * <li>removeRef(v) - removes an object from the association 'items'. Internally calls {@link #removeAssociation}</li>
 	 * <li>removeAllRefs() - removes all objects from the association 'items'. Internally calls {@link #removeAllAssociation}</li>
 	 * </ul>
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>'events'</b> : <i>object</i><br>
 	 * An object literal whose properties each define a new event of the ManagedObject subclass.
 	 * The value can either be a simple string which then will be assumed to be the type of the new association or it can be
@@ -643,28 +654,28 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Event names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * If an event in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will be used
 	 * as generic documentation of the event.
-	 * 
-	 * For each event 'Some' the following methods will be created by the "extend" method and will be added to the 
+	 *
+	 * For each event 'Some' the following methods will be created by the "extend" method and will be added to the
 	 * prototype of the subclass:
 	 * <ul>
 	 * <li>attachSome(fn,o) - registers a listener for the event. Internally calls {@link #attachEvent}</li>
 	 * <li>detachSome(fn,o) - deregisters a listener for the event. Internally calls {@link #detachEvent}</li>
 	 * <li>fireSome() - fire the event. Internally calls {@link #fireEvent}</li>
 	 * </ul>
-	 * 
-	 * 
+	 *
+	 *
 	 * <b>'specialSettings'</b> : <i>object</i><br>
-	 * Special settings are an experimental feature and MUST NOT BE USED by controls or applications outside of the sap.ui.core project.  
-	 * 
+	 * Special settings are an experimental feature and MUST NOT BE USED by controls or applications outside of the sap.ui.core project.
+	 *
 	 * @param {string} sClassName name of the class to be created
 	 * @param {object} [oClassInfo] object literal with informations about the class
 	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ManagedObjectMetadata.
 	 * @return {function} the created class / constructor function
-	 * 
+	 *
 	 * @public
 	 * @static
 	 * @experimental Since 1.27.0 Support for 'specialSettings' is experimental and might be modified or removed in future versions.
-	 *   They must not be used in any way outside of the sap.ui.core library. Code outside sap.ui.core must not declare special settings 
+	 *   They must not be used in any way outside of the sap.ui.core library. Code outside sap.ui.core must not declare special settings
 	 *   nor must it try to retrieve / evaluate metadata for such settings.
 	 * @name sap.ui.base.ManagedObject.extend
 	 * @function
@@ -792,7 +803,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			preprocessor = ManagedObject._fnSettingsPreprocessor,
 			sKey, oValue, oKeyInfo;
 
-		// add all given objects to the given aggregation. nested arrays are flattened 
+		// add all given objects to the given aggregation. nested arrays are flattened
 		// (might occur e.g. in case of content from an extension point)
 		function addAllToAggregation(aObjects) {
 			for (var i = 0, len = aObjects.length; i < len; i++) {
@@ -827,7 +838,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			if ( typeof mSettings.bindingContexts !== "object" ) {
 				throw new Error("bindingContexts must be a simple object");
 			}
-			if ( mSettings.bindingContexts instanceof sap.ui.model.Context) {
+			if ( mSettings.bindingContexts instanceof Context) {
 				this.setBindingContext(mSettings.bindingContexts);
 			} else {
 				for (sKey in mSettings.bindingContexts ) {
@@ -890,7 +901,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					} else {
 						oValue = oBindingInfo || oValue; // could be an unescaped string if altTypes contains 'string'
 						if ( oValue ) {
-							addAllToAggregation(jQuery.isArray(oValue) ? oValue : [oValue]); // wrap a single object as array 
+							addAllToAggregation(jQuery.isArray(oValue) ? oValue : [oValue]); // wrap a single object as array
 						}
 					}
 					break;
@@ -954,23 +965,23 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	// ######################################################################################################
 
 	/**
-	 * Sets the given value for the given property after validating and normalizing it, 
+	 * Sets the given value for the given property after validating and normalizing it,
 	 * marks this object as changed.
-	 *  
-	 * If the value is not valid with regard to the declared data type of the property, 
-	 * an Error is thrown (see {@link #validateProperty}. If the validated and normalized 
+	 *
+	 * If the value is not valid with regard to the declared data type of the property,
+	 * an Error is thrown (see {@link #validateProperty}. If the validated and normalized
 	 * <code>oValue</code> equals the current value of the property, the internal state of
-	 * this object is not changed. If the value changes, it is stored internally and 
+	 * this object is not changed. If the value changes, it is stored internally and
 	 * the {@link #invalidate} method is called on this object. In the case of TwoWay
-	 * databinding, the bound model is informed about the property change.  
-	 * 
+	 * databinding, the bound model is informed about the property change.
+	 *
 	 * Note that ManagedObject only implements a single level of change tracking: if a first
-	 * call to setProperty recognizes a change, 'invalidate' is called. If another call to 
-	 * setProperty reverts that change, invalidate() will be called again, the new status 
-	 * is not recognized as being 'clean' again. 
+	 * call to setProperty recognizes a change, 'invalidate' is called. If another call to
+	 * setProperty reverts that change, invalidate() will be called again, the new status
+	 * is not recognized as being 'clean' again.
 	 *
 	 * <b>Note:</b> This method is a low level API as described in <a href="#lowlevelapi">the class documentation</a>.
-	 * Applications or frameworks must not use this method to generically set a property. 
+	 * Applications or frameworks must not use this method to generically set a property.
 	 * Use the concrete method set<i>XYZ</i> for property 'XYZ' or the generic {@link #applySettings} instead.
 	 *
 	 * @param {string}  sPropertyName name of the property to set
@@ -1028,9 +1039,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Returns the value for the property with the given <code>sPropertyName</code>
 	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
-	 * Applications or frameworks must not use this method to generically retrieve the value of a property. 
+	 * Applications or frameworks must not use this method to generically retrieve the value of a property.
 	 * Use the concrete method get<i>XYZ</i> for property 'XYZ' instead.
-	 * 
+	 *
 	 * @param {string} sPropertyName the name of the property
 	 * @returns {any} the value of the property
 	 * @protected
@@ -1061,19 +1072,19 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/**
 	 * Checks whether the given value is of the proper type for the given property name.
-	 *  
-	 * In case <code>null</code> or <code>undefined</code> is passed, the default value for 
-	 * this property is used as value. If no default value is defined for the property, the 
+	 *
+	 * In case <code>null</code> or <code>undefined</code> is passed, the default value for
+	 * this property is used as value. If no default value is defined for the property, the
 	 * default value of the type of the property is used.
 	 *
-	 * If the property has a data type that is an instance of sap.ui.base.DataType and if 
-	 * a <code>normalize</code> function is defined for that type, that function will be 
+	 * If the property has a data type that is an instance of sap.ui.base.DataType and if
+	 * a <code>normalize</code> function is defined for that type, that function will be
 	 * called with the resulting value as only argument. The result of the function call is
-	 * then used instead of the raw value. 
-	 *   
+	 * then used instead of the raw value.
+	 *
 	 * This method is called by {@link #setProperty}. In many cases, subclasses of
 	 * ManagedObject don't need to call it themselves.
-	 * 
+	 *
 	 * @param {string} sPropertyName the name of the property
 	 * @param {any} oValue the value
 	 * @return {any} the normalized value for the passed value or for the default value if null or undefined was passed
@@ -1140,11 +1151,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	/**
 	 * Returns the origin info for the value of the given property.
 	 *
-	 * The origin info might contain additional information for translatable 
-	 * texts. The bookkeeping of this information is not active by default and must be 
-	 * activated by configuration. Even then, it might not be present for all properties 
+	 * The origin info might contain additional information for translatable
+	 * texts. The bookkeeping of this information is not active by default and must be
+	 * activated by configuration. Even then, it might not be present for all properties
 	 * and their values depending on where the value came form.
-	 *    
+	 *
 	 * @param {string} sPropertyName the name of the property
 	 * @return {object} a map of properties describing the origin of this property value or null
 	 * @public
@@ -1163,16 +1174,16 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	// ######################################################################################################
 
 	/**
-	 * Sets the associatied object for the given managed association of cardinality '0..1' and 
+	 * Sets the associatied object for the given managed association of cardinality '0..1' and
 	 * marks this ManagedObject as changed.
-	 * 
-	 * The associated object can either be given by itself or by its id. If <code>null</code> or 
+	 *
+	 * The associated object can either be given by itself or by its id. If <code>null</code> or
 	 * <code>undefined</code> is given, the association is cleared.
-	 * 
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically set an object in an association.
-	 * Use the concrete method set<i>XYZ</i> for association 'XYZ' or the generic {@link #applySettings} instead. 
-	 * 
+	 * Use the concrete method set<i>XYZ</i> for association 'XYZ' or the generic {@link #applySettings} instead.
+	 *
 	 * @param {string}
 	 *            sAssociationName name of the association
 	 * @param {string | sap.ui.base.ManagedObject}
@@ -1214,27 +1225,27 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	};
 
 	/**
-	 * Returns the content of the association wit hthe given name. 
+	 * Returns the content of the association wit hthe given name.
 	 *
 	 * For associations of cardinality 0..1, a single string with the ID of an associated
-	 * object is returned (if any). For cardinality 0..n, an array with the IDs of the 
+	 * object is returned (if any). For cardinality 0..n, an array with the IDs of the
 	 * associated objects is returned.
-	 *  
+	 *
 	 * If the association does not contain any objects(s), the given <code>oDefaultForCreation</code>
-	 * is set as new value of the association and returned to the caller. The only supported values for 
-	 * <code>oDefaultForCreation</code> are <code>null</code> and <code>undefined</code> in the case of 
-	 * cardinality 0..1 and <code>null</code>, <code>undefined</code> or an empty array (<code>[]</code>) 
-	 * in case of cardinality 0..n. If the argument is omitted, <code>null</code> is used independently 
+	 * is set as new value of the association and returned to the caller. The only supported values for
+	 * <code>oDefaultForCreation</code> are <code>null</code> and <code>undefined</code> in the case of
+	 * cardinality 0..1 and <code>null</code>, <code>undefined</code> or an empty array (<code>[]</code>)
+	 * in case of cardinality 0..n. If the argument is omitted, <code>null</code> is used independently
 	 * from the cardinality.
-	 * 
+	 *
 	 * <b>Note:</b> the need to specify a default value and the fact that it is stored as
-	 * new value of a so far empty association is recognized as a shortcoming of this API 
+	 * new value of a so far empty association is recognized as a shortcoming of this API
 	 * but can no longer be changed for compatibility reasons.
-	 * 
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically retrieve the content of an association.
 	 * Use the concrete method get<i>XYZ</i> for association 'XYZ' instead.
-	 * 
+	 *
 	 * @param {string} sAssociationName the name of the association
 	 * @param {object}
 	 *			  oDefaultForCreation the object that is used in case the current aggregation is empty (only null or empty array allowed)
@@ -1259,11 +1270,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	};
 
 	/**
-	 * Adds some object with the ID <code>sId</code> to the association identified by <code>sAssociationName</code> and 
+	 * Adds some object with the ID <code>sId</code> to the association identified by <code>sAssociationName</code> and
 	 * marks this ManagedObject as changed.
 	 *
-	 * This method does not avoid duplicates. 
-	 *  
+	 * This method does not avoid duplicates.
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically add an object to an association.
 	 * Use the concrete method add<i>XYZ</i> for association 'XYZ' or the generic {@link #applySettings} instead.
@@ -1311,17 +1322,17 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	};
 
 	/**
-	 * Removes a ManagedObject from the association named <code>sAssociationName</code>. 
-	 * 
+	 * Removes a ManagedObject from the association named <code>sAssociationName</code>.
+	 *
 	 * If an object is removed, the Id of that object is returned and this ManagedObject is
 	 * marked as changed. Otherwise <code>undefined</code> is returned.
 	 *
-	 * If the same object was added multiple times to the same association, only a single 
-	 * occurence of it will be removed by this method. If the object is not found or if the 
-	 * parameter can't be interpreted neither as a ManagedObject (or id) nor as an index in 
-	 * the assocation, nothing will be removed. The same is true if an index is given and if  
+	 * If the same object was added multiple times to the same association, only a single
+	 * occurence of it will be removed by this method. If the object is not found or if the
+	 * parameter can't be interpreted neither as a ManagedObject (or id) nor as an index in
+	 * the assocation, nothing will be removed. The same is true if an index is given and if
 	 * that index is out of range for the association.
-	 * 
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically remove an object from an association.
 	 * Use the concrete method remove<i>XYZ</i> for association 'XYZ' instead.
@@ -1339,6 +1350,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	ManagedObject.prototype.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {
 		var aIds = this.mAssociations[sAssociationName];
 		var sId = null;
+
+		if (!aIds) {
+			return null;
+		}
 
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -1426,8 +1441,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Checks whether the given value is of the proper type for the given aggregation name.
 	 *
 	 * This method is already called by {@link #setAggregation}, {@link #addAggregation} and {@link #insertAggregation}.
-	 * In many cases, subclasses of ManagedObject don't need to call it again in their mutator methods. 
-	 *   
+	 * In many cases, subclasses of ManagedObject don't need to call it again in their mutator methods.
+	 *
 	 * @param {string} sAggregationName the name of the aggregation
 	 * @param {sap.ui.base.ManagedObject|any} oObject the aggregated object or a primitive value
 	 * @param {boolean} bMultiple whether the caller assumes the aggregation to have cardinality 0..n
@@ -1440,7 +1455,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oAggregation = oMetadata.getManagedAggregation(sAggregationName), // public or private
 			aAltTypes,
 			oType,
-			i, 
+			i,
 			msg;
 
 		if (!oAggregation) {
@@ -1478,7 +1493,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					if (oType.isValid(oObject)) {
 						return oObject;
 					}
-				} 
+				}
 			}
 		}
 
@@ -1493,34 +1508,34 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	};
 
 	/**
-	 * Sets a new object in the named 0..1 aggregation of this ManagedObject and 
+	 * Sets a new object in the named 0..1 aggregation of this ManagedObject and
 	 * marks this ManagedObject as changed.
 	 *
-	 * If the given object is not valid with regard to the aggregation (if it is not an instance 
-	 * of the type specified for that aggregation) or when the method is called for an aggregation 
-	 * of cardinality 0..n, then an Error is thrown (see {@link #validateAggregation}. 
-	 * 
+	 * If the given object is not valid with regard to the aggregation (if it is not an instance
+	 * of the type specified for that aggregation) or when the method is called for an aggregation
+	 * of cardinality 0..n, then an Error is thrown (see {@link #validateAggregation}.
+	 *
 	 * If the new object is the same as the currently aggregated object, then the internal state
-	 * is not modified and this ManagedObject is not marked as changed. 
-	 *  
-	 * If the given object is different, the parent of a previously aggregated object is cleared 
-	 * (it must have been this ManagedObject before), the parent of the given object is set to this 
-	 * ManagedObject and {@link #invalidate} is called for this object. 
-	 * 
-	 * Note that this method does neither return nor destroy the previously aggregated object. 
-	 * This behavior is inherited by named set methods (see below) in subclasses. 
-	 * To avoid memory leaks, applications therefore should first get the aggregated object, 
-	 * keep a reference to it or destroy it, depending on their needs, and only then set a new 
+	 * is not modified and this ManagedObject is not marked as changed.
+	 *
+	 * If the given object is different, the parent of a previously aggregated object is cleared
+	 * (it must have been this ManagedObject before), the parent of the given object is set to this
+	 * ManagedObject and {@link #invalidate} is called for this object.
+	 *
+	 * Note that this method does neither return nor destroy the previously aggregated object.
+	 * This behavior is inherited by named set methods (see below) in subclasses.
+	 * To avoid memory leaks, applications therefore should first get the aggregated object,
+	 * keep a reference to it or destroy it, depending on their needs, and only then set a new
 	 * object.
-	 * 
+	 *
 	 * Note that ManagedObject only implements a single level of change tracking: if a first
-	 * call to setAggregation recognizes a change, 'invalidate' is called. If another call to 
-	 * setAggregation reverts that change, invalidate() will be called again, the new status 
-	 * is not recognized as being 'clean' again. 
+	 * call to setAggregation recognizes a change, 'invalidate' is called. If another call to
+	 * setAggregation reverts that change, invalidate() will be called again, the new status
+	 * is not recognized as being 'clean' again.
 	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically set an object in an aggregation.
-	 * Use the concrete method set<i>XYZ</i> for aggregation 'XYZ' or the generic {@link #applySettings} instead. 
+	 * Use the concrete method set<i>XYZ</i> for aggregation 'XYZ' or the generic {@link #applySettings} instead.
 	 *
 	 * @param {string}
 	 *            sAggregationName name of an 0..1 aggregation
@@ -1529,7 +1544,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
-	 * @throws {Error} 
+	 * @throws {Error}
 	 * @protected
 	 */
 	ManagedObject.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
@@ -1569,14 +1584,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * If the aggregation does not contain any objects(s), the given <code>oDefaultForCreation</code>
 	 * (or <code>null</code>) is set as new value of the aggregation and returned to the caller.
-	 *  
+	 *
 	 * <b>Note:</b> the need to specify a default value and the fact that it is stored as
-	 * new value of a so far empty aggregation is recognized as a shortcoming of this API 
+	 * new value of a so far empty aggregation is recognized as a shortcoming of this API
 	 * but can no longer be changed for compatibility reasons.
-	 * 
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically read the content of an aggregation.
-	 * Use the concrete method get<i>XYZ</i> for aggregation 'XYZ' instead. 
+	 * Use the concrete method get<i>XYZ</i> for aggregation 'XYZ' instead.
 	 *
 	 * @param {string}
 	 *            sAggregationName the name of the aggregation
@@ -1604,14 +1619,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	};
 
 	/**
-	 * Searches for the provided ManagedObject in the named aggregation and returns its 
-	 * 0-based index if found, or -1 otherwise. Returns -2 if the given named aggregation 
-	 * is of cardinality 0..1 and doesn't reference the given object. 
-	 * 
+	 * Searches for the provided ManagedObject in the named aggregation and returns its
+	 * 0-based index if found, or -1 otherwise. Returns -2 if the given named aggregation
+	 * is of cardinality 0..1 and doesn't reference the given object.
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically determine the position of an object in an aggregation.
 	 * Use the concrete method indexOf<i>XYZ</i> for aggregation 'XYZ' instead.
-	 *  
+	 *
 	 * @param {string}
 	 *            sAggregationName the name of the aggregation
 	 * @param {sap.ui.base.ManagedObject}
@@ -1637,16 +1652,16 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/**
 	 * Inserts managed object <code>oObject</code> to the aggregation named <code>sAggregationName</code> at
-	 * position <code>iIndex</code>. 
-	 * 
-	 * If the given object is not valid with regard to the aggregation (if it is not an instance 
-	 * of the type specified for that aggregation) or when the method is called for an aggregation 
-	 * of cardinality 0..1, then an Error is thrown (see {@link #validateAggregation}. 
+	 * position <code>iIndex</code>.
+	 *
+	 * If the given object is not valid with regard to the aggregation (if it is not an instance
+	 * of the type specified for that aggregation) or when the method is called for an aggregation
+	 * of cardinality 0..1, then an Error is thrown (see {@link #validateAggregation}.
 	 *
 	 * If the given index is out of range with respect to the current content of the aggregation,
 	 * it is clipped to that range (0 for iIndex < 0, n for iIndex > n).
-	 *  
-	 * Please note that this method does not work as expected when an object is added 
+	 *
+	 * Please note that this method does not work as expected when an object is added
 	 * that is already part of the aggregation. In order to change the index of an object
 	 * inside an aggregation, first remove it, then insert it again.
 	 *
@@ -1697,13 +1712,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	/**
 	 * Adds some entity <code>oObject</code> to the aggregation identified by <code>sAggregationName</code>.
 	 *
-	 * If the given object is not valid with regard to the aggregation (if it is not an instance 
-	 * of the type specified for that aggregation) or when the method is called for an aggregation 
-	 * of cardinality 0..1, then an Error is thrown (see {@link #validateAggregation}. 
+	 * If the given object is not valid with regard to the aggregation (if it is not an instance
+	 * of the type specified for that aggregation) or when the method is called for an aggregation
+	 * of cardinality 0..1, then an Error is thrown (see {@link #validateAggregation}.
 	 *
 	 * If the aggregation already has content, the new object will be added after the current content.
 	 * If the new object was already contained in the aggregation, it will be moved to the end.
-	 *  
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically add an object to an aggregation.
 	 * Use the concrete method add<i>XYZ</i> for aggregation 'XYZ' or the generic {@link #applySettings} instead.
@@ -1735,16 +1750,16 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/**
 	 * Removes an object from the aggregation named <code>sAggregationName</code> with cardinality 0..n.
-	 * 
+	 *
 	 * The removed object is not destroyed nor is it marked as changed.
-	 *  
+	 *
 	 * If the given object is found in the aggreation, it is removed, it's parent relationship
-	 * is unset and this ManagedObject is marked as changed. The removed object is returned as 
-	 * result of this method. If the object could not be found, <code>undefined</code> is returned. 
-	 * 
-	 * This method must only be called for aggregations of cardinality 0..n. The only way to remove objects 
-	 * from a 0..1 aggregation is to set a <code>null</code> value for them. 
-	 *   
+	 * is unset and this ManagedObject is marked as changed. The removed object is returned as
+	 * result of this method. If the object could not be found, <code>undefined</code> is returned.
+	 *
+	 * This method must only be called for aggregations of cardinality 0..n. The only way to remove objects
+	 * from a 0..1 aggregation is to set a <code>null</code> value for them.
+	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically remove an object from an aggregation.
 	 * Use the concrete method remove<i>XYZ</i> for aggregation 'XYZ' instead.
@@ -1753,7 +1768,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            sAggregationName the string identifying the aggregation that the given object should be removed from
 	 * @param {int | string | sap.ui.base.ManagedObject}
 	 *            vObject the position or ID of the ManagedObject that should be removed or that ManagedObject itself;
-	 *            if <code>vObject</code> is invalid, a negative value or a value greater or equal than the current size 
+	 *            if <code>vObject</code> is invalid, a negative value or a value greater or equal than the current size
 	 *            of the aggregation, nothing is removed.
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
@@ -1817,13 +1832,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/**
 	 * Removes all objects from the 0..n-aggregation named <code>sAggregationName</code>.
-	 * 
+	 *
 	 * The removed objects are not destroyed nor are they marked as changed.
-	 *  
-	 * Additionally, it clears the parent relationship of all removed objects, marks this 
+	 *
+	 * Additionally, it clears the parent relationship of all removed objects, marks this
 	 * ManagedObject as changed and returns an array with the removed objects.
-	 * 
-	 * If the aggregation did not contain any objects, an empty array is returned and this 
+	 *
+	 * If the aggregation did not contain any objects, an empty array is returned and this
 	 * ManagedObject is not marked as changed.
 	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
@@ -1966,7 +1981,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		return bInvalidateSuppressed;
 	};
 
-
 	/**
 	 * Removes the given child from this object's named aggregation.
 	 * @see sap.ui.core.UIArea#_removeChild
@@ -2104,7 +2118,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		return this.oParent;
 	};
 
-
 	/**
 	 * Cleans up the resources associated with this object and all its aggregated children.
 	 *
@@ -2159,21 +2172,25 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 		});
 
+		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
+			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
+		});
+
 		// reset suppress invalidate flag
 		if (bSuppressInvalidate) {
 			this.iSuppressInvalidate--;
 		}
-		
+
 		sap.ui.getCore().getMessageManager().removeMessages(this._aMessages);
 		this._aMessages = undefined;
-		
+
 		EventProvider.prototype.destroy.apply(this, arguments);
 
 		// finally make the object unusable
 		this.setParent = function(){
 			throw Error("The object with ID " + that.getId() + " was destroyed and cannot be used anymore.");
 		};
-		
+
 		// make visible that it's been destroyed.
 		this.bIsDestroyed = true;
 	};
@@ -2278,15 +2295,18 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
 	 * If a relative binding path is used, this will be applied whenever the parent context changes.
-	 * @param {string} sPath the binding path
-	 * @param {object} [mParameters] map of additional parameters for this binding
+	 * @param {string|object} vPath the binding path or an object with more detailed binding options
+	 * @param {string} vPath.path the binding path
+	 * @param {object} [vPath.parameters] map of additional parameters for this binding
+	 * @param {string} [vPath.model] name of the model
+	 * @param {object} [vPath.events] map of event listeners for the binding events
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string)
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.bindObject = function(sPath, mParameters) {
 		var boundObject = {},
-			oldBoundObject,
 			sModelName,
 			iSeparatorPos;
 		// support object notation
@@ -2306,14 +2326,12 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			boundObject.sBindingPath = sPath.substr(iSeparatorPos + 1);
 		}
 
-		//if old binding exists detach handler
-		oldBoundObject = this.mBoundObjects[sModelName];
-		if (oldBoundObject && oldBoundObject.binding) {
-			oldBoundObject.binding.detachChange(oldBoundObject.fChangeHandler);
-			oldBoundObject.binding.detachEvents(oldBoundObject.events);
-			oldBoundObject.binding.destroy();
-			//clear elementContext
-			delete this.mElementBindingContexts[sModelName];
+		// if old binding exists, clean it up
+		if ( this.mBoundObjects[sModelName] ) {
+			this.unbindObject(sModelName, /* _bSkipUpdateBindingContext */ true);
+			// We don't push down context changes here
+			// Either this will happen with the _bindObject call below or the model
+			// is not available yet and wasn't available before -> no change of contexts
 		}
 
 		this.mBoundObjects[sModelName] = boundObject;
@@ -2322,6 +2340,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		if (this.getModel(sModelName)) {
 			this._bindObject(sModelName, boundObject);
 		}
+
 		return this;
 	};
 
@@ -2338,7 +2357,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		var fChangeHandler = function(oEvent) {
 			/* as we reuse the context objects we need to ensure an update of relative bindings. Therefore we set
-			   the context to null so relative bindings will detect a context change */ 
+			   the context to null so relative bindings will detect a context change */
 			if (oBinding.getBoundContext() === that.getBindingContext(sModelName)) {
 				that.setElementBindingContext(null, sModelName);
 			}
@@ -2370,7 +2389,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @public
 	 */
 	ManagedObject.prototype.bindContext = function(sPath) {
-		return this.bindElement(sPath);
+		return this.bindObject(sPath);
 	};
 
 	/**
@@ -2383,7 +2402,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @public
 	 */
 	ManagedObject.prototype.unbindContext = function(sModelName) {
-		return this.unbindElement(sModelName);
+		return this.unbindObject(sModelName);
 	};
 
 	/**
@@ -2394,7 +2413,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
-	ManagedObject.prototype.unbindObject = function(sModelName) {
+	ManagedObject.prototype.unbindObject = function(sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
 		var oBoundObject = this.mBoundObjects[sModelName];
 		if (oBoundObject) {
 			if (oBoundObject.binding) {
@@ -2404,7 +2423,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 			delete this.mBoundObjects[sModelName];
 			delete this.mElementBindingContexts[sModelName];
-			this.updateBindingContext(false, false, sModelName);
+			if ( !_bSkipUpdateBindingContext ) {
+				this.updateBindingContext(false, false, sModelName);
+			}
 		}
 		return this;
 	};
@@ -2425,21 +2446,22 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} [oBindingInfo.model] the model identifier
 	 * @param {function} [oBindingInfo.formatter] the formatter function
 	 * @param {boolean} [oBindingInfo.useRawValues] determines if the parameters in the formatter functions should be passed as raw values or not. In this case
-	 * 					the specified type for the binding is not used and the values are not formatted. Note: use this flag only when using multiple bindings.
-	 * 					If you use only one binding and want raw values then simply don't specify a type for that binding.
+	 *                  the specified type for the binding is not used and the values are not formatted. Note: use this flag only when using multiple bindings.
+	 *                  If you use only one binding and want raw values then simply don't specify a type for that binding.
 	 * @param {sap.ui.model.Type|string} [oBindingInfo.type] the sap.ui.model.Type object or class name
 	 * @param {object} [oBindingInfo.formatOptions] the format options to be used
 	 * @param {object} [oBindingInfo.constraints] the constraints for this value
 	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
 	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
 	 * @param {object} [oBindingInfo.parts] object for definding a read only composite binding which may have multiple binding paths also in different models.
-	 * 									<code>oTxt.bindValue({
-   * 										parts: [
-   *         								{path: "/firstName", type: new sap.ui.model.type.String()},
-   *         								{path: "myModel2>/lastName"}
-   *        						]
-	 *									}); </code>
-	 *
+	 * <pre>
+	 *   oTxt.bindValue({
+	 *     parts: [
+	 *       {path: "/firstName", type: new sap.ui.model.type.String()},
+	 *       {path: "myModel2>/lastName"}
+	 *     ]
+	 *   });
+	 * </pre>
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
@@ -2545,25 +2567,25 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				//clear Messages from messageManager
 				if (oMessageManager && that._aMessages && that._aMessages.length > 0) {
 					sap.ui.getCore().getMessageManager().removeMessages(that._aMessages);
-					that._aMessages = [];	
+					that._aMessages = [];
 				}
 				//delete control Messages (value is updated from model) and update control with model messages
 				if (oBinding.getMessages()) {
-					that.updateMessages(sName, oBinding.getMessages());
+					that.propagateMessages(sName, oBinding.getMessages());
 				}
 				if (oBinding.getBindingMode() === BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
-					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
 				}
 			},
 			fMessageChangeHandler = function(oEvent){
 				var aAllMessages = [];
-			
+
 				var sMessageSource = oEvent.getParameter("messageSource");
 				var aMessages = oEvent.getParameter("messages");
-		
+
 				if (sMessageSource == "control") {
 					that._aMessages = aMessages;
 				}
@@ -2574,7 +2596,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				if (oBinding.getMessages()) {
 					aAllMessages = aAllMessages.concat(oBinding.getMessages());
 				}
-				that.updateMessages(sName, aAllMessages);
+				that.propagateMessages(sName, aAllMessages);
 			};
 
 		// Only use context for bindings on the primary model
@@ -2598,7 +2620,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 			sMode = oPart.mode || oModel.getDefaultBindingMode();
 			oBinding.setBindingMode(sMode);
-			
+
 			// Only if all parts have twoway binding enabled, the composite binding will also have twoway binding
 			if (sMode != BindingMode.TwoWay) {
 				sCompositeMode = BindingMode.OneWay;
@@ -2689,7 +2711,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oBindingInfo.skipModelUpdate = false;
 		} catch (oException) {
 			oBindingInfo.skipModelUpdate = false;
-			if (oException instanceof sap.ui.model.FormatException) {
+			if (oException instanceof FormatException) {
 				this.fireFormatError({
 					element : this,
 					property : sName,
@@ -2752,7 +2774,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					}
 				} catch (oException) {
 					oBindingInfo.skipPropertyUpdate = false;
-					if (oException instanceof sap.ui.model.ParseException) {
+					if (oException instanceof ParseException) {
 						this.fireParseError({
 							element: this,
 							property: sName,
@@ -2762,7 +2784,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 							exception: oException,
 							message: oException.message
 						}, false, true); // bAllowPreventDefault, bEnableEventBubbling
-					} else if (oException instanceof sap.ui.model.ValidateException) {
+					} else if (oException instanceof ValidateException) {
 						this.fireValidationError({
 							element: this,
 							property: sName,
@@ -2779,6 +2801,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 		}
 	};
+
+	// a non-falsy value used as default for 'templateShareable'.
+	var MAYBE_SHAREABLE_OR_NOT = 1;
 
 	/**
 	 * Bind an aggregation to the model.
@@ -2857,8 +2882,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		// if we have a template we will create a factory function
 		if (oBindingInfo.template) {
 			// set default for templateShareable
+			if ( oBindingInfo.template._sapui_candidateForDestroy ) {
+				// template became active again, we should no longer consider to destroy it
+				jQuery.sap.log.warning("A template was reused in a binding, but was already marked as candidate for destroy. You better should declare such a usage with templateShareable:true in the binding configuration.");
+				delete oBindingInfo.template._sapui_candidateForDestroy;
+			}
 			if (oBindingInfo.templateShareable === undefined) {
-				oBindingInfo.templateShareable = true;
+				oBindingInfo.templateShareable = MAYBE_SHAREABLE_OR_NOT;
 			}
 			oBindingInfo.factory = function(sId) {
 				return oBindingInfo.template.clone(sId);
@@ -2949,8 +2979,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oBindingInfo.binding.destroy();
 			}
 			// remove template if any
-			if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.destroy) {
+			if (oBindingInfo.template ) {
+				if ( !oBindingInfo.templateShareable && oBindingInfo.template.destroy ) {
 					oBindingInfo.template.destroy();
+				}
+				if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
+					oBindingInfo.template._sapui_candidateForDestroy = true;
+				}
 			}
 
 			delete this.mBindingInfos[sName];
@@ -2976,12 +3011,12 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,
 			oAggregationInfo = this.getMetadata().getAggregation(sName),  // TODO fix handling of hidden aggregations
-			sGroup = null,
+			sGroup,
 			bGrouped,
 			aContexts,
 			sGroupFunction = oAggregationInfo._sMutator + "Group",
 			that = this;
-		
+
 		// Update a single aggregation with the array of contexts. Reuse existing children
 		// and just append or remove at the end, if some are missing or too many.
 		function update(oControl, aContexts, fnBefore, fnAfter) {
@@ -3013,16 +3048,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				}
 			}
 		}
-		
-		// Check the current context for its group. If the group key changes, call the 
+
+		// Check the current context for its group. If the group key changes, call the
 		// group function on the control.
 		function updateGroup(oContext) {
-			var oNewGroup = oBinding.aSorters[0].fnGroup(oContext);
-			if (typeof oNewGroup == "string") {
-				oNewGroup = {
-					key: oNewGroup
-				};
-			}
+			var oNewGroup = oBinding.aSorters[0].getGroup(oContext);
 			if (oNewGroup.key !== sGroup) {
 				var oGroupHeader;
 				//If factory is defined use it
@@ -3033,20 +3063,20 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				sGroup = oNewGroup.key;
 			}
 		}
-		
+
 		// Update the tree recursively
 		function updateRecursive(oControl, oContexts) {
 			update(oControl, oContexts, null, function(oContext, oClone) {
 				updateRecursive(oClone, oBinding.getNodeContexts(oContext));
 			});
 		}
-		
+
 		// If a factory function is used, aggregation must be completely rebuild
 		if (!oBindingInfo.template) {
 			this[oAggregationInfo._sDestructor]();
 		}
-		
-		if (oBinding instanceof sap.ui.model.ListBinding) {
+
+		if (oBinding instanceof ListBinding) {
 			// If grouping is enabled, use updateGroup as fnBefore to create groups
 			bGrouped = oBinding.isGrouped() && sGroupFunction;
 			if (bGrouped) {
@@ -3054,7 +3084,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 			update(this, aContexts, bGrouped ? updateGroup : null);
-		} else if (oBinding instanceof sap.ui.model.TreeBinding) {
+		} else if (oBinding instanceof TreeBinding) {
 			// In fnAfter call update recursively for the child nodes of the current tree node
 			updateRecursive(this, oBinding.getRootContexts());
 		}
@@ -3075,13 +3105,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/**
 	* Generic method which is called, whenever messages for this object exists.
-	* 
+	*
 	* @param {string} sName The property name
 	* @param {array} aMessages The messages
 	* @protected
 	* @since 1.28
 	*/
-	ManagedObject.prototype.updateMessages = function(sName, aMessages) {
+	ManagedObject.prototype.propagateMessages = function(sName, aMessages) {
 		jQuery.sap.log.warning("Message for " + this + ", Property " + sName);
 	};
 
@@ -3492,7 +3522,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			bUpdateAll = vName === true, // update all bindings when no model name parameter has been specified
 			sName = bUpdateAll ? undefined : vName,
 			sAggregationName, oAggregation, i;
-		
+
 		for (sAggregationName in this.mAggregations) {
 			if (this.mSkipPropagation[sAggregationName]) {
 				continue;
@@ -3739,10 +3769,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				var oBindingInfo = this.mBindingInfos[sName];
 				var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
 
-				// clone the template if it is not shared
+				// clone the template if it is not sharable
 				if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.clone) {
 					oCloneBindingInfo.template = oBindingInfo.template.clone(sIdSuffix,	aLocalIds);
 					delete oCloneBindingInfo.factory;
+				} else if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
+					// a 'clone' operation implies sharing the template (if templateShareable is not set to false)
+					oBindingInfo.templateShareable = oCloneBindingInfo.templateShareable = true;
+					jQuery.sap.log.error("A shared template must be marked with templateShareable:true in the binding info");
 				}
 
 				delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
@@ -3813,29 +3847,39 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	/**
 	 * Searches and returns an array of child elements and controls which are
 	 * referenced within an aggregation or aggregations of child elements/controls.
-	 * This can be either done recursive or not.
+	 * This can be either done recursive or not. Optionally a condition function can be passed that
+	 * returns true if the object should be added to the array.
 	 * <br>
 	 * <b>Take care: this operation might be expensive.</b>
 	 * @param {boolean}
 	 *          bRecursive true, if all nested children should be returned.
+	 * @param {boolean}
+	 *          fnCondition if given, the object is passed as a parameter to the.
 	 * @return {sap.ui.base.ManagedObject[]} array of child elements and controls
 	 * @public
 	 */
-	ManagedObject.prototype.findAggregatedObjects = function(bRecursive) {
+	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {
 
 		var aAggregatedObjects = [];
+		if (fnCondition && !typeof fnCondition === "function") {
+			fnCondition = null;
+		}
 		function fFindObjects(oObject) {
 			for (var n in oObject.mAggregations) {
 				var a = oObject.mAggregations[n];
 				if (jQuery.isArray(a)) {
 					for (var i = 0; i < a.length; i++) {
-						aAggregatedObjects.push(a[i]);
+						if (!fnCondition || fnCondition(a[i])) {
+							aAggregatedObjects.push(a[i]);
+						}
 						if (bRecursive) {
 							fFindObjects(a[i]);
 						}
 					}
 				} else if (a instanceof ManagedObject) {
-					aAggregatedObjects.push(a);
+					if (!fnCondition || fnCondition(a)) {
+						aAggregatedObjects.push(a);
+					}
 					if (bRecursive) {
 						fFindObjects(a);
 					}
@@ -3846,7 +3890,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		return aAggregatedObjects;
 
 	};
-	
+
 	return ManagedObject;
 
-}, /* bExport= */ true);
+});

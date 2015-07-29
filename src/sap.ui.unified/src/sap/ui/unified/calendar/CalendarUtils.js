@@ -43,7 +43,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 				oMyDate = oDate;
 			}
 
-			oLocaleDate = new Date(oMyDate.getTime() + oMyDate.getTimezoneOffset() * 60000);
+			oLocaleDate = new Date(oMyDate.getUTCFullYear(), oMyDate.getUTCMonth(), oMyDate.getUTCDate());
+			if (oMyDate.getFullYear() < 1000) {
+				oLocaleDate.setFullYear(oMyDate.getFullYear());
+			}
 		}
 
 		return oLocaleDate;

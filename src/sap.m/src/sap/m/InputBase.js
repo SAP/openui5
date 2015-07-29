@@ -211,6 +211,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	InputBase.prototype.init = function() {
 		this._lastValue = "";	// last changed value
 		this._changeProxy = jQuery.proxy(this.onChange, this);
+
+		/**
+		 * To detect when the control is in the rendering phase.
+		 *
+		 * @protected
+		 */
+		this.bRenderingPhase = false;
 	};
 
 	/**
@@ -221,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	InputBase.prototype.onBeforeRendering = function() {
 
 		// mark the rendering phase
-		this._bRendering = true;
+		this.bRenderingPhase = true;
 
 		// is DOM already available
 		if (this._bCheckDomValue && this.isActive()) {
@@ -229,6 +236,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// remember dom value in case of invalidation during keystrokes
 			// so the following should only be used onAfterRendering
 			this._sDomValue = this._getInputValue();
+		} else {
+			// no active dom so we should not try to retain the value
+			this._bCheckDomValue = false;
 		}
 	};
 
@@ -262,7 +272,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// rendering phase is finished
-		this._bRendering = false;
+		this.bRenderingPhase = false;
 	};
 
 	/**
@@ -386,7 +396,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// because dom is replaced during the rendering
 		// onfocusout event is triggered probably focus goes to the document
 		// so we ignore this event that comes during the rendering
-		if (this._bRendering) {
+		if (this.bRenderingPhase) {
 			return;
 		}
 
@@ -730,9 +740,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	InputBase.prototype.updateDomValue = function(sValue) {
 
-		// dom value updated other than value property
-		this._bCheckDomValue = true;
-
 		// respect to max length
 		sValue = this._getInputValue(sValue);
 
@@ -740,6 +747,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// otherwise cursor can goto end of text unnecessarily
 		if (this.isActive() && (this._getInputValue() !== sValue)) {
 			this._$input.val(sValue);
+			
+			// dom value updated other than value property
+			this._bCheckDomValue = true;
 		}
 
 		// update synthetic placeholder visibility
@@ -865,6 +875,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	InputBase.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
+		var mValueState = sap.ui.core.ValueState,
+			$This = this.$(),
+			$Input = jQuery(this.getFocusDomRef());
+
+		if (sOldValueState !== mValueState.None) {
+			$This.removeClass("sapMInputBaseState sapMInputBase" + sOldValueState);
+			$Input.removeClass("sapMInputBaseStateInner sapMInputBase" + sOldValueState + "Inner");
+		}
+
+		if (sValueState !== mValueState.None) {
+			$This.addClass("sapMInputBaseState sapMInputBase" + sValueState);
+			$Input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
+		}
+	};
+
 	/* ----------------------------------------------------------- */
 	/* public methods                                              */
 	/* ----------------------------------------------------------- */
@@ -884,17 +910,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		
 		// get the value back in case of invalid value 
 		sValueState = this.getValueState();
+
 		if (sValueState === sOldValueState) {
 			return this;
 		}
 
 		var oDomRef = this.getDomRef();
+
 		if (!oDomRef) {
 			return this;
 		}
 
-		var $This = jQuery(oDomRef),
-			$Input = jQuery(this.getFocusDomRef()),
+		var $Input = jQuery(this.getFocusDomRef()),
 			mValueState = sap.ui.core.ValueState;
 
 		if (sValueState === mValueState.Error) {
@@ -903,15 +930,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$Input.removeAttr("aria-invalid");
 		}
 
-		if (sOldValueState !== mValueState.None) {
-			$This.removeClass("sapMInputBaseState sapMInputBase" + sOldValueState);
-			$Input.removeClass("sapMInputBaseStateInner sapMInputBase" + sOldValueState + "Inner");
-		}
-
-		if (sValueState !== mValueState.None) {
-			$This.addClass("sapMInputBaseState sapMInputBase" + sValueState);
-			$Input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
-		}
+		this.updateValueStateClasses(sValueState, sOldValueState);
 
 		if ($Input[0] === document.activeElement) {
 			switch (sValueState) {
@@ -989,7 +1008,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {string} sName The Property Name
 	 * @param {array} aMessages Array of Messages
 	 */
-	InputBase.prototype.updateMessages = function(sName, aMessages) {
+	InputBase.prototype.propagateMessages = function(sName, aMessages) {
 		if (aMessages && aMessages.length > 0) {
 			this.setValueState(aMessages[0].type);
 			this.setValueStateText(aMessages[0].message);

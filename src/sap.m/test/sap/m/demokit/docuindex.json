@@ -353,8 +353,7 @@
 		  "samples": [
 			"sap.m.sample.MessageBox",
 			"sap.m.sample.MessageBoxInfo",
-			"sap.m.sample.MessageBoxTypes",
-			"sap.m.sample.MessageBoxCustom"
+			"sap.m.sample.MessageBoxTypes"
 		  ]
 		},
 		{
@@ -389,7 +388,8 @@
 		  "category": "Container",
 		  "since": "1.30",
 		  "samples": [
-			"sap.m.sample.QuickViewCard"
+			"sap.m.sample.QuickViewCard",
+			"sap.m.sample.QuickViewCardScrollBar"
 		  ]
 		},
 		{
@@ -483,7 +483,11 @@
 		  "since": "1.28",
 		  "samples": [
 			"sap.m.sample.OverflowToolbarSimple",
-			"sap.m.sample.OverflowToolbarFooter"
+			"sap.m.sample.OverflowToolbarFooter",
+			"sap.m.sample.ToolbarAlignment",
+			"sap.m.sample.ToolbarActive",
+			"sap.m.sample.ToolbarEnabled",
+			"sap.m.sample.TitleToolBar"
 		  ]
 		},
 		{
@@ -788,13 +792,8 @@
 		  "category": "Container",
 		  "since": "1.20",
 		  "samples": [
-			"sap.m.sample.ToolbarAlignment",
-			"sap.m.sample.ToolbarActive",
-			"sap.m.sample.ToolbarEnabled",
 			"sap.m.sample.ToolbarShrinkable",
-			"sap.m.sample.Page",
-			"sap.m.sample.ToolbarVsBar",
-			"sap.m.sample.TitleToolBar"
+			"sap.m.sample.ToolbarVsBar"
 		  ]
 		},
 		{
@@ -861,7 +860,8 @@
 		  "category" : "Container",
 		  "since" : "1.30",
 		  "samples" : [
-			"sap.m.sample.Wizard"
+			"sap.m.sample.Wizard",
+			"sap.m.sample.WizardBranching"
 		  ]
 		},
 		{
@@ -909,6 +909,41 @@
 			"Custom Controls",
 			"Responsiveness and Device Adaptation"
 		  ]
+		},
+		{
+		  "id": "sap.m.tutorial.testing",
+		  "name": "[PREVIEW] Testing Apps",
+		  "category": "Tutorial",
+		  "since": "1.30",
+		  "formFactors": "-",
+		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server. Pleaae have a look at the tutorial documentation in the developer guide for more details",
+		  "samplesAsSteps": [
+			"Handover and Testing Strategy",
+			"A first Unit Test",
+			"Adding a flagged button",
+			"A first OPA Test",
+			"Changing the Table to grow",
+			"Testing Navigation",
+			"Adding the Detail Page",
+			"Testsuite and Automated Testing",
+			"Mocking Data and Defining URL Parameters for Testing"
+		  ],
+		  "unfinishedStepsThatAreNotParsedByExplored": [
+			"Testing Control Visibility",
+			"Adding an Info Tab",
+			"Testing Interactions",
+			"Adding a Statistics Tab",
+			"Testing Internationalization",
+			"Implementing more fields for the statistics tab",
+			"Testing Custom Formatters",
+			"Writing a Date Formatter",
+			"Testing Controllers",
+			"Implement a Controller Feature",
+			"Testing Responsiveness",
+			"Make the table responsive",
+			"Testing Errors",
+			"Implementing an interaction that can fail"
+		  ]
 		}
 	  ],
 	  "samples": [
@@ -929,8 +964,8 @@
 		},
 		{
 		  "id": "sap.m.sample.ToolbarVsBar",
-		  "name": "Toolbar vs Bar",
-		  "description": "Toolbar is better in handling overflow. It is more flexible as a container + it has a faster performance. Bar is able to perfectly center a text if nothing overflows."
+		  "name": "Toolbar vs Bar vs OverflowToolbar",
+		  "description": "Toolbar handles overflow by shrinking items. OverflowToolbar provides an overflow menu. Bar is able to perfectly center a text if nothing overflows."
 		},
 		{
 		  "id": "sap.m.sample.QuickView",
@@ -941,6 +976,11 @@
 		  "id": "sap.m.sample.QuickViewCard",
 		  "name": "QuickViewCard",
 		  "description": "QuickView embedded in container"
+		},
+		{
+		  "id": "sap.m.sample.QuickViewCardScrollBar",
+		  "name": "QuickViewCard - Scroll example",
+		  "description": "QuickView embedded in container with scroll bar"
 		},
 		{
 		  "id": "sap.m.sample.ResponsivePopover",
@@ -974,23 +1014,23 @@
 		},
 		{
 		  "id": "sap.m.sample.ToolbarAlignment",
-		  "name": "Toolbar - Alignment",
-		  "description": "One of the very common use-case with Toolbar is adding some group of items on the left and on the right. However, Toolbar does not provide left/right/middle aggregation as in the Bar control but it needs ToolbarSpacer to add a horizontal space between toolbar items. Lets see some examples."
+		  "name": "OverflowToolbar - Alignment",
+		  "description": "OverflowToolbar and Toolbar are often used for left/right alignment. This is easily achieved with ToolbarSpacer."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarActive",
-		  "name": "Toolbar - Active",
-		  "description": "Active toolbar indicates that the whole toolbar is clickable. Press event of this control is fired only if the active property is set to true."
+		  "name": "OverflowToolbar - Active",
+		  "description": "Making an OverflowToolbar or a Toolbar active allows them to react to the click event."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarEnabled",
-		  "name": "Toolbar - Enabled",
-		  "description": "Enabled property of the toolbar can be used to enable or disable all the controls inside the toolbar. This property is not for the toolbar itself. See also the active property."
+		  "name": "OverflowToolbar - Enabled",
+		  "description": "The Enabled property can be used to enable or disable all the controls inside the OverflowToolbar/Toolbar."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarShrinkable",
-		  "name": "Toolbar - Shrinkable",
-		  "description": "Toolbar items can be set as shrinkable to fit items into the container when overflow happens. You can configure this feature with providing ToolbarLayoutData which can enable/disable the shrinking or define shrinking priority with min/max width."
+		  "name": "Toolbar - Shrinkable items",
+		  "description": "Toolbar items can shrink/expand when the toolbar is resized. This behavior is enabled/disabled via the ToolbarLayoutData layout. It is also possible to set min/max width for shrinkable items."
 		},
 		{
 		  "id": "sap.m.sample.Link",
@@ -1668,11 +1708,6 @@
 		  "description": "MessageBox icons can be used to show the different value states that a MessageBox can display: success, warning, error, information and question."
 		},
 		{
-		  "id": "sap.m.sample.MessageBoxCustom",
-		  "name": "Message Box Custom Content",
-		  "description": "MessageBox with custom content (e.g. a layout or checkboxes). Additionally for large content horizontal and vertical scrolling can be enabled or disabled."
-		},
-		{
 		  "id": "sap.m.sample.MessagePopover",
 		  "name": "MessagePopover",
 		  "description": "MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message."
@@ -1754,8 +1789,8 @@
 		},
 		{
 		  "id": "sap.m.sample.TitleToolBar",
-		  "name": "Title Toolbar",
-		  "description": "A TitleToolBar is always 3 rem in height. For the title text inside the sap.m.Title control should be used."
+		  "name": "Placing a Title in OverflowToolbar/Toolbar",
+		  "description": "The sap.m.Title control can be used to place a title inside an OverflowToolbar/Toolbar."
 		},
 		{
 		  "id": "sap.m.sample.UploadCollection",
@@ -1765,7 +1800,7 @@
 		{
 		  "id": "sap.m.sample.UploadCollectionForPendingUpload",
 		  "name": "Upload Collection - Upload Pending",
-		  "description": "With the UploadCollection for a pending upload, you can first select several attachments and then upload them in a separate step. An application triggers the upload with an event."
+		  "description": "With this UploadCollection scenario, you can select an attachment and add it to the upload list first. You can select another one if required. In a second step, you can upload the selected files. The application triggers the upload with an event."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
@@ -1825,7 +1860,7 @@
 		{
 		  "id": "sap.m.sample.OverflowToolbarSimple",
 		  "name": "Overflow Toolbar - layout",
-		  "description": "Overflow Toolbar can contain the same controls as Toolbar with the added benefit that buttons that do not fit are moved to an Action Sheet when overflow occurs."
+		  "description": "Overflow Toolbar can contain the same controls as Toolbar with the added benefit that buttons that do not fit are moved to an overflow area when overflow occurs."
 		},
 		{
 		  "id": "sap.m.sample.OverflowToolbarFooter",
@@ -1836,6 +1871,11 @@
 		  "id": "sap.m.sample.Wizard",
 		  "name": "Wizard standard use case",
 		  "description": "The Wizard is useful for breaking down complex tasks into smaller steps."
+		},
+		{
+		  "id": "sap.m.sample.WizardBranching",
+		  "name": "Wizard branching use case",
+		  "description": "The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one."
 		}
 	  ]
 	}

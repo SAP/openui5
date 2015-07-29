@@ -119,7 +119,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			oImage = IconPool.createControlByURI({
 				id: sImgId,
 				src : sSrc,
-				densityAware : bIconDensityAware
+				densityAware : bIconDensityAware,
+				useIconTooltip : false
 			}, sap.m.Image).setParent(this, null, true);
 		}
 	

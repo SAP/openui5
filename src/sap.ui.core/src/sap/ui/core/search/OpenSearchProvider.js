@@ -96,4 +96,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 
 	return OpenSearchProvider;
 
-}, /* bExport= */ true);
+});

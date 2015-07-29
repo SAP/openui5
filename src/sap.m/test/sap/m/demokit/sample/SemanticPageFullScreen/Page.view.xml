@@ -2,7 +2,7 @@
 		height="100%"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		controllerName="sap.m.sample.SemanticPage.Page"
+		controllerName="sap.m.sample.SemanticPageFullScreen.Page"
 		xmlns="sap.m"
 		xmlns:semantic="sap.m.semantic"
 		xmlns:ui="sap.ca.ui"
@@ -42,8 +42,12 @@
 						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 					</semantic:messagesIndicator>
 
+					<semantic:customHeaderContent>
+						<Button text="CustomHeaderBtn" press="onPress"/>
+					</semantic:customHeaderContent>
+
 					<semantic:customFooterContent>
-						<Button text="CustomTextBtn" press="onPress"/>
+						<Button text="CustomFooterBtn" press="onPress"/>
 						<OverflowToolbarButton icon="sap-icon://settings" text="Settings" press="onPress"/>
 					</semantic:customFooterContent>
 

@@ -102,4 +102,4 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 
 	return CustomData;
 
-}, /* bExport= */ true);
+});

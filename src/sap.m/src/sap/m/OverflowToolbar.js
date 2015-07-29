@@ -12,12 +12,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 		/**
 		 * Constructor for a new Overflow Toolbar
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
 		 * The OverflowToolbar control is a container based on sap.m.Toolbar, that provides overflow when its content does not fit in the visible area.
 		 *
+		 * Note: It is recommended that you use OverflowToolbar over {@link sap.m.Toolbar}, unless you want to avoid overflow in favor of shrinking.
 		 * @extends sap.ui.core.Toolbar
 		 *
 		 * @author SAP SE
@@ -73,12 +74,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			// When set to true, the recalculation algorithm will bypass an optimization to determine if anything moved from/to the action sheet
 			this._bSkipOptimization = false;
 
-			// Load the resources, needed for the text of the overflow button
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			// Init static hidden text for ARIA
+			if (!OverflowToolbar._sAriaOverflowButtonLabelId) {
 
-			OverflowToolbar.prototype._sAriaOverflowButtonLabelId = new InvisibleText({
-				text: this._oResourceBundle.getText("LOAD_MORE_DATA")
-			}).toStatic().getId();
+				// Load the resources, needed for the text of the overflow button
+				var oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+
+				// Use Icon-Font text
+				OverflowToolbar._sAriaOverflowButtonLabelId = new InvisibleText({
+					text: oCoreResourceBundle.getText("Icon.overflow")
+				}).toStatic().getId();
+
+			}
+
 		};
 
 		/**
@@ -405,11 +413,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			if (!this.getAggregation("_overflowButton")) {
 
 				// Create the overflow button
+				// A tooltip will be used automatically by the button
+				// using to the icon-name provided
 				oOverflowButton = new ToggleButton({
 					icon: "sap-icon://overflow",
 					press: this._overflowButtonPressed.bind(this),
 					ariaLabelledBy: this._sAriaOverflowButtonLabelId,
-					tooltip: this._oResourceBundle.getText("LOAD_MORE_DATA"),
 					type: sap.m.ButtonType.Transparent
 				});
 
@@ -453,6 +462,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 				// Create the Popover
 				oPopover = new OverflowToolbarAssociativePopover(this.getId() + "-popover", {
 					showHeader: false,
+					showArrow: sap.ui.Device.system.phone ? false : true,
 					modal: false,
 					horizontalScrolling: sap.ui.Device.system.phone ? false : true,
 					contentWidth: sap.ui.Device.system.phone ? "100%" : "auto"
@@ -503,19 +513,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			this._getOverflowButton().setPressed(false); // Turn off the toggle button
 			this._getOverflowButton().$().focus(); // Focus the toggle button so that keyboard handling will work
 
-			// On IE, if you click the toggle button again to close the popover, onAfterClose is triggered first, which closes the popup, and then the click event on the toggle button reopens it
+			// On IE/sometimes other browsers, if you click the toggle button again to close the popover, onAfterClose is triggered first, which closes the popup, and then the click event on the toggle button reopens it
 			// To prevent this behaviour, disable the overflow button till the end of the current javascript engine's "tick"
-			if (sap.ui.Device.browser.internet_explorer) {
-				this._getOverflowButton().setEnabled(false);
-				jQuery.sap.delayedCall(0, this, function() {
-					this._getOverflowButton().setEnabled(true);
+			this._getOverflowButton().setEnabled(false);
+			jQuery.sap.delayedCall(0, this, function() {
+				this._getOverflowButton().setEnabled(true);
 
-					// In order to restore focus, we must wait another tick here to let the renderer enable it first
-					jQuery.sap.delayedCall(0, this, function() {
-						this._getOverflowButton().$().focus();
-					});
+				// In order to restore focus, we must wait another tick here to let the renderer enable it first
+				jQuery.sap.delayedCall(0, this, function() {
+					this._getOverflowButton().$().focus();
 				});
-			}
+			});
 		};
 
 		/**

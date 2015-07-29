@@ -3,12 +3,11 @@
  */
 
 // Provides control sap.ui.core.ListItem.
-sap.ui.define(['jquery.sap.global', './Item', './library'],
-	function(jQuery, Item, library) {
+sap.ui.define(['./Item', './library'],
+	function(Item, library) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new ListItem.
 	 *
@@ -45,9 +44,8 @@ sap.ui.define(['jquery.sap.global', './Item', './library'],
 			additionalText : {type : "string", group : "Data", defaultValue : null}
 		}
 	}});
-	
-	
+
 
 	return ListItem;
 
-}, /* bExport= */ true);
+});

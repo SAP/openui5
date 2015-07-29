@@ -11,10 +11,51 @@
 <script type="text/javascript">
 	jQuery.sap.initMobile();
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
-	jQuery.sap.require("sap.m.ObjectAttribute");
-	jQuery.sap.require("sap.m.ObjectStatus");
 	jQuery.sap.require("sap.m.MessageToast");
 
+	/* =========================================================== */
+	/* ComboBox for simulation of uploading status                 */
+	/* =========================================================== */
+	var oModelCBSR = new sap.ui.model.json.JSONModel();
+	var bSimulateUploadingStatusSR = "false";
+	var oUploadCompleteStub;
+	var mDataCBSR = {
+		"items": [
+			{
+				"key": "false",
+				"text": "false"
+			},
+			{
+				"key": "true",
+				"text": "true"
+			}
+		],
+		"selected": "false"
+	};
+
+	oModelCBSR.setData(mDataCBSR);
+
+	var oListItemTemplate = new sap.ui.core.ListItem({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oComboBoxSR = new sap.m.Select({
+		items: {
+			path: "/items",
+			template: oListItemTemplate
+		},
+		selectedKey: {
+			path: "/selected"
+		},
+		change : function(oControlEvent) {
+			bSimulateUploadingStatusSR = oControlEvent.mParameters.selectedItem.getKey();
+		}
+	});
+
+	var oBackendErrorCheckBox = new sap.m.CheckBox();
+
+	oComboBoxSR.setModel(oModelCBSR);
 
 	/* =========================================================== */
 	/* ComboBox for Selection of Separator Style                   */
@@ -38,11 +79,6 @@
 
 	oModelCB.setData(mDataCB);
 
-	var oListItemTemplate = new sap.ui.core.ListItem({
-		key: "{key}",
-		text: "{text}"
-	});
-
 	var oComboBox = new sap.m.Select({
 		items: {
 			path: "/items",
@@ -60,7 +96,6 @@
 	});
 
 	oComboBox.setModel(oModelCB);
-
 
 	/* =========================================================== */
 	/* UploadCollection                                            */
@@ -403,6 +438,18 @@
 	/* =========================================================== */
 	var fnChange = function(oEvent) {
 		sap.m.MessageToast.show("Change event triggered.");
+		// simulate status uploading for screen reader support
+		if(bSimulateUploadingStatusSR === "true") {
+			if (oUploadCompleteStub === undefined) {
+				oUploadCompleteStub = oUploadCollection._onUploadComplete;
+				oUploadCollection._onUploadComplete = function () {
+					return;
+				};
+			};
+			oUploadCollection.invalidate();
+		} else if (oUploadCompleteStub) {
+			oUploadCollection._onUploadComplete = oUploadCompleteStub;
+		}
 	};
 
 	var fnFileDeleted = function(oEvent) {
@@ -448,30 +495,36 @@
 	};
 
 	var fnUploadComplete = function(oEvent) {
-		var oData = oUploadCollection.getModel().getData();
-		var aItems = jQuery.extend(true, {}, oData).items;
-		var oItem = {};
-		var sUploadedFile = oEvent.getParameter("files")[0].fileName;
-		// at the moment parameter fileName is not set in IE9
-		if (!sUploadedFile) {
-			var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
-			sUploadedFile = aUploadedFile[0];
+		if (oBackendErrorCheckBox.getSelected() === false) {
+			var oData = oUploadCollection.getModel().getData();
+			var aItems = jQuery.extend(true, {}, oData).items;
+			var oItem = {};
+			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
+			// at the moment parameter fileName is not set in IE9
+			if (!sUploadedFile) {
+				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
+				sUploadedFile = aUploadedFile[0];
+			}
+			oItem = {
+				"contributor" : "You",
+				"documentId" : jQuery.now().toString(), // generate Id
+				"fileName" : sUploadedFile,
+				"fileSize" : 10, // TODO get file size
+				"mimeType" : "",
+				"thumbnailUrl" : "",
+				"uploadedDate" : new Date(jQuery.now()).toLocaleDateString(),
+				"url" : ""
+			};
+			aItems.unshift(oItem);
+			oModel.setData({
+				"items" : aItems
+			});
+		} else {
+			oUploadCollection.getBinding("items").refresh(true);
 		}
-		oItem = {
-			"contributor" : "You",
-			"documentId" : jQuery.now().toString(), // generate Id
-			"fileName" : sUploadedFile,
-			"fileSize" : 10, // TODO get file size
-			"mimeType" : "",
-			"thumbnailUrl" : "",
-			"uploadedDate" : new Date(jQuery.now()).toLocaleDateString(),
-			"url" : ""
-		};
-		aItems.unshift(oItem);
-		oModel.setData({
-			"items" : aItems
-		});
-		sap.m.MessageToast.show("UploadComplete event triggered.");
+		setTimeout(function () {
+			sap.m.MessageToast.show("UploadComplete event triggered.");
+		}, 3000);
 	};
 
 	var oAttributeTemplate = new sap.m.ObjectAttribute({
@@ -502,6 +555,7 @@
 		thumbnailUrl : "{thumbnailUrl}",
 		uploadedDate : "{uploadedDate}",
 		url : "{url}",
+		ariaLabelForPicture : "{ariaLabelForPicture}",
 		attributes : {
 			path : "attributes",
 			template : oAttributeTemplate
@@ -529,20 +583,35 @@
 		fileRenamed : fnFileRenamed,
 		fileSizeExceed : fnFileSizeExceed,
 		typeMissmatch : fnTypeMissmatch,
-		uploadComplete : fnUploadComplete,
+		uploadComplete : fnUploadComplete
 	});
 
 	oUploadCollection.setShowSeparators(oComboBox.getSelectedKey());
-
 
 	/* =========================================================== */
 	/* Create Page                   */
 	/* =========================================================== */
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection",
-		headerContent : [new sap.m.Label({
-			text : "Layout:"
-		}), oComboBox],
+		headerContent : [
+			new sap.m.Button({
+				text : "Rerender UC",
+				press : function (oEvent) {
+					oUploadCollection.invalidate();
+				}
+			}),
+			new sap.m.Label({
+				text : "Simulates a backend error:"
+			}),
+			oBackendErrorCheckBox,
+			new sap.m.Label({
+				text : "Simulates the uploading status for screen reader:"
+			}),
+			oComboBoxSR,
+			new sap.m.Label({
+				text : "Layout:"
+			}),
+			oComboBox],
 		content : oUploadCollection
 	});
 
