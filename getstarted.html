@@ -146,8 +146,8 @@
 						<li>We configure the process of “bootstrapping” to run asynchronously</li>
 					</ul>
 				</p>
-				<p>The src attribute of the first &lt;script&gt; tag tells the browser where to find the OpenUI5 core library – it initializes the SAPUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded SAPUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing SAPUI5 is called bootstrapping. There are two versions of the SAPUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
-				In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons. Once the SAPUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the SAPUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In SAPUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
+				<p>The src attribute of the first &lt;script&gt; tag tells the browser where to find the OpenUI5 core library – it initializes the OpenUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded OpenUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing OpenUI5 is called bootstrapping. There are two versions of the OpenUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
+				In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons. Once the OpenUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the OpenUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In OpenUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
 				Our anonymous callback function is executed when the bootstrap of OpenUI5 is finished and displays a native JavaScript alert.</p>
 				<p>
 					Try it out yourself - feel free to modify and extend this example!
@@ -194,7 +194,7 @@
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
 
-			<p>Instead of using native JavaScript to change the content of the body tag, we want to use a simple SAPUI5 control. Controls are used to define appearance and behavior of parts of the screen.
+			<p>Instead of using native JavaScript to change the content of the body tag, we want to use a simple OpenUI5 control. Controls are used to define appearance and behavior of parts of the screen.
 In the example above the content of the init event handler is now replaced with an OpenUI5 text control. The name of the control is prefixed by the namespace of its control library “sap.m” and the options are passed to the constructor with a JavaScript object. For our control we set the “text” property to the value “Hello World”.
 We concatenate the constructor call of the control with the standard method “placeAt” that is used to position OpenUI5 controls inside a node of the DOM. As the target node we use the body tag of the HTML document with the id &quot;content&quot;. The class “sapUiBody” adds additional theme dependent styles for displaying OpenUI5 apps.
 All Controls of OpenUI have a fixed set of properties and methods to interact with, the public API of the control. You can it look up in the API reference that is linked below.</p>
@@ -381,7 +381,7 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 
 });</pre>
 		<p>
-			We add an init function to the controller. onInit is one of SAPUI5’s lifecycle methods that is invoked by the framework when the controller is created, similar to a constructor function of a control.
+			We add an init function to the controller. onInit is one of OpenUI5’s lifecycle methods that is invoked by the framework when the controller is created, similar to a constructor function of a control.
 			Inside the function we instantiate a JSON model. The data for the model only contains a single property for the &quot;recipient&quot; and inside this one another property for the name. 
 			To be able to use this model from within the XML view we call the setModel function on the view and pass in our newly created model.
 		</p>
