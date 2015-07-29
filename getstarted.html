@@ -135,7 +135,7 @@
     <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
-					<p>In this step we load the SAPUI5 framework from our local webserver and initialize the core modules with the following configuration options:
+					<p>In this step we load the OpenUI5 framework from our local webserver and initialize the core modules with the following configuration options:
 						<ul>
 							<li>We specify the required UI library “sap.m” containing the UI controls we need for this tutorial.</li>
 							<li>The OpenUI5 controls support different themes, we choose “sap_bluecrystal” as our default theme.</li>
@@ -150,7 +150,7 @@
 						Try it out yourself - feel free to modify and extend this example!
 					</p>
 					<div class="corset"> <!-- for Ipad -->
-						<iframe style="width: 100%; height: 400px" src="http://embed.plnkr.co/wzougZ" frameborder="0" allowfullscren="allowfullscren"></iframe>
+						<iframe style="width: 100%; height: 120px" src="http://embed.plnkr.co/wzougZ" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
 					</div>
 				</div>
 
@@ -189,8 +189,8 @@
     <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
-</pre>				
-			<p>Instead of using native JavaScript to display a dialog we want to use a simple SAPUI5 control. Controls are used to define appearance and behavior of parts of the screen.
+
+			<p>Instead of using native JavaScript to change the content of the body tag, we want to use a simple SAPUI5 control. Controls are used to define appearance and behavior of parts of the screen.
 In the example above the content of the init event handler is now replaced with an OpenUI5 text control. The name of the control is prefixed by the namespace of its control library “sap.m” and the options are passed to the constructor with a JavaScript object. For our control we set the “text” property to the value “Hello World”.
 We concatenate the constructor call of the control with the standard method “placeAt” that is used to position OpenUI5 controls inside a node of the DOM. As the target node we use the body tag of the HTML document with the id &quot;content&quot;. The class “sapUiBody” adds additional theme dependent styles for displaying OpenUI5 apps.
 All Controls of OpenUI have a fixed set of properties and methods to interact with, the public API of the control. You can it look up in the API reference that is linked below.</p>
