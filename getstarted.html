@@ -198,6 +198,17 @@
 In the example above the content of the init event handler is now replaced with an OpenUI5 text control. The name of the control is prefixed by the namespace of its control library “sap.m” and the options are passed to the constructor with a JavaScript object. For our control we set the “text” property to the value “Hello World”.
 We concatenate the constructor call of the control with the standard method “placeAt” that is used to position OpenUI5 controls inside a node of the DOM. As the target node we use the body tag of the HTML document with the id &quot;content&quot;. The class “sapUiBody” adds additional theme dependent styles for displaying OpenUI5 apps.
 All Controls of OpenUI have a fixed set of properties and methods to interact with, the public API of the control. You can it look up in the API reference that is linked below.</p>
+				<p>
+					Try it out yourself - feel free to modify and extend this example!
+				</p>
+				<div class="corset"> <!-- for Ipad -->
+					<iframe style="width: 100%; height: 120px" src="http://embed.plnkr.co/7EGSDt" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
+				</div>
+				<div class="resultIE">
+					<p>
+						Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
+					</p>
+				</div>
 			<h4>Read more</h4
 				<ul>
 					<li><a href="https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html" target="_blank">OpenUI5 API Reference</a></li>
@@ -210,8 +221,8 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 			OpenUI5 supports multiple view types (XML, HTML, JavaScript). 
 			We choose XML as this produces the most readable code and will force us separate the view declaration from the controller logic. 
 			Yet the look of our UI will not change.</p>
-			<p>The outcome of this step will look like this: (preview)<br>
-				<img src="./images/openui5-get-started-step3.png" alt="Preview Step 3"></p>
+			<p>The outcome of this step will still look like this: (preview)<br>
+				<img src="./images/openui5-get-started-step2.png" alt="Preview Step 3"></p>
 			<p>We create a new file for our XML view. The root node of the XML structure is this view. 
 			Here we reference the default namespace &quot;sap.m&quot; where the majority of our UI assets are located. 
 			We define an additional &quot;sap.ui.core.mvc&quot; namespace where the OpenUI5 views and all other Model-View-Controller (MVC) assets are located with an alias &quot;mvc&quot;.
@@ -273,8 +284,66 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 					Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
 				</p>
 			</div>
+			<h4>Read more:</h4>
+			<p>
+				<ul>
+					<li><a href="https://openui5.hana.ondemand.com/#docs/guide/91f233476f4d1014b6dd926db0e91070.html" target="_blank">Model View Controller (MVC) in OpenUI5</a></li>
+					<li><a href="https://openui5.hana.ondemand.com/#docs/guide/91f27e3e6f4d1014b6dd926db0e91070.html" target="_blank">Model View Controller(MVC) &gt; Views</a></li>
+					<li><a href="https://openui5.hana.ondemand.com/#docs/guide/91f292806f4d1014b6dd926db0e91070.html">XML Views</a></li>
+				</ul>
+			</p>
+			<h3>Controllers</h3>
+			<p>In this step we replace the text with a button and show the &quot;Hello World&quot; message once the button gets pressed. The handling of this event will be implemented on the controller of the view.</p>
+			<p>Preview: <br>
+				<img src="./images/openui5-get-started-step4.png" alt="Preview Step 4"></p>
+			<p>Here is the new code for our view:</p>
+			<pre class="codeblock">&lt;mvc:View
+	controllerName=&quot;<span class="shString">sap.ui.demo.wt.controller.App</span>&quot;
+	xmlns=&quot;<span class="shString">sap.m</span>&quot;
+	xmlns:mvc=&quot;<span class="shString">sap.ui.core.mvc</span>&quot;&gt;
+	&lt;Button
+		text=&quot;<span class="shString">Say Hello</span>&quot;
+		press=&quot;<span class="shString">onShowHello</span>&quot;/&gt;
+&lt;/mvc:View&gt;</pre>			
+			<p>
+				We replace the text control with a button that carries the text “Say Hello” and calls the &quot;onShowHello&quot; function when being pressed. We also have to state the name of the controller that holds the &quot;onShowHello&quot; function.
+				We create a new file - the controller for our view, which we will call App.controller.js.
+			</p>
+			<pre class="codeblock">sap.ui.define([
+	&quot;sap/ui/core/mvc/Controller&quot;
+], <span class="sh-js-keyword">function</span> (Controller) {
+	&quot;use strict&quot;;
 
+	<span class="sh-js-keyword">return</span> Controller.extend(&quot;<span class="shString">sap.ui.demo.wt.App</span>&quot;, {
 
+		<span class="shAttr">onShowHello</span> : <span class="sh-js-keyword">function</span> () {
+			// show a native JavaScript alert
+			alert(&quot;<span class="shString">Hello World</span>&quot;);
+		}
+	});
+
+});</pre>
+			<p>We define the App controller in its own file by extending the &quot;Controller&quot; object of the OpenUI5 core. 
+			For the beginning it holds only a single function called &quot;onShowHello&quot; that handles the pressing of the button by showing an alert. </p>
+			<h4>Conventions</h4>
+			<ul>
+				<li>Controller names are capitalized</li>
+				<li>Controller carry the same name as related view (if there is a 1:1 relationship)</li>
+				<li>Event handlers are prefixed with “on”</li>
+				<li>Controllers always end with *.controller.js</li>
+			</ul>
+		<h4>Read more:</h4>
+		<ul>
+			<li><a href="https://openui5.hana.ondemand.com/#docs/guide/121b8e6337d147af9819129e428f1f75.html" target="_blank">Model View Controller (MVC) > Controllers</a></li>
+		</ul>
+
+			
+			
+			
+			
+			
+			
+			
 <span class="shTag">&lt;mvc:View</span> <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> <span class="shAttr">xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> <span class="shAttr">xmlns</span>=<span class="shString">"sap.m"</span> 
 		<span class="shAttr">controllerName</span>=<span class="shString">"getStarted"</span> <span class="shAttr">xmlns:html</span>=<span class="shString">"http://www.w3.org/1999/xhtml"</span>&gt;
 	
