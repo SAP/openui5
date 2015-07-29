@@ -1095,7 +1095,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (!this.getEnabled()) {
 			return;
 		}
-		if (this.getSameFilenameAllowed()) {
+		if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
 			this.setValue("", true);
 		}
 		var iKeyCode = oEvent.keyCode,
@@ -1115,7 +1115,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 		} else if (iKeyCode != eKC.TAB &&
 					iKeyCode != eKC.SHIFT &&
-					iKeyCode != eKC.F6) {
+					iKeyCode != eKC.F6 &&
+					iKeyCode != eKC.PAGE_UP &&
+					iKeyCode != eKC.PAGE_DOWN &&
+					iKeyCode != eKC.END &&
+					iKeyCode != eKC.HOME &&
+					iKeyCode != eKC.ARROW_LEFT &&
+					iKeyCode != eKC.ARROW_UP &&
+					iKeyCode != eKC.ARROW_RIGHT &&
+					iKeyCode != eKC.ARROW_DOWN) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
