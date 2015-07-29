@@ -93,8 +93,10 @@
 				new sap.m.DatePicker("DP3", { dateValue: new Date("2014", "02", "26"), displayFormat: "short", change: handleChange }),
 				new sap.m.Label({text: "readonly DatePicker with given DateValue and Formatter", labelFor: "DP4"}),
 				new sap.m.DatePicker("DP4", { dateValue: new Date("2014", "02", "26"), displayFormat: "yyyy-MM-dd", editable: false, change: handleChange }),
-				new sap.m.Label({text: "DatePicker using DataBinding", labelFor: "DP5"}),
-				new sap.m.DatePicker("DP5", {
+				new sap.m.Label({text: "disabled DatePicker with given DateValue and Formatter", labelFor: "DP5"}),
+				new sap.m.DatePicker("DP5", { dateValue: new Date("2014", "02", "26"), displayFormat: "yyyy-MM-dd", enabled: false, change: handleChange }),
+				new sap.m.Label({text: "DatePicker using DataBinding", labelFor: "DP6"}),
+				new sap.m.DatePicker("DP6", {
 					value: {
 						path: "/dateValue",
 						type: new sap.ui.model.type.Date({style: "medium", strictParsing: true})}/*,
@@ -105,10 +107,10 @@
 						type: new sap.ui.model.type.Date({style: "long"})},
 					editable: false}),
 				new sap.m.Input("I2", {value: "Content of events DatePicker", editable: false}),
-				new sap.m.Label({text: "Warnig DatePicker:", labelFor: "DP6"}),
-				new sap.m.DatePicker("DP6", { valueState: "Warning", valueStateText: "Warning Message" }),
-				new sap.m.Label({text: "Error DatePicker:", labelFor: "DP7"}),
-				new sap.m.DatePicker("DP7", { valueState: "Error", valueStateText: "Error Message" })
+				new sap.m.Label({text: "Warnig DatePicker:", labelFor: "DP7"}),
+				new sap.m.DatePicker("DP7", { valueState: "Warning", valueStateText: "Warning Message" }),
+				new sap.m.Label({text: "Error DatePicker:", labelFor: "DP8"}),
+				new sap.m.DatePicker("DP8", { valueState: "Error", valueStateText: "Error Message" })
 			],
 			footer: createFooter()
 		});
