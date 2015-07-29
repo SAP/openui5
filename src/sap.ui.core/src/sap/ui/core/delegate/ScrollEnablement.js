@@ -810,6 +810,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					return;
 				}
 
+				this._iLastTouchMoveTime = 0;
+
 				// Drag instead of native scroll
 				// 1. when requested explicitly
 				// 2. bypass Windows Phone 8.1 scrolling issues when soft keyboard is opened
@@ -911,6 +913,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					this._iX = point.pageX;
 					this._iY = point.pageY;
 					return;
+				}
+				
+				if (sap.ui.Device.os.blackberry) {
+					if (this._iLastTouchMoveTime && oEvent.timeStamp - this._iLastTouchMoveTime < 100) {
+						oEvent.stopPropagation();
+					} else {
+						this._iLastTouchMoveTime = oEvent.timeStamp;
+					}
 				}
 
 				// Prevent false tap event during momentum scroll in IOS
