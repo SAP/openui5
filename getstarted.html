@@ -138,25 +138,23 @@
     <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
-					<p>In this step we load the OpenUI5 framework from our local webserver and initialize the core modules with the following configuration options:
-						<ul>
-							<li>We specify the required UI library “sap.m” containing the UI controls we need for this tutorial.</li>
-							<li>The OpenUI5 controls support different themes, we choose “sap_bluecrystal” as our default theme.</li>
-							<li>To make use of the most recent functionality of OpenUI5 we define the compatibility version as “edge”</li>
-							<li>We configure the process of “bootstrapping” to run asynchronously</li>
-						</ul>
-					</p>
-					<p>The src attribute of the first &lt;script&gt; tag tells the browser where to find the OpenUI5 core library – it initializes the SAPUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded SAPUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing SAPUI5 is called bootstrapping. There are two versions of the SAPUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
-					In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons. Once the SAPUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the SAPUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In SAPUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
-					Our anonymous callback function is executed when the bootstrap of OpenUI5 is finished and displays a native JavaScript alert.</p>
-					<p>
-						Try it out yourself - feel free to modify and extend this example!
-					</p>
-					<div class="corset"> <!-- for Ipad -->
-						<iframe style="width: 100%; height: 120px" src="http://embed.plnkr.co/wzougZ" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
-					</div>
-
-
+				<p>In this step we load the OpenUI5 framework from our local webserver and initialize the core modules with the following configuration options:
+					<ul>
+						<li>We specify the required UI library “sap.m” containing the UI controls we need for this tutorial.</li>
+						<li>The OpenUI5 controls support different themes, we choose “sap_bluecrystal” as our default theme.</li>
+						<li>To make use of the most recent functionality of OpenUI5 we define the compatibility version as “edge”</li>
+						<li>We configure the process of “bootstrapping” to run asynchronously</li>
+					</ul>
+				</p>
+				<p>The src attribute of the first &lt;script&gt; tag tells the browser where to find the OpenUI5 core library – it initializes the SAPUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded SAPUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing SAPUI5 is called bootstrapping. There are two versions of the SAPUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
+				In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons. Once the SAPUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the SAPUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In SAPUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
+				Our anonymous callback function is executed when the bootstrap of OpenUI5 is finished and displays a native JavaScript alert.</p>
+				<p>
+					Try it out yourself - feel free to modify and extend this example!
+				</p>
+				<div class="corset"> <!-- for Ipad -->
+					<iframe style="width: 100%; height: 120px" src="http://embed.plnkr.co/wzougZ" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
+				</div>
 				<div class="resultIE">
 					<p>
 						Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
@@ -214,14 +212,23 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 			Yet the look of our UI will not change.</p>
 			<p>The outcome of this step will look like this: (preview)<br>
 				<img src="./images/openui5-get-started-step3.png" alt="Preview Step 3"></p>
-			<p>And here’s the code for this step, first of all for the view, which will now contain our sap.m.Text control:</p>
+			<p>We create a new file for our XML view. The root node of the XML structure is this view. 
+			Here we reference the default namespace &quot;sap.m&quot; where the majority of our UI assets are located. 
+			We define an additional &quot;sap.ui.core.mvc&quot; namespace where the OpenUI5 views and all other Model-View-Controller (MVC) assets are located with an alias &quot;mvc&quot;.
+			The view code will look like this:</p>
 			<pre class="codeblock">
 &lt;mvc:View
 	xmlns=&quot;<span class="shString">sap.m</span>&quot;
 	xmlns:mvc=&quot;<span class="shString">sap.ui.core.mvc</span>&quot;&gt;
 	&lt;Text text=&quot;<span class="shString">Hello World</span>&quot;/&gt;
 &lt;/mvc:View&gt;</pre>
-			<p>And next our new application code, which will be placed in the index.html again:</p>
+			<p>Inside the view tag we add the declaratively definition of our text control with the same properties as in the previous step. 
+			The XML tags are mapped to controls and the attributes are mapped to the properties of the control.
+			In OpenUI5 each control has its own id. 
+			In the XML View above we did not specify an id attribute and therefore the OpenUI5 runtime generates an own id and adds it to the control. 
+			However, it is a good practive to set the ids of controls explicitely so that controls can be identified easily.
+			</p>
+			<p>Next, we will change our application code, which will be placed in the index.html again:</p>
 			<pre class="codeblock">
 <span class="shTag">&lt;!DOCTYPE html&gt;</span>
 <span class="shTag">&lt;html&gt;&lt;head&gt;</span>
@@ -249,9 +256,23 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
     <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
-
-
-
+			<p>We replace the instantiation of the sap.m.Text control by our new “App” XML view. 
+			The view is created by a factory function of OpenUI5 which makes sure that the view is correctly configured. 
+				The name is prefixed with the namespace “sap.ui.demo.wt.view” in order to uniquely identify this resource. 
+				Furthermore, we tell the OpenUI5 core that resources in the “sap.ui.demo.wt” namespace are located in the same folder as the index.html. 
+				This is important and necessary for apps to run in some containers.
+			</p>
+			<p>
+				Try it out yourself - feel free to modify and extend this example!
+			</p>
+			<div class="corset"> <!-- for Ipad -->
+				<iframe style="width: 100%; height: 120px" src="http://embed.plnkr.co/O4ISRg" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
+			</div>
+			<div class="resultIE">
+				<p>
+					Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
+				</p>
+			</div>
 
 
 <span class="shTag">&lt;mvc:View</span> <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> <span class="shAttr">xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> <span class="shAttr">xmlns</span>=<span class="shString">"sap.m"</span> 
