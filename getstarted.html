@@ -121,7 +121,10 @@
 <span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
     <span class="shAttr">src</span>=<span class="shString">'resources/sap-ui-core.js'</span>
     <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_bluecrystal'</span>
-    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span><span class="shTag">&gt;</span>
+    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
+    <span class="shAttr">data-sap-ui-compatVersion</span>=<span class="shString">'edge'</span>
+    <span class="shAttr">data-sap-ui-preload</span>=<span class="shString">'async</span><span class="shTag">&gt;</span>
+
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;script&gt;</span>
@@ -162,8 +165,9 @@
 
 				<h3>Using OpenUI5 Controls</h3>
 				<p>Now it is time to build our first little UI by replacing the “Hello World” text in the HTML body by the OpenUI5 control sap.m.Text. For the beginning we use the JavaScript control interface to setup the UI. The control instance is then &quot;placed&quot; into the HTML body. Don’t forget to remove the line starting with &quot;jQuery(&quot;#content&quot;)... &quot;.</p>
-				<img src="./images/openui5-get-started-step2.png" alt="Preview Step 2">
-				<p>Here’s the code for this step:</p>
+				<p>Here's a preview:<br>
+				<img src="./images/openui5-get-started-step2.png" alt="Preview Step 2"></p>
+				<p>And here’s the code for this step:</p>
 				<pre class="codeblock">
 <span class="shTag">&lt;!DOCTYPE html&gt;</span>
 <span class="shTag">&lt;html&gt;&lt;head&gt;</span>
@@ -173,14 +177,16 @@
 <span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
     <span class="shAttr">src</span>=<span class="shString">'resources/sap-ui-core.js'</span>
     <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_bluecrystal'</span>
-    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span><span class="shTag">&gt;</span>
+    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
+    <span class="shAttr">data-sap-ui-compatVersion</span>=<span class="shString">'edge'</span>
+    <span class="shAttr">data-sap-ui-preload</span>=<span class="shString">'async</span><span class="shTag">&gt;</span>
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;script&gt;</span>
          sap.ui.getCore().attachInit(function () {
              	<span class="sh-js-keyword">new</span> sap.m.Text({
 			 <span class="shAttr">text</span>: &quot;<span class="shString">Hello World&quot;</span>
-		}).placeAt(&quot;content&quot;);
+		}).placeAt(&quot;<span class="shString">content<span class="shString">&quot;);
          });
 <span class="shTag">&lt;/script&gt;</span>
 
@@ -200,6 +206,53 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 					<li><a href="http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/explored.html#/entity/sap.m.Text/samples" target="_blank">sap.m.Text - API Overview &nbsp; Samples</a></li>
 					<li><a href="http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/#docs/api/symbols/sap.m.Text.html" target="_blank">sap.m.Text - API Reference</a></li>
 				</ul>
+			<h3>XML Views</h3>
+			<p>Putting all our UI into the index.html file will very soon result in a messy setup and there is quite a bit of work ahead of us. 
+			So let’s do a first for modularization by putting the sap.m.Text control into a dedicated “view”. 
+			OpenUI5 supports multiple view types (XML, HTML, JavaScript). 
+			We choose XML as this produces the most readable code and will force us separate the view declaration from the controller logic. 
+			Yet the look of our UI will not change.</p>
+			<p>The outcome of this step will look like this: (preview)<br>
+				<img src="./images/openui5-get-started-step3.png" alt="Preview Step 3"></p>
+			<p>And here’s the code for this step, first of all for the view, which will now contain our sap.m.Text control:</p>
+			<pre class="codeblock">
+&lt;mvc:View
+	xmlns=&quot;<span class="shString">sap.m</span>&quot;
+	xmlns:mvc=&quot;<span class="shString">sap.ui.core.mvc</span>&quot;&gt;
+	&lt;Text text=&quot;<span class="shString">Hello World</span>&quot;/&gt;
+&lt;/mvc:View&gt;</pre>
+			<p>And next our new application code, which will be placed in the index.html again:</p>
+			<pre class="codeblock">
+<span class="shTag">&lt;!DOCTYPE html&gt;</span>
+<span class="shTag">&lt;html&gt;&lt;head&gt;</span>
+<span class="shTag">&lt;meta </span><span class="shAttr">http-equiv</span>=<span class="shString">'X-UA-Compatible'</span> <span class="shAttr">content</span>=<span class="shString">'IE=edge'</span> <span class="shTag">/&gt;</span>
+<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
+
+<span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
+    <span class="shAttr">src</span>=<span class="shString">'resources/sap-ui-core.js'</span>
+    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_bluecrystal'</span>
+    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
+    <span class="shAttr">data-sap-ui-compatVersion</span>=<span class="shString">'edge'</span>
+    <span class="shAttr">data-sap-ui-preload</span>=<span class="shString">'async</span><span class="shTag">&gt;</span>
+<span class="shTag">&lt;/script&gt;</span>
+
+<span class="shTag">&lt;script&gt;</span>
+   sap.ui.getCore().attachInit(function () {
+        <span class="sh-js-keyword">new</span> sap.ui.xmlview({
+		<span class="shAttr">viewName</span>: &quot;<span class="shString">sap.ui.demo.wt.App</span>&quot;
+	}).placeAt(&quot;<span class="shString">content<span class="shString">&quot;);
+   });
+<span class="shTag">&lt;/script&gt;</span>
+
+<span class="shTag">&lt;/head&gt;</span>
+<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span><span class="shTag">&gt;</span>
+    <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
+<span class="shTag">&lt;/body&gt;</span>
+<span class="shTag">&lt;/html&gt;</span></pre>
+
+
+
+
 
 <span class="shTag">&lt;mvc:View</span> <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> <span class="shAttr">xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> <span class="shAttr">xmlns</span>=<span class="shString">"sap.m"</span> 
 		<span class="shAttr">controllerName</span>=<span class="shString">"getStarted"</span> <span class="shAttr">xmlns:html</span>=<span class="shString">"http://www.w3.org/1999/xhtml"</span>&gt;
