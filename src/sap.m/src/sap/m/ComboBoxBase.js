@@ -784,7 +784,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.insertItem = function(oItem, iIndex) {
-			this.insertAggregation("items", oItem, iIndex);
+			this.insertAggregation("items", oItem, iIndex, true);
 
 			if (oItem) {
 				oItem.attachEvent("_change", this.onItemChange, this);
