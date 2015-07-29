@@ -185,7 +185,9 @@ sap.ui.define(['jquery.sap.global'],
 
 				if (sIcon) {
 					var aClasses = [];
-					var mAttributes = {};
+					var mAttributes = {
+						"title": null // prevent default icon tooltip
+					};
 
 					mAttributes["id"] = oTitle.getId() + "-ico";
 					rm.writeIcon(sIcon, aClasses, mAttributes);
