@@ -2054,7 +2054,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	MultiComboBox.prototype.clearSelection = function() {
 		this.removeAllSelectedItems();
 	};
-	
+
+	MultiComboBox.prototype.addItem = function(oItem) {
+		ComboBoxBase.prototype.addItem.apply(this, arguments);
+		this.invalidate();
+		return this;
+	};
+
 	/**
 	 * Removes an item from the aggregation named <code>items</code>.
 	 * 
