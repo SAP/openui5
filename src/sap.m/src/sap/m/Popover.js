@@ -755,14 +755,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			sContentWidth = this.getContentWidth(),
 			sContentHeight = this.getContentHeight(),
 			$arrow = this.$("arrow"),
-			iWindowWidth = this._$window.width(),
-			iWindowHeight = this._$window.height();
+			iWindowWidth,
+			iWindowHeight;
 
 		if (sContentWidth.indexOf("%") > 0) {
+			iWindowWidth = this._$window.width();
 			sContentWidth = sap.m.PopupHelper.calcPercentageSize(sContentWidth, iWindowWidth);
 		}
 
 		if (sContentHeight.indexOf("%") > 0) {
+			iWindowHeight = this._$window.height();
 			sContentHeight = sap.m.PopupHelper.calcPercentageSize(sContentHeight, iWindowHeight);
 		}
 
