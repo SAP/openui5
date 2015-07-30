@@ -16,12 +16,8 @@ var FeedInputRenderer = {
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FeedInputRenderer.render = function (oRm, oControl) {
-	
 		var sMyId = oControl.getId();
-			
-		if (!oControl.getVisible()) {
-			return;
-		}
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMFeedIn");
@@ -33,7 +29,7 @@ var FeedInputRenderer = {
 		if (!!oControl.getShowIcon()) {
 			this._addImage(oRm, oControl, sMyId);
 		}
-		oRm.write("<div");
+		oRm.write('<div id="' + sMyId + '-container"');
 		oRm.addClass("sapMFeedInContainer");
 		oRm.writeClasses();
 		oRm.write(">");
@@ -43,7 +39,7 @@ var FeedInputRenderer = {
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};
-	
+
 	FeedInputRenderer._addImage = function (oRm, oControl, sMyId) {
 		oRm.write('<figure id="' + sMyId + '-figure" class ="sapMFeedInFigure');
 		if (!!oControl.getIcon()) {

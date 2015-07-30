@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.commons",
 		version: "${version}",
-		dependencies : ["sap.ui.core","sap.ui.layout"],
+		dependencies : ["sap.ui.core","sap.ui.layout","sap.ui.unified"],
 		types: [
 			"sap.ui.commons.ButtonStyle",
 			"sap.ui.commons.HorizontalDividerHeight",
@@ -444,10 +444,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	
 	
 	/**
-	 * @class A string type that represents subset of CSS size values. For the Splitter only px and % are allowed.
+	 * @classdesc A string type that represents subset of CSS size values. For the Splitter only px and % are allowed.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1193,23 +1193,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			bFinal: false /* to allow mobile to overwrite  */
 		};
 	}
-	
+
 	//implement FileUploader helper factory with commons controls
-	jQuery.sap.setObject("sap.ui.unified.FileUploaderHelper", {
-		createTextField: function(sId){
-			var oTextField = new sap.ui.commons.TextField(sId);
-			return oTextField;
-		},
-		setTextFieldContent: function(oTextField, sWidth){
-			oTextField.setWidth(sWidth);
-		},
-		createButton: function(){
-			var oButton = new sap.ui.commons.Button();
-			return oButton;
-		},
-		bFinal: false /* to allow mobile to overwrite  */
-	});
-	
+	if (!sap.ui.unified.FileUploaderHelper || !sap.ui.unified.FileUploaderHelper.bFinal) {
+		sap.ui.unified.FileUploaderHelper = {
+			createTextField: function(sId){
+				var oTextField = new sap.ui.commons.TextField(sId);
+				return oTextField;
+			},
+			setTextFieldContent: function(oTextField, sWidth){
+				oTextField.setWidth(sWidth);
+			},
+			createButton: function(){
+				var oButton = new sap.ui.commons.Button();
+				return oButton;
+			},
+			bFinal: false /* to allow mobile to overwrite  */
+		};
+	}
+
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
 	jQuery.sap.setObject("sap.ui.table.TableHelper", {
@@ -1217,6 +1219,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			return new sap.ui.commons.Label(mConfig);
 		},
 		createTextView: function(mConfig){
+			if (mConfig && !mConfig.wrapping) {
+				mConfig.wrapping = false;
+			}
 			return new sap.ui.commons.TextView(mConfig);
 		},
 		createTextField: function(mConfig){
@@ -1225,9 +1230,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		createImage: function(mConfig){
 			return new sap.ui.commons.Image(mConfig);
 		},
+		addTableClass: function() { return "sapUiTableCommons"; },
 		bFinal: false /* to allow mobile to overwrite  */
 	});
 
 	return sap.ui.commons;
 
-}, /* bExport= */ false);
+});

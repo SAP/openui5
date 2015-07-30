@@ -1,26 +1,37 @@
-sap.ui.controller("sap.m.sample.ListItemTypes.List", {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/m/MessageToast',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, MessageToast, Controller, JSONModel) {
+	"use strict";
 
-	onInit : function(evt) {
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		this.getView().setModel(oModel);
-	},
+	var ListController = Controller.extend("sap.m.sample.ListItemTypes.List", {
 
-	handleSelectChange : function(oEvent) {
-		var type = oEvent.getParameter("selectedItem").getKey();
-		this.getView().byId("ProductList").getItems().forEach(function(item) {
-			item.setType(type);
-		});
-	},
+		onInit : function(evt) {
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+		},
 
-	handlePress : function(oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
-		sap.m.MessageToast.show("'press' event fired!");
-	},
+		handleSelectChange : function(oEvent) {
+			var type = oEvent.getParameter("selectedItem").getKey();
+			this.getView().byId("ProductList").getItems().forEach(function(item) {
+				item.setType(type);
+			});
+		},
 
-	handleDetailPress : function(oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
-		sap.m.MessageToast.show("'detailPress' event fired!");
-	}
+		handlePress : function(oEvent) {
+			MessageToast.show("'press' event fired!");
+		},
+
+		handleDetailPress : function(oEvent) {
+			MessageToast.show("'detailPress' event fired!");
+		}
+
+	});
+
+
+	return ListController;
 
 });

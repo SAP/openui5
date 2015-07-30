@@ -11,6 +11,76 @@
 <script type="text/javascript">
 	var bCheckBoxSet = true;
 
+	var oModel = new sap.ui.model.json.JSONModel({
+	                                 			"TextTrue": "TitleActive",
+	                                			"true" : true,
+	                                			"TextFalse" : "TitleNotActive",
+	                                			"false" : false,
+	                                			"formatterTest" : "dummyString",
+	                                			"description1" : "Model sets true",
+	                                			"description2" : "Model sets false",
+	                                			"description3" : "Formatter sets true",
+	                                			"description4" : ""
+	                                		});
+	
+	var oProductModel = new sap.ui.model.json.JSONModel({
+					"ProductCollection": [
+	                	              		{
+	                	              			"active": true,
+	                	              			"ProductId": "1239102",
+	                	              			"Name": "Power Projector 4713",
+	                	              			"Category": "Projector",
+	                	              			"SupplierName": "Titanium",
+	                	              			"Description": "A very powerful projector with special features for Internet usability, USB",       	              		
+	                	              			"Price": 856.49,
+	                	              			"CurrencyCode": "EUR"
+	                	              		},
+	                	              		{
+	                	              			"ProductId": "2212-121-828",
+	                	              			"Name": "Gladiator MX",
+	                	              			"Category": "Graphics Card",
+	                	              			"SupplierName": "Technocom",
+	                	              			"Description": "Gladiator MX: DDR2 RoHS 128MB Supporting 512MB Clock rate: 350 MHz Memory Clock: 533 MHz, Bus Type: PCI-Express, Memory Type: DDR2 Memory Bus: 32-bit Highlighted Features: DVI Out, TV Out , HDTV",
+	                	              			"Price": 81.7,
+	                	              			"CurrencyCode": "EUR"
+	                	              		},
+	                	              		{
+	                	              			"ProductId": "K47322.1",
+	                	              			"Name": "Hurricane GX",
+	                	              			"Category": "Graphics Card",
+	                	              			"SupplierName": "Red Point Stores",
+	                	              			"Description": "Hurricane GX: DDR2 RoHS 512MB Supporting 1024MB Clock rate: 550 MHz Memory Clock: 933 MHz, Bus Type: PCI-Express, Memory Type: DDR2 Memory Bus: 64-bit Highlighted Features: DVI Out, TV-In, TV-Out, HDTV",
+	                	              			"Price": 219,
+	                	              			"CurrencyCode": "EUR"
+	                	              		},
+	                	              		{
+	                	              			"ProductId": "KTZ-12012.V2",
+	                	              			"Name": "Deskjet Super Highspeed",
+	                	              			"Category": "Printer",
+	                	              			"SupplierName": "Red Point Stores",
+	                	              			"Description": "1200 dpi x 1200 dpi - up to 25 ppm (mono) / up to 24 ppm (colour) - capacity: 100 sheets - Hi-Speed USB2.0, Ethernet",
+	                	              			"Price": 117.19,
+	                	              			"CurrencyCode": "EUR"
+	                	              		},
+	                	              		{
+	                	              			"Name": "Laser Allround Pro",
+	                	              			"Category": "Printer",
+	                	              			"SupplierName": "Red Point Stores",
+	                	              			"Description": "Should be one line in height",
+	                	              			"Price": 39.99,
+	                	              			"CurrencyCode": "EUR"
+	                	              		},
+	                	              		{
+	                	              			"ProductId": "38094020.1",
+	                	              			"Category": "Monitor",
+	                	              			"SupplierName": "Very Best Screens",
+	                	              			"Description": "Should be one line in height",
+	                	              			"Price": 339,
+	                	              			"CurrencyCode": "EUR"
+	                	              		}
+	                	              	]
+	                	              });
+	
 	var oi1 = new sap.m.ObjectIdentifier("oi1", {
 		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1",
 		text : "Gummib\u00E4" + "r\u00E7" + "he\u00D1 bla bla bla bla bla bla bla bla bla silly table",
@@ -47,6 +117,100 @@
 		badgeAttachments : true,
 		visible : true
 	});
+	
+	var oi4 = new sap.m.ObjectIdentifier("oi4", {
+		title : "{/TextTrue}",
+		text : "{/description1}",
+		titlePress: function() {
+			alert('ok')
+		},
+		titleActive : "{/true}"
+	});
+	
+	var oi5 = new sap.m.ObjectIdentifier("oi5", {
+		title : "{/TextFalse}",
+		text : "{/description2}",
+		titleActive : "{/false}"
+	});
+	
+	var oi6 = new sap.m.ObjectIdentifier("oi6", {
+		title: "{/TextTrue}",
+		text: "{/description3}",
+		titlePress: function() {
+			alert('ok')
+		},
+		titleActive: {
+			path: "/formatterTest",
+			formatter: function(e) {
+				return (e == "dummyString") ? true : false;
+			}
+		}
+	});
+	
+	var oi7 = new sap.m.ObjectIdentifier("oi7", {
+		title : "Model sets empty text",
+		text : "{/description4}",
+	});
+
+	var oi8 = new sap.m.ObjectIdentifier("oi8", {
+		title : "OI with textDirection set to LTR",
+		text : "+49 (9) 1234567",
+		badgeNotes : true,
+		badgePeople : true,
+		badgeAttachments : true,
+		textDirection: sap.ui.core.TextDirection.LTR
+	});
+
+	
+	var oTableHeader = new sap.m.Toolbar({
+		content : [
+			new sap.m.Label({
+				text : "Test ObjectIdentifier inside a Table"
+			})
+		]
+	});
+	
+	var aColumns = [
+   		new sap.m.Column({
+   			header : new sap.m.Label({
+   				text : "Product"
+   			})
+   		}),
+   		new sap.m.Column({
+   			header : new sap.m.Label({
+   				text : "Category"
+   			})
+   		}),
+   		new sap.m.Column({
+   			header : new sap.m.Label({
+   				text : "Price"
+   			})
+   		})
+   	];
+	
+	var oTemplate = new sap.m.ColumnListItem({
+		cells : [
+			new sap.m.ObjectIdentifier({
+				title : "{Name}",
+				text : "{ProductId}",
+				titleActive : "{active}"
+			}),
+			new sap.m.Text({
+				text : "{Category}"
+			}),
+			new sap.m.ObjectNumber({
+				number : "{Price}",
+				unit : "{CurrencyCode}"
+			})
+		]
+	});
+	
+	var oTable = new sap.m.Table({
+		headerToolbar : oTableHeader,
+		columns : aColumns
+	})
+	oTable.setModel(oProductModel);
+	oTable.bindItems("/ProductCollection", oTemplate);
 
 	var app = new sap.m.App();
 	var page = new sap.m.Page({
@@ -56,10 +220,17 @@
 	app.setInitialPage(page.getId());
 	app.addPage(page);
 
+	page.setModel(oModel);
 	page.addContent(oi1);
 	page.addContent(cb1);
 	page.addContent(oi2);
 	page.addContent(oi3);
+	page.addContent(oi4);
+	page.addContent(oi5);
+	page.addContent(oi6);
+	page.addContent(oi7);
+	page.addContent(oi8);
+	page.addContent(oTable);
 	app.placeAt('body');
 </script>
 </head>

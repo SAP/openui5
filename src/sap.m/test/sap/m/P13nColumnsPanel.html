@@ -12,7 +12,7 @@
 <script>
 	jQuery.sap.require("jquery.sap.xml");
 	jQuery.sap.require("sap.m.P13nColumnsPanel");
-	jQuery.sap.require("sap.m.P13nColumnItem");
+	jQuery.sap.require("sap.m.P13nItem");
 
 	var oApp = new sap.m.App("myApp", {
 		initialPage: "page1"
@@ -22,119 +22,125 @@
 	this._oModel = new sap.ui.model.json.JSONModel();
 
 	var _oData = {
-		columns: {
-			title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp").getText("PERSODIALOG_TAB_COLUMNS"),
-			items: [ {
-				key: '4711',
-				selected: true,
-				visible: true,
-				text: "Column1",
-				tooltip: "Column1_Tooltip"
-			}, {
-				key: '4712',
-				selected: true,
-				visible: true,
-				text: "Column2",
-				tooltip: "Column2_Tooltip"
-			}, {
-				key: '4713',
-				selected: false,
-				visible: true,
-				text: "Column3",
-				tooltip: "Column3_Tooltip"
-			}, {
-				key: '4714',
-				selected: true,
-				visible: true,
-				text: "Column4",
-				tooltip: "Column4_Tooltip"
-			} ]
-		}
+			transientData: {	
+				columns: {
+					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp").getText("PERSODIALOG_TAB_COLUMNS"),
+					items: [ {
+						columnKey: '4711',
+						visible: true,
+						text: "Column1",
+						tooltip: "Column1_Tooltip"
+					}, {
+						columnKey: '4712',
+						visible: true,
+						text: "Column2",
+						tooltip: "Column2_Tooltip"
+					}, {
+						columnKey: '4713',
+						visible: false,
+						text: "Column3",
+						tooltip: "Column3_Tooltip"
+					}, {
+						columnKey: '4714',
+						visible: true,
+						text: "Column4",
+						tooltip: "Column4_Tooltip"
+					}, {
+						columnKey: '4715',
+						visible: true,
+						text: "Column5",
+						tooltip: "Column5_Tooltip"
+					}, {
+						columnKey: '4716',
+						visible: false,
+						text: "Column6",
+						tooltip: "Column6_Tooltip"
+					}, {
+						columnKey: '4717',
+						visible: true,
+						text: "Column7",
+						tooltip: "Column7_Tooltip"
+					}, {
+						columnKey: '4718',
+						visible: true,
+						text: "Column8",
+						tooltip: "Column8_Tooltip"
+					}, {
+						columnKey: '4719',
+						visible: false,
+						text: "Column9",
+						tooltip: "Column9_Tooltip"
+					}, {
+						columnKey: '4720',
+						visible: false,
+						text: "Column10",
+						tooltip: "Column10_Tooltip"
+					} ]
+				}
+			},
+			persistentData: {
+				columns: {
+					columnsItems: [ {
+						columnKey: '4711',
+						index: 1
+					}, {
+						columnKey: '4712',
+						index: 0
+					}, {
+						columnKey: '4714',
+						visible: false
+					}, {
+						columnKey: '4716',
+						width: "100px"
+					}]
+				}
+			}
 	};
 
 	this._oModel.setData(_oData);
 
-	this._oColumnItemTemplate = new sap.m.P13nColumnItem({
-		key: '{key}',
-		cells: [ new sap.m.Text({
-			text: '{text}'
-		}) ],
-		visible: '{visible}',
-		selected: '{selected}',
-		tooltip: '{tooltip}',
-		type: sap.m.ListType.Active
-	});
-
 	this._oColumnsPanel = new sap.m.P13nColumnsPanel({
-		title: "{/columns/title}",
-		type: "columns",
-		items: {
-			path: '/columns/items',
-			template: this._oColumnItemTemplate
+		title : "{/transientData/columns/title}",
+		type : "columns",
+		items : {
+			path : '/transientData/columns/items',
+			template : new sap.m.P13nItem({
+				columnKey : "{columnKey}",
+				text : '{text}',
+				visible : '{visible}',
+				tooltip : '{tooltip}'
+			})
 		},
-		moveItem: function(oEvent) {
-			that._handleMoveItem(oEvent);
+		columnsItems : {
+			path : "/persistentData/columns/columnsItems",
+			template : new sap.m.P13nColumnsItem({
+				columnKey : "{columnKey}",
+				index : "{index}",
+				visible : "{visible}",
+				width : "{width}"
+			})
 		}
 	});
+	
+	this._oColumnsPanel.attachAddColumnsItem(function(oEvent) {
+		var oData = this._oModel.getData();
+		var oParams = oEvent.getParameters();
+		var oColumnsItem = {
+			columnKey : oParams.newItem.getColumnKey(),
+			index : oParams.newItem.getIndex(),
+			visible : oParams.newItem.getVisible(),
+			width : oParams.newItem.getWidth()
+		};
+		oData.persistentData.columns.columnsItems.push(oColumnsItem);
+		this._oModel.setData(oData, true);
+	}, this);
 
+
+	this._oColumnsPanel.setModel(this._oModel)
+	
 	var oPage = new sap.m.Page("page1", {
 		content: [ this._oColumnsPanel ]
 	});
-
-	this._oColumnsPanel.setModel(this._oModel)
-
-	this._handleMoveItem = function(oEvent) {
-		var oTable = null, i = 0;
-		var oOldItem = null, oNewItem = null;
-		var iOldIndex = null, iNewIndex = null;
-
-		if (oEvent !== null) {
-			oOldItem = oEvent.getParameter('oldItem');
-			oNewItem = oEvent.getParameter('newItem');
-			if (oOldItem !== null && oNewItem !== null) {
-				oTable = oOldItem.getParent();
-				if (oTable !== null) {
-					iOldIndex = oTable.indexOfItem(oOldItem);
-					iNewIndex = oTable.indexOfItem(oNewItem);
-				}
-
-				//Items are direct neighbors -> just swop the content -> this is faster as working on the model
-				if (iOldIndex !== null && iNewIndex !== null && (Math.abs(iOldIndex - iNewIndex) == 1)) {
-					this._swopItemContent(oOldItem, oNewItem);
-				} else {
-					var aTableItems = oTable.getItems();
-					if (iOldIndex > iNewIndex) {
-						for (i = iOldIndex; i > iNewIndex; i--) {
-							this._swopItemContent(aTableItems[i-1], aTableItems[i]);
-						}
-					} else {
-						for (i = iOldIndex; i < iNewIndex; i++) {
-							this._swopItemContent(aTableItems[i], aTableItems[i+1]);						}
-					}
-				}
-
-				that._oColumnsPanel._afterMoveItem(oOldItem, oNewItem);
-			}
-		}
-	};
-	
-	this._swopItemContent = function(oItem1, oItem2) {
-		var bTempItemIsSelected = null, sTempItemText = null, sTempItemKey = null;
-		
-		if (oItem1 !== null && oItem2 !== null) {
-			bTempItemIsSelected = oItem2.getSelected();
-			sTempItemText = oItem2.getCells()[0].getText();
-			sTempItemKey = oItem2.getKey();
-			
-			oItem2.setSelected(oItem1.getSelected());
-			oItem2.getCells()[0].setText(oItem1.getCells()[0].getText());
-			oItem2.setKey(oItem1.getKey());
-
-			oItem1.setSelected(bTempItemIsSelected);
-			oItem1.getCells()[0].setText(sTempItemText);
-			oItem1.setKey(sTempItemKey);
-		}
-	};
 
 	oApp.addPage(oPage);
 	oApp.placeAt("body");

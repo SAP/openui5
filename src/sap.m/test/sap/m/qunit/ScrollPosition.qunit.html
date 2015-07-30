@@ -23,11 +23,14 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
+		<script>
 			
 		QUnit.config.autostart = false;
 		jQuery(document).ready(function() {
 			QUnit.start();
+			
+			// do not let ui5 to retain the focus after rendering to make the scroll position test valid 
+			document.activeElement.blur();
 		});
 		
 		
@@ -184,15 +187,14 @@
 		});
 		
 		
-		test("Scroll position after rerendering page1", function() {
-			page1.rerender();
-
-			equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-			equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-		});
-		
-		
 		if (!sap.ui.Device.browser.internet_explorer) { // known gap in IE
+			test("Scroll position after rerendering page1", function() {
+				page1.rerender();
+
+				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+			});
+
 			asyncTest("Scroll position after navigating away and back to page1", function() {
 				expect(5);
 				
@@ -270,67 +272,68 @@
 			equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 		});
 		
-		
-		asyncTest("Scroll position after navigating away and rerendering the APP and navigating back to page1", function() {
-			expect(2);
-			
-			var test = function() { // function to be executed after navigating forward and back
-				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-				
-				app.detachAfterNavigate(test);
-				start();
-			};
-			
-			var goBack = function() {
-				app.detachAfterNavigate(goBack);
-				app.attachAfterNavigate(test);
-				
-				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-					app.rerender();
-					
-					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-						app.back();
-					}, 100);
-				}, 100);
-			};
+		if (!sap.ui.Device.browser.internet_explorer) {
 
-			app.attachAfterNavigate(goBack);
-			app.to("page2");
-		});
-		
-		
-		asyncTest("Scroll position after navigating away and removing page1 from DOM and navigating back to page1", function() {
-			expect(4);
-			
-			var test = function() { // function to be executed after navigating forward and back
-				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+			asyncTest("Scroll position after navigating away and rerendering the APP and navigating back to page1", function() {
+				expect(2);
 				
-				app.detachAfterNavigate(test);
-				start();
-			};
-			
-			var goBack = function() {
-				app.detachAfterNavigate(goBack);
-				app.attachAfterNavigate(test);
-				
-				window.setTimeout(function(){ // Make sure there is one resize listener cycle with no page1 rendered in the html
-					page1.$().remove();
-					
+				var test = function() { // function to be executed after navigating forward and back
+					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 					
+					app.detachAfterNavigate(test);
+					start();
+				};
+				
+				var goBack = function() {
+					app.detachAfterNavigate(goBack);
+					app.attachAfterNavigate(test);
+					
 					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-						app.back();
-						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+						app.rerender();
+						
+						window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
+							app.back();
+						}, 100);
 					}, 100);
-				}, 310);
-			};
-
-			app.attachAfterNavigate(goBack);
-			app.to("page2");
-		});
-		
+				};
+	
+				app.attachAfterNavigate(goBack);
+				app.to("page2");
+			});
+			
+			
+			asyncTest("Scroll position after navigating away and removing page1 from DOM and navigating back to page1", function() {
+				expect(4);
+				
+				var test = function() { // function to be executed after navigating forward and back
+					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+					
+					app.detachAfterNavigate(test);
+					start();
+				};
+				
+				var goBack = function() {
+					app.detachAfterNavigate(goBack);
+					app.attachAfterNavigate(test);
+					
+					window.setTimeout(function(){ // Make sure there is one resize listener cycle with no page1 rendered in the html
+						page1.$().remove();
+						
+						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+						
+						window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
+							app.back();
+							equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+						}, 100);
+					}, 310);
+				};
+	
+				app.attachAfterNavigate(goBack);
+				app.to("page2");
+			});
+		}
 		
 		
 		asyncTest("Scroll position after making the page huge", function() {
@@ -378,7 +381,6 @@
 				start();
 			}, 700); // required for scroll duration plus iScroll with resize Handler plus rubberband effect
 		}); 
-		
 		</script>
 		
 	</head>

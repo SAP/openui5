@@ -3,10 +3,12 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.ui.layout.form"
 	xmlns="sap.m" >
-	<Panel>
+	<Panel 
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Address" />
+				<Title text="Address" level="H2"/>
 				<ToolbarSpacer />
 				<Button icon="sap-icon://settings" />
 				<Button icon="sap-icon://drop-down-list" />

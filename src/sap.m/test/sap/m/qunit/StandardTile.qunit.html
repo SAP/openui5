@@ -116,13 +116,44 @@
 			result = sut.getIcon();
 
 			//Assert
-			ok(result,"result should not be undefined")
+			ok(result,"result should not be undefined");
 			ok(result.indexOf("add") !== -1, result,"result should contain add");
 			
 			
 			sut.destroy();
 		});
-		
+
+        test("ShouldStyleLongNumbersDifferently", function() {
+            //SUT
+            var sut = new sap.m.StandardTile({type: "Monitor", number:"4000", icon : "../images/action.png"}),
+                    result;
+            sut.placeAt("qunit-fixture");
+            core.applyChanges();
+
+            //Act
+            result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS .sapMStdTileNumM");
+            //Assert
+            equals(result.length, 0);
+
+            //Act
+            sut.setNumber("7000000");
+            core.applyChanges();
+            result = jQuery(sut.getDomRef()).find(".sapMStdTileNumM");
+            //Assert
+            equals(result.length, 1);
+
+            //Act
+            sut.setNumber("80000000");
+            core.applyChanges();
+            result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS");
+            //Assert
+            equals(result.length, 1);
+
+            sut.destroy();
+        });
+
+
+
 		module("Not Rendering Optional Fields");	
 		
 		test("IconNotRendered", function() {

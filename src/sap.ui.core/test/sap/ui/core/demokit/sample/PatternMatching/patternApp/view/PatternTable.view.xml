@@ -1,0 +1,65 @@
+<mvc:View controllerName="patternApp.view.PatternTable"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+			<f:SimpleForm editable="false" title="Hash">
+				<Label for="current" text="Current hash"></Label>
+				<Text for="hash" text="{
+					path: '/currentHash',
+					formatter: '.formatHash'
+				}"></Text>
+			</f:SimpleForm>
+			<f:SimpleForm editable="true">
+				<Input
+						id="hash"
+						showSuggestion="true"
+						showValueHelp="true"
+						valueHelpRequest="handleValueHelp"
+						suggestionItems="{/sampleRoutes}"
+						placeholder="Enter new hash">
+					<suggestionItems>
+						<core:Item text="{pattern}" />
+					</suggestionItems>
+				</Input>
+				<Button text="Set Hash" press="onSetHash"></Button>
+			</f:SimpleForm>
+			<Title class="sapUiSmallMarginBegin sapUiSmallMarginTop" text="Routes" level="H2"/>
+			<Table items="{/patterns}">
+				<headerToolbar>
+					<Toolbar>
+						<Label for="pattern" text="Pattern"></Label>
+						<ToolbarSpacer></ToolbarSpacer>
+						<Input
+								id="pattern"
+								width="50%"
+								placeholder="Enter new pattern">
+						</Input>
+						<Button icon="sap-icon://add" press="onAddPattern"></Button>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="Patterns" />
+					</Column>
+					<Column>
+						<Text text="Match" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{pattern}"></Text>
+							<ObjectStatus
+									state="{
+										path : 'matched',
+										formatter : '.formatMatched'
+									}"
+									text="{parameters}"></ObjectStatus>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+
+</mvc:View>

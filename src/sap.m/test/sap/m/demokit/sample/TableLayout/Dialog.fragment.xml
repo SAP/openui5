@@ -15,7 +15,7 @@
 				}">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Products"/>
+						<Title text="Products" level="H2"/>
 						<ToolbarSpacer/>
 						<CheckBox text="Fixed Layout" selected="true" select="onCheckBoxSelect"/>
 					</Toolbar>

@@ -7,12 +7,12 @@ When a file is consistently not following these rules and adhering to the rules 
 ### Table of Contents
 
 1.  [General](#general)
-2.  [JavaScript Coding Guidelines](#javascript-coding-guidelines)
+1.  [JavaScript Coding Guidelines](#javascript-coding-guidelines)
     *  [Code Formatting](#code-formatting)
     *  [Naming Conventions](#naming-conventions)
     *  [Creating Classes](#creating-classes)
     *  [Documentation (JSDoc)](#documentation-jsdoc)
-3.  [UI5 Control Development Guidelines](#ui5-control-development-guidelines)
+1.  [UI5 Control Development Guidelines](#ui5-control-development-guidelines)
     *  [API](#api)
     *  [Behavior](#behavior)
     *  [Renderer](#renderer)
@@ -20,10 +20,10 @@ When a file is consistently not following these rules and adhering to the rules 
         *  [General](#general-1)
         *  [Naming](#naming)
         *  [LESS Theme Parameters](#less-theme-parameters)
-4.  [Product Standards / Acceptance Criteria](#product-standards--acceptance-criteria)
-5.  [File Names and Encoding](#file-names-and-encoding)
-<!-- 6.  [Git Guidelines](#git-guidelines) -->
-6.  [Tools](#tools)
+1.  [Product Standards / Acceptance Criteria](#product-standards--acceptance-criteria)
+1.  [File Names and Encoding](#file-names-and-encoding)
+1.  [Git Guidelines](#git-guidelines)
+1.  [Tools](#tools)
     *  [ESLint](#eslint)
 
 
@@ -35,7 +35,7 @@ General
 -   Use tabs, not spaces, for indentation (but adhere to any local standard in the file)
 -   Use Unix line endings (LF-only)
     -   In Eclipse, this is configured in "Preferences - General - Workspace - New text file line delimiter"
--   Text files must be UTF-8 encoded, only `\*.properties` and `\*.hdbtextbundle` files must be ISO8859-1 encoded (as defined in the corresponding standard)
+-   Text files must be UTF-8 encoded, only `*.properties` and `*.hdbtextbundle` files must be ISO8859-1 encoded (as defined in the corresponding standard)
     -   This is at least the current state, which does cause some issues, so a change is not ruled out
     -   In Eclipse, this is configured in "Preferences - General - Workspace - Text File Encoding"
 -   There is *no* 80-character line length guideline
@@ -44,7 +44,7 @@ General
 JavaScript Coding Guidelines
 ----------------------------
 
--   No global JavaScript variables; organize all global objects in an "sap.\*" namespace structure or extend the `jQuery.sap` object. The method `jQuery.sap.declare(sModuleName)` assists in doing so <!-- TODO, find [more details here](/trac/sapui5/wiki/Documentation/DevelopmentGuidelines/JavaScriptNamespaces). -->
+-   No global JavaScript variables; organize all global objects in an `sap.\*` namespace structure or extend the `jQuery.sap` object. The methods `sap.ui.define(...)` and `jQuery.sap.declare(sModuleName)` assist in doing so, find [more details here](guidelines/jsnamespaces.md).
     -   This also means: no undeclared variables
     -   When using global variables introduced by other libraries, declare the usage in a special "global"-comment: `/*global JSZip, OpenAjax */`
 -   Do not access internal (private) members of other objects
@@ -63,23 +63,23 @@ JavaScript Coding Guidelines
     -   Use `===` and `!==` instead of `==` and `!=` (see the ESLint docu for special cases where `==` is allowed)
     -   The code should therefore look like this:
 
-    ```js
-        function outer(c, d) {
-            var e = c * d;
-            if (e === 0) {
-                e++;
-            }
-            for (var i = 0; i < e; i++) {
-                // do nothing
-            }
-    
-            function inner(a, b) {
-                return (e * a) + b;
-            }
-    
-            return inner(0, 1);
-        }
-    ```
+  ```js
+  function outer(c, d) {
+      var e = c * d;
+      if (e === 0) {
+          e++;
+      }
+      for (var i = 0; i < e; i++) {
+          // do nothing
+      }
+
+      function inner(a, b) {
+          return (e * a) + b;
+      }
+
+      return inner(0, 1);
+  }
+  ```
 
     -   The Eclipse default settings for the JavaScript editor are pretty fine, but make sure tabs are used for indentation
 
@@ -89,20 +89,20 @@ JavaScript Coding Guidelines
 But do NOT use hungarian notation for API method parameters: the documentation will specify the type in this case. When using hungarian notation, use the prefixes highlighted below and continue with an uppercase letter (camelCase):
 
 
-| Sample          | Type               |
-|-----------------|--------------------|
-| **s**Id         | string             |
-| **o**DomRef     | object             |
-| **$**DomRef     | jQuery object      |
-| **i**Count      | int                |
-| **m**Parameters | map / assoc. array |
-| **a**Entries    | array              |
-| **d**Today      | date               |
-| **f**Decimal    | float              |
-| **b**Enabled    | boolean            |
-| **r**Pattern    | RegExp             |
-| **fn**Function  | function           |
-| **v**Variant    | variant types      |
+| Sample             | Type               |
+|--------------------|--------------------|
+| <b>s</b>Id         | string             |
+| <b>o</b>DomRef     | object             |
+| <b>$</b>DomRef     | jQuery object      |
+| <b>i</b>Count      | int                |
+| <b>m</b>Parameters | map / assoc. array |
+| <b>a</b>Entries    | array              |
+| <b>d</b>Today      | date               |
+| <b>f</b>Decimal    | float              |
+| <b>b</b>Enabled    | boolean            |
+| <b>r</b>Pattern    | RegExp             |
+| <b>fn</b>Function  | function           |
+| <b>v</b>Variant    | variant types      |
 
 -   Class names should use CamelCase, starting with an uppercase letter
 -   HTML element IDs starting with `sap-ui-` are reserved for UI5.
@@ -133,7 +133,7 @@ But do NOT use hungarian notation for API method parameters: the documentation w
     -   If there is no base class, the prototype is automatically initialized by JavaScript as an empty object literal and must not be assigned manually. Consider inheriting from `sap.ui.base.Object`
 -   Subclasses call (or apply) the constructor of their base class: `SuperClass.apply(this, arguments);`
 
-<!-- TODO See the [example for creating a class (with documentation)](guidelines/ClassExample). -->
+See the [example for creating a class (with documentation)](guidelines/classexample.md).
 
 ### Documentation (JSDoc)
 
@@ -147,9 +147,9 @@ For documenting JavaScript, UI5 uses the JSDoc3 toolkit which mimics JavaDoc. Se
 -   Document method parameters with type (in curly braces) and parameter name (in square brackets if optional)
 -   For static helper classes that only provide static methods use `@namespace`
 
-<!-- TODO See the [example for creating a class with documentation](/trac/sapui5/wiki/Documentation/DevelopmentGuidelines/ClassExample). -->
+See the [example for creating a class with documentation](guidelines/classexample.md).
 
-<!-- TODO Also see the [list of common JSDoc pitfalls](/trac/sapui5/wiki/Documentation/DevelopmentGuidelines/JSDocPitfalls). -->
+Also see the [list of common JSDoc pitfalls](guidelines/jsdocpitfalls.md).
 
 UI5 Control Development Guidelines
 ----------------------------------
@@ -253,8 +253,7 @@ General:
 -   Automated tests (qunit)
 -   Proper API documentation
 -   Translation: all texts visible in the UI must be translatable
-    -   Do not provide translations, only provide the "developer english" version in messagebundle.properties
-    <!-- TODO , but annotate properly for translators, see [this page](/trac/sapui5/wiki/Documentation/DevelopmentGuidelines/TranslationFiles) for details.  -->
+    -   Do not provide translations, only provide the "developer english" version in messagebundle.properties, but annotate properly for translators, see [this page](guidelines/translationfiles.md) for details.
 -   Follow the compatibility rules, as specified [here](https://openui5.hana.ondemand.com/docs/guide/91f087396f4d1014b6dd926db0e91070.html)
 -   Make sure other Open Source libraries (or parts of them) are officially approved before adding them to UI5. Do not add code you "found" somewhere.
 
@@ -293,8 +292,9 @@ The commit message consists of two or three parts, separated by empty lines:
 -   The summary line must be prefixed by `[FIX]` or `[FEATURE]` and should start with the control/component which was the main subject of the change
 -   Instead of `[FIX]`/`[FEATURE]` and at any other location in the commit message `[INTERNAL]` can be used for commits/explanations which are not supposed to be part of the release notes because they are not relevant for users of UI5
 -   The data section consists of name-value pairs
-	-   `Fixes https://github.com/SAP/openui5/issues/(issueNumber)` (when the change fixes a GitHub-reported bug; it is important that there is NO colon between "Fixes" and the URL!)
-    -   Further internal information like `CSS` (for SAP-internally reported bugs), `BCS` (for customer messages reported at SAP), a mandatory `Change-Id`, and `CR-Id` ("Change Request", mandatory for maintenance codelines) - is added by SAP developers when required
+	-   `Fixes https://github.com/SAP/openui5/issues/(issueNumber)` when the change fixes a GitHub-reported bug; it is important that there is NO colon between "Fixes" and the URL!
+	-   `Closes https://github.com/SAP/openui5/pull/(pullRequestNumber)` when the change comes from a pull request; it is important that there is NO colon between "Fixes" and the URL! As the pull request number is not known before it is created, this is usually added by the OpenUI5 committer handling the pull request
+    -   Further internal information - like `CSS` (for old SAP-internally reported bugs), `BCP` (for customer messages reported at SAP and new internal bug reports), a mandatory `Change-Id`, and the `CR-Id` ("Change Request ID", mandatory for maintenance codelines) - is added by SAP developers when required
 -   A commit message can thus look like this:
 
     ``` wiki

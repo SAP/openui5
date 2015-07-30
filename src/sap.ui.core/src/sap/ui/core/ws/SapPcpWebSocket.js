@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * @extends sap.ui.core.ws.WebSocket
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.ws.SapPcpWebSocket
+	 * @alias sap.ui.core.ws.SapPcpWebSocket
 	 */
 	var SapPcpWebSocket = WebSocket.extend("sap.ui.core.ws.SapPcpWebSocket", /** @lends sap.ui.core.ws.SapPcpWebSocket.prototype */ {
 
@@ -29,23 +29,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 		}
 
 	});
-
-	/**
-	 * Creates a new subclass of class sap.ui.core.ws.SapPcpWebSocket with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.core.ws.SapPcpWebSocket.extend
-	 * @function
-	 */
 
 	/**
 	 * The 'message' event is fired, when a message was received.
@@ -79,7 +62,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 *
 	 * @public
 	 * @static
-	 * @name sap.ui.core.ws.SapPcpWebSocket.SUPPORTED_PROTOCOLS
 	 */
 	SapPcpWebSocket.SUPPORTED_PROTOCOLS = {
 
@@ -96,7 +78,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * RegEx to get pcp-header fields
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket._deserializeRegexp
 	 */
 	SapPcpWebSocket._deserializeRegexp = /((?:[^:\\]|(?:\\.))+):((?:[^:\\\n]|(?:\\.))*)/;
 
@@ -104,7 +85,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * Separator between header-fields and message body
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket._SEPARATOR
 	 */
 	SapPcpWebSocket._SEPARATOR = "\n\n";
 
@@ -112,7 +92,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * pcp-action value
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket._MESSAGE
 	 */
 	SapPcpWebSocket._MESSAGE = "MESSAGE";
 
@@ -120,8 +99,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * Internal handler for open-event.
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket#_onopen
-	 * @function
 	 */
 	SapPcpWebSocket.prototype._onopen = function() {
 		var bSuccess = false;
@@ -153,8 +130,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * Internal handler for message-event.
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket#_onmessage
-	 * @function
 	 */
 	SapPcpWebSocket.prototype._onmessage = function(oMessageEvent) {
 		var iSplitPos = -1,
@@ -182,8 +157,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * @param {string} sHeader Header as string
 	 * @return {object} oPcpFields extracted fields as key-value map
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket#_extractPcpFields
-	 * @function
 	 */
 	SapPcpWebSocket.prototype._extractPcpFields = function(sHeader) {
 		var aFields = sHeader.split("\n"),
@@ -206,8 +179,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * @param {string} sEscaped escaped string
 	 * @return sUnescaped Unescaped string
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket#_unescape
-	 * @function
 	 */
 	SapPcpWebSocket.prototype._unescape = function(sEscaped) {
 		var aParts = sEscaped.split("\u0008"),
@@ -230,8 +201,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * @param {string} sPcpAction pcp-action value
 	 * @return {string} serialized pcp-fields
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket#_serializePcpFields
-	 * @function
 	 */
 	SapPcpWebSocket.prototype._serializePcpFields = function(oPcpFields, sMessageType, sPcpAction) {
 		var oSerialized = "",
@@ -261,8 +230,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * @param {string} sUnEscaped unescaped string
 	 * @return {string} sEscaped escaped string
 	 * @private
-	 * @name sap.ui.core.ws.SapPcpWebSocket#_escape
-	 * @function
 	 */
 	SapPcpWebSocket.prototype._escape = function(sUnEscaped) {
 		return sUnEscaped.replace(/\\/g, '\\\\').replace(/:/g, '\\:').replace(/\n/g, '\\n');
@@ -279,8 +246,6 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 * @param {object} [oPcpFields] additional pcp-fields as key-value map
 	 * @return {sap.ui.core.ws.SapPcpWebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.SapPcpWebSocket#send
-	 * @function
 	 */
 	SapPcpWebSocket.prototype.send = function(message, oPcpFields) {
 		var sMessageType = typeof message,
@@ -294,4 +259,4 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 
 	return SapPcpWebSocket;
 
-}, /* bExport= */ true);
+});

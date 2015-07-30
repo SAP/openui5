@@ -1,12 +1,25 @@
-sap.ui.controller("sap.m.sample.ObjectHeaderResponsiveV.Page", {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/m/MessageBox',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, MessageBox, Controller, JSONModel) {
+	"use strict";
 
-	onInit: function() {
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		this.getView().setModel(oModel);
-	},
+	var PageController = Controller.extend("sap.m.sample.ObjectHeaderResponsiveV.Page", {
 
-	onPress: function (evt) {
-		jQuery.sap.require("sap.m.MessageBox");
-		sap.m.MessageBox.alert("Link was clicked!");
-	},
+		onInit: function() {
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+		},
+
+		onPress: function (evt) {
+			jQuery.sap.require("sap.m.MessageBox");
+			MessageBox.alert("Link was clicked!");
+		},
+	});
+
+
+	return PageController;
+
 });

@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 	"use strict";
 
 /**
-	 * @class OverlayContainer renderer.
-	 * @static
+	 * OverlayContainer renderer.
+	 * @namespace
 	 */
 	var OverlayContainerRenderer = Renderer.extend(OverlayRenderer);
 	

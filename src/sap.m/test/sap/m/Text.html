@@ -6,7 +6,6 @@
 		<style>
 			#text1, #text2, #text3, #text4, #text5, #text6, #text7, #text8 {
 				margin: 0.4375em 0.4375em 0em 0.4375em;
-				border
 			}
 			#text4 {
 				padding: 0em 0.4375em 0em 0.4375em;
@@ -16,11 +15,16 @@
 				color: blue;
 				background-color: #FFFFDD;
 			}
+
+			#heading {
+				font-size: 1rem;
+				font-weight: bold;
+			}
 		</style>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.ui.commons, sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script>
@@ -28,14 +32,47 @@
 			// create and add app
 			var app = new sap.m.App("myApp", {initialPage:"textPage"});
 			app.placeAt("body");
-			
-			// create and add a page with texts 
+
+			// create and add a page with texts
 			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+
+			var form = new sap.ui.layout.form.SimpleForm({
+				minWidth : 1024,
+				maxContainerCols : 2,
+				editable: false,
+				content : [
+					new sap.m.Text("heading", {
+						text: 'Below are examples for testing the right-to-left special cases such as numerals, phone numbers, etc. To switch the page direction to right-to-left, please paste the following parameter at the end of the URL -> &sap-ui-rtl=true'
+					}),
+					new sap.m.Label({
+						text: 'default behavior'
+					}),
+					new sap.m.Text({
+						text: '(012) 345 678'
+					}),
+					new sap.m.Label({
+						text: 'textDirection -> ltr'
+					}),
+					new sap.m.Text({
+						textDirection: 'LTR',
+						text: '(012) 345 678'
+					}),
+					new sap.m.Label({
+						text: 'textDirection -> ltr, textAlign -> right'
+					}),
+					new sap.m.Text({
+						textDirection: 'LTR',
+						textAlign: 'Right',
+						text: '(012) 345 678'
+					})
+				]
+			});
+
 			var page = new sap.m.Page("textPage", {
 				title:"Text",
-				content : [ 
+				content : [
 			   		new sap.m.Text("text1", {
-			   			text: "[1. STANDARD] " + lorem 
+			   			text: "[1. STANDARD] " + lorem
 			   		}),
 			   		new sap.m.Text("text2", {
 			   			text: "[2. NO WRAPPING] " + lorem,
@@ -71,13 +108,15 @@
 			   			text: "Text [10. RTL + MAXLINE:2] " + lorem,
 			   			textDirection: "RTL",
 			   			maxLines: 2
-			   		})
+			   		}),
+					form
 	            ]
 			});
+
 			app.addPage(page);
-		
+
 		</script>
 	</head>
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>

@@ -17,8 +17,10 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 		<script>
-			var oApp = new sap.m.App("myApp");
+			sinon.config.useFakeTimers = true;
+
 			var oPage = new sap.m.Page("page1", {
 				title: "Mobile Switch Control",
 				content: [
@@ -79,9 +81,7 @@
 				]
 			});
 
-			oApp.addPage(oPage);
-			oApp.placeAt("content");
-
+			oPage.placeAt("content");
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -94,21 +94,18 @@
 					$SwtInner = $Swt.children(".sapMSwtInner"),
 					$SwtTextOn = $SwtInner.children(".sapMSwtTextOn"),
 					$SwtTextOff = $SwtInner.children(".sapMSwtTextOff"),
-					$SwtSpanOn = $SwtTextOn.children(),
-					$SwtSpanOff = $SwtTextOff.children(),
-					$SwtHandle = $SwtInner.children(".sapMSwtHandle"),
+					$SwtSpanOn = $SwtTextOn.children(".sapMSwtLabelOn"),
+					$SwtSpanOff = $SwtTextOff.children(".sapMSwtLabelOff"),
 					$Checkbox = $SwtCont.children("input[type=checkbox]");
 
 				return {
 					oSwitch: oSwitch,
-					$SwtCont: $SwtCont,
 					$Swt: $Swt,
 					$SwtInner: $SwtInner,
 					$SwtTextOn: $SwtTextOn,
 					$SwtTextOff: $SwtTextOff,
 					$SwtSpanOn: $SwtSpanOn,
 					$SwtSpanOff: $SwtSpanOff,
-					$SwtHandle: $SwtHandle,
 					$Checkbox: $Checkbox
 				}
 			};
@@ -159,6 +156,8 @@
 			test("properties and default values", function() {
 				strictEqual(oSwitch0.getState(), false, "The default state is false");
 				strictEqual(oSwitch0.getEnabled(), true, "By default the switch is disabled");
+				strictEqual(oSwitch0.getFocusDomRef().getAttribute("role"), "checkbox", "The role checkbox is set");
+				strictEqual(jQuery(oSwitch0.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
 			});
 
 			test("getter / setter", function() {
@@ -178,6 +177,164 @@
 				strictEqual(sap.ui.getCore().byId("__switch11")._sOff, "000", "");
 			});
 
+			/* ------------------------------ */
+			/* setState()                     */
+			/* ------------------------------ */
+
+			test("setState() test case 1 (initial rendering)", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					state: false
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
+			test("setState() test case 2 (initial rendering)", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					state: true
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
+			test("setState() test case 3", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch();
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSwitch.setState(true);
+
+				// assert
+				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
+			test("setState() test case 4", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch();
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSwitch.setState(false);
+
+				// assert
+				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
+			/* ------------------------------ */
+			/* ariaLabelledBy()               */
+			/* ------------------------------ */
+
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 1)", function() {
+
+				// system under test
+				var oLabel = new sap.m.Label({
+					id: "label"
+				});
+
+				var oSwitch = new sap.m.Switch({
+					state: false,
+					ariaLabelledBy: oLabel
+				});
+
+				// arrange
+				oLabel.placeAt("content");
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
+
+				// assert
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSwitch.destroy();
+				oLabel.destroy();
+			});
+
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 2)", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					state: true
+				});
+
+				var oLabel = new sap.m.Label({
+					id: "label",
+					labelFor: oSwitch
+				});
+
+				// arrange
+				oLabel.placeAt("content");
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
+
+				// assert
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSwitch.destroy();
+				oLabel.destroy();
+			});
+
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 3)", function() {
+
+				// system under test
+				var oLabel = new sap.m.Label({
+					id: "label"
+				});
+
+				var oSwitch = new sap.m.Switch({
+					type: sap.m.SwitchType.AcceptReject,
+					ariaLabelledBy: oLabel
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
+
+				// assert
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */
@@ -192,21 +349,42 @@
 				oPage.getContent().forEach(function(oSwitch) {
 					var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-					// assertions
-					ok(mDomRefs.$SwtCont.length, "The switch container html div element exists");
+					// assert
+					ok(oSwitch.$().length, "The switch container html div element exists");
 					ok(mDomRefs.$Swt.length, "The switch first-child html div element exists");
 					ok(mDomRefs.$SwtInner.length, "The switch first-child html div inner element exists");
 					ok(mDomRefs.$SwtTextOn.length, "The switch html div text element exists");
 					ok(mDomRefs.$SwtTextOff.length, "The switch html div text element exists");
 					ok(mDomRefs.$SwtSpanOn.length, "The switch html span inner element exists");
 					ok(mDomRefs.$SwtSpanOff.length, "The switch html span inner element exists");
+					strictEqual(oSwitch.getDomRef("switch").getAttribute("aria-hidden"), "true");
 
 					if (mDomRefs.oSwitch.getName()) {
 						ok(mDomRefs.$Checkbox.length, 'The checkbox html input element exists');
 					}
 
-					ok(mDomRefs.$SwtHandle.length, "The switch handler html div element exists");
+					ok(oSwitch.$("handle").length, "The switch handle html div element exists");
 				});
+			});
+
+			test("it should render the invisible element with the corresponding text nodes for screen reader announcement", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					type: sap.m.SwitchType.AcceptReject
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getDomRef("invisible").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
+				strictEqual(getComputedStyle(oSwitch.getDomRef("invisible")).getPropertyValue("display"), "none");
+				strictEqual(oSwitch.getDomRef("invisible").getAttribute("aria-hidden"), "true");
+
+				// cleanup
+				oSwitch.destroy();
 			});
 
 			/* =========================================================== */
@@ -226,8 +404,8 @@
 			function testSwitchON(oSwitch) {
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
-				ok(mDomRefs.$SwtCont.hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
+				// assert
+				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch first-child html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOn"), 'The switch first-child html element "must have" the css class "sapMSwtOn"');
 				ok(!mDomRefs.$Swt.hasClass("sapMSwtOff"), 'The switch first-child html element "must not have" the css class "sapMSwtOff"');
@@ -237,12 +415,12 @@
 					strictEqual(mDomRefs.$Checkbox.attr("checked"), "checked", 'The input checkbox is "checked"');
 				}
 
-				strictEqual(mDomRefs.$SwtHandle.attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON"), 'The switch handler "data-sap-ui-swt" attribute must have the value of "On"');
+				strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON"), 'The switch handle "data-sap-ui-swt" attribute must have the value of "On"');
 
 				if (oSwitch.getEnabled()) {
-					equal(mDomRefs.$SwtCont.attr("tabindex"), 0, 'The switch "tabindext" attribute must have the value of "0"');
+					equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindext" attribute must have the value of "0"');
 				} else {
-					ok(mDomRefs.$SwtCont.attr("tabindex"), 'The "tabindex" attribute of the switch is not rendered');
+					ok(oSwitch.$().attr("tabindex"), 'The "tabindex" attribute of the switch is not rendered');
 				}
 
 				testSwitchEnabled(oSwitch);
@@ -256,8 +434,8 @@
 				// arrange
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
-				ok(mDomRefs.$SwtCont.hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
+				// assert
+				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOff"), 'The switch html element "must have" the css class "sapMSwtOff"');
 				ok(!mDomRefs.$Swt.hasClass("sapMSwtOn"), 'The switch first-child html element "must not have" the css class "sapMSwtOn"');
@@ -267,10 +445,10 @@
 					strictEqual(mDomRefs.$Checkbox.attr("checked"), undefined, 'The input checkbox is not "checked"');
 				}
 
-				strictEqual(mDomRefs.$SwtHandle.attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF"), 'The switch handler "data-sap-ui-swt" attribute must have the value of "Off"');
+				strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF"), 'The switch handle "data-sap-ui-swt" attribute must have the value of "Off"');
 
 				if (mDomRefs.oSwitch.getEnabled()) {
-					equal(mDomRefs.$SwtCont.attr("tabindex"), 0, 'The switch "tabindex" attribute must have the value of "0"');
+					equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindex" attribute must have the value of "0"');
 				}
 			}
 
@@ -279,26 +457,17 @@
 				// arrange
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
+				// assert
 				if (oSwitch.getEnabled()) {
-					ok(!mDomRefs.$SwtCont.hasClass("sapMSwtContDisabled"), 'The switch container html element "must not have" the css class "sapMSwtContDisabled"');
+					ok(!oSwitch.$().hasClass("sapMSwtContDisabled"), 'The switch container html element "must not have" the css class "sapMSwtContDisabled"');
 					ok(!mDomRefs.$Swt.hasClass("sapMSwtDisabled"), 'The switch first-child html element "must not have" the css class "sapMSwtDisabled"');
 				} else {
-					ok(mDomRefs.$SwtCont.hasClass("sapMSwtContDisabled"), 'The switch container html element "must have" the css class "sapMSwtContDisabled"');
+					ok(oSwitch.$().hasClass("sapMSwtContDisabled"), 'The switch container html element "must have" the css class "sapMSwtContDisabled"');
 					ok(mDomRefs.$Swt.hasClass("sapMSwtDisabled"), 'The switch first-child html element "must have" the css class "sapMSwtDisabled"');
 				}
 			}
 
 			module("Updating");
-
-			if (sap.ui.Device.os.ios) {
-				asyncTest('Check the width for html elements "ON" and "OFF" state. Switch is "ON"', function() {
-					setTimeout(function() {
-						testSwitchON(oSwitch7);
-						start();
-					}, 175);
-				});
-			}
 
 			// test switch disabled
 			test("When the method setEnabled is invoked with a boolean false argument", function() {
@@ -310,7 +479,7 @@
 				// arrange
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				testSwitchOFF(oSwitch7);
 			});
 
@@ -323,8 +492,9 @@
 				// arrange
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				testSwitchOFF(oSwitch7);
+				strictEqual(jQuery(oSwitch7.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute not set');
 			});
 
 			test("Testing that setName() method add the html attribute name", function() {
@@ -339,29 +509,12 @@
 
 			module("Event");
 
-			test("Event binding", function() {
-				var oSwitch7 = sap.ui.getCore().byId("__switch7");
-
-				function test() {
-					strictEqual(typeof oSwitch7.ontouchstart, "function");
-					if (sap.ui.Device.os.os === "ios" && sap.ui.Device.os.version <= 5 && sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true") {
-						strictEqual(oSwitch7.ontouchmove, null);
-					} else {
-						strictEqual(typeof oSwitch7.ontouchmove, "function");
-					}
-					strictEqual(typeof oSwitch7.ontouchend, "function");
-				}
-
-				test();
-			});
-
 			test("Firing events", function() {
 				var j,
 					i,
 					oTouchMove,
 					oSwitch0 = sap.ui.getCore().byId("__switch0"),
-					oSwitch8 = sap.ui.getCore().byId("__switch8"),
-					fnDelayedCallSpy = this.spy(jQuery.sap, "delayedCall");
+					oSwitch8 = sap.ui.getCore().byId("__switch8");
 
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
 					touches: {
@@ -385,25 +538,7 @@
 					}
 				});
 
-				if (jQuery.device.is.desktop) {
-
-					// assertion
-	// 				ok(fnDelayedCallSpy.calledOnce, "delayedCall() method was called exactly once on " + oSwitch0);
-	// 				ok(fnDelayedCallSpy.alwaysCalledWithExactly(0, oSwitch0, "handleFocus"), "handleFocus() method was called");
-				} else {
-
-					// assertion
-					strictEqual(fnDelayedCallSpy.callCount, 0, "delayedCall() method must be called exactly once");
-				}
-
-				// cleanup
-				fnDelayedCallSpy.restore();
-
 				ok(oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtPressed"), 'On touchstart event the switch first-child html element muss have the css class “sapMSwtPressed”');
-
-				if (sap.ui.Device.os.ios) {
-					ok(!oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtTrans"), 'On touchstart event the switch first-child html element muss not have the css class “sapMSwtTrans”');
-				}
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch0.getDomRef(), {
 					changedTouches: {
@@ -421,8 +556,8 @@
 					}
 				});
 
+				this.clock.tick(200);
 				strictEqual(oSwitch0.getState(), true, "On tap the switch state is true");
-
 				ok(!oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtPressed"), 'On touchend event the switch muss not have the css class “sapMSwtPressed”');
 
 				/*	Only process single touches. If there is already a touch
@@ -495,7 +630,7 @@
 						0: {
 							pageX: 636,
 							identifier: 3,
-							target: oSwitch8.$().find(".sapMSwtHandle")[0]
+							target: oSwitch8.$("handle")[0]
 						},
 
 						length: 1
@@ -505,7 +640,7 @@
 						0: {
 							pageX: 636,
 							identifier: 3,
-							target: oSwitch8.$().find(".sapMSwtHandle")[0]
+							target: oSwitch8.$("handle")[0]
 						},
 
 						length: 1
@@ -515,7 +650,7 @@
 				j = 636;
 				for (i = j + 1; i < j + 41; i++) {
 					oTouchMove.changedTouches[0].pageX = i;
-					sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch8.$().find(".sapMSwtHandle")[0], oTouchMove);
+					sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch8.$("handle")[0], oTouchMove);
 				}
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch8.getDomRef(), {
@@ -533,6 +668,161 @@
 						length: 0
 					}
 				});
+			});
+
+			// github #234
+			test("double click/tap test case", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					state: true
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oTouchstart = {
+					touches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					},
+
+					targetTouches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					}
+				};
+
+				var oTouchend = {
+					changedTouches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					},
+
+					touches: {
+						length: 0
+					}
+				};
+
+				var iClickThreshold = 100;	// threshold between clicks
+
+				// act
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+				this.clock.tick(iClickThreshold);
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+				this.clock.tick(sap.m.Switch._TRANSITIONTIME - iClickThreshold);
+
+				// assert
+				strictEqual(oSwitch.getState(), false);
+				this.clock.tick(iClickThreshold);
+				strictEqual(oSwitch.getState(), true);
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
+			test("The change event should be fired only when it's state changes", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					state: true
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oTouchstart = {
+					touches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					},
+
+					targetTouches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					}
+				};
+
+				var oTouchmove = {
+					touches: {
+						0: {
+							pageX: 2,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					},
+
+					changedTouches: {
+						0: {
+							pageX: 2,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					}
+				};
+
+				var oTouchend = {
+					changedTouches: {
+						0: {
+							pageX: 2,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					},
+
+					touches: {
+						length: 0
+					}
+				};
+
+				var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
+
+				// act
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+				sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);	// drag the switch handle 1px to the right
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+				this.clock.tick(sap.m.Switch._TRANSITIONTIME + 1);	// wait some ms after the CSS transition is completed
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0);
+
+				// cleanup
+				oSwitch.destroy();
 			});
 
 			/* ------------------------------ */
@@ -555,7 +845,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 				this.clock.tick(1000);
 
-				// assertion
+				// assert
 				strictEqual(oSwitch.getState(), true, "After the space key is pressed, the switch state must change");
 				strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 
@@ -579,12 +869,33 @@
 				sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 				this.clock.tick(1000);
 
-				// assertion
+				// assert
 				strictEqual(oSwitch.getState(), false, "After the enter key is pressed, the switch state must change");
 				strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 
 				// cleanup
 				oSwitch.destroy();
+			});
+
+			// BCP 1570633670
+			test("extending the switch should not throw an error", function() {
+
+				// system under test
+				sap.m.Switch.extend("CustomSwitch", {
+					renderer: {}
+				});
+
+				var oCustomSwitch = new CustomSwitch();
+
+				// arrange
+				oCustomSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(oCustomSwitch.isActive());
+
+				// cleanup
+				oCustomSwitch.destroy();
 			});
 		</script>
 	</head>

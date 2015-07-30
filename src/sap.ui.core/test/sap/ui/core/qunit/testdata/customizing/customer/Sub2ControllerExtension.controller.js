@@ -1,29 +1,35 @@
-sap.ui.controller("testdata.customizing.customer.Sub2ControllerExtension", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(/* Controller */) {
+	"use strict";
+
+	return sap.ui.controller("testdata.customizing.customer.Sub2ControllerExtension", {
 	
-	onInit: function() {
-		aLifeCycleCalls.push("Sub2ControllerExtension Controller onInit()");
-	},
+		onInit: function() {
+			aLifeCycleCalls.push("Sub2ControllerExtension Controller onInit()");
+		},
 	
-	onExit: function() {
-		aLifeCycleCalls.push("Sub2ControllerExtension Controller onExit()");
-	},
+		onExit: function() {
+			aLifeCycleCalls.push("Sub2ControllerExtension Controller onExit()");
+		},
 	
-	onBeforeRendering: function() {
-		aLifeCycleCalls.push("Sub2ControllerExtension Controller onBeforeRendering()");
-	},
+		onBeforeRendering: function() {
+			aLifeCycleCalls.push("Sub2ControllerExtension Controller onBeforeRendering()");
+		},
 	
-	onAfterRendering: function() {
-		aLifeCycleCalls.push("Sub2ControllerExtension Controller onAfterRendering()");
-	},
+		onAfterRendering: function() {
+			aLifeCycleCalls.push("Sub2ControllerExtension Controller onAfterRendering()");
+		},
 	
 	
-	originalSAPAction: function() {
-		standardSub2ControllerCalled();
-		return "ext";
-	},
+		originalSAPAction: function() {
+			standardSub2ControllerCalled();
+			return "ext";
+		},
 	
-	customerAction: function() {
-		customSub2ControllerCalled();
-	}
+		customerAction: function() {
+			customSub2ControllerCalled();
+		}
 	
+	});
+
 });

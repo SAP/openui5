@@ -11,14 +11,14 @@
 
 <script>
 (function () {
+	"use strict";
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	sinon.config.useFakeTimers = true;
 	jQuery.sap.require("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
 
@@ -50,7 +50,7 @@
 		// Act
 		oOpa.waitFor({
 			check : function () {
-				return bFirstCheck
+				return bFirstCheck;
 			},
 			success : oFirstSuccess
 		});
@@ -87,6 +87,95 @@
 		strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
 
+	QUnit.test("Should resolve after 0ms if the conditions are met", function(asssert) {
+		// System under Test
+		var oOpa = new Opa();
+
+		// Act
+		oOpa.waitFor({
+			check : function () {
+				return true;
+			},
+			success : function () {
+				QUnit.ok(true, "Success is called synchronously");
+			}
+		});
+
+		Opa.emptyQueue();
+		this.clock.tick(0);
+	});
+
+	test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function() {
+		// System under Test
+		var oOpa = new Opa();
+		oOpa.extendConfig({
+			pollingInterval : 1
+		});
+
+		// Arrange
+		var	oSuccess_1_1 = this.spy(),
+			oSuccess_1_2_1 = this.spy(),
+			fnSuccess_1_2 = function(){
+				return oOpa.waitFor({
+					_debugID : "1_2_1",
+					success : oSuccess_1_2_1
+				});
+			},
+			fnSuccessSpy_1_2 = this.spy(fnSuccess_1_2),
+			oSuccess_1_3 = this.spy(),
+			fnSuccess_1 = function(){
+				oOpa.waitFor({
+					_debugID : "1_1",
+					success : oSuccess_1_1
+				});
+				oOpa.waitFor({
+					_debugID : "1_2",
+					success : fnSuccessSpy_1_2
+				});
+				return oOpa.waitFor({
+					_debugID : "1_3",
+					success : oSuccess_1_3
+				});
+			},
+			fnSuccessSpy_1 = this.spy(fnSuccess_1),
+			oSuccess_2 = this.spy(),
+			oDoneSpy = this.spy();
+
+
+
+		// Act
+		oOpa.waitFor({
+			_debugID : "1",
+			success : fnSuccessSpy_1
+		});
+
+		oOpa.waitFor({
+			_debugID : "2",
+			success : oSuccess_2
+		}).done(oDoneSpy);
+
+		sap.ui.test.Opa.emptyQueue();
+
+		//Ensure all timers have been triggered
+		this.clock.tick(100);
+
+		// Assert
+		//		Ensure Order
+		ok(fnSuccessSpy_1.calledBefore(oSuccess_1_1), "Success Handler Order: 1 before 1.1");
+		ok(oSuccess_1_1.calledBefore(fnSuccessSpy_1_2), "Success Handler Order: 1.1 before 1.2");
+		ok(fnSuccessSpy_1_2.calledBefore(oSuccess_1_2_1), "Success Handler Order: 1.2 before 1.2.1");
+		ok(oSuccess_1_2_1.calledBefore(oSuccess_1_3), "Success Handler Order: 1.2.1 before 1.3");
+		ok(oSuccess_1_3.calledBefore(oSuccess_2), "Success Handler Order: 1.3 before 2");
+		//		Ensure called once
+		strictEqual(fnSuccessSpy_1.callCount, 1, "Ensure Success Handler #1 called once");
+		strictEqual(oSuccess_1_1.callCount, 1, "Ensure Success Handler #1.1 called once");
+		strictEqual(fnSuccessSpy_1_2.callCount, 1, "Ensure Success Handler #1.2 called once");
+		strictEqual(oSuccess_1_2_1.callCount, 1, "Ensure Success Handler #1.2.1 called once");
+		strictEqual(oSuccess_1_3.callCount, 1, "Ensure Success Handler #1.3 called once");
+		strictEqual(oSuccess_2.callCount, 1, "Ensure Success Handler #2 called once");
+		strictEqual(oDoneSpy.callCount, 1, "Resolve the deferred");
+	});
+
 	test("Should modify the polling interval", function() {
 		// Arrange
 		var bFirstCheck = false,
@@ -119,7 +208,7 @@
 		sap.ui.test.Opa.emptyQueue().done(oDoneSpy);
 
 		this.clock.tick(1000);
-		strictEqual(oFirstCheckSpy.callCount, 5, "Did apply the polling of the extendConfig");
+		strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");
 
 		bFirstCheck = true;
 
@@ -128,7 +217,7 @@
 
 		//check for faster polling
 		this.clock.tick(1000);
-		strictEqual(oSecondCheckSpy.callCount, 10, "Did apply the polling of the waitFor");
+		strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
 
 		bSecondCheck = true;
 
@@ -152,6 +241,7 @@
 				oWaitForDoneSpy = this.spy(),
 				oSuccessSpy = this.spy(),
 				oDoneSpy = this.spy();
+		jQuery.sap.log.error = this.spy();
 
 		// System under Test
 		var oOpa = new Opa();
@@ -171,15 +261,33 @@
 			strictEqual(oDoneSpy.callCount, 0, "Done was not called");
 			strictEqual(oSuccessSpy.callCount, 0, "Success was not called");
 			strictEqual(oErrorSpy.callCount, 1, "Error spy got invoked");
+			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
 
 			start();
 		}).done(oDoneSpy);
 
 	});
 
-	asyncTest("Should reject the promise if no error handler is defined", function() {
+	function theCurrentBrowserSupporstStacktraces () {
+		if (sap.ui.Device.browser.phantomJS) {
+			return false;
+		}
+
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+			return false;
+		}
+
+		if (sap.ui.Device.browser.safari) {
+			return false;
+		}
+
+		return true;
+	}
+
+	asyncTest("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction() {
 		// System under Test
 		var oOpa = new Opa();
+		jQuery.sap.log.error = this.spy();
 
 		// Act
 		oOpa.waitFor({
@@ -189,11 +297,59 @@
 			timeout : 1
 		});
 
-		oOpa.emptyQueue().fail(function () {
+		oOpa.emptyQueue().fail(function (oOptions) {
 			ok(true, 0, "Promise got rejected");
+			ok(oOptions, "Options are passed");
+			ok(oOptions.errorMessage, "Error message is there");
+
+			if (theCurrentBrowserSupporstStacktraces()) {
+				ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
+			}
+
+			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
+			ok(jQuery.sap.log.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
 			start();
 		});
 
+	});
+
+	asyncTest("Reject message stack for additional waitFor declared in the success handler contains original call", function thisIsTheMainTest() {
+		// System under Test
+		var oOpa = new Opa();
+		oOpa.extendConfig({
+			pollingInterval : 1
+		});
+
+		function thisIsTheSuccessHandler(){
+			oOpa.waitFor({
+				check : function () {
+					return false;
+				},
+				timeout : 1
+			});
+
+		}
+
+		oOpa.waitFor({
+			check : function () {
+				return true;
+			},
+			success : thisIsTheSuccessHandler
+		});
+
+
+		oOpa.emptyQueue().fail(function (oOptions) {
+			ok(true, 0, "Promise got rejected");
+			ok(oOptions, "Options are passed");
+			ok(oOptions.errorMessage, "Error message is there");
+
+			if (theCurrentBrowserSupporstStacktraces()) {
+				ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
+				ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
+			}
+
+			start();
+		});
 	});
 })();
 

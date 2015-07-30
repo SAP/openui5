@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.core.InvisibleText
+  Author: d046314
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.ui.core">
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script language="javascript">
+	QUnit.config.autostart = false;
+	jQuery(document).ready(function() {
+		QUnit.start();
+	});
+
+	test("Hidden Text is really hidden", function(){
+		var iWidth = jQuery.sap.byId("content").width();
+		var iHeight = jQuery.sap.byId("content").height();
+		
+		var text = new sap.ui.core.InvisibleText({text: "Hello"});
+		text.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		
+		equal(iWidth, jQuery.sap.byId("content").width(), "Width of container not influenced by hidden text.");
+		equal(iHeight, jQuery.sap.byId("content").height(), "Height of container not influenced by hidden text.");
+		ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
+	});
+	
+	test("Render to static area", function(){
+		var text = new sap.ui.core.InvisibleText({text: "Hello"});
+		text.toStatic();
+		sap.ui.getCore().applyChanges();
+		ok(text.$().parent().attr("id") == "sap-ui-static", "Invisible Text was rendered to static area");
+	});
+	
+	test("Rendering", function(){
+		var text = new sap.ui.core.InvisibleText({text: "Hello"});
+		text.toStatic();
+		sap.ui.getCore().applyChanges();
+		equal(text.$().text(), "Hello", "Text rendered correctly");
+		text.setText("Hello2");
+		equal(text.$().text(), "Hello2", "Text rendered correctly");
+		equal(text.$().attr("aria-hidden"), "true", "aria-hidden=true is set");
+		ok(text.$().hasClass("sapUiInvisibleText"), "Class sapUiInvisibleText is set");
+	});
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: sap.ui.core.InvisibleText</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="content"></div>
+</body>
+</html>

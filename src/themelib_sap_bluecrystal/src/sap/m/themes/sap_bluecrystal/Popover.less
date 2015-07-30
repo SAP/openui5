@@ -20,8 +20,6 @@
 
 /* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
 .sapMPopover > .sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -53,7 +51,7 @@
 }
 
 html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
-	/* 
+	/*
 		In IE 9, .sapMBarPH gets style width: 100% when there's content only in the contentMiddle.
 		This style pushes the popover to maximum width. Therefore this inline style has to be overwritten by important.
 	*/
@@ -158,7 +156,7 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 	border-bottom-color: @sapUiPopupBorderColor;
 }
 
-.sapMPopoverArrUp:after, 
+.sapMPopoverArrUp:after,
 .sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
 .sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
 	border-color: transparent;
@@ -193,7 +191,7 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrLeft:after{
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after,
 .sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after{
 	border-color: transparent;
-	border-right-color: lighten(@sapUiExtraLightBG, 2%);
+	border-right-color: @sapUiHeaderBG;
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,
@@ -233,7 +231,7 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrRight:after{
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after,
 .sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after{
 	border-color: transparent;
-	border-left-color: lighten(@sapUiExtraLightBG, 2%);
+	border-left-color: @sapUiHeaderBG;
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,

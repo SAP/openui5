@@ -23,7 +23,7 @@
 
 .sapMRbB .sapMRbBOut {
 	height: 1.03em;
-	width: 1.03em;	
+	width: 1.03em;
 	border-radius: 1em;
 }
 
@@ -31,13 +31,41 @@
 	vertical-align: top;
 	height: 3em;
 	line-height: 3em;
+	cursor: default;
 }
 
 .sapMRbB input {
+	margin: 0; /* FF puts margin */
 	-webkit-appearance: none;
 	visibility: hidden;
 }
 
 .sapMRbB:focus {
 	outline: none;
+}
+
+.sapMRb:focus:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: .75rem;
+	bottom: .625rem;
+	left: .75rem;
+	right: .625rem;
+	z-index: -1;
+}
+
+.sapMRbHasLabel.sapMRb:focus:before {
+	right: -0.0625rem;
+}
+
+.sapMRbDis:focus:before {
+	display: none;
+}
+
+.sapUiSizeCompact .sapMRb:focus:before {
+	top: .4375rem;
+	bottom: .3125rem;
+	left: .4375rem;
+	right: .325rem;
 }

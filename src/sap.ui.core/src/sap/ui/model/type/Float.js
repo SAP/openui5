@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType'],
-	function(jQuery, NumberFormat, SimpleType) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, NumberFormat, SimpleType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -22,128 +22,139 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.NumberFormat.getFloatInstance NumberFormat.getFloatInstance}
+	 * @param {object} [oFormatOptions.source] additional set of format options to be used if the property in the model is not of type string and needs formatting as well. 
+	 * 										   In case an empty object is given, the default is disabled grouping and a dot as decimal separator. 
 	 * @param {object} [oConstraints] value constraints. 
 	 * @param {float} [oConstraints.minimum] smallest value allowed for this type  
 	 * @param {float} [oConstraints.maximum] largest value allowed for this type  
-	 * @name sap.ui.model.type.Float 
+	 * @alias sap.ui.model.type.Float 
 	 */
 	var Float = SimpleType.extend("sap.ui.model.type.Float", /** @lends sap.ui.model.type.Float.prototype  */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "Float";
 		}
-	
+
 	});
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.type.Float with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.type.Float.extend
-	 * @function
-	 */
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
-	 * @name sap.ui.model.type.Float#formatValue
-	 * @function
 	 */
-	Float.prototype.formatValue = function(fValue, sInternalType) {
-		if (fValue == undefined || fValue == null) {
+	Float.prototype.formatValue = function(vValue, sInternalType) {
+		var fValue = vValue;
+		if (vValue == undefined || vValue == null) {
 			return null;
 		}
-		switch (sInternalType) {
+		if (this.oInputFormat) {
+			fValue = this.oInputFormat.parse(vValue);
+			if (fValue == null) {
+				throw new FormatException("Cannot format float: " + vValue + " has the wrong format");
+			}
+		}
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
-				return this.oFormat.format(fValue);
+				return this.oOutputFormat.format(fValue);
 			case "int":
 				return Math.floor(fValue);
 			case "float":
+			case "any":
 				return fValue;
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format Float to " + sInternalType);
+				throw new FormatException("Don't know how to format Float to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
-	 * @name sap.ui.model.type.Float#parseValue
-	 * @function
 	 */
-	Float.prototype.parseValue = function(oValue, sInternalType) {
-		var iResult;
-		switch (sInternalType) {
+	Float.prototype.parseValue = function(vValue, sInternalType) {
+		var fResult, oBundle;
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
-				iResult = this.oFormat.parse(oValue);
-				if (isNaN(iResult)) {
-					throw new sap.ui.model.ParseException(oValue + " is not a valid Float value");
+				fResult = this.oOutputFormat.parse(vValue);
+				if (isNaN(fResult)) {
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					throw new ParseException(oBundle.getText("Float.Invalid"));
 				}
-				return iResult;
+				break;
 			case "int":
 			case "float":
-				return oValue;
+				fResult = vValue;
+				break;
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse Float from " + sInternalType);
+				throw new ParseException("Don't know how to parse Float from " + sInternalType);
 		}
+		if (this.oInputFormat) {
+			fResult = this.oInputFormat.format(fResult);
+		}				
+		return fResult;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
-	 * @name sap.ui.model.type.Float#validateValue
-	 * @function
 	 */
 	Float.prototype.validateValue = function(iValue) {
 		if (this.oConstraints) {
-			var aViolatedConstraints = [];
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				aViolatedConstraints = [],
+				aMessages = [];
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
 						if (iValue < oContent) {
 							aViolatedConstraints.push("minimum");
+							aMessages.push(oBundle.getText("Float.Minimum", [oContent]));
 						}
 						break;
 					case "maximum":
 						if (iValue > oContent) {
 							aViolatedConstraints.push("maximum");
+							aMessages.push(oBundle.getText("Float.Maximum", [oContent]));
 						}
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException("Validation of type constraints failed", aViolatedConstraints);
+				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.setFormatOptions
-	 * @name sap.ui.model.type.Float#setFormatOptions
-	 * @function
 	 */
 	Float.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
-		this._handleLocalizationChange();
+		this._createFormats();
 	};
-	
+
 	/**
 	 * Called by the framework when any localization setting changed
 	 * @private
-	 * @name sap.ui.model.type.Float#_handleLocalizationChange
-	 * @function
 	 */
 	Float.prototype._handleLocalizationChange = function() {
-		this.oFormat = NumberFormat.getFloatInstance(this.oFormatOptions);
+		this._createFormats();
 	};
 	
+	/**
+	 * Create formatters used by this type
+	 * @private
+	 */
+	Float.prototype._createFormats = function() {
+		var oSourceOptions = this.oFormatOptions.source;
+		this.oOutputFormat = NumberFormat.getFloatInstance(this.oFormatOptions);
+		if (oSourceOptions) {
+			if (jQuery.isEmptyObject(oSourceOptions)) {
+				oSourceOptions = {
+					groupingEnabled: false,
+					groupingSeparator: ",",
+					decimalSeparator: "."
+				};
+			}
+			this.oInputFormat = NumberFormat.getFloatInstance(oSourceOptions);
+		}
+	};
 
 	return Float;
 
-}, /* bExport= */ true);
+});

@@ -11,14 +11,14 @@
 <!-- SAPUI5 Bootstrap:                                                     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.ui.unified"
 	data-sap-ui-theme="sap_goldreflection"
 	src="../../../../resources/sap-ui-core.js"></script>
 
-<script type="text/javascript">	
-	
+<script type="text/javascript">
+
 	// TABLE SETTINGS
 	var oDialog = new sap.ui.commons.Dialog({
 		height: "500px",
@@ -26,39 +26,39 @@
 		title: "Change Table Properties...",
 		showCloseButton: true
 	});
-	
+
 	var oML = new sap.ui.commons.layout.MatrixLayout({width: "100%"});
-	
+
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Width:", labelFor: "txtWidth"}), 
+		new sap.ui.commons.Label({text: "Width:", labelFor: "txtWidth"}),
 		new sap.ui.commons.TextField("txtWidth", {change: function(oEvent) {
 			var oTable = sap.ui.getCore().byId("table");
 			oTable.setWidth(this.getValue());
 		}})
 	);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Row Height (PX):", labelFor: "txtRowHeight"}), 
+		new sap.ui.commons.Label({text: "Row Height (PX):", labelFor: "txtRowHeight"}),
 		new sap.ui.commons.TextField("txtRowHeight", {change: function(oEvent) {
 			var oTable = sap.ui.getCore().byId("table");
 			oTable.setRowHeight(parseInt(this.getValue(), 10));
 		}})
 	);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Column Header Height (PX):", labelFor: "txtColHdrHeight"}), 
+		new sap.ui.commons.Label({text: "Column Header Height (PX):", labelFor: "txtColHdrHeight"}),
 		new sap.ui.commons.TextField("txtColHdrHeight", {change: function(oEvent) {
 			var oTable = sap.ui.getCore().byId("table");
 			oTable.setColumnHeaderHeight(parseInt(this.getValue(), 10));
 		}})
 	);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Visible Row Count:", labelFor: "txtVisRowCnt"}), 
+		new sap.ui.commons.Label({text: "Visible Row Count:", labelFor: "txtVisRowCnt"}),
 		new sap.ui.commons.TextField("txtVisRowCnt", {change: function(oEvent) {
 			var oTable = sap.ui.getCore().byId("table");
 			oTable.setVisibleRowCount(parseInt(this.getValue(), 10));
 		}})
 	);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Visible Row Count Mode:", labelFor: "ddVisRowCntMode"}), 
+			new sap.ui.commons.Label({text: "Visible Row Count Mode:", labelFor: "ddVisRowCntMode"}),
 			new sap.ui.commons.DropdownBox("ddVisRowCntMode", {
 				change: function(oEvent) {
 					var oTable = sap.ui.getCore().byId("table");
@@ -72,49 +72,49 @@
 			})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Min Auto Row Count:", labelFor: "txtMinAutoRowCount"}), 
+			new sap.ui.commons.Label({text: "Min Auto Row Count:", labelFor: "txtMinAutoRowCount"}),
 			new sap.ui.commons.TextField("txtMinAutoRowCount", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setMinAutoRowCount(parseInt(this.getValue(), 10));
 			}})
 		);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "First Visible Row:", labelFor: "txtFstVisRow"}), 
+		new sap.ui.commons.Label({text: "First Visible Row:", labelFor: "txtFstVisRow"}),
 		new sap.ui.commons.TextField("txtFstVisRow", {change: function(oEvent) {
 			var oTable = sap.ui.getCore().byId("table");
 			oTable.setFirstVisibleRow(parseInt(this.getValue(), 10));
 		}})
 	);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Fixed Column Count:", labelFor: "txtFixedColCount"}), 
+			new sap.ui.commons.Label({text: "Fixed Column Count:", labelFor: "txtFixedColCount"}),
 			new sap.ui.commons.TextField("txtFixedColCount", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setFixedColumnCount(parseInt(this.getValue(), 10));
 			}})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Fixed Row Count:", labelFor: "txtFixedRowCount"}), 
+			new sap.ui.commons.Label({text: "Fixed Row Count:", labelFor: "txtFixedRowCount"}),
 			new sap.ui.commons.TextField("txtFixedRowCount", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setFixedRowCount(parseInt(this.getValue(), 10));
 			}})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Fixed Bottom Row Count:", labelFor: "txtFixedBottomRowCount"}), 
+			new sap.ui.commons.Label({text: "Fixed Bottom Row Count:", labelFor: "txtFixedBottomRowCount"}),
 			new sap.ui.commons.TextField("txtFixedBottomRowCount", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setFixedBottomRowCount(parseInt(this.getValue(), 10));
 			}})
 		);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Selected Index:", labelFor: "txtSelIndex"}), 
+		new sap.ui.commons.Label({text: "Selected Index:", labelFor: "txtSelIndex"}),
 		new sap.ui.commons.TextField("txtSelIndex", {change: function(oEvent) {
 			var oTable = sap.ui.getCore().byId("table");
 			oTable.setSelectedIndex(parseInt(this.getValue(), 10));
 		}})
 	);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Selection Mode:", labelFor: "ddSelMode"}), 
+			new sap.ui.commons.Label({text: "Selection Mode:", labelFor: "ddSelMode"}),
 			new sap.ui.commons.DropdownBox("ddSelMode", {
 				change: function(oEvent) {
 					var oTable = sap.ui.getCore().byId("table");
@@ -129,7 +129,7 @@
 			})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Selection Behavior:", labelFor: "ddSelBehavior"}), 
+			new sap.ui.commons.Label({text: "Selection Behavior:", labelFor: "ddSelBehavior"}),
 			new sap.ui.commons.DropdownBox("ddSelBehavior", {
 				change: function(oEvent) {
 					var oTable = sap.ui.getCore().byId("table");
@@ -143,77 +143,77 @@
 			})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Enable Grouping:", labelFor: "chkColGrp"}), 
+			new sap.ui.commons.Label({text: "Enable Grouping:", labelFor: "chkColGrp"}),
 			new sap.ui.commons.CheckBox("chkColGrp", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setEnableGrouping(this.getChecked());
 			}})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Enable Freezing:", labelFor: "chkColFrz"}), 
+			new sap.ui.commons.Label({text: "Enable Freezing:", labelFor: "chkColFrz"}),
 			new sap.ui.commons.CheckBox("chkColFrz", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setEnableColumnFreeze(this.getChecked());
 			}})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Block Column Freeze:", labelFor: "chkBlockColFrz"}), 
+			new sap.ui.commons.Label({text: "Block Column Freeze:", labelFor: "chkBlockColFrz"}),
 			new sap.ui.commons.CheckBox("chkBlockColFrz", {checked: false})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Column Header Visible:", labelFor: "chkColHdrVis"}), 
+			new sap.ui.commons.Label({text: "Column Header Visible:", labelFor: "chkColHdrVis"}),
 			new sap.ui.commons.CheckBox("chkColHdrVis", {checked: true, change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setColumnHeaderVisible(this.getChecked());
 			}})
 		);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Column Header Wrapping:", labelFor: "chkColHdrWrap"}), 
+			new sap.ui.commons.Label({text: "Column Header Wrapping:", labelFor: "chkColHdrWrap"}),
 			new sap.ui.commons.CheckBox("chkColHdrWrap", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.getColumns()[2].getLabel().setWrapping(this.getChecked());
-				oTable.rerender(); // TODO: avoid need of this mechanism 
+				oTable.rerender(); // TODO: avoid need of this mechanism
 			}})
 		);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Column Reordering:", labelFor: "chkAllowColReo"}), 
+		new sap.ui.commons.Label({text: "Column Reordering:", labelFor: "chkAllowColReo"}),
 		new sap.ui.commons.CheckBox("chkAllowColReo", {checked: true, change: function(oEvent) {
 			var oTable = sap.ui.getCore().byId("table");
 			oTable.setEnableColumnReordering(this.getChecked());
 		}})
 	);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Block Column Header Menu:", labelFor: "chkBlockColHdr"}), 
+		new sap.ui.commons.Label({text: "Block Column Header Menu:", labelFor: "chkBlockColHdr"}),
 		new sap.ui.commons.CheckBox("chkBlockColHdr", {checked: false})
 	);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Block Column Resize:", labelFor: "chkBlockColRsz"}), 
+		new sap.ui.commons.Label({text: "Block Column Resize:", labelFor: "chkBlockColRsz"}),
 		new sap.ui.commons.CheckBox("chkBlockColRsz", {checked: false})
 	);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Show Column Visibility Menu:", labelFor: "chkShowColVisMnu"}), 
+			new sap.ui.commons.Label({text: "Show Column Visibility Menu:", labelFor: "chkShowColVisMnu"}),
 			new sap.ui.commons.CheckBox("chkShowColVisMnu", {checked: false, change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setShowColumnVisibilityMenu(this.getChecked());
 			}})
 		);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Block Column Visibility:", labelFor: "chkBlockColVis"}), 
+		new sap.ui.commons.Label({text: "Block Column Visibility:", labelFor: "chkBlockColVis"}),
 		new sap.ui.commons.CheckBox("chkBlockColVis", {checked: false})
 	);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Block Column Move:", labelFor: "chkBlockColMov"}), 
+		new sap.ui.commons.Label({text: "Block Column Move:", labelFor: "chkBlockColMov"}),
 		new sap.ui.commons.CheckBox("chkBlockColMov", {checked: false})
 	);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Enable Cell Filter:", labelFor: "chkColCellFilter"}), 
+			new sap.ui.commons.Label({text: "Enable Cell Filter:", labelFor: "chkColCellFilter"}),
 			new sap.ui.commons.CheckBox("chkColCellFilter", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setEnableCellFilter(this.getChecked());
 			}})
 		);
 	oML.createRow(
-		new sap.ui.commons.Label({text: "Navigation Mode:", labelFor: "ddNavMode"}), 
+		new sap.ui.commons.Label({text: "Navigation Mode:", labelFor: "ddNavMode"}),
 		new sap.ui.commons.DropdownBox("ddNavMode", {
 			change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
@@ -226,15 +226,15 @@
 		})
 	);
 	oML.createRow(
-			new sap.ui.commons.Label({text: "Busy:", labelFor: "txtBusy"}), 
+			new sap.ui.commons.Label({text: "Busy:", labelFor: "txtBusy"}),
 			new sap.ui.commons.CheckBox("txtBusy", {change: function(oEvent) {
 				var oTable = sap.ui.getCore().byId("table");
 				oTable.setBusy(this.getChecked());
 			}})
 		);
-	
-	oDialog.addContent(oML);	
-	
+
+	oDialog.addContent(oML);
+
 	// MESSAGE AREA
     var oMsgBar = new sap.ui.commons.MessageBar("msgBar", {
     	anchorID: "header",
@@ -252,15 +252,15 @@
    		{lastName: "Zar", name: "Lou", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 1, money: 123, birthday: "1965-01-01", currency: "EUR"},
    		{lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 678.45, birthday: "1978-01-01", currency: "DEM"},
    		{lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 123.45, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Lester", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-01-01", currency: "JPY"},
+   		{lastName: "Town", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-01-01", currency: "JPY"},
    		{lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 3, money: 8756.2, birthday: "1968-01-01", currency: "EUR"},
    		{lastName: "Time", name: "Justin", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 4, money: 836.4, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Barr", name: "Gaye", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-01-01", currency: "USD"},
+   		{lastName: "Barr", name: "Sandy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-01-01", currency: "USD"},
    		{lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 1, money: 6344.21, birthday: "1968-01-01", currency: "EUR"},
    		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 563.2, birthday: "1968-01-01", currency: "JPY"},
    		{lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 8564.4, birthday: "1968-01-01", currency: "EUR"},
    		{lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01", currency: "USD"},
-   		{lastName: "Haas", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-01-01", currency: "EUR"},
+   		{lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-01-01", currency: "EUR"},
    		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR"},
    		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR"}
    	];
@@ -269,16 +269,16 @@
 	for (var i = 0; i < 9; i++) {
 		aData = aData.concat(jQuery.extend(true, [], aOrgData));
 	}
-	
+
 	for (var i = 0, l = aData.length; i < l; i++) {
-		aData[i].lastName += " - " + i;		
+		aData[i].lastName += " - " + i;
 	}
 	aData[100].lastName = "Multi\nLine";
-	
+
 	var oTable = new sap.ui.table.Table("table", {
 		firstVisibleRow: 5
 	});
-	
+
 	oTable.setTitle("Title of the Table");
 	oTable.setFooter("Footer of the Table");
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
@@ -333,7 +333,7 @@
 		alert(iRowIndex);
 	}});
 	oTable.addColumn(new sap.ui.table.Column({label: "Test", template: oControl, width: "200px", hAlign: "Center"}));
-	
+
 	var floatType = new sap.ui.model.type.Float();
 	oControl = new sap.ui.unified.Currency({textAlign: "End"}).bindProperty("value", "money", floatType).bindProperty("currency", "currency");
 	oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Number", textAlign: "End"}), hAlign: "End", template: oControl, sortProperty: "money", filterProperty: "money", filterType: floatType, width: "100px"}));
@@ -346,20 +346,20 @@
 	oControl = new sap.ui.commons.TextField().bindProperty("value", "birthday", dateType);
 	oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Birthday"}), template: oControl, sortProperty: "birthday", filterProperty: "birthday", filterType: dateType, width: "100px"}));
 
-	
+
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: aData});
 	oTable.setModel(oModel);
 	oTable.bindRows("/modelData");
-	
+
 	oTable.attachRowSelectionChange(function(oEvent) {
 		var oMessage = new sap.ui.commons.Message({
-			type: sap.ui.commons.MessageType.Success, 
+			type: sap.ui.commons.MessageType.Success,
 			text: "Selected Row Index: " + oEvent.getParameter("rowIndex")
 		});
 		oMsgBar.addMessages([oMessage]);
 	});
-	
+
 	oTable.attachColumnSelect(function(oEvent) {
 		if (sap.ui.getCore().byId("chkBlockColHdr").getChecked()) {
 			oEvent.preventDefault();
@@ -377,7 +377,7 @@
 			oEvent.preventDefault();
 		}
 	});
-	
+
 	oTable.attachColumnVisibility(function(oEvent) {
 		if (sap.ui.getCore().byId("chkBlockColVis").getChecked()) {
 			oEvent.preventDefault();
@@ -392,7 +392,7 @@
 
 	oTable.attachSort(function(oEvent) {
 		var oMessage = new sap.ui.commons.Message({
-			type: sap.ui.commons.MessageType.Success, 
+			type: sap.ui.commons.MessageType.Success,
 			text: "Sort column: " + oEvent.getParameter("column").getId() + " - " + oEvent.getParameter("sortOrder")
 		});
 		oMsgBar.addMessages([oMessage]);
@@ -400,12 +400,12 @@
 
 	oTable.attachFilter(function(oEvent) {
 		var oMessage = new sap.ui.commons.Message({
-			type: sap.ui.commons.MessageType.Success, 
+			type: sap.ui.commons.MessageType.Success,
 			text: "Filter column: " + oEvent.getParameter("column").getId() + " - " + oEvent.getParameter("value")
 		});
 		oMsgBar.addMessages([oMessage]);
 	});
-	
+
 	oTable.attachCellClick(function(oEvent) {
 		jQuery.sap.log.info("Cell click: " + oEvent.getParameter("rowIndex") + " - " + oEvent.getParameter("columnIndex") + " - " + oEvent.getParameter("cellControl").getId());
 	});
@@ -417,7 +417,11 @@
 	oTable.addExtension(new sap.ui.commons.Button({text: "Hello World"}));
 	oTable.addExtension(new sap.ui.commons.TextView({text: "Hello World"}));
 
-	oTable.placeAt("content");
+	var oLayout = new sap.ui.layout.VerticalLayout({
+				content: [oTable,
+					new sap.ui.commons.Button({text: "Hello World!"})]
+			});
+	oLayout.placeAt("content");
 
 </script>
 </head>

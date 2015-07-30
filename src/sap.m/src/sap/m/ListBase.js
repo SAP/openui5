@@ -12,13 +12,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	/**
 	 * Constructor for a new ListBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * sap.m.ListBase Control provides a basic functionality of List and Table. Selection, deletion, unread states and inset style are also maintained here.
+	 * The <code>sap.m.ListBase</code> control provides a base functionality of the <code>sap.m.List</code> and <code>sap.m.Table</code> controls. Selection, deletion, unread states and inset style are also maintained in <code>sap.m.ListBase</code>.
 	 * 
-	 * Note: The ListBase including all contained items is completely re-rendered when the data of a bound model is changed. Due to the limited hardware resources of mobile devices this can lead to longer delays for lists with many items. As such the usage of a list is not recommended for these use cases.
+	 * <b>Note:</b> The ListBase including all contained items may be completely re-rendered when the data of a bound model is changed. Due to the limited hardware resources of mobile devices this can lead to longer delays for lists that contain many items. As such the usage of a list is not recommended for these use cases.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @constructor
 	 * @public
 	 * @since 1.16
-	 * @name sap.m.ListBase
+	 * @alias sap.m.ListBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListBase = Control.extend("sap.m.ListBase", /** @lends sap.m.ListBase.prototype */ { metadata : {
@@ -36,116 +36,112 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		properties : {
 	
 			/**
-			 * Inset style false/true
+			 * Defines the indentation of the container. Setting it to <code>true</code> indents the list.
 			 */
 			inset : {type : "boolean", group : "Appearance", defaultValue : false},
 	
 			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
-			 * The header text appearing in the list/table header.
-			 * Note: if "headerToolbar" aggregation is set, then this property is ignored.
+			 * Defines the header text that appears in the control.
+			 * <b>Note:</b> If <code>headerToolbar</code> aggregation is set, then this property is ignored.
 			 */
 			headerText : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * List header style. Possible vales are "Standard" and "Plain"
+			 * Defines the header style of the control. Possible values are <code>Standard</code> and <code>Plain</code>.
 			 * @since 1.14
-			 * @deprecated Since version 1.16. 
-			 * Has no functionality since 1.16
+			 * @deprecated Since version 1.16. No longer has any functionality.
 			 */
 			headerDesign : {type : "sap.m.ListHeaderDesign", group : "Appearance", defaultValue : sap.m.ListHeaderDesign.Standard, deprecated: true},
 	
 			/**
-			 * Footer Text
+			 * Defines the footer text that appears in the control.
 			 */
 			footerText : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Mode of a list (e.g. None, SingleSelect, MultiSelect, Delete, etc.)
+			 * Defines the mode of the control (e.g. <code>None</code>, <code>SingleSelect</code>, <code>MultiSelect</code>, <code>Delete</code>).
 			 */
 			mode : {type : "sap.m.ListMode", group : "Behavior", defaultValue : sap.m.ListMode.None},
 	
 			/**
-			 * Sets the width of the list.
+			 * Sets the width of the control.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 	
 			/**
-			 * This property decides if the list item interacts with the selection. If it is "true", a tap on the item will set the selection control in front of the list item.
+			 * Defines whether the items are selectable by clicking on the item itself (<code>true</code>) rather than having to set the selection control first.
+			 * <b>Note:</b> The <code>SingleSelectMaster</code> mode also provides this functionality by default. 
 			 */
 			includeItemInSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 	
 			/**
-			 * Activates the unread feature for all items.
+			 * Activates the unread indicator for all items, if set to <code>true</code>.
 			 */
 			showUnread : {type : "boolean", group : "Misc", defaultValue : false},
 	
 			/**
-			 * This text is displayed when the control has no data.
+			 * This text is displayed when the control contains no items.
 			 */
 			noDataText : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Enables an information text(see "noDataText" property) when the control has no data.
+			 * Defines whether or not the text specified in the <code>noDataText</code> property is displayed. 
 			 */
 			showNoData : {type : "boolean", group : "Misc", defaultValue : true},
 	
 			/**
-			 * When this property is set to "true", the List/Table will automatically display a BusyIndicator when it detects that data is being loaded or filtered. This BusyIndicator blocks the interaction with the items until data loading is finished.
-			 * For the List/Table controls BusyIndicator will be shown after one second. This behavior can be customized by setting the "busyIndicatorDelay" property.
-			 * When this property is set to "false", items will stay on the List/Table until data loading is finished.
+			 * When this property is set to <code>true</code>, the control will automatically display a busy indicator when it detects that data is being loaded. This busy indicator blocks the interaction with the items until data loading is finished.
+			 * By default, the busy indicator will be shown after one second. This behavior can be customized by setting the <code>busyIndicatorDelay</code> property.
 			 * @since 1.20.2
 			 */
 			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Defines if animations will be shown when activating or deactivating selection modes.
+			 * Defines if animations will be shown while switching between modes.
 			 */
 			modeAnimationOn : {type : "boolean", group : "Misc", defaultValue : true},
 	
 			/**
-			 * Defines which separator style will be used.
+			 * Defines which item separator style will be used.
 			 */
 			showSeparators : {type : "sap.m.ListSeparators", group : "Appearance", defaultValue : sap.m.ListSeparators.All},
 	
 			/**
-			 * Direction of swipe(e.g LeftToRight, RightToLeft, Both) to bring in a control on the right hand side of the list item.
+			 * Defines the direction of the swipe movement (e.g LeftToRight, RightToLeft, Both) to display the control defined in the <code>swipeContent</code> aggregation.
 			 */
 			swipeDirection : {type : "sap.m.SwipeDirection", group : "Misc", defaultValue : sap.m.SwipeDirection.Both},
 	
 			/**
-			 * Sets the growing(paging) feature of control.
-			 * Note: This feature only works with item binding and should not be used with two way binding!
+			 * If set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the model. 
+			 * <b>Note:</b>: This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
 			 * @since 1.16
 			 */
 			growing : {type : "boolean", group : "Behavior", defaultValue : false},
 	
 			/**
-			 * Number of items requested from the server. To activate this you should set "growing" property to "true".
+			 * Defines the number of items to be requested from the model for each grow.
+			 * This property can only be used if the <code>growing</code> property is set to <code>true</code>.
 			 * @since 1.16
 			 */
 			growingThreshold : {type : "int", group : "Misc", defaultValue : 20},
 	
 			/**
-			 * This text is displayed on the trigger button which is responsible to load new page at the end of the list. The default is a translated text ("More") coming from the message bundle.
-			 * This property can be used only if "growing" property is set "true"
+			 * Defines the text displayed on the growing button. The default is a translated text ("More") coming from the message bundle.
+			 * This property can only be used if the <code>growing</code> property is set to <code>true</code>.
 			 * @since 1.16
 			 */
 			growingTriggerText : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * If true, user can scroll end to trigger a new page request. Otherwise a trigger button is displayed at the bottom of the list.
-			 * This property can be used only if "growing" property is set "true" and if you only have one instance of this control inside the scroll container(e.g Page).
+			 * If set to true, the user can scroll down to load more items. Otherwise a growing button is displayed at the bottom of the control.
+			 * <b>Note:</b> This property can only be used if the <code>growing</code> property is set to <code>true</code> and only if there is one instance of <code>sap.m.List</code> or <code>sap.m.Table</code> inside the scroll container (e.g <code>sap.m.Page</code>).
 			 * @since 1.16
 			 */
 			growingScrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false},
 	
 			/**
-			 * By default, if you have binding then the control remembers selections after binding update(sorting, filter, refresh). If this is not a desired behavior for your use case, you can switch this off with setting it to "false".
+			 * If set to true, this control remembers the selections after a binding update has been performed (e.g. sorting, filtering).
+			 * <b>Note:</b> If <code>items</code> aggregation is not bound then this property is ignored. 
 			 * @since 1.16.6
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -154,111 +150,120 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		aggregations : {
 	
 			/**
-			 * The items of this list or rows of the table.
+			 * Defines the items contained within this control.
 			 */
 			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", bindable : "bindable"}, 
 	
 			/**
-			 * User can swipe to bring in this control on the right hand side of a list item.
-			 * Note: This functionality gets disabled for non-touch devices.
+			 * User can swipe to bring in this control on the right hand side of an item.
+			 * <b>Note:</b> For non-touch devices, this functionality is ignored.
 			 */
 			swipeContent : {type : "sap.ui.core.Control", multiple : false}, 
 	
 			/**
-			 * Header can be used as a Toolbar to add extra controls for user interactions.
-			 * Note: This aggregation overwrites "headerText" property.
+			 * The header area can be used as a toolbar to add extra controls for user interactions.
+			 * <b>Note:</b> When set, this overwrites the <code>headerText</code> property.
 			 * @since 1.16
 			 */
 			headerToolbar : {type : "sap.m.Toolbar", multiple : false}, 
 	
 			/**
-			 * InfoBar is placed below the header and can be used to show extra information to the user.
+			 * A toolbar that is placed below the header to show extra information to the user.
 			 * @since 1.16
 			 */
 			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
 		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.28.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+		},
 		events : {
 	
 			/**
-			 * Event is fired when selection is changed by user interaction. In "multi-selection" mode, this event is also fired on "deselect"
+			 * Fires when selection is changed via user interaction. In <code>MultiSelect</code> mode, this event is also fired on deselection.
 			 * @deprecated Since version 1.16. 
-			 * Instead use "selectionChange" event.
+			 * Use the <code>selectionChange</code> event instead.
 			 */
 			select : {deprecated: true,
 				parameters : {
 	
 					/**
-					 * The list item which fired the select.
+					 * The item which fired the select event.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}
 				}
 			}, 
 	
 			/**
-			 * Event is fired when selection is changed via user interaction inside the control.
+			 * Fires when selection is changed via user interaction inside the control.
 			 * @since 1.16
 			 */
 			selectionChange : {
 				parameters : {
 	
 					/**
-					 * The list item whose selection has changed. In "multi-selection" mode, only the up-most selected item is returned. This parameter can be used for single-selection modes.
+					 * The item whose selection has changed. In <code>MultiSelect</code> mode, only the up-most selected item is returned. This parameter can be used for single-selection modes.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}, 
 	
 					/**
-					 * This parameter is filled with array of list items whose selection has changed. This parameter can be used for multi-selection mode.
+					 * Array of items whose selection has changed. This parameter can be used for <code>MultiSelect</code> mode.
 					 */
 					listItems : {type : "sap.m.ListItemBase[]"}, 
 	
 					/**
-					 * This flag indicates whether the "listItem" parameter is selected or not.
+					 * Indicates whether the <code>listItem</code> parameter is selected or not.
 					 */
 					selected : {type : "boolean"}
 				}
 			}, 
 	
 			/**
-			 * Event is fired when delete icon is pressed by user.
+			 * Fires when delete icon is pressed by user.
 			 */
 			"delete" : {
 				parameters : {
 	
 					/**
-					 * The list item which fired the delete.
+					 * The item which fired the delete event.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}
 				}
 			}, 
 	
 			/**
-			 * This event is fired when a user swipes to bring in a control and before swipeContent is shown on the right hand side of list item. So, you can easily change swipeContent according to swiped list item. Call the preventDefault method of the event object to disable swipe.
+			 * Fires after user's swipe action and before the <code>swipeContent</code> is shown. On the <code>swipe</code> event handler, <code>swipeContent</code> can be changed according to the swiped item. 
+			 * Calling the <code>preventDefault</code> method of the event cancels the swipe action.
 			 */
 			swipe : {allowPreventDefault : true,
 				parameters : {
 	
 					/**
-					 * The listitem which fired the swipe.
+					 * The item which fired the swipe.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}, 
 	
 					/**
-					 * Given swipeContent control to show on the right hand side of a list item.
+					 * Aggregated <code>swipeContent</code> control that is shown on the right hand side of the item.
 					 */
 					swipeContent : {type : "sap.ui.core.Control"}, 
 	
 					/**
-					 * Holds which control caused the swipe event in within the Item.
+					 * Holds which control caused the swipe event within the item.
 					 */
 					srcControl : {type : "sap.ui.core.Control"}
 				}
 			}, 
 	
 			/**
-			 * This event is called when "growing" feature is enabled and before new page loaded.
+			 * Fires before the new growing chunk is requested from the model.
 			 * @since 1.16
 			 * @deprecated Since version 1.16.3. 
-			 * Instead, use "updateStarted" event.
+			 * Instead, use <code>updateStarted</code> event with listening <code>changeReason</code>.
 			 */
 			growingStarted : {deprecated: true,
 				parameters : {
@@ -276,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			}, 
 	
 			/**
-			 * This event is called when "growing" feature is enabled and after new page loaded and DOM updated.
+			 * Fires after the new growing chunk has been fetched from the model and processed by the control.
 			 * @since 1.16
 			 * @deprecated Since version 1.16.3. 
 			 * Instead, use "updateFinished" event.
@@ -297,15 +302,16 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			}, 
 	
 			/**
-			 * This event is called before items binding is updated.
-			 * Note: Event handler should not invalidate the control.
+			 * Fires before <code>items</code> binding is updated (e.g. sorting, filtering)
+			 * 
+			 * <b>Note:</b> Event handler should not invalidate the control.
 			 * @since 1.16.3
 			 */
 			updateStarted : {
 				parameters : {
 	
 					/**
-					 * The reason of update. Possible values are "Binding", "Filter", "Sort", "Growing", "Change", "Refresh", "Context"
+					 * The reason of the update, e.g. Binding, Filter, Sort, Growing, Change, Refresh, Context.
 					 */
 					reason : {type : "string"}, 
 	
@@ -315,21 +321,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 					actual : {type : "int"}, 
 	
 					/**
-					 * The total count of bound items. This parameter can be used if "growing" feature is enabled.
+					 * The total count of bound items. This can be used if the <code>growing</code> property is set to <code>true</code>.
 					 */
 					total : {type : "int"}
 				}
 			}, 
 	
 			/**
-			 * This event is called after items binding and afterwards related DOM is updated.
+			 * Fires after <code>items</code> binding is updated and processed by the control.
 			 * @since 1.16.3
 			 */
 			updateFinished : {
 				parameters : {
 	
 					/**
-					 * The reason of update. Possible values are "Binding", "Filter", "Sort", "Growing", "Change", "Refresh", "Context"
+					 * The reason of the update, e.g. Binding, Filter, Sort, Growing, Change, Refresh, Context.
 					 */
 					reason : {type : "string"}, 
 	
@@ -339,23 +345,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 					actual : {type : "int"}, 
 	
 					/**
-					 * The total count of bound items. This parameter can be used if "growing" feature is enabled.
+					 * The total count of bound items. This can be used if the <code>growing</code> property is set to <code>true</code>.
 					 */
 					total : {type : "int"}
 				}
 			}, 
 	
 			/**
-			 * This event is called when an item is pressed regardless of the selection mode.
-			 * NOTE: This event is fired for all kind of list items unless the item's type is "Inactive".
+			 * Fires when an item is pressed unless the item's <code>type</code> property is <code>Inactive</code>.
 			 * @since 1.20
 			 */
 			itemPress : {
 				parameters : {
 	
 					/**
-					 * The list item which fired the pressed event.
-					 * NOTE: This event is fired also for "GroupHeaderListItem" which does not have binding context.
+					 * The item which fired the pressed event.
 					 */
 					listItem : {type : "sap.m.ListItemBase"}, 
 	
@@ -369,136 +373,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	}});
 	
 	
-	/**
-	 * Returns selected list item. When no item is selected, "null" is returned. When "multi-selection" is enabled and multiple items are selected, only the up-most selected item is returned.
-	 *
-	 * @name sap.m.ListBase#getSelectedItem
-	 * @function
-	 * @type sap.m.ListItemBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Selects or deselects the given list item.
-	 *
-	 * @name sap.m.ListBase#setSelectedItem
-	 * @function
-	 * @param {sap.m.ListItemBase} oListItem
-	 *         The list item whose selection to be changed. This parameter is mandatory.
-	 * @param {boolean} bSelect
-	 *         Sets selected status of the list item. Default value is true.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns an array containing the selected list items. If no items are selected, an empty array is returned.
-	 *
-	 * @name sap.m.ListBase#getSelectedItems
-	 * @function
-	 * @type sap.m.ListItemBase[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Sets a list item to be selected by id. In single mode the method removes the previous selection.
-	 *
-	 * @name sap.m.ListBase#setSelectedItemById
-	 * @function
-	 * @param {string} sId
-	 *         The id of the list item whose selection to be changed.
-	 * @param {boolean} bSelect
-	 *         Sets selected status of the list item. Default value is true.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes visible selections of the current selection mode.
-	 *
-	 * @name sap.m.ListBase#removeSelections
-	 * @function
-	 * @param {boolean} bAll
-	 *         Since version 1.16.3. This control keeps old selections after filter or sorting. Set this parameter "true" to remove all selections.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Select all items in "MultiSelection" mode.
-	 *
-	 * @name sap.m.ListBase#selectAll
-	 * @function
-	 * @type sap.m.ListBase
-	 * @public
-	 * @since 1.16
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns swiped list item. When no item is swiped, "null" is returned.
-	 *
-	 * @name sap.m.ListBase#getSwipedItem
-	 * @function
-	 * @type sap.m.ListItemBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * After swipeContent is shown, user can interact with this control(e.g Tap). After interaction is done, you can/should use this method to hide swipeContent from screen.
-	 * Note: If users try to tap inside of the list but outside of the swipeContent then control hides automatically.
-	 *
-	 * @name sap.m.ListBase#swipeOut
-	 * @function
-	 * @param {any} oCallback
-	 *         This callback function is called with two parameters(swipedListItem and swipedContent) after swipe-out animation is finished.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns growing information as object with "actual" and "total" keys.
-	 * Note: This function returns "null" if "growing" feature is disabled.
-	 *
-	 * @name sap.m.ListBase#getGrowingInfo
-	 * @function
-	 * @type object
-	 * @public
-	 * @since 1.16
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the binding contexts of the selected items.
-	 * Note: This method returns an empty array if no databinding is used.
-	 *
-	 * @name sap.m.ListBase#getSelectedContexts
-	 * @function
-	 * @param {boolean} bAll
-	 *         Set true to include even invisible selected items(e.g. the selections from the previous filters).
-	 *         Note: In single selection modes, only the last selected item's binding context is returned in array.
-	 * @type object[]
-	 * @public
-	 * @since 1.18.6
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	// class name for the navigation items
 	ListBase.prototype.sNavItemClass = "sapMLIB";
 	
@@ -510,30 +384,26 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._aSelectedPaths = [];
 		this._aNavSections = [];
 		this._bUpdating = false;
-		
+		this._bRendering = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	ListBase.prototype.onBeforeRendering = function() {
-		this._aNavSections.length = 0;
-		if (this.hasOwnProperty("_$touchBlocker")) {
-			this._removeSwipeContent();	// remove the swipe content from screen immediately
-			delete this._$touchBlocker;	// delete touchBlocker to refresh
-		}
+		this._bRendering = true;
+		this._aNavSections = [];
+		this._removeSwipeContent();
 	};
 	
 	ListBase.prototype.onAfterRendering = function() {
-		this._startItemNavigation();
-		if (!this._oGrowingDelegate && this.isBound("items")) {
-			this._updateFinished();
-		}
+		this._bRendering = false;
+		this._sLastMode = this.getMode();
+		this._bItemNavigationInvalidated = true;
 	};
 	
 	ListBase.prototype.exit = function () {
 		this._oSelectedItem = null;
-		this._bReceivingData = false;
-		this._aNavSections.length = 0;
-		this._aSelectedPaths.length = 0;
+		this._aNavSections = [];
+		this._aSelectedPaths = [];
 		this._destroyGrowingDelegate();
 		this._destroyItemNavigation();
 	};
@@ -585,49 +455,46 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 			// for flat list update items aggregation
 			this.updateAggregation("items");
+
+			// items binding are updated
+			this._updateFinished();
 		}
 	};
 	
-	ListBase.prototype.bindAggregation = function(sName) {
-		sName == "items" && this._resetItemsBinding();
-		return this._applyAggregation("bind", arguments);
+	ListBase.prototype.setBindingContext = function() {
+		this._resetItemsBinding();
+		return Control.prototype.setBindingContext.apply(this, arguments);
 	};
 	
 	ListBase.prototype._bindAggregation = function(sName) {
 		sName == "items" && this._resetItemsBinding();
-		return this._applyAggregation("_bind", arguments);
+		return Control.prototype._bindAggregation.apply(this, arguments);
 	};
 	
-	ListBase.prototype.addAggregation = function (sAggregationName, oObject) {
-		sAggregationName == "items" && this._applySettingsToItem(oObject);
-		this._applyAggregation("add", arguments);
-		sAggregationName == "items" && this._applySelectionToItem(oObject);
-		return this;
+	ListBase.prototype.destroyItems = function() {
+		this._oSelectedItem = null;
+		return this.destroyAggregation("items");
 	};
 	
-	ListBase.prototype.insertAggregation = function(sAggregationName, oObject) {
-		sAggregationName == "items" && this._applySettingsToItem(oObject);
-		this._applyAggregation("insert", arguments);
-		sAggregationName == "items" && this._applySelectionToItem(oObject);
-		return this;
+	ListBase.prototype.removeAllItems = function(sAggregationName) {
+		this._oSelectedItem = null;
+		return this.removeAllAggregation("items");
 	};
 	
-	ListBase.prototype.destroyAggregation = function(sAggregationName) {
-		sAggregationName == "items" && (this._oSelectedItem = null);
-		return this._applyAggregation("destroy", arguments);
-	};
-	
-	ListBase.prototype.removeAggregation = function(sAggregationName) {
-		var oObject = this._applyAggregation("remove", arguments);
-		if (sAggregationName == "items" && oObject && oObject === this._oSelectedItem) {
+	ListBase.prototype.removeItem = function(vItem) {
+		var oItem = this.removeAggregation("items", vItem);
+		if (oItem && oItem === this._oSelectedItem) {
 			this._oSelectedItem = null;
 		}
-		return oObject;
+		return oItem;
 	};
 	
-	ListBase.prototype.removeAllAggregation = function(sAggregationName) {
-		sAggregationName == "items" && (this._oSelectedItem = null);
-		return this._applyAggregation("removeAll", arguments);
+	ListBase.prototype.getItems = function(bReadOnly) {
+		if (bReadOnly) {
+			return this.mAggregations["items"] || [];
+		}
+		
+		return this.getAggregation("items", []);
 	};
 	
 	ListBase.prototype.getId = function(sSuffix) {
@@ -651,17 +518,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	ListBase.prototype.setGrowingThreshold = function(iThreshold) {
-		this.setProperty("growingThreshold", iThreshold, true);
-		this._oItemNavigation && this._oItemNavigation.setPageSize(this.getGrowingThreshold());
-		return this;
-	};
-	
-	ListBase.prototype.setGrowingTriggerText = function(sText) {
-		this.setProperty("growingTriggerText", sText, true);
-		if (this._oGrowingDelegate) {
-			this._oGrowingDelegate.setTriggerText(this.getGrowingTriggerText());
-		}
-		return this;
+		return this.setProperty("growingThreshold", iThreshold, true);
 	};
 	
 	ListBase.prototype.setEnableBusyIndicator = function(bEnable) {
@@ -669,51 +526,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		if (!this.getEnableBusyIndicator()) {
 			this._hideBusyIndicator();
 		}
-		return this;
-	};
-	
-	ListBase.prototype.setBackgroundDesign = function(sBgDesign) {
-		var sBgDesignOld = this.getBackgroundDesign();
-		this.setProperty("backgroundDesign", sBgDesign, true);
-		this.$().removeClass("sapMListBG" + sBgDesignOld).addClass("sapMListBG" + this.getBackgroundDesign());
-		return this;
-	};
-	
-	ListBase.prototype.setShowSeparators = function(sSeparators) {
-		var sSeparatorsOld = this.getShowSeparators();
-		this.setProperty("showSeparators", sSeparators, true);
-		this.$("listUl").removeClass("sapMListShowSeparators" + sSeparatorsOld).addClass("sapMListShowSeparators" + this.getShowSeparators());
-		return this;
-	};
-	
-	ListBase.prototype.setIncludeItemInSelection = function(bInclude) {
-		bInclude = this.validateProperty("includeItemInSelection", bInclude);
-		if (bInclude != this.getIncludeItemInSelection()) {
-			this.setProperty("includeItemInSelection", bInclude, true);
-			this.getItems().forEach(function(oItem) {
-				oItem._includeItemInSelection = bInclude;
-				oItem.$().toggleClass("sapMLIBCursor", bInclude);
-			});
-		}
-		return this;
-	};
-	
-	ListBase.prototype.setInset = function(bInset) {
-		bInset = this.validateProperty("inset", bInset);
-		if (bInset != this.getInset()) {
-			this.setProperty("inset", bInset, true);
-			if (this.getDomRef()) {
-				this.$().toggleClass("sapMListInsetBG", bInset);
-				this.$("listUl").toggleClass("sapMListInset", bInset);
-				this._setSwipePosition();
-			}
-		}
-		return this;
-	};
-	
-	ListBase.prototype.setWidth = function(sWidth) {
-		this.setProperty("width", sWidth, true);
-		this.$().css("width", this.getWidth());
 		return this;
 	};
 	
@@ -731,15 +543,20 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 		// return no data text from resource bundle when there is no custom
 		var sNoDataText = this.getProperty("noDataText");
-		if (!sNoDataText) {
-			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			sNoDataText = oRB.getText("LIST_NO_DATA");
-		}
+		sNoDataText = sNoDataText || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_NO_DATA");
 		return sNoDataText;
 	};
 	
+
+	/**
+	 * Returns selected list item. When no item is selected, "null" is returned. When "multi-selection" is enabled and multiple items are selected, only the up-most selected item is returned.
+	 *
+	 * @type sap.m.ListItemBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSelectedItem = function() {
-		var aItems = this.getItems();
+		var aItems = this.getItems(true);
 		for (var i = 0; i < aItems.length; i++) {
 			if (aItems[i].getSelected()) {
 				return aItems[i];
@@ -748,9 +565,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return null;
 	};
 	
+
+	/**
+	 * Selects or deselects the given list item.
+	 *
+	 * @param {sap.m.ListItemBase} oListItem
+	 *         The list item whose selection to be changed. This parameter is mandatory.
+	 * @param {boolean} bSelect
+	 *         Sets selected status of the list item. Default value is true.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.setSelectedItem = function(oListItem, bSelect, bFireEvent) {
-		if (!oListItem instanceof sap.m.ListItemBase) {
-			jQuery.sap.log.warning("setSelectedItem is called without ListItem parameter on " + this);
+		if (this.indexOfItem(oListItem) < 0) {
+			jQuery.sap.log.warning("setSelectedItem is called without valid ListItem parameter on " + this);
 			return;
 		}
 		if (this._bSelectionMode) {
@@ -759,17 +588,50 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	};
 	
+
+	/**
+	 * Returns an array containing the selected list items. If no items are selected, an empty array is returned.
+	 *
+	 * @type sap.m.ListItemBase[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSelectedItems = function() {
-		return this.getItems().filter(function(oItem) {
+		return this.getItems(true).filter(function(oItem) {
 			return oItem.getSelected();
 		});
 	};
 	
+
+	/**
+	 * Sets a list item to be selected by id. In single mode the method removes the previous selection.
+	 *
+	 * @param {string} sId
+	 *         The id of the list item whose selection to be changed.
+	 * @param {boolean} bSelect
+	 *         Sets selected status of the list item. Default value is true.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.setSelectedItemById = function(sId, bSelect) {
 		var oListItem = sap.ui.getCore().byId(sId);
 		return this.setSelectedItem(oListItem, bSelect);
 	};
 	
+
+	/**
+	 * Returns the binding contexts of the selected items.
+	 * Note: This method returns an empty array if no databinding is used.
+	 *
+	 * @param {boolean} bAll
+	 *         Set true to include even invisible selected items(e.g. the selections from the previous filters).
+	 *         Note: In single selection modes, only the last selected item's binding context is returned in array.
+	 * @type object[]
+	 * @public
+	 * @since 1.18.6
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSelectedContexts = function(bAll) {
 		var oBindingInfo = this.getBindingInfo("items"),
 			sModelName = (oBindingInfo || {}).model,
@@ -793,16 +655,33 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 	
-	ListBase.prototype.removeSelections = function(bAll, bFireEvent) {
+
+	/**
+	 * Removes visible selections of the current selection mode.
+	 *
+	 * @param {boolean} bAll
+	 *         Since version 1.16.3. This control keeps old selections after filter or sorting. Set this parameter "true" to remove all selections.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	ListBase.prototype.removeSelections = function(bAll, bFireEvent, bDetectBinding) {
 		var aChangedListItems = [];
 		this._oSelectedItem = null;
-		bAll && (this._aSelectedPaths.length = 0);
-		this.getItems().forEach(function(oItem) {
-			if (oItem.getSelected()) {
-				oItem.setSelected(false, true);
-				aChangedListItems.push(oItem);
-				!bAll && this._updateSelectedPaths(oItem);
+		bAll && (this._aSelectedPaths = []);
+		this.getItems(true).forEach(function(oItem) {
+			if (!oItem.getSelected()) {
+				return;
 			}
+			
+			// if the selected property is two-way bound then we do not need to update the selection
+			if (bDetectBinding && oItem.isSelectedBoundTwoWay()) {
+				return;
+			}
+			
+			oItem.setSelected(false, true);
+			aChangedListItems.push(oItem);
+			!bAll && this._updateSelectedPaths(oItem);
 		}, this);
 	
 		if (bFireEvent && aChangedListItems.length) {
@@ -811,13 +690,22 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
+
+	/**
+	 * Select all items in "MultiSelection" mode.
+	 *
+	 * @type sap.m.ListBase
+	 * @public
+	 * @since 1.16
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.selectAll = function (bFireEvent) {
 		if (this.getMode() != "MultiSelect") {
 			return this;
 		}
 	
 		var aChangedListItems = [];
-		this.getItems().forEach(function(oItem) {
+		this.getItems(true).forEach(function(oItem) {
 			if (!oItem.getSelected()) {
 				oItem.setSelected(true, true);
 				aChangedListItems.push(oItem);
@@ -831,39 +719,99 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
-	ListBase.prototype.setMode = function(sMode) {
-		var sOldMode = this.getMode();
-		if (sOldMode != sMode) {
-			this.setProperty("mode", sMode);
-			var iSelectionLength = this.getSelectedItems().length;
-			this._bSelectionMode = this.getMode().indexOf("Select") > -1;
 	
-			// remove selection only if needed
-			if (iSelectionLength > 1 || !this._bSelectionMode) {
-				this.removeSelections(true);
-			}
+	/**
+	 * Returns the last list mode, the mode that is rendered
+	 * This can be used to detect mode changes during rendering
+	 * 
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.getLastMode = function(sMode) {
+		return this._sLastMode;
+	};
+	
+	ListBase.prototype.setMode = function(sMode) {
+		sMode = this.validateProperty("mode", sMode);
+		var sOldMode = this.getMode();
+		if (sOldMode == sMode) {
+			return this;
 		}
+		
+		// update property with invalidate
+		this.setProperty("mode", sMode);
+		
+		// determine the selection mode
+		this._bSelectionMode = sMode.indexOf("Select") > -1;
+		
+		// remove selections if mode is not a selection mode
+		if (!this._bSelectionMode) {
+			this.removeSelections(true);
+			return this;
+		}
+		
+		// update selection status of items 
+		var aSelecteds = this.getSelectedItems();
+		if (aSelecteds.length > 1) {
+			// remove selection if there are more than one item is selected
+			this.removeSelections(true);
+		} else if (sOldMode === sap.m.ListMode.MultiSelect) {
+			// if old mode is multi select then we need to remember selected item 
+			// in case of new item selection right after setMode call
+			this._oSelectedItem = aSelecteds[0];
+		}
+		
 		return this;
 	};
 	
+
+	/**
+	 * Returns growing information as object with "actual" and "total" keys.
+	 * Note: This function returns "null" if "growing" feature is disabled.
+	 *
+	 * @type object
+	 * @public
+	 * @since 1.16
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getGrowingInfo = function() {
-		if (this._oGrowingDelegate) {
-			return this._oGrowingDelegate.getInfo();
-		}
-		return null;
+		return this._oGrowingDelegate ? this._oGrowingDelegate.getInfo() : null;
 	};
 	
 	ListBase.prototype.setRememberSelections = function(bRemember) {
 		this.setProperty("rememberSelections", bRemember, true);
-		!this.getRememberSelections() && (this._aSelectedPaths.length = 0);
+		!this.getRememberSelections() && (this._aSelectedPaths = []);
 		return this;
+	};
+	
+	/*
+	 * Sets internal remembered selected context paths.
+	 * This method can be called to reset remembered selection
+	 * and does not change selection of the items until binding update.
+	 *
+	 * @param {String[]} aSelectedPaths valid binding context path array
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.setSelectedContextPaths = function(aSelectedPaths) {
+		this._aSelectedPaths = aSelectedPaths || [];
+	};
+
+	/*
+	 * Returns internal remembered selected context paths as a copy
+	 *
+	 * @return {String[]} selected items binding context path
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.getSelectedContextPaths = function() {
+		return this._aSelectedPaths.slice(0);
 	};
 	
 	/* Determines is whether all selectable items are selected or not
 	 * @protected
 	 */
 	ListBase.prototype.isAllSelectableSelected = function() {
-		var aItems = this.getItems(),
+		var aItems = this.getItems(true),
 			iSelectedItemCount = this.getSelectedItems().length,
 			iSelectableItemCount = aItems.filter(function(oItem) {
 				return oItem.isSelectable();
@@ -872,46 +820,42 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
 	};
 	
-	
 	/*
 	 * Returns only visible items
 	 * @protected
 	 */
 	ListBase.prototype.getVisibleItems = function() {
-		return this.getItems().filter(function(oItem) {
+		return this.getItems(true).filter(function(oItem) {
 			return oItem.getVisible();
 		});
 	};
 	
-	/*
-	 * This function runs when setVisible is called from ListItemBase
-	 * @protected
-	 */
-	ListBase.prototype.onItemVisibleChange = function(oItem, bVisible) {
-		// invalidate the item navigation
-		this._bItemNavigationInvalidated = true;
+	
+	// this gets called when items DOM is changed
+	ListBase.prototype.onItemDOMUpdate = function(oListItem) {
+		if (!this._bRendering) {
+			this._startItemNavigation(true);
+		}
 	};
 	
-	/*
-	 * This function runs when setSelected is called from ListItemBase
-	 * @protected
-	 */
-	ListBase.prototype.onItemSetSelected = function(oItem, bSelect) {
-		if (this.getMode() == "MultiSelect") {
-			this._updateSelectedPaths(oItem, bSelect);
+	// this gets called when selected property of the ListItem is changed
+	ListBase.prototype.onItemSelectedChange = function(oListItem, bSelected) {
+		
+		if (this.getMode() == sap.m.ListMode.MultiSelect) {
+			this._updateSelectedPaths(oListItem, bSelected);
 			return;
 		}
 	
-		if (bSelect) {
-			this._aSelectedPaths.length = 0;
+		if (bSelected) {
+			this._aSelectedPaths = [];
 			this._oSelectedItem && this._oSelectedItem.setSelected(false, true);
-			this._oSelectedItem = oItem;
-		} else if (this._oSelectedItem === oItem) {
+			this._oSelectedItem = oListItem;
+		} else if (this._oSelectedItem === oListItem) {
 			this._oSelectedItem = null;
 		}
 	
-		// update selection path for item
-		this._updateSelectedPaths(oItem, bSelect);
+		// update selection path for the list item
+		this._updateSelectedPaths(oListItem, bSelected);
 	};
 	
 	/*
@@ -936,15 +880,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @protected
 	 */
 	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
-		// remove nodata text if we get new data
-		if (this.getShowNoData() && oGrowingInfo.total) {
-			this.$("nodata").remove();
-		}
-	
-		// refresh item navigation
-		this._startItemNavigation();
-	
-		// fire events
 		this._fireUpdateFinished(oGrowingInfo);
 		this.fireGrowingFinished(oGrowingInfo);
 	};
@@ -969,7 +904,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		if (oBinding) {
 			return oBinding.getLength() || 0;
 		}
-		return this.getItems().length;
+		return this.getItems(true).length;
 	};
 	
 	/*
@@ -980,19 +915,19 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return true;
 	};
 	
-	// call the base aggregation functions according to given parameters
-	ListBase.prototype._applyAggregation = function(sFunction, oParams) {
-		return Control.prototype[sFunction + "Aggregation"].apply(this, oParams);
-	};
-	
 	// when new items binding we should turn back to initial state
 	ListBase.prototype._resetItemsBinding = function() {
 		if (this.isBound("items")) {
 			this._bUpdating = false;
 			this._bReceivingData = false;
-			this.removeSelections(true);
-			this._hideBusyIndicator();
+			this.removeSelections(true, false, true);
 			this._oGrowingDelegate && this._oGrowingDelegate.reset();
+			this._hideBusyIndicator();
+			
+			/* reset focused position */
+			if (this._oItemNavigation) {
+				this._oItemNavigation.iFocusedIndex = -1;
+			}
 		}
 	};
 	
@@ -1010,7 +945,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._sUpdateReason = jQuery.sap.charToUpperCase(sReason || "Refresh");
 		this.fireUpdateStarted({
 			reason : this._sUpdateReason,
-			actual : oInfo ? oInfo.actual : this.getItems().length,
+			actual : oInfo ? oInfo.actual : this.getItems(true).length,
 			total : oInfo ? oInfo.total : this.getMaxItemsCount()
 		});
 	};
@@ -1026,11 +961,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
+		this._hideBusyIndicator();
 		jQuery.sap.delayedCall(0, this, function() {
-			this._hideBusyIndicator();
+			this._startItemNavigation(true);
 			this.fireUpdateFinished({
 				reason : this._sUpdateReason,
-				actual : oInfo ? oInfo.actual : this.getItems().length,
+				actual : oInfo ? oInfo.actual : this.getItems(true).length,
 				total : oInfo ? oInfo.total : this.getMaxItemsCount()
 			});
 		});
@@ -1055,79 +991,64 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	ListBase.prototype._hideBusyIndicator = function() {
 		if (this._bBusy) {
 			// revert busy state
+			this._bBusy = false;
 			this.setBusy(false, "listUl");
+			jQuery.sap.clearDelayedCall(this._sBusyTimer);
 	
 			// revert no data texts when necessary
-			jQuery.sap.clearDelayedCall(this._sBusyTimer);
-			this.$("nodata-text").text(this.getNoDataText());
-			this._bBusy = false;
+			if (!this.getItems(true).length) {
+				this.$("nodata-text").text(this.getNoDataText());
+			}
 		}
 	};
 	
-	/*
-	 * Apply ListBase settings to given list item if selectable
-	 * TODO: There should be a better way to set these private variables
-	 */
-	ListBase.prototype._applySettingsToItem = function(oItem, bOnlyProperties) {
-		if (!oItem) {
-			return oItem;
+	ListBase.prototype.onItemBindingContextSet = function(oItem) {
+		// determine whether selection remember is necessary or not
+		if (!this._bSelectionMode || !this.getRememberSelections() || !this.isBound("items")) {
+			return;
 		}
-	
-		oItem._listId = this.getId();
-		oItem._showUnread = this.getShowUnread();
-		if (!oItem.isSelectable()) {
-			return oItem;
+		
+		// if selected property two-way bound then we do not need to update the selection
+		if (oItem.isSelectedBoundTwoWay()) {
+			return;
 		}
-	
-		oItem._mode = this.getMode();
-		oItem._modeAnimationOn = this.getModeAnimationOn();
-		oItem._includeItemInSelection = this.getIncludeItemInSelection();
-		if (bOnlyProperties) {
-			return oItem;
+
+		// update the item selection
+		var sPath = oItem.getBindingContextPath();
+		if (sPath) {
+			var bSelected = (this._aSelectedPaths.indexOf(sPath) > -1);
+			oItem.setSelected(bSelected);
 		}
-	
-		// FIXME: very lame to share events
-		oItem._select = this._select;
-		oItem._delete = this._delete;
-	
-		if (!oItem.getParent() && oItem.getSelected()) {
-			this.onItemSetSelected(oItem, true);
-		}
-	
-		return oItem;
 	};
 	
-	// select item if it was already selected before and not selected now
-	ListBase.prototype._applySelectionToItem = function(oItem) {
-		if (!this.getRememberSelections() || !oItem || !this._bSelectionMode || !this._aSelectedPaths.length || oItem.getSelected()) {
+	ListBase.prototype.onItemInserted = function(oItem, bSelectedDelayed) {
+		if (bSelectedDelayed) {
+			// item was already selected before inserted to the list 
+			this.onItemSelectedChange(oItem, true);
+		}
+		
+		if (!this._bSelectionMode ||
+			!this._aSelectedPaths.length ||
+			!this.getRememberSelections() ||
+			!this.isBound("items") ||
+			oItem.getSelected()) {
 			return;
 		}
 	
+		// retain item selection
 		var sPath = oItem.getBindingContextPath();
 		if (sPath && this._aSelectedPaths.indexOf(sPath) > -1) {
 			oItem.setSelected(true);
 		}
 	};
 	
-	// List fires select event caused by checkbox/radiobutton
-	ListBase.prototype._select = function(oEvent) {
-		var oListItem = sap.ui.getCore().byId(this.oParent.getId()),
-			oList = sap.ui.getCore().byId(oListItem._listId),
-			bSelect = oEvent.getParameter("selected"),
-			sMode = oList.getMode();
-	
-		oListItem.setSelected(bSelect);
-	
-		if (sMode == "MultiSelect") {
-			oList._fireSelectionChangeEvent([oListItem]);
-		} else if (oList._bSelectionMode && bSelect) {
-			oList._fireSelectionChangeEvent([oListItem]);
+	// this gets called from item when selection is changed via checkbox/radiobutton/press event
+	ListBase.prototype.onItemSelect = function(oListItem, bSelected) {
+		if (this.getMode() == sap.m.ListMode.MultiSelect) {
+			this._fireSelectionChangeEvent([oListItem]);
+		} else if (this._bSelectionMode && bSelected) {
+			this._fireSelectionChangeEvent([oListItem]);
 		}
-	};
-	
-	// List fires select event caused by the list item
-	ListBase.prototype._selectTapped = function(oListItem) {
-		this._fireSelectionChangeEvent([oListItem]);
 	};
 	
 	// Fire selectionChange event and support old select event API
@@ -1145,32 +1066,38 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	
 		// support old API
-		this.fireSelect({ listItem : oListItem });
+		this.fireSelect({
+			listItem : oListItem 
+		});
 	};
 	
-	// List fires delete event caused by the delete image
-	ListBase.prototype._delete = function(oEvent) {
-		var oListItem = sap.ui.getCore().byId(this.oParent.getId());
-		var oList = sap.ui.getCore().byId(oListItem._listId);
-		oList.fireDelete({
+	// this gets called from item when delete is triggered via delete button
+	ListBase.prototype.onItemDelete = function(oListItem) {
+		this.fireDelete({
 			listItem : oListItem
 		});
 	};
 	
-	// this will be called from item when it is pressed to fire event
-	// FIXME: why item does not fire its own events
-	ListBase.prototype._onItemPressed = function(oItem, oEvent) {
-		jQuery.sap.delayedCall(0, this, function(){
+	// this gets called from item when item is pressed(enter/tap/click)
+	ListBase.prototype.onItemPress = function(oListItem, oSrcControl) {
+		
+		// do not fire press event for inactive type 
+		if (oListItem.getType() == sap.m.ListType.Inactive) {
+			return;
+		}
+		
+		// fire event async
+		jQuery.sap.delayedCall(0, this, function() {
 			this.fireItemPress({
-				listItem : oItem,
-				srcControl : oEvent.srcControl || oItem
+				listItem : oListItem,
+				srcControl : oSrcControl
 			});
 		});
 	};
 	
 	// insert or remove given item's path from selection array
 	ListBase.prototype._updateSelectedPaths = function(oItem, bSelect) {
-		if (!this.getRememberSelections()) {
+		if (!this.getRememberSelections() || !this.isBound("items")) {
 			return;
 		}
 	
@@ -1200,7 +1127,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeEventDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
-			this._oLastNavItem = null;
 		}
 	};
 	
@@ -1212,7 +1138,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @private
 	 */
 	ListBase.prototype._getTouchBlocker = function() {
-		return this._$touchBlocker || (this._$touchBlocker = this.$().children());
+		return this.$().children();
 	};
 	
 	ListBase.prototype._getSwipeContainer = function() {
@@ -1317,6 +1243,17 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		sap.m.InstanceManager.removeDialogInstance(this);
 	};
 	
+
+	/**
+	 * After swipeContent is shown, user can interact with this control(e.g Tap). After interaction is done, you can/should use this method to hide swipeContent from screen.
+	 * Note: If users try to tap inside of the list but outside of the swipeContent then control hides automatically.
+	 *
+	 * @param {any} oCallback
+	 *         This callback function is called with two parameters(swipedListItem and swipedContent) after swipe-out animation is finished.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.swipeOut = function(callback) {
 		if (!this._isSwipeActive) {
 			return this;
@@ -1403,6 +1340,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this.setProperty("swipeDirection", sDirection, true);
 	};
 	
+
+	/**
+	 * Returns swiped list item. When no item is swiped, "null" is returned.
+	 *
+	 * @type sap.m.ListItemBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSwipedItem = function() {
 		return (this._isSwipeActive ? this._swipedItem : null);
 	};
@@ -1413,12 +1358,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this.toggleStyleClass("sapMListSwipable", !!oControl);
 	
 		// prevent list from re-rendering on setSwipeContent
-		return this.setAggregation("swipeContent", oControl, true);
+		return this.setAggregation("swipeContent", oControl, !this._isSwipeActive);
 	};
 	
 	ListBase.prototype.invalidate = function(oOrigin) {
 		if (oOrigin && oOrigin === this.getSwipeContent()) {
 			this._bRerenderSwipeContent = true;
+			this._isSwipeActive && this._renderSwipeContent();
+			return this;
 		}
 	
 		Control.prototype.invalidate.apply(this, arguments);
@@ -1435,11 +1382,37 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	ListBase.prototype.removeGroupHeaders = function(bSuppressInvalidate) {
-		this.getItems().forEach(function(oItem) {
+		this.getItems(true).forEach(function(oItem) {
 			if (oItem instanceof GroupHeaderListItem) {
 				oItem.destroy(bSuppressInvalidate);
 			}
 		});
+	};
+	
+	// returns accessibility role
+	ListBase.prototype.getRole = function() {
+		var sMode = this.getMode(),
+			mMode = sap.m.ListMode;
+		
+		return (sMode == mMode.None || sMode == mMode.Delete) ? "list" : "listbox";
+	};
+	
+	// this gets called after navigation items are focused
+	ListBase.prototype.onNavigationItemFocus = function(oEvent) {
+		var iIndex = oEvent.getParameter("index"),
+			aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
+			oItemDomRef = aItemDomRefs[iIndex],
+			iSetSize = aItemDomRefs.length,
+			oBinding = this.getBinding("items");
+
+		// use binding length if list is in scroll to load growing mode
+		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
+			iSetSize = oBinding.getLength();
+		}
+
+		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
+		oItemDomRef.setAttribute("aria-posinset", iIndex + 1);
+		oItemDomRef.setAttribute("aria-setsize", iSetSize);
 	};
 	
 	/* Keyboard Handling */
@@ -1451,15 +1424,17 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		// let the item navigation handle focus
 		return this.getNavigationRoot();
 	};
-	
-	ListBase.prototype.applyFocusInfo = function(oFocusInfo) {
-		// for backwards compatibility we focus to the root dom ref
-		// instead of focus dom ref
-		this.getDomRef().focus();
-		return this;
-	};
-	
-	ListBase.prototype._startItemNavigation = function() {
+
+	ListBase.prototype._startItemNavigation = function(bIfNeeded) {
+		// if focus is not on the list then only invalidate the item navigation
+		if (bIfNeeded) {
+			var oNavigationRoot = this.getNavigationRoot();
+			if (!oNavigationRoot || !oNavigationRoot.contains(document.activeElement)) {
+				this._bItemNavigationInvalidated = true;
+				return;
+			}
+		}
+		
 		// clear invalidation
 		this._bItemNavigationInvalidated = false;
 	
@@ -1476,9 +1451,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			// root element should still be tabbable
 			this._oItemNavigation.setTabIndex0();
 	
-			// TODO: Maybe we need a real paging algorithm here
-			this._oItemNavigation.setPageSize(this.getGrowingThreshold());
-	
 			// implicitly setting table mode with one column
 			// to disable up/down reaction on events of the cell
 			this._oItemNavigation.setTableMode(true, true).setColumns(1);
@@ -1489,20 +1461,20 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 				sapnext : ["alt"],
 				sapprevious : ["alt"]
 			});
+			
+			// attach to the focus event of the navigation items
+			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this.onNavigationItemFocus, this);
 		}
+		
+		// TODO: Maybe we need a real paging algorithm here
+		this._oItemNavigation.setPageSize(this.getGrowingThreshold());
+		
 		// configure navigation root
 		var oNavigationRoot = this.getNavigationRoot();
 		this._oItemNavigation.setRootDomRef(oNavigationRoot);
 		
 		// configure navigatable items
 		this.setNavigationItems(this._oItemNavigation, oNavigationRoot);
-		
-		// configure invalid focus index incase of item remove
-		var iFocusIndex = this._oItemNavigation.getFocusedIndex();
-		var iNavigationItemsLength = this._oItemNavigation.getItemDomRefs().length;
-		if (iFocusIndex > iNavigationItemsLength - 1) {
-			this._oItemNavigation.setFocusedIndex(iNavigationItemsLength - 1);
-		}
 	};
 	
 	/*
@@ -1514,8 +1486,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @since 1.26
 	 */
 	ListBase.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
-		if (oNavigationRoot) {
-			this._oItemNavigation.setItemDomRefs([].slice.call(oNavigationRoot.children));
+		var aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
+		oItemNavigation.setItemDomRefs(aNavigationItems);
+		if (oItemNavigation.getFocusedIndex() == -1) {
+			oItemNavigation.setFocusedIndex(0);
 		}
 	};
 	
@@ -1570,8 +1544,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// move focus out of the table for nodata row
 	ListBase.prototype.onsaptabprevious = function(oEvent) {
-		if (oEvent.target.id == this.getId("nodata")) {
+		var sTargetId = oEvent.target.id;
+		if (sTargetId == this.getId("nodata")) {
 			this.forwardTab(false);
+		} else if (sTargetId == this.getId("trigger")) {
+			this.focusPrevious();
+			oEvent.preventDefault();
 		}
 	};
 	
@@ -1625,8 +1603,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Handle Alt + Down
 	ListBase.prototype.onsapshow = function(oEvent) {
-		// do not handle marked events and ignore F4
-		if (oEvent.isMarked() || oEvent.which == jQuery.sap.KeyCodes.F4) {
+		// handle events that are only coming from navigation items and ignore F4
+		if (oEvent.isMarked() || 
+			oEvent.which == jQuery.sap.KeyCodes.F4 || 
+			oEvent.target.id != this.getId("trigger") &&
+			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
 		}
 	
@@ -1637,9 +1618,25 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	};
 	
+	// Handle Alt + Up
+	ListBase.prototype.onsaphide = function(oEvent) {
+		// handle events that are only coming from navigation items
+		if (oEvent.isMarked() || 
+			oEvent.target.id != this.getId("trigger") &&
+			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
+			return;
+		}
+	
+		// move focus to the previous section
+		if (this._navToSection(false)) {
+			oEvent.preventDefault();
+			oEvent.setMarked();
+		}
+	};
+	
 	// Ctrl + A to switch select all/none
 	ListBase.prototype.onkeydown = function(oEvent) {
-		
+
 		var bCtrlA = (oEvent.which == jQuery.sap.KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
 		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
@@ -1660,18 +1657,27 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		oEvent.setMarked();
 	};
 	
-	// Handle Alt + Up
-	ListBase.prototype.onsaphide = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
-			return;
+	ListBase.prototype.onmousedown = function(oEvent) {
+		// check whether item navigation should be reapplied from scratch
+		if (this._bItemNavigationInvalidated) {
+			this._startItemNavigation();
 		}
+	};
 	
-		// move focus to the previous section
-		if (this._navToSection(false)) {
-			oEvent.preventDefault();
-			oEvent.setMarked();
-		}
+	// focus to previously focused element known in item navigation
+	ListBase.prototype.focusPrevious = function() {
+		// get the last focused element from the ItemNavigation
+		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
+		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
+		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
+
+		// find related item control to get tabbables
+		var oRelatedControl = $LastFocused.control(0) || {};
+		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
+		
+		// get the last tabbable item or itself and focus
+		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
+		$FocusElement.focus();
 	};
 	
 	// Handles focus to reposition the focus to correct place
@@ -1696,16 +1702,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 	
-		// get the last focused element from the ItemNavigation
-		var $LastFocused = jQuery(this._oItemNavigation.getFocusedDomRef());
-		
-		// find related item control to get tabbables
-		var oRelatedControl = $LastFocused.control(0) || {};
-		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
-		
-		// get the last tabbable item or itself and focus
-		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
-		$FocusElement.focus();
+		this.focusPrevious();
 		oEvent.setMarked();
 	};
 

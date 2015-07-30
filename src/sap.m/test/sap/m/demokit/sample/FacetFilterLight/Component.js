@@ -1,25 +1,31 @@
-jQuery.sap.declare("sap.m.sample.FacetFilterLight.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.FacetFilterLight.Component", {
+	var Component = UIComponent.extend("sap.m.sample.FacetFilterLight.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.FacetFilterLight.FacetFilter",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			],
-			components : [
-				"sap.m.sample.Table"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"FacetFilter.view.xml",
-					"FacetFilter.controller.js"
+		metadata : {
+			rootView : "sap.m.sample.FacetFilterLight.FacetFilter",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
+				],
+				components : [
+					"sap.m.sample.Table"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"FacetFilter.view.xml",
+						"FacetFilter.controller.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

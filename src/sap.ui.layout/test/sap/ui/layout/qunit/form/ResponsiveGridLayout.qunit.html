@@ -26,6 +26,7 @@
 		var oLayout1 = new sap.ui.layout.form.ResponsiveGridLayout("Layout1");
 		var oForm1 = new sap.ui.layout.form.Form("F1",{
 			title: new sap.ui.core.Title("F1T",{text: "Form1"}),
+			editable: true,
 			layout: oLayout1,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F1C1",{
@@ -42,6 +43,7 @@
 		var oLayout2 = new sap.ui.layout.form.ResponsiveGridLayout("Layout2");
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
 			title: "Form2",
+			editable: true,
 			layout: oLayout2,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F2C1",{
@@ -60,6 +62,7 @@
 		var oLayout3 = new sap.ui.layout.form.ResponsiveGridLayout("Layout3");
 		var oForm3 = new sap.ui.layout.form.Form("F3",{
 			title: "Form3",
+			editable: true,
 			layout: oLayout3,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F3C1",{
@@ -275,6 +278,18 @@
 			equal(oLayoutData.getId(), "F3C2E2_T2LD", "Form3: Container2 Field3 must use given LayoutData");
 		});
 
+		test("DOM representation", function() {
+			var oContainer = sap.ui.getCore().byId("F1C1");
+			equal(oContainer.getRenderedDomRef().id, "F1C1--Grid", "Form1: Container1 ResponsiveFlowLayout is DOM representation");
+			oContainer = sap.ui.getCore().byId("F2C1");
+			equal(oContainer.getRenderedDomRef().id, "F2C1---Panel", "Form2: Container1 Panel is DOM representation");
+			oContainer = sap.ui.getCore().byId("F3C5");
+			ok(!oContainer.getRenderedDomRef(), "Form3: invisible Container5 no DOM representation");
+
+			var oElement = sap.ui.getCore().byId("F1C1E1");
+			ok(!oElement.getRenderedDomRef(), "no DOM representation rendered for FormElements");
+		});
+
 		module("Rendering");
 
 		test("Container rendering", function() {
@@ -318,6 +333,15 @@
 
 			ok(!jQuery.sap.domById("F3C2E3_T1"), "Form3: invisible Element - TextField not rendered");
 			ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - TextField not rendered");
+		});
+
+		test("Aria", function() {
+			equal(jQuery("#F1C1--Grid").attr("role"), "form", "Container-F1C1: role \"form\" set on grid level");
+			ok(!jQuery("#F1C1--Grid").attr("aria-labelledby"), "Container-F1C1: aria-labelledby not set on grid level");
+			equal(jQuery("#F2C1---Panel").attr("role"), "form", "Container-F2C1: role \"form\" set on panel level");
+			ok(!jQuery("#F2C1--Grid").attr("role"), "Container-F2C1: role \"form\" not set on grid level");
+			equal(jQuery("#F2C1---Panel").attr("aria-labelledby"), "F2C1--title", "Container-F2C1: aria-labelledby set");
+			equal(jQuery("#F3C1---Panel").attr("aria-labelledby"), "F3C1T", "Container-F3C1: aria-labelledby set");
 		});
 
 		module("Interaction");

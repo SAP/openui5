@@ -56,7 +56,7 @@
 	outline-offset: -1px;
 }
 
-.sapUiBtnS.sapUiBtnNorm.sapUiBtnStd:focus:hover,
+.sapUiBtnS.sapUiBtnNorm.sapUiBtnStd:not(.sapUiBtnEmph):focus:hover,
 /* extra css class for the focus styling of the FileUploader */
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnStd.sapUiBtnStdFocus:hover {
 	background-color: @sapUiButtonHoverBackground;
@@ -154,7 +154,7 @@ html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnIconOnly > .sapUiBtnIco{
 .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl > span.sapUiBtnIco,
 .sapUiBtnS.sapUiBtnLite.sapUiBtnStd:hover > span.sapUiBtnIco,
 .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:hover > span.sapUiBtnIco{
-	color: @sapUiBtnIcon;
+	color: @sapUiButtonIconColor;
 }
 
 .sapUiBtnS.sapUiBtnLite.sapUiBtnStd:focus{
@@ -239,7 +239,7 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph{
 	background-color: @sapUiButtonEmphasizedBackground;
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiButtonEmphasizedTextShadow;
 }
 
 /*.sapUiBtnNoGradient.sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph{
@@ -258,7 +258,7 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnStd:hover{
 	background-image: none;
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiButtonEmphasizedTextShadow;
 }
 
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnAct,
@@ -267,12 +267,12 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnStd:active{
 	background-image: none;
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiButtonEmphasizedTextShadow;
 }
 
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnDsbl{
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiButtonEmphasizedTextShadow;
 	opacity: 0.25;
 }
 
@@ -486,7 +486,7 @@ html[data-sap-ui-browser="ie10"] .sapUiBtn > span.sapUiBtnIco{
 }
 
 .sapUiBtnS.sapUiBtnNorm > span.sapUiBtnIco{
-	color: @sapUiBtnIcon;
+	color: @sapUiButtonIconColor;
 }
 
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph > span.sapUiBtnIco,
@@ -542,14 +542,6 @@ html[data-sap-ui-browser="ie8"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco{
 	margin-top: 1px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiBtnS > span.sapUiBtnIco{
-	margin-top: 0;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco{
-	margin-top: 0;
-}
-
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnDsbl > span.sapUiBtnIco {  /* make disabled icon look "reduced" */
 	opacity: .5;
 	filter: alpha(opacity=50);
@@ -558,4 +550,14 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco{
 .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl > span.sapUiBtnIco {  /* switch back for lite button: make disabled icon look "reduced" */
 	opacity: .5;
 	filter: alpha(opacity=50);
+}
+
+html[data-sap-ui-browser="ie9"] .sapUiBtnS,
+html[data-sap-ui-browser="ie10"] .sapUiBtnS {
+	> img,
+	> span.sapUiBtnTxt,
+	&.sapUiBtnIconOnly > span.sapUiBtnIco,
+	> span.sapUiBtnIco {
+		margin-top: 0;
+	}
 }

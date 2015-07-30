@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Many Resource Roots</title>
+
+		<script>
+			// generate many resource roots to stress the technical info dialog
+			window["sap-ui-config"] = {
+				resourceRoots : (function() {
+					var roots = {};
+					for( var i=0; i<100; i++) {
+						roots["sap.lib" + i] = "resources/sap/lib" + (100-i);
+					}
+					return roots;
+				}())
+			};
+		</script>
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+	</head>
+	<body class="sapUiBody">
+		Open the 'Technical Info' dialog by pressing CTRL + ALT + SHIFT + 'P' 
+	</body>
+</html>

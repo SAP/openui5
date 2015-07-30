@@ -1,0 +1,56 @@
+<mvc:View
+		height="100%"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		controllerName="sap.m.sample.SemanticPageFullScreen.Page"
+		xmlns="sap.m"
+		xmlns:semantic="sap.m.semantic"
+		xmlns:ui="sap.ca.ui"
+		displayBlock="true">
+
+			<semantic:FullscreenPage title="FullScreen Page Title"
+									 showNavButton="true"
+									 navButtonPress="onNavButtonPress">
+					<semantic:addAction>
+						<semantic:AddAction press="onSemanticButtonPress"/>
+					</semantic:addAction>
+					<semantic:editAction>
+						<semantic:EditAction press="onSemanticButtonPress"/>
+					</semantic:editAction>
+					<semantic:flagAction>
+						<semantic:FlagAction press="onSemanticButtonPress"/>
+					</semantic:flagAction>
+					<semantic:favoriteAction>
+						<semantic:FavoriteAction press="onSemanticButtonPress"/>
+					</semantic:favoriteAction>
+					<semantic:sendEmailAction>
+						<semantic:SendEmailAction press="onSemanticButtonPress"/>
+					</semantic:sendEmailAction>
+					<semantic:sendMessageAction>
+						<semantic:SendMessageAction press="onSemanticButtonPress"/>
+					</semantic:sendMessageAction>
+					<semantic:discussInJamAction>
+						<semantic:DiscussInJamAction press="onSemanticButtonPress"/>
+					</semantic:discussInJamAction>
+					<semantic:shareInJamAction>
+						<semantic:ShareInJamAction press="onSemanticButtonPress"/>
+					</semantic:shareInJamAction>
+					<semantic:printAction>
+						<semantic:PrintAction press="onSemanticButtonPress"/>
+					</semantic:printAction>
+					<semantic:messagesIndicator>
+						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
+					</semantic:messagesIndicator>
+
+					<semantic:customHeaderContent>
+						<Button text="CustomHeaderBtn" press="onPress"/>
+					</semantic:customHeaderContent>
+
+					<semantic:customFooterContent>
+						<Button text="CustomFooterBtn" press="onPress"/>
+						<OverflowToolbarButton icon="sap-icon://settings" text="Settings" press="onPress"/>
+					</semantic:customFooterContent>
+
+			</semantic:FullscreenPage>
+
+</mvc:View>

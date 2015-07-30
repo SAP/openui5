@@ -11,7 +11,7 @@
 	data-sap-ui-trace="false" type="text/javascript"
 	data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
 	src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
 <script type="text/javascript">
@@ -38,6 +38,7 @@
 	var aSpecialDays = [ [ "20140801", undefined, "Placeholder01", 1 ], [ "20140802", undefined, "Placeholder02", 2 ], [ "20140803", undefined, "Placeholder03", 3 ], [ "20140804", undefined, "Placeholder04", 4 ], [ "20140805", undefined, "Placeholder05", 5 ], [ "20140806", undefined, "Placeholder06", 6 ], [ "20140807", undefined, "Placeholder07", 7 ], [ "20140808", undefined, "Placeholder08", 8 ], [ "20140809", undefined, "Placeholder09", 9 ], [ "20140810", undefined, "Placeholder10", 10 ] ];
 
 	var oCal = new sap.ui.unified.Calendar("Cal", {
+		selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
 		select : function(oEvent) {
 			alert("Select");
 		},
@@ -88,6 +89,7 @@
 	oLayout.placeAt("sample5");
 
 	var oCal2 = new sap.ui.unified.Calendar("Cal2", {
+		selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
 		select : function(oEvent) {
 			alert("Select");
 		},
@@ -137,6 +139,17 @@
 	oLayout2.addContent(oCal2);
 	oLayout2.addContent(oLeg6);
 	oLayout2.placeAt("sample6");
+
+	var oLeg7 = new sap.ui.unified.CalendarLegend("Leg7", {
+			items: [ new sap.ui.unified.CalendarLegendItem({text: "Type10", type: sap.ui.unified.CalendarDayType.Type10, tooltip: "Type 10"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "Type09", type: sap.ui.unified.CalendarDayType.Type09, tooltip: "Type 9"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "Type08", type: sap.ui.unified.CalendarDayType.Type08, tooltip: "Type 8"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "no type 1", tooltip: "no type 1"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "Type07", type: sap.ui.unified.CalendarDayType.Type07, tooltip: "Type 7"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "no type 2", tooltip: "no type 2"}),
+			        ]
+		}).placeAt("sample7");
+
 </script>
 
 </head>
@@ -185,5 +198,11 @@
 			<div id="sample6" class="sapUiSizeCompact" />
 		</div>
 	</div>
-</body>
+	<br>
+	<div>Simple Legend example</div>
+	<br>
+	<div>
+		<div id="sample7"></div>
+	</div>
+	</body>
 </html>

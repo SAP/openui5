@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.NavigationBar
+	 * @alias sap.ui.ux3.NavigationBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NavigationBar = Control.extend("sap.ui.ux3.NavigationBar", /** @lends sap.ui.ux3.NavigationBar.prototype */ { metadata : {
@@ -38,12 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * Defines whether the navigation bar shall have top-level appearance
 			 */
-			toplevelVariant : {type : "boolean", group : "Misc", defaultValue : false},
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			toplevelVariant : {type : "boolean", group : "Misc", defaultValue : false}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -95,30 +90,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	}});
 	
 	
-	/**
-	 * Replaces the currently associated items with the ones in the given array
-	 *
-	 * @name sap.ui.ux3.NavigationBar#setAssociatedItems
-	 * @function
-	 * @param {sap.ui.ux3.NavigationItem[]} aItems
-	 *         The items to associate
-	 * @type sap.ui.ux3.NavigationBar
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns whether there is a selectedItem set which is actually present in the items aggregation; or, if the aggregation is empty, in the associatedItems association.
-	 *
-	 * @name sap.ui.ux3.NavigationBar#isSelectedItemValid
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	NavigationBar.SCROLL_STEP = 250; // how many pixels to scroll with every overflow arrow click
 	//sap.ui.ux3.NavigationBar._MAX_ITEM_WIDTH = 300;
 	
@@ -138,6 +109,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		// Initialize the ItemNavigation
 		this._oItemNavigation = new ItemNavigation().setCycling(false);
 		this.addDelegate(this._oItemNavigation);
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	
 		if (jQuery.sap.touchEventMode === "ON") {
 			var fnTouchStart = function(evt) {
@@ -212,7 +185,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._oItemNavigation.destroy();
 			delete this._oItemNavigation;
 		}
-	
+
+		if (this._checkOverflowIntervalId) {
+			jQuery.sap.clearIntervalCall(this._checkOverflowIntervalId);
+			this._checkOverflowIntervalId = null;
+		}
+
 		// no super.exit() to call
 	};
 	
@@ -618,44 +596,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	NavigationBar.prototype._checkOverflow = function(oListDomRef, of_back, of_fw) {
-		if (oListDomRef) {
+
+		function isChromeOnMac() {
+			return sap.ui.Device.os.macintosh && sap.ui.Device.browser.chrome;
+		}
+
+		if (oListDomRef && this.getDomRef() && jQuery.sap.act.isActive()) {
 			var iScrollLeft = oListDomRef.scrollLeft;
-	
+
 			// check whether scrolling to the left is possible
 			var bScrollBack = false;
 			var bScrollForward = false;
-	
+
 			var realWidth = oListDomRef.scrollWidth;
 			var availableWidth = oListDomRef.clientWidth;
-			
+
+			// Exceptional case for Chrome on Mac OS
+			// Added scroll tolerance to ensure that the arrows are hidden correctly
+			// see BCP Internal Incident 1570758438
+			var iScrollTolerance = isChromeOnMac() ? 5 : 0;
+
 			if (Math.abs(realWidth - availableWidth) == 1) { // Avoid rounding issues see CSN 1316630 2013
 				realWidth = availableWidth;
 			}
-	
+
 			if (!this._bRtl) {   // normal LTR mode
-				if (iScrollLeft > 0) {
+
+				if (iScrollLeft > iScrollTolerance) {
 					bScrollBack = true;
 				}
-				if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
+				if ((realWidth > availableWidth) && (realWidth - (iScrollLeft + availableWidth) > iScrollTolerance)) {
 					bScrollForward = true;
 				}
 	
 			} else {  // RTL mode
 				var $List = jQuery(oListDomRef);
-				if ($List.scrollLeftRTL() > 0) {
+				if ($List.scrollLeftRTL() > iScrollTolerance) {
 					bScrollForward = true;
 				}
-				if ($List.scrollRightRTL() > 0) {
+				if ($List.scrollRightRTL() > iScrollTolerance) {
 					bScrollBack = true;
 				}
 			}
-	
+
 			// only do DOM changes if the state changed to avoid periodic application of identical values
 			if ((bScrollForward != this._bPreviousScrollForward) || (bScrollBack != this._bPreviousScrollBack)) {
 				this._bPreviousScrollForward = bScrollForward;
 				this._bPreviousScrollBack = bScrollBack;
 				this.$().toggleClass("sapUiUx3NavBarScrollBack", bScrollBack)
 						.toggleClass("sapUiUx3NavBarScrollForward", bScrollForward);
+				if (!NavigationBar._bMenuLoaded && (bScrollBack || bScrollForward)) {
+					NavigationBar._bMenuLoaded = true;
+					jQuery.sap.require("sap.ui.commons.Menu");
+				}
 			}
 			
 			// paint selection arrow in the right place
@@ -741,6 +734,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	
 	/* API method implementations */
 	
+
+	/**
+	 * Replaces the currently associated items with the ones in the given array
+	 *
+	 * @param {sap.ui.ux3.NavigationItem[]} aItems
+	 *         The items to associate
+	 * @type sap.ui.ux3.NavigationBar
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavigationBar.prototype.setAssociatedItems = function(aItems /* bResetArrowPosition */) { // second parameter is currently not in the public API
 		jQuery.sap.assert(jQuery.isArray(aItems), "aItems must be an array");
 	
@@ -790,6 +793,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 	
 	
+
+	/**
+	 * Returns whether there is a selectedItem set which is actually present in the items aggregation; or, if the aggregation is empty, in the associatedItems association.
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavigationBar.prototype.isSelectedItemValid = function() {
 		var selId = this.getSelectedItem();
 		if (!selId) {

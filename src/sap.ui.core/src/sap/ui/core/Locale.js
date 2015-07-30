@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * @version ${version}
 		 * @constructor
 		 * @public
-		 * @name sap.ui.core.Locale
+		 * @alias sap.ui.core.Locale
 		 */
 		var Locale = BaseObject.extend("sap.ui.core.Locale", /** @lends sap.ui.core.Locale.prototype */ {
 	
@@ -318,8 +318,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * As of 3/2013 this is true for all supported locales/regions of UI5.
 		 * 
 		 * @private
-		 * @name sap.ui.core.Locale._impliesRTL
-		 * @function
 		 */
 		Locale._impliesRTL = function(sLanguage) {
 			var oLocale = new Locale(sLanguage);
@@ -335,4 +333,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		
 	return Locale;
 
-}, /* bExport= */ true);
+});

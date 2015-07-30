@@ -9,13 +9,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 
 	/**
-	 * @class
 	 * @author SAP SE
-	 * @version 0.1
-	 * @static
+	 * @namespace
 	 */
 	var TriStateCheckBoxRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -23,17 +21,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TriStateCheckBoxRenderer.render = function(oRm, oControl) {
-	
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		var myTabIndex = 0;
 		var bReadOnly = false;
-	
+
 		// Collect state information
-	  var enabled = !!oControl.getEnabled();
+		var enabled = !!oControl.getEnabled();
 		var editable = !!oControl.getEditable();
 		var inErrorState = false;
 		var inWarningState = false;
@@ -41,8 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var ariaState = selectedState.toLowerCase();
 		if (ariaState == "checked") {
 			ariaState = true;
-		}
-		else if (ariaState == "unchecked") {
+		} else if (ariaState == "unchecked") {
 			ariaState = false;
 		}
 		var tooltip = ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
@@ -51,14 +42,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			inErrorState = sap.ui.core.ValueState.Error == oControl.getValueState();
 			inWarningState = sap.ui.core.ValueState.Warning == oControl.getValueState();
 		}
-	
+
 		// write the HTML into the render manager
 		//outer span containing aria information, tabindex, text and tooltip etc.
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
-	
+
 		oRm.addClass("sapUiTriCb");
-	
+
 		if (!!oControl.getWidth()) {
 			oRm.writeAttribute("style", "width:" + oControl.getWidth() + ";");
 		}
@@ -72,67 +63,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		}
 		oRm.writeAttribute("tabIndex", myTabIndex);
 		oRm.write(">");
-	
+
 		// inner span carrying metadata and style according to the current state
 		oRm.write("<span");
-	
+
 		oRm.writeAccessibilityState(oControl, {"labelledby": ariaLabelId});
-	
+
 		if (tooltip) {
 			oRm.writeAttributeEscaped("title", tooltip);
 		}
-	
+
 		if (!enabled) {
 			bReadOnly = true;
 			myTabIndex = -1;
 			oRm.write(" disabled='disabled'");
 		}
-	
+
 		if (!editable) {
 			bReadOnly = true;
 		}
-	
+
 		if (bReadOnly) {
 			oRm.write(" readOnly='readOnly'");
 		}
-	
+
 		oRm.addClass("sapUiTriCbInner");
-	
+
 		if (!enabled) {
 			oRm.addClass("sapUiTriCbDis");
 		}
-	
+
 		if (!editable) {
 			oRm.addClass("sapUiTriCbRo");
 		}
-	
+
 		if (inErrorState) {
 			oRm.addClass("sapUiTriCbErr");
-		}
-		else if (inWarningState) {
+		} else if (inWarningState) {
 			oRm.addClass("sapUiTriCbWarn");
 		}
-	
+
 		// Add classes and properties depending on the state
 		if (selectedState === "Checked") {
 			oRm.addClass("sapUiTriCbCheck");
-		}
-		else if (selectedState === "Mixed") {
+		} else if (selectedState === "Mixed") {
 			oRm.addClass("sapUiTriCbMix");
 		}
-	
+
 		oRm.writeClasses();
 		oRm.write(">"); // span element
 		oRm.write("</span>");
-	
+
 	// render text into the outer span
 		if (oControl.getText()) {
 			this.renderText(ariaLabelId, oRm, oControl.getText(), oControl.getTextDirection());
 		}
 		oRm.write("</span>");
-	
+
 	};
-	
+
 	/**
 	 * Write the descriptive span for the CheckBox along with an explicit "dir" in case the text direction is different from the environment.
 	 * Add sLabelId as id for aria-labelledby support

@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 	sap.ui.lazyRequire("sap.ui.demokit.DemokitApp", "new getInstance");
 	sap.ui.lazyRequire("sap.ui.demokit.IndexPage");
 	
-	sap.ui.getCore().attachInitEvent( function () {
+	sap.ui.getCore().attachInit( function () {
 	
 		if ( jQuery("body").hasClass("sapUiDemokitBody") ) {
 		
@@ -178,13 +178,29 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 		});
 	};
 	
-	sap.ui.demokit._loadAllLibInfo = function(sAppRoot, sInfoType /*"_getDocuIndex", "_getThirdPartyInfo", "_getLibraryInfo"*/, fnCallback) {
+	sap.ui.demokit._loadAllLibInfo = function(sAppRoot, sInfoType /*"_getDocuIndex", "_getThirdPartyInfo", "_getLibraryInfo", "_getReleaseNotes", "_getLibraryInfoAndReleaseNotes"*/, sReqVersion, fnCallback) {
+		
+		// parameter fallback for compatibility: if the version is a function
+		// then it is the old signature: (sAppRoot, sInfoType, fnCallback)
+		if (typeof sReqVersion === "function") {
+			fnCallback = sReqVersion;
+			sReqVersion = undefined;
+		}
+		
 		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
 		var libInfo = new sap.ui.core.util.LibraryInfo();
+		
+		// special case: fetching library info and release notes in one cycle
+		// this will use the _getLibraryInfo functionality and 
+		var bFetchReleaseNotes = sInfoType == "_getLibraryInfoAndReleaseNotes";
+		if (bFetchReleaseNotes) {
+			sInfoType = "_getLibraryInfo";
+		}
 		
 		sap.ui.demokit._getAppInfo(function(oAppInfo) {
 			if (!(oAppInfo && oAppInfo.libraries)) {
 				fnCallback(null, null);
+				return;
 			}
 			
 			var count = 0,
@@ -200,19 +216,33 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 				libVersion = aLibraries[i].version;
 				aLibs.push(libName);
 				oLibVersions[libName] = libVersion;
+				
 				/*eslint-disable no-loop-func */
 				libInfo[sInfoType](libName, function(oExtensionData){
+					var fnDone = function() {
+						count++;
+						if (count == len) {
+							fnCallback(aLibs, oLibInfos, oAppInfo);
+						}
+					};
 					oLibInfos[oExtensionData.library] = oExtensionData;
 					// fallback to version coming from version info file
 					// (in case of ABAP we always should refer to the libVersion if available!)
-					//if (!oLibInfos[oExtensionData.library].version) {
-					var sVersion = oLibVersions[oExtensionData.library];
-					if (sVersion) {
-						oLibInfos[oExtensionData.library].version = sVersion;
+					if (!oLibInfos[oExtensionData.library].version) {
+						oLibInfos[oExtensionData.library].version = oLibVersions[oExtensionData.library];
 					}
-					count++;
-					if (count == len) {
-						fnCallback(aLibs, oLibInfos, oAppInfo);
+					// fetch the release notes if defined - in case of no version
+					// is specified we fallback to the current library version
+					if (bFetchReleaseNotes) {
+						if (!sReqVersion) {
+							sReqVersion = oLibVersions[oExtensionData.library];
+						}
+						libInfo._getReleaseNotes(oExtensionData.library, sReqVersion, function(oReleaseNotes) {
+							oLibInfos[oExtensionData.library].relnotes = oReleaseNotes;
+							fnDone();
+						});
+					} else {
+						fnDone();
 					}
 				});
 				/*eslint-enable no-loop-func */
@@ -222,4 +252,4 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 	
 	return sap.ui.demokit;
 	
-}, /* bExport= */ false);
+});

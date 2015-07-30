@@ -3,8 +3,8 @@
 /* ============================================= */
 
 .sapMLIB {
-	border-bottom: 1px solid @sapUiLIBorder;
-	background-color: @sapUiListBG;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	background-color: @sapUiListBackground;
 	padding: 0 1rem 0 1rem;
 }
 
@@ -20,15 +20,15 @@
 }
 
 .sapMListBGTransparent .sapMLIB {
-	background-color: fade(@sapUiListBG, 0%);
+	background-color: fade(@sapUiListBackground, 0%);
 }
 
 .sapMListBGTranslucent .sapMLIB {
-	background-color: fade(@sapUiListBG, @sapUiTranslucentBGOpacity);
+	background-color: fade(@sapUiListBackground, @sapUiTranslucentBGOpacity);
 }
 
 .sapMListBGSolid .sapMLIB{
-	background-color: @sapUiListBG;
+	background-color: @sapUiListBackground;
 }
 
 .sapMListShowSeparatorsNone .sapMLIBShowSeparator{
@@ -61,7 +61,7 @@
 
 .sapMLIBSelectD > .sapUiIcon {
 	font-size: 1.5rem;
-	color: @sapUiLIDelColor;
+	color: @sapUiNegativeElement;
 	font-weight: normal;
 	width : 100%;
 }
@@ -120,16 +120,16 @@
 	}
 }
 
-.sapMLIBUnread.sapMLIBUnreadBold > *,
-.sapMLIBUnread.sapMLIBUnreadBold > .sapMListTblCell,
-.sapMLIBUnread.sapMLIBUnreadBold + .sapMListTblSubRow {
+.sapMLIBUnread,
+.sapMLIBUnread > .sapMListTblCell,
+.sapMLIBUnread + .sapMListTblSubRow {
 	font-family: @sapUiFontFamily;
 	font-weight: bold;
 }
 
 .sapMLIBCounter {
 	font-size: 0.875rem;
-	color: @sapUiLICounter;
+	color: @sapUiAccent5;
 	padding-left: 1rem;
 }
 
@@ -138,7 +138,7 @@
 	height: 3rem;
 	line-height: 3rem;
 	font-size: 0.75rem;
-	color: @sapUiLINavColor;
+	color: lighten(@sapUiElement, 15);
 }
 
 .sapMLIBIconDet {
@@ -146,7 +146,7 @@
 	height: 3rem;
 	line-height: 3rem;
 	font-size: 1.375rem;
-	color: @sapUiLIDetailColor;
+	color: @sapUiElement;
 	margin-right: -1rem;
 	margin-left: 0.5rem;
 	-webkit-box-flex: 0;
@@ -156,11 +156,11 @@
 }
 
 .sapMLIBActive .sapMLIBImgNav,
-.sapMLIBActive .sapMLIBIconDetActive,
-.sapMLIBActive .sapMLIBIconDelActive,
+.sapMLIBActive .sapMLIBIconDet,
+.sapMLIBActive .sapMLIBIconDel,
 .sapMLIBIconDet:active,
 .sapMLIBIconDel:active {
-	color: @sapUiLITextInverted;
+	color: @sapUiInvertedElement;
 }
 
 .sapMLIBTypeDetailAndActive .sapMLIBIconDet:active,
@@ -169,7 +169,7 @@
 /* in IE9 the SelectD does not get the active state so we have to put it on the icon*/
 .sapMListModeDelete .sapMLIBSelectD > .sapUiIcon:active,
 .sapMLIBActive:not(.sapMLIBTypeDetailAndActive):not(.sapMLIBTypeNavigation):not(.sapMLIBTypeActive) .sapMLIBImgNav {
-	background-color : @sapUiLIActive;
+	background-color : @sapUiListActiveBackground;
 }
 
 .sap-desktop .sapMLIBImgNav:focus,
@@ -186,12 +186,10 @@
 
 .sapMLIB.sapMLIBSelected,
 .sapMLIB.sapMLIBSelected > td {
-	background: @sapUiLISelected;
+	background: @sapUiListSelectionBackgroundColor;
 }
 
 .sapMLIBSelectD:hover {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -213,7 +211,7 @@
 
 /* popin hover - issue does not hover the list item, only the popin */
 .sap-desktop .sapMListTblSubRow:not(.sapMLIBActive):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):hover {
-	background : @sapUiLightestBGHover;
+	background : @sapUiListHoverBackground;
 }
 
 /* same as the 4 selectors above just for selected */
@@ -222,30 +220,29 @@
 .sap-desktop .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover > td,
 .sap-desktop .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover + .sapMListTblSubRow,
 .sap-desktop .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI)  + .sapMListTblSubRow:hover {
-	background : @sapUiActiveBGHover;
+	background : @sapUiListSelectionHoverBackground;
 }
 
 .sapMLIBActive.sapMLIB,
 .sapMLIBActive.sapMLIB > td {
-	color: @sapUiLITextInverted;
-	background: @sapUiLIActive;
+	color: @sapUiListActiveTextColor;
+	background: @sapUiListActiveBackground;
 }
 
 .sapMLIBActive div,
-.sapMLIBActiveCounter {
-	color: @sapUiLITextInverted;
+.sapMLIBActive .sapMLIBCounter {
+	color: @sapUiListActiveTextColor;
 }
 
 .sapMLIBActive .sapThemeHighlight-asColor {
-	color: @sapUiLITextInverted;
+	color: @sapUiListActiveTextColor;
 }
 .sapMLIBActive .sapThemeHighlight-asBorderColor {
-	border-color: @sapUiLITextInverted;
+	border-color: @sapUiInvertedFocus;
 }
 
 /* Compact size */
 .sapUiSizeCompact .sapMLIBSelectSL,
 .sapUiSizeCompact .sapMLIBSelectM {
-	width:2.5rem;
-	margin-left: -0.5rem;
+	width: 2.5rem;
 }

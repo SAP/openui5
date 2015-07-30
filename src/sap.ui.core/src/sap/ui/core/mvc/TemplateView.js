@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.core.mvc.TemplateView
+	 * @alias sap.ui.core.mvc.TemplateView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TemplateView = View.extend("sap.ui.core.mvc.TemplateView", /** @lends sap.ui.core.mvc.TemplateView.prototype */ { metadata : {
@@ -120,4 +120,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 
 	return TemplateView;
 
-}, /* bExport= */ true);
+});

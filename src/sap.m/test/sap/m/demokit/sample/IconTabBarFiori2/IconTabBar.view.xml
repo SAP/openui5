@@ -2,10 +2,10 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<IconTabBar
-		class="iconTabBarPaddingTop"
 		id="idIconTabBarFiori2"
 		upperCase="true"
-		expanded="{device>/isNoPhone}">
+		expanded="{device>/isNoPhone}"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				text="Info"

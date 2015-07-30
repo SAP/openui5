@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="sap.m.sample.InputValueUpdate.C"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<form:SimpleForm editable="true">
+		<Label text="ValueLiveUpdate"/>
+		<Switch state="{/ValueLiveUpdate}"/>
+		<Label text="Type here"/>
+		<Input id="TypeHere"
+			value="{/InputValue}"
+			valueLiveUpdate="{/ValueLiveUpdate}"
+			liveChange="handleLiveChange"
+		/>
+		<Label text="input.getValue()"/>
+		<Text id="getValue" />
+		<Label text="model.getProperty()"/>
+		<Text id="getProperty"
+			text="{/InputValue}"
+		/>
+	</form:SimpleForm>
+</mvc:View>

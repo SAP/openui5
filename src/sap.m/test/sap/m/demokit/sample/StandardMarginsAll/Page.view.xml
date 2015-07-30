@@ -1,0 +1,29 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.StandardMarginsAll.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Text text="Panels below illustrate the four standard margin sizes 'tiny', 'small', 'medium' and 'large'." class="sapUiExploredNoMarginInfo"/>
+	<Panel width="auto" class="sapUiTinyMargin">
+	    <content>
+	      	<Text text="This panel uses margin class 'sapUiTinyMargin' to clear a 8px (0.5rem) space all around." class="sapMH4FontSize"/>
+	      	<Text text="Since panels have a default width of 100%, horizontal margins are not displayed appropriately. Therefore we need to set the panel's 'width' property to 'auto'." />
+	    </content>
+	</Panel>
+	<Panel width="auto" class="sapUiSmallMargin">
+	    <content>
+	      	<Text text="This panel uses margin class 'sapUiSmallMargin' to clear a 16px (1rem) space all around." class="sapMH4FontSize"/>
+	    </content>
+	</Panel>
+	<Panel width="auto" class="sapUiMediumMargin">
+	    <content>
+	      	<Text text="This panel uses margin class 'sapUiMediumMargin' to clear a 32px (2rem) space all around." class="sapMH4FontSize"/>
+	    </content>
+	</Panel>
+	<Panel width="auto" class="sapUiLargeMargin">
+	    <content>
+	      	<Text text="This panel uses margin class 'sapUiLargeMargin' to clear a 48px (3rem) space all around." class="sapMH4FontSize"/>
+	    </content>
+	</Panel>
+	<Text text="Each of the panels above has a margin all around. Please notice that this margins do not add up. Instead, they 'collapse'." class="sapUiExploredNoMarginInfo"/>
+</mvc:View>

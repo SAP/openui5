@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	/**
 	 * Constructor for a new CalloutBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.CalloutBase
+	 * @alias sap.ui.commons.CalloutBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalloutBase = TooltipBase.extend("sap.ui.commons.CalloutBase", /** @lends sap.ui.commons.CalloutBase.prototype */ { metadata : {
@@ -43,12 +43,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 					 */
 					parent : {type : "sap.ui.core.Control"}
 				}
-			}, 
+			},
 
 			/**
 			 * Event is fired when the Callout window is closed.
 			 */
-			close : {}, 
+			close : {},
 
 			/**
 			 * Event is fired before a Callout is displayed. Call the preventDefault method of the event object to postpone opening. Application may use this event to start asynchronous Ajax call to load the Callout content
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 					 */
 					parent : {type : "sap.ui.core.Control"}
 				}
-			}, 
+			},
 
 			/**
 			 * Is fired when the Callout has been opened
@@ -73,49 +73,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 
 
 	/**
-	 * Adjust position of the already opened Callout window.
-	 * Call this method each time when the size of the opened
-	 * Callout window may be changed due to new or changed
-	 * contents.
-	 *
-	 * @name sap.ui.commons.CalloutBase#adjustPosition
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Closes Callout
-	 *
-	 * @name sap.ui.commons.CalloutBase#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Helper function to set position of the Callout window relative to the parent control. It automatically calculates and sets the correct offset, so it is recommended to use this function instead of setMyPosition and setAtPosition
-	 *
-	 * @name sap.ui.commons.CalloutBase#setPosition
-	 * @function
-	 * @param {sap.ui.core.Dock} sMyPosition
-	 *         Docking position of the Callout
-	 * @param {sap.ui.core.Dock} sAtPosition
-	 *         Docking position of the Callout
-	 * @type sap.ui.commons.CalloutBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	///**
-	// * This file defines behavior for the Callout control
-	// */
-
-	/**
 	 * Initializes a new callout base.
 	 * Overrides default popup placement and offset of the TooltipBase control
 	 *
@@ -124,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	CalloutBase.prototype.init = function() {
 		this.oPopup = new sap.ui.core.Popup();
 		this.oPopup.setShadow(true);
-	
+
 		// resource bundle
 		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
@@ -140,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			sap.ui.core.Popup.prototype._applyPosition.call(this, oPosition);
 			that.setTip();
 		};
-	
+
 		// close the Callout if its opener moves away (due to scrolling e.g.)
 		this.oPopup.setFollowOf(sap.ui.core.Popup.CLOSE_ON_SCROLL);
 	};
@@ -241,12 +198,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			myPosition = this.getMyPosition();
 
 		// right-left pointer
-		if ( tRect.r < pRect.l - tipOffset ) { dock.x = "right"; }
-		else if ( tRect.l - tipOffset > pRect.r ) { dock.x = "left"; }
+		if ( tRect.r < pRect.l - tipOffset ) {
+			dock.x = "right";
+		} else if (tRect.l - tipOffset > pRect.r ) {
+			dock.x = "left";
+		}
 
 		// top-bottom pointer
-		if ( tRect.t > pRect.b - tipOffset ) { dock.y = "top"; }
-		else if ( tRect.b < pRect.t + tipOffset ) { dock.y = "bottom"; }
+		if ( tRect.t > pRect.b - tipOffset ) {
+			dock.y = "top";
+		} else if ( tRect.b < pRect.t + tipOffset ) {
+			dock.y = "bottom";
+		}
 
 		if (dock.x) { // pointer on the left or right side
 
@@ -320,6 +283,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 		$arrow.toggle(bShow);
 	};
 
+
+	/**
+	 * Adjust position of the already opened Callout window.
+	 * Call this method each time when the size of the opened
+	 * Callout window may be changed due to new or changed
+	 * contents.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	CalloutBase.prototype.adjustPosition = function() {
 
 		function _adjust(){
@@ -390,9 +364,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	};
 
 	/**
-	 * Close the Callout popup.
+	 * Closes Callout
 	 *
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalloutBase.prototype.close = function() {
 		if (this.oPopup && this.oPopup.isOpen() && !this.sCloseNowTimeout) {
@@ -496,10 +472,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			this.bDoFocus = false;
 			this.bFocused = true; // Remember to set focus to parent on close
 		}
-	
+
 		this.$().css("display:", "");
 		this.fireOpened();
-	
+
 		// - listen to mouse over events outside
 		//   do always because the Callout can lose focus to child popup controls
 		jQuery.sap.bindAnyEvent(this.fAnyEventHandlerProxy);
@@ -560,7 +536,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	};
 
 	/**
-	 * Handle the mouseout event of a Callout. Override the default TooltipBase behavior when 
+	 * Handle the mouseout event of a Callout. Override the default TooltipBase behavior when
 	 * the mouse pointer is over some other popup on the screen
 	 * @param {jQuery.EventObject} oEvent mouseout Event.
 	 * @private
@@ -612,10 +588,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * Set position of the Callout window relative to the parent control.
 	 * This function automatically calculates and sets the correct offset,
 	 * use it instead of <code>setMyPosition/setAtPosition</code>.
-	 * @param {sap.ui.core.Popup.Dock} myPosition docking position of the Callout
-	 * @param {sap.ui.core.Popup.Dock} atPosition docking position of the parent control
+	 * @param {sap.ui.core.Dock} myPosition docking position of the Callout
+	 * @param {sap.ui.core.Dock} atPosition docking position of the parent control
 	 * @return {sap.ui.commons.CalloutBase} <code>this</code> to allow method chaining
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalloutBase.prototype.setPosition = function(myPosition, atPosition){
 

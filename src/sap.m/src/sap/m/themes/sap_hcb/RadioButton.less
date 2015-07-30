@@ -23,12 +23,13 @@
 	padding: 1px; /* using padding here so that margin won't collide */
 }
 
-.sapMRb:focus .sapMRbBOut {
-	outline: 0.125rem dotted @sapHCStandardFG;
+.sapMRb:focus:before {
+	border: .125rem dotted @sapHCStandardFG;
 }
 
-.sapMRbHoverable:hover {
-	background: @sapHCHighlightAltBG;
+.sapMRbBInn {
+	background-color: transparent;
+	-webkit-user-select: none;
 }
 
 .sapMRbB .sapMRbBInn {
@@ -37,9 +38,11 @@
 	padding: 1px;
 	border-radius: 1rem;
 	margin: 0.1875rem;
-	
-	background-color: transparent;
-	-webkit-user-select: none;
+}
+
+.sapMRbHoverable:hover,
+.sapMRb.sapMRbBTouched .sapMRbBOut {
+	background-color: @sapHCHighlightAltBG;
 }
 
 /* IE cannot handle more than 2 decimal places, and therefore the radio button dot is misaligned when using em */
@@ -47,22 +50,46 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	margin: 3px;
 }
 
+/* Selected */
+
 .sapMRbSel .sapMRbBInn {
+	background-color: @sapHCStandardFG;
+}
+
+/* Read only */
+.sapMRbRo .sapMRbBOut {
+	background-color: @sapHCReducedBG;
+	border-color: @sapHCReducedAltFG;
+}
+
+.sapMRbRo.sapMRbSel .sapMRbBInn {
 	background-color: @sapHCStandardFG;
 }
 
 /* Value states */
 
 .sapMRbErr .sapMRbBOut {
-	background-color: @sapHCHighlightBG;
-	border: 0.125rem dashed @sapHCStandardFG;
-	background-clip: padding-box;
+  background-color: @sapHCHighlightBG;
+  border-style: dashed;
 }
 
 .sapMRbWarn .sapMRbBOut {
-	background-color: @sapHCStandardBG;
-	border: 0.125rem dashed @sapHCStandardFG;
-	background-clip: padding-box;
+  border-style: dashed;
+}
+
+/* Disabled */
+
+.sapMRbDis.sapMRbSel  .sapMRbBInn {
+  background-color: @sapHCReducedAltFG;
+}
+
+.sapMRbDis .sapMRbBOut {
+  background-color: @sapHCReducedBG;
+  border-color: @sapHCReducedAltFG;
+}
+
+.sapMRbDis .sapMLabel {
+	color: @sapHCReducedFG;
 }
 
 /* Compact size */
@@ -93,6 +120,17 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	.sapMRbBLabel {
 		line-height: 2rem;
 		height: 2rem;
+	}
+
+	.sapMRb:focus:before {
+		top: .4375rem;
+		bottom: .3125rem;
+		left: .4375rem;
+		right: .0625;
+	}
+
+	.sapMRbHasLabel.sapMRb:focus:before {
+		right: -.125rem;
 	}
 }
 
@@ -130,40 +168,4 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 		line-height: 1.5rem;
 		height: 1.5rem;
 	}
-}
-
-/* HCB Additional Styles */
-
-.sapMRbWarn.sapMRbSel .sapMRbBInn {
-	background-color: @sapHCStandardFG;
-}
-
-.sapMRbRo:not(.sapMRbWarn) .sapMRbBOut,
-.sapMRbDis .sapMRbBOut {
-	border-color: @sapHCReducedAltFG;
-}
-
-.sapMRbRo:not(.sapMRbErr) .sapMRbBOut,
-.sapMRbRo:not(.sapMRbWarn) .sapMRbOut {
-	background-color: @sapHCReducedBG;
-}
-
-.sapMRbDis .sapMRbBOut {
-	background-color: @sapHCReducedBG;
-}
-
-.sapMRbDis.sapMRbSel .sapMRbBInn {
-	background-color: @sapHCReducedAltFG;
-}
-
-.sapMRbDis .sapMRbBOut:focus {
-	outline: 0;
-}
-
-.sapMRbRo.sapMRbWarn .sapMRbBOut {
-	background-color: @sapHCReducedBG;
-}
-
-.sapMRbDis label {
-	color: @sapHCReducedAltFG;
 }

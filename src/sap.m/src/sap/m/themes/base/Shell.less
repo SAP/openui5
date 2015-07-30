@@ -6,9 +6,9 @@
 @sapMShellAppWidthLimit: 1280px;
 @sapMShellAppWidthLimitBy2: @sapMShellAppWidthLimit / 2;
 
-@sapMShellAppHeight: 1500px; // Ux decision: never show the header
+@sapMShellAppHeight: 3333px; // Ux decision: never show the header, so make this value large enough even for zoom-out cases
 @sapMShellHeaderHeight: 68px; // should be 4.25rem
-@sapMShellMinHeightForHeader: @sapMShellAppHeight + @sapMShellHeaderHeight;
+@sapMShellMinHeightForHeader: (@sapMShellAppHeight + @sapMShellHeaderHeight);
 
 @sapMShellMinWidthForLogoAside: 1480px;     // = @sapMShellAppWidthLimit + 200; but additions do not work in LESS for media query arguments
 @sapMShellMinWidthForBigLogoAside: 1680px;  // = @sapMShellAppWidthLimit + 400; but additions do not work in LESS for media query arguments
@@ -32,6 +32,9 @@
 	z-index: 1; /* to lift it above the CenterBox shadow */
 	background-color: @sapUiBrand;
 }
+
+/* this "sapMBrandingBar-CTX" CSS class can be set by any container control that comes with its own branding bar, so any shell inside will not display its branding bar */
+.sapMBrandingBar-CTX .sapMShellBrandingBar,
 .sapUiUfdShell .sapMShellBrandingBar {
 	display: none;
 }

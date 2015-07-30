@@ -4,27 +4,31 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<HBox>
 				<Image
-					src="test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg"
+					src="{img>/products/pic1}"
+					densityAware="false"
 					width="{/imageWidth}" >
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
 				</Image>
 				<Image
-					src="test-resources/sap/ui/demokit/explored/img/large_HT-1073.jpg"
+					src="{img>/products/pic2}"
+					densityAware="false"
 					width="{/imageWidth}" >
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
 				</Image>
 				<Image
-					src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+					src="{img>/products/pic3}"
+					densityAware="false"
 					width="{/imageWidth}"
+					decorative="false"
 					press="handleImage3Press" >
 					<layoutData>
 						<FlexItemData growFactor="1" />

@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Splitter renderer. 
-	 * @static
+	 * Splitter renderer. 
+	 * @namespace
 	 */
 	var SplitterRenderer = {
 	};
@@ -83,12 +83,19 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.write(
 					"<div id=\"" + sId + "-splitbar-" + i + "\" " +
 						"role=\"separator\" " +
-						"title=\"" + oControl._getText("SPLITTER_MOVE") + "\"" +
+						"title=\"" + oControl._getText("SPLITTER_MOVE") + "\" " +
 						"class=\"sapUiLoSplitterBar\" " +
+						"aria-orientation=\"" + (bHorizontal ? "vertical" : "horizontal") + "\" " +
 						"tabindex=\"0\">"
 				);
 				// Icon ID must start with sId + "-splitbar-" + i so that the target is recognized for resizing
-				oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", { "id" : sId + "-splitbar-" + i + "-icon" });
+				oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
+					"id" : sId + "-splitbar-" + i + "-icon",
+					// prevent any tooltip / ARIA attributes on the icon as they
+					// are already set on the outer div
+					"title" : null,
+					"aria-label" : null
+				});
 				oRm.write("</div>");
 			}
 		}
@@ -98,7 +105,13 @@ sap.ui.define(['jquery.sap.global'],
 			"<div id=\"" + sId + "-overlayBar\" class=\"sapUiLoSplitterOverlayBar\">"
 		);
 		// Icon ID must start with sId + "-splitbar" so that the target is recognized for resizing
-		oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", { "id" : sId + "-splitbar-Overlay-icon" });
+		oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
+			"id" : sId + "-splitbar-Overlay-icon",
+			// prevent any tooltip / ARIA attributes on the icon as they
+			// are already set on the outer div
+			"title" : null,
+			"aria-label" : null
+		});
 		oRm.write(
 			"</div>" +
 			"</div>"

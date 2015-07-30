@@ -1,6 +1,6 @@
 .sapUiBody {
 	scrollbar-base-color: @sapHCStandardBG;
-	scrollbar-face-color: @sapHCStandardBG;
+	scrollbar-face-color: @sapHCStandardFG;
 	scrollbar-3dlight-color: @sapHCStandardFG;
 	scrollbar-arrow-color: @sapHCStandardFG;
 	scrollbar-darkshadow-color:@sapHCStandardBG;
@@ -10,15 +10,16 @@
 }
 
 .sap-desktop ::-webkit-scrollbar {
-	width: 0.75rem;
-	height: 100%;
 	background-color: @sapHCStandardBG;
 	border-left: 1px solid @sapHCReducedAltFG;
 }
 
 .sap-desktop ::-webkit-scrollbar:horizontal {
-	width: 100%;
 	height: 0.75rem;
+}
+
+.sap-desktop ::-webkit-scrollbar:vertical {
+	width: 0.75rem;
 }
 
 .sap-desktop ::-webkit-scrollbar-thumb {

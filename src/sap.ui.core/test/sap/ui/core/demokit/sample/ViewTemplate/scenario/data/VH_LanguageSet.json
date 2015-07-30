@@ -1,0 +1,374 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('0')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('0')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "0",
+					"Sptxt" : "Serbian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('1')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('1')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "1",
+					"Sptxt" : "Chinese"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('2')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('2')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "2",
+					"Sptxt" : "Thai"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('3')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('3')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "3",
+					"Sptxt" : "Korean"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('4')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('4')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "4",
+					"Sptxt" : "Romanian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('5')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('5')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "5",
+					"Sptxt" : "Slovenian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('6')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('6')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "6",
+					"Sptxt" : "Croatian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('7')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('7')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "7",
+					"Sptxt" : "Malay"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('8')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('8')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "8",
+					"Sptxt" : "Ukrainian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('9')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('9')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "9",
+					"Sptxt" : "Estonian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('A')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('A')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "A",
+					"Sptxt" : "Arabic"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('B')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('B')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "B",
+					"Sptxt" : "Hebrew"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('C')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('C')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "C",
+					"Sptxt" : "Czech"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('D')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('D')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "D",
+					"Sptxt" : "German"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('E')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('E')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "E",
+					"Sptxt" : "English"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('F')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('F')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "F",
+					"Sptxt" : "French"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('G')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('G')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "G",
+					"Sptxt" : "Greek"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('H')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('H')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "H",
+					"Sptxt" : "Hungarian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('I')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('I')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "I",
+					"Sptxt" : "Italian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('J')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('J')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "J",
+					"Sptxt" : "Japanese"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('K')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('K')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "K",
+					"Sptxt" : "Danish"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('L')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('L')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "L",
+					"Sptxt" : "Polish"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('M')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('M')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "M",
+					"Sptxt" : "Chinese trad."
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('N')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('N')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "N",
+					"Sptxt" : "Dutch"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('O')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('O')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "O",
+					"Sptxt" : "Norwegian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('P')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('P')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "P",
+					"Sptxt" : "Portuguese"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('Q')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('Q')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "Q",
+					"Sptxt" : "Slovak"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('R')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('R')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "R",
+					"Sptxt" : "Russian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('S')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('S')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "S",
+					"Sptxt" : "Spanish"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('T')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('T')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "T",
+					"Sptxt" : "Turkish"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('U')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('U')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "U",
+					"Sptxt" : "Finnish"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('V')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('V')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "V",
+					"Sptxt" : "Swedish"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('W')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('W')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "W",
+					"Sptxt" : "Bulgarian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('X')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('X')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "X",
+					"Sptxt" : "Lithuanian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('Y')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('Y')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "Y",
+					"Sptxt" : "Latvian"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('Z')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('Z')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "Z",
+					"Sptxt" : "Customer reserve"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('a')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('a')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "a",
+					"Sptxt" : "Afrikaans"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('b')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('b')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "b",
+					"Sptxt" : "Icelandic"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('c')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('c')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "c",
+					"Sptxt" : "Catalan"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('d')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('d')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "d",
+					"Sptxt" : "Serbian (Latin)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('i')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_LanguageSet('i')",
+						"type" : "GWSAMPLE_BASIC.VH_Language"
+					},
+					"Spras" : "i",
+					"Sptxt" : "Indonesian"
+				}]
+	}
+}

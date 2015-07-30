@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.ToggleButton
+	 * @alias sap.m.ToggleButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ { metadata : {
@@ -58,10 +58,9 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	
 	ToggleButton.prototype.setPressed = function(bPressed) {
 		if (bPressed != this.getPressed()) {
-			var $Inner = this.$("inner");
 			this.setProperty("pressed", bPressed, true);
-			$Inner.toggleClass("sapMToggleBtnPressed",bPressed);
-			$Inner.attr("pressed", bPressed);
+			this.$().attr("aria-pressed", bPressed);
+			this.$("inner").toggleClass("sapMToggleBtnPressed",bPressed && !this._isUnstyled());
 		}
 		return this;
 	};

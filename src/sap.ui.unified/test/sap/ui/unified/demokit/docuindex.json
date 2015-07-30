@@ -1,7 +1,6 @@
 {
 	"explored": {
 		"entitiesDefaults": {
-			"appComponent": "CA-UI5",
 			"formFactors": "ML"
 		},
 		"samplesRef": {
@@ -47,7 +46,17 @@
 					"sap.ui.unified.sample.CalendarSingleDaySelection",
 					"sap.ui.unified.sample.CalendarSingleIntervalSelection",
 					"sap.ui.unified.sample.CalendarMultipleDaySelection",
-					"sap.ui.unified.sample.CalendarSpecialDaysLegend"
+					"sap.ui.unified.sample.CalendarSpecialDaysLegend",
+					"sap.ui.unified.sample.CalendarMultipleMonth"
+				]
+			},
+			{
+				"id": "sap.ui.unified.CalendarDateInterval",
+				"name": "CalendarDateInterval",
+				"category": "User Input",
+				"since": "1.30",
+				"samples": [
+					"sap.ui.unified.sample.CalendarDateIntervalBasic"
 				]
 			},
 			{
@@ -114,6 +123,16 @@
 				"id": "sap.ui.unified.sample.CalendarSpecialDaysLegend",
 				"name": "Special Days with Legend",
 				"description": "Calendar with special days and legend"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarMultipleMonth",
+				"name": "multiple months",
+				"description": "Calendar with more than one month"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",
+				"name": "simple example",
+				"description": "CalendarDateInterval with 14 days and single day selection"
 			},
 			{
 				"id": "sap.ui.unified.sample.ShellBasic",

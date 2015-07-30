@@ -3,12 +3,11 @@
  */
 
 // Provides a tree of controls for the testsuite
-sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/UIArea', './Highlighter'],
+	function(jQuery, EventProvider, Element, UIArea, Highlighter) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructs the class <code>sap.ui.debug.ControlTree</code> and registers
 	 * to the <code>sap.ui.core.Core</code> for UI change events.
@@ -26,7 +25,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
 	 * @version ${version}
-	 * @name sap.ui.debug.ControlTree
+	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
 	var ControlTree = EventProvider.extend("sap.ui.debug.ControlTree", /** @lends sap.ui.debug.ControlTree.prototype */ {
@@ -37,8 +36,8 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			this.oCore = oCore;
 			this.oSelectedNode = null;
 			this.oParentDomRef = oParentDomRef;
-			this.oSelectionHighlighter = new sap.ui.debug.Highlighter("sap-ui-testsuite-SelectionHighlighter");
-			this.oHoverHighlighter = new sap.ui.debug.Highlighter("sap-ui-testsuite-HoverHighlighter", true, '#c8f', 1);
+			this.oSelectionHighlighter = new Highlighter("sap-ui-testsuite-SelectionHighlighter");
+			this.oHoverHighlighter = new Highlighter("sap-ui-testsuite-HoverHighlighter", true, '#c8f', 1);
 			var that = this;
 			jQuery(oParentDomRef).bind("click",function(evt) {
 				that.onclick(evt);
@@ -69,8 +68,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#exit
-	 * @function
 	 */
 	ControlTree.prototype.exit = function() {
 		jQuery(document).unbind();
@@ -80,8 +77,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#renderDelayed
-	 * @function
 	 */
 	ControlTree.prototype.renderDelayed = function() {
 		if (this.oTimer) {
@@ -93,8 +88,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#render
-	 * @function
 	 */
 	ControlTree.prototype.render = function() {
 		var oDomRef = this.oParentDomRef;
@@ -116,8 +109,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#createTreeNodeDomRef
-	 * @function
 	 */
 	ControlTree.prototype.createTreeNodeDomRef = function(sId,iLevel,sType,sIcon) {
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
@@ -141,8 +132,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#createLinkNode
-	 * @function
 	 */
 	ControlTree.prototype.createLinkNode = function(oParentRef, sId, iLevel, sType) {
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
@@ -167,8 +156,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#renderNode
-	 * @function
 	 */
 	ControlTree.prototype.renderNode = function(oDomRef,oControl,iLevel) {
 		if (!oControl) {
@@ -187,11 +174,11 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 				if (oAggregation && oAggregation.length) {
 					for (var i = 0;i < oAggregation.length;i++) {
 						var o = oAggregation[i];
-						if (o  instanceof sap.ui.core.Element) {
+						if (o  instanceof Element) {
 							this.renderNode(oDomRef,oAggregation[i],iLevel + 1);
 						}
 					}
-				} else if (oAggregation instanceof sap.ui.core.Element) {
+				} else if (oAggregation instanceof Element) {
 					this.renderNode(oDomRef,oAggregation,iLevel + 1);
 				}
 			}
@@ -223,8 +210,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#onclick
-	 * @function
 	 */
 	ControlTree.prototype.onclick = function(oEvent) {
 		var oSource = oEvent.target;
@@ -277,7 +262,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 				oElement = this.oCore.getElementById(sId),
 				sNodeId = oParent.getAttribute("sap-type") === "Link" ? "sap-debug-controltree-" + sId : oParent.id;
 			this.oSelectionHighlighter.hide();
-			if (oElement && oElement instanceof sap.ui.core.Element) {
+			if (oElement && oElement instanceof Element) {
 				this.oSelectionHighlighter.highlight(oElement.getDomRef());
 				this.oHoverHighlighter.hide();
 			}
@@ -289,8 +274,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#onmouseover
-	 * @function
 	 */
 	ControlTree.prototype.onmouseover = function(oEvent) {
 		var oSource = oEvent.target;
@@ -302,8 +285,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#onmouseout
-	 * @function
 	 */
 	ControlTree.prototype.onmouseout = function(oEvent) {
 		var oSource = oEvent.target;
@@ -317,8 +298,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#selectNode
-	 * @function
 	 */
 	ControlTree.prototype.selectNode = function(sId) {
 		if (!sId) {
@@ -341,8 +320,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#deselectNode
-	 * @function
 	 */
 	ControlTree.prototype.deselectNode = function(sId) {
 		if (!sId) {
@@ -366,15 +343,13 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @param oTreeNodeDomRef the tree node to start the search for
 	 * @return {Element} best matching source DOM node
 	 * @private
-	 * @name sap.ui.debug.ControlTree#getTargetDomRef
-	 * @function
 	 */
 	ControlTree.prototype.getTargetDomRef = function(oTreeNodeDomRef) {
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
 			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.getElementById(sId);
 	
-		while (oSomething && oSomething instanceof sap.ui.core.Element) {
+		while (oSomething && oSomething instanceof Element) {
 			var oDomRef = oSomething.getDomRef();
 			if ( oDomRef ) {
 				return oDomRef;
@@ -382,7 +357,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			oSomething = oSomething.getParent();
 		}
 	
-		if ( oSomething instanceof sap.ui.core.UIArea ) {
+		if ( oSomething instanceof UIArea ) {
 			return oSomething.getRootNode();
 		}
 	};
@@ -390,8 +365,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * Enables an 'onhover' handler in the content window that allows to see control borders.
 	 * @private
-	 * @name sap.ui.debug.ControlTree#enableInplaceControlSelection
-	 * @function
 	 */
 	ControlTree.prototype.enableInplaceControlSelection = function() {
 		var that = this;
@@ -422,4 +395,4 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 
 	return ControlTree;
 
-}, /* bExport= */ true);
+});

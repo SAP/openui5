@@ -3,18 +3,21 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
-		<title>ComboBox - sap.m</title>
+		<title>sap.m.ComboBox</title>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-xx-bindingSyntax="complex">
 		</script>
+		<style type="text/css">
+			.customLabel {
+				margin: 0 0.5rem;
+				vertical-align: middle;
+				vertical-align: -webkit-baseline-middle;
+			}
+		</style>
 		<script>
-		var oApp = new sap.m.App("myApp", {
-			initialPage: "page1"
-		});
-
 		var oModel = new sap.ui.model.json.JSONModel();
 
 		var mData = {
@@ -388,8 +391,7 @@
 			text: "{text}"
 		});
 
-		var oComboBox1 = new sap.m.ComboBox({
-			placeholder: "Choose your country",
+		var oComboBox = new sap.m.ComboBox({
 
 			items: {
 				path: "/items",
@@ -397,55 +399,139 @@
 			},
 
 			change: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
 			},
 
 			selectionChange: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("selectedItem") + " on " + this);
+				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("selectedItem") + " on", this);
 			}
 		});
 
-		var oComboBox2 = new sap.m.ComboBox({
-			placeholder: "Warnig Combobox",
-			valueState : "Warning",
-			valueStateText:"WARNING WARNING!!!!",
+		var oComboBoxDefault = new sap.m.ComboBox({
+			placeholder: "List of countries",
 			items: {
-				path: "/items", template: oItemTemplate
-			},
-
-			change: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on " + this);
-			},
-
-			selectionChange: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("selectedItem") + " on " + this);
+				path: "/items",
+				template: oItemTemplate
 			}
 		});
 
-		var oComboBox3 = new sap.m.ComboBox({
-			placeholder: "Error Combobox",
-			valueState : "Error",
-			valueStateText:"ERROR ERROR!!!!",
+		var oLabel = new sap.m.Label({
+			text: "Choose your country",
+			labelFor: oComboBoxDefault
+		}).addStyleClass("customLabel");
+
+		var oComboBoxWithPlaceholder  = new sap.m.ComboBox({
+			placeholder: "Choose your country",
+
 			items: {
-				path: "/items", template: oItemTemplate
-			},
-
-			change: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on " + this);
-			},
-
-			selectionChange: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("selectedItem") + " on " + this);
+				path: "/items",
+				template: oItemTemplate
 			}
 		});
 
-		var oPage = new sap.m.Page("page1", {
-			content: [oComboBox1, oComboBox2, oComboBox3]
+		var oComboBoxDisabled  = new sap.m.ComboBox({
+			enabled: false,
+			placeholder: "Choose your country",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
 		});
 
-		oApp.addPage(oPage);
-		oApp.placeAt("body");
+		var oComboBoxReadOnly  = new sap.m.ComboBox({
+			editable: false,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			},
+			selectedKey: "GER"
+		});
+
+		var oComboBoxSuccess = new sap.m.ComboBox({
+			valueState: sap.ui.core.ValueState.Success,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oComboBoxWarning = new sap.m.ComboBox({
+			placeholder: "List of countries",
+			valueState: sap.ui.core.ValueState.Warning,
+			valueStateText: "value state text",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oLabelWarning = new sap.m.Label({
+			text: "Choose your country",
+			labelFor: oComboBoxWarning
+		}).addStyleClass("customLabel");
+
+		var oComboBoxError = new sap.m.ComboBox({
+			valueState: sap.ui.core.ValueState.Error,
+			valueStateText: "value state text",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oComboBoxBusy = new sap.m.ComboBox({
+			busy: true,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		new sap.m.App().addPage(new sap.m.Page({
+			title: "sap.m.ComboBox",
+			content: [
+				new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
+				oComboBox,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Placeholder</h3>" }),
+				oComboBoxWithPlaceholder,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Label and placeholder</h3>" }),
+				oLabel,
+				oComboBoxDefault,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
+				oComboBoxDisabled,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Read only</h3>" }),
+				oComboBoxReadOnly,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Warring state (with label and placeholder)</h3>" }),
+				oLabelWarning,
+				oComboBoxWarning,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+				oComboBoxSuccess,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
+				oComboBoxError,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),
+				oComboBoxBusy,
+				new sap.ui.core.HTML({ content: "<hr>" })
+			]
+		}).addStyleClass("sapUiContentPadding")).placeAt("body");
 		</script>
 	</head>
-	<body id="body" class="sapUiBody"></body>
+	<body id="body" class="sapUiBody">
+	</body>
 </html>

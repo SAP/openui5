@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @extends sap.ui.core.util.serializer.delegate.Delegate
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.util.serializer.delegate.HTML
+	 * @alias sap.ui.core.util.serializer.delegate.HTML
 	 * @experimental Since 1.15.1. The HTML serializer delegate is still under construction, so some implementation details can be changed in future.
 	 */
 	var HTML = Delegate.extend("sap.ui.core.util.serializer.delegate.HTML", /** @lends sap.ui.core.util.serializer.delegate.HTML.prototype */
@@ -38,8 +38,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.HTML#startAggregation
-	 * @function
 	 */
 	HTML.prototype.startAggregation = function (oControl, sAggregationName) {
 		return '<div data-sap-ui-aggregation="' + sAggregationName + '">';
@@ -52,8 +50,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.HTML#endAggregation
-	 * @function
 	 */
 	HTML.prototype.endAggregation = function (oControl, sAggregationName) {
 		return '</div>';
@@ -67,8 +63,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.HTML#start
-	 * @function
 	 */
 	HTML.prototype.start = function (oControl, sAggregationName, isDefaultAggregation) {
 		return "<div";
@@ -82,8 +76,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.HTML#middle
-	 * @function
 	 */
 	HTML.prototype.middle = function (oControl, sAggregationName, isDefaultAggregation) {
 		
@@ -168,8 +160,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.HTML#end
-	 * @function
 	 */
 	HTML.prototype.end = function (oControl, sAggregationName, isDefaultAggregation) {
 		return "</div>";
@@ -185,8 +175,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {function} [fnGetValue] A delegate function to retrieve the value. 
 	 * @param {function} [fnValueCheck] A delegate function to check the value.
 	 * @private
-	 * @name sap.ui.core.util.serializer.delegate.HTML#_createAttributes
-	 * @function
 	 */
 	HTML.prototype._createAttributes = function (aHtml, oControl, oObj, fnGetValue, fnValueCheck) {
 		for (var sName in oObj) {
@@ -196,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 				var oValue = oControl[sGetter]();
 				oValue = fnGetValue ? fnGetValue(sName, oValue) : oValue;
 				if (!oControl.getBindingInfo(sName)) {
-					if (oValue !== oProp.defaultValue) {
+					if (!jQuery.sap.equal(oValue,oProp.defaultValue)) {
 						if (!fnValueCheck || fnValueCheck(sName, oValue)) {
 							aHtml.push(this._createAttribute("data-" + this._createHtmlAttributeName(sName), oValue));
 						}
@@ -217,8 +205,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {object} oValue The value of the property.
 	 * @return {string} The created data binding attribute.
 	 * @private
-	 * @name sap.ui.core.util.serializer.delegate.HTML#_createDataBindingAttribute
-	 * @function
 	 */
 	HTML.prototype._createDataBindingAttribute = function (oControl, sName, oValue) {
 			
@@ -259,8 +245,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {object} oValue The value of the attribute.
 	 * @return {string} The created attribute string.
 	 * @private
-	 * @name sap.ui.core.util.serializer.delegate.HTML#_createAttribute
-	 * @function
 	 */
 	HTML.prototype._createAttribute = function (sAttribute, oValue) {
 		return ' ' + sAttribute + '="' + oValue + '"';
@@ -273,8 +257,6 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {string} sName The name of the attribute.
 	 * @return {string} The created attribute name.
 	 * @private
-	 * @name sap.ui.core.util.serializer.delegate.HTML#_createHtmlAttributeName
-	 * @function
 	 */
 	HTML.prototype._createHtmlAttributeName = function (sName) {
 		return jQuery.sap.hyphen(sName);
@@ -282,4 +264,4 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 
 	return HTML;
 
-}, /* bExport= */ true);
+});

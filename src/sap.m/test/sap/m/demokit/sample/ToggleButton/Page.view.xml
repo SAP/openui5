@@ -5,11 +5,11 @@
 	xmlns="sap.m">
 	<Page
 		title="Page"
-		class="marginBoxContent" >
+		class="sapUiContentPadding" >
 		<customHeader>
 			<Bar>
 				<contentMiddle>
-					<Label text="Title" />
+					<Title level="H2" text="Title"/>
 				</contentMiddle>
 				<contentRight>
 					<ToggleButton icon="sap-icon://edit" press="onPress" />

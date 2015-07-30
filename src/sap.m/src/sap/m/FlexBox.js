@@ -27,18 +27,13 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.FlexBox
+	 * @alias sap.m.FlexBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FlexBox = Control.extend("sap.m.FlexBox", /** @lends sap.m.FlexBox.prototype */ { metadata : {
 	
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * Is the control visible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * The height of the FlexBox. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
@@ -172,7 +167,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			for (parent = currentElement.getParent();
 				parent !== null && parent !== undefined &&
 				(parent instanceof FlexBox
-				|| (parent.getLayoutData() !== null && parent.getLayoutData() instanceof sap.m.FlexItemData));
+				|| (parent.getLayoutData && parent.getLayoutData() instanceof sap.m.FlexItemData));
 				) {
 				currentElement = parent;
 				parent = currentElement.getParent();

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Opa sample for matchers</title>
+
+		<script 
+			id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js" 
+			data-sap-ui-resourceroots='{"myApp.test": "./"}'>
+		</script>
+
+		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<script>
+			(function () {
+				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.test.Opa5");
+				jQuery.sap.require("sap.ui.test.opaQunit");
+				var Opa = sap.ui.test.Opa;
+				var Opa5 = sap.ui.test.Opa5;
+
+				jQuery.sap.require("myApp.test.arrangements.Common");
+				//Ensure to add arrangements, action, assertions before loading the page objects, 
+				//otherwise they would be overwritten.
+				Opa5.extendConfig({
+					viewName : "view.Main",
+					arrangements : new myApp.test.arrangement.Common()
+				});
+				
+				//Load all page objects needed for this test
+				jQuery.sap.require("myApp.test.pageObjects.Intro");
+				jQuery.sap.require("myApp.test.pageObjects.Overview");
+				jQuery.sap.require("myApp.test.pageObjects.TestPage1");
+				jQuery.sap.require("myApp.test.pageObjects.TestPage2");
+
+				module("Page 1 journey");
+
+				opaTest("Should go to Page 1", function(Given, When, Then) {
+
+					Given.iStartMyApp();
+					Given.onTheIntro.iPressOnGoToOverview(); //can serve as arrangement and action (see below)
+
+					When.onTheOverview.iPressOnGoToPage1();
+
+					Then.onPage1.iShouldSeeThePage1Text().
+						and.iTeardownMyAppFrame();
+
+				});
+
+				module("Page 2 journey");
+
+				opaTest("Should go to Page 2", function(Given, When, Then) {
+
+					Given.iStartMyApp();
+
+					When.onTheIntro.iPressOnGoToOverview();
+					When.onTheOverview.iPressOnGoToPage2();
+
+					Then.onPage2.iShouldSeeThePage2Text().
+						and.iTeardownMyAppFrame();
+
+				});
+
+			})();
+		</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">Opa sample for Page Objects</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

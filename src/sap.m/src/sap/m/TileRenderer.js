@@ -9,12 +9,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class Text renderer
+	 * Text renderer
 	 * @author SAP SE
-	 * @static
+	 * @namespace
 	 */
 	var TileRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer.
@@ -34,6 +34,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
+
+		/* WAI ARIA if in TileContainer context */
+		if (oControl.getParent() instanceof sap.m.TileContainer) {
+			rm.writeAccessibilityState(oControl, {
+				role: "option",
+				posinset: oControl._getTileIndex(),
+				setsize: oControl._getTilesCount()
+			});
+		}
+
 		rm.write(">");
 		if (oControl.getRemovable()) {
 			rm.write("<div id=\"" + oControl.getId() + "-remove\" class=\"sapMTCRemove\"></div>");
@@ -44,12 +54,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		this._renderContent(rm,oControl);
 		rm.write("</div></div>");
 	};
-	
-	
-	TileRenderer._renderContent = function(rm, oControl) {
-	};
-	
-	
+
+	TileRenderer._renderContent = function(rm, oControl) {};
 
 	return TileRenderer;
 

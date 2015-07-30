@@ -14,7 +14,11 @@
 		<content>
 			<ObjectHeader
 				title="{Name}"
-				number="{Price}"
+				number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
 				numberUnit="{CurrencyCode}" >
 				<attributes>
 					<ObjectAttribute title="Weight" text="{WeightMeasure} {WeightUnit}" />
@@ -25,7 +29,8 @@
 				</statuses>
 			</ObjectHeader>
 			<IconTabBar
-				expanded="{device>/isNoPhone}">
+				expanded="{device>/isNoPhone}"
+				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
 						text="Info">
@@ -53,16 +58,16 @@
 			</IconTabBar>
 			<f:SimpleForm
 				minWidth="1024"
-				maxContainerCols="2" >
+				maxContainerCols="2">
 				<f:title>
 					<core:Title text="A Form" />
 				</f:title>
 				<Label text="Label"/>
 				<Text text="Value"/>
 			</f:SimpleForm>
-			<List headerText="A List" backgroundDesign="Translucent" />
-			<Table headerText="A Table" />
-			<Panel headerText="A Panel" />
+			<List headerText="A List" backgroundDesign="Translucent"/>
+			<Table headerText="A Table"/>
+			<Panel headerText="A Panel"/>
 		</content>
 	</Page>
 </mvc:View>

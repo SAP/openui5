@@ -14,27 +14,25 @@
 			function suite() {
 				var suite = new parent.jsUnitTestSuite(),
 					contextPath = "/" + window.location.pathname.split("/")[1];
-			
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/Form.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/SimpleForm.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/VerticalLayout.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/HorizontalLayout.qunit.html");
-			
-					// Some controls are not working for IE8, so no automatical test for older IE versions 
-					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9) {
-						return suite;
-					}
 
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Grid.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/GridLayout.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveGridLayout.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveLayout.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ResponsiveFlowLayout.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Splitter.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/DynamicSideContent.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ExploredSamples.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/FixFlex.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/Form.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/GridLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveGridLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/SimpleForm.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Grid.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/HorizontalLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ResponsiveFlowLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Splitter.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/VerticalLayout.qunit.html");
+
 				return suite;
 			}
 
 		</script>
-		
+
 	</body>
 </html>

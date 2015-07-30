@@ -40,7 +40,7 @@
 		});
 		
 		
-		test("getAdditionalText()", function() {
+		test("getAdditionalText() with sap.ui.core.Element", function() {
 			jQuery.sap.require("sap.ui.core.ValueStateSupport");
 			
 			var result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
@@ -64,6 +64,30 @@
 			// none
 			element.setValueState(sap.ui.core.ValueState.None);
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
+			equal(result, null, "text should not be returned when there is no special state");
+		});
+		
+		
+		test("getAdditionalText() with sap.ui.core.ValueState", function() {
+			jQuery.sap.require("sap.ui.core.ValueStateSupport");
+			
+			var result = sap.ui.core.ValueStateSupport.getAdditionalText("Hello");
+			equal(result, null, "text should not be returned when there is no special state");
+			
+			// error
+			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.Error);
+			equal(result, errorText, "text should be the error text when there is the error state");
+			
+			// warning
+			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.Warning);
+			equal(result, warningText, "text should be the warning text when there is the warning state");
+			
+			// success
+			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.Success);
+			equal(result, successText, "text should be the success text when there is the success state");
+			
+			// none
+			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.None);
 			equal(result, null, "text should not be returned when there is no special state");
 		});
 		

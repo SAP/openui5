@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	 * @class
 	 * Allows end users to interact with date and/or time and select from a date and/or time pad.
 	 * Note: Since 1.22, this control should not be used as a date picker(type property "Date"), instead please use dedicated sap.m.DatePicker control.
+	 * Note: This control does not support the Islamic calendar.
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
@@ -26,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
-	 * @name sap.m.DateTimeInput
+	 * @alias sap.m.DateTimeInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimeInput = InputBase.extend("sap.m.DateTimeInput", /** @lends sap.m.DateTimeInput.prototype */ { metadata : {
@@ -104,12 +105,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			}
 		});
 	
-		// am-pm picker is hard-coded in mobiscroll so use 24 hour format for RTL
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		// am-pm picker is hard-coded so use 24 hour format when language is not English
+		if (sap.m.getLocale().getLanguage() != "en") {
 			["valueFormat", "displayFormat"].forEach(function(sFormatType) {
 				var oTime = oPrototype._types.Time;
 				var sFormat = oTime[sFormatType];
-				oTime[sFormatType] = sFormat.replace(/a+/i, "").replace(/h+/i, "HH").trim();
+				if (sFormat.indexOf("a") != -1) {
+					oTime[sFormatType] = sFormat.replace(/a+/i, "").replace(/h+/i, "HH").trim();
+				}
 			});
 		}
 	
@@ -257,6 +260,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	};
 	
 	DateTimeInput.prototype.onfocusin = function() {
+		this.$().toggleClass("sapMFocus", true);
 		this._setLabelVisibility();
 		
 		// open message when focus is back to input field
@@ -392,9 +396,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	};
 	
 	/**
-	 * Opens scroller via keyboard [F4] or [ALT]+[DOWN]
+	 * Opens scroller on tap
 	 */
-	DateTimeInput.prototype.onsapshow = function(oEvent) {
+	DateTimeInput.prototype.ontap = function(oEvent) {
+		if (document.activeElement) {
+			document.activeElement.blur();
+		}
+		
 		this._$input.scroller("show");
 		oEvent.preventDefault();
 		oEvent.setMarked();
@@ -403,7 +411,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	/**
 	 * Opens scroller via keyboard [ALT]+[UP]
 	 */
-	DateTimeInput.prototype.onsaphide = DateTimeInput.prototype.onsapshow;
+	DateTimeInput.prototype.onsaphide = DateTimeInput.prototype.ontap;
+	
+	/**
+	 * Opens scroller via keyboard [F4] or [ALT]+[DOWN]
+	 */
+	DateTimeInput.prototype.onsapshow = DateTimeInput.prototype.ontap;
 	
 	/**
 	 * Enables custom date time and adds related methods to prototype
@@ -435,10 +448,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				minuteText : _("MINUTES"),
 				secText : _("SECONDS"),
 				nowText : _("NOW"),
-				dayNames : oLocaleData.getDaysStandAlone("wide").map($.sap.encodeHTML),
-				dayNamesShort : oLocaleData.getDaysStandAlone("abbreviated").map($.sap.encodeHTML),
-				monthNames : oLocaleData.getMonthsStandAlone("wide").map($.sap.encodeHTML),
-				monthNamesShort : oLocaleData.getMonthsStandAlone("abbreviated").map($.sap.encodeHTML)
+				dayNames : oLocaleData.getDaysStandAlone("wide"),
+				dayNamesShort : oLocaleData.getDaysStandAlone("abbreviated"),
+				monthNames : oLocaleData.getMonthsStandAlone("wide"),
+				monthNamesShort : oLocaleData.getMonthsStandAlone("abbreviated")
 			},
 			oThemeParams = Parameters.get();
 	
@@ -595,7 +608,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					oConfig = $.extend({}, oSettings, {
 						preset : sType.toLowerCase(),
 						showOnFocus : false,
-						showOnTap: true,
+						showOnTap: false,
 						disabled : !that.getEnabled() || !that.getEditable(),
 						onShow : function($dialog) {
 							// Special treatment for IE: with jQuery < 1.9 focus is fired twice in IE

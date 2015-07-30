@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ws.WebSocket for standard WebSocket support
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider', './ReadyState'],
-	function(jQuery, Device, EventProvider, ReadyState) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider', './ReadyState', 'sap/ui/thirdparty/URI'],
+	function(jQuery, Device, EventProvider, ReadyState, URI) {
 	"use strict";
 
 	/**
@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.ws.WebSocket
+	 * @alias sap.ui.core.ws.WebSocket
 	 */
 	var WebSocket = EventProvider.extend("sap.ui.core.ws.WebSocket", /** @lends sap.ui.core.ws.WebSocket.prototype */ {
 
@@ -50,27 +50,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	});
 
 	/**
-	 * Creates a new subclass of class sap.ui.core.ws.WebSocket with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.core.ws.WebSocket.extend
-	 * @function
-	 */
-
-	/**
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#getInterface
-	 * @function
 	 */
 	WebSocket.prototype.getInterface = function() {
 		return this;
@@ -78,7 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 
 	/**
 	 * Map of event names, that are provided by the WebSocket.
-	 * @name sap.ui.core.ws.WebSocket.M_EVENTS
 	 */
 	WebSocket.M_EVENTS = {
 
@@ -129,8 +109,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#attachOpen
-	 * @function
 	 */
 	WebSocket.prototype.attachOpen = function(oData, fnFunction, oListener) {
 		this.attachEvent("open", oData, fnFunction, oListener);
@@ -148,8 +126,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#detachOpen
-	 * @function
 	 */
 	WebSocket.prototype.detachOpen = function(fnFunction, oListener) {
 		this.detachEvent("open", fnFunction, oListener);
@@ -162,8 +138,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {object} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.ws.WebSocket#fireOpen
-	 * @function
 	 */
 	WebSocket.prototype.fireOpen = function(mArguments) {
 		this.fireEvent("open", mArguments);
@@ -198,8 +172,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#attachClose
-	 * @function
 	 */
 	WebSocket.prototype.attachClose = function(oData, fnFunction, oListener) {
 		this.attachEvent("close", oData, fnFunction, oListener);
@@ -217,8 +189,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#detachClose
-	 * @function
 	 */
 	WebSocket.prototype.detachClose = function(fnFunction, oListener) {
 		this.detachEvent("close", fnFunction, oListener);
@@ -234,8 +204,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {string} [mArguments.wasClean] Indicates whether the connection was cleanly closed or not.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.ws.WebSocket#fireClose
-	 * @function
 	 */
 	WebSocket.prototype.fireClose = function(mArguments) {
 		this.fireEvent("close", mArguments);
@@ -267,8 +235,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#attachError
-	 * @function
 	 */
 	WebSocket.prototype.attachError = function(oData, fnFunction, oListener) {
 		this.attachEvent("error", oData, fnFunction, oListener);
@@ -286,8 +252,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#detachError
-	 * @function
 	 */
 	WebSocket.prototype.detachError = function(fnFunction, oListener) {
 		this.detachEvent("error", fnFunction, oListener);
@@ -300,8 +264,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {object} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.ws.WebSocket#fireError
-	 * @function
 	 */
 	WebSocket.prototype.fireError = function(mArguments) {
 		this.fireEvent("error", mArguments);
@@ -333,8 +295,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#attachMessage
-	 * @function
 	 */
 	WebSocket.prototype.attachMessage = function(oData, fnFunction, oListener) {
 		this.attachEvent("message", oData, fnFunction, oListener);
@@ -352,8 +312,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#detachMessage
-	 * @function
 	 */
 	WebSocket.prototype.detachMessage = function(fnFunction, oListener) {
 		this.detachEvent("message", fnFunction, oListener);
@@ -367,8 +325,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {string} [mArguments.data] Received data from the server.
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.ws.WebSocket#fireMessage
-	 * @function
 	 */
 	WebSocket.prototype.fireMessage = function(mArguments) {
 		this.fireEvent("message", mArguments);
@@ -382,35 +338,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {string} sUrl input url
 	 * @return {string} sFullUrl full url which can be used for the ws-connection
 	 * @private
-	 * @name sap.ui.core.ws.WebSocket#_resolveFullUrl
-	 * @function
 	 */
 	WebSocket.prototype._resolveFullUrl = function(sUrl) {
-		var sFullUrl = '';
+		// parse URI string
+		var oUri = new URI(sUrl);
 
-		// check if no protocol (ws:// or wss://) is provided
-		if (!/^wss?:\/\//.test(sUrl)) {
+		// create base URI to resolve absolute URL
+		var oBaseUri = new URI();
 
-			var loc = document.location;
+		// clear search string to remove parameters from the current page
+		oBaseUri.search('');
 
-			sFullUrl = ((loc.protocol === 'https:')
-							? 'wss://'
-							: 'ws://') +
-							loc.host;
+		// set according WebSocket protocol (secure / non-secure)
+		oBaseUri.protocol(oBaseUri.protocol() === 'https' ? 'wss' : 'ws');
 
-			if (sUrl.substr(0, 1) === '/') {
-				// absolute url, e.g. /foo/bar
-				sFullUrl += sUrl;
-			} else {
-				// relative url, eg. foo/../../bar
-				sFullUrl += loc.pathname.substring(0, loc.pathname.lastIndexOf('/')) + '/' + sUrl;
-			}
+		// resolve absolute to base
+		// if there is already a protocol defined it won't be replaced
+		oUri = oUri.absoluteTo(oBaseUri);
 
-		} else {
-			sFullUrl = sUrl;
-		}
-
-		return sFullUrl;
+		// build string
+		return oUri.toString();
 	};
 
 	/**
@@ -419,8 +366,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {string} sUrl	url for WebSocket
 	 * @param {array} [aProtocols] array of protocols as strings, a single protocol as a string
 	 * @private
-	 * @name sap.ui.core.ws.WebSocket#_openConnection
-	 * @function
 	 */
 	WebSocket.prototype._openConnection = function(sUrl, aProtocols) {
 		var sUrl = this._resolveFullUrl(sUrl);
@@ -438,8 +383,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * Internal handler for open-event.
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.WebSocket#_onopen
-	 * @function
 	 */
 	WebSocket.prototype._onopen = function() {
 		this.fireOpen();
@@ -449,8 +392,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * Internal handler for close-event.
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.WebSocket#_onclose
-	 * @function
 	 */
 	WebSocket.prototype._onclose = function(oCloseEvent) {
 		this.fireClose({
@@ -464,8 +405,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * Internal handler for error-event.
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.WebSocket#_onerror
-	 * @function
 	 */
 	WebSocket.prototype._onerror = function(oEvent) {
 		this.fireError();
@@ -475,8 +414,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * Internal handler for message-event.
 	 *
 	 * @private
-	 * @name sap.ui.core.ws.WebSocket#_onmessage
-	 * @function
 	 */
 	WebSocket.prototype._onmessage = function(oMessageEvent) {
 		this.fireMessage({
@@ -494,8 +431,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {string} sMessage Message to send
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#send
-	 * @function
 	 */
 	WebSocket.prototype.send = function(sMessage) {
 		if (this.getReadyState() === ReadyState.OPEN) {
@@ -519,8 +454,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @param {string} [sReason] Closing reason as a string
 	 * @return {sap.ui.core.ws.WebSocket} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#close
-	 * @function
 	 */
 	WebSocket.prototype.close = function(iCode, sReason) {
 
@@ -563,8 +496,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *
 	 * @returns {sap.ui.core.ws.ReadyState} readyState
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#getReadyState
-	 * @function
 	 */
 	WebSocket.prototype.getReadyState = function() {
 		return this._oWs.readyState;
@@ -575,8 +506,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * 
 	 * @returns {string} protocol
 	 * @public
-	 * @name sap.ui.core.ws.WebSocket#getProtocol
-	 * @function
 	 */
 	WebSocket.prototype.getProtocol = function() {
 		return this._oWs.protocol;
@@ -584,4 +513,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 
 	return WebSocket;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,351 @@
+{
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "9b9e10132d9b77c55de2ed422d9c86a6e8e1f32f",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Added cozy mode",
+        "references": []
+      },
+      {
+        "id": "e35ecda8da67bb38a641bcb728f5d692ea6c9de5",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Menu: Cozy mode for BlueCrystal and HCB theme introduced",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "f8c42931aca2a133b68626e365a2ca40405e174b",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: Alignment fixed",
+        "references": []
+      },
+      {
+        "id": "0bd6f69977823b4b22f97db38a798f2535c1182f",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: Alignment fixed in Chrome",
+        "references": []
+      },
+      {
+        "id": "bf6c39a206b28c3eadf3619056fdc93c89fcc475",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: hAlign fixed",
+        "references": []
+      },
+      {
+        "id": "8a0228ded545fcb77cf49016c3d4ebfed06ff7fb",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Selection restored after model change",
+        "references": []
+      },
+      {
+        "id": "3c0b79450451f942a924e3d5aec7cf63e198b315",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Inital setting of focus fixed",
+        "references": []
+      },
+      {
+        "id": "a9837bc4978617ce970d5324bc4fcab3fa7f10b4",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Saving of \u0027_followOfHandler\u0027 fixed",
+        "references": []
+      },
+      {
+        "id": "a9261096b492e11e020fef1a1bcb9a3178da4ed7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.commons.DatePicker: Keyboard navigation fixed",
+        "references": []
+      },
+      {
+        "id": "eab953cdd9853ea17c74b905bb79fc9493127ea4",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Accordion: setCollapsedState DOM check fixed",
+        "references": []
+      },
+      {
+        "id": "e0d1f613169e5858297bcfbabf50f8b51a419319",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RatingIndictor: Focus outline color adapted in High Contrast theme",
+        "references": []
+      },
+      {
+        "id": "15f63b705d466ff43d06c55e35c8c5337c32bf46",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RoadMap: Scrolling to first visible step when step is not yet rendered does not cause an error",
+        "references": []
+      },
+      {
+        "id": "5b48f4f06443365501b61cb4eceb009a3dbfe381",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField, ComboBox, DropdownBox: liveChange event added",
+        "references": []
+      },
+      {
+        "id": "a530b31466d058f456b3e404f01ea74aca776ce8",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "ui.commons.Toolbar: toolbar not updated during rendering phase",
+        "references": []
+      },
+      {
+        "id": "fd6921cb5cc917e740a287ab2686073165c464f3",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.SegmentedButton: Not focusable when disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "172678"
+          }
+        ]
+      },
+      {
+        "id": "ef0aecdb5517ea77a077b88cb3a6803d3adcc495",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup \u0026 commons.Dialog: Fixed focusable elements",
+        "references": []
+      },
+      {
+        "id": "b35ca8de7e15fa9ee9eab789c4305df61083347c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.commons.Menubar: Support for MenuItems without submenus added",
+        "references": []
+      },
+      {
+        "id": "6fcfaa7d83fcaca96f954e9cf8294a2970719a6e",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "MatrixLayout: text-align is not inherited",
+        "references": []
+      },
+      {
+        "id": "3b8eb52097b9aa82bf215f847ef7aa97c4561b0e",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Support binding on named models",
+        "references": []
+      },
+      {
+        "id": "3e29dc7a6db79433ed4f7acc3b80c2b910f16e90",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: onThemeChanged checks for existance of buttons",
+        "references": []
+      },
+      {
+        "id": "12262707e555a76183e6d35daedeacc7f7728828",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Invalidation of Dialog stopped if dialog isn\u0027t open",
+        "references": []
+      },
+      {
+        "id": "48cd3d0cff9a21b24279b2ae0a449e9bf76ead48",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Carousel: Carousel in vertical mode reads correctly with JAWS 16",
+        "references": []
+      },
+      {
+        "id": "d898c0bccda89b2cb5f62dc5b28b7b26f27e30ed",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Carousel: Carousel items in vertical mode are displayed correctly",
+        "references": []
+      },
+      {
+        "id": "36286c687eff9c4009de4af52b478e889f38b225",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Carousel items are displayed correctly with jQuery 1.8.1",
+        "references": []
+      },
+      {
+        "id": "9d76efdca28324f646243d3abaa102f3bf8f7ce9",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Fixed bug in keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "97da458309aefadbcda9973542cf5b0968612a5a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox, sap.ui.commons.DatePicker: Combi-device added",
+        "references": []
+      },
+      {
+        "id": "743236da0494e5d6556498f25762d7b7a399c58d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DatePicker: Added change event on mobile devices",
+        "references": []
+      },
+      {
+        "id": "222536f53dbe56b566d27eb0eff79f0fc261ba9a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: Fixed input issue on mobile devices",
+        "references": []
+      },
+      {
+        "id": "bf85579538e7aef982c210f1da26e2a4b1922f44",
+        "author": "Martin Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButton: Selecting more than one RadioButton in the same group fixed",
+        "references": []
+      },
+      {
+        "id": "718ad99a4f953f48d28d299be8fefc9c82b0f28e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButtonGroup: Binding issues fixed",
+        "references": []
+      },
+      {
+        "id": "8e5b8d1a588e3a5d0cf611194526dd933fb7a304",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Roadmap: Default step tooltips suppressed when RichTooltip is used",
+        "references": []
+      },
+      {
+        "id": "4d867bc44c3c09dd975d84488d9b2d83c8b41eb6",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Suggestion is triggered when Ctrl+A is pressed",
+        "references": []
+      },
+      {
+        "id": "c5b7bb7704dfcce287e24a3a96bb60d8f2b44617",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Showing invalid suggestions avoided",
+        "references": []
+      },
+      {
+        "id": "aa02a3f67148a936dd1d62bfd6101419c267d73c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: Fixed arrow up/down in edit mode",
+        "references": []
+      },
+      {
+        "id": "29587322010b5b1975fe7f77d01e5f4a02183727",
+        "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Items in the overflow popup are now properly moved to the toolbar instance when there is more than one item in the popup",
+        "references": []
+      },
+      {
+        "id": "98f047b892228c73a69b867e50b6a03e158b8ec7",
+        "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Items in the overflow popup are now properly removed upon re-rendering while the popup is open.",
+        "references": []
+      },
+      {
+        "id": "db1d2fc8a12b1dc0fbc319a99b77065fdbb06d5c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Element: Additional documentation for event delegates provided",
+        "references": []
+      },
+      {
+        "id": "77554d36ae0e82228826efa8515adaf0cef3cff3",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Carousel: Rendering of horizontal carousel items when navigating left and right is now fixed",
+        "references": []
+      },
+      {
+        "id": "8179c3c2db4b8319a651b13bdb8c60c57fef05cf",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ProgressIndicator: Screen Reader improved",
+        "references": []
+      },
+      {
+        "id": "cc85eb9b1485f93c0e7b1aabcc12808f4a90335b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "SearchField: Suggestion event in case of empty value and startSuggestion\u003d0 corrected",
+        "references": []
+      },
+      {
+        "id": "b7bda34e8482fff66f4deb06c0ab70d53ad5f56a",
+        "author": "I057508 \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar: Keyboard navigation when invisible item(s) exist is now supported",
+        "references": []
+      },
+      {
+        "id": "a4c8e13b16959e13318c602dfb4e1fde0e0033c0",
+        "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar: Opening the overflow popup is not causing a toolbar resize when the toolbar is nested inside sap.ui.layout.HorizontalLayout",
+        "references": []
+      },
+      {
+        "id": "b7fd99a5202fcff9e27c20a3752924528ccade0b",
+        "author": "I314023 \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar: Tab indexes on the right toolbar items are now correctly retained upon updating item navigation",
+        "references": []
+      },
+      {
+        "id": "f371b5a98b9b274b754214c1bacbcd797bf291f0",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ListBox: Native scrolling is now used on touch devices",
+        "references": []
+      }
+    ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "62908d5e3ec15696eb218289343978e69c72a8d7",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Fixes Dialog resizing beyond minimum size",
+        "references": []
+      }
+    ]
+  },
+  "1.30.2": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "fd9d53e102a7917b28be343f665b7fcebd46f73e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      }
+    ]
+  }
+}

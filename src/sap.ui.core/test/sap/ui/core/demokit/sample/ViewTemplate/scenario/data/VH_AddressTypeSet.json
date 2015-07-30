@@ -1,0 +1,23 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('01')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('01')",
+						"type" : "GWSAMPLE_BASIC.VH_AddressType"
+					},
+					"AddressType" : "01",
+					"Shorttext" : "Private"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('02')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('02')",
+						"type" : "GWSAMPLE_BASIC.VH_AddressType"
+					},
+					"AddressType" : "02",
+					"Shorttext" : "Business"
+				}]
+	}
+}

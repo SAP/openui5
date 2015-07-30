@@ -1,0 +1,73 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.UploadCollection.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<Page showHeader="false">
+		<content>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Label
+					text="Layout:">
+				</Label>
+				<Select
+					id="tbSelect"
+					items="{/items}"
+					selectedKey="{/selectedKey}"
+					change="onSelectChange" >
+					<core:Item key="{key}" text="{text}"/>
+				</Select>
+			</Toolbar>
+			<UploadCollection
+				id="UploadCollection"
+				maximumFilenameLength="55"
+				maximumFileSize="10"
+				multiple="true"
+				showSeparators="All"
+				change="onChange"
+				fileDeleted="onFileDeleted"
+				filenameLengthExceed="onFilenameLengthExceed"
+				fileRenamed="onFileRenamed"
+				fileSizeExceed="onFileSizeExceed"
+				typeMissmatch="onTypeMissmatch"
+				uploadComplete="onUploadComplete"
+				items="{/items}"
+				numberOfAttachmentsText="Uploaded (8)">
+				<items>
+					<UploadCollectionItem
+						documentId="{documentId}"
+						fileName="{fileName}"
+						mimeType="{mimeType}"
+						thumbnailUrl="{thumbnailUrl}"
+						url="{url}"
+						enableEdit="{enableEdit}"
+						enableDelete="{enableDelete}"
+						visibleDelete="{visibleDelete}"
+						visibleEdit="{visibleEdit}"
+						attributes="{attributes}"
+						statuses="{statuses}">
+						<attributes>
+							<ObjectAttribute
+								title="{title}"
+								text="{path : 'text', formatter : '.formatAttribute'}"
+								active="{active}"
+								textDirection="{textDirection}"/>
+						</attributes>
+						<statuses>
+							<ObjectStatus
+								title="{title}"
+								text="{text}"
+								state="{state}"
+								icon="{icon}"
+								iconDensityAware="{iconDensityAware}"
+								textDirection="{textDirection}"/>
+						</statuses>
+					</UploadCollectionItem>
+				</items>
+			</UploadCollection>
+		</content>
+	</Page>
+</mvc:View>

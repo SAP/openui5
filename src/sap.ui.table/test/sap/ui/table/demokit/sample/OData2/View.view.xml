@@ -1,0 +1,36 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.OData2.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				selectionMode="MultiToggle"
+				visibleRowCount="10"
+				enableSelectAll="false"
+				rows="{/ProductSet}"
+				threshold="15"
+				enableBusyIndicator="true"
+				columns="{
+					path: 'meta>/dataServices/schema/[${namespace}===\'MYSAMPLE\']/entityType/[${name}===\'Product\']/property',
+					factory: '.columnFactory'
+				}">
+				<toolbar>
+					<m:Toolbar>
+						<m:Title text="Products"></m:Title>
+					</m:Toolbar>
+				</toolbar>
+				<noData>
+					<m:BusyIndicator class="sapUiMediumMargin"/>
+				</noData>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

@@ -7,12 +7,11 @@
 	xmlns="sap.m">
 	<Page
 		showHeader="false"
-		class="marginBoxContent">
+		class="sapUiContentPadding">
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Select
-					autoAdjustWidth="true"
 					items="{
 						path: '/ProductCollection',
 						sorter: { path: 'Name' }

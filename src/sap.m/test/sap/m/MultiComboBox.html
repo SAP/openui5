@@ -378,6 +378,74 @@
 		enabled : "{enabled}"
 	});
 
+	function createComboForDialog(){
+		return new sap.m.MultiComboBox({
+			placeholder : "Choose your country",
+			items : {
+				path : "/items",
+				template : oItemTemplate
+			},
+			selectedKeys : {
+				path : "/selected",
+				template : "{selected}"
+			},
+			change : function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
+						+ this);
+			},
+			selectionChange : function(oEvent) {
+				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oEvent.getParameter("changedItem")
+						+ " with selected=" + oEvent.getParameter("selected") + " on " + this);
+			},
+			selectionFinish : function(oEvent) {
+				jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oEvent.getParameter("selectedItems")
+						+ " on " + this);
+			}
+		});		
+	}
+	
+	var oDialog = new sap.m.Dialog("dialog", {
+		title: "Multi Inputs",
+		contentWidth: "420px",
+		horizontalScrolling: false,
+		content: [
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog(),
+					createComboForDialog()
+				],
+		beginButton: 
+			new sap.m.Button({
+				text: "OK",
+				type: sap.m.ButtonType.Accept,
+				press : function() {
+					oDialog.close();
+				}
+			}),
+		endButton:
+			new sap.m.Button({
+				text: "Cancel",
+				type: sap.m.ButtonType.Reject,
+				press : function() {
+					oDialog.close();
+				}
+		})
+	});
+	// open in a dialog
+	function openDialog(){
+		oDialog.open();
+	}
+
 	var oComboBox = new sap.m.ComboBox({
 		placeholder : "Choose your country",
 		width : "400px",
@@ -774,8 +842,11 @@
 						jQuery.sap.log.info('Event fired: "selectionChange" value property to '
 								+ oControlEvent.getParameter("selectedItems") + " on " + this);
 					}
-				}), new sap.m.ToolbarSpacer()]
-	})	
+				}), 
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Button({text: "Open Popup", press: openDialog})
+				]
+	});
 
 	var oApp = new sap.m.App("myApp", {
 		initialPage : "page1"

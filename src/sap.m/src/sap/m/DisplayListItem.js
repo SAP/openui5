@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new DisplayListItem.
 	 *
@@ -24,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.DisplayListItem
+	 * @alias sap.m.DisplayListItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DisplayListItem = ListItemBase.extend("sap.m.DisplayListItem", /** @lends sap.m.DisplayListItem.prototype */ { metadata : {
@@ -40,17 +39,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			/**
 			 * List item value
 			 */
-			value : {type : "string", group : "Data", defaultValue : null}
+			value : {type : "string", group : "Data", defaultValue : null},
+
+			/**
+			 * This property specifies the value text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			valueTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.m.DisplayListItem.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-	
 
 	return DisplayListItem;
 

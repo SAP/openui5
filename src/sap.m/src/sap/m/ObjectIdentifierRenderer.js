@@ -8,14 +8,14 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ObjectIdentifier renderer.
-	 * @static
+	 * ObjectIdentifier renderer.
+	 * @namespace
 	 */
 	var ObjectIdentifierRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the render
 	 *            output buffer
@@ -24,28 +24,40 @@ sap.ui.define(['jquery.sap.global'],
 	 *            rendered
 	 */
 	ObjectIdentifierRenderer.render = function(oRm, oOI) {
+
+		var sTooltip;
+
 		// Return immediately if control is invisible
 		if (!oOI.getVisible()) {
 			return;
 		}
-	
+
 		// write the HTML into the render manager
 		oRm.write("<div"); // Identifier begins
 		oRm.writeControlData(oOI);
+		//WAI ARIA support
+		oRm.writeAccessibilityState(oOI);
 		oRm.addClass("sapMObjectIdentifier");
 		oRm.writeClasses();
+
+		sTooltip = oOI.getTooltip_AsString();
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+
 		oRm.write(">");
-	
+
 		oRm.write("<div"); // Top row begins
 		oRm.addClass("sapMObjectIdentifierTopRow");
 		oRm.writeClasses();
 		oRm.write(">");
-	
+
 		oRm.write("<div"); // Icons begin
 		oRm.addClass("sapMObjectIdentifierIcons");
 		oRm.writeClasses();
+
 		oRm.write(">");
-	
+
 		if (oOI.getBadgeAttachments()) {
 			oRm.write("<span"); // Icon span begins
 			oRm.addClass("sapMObjectIdentifierIconSpan");
@@ -70,33 +82,37 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.renderControl(oOI._getPeopleIcon());
 			oRm.write("</span>"); // Icon span ends
 		}
-		
+
 		oRm.write("</div>"); // Icons end
-	
-		oRm.write("<div id='" + oOI.getId() + "-title'"); // Title begins 
+
+		oRm.write("<div id='" + oOI.getId() + "-title'"); // Title begins
 		oRm.addClass("sapMObjectIdentifierTitle");
-		
+
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oOI._getTitleControl());
+		//Render WAI ARIA hidden label for title if it's active
+		if (oOI.getProperty("titleActive")) {
+			oRm.renderControl(oOI._oAriaInfoTextControl);
+		}
 		oRm.write("</div>"); // Title ends
-	
+
 		oRm.write("</div>"); // Top row ends
-	
+
 		oRm.write("<div id='" + oOI.getId() + "-text'"); // Text begins
 		oRm.addClass("sapMObjectIdentifierText");
-		
+
 		if (!!oOI.getProperty("text") && !!oOI.getProperty("title")) {
 			oRm.addClass("sapMObjectIdentifierTextBellow");
 		}
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.renderControl(oOI.getAggregation("_textControl"));
+		oRm.renderControl(oOI._getTextControl());
 		oRm.write("</div>"); // Text ends
-	
+
 		oRm.write("</div>"); // Identifier ends
 	};
-	
+
 
 	return ObjectIdentifierRenderer;
 

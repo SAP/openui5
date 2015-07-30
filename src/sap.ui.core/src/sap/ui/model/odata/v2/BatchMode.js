@@ -3,8 +3,7 @@
  */
 
 // Provides enumeration sap.ui.model.odata.v2.BatchMode
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
@@ -14,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	*
 	* @static
 	* @public
-	* @name sap.ui.model.odata.CountMode
+	* @alias sap.ui.model.odata.BatchMode
 	*/
 	var BatchMode = {
 			/**

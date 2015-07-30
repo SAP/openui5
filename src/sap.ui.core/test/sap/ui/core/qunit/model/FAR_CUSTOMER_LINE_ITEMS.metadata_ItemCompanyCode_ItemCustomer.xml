@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=Item/CompanyCode,Item/Customer -->
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="FAR_CUSTOMER_LINE_ITEMS" xml:lang="en" sap:schema-version="0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="VL_SH_H_T001" sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS"/>
+				</Key>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:text="BUTXT" sap:label="Company Code"/>
+				<Property Name="BUTXT" Type="Edm.String" MaxLength="25" sap:label="Company Name"/>
+				<Property Name="ORT01" Type="Edm.String" MaxLength="25" sap:label="City"/>
+				<Property Name="WAERS" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency" sap:semantics="currency-code"/>
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIA" sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SORTL"/>
+					<PropertyRef Name="PSTLZ"/>
+					<PropertyRef Name="MCOD3"/>
+					<PropertyRef Name="MCOD1"/>
+					<PropertyRef Name="KUNNR"/>
+				</Key>
+				<Property Name="BEGRU" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Authorization" sap:filterable="false"/>
+				<Property Name="SORTL" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term"/>
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country"/>
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code"/>
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="City"/>
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name"/>
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="MCOD1" sap:label="Customer"/>
+			</EntityType>
+			<EntityType Name="VL_SH_DEBID" sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SORTL"/>
+					<PropertyRef Name="PSTLZ"/>
+					<PropertyRef Name="MCOD3"/>
+					<PropertyRef Name="MCOD1"/>
+					<PropertyRef Name="KUNNR"/>
+					<PropertyRef Name="BUKRS"/>
+				</Key>
+				<Property Name="BEGRU" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Authorization" sap:filterable="false"/>
+				<Property Name="SORTL" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term"/>
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country"/>
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code"/>
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="City"/>
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name"/>
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="MCOD1" sap:label="Customer"/>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code"/>
+			</EntityType>
+			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="VL_SH_H_T001" EntityType="FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1" sap:countable="false"/>
+				<EntitySet Name="VL_SH_DEBIA" EntityType="FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1" sap:countable="false"/>
+				<EntitySet Name="VL_SH_DEBID" EntityType="FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1" sap:countable="false"/>
+			</EntityContainer>
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Company Codes"/>
+						<PropertyValue Property="CollectionPath" String="VL_SH_H_T001"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CompanyCode"/>
+									<PropertyValue Property="ValueListProperty" String="BUKRS"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="BUTXT"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="ORT01"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="WAERS"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/Customer" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers (general)"/>
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIA"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="SORTL"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LAND1"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PSTLZ"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="MCOD3"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="MCOD1"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Customer"/>
+									<PropertyValue Property="ValueListProperty" String="KUNNR"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/Customer" Qualifier="DEBID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers (by company code)"/>
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBID"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="SORTL"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LAND1"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PSTLZ"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="MCOD3"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="MCOD1"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Customer"/>
+									<PropertyValue Property="ValueListProperty" String="KUNNR"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CompanyCode"/>
+									<PropertyValue Property="ValueListProperty" String="BUKRS"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<!-- Note: this is part of original $metadata, but not sent with sap-value-list=Item/Customer -->
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA/LAND1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Help_View für Länder" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FARP_T005" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="LAND1" />
+									<PropertyValue Property="ValueListProperty" String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LANDX" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="NATIO" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<!-- Note: this is part of original $metadata, but not sent with sap-value-list=Item/CompanyCode -->
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.VL_SH_H_T001/WAERS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="VL_CT_TCURC" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="WAERS" />
+									<PropertyValue Property="ValueListProperty" String="WAERS" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LTEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

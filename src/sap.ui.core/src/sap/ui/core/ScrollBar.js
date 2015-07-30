@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.ScrollBar.
-sap.ui.define(['jquery.sap.global', './Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
+	function(jQuery, Device, Control, library) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.ScrollBar
+	 * @alias sap.ui.core.ScrollBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ScrollBar = Control.extend("sap.ui.core.ScrollBar", /** @lends sap.ui.core.ScrollBar.prototype */ { metadata : {
@@ -89,65 +89,14 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	}});
 	
 	
-	/**
-	 * Binds the mouse wheel scroll event of the control that has the scrollbar to the scrollbar itself.
-	 *
-	 * @name sap.ui.core.ScrollBar#bind
-	 * @function
-	 * @param {string} sOOwnerDomRef
-	 *         Dom ref of the control that uses the scrollbar
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Unbinds the mouse wheel scroll event of the control that has the scrollbar
-	 *
-	 * @name sap.ui.core.ScrollBar#unbind
-	 * @function
-	 * @param {string} sOOwnerDomRef
-	 *         Dom ref of the Control that uses the scrollbar
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Page Up is used to scroll one page back.
-	 *
-	 * @name sap.ui.core.ScrollBar#pageUp
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Page Down is used to scroll one page forward.
-	 *
-	 * @name sap.ui.core.ScrollBar#pageDown
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	/**
-	* This file defines behavior for the control,
-	*/
-	
 	// =============================================================================
 	// BASIC CONTROL API
 	// =============================================================================
 	
 	/**
-	* Initialization of the Scrollbar control
-	* @private
-	*/
+	 * Initialization of the Scrollbar control
+	 * @private
+	 */
 	ScrollBar.prototype.init = function(){
 	
 		// JQuery Object - Dom reference of the scroll bar
@@ -191,18 +140,18 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	
 	
 	/**
-	* Rerendering handling
-	* @private
-	*/
+	 * Rerendering handling
+	 * @private
+	 */
 	ScrollBar.prototype.onBeforeRendering = function() {
 		this.$("sb").unbind("scroll", this.onscroll);
 	};
 	
 	
 	/**
-	* Rerendering handling
-	* @private
-	*/
+	 * Rerendering handling
+	 * @private
+	 */
 	ScrollBar.prototype.onAfterRendering = function () {
 		 // count of steps (comes per API)
 		this._iSteps = this.getSteps();
@@ -223,12 +172,20 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		var stepSize = null;
 	
 		var $ffsize = this.$("ffsize");
-		if (!!sap.ui.Device.browser.firefox) {
+		if (!!Device.browser.firefox) {
 			stepSize = $ffsize.outerHeight();
+			if ( stepSize === 0) {
+				// the following code is used if a container of the scrollbar is rendered invisible and afterwards is set to visible
+				stepSize = window.getComputedStyle(jQuery("body").get(0))["font-size"];
+				if (jQuery.sap.endsWith(stepSize,"px")) {
+					stepSize = stepSize.substr(0, stepSize.length - 2);
+				}
+				stepSize = parseInt(stepSize, 10);
+			}
 		}
 		$ffsize.remove();
 	
-		if (!!sap.ui.Device.browser.webkit) {
+		if (!!Device.browser.webkit) {
 			// document.width - was not supported by Chrome 17 anymore, but works again with Chrome from 18 to 30, and does not work in chrom 31.
 			if  (!document.width) {
 				stepSize = Math.round(40 / (window.outerWidth / jQuery(document).width()));
@@ -239,19 +196,19 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		}
 	
 		if (this.getVertical()) {
-			if (!!sap.ui.Device.browser.firefox) {
+			if (!!Device.browser.firefox) {
 				this._iFactor = stepSize;
-			} else if (!!sap.ui.Device.browser.webkit) {
+			} else if (!!Device.browser.webkit) {
 				this._iFactor = stepSize;
 			} else {
 				this._iFactor = Math.floor(iScrollBarSize  * 0.125);
 			}
-			this._iFactorPage = !!sap.ui.Device.browser.firefox ? iScrollBarSize - stepSize : Math.floor(iScrollBarSize * 0.875);
+			this._iFactorPage = !!Device.browser.firefox ? iScrollBarSize - stepSize : Math.floor(iScrollBarSize * 0.875);
 		} else {
-			if (!!sap.ui.Device.browser.firefox) {
+			if (!!Device.browser.firefox) {
 				this._iFactor = 10;
 				this._iFactorPage = Math.floor(iScrollBarSize * 0.8);
-			} else if (!!sap.ui.Device.browser.webkit) {
+			} else if (!!Device.browser.webkit) {
 				this._iFactor = stepSize;
 				this._iFactorPage = Math.floor(iScrollBarSize  * 0.875);
 			} else {
@@ -310,11 +267,11 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	//=============================================================================
 	
 	/**
-	* Event object contains detail (for Firefox and Opera), and wheelData (for Internet Explorer, Safari, and Opera).
-	* Scrolling down is a positive number for detail, but a negative number for wheelDelta.
-	* @param {jQuery.Event} oEvent Event object contains detail (for Firefox and Opera), and wheelData (for Internet Explorer, Safari, and Opera).
-	* @private
-	*/
+	 * Event object contains detail (for Firefox and Opera), and wheelData (for Internet Explorer, Safari, and Opera).
+	 * Scrolling down is a positive number for detail, but a negative number for wheelDelta.
+	 * @param {jQuery.Event} oEvent Event object contains detail (for Firefox and Opera), and wheelData (for Internet Explorer, Safari, and Opera).
+	 * @private
+	 */
 	ScrollBar.prototype.onmousewheel = function(oEvent)  {
 	
 		// ignore the mousewheel events when the scrollbar is not visible
@@ -353,10 +310,10 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	
 	
 	/**
-	* Touch start handler. Called when the "touch start" event occurs on this control.
-	* @param {jQuery.Event} oEvent Touch Event object 
+	 * Touch start handler. Called when the "touch start" event occurs on this control.
+	 * @param {jQuery.Event} oEvent Touch Event object 
 	 * @private
-	*/
+	 */
 	ScrollBar.prototype.ontouchstart = function(oEvent) {
 		// Don't react if initial down happens on a form element
 		var aTouches =  oEvent.touches;
@@ -374,10 +331,10 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	
 	
 	/**
-	* Touch move handler. Called when the "touch move" event occurs on this control.
-	* @param {jQuery.Event} oEvent Touch Event object 
+	 * Touch move handler. Called when the "touch move" event occurs on this control.
+	 * @param {jQuery.Event} oEvent Touch Event object 
 	 * @private
-	*/
+	 */
 	ScrollBar.prototype.ontouchmove = function(oEvent) {
 		if (this._oTouchScroller) {
 			this._oTouchScroller.doTouchMove(oEvent.touches, oEvent.timeStamp, oEvent.scale);
@@ -386,10 +343,10 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	
 	
 	/**
-	* Touch end handler. Called when the "touch end" event occurs on this control.
-	* @param {jQuery.Event} oEvent Touch Event object 
+	 * Touch end handler. Called when the "touch end" event occurs on this control.
+	 * @param {jQuery.Event} oEvent Touch Event object 
 	 * @private
-	*/
+	 */
 	ScrollBar.prototype.ontouchend = function(oEvent) {
 		if (this._oTouchScroller) {
 			this._oTouchScroller.doTouchEnd(oEvent.timeStamp);
@@ -397,10 +354,10 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	};
 	
 	/**
-	* Touch cancel handler. Called when the "touch cancel" event occurs on this control.
-	* @param {jQuery.Event} oEvent Touch Event object 
+	 * Touch cancel handler. Called when the "touch cancel" event occurs on this control.
+	 * @param {jQuery.Event} oEvent Touch Event object 
 	 * @private
-	*/
+	 */
 	ScrollBar.prototype.ontouchcancel = function(oEvent) {
 		if (this._oTouchScroller) {
 			this._oTouchScroller.doTouchEnd(oEvent.timeStamp);
@@ -408,7 +365,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	};
 	
 	/**
-	* Handles the Scroll event.
+	* Handles the Scroll event. 
 	*
 	* @param {jQuery.Event}  oEvent Event object
 	* @private
@@ -426,12 +383,12 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		var iScrollPos = null;
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				iScrollPos = this._$ScrollDomRef.scrollTop();
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
-				iScrollPos = this._$ScrollDomRef.scrollLeft();
-				if ( !!sap.ui.Device.browser.firefox && this._bRTL ) {
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollLeft());
+				if ( !!Device.browser.firefox && this._bRTL ) {
 					iScrollPos = Math.abs(iScrollPos);
-				} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
+				} else if ( !!Device.browser.webkit && this._bRTL ) {
 					var oScrollDomRef = this._$ScrollDomRef.get(0);
 					iScrollPos = oScrollDomRef.scrollWidth - oScrollDomRef.clientWidth - oScrollDomRef.scrollLeft;
 				}
@@ -464,13 +421,13 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	
 	
 	/**
-	* Handler for the touch scroller instance. Called only when touch mode is enabled.
-	*   
+	 * Handler for the touch scroller instance. Called only when touch mode is enabled.
+	 *
 	 * @param {number} left Horizontal scroll position
-	* @param {number} top Vertical scroll position 
+	 * @param {number} top Vertical scroll position 
 	 * @param {number} zoom The zoom level
-	* @private
-	*/
+	 * @private
+	 */
 	ScrollBar.prototype._handleTouchScroll = function(iLeft, iTop, iZoom) {
 		if (this._bSkipTouchHandling) {
 			return;
@@ -495,14 +452,19 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	// PUBLIC API METHODS
 	//=============================================================================
 	
-	/*
-	* @see JSDoc generated by SAPUI5 control API generator
-	*/
+	/**
+	 * Unbinds the mouse wheel scroll event of the control that has the scrollbar
+	 *
+	 * @param {string} oOwnerDomRef
+	 *         Dom ref of the Control that uses the scrollbar
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ScrollBar.prototype.unbind = function (oOwnerDomRef) {
 		if (oOwnerDomRef) {
 			this._$OwnerDomRef = jQuery(oOwnerDomRef);
 			if (this.getVertical()) {
-				this._$OwnerDomRef.unbind(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this.onmousewheel);
+				this._$OwnerDomRef.unbind(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this.onmousewheel);
 			}
 			
 			if (jQuery.sap.touchEventMode === "ON") {
@@ -514,14 +476,19 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		}
 	};
 	
-	/*
-	* @see JSDoc generated by SAPUI5 control API generator
-	*/
+	/**
+	 * Binds the mouse wheel scroll event of the control that has the scrollbar to the scrollbar itself.
+	 *
+	 * @param {string} oOwnerDomRef
+	 *         Dom ref of the control that uses the scrollbar
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ScrollBar.prototype.bind = function (oOwnerDomRef) {
 		if (oOwnerDomRef) {
 			this._$OwnerDomRef = jQuery(oOwnerDomRef);
 			if (this.getVertical()) {
-				this._$OwnerDomRef.bind(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this.onmousewheel, this));
+				this._$OwnerDomRef.bind(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this.onmousewheel, this));
 			}
 	
 			if (jQuery.sap.touchEventMode === "ON") {
@@ -544,17 +511,23 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		return jQuery.sap.touchEventMode === "SIM" ? ("sap" + sType) : sType;
 	};
 	
-	/*
-	* @see JSDoc generated by SAPUI5 control API generator
-	*/
+	/**
+	 * Page Up is used to scroll one page back.
+	 *
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ScrollBar.prototype.pageUp = function() {
 		// call on scroll
 		this._doScroll(sap.ui.core.ScrollBarAction.Page, false);
 	};
 	
-	/*
-	* @see JSDoc generated by SAPUI5 control API generator
-	*/
+	/**
+	 * Page Down is used to scroll one page forward.
+	 *
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ScrollBar.prototype.pageDown = function() {
 		// call on scroll
 		this._doScroll(sap.ui.core.ScrollBarAction.Page, true);
@@ -565,8 +538,8 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	//=============================================================================
 	
 	/*
-	* @see JSDoc generated by SAPUI5 control API generator
-	*/
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
 	ScrollBar.prototype.setScrollPosition = function (scrollPosition) {
 		if (this._$ScrollDomRef) {
 			this.setCheckedScrollPosition(scrollPosition, true);
@@ -577,9 +550,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	};
 	
 	/*
-	* After the Scrollbar is rendered, we check the validity of the scroll position and set Scroll Left and ScrollTop.
-	* @private
-	*/
+	 * After the Scrollbar is rendered, we check the validity of the scroll position and set Scroll Left and ScrollTop.
+	 * @private
+	 */
 	ScrollBar.prototype.setCheckedScrollPosition = function (scrollPosition, callScrollEvent) {
 	
 		var iCheckedSP = Math.max(scrollPosition, 0);
@@ -597,7 +570,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			iScrollPos = iCheckedSP * this._iFactor;
 		}
 	
-		iCheckedSP = Math.floor(iCheckedSP);
+		iCheckedSP = Math.round(iCheckedSP);
 	
 		this._bSuppressScroll = !callScrollEvent;
 		this.setProperty("scrollPosition", iCheckedSP, true);
@@ -605,9 +578,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		if ( this.getVertical()) {
 				this._$ScrollDomRef.scrollTop(iScrollPos);
 			} else {
-			if ( !!sap.ui.Device.browser.firefox && this._bRTL ) {
+			if ( !!Device.browser.firefox && this._bRTL ) {
 				this._$ScrollDomRef.scrollLeft(-iScrollPos);
-			} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
+			} else if ( !!Device.browser.webkit && this._bRTL ) {
 				var oScrollDomRef = this._$ScrollDomRef.get(0);
 				this._$ScrollDomRef.scrollLeft(oScrollDomRef.scrollWidth - oScrollDomRef.clientWidth - iScrollPos);
 			} else {
@@ -627,8 +600,8 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	};
 	
 	/*
-	* @see JSDoc generated by SAPUI5 control API generator
-	*/
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
 	ScrollBar.prototype.setContentSize = function (sContentSize) {
 	
 		// Trigger the rerendering when switching the from step mode.
@@ -650,23 +623,23 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	//=============================================================================
 	
 	/**
-	* Process scroll events and fire scroll event
-	* @param eAction Action type that can be mouse wheel, Drag, Step or Page.
-	* @param bForward Scroll Direction - forward or back
-	* @private
-	*/
+	 * Process scroll events and fire scroll event
+	 * @param eAction Action type that can be mouse wheel, Drag, Step or Page.
+	 * @param bForward Scroll Direction - forward or back
+	 * @private
+	 */
 	ScrollBar.prototype._doScroll = function(eAction, bForward) {
 	
 		// Get new scroll position
 		var iScrollPos = null;
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				iScrollPos = this._$ScrollDomRef.scrollTop();
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
-				iScrollPos = this._$ScrollDomRef.scrollLeft();
-				if (!!sap.ui.Device.browser.firefox && this._bRTL ) {
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollLeft());
+				if (!!Device.browser.firefox && this._bRTL ) {
 					iScrollPos = Math.abs(iScrollPos);
-				} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
+				} else if ( !!Device.browser.webkit && this._bRTL ) {
 					var oScrollDomRef = this._$ScrollDomRef.get(0);
 					iScrollPos = oScrollDomRef.scrollWidth - oScrollDomRef.clientWidth - oScrollDomRef.scrollLeft;
 				}
@@ -692,6 +665,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		} else {
 	
 			// Set new scroll position without the rerendering:
+			iScrollPos = Math.round(iScrollPos);
 			this.setProperty("scrollPosition", iScrollPos, true);
 	
 			jQuery.sap.log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + eAction + " --- Direction is forward: " + bForward);
@@ -708,39 +682,40 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	};
 	
 	/**
-	* return the native scroll position without any browser specific correction of 
+	 * return the native scroll position without any browser specific correction of 
 	 * the scroll position value (firefox & RTL => negative value / webkit & RTL =>
-	* positive value not beginning with 0 because 0 is left and not as expected 
+	 * positive value not beginning with 0 because 0 is left and not as expected 
 	 * right for webkit RTL mode).
-	* @return {int} native scroll position
-	* @private
-	*/
+	 * @return {int} native scroll position
+	 * @private
+	 */
 	ScrollBar.prototype.getNativeScrollPosition = function() {
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				return this._$ScrollDomRef.scrollTop();
+				return Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
-				return this._$ScrollDomRef.scrollLeft();
+				return Math.round(this._$ScrollDomRef.scrollLeft());
 			}
 		}
 		return 0;
 	};
 	
 	/**
-	* sets the scroll position directly
-	* @param {int} iNativeScrollPos new native scroll position
-	* @private
-	*/
+	 * sets the scroll position directly
+	 * @param {int} iNativeScrollPos new native scroll position
+	 * @private
+	 */
 	ScrollBar.prototype.setNativeScrollPosition = function(iNativeScrollPos) {
+		var iScrollPos = Math.round(iNativeScrollPos);
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				this._$ScrollDomRef.scrollTop(iNativeScrollPos);
+				this._$ScrollDomRef.scrollTop(iScrollPos);
 			} else {
-				this._$ScrollDomRef.scrollLeft(iNativeScrollPos);
+				this._$ScrollDomRef.scrollLeft(iScrollPos);
 			}
 		}
 	};
 
 	return ScrollBar;
 
-}, /* bExport= */ true);
+});

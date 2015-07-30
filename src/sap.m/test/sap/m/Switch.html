@@ -4,66 +4,80 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
 		<title>Switch - sap.m</title>
-		<style type="text/css">
-			.sapMSwtCont {
-				margin-left: 0.3125em;
-			}
-		</style>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
+		<style type="text/css">
+			.customLabel {
+				margin: 0 0.5rem;
+				vertical-align: middle;
+				vertical-align: -webkit-baseline-middle;
+			}
+		</style>
 		<script>
-			var oApp = new sap.m.App("myApp", {
-				initialPage: "page1"
-			});
-
-			var oSwitch0 = new sap.m.Switch({
-				state: true,
+			var oSwitch = new sap.m.Switch({
 				change: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' state property to " + oControlEvent.getParameter("state") + " on " + this);
+					jQuery.sap.log.info("Event fired: 'change' state property " + this.getState() + " on", this);
 				}
 			});
 
-			var oSwitch1 = new sap.m.Switch({
-				change: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' state property to " + oControlEvent.getParameter("state") + " on " + this);
-				}
-			});
+			var oLabel = new sap.m.Label({
+				text: "Airplane Mode",
+				labelFor: oSwitch
+			}).addStyleClass("customLabel");
 
-			var oSwitch2 = new sap.m.Switch({
+			var oSwitchDisabled = new sap.m.Switch({
 				enabled: false
 			});
 
-			var oSwitch3 = new sap.m.Switch({
-				customTextOn: "I",
-				customTextOff: "O"
-			});
-
-			var oSwitch4 = new sap.m.Switch({
-				customTextOn: "I",
-				customTextOff: "O",
-				state: true
-			});
-
-			var oSwitch5 = new sap.m.Switch({
-				state: true,
-				type: sap.m.SwitchType.AcceptReject
-			});
-
-			var oSwitch6 = new sap.m.Switch({
+			var oSwitchNoText = new sap.m.Switch({
 				customTextOn: " ",
 				customTextOff: " ",
 			});
 
-			var oPage1 = new sap.m.Page("page1", {
-				title: "Mobile Switch Control",
-				content : [oSwitch0, oSwitch1, oSwitch2, oSwitch3, oSwitch4, oSwitch5, oSwitch6]
+			var oSwitchAcceptReject = new sap.m.Switch({
+				state: true,
+				type: sap.m.SwitchType.AcceptReject
 			});
 
-			oApp.addPage(oPage1);
-			oApp.placeAt("body");
+			var oSwitchAcceptRejectLabelled = new sap.m.Switch({
+				state: false,
+				type: sap.m.SwitchType.AcceptReject
+			});
+
+			var oLabelAcceptReject = new sap.m.Label({
+				text: "You agree, that we may use cookies",
+				labelFor: oSwitchAcceptRejectLabelled
+			}).addStyleClass("customLabel");
+
+			new sap.m.App().addPage(new sap.m.Page({
+				title: "sap.m.Switch",
+				content: [
+					new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
+					oLabel,
+					oSwitch,
+					new sap.ui.core.HTML({ content: "<hr>" }),
+
+					new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
+					oSwitchDisabled,
+					new sap.ui.core.HTML({ content: "<hr>" }),
+
+					new sap.ui.core.HTML({ content: "<h3>No text</h3>" }),
+					oSwitchNoText,
+					new sap.ui.core.HTML({ content: "<hr>" }),
+
+					new sap.ui.core.HTML({ content: "<h3>Semantic</h3>" }),
+					oSwitchAcceptReject,
+					new sap.ui.core.HTML({ content: "<hr>" }),
+
+					new sap.ui.core.HTML({ content: "<h3>Semantic with label</h3>" }),
+					oLabelAcceptReject,
+					oSwitchAcceptRejectLabelled,
+					new sap.ui.core.HTML({ content: "<hr>" })
+				]
+			}).addStyleClass("sapUiContentPadding")).placeAt("body");
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<SelectDialog
+			title="Sample Routes"
+			items="{/sampleRoutes}"
+			confirm="handleValueHelpClose"
+			cancel="handleValueHelpClose"
+			search="handleValueHelpSearch">
+		<StandardListItem
+				title="{pattern}"
+				description="{description}" />
+	</SelectDialog>
+</core:FragmentDefinition>

@@ -794,7 +794,7 @@
 			aItems[0].setSelected(true);
 		}
 		if (oListSelection.getMode() == sap.m.ListMode.MultiSelect){
-			aItems[0].setSelected( (!aItems[0]._checkBox.getSelected()) );
+			aItems[0].setSelected( (!aItems[0].getModeControl().getSelected()) );
 		}
 	}
 
@@ -804,7 +804,7 @@
 			aItems[1].setSelected(true);
 		}
 		if (oListSelection.getMode() == sap.m.ListMode.MultiSelect){
-			aItems[1].setSelected( (!aItems[1]._checkBox.getSelected()) );
+			aItems[1].setSelected( (!aItems[1].getModeControl().getSelected()) );
 		}
 	}
 
@@ -814,7 +814,7 @@
 			aItems[2].setSelected(true);
 		}
 		if (oListSelection.getMode() == sap.m.ListMode.MultiSelect){
-			aItems[2].setSelected( (!aItems[2]._checkBox.getSelected()) );
+			aItems[2].setSelected( (!aItems[2].getModeControl().getSelected()) );
 		}
 	}
 
@@ -824,68 +824,68 @@
 			aItems[3].setSelected(true);
 		}
 		if (oListSelection.getMode() == sap.m.ListMode.MultiSelect){
-			aItems[3].setSelected( (!aItems[3]._checkBox.getSelected()) );
+			aItems[3].setSelected( (!aItems[3].getModeControl().getSelected()) );
 		}
 	}
 
 	function setSelectionItem5() {
 		var aItems = oListSelection.getItems();
 		if (oListSelection.getMode() == sap.m.ListMode.SingleSelect || oListSelection.getMode() == sap.m.ListMode.SingleSelectLeft) {
-			aItems[4].setSelected( (!aItems[4]._radioButton.getSelected()) );
+			aItems[4].setSelected( (!aItems[4].getModeControl().getSelected()) );
 		}
 		if (oListSelection.getMode() == sap.m.ListMode.MultiSelect){
-			aItems[4].setSelected( (!aItems[4]._checkBox.getSelected()) );
+			aItems[4].setSelected( (!aItems[4].getModeControl().getSelected()) );
 		}
 	}
 
 	function checkSingleSelectionItem1() {
 		var aItems = oListSelection.getItems();
-		return aItems[0]._radioButton.getSelected();
+		return aItems[0].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem2() {
 		var aItems = oListSelection.getItems();
-		return aItems[1]._radioButton.getSelected();
+		return aItems[1].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem3() {
 		var aItems = oListSelection.getItems();
-		return aItems[2]._radioButton.getSelected();
+		return aItems[2].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem4() {
 		var aItems = oListSelection.getItems();
-		return aItems[3]._radioButton.getSelected();
+		return aItems[3].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem5() {
 		var aItems = oListSelection.getItems();
-		return aItems[4]._radioButton.getSelected();
+		return aItems[4].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem1() {
 		var aItems = oListSelection.getItems();
-		return aItems[0]._checkBox.getSelected();
+		return aItems[0].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem2() {
 		var aItems = oListSelection.getItems();
-		return aItems[1]._checkBox.getSelected();
+		return aItems[1].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem3() {
 		var aItems = oListSelection.getItems();
-		return aItems[2]._checkBox.getSelected();
+		return aItems[2].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem4() {
 		var aItems = oListSelection.getItems();
-		return aItems[3]._checkBox.getSelected();
+		return aItems[3].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem5() {
 		var aItems = oListSelection.getItems();
-		return aItems[4]._checkBox.getSelected();
+		return aItems[4].getModeControl().getSelected();
 	}
 
 	function removeSelection() {
@@ -1197,89 +1197,100 @@
 		equals(checkSingleSelectionItem5(), true, "SingleSelection: Item 5 should be selected");
 	});
 
-	test("selectionList singleSelection item check by tap event on Item 1", function() {
+	asyncTest("selectionList singleSelection item check by tap event on Item 1", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId1);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId1);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+		
+		setTimeout(function() {
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			
+			start();
+		}, 0);
 	});
 
-	test("selectionList singleSelection item check by tap event on Item 2", function() {
+	asyncTest("selectionList singleSelection item check by tap event on Item 2", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId2);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId2);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+
+		setTimeout(function() {
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			start();
+		}, 0);
 	});
 
-	test("selectionList singleSelection item check by tap event on Item 3", function() {
+	asyncTest("selectionList singleSelection item check by tap event on Item 3", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId3);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId3);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+
+		setTimeout(function() {
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			start();
+		}, 0);
 	});
 
-	test("selectionList singleSelection item check by tap event on Item 4", function() {
+	asyncTest("selectionList singleSelection item check by tap event on Item 4", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId4);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId4);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+
+		setTimeout(function() {
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			start();
+		}, 0);
 	});
 
-	test("selectionList singleSelection item check by tap event on Item 5", function() {
+	asyncTest("selectionList singleSelection item check by tap event on Item 5", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId5);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId5);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
+
+		setTimeout(function() {
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
+			start();
+		}, 0);
 	});
 
 	test("selectionList switch to SingleSelectionLeft", function() {
@@ -1334,89 +1345,100 @@
 		equals(checkSingleSelectionItem5(), true, "SingleSelectionLeft: Item 5 should be selected");
 	});
 
-	test("selectionList SingleSelectionLeft item check by tap event on Item 1", function() {
+	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 1", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId1);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId1);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+
+		setTimeout(function() {
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+
+			start();
+		}, 0)
 	});
 
-	test("selectionList SingleSelectionLeft item check by tap event on Item 2", function() {
+	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 2", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId2);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId2);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+		setTimeout(function() {
+
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			start();
+		}, 0)
 	});
 
-	test("selectionList SingleSelectionLeft item check by tap event on Item 3", function() {
+	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 3", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId3);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId3);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+		setTimeout(function() {
+
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			start();
+		}, 0)
 	});
 
-	test("selectionList SingleSelectionLeft item check by tap event on Item 4", function() {
+	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 4", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId4);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId4);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+		setTimeout(function() {
+
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			start();
+		}, 0)
 	});
 
-	test("selectionList SingleSelectionLeft item check by tap event on Item 5", function() {
+	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 5", function() {
 		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0]._radioButton.getId();
-		var radioButtonId2 = aItems[1]._radioButton.getId();
-		var radioButtonId3 = aItems[2]._radioButton.getId();
-		var radioButtonId4 = aItems[3]._radioButton.getId();
-		var radioButtonId5 = aItems[4]._radioButton.getId();
+		var radioButtonId1 = aItems[0].getModeControl().getId();
+		var radioButtonId2 = aItems[1].getModeControl().getId();
+		var radioButtonId3 = aItems[2].getModeControl().getId();
+		var radioButtonId4 = aItems[3].getModeControl().getId();
+		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId5);
-		//var oRadiobutton = sap.ui.getCore().byId(radioButtonId5);
-		//oRadiobutton.ontap();
-		equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-		equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
+		setTimeout(function() {
+	
+			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
+		start();
+		}, 0)
 	});
 
 	test("selectionList switch to multiSelection", function() {
@@ -1459,11 +1481,11 @@
 
 	test("selectionList multiSelection item check by tap event (1,3,5)", function() {
 		var aItems = oListSelection.getItems();
-		var checkBoxId1 = aItems[0]._checkBox.getId();
-		var checkBoxId2 = aItems[1]._checkBox.getId();
-		var checkBoxId3 = aItems[2]._checkBox.getId();
-		var checkBoxId4 = aItems[3]._checkBox.getId();
-		var checkBoxId5 = aItems[4]._checkBox.getId();
+		var checkBoxId1 = aItems[0].getModeControl().getId();
+		var checkBoxId2 = aItems[1].getModeControl().getId();
+		var checkBoxId3 = aItems[2].getModeControl().getId();
+		var checkBoxId4 = aItems[3].getModeControl().getId();
+		var checkBoxId5 = aItems[4].getModeControl().getId();
 		//qutils.triggerEvent("tap", checkBoxId1);
 		//qutils.triggerEvent("tap", checkBoxId3);
 		//qutils.triggerEvent("tap", checkBoxId5);
@@ -1518,6 +1540,10 @@
 		
 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
+			touches : [{
+				clientX: 0,
+				clientY: 0
+			}],
 			targetTouches : [{
 				clientX: 0,
 				clientY: 0
@@ -1539,6 +1565,88 @@
 		});
 		
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
+	});
+	
+	module("StandartListItem RTL attributes");
+	
+	test("setter / getter titleTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "123 456"
+		});
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		oStdLI.setTitleTextDirection(sap.ui.core.TextDirection.RTL);
+		// Assert
+		equals(oStdLI.getTitleTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		
+		// Clean up
+		oList.destroy();
+	});
+	
+	test("setter / getter infoTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "Title",
+			info : "+359 123 456"
+		});
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		oStdLI.setInfoTextDirection(sap.ui.core.TextDirection.RTL);
+		// Assert
+		equals(oStdLI.getInfoTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		
+		// Clean up
+		oList.destroy();
+	});
+	
+	test("StandardListItem titleTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "123 456",
+			titleTextDirection: sap.ui.core.TextDirection.LTR
+			});
+		
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oTitle = oStdLI.$().find(".sapMSLITitleDiv").children(0);
+		// Assert
+		equals(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
+		
+		// Clean up
+		oList.destroy();
+	});
+	
+	test("StandardListItem infoTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "Title",
+			info : "+359 1234 567",
+			infoTextDirection: sap.ui.core.TextDirection.LTR
+		});
+		
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oInfo = oStdLI.$().find(".sapMSLIInfo");
+		// Assert
+		equals(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
+		
+		// Clean up
+		oList.destroy();
 	});
 
 </script>

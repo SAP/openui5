@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Frame Options Testpage - sap.ui.core</title>
+
+		<script>
+			function selectParentPage(url) {
+				location.href = url;
+			}
+			function selectChildPage(url) {
+				document.getElementById("currentChild").innerHTML = url;
+				if (url == "sameorigin_denied.html" || url == "whitelistservice_allowed.html" || url == "whitelistservice_denied.html") {
+					url = location.protocol + "//" + location.hostname.substr(0,location.hostname.indexOf(".")) + ":" +
+						location.port + location.pathname.substr(0,location.pathname.lastIndexOf("/") + 1) + url;
+				}
+				document.getElementById("iframe").src = url;
+			}
+		</script>
+	</head>
+	<body class="sapUiBody">
+	<h1>Frame Options Testpage</h1>
+	<p>Please open this page with full qualified domain name for tests to work properly.
+	<h2>Page Selection</h2>
+	<label for="parent">Parent page:</label>
+	<select id="parent" onchange="selectParentPage(event.target.value)">
+		<option value="ui5parent.html">UI5 Parent</option>
+		<option value="htmlparent.html" selected>HTML Parent</option>
+	</select>
+	<label for="child">Child page:</label>
+	<select id="child" onchange="selectChildPage(event.target.value)">
+		<option value="allow.html" selected>Allow</option>
+		<option value="deny.html">Deny</option>
+		<option value="sameorigin_allowed.html">Trusted (same origin, allowed)</option>
+		<option value="sameorigin_denied.html">Trusted (same origin, denied)</option>
+		<option value="whitelistservice_allowed.html">Trusted (whitelist service, allowed)</option>
+		<option value="whitelistservice_denied.html">Trusted (whitelist service, denied)</option>
+	</select>
+	<h2>IFrame with <span id="currentChild">allow.html</span></h2>
+		<iframe id="iframe" src="allow.html" style="width:100%;height:500px"></iframe>
+	</body>
+</html>

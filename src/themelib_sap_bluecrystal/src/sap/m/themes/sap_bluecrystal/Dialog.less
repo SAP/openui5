@@ -1,153 +1,64 @@
-/* ====================================================== */
-/* CSS for control sap.m/Dialog.control BlueCrystal theme */
-/* ====================================================== */
-
-.sapMDialogPhone {
-	opacity: 1;
-	-webkit-transform: translate3d(0px, 0px, 0px);
-	-moz-transform: translate3d(0px, 0px, 0px);
-	transform: translate3d(0px, 0px, 0px);
-	-webkit-transition-property: -webkit-transform;
-	-moz-transition-property: -webkit-transform;
-	transition-property: transform;
-}
-
 .sapMDialog {
+	background: @sapUiPageBG;
+	border: solid 1px rgba(0, 0, 0, 0.6);
 	border-radius: @sapUiPopupBorderRadius;
-	border: @sapUiPopupBorder;
-	-webkit-box-shadow: @sapUiPopupBoxShadow;
-	-moz-box-shadow: @sapUiPopupBoxShadow;
 	box-shadow: @sapUiPopupBoxShadow;
+	-moz-box-shadow: @sapUiPopupBoxShadow;
+	-webkit-box-shadow: @sapUiPopupBoxShadow;
+
+	.sapMDialogSection {
+		background: darken(@sapUiLightestBG, 2);
+	}
 }
 
-.sapMDialog.sapMMessageDialog {
-	font-size: 0.875rem;
-}
-
-.sapMDialogSection {
+.sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle {
 	background-color: @sapUiLightestBG;
 }
 
-.sapMDialog > header.sapMDialogTitle,
-.sapMDialog > header.sapMDialogSubHeader {
-	font-size: 1rem;
-}
-
-/* remove the branding color of bar in page when page is in dialog*/
-.sapMDialog .sapMIBar.sapMPageHeader::before{
-	border-top: none;
-}
-
-.sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle{
-	background-color: @sapUiLightestBG;
-	background-image: none;
-	filter: none;
-}
-
-.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
-	color: @sapUiLightText;
-	vertical-align: middle;
-}
-
-.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg {
-	width: 2.25rem;
-	height: 2.25rem;
-	vertical-align: middle;
-	margin-right: 0.625rem;
-}
-
-.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
-	vertical-align: middle;
-	height: 3rem;
-	line-height: 3rem;
-	margin-right: 0.625rem;
-	font-size: 1.25rem;
+.sapMDialog > header.sapMDialogTitle .sapUiIcon {
 	color: @sapUiElement;
-}
-
-.sapMTB.sapMTBNoBorders {
-	border-top: none;
-	border-bottom: none;
-}
-
-.sapMDialog > footer.sapMDialogActions {
-	background-color: @sapUiFooterBG;
-	border-top: 1px fade(@sapUiExtraLightBorder, 20%) solid;
 }
 
 .sap-desktop .sapMDialog > footer.sapMDialogActions {
 	background-color: @sapUiFooterOnDesktopBG;
 }
 
-.sapMDialog > footer.sapMDialogActions > .sapMDialogAction {
-	box-sizing: border-box;
-	width: 50%;
-	padding: 0 0.25rem;
-}
-
-.sapMDialog > footer.sapMDialogActions > .sapMDialogAction:only-child {
-	width: 100%;
-}
-
-.sapMDialog > footer.sapMDialogActions > .sapMDialogAction > button.sapMDialogBtn {
-	width: 100%;
-	vertical-align: top;
-	border: none;
-}
-
-.sapMDialogWarning > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
-	color: @sapUiCriticalText;
-}
-
-.sapMDialogError > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
-	color: @sapUiNegativeText;
-}
-
-.sapMDialogSuccess > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon  {
-	color: @sapUiPositiveText;
-}
-
-.sapMDialogWarning > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMLabel {
-	color: @sapUiCriticalText;
-}
-
-.sapMDialogError > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMLabel {
-	color: @sapUiNegativeText;
-}
-
-.sapMDialogSuccess > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMLabel {
-	color: @sapUiPositiveText;
-}
-
-/* Compact size */
-.sapUiSizeCompact{
-	&.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg {
-		width: 1.5rem;
-		height: 1.5rem;
-	}
-	&.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
-		line-height: 1.5rem;
-		height: 1.5rem;
-		width: 1rem;
-		font-size: 1rem;
-	}
-	.sapMDialogActions { /* footer with actions buttons */
-		width: auto;
-		height: 1.625rem;
-		line-height: 1.625rem;
-		padding: 0.1875rem 0.25rem;
+.sapMDialogWarning > header {
+	&.sapMDialogTitle .sapUiIcon {
+		color: @sapUiCriticalText;
 	}
 
-	&.sapMDialog > header:first-of-type.sapMHeader-CTX,
-	&.sapMDialog footer:last-of-type.sapMFooter-CTX {
-		height : 2.5rem;
+	&.sapMBar {
+		box-shadow: inset 0 -0.0625rem @sapUiCriticalText;
+	}
+}
 
-		.sapMBarLeft,
-		.sapMBarRight,
-		.sapMBarPH {
-			height: 2.5rem;
-			padding-top: 0.25rem;
-			padding-bottom: 0.25rem;
-		}
+.sapMDialogError > header {
+	&.sapMDialogTitle .sapUiIcon {
+		color: @sapUiNegativeText;
+	}
+
+	&.sapMBar {
+		box-shadow: inset 0 -0.0625rem @sapUiNegativeText;
+	}
+}
+
+.sapMDialogSuccess > header {
+	&.sapMDialogTitle .sapUiIcon {
+		color: @sapUiPositiveText;
+	}
+
+	&.sapMBar {
+		box-shadow: inset 0 -0.0625rem @sapUiPositiveText;
+	}
+}
+
+.sapMDialogResizeHandler {
+	&:before {
+		border-color: transparent transparent @sapUiExtraDarkBorder transparent;
+	}
+
+	&:hover:before {
+		border-color: transparent transparent lighten(@sapUiExtraDarkBorder, 15%) transparent;
 	}
 }

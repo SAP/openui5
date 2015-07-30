@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/search/OpenSearchP
 	 * @public
 	 * @deprecated Since version 1.6.0. 
 	 * Replaced by sap.ui.core.search.OpenSearchProvider
-	 * @name sap.ui.commons.SearchProvider
+	 * @alias sap.ui.commons.SearchProvider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SearchProvider = OpenSearchProvider.extend("sap.ui.commons.SearchProvider", /** @lends sap.ui.commons.SearchProvider.prototype */ { metadata : {

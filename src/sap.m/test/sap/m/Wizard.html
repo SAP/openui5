@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>sap.m.Wizard</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script type="text/javascript">
+		jQuery.sap.require("sap.m.WizardProgressNavigator");
+		jQuery.sap.require("sap.m.WizardStep");
+
+		var app = new sap.m.App({initialPage: "paginaUno"});
+		var pageOne = new sap.m.Page("paginaUno", {showHeader: false});
+
+		(function () {
+			var checkStep4 = function() {
+				var selected1 = sap.ui.getCore().byId("cBox1").getSelected(),
+						selected2 = sap.ui.getCore().byId("cBox2").getSelected(),
+						selected3 = sap.ui.getCore().byId("cBox3").getSelected(),
+						selected4 = sap.ui.getCore().byId("cBox4").getSelected(),
+						selected5 = sap.ui.getCore().byId("cBox5").getSelected();
+
+				if((selected1 && selected2 && !selected5) || (selected3 && !selected4) || (selected4 && selected2 && selected1 ))
+					wizard.validateStep(step4);
+			};
+
+			var step1 = new sap.m.WizardStep({
+				validated : false,
+				title : "User credentials",
+				complete : function() {
+					alert("First step is complete");
+				},
+				content: [
+					new sap.m.Text({
+						text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget turpis quis felis luctus consectetur. Nulla eros sem, tincidunt sit amet ipsum at, laoreet fringilla risus. Curabitur tempus arcu sit amet volutpat gravida. Sed blandit leo vel lectus tempus, ac laoreet dui tempus. Curabitur placerat orci a faucibus rutrum. Praesent mattis ante vel enim posuere, a luctus lacus posuere. Aliquam imperdiet leo sit amet auctor vestibulum. Nunc consequat, turpis faucibus porttitor eleifend, nisi eros auctor est, in ultricies magna elit in quam. Phasellus risus felis, cursus at libero sed, consequat tristique lectus. Nullam quis eros diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce dignissim turpis quis elit finibus elementum. Fusce aliquet enim ante. Morbi vitae turpis urna."
+					}),
+					new sap.ui.layout.form.SimpleForm({
+						minWidth : 1024,
+						maxContainerCols : 2,
+						editable: true,
+						content: [
+							new sap.m.Label({
+								text:"User name",
+								labelFor : "nameInput"
+							}),
+							new sap.m.Input("nameInput", {
+								liveChange : function(oEvent) {
+									var val = oEvent.getParameter("value");
+									if(val.length > 8)
+										wizard.validateStep(step1);
+									else
+										wizard.invalidateStep(step1);
+								}
+							}),
+							new sap.m.Label({text: "E-mail"}),
+							new sap.m.Input(),
+							new sap.m.Label({text:"Male"}),
+							new sap.m.CheckBox("maleIndicator"),
+							new sap.m.Label({text:"Password"}),
+							new sap.m.Input({type:"Password"}),
+							new sap.m.Label({text:"Repeat Password"}),
+							new sap.m.Input({type:"Password"})
+						]
+					})
+				]
+			});
+			var step2 = new sap.m.WizardStep({
+				validated : true,
+				title : "Personal information",
+				content: [
+					new sap.m.Text({
+						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
+					}),
+				]
+			});
+			var step3 = new sap.m.WizardStep({
+				validated: true,
+				title: "Payment details",
+				content: [
+					new sap.ui.layout.form.SimpleForm({
+						minWidth: 1024,
+						maxContainerCols: 2,
+						editable: true,
+						content: [
+							new sap.m.Label({
+								text: 'sap.m.Select'
+							}),
+							new sap.m.Select({
+								name: "select-name0",
+								items: [
+									oItem20 = new sap.ui.core.Item({
+										key: "0",
+										text: "item 0"
+									}),
+
+									oItem21 = new sap.ui.core.Item({
+										key: "1",
+										text: "item 1"
+									}),
+
+									oItem22 = new sap.ui.core.Item({
+										key: "2",
+										text: "item 2 is a little long"
+									}),
+
+									oItem23 = new sap.ui.core.Item({
+										key: "3",
+										text: "item 3"
+									})
+								]
+							}),
+							new sap.m.Label({
+								text: 'sap.m.Link'
+							}),
+							new sap.m.Link({
+								text: 'SAP Germany',
+								target: 'http://www.sap.com'
+							}),
+							new sap.m.Label({
+								text: 'sap.m.TextArea'
+							}),
+							new sap.m.TextArea({
+								placeholder: "Please add your comment",
+								rows: 6,
+								maxLength: 255,
+								width: "100%"
+							})
+						]
+					})
+				]
+			});
+			var step4 = new sap.m.WizardStep({
+				validated : false,
+				title : "Credit card information",
+				activate : function() {
+					alert("Credit card information step activated");
+				},
+				content : [
+					new sap.ui.layout.form.SimpleForm({
+						minWidth : 1024,
+						maxContainerCols : 2,
+						editable: true,
+						content: [
+							new sap.m.Label({
+								text:"CC Number"
+							}),
+							new sap.m.Input(),
+							new sap.m.Label({text: "Verification code"}),
+							new sap.m.Input(),
+							new sap.m.Label({text:"Lorem ipsum"}),
+							new sap.m.CheckBox("cBox1",{text: "Ilbris", select : checkStep4}),
+							new sap.m.CheckBox("cBox2",{ text: "Mohaseed", select : checkStep4 }),
+							new sap.m.CheckBox("cBox3",{ text: "Jukka", select : checkStep4 }),
+							new sap.m.CheckBox("cBox4",{ text: "Valvet", select : checkStep4 }),
+							new sap.m.CheckBox("cBox5",{ text: "Beerendes", select : checkStep4})
+						]
+					})
+				]
+			});
+			var step5 = new sap.m.WizardStep({
+				validated : true,
+				title: "Card contents",
+				content : [
+					new sap.m.Label({
+						text:"CC Number"
+					}),
+					new sap.m.Input({
+						liveChange : function(oEvent) {
+
+						}
+					}),
+					new sap.m.Label({text: "Verification code"}),
+					new sap.m.Input(),
+					new sap.m.Label({text:"Lorem ipsum"}),
+					new sap.m.CheckBox({text: "Ilbris"}),
+					new sap.m.CheckBox({ text: "Mohaseed"}),
+					new sap.m.CheckBox({ text: "Jukka"}),
+					new sap.m.CheckBox({ text: "Valvet"}),
+					new sap.m.CheckBox({ text: "Beerendes"})
+				]
+			});
+			var step6 = new sap.m.WizardStep({
+				title : "Finishing touches",
+				validated : false,
+				content : [
+					new sap.m.Text({
+						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
+					}),
+					new sap.m.Button({
+						text: "Verify final step",
+						press : function() {
+							wizard.validateStep(step6);
+						}
+					}),
+					new sap.m.Button({
+						text : "Discard progress",
+						press : function() {
+							wizard.discardProgress(step1);
+						}
+					})
+				]
+			});
+
+			wizard = new sap.m.Wizard({
+				width:"100%",
+				showNextButton: true,
+				complete : function() {
+					alert("Process finished");
+				},
+				stepActivate : function (oEvent) {
+					//alert("Step " + oEvent.getParameter("index"));
+				},
+				steps: [step1, step2, step3, step4, step5, step6]
+			});
+		})();
+
+		(function () {
+			bindableWizard = new sap.m.Wizard({
+				visible: false,
+				steps: {
+					path: "/steps",
+					template: new sap.m.WizardStep({
+						title:"{title}",
+						content: new sap.m.Button({
+							text: "{button}"
+						})
+					})
+				}
+			});
+
+			bindableWizard.setModel(new sap.ui.model.json.JSONModel({
+				steps: [
+					{
+						title: "First",
+						button: "1button1"
+					},
+					{
+						title: "Second",
+						button: "22button22"
+					},
+					{
+						title: "Third",
+						button: "333button333"
+					}
+				]
+			}));
+		})();
+
+		(function () {
+
+			var step6 = new sap.m.WizardStep({
+				title : "Finishing touches",
+				content : [
+					new sap.m.Text({
+						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
+					}),
+					new sap.m.Button({
+						text: "Verify final step",
+						press : function() {
+							branchingWizard.validateStep(step6);
+						}
+					}),
+					new sap.m.Button({
+						text : "Discard progress",
+						press : function() {
+							branchingWizard.discardProgress(step1);
+						}
+					})
+				]
+			});
+			var stepDummy = new sap.m.WizardStep("Dummy_Step", {
+				nextStep: step6,
+				title: "Dummy step",
+				content: [new sap.m.Text({text: "I am dummy!"})]
+			});
+			var step5 = new sap.m.WizardStep("Card_Contents",{
+				nextStep: stepDummy,
+				title: "Card contents",
+				content : [
+					new sap.m.Label({
+						text:"CC Number"
+					}),
+					new sap.m.Input({
+						liveChange : function(oEvent) {
+
+						}
+					}),
+					new sap.m.Label({text: "Verification code"}),
+					new sap.m.Input(),
+					new sap.m.Label({text:"Lorem ipsum"}),
+					new sap.m.CheckBox({text: "Ilbris"}),
+					new sap.m.CheckBox({ text: "Mohaseed"}),
+					new sap.m.CheckBox({ text: "Jukka"}),
+					new sap.m.CheckBox({ text: "Valvet"}),
+					new sap.m.CheckBox({ text: "Beerendes"})
+				]
+			});
+			var step4 = new sap.m.WizardStep("CreditCard_Information",{
+				nextStep: step6,
+				title : "Credit card information",
+				activate : function() {
+					alert("Credit card information step activated");
+				},
+				content : [
+					new sap.ui.layout.form.SimpleForm({
+						minWidth : 1024,
+						maxContainerCols : 2,
+						editable: true,
+						content: [
+							new sap.m.Label({
+								text:"CC Number"
+							}),
+							new sap.m.Input(),
+							new sap.m.Label({text: "Verification code"}),
+							new sap.m.Input(),
+							new sap.m.Label({text:"Lorem ipsum"}),
+						]
+					})
+				]
+			});
+			var step3 = new sap.m.WizardStep("Payment_Details",{
+				subsequentSteps: [step4, step5],
+				title: "Payment details",
+				validated: false,
+				complete: function () {
+					var nextId = sap.ui.getCore().byId("step3Next").getSelectedButton().getText();
+					var nextStep = sap.ui.getCore().byId(nextId);
+					step3.setNextStep(nextStep);
+				},
+				content: [
+					new sap.ui.layout.form.SimpleForm({
+						minWidth: 1024,
+						maxContainerCols: 2,
+						editable: true,
+						content: [
+							new sap.m.Label({
+								text:"Next Step"
+							}),
+							new sap.m.RadioButtonGroup("step3Next", {
+								buttons: [
+									new sap.m.RadioButton({ text:"Card_Contents" }),
+									new sap.m.RadioButton({ text:"CreditCard_Information"})
+								]
+							}),
+							new sap.m.Button({
+								text: "Validate step",
+								press: function () {
+									step3.setValidated(true);
+								}
+							})
+						]
+					})
+				]
+			});
+			var step2 = new sap.m.WizardStep("Personal_Information",{
+				title : "Personal information",
+				nextStep: step3,
+				content: [
+					new sap.m.Text({
+						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
+					}),
+				]
+			});
+			var step1 = new sap.m.WizardStep({
+				title : "User credentials",
+				complete : function() {
+					var nextId = sap.ui.getCore().byId("step1Next").getSelectedButton().getText();
+					var nextStep = sap.ui.getCore().byId(nextId);
+					step1.setNextStep(nextStep);
+				},
+				subsequentSteps: [step2, step3],
+				content: [
+					new sap.m.Text({
+						text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget turpis quis felis luctus consectetur. Nulla eros sem, tincidunt sit amet ipsum at, laoreet fringilla risus. Curabitur tempus arcu sit amet volutpat gravida. Sed blandit leo vel lectus tempus, ac laoreet dui tempus. Curabitur placerat orci a faucibus rutrum. Praesent mattis ante vel enim posuere, a luctus lacus posuere. Aliquam imperdiet leo sit amet auctor vestibulum. Nunc consequat, turpis faucibus porttitor eleifend, nisi eros auctor est, in ultricies magna elit in quam. Phasellus risus felis, cursus at libero sed, consequat tristique lectus. Nullam quis eros diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce dignissim turpis quis elit finibus elementum. Fusce aliquet enim ante. Morbi vitae turpis urna."
+					}),
+					new sap.ui.layout.form.SimpleForm({
+						minWidth : 1024,
+						maxContainerCols : 2,
+						editable: true,
+						content: [
+							new sap.m.Label({
+								text:"Next Step"
+							}),
+							new sap.m.RadioButtonGroup("step1Next", {
+								buttons: [
+									new sap.m.RadioButton({ text:"Personal_Information" }),
+									new sap.m.RadioButton({ text:"Payment_Details"})
+								]
+							})
+						]
+					})
+				]
+			});
+
+			branchingWizard = new sap.m.Wizard({
+				visible: false,
+				enableBranching: true,
+				width:"100%",
+				showNextButton: true,
+				complete : function() {
+					alert("Process finished");
+				},
+				steps: [step1, step2, step3, step4, step5, stepDummy, step6]
+			});
+
+		})();
+
+		var masterPage = new sap.m.Page({
+			title: "Navigation",
+			content: [
+				new sap.m.List({
+					items:[
+						new sap.m.StandardListItem({
+							title: "Forward wizard",
+							type: "Active",
+							press: function () {
+								wizard.setVisible(true);
+								bindableWizard.setVisible(false);
+								branchingWizard.setVisible(false);
+							}
+						}),
+						new sap.m.StandardListItem({
+							title: "Branching wizard",
+							type: "Active",
+							press: function () {
+								wizard.setVisible(false);
+								bindableWizard.setVisible(false);
+								branchingWizard.setVisible(true);
+							}
+						}),
+						new sap.m.StandardListItem({
+							title: "Wizard binding",
+							type: "Active",
+							press : function () {
+								wizard.setVisible(false);
+								bindableWizard.setVisible(true);
+								branchingWizard.setVisible(false);
+							}
+						})
+					]
+				})
+			]
+		});
+
+		var detailPage = new sap.m.Page({
+			content: [wizard, bindableWizard, branchingWizard]
+		});
+
+		pageOne.addContent(new sap.m.SplitContainer({
+			masterPages: masterPage,
+			detailPages: detailPage
+		}));
+
+		app.addPage(pageOne);
+		app.placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content">
+	</div>
+</body>
+</html>

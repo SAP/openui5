@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './FlexBox', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.VBox
+	 * @alias sap.m.VBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VBox = FlexBox.extend("sap.m.VBox", /** @lends sap.m.VBox.prototype */ { metadata : {

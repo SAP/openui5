@@ -4,42 +4,42 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Slider liveChange="onSliderLiveChange" step="20" value="100"/>
-	
-	<Text text="By default, toolbar items are not shrinkable except text and controls(e.g. Text, Label) and the controls that have percentual width." class="sapUiExploredInfo"/>
-	<Toolbar id="toolbar1">
-		<Label text="I am a text control, so I will shrink whenever toolbar overflows"/>
+
+	<MessageStrip text="By default, Toolbar items are shrinkable if they have percent-based width (e.g. Input, Slider) or implement the IShrinkable interface (e.g. Text, Label)." class="sapUiTinyMargin" />
+	<Toolbar class="sapUiMediumMarginTop" id="toolbar1">
+		<Label text="I am a text control, so I will shrink whenever the toolbar overflows."/>
 		<ToolbarSpacer/>
-		<Button text="Unshrinkable button"/>
+		<Button text="Non-shrinkable button"/>
 		<ToolbarSpacer/>
-		<SearchField width="100%" placeholder="My width is 100%, so I should shrink"/>
+		<SearchField width="100%" placeholder="My width is 100%, so I should shrink."/>
 	</Toolbar>
-	
-	<Text text="You can configure the item's shrinkablitiy by providing ToolbarLayoutData" class="sapUiExploredInfo"/>
-	<Toolbar id="toolbar2">
-		<Label text="I am an unshrinkable text">
+
+	<MessageStrip text="You can configure the item's shrinking-related properties by providing ToolbarLayoutData." class="sapUiTinyMargin"/>
+	<Toolbar class="sapUiMediumMarginTop" id="toolbar2">
+		<Label text="I am a non-shrinkable text.">
 			<layoutData>
 					<ToolbarLayoutData shrinkable="false" />
 			</layoutData>
 		</Label>
 		<ToolbarSpacer/>
-		<Button text="I am a shrinkable button, so I will shrink whenever toolbar overflows" >
+		<Button text="I am a shrinkable button, so I will shrink whenever the toolbar overflows." >
 			<layoutData>
 					<ToolbarLayoutData shrinkable="true" />
 			</layoutData>
 		</Button>
 		<ToolbarSpacer/>
-		<SearchField width="200px" placeholder="I have fixed width(200px), so I cannot be shrinkable"/>
+		<SearchField width="200px" placeholder="I have a fixed width (200px), so I cannot shrink."/>
 	</Toolbar>
-	
-	<Text text="You can define shrinking priority with setting min/maxWidth via ToolbarLayoutData. By default min width is 48px in Blue Crystal theme." class="sapUiExploredInfo"/>
-	<Toolbar id="toolbar3">
-		<Label text="I should not shrink more than 200px because I am an important text">
+
+	<MessageStrip text="You can determine to what extent an item shrinks by setting minWidth/maxWidth via ToolbarLayoutData. By default, minWidth is 48px in the Blue Crystal theme." class="sapUiTinyMargin"/>
+	<Toolbar class="sapUiMediumMarginTop" id="toolbar3">
+		<Label text="I should not shrink by more than 200px, because I am an important text.">
 			<layoutData>
 					<ToolbarLayoutData shrinkable="true" minWidth="200px"/>
 			</layoutData>
 		</Label>
 		<ToolbarSpacer/>
-		<Button text="I cannot be wider than 400px but I can shrink up to default theme min width">
+		<Button text="I cannot be wider than 400px, but I can shrink up to the theme's default minimum width.">
 			<layoutData>
 					<ToolbarLayoutData shrinkable="true" maxWidth="400px"/>
 			</layoutData>

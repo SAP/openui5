@@ -1,16 +1,17 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.Component, sap.ui.core.UIComponent
 -->
 
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m"
 		data-sap-ui-noConflict="true">
 	</script>
 <link rel="stylesheet"
@@ -34,7 +35,7 @@
 		name: "samples.components.button",
 		id: "myButton",
 		settings: {
-			text: "Text changed through settings", 
+			text: "Text changed through settings",
 			componentData: {
 				"foo": "bar"
 			}
@@ -54,7 +55,7 @@
 		component : oComp
 	});
 	oCompCont.placeAt("comparea2");
-	
+
 	//******************************************************
 	//Test preparation for custom component configuration
 	jQuery.sap.require("sap.ui.core.Component");
@@ -78,15 +79,15 @@
 	});
 	//******************************************************
 
-	
+
  	module("Basic Components");
-	
+
 	test("Simple Component Instance", function(){
 		ok(document.getElementById("CompCont1"));
 		var elem = jQuery.sap.byId("__component0---mybutn");
 		equal(elem.text(), "Text changed through settings", "Settings applied");
-	}); 
-	
+	});
+
 	test("Nested Components", function(){
 		ok(document.getElementById("ContVLayout"));
 		//check for ids of nested elements
@@ -107,40 +108,40 @@
 		deepEqual(oComp.getMetadata().getComponents(), components, "Child components retrieved");
 		equal(oComp.getMetadata().getUI5Version(), "1.13.0", "UI5 Version retrieved");
 	});
-	
+
 	test("Components Metadata - Custom Configuration Entry", function(){
 		var oSuccessMerged = test.comp2.Component.getMetadata().getCustomEntry("my.custom.config", true);
 		var oSuccessUnMerged = test.comp2.Component.getMetadata().getCustomEntry("my.custom.config", false);
 		var oFail = test.comp2.Component.getMetadata().getCustomEntry("properties");
-		
+
 		ok(!oFail, "Standard metadata can not be accessed.");
 		equal(oSuccessMerged.property1, "value3", "Property 1 merged and overridden.");
 		equal(oSuccessMerged.property2, "value2", "Property 2 merged and but not overridden.");
 		equal(oSuccessUnMerged.property1, "value3", "Property 1 not merged.");
 		ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
 	});
-	
+
 	test("Components Metadata - Load from file", function(){
 		jQuery.sap.require("samples.components.loadfromfile.Component");
 		var oMetadata = samples.components.loadfromfile.Component.getMetadata();
-		
+
 		deepEqual(oMetadata.getIncludes(), ["css/includeme.css", "js/includeme.js"], "Includes are available.");
 		ok(oMetadata.hasProperty("prop1"), "Property 'prop1' available.");
 	});
-	
+
 	test("Components Includes", function(){
 		ok((typeof foo == 'function'), "function foo from included js exists");
-		sFontSize = "12px";
+		sFontSize = "4px";
 		foo("comparea2", sFontSize);
 		var sSize = jQuery("#comparea2").css('font-size');
 		equal(sSize, sFontSize, "function from JS include invoked");
-		equal(jQuery.sap.byId("vLayout---myTF").css("font-size"), sFontSize, "CSS from include applied");
+		equal(jQuery.sap.byId("vLayout---myTF").css("padding-left"), "321px", "CSS from include applied");
 	});
 
 	test("Factory Function", function(){
 		var oComponent = sap.ui.component(oComp.getId());
 		equal(oComponent, oComp, "Factory function returns the same instance!");
-		var oComponent = sap.ui.component({
+		oComponent = sap.ui.component({
 			name: "samples.components.verticalLayout",
 			id: "factoryVLayout"
 		});
@@ -155,9 +156,9 @@
 		ok(!!oComponent.getComponentData(), "Component has component data");
 		equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
-	
+
  	module("Creation Context");
-	
+
 	test("Basic Test", function(){
 		// check that the layout has the reference to the component
 		var oLayout = oComp.byId("myLayout");
@@ -173,24 +174,93 @@
 		equal(sNestedComponentId, oNestedControl._sOwnerId /* INTERNAL ONLY! */, "The nested control has the correct component context");
 	});
 
-	module("Routing");
+	QUnit.module("Routing", {
+		setup : function () {
+			// System under test
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "samples.components.routing"
+			});
+			this.oComponent.init();
+		}
+	});
 
-	test("Should create a custom router class", function() {
-		//Arrange + System under test 
-		var oComponent = sap.ui.getCore().createComponent({
-			name: "samples.components.routing",
-		});
-
-
-		//Act - initialize the component to create the router
-		oComponent.init();
-		var oRouter = oComponent.getRouter();
+	QUnit.test("Should create a custom router class", function(assert) {
+		//Act
+		var oRouter = this.oComponent.getRouter();
 
 		//Assert
-		ok(oRouter instanceof samples.components.routing.RouterExtension, "the created router was an extension");
+		assert.ok(oRouter instanceof samples.components.routing.RouterExtension, "the created router was an extension");
+		assert.strictEqual(oRouter._oConfig.targetParent, this.oComponent.oView.getId(), "the viewid is the targetParent");
 
 		//Cleanup
-		oComponent.destroy();
+		this.oComponent.destroy();
+		assert.ok(oRouter.bIsDestroyed, "Router got destroyed when the component is destroyed");
+	});
+
+	QUnit.test("Should return the targets instance of the router", function (assert) {
+		//Act - initialize the component to create the router
+		var oTargets = this.oComponent.getTargets();
+
+		//Assert
+		assert.ok(oTargets, "the component created targets");
+		var oTarget = oTargets.getTarget("myTarget");
+		assert.ok(oTarget, "the component created a target instance");
+		assert.strictEqual(oTarget._oOptions.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
+
+		//Cleanup
+		this.oComponent.destroy();
+		assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
+	});
+
+	module("Routing", {
+		setup : function () {
+			// System under test
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "samples.components.targets"
+			});
+			this.oComponent.init();
+		}
+	});
+
+	QUnit.test("Should create the targets instance standalone", function (assert) {
+		//Act - initialize the component to create the router
+		var oTargets = this.oComponent.getTargets();
+		var oViews = this.oComponent._oViews;
+
+		//Assert
+		assert.ok(oTargets, "the component created targets");
+		var oTarget = oTargets.getTarget("myTarget");
+		assert.ok(oTarget, "the component created a target instance");
+		assert.strictEqual(oTarget._oOptions.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
+		assert.strictEqual(oViews._oComponent, this.oComponent, "the views instance knows its component");
+
+		//Cleanup
+		this.oComponent.destroy();
+		assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
+		assert.ok(oViews.bIsDestroyed, "Views created by the component got destroyed");
+	});
+
+	QUnit.module("Root control", {
+		setup : function () {
+			// System under test
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "samples.components.routing"
+			});
+		}
+	});
+
+	QUnit.test("Should get the root control", function (assert) {
+		//Act
+		var oRootControl = this.oComponent.getAggregation("rootControl");
+
+		//Assert
+		assert.strictEqual(this.oComponent._oViewWhileInit, oRootControl, "the root control is available in the init function");
+		assert.strictEqual(this.oComponent.oView, oRootControl, "the returned control is the rootView");
+		assert.strictEqual(this.oComponent._oViewWhileCeateContent, null, "in the create content the control is still null");
+
+		//Cleanup
+		this.oComponent.destroy();
+		assert.ok(oRootControl.bIsDestroyed, "Root control got destroyed when the component is destroyed");
 	});
 
 	</script>

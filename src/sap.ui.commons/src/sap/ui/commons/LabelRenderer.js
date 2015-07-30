@@ -10,11 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	
 	/**
-	 * @class
-	 *
-	 * @author SAP - TD Core UI&AM UI Infra
-	 * @version 0.1
-	 * @static
+	 * @author SAP SE
+	 * @namespace
 	 */
 	var LabelRenderer = {
 	//	sap.ui.core.Renderer.apply(this, arguments);
@@ -31,31 +28,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		var rm = oRenderManager;
 		var r = LabelRenderer;
 	
-		// Return immediately if control is invisible
-		if (!oLabel.getVisible()) {
-			return;
-		}
-	
 		rm.write("<label");
 		rm.writeControlData(oLabel);
 	
+		sap.ui.core.LabelEnablement.writeLabelForAttribute(oRenderManager, oLabel);
+		
+		var oFor = oLabel._getLabeledControl();
 		var sTooltip = oLabel.getTooltip_AsString();
-	
-		if (oLabel.getLabelForRendering()) {
-			var oFor = sap.ui.getCore().byId(oLabel.getLabelForRendering());
-			rm.write(" for=\"");
-			// for some controls the label must point to an special HTML element, not the outer one.
-			if ( oFor && oFor.getIdForLabel) {
-				rm.write(oFor.getIdForLabel());
-			} else {
-				rm.write(oLabel.getLabelForRendering());
-			}
-			rm.write("\"");
-	
-			if ((!sTooltip || sTooltip == "") && oFor && oFor.getTooltip_AsString() && oFor.getTooltip_AsString() != "") {
-				// If label has no own tooltip use tooltip of the labeled control
-				sTooltip = oFor.getTooltip_AsString();
-			}
+		
+		if ((!sTooltip || sTooltip == "") && oFor && oFor.getTooltip_AsString() && oFor.getTooltip_AsString() != "") {
+			// If label has no own tooltip use tooltip of the labeled control
+			sTooltip = oFor.getTooltip_AsString();
 		}
 	
 		// check whether a 'required' marker is needed
@@ -126,7 +109,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		var sIconUrl = oLabel.getIcon();
 		var oConfig = oRenderManager.getConfiguration();
 		var aClasses = [];
-		var mAttributes = {};
+		var mAttributes = {
+			"title": null
+		};
 	
 		aClasses.push("sapUiLblIco");
 		if ((oLabel.getTextDirection() == sap.ui.core.TextDirection.RTL && !oConfig.getRTL()) || (oLabel.getTextDirection() == sap.ui.core.TextDirection.LTR && oConfig.getRTL())) {

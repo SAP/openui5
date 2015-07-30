@@ -1,11 +1,20 @@
-sap.ui.controller("sap.m.sample.StandardListItemTitle.List", {
+sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
+	function(jQuery, Controller, JSONModel) {
+	"use strict";
 
-	onInit : function (evt) {
+	var ListController = Controller.extend("sap.m.sample.StandardListItemTitle.List", {
 
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		this.getView().setModel(oModel);
+		onInit : function (evt) {
 
-		this.getView().byId("ShortProductList").bindElement("/ProductCollection");
-	}
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+
+			this.getView().byId("ShortProductList").bindElement("/ProductCollection");
+		}
+	});
+
+
+	return ListController;
+
 });

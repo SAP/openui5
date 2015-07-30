@@ -2,9 +2,8 @@
  * ${copyright}
  */
 
-// Provides enumeration sap.ui.model.FilterOperator
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+// Provides enumeration sap.ui.model.CountMode
+sap.ui.define(function() {
 	"use strict";
 
 
@@ -14,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	*
 	* @static
 	* @public
-	* @name sap.ui.model.odata.CountMode
+	* @alias sap.ui.model.odata.CountMode
 	*/
 	var CountMode = {
 			/**
@@ -28,6 +27,12 @@ sap.ui.define(['jquery.sap.global'],
 			 * @public
 			 */
 			Inline: "Inline",
+	
+			/**
+			 * Count is retrieved by adding $inlinecount=allpages and is included in every data request
+			 * @public
+			 */
+			InlineRepeat: "InlineRepeat",
 	
 			/**
 			 * Count is retrieved by a separate request upfront and inline with each data request

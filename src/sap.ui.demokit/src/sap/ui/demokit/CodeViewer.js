@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	
 	CodeViewer.load = function() {
 		if ( !window.prettyPrint ) {
-			jQuery.sap.require("sap.ui.demokit.js.prettify");
+			jQuery.sap.require("sap.ui.demokit.js.google-code-prettify.prettify");
 		}
 	};
 	
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 		if ( !this.getEditable() && oDomRef && oDomRef.className.indexOf("prettyprint") === 0 && window.prettyPrint ) {
 			// TODO a call to prettyPrint() will also pretty print other CodeViewer controls -> avoid double pretty printing
 			prettyPrint();
-			oDomRef.className = "sapUiCodeViewer";
+			oDomRef.className = 'sapUiCodeViewer ' + (this.aCustomStyleClasses || []).join(' ');
 		}
 	};
 	

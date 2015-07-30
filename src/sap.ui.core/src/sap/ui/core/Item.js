@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.Item.
-sap.ui.define(['jquery.sap.global', './Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['./Element', './library'],
+	function(Element, library) {
 	"use strict";
 
 
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.Item
+	 * @alias sap.ui.core.Item
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Item = Element.extend("sap.ui.core.Item", /** @lends sap.ui.core.Item.prototype */ { metadata : {
@@ -58,4 +58,4 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 
 	return Item;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>YearPicker - sap.ui.unified.calendar</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.calendar.YearPicker.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				src="../../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script type="text/javascript">
+
+			var oYearPicker = new sap.ui.unified.calendar.YearPicker("YP1",{
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF1");
+					var oYP = oEvent.oSource;
+					var iYear = oYP.getYear();
+					oTF.setValue(iYear);
+				}
+			}).placeAt("sample1");
+
+			var oLabel = new sap.ui.commons.Label({text: "selected Year", labelFor: "TF1"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF1",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oYP = sap.ui.getCore().byId("YP1");
+					if(sValue && !isNaN(sValue)){
+						var iYear = parseInt(sValue);
+						oYP.setYear(iYear);
+					}
+				}
+			}).placeAt("event1");
+
+			oYearPicker = new sap.ui.unified.calendar.YearPicker("YP2",{
+				years: 5,
+				columns: 0,
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF2");
+					var oYP = oEvent.oSource;
+					var iYear = oYP.getYear();
+					oTF.setValue(iYear);
+				}
+			}).placeAt("sample2");
+
+			oLabel = new sap.ui.commons.Label({text: "selected Year", labelFor: "TF2"}).placeAt("event2");
+			oInput = new sap.ui.commons.TextField("TF2",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oYP = sap.ui.getCore().byId("YP2");
+					if(sValue && !isNaN(sValue)){
+						var iYear = parseInt(sValue);
+						oYP.setYear(iYear);
+					}
+				}
+			}).placeAt("event2");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.unified.calendar.YearPicker</code></h1>
+		<br>
+		<div>
+		<h2>Default YearPicker</h2>
+		<div id="sample1" style="display:inline-block;"></div>
+		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+		<h2>one line YearPicker</h2>
+		<div id="sample2" style="display:inline-block;"></div>
+		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+
+	</body>
+</html>

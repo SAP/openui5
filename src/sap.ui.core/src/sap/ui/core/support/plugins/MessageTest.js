@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.MessageTest (Test  plugin for support tool communication)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/support/Plugin'],
-	function(jQuery, RenderManager, Plugin) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
+	function(jQuery, Plugin) {
 	"use strict";
 
 
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 * @version ${version}
 		 * @constructor
 		 * @private
-		 * @name sap.ui.core.support.plugins.MessageTest
+		 * @alias sap.ui.core.support.plugins.MessageTest
 		 */
 		var MessageTest = Plugin.extend("sap.ui.core.support.plugins.MessageTest", {
 			constructor : function(oSupportStub) {
@@ -39,8 +39,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.MessageTest#onsapUiSupportMessageTestMsg
-		 * @function
 		 */
 		MessageTest.prototype.onsapUiSupportMessageTestMsg = function(oEvent){
 			this.$("Panel").removeClass("sapUiSupportHidden"); //Make panel visible with the first event
@@ -96,4 +94,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 
 	return MessageTest;
 
-}, /* bExport= */ true);
+});

@@ -2,16 +2,16 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+
 		<title>sap.m.Carousel Test</title>
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-compatVersion="1.20">>
+			data-sap-ui-compatVersion="1.20">
 		</script>
-		
+
 		<script id="mainView" type="sapui5/xmlview">
 			<mvc:View
 				controllerName="carousel.qunit.controller"
@@ -42,16 +42,16 @@
 					</Table>
 			</mvc:View>
 		</script>
-		
+
 		<script type="text/javascript">
-		
-		
+
+
 		//Create demo page for mobile controls
 		function createAList(inset, id) {
 			var oList = new sap.m.List(id, {
 				inset : inset
 			});
-			
+
 			var fnOnListItemPress = function() {
 				sap.m.MessageToast.show("ListItem pressed");
 			};
@@ -118,7 +118,7 @@
 			}
 
 			bindListData(data, oItemTemplate1, oList);
-			
+
 
 			return oList;
 		}
@@ -223,21 +223,12 @@
 				}) ]
 			}),
 
-			new sap.m.HBox({
-				items : [ new sap.m.Input({
-					placeholder : "Type here..."
-				}), new sap.m.Input({
-					type : sap.m.InputType.Number,
-					value : 42
-				}), ]
-			}),
-
 			new sap.m.SearchField({
 				placeholder : "Search for...",
 				showMagnifier : true
 			}),
 
-			
+
 			createAList(true, "lins").setHeaderText("This is an inset List").setFooterText("This was an inset List") ];
 			return aControls;
 		}
@@ -250,7 +241,7 @@
 				text : "Open Dialog",
 				press : openDialog
 			}),
-			
+
 			content : new sap.m.VBox("vbox", {
 				items : getAllControls()
 			}),
@@ -268,9 +259,9 @@
 				})
 			})
 		});
-		
+
 		//Example of usage for 'BeforeShow' and 'AfterHide' events
-		demoPage.addEventDelegate({ 
+		demoPage.addEventDelegate({
 			onBeforeShow: function(evt) {
 				jQuery.sap.log.info("sap.m.Page: demo page is going to be shown");
 			},
@@ -291,10 +282,10 @@
 				} */
 			}
 		});
-		
-		
+
+
 		// Create Test View and Controller
-		
+
 		sap.ui.controller("carousel.qunit.controller", {
 
 			onInit: function(oEvent) {
@@ -302,7 +293,7 @@
 			}
 
 		});
-		
+
 		var oView = sap.ui.xmlview({ viewContent: jQuery('#mainView').html() });
 		oView.setModel(new sap.ui.model.json.JSONModel({
 			items: [
@@ -311,8 +302,8 @@
 					{ name: "David", color: "green", number: 0 },
 			],
 		}));
-		
-		
+
+
 		jQuery.sap.require("sap.m.ImageRenderer");
 		/* poll control start */
 		sap.m.Image.extend("Lightbox", {
@@ -362,8 +353,8 @@
 			// render control with the image renderer
 			renderer: sap.m.ImageRenderer.render
 		});
-				
-			
+
+
 		// Create Images
 		var imgDesert = new sap.m.Image("desert", {
 			src: "images/demo/nature/desert.jpg",
@@ -371,48 +362,48 @@
 			densityAware: false,
 			decorative: false
 		});
-		
+
 		imgDesert.attachPress(function (e) {
 			var event = e;
 		});
-		
+
 		var imgElephant = new sap.m.Image("elephant", {
 			src: "images/demo/nature/elephant.jpg",
 			alt: "Mighty Elephant",
 			densityAware: false,
 			decorative: false
 		});
-		
+
 		var imgFishImg = new Lightbox("fish", {
 			src: "images/demo/nature/fish.jpg",
 			large: "images/demo/nature/fish.jpg",
 			alt: "Lively Fish",
 		});
-		
-		
+
+
 		var imgForest =  new sap.m.Image("forest", {
 			src: "images/demo/nature/forest.jpg",
 			alt: "Forest in Fall",
 			densityAware: false,
 			decorative: false
 		});
-		
+
 		var scrollForest = new sap.m.ScrollContainer({
 			horizontal: false,
 			vertical: true,
 			content:[imgForest],
 			width:'100%',
 			height:'100%',
-		}); 
-		
-		
+		});
+
+
 		var imgHuntingLeopard = new sap.m.Image("huntingLeopard", {
 			src: "images/demo/nature/huntingLeopard.jpg",
 			alt: "Hunting Leopard, Full Speed",
 			densityAware: false,
 			decorative: false
 		});
-		
+
 		var imgPrairie = new sap.m.Image("prairie", {
 			src: "images/demo/nature/prairie.jpg",
 			alt: "Prairie in Dawn",
@@ -426,8 +417,8 @@
 			densityAware: false,
 			decorative: false
 		});
-		
-		
+
+
 		var imgLeopard = new sap.m.Image("leopard", {
 			src: "images/demo/nature/huntingLeopard.jpg",
 			alt: "Waterfall in the Jungle",
@@ -441,21 +432,21 @@
 			densityAware: false,
 			decorative: false
 		});
-		
+
 		var imgLeopard2 = new sap.m.Image("leopard2", {
 			src: "images/demo/nature/huntingLeopard.jpg",
 			alt: "Waterfall in the Jungle",
 			densityAware: false,
 			decorative: false
-		});	
-		
+		});
+
 		var imgWaterfall3 = new sap.m.Image("waterfall3", {
 			src: "images/demo/nature/waterfall.jpg",
 			alt: "Waterfall in the Jungle",
 			densityAware: false,
 			decorative: false
 		});
-		
+
 		//Please uncomment any of the following lines to test the corresponding
 		//carousel attribute
 		var carousel = new sap.m.Carousel("myCarousel", {
@@ -470,23 +461,23 @@
 			pages: [imgDesert, oView, imgElephant, imgFishImg, demoPage, imgPrairie, scrollForest, imgWaterfall, imgLeopard, imgWaterfall2, imgLeopard2, imgWaterfall3]
 			//pages: [imgDesert, imgElephant, imgFishImg]
 		});
-		
-		
+
+
 		//Listen to 'pageChanged' events
 		carousel.attachPageChanged(function(oControlEvent) {
 			jQuery.sap.log.info("sap.m.Carousel: page changed: old: " + oControlEvent.getParameters().oldActivePageId );
 			jQuery.sap.log.info("                              new: " + oControlEvent.getParameters().newActivePageId );
 		});
-		
-		
-		
+
+
+
 		carousel.attachLoadPage(function(oControlEvent) {
 			var sPageId = oControlEvent.getParameters().pageId;
 			jQuery.sap.log.info("sap.m.Carousel: loading page " + sPageId  );
 			//Example for usage of 'loadPage' event: Add content to 'demoPage' when it is loaded into the carousel
 			/* if(sPageId == demoPage.getId()) {
 				//To demonstrate a loading delay, the following
-				//timeout waits for two seconds, until it hides the 
+				//timeout waits for two seconds, until it hides the
 				//carousel's busy indicator and shows the demo page
 				setTimeout(function() {
 					demoPage.addContent(new sap.m.VBox("vbox", {
@@ -499,34 +490,34 @@
 				carousel.loadComplete(sPageId);
 			}  */
 		});
-		
-		//Example for usage of 'unloadPage' event: 
+
+		//Example for usage of 'unloadPage' event:
 		carousel.attachUnloadPage(function(oControlEvent) {
 			jQuery.sap.log.info("sap.m.Carousel: unloaded page: " + oControlEvent.getParameters().pageId );
-			
+
 			//You may also use this function to clean up the demo page
 			//instead of using the 'onAfterHide' delegate
-			
+
 		});
 
 		var appCarousel = new sap.m.App("myApp", {initialPage:"carouselPage"});
 
 		var carouselPage = new sap.m.Page("carouselPage",
-			{title: "Carousel Test Page", 
+			{title: "Carousel Test Page",
 			enableScrolling: false }
 		);
 
 		carouselPage.addContent(carousel);
 		appCarousel.addPage(carouselPage);
 		appCarousel.placeAt("body");
-		
+
 		sap.ui.getCore().applyChanges();
-		
-		
-		
+
+
+
 		</script>
-		
+
 	</head>
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>

@@ -24,19 +24,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.FacetFilter
+	 * @alias sap.ui.ux3.FacetFilter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilter = Control.extend("sap.ui.ux3.FacetFilter", /** @lends sap.ui.ux3.FacetFilter.prototype */ { metadata : {
 	
 		library : "sap.ui.ux3",
 		properties : {
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
 			/**
 			 * If the value is "Auto" - the Facet Filter takes the whole available height. If "Fixed" , then the default number of Facet Filter Items (5) is visible.
 			 */

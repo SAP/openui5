@@ -3,7 +3,10 @@
 // Semantic Theming Mapping
 @sapUiBaseColor: @sapBaseColor;
 
+@sapUiContentLabelColor: @sapContent_LabelColor;
 @sapUiContentDisabledTextColor: @sapContent_DisabledTextColor;
+@sapUiContentContrastTextColor: #FFFFFF;
+@sapUiContentForegroundColor: lightgray;
 @sapUiContentForegroundBorderColor: #A6A6A6;
 
 @sapUiButtonBackground: @sapButton_Background;
@@ -43,6 +46,10 @@
 @sapUiFieldWarningBackground: #FAF2B0;
 @sapUiFieldSuccessColor: @sapField_SuccessColor;
 @sapUiFieldSuccessBackground: @sapField_SuccessBackground;
+
+@sapUiGroupTitleTextColor: @sapGroup_TitleTextColor;
+
+@sapUiToolbarSeparatorColor: @sapToolbar_SeparatorColor;
 
 @sapUiListHeaderBorderColor: #000000;
 @sapUiListHighlightColor: @sapList_HighlightColor;
@@ -130,11 +137,15 @@
 @sapUiErrorBorder: red;
 @sapUiWarningBorder: yellow;
 
+@sapUiElement: lightgrey;
+
 // Line Colors
 @sapUiLightLine: lightgrey;
 @sapUiMediumLine: grey;
 @sapUiEmphasizedLine: @sapUiHighlight;
 @sapUiDarkLine: darkgrey;
+
+@sapUiListTextColor: @sapUiDarkText;
 
 // Table Colors
 @sapUiTableRowBG: @sapUiWhite;
@@ -272,3 +283,74 @@
 
 // This parameter will be set to true by the Theme Designer when custom CSS has been added to a new custom theme
 @sapUiThemeDesignerCustomCss:false;
+
+/* Default margins classes to be used by the application for all controls */
+@sapUiMarginTiny   : 0.5rem; /*make tiny margin themable*/
+@sapUiMarginSmall  : 1rem; /*make small margin themable*/
+@sapUiMarginMedium : 2rem; /*make medium margin themable*/
+@sapUiMarginLarge  : 3rem; /*make large margin themable*/
+
+/* 
+ * This is a mixin for creating the predefined container content padding
+ * classes:
+ * sapUiNoContainerContentPadding
+ * sapUiContainerContentPadding
+ * sapUiResponsiveContainerContentPadding
+ * These classes can be set on many UI5 containers and will 
+ * add padding inside the container's content padding based 
+ * on the selectors that are arguments for this mixin.
+ *
+ * Arguments to this function-like mixin are the rootClass selector and
+ * the content selector where the padding should be applied.
+ */
+ 
+ /* 
+  * the sapLess-parser has problems with an escaped string as default value for the parameterized mixin
+  * therefore we need to temporarily use a parameter assigning the default value
+  */
+@sapUiEscapedEmptyString: ~"";
+
+.sapUiContainerContentPadding(@rootClass, @contentSelector: @sapUiEscapedEmptyString) {
+	@{rootClass}.sapUiContentPadding @{contentSelector} {
+		padding: 1rem;
+		box-sizing: border-box;
+	}
+
+	@media (max-width:599px) {
+		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		.sapMSplitContainerPortrait > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+			padding: 0;
+		}
+	}
+
+	@media (min-width:600px) and (max-width:1023px) {
+		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+			padding: 1rem;
+			box-sizing: border-box;
+		}
+	}
+
+	@media (min-width:1024px) {
+		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+			padding: 1rem 2rem;
+			box-sizing: border-box;
+		}
+	}
+
+	/* overrides the responsive settings for the split app master page */
+	.sapMSplitContainerMaster @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+		padding: 0;
+	}
+	
+	/* overrides the responsive settings for the split app detail page */
+	.sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+		padding: 1rem;
+	}
+
+	@{rootClass}.sapUiNoContentPadding @{contentSelector} {
+		padding: 0;
+	}
+}

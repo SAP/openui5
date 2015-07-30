@@ -9,11 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 *
-	 * @author d046011
-	 * @version 0.1
-	 * @static
+	 * @author SAP SE
+	 * @namespace
 	 */
 	var ImageRenderer = {
 	};
@@ -26,12 +23,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ImageRenderer.render = function(oRenderManager, oImage) {
 		var rm = oRenderManager;
-	
-		// Return immediately if control is invisible
-		if (!oImage.getVisible()) {
-			return;
-		}
-	
+
 		// Open the <img> tag
 		rm.write("<img");
 		rm.writeControlData(oImage);

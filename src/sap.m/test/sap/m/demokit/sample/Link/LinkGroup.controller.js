@@ -1,8 +1,17 @@
-sap.ui.controller("sap.m.sample.Link.LinkGroup", {
+sap.ui.define([
+		'sap/m/MessageBox',
+		'sap/ui/core/mvc/Controller'
+	], function(MessageBox, Controller) {
+	"use strict";
 
-	handleLinkPress: function (evt) {
-		jQuery.sap.require("sap.m.MessageBox");
-		sap.m.MessageBox.alert("Link was clicked!");
-	}
+	var LinkGroupController = Controller.extend("sap.m.sample.Link.LinkGroup", {
+
+		handleLinkPress: function (evt) {
+			MessageBox.alert("Link was clicked!");
+		}
+
+	});
+
+	return LinkGroupController;
 
 });

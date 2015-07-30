@@ -3,12 +3,12 @@
  */
 
 // Provides class sap.ui.core.format.FileSizeFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/format/NumberFormat', 'jquery.sap.strings'],
-	function(jQuery, LocaleData, NumberFormat, jQuerySapStrings) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleData', 'sap/ui/core/format/NumberFormat'],
+	function(jQuery, BaseObject, LocaleData, NumberFormat) {
 	"use strict";
 
 
-    var _UNITS = [
+	var _UNITS = [
 		{ binaryFactor: 1, decimalFactor: 1, decimalUnit: "Byte", binaryUnit: "Byte" },
 		{ binaryFactor: 1, decimalFactor: 1, decimalUnit: "Bytes", binaryUnit: "Bytes" },
 		{ binaryFactor: Math.pow(2,10), decimalFactor: 1e3, decimalUnit: "Kilobyte", binaryUnit: "Kibibyte" },
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 		{ binaryFactor: Math.pow(2,60), decimalFactor: 1e18, decimalUnit: "Exabyte", binaryUnit: "Exbibyte" },
 		{ binaryFactor: Math.pow(2,70), decimalFactor: 1e21, decimalUnit: "Zettabyte", binaryUnit: "Zebibyte" },
 		{ binaryFactor: Math.pow(2,80), decimalFactor: 1e24, decimalUnit: "Yottabyte", binaryUnit: "Yobibyte" }
-    ];
+	];
 	
 	
 	/**
@@ -46,9 +46,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	 * </ul>
 	 *
 	 * @public
-	 * @name sap.ui.core.format.FileSizeFormat
+	 * @alias sap.ui.core.format.FileSizeFormat
 	 */
-	var FileSizeFormat = sap.ui.base.Object.extend("sap.ui.core.format.FileSizeFormat", /** @lends sap.ui.core.format.FileSizeFormat.prototype */ {
+	var FileSizeFormat = BaseObject.extend("sap.ui.core.format.FileSizeFormat", /** @lends sap.ui.core.format.FileSizeFormat.prototype */ {
 		constructor : function(oFormatOptions) {
 			// Do not use the constructor
 			throw new Error();
@@ -67,8 +67,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	 * @return {sap.ui.core.format.FileSizeFormat} instance of the FileSizeFormat
 	 * @static
 	 * @public
-	 * @name sap.ui.core.format.FileSizeFormat.getInstance
-	 * @function
 	 */
 	FileSizeFormat.getInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale);
@@ -81,8 +79,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	 * @return {sap.ui.core.format.FileSizeFormat} the instance of the FileSizeFormat
 	 * @static
 	 * @private
-	 * @name sap.ui.core.format.FileSizeFormat.createInstance
-	 * @function
 	 */
 	FileSizeFormat.createInstance = function(oFormatOptions, oLocale) {
 		var oFormat = jQuery.sap.newObject(this.prototype);
@@ -95,10 +91,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
-		oFormat.oNumberFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oFormatOptions, oLocale);
+		oFormat.oNumberFormat = NumberFormat.getFloatInstance(oFormatOptions, oLocale);
 		oFormat.oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", oLocale.toString());
 		
-		oFormat.bBinary = !!oFormatOptions.binaryFilesize;
+		oFormat.bBinary = oFormatOptions ? !!oFormatOptions.binaryFilesize : false;
 		
 		return oFormat;
 	};
@@ -109,8 +105,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	 * @param {number|string} oValue the number (or hex string) to format
 	 * @return {string} the formatted output value
 	 * @public
-	 * @name sap.ui.core.format.FileSizeFormat#format
-	 * @function
 	 */
 	FileSizeFormat.prototype.format = function(oValue) {
 		var fValue = null, fOriginValue;
@@ -155,8 +149,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	 * @param {string} sValue the string containing a formatted filesize value
 	 * @return {number} the parsed value in bytes
 	 * @public
-	 * @name sap.ui.core.format.FileSizeFormatt#parse
-	 * @function
 	 */
 	FileSizeFormat.prototype.parse = function(sValue) {
 		var oUnit, _sValue, fValue, bBinary;
@@ -233,4 +225,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	
 	return FileSizeFormat;
 
-}, /* bExport= */ true);
+});

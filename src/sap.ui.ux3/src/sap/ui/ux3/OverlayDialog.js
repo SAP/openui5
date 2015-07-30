@@ -7,13 +7,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 	function(jQuery, IntervalTrigger, Overlay, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new OverlayDialog.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
+	 * @param {object} [mSettings] Initial settings for the new control.
 	 *
 	 * @class
 	 * Dialog implementation based on the Overlay. If used in a Shell it leaves the Tool-Palette, Pane-Bar and Header-Items accessible.
@@ -22,34 +20,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.OverlayDialog
+	 * @alias sap.ui.ux3.OverlayDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var OverlayDialog = Overlay.extend("sap.ui.ux3.OverlayDialog", /** @lends sap.ui.ux3.OverlayDialog.prototype */ { metadata : {
-	
-		library : "sap.ui.ux3",
-		properties : {
-	
-			/**
-			 * Width of the Overlay Dialog. If the width is set to "auto" it is always 50% of the overlay width.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
-	
-			/**
-			 * Height of the Overlay Dialog. If the height is set to "auto" it is always 50% of the overlay height.
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'}
-		},
-		aggregations : {
-	
-			/**
-			 * Content for the OverlayDialog.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+	var OverlayDialog = Overlay.extend("sap.ui.ux3.OverlayDialog", /** @lends sap.ui.ux3.OverlayDialog.prototype */ {
+		metadata: {
+			library: "sap.ui.ux3",
+			properties: {
+				/**
+				 * Determines the width of the Overlay Dialog. If the width is set to "auto" it is always 50% of the overlay width.
+				 */
+				width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto'},
+
+				/**
+				 * Determines the height of the Overlay Dialog. If the height is set to "auto" it is always 50% of the overlay height.
+				 */
+				height: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto'}
+			},
+			aggregations: {
+				/**
+				 * Content for the OverlayDialog.
+				 */
+				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
+			}
 		}
-	}});
-	
-	
+	});
+
 	/**
 	 * @private
 	 */
@@ -59,9 +55,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		this.setProperty("openButtonVisible",false);
 		OverlayDialog.Trigger = new IntervalTrigger(300);
 	};
-	
+
 	/**
-	 * Focus Last Element
+	 * Focus the last focusable element.
 	 *
 	 * @private
 	 */
@@ -72,9 +68,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		}
 		jQuery.sap.focus(oFocus);
 	};
-	
+
 	/**
-	 * Focus First Element
+	 * Focus the first focusable element.
 	 *
 	 * @private
 	 */
@@ -85,9 +81,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 			jQuery.sap.focus(this.$("content").firstFocusableDomRef());
 		}
 	};
-	
+
 	/**
-	 * This Method is not supported for the OverlayDialog 
+	 * This Method is not supported for the OverlayDialog.
+	 *
 	 * @param {boolean} bVisible
 	 * @public
 	 */
@@ -95,12 +92,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		jQuery.sap.log.warning("OverlayDialog does not support an openButton.");
 		return undefined;
 	};
-	
+
 	/**
-	 * Sets the width for the OverlayDialog
-	 * @param {sap.ui.core.CSSSize} sWidth
-	 * @public 
+	 * The width for the OverlayDialog.
 	 *
+	 * @param {sap.ui.core.CSSSize} sWidth
+	 * @public
 	 */
 	OverlayDialog.prototype.setWidth = function(sWidth) {
 		if (sWidth == "auto" || sWidth == "inherit") {
@@ -108,12 +105,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		}
 		return this.setProperty("width", sWidth);
 	};
-	
+
 	/**
-	 * Sets the height for the OverlayDialog
-	 * @param {sap.ui.core.CSSSize} sHeight
-	 * @public 
+	 * The height for the OverlayDialog.
 	 *
+	 * @param {sap.ui.core.CSSSize} sHeight
+	 * @public
 	 */
 	OverlayDialog.prototype.setHeight = function(sHeight) {
 		if (sHeight == "auto" || sHeight == "inherit") {
@@ -121,7 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		}
 		return this.setProperty("height", sHeight);
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -129,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		Overlay.prototype.onBeforeRendering.apply(this, arguments);
 		this._cleanup();
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -137,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		Overlay.prototype.onAfterRendering.apply(this, arguments);
 		OverlayDialog.Trigger.addListener(this._checkChange, this);
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -148,7 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		this.overlayWidth = null;
 		this.overlayHeight = null;
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -156,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		this._cleanup();
 		Overlay.prototype.exit.apply(this,arguments);
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -164,29 +161,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 		if (!this.getDomRef()) {
 			return;
 		}
-	
+
 		var $content = this.$("content"),
 			$overlay = this.$(),
 			bAutoWidth = this.getWidth() === "auto",
 			bAutoHeight = this.getHeight() === "auto";
-	
+
 		var contentWidth = bAutoWidth ? $overlay.width() / 2 : $content.width(),
 			contentHeight = bAutoHeight ? $overlay.height() / 2 : $content.height(),
 			overlayWidth = $overlay.width(),
 			overlayHeight = $overlay.height();
-	
-		if (	contentWidth != this.contentWidth || contentHeight != this.contentHeight
+
+		if (contentWidth != this.contentWidth || contentHeight != this.contentHeight
 			|| overlayWidth != this.overlayWidth || overlayHeight != this.overlayHeight) {
-	
+
 			$content.css("left", "0").css("right", "auto").css("top", "0").css("bottom", "auto").css("width", this.getWidth()).css("height", this.getHeight());
-			
+
 			this.contentWidth = bAutoWidth ? $overlay.width() / 2 : $content.width();
 			this.contentHeight = bAutoHeight ? $overlay.height() / 2 : $content.height();
 			this.overlayWidth = overlayWidth;
 			this.overlayHeight = overlayHeight;
-	
+
 			var $close = this.$("close");
-	
+
 			if (this.contentWidth < this.overlayWidth) {
 				$content.css("left", "50%");
 				$content.css("right", "auto");
@@ -202,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 				$close.css("right", "0");
 				$close.css("margin-right", "0");
 			}
-	
+
 			if (this.contentHeight < this.overlayHeight - 30/*Bottom Border (NotificationBar)*/) {
 				$content.css("top", "50%");
 				$content.css("bottom", "auto");
@@ -220,8 +217,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', 
 			}
 		}
 	};
-	
 
 	return OverlayDialog;
-
 }, /* bExport= */ true);

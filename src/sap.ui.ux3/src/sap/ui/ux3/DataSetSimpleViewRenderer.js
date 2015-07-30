@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class DataSetSimpleView renderer.
-	 * @static
+	 * DataSetSimpleView renderer.
+	 * @namespace
 	 */
 	var DataSetSimpleViewRenderer = {
 	};

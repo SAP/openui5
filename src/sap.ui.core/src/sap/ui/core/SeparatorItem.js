@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.SeparatorItem.
-sap.ui.define(['jquery.sap.global', './Item', './library'],
-	function(jQuery, Item, library) {
+sap.ui.define(['./Item', './library'],
+	function(Item, library) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Item', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.SeparatorItem
+	 * @alias sap.ui.core.SeparatorItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SeparatorItem = Item.extend("sap.ui.core.SeparatorItem", /** @lends sap.ui.core.SeparatorItem.prototype */ { metadata : {
@@ -33,13 +33,6 @@ sap.ui.define(['jquery.sap.global', './Item', './library'],
 		library : "sap.ui.core"
 	}});
 	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.core.SeparatorItem.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
 	return SeparatorItem;
 
-}, /* bExport= */ true);
+});

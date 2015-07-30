@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	 * @param oShell
 	 * @public
 	 * @experimental Since 1.0. The Shell-features Personalization, Color Picker and “Inspect”-Tool are only experimental work and might change or disappear in future versions.
-	 * @name sap.ui.ux3.ShellPersonalization
+	 * @alias sap.ui.ux3.ShellPersonalization
 	 */
 	var ShellPersonalization = EventProvider.extend("sap.ui.ux3.ShellPersonalization", {
 		constructor: function(oShell) {

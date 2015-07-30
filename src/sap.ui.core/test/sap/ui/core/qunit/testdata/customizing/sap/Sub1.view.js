@@ -1,6 +1,12 @@
-sap.ui.jsview("testdata.customizing.sap.Sub1", {
+sap.ui.define(['sap/ui/commons/TextView', 'sap/ui/core/mvc/JSView'],
+	function(TextView, JSView) {
+	"use strict";
 
-	createContent : function(oController) {
-		return new sap.ui.commons.TextView({text: "I am the SAP original view and should be replaced"});
-	}
+	sap.ui.jsview("testdata.customizing.sap.Sub1", {
+
+		createContent : function(oController) {
+			return new TextView({text: "I am the SAP original view and should be replaced"});
+		}
+	});
+
 });

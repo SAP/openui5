@@ -1,0 +1,17 @@
+<mvc:View controllerName="sap.ui.core.sample.View.async.Sample"
+	xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Panel>
+		<mvc:XMLView viewName="sap.ui.core.sample.View.async.Async" id="xml_sample" async="false"></mvc:XMLView>
+	</Panel>
+	<Panel>
+		<mvc:JSONView viewName="sap.ui.core.sample.View.async.Async" id="json_sample" async="false"></mvc:JSONView>
+	</Panel>
+	<Panel>
+		<mvc:HTMLView viewName="sap.ui.core.sample.View.async.Async" id="html_sample" async="false"></mvc:HTMLView>
+	</Panel>
+	<Panel>
+		<mvc:JSView viewName="sap.ui.core.sample.View.async.Async" id="js_sample" async="false"></mvc:JSView>
+	</Panel>
+
+</mvc:View>

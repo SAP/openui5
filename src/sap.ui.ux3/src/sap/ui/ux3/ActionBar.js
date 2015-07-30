@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.ActionBar
+	 * @alias sap.ui.ux3.ActionBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ActionBar = Control.extend("sap.ui.ux3.ActionBar", /** @lends sap.ui.ux3.ActionBar.prototype */ { metadata : {
@@ -51,6 +51,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			 * Indicates whether “Favorite” is active
 			 */
 			favoriteState : {type : "boolean", group : "Misc", defaultValue : null},
+			
+			/**
+			 * Indicates whether “Update” is active
+			 */
+			updateState : {type : "boolean", group : "Misc", defaultValue : null},
 	
 			/**
 			 * The thing icon uri. Icon will be displayed in Feeder
@@ -155,24 +160,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Closes all popups which might be opened as ActionBar children. These are the more- and follow menu and the feeder popup
-	 *
-	 * @name sap.ui.ux3.ActionBar#closePopups
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	/*================================================================================
-	 *
-	 * This file provides behaviour of control sap.ui.ux3.ActionBar
-	 * 
-	 */
-	
 	
 	
 	/**
@@ -347,29 +334,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 					};
 					//opens or closes the feeder popup
 					oResult.fnActionSelected = function (oEvent, oActionBar) {
+						oActionBar._setUpdateState(!oActionBar.getUpdateState());
 						if (oActionBar._oUpdatePopup.isOpen()) {
 							oActionBar._oUpdatePopup.close();
-							} else {
-								var oDomRef, iTIHeight, iContentHeight;
-								
-								oActionBar._oUpdatePopup.setPosition(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop, oEvent.getSource().getDomRef(), "-8 -13", "none");
-								oActionBar._oUpdatePopup.open();
-								oDomRef = jQuery(oActionBar._oUpdatePopup.getDomRef());
-								iTIHeight = jQuery(window).height();
-								iContentHeight = jQuery(oActionBar.getDomRef()).offset().top;
-								oDomRef.css("top", "auto").css("bottom",(iTIHeight - iContentHeight + 7) + "px");
-								jQuery.sap.delayedCall(1000, this, function() {
-									jQuery.sap.focus(oActionBar._feeder.getFocusDomRef());
-								});
-								
-							}
+						} else {
+							var oDomRef, iTIHeight, iContentHeight;
+							
+							oActionBar._oUpdatePopup.setPosition(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop, oEvent.getSource().getDomRef(), "-8 -13", "none");
+							oActionBar._oUpdatePopup.open();
+							oDomRef = jQuery(oActionBar._oUpdatePopup.getDomRef());
+							iTIHeight = jQuery(window).height();
+							iContentHeight = jQuery(oActionBar.getDomRef()).offset().top;
+							oDomRef.css("top", "auto").css("bottom",(iTIHeight - iContentHeight + 7) + "px");
+							jQuery.sap.delayedCall(1000, this, function() {
+								jQuery.sap.focus(oActionBar._feeder.getFocusDomRef());
+							});
+							
+						}
+						oActionBar._updateSocialActionDomRef(oResult);
 					};
-					
 					oResult.fnExit = function( oActionBar) {
 						if (oActionBar._oUpdatePopup) {
 							oActionBar._oUpdatePopup.destroy();
 							oActionBar._oUpdatePopup = null;
 						}
+					};
+					oResult.fnCalculateState = function ( oActionBar ) {
+						var result = null;
+						if (oActionBar.getUpdateState()) {
+							result = "Selected";
+						}
+						return result;
 					};
 				break;
 			case this.mActionKeys.Follow:
@@ -570,7 +565,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				content.addClass("sapUiUx3ActionBarAction");
 				content.addClass(oSocialAction.fnCalculateState(this));
 			}
-			if (oSocialAction.name == this.mActionKeys.Flag || oSocialAction.name == this.mActionKeys.Favorite) {
+			if (oSocialAction.name == this.mActionKeys.Update || oSocialAction.name == this.mActionKeys.Flag || oSocialAction.name == this.mActionKeys.Favorite) {
 				content.attr("aria-pressed", oSocialAction.fnCalculateState(this) == "Selected" ? "true" : "false");
 			}
 			if (oSocialAction.isMenu) {
@@ -646,7 +641,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Private method _setShowSocialActionProperty to be used within these setters
 	 */
 	
-	/**
+	/*
 	 * Sets follow state and triggering re-rendering
 	 *
 	 * @param oFollowState new state
@@ -664,7 +659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	
 	
 	 
-	 /**
+	/*
 	 * Shows or hides standard button 'Update' on toolbar
 	 *
 	 * @param bFlag show or hide this social action on the toolbar
@@ -676,7 +671,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 	};
 	
-	/**
+	/*
 	 * Shows or hides standard button 'Follow' on toolbar
 	 *
 	 * @param bFlag show or hide this social action on the toolbar
@@ -688,7 +683,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 	};
 	
-	/**
+	/*
 	 * Shows or hides standard button 'Flag' on toolbar
 	 *
 	 * @param bFlag show or hide this social action on the toolbar
@@ -700,10 +695,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 	};
 	
-	/**
+	/*
 	 * Shows or hides standard button 'Favorite' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowFavorite = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Favorite), bFlag);
@@ -712,10 +707,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 	};
 	
-	/**
+	/*
 	 * Shows or hides standard button 'Open' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowOpen = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Open), bFlag);
@@ -749,6 +744,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 	
 	/**
+	 * Sets update state without triggering re-rendering
+	 *
+	 * @param oUpdateState new state
+	 * @private
+	 */
+	ActionBar.prototype._setUpdateState = function(oUpdateState) {
+		// supress rerendering
+		this.setProperty("updateState", oUpdateState, true);
+		return this;
+	};
+	/**
 	 * Sets favorite state without triggering re-rendering
 	 *
 	 * @param oFavoriteState new state
@@ -774,7 +780,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 	};
 	
-	/**
+	/*
 	 * Sets the minimum width of ActionBar's the social actions part: 
 	 * business action controls have to be rendered outside this area
 	 *
@@ -788,14 +794,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 	};
 	
-	/**
+	/*
 	 * Renders business actions as menu items of the 'Other Actions' 
 	 * toolbar button if 'bFlag' is true. Otherwise, 'Other Actions' toolbar button disappears and 
 	 * business actions are rendered as individual buttons.
 	 *
-	 * @param bFlag If true, business actions are rendered as menu items of the 'Other Actions' 
-	 *		  toolbar button. Otherwise, 'Other Actions' toolbar button disappears and 
-	 * 		  business actions are rendered as individual buttons.
+	 * @param {boolean} bFlag If true, business actions are rendered as menu items of the 'Other Actions' 
+	 *        toolbar button. Otherwise, 'Other Actions' toolbar button disappears and 
+	 *        business actions are rendered as individual buttons.
 	 */
 	ActionBar.prototype.setAlwaysShowMoreMenu = function(bFlag) {
 		var bOldValue = this.getProperty("alwaysShowMoreMenu");
@@ -830,6 +836,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * Closes all popups which might be opened as ActionBar children
 	 * These are the more- and follow menu and the feeder popup
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionBar.prototype.closePopups = function() {
 		if (this._oUpdatePopup) {

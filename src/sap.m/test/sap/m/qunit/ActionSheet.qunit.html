@@ -60,10 +60,10 @@
 					start();
 				},
 				beforeClose: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
 				},
 				afterClose: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "hidden", "ActionSheet should be hidden before it's opened");
+					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
 					ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
 					start();
 				}
@@ -261,7 +261,7 @@
 					var spyOfRepositionProxy = sinon.spy(oAC._parent, "_fnOrientationChange");
 
 					//simulates an orientation change
-					oAC._parent.$().width(oAC._parent.$().width()-10);
+					oAC._parent._onResize();
 
 					setTimeout(function(){
 						equal(spyOfReposition.callCount, 0, "_reposition method shouldn't be called");
@@ -307,7 +307,14 @@
 			
 			module("keyboard handling")
 
-			/* asyncTest('PageDown keyboard handling mobile phone', function(){
+			asyncTest('PageDown keyboard handling mobile phone', function(){
+				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+						// this test is not supported by IE9
+						expect(0);
+						start();
+						return;
+				}
+				
 				var oSystem = {
 						desktop: false,
 						phone: true,
@@ -360,7 +367,7 @@
 					]
 				});
 				
-				oButton.placeAt('uiArea');
+				page.addContent(oButton);
 				sap.ui.getCore().applyChanges();
 				oButton.firePress();
 				
@@ -379,7 +386,7 @@
 					oButton.destroy();
 					oActionSheet.destroy();
 				}, 500)
-			}); */
+			}); 
 			
 			asyncTest('PageDown keyboard handling desktop', function(){
 				var oSystem = {
@@ -433,7 +440,7 @@
 					]
 				});
 				
-				oButton.placeAt('uiArea');
+				page.addContent(oButton);
 				sap.ui.getCore().applyChanges();
 				oButton.firePress();
 				
@@ -503,7 +510,7 @@
 					]
 				});
 				
-				oButton.placeAt('uiArea');
+				page.addContent(oButton);
 				sap.ui.getCore().applyChanges();
 				oButton.firePress();
 				
@@ -527,16 +534,21 @@
 				}, 500)
 		
 			});
+			
+			QUnit.done(function() {
+				// hide the content so that the QUnit results can be seen
+				jQuery("#content").css('height', '0');
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
 		<div id="contentHolder"></div>
+		<div id="uiArea"></div>
+		<div id="content"></div>
 		<h1 id="qunit-header">qUnit Page for sap.m.ActionSheet</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-		<div id="uiArea"></div>
-		<div id="content"></div>
 
 	</body>
 </html>

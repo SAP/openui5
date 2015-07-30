@@ -1,0 +1,23 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_BPRoleSet('01')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_BPRoleSet('01')",
+						"type" : "GWSAMPLE_BASIC.VH_BPRole"
+					},
+					"BpRole" : "01",
+					"Shorttext" : "Customer"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_BPRoleSet('02')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_BPRoleSet('02')",
+						"type" : "GWSAMPLE_BASIC.VH_BPRole"
+					},
+					"BpRole" : "02",
+					"Shorttext" : "Supplier"
+				}]
+	}
+}

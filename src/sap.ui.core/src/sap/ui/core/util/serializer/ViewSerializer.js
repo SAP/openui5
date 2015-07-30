@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSerializer', './Serializer', './XMLViewSerializer'],
-	function(jQuery, EventProvider, HTMLViewSerializer, Serializer, XMLViewSerializer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSerializer', './XMLViewSerializer'],
+	function(jQuery, EventProvider, HTMLViewSerializer, XMLViewSerializer) {
 	"use strict";
 
 
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.util.serializer.ViewSerializer
+	 * @alias sap.ui.core.util.serializer.ViewSerializer
 	 * @experimental Since 1.15.1. The ViewSerializer is still under construction, so some implementation details can be changed in future.
 	 */
 	var ViewSerializer = EventProvider.extend("sap.ui.core.util.serializer.ViewSerializer", /** @lends sap.ui.core.util.serializer.ViewSerializer.prototype */
@@ -39,8 +39,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * Serializes all views into XML.
 	 * 
 	 * @returns {map} the serialized views. The keys are the view name.
-	 * @name sap.ui.core.util.serializer.ViewSerializer#serializeToXML
-	 * @function
 	 */
 	ViewSerializer.prototype.serializeToXML = function () {
 		return this.serialize("XML");
@@ -50,8 +48,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * Serializes all views into HTML.
 	 * 
 	 * @returns {map} the serialized views. The keys are the view name.
-	 * @name sap.ui.core.util.serializer.ViewSerializer#serializeToHTML
-	 * @function
 	 */
 	ViewSerializer.prototype.serializeToHTML = function () {
 		return this.serialize("HTML");
@@ -63,8 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * If left empty the content is left as it was.
 	 * 
 	 * @returns {map} the serialized views. The keys are the view name.
-	 * @name sap.ui.core.util.serializer.ViewSerializer#serialize
-	 * @function
 	 */
 	ViewSerializer.prototype.serialize = function (sConvertToViewType) {
 		this._mViews = {};
@@ -90,8 +84,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * @param {sap.ui.core.Control|sap.ui.core.UIArea} oControl the control to serialize
 	 * @returns {map} the serialized views. The keys are the view name.
 	 * @private
-	 * @name sap.ui.core.util.serializer.ViewSerializer#_serializeRecursive
-	 * @function
 	 */
 	ViewSerializer.prototype._serializeRecursive = function (oControl) {
 	
@@ -143,8 +135,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * @param {sap.ui.core.mvc.View|sap.ui.core.Control|sap.ui.core.UIArea} oView the instance of the view. Needed to determine the type of view serializer.
 	 * @returns {sap.ui.core.util.serializer.XMLViewSerializer|sap.ui.core.util.serializer.HTMLViewSerializer} returns the corresponding serializer for the view type. Returns null when control is not a view.. 
 	 * @private
-	 * @name sap.ui.core.util.serializer.ViewSerializer#_getViewSerializer
-	 * @function
 	 */
 	ViewSerializer.prototype._getViewSerializer = function (oView, sType) {
 	
@@ -157,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	
 				// double check that the function is on the controller
 				var oController = oView.getController();
-				if (oController[sHandlerName]) {
+				if (oController[sHandlerName] || sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
 					return sHandlerName;
 				}
 			}
@@ -205,4 +195,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 
 	return ViewSerializer;
 
-}, /* bExport= */ true);
+});

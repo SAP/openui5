@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
+	function(jQuery, ToolsAPI) {
 	"use strict";
 
 
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @name sap.m.Support
 	 */
 	var Support = (function($, document) {
-	
+
 		var dialog, startTime, isEventRegistered, lastTouchUID;
 		var timeDiff = 0;
 		var minHoldTime = 3000; // 3s(3000ms) two-finger hold time
@@ -63,13 +63,13 @@ sap.ui.define(['jquery.sap.global'],
 				infoText : "Ent-to-End trace is running in the background." +
 							" Navigate to the URL that you would like to trace." +
 							" The result of the trace will be shown in dialog after the trace is terminated.",
-				infoDuration : 5000 // 5 sec.			
+				infoDuration : 5000 // 5 sec.
 			},
 			controlIDs = {
 				dvLoadedLibs 	: "LoadedLibs",
 				dvLoadedModules : "LoadedModules"
 		};
-	
+
 		// copied from core
 		function line(buffer, right, border, label, content) {
 			buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", jQuery.sap.escapeHTML(label), "</label><br>");
@@ -80,14 +80,14 @@ sap.ui.define(['jquery.sap.global'],
 			buffer.push($.sap.escapeHTML(ctnt));
 			buffer.push("</td></tr>");
 		}
-	
+
 		// copied from core
 		function multiline(buffer, right, border, label, content) {
 			line(buffer, right, border, label, function(buffer) {
 				buffer.push("<table class='sapMSupportTable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody>");
 				$.each(content, function(i, v) {
 					var val = "";
-					if (v) {
+					if (v !== undefined && v !== null) {
 						if (typeof (v) == "string" || typeof (v) == "boolean" || ($.isArray(v) && v.length == 1)) {
 							val = v;
 						} else if (($.isArray(v) || $.isPlainObject(v)) && window.JSON) {
@@ -99,42 +99,26 @@ sap.ui.define(['jquery.sap.global'],
 				buffer.push("</tbody></table>");
 			});
 		}
-	
+
 		// copied from core
 		function getTechnicalContent() {
-			var html,
-				oConfig = sap.ui.getCore().getConfiguration();
-			var oLoadedLibs = {};
-			jQuery.each(sap.ui.getCore().getLoadedLibraries(), function(sName, oLibInfo) {
-				oLoadedLibs[sName] = oLibInfo.version;
-			});
+			var oCfg = ToolsAPI.getFrameworkInformation();
 			oData = {
-					version: sap.ui.version,
-					build: sap.ui.buildinfo.buildtime,
-					change: sap.ui.buildinfo.lastchange,
-					useragent: navigator.userAgent,
-					docmode: document.documentMode ||  "",
-					debug: $.sap.debug(),
-					bootconfig: window["sap-ui-config"] || {},
-					modules: $.sap.getAllDeclaredModules(),
-					loadedlibs: oLoadedLibs,
-					uriparams: $.sap.getUriParameters().mParams,
-					appurl: window.location.href,
-					config: {
-						theme: oConfig.getTheme(),
-						language: oConfig.getLanguage(),
-						formatLocale: oConfig.getFormatLocale(),
-						accessibility: "" + oConfig.getAccessibility(),
-						animation: "" + oConfig.getAnimation(),
-						rtl: "" + oConfig.getRTL(),
-						debug: "" + oConfig.getDebug(),
-						inspect: "" + oConfig.getInspect(),
-						originInfo: "" + oConfig.getOriginInfo(),
-						noDuplicateIds: "" + oConfig.getNoDuplicateIds()
-					}
+				version: oCfg.commonInformation.version,
+				build: oCfg.commonInformation.buildTime,
+				change: oCfg.commonInformation.lastChange,
+				useragent: oCfg.commonInformation.userAgent,
+				docmode: oCfg.commonInformation.documentMode,
+				debug: oCfg.commonInformation.debugMode,
+				bootconfig: oCfg.configurationBootstrap,
+				config:  oCfg.configurationComputed,
+				loadedlibs: oCfg.loadedLibraries,
+				modules: oCfg.loadedModules,
+				uriparams: oCfg.URLParameters,
+				appurl: oCfg.commonInformation.applicationHREF
 			};
-	
-			html = ["<table class='sapUiSelectable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody class='sapUiSelectable'>"];
+
+			var html = ["<table class='sapUiSelectable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody class='sapUiSelectable'>"];
 			line(html, true, true, "SAPUI5 Version", function(buffer) {
 				buffer.push(oData.version, " (built at ", oData.build, ", last change ", oData.change, ")");
 			});
@@ -163,7 +147,7 @@ sap.ui.define(['jquery.sap.global'],
 				buffer.push("<textarea id='" + buildControlId(e2eTraceConst.taContent) +  "' class='sapUiSupportTxtArea sapUiSelectable' readonly ></textarea>");
 				buffer.push("</div>");
 			});
-	
+
 			line(html, true, true, "Loaded Libraries", function(buffer) {
 				buffer.push("<ul class='sapUiSelectable'>");
 				$.each(oData.loadedlibs, function(i, v) {
@@ -173,32 +157,32 @@ sap.ui.define(['jquery.sap.global'],
 				});
 				buffer.push("</ul>");
 			});
-			
+
 			line(html, true, true, "Loaded Modules", function(buffer) {
 				buffer.push("<div class='sapUiSupportDiv sapUiSelectable' id='" + buildControlId(controlIDs.dvLoadedModules) + "' />");
 			});
-		
+
 			html.push("</tbody></table>");
-	
+
 			return new sap.ui.core.HTML({
 				content : html.join("").replace(/\{/g, "&#123;").replace(/\}/g, "&#125;")
 			});
 		}
-		
+
 		function buildControlId(controlId) {
 			return dialog.getId() + "-" + controlId;
 		}
-		
+
 		function fillPanelContent(panelId, arContent) {
-			
+
 			var panelHeader = "Modules";
 			var libsCount = 0, arDivContent = [];
-			
+
 			libsCount = arContent.length;
 			$.each(arContent.sort(), function(i, module) {
 				arDivContent.push(new sap.m.Label({ text : " - " + module }).addStyleClass("sapUiSupportPnlLbl"));
 			});
-			
+
 			// insert content into div placeholders
 			var objPanel = new sap.m.Panel({
 				expandable : true,
@@ -212,10 +196,10 @@ sap.ui.define(['jquery.sap.global'],
 				}),
 				content : arDivContent
 			});
-	
+
 			objPanel.placeAt( buildControlId(panelId), "only");
 		}
-		
+
 		// setup dialog elements and bind some events
 		function setupDialog() {
 			// setup e2e values as log level and content
@@ -225,42 +209,42 @@ sap.ui.define(['jquery.sap.global'],
 			if (dialog.e2eLogLevel) {
 				dialog.$(e2eTraceConst.selLevel).val(dialog.e2eLogLevel);
 			}
-			
+
 			fillPanelContent(controlIDs.dvLoadedModules, oData.modules);
-			
-			
+
+
 			// bind button Start event
 			dialog.$(e2eTraceConst.btnStart).one("tap", function() {
-				
+
 				dialog.e2eLogLevel = dialog.$(e2eTraceConst.selLevel).val();
 				dialog.$(e2eTraceConst.btnStart).addClass("sapUiSupportRunningTrace").text("Running...");
 				dialog.traceXml = "";
 				dialog.$(e2eTraceConst.taContent).text("");
-	
+
 				sap.ui.core.support.trace.E2eTraceLib.start(dialog.e2eLogLevel, function(traceXml) {
 					dialog.traceXml = traceXml;
 				});
-				
-				// show info message about the E2E trace activation			
+
+				// show info message about the E2E trace activation
 				sap.m.MessageToast.show(e2eTraceConst.infoText, {duration: e2eTraceConst.infoDuration});
-				
+
 				//close the dialog, but keep it for later use
 				dialog.close();
 			});
 		}
-	
+
 		// get or create dialog instance and return
 		function getDialog() {
 			if (dialog) {
 				return dialog;
 			}
-	
+
 			$.sap.require("sap.m.Dialog");
 			$.sap.require("sap.m.Button");
 			$.sap.require("sap.ui.core.HTML");
 			$.sap.require("sap.m.MessageToast");
 			$.sap.require("sap.ui.core.support.trace.E2eTraceLib");
-	
+
 			dialog = new sap.m.Dialog({
 				title : "Technical Information",
 				horizontalScrolling: true,
@@ -279,29 +263,29 @@ sap.ui.define(['jquery.sap.global'],
 					Support.on();
 				}
 			}).addStyleClass("sapMSupport");
-	
+
 			return dialog;
 		}
-		
-		
-		
+
+
+
 		//function is triggered when a touch is detected
 		function onTouchStart(oEvent) {
 			if (oEvent.touches) {
 				var currentTouches = oEvent.touches.length;
-				
+
 				if (currentTouches > maxFingersAllowed) {
 					document.removeEventListener('touchend', onTouchEnd);
 					return;
 				}
-				
+
 				switch (currentTouches) {
-					
+
 					case holdFingersNumber:
 						startTime = Date.now();
 						document.addEventListener('touchend', onTouchEnd);
 						break;
-						
+
 					case maxFingersAllowed:
 						if (startTime) {
 							timeDiff = Date.now() - startTime;
@@ -311,23 +295,23 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}
 		}
-	
+
 		//function is triggered when a touch is removed e.g. the user’s finger is removed from the touchscreen.
 		function onTouchEnd(oEvent) {
 			document.removeEventListener('touchend', onTouchEnd);
-			
+
 			// Check if two fingers are holded for 3 seconds or more and after that it`s tapped with a third finger
 			if (timeDiff > minHoldTime
 					&& oEvent.touches.length === holdFingersNumber
 					&& oEvent.changedTouches.length === releasedFingersNumber
 					&& oEvent.changedTouches[0].identifier === lastTouchUID) {
-				
+
 						timeDiff = 0;
 						startTime = 0;
 						show();
 			}
 		}
-	
+
 		function show() {
 			var container = getDialog();
 			container.removeAllAggregation("content");
@@ -335,7 +319,7 @@ sap.ui.define(['jquery.sap.global'],
 			dialog.open();
 			setupDialog();
 		}
-	
+
 		return ({
 			/**
 			 * Enables support.
@@ -352,7 +336,7 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				return this;
 			},
-	
+
 			/**
 			 * Disables support.
 			 *
@@ -368,14 +352,26 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				return this;
 			},
-	
+
 			open : function() {
 				show();
+			},
+
+			/**
+			 * Returns if event is registered or not.
+			 *
+			 * @returns {boolean}
+			 * @protected
+			 * @name sap.m.Support.isEventRegistered
+			 * @function
+			 */
+			isEventRegistered : function() {
+				return isEventRegistered;
 			}
 		}).on();
-	
+
 	}(jQuery, document));
-	
+
 
 	return Support;
 

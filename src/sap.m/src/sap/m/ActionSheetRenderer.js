@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ActionSheet renderer. 
-	 * @static
+	 * ActionSheet renderer. 
+	 * @namespace
 	 */
 	var ActionSheetRenderer = {
 	};
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ActionSheetRenderer.render = function(oRm, oControl){
-		var aActionButtons = oControl.getButtons(),
+		var aActionButtons = oControl._getAllButtons(),
 			i, bMixedButtons, oButton;
 		
 		for (i = 0 ; i < aActionButtons.length ; i++) {

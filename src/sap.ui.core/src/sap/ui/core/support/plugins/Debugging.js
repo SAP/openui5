@@ -3,14 +3,11 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Debugging
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/support/Plugin'],
-	function(jQuery, RenderManager, Plugin) {
-	"use strict";
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
+	function(jQuery, Plugin) {
+		"use strict";
 
 
-	
-	
-	
 		var $ = jQuery;
 		var Debugging = Plugin.extend("sap.ui.core.support.plugins.Debugging", {
 			constructor: function(oSupportStub) {
@@ -22,17 +19,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 				}
 	
 				this._oStub = oSupportStub;
-	
+
 				this._aEventIds = [
 					this.getId() + "ReceiveClasses",
-					this.getId() + "ReceiveClassMethods"
+					this.getId() + "ReceiveClassMethods",
+					this.getId() + "SaveUrlIfNew",
+					this.getId() + "AppendUserUrls"
 				];
 	
 				this._breakpointId = "sapUiSupportBreakpoint";
+				this._localStorageId = "sapUiSupportLocalStorage";
+				this._techInfoId = "sapUiSupportTechInfo";
 	
 				this._aClasses = [];
 				this._mAddedClasses = {};
 				this._sSelectedClass = "";
+				this._mRebootUrls = {};
 	
 			}
 		});
@@ -42,6 +44,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 	
 			if (this.isToolPlugin()) {
 				var _$ = this.$();
+				_$.on("click", '#sapUiSupportDebuggingReboot', $.proxy(this._onUseOtherUI5Version, this));
+				_$.on("change", '#sapUiSupportDebuggingRebootSelect', this._onUI5VersionDropdownChanged);
 				_$.on("keyup", '#sapUiSupportDebuggingClassInput', $.proxy(this._autoComplete, this));
 				_$.on("blur", '#sapUiSupportDebuggingClassInput', $.proxy(this._updateSelectOptions, this));
 				_$.on("change", '#sapUiSupportDebuggingClassSelect', $.proxy(this._selectOptionsChanged, this));
@@ -55,6 +59,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 				_$.on("click", '#sapUiSupportDebuggingBreakpointList li img.remove-breakpoint', $.proxy(this._onRemoveBreakpoint, this));
 	
 				this.renderContainer();
+
+				this._populateRebootUrls();
 	
 				this._oStub.sendEvent(this._breakpointId + "RequestClasses", {
 					callback: this.getId() + "ReceiveClasses"
@@ -87,6 +93,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		Debugging.prototype.renderContainer = function() {
 	
 			var rm = sap.ui.getCore().createRenderManager();
+	
+			rm.write('<div id="sapUiSupportDebuggingRebootContainer" class="sapUiSupportDottedContainer">');
+			rm.write('<div>Boot application with different UI5 version on next reload:</div>');
+			rm.write('<select id="sapUiSupportDebuggingRebootSelect">');
+			rm.write('<option value="none">Disabled (no custom reboot URL)</option>');
+			rm.write('<option value="other" id="sapUiSupportDebuggingRebootOther">Other (enter URL to sap-ui-core.js below)...:</option>');
+			rm.write('</select>');
+			rm.write('<input type="text" id="sapUiSupportDebuggingRebootInput" disabled="disabled"/>');
+			rm.write('<button id="sapUiSupportDebuggingReboot">Activate Reboot URL</button>');
+			rm.write('</div>');
 	
 			rm.write('<div id="sapUiSupportDebuggingClassContainer" class="sapUiSupportDottedContainer"></div>');
 			rm.write('<div id="sapUiSupportDebuggingMethodContainer" class="sapUiSupportDottedContainer"></div>');
@@ -395,8 +411,140 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 			});
 		};
 	
-	
+		/* "reboot with other UI5 core" methods */
+		
+		Debugging.prototype._populateRebootUrls = function() { // checks whether known URLs where UI5 could be booted from are reachable
+
+			// these are the known standard URLs; add them to the dropdown if reachable
+			this._mRebootUrls = {
+				// unfortunately we are not allowed to add the known internal URLs here
+				"https://openui5.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 server",
+				"https://openui5beta.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 PREVIEW server",
+				"https://sapui5.hana.ondemand.com/sdk/resources/sap-ui-core.js": "Public SAPUI5 server",
+				"http://localhost:8080/testsuite/resources/sap-ui-core.js": "Localhost (port 8080), /testsuite ('grunt serve' URL)",
+				"http://localhost:8080/sapui5/resources/sap-ui-core.js": "Localhost (port 8080), /sapui5 (maven URL)"
+			};
+
+			this._testAndAddUrls(this._mRebootUrls);
+
+			// also try any previously entered URLs
+			// need to get them from the domain of the app window
+			// but the app plugins are initialized AFTER the tool popup plugins...
+			var that = this;
+			window.setTimeout(function(){
+				that._oStub.sendEvent(that._localStorageId + "GetItem", {
+					id: "sap-ui-reboot-URLs",
+					callback: that.getId() + "AppendUserUrls"
+				});
+			}, 0);
+		};
+
+		Debugging.prototype._testAndAddUrls = function(mUrls) {
+			var $Other = jQuery("#sapUiSupportDebuggingRebootOther");
+			function createAppendFunction(sUrl) {
+				return function() {
+					// append URL and description to select box
+					var sHtml = "<option value='" + sUrl + "'>" + mUrls[sUrl] + "</option>";
+					$Other.before(sHtml);
+				};
+			}
+
+			// send an async HEAD request to each URL and append URL to the list in case of success
+			for (var sUrl in mUrls) {
+				jQuery.ajax({
+					type: "HEAD",
+					async: true,
+					url: sUrl,
+					success: createAppendFunction(sUrl)
+				});
+			}
+		};
+
+		Debugging.prototype.onsapUiSupportDebuggingAppendUserUrls = function(oEvent) {
+			var sUserUrls = oEvent.getParameter("value"),
+				mUrls = {},
+				aUserUrls = sUserUrls.split(" ");
+
+			for (var i = 0; i < aUserUrls.length; i++) {
+				var sUrl = aUserUrls[i];
+				if (sUrl && !this._mRebootUrls[sUrl]) {
+					mUrls[sUrl] = jQuery.sap.encodeHTML(sUrl) + " (user-defined URL)";
+				}
+			}
+
+			this._testAndAddUrls(mUrls);
+		};
+
+		Debugging.prototype._onUI5VersionDropdownChanged = function() {
+			var sRebootUrl = jQuery("#sapUiSupportDebuggingRebootSelect").val(),
+				$Input = jQuery("#sapUiSupportDebuggingRebootInput");
+
+			if (sRebootUrl === "other") {
+				// enable input field for custom URL
+				$Input.removeAttr("disabled");
+
+			} else {
+				// disable input field and fill the selected URL (if any)
+				$Input.attr("disabled", "disabled");
+				if (sRebootUrl === "none") {
+					$Input.val("");
+				} else {
+					$Input.val(sRebootUrl);
+				}
+			}
+		};
+
+		Debugging.prototype._onUseOtherUI5Version = function() {
+			var sRebootUrl = jQuery("#sapUiSupportDebuggingRebootSelect").val();
+			if (sRebootUrl === "other") {
+				// use content of input field
+				sRebootUrl = jQuery("#sapUiSupportDebuggingRebootInput").val();
+			}
+
+			if (!sRebootUrl || sRebootUrl === "none") {
+				// no custom reboot
+				this._oStub.sendEvent(this._techInfoId + "SetReboot", {
+					rebootUrl: null
+				});
+				/*eslint-disable no-alert */
+				alert("Reboot URL cleared. App will start normally.");
+				/*eslint-enable no-alert */
+			} else {
+				// configure a reboot in the original window
+				this._oStub.sendEvent(this._techInfoId + "SetReboot", {
+					rebootUrl: sRebootUrl
+				});
+
+				// remember this URL in case it is a custom one
+				if (!this._mRebootUrls[sRebootUrl]) {
+					// need to get them from the domain of the app window
+					this._oStub.sendEvent(this._localStorageId + "GetItem", {
+						id: "sap-ui-reboot-URLs",
+						passThroughData: sRebootUrl,
+						callback: this.getId() + "SaveUrlIfNew"
+					});
+				}
+			}
+		};
+
+		/*
+		 * Receives a string containing a list of custom reboot URLs; 
+		 */
+		Debugging.prototype.onsapUiSupportDebuggingSaveUrlIfNew = function(oEvent) {
+			var sUserUrls = oEvent.getParameter("value"),
+				sNewUrl = oEvent.getParameter("passThroughData"),
+				aUserUrls = sUserUrls.split(" ");
+
+			if (jQuery.inArray(sNewUrl, aUserUrls) === -1) {
+				aUserUrls.push(sNewUrl.replace(/ /g,"%20"));
+				
+				this._oStub.sendEvent(this._localStorageId + "SetItem", {
+					id: "sap-ui-reboot-URLs",
+					value: aUserUrls.join(" ")
+				});
+			}
+		};
 
 	return Debugging;
 
-}, /* bExport= */ true);
+});

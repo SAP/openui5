@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * @author Malte Wedel
 	 * @version ${version}
 	 * @public
-	 * @name sap.ui.base.Object
+	 * @alias sap.ui.base.Object
 	 */
 	var BaseObject = Metadata.createClass("sap.ui.base.Object", {
 	
@@ -40,8 +40,6 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	/**
 	 * Destructor method for objects
 	 * @public
-	 * @name sap.ui.base.Object#destroy
-	 * @function
 	 */
 	BaseObject.prototype.destroy = function() {
 	};
@@ -51,8 +49,6 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 *
 	 * @return {sap.ui.base.Interface} the public interface of the object
 	 * @public
-	 * @name sap.ui.base.Object#getInterface
-	 * @function
 	 */
 	BaseObject.prototype.getInterface = function() {
 		// New implementation that avoids the overhead of a dedicated member for the interface
@@ -76,7 +72,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * or {@link sap.ui.base.Object.extend}.
 	 *
 	 * @return {sap.ui.base.Metadata] metadata for the class of the object
-	 * @name sap.ui.base.Object.prototype#getMetadata
+	 * @name sap.ui.base.Object#getMetadata
 	 * @function
 	 * @public
 	 */
@@ -157,8 +153,6 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * @public
 	 * @static
 	 * @deprecated Since 1.3.1. Use the static <code>extend</code> method of the desired base class (e.g. {@link sap.ui.base.Object.extend})
-	 * @name sap.ui.base.Object.defineClass
-	 * @function
 	 */
 	BaseObject.defineClass = function(sClassName, oStaticInfo, FNMetaImpl) {
 		// create Metadata object

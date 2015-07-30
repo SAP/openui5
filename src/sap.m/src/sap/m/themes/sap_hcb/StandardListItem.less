@@ -60,7 +60,7 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 }
 
 .sapMSLIDescription {
-	font-size: 0.875em;
+	font-size: 0.875rem;
 	color: @sapHCStandardFG;
 }
 
@@ -124,6 +124,14 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 	line-height: 4rem;
 }
 
+/* HCB Additional Styles */
+.sap-desktop .sapMSLIIconThumb > .sapMLIBSelectD > .sapMLIBIconDel {
+	border-left: 0.0625rem solid transparent;
+}
+.sap-desktop .sapMSLIIconThumb > .sapMLIBSelectD > .sapMLIBIconDel:hover {
+	border-color: @sapHCStandardFG;
+}
+
 .sapMSLIIconThumb > .sapMLIBContent,
 .sapMSLIDescIcon > .sapMLIBContent{
 	padding: 0.5rem 0 0.5rem 1rem;
@@ -154,9 +162,4 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 	.sapMSLITitleOnly {
 		font-size: @sapMFontMediumSize;
 	}
-}
-
-/* HCB Additional Styles */
-.sapMSLIIconThumb > .sapMLIBSelectD > .sapMLIBIconDel:hover{
-	border-left: 1px solid @sapHCStandardFG;
 }

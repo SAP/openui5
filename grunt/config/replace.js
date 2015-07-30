@@ -5,8 +5,11 @@ module.exports = function(grunt, config) {
 
 		target: {
 
-			// replace patterns in all js/css files in the target resources dir
-			src: [ 'target/openui5/resources/**/*.{js,css}' ],
+			// replace patterns in all relevant files in the target resources dir
+			src: [
+				'target/openui5-*/resources/**/*.{js,css,less,json,xml,html}',
+				'target/openui5-*/resources/**/.*'
+			],
 
 			// overwrite target files instead of copying into a dist dir
 			overwrite: true,
@@ -15,11 +18,11 @@ module.exports = function(grunt, config) {
 
 				// ${copyright} or @copyright@
 				{
-					from: /^(.*)(?:\$\{copyright\}|@copyright@)/gm,
+					from: /(?:\$\{copyright\}|@copyright@)/g,
 					to:
-						'$1SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)' + '\n' +
-						'$1(c) Copyright 2009-' + new Date().getFullYear() + ' SAP SE or an SAP affiliate company.' + '\n' +
-						'$1Licensed under the Apache License, Version 2.0 - see LICENSE.txt.'
+						'UI development toolkit for HTML5 (OpenUI5)' + '\n' +
+						' * (c) Copyright 2009-' + new Date().getFullYear() + ' SAP SE or an SAP affiliate company.' + '\n' +
+						' * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.'
 				},
 
 				// ${version} or @version@
@@ -31,8 +34,15 @@ module.exports = function(grunt, config) {
 				// ${buildtime} or @buildtime@
 				{
 					from: /(?:\$\{buildtime\}|@buildtime@)/g,
-					to: new Date().toISOString()
+					to: '<%= buildtime %>'
+				},
+
+				// ${lastchange} or @lastchange@
+				{
+					from: /(?:\$\{lastchange\}|@lastchange@)/g,
+					to: '<%= lastchange %>'
 				}
+
 			]
 		}
 

@@ -4,95 +4,86 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="panelBoxContainer sapUiFioriObjectPage"
 		width="100%" >
 		<l:content>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Reverse, horizontal" />
+						<Title level="H2" text="Reverse, horizontal" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					direction="RowReverse"
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" />
+						<Button text="2" type="Reject" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Top to bottom, vertical" />
+						<Title level="H2" text="Top to bottom, vertical" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					direction="Column"
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" />
+						<Button text="2" type="Reject" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Bottom to top, reverse vertical" />
+						<Title level="H2" text="Bottom to top, reverse vertical" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					direction="ColumnReverse"
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" />
+						<Button text="2" type="Reject" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Arbitrary flex item order" />
+						<Title level="H2" text="Arbitrary flex item order" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+						<Button text="1" width="100%" type="Emphasized" >
 							<layoutData>
 								<FlexItemData order="2" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png">
+						</Button>
+						<Button text="2" width="100%" type="Reject" >
 							<layoutData>
 								<FlexItemData order="3" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png">
+						</Button>
+						<Button text="3" width="100%" type="Accept" >
 							<layoutData>
 								<FlexItemData order="1" />
 							</layoutData>
-						</Image>
+						</Button>
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 		</l:content>

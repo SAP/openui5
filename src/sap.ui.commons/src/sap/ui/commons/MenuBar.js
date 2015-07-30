@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.MenuBar
+	 * @alias sap.ui.commons.MenuBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MenuBar = Control.extend("sap.ui.commons.MenuBar", /** @lends sap.ui.commons.MenuBar.prototype */ { metadata : {
@@ -39,11 +39,6 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 			 * When the MenuBar is not enabled, automatically all single menu items are also displayed as 'disabled'.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Specifies the width of the MenuBar
@@ -68,33 +63,42 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	/*Ensure MenuItemBase is loaded (incl. loading of unified library)*/
 	
 	MenuItem.extend("sap.ui.commons._DelegatorMenuItem", {
-	  constructor : function(oAlterEgoItm) {
-	    MenuItem.apply(this);
-	    this.oAlterEgoItm = oAlterEgoItm;
-	    var that = this;
-	    this.oAlterEgoItm.getSubmenu().getRootMenu = function(){
-				return that.getParent();
-	    };
-	  },
-	  exit : function () {
-		this.oAlterEgoItm.getSubmenu().getRootMenu = Menu.prototype.getRootMenu;
-	    this.oAlterEgoItm = null;
-	  },
-	  getText : function() {
-	    return this.oAlterEgoItm.getText();
-	  },
-	  getIcon : function() {
-		  return this.oAlterEgoItm.getIcon();
-	  },
-	  getEnabled : function() {
-		  return this.oAlterEgoItm.getEnabled();
-	  },
-	  getVisible : function() {
-		  return this.oAlterEgoItm.getVisible();
-	  },
-	  getSubmenu : function() {
-		  return this.oAlterEgoItm.getSubmenu();
-	  }
+		constructor: function(oAlterEgoItm) {
+			MenuItem.apply(this);
+			this.oAlterEgoItm = oAlterEgoItm;
+			this.bNoSubMenu = true;
+
+			var oSubmenu = this.oAlterEgoItm.getSubmenu();
+			if (oSubmenu) {
+				var that = this;
+				oSubmenu.getRootMenu = function() {
+					return that.getParent();
+				};
+				this.bNoSubMenu = false;
+			}
+		},
+		exit: function() {
+			if (!this.bNoSubMenu) {
+				this.oAlterEgoItm.getSubmenu().getRootMenu = Menu.prototype.getRootMenu;
+			}
+			this.bNoSubMenu = true;
+			this.oAlterEgoItm = null;
+		},
+		getText: function() {
+			return this.oAlterEgoItm.getText();
+		},
+		getIcon: function() {
+			return this.oAlterEgoItm.getIcon();
+		},
+		getEnabled: function() {
+			return this.oAlterEgoItm.getEnabled();
+		},
+		getVisible: function() {
+			return this.oAlterEgoItm.getVisible();
+		},
+		getSubmenu: function() {
+			return this.oAlterEgoItm.getSubmenu();
+		}
 	});
 	
 	(function() {
@@ -102,6 +106,7 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	
 	/**
 	 * Initialize this control.
+	 * 
 	 * @private
 	 */
 	MenuBar.prototype.init = function() {
@@ -241,7 +246,7 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
-	sap.ui.commons.MenuButton.prototype.onmouseout = function(oEvent) {
+	MenuBar.prototype.onmouseout = function(oEvent) {
 		var oMenuItem = _getMenuItem(this, oEvent);
 		if (oMenuItem === "ovrflw") {
 			var jRef = get$Item(this, oEvent);
@@ -374,6 +379,8 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 					if (oMenu && !oMenuItem._bSkipOpen) {
 						var eDock = sap.ui.core.Popup.Dock;
 						oMenu.open(bWithKeyboard, jRef.get(0), eDock.BeginTop, eDock.BeginBottom, jRef.get(0));
+					} else if (!oMenu) {
+						oMenuItem.fireSelect({item: oMenuItem});
 					}
 				}
 			}
@@ -474,6 +481,8 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 					if (!(oItem instanceof sap.ui.commons._DelegatorMenuItem)) {
 						var oItemRootMenu = Menu.prototype.getRootMenu.apply(oItem.getParent());
 						oItemRootMenu.fireItemSelect({item: oItem});
+					} else if (oItem.bNoSubMenu && oItem instanceof sap.ui.commons._DelegatorMenuItem) {
+						oItem.oAlterEgoItm.fireSelect({item: oItem.oAlterEgoItm});
 					}
 				});
 			}

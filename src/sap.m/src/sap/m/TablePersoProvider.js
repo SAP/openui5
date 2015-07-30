@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @abstract
 	 * @author SAP
 	 * @version ${version}
-	 * @name sap.m.TablePersoProvider
+	 * @alias sap.m.TablePersoProvider
 	 */
 	var TablePersoProvider = ManagedObject.extend("sap.m.TablePersoProvider", /** @lends sap.m.TablePersoProvider */
 	
@@ -42,8 +42,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	/**
 	 * Initializes the TablePersoProvider instance after creation.
 	 *
-	 * @function
-	 * @name sap.m.TablePersoDialog.prototype.init
 	 * @protected
 	 */
 	TablePersoProvider.prototype.init = function() {

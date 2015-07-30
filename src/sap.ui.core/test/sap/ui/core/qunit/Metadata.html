@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Metadata - sap.ui.base</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true" >
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+			// define new type for testing
+			var TestClass = sap.ui.base.Metadata.createClass("sap.ui.core.TestClass", {
+				metadata : {
+					// ---- control specific ----
+					library : "sap.ui.core",
+					publicMethods : ["a1", "a2", "a2"]	// duplicate present
+				}
+			});
+
+			module("Basic");
+
+			test("Lazy calculation of public method name uniqueness", function() {
+				var testObj = new TestClass();
+				var metaData = testObj.getMetadata();
+
+				// initial state checks
+				ok(!metaData._bInterfacesUnique, "dirty flag must be set");
+				deepEqual(metaData._aPublicMethods, ["a1", "a2", "a2"], "duplicates must be present before getting")
+
+				// get public methods and assert correctness
+				deepEqual(metaData.getAllPublicMethods(), ["a1", "a2"], "obj must have 2 public methods");
+				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+			});
+
+			test("Lazy calculation of public method name uniqueness after addition", function() {
+				var testObj = new TestClass();
+				var metaData = testObj.getMetadata();
+
+				// initial state checks
+				deepEqual(metaData.getAllPublicMethods(), ["a1", "a2"], "obj must have 2 public methods");
+				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+
+				// add a duplicate and non-duplicate method name
+				metaData.addPublicMethods(["a2", "a3"]);
+				deepEqual(metaData.getAllPublicMethods(), ["a1", "a2", "a3"], "obj must have 3 public methods");
+				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+
+				// add a duplicate and non-duplicate method name as arguments
+				metaData.addPublicMethods("a3", "a4");
+				deepEqual(metaData.getAllPublicMethods(), ["a1", "a2", "a3", "a4"], "obj must have 4 public methods");
+				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for sap.ui.base.Metadata</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+	</body>
+</html>

@@ -2,26 +2,26 @@
 	controllerName="sap.m.sample.FeedInput.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Label text="Without Icon" class="sapUiExploredFeedInputMargin" />
+	<Label text="Without Icon" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
 		post="onPost"
 		showIcon="false" />
 		
-	<Label text="With Icon Placeholder" class="sapUiExploredFeedInputMargin" />
+	<Label text="With Icon Placeholder" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
 		post="onPost"
 		showIcon="true" />
 
-	<Label text="With Icon" class="sapUiExploredFeedInputMargin" />
+	<Label text="With Icon" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
 		post="onPost"
 		showIcon="true"
-		icon="test-resources/sap/ui/demokit/explored/img/Man_12.png" />
+		icon="http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg" />
 
-	<Label text="Disabled" class="sapUiExploredFeedInputMargin" />
+	<Label text="Disabled" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
 		post="onPost"
 		enabled="false"
 		showIcon="true"
-		icon="test-resources/sap/ui/demokit/explored/img/Man_12.png" />
+		icon="http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg" />
 </mvc:View>

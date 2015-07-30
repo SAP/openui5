@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.ExactBrowser
+	 * @alias sap.ui.ux3.ExactBrowser
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactBrowser = Control.extend("sap.ui.ux3.ExactBrowser", /** @lends sap.ui.ux3.ExactBrowser.prototype */ { metadata : {
@@ -43,11 +43,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 			 * Title text in the header of the Exact Browser.
 			 */
 			headerTitle : {type : "string", group : "Misc", defaultValue : null},
-	
-			/**
-			 * Invisible ExactBrowsers are not rendered.
-			 */
-			visible : {type : "boolean", defaultValue : true},
 	
 			/**
 			 * The order how the sublists of the top level list should be displayed.
@@ -152,15 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 	}});
 	
 	
-	/**
-	 * Deselects all currently selected attributes and closes all attribute lists.
-	 *
-	 * @name sap.ui.ux3.ExactBrowser#reset
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	
 	(function() {
@@ -337,6 +324,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 		};
 	
 	
+
+		/**
+		 * Deselects all currently selected attributes and closes all attribute lists.
+		 *
+		 * @type void
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 		ExactBrowser.prototype.reset = function() {
 			this._rootList._closeAll();
 		};

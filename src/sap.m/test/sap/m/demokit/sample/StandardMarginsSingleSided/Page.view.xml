@@ -1,0 +1,13 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.StandardMarginsSingleSided.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Panel width="auto" class="sapUiLargeMarginBegin sapUiLargeMarginBottom">
+	    <content>
+	      	<Text text="This panel uses margin classes 'sapUiLargeMarginBegin' and 'sapUiLargeMarginBottom' to clear a 48px (3rem) space to the left and bottom." class="sapMH4FontSize"/>
+	      	<Text text="Since panels have a default width of 100%, horizontal margins are not displayed appropriately. Therefore we need to set the panel's 'width' property to 'auto'." />
+	      	</content>
+	</Panel>
+	<Text text="To see what happens in Right-To-Left mode open 'Settings' by pressing the cog wheel button next to 'Entities'." class="sapUiExploredNoMarginInfo"/>
+</mvc:View>

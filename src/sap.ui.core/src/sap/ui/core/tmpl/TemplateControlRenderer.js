@@ -3,15 +3,14 @@
  */
 
 // A renderer for the ScrollBar control
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
 	/**
 	 * @class Control renderer.
 	 * @static
-	 * @name sap.ui.core.tmpl.TemplateControlRenderer
+	 * @alias sap.ui.core.tmpl.TemplateControlRenderer
 	 */
 	var TemplateControlRenderer = {};
 	
@@ -25,8 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.tmpl.TemplateControl}
 	 *            oControl Object representation of the template control 
 	 *            that should be rendered
-	 * @name sap.ui.core.tmpl.TemplateControlRenderer.render
-	 * @function
 	 */
 	TemplateControlRenderer.render = function(oRM, oControl) {
 		

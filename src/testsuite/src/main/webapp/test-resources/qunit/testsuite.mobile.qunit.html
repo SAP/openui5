@@ -1,12 +1,13 @@
 <html>
  <head>
   <title>Global Mobile QUnit TestSuite</title>
+  <script type="text/javascript" src="../../resources/sap/ui/qunit/qunit-redirect.js"></script>
  </head>
  <body>
   <script language="javascript">
 
   /**
-   * Method that is called by the Selenium/QUnit framework to retrieve the test suites.  
+   * Method that is called by the Selenium/QUnit framework to retrieve the test suites.
    */
   function suite() {
     var suite = new top.jsUnitTestSuite();
@@ -20,10 +21,12 @@
       suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/testsuite.qunit.html");
     }
     // execute all the mobile QUnit tests
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuite.mobile.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuite.mobile.qunit.html");
+
+    // execute the test for the demokit
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/demokit/qunit/testsuite.demokit.qunit.html");
     return suite;
-  }    
+  }
 
   </script>
  </body>

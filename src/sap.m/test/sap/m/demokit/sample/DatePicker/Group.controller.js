@@ -1,49 +1,57 @@
-sap.ui.controller("sap.m.sample.DatePicker.Group", {
+sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
+	function(Controller, JSONModel) {
+	"use strict";
 
-	onInit: function () {
-		// create model
-		var oModel = new sap.ui.model.json.JSONModel();
-		oModel.setData({
-			dateValue: new Date()
-		});
-		this.getView().setModel(oModel);
+	var GroupController = Controller.extend("sap.m.sample.DatePicker.Group", {
 
-		this.byId("DP3").setDateValue(new Date());
+		onInit: function () {
+			// create model
+			var oModel = new JSONModel();
+			oModel.setData({
+				dateValue: new Date()
+			});
+			this.getView().setModel(oModel);
 
-		this._iEvent = 0;
+			this.byId("DP3").setDateValue(new Date());
 
-		// for the data binding example do not use the change event for check but the data binding parsing events
-		sap.ui.getCore().attachParseError(
-				function(oEvent) {
-					var oElement = oEvent.getParameter("element");
+			this._iEvent = 0;
 
-					if (oElement.setValueState) {
-						oElement.setValueState(sap.ui.core.ValueState.Error);
-					}
-				});
+			// for the data binding example do not use the change event for check but the data binding parsing events
+			sap.ui.getCore().attachParseError(
+					function(oEvent) {
+						var oElement = oEvent.getParameter("element");
 
-		sap.ui.getCore().attachValidationSuccess(
-				function(oEvent) {
-					var oElement = oEvent.getParameter("element");
+						if (oElement.setValueState) {
+							oElement.setValueState(sap.ui.core.ValueState.Error);
+						}
+					});
 
-					if (oElement.setValueState) {
-						oElement.setValueState(sap.ui.core.ValueState.None);
-					}
-				});
-	},
+			sap.ui.getCore().attachValidationSuccess(
+					function(oEvent) {
+						var oElement = oEvent.getParameter("element");
 
-	handleChange: function (oEvent) {
-		var oText = this.byId("T1");
-		var oDP = oEvent.oSource;
-		var sValue = oEvent.getParameter("value");
-		var bValid = oEvent.getParameter("valid");
-		this._iEvent++;
-		oText.setText("Change - Event " + this._iEvent + ": DatePicker " + oDP.getId() + ":" + sValue);
+						if (oElement.setValueState) {
+							oElement.setValueState(sap.ui.core.ValueState.None);
+						}
+					});
+		},
 
-		if (bValid) {
-			oDP.setValueState(sap.ui.core.ValueState.None);
-		} else {
-			oDP.setValueState(sap.ui.core.ValueState.Error);
+		handleChange: function (oEvent) {
+			var oText = this.byId("T1");
+			var oDP = oEvent.oSource;
+			var sValue = oEvent.getParameter("value");
+			var bValid = oEvent.getParameter("valid");
+			this._iEvent++;
+			oText.setText("Change - Event " + this._iEvent + ": DatePicker " + oDP.getId() + ":" + sValue);
+
+			if (bValid) {
+				oDP.setValueState(sap.ui.core.ValueState.None);
+			} else {
+				oDP.setValueState(sap.ui.core.ValueState.Error);
+			}
 		}
-	}
+	});
+
+	return GroupController;
+
 });

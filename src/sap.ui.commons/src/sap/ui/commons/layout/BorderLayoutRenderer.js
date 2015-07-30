@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 
 	
 	/**
-	 * @class BorderLayout renderer.
-	 * @static
+	 * BorderLayout renderer.
+	 * @namespace
 	 */
 	var BorderLayoutRenderer = {};
 	

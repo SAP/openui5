@@ -2,23 +2,24 @@
  * ${copyright}
  */
 
+/*global HTMLTemplateElement, DocumentFragment*/
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', './ExtensionPoint'],
+	function(jQuery, ManagedObject, View, ExtensionPoint) {
 	"use strict";
 
 
-	
-	
-	
+
+
+
 		function parseScalarType(sType, sValue, sName, oController) {
 			// check for a binding expression (string)
-			var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oController, true);
+			var oBindingInfo = ManagedObject.bindingParser(sValue, oController, true);
 			if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 				return oBindingInfo;
 			}
-	
-			var vValue = sValue = oBindingInfo || sValue; // oBindingInfo could be an unescaped string 
+
+			var vValue = sValue = oBindingInfo || sValue; // oBindingInfo could be an unescaped string
 			var oType = sap.ui.base.DataType.getType(sType);
 			if (oType) {
 				if (oType instanceof sap.ui.base.DataType) {
@@ -28,59 +29,54 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				throw new Error("Property " + sName + " has unknown type " + sType);
 			}
-			
-			// Note: to avoid double resolution of binding expressions, we have to escape string values once again 
-			return typeof vValue === "string" ? sap.ui.base.ManagedObject.bindingParser.escape(vValue) : vValue;
+
+			// Note: to avoid double resolution of binding expressions, we have to escape string values once again
+			return typeof vValue === "string" ? ManagedObject.bindingParser.escape(vValue) : vValue;
 		}
-	
+
 		function localName(xmlNode) {
 			// localName for standard browsers, baseName for IE, nodeName in the absence of namespaces
 			return xmlNode.localName || xmlNode.baseName || xmlNode.nodeName;
 		}
-	
+
 		/**
 		 * The XMLTemplateProcessor class is used to load and process Control trees in XML-declarative notation.
-		 * 
-		 * @static
-		 * @class sap.ui.core.XMLTemplateProcessor
-		 * @name sap.ui.core.XMLTemplateProcessor
+		 *
+		 * @namespace
+		 * @alias sap.ui.core.XMLTemplateProcessor
 		 */
 		var XMLTemplateProcessor = {};
-	
-		
-		
+
+
+
 		/**   API METHODS ***/
-		
-		
+
+
 		/**
 		 * Loads an XML template using the module loading mechanism and returns the root XML element of the XML document.
 		 *
 		 * @param {string} sTemplateName
 		 * @param {string} [sExtension]
 		 * @return {Element} an XML document root element
-		 * @name sap.ui.core.XMLTemplateProcessor.loadTemplate
-		 * @function
 		 */
 		XMLTemplateProcessor.loadTemplate = function(sTemplateName, sExtension) {
 			var sResourceName = jQuery.sap.getResourceName(sTemplateName, "." + (sExtension || "view") + ".xml");
 			return jQuery.sap.loadResource(sResourceName).documentElement; // result is the document node
 		};
-	
-	
+
+
 		/**
 		 * Parses only the attributes of the XML root node (View!) and fills them into the given settings object.
 		 * Children are parsed later on after the controller has been set.
 		 * TODO cannot handle event handlers in the root node
-		 * 
+		 *
 		 * @param {Element} xmlNode the XML element representing the View
 		 * @param {sap.ui.core.ManagedObject} oView the View to consider when parsing the attributes
 		 * @param {object} mSettings the settings object which should be enriched with the suitable attributes from the XML node
 		 * @return undefined
-		 * @name sap.ui.core.XMLTemplateProcessor.parseViewAttributes
-		 * @function
 		 */
 		XMLTemplateProcessor.parseViewAttributes = function(xmlNode, oView, mSettings) {
-	
+
 			var mAllProperties = oView.getMetadata().getAllProperties();
 			for ( var i = 0; i < xmlNode.attributes.length; i++) {
 				var attr = xmlNode.attributes[i];
@@ -101,19 +97,17 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}
 		};
-	
-	
+
+
 		/**
 		 * Parses a complete XML template definition (full node hierarchy)
-		 * 
+		 *
 		 * @param {Element} xmlNode the XML element representing the View/Fragment
 		 * @param {sap.ui.core.ManagedObject} oView the View/Fragment which corresponds to the parsed XML
 		 * @return an array containing Controls and/or plain HTML element strings
-		 * @name sap.ui.core.XMLTemplateProcessor.parseTemplate
-		 * @function
 		 */
 		XMLTemplateProcessor.parseTemplate = function(xmlNode, oView) {
-	
+
 			var aResult = [];
 			var sCurrentName = oView.sViewName || oView._sFragmentName; // TODO: should Fragments and Views be separated here?
 			if (!sCurrentName) {
@@ -124,28 +118,28 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				sCurrentName = oTopView.sViewName;
 			}
-	
+
 			if (oView.isSubView()) {
 				parseNode(xmlNode, true);
 			} else {
 				parseChildren(xmlNode);
 			}
-	
+
 			return aResult;
-	
+
 			/**
 			 * Parses an XML node that might represent a UI5 control or simple XHTML.
 			 * XHTML will be added to the aResult array as a sequence of strings,
 			 * UI5 controls will be instantiated and added as controls
-			 * 
+			 *
 			 * @param xmlNode the XML node to parse
 			 * @param bRoot whether this node is the root node
-			 * @return undefined but the aResult array is filled 
+			 * @return undefined but the aResult array is filled
 			 */
 			function parseNode(xmlNode, bRoot, bIgnoreToplevelTextNodes) {
-	
+
 				if ( xmlNode.nodeType === 1 /* ELEMENT_NODE */ ) {
-	
+
 					var sLocalName = localName(xmlNode);
 					if (xmlNode.namespaceURI === "http://www.w3.org/1999/xhtml" || xmlNode.namespaceURI === "http://www.w3.org/2000/svg") {
 						// write opening tag
@@ -163,39 +157,43 @@ sap.ui.define(['jquery.sap.global'],
 							aResult.push("data-sap-ui-preserve" + "=\"" + oView.getId() + "\" ");
 						}
 						aResult.push(">");
-	
+
 						// write children
-						parseChildren(xmlNode);
-	
+						if (window.HTMLTemplateElement && xmlNode instanceof HTMLTemplateElement && xmlNode.content instanceof DocumentFragment) {
+							// <template> support (HTMLTemplateElement has no childNodes, but a content node which contains the childNodes)
+							parseChildren(xmlNode.content);
+						} else {
+							parseChildren(xmlNode);
+						}
+
 						// close the tag
 						aResult.push("</" + sLocalName + ">");
-	
+
 					} else if (sLocalName === "FragmentDefinition" && xmlNode.namespaceURI === "sap.ui.core") {
 						// a Fragment element - which is not turned into a control itself. Only its content is parsed.
 						parseChildren(xmlNode, false, true);
-						// TODO: check if this branch is required or can be handled by the below one 
-						
+						// TODO: check if this branch is required or can be handled by the below one
+
 					} else {
-	
+
 						// assumption: an ELEMENT_NODE with non-XHTML namespace is a SAPUI5 control and the namespace equals the library name
 						var aChildren = createControlOrExtension(xmlNode);
-	
+
 						for (var i = 0; i < aChildren.length; i++) {
 							var oChild = aChildren[i];
 							if (oView.getMetadata().hasAggregation("content")) {
 								oView.addAggregation("content", oChild);
-							}
-							else if (oView.getMetadata().hasAssociation(("content"))) {
+							} else if (oView.getMetadata().hasAssociation(("content"))) {
 								oView.addAssociation("content", oChild);
 							}
-		
+
 							aResult.push(oChild);
 						}
-	
+
 					}
-	
+
 				} else if (xmlNode.nodeType === 3 /* TEXT_NODE */ && !bIgnoreToplevelTextNodes) {
-	
+
 					var text = xmlNode.textContent || xmlNode.text,
 					parentName = localName(xmlNode.parentNode);
 					if (text) {
@@ -204,11 +202,11 @@ sap.ui.define(['jquery.sap.global'],
 						}
 						aResult.push(text);
 					}
-	
+
 				}
-	
+
 			}
-	
+
 			/**
 			 * Parses the children of an XML node
 			 */
@@ -218,7 +216,7 @@ sap.ui.define(['jquery.sap.global'],
 					parseNode(children[i], bRoot, bIgnoreToplevelTextNodes);
 				}
 			}
-	
+
 			function findControlClass(sNamespaceURI, sLocalName) {
 				var sClassName;
 				var mLibraries = sap.ui.getCore().getLoadedLibraries();
@@ -229,7 +227,7 @@ sap.ui.define(['jquery.sap.global'],
 				});
 				// TODO guess library from sNamespaceURI and load corresponding lib!?
 				sClassName = sClassName || sNamespaceURI + "." + sLocalName;
-	
+
 				// ensure that control and library are loaded
 				jQuery.sap.require(sClassName); // make sure oClass.getMetadata() exists
 				var oClassObject = jQuery.sap.getObject(sClassName);
@@ -239,11 +237,11 @@ sap.ui.define(['jquery.sap.global'],
 					jQuery.sap.log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor.js");
 				}
 			}
-	
+
 			/**
 			 * Takes an arbitrary node (control or plain HTML) and creates zero or one or more SAPUI5 controls from it,
 			 * iterating over the attributes and child nodes.
-			 * 
+			 *
 			 * @return an array with 0..n controls
 			 * @private
 			 */
@@ -256,18 +254,18 @@ sap.ui.define(['jquery.sap.global'],
 						id: id ? oView._oContainingView.createId(id) : undefined,
 								xmlNode:node,
 								containingView:oView._oContainingView}) ];
-					
+
 				} else {
 					// non-HTML (SAPUI5) control
 					return createControlOrExtension(node);
 				}
 			}
-			
+
 			/**
 			 * Creates 0..n UI5 controls from an XML node which is not plain HTML, but a UI5 node (either control or ExtensionPoint).
 			 * One control for regular controls, zero for ExtensionPoints without configured extension and
 			 * n controls for multi-root Fragments.
-			 * 
+			 *
 			 * @return an array with 0..n controls created from a node
 			 * @private
 			 */
@@ -297,7 +295,7 @@ sap.ui.define(['jquery.sap.global'],
 			 * Creates 0..n UI5 controls from an XML node.
 			 * One control for regular controls, zero for ExtensionPoints without configured extension and
 			 * n controls for multi-root Fragments.
-			 * 
+			 *
 			 * @return an array with 0..n controls created from a node
 			 * @private
 			 */
@@ -312,43 +310,41 @@ sap.ui.define(['jquery.sap.global'],
 					return [];
 				}
 				var oMetadata = oClass.getMetadata();
-				var mJSONKeys = oMetadata.getJSONKeys();
+				var mKnownSettings = oMetadata.getAllSettings();
 
 				for (var i = 0; i < node.attributes.length; i++) {
-					var attr = node.attributes[i];
-	
-					var sName = attr.name;
-					var sValue = attr.value;
-	
+					var attr = node.attributes[i],
+						sName = attr.name,
+						oInfo = mKnownSettings[sName],
+						sValue = attr.value;
+
 					// apply the value of the attribute to a
 					//   * property,
 					//   * association (id of the control),
 					//   * event (name of the function in the controller) or
 					//   * CustomData element (namespace-prefixed attribute)
-	
-					var oInfo = mJSONKeys[sName];
-	
+
 					if (sName === "id") {
 						// special handling for ID
 						mSettings[sName] = oView._oContainingView.createId(sValue);
-	
+
 					} else if (sName === "class") {
 						// special handling for CSS classes, which will be added via addStyleClass()
 						sStyleClasses += sValue;
-	
+
 					} else if (sName === "viewName") {
 						mSettings[sName] = sValue;
-	
+
 					} else if (sName === "fragmentName") {
 						mSettings[sName] = sValue;
 						mSettings['containingView'] = oView._oContainingView;
-	
-					} else if (sName === "binding") {
-						var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
-						// TODO reject complex bindings, types, formatters; enable 'parameters'? 
+
+					} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
+						var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+						// TODO reject complex bindings, types, formatters; enable 'parameters'?
 						mSettings.objectBindings = mSettings.objectBindings || {};
 						mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
-	
+
 					} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
 						if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
 							var sLocalName = localName(attr);
@@ -360,76 +356,78 @@ sap.ui.define(['jquery.sap.global'],
 							jQuery.sap.log.warning(oView + ": XMLView parser encountered and ignored attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace");
 							// TODO: here XMLView could check for namespace handlers registered by the application for this namespace which could modify mSettings according to their interpretation of the attribute
 						}
-	
+
 					} else if (oInfo && oInfo._iKind === 0 /* PROPERTY */ ) {
 						// other PROPERTY
 						mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController); // View._oContainingView.oController is null when [...]
 						// FIXME: ._oContainingView might be the original Fragment for an extension fragment or a fragment in a fragment - so it has no controller bit ITS containingView.
-	
+
 					} else if (oInfo && oInfo._iKind === 1 /* SINGLE_AGGREGATION */ && oInfo.altTypes ) {
 						// AGGREGATION with scalar type (altType)
 						mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController);
-	
+
 					} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
-						var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+						var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
 						if ( oBindingInfo ) {
 							mSettings[sName] = oBindingInfo;
 						} else {
 							// TODO we now in theory allow more than just a binding path. Update message?
 							jQuery.sap.log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
 						}
-	
+
 					} else if (oInfo && oInfo._iKind === 3 /* SINGLE_ASSOCIATION */ ) {
 						// ASSOCIATION
 						mSettings[sName] = oView._oContainingView.createId(sValue); // use the value as ID
-	
+
 					} else if (oInfo && oInfo._iKind === 4 /* MULTIPLE_ASSOCIATION */ ) {
-						// we support "," and " " to separate IDs 
+						// we support "," and " " to separate IDs
 						/*eslint-disable no-loop-func */
 						mSettings[sName] = jQuery.map(sValue.split(/[\s,]+/g), function(sId) {
-							// Note: empty IDs need to ignored, therefore splitting by a sequence of separators is okay. 
+							// Note: empty IDs need to ignored, therefore splitting by a sequence of separators is okay.
 							return sId ? oView._oContainingView.createId(sId) : null;
 						});
 						/*eslint-enable no-loop-func */
-	
+
 					} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
 						// EVENT
-						var fnEventHandler = oView._oContainingView.oController[sValue];
-						if (typeof (fnEventHandler) !== "function") {
+						var vEventHandler = View._resolveEventHandler(sValue, oView._oContainingView.oController);
+						if ( vEventHandler ) {
+							mSettings[sName] = vEventHandler;
+						} else {
 							jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
 						}
-						if (fnEventHandler) {
-							// the handler name is set as property on the function to keep this information
-							// e.g. for serializers which converts a control tree back to a declarative format
-							fnEventHandler["_sapui_handlerName"] = sValue;
-							mSettings[sName] = [fnEventHandler, oView._oContainingView.oController];
+					} else if (oInfo && oInfo._iKind === -1) {
+						// SPECIAL SETTING - currently only allowed for View´s async setting
+						if (sap.ui.core.mvc.View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
+							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController);
+						} else {
+							jQuery.sap.log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
 						}
-	
-					} else if ( sName !== "xmlns" ) {
-						jQuery.sap.log.warning(oView + ": XMLTemplateProcessor encountered and ignored unknown attribute '" + sName + "' (value: '" + sValue + "')");
+					} else {
+						jQuery.sap.assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
 					}
 				}
 				if (aCustomData.length > 0) {
 					mSettings.customData = aCustomData;
 				}
-	
+
 				function handleChildren(node, oAggregation, mAggregations) {
-	
+
 					var childNode,oNamedAggregation;
-	
+
 					// loop over all nodes
 					for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
-	
+
 						// inspect only element nodes
-						if ( childNode.nodeType === 1 /* ELEMENT_NODE */ ) {
-	
+						if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
+
 							// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
 							oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
 							if (oNamedAggregation) {
-	
+
 								// the children of the current childNode are aggregated controls (or HTML) below the named aggregation
 								handleChildren(childNode, oNamedAggregation);
-	
+
 							} else if (oAggregation) {
 								// child node name does not equal an aggregation name,
 								// so this child must be a control (or HTML) which is aggregated below the DEFAULT aggregation
@@ -437,13 +435,13 @@ sap.ui.define(['jquery.sap.global'],
 								for (var j = 0; j < aControls.length; j++) {
 									var oControl = aControls[j];
 									// append the child to the aggregation
-									var name = oAggregation._sName;
+									var name = oAggregation.name;
 									if (oAggregation.multiple) {
 										// 1..n AGGREGATION
 										if (!mSettings[name]) {
 											mSettings[name] = [];
 										}
-										if ( typeof mSettings[name].path === "string" ) {
+										if (typeof mSettings[name].path === "string") {
 											jQuery.sap.assert(!mSettings[name].template, "list bindings support only a single template object");
 											mSettings[name].template = oControl;
 										} else {
@@ -458,16 +456,16 @@ sap.ui.define(['jquery.sap.global'],
 							} else if (localName(node) !== "FragmentDefinition" || node.namespaceURI !== "sap.ui.core") { // children of FragmentDefinitions are ok, they need no aggregation
 								throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
 							}
-	
-						} else if ( childNode.nodeType === 3 /* TEXT_NODE */ ) {
-							if ( jQuery.trim(childNode.textContent || childNode.text) ) { // whitespace would be okay
-								throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed");
+
+						} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
+							if (jQuery.trim(childNode.textContent || childNode.text)) { // whitespace would be okay
+								throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + jQuery.trim(childNode.textContent || childNode.text));
 							}
 						} // other nodes types are silently ignored
-	
+
 					}
 				}
-	
+
 				// loop child nodes and handle all AGGREGATIONS
 				var oAggregation = oMetadata.getDefaultAggregation();
 				var mAggregations = oMetadata.getAllAggregations();
@@ -484,12 +482,12 @@ sap.ui.define(['jquery.sap.global'],
 					//   This is the reason for all the related functions around here returning arrays.
 					vNewControlInstance = new oClass(mSettings);
 				}
-	
+
 				if (sStyleClasses && vNewControlInstance.addStyleClass) {
 					// Elements do not have a style class!
 					vNewControlInstance.addStyleClass(sStyleClasses);
 				}
-	
+
 				if (!vNewControlInstance) {
 					vNewControlInstance = [];
 				} else if (!jQuery.isArray(vNewControlInstance)) {
@@ -497,11 +495,11 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				return vNewControlInstance;
 			}
-	
+
 		};
-	
-	
-	
+
+
+
 
 	return XMLTemplateProcessor;
 

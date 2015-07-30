@@ -13,6 +13,10 @@
 	word-wrap: normal;
 }
 
+.sapMLnk:active {
+	background-color: transparent; /* required for IE10 */
+}
+
 .sapMLnk:active:not(.sapMLnkDsbl),
 .sapMLnk:focus:not(.sapMLnkDsbl) {
 	color: @sapUiLinkActive;

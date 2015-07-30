@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Shell Layout renderer.
-	 * @static
+	 * Shell Layout renderer.
+	 * @namespace
 	 */
 	var ShellLayoutRenderer = {};
 	
@@ -44,8 +44,11 @@ sap.ui.define(['jquery.sap.global'],
 		
 		rm.write("<hr id='", id, "-brand' class='sapUiUfdShellBrand'/>");
 		
-		rm.write("<header id='", id, "-hdr'  class='sapUiUfdShellHead'><div>");
-		rm.write("<div id='", id, "-hdrcntnt' class='sapUiUfdShellCntnt'>");
+		rm.write("<header id='", id, "-hdr'  class='sapUiUfdShellHead'");
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "banner");
+		}
+		rm.write("><div><div id='", id, "-hdrcntnt' class='sapUiUfdShellCntnt'>");
 		if (oShell.getHeader()) {
 			rm.renderControl(oShell.getHeader());
 		}

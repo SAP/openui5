@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Performance
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/support/Plugin'],
-	function(jQuery, RenderManager, Plugin) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
+	function(jQuery, Plugin) {
 	"use strict";
 
 
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 * @version ${version}
 		 * @constructor
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance
+		 * @alias sap.ui.core.support.plugins.Performance
 		 */
 		var Performance = Plugin.extend("sap.ui.core.support.plugins.Performance", {
 			constructor : function(oSupportStub) {
@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 	*/
 			this.$("active").click(jQuery.proxy(function(oEvent) {
 				var bActive = false;
-				if (this.$("active").attr("checked")) {
+				if (this.$("active").prop("checked")) {
 					bActive = true;
 				}
 				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});
@@ -133,8 +133,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance#onsapUiSupportPerfSetMeasurements
-		 * @function
 		 */
 		Performance.prototype.onsapUiSupportPerfSetMeasurements = function(oEvent) {
 	
@@ -163,8 +161,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance#onsapUiSupportPerfSetActive
-		 * @function
 		 */
 		Performance.prototype.onsapUiSupportPerfSetActive = function(oEvent) {
 	
@@ -184,8 +180,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance#onsapUiSupportPerfRefresh
-		 * @function
 		 */
 		Performance.prototype.onsapUiSupportPerfRefresh = function(oEvent) {
 	
@@ -198,8 +192,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance#onsapUiSupportPerfClear
-		 * @function
 		 */
 		Performance.prototype.onsapUiSupportPerfClear = function(oEvent) {
 	
@@ -213,8 +205,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance#onsapUiSupportPerfStart
-		 * @function
 		 */
 		Performance.prototype.onsapUiSupportPerfStart = function(oEvent) {
 	
@@ -227,8 +217,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance#onsapUiSupportPerfEnd
-		 * @function
 		 */
 		Performance.prototype.onsapUiSupportPerfEnd = function(oEvent) {
 	
@@ -241,8 +229,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Performance#onsapUiSupportPerfActivate
-		 * @function
 		 */
 		Performance.prototype.onsapUiSupportPerfActivate = function(oEvent) {
 	
@@ -258,4 +244,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 
 	return Performance;
 
-}, /* bExport= */ true);
+});

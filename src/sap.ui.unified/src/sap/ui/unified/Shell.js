@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', './ShellHeader', './ShellLayout', './library
 	 * @constructor
 	 * @public
 	 * @since 1.15.1
-	 * @name sap.ui.unified.Shell
+	 * @alias sap.ui.unified.Shell
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Shell = ShellLayout.extend("sap.ui.unified.Shell", /** @lends sap.ui.unified.Shell.prototype */ { metadata : {
@@ -219,8 +219,6 @@ sap.ui.define(['jquery.sap.global', './ShellHeader', './ShellLayout', './library
 	 * @param {sap.ui.core.Control} oHeader The Control which should be rendered within the Shell header or <code>null</code> to render the default Shell header.
 	 * @return {sap.ui.unified.Shell} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.unified.Shell#setHeader
-	 * @function
 	 */
 	Shell.prototype.setHeader = function(oHeader) {
 		return ShellLayout.prototype.setHeader.apply(this, [oHeader ? oHeader : this._header]);
@@ -232,8 +230,6 @@ sap.ui.define(['jquery.sap.global', './ShellHeader', './ShellLayout', './library
 	 * 
 	 * @return {sap.ui.unified.Shell} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.unified.Shell#destroyHeader
-	 * @function
 	 */
 	Shell.prototype.destroyHeader = function() {
 		if (this.getHeader() === this._header) {

@@ -2,14 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTML', 'sap/ui/thirdparty/vkbeautify'],
-	function(jQuery, EventProvider, HTML, vkbeautify1) {
+sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', 'sap/ui/thirdparty/vkbeautify'],
+	function(EventProvider, Serializer, HTML, vkbeautify) {
 	"use strict";
 
 
-	
-	/*global vkbeautify *///declare unusual global vars for JSLint/SAPUI5 validation
-	
 	/**
 	 * HTML view serializer class. Serializes a given view.
 	 *
@@ -23,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.util.serializer.HTMLViewSerializer
+	 * @alias sap.ui.core.util.serializer.HTMLViewSerializer
 	 * @experimental Since 1.15.1. The HTMLViewSerializer is still under construction, so some implementation details can be changed in future.
 	 */
 	var HTMLViewSerializer = EventProvider.extend("sap.ui.core.util.serializer.HTMLViewSerializer", /** @lends sap.ui.core.util.serializer.HTMLViewSerializer.prototype */
@@ -42,8 +39,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 	 * Serializes the given HTML view.
 	 * 
 	 * @returns {string} the serialized HTML view.
-	 * @name sap.ui.core.util.serializer.HTMLViewSerializer#serialize
-	 * @function
 	 */
 	HTMLViewSerializer.prototype.serialize = function () {
 	
@@ -53,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 		};
 	
 		// create serializer
-		var oControlSerializer = new sap.ui.core.util.serializer.Serializer(
+		var oControlSerializer = new Serializer(
 			this._oView,
 			new HTML(
 				this._fnGetControlId,
@@ -81,4 +76,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 
 	return HTMLViewSerializer;
 
-}, /* bExport= */ true);
+});

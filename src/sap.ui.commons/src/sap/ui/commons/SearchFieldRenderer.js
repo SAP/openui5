@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class SearchField renderer.
-	 * @static
+	 * SearchField renderer.
+	 * @namespace
 	 */
 	var SearchFieldRenderer = {
 	};
@@ -24,11 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	SearchFieldRenderer.render = function(oRenderManager, oControl){
 	    var rm = oRenderManager;
-	
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
+
 	    rm.write("<div");
 	    rm.writeControlData(oControl);
 	    rm.addClass("sapUiSearchField");
@@ -60,6 +56,11 @@ sap.ui.define(['jquery.sap.global'],
 	    if (oControl.getShowExternalButton()) {
 			rm.renderControl(oControl._btn);
 	    }
+	    
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
+	    rm.write("<span id='", oControl.getId(), "-label' style='display:none;' aria-hidden='true'>");
+		rm.writeEscaped(rb.getText("SEARCHFIELD_BUTTONTEXT"));
+		rm.write("</span>");
 	    rm.write("</div>");
 	};
 	

@@ -3,9 +3,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<IconTabBar
-		class="iconTabBarPaddingTop"
 		id="idIconTabBarMulti"
-		expanded="{device>/isNoPhone}">
+		expanded="{device>/isNoPhone}"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				icon="sap-icon://hint">

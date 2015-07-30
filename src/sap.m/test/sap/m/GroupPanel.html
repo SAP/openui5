@@ -22,21 +22,19 @@
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nGroupItem");
 	jQuery.sap.require("sap.m.P13nGroupPanel");
-	
-	var oCondition0= { "key": "g0", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "Date", grouping: true};
-	var oCondition1= { "key": "g1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", grouping: true};
-	var oCondition2= { "key": "g2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", grouping: false};
-	aConditions= [oCondition0, oCondition1, oCondition2];    	
-	var oGroupPanel;
+	jQuery.sap.require("sap.ui.layout.Grid");	
+
+ 	var aConditions= [];
+ 	var oGroupPanel;
 	var oModel;
 	var iCount= 100;
 	
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
-			oPanel.setLayoutMode("Desktop");
+			//oPanel.setLayoutMode("Desktop");
 
-			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel], contentWidth: "1600px"});
+			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel], contentWidth: "1600px"});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
 			}			
@@ -54,21 +52,6 @@
 	};	
 	
 	var btnShow = new sap.m.Button({
-		text: "show GroupPanel",
-		press: function() {
-			oGroupPanel = new sap.m.P13nGroupPanel({
-			});
-			
-			oGroupPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 
-			
-			oGroupPanel.setConditions(aConditions);			
-	
-			show(oGroupPanel, "Group");
-		}		
-	});
-	
-	
-	var btnShow2 = new sap.m.Button({
 		text: "show bound GroupPanel",
 		press: function() {
 			var oData = {
@@ -90,12 +73,12 @@
 					"key" : "g0",
 					"columnKey" : "c1",
 					"operation" : "GroupAscending",
-					"grouping" : true
+					"showIfGrouped" : true
 				}, {
 					"key" : "g1",
 					"columnKey" : "c0",
 					"operation" : "GroupDescending",
-					"grouping" : false
+					"showIfGrouped" : false
 				} ]
 			};
 	
@@ -120,9 +103,9 @@
 					var oData = oModel.getData();
 					var oGroupItem = {
 						key : params.key,
-						columnKey : params.newItem.getColumnKey(),
-						operation : params.newItem.getOperation(),
-						grouping : params.newItem.getGrouping()
+						columnKey : params.groupItemData.getColumnKey(),
+						operation : params.groupItemData.getOperation(),
+						showIfGrouped : params.groupItemData.getShowIfGrouped()
 					};
 					if (params.index) {
 						oData.groupItems.splice(params.index, 0, oGroupItem);
@@ -144,7 +127,7 @@
 				key : "{key}",
 				operation : "{operation}",
 				columnKey : "{columnKey}",
-				grouping : "{grouping}"
+				showIfGrouped : "{showIfGrouped}"
 			}));
 			
 			show(oGroupPanel, "Group");
@@ -155,6 +138,8 @@
 			oFieldKeyField.bindValue("/groupItems/0/columnKey");
 			oFieldOperation.setModel(oModel);
 			oFieldOperation.bindValue("/groupItems/0/operation");
+			oFieldShowIfGrouped.setModel(oModel);
+			oFieldShowIfGrouped.bindValue("/groupItems/0/showIfGrouped");
 		}
 	});
 	
@@ -165,10 +150,24 @@
 		}
 	});
 	
+	var btnClearErrors = new sap.m.Button({
+		text: "Clear Errors",
+		press: function() {
+			oGroupPanel.removeValidationErrors();
+		}
+	});
+	
+	var btnRemoveInvalidConditions = new sap.m.Button({
+		text: "Remove Invalid Conditions",
+		press: function() {
+			oGroupPanel.removeInvalidConditions();
+		}
+	});
+	
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
-			aConditions = oGroupPanel.getConditions();
+			aConditions = oGroupPanel._getConditions();
 	
 			var sConditions= ""; 
 			for (i = 0; i < aConditions.length; i++) {
@@ -188,7 +187,7 @@
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
 					"operation" : "Ascending",
-					"grouping" : true
+					"showIfGrouped" : true
 			});
 			oModel.setData(oData, true);
 
@@ -204,7 +203,7 @@
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
 					"operation" : "Ascending",
-					"grouping" : true
+					"showIfGrouped" : true
 			});
 			oModel.setData(oData, true);
 
@@ -233,6 +232,10 @@
 		width: "100px"
 	});
 
+	var oFieldShowIfGrouped = new sap.m.Input({
+		width: "100px"
+	});
+
 	var theCompactMode= new sap.m.CheckBox({
 		selected: true,
 		text: "compactMode",
@@ -250,12 +253,14 @@
 	
 	
 	btnShow.placeAt("content");
-	btnShow2.placeAt("content2");
 	btnValidate.placeAt("content");
+	btnClearErrors.placeAt("content");
+	btnRemoveInvalidConditions.placeAt("content");
 	btnConditions.placeAt("content");
 	oFieldKey.placeAt("content2");
 	oFieldKeyField.placeAt("content2");
 	oFieldOperation.placeAt("content2");
+	oFieldShowIfGrouped.placeAt("content2");
 	btnAddCondition.placeAt("content2");
 	btnInsertCondition.placeAt("content2");
 	btnRemoveCondition.placeAt("content2");

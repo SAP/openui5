@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Thing renderer. 
-	 * @static
+	 * Thing renderer. 
+	 * @namespace
 	 */
 	var ThingViewerRenderer = {
 	};
@@ -153,6 +153,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 		rm.writeEscaped(oControl.getTitle());
 		rm.write("</span><br/>");
+		rm.write("</div><div class='sapUiUx3TVTitle'>");
 		rm.write("<span role='heading' aria-level='3' class='sapUiUx3TVTitleSecond'");
 		rm.writeAttributeEscaped("title", oControl.getSubtitle());
 		rm.write(">");

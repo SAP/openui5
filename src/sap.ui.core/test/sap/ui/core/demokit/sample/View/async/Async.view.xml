@@ -1,0 +1,15 @@
+<mvc:View controllerName="sap.ui.core.sample.View.async.Sample" xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<m:ObjectHeader icon="{img>/products/screw}" iconDensityAware="false" title="Deluxe Screw">
+		<m:statuses>
+			<m:ObjectStatus text="In Stock" state="Success" />
+		</m:statuses>
+		<m:attributes>
+			<m:ObjectAttribute text="Weight: 10 gr" />
+			<m:ObjectAttribute text="Size: 1,4 x 1,8 x 0,8 inch" />
+			<m:ObjectAttribute text="Material: Titanium" />
+			<m:ObjectAttribute text="Description: A really nice xml screw." />
+		</m:attributes>
+	</m:ObjectHeader>
+</mvc:View>

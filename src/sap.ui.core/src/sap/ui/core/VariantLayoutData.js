@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.VariantLayoutData.
-sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
-	function(jQuery, LayoutData, library) {
+sap.ui.define(['./LayoutData', './library'],
+	function(LayoutData, library) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.9.2
-	 * @name sap.ui.core.VariantLayoutData
+	 * @alias sap.ui.core.VariantLayoutData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VariantLayoutData = LayoutData.extend("sap.ui.core.VariantLayoutData", /** @lends sap.ui.core.VariantLayoutData.prototype */ { metadata : {
@@ -42,4 +42,4 @@ sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
 
 	return VariantLayoutData;
 
-}, /* bExport= */ true);
+});

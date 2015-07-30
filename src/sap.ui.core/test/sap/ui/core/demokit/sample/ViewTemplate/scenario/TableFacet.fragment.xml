@@ -1,0 +1,18 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+
+	<form:SimpleForm>
+		<form:title>
+			<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+		</form:title>
+
+		<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+			<Table items="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
+				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
+			</Table>
+		</template:with>
+	</form:SimpleForm>
+</core:FragmentDefinition>

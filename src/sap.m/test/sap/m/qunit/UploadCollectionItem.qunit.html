@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for sap.m.UploadCollectionItem</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+</script>
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	/* --------------------------------------- */
+	/* Test properties                         */
+	/* --------------------------------------- */
+	module("I. Initial Test deprecated properties", {
+		setup : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				contributor : "Susan Baker",
+				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				enableEdit : true,
+				enableDelete : true,
+				fileName : "Screenshot.ico",
+				fileSize : 20,
+				mimeType : "image/jpg",
+				thumbnailUrl : "",
+				uploadedDate : "2014-07-30",
+				url : ""
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollectionItem.destroy();
+		}
+	});
+
+	test("Check if the deprecated properties were set with initial load", function(assert) {
+		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
+		assert.equal(this.oUploadCollectionItem.getContributor(), "Susan Baker", "Contributor property is set");
+		assert.equal(this.oUploadCollectionItem.getUploadedDate(), "2014-07-30", "UploadedDate property is set");
+		assert.equal(this.oUploadCollectionItem.getFileSize(), "20", "FileSize property is set");
+	});
+
+	test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
+		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
+		assert.equal(aAggregation[1].getText(), "Susan Baker", "2. attribute: contributor");
+		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
+	});
+
+	test("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		//before change
+		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
+		assert.equal(aAggregation[0].getText(), "2014-07-30", "2. attribute: uploadedDate");
+		assert.equal(aAggregation[1].getText(), "Susan Baker", "1. attribute: contributor");
+		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
+		//corresponding setter functions of the deprecated properties
+		this.oUploadCollectionItem.setContributor("John Doe");
+		this.oUploadCollectionItem.setFileSize(45);
+		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
+		//after change
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' updated");
+		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' updated");
+		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' updated");
+	});
+
+	module("II. Test deprecated properties with setter", {
+		setup : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+//				contributor : "Susan Baker",
+				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				enableEdit : true,
+				enableDelete : true,
+				fileName : "Screenshot.ico",
+//				fileSize : 20,
+				mimeType : "image/jpg",
+				thumbnailUrl : "",
+//				uploadedDate : "2014-07-30",
+				url : ""
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollectionItem.destroy();
+		}
+	});
+
+	test("Set deprecated properties in mixed sequence", function(assert) {
+		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
+		//fileSize
+		this.oUploadCollectionItem.setFileSize(20);
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation[0].getText(), "20", "1. attribute 'fileSize'");
+		//uploadedDate
+		this.oUploadCollectionItem.setUploadedDate("2014-07-30");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute 'uploadedDate'");
+		assert.equal(aAggregation[1].getText(), "20", "2. attribute 'fileSize'");
+		//contributor
+		this.oUploadCollectionItem.setContributor("Susan Baker");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation.length, "3", "Aggregation filled with 3 attributes");
+		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
+		assert.equal(aAggregation[1].getText(), "Susan Baker", "2. attribute: contributor");
+		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
+	});
+
+	module("III. Test deprecated properties with prefilled aggregation", {
+		setup : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				attributes : [ new sap.m.ObjectAttribute({
+					active : false,
+					text : "Test"
+				})]
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollectionItem.destroy();
+		}
+	});
+
+	test("Check of the removeAllAggregation/removeAllAttributes", function(assert) {
+		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
+
+		//removeAllAggregation
+		this.oUploadCollectionItem.removeAllAggregation("attributes");
+		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		assert.equal(aAggregation, null, "Original attributes with RemoveAllAggregation were deleted");
+		//removeAllAttributes
+		this.oUploadCollectionItem.addAttribute(new sap.m.ObjectAttribute({
+			active : false,
+			text : "Test 1"
+		}));
+		this.oUploadCollectionItem.removeAllAttributes();
+		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		assert.equal(aAggregation, null, "Original attributes with RemoveAllAggregation were deleted");
+	});
+
+	test("Check of the removeAllAggregation with deprecated Properties", function(assert) {
+		this.oUploadCollectionItem.setFileSize(45);
+		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
+		this.oUploadCollectionItem.setContributor("John Doe");
+		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
+		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' set");
+		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
+		assert.equal(aAggregation.length, 3, "Additional attribute added");
+
+		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		assert.equal(aAggregation.length, 1, "Additional attribute added");
+
+		this.oUploadCollectionItem.removeAllAggregation("attributes");
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation.length, 3, "Additional attribute added");
+		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
+		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' set");
+		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
+	});
+
+	test("Set deprecated properties with prefilled attributes aggregation", function(assert) {
+		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		assert.equal(aAggregation.length, 1, "1 attribute available");
+		this.oUploadCollectionItem.setFileSize(45);
+		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
+		this.oUploadCollectionItem.setContributor("John Doe");
+
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation.length, 3, "3 deprecated attributes available");
+
+		//add additional attribute
+		this.oUploadCollectionItem.addAttribute(new sap.m.ObjectAttribute({
+			active : false,
+			text : "Test 2"
+		}));
+		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		//check existence/position of original attributes
+		assert.equal(aAggregation[0].getText(), "Test", "Original attribute still available");
+		assert.equal(aAggregation[1].getText(), "Test 2", "Original attribute correct added");
+		assert.equal(aAggregation.length, 2, "2 attributes available");
+
+		var dummyName = "";
+		this.oUploadCollectionItem.removeAllAggregation(dummyName);
+		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
+		assert.equal(aAggregation.length, 2, "2 attributes still available");
+		
+		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
+		assert.equal(aAggregation.length, 3, "3 deprecated attributes still available");
+	});
+
+	module("IV. Test getter for all attributes", {
+		setup : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				attributes : [ new sap.m.ObjectAttribute({
+					active : false,
+					text : "Test"
+				})]
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollectionItem.destroy();
+		}
+	});
+
+	test("Test getAllAttributes", function(assert) {
+		//set deprecated properties
+		this.oUploadCollectionItem.setContributor("deprecatedContributor");
+		this.oUploadCollectionItem.setUploadedDate("deprecatedDate");
+		this.oUploadCollectionItem.setFileSize(555);
+		
+		this.oUploadCollectionItem.addAggregation("attributes", new sap.m.ObjectAttribute({
+			active : false,
+			text : "someAttribute"
+		}), true);
+		var aAggregation = this.oUploadCollectionItem.getAllAttributes();
+		assert.equal(aAggregation.length, 5, "Aggregation with 5 items");
+		assert.equal(aAggregation[0].getText(), "deprecatedDate", "Deprecated property uploadedDate at first position");
+		assert.equal(aAggregation[1].getText(), "deprecatedContributor", "Deprecated property contributor at second position");
+		assert.equal(aAggregation[2].getText(), "555", "Deprecated property fileSize at third position");
+		assert.equal(aAggregation[3].getText(), "Test", "Attribute Test at fourth position");
+		assert.equal(aAggregation[4].getText(), "someAttribute", "Attribute someAttribute at fifth position");
+	});
+
+</script>
+
+</head>
+<body class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="uiArea"></div>
+</body>
+</html>

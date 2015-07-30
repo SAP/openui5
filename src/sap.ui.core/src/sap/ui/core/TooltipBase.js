@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new TooltipBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -22,63 +22,63 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.TooltipBase
+	 * @alias sap.ui.core.TooltipBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TooltipBase = Control.extend("sap.ui.core.TooltipBase", /** @lends sap.ui.core.TooltipBase.prototype */ { metadata : {
-	
+
 		"abstract" : true,
 		library : "sap.ui.core",
 		properties : {
-	
+
 			/**
 			 * The text that is shown in the tooltip that extends the TooltipBase class, for example in RichTooltip.
 			 */
 			text : {type : "string", group : "Misc", defaultValue : ""},
-	
+
 			/**
 			 * Optional. Open Duration in milliseconds.
 			 */
 			openDuration : {type : "int", group : "Behavior", defaultValue : 200},
-	
+
 			/**
 			 * Optional. Close Duration in milliseconds.
 			 */
 			closeDuration : {type : "int", group : "Behavior", defaultValue : 200},
-	
+
 			/**
 			 * Optional. My position defines which position on the extended tooltip being positioned to align with the target control.
 			 */
 			myPosition : {type : "sap.ui.core.Dock", group : "Behavior", defaultValue : 'begin top'},
-	
+
 			/**
 			 * Optional. At position defines which position on the target control to align the positioned tooltip.
 			 */
 			atPosition : {type : "sap.ui.core.Dock", group : "Behavior", defaultValue : 'begin bottom'},
-	
+
 			/**
 			 * Optional. Offset adds these left-top values to the calculated position.
 			 * Example: "10 3".
 			 */
 			offset : {type : "string", group : "Behavior", defaultValue : '10 3'},
-	
+
 			/**
 			 * Optional. Collision - when the positioned element overflows the window in some direction, move it to an alternative position.
 			 */
 			collision : {type : "sap.ui.core.Collision", group : "Behavior", defaultValue : 'flip'},
-	
+
 			/**
 			 * Opening delay of the tooltip in milliseconds
 			 */
 			openDelay : {type : "int", group : "Misc", defaultValue : 500},
-	
+
 			/**
 			 * Closing delay of the tooltip in milliseconds
 			 */
 			closeDelay : {type : "int", group : "Misc", defaultValue : 100}
 		},
 		events : {
-	
+
 			/**
 			 * This event is fired when the Tooltip has been closed
 			 * @since 1.11.0
@@ -86,8 +86,8 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			closed : {}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Return the popup to use but do not expose it to the outside.
 	 * @type sap.ui.commons.Popup
@@ -100,14 +100,14 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 				return oPopup;
 			}())
 	);
-	
+
 	/**
 	 * When a control that has a Tooltip gets the focus, this method is called.
 	 * @param {jQuery.EventObject} oEvent The event that occurred on the Control that has extended Tooltip.
 	 * @private
 	 */
 	TooltipBase.prototype.onfocusin = function(oEvent) {
-	
+
 		var oSC = jQuery(oEvent.target).control(0);
 		if (oSC != null) {
 			var oDomRef = oSC.getFocusDomRef();
@@ -116,25 +116,24 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 				this.sStoredTooltip = oDomRef.title;
 				oDomRef.title = "";
 			}
-	
+
 			var oPopup = this._getPopup();
 			if (!(oPopup.isOpen() && oPopup.getContent() == this)) {
 				// Update Tooltip or create a new span with texts.
 				sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
 			}
-	
+
 			// Attach accessibility info to the control oSC
 			var sValue = oDomRef.getAttribute("aria-describedby");
 			var sIdsString = this.getId() + "-title " + this.getId() + "-txt";
 			if (sValue == null || sValue == "" ) {
 				oDomRef.setAttribute("aria-describedby", sIdsString);
-			}
-			else if (sValue.indexOf(sIdsString) == -1) {
+			} else if (sValue.indexOf(sIdsString) == -1) {
 				oDomRef.setAttribute("aria-describedby", sValue + " " + sIdsString);
 			}
 		}
 	};
-	
+
 	/**
 	 * When a control that has a Tooltip looses the focus, this method is called.
 	 * @param {jQuery.EventObject} oEvent The event that occurred on the extended Tooltip.
@@ -143,12 +142,12 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	TooltipBase.prototype.onfocusout = function(oEvent) {
 		var oSC = jQuery(oEvent.target).control(0);
 		if (oSC != null) {
-	
+
 			var oDomRef = oSC.getFocusDomRef();
 			if (this.sStoredTooltip) {
 				oDomRef.title = this.sStoredTooltip;
 			}
-	
+
 			// Detach accessibility information from control oSC.
 			var sValue = oDomRef.getAttribute("aria-describedby");
 			var sIdsString = this.getId() + "-title " + this.getId() + "-txt";
@@ -165,11 +164,11 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			jQuery.sap.clearDelayedCall(TooltipBase.sOpenTimeout);
 			TooltipBase.sOpenTimeout = undefined;
 		}
-	
+
 		// Avoid closing the popup when there is a move inside the control to another control or element (for example div)
 		this.sCloseNowTimeout = jQuery.sap.delayedCall(this.getCloseDelay(), this, "closePopup");
 	};
-	
+
 	/**
 	 *	Check if the parameter is a standard browser Tooltip.
 	 * @return {boolean} - true if the Tooltip is a standard tooltip type of string. False if not a string or empty.
@@ -178,19 +177,19 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	TooltipBase.prototype.isStandardTooltip = function(oTooltip) {
 		return  (typeof oTooltip === "string" &&  (jQuery.trim(oTooltip)) !== "");
 	};
-	
+
 	/**
 	* Handle the mouseover event of a Control that has a Tooltip.
 	* @param {jQuery.EventObject} oEvent - The event that occurred on the Control.
 	* @private
 	 */
 	TooltipBase.prototype.onmouseover = function(oEvent) {
-	
+
 		// The Element or Control that initiated the event.
 		var oEventSource = jQuery(oEvent.target).control(0);
 		//jQuery.sap.log.debug("MOUSE OVER    " +  oEventSource + "  " + jQuery(oEvent.currentTarget).control(0));
 		if ( oEventSource != null) {
-	
+
 			// If we move in the tooltip itself then do not close the tooltip.
 			if ( oEventSource === this) {
 				if (this.sCloseNowTimeout) {
@@ -213,11 +212,11 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 					return;
 				}
 			}
-	
+
 			// Indicates the element being exited.
 			var oLeftElement = jQuery(oEvent.relatedTarget).control(0);
 			if (oLeftElement) {
-	
+
 				// Cancel close event if we move from child without own tooltip to the parent with rtt - current element has to have rtt.
 				if (oLeftElement.getParent()) {
 					if (oLeftElement.getParent() === oCurrentElement && oCurrentElement === oEventSource) {
@@ -235,7 +234,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 					}
 				}
 			}
-	
+
 			// Open the popup
 			if (this._currentControl === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {
 				// Set all standard tooltips to empty string
@@ -251,7 +250,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Handle the mouseout event  of a Control that has a Tooltip.
 	 * @param {jQuery.EventObject} oEvent Event that occurred on the Control that has extended Tooltip.
@@ -271,33 +270,33 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 		oEvent.stopPropagation();
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * Close the popup holding the content of the tooltip.
 	 * Clears all delayed calls for closing this popup as those are not needed anymore.
 	 * @private
 	 */
 	TooltipBase.prototype.closePopup = function() {
-		
+
 		var oPopup = this._getPopup();
-		
+
 		if (this.sCloseNowTimeout) {
 			jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
 		}
 		this.sCloseNowTimeout = undefined;
-		
+
 		oPopup.attachClosed(this.handleClosed, this);
 		oPopup.close();
 		//jQuery.sap.log.debug("CLOSE POPUP  " + this.getId());
 		this.restoreStandardTooltips();
 	};
-	
+
 	TooltipBase.prototype.handleClosed = function(){
 		this._getPopup().detachClosed(jQuery.proxy(this.handleClosed, this));
 		this.fireClosed();
 	};
-	
-	
+
+
 	/**
 	 * Open the popup holding the content of the tooltip.
 	 * @param {Object} oSC - the Control that has extended Tooltip.
@@ -305,23 +304,23 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	 */
 	TooltipBase.prototype.openPopup = function(oSC) {
 		if (oSC.getTooltip() != null) {
-	
+
 			// Clear Delayed Call if exist
 			if (this.sCloseNowTimeout) {
 				jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
 				this.sCloseNowTimeout = null;
 				return;
 			}
-	
+
 			// If already opened with the needed content then return
 			var oPopup = this._getPopup();
 			if (oPopup.isOpen() && oPopup.getContent() == this) {
 				return;
 			}
-	
+
 			// Tooltip will be displayed. Ensure the content is rendered. As this is no control, the popup will not take care of rendering.
 			sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
-	
+
 			// Open popup
 			var oDomRef = oSC.getDomRef();
 			oPopup.setContent(this);
@@ -331,20 +330,20 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			this.removeStandardTooltips(this._currentControl);
 		}
 	};
-	
+
 	/**
 	 * Switch off the browser standard tooltips and store then in an array.
 	 * @private
 	*/
 	TooltipBase.prototype.removeStandardTooltips = function() {
-	
+
 		var oDomRef = this._currentControl.getDomRef();
 		if (!this.aStoredTooltips) {
 			this.aStoredTooltips = [];
 		} else {
 			return;
 		}
-	
+
 		var tooltip = "";
 		while (oDomRef && !(oDomRef === document)) {
 			tooltip = oDomRef.title;
@@ -354,7 +353,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			}
 			oDomRef = oDomRef.parentNode;
 		}
-	
+
 		// Do it for the specified elements under the root Dom ref.
 		if (this._currentControl.getTooltipDomRefs) {
 			// oDomRefs is jQuery Object that contains DOM nodes of the elements to remove the tooltips
@@ -371,13 +370,13 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Restore the standard browser tooltips.
 	 * @private
 	 */
 	TooltipBase.prototype.restoreStandardTooltips = function() {
-	
+
 		var oPopup = this._getPopup();
 		var eState = oPopup.getOpenState();
 		if (eState === sap.ui.core.OpenState.OPEN || eState === sap.ui.core.OpenState.OPENING) {
@@ -395,10 +394,10 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 		}
 		this.aStoredTooltips = null;
 	};
-	
+
 	/* Store reference to original setParent function */
 	TooltipBase.prototype._setParent = TooltipBase.prototype.setParent;
-	
+
 	/**
 	 * Defines the new parent of this TooltipBase using {@link sap.ui.core.Element#setParent}.
 	 * Additionally closes the Tooltip.
@@ -424,31 +423,31 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 		// Ctrl is pressed together with "i" - Open Rich tooltip.
 		if (oEvent.ctrlKey && oEvent.which == jQuery.sap.KeyCodes.I) {
 			// The Element or Control that initiated the event.
-	
+
 			var oEventSource = jQuery(oEvent.target).control(0);
 			if (oEventSource != null) {
 				// If the current control is the event source or event source does not have a standard tooltip
 				if (this._currentControl === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {
-	
+
 					// Set all standard tooltips to empty string
 					this.removeStandardTooltips(oEventSource);
-	
+
 					// Open extended tooltip
 					this.openPopup( this._currentControl);
-	
+
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
 				}
 			}
-		}
-		// If Ecs is pressed then close the Rich Tooltip.
-		else if (oEvent.which == jQuery.sap.KeyCodes.ESCAPE) {
+		} else if (oEvent.which == jQuery.sap.KeyCodes.ESCAPE) {
+			// If ESC is pressed then close the Rich Tooltip.
+
 			if (TooltipBase.sOpenTimeout) {
 				jQuery.sap.clearDelayedCall(TooltipBase.sOpenTimeout);
 				TooltipBase.sOpenTimeout = undefined;
 			}
-	
-			
+
+
 			var bWasOpen = this.oPopup && this.oPopup.isOpen();
 			this.closePopup();
 			if (bWasOpen) {
@@ -457,10 +456,10 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
-			
+
 		}
 	};
-	
+
 	/**
 	 * Closes the tooltip if open or clears the open timer.
 	 * @private
@@ -474,8 +473,8 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			TooltipBase.sOpenTimeout = undefined;
 		}
 	};
-	
+
 
 	return TooltipBase;
 
-}, /* bExport= */ true);
+});

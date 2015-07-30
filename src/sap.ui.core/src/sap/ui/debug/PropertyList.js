@@ -3,8 +3,8 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Core', 'sap/ui/core/Element', 'jquery.sap.strings'],
-	function(jQuery, DataType, EventProvider, Core, Element/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'jquery.sap.strings', 'jquery.sap.encoder'],
+	function(jQuery, DataType, EventProvider, Element, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
 
@@ -26,7 +26,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	 *            oParentDomRef reference to the parent DOM element
 	 *
 	 * @constructor
-	 * @name sap.ui.debug.PropertyList
+	 * @alias sap.ui.debug.PropertyList
 	 * @private
 	 */
 	var PropertyList = EventProvider.extend("sap.ui.debug.PropertyList", /** @lends sap.ui.debug.PropertyList.prototype */ {
@@ -66,8 +66,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#exit
-	 * @function
 	 */
 	PropertyList.prototype.exit = function() {
 		jQuery(this.oParentDomRef).unbind();
@@ -76,8 +74,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#update
-	 * @function
 	 */
 	PropertyList.prototype.update = function(oParams) {
 		var sControlId = oParams.getParameter("controlId");
@@ -103,7 +99,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		}
 		aHTML.push("<div style='border-bottom:1px solid gray'>&nbsp;</div><table cellspacing='1' style='font-size:8pt;width:100%;table-layout:fixed'>");
 	
-		while ( oMetadata instanceof sap.ui.core.ElementMetadata ) {
+		while ( oMetadata instanceof ElementMetadata ) {
 			var mProperties = oMetadata.getProperties();
 			var bHeaderCreated = false;
 			if ( !jQuery.isEmptyObject(mProperties) ) {
@@ -113,7 +109,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			var mProperties = this.getAggregationsAsProperties(oMetadata);
@@ -124,7 +119,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			oMetadata = oMetadata.getParent();
@@ -173,8 +167,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#printProperties
-	 * @function
 	 */
 	PropertyList.prototype.printProperties = function(aHTML, oControl, mProperties, bAggregation) {
 		for (var i in mProperties) {
@@ -241,8 +233,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#onkeydown
-	 * @function
 	 */
 	PropertyList.prototype.onkeydown = function(oEvent) {
 		if (oEvent.keyCode == 13) {
@@ -253,8 +243,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#onclick
-	 * @function
 	 */
 	PropertyList.prototype.onclick = function(oEvent) {
 		var oSource = oEvent.target;
@@ -266,8 +254,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#onfocus
-	 * @function
 	 */
 	PropertyList.prototype.onfocus = function(oEvent) {
 		var oSource = oEvent.target;
@@ -282,8 +268,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#applyChanges
-	 * @function
 	 */
 	PropertyList.prototype.applyChanges = function(sId) {
 		var oSource = this.oParentDomRef.ownerDocument.getElementById(sId),
@@ -500,8 +484,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#onmouseover
-	 * @function
 	 */
 	PropertyList.prototype.onmouseover = function(oEvent) {
 		var oSource = oEvent.target;
@@ -525,8 +507,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.PropertyList#onmouseout
-	 * @function
 	 */
 	PropertyList.prototype.onmouseout = function(oEvent) {
 		var oSource = oEvent.target;
@@ -556,4 +536,4 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 
 	return PropertyList;
 
-}, /* bExport= */ true);
+});

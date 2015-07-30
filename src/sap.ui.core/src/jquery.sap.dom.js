@@ -229,29 +229,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.selectText = function selectText(iStart, iEnd) {
 		var oDomRef = this.get(0);
 
-		if (!oDomRef) {
-			return this;
-		}
-
 		try {
 			if (typeof (oDomRef.selectionStart) === "number") { // Firefox and IE9+
 
-				// sanity checks
-				if (iStart < 0) {
-					iStart = 0;
-				}
-
-				if (iEnd > oDomRef.value.length) {
-					iEnd = oDomRef.value.length;
-				}
-
-				if (!iEnd || iStart > iEnd) {
-					iStart = 0;
-					iEnd = 0;
-				}
-
-				oDomRef.selectionStart = iStart; // TODO: maybe need to decouple via setTimeout?
-				oDomRef.selectionEnd = iEnd;
+				oDomRef.setSelectionRange(iStart, iEnd);
 			} else if (oDomRef.createTextRange) { // IE
 				var oTextEditRange = oDomRef.createTextRange();
 				oTextEditRange.collapse();
@@ -259,7 +240,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				oTextEditRange.moveEnd('character', iEnd - iStart);
 				oTextEditRange.select();
 			}
-		} catch (e) {}	// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		} catch (e) {
+			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		}	
 
 		return this;
 	};
@@ -278,10 +261,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.getSelectedText = function() {
 		var oDomRef = this.get(0);
 
-		if (!oDomRef) {
-			return "";
-		}
-
 		try {
 			if (typeof oDomRef.selectionStart === "number") {
 				return oDomRef.value.substring(oDomRef.selectionStart, oDomRef.selectionEnd);
@@ -291,7 +270,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			if (document.selection) {
 				return document.selection.createRange().text;
 			}
-		} catch (e) {}	// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		} catch (e) {
+			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+		}	
 
 		return "";
 	};
@@ -564,50 +545,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 	};
 
-	/*
-	 * The following methods are taken from jQuery UI core but modified.
-	 *
-	 * jQuery UI Core
-	 * http://jqueryui.com
-	 *
-	 * Copyright 2014 jQuery Foundation and other contributors
-	 * Released under the MIT license.
-	 * http://jquery.org/license
-	 *
-	 * http://api.jqueryui.com/category/ui-core/
-	 */
-	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
-	jQuery.fn.extend({
-
-		/**
-		 * Disable HTML elements selection.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @protected
-		 * @methodOf jQuery.prototype
-		 * @name disableSelection
-		 * @since 1.24.0
-		 */
-		disableSelection: function() {
-			return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
-				oEvent.preventDefault();
-			});
-		},
-
-		/**
-		 * Enable HTML elements to get selected.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @protected
-		 * @methodOf jQuery.prototype
-		 * @name enableSelection
-		 * @since 1.24.0
-		 */
-		enableSelection: function() {
-			return this.off(".ui-disableSelection");
-		}
-	});
-
 	/**
 	 * Returns the MIRRORED scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
 	 * Precondition: The element is rendered in RTL mode.
@@ -683,6 +620,87 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	};
 
 
+	/**
+	 * For the given scroll position measured from the "beginning" of a container (the right edge in RTL mode)
+	 * this method returns the scrollLeft value as understood by the current browser in RTL mode.
+	 * This value is specific to the given DOM element, as the computation may involve its dimensions.
+	 *
+	 * So when oDomRef should be scrolled 2px from the beginning, the number "2" must be given as iNormalizedScrollBegin
+	 * and the result of this method (which may be a large or even negative number, depending on the browser) can then be set as
+	 * oDomRef.scrollLeft to achieve the desired (cross-browser-consistent) scrolling position.
+	 * Low values make the right part of the content visible, high values the left part.
+	 *
+	 * This method does no scrolling on its own, it only calculates the value to set (so it can also be used for animations).
+	 *
+	 * Only use this method in RTL mode, as the behavior in LTR mode is undefined and may change!
+	 *
+	 * @param {int} iNormalizedScrollBegin The distance from the rightmost position to which the element should be scrolled
+	 * @param {Element} oDomRef The DOM Element to which scrollLeft will be applied
+	 * @return {int} The scroll position that must be set for the DOM element
+	 * @public
+	 * @author SAP SE
+	 * @since 1.26.1
+	 */
+	jQuery.sap.denormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
+
+		if (oDomRef) {
+			if (!!Device.browser.internet_explorer) {
+				return iNormalizedScrollBegin;
+
+			} else if (!!Device.browser.webkit) {
+				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
+
+			} else if (!!Device.browser.firefox) {
+				return -iNormalizedScrollBegin;
+
+			} else {
+				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
+				return iNormalizedScrollBegin;
+			}
+		}
+	};
+
+
+
+	/*
+	 * The following methods are taken from jQuery UI core but modified.
+	 *
+	 * jQuery UI Core
+	 * http://jqueryui.com
+	 *
+	 * Copyright 2014 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * http://api.jqueryui.com/category/ui-core/
+	 */
+	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
+	jQuery.fn.extend( /** @lends jQuery.prototype */ {
+
+		/**
+		 * Disable HTML elements selection.
+		 *
+		 * @return {jQuery} <code>this</code> to allow method chaining.
+		 * @protected
+		 * @since 1.24.0
+		 */
+		disableSelection: function() {
+			return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
+				oEvent.preventDefault();
+			});
+		},
+
+		/**
+		 * Enable HTML elements to get selected.
+		 *
+		 * @return {jQuery} <code>this</code> to allow method chaining.
+		 * @protected
+		 * @since 1.24.0
+		 */
+		enableSelection: function() {
+			return this.off(".ui-disableSelection");
+		}
+	});
 
 
 	/*!
@@ -697,7 +715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	function visible( element ) {
 		// check if one of the parents (until it's position parent) is invisible
 		// prevent that elements in static area are always checked as invisible
-		
+
 		// list all items until the offsetParent item (with jQuery >1.6 you can use parentsUntil)
 		var oOffsetParent = jQuery(element).offsetParent();
 		var bOffsetParentFound = false;
@@ -707,7 +725,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			}
 			return bOffsetParentFound;
 		});
-		
+
 		// check for at least one item to be visible
 		return !jQuery(element).add($refs).filter(function() {
 			return jQuery.css( this, "visibility" ) === "hidden" || jQuery.expr.filters.hidden( this );
@@ -766,7 +784,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	if (!jQuery.expr[":"].sapTabbable) {
 		/*!
 		 * The following function is taken from
-		 * jQuery UI Core 1.10.4
+		 * jQuery UI Core 1.11.1
 		 * http://jqueryui.com
 		 *
 		 * Copyright 2014 jQuery Foundation and other contributors
@@ -809,7 +827,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	if (!jQuery.fn.zIndex) {
 		/*!
 		 * The following function is taken from
-		 * jQuery UI Core 1.10.4
+		 * jQuery UI Core 1.11.1
 		 * http://jqueryui.com
 		 *
 		 * Copyright 2014 jQuery Foundation and other contributors
@@ -885,13 +903,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 		return oDomRef.ownerDocument.defaultView;
 	};
-	
-	
+
+
 	var _oScrollbarSize = {};
-	
+
 	/**
 	 * Returns the size (width of the vertical / height of the horizontal) native browser scrollbars.
-	 * 
+	 *
 	 * This function must only be used when the DOM is ready.
 	 *
 	 * @param {string} [sClasses=null] the CSS class that should be added to the test element.
@@ -915,7 +933,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				_oScrollbarSize = {};
 			}
 		}
-		
+
 		if (_oScrollbarSize[sKey]) {
 			return _oScrollbarSize[sKey];
 		}
@@ -923,7 +941,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (!document.body) {
 			return {width: 0, height: 0};
 		}
-		
+
 		var $Area = jQuery("<DIV/>")
 			.css("visibility", "hidden")
 			.css("height", "0")
@@ -935,7 +953,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 
 		$Area.prependTo(document.body);
-		
+
 		var $Dummy = jQuery("<div style=\"visibility:visible;position:absolute;height:100px;width:100px;overflow:scroll;opacity:0;\"></div>");
 		$Area.append($Dummy);
 
@@ -958,6 +976,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return _oScrollbarSize[sKey];
 	};
 
+	// handle weak dependency to sap/ui/core/Control 
+	var _Control;
+
+	function getControl() {
+		return _Control || (_Control = sap.ui.require('sap/ui/core/Control'));
+	}
+
 	/**
 	 * Search ancestors of the given source DOM element for the specified CSS class name.
 	 * If the class name is found, set it to the root DOM element of the target control.
@@ -967,7 +992,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @param {jQuery|Control|string} vSource jQuery object, control or an id of the source element.
 	 * @param {jQuery|Control} vDestination target jQuery object or a control.
 	 * @return {jQuery|Element} Target element
-	 * @name jQuery.sap.syncStyleClass
 	 * @public
 	 * @since 1.22
 	 */
@@ -977,7 +1001,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			return vDestination;
 		}
 
-		if (vSource instanceof sap.ui.core.Control) {
+		var Control = getControl();
+		
+		if (Control && vSource instanceof Control) {
 			vSource = vSource.$();
 		} else if (typeof vSource === "string") {
 			vSource = jQuery.sap.byId(vSource);
@@ -990,7 +1016,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		if (vDestination instanceof jQuery) {
 			vDestination.toggleClass(sStyleClass, bClassFound);
-		} else if (vDestination instanceof sap.ui.core.Control) {
+		} else if (Control && vDestination instanceof Control) {
 			vDestination.toggleStyleClass(sStyleClass, bClassFound);
 		} else {
 			jQuery.sap.assert(false, 'jQuery.sap.syncStyleClass(): vDestination must be a jQuery object or a Control');
@@ -998,7 +1024,246 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		return vDestination;
 	};
+	
+	/**
+	 * Adds space separated value to the given attribute.
+	 * This method ignores when the value is already available for the given attribute.
+	 *
+	 * @this {jQuery} jQuery context
+	 * @param {string} sAttribute The name of the attribute.
+	 * @param {string} sValue The value of the attribute to be inserted.
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @function
+	 * @private
+	 */
+	function addToAttributeList(sAttribute, sValue) {
+		var sAttributes = this.attr(sAttribute);
+		if (!sAttributes) {
+			return this.attr(sAttribute, sValue);
+		}
+
+		var aAttributes = sAttributes.split(" ");
+		if (aAttributes.indexOf(sValue) == -1) {
+			aAttributes.push(sValue);
+			this.attr(sAttribute, aAttributes.join(" "));
+		}
+
+		return this;
+	}
+	
+	/**
+	 * Remove space separated value from the given attribute.
+	 *
+	 * @this {jQuery} jQuery context
+	 * @param {string} sAttribute The name of the attribute.
+	 * @param {string} sValue The value of the attribute to be inserted.
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @function
+	 * @private
+	 */
+	function removeFromAttributeList(sAttribute, sValue) {
+		var sAttributes = this.attr(sAttribute) || "",
+			aAttributes = sAttributes.split(" "),
+			iIndex = aAttributes.indexOf(sValue);
+
+		if (iIndex == -1) {
+			return this;
+		}
+
+		aAttributes.splice(iIndex, 1);
+		if (aAttributes.length) {
+			this.attr(sAttribute, aAttributes.join(" "));
+		} else {
+			this.removeAttr(sAttribute);
+		}
+
+		return this;
+	}
+
+	/**
+	 * Adds the given ID reference to the the aria-labelledby attribute.
+	 *
+	 * @param {string} sID The ID reference of an element
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @name jQuery#addAriaLabelledBy
+	 * @public
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @function
+	 */
+	jQuery.fn.addAriaLabelledBy = function (sId) {
+		return addToAttributeList.call(this, "aria-labelledby", sId);
+	};
+	
+	/**
+	 * Removes the given ID reference from the aria-labelledby attribute.
+	 *
+	 * @param {string} sID The ID reference of an element
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @name jQuery#removeAriaLabelledBy
+	 * @public
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @function
+	 */
+	jQuery.fn.removeAriaLabelledBy = function (sId) {
+		return removeFromAttributeList.call(this, "aria-labelledby", sId);
+	};
+	
+	/**
+	 * Adds the given ID reference to the aria-describedby attribute.
+	 *
+	 * @param {string} sID The ID reference of an element
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @name jQuery#addAriaDescribedBy
+	 * @public
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @function
+	 */
+	jQuery.fn.addAriaDescribedBy = function (sId) {
+		return addToAttributeList.call(this, "aria-describedby", sId);
+	};
+	
+	/**
+	 * Removes the given ID reference from the aria-describedby attribute.
+	 *
+	 * @param {string} sID The ID reference of an element
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @name jQuery#removeAriaDescribedBy
+	 * @public
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @function
+	 */
+	jQuery.fn.removeAriaDescribedBy = function (sId) {
+		return removeFromAttributeList.call(this, "aria-describedby", sId);
+	};
+
+	
+	/**
+	 * This method try to patch two HTML elements according to changed attributes.
+	 *
+	 * @param {HTMLElement} oOldDom existing element to be patched
+	 * @param {HTMLElement} oNewDom is the new node to patch old dom
+	 * @return {Boolean} true when patch is applied correctly or false when nodes are replaced.
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @private
+	 */
+	function patchDOM(oOldDom, oNewDom) {
+		
+		// start checking with most common use case and backwards compatible
+		if (oOldDom.childElementCount != oNewDom.childElementCount ||
+			oOldDom.tagName != oNewDom.tagName) {
+			oOldDom.parentNode.replaceChild(oNewDom, oOldDom);
+			return false;
+		}
+
+		// go with native... if nodes are equal there is nothing to do
+		// http://www.w3.org/TR/DOM-Level-3-Core/core.html#Node3-isEqualNode
+		if (oOldDom.isEqualNode(oNewDom)) {
+			return true;
+		}
+
+		// remove outdated attributes from old dom
+		var aOldAttributes = oOldDom.attributes;
+		for (var i = 0, ii = aOldAttributes.length; i < ii; i++) {
+			var sAttrName = aOldAttributes[i].name;
+			if (oNewDom.getAttribute(sAttrName) === null) {
+				oOldDom.removeAttribute(sAttrName);
+				ii = ii - 1;
+				i = i - 1;
+			}
+		}
+
+		// patch new or changed attributes to the old dom
+		var aNewAttributes = oNewDom.attributes;
+		for (var i = 0, ii = aNewAttributes.length; i < ii; i++) {
+			var sAttrName = aNewAttributes[i].name,
+				vOldAttrValue = oOldDom.getAttribute(sAttrName),
+				vNewAttrValue = oNewDom.getAttribute(sAttrName);
+			
+			if (vOldAttrValue === null || vOldAttrValue !== vNewAttrValue) {
+				oOldDom.setAttribute(sAttrName, vNewAttrValue);
+			}
+		}
+
+		// check whether more child nodes to continue or not
+		var iNewChildNodesCount = oNewDom.childNodes.length;
+		if (!iNewChildNodesCount && !oOldDom.hasChildNodes()) {
+			return true;
+		}
+
+		// maybe no more child elements
+		if (!oNewDom.childElementCount) {
+			// but child nodes(e.g. Text Nodes) still needs to be replaced
+			if (!iNewChildNodesCount) {
+				// new dom does not have any child node, so we can clean the old one
+				oOldDom.textContent = "";
+			} else if (iNewChildNodesCount == 1 && oNewDom.firstChild.nodeType == 3 /* TEXT_NODE */) {
+				// update the text content for the first text node
+				oOldDom.textContent = oNewDom.textContent;
+			} else {
+				// in case of comments or other node types are used
+				oOldDom.innerHTML = oNewDom.innerHTML;
+			}
+			return true;
+		}
+
+		// patch child nodes
+		for (var i = 0, r = 0, ii = iNewChildNodesCount; i < ii; i++) {
+			var oOldDomChildNode = oOldDom.childNodes[i],
+				oNewDomChildNode = oNewDom.childNodes[i - r];
+
+			if (oNewDomChildNode.nodeType == 1 /* ELEMENT_NODE */) {
+				// recursively patch child elements 
+				if (!patchDOM(oOldDomChildNode, oNewDomChildNode)) {
+					// if patch is not possible we replace nodes
+					// in this case replaced node is removed
+					r = r + 1;
+				}
+			} else {
+				// when not element update only node values 
+				oOldDomChildNode.nodeValue = oNewDomChildNode.nodeValue;
+			}
+		}
+
+		return true;
+	}
+	
+	/**
+	 * This method try to replace two HTML elements according to changed attributes.
+	 * As a fallback it replaces DOM nodes.
+	 *
+	 * @param {HTMLElement} oOldDom existing element to be patched
+	 * @param {HTMLElement|String} vNewDom is the new node to patch old dom
+	 * @param {Boolean} bCleanData wheter jQuery data should be removed or not
+	 * @return {Boolean} true when patch is applied correctly or false when nodes are replaced.
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @private
+	 */
+	jQuery.sap.replaceDOM = function(oOldDom, vNewDom, bCleanData) {
+		var oNewDom;
+		if (typeof vNewDom === "string") {
+			oNewDom = jQuery.parseHTML(vNewDom)[0];
+		} else {
+			oNewDom = vNewDom;
+		}
+
+		if (bCleanData) {
+			jQuery.cleanData([oOldDom]);
+			jQuery.cleanData(oOldDom.getElementsByTagName("*"));
+		}
+
+		return patchDOM(oOldDom, oNewDom);
+	};
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

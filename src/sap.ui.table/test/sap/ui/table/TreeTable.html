@@ -8,7 +8,7 @@
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.TreeTable.gif">
 
 <!-- ********************************************************************** -->
-<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- SAPUI5 Bootstrap:												     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
 <script id="sap-ui-bootstrap" 
@@ -19,138 +19,241 @@
 
 <script type="text/javascript">	
 	
-    var oData = {
-    		root:{
-    			name: "root",
-    			description: "root description",
-    			checked: false,
-    			0: {
-    				name: "item1",
-        			description: "item1 description",
-        			checked: true,
-    				0: {
-    					name: "subitem1-1",
-            			description: "subitem1-1 description",
-            			checked: true,
-    					0: {
-    						name: "subsubitem1-1-1",
-   		        			description: "subsubitem1-1-1 description",
-   		        			checked: true
-    					},
-    					1: {
-    						name: "subsubitem1-1-2",
-   		        			description: "subsubitem1-1-2 description",
-   		        			checked: true
-    					}
-    				},
-    				1: {
-    					name: "subitem1-2",
-	        			description: "subitem1-2 description",
-  		        		checked: true,
-    					0: {
-    						name: "subsubitem1-2-1",
-   		        			description: "subsubitem1-2-1 description",
-   		        			checked: true
-    					}
-    				}
-    				
-    			},
-    			1:{
-    				name: "item2",
-        			description: "item2 description",
-        			checked: true,
-    				0: {
-    					name: "subitem2-1",
-	        			description: "subitem2-1 description",
-	        			checked: true
-    				}
-    			},
-    			2:{
-    				name: "item3",
-        			description: "item3 description",
-        			checked: true
-    			}
-    			
-    		}
-    			
-    };
-    
-    for (var i = 0; i < 20; i++) {
-		oData["root"][2][i] = {
-			name: "subitem3-" + i,
-   			description: "subitem3-" + i + " description",
-   			checked: false
-		};
-    }
+var oData = {
+	root:{
+		name: "root",
+		description: "moep moep",
+		checked: false,
+		0: {
+			name: "Rock",
+			description: "Rockmusik",
+			checked: true,
+			0: { //children as object references
+				name: "Rock'n'Roll",
+				description: "late 1940s",
+				checked: true,
+				children: [ // Children inside an array
+					{
+						name: "Elvis Presley",
+						description: "*1935 - +1977",
+						checked: true
+					},
+					{
+						name: "Chuck Berry",
+						description: "*1926",
+						checked: true
+					}
+				],
+				"flup": { // mixed with arrays and objects 
+						name: "Keith Richards",
+						description: "*1943",
+						checked: true
+					}
+			},
+			1: {
+				name: "Heavy Metal",
+				description: "late 1960s",
+				checked: true,
+				0: {
+					name: "Black Sabbath",
+					description: "founded 1968",
+					checked: true
+				},
+				1: {
+					name: "Judas Priest",
+					description: "founded 1969",
+					checked: true
+				}
+			},
+			2: {
+				name: "Grunge",
+				description: "Mid-1980s",
+				checked: true,
+				0: {
+					name: "Nirvana",
+					description: "1987",
+					checked: true
+				},
+				1: {
+					name: "Soundgarden",
+					description: "1984",
+					checked: true
+				},
+				2: {
+					name: "Alice in Chains",
+					description: "1987",
+					checked: true
+				}
+			}
+		},
+		1:{
+			name: "Hip-Hop",
+			description: "Hip-Hop",
+			checked: true,
+			0: {
+				name: "Old-School",
+				description: "Mid 1970s",
+				checked: true,
+				0: {
+					name: "The Sugarhill Gang",
+					description: "1973",
+					checked: true
+				},
+				1: {
+					name: "Grandmaster Flash and the Furious Five",
+					description: "1978",
+					checked: true
+				}
+			},
+			1: {
+				name: "Rap-Rock",
+				description: "early 1980s",
+				checked: true,
+				0: {
+					name: "Run-D.M.C.",
+					description: "1981 - 2002",
+					checked: true
+				},
+				1: {
+					name: "Beastie Boys",
+					description: "1981 - 2012",
+					checked: true
+				}
+			},
+			2: {
+				name: "Gangsta rap",
+				description: "mid 1980s",
+				checked: true,
+				0: {
+					name: "2Pac",
+					description: "1971 - 1996",
+					checked: true
+				},
+				1: {
+					name: "N.W.A",
+					description: "1986 - 1991, 1998 - 2002",
+					checked: true
+				}
+			}
+		},
+		2: {
+			name: "Swing/Big Band",
+			description: "1930s",
+			checked: true,
+			0: {
+				name: "Frank Sinatra",
+				description: "1915 - 1998",
+				checked: true
+			},
+			1: {
+				name: "Count Basie",
+				description: "1904 - 1984",
+				checked: true
+			}
+		},
+		3: {
+			name: "ZZZ",
+			description: "None",
+			checked: true
+		}
+	}
+};
 
-    var oModel = new sap.ui.model.json.JSONModel();
-    oModel.setData(oData);
-    
-	var oTable = new sap.ui.table.TreeTable({
-		title: "TreeTable",
-		toolbar: new sap.ui.commons.Toolbar({
-			items: [
-				new sap.ui.commons.Button({text: "Expand",
-					press: function() {
-						var iSelectedIndex = oTable.getSelectedIndex();
-						oTable.getBinding("rows").expandContext(oTable.getContextByIndex(iSelectedIndex));
-						oTable.setSelectedIndex(iSelectedIndex);
-					}
-				}),
-				new sap.ui.commons.Button({text: "Collapse",
-					press: function() {
-						var iSelectedIndex = oTable.getSelectedIndex();
-						oTable.getBinding("rows").collapseContext(oTable.getContextByIndex(iSelectedIndex));
-						oTable.setSelectedIndex(iSelectedIndex);
-					}
-				}),
-				new sap.ui.commons.Button({text: "Add",
-					press: function() {
-						oModel.setData({
-							root: {
-				    			3: {
-				    				name: "new item",
-				        			description: "new item description",
-				        			checked: false
-				    			}
+for (var i = 0; i < 20; i++) {
+	oData["root"][3][i] = {
+		name: "subitem3-" + i,
+		description: "subitem3-" + i + " description",
+		checked: false
+	};
+}
+
+oData["root"][4] = {
+	name: "Bottom - 1",
+	description: "1930s",
+	checked: true,
+	0: {
+		name: "Bottom - 2",
+		description: "1915 - 1998",
+		checked: true
+	},
+	1: {
+		name: "Bottom - 3",
+		description: "1904 - 1984",
+		checked: true
+	}
+};
+
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(oData);
+
+var oTable = new sap.ui.table.TreeTable({
+	title: "TreeTable",
+	toolbar: new sap.ui.commons.Toolbar({
+		items: [
+			new sap.ui.commons.Button({text: "Expand",
+				press: function() {
+					var iSelectedIndex = oTable.getSelectedIndex();
+					oTable.getBinding("rows").expandContext(oTable.getContextByIndex(iSelectedIndex));
+					oTable.setSelectedIndex(iSelectedIndex);
+				}
+			}),
+			new sap.ui.commons.Button({text: "Collapse",
+				press: function() {
+					var iSelectedIndex = oTable.getSelectedIndex();
+					oTable.getBinding("rows").collapseContext(oTable.getContextByIndex(iSelectedIndex));
+					oTable.setSelectedIndex(iSelectedIndex);
+				}
+			}),
+			new sap.ui.commons.Button({text: "Add",
+				press: function() {
+					oModel.setData({
+						root: {
+							4: {
+								name: "new item",
+								description: "new item description",
+								checked: false
 							}
-						}, true);
-					}
-				}),
-				new sap.ui.commons.Button({text: "Remove",
-					press: function() {
-						var oData = oModel.getData();
-						delete oData.root[3];
-						oModel.setData(oData);
-					}
-				})
-			]
-		}),
-		columns: [
-			new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name"}),
-			new sap.ui.table.Column({label: "Description", template: "description"})
-		],
-		selectionMode: sap.ui.table.SelectionMode.MultiToggle,
-		enableColumnReordering: true,
-		expandFirstLevel: true
-	});
-	
-	oTable.attachToggleOpenState(function(oEvent) {
-		jQuery.sap.log.info("ToggleOpenState: rowIndex: " + oEvent.getParameter("rowIndex") + 
-				" - rowContext: " + oEvent.getParameter("rowContext") + 
-				" - expanded? " + oEvent.getParameter("expanded"));
-	});
-	
-	oTable.attachRowSelectionChange(function(oEvent) {
-		jQuery.sap.log.info("RowSelectionChange: rowIndex: " + oEvent.getParameter("rowIndex") + 
-				" - rowContext: " + oEvent.getParameter("rowContext"));
-	});
-	
-	oTable.setModel(oModel);
-	oTable.bindRows("/root");
-	
-	oTable.placeAt("content");
-	
+						}
+					}, true);
+				}
+			}),
+			new sap.ui.commons.Button({text: "Remove",
+				press: function() {
+					var oData = oModel.getData();
+					delete oData.root[3];
+					oModel.setData(oData);
+				}
+			})
+		]
+	}),
+	visibleRowCount: 20,
+	columns: [
+		new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name", sortProperty: "name"}),
+		new sap.ui.table.Column({label: "Description", template: "description", sortProperty: "description"})
+	],
+	selectionMode: sap.ui.table.SelectionMode.MultiToggle,
+	enableColumnReordering: true,
+	expandFirstLevel: true
+});
+
+oTable.attachToggleOpenState(function(oEvent) {
+	jQuery.sap.log.info("ToggleOpenState: rowIndex: " + oEvent.getParameter("rowIndex") + 
+			" - rowContext: " + oEvent.getParameter("rowContext") + 
+			" - expanded? " + oEvent.getParameter("expanded"));
+});
+
+oTable.attachRowSelectionChange(function(oEvent) {
+	jQuery.sap.log.info("RowSelectionChange: rowIndex: " + oEvent.getParameter("rowIndex") + 
+			" - rowContext: " + oEvent.getParameter("rowContext"));
+});
+
+oTable.setModel(oModel);
+oTable.bindRows("/root");
+
+oTable.placeAt("content");
+
+b = oTable.getBinding("rows");
+
 </script>
 
 </head>

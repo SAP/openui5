@@ -76,4 +76,4 @@ sap.ui.define(['jquery.sap.global',
 
 	return sap.ui.suite;
 
-}, /* bExport= */ false);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Tokenizer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement'],
+	function(jQuery, library, Control, ScrollEnablement) {
 	"use strict";
 
 
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Tokenizer
+	 * @alias sap.m.Tokenizer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tokenizer = Control.extend("sap.m.Tokenizer", /** @lends sap.m.Tokenizer.prototype */ { metadata : {
@@ -38,12 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Defines the width of the Tokenizer.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
-			/**
-			 * Determines whether the tokenizer is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
 		},
 		defaultAggregation : "tokens",
 		aggregations : {
@@ -53,24 +48,71 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 */
 			tokens : {type : "sap.m.Token", multiple : true, singularName : "token"}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
 			 * fired when the tokens aggregation changed (add / remove token)
 			 */
-			tokenChange : {}
+			tokenChange : {
+				parameters : {
+					
+					/**
+					 * type of tokenChange event. 
+					 * There are four TokenChange types: "added", "removed", "removedAll", "tokensChanged".
+					 * Use Tokenizer.TokenChangeType.Added for "added",	Tokenizer.TokenChangeType.Removed for "removed", Tokenizer.TokenChangeType.RemovedAll for "removedAll" and Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
+					 */
+					type: { type : "string"},
+					
+					/**
+					 * the added token or removed token. 
+					 * This parameter is used when tokenChange type is "added" or "removed".
+					 */
+					token: { type: "sap.m.Token"},
+					
+					/**
+					 * the array of removed tokens. 
+					 * This parameter is used when tokenChange type is "removedAll".
+					 */
+					tokens: { type: "sap.m.Token[]"},
+					
+					/**
+					 * the array of tokens that are added.
+					 * This parameter is used when tokenChange type is "tokenChanged".
+					 */
+					addedTokens :  { type: "sap.m.Token[]"},
+					
+					/**
+					 * the array of tokens that are removed.
+					 * This parameter is used when tokenChange type is "tokenChanged".
+					 */
+					removedTokens :  { type: "sap.m.Token[]"}
+				}				
+			}
 		}
 	}});
-	
+
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an ARIA announcement and remember its ID for later use in the renderer:
+	Tokenizer.prototype._sAriaTokenizerLabelId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKENIZER_ARIA_LABEL")
+	}).toStatic().getId();
+
 	///**
 	// * This file defines behavior for the control,
 	// */
-	
-	// When to create a scroll delegate (library) or using pure CSS
-	Tokenizer.prototype._bDoScrollViaLibrary = !sap.ui.Device.system.desktop;
-	Tokenizer.prototype._bDoScrollWin8 = sap.ui.Device.os.windows && sap.ui.Device.os.version === 8;
-	Tokenizer.prototype._bDoTouchScroll = Tokenizer.prototype._bDoScrollViaLibrary
-			|| Tokenizer.prototype._bDoScrollWin8;
 	
 	Tokenizer.prototype.init = function() {
 		//if bScrollToEndIsActive === true, than tokenizer will keep last token visible
@@ -78,28 +120,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		
 		this._aTokenValidators = [];
 		
-		if (this._bDoScrollViaLibrary) {
-			jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
-			var sId = this.getId() + "-scrollContainer";
-	
-			var _nonTouchScrolling;
-			if (sap.ui.Device.os.android && sap.ui.Device.os.version < 4.4 && !sap.ui.Device.browser.chrome) {
-				_nonTouchScrolling = true;
-			} else {
-				_nonTouchScrolling = false;
-			}
-	
-			this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, sId, {
-				horizontal : true,
-				vertical : false,
-				nonTouchScrolling : _nonTouchScrolling
-			});
-	
-		} else if (this._bDoScrollWin8) {
-			// in the case of Windows 8 we use no special library since scrolling there is a. working nicely without it and
-			// b. there are issues with scrolling when using the ScrollEnablement
-			this.addStyleClass("sapMTokenizerWin8");
-		}
+		this._oScroller = new ScrollEnablement(this, this.getId() + "-scrollContainer", {
+			horizontal : true,
+			vertical : false,
+			nonTouchScrolling : true
+		});
 	};
 	
 	/**
@@ -134,6 +159,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		
 		this._doScrollToEnd();
+	};
+	
+	
+	Tokenizer.prototype.setWidth = function(sWidth) {
+		this.setProperty("width", sWidth, true);
+		this.$().css("width", this.getWidth());
+		return this;
 	};
 	
 	/**
@@ -175,6 +207,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// when token selected we no longer truncate; thereby the delete icon is visible
 		var fSelectHandler = null;
 		fSelectHandler = function() {
+			lastToken.removeStyleClass("sapMTokenTruncate");
 			this.$().removeAttr("style");
 			this.detachSelect(fSelectHandler);
 			that.scrollToEnd();
@@ -182,13 +215,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		
 		var widthOfLastToken = $LastToken.width();
-		if (!lastToken.getSelected() && nWidth < widthOfLastToken) {
+		if (!lastToken.getSelected() && nWidth >= 0 && widthOfLastToken >= 0 && nWidth < widthOfLastToken) {
 			// truncate last token if not selected and not completely visible
 			$LastToken.outerWidth(nWidth, true);
-			$LastToken.css("overflow", "hidden");
-			$LastToken.css("text-overflow", "ellipsis");
-			$LastToken.css("white-space", "nowrap");
-	
+			lastToken.addStyleClass("sapMTokenTruncate");
 			lastToken.attachSelect(fSelectHandler);
 		} else {
 		  // last token is completely visible
@@ -274,6 +304,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		
 		return this.$().children(".sapMTokenizerScrollContainer")[0].scrollWidth;
 	};
+
+	Tokenizer.prototype.onBeforeRendering = function() {
+		this._deregisterResizeHandler();
+	};
 	
 	/**
 	 * Called after the control is rendered.
@@ -285,12 +319,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (Control.prototype.onAfterRendering) {
 			Control.prototype.onAfterRendering.apply(this, arguments);
 		}
+		
+		var that = this;
 	
 		if (this._bScrollToEndIsActive) {
-			var that = this;
 			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
 					that._doScrollToEnd();
 			});
+		}
+		
+		this._bCopyToClipboardSupport = !!this.getDomRef("clip");
+		if (this._bCopyToClipboardSupport) {
+			this.$().on("copy", function(oEvent){
+				that.oncopy(oEvent);
+			});
+		}
+	};
+	
+	/**
+	 * Handles the copy event
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Tokenizer.prototype.oncopy = function(oEvent) {
+		var aSelectedTokens = this.getSelectedTokens();
+		var sSelectedText = "";
+		for (var i = 0; i < aSelectedTokens.length; i++) {
+			sSelectedText = sSelectedText + (i > 0 ? "\r\n" : "") + aSelectedTokens[i].getText();
+		}
+		
+		if (!sSelectedText) {
+			return;
+		}
+		
+		if (window.clipboardData) {
+			window.clipboardData.setData("text", sSelectedText);
+		} else {
+			oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
+		}
+		oEvent.preventDefault();
+	};
+	
+	/**
+	 * Handle the focus leave event, deselects token
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Tokenizer.prototype.onsapfocusleave = function(oEvent) {
+		//when focus goes to token, keep the select status, otherwise deselect all tokens
+		if (!this._checkFocus()) {
+			this.selectAllTokens(false);
 		}
 	};
 	
@@ -303,6 +385,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Tokenizer.prototype.saptabnext = function(oEvent) {
 		this.selectAllTokens(false);
+	};
+	
+	/**
+	 * check if all tokens in the tokenizer are selected.
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype.isAllTokenSelected = function() {
+		if (this.getTokens().length === this.getSelectedTokens().length) {
+			
+			return true;
+		}
+		return false;
+	
 	};
 	
 	/**
@@ -320,16 +416,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command
 			
-			// flag used for ctrl + a in MultiInput check
-			this.bSelectAllToken = false;
+			//to check how many tokens are selected before Ctrl + A in MultiInput
+			this._iSelectedToken = this.getSelectedTokens().length;
 			
-			if (this.getTokens().length !== this.getSelectedTokens().length){
+			if (!this.isAllTokenSelected()) {
 				this.focus();
 				this.selectAllTokens(true);
 				oEvent.preventDefault();
-				this.bSelectAllToken = true;
 			}
-			
 			
 		}
 
@@ -396,7 +490,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 	
 		if (index < iLength - 1) {
-			this.getTokens()[index + 1].setSelected(true);
+			var oNextToken = this.getTokens()[index + 1];
+			oNextToken.setSelected(true);
+			this._ensureTokenVisible(oNextToken);
+
 			oEvent.preventDefault();
 		} else if (index === iLength - 1) {
 			// focus is on last token - we do not handle this event and let it bubble
@@ -409,7 +506,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		oEvent.setMarked();
 	
 	};
-	
+
+	/**
+	 * Adjusts the scrollLeft so that the given token is visible from its left side
+	 * @param {sap.m.Token} oToken The token that will be fully visible
+	 * @private
+	*/
+	Tokenizer.prototype._ensureTokenVisible = function(oToken) {
+		var iTokenizerLeftOffset = this.$().offset().left,
+			iTokenLeftOffset = oToken.$().offset().left;
+
+		if (iTokenLeftOffset < iTokenizerLeftOffset) {
+			this.$().scrollLeft(this.$().scrollLeft() - iTokenizerLeftOffset + iTokenLeftOffset);
+		}
+	};
+
 	/**
 	 * Called when the user presses the left arrow key, selects previous token
 	 * @param {jQuery.Event} oEvent The event triggered by the user
@@ -435,7 +546,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 	
 		if (index > 0) {
-			this.getTokens()[index - 1].setSelected(true);
+			var oPrevToken = this.getTokens()[index - 1];
+			oPrevToken.setSelected(true);
+			this._ensureTokenVisible(oPrevToken);
 		} else if (index === -1) {
 			this.getTokens()[this.getTokens().length - 1].setSelected(true);
 		}
@@ -598,10 +711,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return;
 		}
 	
-		if (fValidateCallback) {
-			fValidateCallback(true);
-		}
-	
 		var tokenExists = this._tokenExists(oToken);
 		if (tokenExists) {
 			return;
@@ -609,12 +718,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		this.addToken(oToken);
 	
+		if (fValidateCallback) {
+			fValidateCallback(true);
+		}
+		
 		this.fireTokenChange({
 			addedTokens : [oToken],
 			removedTokens : [],
 			type : Tokenizer.TokenChangeType.TokensChanged
 		});
 	};
+	
+	/**
+	 * Function parses given text, and text is separated by line break 
+	 * 
+	 * @private
+	 * @param {String} string needed parsed
+	 * @return {Array} array of string after parsing
+	 */
+	Tokenizer.prototype._parseString = function(sString) {
+		
+		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+		// delimiter is line break
+		return sString.split(/\r\n|\r|\n/g);
+	};
+	
+	/**
+	 * Checks whether the Tokenizer or one of its internal DOM elements has the focus.
+	 * 
+	 * @private
+	 */
+	Tokenizer.prototype._checkFocus = function() {
+		return this.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+	};
+	
 	
 	/**
 	 * Function checks if a given token already exists in the tokens aggregation based on their keys
@@ -760,6 +897,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			removedTokens : tokensToBeDeleted,
 			type : Tokenizer.TokenChangeType.TokensChanged
 		});
+		
+		this._doSelect();
 	
 		return this;
 	};
@@ -784,6 +923,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			token = tokens[i];
 			token.setSelected(bSelect, true);
 		}
+		
+		this._doSelect();
 	
 		return this;
 	};
@@ -829,18 +970,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	/**
 	 * Function is called when token is pressed, toggles the token's selection state depending on ctrl key state, deselectes
-	 * other tokens
+	 * other tokens. Currently handled by sap.m.Token#ontap
 	 * 
 	 * @private
 	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
-	Tokenizer.prototype._onTokenPress = function(oEvent) {
-		var sourceToken = oEvent.oSource;
-		var bSelected = sourceToken.getSelected();
-		sourceToken.setSelected(!bSelected);
-			
-	};
+	Tokenizer.prototype._onTokenPress = function(oEvent) {};
 	
 	Tokenizer.prototype.setEditable = function(bEditable) {
 		this.setProperty("editable", bEditable);
@@ -854,12 +990,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		return this;
 
-	};
-	
-	Tokenizer.prototype.setWidth = function(sWidth) {
-		this.setProperty("width", sWidth, true);
-		this.$().css("width", this.getWidth());
-		return this;
 	};
 	
 	/**
@@ -902,6 +1032,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (this._sResizeHandlerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeHandlerId);
 			delete this._sResizeHandlerId;
+		}
+	};
+	
+	/**
+	 * Selects the hidden clip div to enable copy to clipboad.
+	 * 
+	 * @private
+	 */
+	Tokenizer.prototype._doSelect = function(){
+		if (this._checkFocus() && this._bCopyToClipboardSupport) {
+			var oFocusRef = document.activeElement;
+			var oSelection = window.getSelection();
+			oSelection.removeAllRanges();
+			if (this.getSelectedTokens().length) {
+				var oRange = document.createRange();
+				oRange.selectNodeContents(this.getDomRef("clip"));
+				oSelection.addRange(oRange);
+			}
+			if (window.clipboardData && document.activeElement.id == this.getId() + "-clip") {
+				jQuery.sap.focus(oFocusRef.id == this.getId() + "-clip" ? this.getDomRef() : oFocusRef);
+			}
 		}
 	};
 	

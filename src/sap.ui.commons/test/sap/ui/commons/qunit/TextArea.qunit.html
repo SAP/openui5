@@ -79,7 +79,7 @@
 		equal(oTA.getExplanation(), "", "Default 'explanation':");
 		equal(oTA.getLabeledBy(), "", "Default 'labeledBy':");
 		equal(oTA.getTooltip(), null, "Default 'tooltip':");
-	 });
+	});
 
 	test("Custom Values", function() {
 		var oTA = oTAs["oTA2"];
@@ -208,6 +208,7 @@
 		jQuery.sap.domById('oTA1').focus();
 
 		qutils.triggerCharacterInput("oTA1", "A");
+		qutils.triggerEvent("input", "oTA1");
 		qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.A, true, false, false);
 		equal(oTA.getValue(), "", "Value after Typing");
 		equal(oTA.getLiveValue(), "A", "LiveValue after typing");
@@ -217,6 +218,7 @@
 		bLiveChange = false;
 
 		qutils.triggerCharacterInput("oTA1", "b");
+		qutils.triggerEvent("input", "oTA1");
 		qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.B, false, false, false);
 		equal(oTA.getValue(), "", "Value after Typing");
 		equal(oTA.getLiveValue(), "Ab", "LiveValue after typing");
@@ -237,6 +239,7 @@
 			// Escape
 			jQuery.sap.domById('oTA1').focus();
 			qutils.triggerCharacterInput("oTA1", "c");
+			qutils.triggerEvent("input", "oTA1");
 			qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.C, false, false, false);
 			equal(oTA.getValue(), "Ab", "Value after Typing");
 			equal(oTA.getLiveValue(), "Abc", "LiveValue after typing");
@@ -270,7 +273,7 @@
 <body>
 	<h1 id="qunit-header">QUnit tests: sap.ui.commons.TextArea</h1>
 	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
+	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
 	<br>

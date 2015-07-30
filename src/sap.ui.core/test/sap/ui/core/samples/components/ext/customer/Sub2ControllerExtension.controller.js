@@ -1,24 +1,30 @@
-sap.ui.controller("samples.components.ext.customer.Sub2ControllerExtension", {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
+	function(jQuery/*, Controller*/) {
+	"use strict";
+
+	sap.ui.controller("samples.components.ext.customer.Sub2ControllerExtension", {
 	
-	onInit: function() {
-		jQuery.sap.log.info("Sub2ControllerExtension Controller onInit()");
-	},
+		onInit: function() {
+			jQuery.sap.log.info("Sub2ControllerExtension Controller onInit()");
+		},
 	
-	onExit: function() {
-		jQuery.sap.log.info("Sub2ControllerExtension Controller onExit()");
-	},
+		onExit: function() {
+			jQuery.sap.log.info("Sub2ControllerExtension Controller onExit()");
+		},
 	
-	onBeforeRendering: function() {
-		jQuery.sap.log.info("Sub2ControllerExtension Controller onBeforeRendering()");
-	},
+		onBeforeRendering: function() {
+			jQuery.sap.log.info("Sub2ControllerExtension Controller onBeforeRendering()");
+		},
 	
-	onAfterRendering: function() {
-		jQuery.sap.log.info("Sub2ControllerExtension Controller onAfterRendering()");
-	},
+		onAfterRendering: function() {
+			jQuery.sap.log.info("Sub2ControllerExtension Controller onAfterRendering()");
+		},
 	
 	
-	customerAction: function() {
-		alert("This is a customer Action");
-	}
+		customerAction: function() {
+			alert("This is a customer Action");
+		}
 	
+	});
+
 });

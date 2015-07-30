@@ -184,7 +184,6 @@
 
 	module("Behaviour");
 	
-	stop();
 	asyncTest("FacetSelected Event", function() {
 		expect(3);
 		facet = "activities";
@@ -205,7 +204,6 @@
 		ok(!oDomRef, "Rendered ThingViewer should not exist in the page after destruction");
 	});
 	
-	QUnit.stop();
 </script>
 </head>
 <body>

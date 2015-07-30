@@ -1,13 +1,19 @@
-sap.ui.jsfragment("testdata.customizing.customer.MultiRootFragment", {
+sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/Fragment'],
+	function(Button, Fragment) {
+	"use strict";
 
-	createContent : function(oController) {
-		var aContent = [ new sap.ui.commons.Button(this.createId("customerButton1"),{
-			text : "Hello World",
+	sap.ui.jsfragment("testdata.customizing.customer.MultiRootFragment", {
 
-		}), new sap.ui.commons.Button(this.createId("customerButton2"),{
-			text : "Hello Button",
-		}) ];
-		return aContent;
-	}
+		createContent : function(oController) {
+			var aContent = [ new Button(this.createId("customerButton1"),{
+				text : "Hello World",
+
+			}), new Button(this.createId("customerButton2"),{
+				text : "Hello Button",
+			}) ];
+			return aContent;
+		}
+
+	});
 
 });

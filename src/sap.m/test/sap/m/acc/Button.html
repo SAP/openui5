@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Button ACC Test - sap.m</title>
+
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+
+		var app = new sap.m.App("myApp");
+
+		var iEvent = 0;
+
+		var page1 = new sap.m.Page("page1", {
+			title:"Button Test page",
+			content : [
+				new sap.m.Label("L1", { text: "go to homepage", width: "100%" }),
+				new sap.m.Title({ text: "Default Buttons", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home" }),
+				new sap.m.Button({ text: "Home", enabled: false }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home" }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false }),
+				new sap.m.Button({ icon: "sap-icon://home" }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home" }),
+
+				new sap.m.Title({ text: "Default Buttons with label", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaLabelledBy: ["L1"] }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaLabelledBy: ["L1"] }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaLabelledBy: ["L1"] }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaLabelledBy: ["L1"] }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaLabelledBy: ["L1"] }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaLabelledBy: ["L1"] }),
+
+				new sap.m.Title({ text: "Default Buttons with Description", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaDescribedBy: ["L1"] }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaDescribedBy: ["L1"] }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaDescribedBy: ["L1"] }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaDescribedBy: ["L1"] }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaDescribedBy: ["L1"] }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaDescribedBy: ["L1"] }),
+
+				new sap.m.Title({ text: "Buttons with special types", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Title({ text: "Type: Back", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", enabled: false, type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ icon: "sap-icon://home", type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", type: sap.m.ButtonType.Back }),
+				new sap.m.Title({ text: "Type: Back with label", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Title({ text: "Type: Back with Description", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Back }),
+
+				new sap.m.Title({ text: "Type: Up", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", enabled: false, type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ icon: "sap-icon://home", type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", type: sap.m.ButtonType.Up }),
+				new sap.m.Title({ text: "Type: Up with label", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Title({ text: "Type: Up with Description", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Back }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Up }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Up }),
+
+				new sap.m.Title({ text: "Type: Accept", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", enabled: false, type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ icon: "sap-icon://home", type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", type: sap.m.ButtonType.Accept }),
+				new sap.m.Title({ text: "Type: Accept with label", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Title({ text: "Type: Accept with Description", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Accept }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Accept }),
+
+				new sap.m.Title({ text: "Type: Reject", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", enabled: false, type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ icon: "sap-icon://home", type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", type: sap.m.ButtonType.Reject }),
+				new sap.m.Title({ text: "Type: Reject with label", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Title({ text: "Type: Reject with Description", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Reject }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Reject }),
+
+				new sap.m.Title({ text: "Type: Emphasized", level: sap.ui.core.TitleLevel.H3, width: "100%" }),
+				new sap.m.Button({ text: "Home", type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", enabled: false, type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ icon: "sap-icon://home", type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Title({ text: "Type: Emphasized with label", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaLabelledBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Title({ text: "Type: Emphasized with Description", level: sap.ui.core.TitleLevel.H2, width: "100%" }),
+				new sap.m.Button({ text: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", enabled: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ text: "Home", icon: "sap-icon://home", iconFirst: false, ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ icon: "sap-icon://home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Emphasized }),
+				new sap.m.Button({ icon: "sap-icon://home", tooltip: "Home", ariaDescribedBy: ["L1"], type: sap.m.ButtonType.Emphasized })
+			]
+		});
+
+		app.addPage(page1);
+
+		app.placeAt("body");
+
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+		.sapMPageScroll {
+			padding: 1rem;
+		}
+	</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

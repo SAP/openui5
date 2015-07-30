@@ -1,22 +1,28 @@
-jQuery.sap.declare("sap.m.sample.InputChecked.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.InputChecked.Component", {
+	var Component = UIComponent.extend("sap.m.sample.InputChecked.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.InputChecked.V",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"V.view.xml",
-					"C.controller.js"
+		metadata : {
+			rootView : "sap.m.sample.InputChecked.V",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"V.view.xml",
+						"C.controller.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

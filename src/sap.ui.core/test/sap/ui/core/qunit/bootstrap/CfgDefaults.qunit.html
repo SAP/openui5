@@ -26,7 +26,7 @@
 
 			// compare values where possible 
 			equal(oCfg.theme, "base", "theme");
-			equal(oCfg.language, navigator.language || navigator.userLanguage || navigator.browserLanguage, "language");
+			equal(oCfg.language, (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage || navigator.browserLanguage, "language");
 			equal(oCfg.accessibility, true, "accessibility");
 			equal(oCfg.animation, true, "animation");
 			equal(oCfg.getRTL(), false, "rtl");

@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxRenderer'],
 
 
 	/**
-	 * @class HBox renderer.
-	 * @static
+	 * HBox renderer.
+	 * @namespace
 	 */
 	var HBoxRenderer = {
 	};

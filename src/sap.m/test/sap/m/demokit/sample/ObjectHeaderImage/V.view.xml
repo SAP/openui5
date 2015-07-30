@@ -7,8 +7,13 @@
 		binding="{/ProductCollection/5}"
 		icon="{ProductPicUrl}"
 		iconDensityAware="false"
+		iconAlt="{Name}"
 		title="{Name}"
-		number="{Price}"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}" >
 		<statuses>
 			<ObjectStatus

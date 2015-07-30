@@ -37,6 +37,29 @@
 		barColor : "NEGATIVE"
 	});
 	oProgInd2.placeAt("content");
+
+	var oProgInd3 = new sap.m.ProgressIndicator("pi3", {
+		width : "50%",
+		percentValue : 30,
+		displayValue : "display 30 %",
+		showValue : true,
+		barColor : "POSITIVE",
+		textDirection: "RTL"
+	});
+
+	oProgInd3.placeAt("content");
+
+	var oProgInd4 = new sap.m.ProgressIndicator("pi4", {
+		width : "50%",
+		percentValue : 30,
+		displayValue : "display 30 %",
+		showValue : true,
+		barColor : "POSITIVE",
+		textDirection: "LTR"
+	});
+
+	oProgInd4.placeAt("content");
+
 	sap.ui.getCore().applyChanges();
 
 	//deferment
@@ -76,20 +99,137 @@
 		equal(iPercentAfter, 30, "we expect value to be the same as before");
 	});
 
-	test("setPercentValue wrong input (int out of range, too small)",
-			function() {
-				var iPercentTest = -20;
-				oProgInd.setPercentValue(iPercentTest);
-				var iPercentAfter = oProgInd.getPercentValue();
-				equal(iPercentAfter, 30,
-						"we expect value to be the same as before");
-			});
-</script>
+	test("setPercentValue wrong input (int out of range, too small)", function() {
+		var iPercentTest = -20;
+		oProgInd.setPercentValue(iPercentTest);
+		var iPercentAfter = oProgInd.getPercentValue();
+		equal(iPercentAfter, 30, "we expect value to be the same as before");
+	});
 
+	test("text should not be rendered when displayValue is not set", function() {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			percentValue: 50
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
+		strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
+
+		oProgIndicator.destroy();
+	});
+
+	test("ARIA attributes should be present", function() {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			percentValue: 50
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemin"), 10), 0, "aria-valuemin should equal 0");
+		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
+		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemax"), 10), 100, "aria-valuemax should equal 100");
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
+
+		oProgIndicator.destroy();
+	});
+
+	test("ARIA attributes should change when percent value changes", function() {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			percentValue: 50
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
+
+		oProgIndicator.setPercentValue(15);
+		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 15, "aria-valuenow should equal 15");
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "15%", "aria-valuetext should be 15%");
+
+		oProgIndicator.setPercentValue(95);
+		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 95, "aria-valuenow should equal 95");
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "95%", "aria-valuetext should be 95%");
+
+		oProgIndicator.destroy();
+	});
+
+	test("ARIA attributes should change when display value changes", function() {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			percentValue: 50,
+			displayValue: "50/100"
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
+
+		oProgIndicator.setDisplayValue("65/100");
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "65/100", "aria-valuetext should be '65/100'");
+
+		oProgIndicator.destroy();
+	});
+
+	test("ARIA valuetext should contain information about the state", function() {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			percentValue: 50,
+			state: sap.ui.core.ValueState.Success
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var stateText = oProgIndicator._getStateText();
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+
+		oProgIndicator.setState(sap.ui.core.ValueState.Error);
+		sap.ui.getCore().applyChanges();
+		stateText = oProgIndicator._getStateText();
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+
+		oProgIndicator.setState(sap.ui.core.ValueState.Warning);
+		sap.ui.getCore().applyChanges();
+		stateText = oProgIndicator._getStateText();
+		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+
+		oProgIndicator.destroy();
+	});
+
+	test("explicitly setting textDirection to RTL should override the global setting", function(){
+		var $TestSubject = jQuery.sap.byId("pi3").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		equal(sDirAttribute, 'rtl', "the attribute 'dir' should have it's value set to rtl");
+	});
+
+	test("explicitly setting textDirection to LTR should override the global setting", function(){
+		var $TestSubject = jQuery.sap.byId("pi4").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		equal(sDirAttribute, 'ltr', "the attribute 'dir' should have it's value set to ltr");
+	});
+
+	test("not setting textDirection should not change the global text direction", function(){
+		var $TestSubject = jQuery.sap.byId("pi1").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		equal(sDirAttribute, undefined, "the attribute 'dir' should not exist");
+	});
+
+	test("explicitly setting textDirection to RTL should result in 'dir' attribute added", function(){
+		var $TestSubject = jQuery.sap.byId("pi3").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		var bDirAttributeExists = sDirAttribute !== null && sDirAttribute !== undefined;
+		equal(bDirAttributeExists, true, "the attribute 'dir' should exist");
+	});
+
+</script>
 
 </head>
 <body>
-	<h1 id="qunit-header">QUnit page for sap.ui.m.ProgressIndicator</h1>
+	<h1 id="qunit-header">QUnit page for sap.m.ProgressIndicator</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>

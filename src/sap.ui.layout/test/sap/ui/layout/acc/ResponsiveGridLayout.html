@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>ResponsiveGridLayout ACC Test - sap.ui.layout</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
+	<script id="sap-ui-bootstrap" type="text/javascript"
+	        data-sap-ui-theme="sap_bluecrystal"
+	        data-sap-ui-libs="sap.ui.layout, sap.m"
+	        src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script type="text/javascript">
+
+		var oLayout1 = new sap.ui.layout.form.ResponsiveGridLayout("L1");
+
+		var oForm = new sap.ui.layout.form.Form("F1",{
+			title: new sap.ui.core.Title({text: "Customer data"}),
+			editable: true,
+			layout: oLayout1,
+			formContainers: [
+				new sap.ui.layout.form.FormContainer("C1",{
+					title: "contact data",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "Name",
+							fields: [new sap.m.Input({value: "Mustermann"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "First name",
+							fields: [new sap.m.Input({value: "Max"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Date of birth",
+							fields: [new sap.m.DatePicker()]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Gender",
+							fields: [new sap.m.RadioButtonGroup({
+								columns: 2,
+								buttons: [
+									new sap.m.RadioButton({text: "male", selected: true}),
+									new sap.m.RadioButton({text: "female", selected: false})
+									]
+								})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Info",
+							fields: [new sap.m.Text({text:"additional information"})]
+						})
+						]
+				}),
+				new sap.ui.layout.form.FormContainer("C2",{
+					title: new sap.ui.core.Title({text: "Address"}),
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text:"Street / Housenumber"}),
+							fields: [new sap.m.Input({placeholder: "Street"}),
+							         new sap.m.Input({placeholder: "Number", layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
+							         })]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "City",
+							fields: [new sap.m.Input()]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text: "Post code"}),
+							fields: [new sap.m.Input({layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Country",
+							fields: [new sap.m.Select({
+								items: [new sap.ui.core.Item({text: "Germany"}),
+								        new sap.ui.core.Item({text: "USA"}),
+								        new sap.ui.core.Item({text: "England"})]
+							})]
+						})
+					]
+				})]
+		}).placeAt("content1");
+
+		var oForm = new sap.ui.layout.form.Form("F2",{
+			title: new sap.ui.core.Title({text: "Employee"}),
+			editable: false,
+			layout: new sap.ui.layout.form.ResponsiveGridLayout("L2"),
+			formContainers: [
+				new sap.ui.layout.form.FormContainer({
+					title: "contact data",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "Name",
+							fields: [new sap.m.Text({text: "Mustermann"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "First name",
+							fields: [new sap.m.Text({text: "Max"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Info",
+							fields: [new sap.m.Text({text:"additional information"})]
+						})
+						]
+				}),
+				new sap.ui.layout.form.FormContainer({
+					title: new sap.ui.core.Title({text: "Address"}),
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text:"Street / Housenumber"}),
+							fields: [new sap.m.Text({text: "Main street"}),
+							         new sap.m.Text({text: "1", layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
+							         })]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "City",
+							fields: [new sap.m.Text({text: "Main city"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text: "Post code"}),
+							fields: [new sap.m.Text({text: "12345", layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})})]
+						})
+					]
+				})]
+		}).placeAt("content2");
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+
+	<h1 id="header">Test Page for <code>sap.ui.layout.form.ResponsiveGridLayout</code></h1>
+
+	<div id="button"></div>
+	<br>
+	<div id="content1"></div>
+	<br>
+	<div id="content2"></div>
+
+</body>
+</html>

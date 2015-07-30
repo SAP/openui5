@@ -1,0 +1,324 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Table - sap.ui.table</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
+
+<!-- ********************************************************************** -->
+<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified,sap.ui.layout"
+		data-sap-ui-theme="sap_bluecrystal"
+		src="../../../../resources/sap-ui-core.js"></script>
+
+<script type="text/javascript">
+
+	var oModel,
+		oTable,
+		iColumns = 0,
+		iRows = 0;
+
+	function fnCreateDataModel () {
+		var oDataColumns = {};
+		var aDataRows = [];
+		var i;
+		var j;
+
+		iColumns = parseInt(oColumnsInput.getValue(), 10) || 0;
+		iRows = parseInt(oRowsInput.getValue(), 10) || 0;
+
+		// generate data for the model
+		for (i = 0; i < iRows; i++) {
+			oDataColumns = {};
+			for (j = 0; j < iColumns; j++) {
+				oDataColumns["c" + j] = i + "-" + j;
+			}
+			aDataRows[i] = oDataColumns;
+		}
+
+		// make sure that the input field shows the converted value. Gives some visual feedback to
+		// the user when the input was converted (i.e. a string to a number)
+		oColumnsInput.setValue(iColumns);
+		oRowsInput.setValue(iRows);
+
+		// create model and set data
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({tableRows: aDataRows});
+
+		oMessageLabel.setText("Model created");
+	}
+
+	var oVerticalLayout = new sap.ui.layout.VerticalLayout({
+		width: "100%"
+	});
+
+	var oColumnsInput = new sap.m.Input({
+		width: "3rem",
+		type: sap.m.InputType.Number,
+		value: 5
+	});
+
+	var oRowsInput = new sap.m.Input({
+		width: "3rem",
+		type: sap.m.InputType.Number,
+		value: 100
+	});
+
+	var oCreateDataModelButton = new sap.m.Button({
+		text: "Create Data Model",
+		press: fnCreateDataModel
+	});
+
+	var oVisibleRowCountInput = new sap.m.Input({
+		width: "3rem",
+		type: sap.m.InputType.Number,
+		value: 10
+	});
+
+	var oCreateTableButton = new sap.m.Button({
+		text: "Create Table",
+		press: fnCreateTable
+	});
+
+	var oFixedColumnWidth = new sap.m.CheckBox({
+		text: "Fixed Column Width"
+	});
+
+	var oGetResults = new sap.m.Button({
+		text: "Download Test Results",
+		press: function () {
+			console.log("Test Results: ", oResults);
+
+			var sCSV = "Key;Overall;Rendering;Before Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering\n";
+			jQuery.each(oResults, function (k, v) {
+				for (var i = 0; i < v.resultList.length; i++) {
+					sCSV += k + ";" +
+							v.resultList[i].overall + ";" +
+							v.resultList[i].rendering + ";" +
+							v.resultList[i].beforeRendering + ";" +
+							v.resultList[i].afterRendering + ";" +
+							v.resultList[i].tableCreate + ";" +
+							v.resultList[i].factor + "\n";
+				}
+			});
+
+			var sFileName = "TablePerformanceTestResults.csv";
+			var oBlob = new Blob([sCSV], { type: 'application/csv;charset=utf-8' });
+
+			if (navigator.appVersion.toString().indexOf('.NET') > 0)
+				window.navigator.msSaveBlob(oBlob, sFileName);
+			else
+			{
+				var oLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+				oLink.href = URL.createObjectURL(oBlob);
+				oLink.download = sFileName;
+				oLink.click();
+			}
+		}
+	});
+
+	oVerticalLayout.addContent(
+			new sap.m.Toolbar({
+				design: sap.m.ToolbarDesign.Info,
+				content: [
+					new sap.m.Label({text: "Number of Columns"}),
+					oColumnsInput,
+					new sap.m.Label({text: "Number of Rows"}),
+					oRowsInput,
+					oCreateDataModelButton,
+					new sap.m.Label({text: "Visible Row Count"}),
+					oVisibleRowCountInput,
+					oFixedColumnWidth,
+					oCreateTableButton,
+					oGetResults
+				]
+			})
+	);
+
+	var oMessageLabel = new sap.m.Label({text: ""});
+	oVerticalLayout.addContent(
+			new sap.m.Toolbar({
+				content: [
+					oMessageLabel
+				]
+			})
+	);
+
+	oVerticalLayout.placeAt("content");
+
+	var oTimer = {};
+	var oResults = {};
+	function fnCreateTable () {
+		// create columns
+		var oControl, oColumn, i;
+	
+		jQuery.sap.measure.setActive(true);
+		
+		if (!console.timeStamp) {
+			console.timeStamp = function () {};
+		}
+
+		jQuery.sap.delayedCall(0, this, function() {
+			console.timeStamp("DestroyTable");
+			oTable && oTable.destroy()
+
+			jQuery.sap.delayedCall(100, this, function() {
+				console.timeStamp("CreateTable");
+				jQuery.sap.measure.start("createTable");
+
+				var iVisibleRowCount = parseInt(oVisibleRowCountInput.getValue(), 10);
+				if (parseInt(oRowsInput.getValue(), 10) < parseInt(oVisibleRowCountInput.getValue(), 10)) {
+					iVisibleRowCount = parseInt(oRowsInput.getValue(), 10);
+				}
+
+				oTable = new sap.ui.table.Table({
+					visibleRowCount: iVisibleRowCount
+				});
+				
+				
+				
+				oTable.addDelegate({
+					onBeforeRendering: function () {
+						jQuery.sap.measure.start("onBeforeRendering");
+						jQuery.sap.measure.start("rendering");
+					},
+					onAfterRendering: function () {
+						jQuery.sap.measure.start("onAfterRendering");
+					}
+				}, true);
+
+				oTable.addDelegate({
+					onBeforeRendering: function () {
+						jQuery.sap.measure.end("onBeforeRendering");
+					},
+					onAfterRendering: function () {
+						jQuery.sap.measure.end("onAfterRendering");
+						jQuery.sap.measure.end("rendering");
+					}
+				}, false);
+
+				var iColumnWidth;
+				var fnRowsUpdated = function() {
+					oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
+					console.timeStamp("RowsUpdated");
+
+					var iOverall = jQuery.sap.measure.end("createTable").duration;
+					var iRendering = jQuery.sap.measure.getMeasurement("rendering").duration;
+					var iBeforeRendering = jQuery.sap.measure.getMeasurement("onBeforeRendering").duration;
+					var iAfterRendering = jQuery.sap.measure.getMeasurement("onAfterRendering").duration;
+					var iTableCreate = (iOverall - iRendering);
+					var iFactor = Math.round(iAfterRendering / iRendering * 100);
+					
+					
+					var sKey = iColumns + "_" + iRows + "_" + iVisibleRowCount + "_" + (iColumnWidth || "");
+					if (!oResults[sKey]) {
+						oResults[sKey] = {
+							resultList: [],
+							avg: {
+								overall: 0,
+								rendering: 0,
+								beforeRendering: 0,
+								afterRendering: 0,
+								tableCreate: 0,
+								factor: 0
+							}};
+					}
+
+					oResults[sKey].resultList.push({
+								overall: iOverall,
+								rendering: iRendering,
+								beforeRendering: iBeforeRendering,
+								afterRendering: iAfterRendering,
+								tableCreate: iTableCreate,
+								factor: iFactor
+							}
+					);
+
+					var iOverallSum = 0;
+					var iRenderingSum = 0;
+					var iBeforeRenderingSum = 0;
+					var iAfterRenderingSum = 0;
+					var iTableCreateSum = 0;
+					var iFactorSum = 0;
+					var iLength = oResults[sKey].resultList.length;
+
+					for (var i = 0; i < iLength; i++) {
+						var iItem = oResults[sKey].resultList[i];
+						iOverallSum += iItem.overall;
+						iRenderingSum += iItem.rendering;
+						iBeforeRenderingSum += iItem.beforeRendering;
+						iAfterRenderingSum += iItem.afterRendering;
+						iTableCreateSum += iItem.tableCreate;
+						iFactorSum += iItem.factor;
+					}
+
+					oResults[sKey].avg.overall = iOverallSum / iLength;
+					oResults[sKey].avg.rendering = iRenderingSum / iLength;
+					oResults[sKey].avg.beforeRendering = iBeforeRenderingSum / iLength;
+					oResults[sKey].avg.afterRendering = iAfterRenderingSum / iLength;
+					oResults[sKey].avg.tableCreate = iTableCreateSum / iLength;
+					oResults[sKey].avg.factor = iFactorSum / iLength;
+
+					oMessageLabel.setText(
+									"Overall: " + iOverall + "ms, " +
+									"Rendering: " + iRendering + "ms, " +
+									"OnBeforeRendering: " + iBeforeRendering + "ms, " +
+									"OnAfterRendering: " + iAfterRendering + "ms, " +
+									"Table Create: " + iTableCreate + "ms, " +
+									"Factor AfterRendering in Rendering: " + iFactor + "%"
+					);
+				};
+
+				oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
+
+				console.timeStamp("AddColumns");
+
+				var iColumnWidth;
+				if (oFixedColumnWidth.getSelected()) {
+					iColumnWidth = "50px";
+				}
+
+				for (i = 0; i < iColumns; i++) {
+					if (i === iColumns - 1) {
+						iColumnWidth = undefined;
+					}
+					oControl = new sap.m.Text({text: "{c" + i + "}"});
+					oColumn = new sap.ui.table.Column({
+						label: new sap.m.Label({text: "m.Text"}),
+						template: oControl,
+						width: iColumnWidth
+					});
+					oTable.addColumn(oColumn);
+				}
+
+				console.timeStamp("SetModel");
+				oTable.setModel(oModel);
+				console.timeStamp("BindRows");
+				oTable.bindRows("/tableRows");
+				console.timeStamp("PlaceAt");
+				oTable.placeAt("content");
+
+				console.timeStamp("Done");
+				oMessageLabel.setText("Table created...");
+			});
+		});
+
+	}
+
+	fnCreateDataModel();
+
+
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCompact" role="application">
+<h1 id="header">Performance Test Page for <code>sap.ui.table.Table</code></h1>
+<div id="content" style="width:100%;"></div>
+<p>
+</body>
+</html>

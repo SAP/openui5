@@ -1,13 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './EventBus'],
-	function(jQuery, EventBus) {
+sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
+	function(jQuery, BaseObject, EventBus) {
 	"use strict";
 
 
-	
-	
 		var _EVENT_ID = "sapUiIntervalTrigger-event";
 	
 		/**
@@ -27,11 +25,11 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		 * @constructor
 		 * @public
 		 * @since 1.11.0
-		 * @name sap.ui.core.IntervalTrigger
+		 * @alias sap.ui.core.IntervalTrigger
 		 */
-		var IntervalTrigger = sap.ui.base.Object.extend("sap.ui.core.IntervalTrigger", {
+		var IntervalTrigger = BaseObject.extend("sap.ui.core.IntervalTrigger", {
 			constructor : function(iInterval) {
-				sap.ui.base.Object.apply(this);
+				BaseObject.apply(this);
 	
 				this._oEventBus = new EventBus();
 	
@@ -67,11 +65,9 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		 * Destructor method for objects.
 		 * 
 		 * @public
-		 * @name sap.ui.core.IntervalTrigger#destroy
-		 * @function
 		 */
 		IntervalTrigger.prototype.destroy = function() {
-			sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+			BaseObject.prototype.destroy.apply(this, arguments);
 	
 			delete this._triggerProxy;
 	
@@ -88,8 +84,6 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		 * @param {int}
 		 *            iInterval sets the interval in milliseconds when a new
 		 *            triggering should occur.
-		 * @name sap.ui.core.IntervalTrigger#setInterval
-		 * @function
 		 */
 		IntervalTrigger.prototype.setInterval = function(iInterval) {
 			jQuery.sap.assert((typeof iInterval === "number"), "Interval must be an integer value");
@@ -110,8 +104,6 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		 *            the trigger want to trigger the listener.
 		 * @param {object}
 		 *            [oListener] that should be triggered.
-		 * @name sap.ui.core.IntervalTrigger#addListener
-		 * @function
 		 */
 		IntervalTrigger.prototype.addListener = function(fnFunction, oListener) {
 			this._oEventBus.subscribe(_EVENT_ID, fnFunction, oListener);
@@ -127,8 +119,6 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		 *            fnFunction is the previously registered function
 		 * @param {object}
 		 *            [oListener] that should be removed
-		 * @name sap.ui.core.IntervalTrigger#removeListener
-		 * @function
 		 */
 		IntervalTrigger.prototype.removeListener = function(fnFunction, oListener) {
 			this._oEventBus.unsubscribe(_EVENT_ID, fnFunction, oListener);
@@ -137,14 +127,12 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		/**
 		 * @see sap.ui.base.Object#getInterface
 		 * @public
-		 * @name sap.ui.core.IntervalTrigger#getInterface
-		 * @function
 		 */
 		IntervalTrigger.prototype.getInterface = function() {
 			return this;
 		};
-	
+
 
 	return IntervalTrigger;
 
-}, /* bExport= */ true);
+});

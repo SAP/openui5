@@ -70,7 +70,7 @@
 
 	test("Basic", 11, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -102,7 +102,7 @@
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -114,7 +114,7 @@
 		oMockServer.stop();
 		ok(!oMockServer.isStarted(), "Mock server is stopped");
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Response not faked");
@@ -122,7 +122,7 @@
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started again");
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -133,10 +133,39 @@
 
 		oMockServer.destroy();
 	});
+	
+	
+	test("Test URL parameters with ampersand in value", 3, function() {
+
+        var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+
+ 		var oResponse = jQuery.sap.sjax({
+ 			url : "/myservice/FlightCollection?$filter=startswith(flightDetails,'Smartphones&$Tab&lets')",
+ 			dataType : "json"
+ 		});
+		
+ 		ok(!oResponse.success, "Mock server responded well");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?key1=1&key2=22&key3='h&m'&key4='42\" tv'",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded well");
+		oMockServer.destroy();
+	});	
+
+	
 
 	test("Path with RegExp Pattern", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)",
@@ -152,7 +181,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -163,7 +192,7 @@
 
 	test("Path with placeholder", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -179,7 +208,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -190,7 +219,7 @@
 
 	test("Test assertion: Missing method", 1, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				path : "/projects2/(.*)",
 				response : function(oXhr, id) {
@@ -209,7 +238,7 @@
 
 	test("Test assertion: Missing path", 1, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				response : function(oXhr, id) {
@@ -228,7 +257,7 @@
 
 	test("Test assertion: Missing response", 1, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)"
@@ -243,7 +272,7 @@
 
 	test("Two server", 10, function() {
 		var oMockServer1 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -264,7 +293,7 @@
 		});
 
 		var oMockServer2 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)",
@@ -282,7 +311,7 @@
 		ok(oMockServer2.isStarted(), "Mock server 2 is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects",
+			url : "/myservice/projects",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -292,7 +321,7 @@
 		} ], "Response is right");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -302,7 +331,7 @@
 		ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Response is not faked");
@@ -316,7 +345,7 @@
 
 	test("Clean up", 15, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -375,7 +404,7 @@
 
 	test("Start / Stop / Destroy all", 8, function() {
 		var oMockServer1 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects",
@@ -396,7 +425,7 @@
 		});
 
 		var oMockServer2 = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects2/(.*)",
@@ -431,7 +460,7 @@
 		})
 
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -448,7 +477,7 @@
 
 		var iBefore = new Date().getTime();
 		var oResponse = jQuery.ajax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json",
 			success : function() {
 				start();
@@ -473,7 +502,7 @@
 		})
 
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -489,7 +518,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.ajax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json",
 			success : function() {
 				start();
@@ -508,7 +537,7 @@
 
 	test("xhr.respondJSON", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -522,7 +551,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -537,7 +566,7 @@
 
 	test("xhr.respondXML", 3, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -551,7 +580,7 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -562,7 +591,7 @@
 
 	test("xhr.respondFile", 5, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "http://localhost/myservice",
+			rootUri : "/myservice",
 			requests : [ {
 				method : "GET",
 				path : "/projects/:id",
@@ -582,14 +611,14 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects/323234",
+			url : "/myservice/projects/323234",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
 		equal(oResponse.data.test, "works", "JSON: Response is right")
 
 		var oResponse = jQuery.sap.sjax({
-			url : "http://localhost/myservice/projects2/323234",
+			url : "/myservice/projects2/323234",
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
@@ -599,12 +628,676 @@
 	});
 
 	var sURI = "/myservice/";
+	
+	var iTesterPre = 0;
+	var iTesterPost = 0;
+	
+	test("test Callbacks - example - use of callbacks in rest API", function() {
+
+      
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/mydummyservice/",
+			requests : [ {
+				method : "GET",
+				path : new RegExp("path(\\?.*)?"),
+				response : function(oXhr, sUrlParameters) {
+					var self = oMockServer;
+					self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path' + ':before' , {oXhr: oXhr, sUrlParameters: sUrlParameters});
+			        //console.log("processing");
+			        oXhr.responseText = "test";
+			        self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path' + ':after', {oXhr: oXhr}); 
+					oXhr.respondJSON(200, null, '{"name": "' + oXhr.responseText + '"}');
+				}
+			}]
+		});
+		
+		var fnCbPre = function(oEvent) {
+			iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent) {
+			oEvent.getParameter("oXhr").responseText = "finished";
+		};
+		
+		oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "path");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "path");
+		
+		oMockServer.start();
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/mydummyservice/path?customParameter=123",
+		});
+		
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data.name, "finished");
+		iTesterPre = 0;
+				
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, 'path');
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, 'path');
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/mydummyservice/path?customParameter=123",
+		});
+		
+		equal(iTesterPre, 0,"Pre function was not executed");
+		equal(oResponse.data.name, "test");
+	    ok(oResponse.success, "Mock server responded");
+	    
+		oMockServer.destroy();
+	});
+	
+	
+   test("test Callbacks Get entity set count", function() {
+       
+       iTesterPre = 0;
+	   iTesterPost = 0;
+
+      var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var fnCbPre = function(oEvent) {
+			iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent) {
+			oEvent.getParameter("oFilteredData").results.splice(0,1)
+		};
+		
+		oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection/$count",
+			dataType : "json"
+		});
+	    
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data, 99, "callback on $count on entityset attach");
+        iTesterPre = 0;
+        
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection/$count",
+			dataType : "json"
+		});
+	
+		ok(oResponse.success, "Mock server responded  - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(oResponse.data, 100, "callback on $count on entityset detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	test("test Callbacks Get entity set - calls to two entity sets", function() {
+       
+       iTesterPre = 0;
+	   iTesterPost = 0;
+
+      var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var fnCbPre = function(oEvent, oXhr, arguments) {
+			iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent, oXhr, oFilteredData) {
+		    oEvent.getParameter("oFilteredData").results.splice(0,1);
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre);
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost);
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection/$count",
+			dataType : "json"
+		});
+	    
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data, 99, "callback on $count on entityset attach");
+        iTesterPre = 0;
+        
+        
+        var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection/$count",
+			dataType : "json"
+		});
+		
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data, 99, "callback on $count on entityset attach");
+        iTesterPre = 0;
+		
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre);
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost);
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection/$count",
+			dataType : "json"
+		});
+	    
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPost, 0,"Post function was executed");
+		equal(oResponse.data, 100, "callback on $count on entityset attach");
+        
+        var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection/$count",
+			dataType : "json"
+		});
+		
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPost, 0,"Post function was executed");
+		equal(oResponse.data, 100, "callback on $count on entityset attach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	test("test Callbacks Get entity set query option - get data", function() {
+	    
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+      var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var fnCbPre = function(oEvent) {
+			iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent) {
+		    oEvent.getParameter("oFilteredData").results.splice(0,1)
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data.d.results.length, 99,"callback on query options on entityset attach");
+		iTesterPre = 0;
+   
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+	
+		ok(oResponse.success, "Mock server responded  - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(oResponse.data.d.results.length, 100, "callback on query options on entityset detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	
+	test("test Callbacks Get entity set query option - single entry", function() {
+	    
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+      var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var fnCbPre = function(oEvent) {
+			iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent) {
+			oEvent.getParameter("oEntry").CARRNAME = "CARRNAME 2";
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection('carrid 1')",
+			dataType : "json"
+		});
+		
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data.d.CARRNAME, "CARRNAME 2","callback on single entry on entityset attach");
+		iTesterPre = 0;
+
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection('carrid 1')",
+			dataType : "json"
+		});
+	
+		ok(oResponse.success, "Mock server responded  - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(oResponse.data.d.CARRNAME, "CARRNAME 1", "callback on single entry on entityset detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	test("test Callbacks Get navigation property-count", function() {
+	    
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+      var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var fnCbPre = function(oEvent) {
+			iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent) {
+		    oEvent.getParameter("oFilteredData").results.splice(0,1);
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
+			dataType : "json"
+		});
+		
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data, 99,"callback on navigation property count attach");
+		iTesterPre = 0;
+   
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
+			dataType : "json"
+		});
+	
+		ok(oResponse.success, "Mock server responded  - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(oResponse.data, 100, "callback on navigation property count detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	test("test Callbacks Get entity set navigation property - query option", function() {
+	    
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+      var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var fnCbPre = function(oEvent) {
+			iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent) {
+			oEvent.mParameters.oFilteredData.results.splice(0,1);
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?$skip=10",
+			dataType : "json"
+		});
+		
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(oResponse.data.d.results.length, 89,"callback on navigation property query option attach");
+		iTesterPre = 0;
+   
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?$skip=10",
+			dataType : "json"
+		});
+	
+		ok(oResponse.success, "Mock server responded  - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(oResponse.data.d.results.length, 90,"callback on navigation property query option detach");
+		
+		oMockServer.destroy();
+	});
+
+
+	test("test Callbacks Post", function() {
+	    
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+        var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+        
+		var fnCbPre = function(oEvent) {
+		    iTesterPre = iTesterPre + 1;
+		};
+		
+		var fnCbPost = function(oEvent) {
+		    iTesterPost = iTesterPost + 1;
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPre, "FlightCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPost, "FlightCollection");
+		
+		var oPostResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			type : 'POST',
+			data : '{"carrid1":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
+		});
+		
+		ok(oPostResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(iTesterPost, 1,"Post function was executed");
+		equal(oPostResponse.statusCode, 201,"callback on post attach");
+		iTesterPre = 0;
+		iTesterPost = 0;
+   
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPost, "FlightCollection");
+
+		var oPostResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			type : 'POST',
+			data : '{"carrid1":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
+		});
+		
+		ok(oPostResponse.success, "Mock server responded - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(iTesterPost, 0,"Post function was executed");
+		equal(oPostResponse.statusCode, 201,"callback on post detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	test("test Callbacks Put", function() {
+	    
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+        var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+        
+
+		var fnCbPre = function(oEvent) {
+		    iTesterPre = iTesterPre + 1;
+		};
+	
+		var fnCbPost = function(oEvent) {
+            iTesterPost = iTesterPost + 1;
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPre, "FlightCollection");
+	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPost, "FlightCollection");
+	
+	    oPutResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'PUT',
+			data : '{"carrid":"BB","connid":"009"}'
+		});
+
+		ok(oPutResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(iTesterPost, 1,"Post function was executed");
+		equal(oPutResponse.statusCode, 204,"callback on put attach");
+		iTesterPre = 0;
+	    iTesterPost = 0;
+   
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPost, "FlightCollection");
+
+        oPutResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'PUT',
+			data : '{"carrid":"BB","connid":"009"}'
+		});
+        
+		ok(oPutResponse.success, "Mock server responded - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(iTesterPost, 0,"Post function was executed");
+		equal(oPutResponse.statusCode, 204,"callback on put detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+		test("test Callbacks Merge", function() {
+			if (!!sap.ui.Device.browser.internet_explorer) {
+				ok(true, "IE does not support HTTP MERGE");
+				return;
+			}
+		iTesterPre = 0;
+	    iTesterPost = 0;
+
+        var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+        
+		var fnCbPre = function(oEvent) {
+		    iTesterPre = iTesterPre + 1;
+		};
+	
+		var fnCbPost = function(oEvent) {
+		    iTesterPost = iTesterPost + 1;
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPre, "FlightCollection");
+	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPost, "FlightCollection");
+	
+	    var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'MERGE',
+			dataType : "json",
+			data : '{"carrid":"BB","connid":"009"}'
+			});
+
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(iTesterPost, 1,"Post function was executed");
+		equal(oResponse.statusCode, 204,"callback on merge attach");
+		iTesterPre = 0;
+	    iTesterPost = 0;
+   
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPost, "FlightCollection");
+
+        oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'MERGE',
+			dataType : "json",
+			data : '{"carrid":"BB","connid":"009"}'
+			});
+        
+		ok(oResponse.success, "Mock server responded - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(iTesterPost, 0,"Post function was executed");
+		equal(oResponse.statusCode, 204,"callback on merge detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	test("test Callbacks Patch", function() {
+		if (!!sap.ui.Device.browser.internet_explorer) {
+			ok(true, "IE does not support HTTP PATCH");
+			return;
+		}
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+        var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+        
+		var fnCbPre = function(oEvent) {
+		     iTesterPre = iTesterPre + 1;
+		};
+	
+		var fnCbPost = function(oEvent) {
+		     iTesterPost = iTesterPost + 1;
+		};
+		
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPre, "FlightCollection");
+	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPost, "FlightCollection");
+	
+	    var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'PATCH',
+			dataType : "json",
+			data : '{"carrid":"BB","connid":"009"}'
+			});
+
+		ok(oResponse.success, "Mock server responded - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+		equal(iTesterPost, 1,"Post function was executed");
+		equal(oResponse.statusCode, 204,"callback on merge attach");
+		iTesterPre = 0;
+	    iTesterPost = 0;
+   
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPost, "FlightCollection");
+
+        oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'MERGE',
+			dataType : "json",
+			data : '{"carrid":"BB","connid":"009"}'
+			});
+        
+		ok(oResponse.success, "Mock server responded - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+		equal(iTesterPost, 0,"Post function was executed");
+		equal(oResponse.statusCode, 204,"callback on merge detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
+	test("test Callbacks Delete", function() {
+	    
+	   iTesterPre = 0;
+	   iTesterPost = 0;
+
+        var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var fnCbPre = function(oEvent) {
+		    iTesterPre = iTesterPre + 1;
+		};
+	
+		var fnCbPost = function(oEvent) {
+            iTesterPost = iTesterPost + 1;
+		};
+		
+	   oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, fnCbPre, "CarrierCollection");
+	   oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, fnCbPost, "CarrierCollection");
+	
+		var oDelResponse = jQuery.sap.sjax({
+		    url:  "/myservice/CarrierCollection('carrid 1')",
+			type : 'DELETE'
+		});
+
+		ok(oDelResponse.success, "Mock server responded - delete - attach");
+		equal(iTesterPre, 1,"Pre function was executed");
+	    equal(iTesterPost, 1,"Post function was executed");
+		equal(oDelResponse.statusCode, 204,"callback on delete attach");
+		iTesterPre = 0;
+	    iTesterPost = 0;
+   
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE,  fnCbPost, "CarrierCollection");
+
+        var oDelResponse = jQuery.sap.sjax({
+		    url:  "/myservice/CarrierCollection('carrid 2')",
+			type : 'DELETE'
+		});
+        
+		ok(oDelResponse.success, "Mock server responded - detach");
+		equal(iTesterPre, 0,"Pre function was executed");
+	    equal(iTesterPost, 0,"Post function was executed");
+		equal(oDelResponse.statusCode, 204,"callback on merge detach");
+		
+		oMockServer.destroy();
+	});
+	
+	
 
 	test("test XSRF fetch request", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -632,7 +1325,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -654,8 +1347,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/rmtsampleflight/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		var sMockdataBaseUrl = "testdata/rmtsampleflight/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -774,7 +1467,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -825,13 +1518,34 @@
 		oMockServer.destroy();
 
 	});
+	
+		test("test orderby on expended property", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+        
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?$expand=FlightCarrier&$orderby=FlightCarrier/CARRNAME",
+			dataType : "json"
+		});
+		ok(oResponse.success, "");
+		
+		oMockServer.destroy();
+
+	});
 
 	test("test request to service uri", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
+		
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 
@@ -845,12 +1559,141 @@
 		oMockServer.destroy();
 
 	});
+	
+	test("test get/set entity set data", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, "testdata/rmtsampleflight/");
+		
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 3);
+		
+		var aFlights = oMockServer.getEntitySetData("FlightCollection");
+		
+		aFlights = [];
+		
+		oMockServer.setEntitySetData("FlightCollection", aFlights);
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 0);
+		
+		oMockServer.destroy();
+		
+		oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		oMockServer.start();
+		aFlights = oMockServer.getEntitySetData("FlightCollection");
+		equal(aFlights, undefined);
+		oMockServer.destroy();
+		
+	});
+	
+	test("test deep insert!", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, "testdata/rmtsampleflight/");
+		
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 18);
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?$top=1&$expand=FlightCarrier",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 1);
+		
+		var oDeepCreate = oResponse.data.d.results[0];
+		
+		oDeepCreate["FlightCarrier"].CARRNAME = "Deeply Created";
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			type : 'POST',
+			data : JSON.stringify(oDeepCreate)
+		});
+		ok(oResponse.success, "Mock server responded the POST resquest");
+		equal(oResponse.statusCode, 201, "resource successfully created");
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 19);
+		
+		oMockServer.setEntitySetData("CarrierCollection", []);
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			type : 'POST',
+			data : JSON.stringify(oDeepCreate)
+		});
+		ok(oResponse.success, "Mock server responded the POST resquest");
+		equal(oResponse.statusCode, 201, "resource successfully created");
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 1);
+		
+		
+		oMockServer.destroy();
+		
+	});
+	
+	test("test mockdata linkage to entityset", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemSubCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "");
+		equal(oResponse.data.d.results.length, 2, "");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "");
+		equal(oResponse.data.d.results.length, 7, "");
+
+		oMockServer.destroy();
+
+	});
 
 	test("test $format", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -898,7 +1741,7 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
-				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 				oMockServer.simulate(sMetadataUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -957,7 +1800,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1017,7 +1860,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1091,8 +1934,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1144,12 +1987,13 @@
 		oMockServer.destroy();
 	});
 
+
 	test("test OData orderby", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1476,7 +2320,10 @@
 					rootUri : "/myservice/"
 				});
 				var sMetadataUrl = "testdata/northwind/metadata.xml"
-				oMockServer.simulate(sMetadataUrl, "testdata/northwind/");
+				oMockServer.simulate(sMetadataUrl, {
+					'sMockdataBaseUrl' : "testdata/northwind/",
+					'bGenerateMissingMockData' : true
+				});
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
 
@@ -1509,6 +2356,19 @@
 					dataType : "json"
 				});
 				ok(oResponse.data.d.CategoryName, "Products(5)/Category");
+				
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Products?$filter=UnitsInStock eq (120)",
+					dataType : "json"
+				});
+				equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
+				
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Order_Details?$filter=UnitPrice le 100M",
+					dataType : "json"
+				});
+				ok(oResponse);
+				
 
 				oMockServer.destroy();
 			});
@@ -1517,8 +2377,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1568,8 +2428,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1610,7 +2470,7 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
-				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 				oMockServer.simulate(sMetadataUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -1699,11 +2559,11 @@
 				});
 				equal(oResponse.success, false, "Mock server responded");
 				equal(oResponse.statusCode, 404, "expand with false navigation property path");
-
+				oMockServer.destroy();
 				oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
-				var sMetadataUrl = "testdata/metadata.xml"// url to the service metadata document
+				var sMetadataUrl = "testdata/metadata.xml";
 				oMockServer.simulate(sMetadataUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -1724,8 +2584,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1749,7 +2609,7 @@
 			dataType : "json"
 		});
 		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 404, "false key");
+		equal(oResponse.statusCode, 400, "false key");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection(itemid='dummyValue', employeeid='JSMITH',type='Vacation')",
@@ -1763,14 +2623,14 @@
 			dataType : "json"
 		});
 		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 404, "no commas");
+		equal(oResponse.statusCode, 400, "no commas");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection('keyvalue')",
 			dataType : "json"
 		});
 		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 404, "single key only value");
+		equal(oResponse.statusCode, 400, "single key only value");
 
 		oMockServer.destroy();
 	});
@@ -1779,7 +2639,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, null);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1796,7 +2656,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/Model10Entities.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/Model10Entities.xml";
 		oMockServer.simulate(sMetadataUrl, null);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1806,15 +2666,15 @@
 			dataType : "json"
 		});
 		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 404, "unquoted key value - 1 key without key name");
+		equal(oResponse.statusCode, 400, "unquoted key value - 1 key without key name");
 
 		oMockServer.destroy();
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1824,18 +2684,639 @@
 			dataType : "json"
 		});
 		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 404, "unquoted key value of itemid key name");
+		equal(oResponse.statusCode, 400, "unquoted key value of itemid key name");
 
 		oMockServer.destroy();
 	});
 
-	asyncTest("test $metadata xml", 10, function() {
+
+	test("test CRUD simple data model", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(oResponse.data.d.results.length, 100, "100 entities generated");
+
+		var oPostResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
+			type : 'POST',
+			data : '{"type":"Vacation","from":"2014-03-26","to":"2014-03-27","length":"1 day","state":"Pending"}'
+		});
+		ok(oPostResponse.success, "Mock server responded the POST resquest");
+		equal(oPostResponse.statusCode, 201, "resource successfully created");
+		ok(oPostResponse.data.d.type, "New entry created");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 101, "101 entities read");
+
+		var oPutResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'PUT',
+			data : '{"type":"Vacation","from":"2014-03-27","to":"2014-03-28","length":"1 day","state":"Pending"}'
+		});
+		ok(oPutResponse.success, "Mock server responded the PUT resquest");
+		equal(oPutResponse.statusCode, 204, "resource successfully updated");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 101, "101 entities returned");
+
+		// read the just created resource again
+		var oGetResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'GET',
+		});
+		ok(oGetResponse.success, "Mock server responded the GET request");
+		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+
+		var oDelResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'DELETE',
+		});
+		ok(oDelResponse.success, "Mock server responded the DELETE request");
+		equal(oDelResponse.statusCode, 204, "resource successfully deleted");
+		// Try to read the just delted resource -this shall fail
+		var oGetAgainResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'GET',
+		});
+		equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
+		equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 100, "100 entities returned");
+
+		oMockServer.destroy();
+
+	});
+
+	test("test CRUD rmtsampleflight", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(oResponse.data.d.results.length, 100, "100 entities generated");
+
+		var oPostResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			type : 'POST',
+			data : '{"carrid1":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
+		});
+		ok(oPostResponse.success, "Mock server responded the POST resquest");
+		equal(oPostResponse.statusCode, 201, "resource successfully created");
+		ok(oPostResponse.data.uri, "resource uri available");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 101, "101 entities returned");
+
+		var oPutResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'PUT',
+			data : '{"carrid":"BB","connid":"008","fldate":"\/Date(1287532800000)\/"}'
+		});
+		ok(oPutResponse.success, "Mock server responded the PUT resquest");
+		equal(oPutResponse.statusCode, 204, "resource successfully updated");
+
+		oPutResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'PUT',
+			data : '{"carrid":"BB","connid":"009"}'
+		});
+		ok(oPutResponse.success, "Mock server responded the PUT resquest");
+		equal(oPutResponse.statusCode, 204, "resource successfully updated");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 101, "101 entities returned");
+
+		// read the just created resource again
+		var oGetResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'GET',
+		});
+		ok(oGetResponse.success, "Mock server responded the GET request");
+		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+		equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull");
+
+		var oDelResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'DELETE',
+		});
+		ok(oDelResponse.success, "Mock server responded the DELETE request");
+		equal(oDelResponse.statusCode, 204, "resource successfully deleted");
+		// Try to read the just delted resource -this shall fail
+		var oGetAgainResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
+			type : 'GET',
+		});
+		equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
+		equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 100, "100 entities returned");
+
+		oMockServer.destroy();
+
+	});
+
+	test(
+			"test mock data state changer",
+			14,
+			function() {
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/?sap-client=001"
+				});
+				var sMetadataUrl = "testdata/DataModel.xml";
+				oMockServer.simulate(sMetadataUrl);
+				oMockServer.start();
+				ok(oMockServer.isStarted(), "Mock server is started");
+
+				var oResponse = jQuery.sap.sjax({
+					url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/$metadata?sap-client=001",
+					dataType : "xml"
+				});
+				ok(oResponse.success, "Mock server responded");
+				equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+
+				var oPostResponse = jQuery.sap
+						.sjax({
+							url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
+							type : 'POST',
+							data : '{"type":"Vacation","from":"2013-09-26","to":"2013-09-27","length":"1 day","state":"Pending"}'
+						});
+				ok(oPostResponse.success, "Mock server responded the POST resquest");
+				equal(oPostResponse.statusCode, 201, "resource successfully created");
+				ok(oPostResponse.data.uri, "resource uri available");
+
+				var oPutResponse = jQuery.sap.sjax({
+					url : oPostResponse.data.uri,
+					type : 'PUT',
+					data : '{"type":"Vacation","from":"2013-10-26","to":"2013-10-27","length":"1 day","state":"Pending"}'
+				});
+				ok(oPutResponse.success, "Mock server responded the POST resquest");
+				equal(oPutResponse.statusCode, 204, "resource successfully created");
+
+				// read the just created resource again
+				var oGetResponse = jQuery.sap.sjax({
+					url : oPostResponse.data.uri,
+					type : 'GET',
+				});
+				ok(oGetResponse.success, "Mock server responded the GET request");
+				equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+
+				var oDelResponse = jQuery.sap.sjax({
+					url : oPostResponse.data.uri,
+					type : 'DELETE',
+				});
+				ok(oDelResponse.success, "Mock server responded the DELETE request");
+				equal(oDelResponse.statusCode, 204, "resource successfully deleted");
+				// Try to read the just delted resource -this shall fail
+				var oGetAgainResponse = jQuery.sap.sjax({
+					url : oPostResponse.data.uri,
+					type : 'GET',
+				});
+				equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
+				equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
+
+				oMockServer.destroy();
+
+			});
+
+	test(
+			"$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST)",
+			function() {
+				var sUri = "/mock/";
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri : sUri
+				});
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
+				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+				oMockServer.start();
+				ok(oMockServer.isStarted(), "Mock server is started");
+
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+// 				var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
+				
+				oModel.setUseBatch(true);
+
+				var aBatchReadOperations = [];
+				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+				aBatchReadOperations.push(oFirstGetOp);
+
+				var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$top=2", "GET");
+				aBatchReadOperations.push(oSecGetOp);
+
+				var aBatchChangeOperations = [];
+				var oPutOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchChangeOperations.push(oPutOp);
+
+				var oPutOp2 = oModel
+						.createBatchOperation(
+								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+								"PUT",
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchChangeOperations.push(oPutOp2);
+
+				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
+						null);
+				aBatchChangeOperations.push(oDeleteOp);
+
+				var oPostOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchChangeOperations.push(oPostOp);
+
+				var fnSuccess = function(oData, oResponse) {
+					equal(oResponse.statusCode, 202, "batch completed");
+					equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
+					equal(oData.__batchResponses[1].statusCode, 200, "oData second read succeeded");
+					equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
+
+					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 204, "oData put succeeded");
+					equal(oData.__batchResponses[2].__changeResponses[2].statusCode, 204, "oData delete succeeded");
+					equal(oData.__batchResponses[2].__changeResponses[3].statusCode, 201, "oData post succeeded");
+				};
+
+				var fnError = function(oError) {
+					ok(oData.__batchResponses[0], "fnError - batch failed");
+				};
+
+				oModel.addBatchReadOperations(aBatchReadOperations);
+				oModel.addBatchChangeOperations(aBatchChangeOperations);
+				oModel.submitBatch(fnSuccess, fnError, false);
+
+				oMockServer.destroy();
+			});
+
+	test(
+			"$batch Multiple ChangeSets",
+			function() {
+				var sUri = "/mock/";
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri : sUri
+				});
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
+				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+				oMockServer.start();
+				ok(oMockServer.isStarted(), "Mock server is started");
+
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+				oModel.setUseBatch(true);
+
+				var aBatchReadOperations = [];
+				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+				aBatchReadOperations.push(oFirstGetOp);
+
+				var aBatchFirstChangeOperations = [];
+				var oPutOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPutOp);
+
+				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
+						null);
+				aBatchFirstChangeOperations.push(oDeleteOp);
+
+				var oPostOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"LIDOR1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPostOp);
+
+				var aBatchSecondChangeOperations = [];
+				var oPutOp_2 = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchSecondChangeOperations.push(oPutOp_2);
+
+				var oPostOp_2 = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchSecondChangeOperations.push(oPostOp_2);
+
+				var fnSuccess = function(oData, oResponse) {
+					equal(oResponse.statusCode, 202, "batch completed");
+					equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
+					equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
+
+					equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData put succeeded");
+					equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 204, "oData delete succeeded");
+					equal(oData.__batchResponses[1].__changeResponses[2].statusCode, 201, "oData post succeeded");
+
+					equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
+				};
+
+				var fnError = function(oError) {
+					ok(oData.__batchResponses[0], "fnError - batch failed");
+				};
+
+				oModel.addBatchReadOperations(aBatchReadOperations);
+				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
+				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
+				oModel.submitBatch(fnSuccess, fnError, false);
+
+				oMockServer.destroy();
+			});
+
+	test(
+			"$batch first changeset rollback (second changeset succeed)",
+			function() {
+				var sUri = "/mock/";
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri : sUri
+				});
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
+				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+				oMockServer.start();
+				ok(oMockServer.isStarted(), "Mock server is started");
+
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+				oModel.setUseBatch(true);
+
+				var aBatchReadOperations = [];
+				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+				aBatchReadOperations.push(oFirstGetOp);
+
+				var aBatchFirstChangeOperations = [];
+				var oPutOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPutOp);
+
+				var oPutOp2 = oModel
+						.createBatchOperation(
+								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+								"PUT",
+								{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPutOp2);
+
+				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
+				aBatchFirstChangeOperations.push(oDeleteOp);
+
+				var oPostOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPostOp);
+
+				var aBatchSecondChangeOperations = [];
+				var oPutOp_2 = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchSecondChangeOperations.push(oPutOp_2);
+
+				var oPostOp_2 = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchSecondChangeOperations.push(oPostOp_2);
+
+				var fnSuccess = function(oData, oResponse) {
+					equal(oResponse.statusCode, 202, "batch completed");
+					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+					equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
+					// read to verify no changes made
+					var oGetResponse = jQuery.sap.sjax({
+						url : '/mock/LeaveHeaderCollection',
+						type : 'GET',
+					});
+					ok(oGetResponse.success, "Mock server responded the GET request");
+					equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+					equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
+
+					equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
+				};
+
+				var fnError = function(oError) {
+					ok(oData.__batchResponses[0], "fnError - batch failed");
+				};
+
+				oModel.addBatchReadOperations(aBatchReadOperations);
+				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
+				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
+				oModel.submitBatch(fnSuccess, fnError, false);
+
+				oMockServer.destroy();
+			});
+
+	test(
+			"$batch second changeset rollback (first changeset succeed)",
+			function() {
+				var sUri = "/mock/";
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri : sUri
+				});
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
+				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+				oMockServer.start();
+				ok(oMockServer.isStarted(), "Mock server is started");
+
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+				oModel.setUseBatch(true);
+
+				var aBatchReadOperations = [];
+				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+				aBatchReadOperations.push(oFirstGetOp);
+
+				var aBatchFirstChangeOperations = [];
+				var oPutOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPutOp);
+
+				var oPostOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPostOp);
+
+				var aBatchSecondChangeOperations = [];
+				var oPutOp1 = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchSecondChangeOperations.push(oPutOp1);
+
+				var oPutOp2 = oModel
+						.createBatchOperation(
+								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+								"PUT",
+								{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchSecondChangeOperations.push(oPutOp2);
+
+				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
+				aBatchSecondChangeOperations.push(oDeleteOp);
+
+				var oPostOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchSecondChangeOperations.push(oPostOp);
+
+				var fnSuccess = function(oData, oResponse) {
+					equal(oResponse.statusCode, 202, "batch completed");
+					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+					equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+					equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
+					// read to verify no changes made
+					var oGetResponse = jQuery.sap.sjax({
+						url : '/mock/LeaveHeaderCollection',
+						type : 'GET',
+					});
+					ok(oGetResponse.success, "Mock server responded the GET request");
+					equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+					equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
+
+					equal(oData.__batchResponses[2].message, "HTTP request failed", "HTTP request failed");
+
+				};
+
+				var fnError = function(oError) {
+					ok(oData.__batchResponses[0], "fnError - batch failed");
+				};
+
+				oModel.addBatchReadOperations(aBatchReadOperations);
+				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
+				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
+
+				oModel.submitBatch(fnSuccess, fnError, false);
+
+				oMockServer.destroy();
+			});
+
+	test(
+			"$batch GET in ChangeSet",
+			function() {
+				var sUri = "/mock/";
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri : sUri
+				});
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
+				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+				oMockServer.start();
+				ok(oMockServer.isStarted(), "Mock server is started");
+
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+				oModel.setUseBatch(true);
+
+				var aBatchFirstChangeOperations = [];
+				var oPutOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPutOp);
+
+				var oFakeGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+				aBatchFirstChangeOperations.push(oFakeGetOp);
+
+				var oPostOp = oModel
+						.createBatchOperation("/LeaveHeaderCollection", "POST",
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+				aBatchFirstChangeOperations.push(oPostOp);
+
+				var fnSuccess = function(oData, oResponse) {
+					equal(oResponse.statusCode, 202, "batch completed");
+					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+					equal(oData.__batchResponses[1].statusCode, 204, "oData  read succeeded");
+				};
+
+				var fnError = function(oError) {
+					equal(oError.response.statusCode, 400,
+							"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
+				};
+
+				//                oModel.addBatchReadOperations(aBatchReadOperations);       
+				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
+
+				oModel.submitBatch(fnSuccess, fnError, false);
+
+				oMockServer.destroy();
+			});
+
+	test("$batch GET Operation not succeed", function() {
+		var sUri = "/mock/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sUri
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+		oModel.setUseBatch(true);
+
+		var aBatchReadOperations = [];
+		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+		aBatchReadOperations.push(oFirstGetOp);
+
+		//$to instead of $top - should return 400
+		var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$to=2", "GET");
+		aBatchReadOperations.push(oSecGetOp);
+
+		var fnSuccess = function(oData, oResponse) {
+			equal(oResponse.statusCode, 202, "batch completed");
+			equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+			equal(oData.__batchResponses[1].response.statusCode, 400, "Second Read failed due to incorrect syntax");
+		};
+
+		var fnError = function(oError) {
+			equal(oError.response.statusCode, 400,
+					"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
+		};
+
+		//                oModel.addBatchReadOperations(aBatchReadOperations);       
+		oModel.addBatchReadOperations(aBatchReadOperations);
+
+		oModel.submitBatch(fnSuccess, fnError, false);
+
+		oMockServer.destroy();
+	});
+		
+	asyncTest("test mock data in one file", 10, function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataUrl = "testdata/MockData.json"// JSON file which contains the mockdata
+		oMockServer.simulate(sMetadataUrl, sMockdataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 
@@ -1864,8 +3345,84 @@
 		};
 		oBinding.attachChange(handler);
 		oBinding.getContexts();
+		oMockServer.destroy();
+	});
 
-		//	oMockServer.destroy();
+	asyncTest("test mock data generation", 10, function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/$metadata",
+			dataType : "xml"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+
+		var oModel = initModel(sURI, true);
+		var oBinding = oModel.bindList("/LeaveHeaderCollection");
+		var handler = function() { // delay the following test
+			ok(oBinding.oEntityType, "entity type binding check");
+			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
+			ok(oEntityType, "get entity type check");
+			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
+			ok(oPropMeta, "property type check");
+			equal(oPropMeta.name, "type", "entity type property check");
+			equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		oBinding.getContexts();
+		oMockServer.destroy();
+	});
+
+	
+	asyncTest("test $metadata xml", 10, function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/$metadata",
+			dataType : "xml"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
+
+		var oModel = initModel(sURI, true);
+		var oBinding = oModel.bindList("/LeaveHeaderCollection");
+		var handler = function() { // delay the following test
+			ok(oBinding.oEntityType, "entity type binding check");
+			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
+			ok(oEntityType, "get entity type check");
+			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
+			ok(oPropMeta, "property type check");
+			equal(oPropMeta.name, "type", "entity type property check");
+			equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		oBinding.getContexts();
+
+		oMockServer.destroy();
 	});
 
 	test("test filter on complex type properties", function() {
@@ -1914,7 +3471,243 @@
 		oMockServer.destroy();
 	});
 
+	test("test error messages on invalid operations", function() {
+		sURI = "/myservice/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sURI
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		
+		var oModel = initModel(sURI, true);
+
+		//Query negative tests
+		oModel.read('LeaveHeaderCollection?$ski=5', null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "'$ski' is not a valid system query option");
+		});	
+		
+		oModel.read('LeaveHeaderCollection?$select=type, availablebalance,', null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
+		});	
+		
+		oModel.read('LeaveHeaderCollection?$skip=5,', null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "skip invalid value [ends with ,]");
+		});	
+		
+		//skip & top
+		oModel.read('LeaveHeaderCollection?$skip=1&$top=sdlfksdf', null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value , oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE , "top invalid value");
+		});	
+		
+		oModel.read('LeaveHeaderCollection?$skip=1.5', null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "skip invalid value [not an integer]");
+		});	
+		
+		oModel.read('LeaveHeaderCollection?$top=x', null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "top invalid value [not an integer]");
+		});	
+		
+		//orderby
+		oModel.read("LeaveHeaderCollection?$orderby=entitlement descjkh", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Invalid sortorder 'descjkh' detected", "Invalid sortorder 'descjkh' detected");
+		});	
+		oModel.read("LeaveHeaderCollection?$orderby=entitlementFood", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Property 'entitlementFood' not found", "Property 'entitlementFood' not found");
+		});	
+		
+		//filter
+		oModel.read("LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Property '((type' not found", "Property '((type' not found");
+		});	
+		oModel.read("LeaveHeaderCollection?$filter=type eq 'Vacation' or ", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement");
+		});	
+		oModel.read("LeaveItemCollection?$filter=itemid lfde 6", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement ((filter option 'lfde' doesn't exist))");
+		});	
+		oModel.read("LeaveItemCollection?$filter=itemidFood le 6", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Property 'itemidFood' not found", "Property 'itemidFood' not found");
+		});	
+		
+		//select
+		oModel.read("LeaveHeaderCollection?$select=sdfsdf", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 404, "status code = 404");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'sdfsdf'", "Resource not found for the segment 'sdfsdf'");
+		});	
+		
+		//inlinecount
+		oModel.read("LeaveHeaderCollection?$inlinecount=sfg", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "InlineCount: " + oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
+		});	
+		
+		//format
+		oModel.read("LeaveHeaderCollection?$format=xml", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE, "Format: " + oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE);
+		});	
+		
+		//Single entry negative tests
+		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$select=type,", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
+		});	
+		
+		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$blabla=type", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "'$blabla' is not a valid system query option", "'$blabla' is not a valid system query option (single)");
+		});	
+
+		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$top=1", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "'$top' is not a valid system query option", "'$top' is not a valid system query option (single)");
+		});	
+		
+		//key
+		oModel.read("LeaveItemCollection(itemid='dummy', employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 404, "status code = 404");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND);
+		});	
+		
+		oModel.read("LeaveItemCollection(dummy='1', employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'", "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'");
+		});
+		oModel.read("LeaveItemCollection(employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY);
+		});	
+		oModel.read("LeaveItemCollection(itemid='1, employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 400, "status code = 400");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Malformed URI literal syntax in key 'itemid'", "Malformed URI literal syntax in key 'itemid'");
+		});	
+		oMockServer.destroy();
+		
+		//Expand
+		sURI = "/myservice/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sURI
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		var oModel = initModel(sURI, true);
+
+		oModel.read("FlightCollection?$expand=FlightFood", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 404, "status code = 404");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'FlightFood'", "Resource not found for the segment 'FlightFood'");
+		});	
+		
+		oModel.read("CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking1", null, null, false, function() {
+		}, function(oResult) {
+			equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			equal(oResult.response.statusCode, 404, "status code = 404");
+			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'flightbooking1'", "Resource not found for the segment 'flightbooking1'");
+		});	
+		oMockServer.destroy();		
+});
+	
+asyncTest("test ODataModel update", function() {
+	sURI = "/myservice/";
+	var oMockServer = new sap.ui.core.util.MockServer({
+		rootUri : sURI
+	});
+	var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+	oMockServer.simulate(sMetadataUrl);
+	oMockServer.start();
+	var oModel = initModel(sURI, true);
+	oModel.read('CarrierCollection', null, null, true, function(oData, oResponse) {
+		var oEntry = {};
+		oEntry.CARRNAME = "USD";
+		oModel.update("/CarrierCollection('carrid 1')", oEntry, null, function() {
+			var oResponse = jQuery.sap.sjax({
+				url : "/myservice/CarrierCollection('carrid 1')",
+				dataType : "json"
+			});
+			equal(oResponse.data.d.CARRNAME, "USD");
+			equal(oResponse.data.d.mimeType, "mimeType 1");
+			start();
+		}, function() {
+			start();
+			oMockServer.destroy();
+		}, true); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
+
+	}, function() {
+		ok(false, "Read failed");
+	});
+
+});		
+			
 	asyncTest("test oDataModel _loadData JSON", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+		
 		var oModel = initModel(sURI, true);
 		oModel._loadData("LeaveHeaderCollection", null, function() {
 			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
@@ -2008,730 +3801,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test mock data in one file", 10, function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataUrl = "testdata/MockData.json"// JSON file which contains the mockdata
-		oMockServer.simulate(sMetadataUrl, sMockdataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/$metadata",
-			dataType : "xml"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
-
-		var oModel = initModel(sURI, true);
-		var oBinding = oModel.bindList("/LeaveHeaderCollection");
-		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
-			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
-			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
-			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
-			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
-
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		};
-		oBinding.attachChange(handler);
-		oBinding.getContexts();
-		oMockServer.destroy();
-	});
-
-	asyncTest("test mock data generation", 10, function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		oMockServer.simulate(sMetadataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/$metadata",
-			dataType : "xml"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
-
-		var oModel = initModel(sURI, true);
-		var oBinding = oModel.bindList("/LeaveHeaderCollection");
-		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
-			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
-			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
-			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
-			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
-
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		};
-		oBinding.attachChange(handler);
-		oBinding.getContexts();
-		oMockServer.destroy();
-	});
-
-	test("test CRUD simple data model", function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		oMockServer.simulate(sMetadataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/LeaveItemCollection",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "100 entities generated");
-
-		var oPostResponse = jQuery.sap.sjax({
-			url : "/myservice/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
-			type : 'POST',
-			data : '{"type":"Vacation","from":"2014-03-26","to":"2014-03-27","length":"1 day","state":"Pending"}'
-		});
-		ok(oPostResponse.success, "Mock server responded the POST resquest");
-		equal(oPostResponse.statusCode, 201, "resource successfully created");
-		ok(oPostResponse.data.d.type, "New entry created");
-
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/LeaveItemCollection",
-			dataType : "json"
-		});
-		equal(oResponse.data.d.results.length, 101, "101 entities read");
-
-		var oPutResponse = jQuery.sap.sjax({
-			url : oPostResponse.data.uri,
-			type : 'PUT',
-			data : '{"type":"Vacation","from":"2014-03-27","to":"2014-03-28","length":"1 day","state":"Pending"}'
-		});
-		ok(oPutResponse.success, "Mock server responded the PUT resquest");
-		equal(oPutResponse.statusCode, 204, "resource successfully updated");
-
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/LeaveItemCollection",
-			dataType : "json"
-		});
-		equal(oResponse.data.d.results.length, 101, "101 entities returned");
-
-		// read the just created resource again
-		var oGetResponse = jQuery.sap.sjax({
-			url : oPostResponse.data.uri,
-			type : 'GET',
-		});
-		ok(oGetResponse.success, "Mock server responded the GET request");
-		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-
-		var oDelResponse = jQuery.sap.sjax({
-			url : oPostResponse.data.uri,
-			type : 'DELETE',
-		});
-		ok(oDelResponse.success, "Mock server responded the DELETE request");
-		equal(oDelResponse.statusCode, 204, "resource successfully deleted");
-		// Try to read the just delted resource -this shall fail
-		var oGetAgainResponse = jQuery.sap.sjax({
-			url : oPostResponse.data.uri,
-			type : 'GET',
-		});
-		equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
-		equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
-
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/LeaveItemCollection",
-			dataType : "json"
-		});
-		equal(oResponse.data.d.results.length, 100, "100 entities returned");
-
-		oMockServer.destroy();
-
-	});
-
-	test("test CRUD rmtsampleflight", function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
-		oMockServer.simulate(sMetadataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "100 entities generated");
-
-		var oPostResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection",
-			type : 'POST',
-			data : '{"carrid":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
-		});
-		ok(oPostResponse.success, "Mock server responded the POST resquest");
-		equal(oPostResponse.statusCode, 201, "resource successfully created");
-		ok(oPostResponse.data.uri, "resource uri available");
-
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection",
-			dataType : "json"
-		});
-		equal(oResponse.data.d.results.length, 101, "101 entities returned");
-
-		var oPutResponse = jQuery.sap.sjax({
-			url : oPostResponse.data.uri,
-			type : 'PUT',
-			data : '{"carrid":"BB","connid":"008","fldate":"\/Date(1287532800000)\/"}'
-		});
-		ok(oPutResponse.success, "Mock server responded the PUT resquest");
-		equal(oPutResponse.statusCode, 204, "resource successfully updated");
-
-		oPutResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
-			type : 'PUT',
-			data : '{"carrid":"BB","connid":"009"}'
-		});
-		ok(oPutResponse.success, "Mock server responded the PUT resquest");
-		equal(oPutResponse.statusCode, 204, "resource successfully updated");
-
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection",
-			dataType : "json"
-		});
-		equal(oResponse.data.d.results.length, 101, "101 entities returned");
-
-		// read the just created resource again
-		var oGetResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
-			type : 'GET',
-		});
-		ok(oGetResponse.success, "Mock server responded the GET request");
-		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-		equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull");
-
-		var oDelResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
-			type : 'DELETE',
-		});
-		ok(oDelResponse.success, "Mock server responded the DELETE request");
-		equal(oDelResponse.statusCode, 204, "resource successfully deleted");
-		// Try to read the just delted resource -this shall fail
-		var oGetAgainResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
-			type : 'GET',
-		});
-		equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
-		equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
-
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection",
-			dataType : "json"
-		});
-		equal(oResponse.data.d.results.length, 100, "100 entities returned");
-
-		oMockServer.destroy();
-
-	});
-
-	test(
-			"test mock data state changer",
-			14,
-			function() {
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/?sap-client=001"
-				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				oMockServer.simulate(sMetadataUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oResponse = jQuery.sap.sjax({
-					url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/$metadata?sap-client=001",
-					dataType : "xml"
-				});
-				ok(oResponse.success, "Mock server responded");
-				equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
-
-				var oPostResponse = jQuery.sap
-						.sjax({
-							url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
-							type : 'POST',
-							data : '{"type":"Vacation","from":"2013-09-26","to":"2013-09-27","length":"1 day","state":"Pending"}'
-						});
-				ok(oPostResponse.success, "Mock server responded the POST resquest");
-				equal(oPostResponse.statusCode, 201, "resource successfully created");
-				ok(oPostResponse.data.uri, "resource uri available");
-
-				var oPutResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'PUT',
-					data : '{"type":"Vacation","from":"2013-10-26","to":"2013-10-27","length":"1 day","state":"Pending"}'
-				});
-				ok(oPutResponse.success, "Mock server responded the POST resquest");
-				equal(oPutResponse.statusCode, 204, "resource successfully created");
-
-				// read the just created resource again
-				var oGetResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'GET',
-				});
-				ok(oGetResponse.success, "Mock server responded the GET request");
-				equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-
-				var oDelResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'DELETE',
-				});
-				ok(oDelResponse.success, "Mock server responded the DELETE request");
-				equal(oDelResponse.statusCode, 204, "resource successfully deleted");
-				// Try to read the just delted resource -this shall fail
-				var oGetAgainResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'GET',
-				});
-				equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
-				equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
-
-				oMockServer.destroy();
-
-			});
-
-	test(
-			"$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST)",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
-
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
-
-				var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$top=2", "GET");
-				aBatchReadOperations.push(oSecGetOp);
-
-				var aBatchChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchChangeOperations.push(oPutOp);
-
-				var oPutOp2 = oModel
-						.createBatchOperation(
-								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-								"PUT",
-								'{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchChangeOperations.push(oPutOp2);
-
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
-						null);
-				aBatchChangeOperations.push(oDeleteOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchChangeOperations.push(oPostOp);
-
-				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-					equal(oData.__batchResponses[1].statusCode, 200, "oData second read succeeded");
-					equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
-
-					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 204, "oData put succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[2].statusCode, 204, "oData delete succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[3].statusCode, 201, "oData post succeeded");
-				};
-
-				var fnError = function(oError) {
-					ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
-
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchChangeOperations);
-				oModel.submitBatch(fnSuccess, fnError, false);
-
-				oMockServer.destroy();
-			});
-
-	test(
-			"$batch Multiple ChangeSets",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
-
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
-
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPutOp);
-
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
-						null);
-				aBatchFirstChangeOperations.push(oDeleteOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPostOp);
-
-				var aBatchSecondChangeOperations = [];
-				var oPutOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchSecondChangeOperations.push(oPutOp_2);
-
-				var oPostOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchSecondChangeOperations.push(oPostOp_2);
-
-				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-					equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
-
-					equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData put succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 204, "oData delete succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[2].statusCode, 201, "oData post succeeded");
-
-					equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
-				};
-
-				var fnError = function(oError) {
-					ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
-
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-				oModel.submitBatch(fnSuccess, fnError, false);
-
-				oMockServer.destroy();
-			});
-
-	test(
-			"$batch first changeset rollback (second changeset succeed)",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
-
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
-
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPutOp);
-
-				var oPutOp2 = oModel
-						.createBatchOperation(
-								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-								"PUT",
-								'{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPutOp2);
-
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
-				aBatchFirstChangeOperations.push(oDeleteOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPostOp);
-
-				var aBatchSecondChangeOperations = [];
-				var oPutOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchSecondChangeOperations.push(oPutOp_2);
-
-				var oPostOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchSecondChangeOperations.push(oPostOp_2);
-
-				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
-					// read to verify no changes made
-					var oGetResponse = jQuery.sap.sjax({
-						url : '/mock/LeaveHeaderCollection',
-						type : 'GET',
-					});
-					ok(oGetResponse.success, "Mock server responded the GET request");
-					equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-					equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
-
-					equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
-				};
-
-				var fnError = function(oError) {
-					ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
-
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-				oModel.submitBatch(fnSuccess, fnError, false);
-
-				oMockServer.destroy();
-			});
-
-	test(
-			"$batch second changeset rollback (first changeset succeed)",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
-
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
-
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPutOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPostOp);
-
-				var aBatchSecondChangeOperations = [];
-				var oPutOp1 = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchSecondChangeOperations.push(oPutOp1);
-
-				var oPutOp2 = oModel
-						.createBatchOperation(
-								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-								"PUT",
-								'{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchSecondChangeOperations.push(oPutOp2);
-
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
-				aBatchSecondChangeOperations.push(oDeleteOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchSecondChangeOperations.push(oPostOp);
-
-				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
-					// read to verify no changes made
-					var oGetResponse = jQuery.sap.sjax({
-						url : '/mock/LeaveHeaderCollection',
-						type : 'GET',
-					});
-					ok(oGetResponse.success, "Mock server responded the GET request");
-					equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-					equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
-
-					equal(oData.__batchResponses[2].message, "HTTP request failed", "HTTP request failed");
-
-				};
-
-				var fnError = function(oError) {
-					ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
-
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-
-				oModel.submitBatch(fnSuccess, fnError, false);
-
-				oMockServer.destroy();
-			});
-
-	test(
-			"$batch GET in ChangeSet",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
-
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPutOp);
-
-				var oFakeGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchFirstChangeOperations.push(oFakeGetOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
-				aBatchFirstChangeOperations.push(oPostOp);
-
-				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					equal(oData.__batchResponses[1].statusCode, 204, "oData  read succeeded");
-				};
-
-				var fnError = function(oError) {
-					equal(oError.response.statusCode, 400,
-							"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
-				};
-
-				//                oModel.addBatchReadOperations(aBatchReadOperations);       
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-
-				oModel.submitBatch(fnSuccess, fnError, false);
-
-				oMockServer.destroy();
-			});
-
-	test("$batch GET Operation not succeed", function() {
-		var sUri = "/mock/";
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : sUri
-		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-		oModel.setUseBatch(true);
-
-		var aBatchReadOperations = [];
-		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-		aBatchReadOperations.push(oFirstGetOp);
-
-		//$to instead of $top - should return 400
-		var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$to=2", "GET");
-		aBatchReadOperations.push(oSecGetOp);
-
-		var fnSuccess = function(oData, oResponse) {
-			equal(oResponse.statusCode, 202, "batch completed");
-			equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-			equal(oData.__batchResponses[1].response.statusCode, 400, "Second Read failed due to incorrect syntax");
-		};
-
-		var fnError = function(oError) {
-			equal(oError.response.statusCode, 400,
-					"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
-		};
-
-		//                oModel.addBatchReadOperations(aBatchReadOperations);       
-		oModel.addBatchReadOperations(aBatchReadOperations);
-
-		oModel.submitBatch(fnSuccess, fnError, false);
-
-		oMockServer.destroy();
-	});
 	
-	asyncTest("test ODataModel update", function() {
-		sURI = "/myservice/";
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : sURI
-		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
-		oMockServer.simulate(sMetadataUrl);
-		oMockServer.start();
-		var oModel = initModel(sURI, true);
-		oModel.read('CarrierCollection', null, null, true, function(oData, oResponse) {
-			var oEntry = {};
-			oEntry.CARRNAME = "USD";
-			oModel.update("/CarrierCollection('carrid 1')", oEntry, null, function() {
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/CarrierCollection('carrid 1')",
-					dataType : "json"
-				});
-				equal(oResponse.data.d.CARRNAME, "USD");
-				equal(oResponse.data.d.mimeType, "mimeType 1");
-				start();
-			}, function() {
-				start();
-				oMockServer.destroy();
-			}, true); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
-
-		}, function() {
-			ok(false, "Read failed");
-		});
-
-	});
-
+	
 	function countProperties(obj) {
 		return jQuery.map(obj, function(i, o) {
 			return o;

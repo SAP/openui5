@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ScrollContainer renderer. 
-	 * @static
+	 * ScrollContainer renderer. 
+	 * @namespace
 	 */
 	var ScrollContainerRenderer = {
 	};
@@ -22,11 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ScrollContainerRenderer.render = function(oRm, oControl) {
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 	

@@ -8,11 +8,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new TreeNode.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -22,39 +21,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.TreeNode
+	 * @alias sap.ui.commons.TreeNode
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeNode = Element.extend("sap.ui.commons.TreeNode", /** @lends sap.ui.commons.TreeNode.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Node text
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Node is expanded
 			 */
 			expanded : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Should the node has an expander.
 			 */
 			hasExpander : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * Icon to display in front of the node
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Node is selected
 			 */
 			isSelected : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * The node is selectable. If true, clicking on the node text triggers "selected" event
 			 */
@@ -62,101 +61,69 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 		},
 		defaultAggregation : "nodes",
 		aggregations : {
-	
+
 			/**
 			 * Subnodes for the current node
 			 */
 			nodes : {type : "sap.ui.commons.TreeNode", multiple : true, singularName : "node"}
 		},
 		associations : {
-	
+
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
-	
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
-	
+
 			/**
 			 * Node state has changed.
 			 */
 			toggleOpenState : {
 				parameters : {
-	
+
 					/**
 					 * Node has been opened if true
 					 */
 					opened : {type : "boolean"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Node is selected
 			 */
 			selected : {}
 		}
 	}});
-	
-	
-	/**
-	 * Select the node, and if any, deselects the previously selected node
-	 *
-	 * @name sap.ui.commons.TreeNode#select
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Expands the node
-	 *
-	 * @name sap.ui.commons.TreeNode#expand
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Collapses the node
-	 *
-	 * @name sap.ui.commons.TreeNode#collapse
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
+
+
 	TreeNode.ANIMATION_DURATION	 = 600;
-	
+
 	CustomStyleClassSupport.apply(TreeNode.prototype);
-	
+
 	//***********************************************************************************
 	//* PUBLIC METHODS
 	//***********************************************************************************
-	
+
 	/**
 	 * Expands the node
 	 * @param {boolean} bExpandChildren
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
 	TreeNode.prototype.expand = function(bExpandChildren){
-	
+
 		var oDomNode = this.$();
 		if (oDomNode.hasClass("sapUiTreeNodeCollapsed")) {
 			//If not, not an expandable node
 			oDomNode.toggleClass("sapUiTreeNodeCollapsed");
 			oDomNode.toggleClass("sapUiTreeNodeExpanded");
-	
+
 			var oDomChildrenNodes = this.$("children");
 			if (oDomChildrenNodes) {
 				oDomChildrenNodes.stop(true, true);
@@ -164,35 +131,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			}
 			oDomNode.attr("aria-expanded", "true");
 			this.fireToggleOpenState({opened:true});
-	
+
 		}
 		//Change property anyway. (Even if node has no expander)
 		this.setProperty("expanded", true, true); //Suppress Re-rendering
-	
+
 		if (bExpandChildren) {
-			var aNodes = this.getNodes();
+			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
 				aNodes[i].expand(bExpandChildren);
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Collapses the node
 	 * @param {boolean} bCollapseChildren
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.collapse = function(bCollapseChildren){
-	
+
 		var oDomNode = this.$();
-	
+
 		if (oDomNode.hasClass("sapUiTreeNodeExpanded")) {
 			//If not, not a collapsable node
-	
+
 			oDomNode.toggleClass("sapUiTreeNodeCollapsed");
 			oDomNode.toggleClass("sapUiTreeNodeExpanded");
-	
+
 			var oDomChildrenNodes = this.$("children");
 			if (oDomChildrenNodes) {
 				oDomChildrenNodes.stop(true, true);
@@ -200,86 +168,94 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			}
 			oDomNode.attr("aria-expanded", "false");
 			this.fireToggleOpenState({opened:false});
-	
+
 		}
 		//Change property anyway. (Even if node has no expander)
 		this.setProperty("expanded", false, true); //Suppress Re-rendering
-	
+
 		if (bCollapseChildren) {
-			var aNodes = this.getNodes();
+			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
 				aNodes[i].collapse(bCollapseChildren);
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Select the node, and if any, deselects the previously selected node
 	 * @param {boolean} bSuppressEvent
 	 * @param {boolean} bDeselectOtherNodes
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.select = function(bSuppressEvent) {
 		var oTree = this.getTree();
-	
+
 		// If connected to a tree call setSelection, otherwise call _select directly
 		if (oTree) {
 			oTree.setSelection(this, bSuppressEvent);
 		} else {
 			this._select();
 		}
-		
+
 	};
-	
+
 	//***********************************************************************************
 	//* SELECTION PRIVATE METHODS
 	//***********************************************************************************
-	
+
 	/**Select the node
 	 * @private
 	 */
 	TreeNode.prototype._select = function(bSuppressEvent) {
 		this.setProperty("isSelected", true, true);
-	
+
 		if (!bSuppressEvent) {
 			this.fireSelected();
 		}
-	
+
 		// If node is already rendered, then update the DOM and scroll into view
 		if (this.getDomRef()) {
 			this.$().closest(".sapUiTreeNode").addClass("sapUiTreeNodeSelected").attr("aria-selected", "true");
 			this.scrollIntoView();
 		}
 	};
-	
+
 	/**Deselect the node
 	 * @private
 	 */
 	TreeNode.prototype._deselect = function(bSuppressEvent) {
 		this.setProperty("isSelected", false, true);
-	
+
 		// If node is already rendered, then update the DOM
 		if (this.getDomRef()) {
 			this.$().removeClass("sapUiTreeNodeSelected").removeAttr("aria-selected");
 		}
 	};
-	
+
+	/**
+	 * Private getter for child nodes without creating a copy of the nodes array
+	 */
+	TreeNode.prototype._getNodes = function() {
+		return this.mAggregations.nodes || [];
+	};
+
 	/**Returns true if the node has a selected child node, which is not visible
 	 * @returns True if the node has such child node
 	 * @private
 	 */
 	TreeNode.prototype.hasSelectedHiddenChild = function(){
-		var aNodes = this.getNodes();
+		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
-	
+
 			if ((!aNodes[i].isVisible() && aNodes[i].getIsSelected()) || aNodes[i].hasSelectedHiddenChild()) {
 				return true;
 			}
 		}
 		return false;
 	};
-	
+
 	/**
 	 * Redefinition of Setter for property <code>isSelected</code> for validation purpose
 	 *
@@ -291,24 +267,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 */
 	TreeNode.prototype.setIsSelected = function(bIsSelected) {
 		var oTree = this.getTree();
-		
+
 		if (!this.getSelectable()) {
 			//Node is not selectable.
 			return this;
 		}
-	
+
 		if (bIsSelected == this.getProperty("isSelected")) {
 			return this;
 		}
-		
+
 		if (oTree) {
 			oTree._setNodeSelection(this, bIsSelected, true);
 		} else {
 			this.setProperty("isSelected", bIsSelected, true);
-		}	
+		}
 		return this;
 	};
-	
+
 	/**
 	 * Redefinition of Setter for property <code>selectable</code> for validation purpose.
 	 *
@@ -319,20 +295,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 * @public
 	 */
 	TreeNode.prototype.setSelectable = function(bSelectable) {
-	
+
 		if (!bSelectable && this.getIsSelected()) {
 			//Setting the node to not selectable: remove selection
 			this.setIsSelected(false);
 		}
-	
+
 		this.setProperty("selectable", bSelectable);
 		return this;
 	};
-	
+
+
+
+
 	//***********************************************************************************
 	//* EVENTS HANDLING
 	//***********************************************************************************
-	
+
 	/** The mouse click event, which will expand/collapse the node
 	 * @param {event} oEvent The click event object
 	 * @private
@@ -340,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	TreeNode.prototype.onclick = function(oEvent){
 		var oDomClicked = oEvent.target,
 		oTree = this.getTree();
-	
+
 		if (jQuery(oDomClicked).is(".sapUiTreeNode") || jQuery(oDomClicked).is(".sapUiTreeNodeNotSelectable") ) {
 			//When user click a Not-Selectable node text, it behaves as clicking on the node itself
 			if (jQuery(oDomClicked).is(".sapUiTreeNodeNotSelectable")) {
@@ -353,12 +332,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			} else {
 				this.expand();
 			}
-	
+
 			oTree.placeFocus(oDomClicked);
 			oDomClicked.focus();
-	
-		}
-		else if (jQuery(oDomClicked).is(".sapUiTreeNodeContent") || jQuery(oDomClicked).is(".sapUiTreeIcon")) {
+
+		} else if (jQuery(oDomClicked).is(".sapUiTreeNodeContent") || jQuery(oDomClicked).is(".sapUiTreeIcon")) {
 			var sSelectionType = sap.ui.commons.Tree.SelectionType.Select;
 			if (oTree.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Multi) {
 				if (oEvent.shiftKey) {
@@ -369,15 +347,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 				}
 			}
 			oTree.setSelection(this, false, sSelectionType);
-	
+
 			//Set focus
 			oDomClicked = jQuery(oDomClicked).closest(".sapUiTreeNode")[0];
 			oTree.placeFocus(oDomClicked);
 			oDomClicked.focus();
 		}
 	};
-	
-	
+
+
 	//***********************************************************************************
 	//* KEYBOARD NAVIGATION
 	//***********************************************************************************
@@ -386,19 +364,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 * @private
 	 */
 	TreeNode.prototype.onsapselect = function(oEvent){
-	
+
 		if (this.getSelectable()) {
 			this.getTree().setSelection(this);
-		}
-		else if (this.getExpanded()) {
+		} else if (this.getExpanded()) {
 			this.collapse();
 		} else {
 			this.expand();
 		}
-	
-	
+
+
 	};
-	
+
 	/**
 	 * The numpad + key event, which will expand the current node
 	 * @param {event} oEvent The sapexpand event object
@@ -407,7 +384,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	TreeNode.prototype.onsapexpand = function(oEvent) {
 		this.expand();
 	};
-	
+
 	/**
 	 * The numpad - key event, which will expand the current node
 	 * @private
@@ -415,9 +392,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 */
 	TreeNode.prototype.onsapcollapse = function(oEvent) {
 		this.collapse();
-	
+
 	};
-	
+
 	/**
 	* LEFT key behavior
 	* Opens the section or activates the UI element on LEFT key
@@ -432,7 +409,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 		}
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	* RIGHT key behavior
 	* Opens the section or activates the UI element on RIGHT key
@@ -447,11 +424,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 		}
 		oEvent.preventDefault();
 	};
-	
+
 	//***********************************************************************************
 	//* FOCUS HANDLING
 	//***********************************************************************************
-	
+
 	/**Focuses the node
 	 * @private
 	 */
@@ -462,7 +439,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			domFocus.focus();
 		}
 	};
-	
+
 	/**Removes focus from the node
 	 * @private
 	 */
@@ -472,36 +449,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			domFocus.setAttribute("tabindex", "-1");
 		}
 	};
-	
+
 	//***********************************************************************************
 	//* HELPER METHODS
 	//***********************************************************************************
-	
+
 	/** Returns the parent tree control. Not necessarily the direct parent if the node is a subnode.
 	 * @returns The parent tree control
 	 * @private
 	 */
 	TreeNode.prototype.getTree = function() {
 		var parent = this.getParent();
-	
+
 		while (parent instanceof TreeNode) {
 			parent = parent.getParent();
 		}
 		return parent;
 	};
-	
+
 	/** Returns true if the node has any subnodes.
 	 * @returns True if the node has any subnode
 	 * @private
 	 */
 	TreeNode.prototype.hasChildren = function(){
-		var aSubNodes = this.getNodes();
+		var aSubNodes = this._getNodes();
 		if (aSubNodes.length) {
 			return true;
 		}
 		return false;
 	};
-	
+
 	/** Returns true if the node is visible(parent and all grand parent expanded).
 	 * @returns True if the node is visible
 	 * @private
@@ -512,13 +489,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			if (!parent.getExpanded()) {
 				return false;
 			}
-	
+
 			parent = parent.getParent();
 		}
 		return true;
 	};
-	
-	
+
+
 	/**
 	* Used for Javascript closure.
 	* @private
@@ -537,7 +514,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			};
 		}
 	};
-	
+
 	/**
 	 * In case the selected node is not visible, change the scroll position of the
 	 * tree to get it into view.
@@ -557,17 +534,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			iScrollLeft = $TreeCont.scrollLeft(),
 			iWidth = $TreeCont.width(),
 			iNewScrollLeft;
-	
+
 		if (iOffsetTop > iScrollTop + iHeight || iOffsetTop < iScrollTop) {
 			iNewScrollTop = iOffsetTop - Math.floor(iHeight * 0.5);
 			iNewScrollTop = Math.max(iNewScrollTop, 0);
 		}
-	
+
 		if (iOffsetLeft > iScrollLeft + iWidth || iOffsetLeft < iScrollLeft) {
 			iNewScrollLeft = iOffsetLeft - Math.floor(iWidth * 0.5);
 			iNewScrollLeft = Math.max(iNewScrollLeft, 0);
 		}
-	
+
 		if (iNewScrollTop !== undefined || iNewScrollLeft !== undefined) {
 			var mScrollPos = {};
 			if (iNewScrollTop !== undefined) {
@@ -579,11 +556,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			$TreeCont.animate(mScrollPos);
 		}
 	};
-	
+
 	//***********************************************************************************
 	//* REDEFINITIONS
 	//***********************************************************************************
-	
+
 	/**
 	 * Returns the regular tooltip. If empty, returns the text
 	* @private
@@ -595,13 +572,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 		if (typeof oTooltip === "string" || oTooltip instanceof String ) {
 			sTooltip = oTooltip;
 		}
-	
+
 		if (!sTooltip) {
 			sTooltip = this.getText();
 		}
 		return sTooltip;
 	};
-	
+
 
 	return TreeNode;
 

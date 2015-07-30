@@ -180,7 +180,7 @@
 			ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
 			equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
 			ok(jQuery.sap.domById("F1T"), "Form title is rendered");
-			ok(jQuery("#F1T").is("h5"), "Form title is rendered as H5 as default");
+			ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
 			ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
 			ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
 			equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
@@ -220,7 +220,7 @@
 			ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
 			equal(jQuery("#L1").attr("for"), "DP1-input", "Label1 is renderd for DatePicker");
 			ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
-			equal(jQuery("#DP1-input").attr("aria-labelledby"), "dummy", "DatePicker aria-labelledby not changed")
+			equal(jQuery("#DP1-input").attr("aria-labelledby"), "L1 dummy", "DatePicker aria-labelledby changed (contains reference to label)");
 			ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
 			ok(!jQuery.sap.domById("C4E2T1"), "Content of invisible Element is not rendered");
 			ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");

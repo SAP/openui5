@@ -21,6 +21,7 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
+
 	// global service URL keep the path relative not to have cross domain issue.
 	var sServiceURI = "/service/" 
 
@@ -29,6 +30,15 @@
 	
 	// fakeTimers causing issue with MockServer
 	sinon.config.useFakeTimers = false;
+	
+	function testOData(sMessage, fnTest) {
+		asyncTest("ODATA: " + sMessage, fnTest);
+
+		// stub odata constructor with the new odata version 2
+		sinon.stub(sap.ui.model.odata, "ODataModel", sap.ui.model.odata.v2.ODataModel);
+		asyncTest("ODATAV2: " + sMessage, fnTest);
+		sap.ui.model.odata.ODataModel.restore();
+	}
 
 	function createODataModel(sURL, mSettings) {
 		sURL = sURL || sServiceURI;
@@ -43,6 +53,19 @@
 		return oModel;
 	}
 	
+	function createJSONModel(oData) {
+		oData = oData || {
+			Products : jQuery.sap.sjax({
+				url : "data/Product.json", 
+				dataType:"json"
+			}).data
+		};
+		
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oData);
+		return oModel;
+	}
+
 	function startMockServer(iRespondAfter) {
 		// configure respond to requests delay
 		sap.ui.core.util.MockServer.config({
@@ -92,7 +115,7 @@
 	}
 
 	module("BusyIndicator");
-	asyncTest("List should show busy indicator during the binding update", function() {
+	testOData("List should show busy indicator during the binding update", function() {
 		var oMockServer = startMockServer(0),
 			oList = createList({
 				busyIndicatorDelay : 0,
@@ -114,7 +137,7 @@
 		});
 	});
 
-	asyncTest("List should show busy indicator during the binding update when growing is true", function() {
+	testOData("List should show busy indicator during the binding update when growing is true", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
 				growing : true,
@@ -139,7 +162,7 @@
 		});
 	});
 	
-	asyncTest("List should show busy indicator when there is no data found", function() {
+	testOData("List should show busy indicator when there is no data found", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
@@ -164,7 +187,7 @@
 		});
 	});
 
-	asyncTest("List should respect busyIndicatorDelay property to show busy indicator.", function() {
+	testOData("List should respect busyIndicatorDelay property to show busy indicator.", function() {
 		var iRespondDelay = 10,
 			oMockServer = startMockServer(iRespondDelay),
 			oList = createList({
@@ -183,7 +206,7 @@
 		});
 	});
 	
-	asyncTest("List should respect enableBusyIndicator property to show busy indicator.", function() {
+	testOData("List should respect enableBusyIndicator property to show busy indicator.", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
 				enableBusyIndicator : false,
@@ -201,7 +224,7 @@
 		});
 	});
 
-	asyncTest("List should clear busy state when binding error has occured", function() {
+	testOData("List should clear busy state when binding error has occured", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
@@ -228,7 +251,7 @@
 		});
 	});
 	
-	asyncTest("Growing List should clear busy state and all data when binding error has occured", function() {
+	testOData("Growing List should clear busy state and all data when binding error has occured", function() {
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
 			oList = createList({
@@ -284,7 +307,7 @@
 		oList.destroy();
 	});
 
-	asyncTest("Should not have a static after busy", function() {
+	testOData("Should not have a static after busy", function() {
 		// Arrange
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred();
@@ -311,7 +334,7 @@
 	});
 
 	module("Abort");
-	asyncTest("List should abort multiple requests and runs only the last one", function() {
+	testOData("List should abort multiple requests and runs only the last one", function() {
 		
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
@@ -357,7 +380,7 @@
 	});
 	
 	module("CountMode");
-	asyncTest("CountMode.None should show growing indicator when list is not complete yet", function() {
+	testOData("CountMode.None should show growing indicator when list is not complete yet", function() {
 		var iThreshold = 10,
 			oMockServer = startMockServer(),
 			oList = createList({
@@ -381,7 +404,7 @@
 		});
 	});
 
-	asyncTest("CountMode.None should not show growing indicator when all items are shown", function() {
+	testOData("CountMode.None should not show growing indicator when all items are shown", function() {
 		var iThreshold = 20,
 			oMockServer = startMockServer(),
 			oList = createList({
@@ -405,7 +428,8 @@
 			start();
 		});
 	});
-	
+
+	module("NonAbsoluteAndUnresolveable Binding Path")
 	test("Should not fire update started if a binding cannot be resolved", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -423,6 +447,77 @@
 		oList.destroy();
 	});
 	
+	module("FocusAfterBindingUpdate");
+	testOData("Focus should be retained after binding update", function() {
+		var sFocusedControlId,
+			oMockServer = startMockServer(),
+			oDeferred = jQuery.Deferred(),
+			oList = createList({
+				growing : false,
+			}, {
+				template : new sap.m.InputListItem({
+					label: "Product Name",
+					content : new sap.m.Input({
+						value: "{Name}"
+					})
+				})
+			});
+		
+		// when initial binding is completed
+		oList.done(function () {
+			
+			// focus to the input field
+			sFocusedControlId = oList.$().find("input").eq(5).focus().attr("id");
+			
+			// rerender list
+			oList.rerender();
+			
+			setTimeout(function() {
+				// check focus after rerender
+				strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after list rerender");
+				
+				// recheck focus after binding update
+				oList.attachUpdateFinished(function(oEvent) {
+					strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
+					oDeferred.resolve();
+				});
+				
+				// update the list binding
+				oList.updateItems();
+			}, 0);
+			
+		});
+	
+		// when test is completed
+		jQuery.when(oDeferred).done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
+	
+	testOData("Last setGrowingThreshold should be respected before data fetching", function() {
+		var iInitThreshold = 5,
+			iLastThreshold = 10,
+			oMockServer = startMockServer(),
+			oList = createList({
+				growing : true,
+				growingThreshold : iInitThreshold,
+				updateFinished : function(oEvent) {
+					strictEqual(oEvent.getParameter("actual"), iLastThreshold, "Last growing threshold is respected");
+				}
+			});
+		
+		oList.setGrowingThreshold(iLastThreshold);
+	
+		// when initial binding is completed
+		oList.done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
+
 </script>
 
 </head>

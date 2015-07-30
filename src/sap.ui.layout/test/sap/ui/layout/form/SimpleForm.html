@@ -12,7 +12,7 @@ body {
 
 <script src="../../../../../resources/sap-ui-core.js" type="text/javascript"
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-theme="sap_goldreflection">
+	data-sap-ui-theme="sap_bluecrystal">
 
 </script>
 <script type="text/javascript">
@@ -24,6 +24,7 @@ body {
 				minWidth : 1024,
 				maxContainerCols: 2,
 				title: "Form title",
+				editable: true,
 				content:[
 					new sap.ui.core.Title({text:"Title 1"}),
 					new sap.ui.commons.Label({text:"Label 1"}),
@@ -104,12 +105,12 @@ body {
 				]
 			});
 
-	oSimpleForm.placeAt('body');
+	oSimpleForm.placeAt('sample1');
 
 </script>
 
 </head>
 <body id="body" class="sapUiBody">
-
+	<div id="sample1"></div>
 </body>
 </html>

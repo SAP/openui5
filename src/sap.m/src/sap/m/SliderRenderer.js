@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class Slider renderer.
-		 * @static
+		 * Slider renderer.
+		 * @namespace
 		 */
 		var SliderRenderer = {};
 
@@ -29,11 +29,6 @@ sap.ui.define(['jquery.sap.global'],
 			var bEnabled = oSlider.getEnabled(),
 				sTooltip = oSlider.getTooltip_AsString(),
 				CSS_CLASS = SliderRenderer.CSS_CLASS;
-
-			// avoid render when not visible
-			if (!oSlider.getVisible()) {
-				return;
-			}
 
 			oRm.write("<div");
 			oRm.addClass(CSS_CLASS);
@@ -85,31 +80,22 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addStyle("width", oSlider._sProgressValue);
 			oRm.writeClasses();
 			oRm.writeStyles();
-			oRm.write("></div>");
+			oRm.write(' aria-hidden="true"></div>');
 		};
 
 		SliderRenderer.renderHandle = function(oRm, oSlider) {
-			var bEnabled = oSlider.getEnabled(),
-				fValue = oSlider.getValue();
+			var bEnabled = oSlider.getEnabled();
 
 			oRm.write("<span");
 			oRm.writeAttribute("id", oSlider.getId() + "-handle");
-			oRm.writeAttribute("title", fValue);
+
+			if (oSlider.getShowHandleTooltip()) {
+				this.writeHandleTooltip(oRm, oSlider);
+			}
+
 			oRm.addClass(SliderRenderer.CSS_CLASS + "Handle");
 			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", oSlider._sProgressValue);
-
-			// WAI-ARIA
-			oRm.writeAccessibilityState(oSlider, {
-				role: "slider",
-				orientation: "horizontal",
-				valuemin: oSlider.getMin(),
-				valuemax: oSlider.getMax(),
-				valuenow: fValue,
-				valuetext: fValue,
-				live: "assertive",
-				disabled: !bEnabled
-			});
-
+			this.writeAccessibilityState(oRm, oSlider);
 			oRm.writeClasses();
 			oRm.writeStyles();
 
@@ -118,6 +104,17 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write("></span>");
+		};
+
+		/**
+		 * Writes the handle tooltip.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 */
+		SliderRenderer.writeHandleTooltip = function(oRm, oSlider) {
+			oRm.writeAttribute("title", oSlider.getValue());
 		};
 
 		SliderRenderer.renderInput = function(oRm, oSlider) {
@@ -133,6 +130,25 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped("name", oSlider.getName());
 			oRm.writeAttribute("value", oSlider.getValue());
 			oRm.write("/>");
+		};
+
+		/**
+		 * Writes the accessibility state to the control.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 */
+		SliderRenderer.writeAccessibilityState = function(oRm, oSlider) {
+			var fValue = oSlider.getValue();
+
+			oRm.writeAccessibilityState(oSlider, {
+				role: "slider",
+				orientation: "horizontal",
+				valuemin: oSlider.getMin(),
+				valuemax: oSlider.getMax(),
+				valuenow: fValue
+			});
 		};
 
 		return SliderRenderer;

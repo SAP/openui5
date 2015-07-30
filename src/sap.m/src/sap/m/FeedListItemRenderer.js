@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 
 	/**
-	 * @class FeedListItem renderer.
-	 * @static
+	 * FeedListItem renderer.
+	 * @namespace
 	 */
 	var FeedListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 	
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		// convenience variable
 		var sMyId = oFeedListItem.getId(), bIsPhone = sap.ui.Device.system.phone;
 	
-		rm.write('<article');
+		rm.write('<div');
 		rm.writeControlData(oFeedListItem);
 		rm.addClass('sapMFeedListItem');
 	
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write('" >');
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<p id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
-				rm.renderControl(oFeedListItem._getLinkSender());
+				rm.renderControl(oFeedListItem._getLinkSender(false));
 				rm.write('</p>');
 			}
 			if (!!oFeedListItem.getTimestamp()) {
@@ -86,8 +86,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
 				rm.writeEscaped(oFeedListItem.getText(), true);
+				rm.write('</span>');
 			}
-			rm.write('</span>');
 			rm.write('</p>');
 			if (!!oFeedListItem.getInfo()) {
 				// info
@@ -97,6 +97,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 					rm.writeEscaped(oFeedListItem.getInfo());
 					rm.write('</span>');
 				}
+				rm.write('</p>');
 			}
 		} else {
 			rm.write('<div class= "sapMFeedListItemText ');
@@ -107,8 +108,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write('<p id="' + sMyId + '-text" class="sapMFeedListItemTextText" >');
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
-				rm.renderControl(oFeedListItem._getLinkSender());
-				rm.write(': ');
+				rm.renderControl(oFeedListItem._getLinkSender(true));
+				rm.write(' ');
 				rm.write('</span>');
 			}
 			rm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemTextString">');
@@ -116,8 +117,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
 				rm.writeEscaped(oFeedListItem.getText(), true);
+				rm.write('</span>');
 			}
-			rm.write('</span>');
+			rm.write('</p>');
 			if (!!oFeedListItem.getInfo() || !!oFeedListItem.getTimestamp()) {
 				// info and date
 				rm.write('<p class="sapMFeedListItemFooter">');
@@ -145,12 +147,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 					}
 	
 				}
-	
+				rm.write('</p>');
 			}
-			rm.write('</p>');
 			rm.write('</div>');
 		}
-		rm.write('</article>');
+		rm.write('</div>');
 	};
 	
 	FeedListItemRenderer._writeImageControl = function(rm, oFeedListItem, sMyId) {
@@ -161,28 +162,25 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		}
 		rm.writeClasses();
 		rm.write('>');
-	
-		if (!!oFeedListItem.getIconActive()) {
-			rm.write('<a id="' + sMyId + '-iconRef" ');
-			rm.write('tabindex="-1"'); // according to design there should be never a tab stop on the icon
-			/*eslint-disable no-script-url */
-			rm.writeAttribute('href', 'javascript:void(0);');
-			/*eslint-enable no-script-url */
-			rm.write('>');
-		}
 		rm.renderControl(oFeedListItem._getImageControl());
-		if (!!oFeedListItem.getIconActive()) {
-			rm.write('</a>');
-		}
 		rm.write('</figure>');
 	};
 	
 	FeedListItemRenderer._writeCollapsedText = function(rm, oFeedListItem, sMyId) {
-		rm.writeEscaped(oFeedListItem._getCollapsedText(), true);
-		rm.write('</span>');
-		rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
-		rm.write("&#32&#46&#46&#46&#32"); // space + three dots + space
-		rm.write('</span>');
+		// 'oFeedListItem._bTextExpanded' is true if the text had been expanded and rendering needs to be done again.
+		if (oFeedListItem._bTextExpanded) {
+			rm.writeEscaped(oFeedListItem._sFullText, true);
+			rm.write('</span>');
+			rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
+			rm.write("&#32"); // space
+			rm.write('</span>');
+		} else {
+			rm.writeEscaped(oFeedListItem._getCollapsedText(), true);
+			rm.write('</span>');
+			rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
+			rm.write("&#32&#46&#46&#46&#32"); // space + three dots + space
+			rm.write('</span>');
+		}
 		var oLinkExpandCollapse = oFeedListItem._getLinkExpandCollapse();
 		oLinkExpandCollapse.addStyleClass("sapMFeedListItemLinkExpandCollapse");
 		rm.renderControl(oLinkExpandCollapse);

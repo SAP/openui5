@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for Icon control</title>
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+			jQuery.sap.require("sap.ui.core.Icon");
+			jQuery.sap.require("sap.ui.core.IconPool");
+			
+			// QUnit.config.autostart = false;
+			// jQuery(document).ready(function() {
+			// 	QUnit.start();
+			// });
+			
+			test("Icon content from multiple characters", function() {
+				var oIcon1 = sap.ui.core.IconPool.addIcon("test01", "test", {
+					content: "0000"
+				});
+				var oIcon2 = sap.ui.core.IconPool.addIcon("test02", "test", {
+					content: ["0000"]
+				});
+
+				var oIcon3 = sap.ui.core.IconPool.addIcon("test03", "test", {
+					content: "0f0f"
+				});
+				var oIcon4 = sap.ui.core.IconPool.addIcon("test04", "test", {
+					content: ["0f0f"]
+				});
+				
+				var oIcon5 = sap.ui.core.IconPool.addIcon("test05", "test", {
+					content: ["ffff", "dead"]
+				});
+				var oIcon6 = sap.ui.core.IconPool.addIcon("test06", "test", {
+					content: ["f0f0", "dead"]
+				});
+				
+				var oIcon7 = sap.ui.core.IconPool.addIcon("test07", "test", {
+					content: "f0f0"
+				});
+				oIcon7.content += String.fromCharCode(0xdead);
+				var oIcon8 = sap.ui.core.IconPool.getIconInfo("test07", "test");
+				
+				
+				equal(oIcon1.content, String.fromCharCode(0x0000), "0000-Icons have correct content");
+				equal(oIcon2.content, String.fromCharCode(0x0000), "0000-Icons have correct content");
+				equal(oIcon1.content, oIcon2.content, "0000-Icons match");
+
+				equal(oIcon3.content, String.fromCharCode(0x0f0f), "0000-Icons have correct content");
+				equal(oIcon4.content, String.fromCharCode(0x0f0f), "0000-Icons have correct content");
+				equal(oIcon3.content, oIcon4.content, "0f0f-Icons match");
+
+				equal(oIcon5.content, String.fromCharCode(0xffff) + String.fromCharCode(0xdead), "Multi-Icons have correct content");
+				equal(oIcon6.content, String.fromCharCode(0xf0f0) + String.fromCharCode(0xdead), "Multi-Icons have correct content");
+				
+				equal(oIcon7.content, String.fromCharCode(0xf0f0) + String.fromCharCode(0xdead), "Multi-Icons have correct content");
+				equal(oIcon8.content, String.fromCharCode(0xf0f0) + String.fromCharCode(0xdead), "Multi-Icons have correct content");
+				equal(oIcon7, oIcon8, "Multi-Icons have correct content");
+			});
+			
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for HTML Control</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="dummy" style="display:none"></div>
+		<div id="uiAreaA"></div>
+		<div id="uiAreaB"></div>
+	</body>
+</html>

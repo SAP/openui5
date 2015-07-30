@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ColumnsPanel renderer.
-	 * @static
+	 * ColumnsPanel renderer.
+	 * @namespace
 	 */
 	var P13nColumnsPanelRenderer = {};
 	
@@ -22,19 +22,19 @@ sap.ui.define(['jquery.sap.global'],
 	 *            oControl an object representation of the control that should be rendered
 	 */
 	P13nColumnsPanelRenderer.render = function(oRm, oControl) {
-		// write the HTML into the render manager
-		if (!oControl.getVisible()) {
-			return;
-		}
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMP13nColumnsPanel");
 		oRm.writeClasses();
 		oRm.write(">"); // div element
 	
-		oRm.renderControl(oControl._oToolbar);
-		oRm.renderControl(oControl._oScrollContainer);
-	
+		var aContent = oControl.getAggregation("content");
+		if (aContent) {
+			aContent.forEach(function(oContent){
+				oRm.renderControl(oContent);
+			});
+		}
+
 		oRm.write("</div>");
 	};
 	

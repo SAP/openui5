@@ -1,40 +1,35 @@
 <mvc:View
 	controllerName="sap.m.sample.NavContainer.C"
-	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox
-		class="marginBoxContent">
+		class="sapUiSmallMargin">
 
 		<NavContainer
 			id="navCon"
 			width="98%"
 			height="16em"
-			class="navContainerControl">
+			class="navContainerControl sapUiSmallMarginBottom">
 			<Page
 				id="p1"
-				title="Page 1"
-				enableScrolling="false" >
-				<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
+				title="Page 1" >
+				<footer><Toolbar><Button text="Action 1" /></Toolbar></footer>
 			</Page>
 			<Page
 				id="p2"
-				title="Page 2"
-				enableScrolling="false" >
-				<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1073.jpg" />
+				title="Page 2" >
+				<footer><Toolbar><Button text="Action 2" /></Toolbar></footer>
 			</Page>
 			<Page
 				id="p3"
-				title="Page 3"
-				enableScrolling="false" >
-				<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg" />
+				title="Page 3" >
+				<footer><Toolbar><Button text="Action 3" /></Toolbar></footer>
 			</Page>
 			<Page
 				id="p4"
-				title="Page 4"
-				enableScrolling="false" >
-				<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1063.jpg" />
+				title="Page 4" >
+				<footer><Toolbar><Button text="Action 4" /></Toolbar></footer>
 			</Page>
 		</NavContainer>
 

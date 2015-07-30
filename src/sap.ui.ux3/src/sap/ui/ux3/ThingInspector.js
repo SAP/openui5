@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './ActionBar', './Overlay', './ThingViewer',
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.ThingInspector
+	 * @alias sap.ui.ux3.ThingInspector
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingInspector = Overlay.extend("sap.ui.ux3.ThingInspector", /** @lends sap.ui.ux3.ThingInspector.prototype */ { metadata : {

@@ -1,0 +1,650 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested classes: sap.ui.core.Component, sap.ui.core.UIComponent
+-->
+
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>QUnit tests: Component Metadata</title>
+
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script language="javascript">
+
+	/*
+	 * TEST INITIALIZATION
+	 */
+
+	// delay the test execution until the document is ready
+	qutils.delayTestStart();
+
+	// register the module paths (package mapping)
+	jQuery.sap.registerModulePath("sap.ui.test", ".");
+
+
+	/*
+	 * SHARED TEST CODE
+	 */
+
+	function moduleSetup(sComponentName, iMetadataVersion) {
+
+		this.oComponent = sap.ui.getCore().createComponent({
+			name: "sap.ui.test." + sComponentName
+		});
+
+		this.oMetadata = this.oComponent.getMetadata();
+
+		this.iExpectedMetadataVersion = iMetadataVersion;
+		this.oExpectedMetadata = {
+
+			"name": "sap.ui.test." + sComponentName + ".Component",
+			"version": "1.0.0",
+			"includes" : ["style.css", "script.js"],
+			"dependencies": {
+				"libs": ["sap.ui.commons"],
+				"components" : ["sap.ui.test.other"],
+				"ui5version" : "1.22.5"
+			},
+			"config": {
+				"any1": {
+					"entry": "configuration"
+				},
+				"any2": {
+					"anyobject": {
+						"key1": "value1"
+					}
+				},
+				"any3": {
+					"anyarray": [1, 2, 3]
+				}
+			},
+			"models": {
+				"i18n": {
+					"type": "sap.ui.model.resource.ResourceModel",
+					"uri": "i18n/i18n.properties"
+				},
+				"sfapi": {
+					"type": "sap.ui.model.odata.ODataModel",
+					"uri": "/sap/opu/odata/snce/PO_S_SRV/"
+				}
+			},
+			"rootView": {
+				"type": "XML",
+				"viewName": "sap.ui.test.view.Main"
+			},
+			"customizing": {
+				"sap.ui.viewReplacements": {
+					"sap.ui.test.view.Main": {
+						"viewName": "sap.ui.test.view.Main",
+						"type": "XML"
+					}
+				},
+				"sap.ui.controllerReplacements": {
+					"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+				},
+				"sap.ui.viewExtensions": {
+					"sap.ui.test.view.Main": {
+						"extension": {
+							"name": "sap.xx.new.Fragment",
+							"type": "sap.ui.core.XMLFragment"
+						}
+					}
+				},
+				"sap.ui.viewModification": {
+					"sap.ui.test.view.Main": {
+						"myControlId": {
+							"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
+						}
+					}
+				}
+			},
+			"routing": {
+				"config": {
+					"viewType" : "XML",
+					"viewPath": "NavigationWithoutMasterDetailPattern.view",
+					"targetParent": "myViewId",
+					"targetControl": "app",
+					"targetAggregation": "pages",
+					"clearTarget": false
+				},
+				"routes": [
+					{
+						"name" : "myRouteName1",
+						"pattern" : "FirstView/{from}",
+						"view" : "myViewId"
+					}
+				]
+			},
+			"custom.entry": {
+				"key1": "value1",
+				"key2": "value2",
+				"key3": {
+					"subkey1": "subvalue1",
+					"subkey2": "subvalue2"
+				},
+				"key4": ["value1", "value2"]
+			}
+		};
+
+		this.oExpectedManifest = {
+			"name": "sap.ui.test." + sComponentName + ".Component",
+			"sap.app": {
+				"id": "sap.ui.test." + sComponentName,
+				"applicationVersion": {
+					"version": "1.0.0"
+				},
+				"title": "App Title",
+				"description": "App Description"
+			},
+			"sap.ui5": {
+				"resources": iMetadataVersion === 1 ? {
+					"js": [
+						{
+							"uri": "script.js"
+						}
+					],
+					"css": [
+						{
+							"uri": "style.css"
+						}
+					]
+				} : {
+					"js": [
+						{
+							"uri": "script.js"
+						},
+						{}
+					],
+					"css": [
+						{
+							"uri": "style.css",
+							"id": "mystyle"
+						},
+						{}
+					]
+				},
+				"dependencies": {
+					"components": {
+						"sap.ui.test.other": {
+							"optional": true,
+							"minVersion": "1.0.1"
+						}
+					},
+					"libs": {
+						"sap.ui.commons": {
+							"minVersion": "1.22.0"
+						}
+					},
+					"minUI5Version": "1.22.5"
+				},
+				"models": {
+					"i18n": {
+						"type": "sap.ui.model.resource.ResourceModel",
+						"uri": "i18n/i18n.properties"
+					},
+					"sfapi": {
+						"type": "sap.ui.model.odata.ODataModel",
+						"uri": "/sap/opu/odata/snce/PO_S_SRV/"
+					}
+				},
+				"rootView": {
+					"type": "XML",
+					"viewName": "sap.ui.test.view.Main"
+				},
+				"config": {
+					"any1": {
+						"entry": "configuration"
+					},
+					"any2": {
+						"anyobject": {
+							"key1": "value1"
+						}
+					},
+					"any3": {
+						"anyarray": [1, 2, 3]
+					}
+				},
+				"extends": {
+					"extensions": {
+						"sap.ui.controllerReplacements": {
+							"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+						},
+						"sap.ui.viewExtensions": {
+							"sap.ui.test.view.Main": {
+								"extension": {
+									"name": "sap.xx.new.Fragment",
+									"type": "sap.ui.core.XMLFragment"
+								}
+							}
+						},
+						"sap.ui.viewModification": {
+							"sap.ui.test.view.Main": {
+								"myControlId": {
+									"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
+								}
+							}
+						},
+						"sap.ui.viewReplacements": {
+							"sap.ui.test.view.Main": {
+								"type": "XML",
+								"viewName": "sap.ui.test.view.Main"
+							}
+						}
+					}
+				},
+				"routing": {
+					"config": {
+						"clearTarget": false,
+						"targetAggregation": "pages",
+						"targetControl": "app",
+						"targetParent": "myViewId",
+						"viewPath": "NavigationWithoutMasterDetailPattern.view",
+						"viewType": "XML"
+					},
+					"routes": [
+						{
+							"name": "myRouteName1",
+							"pattern": "FirstView/{from}",
+							"view": "myViewId"
+						}
+					]
+				}
+			}
+		};
+		this.oExpectedRawManifest = jQuery.extend(true, {}, this.oExpectedManifest);
+		this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
+		this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
+		this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
+			["sap.ui.test.view.Main"]["myControlId"]["text"] = "{{mytext}}";
+
+	}
+
+	function moduleTeardown() {
+
+		this.oExpectedManifest = undefined;
+		this.oExpectedRawManifest = undefined;
+		this.oExpectedMetadata = undefined;
+		this.iExpectedMetadataVersion = undefined;
+		this.oMetadata = undefined;
+		this.oComponent.destroy();
+		this.oComponent = undefined;
+
+	}
+
+	function defineGenericTests() {
+
+		test("Metadata API", function() {
+
+			equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
+			equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+			equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+			deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
+			deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
+			deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
+			deepEqual(this.oMetadata.getComponents(), this.oExpectedMetadata.dependencies.components, "Components are correct!");
+			equal(this.oMetadata.getUI5Version(), this.oExpectedMetadata.dependencies.ui5version, "UI5 version is correct!");
+			deepEqual(this.oMetadata.getConfig(), this.oExpectedMetadata.config, "Config is correct!");
+			deepEqual(this.oMetadata.getConfig("any1"), this.oExpectedMetadata.config.any1, "Config 'any1' is correct!");
+			deepEqual(this.oMetadata.getConfig("any2"), this.oExpectedMetadata.config.any2, "Config 'any2' is correct!");
+			deepEqual(this.oMetadata.getConfig("any3"), this.oExpectedMetadata.config.any3, "Config 'any3' is correct!");
+			deepEqual(this.oMetadata.getModels(), this.oExpectedMetadata.models, "Models are correct!");
+			deepEqual(this.oMetadata.getCustomizing(), this.oExpectedMetadata.customizing, "Customizing is correct!");
+			deepEqual(this.oMetadata.getRootView(), this.oExpectedMetadata.rootView, "RootView is correct!");
+			deepEqual(this.oMetadata.getRoutingConfig(), this.oExpectedMetadata.routing.config, "RoutingConfig is correct!");
+			deepEqual(this.oMetadata.getRoutes(), this.oExpectedMetadata.routing.routes, "Routes are correct!");
+			deepEqual(this.oMetadata.getCustomEntry("custom.entry"), this.oExpectedMetadata["custom.entry"], "CustomEntry are correct!");
+
+		});
+
+		test("Manifest Validation", function() {
+
+			deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+			deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+
+		});
+
+	}
+
+
+	/*
+	 * TEST CODE: Component Metadata v1
+	 */
+
+	module("Component Metadata v1", {
+		setup: function() {
+			moduleSetup.call(this, "v1", 1);
+			// fix the specials in the metadata for the v1
+				[
+					this.oExpectedManifest,
+					this.oExpectedRawManifest
+				].forEach(function(oManifest) {
+					oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+					delete oManifest["sap.app"]["title"];
+					delete oManifest["sap.app"]["description"];
+				});
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	defineGenericTests();
+
+
+	/*
+	 * TEST CODE: Component Metadata v2
+	 */
+
+	module("Component Metadata v2", {
+		setup: function() {
+			moduleSetup.call(this, "v2", 2);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	defineGenericTests();
+
+
+	/*
+	 * TEST CODE: Component Metadata v1 (inline)
+	 */
+
+	module("Component Metadata v1 (inline)", {
+		setup: function() {
+			moduleSetup.call(this, "v1inline", 1);
+			// fix the specials in the metadata for the v1
+			[
+				this.oExpectedManifest,
+				this.oExpectedRawManifest
+			].forEach(function(oManifest) {
+				oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+				oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+				delete oManifest["sap.app"]["title"];
+				delete oManifest["sap.app"]["description"];
+			});
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	defineGenericTests();
+
+
+	/*
+	 * TEST CODE: Component Metadata v2 (inline)
+	 */
+
+	module("Component Metadata v2 (inline)", {
+		setup: function() {
+			moduleSetup.call(this, "v2inline", 2);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	defineGenericTests();
+
+
+	/*
+	 * TEST CODE: Component Metadata v1 (valdidate empty metadata)
+	 */
+
+	module("Component Metadata v1 (empty)", {
+		setup: function() {
+			moduleSetup.call(this, "v1empty", 1);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	test("Metadata Validation", function() {
+
+		equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+
+	});
+
+	/*
+	 * TEST CODE: Component Metadata v2 (valdidate empty manifest)
+	 */
+
+	module("Component Metadata v2 (empty)", {
+		setup: function() {
+			moduleSetup.call(this, "v2empty", 2);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	test("Manifest Validation", function() {
+
+		equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+
+	});
+
+	/*
+	 * TEST CODE: Component Metadata v1 (valdidate missing metadata)
+	 */
+
+	module("Component Metadata v1 (missing)", {
+		setup: function() {
+			moduleSetup.call(this, "v1missing", 1);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	test("Metadata Validation", function() {
+
+		equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+
+	});
+
+	/*
+	 * TEST CODE: Component Metadata v2 (validate missing manifest)
+	 */
+
+	module("Component Metadata v2 (missing)", {
+		setup: function() {
+			moduleSetup.call(this, "v2missing", 2);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	test("Manifest Validation", function() {
+
+		equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+
+	});
+
+	/*
+	 * TEST CODE: Component Metadata v1 & v2 (mixed)
+	 */
+
+	module("Component Metadata v1 & v2 (mixed)", {
+		setup: function() {
+			moduleSetup.call(this, "mixed", 2);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	test("Metadata API", function() {
+
+		equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
+		equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
+		deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
+		deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
+		deepEqual(this.oMetadata.getComponents(), this.oExpectedMetadata.dependencies.components, "Components are correct!");
+		equal(this.oMetadata.getUI5Version(), this.oExpectedMetadata.dependencies.ui5version, "UI5 version is correct!");
+		deepEqual(this.oMetadata.getConfig(), this.oExpectedMetadata.config, "Config is correct!");
+		deepEqual(this.oMetadata.getConfig("any1"), this.oExpectedMetadata.config.any1, "Config 'any1' is correct!");
+		deepEqual(this.oMetadata.getConfig("any2"), this.oExpectedMetadata.config.any2, "Config 'any2' is correct!");
+		deepEqual(this.oMetadata.getConfig("any3"), this.oExpectedMetadata.config.any3, "Config 'any3' is correct!");
+		deepEqual(this.oMetadata.getModels(), this.oExpectedMetadata.models, "Models are correct!");
+		deepEqual(this.oMetadata.getCustomizing(), this.oExpectedMetadata.customizing, "Customizing is correct!");
+		deepEqual(this.oMetadata.getRootView(), this.oExpectedMetadata.rootView, "RootView is correct!");
+		deepEqual(this.oMetadata.getRoutingConfig(), this.oExpectedMetadata.routing.config, "RoutingConfig is correct!");
+		deepEqual(this.oMetadata.getRoutes(), this.oExpectedMetadata.routing.routes, "Routes are correct!");
+		deepEqual(this.oMetadata.getCustomEntry("custom.entry"), this.oExpectedMetadata["custom.entry"], "CustomEntry are correct!");
+
+	});
+
+	test("Manifest Validation", function() {
+
+		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+
+	});
+
+	/*
+	 * TEST CODE: Component Metadata v1 & v2 (mixed/inheritance)
+	 */
+
+	module("Component Metadata v1 & v2 (mixed/inheritance)", {
+		setup: function() {
+			moduleSetup.call(this, "inherit", 2);
+			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
+			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
+			this.oExpectedMetadata.models.i18n_1 = this.oExpectedMetadata.models.i18n;
+			this.oExpectedMetadata.models.sfapi_1 = this.oExpectedMetadata.models.sfapi;
+
+			[
+				this.oExpectedManifest,
+				this.oExpectedRawManifest
+			].forEach(function(oManifest) {
+				oManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
+				delete oManifest["sap.ui5"].rootView;
+				oManifest["sap.ui5"].routing = {
+					"routes": [
+						{
+							"name" : "myRouteName1",
+							"pattern" : "FirstView/{from}",
+							"view" : "myViewId"
+						}
+					]
+				};
+
+			});
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	test("Metadata API", function() {
+
+		equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
+		equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
+		deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
+		deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
+		deepEqual(this.oMetadata.getComponents(), this.oExpectedMetadata.dependencies.components, "Components are correct!");
+		equal(this.oMetadata.getUI5Version(), this.oExpectedMetadata.dependencies.ui5version, "UI5 version is correct!");
+		deepEqual(this.oMetadata.getConfig(), this.oExpectedMetadata.config, "Config is correct!");
+		deepEqual(this.oMetadata.getConfig("any1"), this.oExpectedMetadata.config.any1, "Config 'any1' is correct!");
+		deepEqual(this.oMetadata.getConfig("any2"), this.oExpectedMetadata.config.any2, "Config 'any2' is correct!");
+		deepEqual(this.oMetadata.getConfig("any3"), this.oExpectedMetadata.config.any3, "Config 'any3' is correct!");
+		deepEqual(this.oMetadata.getConfig("any9"), this.oExpectedMetadata.config.any9, "Config 'any9' is correct!");
+		deepEqual(this.oMetadata.getModels(), this.oExpectedMetadata.models, "Models are correct!");
+		deepEqual(this.oMetadata.getCustomizing(), this.oExpectedMetadata.customizing, "Customizing is correct!");
+		deepEqual(this.oMetadata.getRootView(), this.oExpectedMetadata.rootView, "RootView is correct!");
+		deepEqual(this.oMetadata.getRoutingConfig(), this.oExpectedMetadata.routing.config, "RoutingConfig is correct!");
+		deepEqual(this.oMetadata.getRoutes(), this.oExpectedMetadata.routing.routes, "Routes are correct!");
+		deepEqual(this.oMetadata._getRoutingSection(), this.oExpectedMetadata.routing, "Routing section is correct!");
+		deepEqual(this.oMetadata.getCustomEntry("custom.entry"), this.oExpectedMetadata["custom.entry"], "CustomEntry are correct!");
+
+	});
+
+	test("Manifest Validation", function() {
+
+		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+
+	});
+
+	/*
+	 * TEST CODE: Component Metadata URI resolution
+	 */
+
+	module("Component Metadata: Resolve URI", {
+		assertResolvedUri: function(sInput, sBase, sExpected) {
+			var sActual = sap.ui.core.ComponentMetadata._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
+			assert.equal(sActual, sExpected, "Resolved URI is correct!");
+		}
+	});
+
+	test("relative", function(assert) {
+		this.assertResolvedUri("local/uri",                           "path/to/base/",          "path/to/base/local/uri");
+		this.assertResolvedUri("./local/uri",                         "path/to/base/",          "path/to/base/local/uri");
+		this.assertResolvedUri("../relative/1/uri",                   "path/to/base/",          "path/to/relative/1/uri");
+		this.assertResolvedUri("../../relative/2/uri",                "path/to/base/",          "path/relative/2/uri");
+		this.assertResolvedUri("../../../relative/3/uri",             "path/to/base/",          "relative/3/uri");
+		this.assertResolvedUri("../../../../relative/4/uri",          "path/to/base/",          "../relative/4/uri");
+		this.assertResolvedUri("../../../../../relative/5/uri",       "path/to/base/",          "../../relative/5/uri");
+		this.assertResolvedUri("../../../../../../relative/6/uri",    "path/to/base/",          "../../../relative/6/uri");
+		this.assertResolvedUri("../../../../../../../relative/7/uri", "path/to/base/",          "../../../../relative/7/uri");
+
+		this.assertResolvedUri("local/uri",                           "../../../path/to/base/", "../../../path/to/base/local/uri");
+		this.assertResolvedUri("./local/uri",                         "../../../path/to/base/", "../../../path/to/base/local/uri");
+		this.assertResolvedUri("../relative/1/uri",                   "../../../path/to/base/", "../../../path/to/relative/1/uri");
+		this.assertResolvedUri("../../relative/2/uri",                "../../../path/to/base/", "../../../path/relative/2/uri");
+		this.assertResolvedUri("../../../relative/3/uri",             "../../../path/to/base/", "../../../relative/3/uri");
+		this.assertResolvedUri("../../../../relative/4/uri",          "../../../path/to/base/", "../../../../relative/4/uri");
+		this.assertResolvedUri("../../../../../relative/5/uri",       "../../../path/to/base/", "../../../../../relative/5/uri");
+		this.assertResolvedUri("../../../../../../relative/6/uri",    "../../../path/to/base/", "../../../../../../relative/6/uri");
+		this.assertResolvedUri("../../../../../../../relative/7/uri", "../../../path/to/base/", "../../../../../../../relative/7/uri");
+	});
+
+	test("absolute", function(assert) {
+		this.assertResolvedUri("http://absolute:1234/uri", "path/to/base/",          "http://absolute:1234/uri");
+		this.assertResolvedUri("//absolute:1234/uri",      "path/to/base/",          "//absolute:1234/uri");
+		this.assertResolvedUri("/server-absolute/uri",     "path/to/base/",          "/server-absolute/uri");
+		this.assertResolvedUri("http://absolute:1234/uri", "../../../path/to/base/", "http://absolute:1234/uri");
+		this.assertResolvedUri("//absolute:1234/uri",      "../../../path/to/base/", "//absolute:1234/uri");
+		this.assertResolvedUri("/server-absolute/uri",     "../../../path/to/base/", "/server-absolute/uri");
+	});
+
+	</script>
+	</head>
+	<body><h1 id="qunit-header">QUnit tests: Component Metadata</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="content"></div>
+	</body>
+</html>

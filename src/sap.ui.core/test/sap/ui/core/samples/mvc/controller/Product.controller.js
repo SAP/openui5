@@ -1,17 +1,17 @@
 sap.ui.controller("sap.ui.core.mvctest.controller.Product", {
-	
+
 
 	onInit: function() {
-		this.myLayout = this.getView().byId("Layout"); 
-		
+		this.myLayout = this.getView().byId("Layout");
+
 		this.showDetailsLink = this.getView().byId("showMore");
 		this.hideDetailsLink = this.getView().byId("hideMore");
-		
+
 		this.myLayout.setWidths(["100px","150px"]);
 		this.hideMore();
 	},
-	
-	
+
+
 	showMore: function(oEvent) {
 		for (var i = 1; i < 4; i++) {
 			this.getView().byId("More"+i).setVisible(true);
@@ -20,7 +20,7 @@ sap.ui.controller("sap.ui.core.mvctest.controller.Product", {
 		this.showDetailsLink.setVisible(false);
 		this.hideDetailsLink.setVisible(true);
 	},
-	
+
 	hideMore: function(oEvent) {
 		for (var i = 1; i < 4; i++) {
 			this.getView().byId("More"+i).setVisible(false);
@@ -29,17 +29,4 @@ sap.ui.controller("sap.ui.core.mvctest.controller.Product", {
 		this.showDetailsLink.setVisible(true);
 		this.hideDetailsLink.setVisible(false);
 	},
-	
-	onBeforeRendering: function() {
-		
-	},
-	
-	onAfterRendering: function() {
-		
-	},
-	
-	onExit: function() {
-		
-	}
-
 });

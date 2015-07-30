@@ -1,10 +1,10 @@
-/* ============================================ */
-/* CSS for control sap.m/Button.control         */
+/* ============================================= */
+/* CSS for control sap.m/Button.control          */
 /* High Contrast Black theme                     */
 /* ============================================= */
 
 .sapMBtn {
-	height:           3.000rem;
+	height: 3.000rem;
 	margin:           0;
 	padding:          0.250rem 0;
 	vertical-align:   top;
@@ -26,13 +26,12 @@
 	margin:           0;
 	padding:          0;
 	vertical-align:   top;
+	background-color: @sapHCStandardBG;
 	border:           1px solid @sapHCStandardFG;
 	border-radius:    0.375rem;
 	color:             @sapHCStandardFG;
-	text-shadow:      none;
 	font-family:      @sapUiFontFamily;
 	font-size:        0.875rem;
-	background-color: @sapHCStandardBG;
 }
 
 .sapMBtnInner::-moz-focus-inner {
@@ -53,7 +52,7 @@
 }
 
 .sapMBtnContent {
-	line-height:      2.25rem;
+	line-height:      2.375rem;
 }
 
 .sapMBtnIcon {
@@ -76,23 +75,23 @@
 }
 
 /* --------------------------------------------------------------------- */
-/* Custom focus outline:                                                 */                                               
+/* Custom focus outline:                                                 */
 /* --------------------------------------------------------------------- */
 
- .sapMBtn:focus > .sapMBtnInner.sapMFocusable {
+.sap-desktop .sapMBtn:focus > .sapMFocusable {
 	outline:           0.125rem dotted @sapHCStandardFG;
 	outline-offset:   -0.125rem;
 	border-color:      transparent;
 	border-radius:     0;
 }
 
-.sapMBtn:focus > .sapMBtnInner.sapMFocusable:not(.sapMBtnActive) {
+.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 	border-radius: 0;
-} 
+}
 
 /* IE ignores outline-offset. Use an overlay: */
-
-.sap-desktop[data-sap-ui-browser^="ie"] {
+.sap-desktop[data-sap-ui-browser^="ie"],
+.sap-phone[data-sap-ui-browser^="ie"] {
 
 	.sapMBtn:focus > .sapMBtnInner.sapMFocusable {
 		outline:          none;
@@ -101,8 +100,6 @@
 
 	.sapMBtn:focus > .sapMBtnInner.sapMFocusable:before {
 		content: " ";
-		-webkit-box-sizing: border-box;
-		-moz-box-sizing:  border-box;
 		box-sizing:       border-box;
 		width:            100%;
 		height:           100%;
@@ -112,11 +109,7 @@
 		border:           0.125rem dotted @sapHCStandardFG;
 	}
 
-.sapMBtn.sapMBtnInverted:focus > .sapMBtnInner.sapMFocusable:before {
-		border-color:     @sapHCStandardFG;
-	}
-
-	/* This is for IE9 - if a button overflows inside of a bar, 
+	/* This is for IE9 - if a button overflows inside of a bar,
 	ellipsis will be shown and it will hide completely if there is no position relative set.*/
 	.sapMBar .sapMBtnInner {
 		position: relative;
@@ -124,7 +117,7 @@
 }
 
 /* ---------------------------------------------------------------------*/
-/* Disabled states:                                                     */
+/* Disabled and active states:                                          */
 /* ---------------------------------------------------------------------*/
 
 .sapMBtnDisabled {
@@ -164,29 +157,28 @@ div.sapMBtnInner.sapMBtnEmphasized {
 	vertical-align:   top;
 }
 
+.sapMIBar-CTX .sapMBtnContent {
+  line-height:      2.25rem;
+}
+
 /* ------------------------------------------------ */
 /* Buttons in an ActionSelect                       */
 /* ------------------------------------------------ */
 
-.sapMActionSelectPicker .sapMBtn {
+.sapMActionSelectPicker.sapMSltPicker .sapMBtn { //overriding the .sapMSltPicker .sapMBtn selector from Select.less
 	display: block;
 	width: 100%;
-	padding: 0;
-	border-top-width: 0;
-	border-bottom-width: 0.0625rem;
+    padding: 0.25rem;
 	text-shadow: none;
+    height: 3rem;
 }
 
 .sapMActionSelectPicker .sapMBtnInner {
-	border-radius:    0;
- 	border-top:       0;
- 	border-left:      0;
- 	border-right:     0;
- 	border-bottom:    1px solid @sapHCStandardFG;
+ 	border: 1px solid @sapHCStandardFG;
 }
 
 .sapMSltPickerStandalone .sapMBtn {
-	height: 2.5rem;
+	height: 3rem;
 }
 
 .sapMSltPickerStandalone .sapMBtnInner > .sapMBtnContent {
@@ -204,10 +196,6 @@ div.sapMBtnInner.sapMBtnEmphasized {
 /* increase outline offset */
 .sapMTB > .sapMBtnInner.sapMFocusable:focus {
 	outline-offset:       -0.125rem;
-}
-
-.sapUiUfdShellBackground, .sapMGlobalBackgroundColor{
-	background-image: none;
 }
 
 /* ------------------------------------------------ */
@@ -270,7 +258,7 @@ div.sapMBtnInner.sapMBtnEmphasized {
 	 .sapMBar-CTX .sapMBtnInner {
 		margin:           0;
 	}
- 
+
 	.sapMBtnContent {
 		line-height:      1.500rem;
 	}
@@ -296,22 +284,17 @@ div.sapMBtnInner.sapMBtnEmphasized {
 
 }
 
-.sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
- 	height:           2rem;
- 	border-radius:    0;
- 	border-top:       0;
- 	border-left:      0;
- 	border-right:     0;
- 	border-bottom:    1px solid @sapHCStandardFG;
+.sapUiSizeCompact.sapMActionSelectPicker.sapMSltPicker .sapMBtnInner {
+ 	height:           1.625rem;
 }
 
-.sapUiSizeCompact.sapMActionSelectPicker .sapMBtnContent {
-	line-height:      2rem;
+.sapUiSizeCompact.sapMActionSelectPicker.sapMSltPicker .sapMBtnContent {
+	line-height:      1.625rem;
 }
 
-.sapUiSizeCompact.sapMActionSelectPicker .sapMBtn {
+.sapUiSizeCompact.sapMActionSelectPicker.sapMSltPicker .sapMBtn {
 	height:           2rem;
-	padding:          0;
+    padding: 0.187rem 0.25rem;
 }
 
 /* ------------------------------------------------ */

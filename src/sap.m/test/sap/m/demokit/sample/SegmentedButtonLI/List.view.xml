@@ -1,0 +1,14 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		headerText="Input List Item" >
+		<InputListItem label="Battery Saving">
+			<SegmentedButton selectedButton="SBYes">
+				<Button text="High" id="SBYes" />
+				<Button text="Low" />
+				<Button text="Off" />
+			</SegmentedButton>
+		</InputListItem>
+	</List>
+</mvc:View>

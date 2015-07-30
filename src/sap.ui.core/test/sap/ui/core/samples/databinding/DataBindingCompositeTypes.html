@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Data binding test page with Data Types</title>
+
+<!-- ********************************************************************** -->
+<!-- JavaScript Bootstrap:                                                  -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script type="text/javascript">
+
+	try{
+		sap.ui.getCore().loadLibrary("sap.ui.commons");
+	}catch(e){
+		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		throw(e);
+	}
+
+	try{
+		sap.ui.getCore().loadLibrary("sap.ui.layout");
+	}catch(e){
+		alert("This test page requires the library 'sap.ui.layout' which is not available.");
+		throw(e);
+	}
+
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData({
+		firstName: "Peter",
+		lastName: "Clark",
+		original: "abc123",
+		compare: "abc123",
+		amount: 23,
+		unit: "kg",
+		salary: 10000,
+		currency: "EUR"
+	});
+	sap.ui.getCore().setModel(oModel);
+	
+	// Simple composite type using string concatenation
+	sap.ui.model.CompositeType.extend("NameType", {
+		formatValue: function(aValues) {
+			return aValues[1] + ", " + aValues[0];
+		},
+		parseValue: function(sValue) {
+			var aValues = sValue.split(", ");
+			return aValues.reverse();
+		},
+		validateValue: function(aValues) {
+			return true;
+		}
+	});
+	
+	// Checkbox type for testing parseWithValues
+	sap.ui.model.CompositeType.extend("CheckType", {
+		constructor: function(){
+			this.bParseWithValues = true;
+		},
+		formatValue: function(aValues, sType) {
+			return aValues[0] == aValues[1];
+		},
+		parseValue: function(bValue, sType, aValues) {
+			if (bValue) {
+				return [undefined, aValues[0]]
+			} else {
+				return [undefined, ""]
+			}
+		},
+		validateValue: function(aValues) {
+			return true;
+		}
+	});
+	
+	// More advanced composite type using raw values and numberformat
+	sap.ui.model.CompositeType.extend("CurrencyType", {
+		constructor: function(){
+			sap.ui.model.CompositeType.apply(this, arguments);
+			this.bUseRawValues = true;
+			jQuery.sap.require("sap.ui.core.format.NumberFormat");
+			this.oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(this.oFormatOptions);
+		},
+		formatValue: function(aValues) {
+			return this.oFormat.format(aValues);
+		},
+		parseValue: function(sValue) {
+			return this.oFormat.parse(sValue);
+		},
+		validateValue: function(aValues) {
+			return true;
+		}
+	})
+
+	var oSimpleForm = new sap.ui.layout.form.SimpleForm({
+		title: "Simple bindings",
+		content: [
+			new sap.ui.commons.Label({text:"First name"}),
+			new sap.ui.commons.TextField({
+				value: "{/firstName}"
+			}),
+			new sap.ui.commons.Label({text:"Last name"}),
+			new sap.ui.commons.TextField({
+				value: "{/lastName}"
+			}),
+			new sap.ui.commons.Label({text:"Original"}),
+			new sap.ui.commons.TextField({
+				value: "{/original}"
+			}),
+			new sap.ui.commons.Label({text:"Compare"}),
+			new sap.ui.commons.TextField({
+				value: "{/compare}"
+			}),
+			new sap.ui.commons.Label({text:"Amount"}),
+			new sap.ui.commons.TextField({
+				value: {path: "/amount", type:"sap.ui.model.type.Float"}
+			}),
+			new sap.ui.commons.Label({text:"Unit"}),
+			new sap.ui.commons.TextField({
+				value: "{/unit}"
+			}),
+			new sap.ui.commons.Label({text:"Salary"}),
+			new sap.ui.commons.TextField({
+				value: {path: "/salary", type:"sap.ui.model.type.Float"}
+			}),
+			new sap.ui.commons.Label({text:"Currency"}),
+			new sap.ui.commons.TextField({
+				value: "{/currency}"
+			})
+		]
+	});
+	oSimpleForm.placeAt("content");
+
+	var oCompositeForm = new sap.ui.layout.form.SimpleForm({
+		title: "Composite bindings",
+		content: [
+			new sap.ui.commons.Label({text:"Full name"}),
+			new sap.ui.commons.TextField({
+				value: {
+					parts: [
+						{path: "/firstName"},
+						{path: "/lastName"}
+					]
+				}
+			}),
+			new sap.ui.commons.Label({text:"Full name (with composite type)"}),
+			new sap.ui.commons.TextField({
+				value: {
+					parts: [
+						{path: "/firstName"},
+						{path: "/lastName"}
+					],
+					type: new NameType()
+				}
+			}),
+			new sap.ui.commons.Label({text:"Checkbox (with composite type)"}),
+			new sap.ui.commons.CheckBox({
+				checked: {
+					parts: [
+						{path: "/original"},
+						{path: "/compare"}
+					],
+					type: new CheckType()
+				}
+			}),
+			new sap.ui.commons.Label({text:"Amount/Unit"}),
+			new sap.ui.commons.TextField({
+				value: {
+					parts: [
+						{path: "/amount", type:"sap.ui.model.type.Float", formatOptions:{minFractionDigits: 2}},
+						{path: "/unit"}
+					]
+				}
+			}),
+			new sap.ui.commons.Label({text:"Salary/Currency (with composite type)"}),
+			new sap.ui.commons.TextField({
+				value: {
+					parts: [
+						{path: "/salary"},
+						{path: "/currency"}
+					],
+					type: new CurrencyType({showMeasure: false})
+				}
+			}),
+		]
+	});
+	oCompositeForm.placeAt("content");
+
+	
+
+</script>
+</head>
+
+<body class="sapUiBody">
+
+<div id="header">
+	<h1>Data binding composite type support test page</h1>
+</div>
+<div id="content">
+</div>
+</body>
+
+</html>

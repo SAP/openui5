@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.ui.ux3.Shell
   Author: d046011
 -->
@@ -10,14 +10,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.ui.ux3.Shell</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
 		</script>
-    
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -34,16 +34,16 @@
 		.sapUiUx3ShellCanvas#myShell-canvas {
 			z-index: -9;
 		}
-		
+
 		#myShell.CustomPadding .sapUiUx3ShellCanvas .sapUiUx3ShellContent {
 			padding-left: 10px;
 			padding-right: 10px;
 			padding-top: 10px;
 			padding-bottom: 10px;
 		}
-		
+
 		</style>
-		
+
 		<script language="javascript">
 			function worksetItemSelectedEventHandler(oEvent) {
 				ok(true, "This text means the event handler has been executed."); // this test tests by just being counted in the respective test
@@ -74,58 +74,58 @@
     	test("InitialCheck", function() {
     		equals(true, true, "...");
     	});
-			
-    	
+
+
     	var oShell;
     	test("Render Basic Shell", function() {
     		oShell = new sap.ui.ux3.Shell("myShell", {showLogoutButton:false});
     		oShell.placeAt("uiArea1");
     		sap.ui.getCore().applyChanges();
-    		
+
     		var jRef = jQuery.sap.byId(oShell.getId());
     		ok(jRef.length == 1, "Rendered Shell should exist in the page");
     		ok(jRef.hasClass("sapUiUx3Shell"), "Rendered Shell should have the class 'sapUiUx3Shell'");
     		ok(jRef.hasClass("sapUiUx3ShellHeadStandard"), "Rendered Shell should have the class 'sapUiUx3ShellHeadStandard'");
     	});
-    	
-    	
+
+
     	test("Rendered Parts", function() {
     		equals(jQuery(".sapUiUx3ShellHeader-logout").length, 0, "There should be no logout button");
     		equals(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
-    		
+
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool");
     		ok(oDomRef, "Search tool should exist in the page");
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-feederTool");
     		ok(oDomRef, "Feeder tool should exist in the page");
-    		
+
     		equals(jQuery(".sapUiUx3ShellToolPaletteArea").children().children().length, 3, "There should be two tools (plus an accessibility description)");
-    		
+
     		equals(jQuery(".sapUiUx3ShellToolSep").length, 0, "There should be no tool separator");
-    		
+
     		ok(jQuery.sap.domById("myShell-wsBar-list"), "Workset item navigation area should exist in the page");
     		equals(jQuery.sap.byId("myShell-wsBar-list").children().length, 2, "There should not be any workset items, just the arrow and the dummy");
     	});
-    	
-    	
+
+
     	test("Destroy and remove control", function() {
     		oShell.destroy();
     		sap.ui.getCore().applyChanges();
     		var oDomRef = jQuery.sap.domById(oShell.getId());
     		ok(!oDomRef, "Rendered Shell should not exist in the page after destruction");
     	});
-    	
-    	
+
+
     	test("Content Padding / Full Height", function() {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell");
     		oShell.placeAt("uiArea1");
     		sap.ui.getCore().applyChanges();
-    		
+
     		if(jQuery("html").attr("data-sap-ui-browser") == "ie8"){
     			ok(true, "Checks skipped for IE8");
     			return; //Skip check for IE8
     		}
-    		
+
     		function checkSettings(){
     			var oSettings = oShell._settings;
     			if(oSettings.customClass){
@@ -133,10 +133,10 @@
     			}
     			oShell.setFullHeightContent(oSettings.fullHeightContent);
     			oShell.setApplyContentPadding(oSettings.enablePadding);
-    			
+
     			var $canvas = jQuery.sap.byId("myShell-canvas");
     			var $content = jQuery.sap.byId("myShell-content");
-    			
+
     			if($canvas.height() > 0){ //Skip check when test window too small
 	    			if(oShell.getFullHeightContent()){
 	    				ok($content.height() > 0, "Height of Content when fullHeight==true");
@@ -144,46 +144,46 @@
 	    				equal($content.height(), 0, "Height of Content when fullHeight==false");
 	    			}
     			}
-    			
+
     			var iTop = oSettings.contentPadding ? oSettings.contentPadding.top : 0;
     			var iBottom = oSettings.contentPadding ? oSettings.contentPadding.bottom : 0;
     			var iLeft = oSettings.contentPadding ? oSettings.contentPadding.left : (oSettings.enablePadding ? 20 : 0);
     			var iRight = oSettings.contentPadding ? oSettings.contentPadding.right : (oSettings.enablePadding ? 20 : 0);
     			var pad;
-    			
+
     			if(oShell.getFullHeightContent()){
     				pad = $canvas.outerHeight()-$content.height();
     			}else{
     				pad = $content.outerHeight();
     			}
-    					
+
  				equal(pad, iTop + iBottom,
- 	    				"Padding Top/Bottom of Canvas when padding enabled=="+oShell.getApplyContentPadding()+", fullHeight=="+oShell.getFullHeightContent()+", padding-top=="+iTop+", padding-bottom=="+iBottom);	
-    			
+ 	    				"Padding Top/Bottom of Canvas when padding enabled=="+oShell.getApplyContentPadding()+", fullHeight=="+oShell.getFullHeightContent()+", padding-top=="+iTop+", padding-bottom=="+iBottom);
+
     			pad = $canvas.outerWidth()-$content.width();
     			equal(pad, iLeft + iRight,
     					"Padding Left/Right of Canvas when padding enabled=="+oShell.getApplyContentPadding()+", fullHeight=="+oShell.getFullHeightContent()+", padding-left=="+iLeft+", padding-right=="+iRight);
-    		
+
     			if(oSettings.customClass){
     				oShell.removeStyleClass(oSettings.customClass);
     			}
     		}
-    		
+
     		var oSetting0 = {fullHeightContent: false, enablePadding: true}; //Default
     		var oSetting1 = {fullHeightContent: false, enablePadding: false}; //No default padding
     		var oSetting2 = {fullHeightContent: false, contentPadding: {top: 10, left: 10, right: 10, bottom: 10}, customClass: "CustomPadding"}; //Custom padding
-    		
+
     		oShell._settings = oSetting0;
     		checkSettings();
     		oShell._settings = oSetting1;
     		checkSettings();
     		oShell._settings = oSetting2;
     		checkSettings();
-    		
+
     		oSetting0.fullHeightContent = true;
     		oSetting1.fullHeightContent = true;
     		oSetting2.fullHeightContent = true;
-    		
+
     		oShell._settings = oSetting0;
     		checkSettings();
     		oShell._settings = oSetting1;
@@ -191,8 +191,8 @@
     		oShell._settings = oSetting2;
     		checkSettings();
     	});
-    	
-    	
+
+
     	test("HeaderTypes", function() {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell", {
@@ -206,32 +206,32 @@
         		ok($Shell.hasClass("sapUiUx3ShellHead"+key), "Shell with header type "+key+" should have the class 'sapUiUx3ShellHead"+key+"'");
     		}
     	});
-    	
-    	
+
+
     	test("Show / Hide Tools or Pane", function() {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell", {
 			});
     		oShell.placeAt("uiArea1");
     		sap.ui.getCore().applyChanges();
-    		
+
     		var $canvas = jQuery.sap.byId("myShell-canvas");
-    		
+
     		function check(sProp){
     			var sVal = $canvas.css(sProp);
     			return sVal == "0" || sVal == 0 || sVal == "0px";
     		}
-    		
+
     		ok(!check("left"), "Tools are shown");
     		oShell.setShowTools(false);
     		ok(check("left"), "Tools are not shown");
-    		
+
     		ok(!check("right"), "Pane Bar is shown");
     		oShell.setShowPane(false);
     		ok(check("right"), "Pane Bar is not shown");
     	});
-    	
-    	
+
+
     	test("Render Populated Shell", function() {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell", {
@@ -258,29 +258,29 @@
       	});
     		oShell.placeAt("uiArea1");
     		sap.ui.getCore().applyChanges();
-    		
+
     		var jRef = jQuery.sap.byId(oShell.getId());
     		ok(jRef.length == 1, "Rendered Shell should exist in the page");
     		ok(jRef.hasClass("sapUiUx3Shell"), "Rendered Shell should have the class 'sapUiUx3Shell'");
     		ok(jRef.hasClass("sapUiUx3ShellHeadStandard"), "Rendered Shell should have the class 'sapUiUx3ShellHeadStandard'");
     	});
-    	
-    	
+
+
     	test("Advanced Content", function() {
     		var header = jQuery(".sapUiUx3ShellHeader")[0];
     		ok(header.innerHTML.indexOf("") > -1, "Application Title must be present");
     		equal(jQuery.sap.byId(oShell.getId()+"-logoImg").attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
-    		
+
     		equals(jQuery(".sapUiUx3ShellHeader-logout").length, 1, "There should be a logout button");
     		equals(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
-    		
+
     		var $wi = jQuery.sap.byId(oShell.getId() + "-wsBar-list");
     		equal($wi.length, 1, "WorksetItem holder should exist");
     		equal($wi.children().length, 5, "There should be three WorksetItems plus dummy plus arrow");
     		ok($wi.children(":eq(1)").hasClass("sapUiUx3NavBarItemSel"), "First workset item should be selected");
     		ok(!$wi.children(":eq(2)").hasClass("sapUiUx3NavBarItemSel"), "Second workset item should NOT be selected");
     		ok(!$wi.children(":eq(3)").hasClass("sapUiUx3NavBarItemSel"), "Third workset item should NOT be selected");
-    		
+
     		// if window is wide enough, there should be no overflow icons visible
     		if ($wi.width() > 250) {
     			var $wiofL = jQuery.sap.byId(oShell.getId() + "-wsBar-ofb");
@@ -288,7 +288,7 @@
     			var $wiofR = jQuery.sap.byId(oShell.getId() + "-wsBar-off");
     			equal($wiofR.css("display"), "none", "Right workset item overflow button should be invisible");
     		}
-    		
+
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool");
     		ok(!!oDomRef, "Search tool should exist in the page");
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-inspectorTool");
@@ -296,62 +296,60 @@
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-feederTool");
     		ok(!!oDomRef, "Feeder tool should exist in the page");
     	});
-    	
+
 			test("WorksetItemSelected Event", function() {
 				expect(5);
-				
+
 				qutils.triggerMouseEvent("wi_so", "click", 1, 1, 1, 1);
-				
+
 				var $wi = jQuery.sap.byId(oShell.getId() + "-wsBar-list");
     		ok(!$wi.children(":eq(1)").hasClass("sapUiUx3NavBarItemSel"), "First workset item should NOT be selected");
     		ok($wi.children(":eq(2)").hasClass("sapUiUx3NavBarItemSel"), "Second workset item should be selected");
     		ok(!$wi.children(":eq(3)").hasClass("sapUiUx3NavBarItemSel"), "Third workset item should NOT be selected");
-				
+
     	});
-    	
+
     	test("Logout Event", function() {
 				expect(1);
 				var $logout = jQuery(".sapUiUx3ShellHeader-logout");
 				qutils.triggerMouseEvent($logout[0], "click", 1, 1, 1, 1);
     	});
-    	
-    	
-    	
-    	
-    	QUnit.stop();
-    	
-    	var renderCount = 0;
-    	asyncTest("Forced Re-rendering", function() {
-    		
-    		// overwrite the Shell renderer to count the calls
-      	var realRender = sap.ui.ux3.ShellRenderer.render;
-      	sap.ui.ux3.ShellRenderer.render = function(oRenderManager, oControl) { 
-      		renderCount++;
-      		realRender(oRenderManager, oControl);
-      	}
-      	
-				expect(1);
-				oShell.forceInvalidation();
-				setTimeout(function() {
-					equal(renderCount, 1, "ONE re-rendering should have happened after forced invalidation");
-					start();
-				}, 10);
+
+
+
+
+		var renderCount = 0;
+		asyncTest("Forced Re-rendering", function() {
+
+			// overwrite the Shell renderer to count the calls
+			var realRender = sap.ui.ux3.ShellRenderer.render;
+			sap.ui.ux3.ShellRenderer.render = function(oRenderManager, oControl) {
+				renderCount++;
+				realRender(oRenderManager, oControl);
+			}
+
+			expect(1);
+			oShell.forceInvalidation();
+			setTimeout(function() {
+				equal(renderCount, 1, "ONE re-rendering should have happened after forced invalidation");
+				start();
+			}, 10);
+		});
+
+		asyncTest("No Re-rendering on Content Modification", function() {
+			expect(2);
+			oShell.addContent(new sap.ui.commons.Button("newContentBtn", {text:"new content"}))
+			setTimeout(function() {
+				ok(jQuery.sap.domById("newContentBtn"), "The new content should now be present in the page");
+				equal(renderCount, 1, "Still, only ONE re-rendering should have happened after adding more content");
+				start();
+			}, 10);
     	});
-    	
-			asyncTest("No Re-rendering on Content Modification", function() {
-				expect(2);
-				oShell.addContent(new sap.ui.commons.Button("newContentBtn", {text:"new content"}))
-				setTimeout(function() {
-					ok(jQuery.sap.domById("newContentBtn"), "The new content should now be present in the page");
-					equal(renderCount, 1, "Still, only ONE re-rendering should have happened after adding more content");
-					start();
-				}, 10);
-    	});
-			
+
 			asyncTest("OnAfterRendering Called on Added Content", function() {
 				expect(2);
 				var newLbx = new sap.ui.commons.ListBox("newContentLbx");
-				
+
 				// overwrite ListBox onAfterRendering to log calls
 				var realOnAfterRendering = newLbx.onAfterRendering;
 				var onAfterRenderingCount = 0;
@@ -359,7 +357,7 @@
 					onAfterRenderingCount++;
 					jQuery.proxy(realOnAfterRendering, newLbx)();
 				}
-				
+
 				oShell.addContent(newLbx);
 				setTimeout(function() {
 					ok(jQuery.sap.domById("newContentLbx"), "The new content should now be present in the page");
@@ -367,23 +365,23 @@
 					start();
 				}, 10);
     	});
-    	
-    	
-    	
-			
+
+
+
+
     	/* TODO: feeder has issues in IE with trim()
-    	
+
 			asyncTest("FeedSubmit Event", function() {
 				qutils.triggerMouseEvent("myShell-tool-myShell-feederTool", "click", 1, 1, 1, 1);
 				setTimeout(function() {
 					// check whether popup is open
 					var $tp = jQuery.sap.byId("myShell-feederTool");
 					equal($tp.css("display"), "block", "Feeder tool popup should be visible now");
-					
+
 					var btn = $tp.find("button")[0];
 					// trigger a feed TODO: add text and check it
 					qutils.triggerMouseEvent(btn, "click", 1, 1, 1, 1);
-					
+
 					setTimeout(function() {
 						equal($tp.css("display"), "none", "Feeder tool popup should be invisible now");
 						start();
@@ -401,24 +399,25 @@
 
 				setTimeout(function() {
 					// check whether popup is open
-					var $tp = jQuery.sap.byId("myShell-searchTool");
+					var oTP = sap.ui.getCore().byId("myShell-searchTool");
+					var $tp = oTP.$();
 					equal($tp.css("display"), "block", "Search tool popup should be visible now");
-					
+
 					// enter text
 					var sf = oShell.getSearchField();
 					sf.setValue("ABC");
-					
+
 					setTimeout(function() {
 						// Enter on the search field
 						qutils.triggerKeydown(sf.getFocusDomRef(), "ENTER");
-						
+
 						// close tool popup
 						qutils.triggerMouseEvent("myShell-tool-myShell-searchTool", "click", 1, 1, 1, 1);
-						setTimeout(function() {
+						oTP.oPopup.attachClosed(function() {
 							// make sure the popup is closed again
 							equal($tp.css("display"), "none", "Search tool popup should not be visible now");
 							start();
-						}, 3000);
+						});
 					}, 300);
 				}, 300);
 			});
@@ -426,24 +425,24 @@
 
 			asyncTest("PaneBarItemSelected Event", function() {
 				expect(8);
-				
+
 				// pane should be closed
 				equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
 				equal(jQuery.sap.byId("paneContent").length, 0, "Pane content should not yet exist");
-				
-				// open pane 
+
+				// open pane
 				qutils.triggerMouseEvent("pb_people", "click", 1, 1, 1, 1);
-				
+
 				setTimeout(function() {
 					// check whether pane is open now
 					equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), true, "Pane bar should be open");
 					equal(jQuery.sap.byId("paneContent").length, 1, "Pane content should exist");
-					
+
 					equal(document.activeElement.id, "paneContent", "Pane content has focus after opening");
 
 					// close again
 					qutils.triggerMouseEvent("pb_people", "click", 1, 1, 1, 1);
-					
+
 					setTimeout(function() {
 						// check whether pane is closed
 						equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
@@ -451,19 +450,19 @@
 					}, 3000);
 				}, 3000);
 			});
-			
+
 			test("No Further Re-rendering", function() {
 				expect(1);
 				equal(renderCount, 1, "Still, only ONE re-rendering should have happened after further tests");
 			});
-			
-			
+
+
 			asyncTest("PaneClosed Event", function() {
                 // The number of times this test opens and closes the side pane
                 // Don't set this one too high or the test might time out...
 			    var iRepetitions = 5;
-                
-                
+
+
                 // Callback functions
                 var openPane = function() {
                     qutils.triggerMouseEvent("pane_feed", "click", 1, 1, 1, 1);
@@ -473,12 +472,11 @@
                     setTimeout(openPane, 300);
                     setTimeout(closePane, 600);
                 };
-                
+
                 // Begin testing
-                QUnit.config.testTimeout = (iRepetitions + 1) * 1000;
-                stop();
+                QUnit.config.testTimeout = (iRepetitions + 2) * 1000;
                 expect(iRepetitions);
-                
+
                 // Clean up the shell and make it ready for testing...
                 try {
                     oShell.destroy();
@@ -487,10 +485,10 @@
                 oShell.addPaneBarItem(new sap.ui.core.Item("pane_feed",{text:"Feed"}));
                 oShell.addPaneBarItem(new sap.ui.core.Item("pane_news",{text:"News"}));
                 oShell.placeAt("uiArea1");
-                
+
                 // Apply changes immediately
                 sap.ui.getCore().applyChanges();
-                
+
                 // Keep track of the number of repetitions
                 var iRepetitionsLeft = iRepetitions;
 
@@ -499,12 +497,12 @@
                 oShell.attachPaneClosed(function(oEvent) {
                     iRepetitionsLeft--;
                     ok(true, "Pane closed: " + iRepetitionsLeft);
-                    
+
                     if (iRepetitionsLeft > 0) {
                         openAndClosePane();
                     } else {
                         start(); // All done...
-                        // clear timeout setting to avoid timeouts in later tests (e.g Toolpalette) 
+                        // clear timeout setting to avoid timeouts in later tests (e.g Toolpalette)
                         delete QUnit.config.testTimeout;
                     }
                 });
@@ -512,10 +510,10 @@
 
 			test("Change Design", function() {
 				// Configure the test...
-				
+
 				// Number of times the test will run
                 var iRepetitions = 30;
-                
+
                 // Available designs
                 var aDesigns = {};
                 aDesigns[sap.ui.ux3.ShellDesignType.Standard] = {
@@ -533,10 +531,10 @@
                     notClasses : ["sapUiUx3ShellDesignStandard"],
                     isLight    : true
                 };
-                
-                
+
+
                 // Now run the test...
-                
+
                 // Clean up the shell and make it ready for testing
                 try {
                     oShell.destroy();
@@ -546,7 +544,7 @@
                 	title : "ToolPopup for testing purposes"
                 }));
                 oShell.placeAt("uiArea1");
-                
+
                 // Apply changes immediately
                 sap.ui.getCore().applyChanges();
 
@@ -567,60 +565,60 @@
                     !oShell.$().hasClass("sapUiUx3ShellDesignCrystal"),
                     "Shell DOM-Element must not have CSS class sapUiUx3ShellDesignLight"
                 );
-                
-                
+
+
                 var sDesign = sap.ui.ux3.ShellDesignType.Standard;
                 var sVerbYes = "has";
                 var sVerbNo  = "does not have";
-                
+
                 var aDesignKeys = [];
-                for(var key in aDesigns) { 
-                	aDesignKeys.push(key); 
+                for(var key in aDesigns) {
+                	aDesignKeys.push(key);
                 }
-                
+
                 for (var i = 0; i < iRepetitions; ++i) {
                     // Switch design every iteration...
-                    
+
                     // Choose a design randomly
                     var sDesign = aDesignKeys[Math.floor(Math.random() * aDesignKeys.length)];
                     var oDesign = aDesigns[sDesign];
-                    
+
                     // Set the design
                     oShell.setDesignType(sDesign);
                     sap.ui.getCore().applyChanges();
-                    
+
                     for(var n = 0; n < oDesign.classes.length; ++n) {
                     	ok(
                     		oShell.$().hasClass(oDesign.classes[n]),
                     		"Design \"" + sDesign + "\" has class \"" + oDesign.classes[n] + "\""
                     	);
                     }
-                    
+
                     for(var n = 0; n < oDesign.notClasses.length; ++n) {
                         ok(
                             !oShell.$().hasClass(oDesign.notClasses[n]),
                             "Design \"" + sDesign + "\" does not have class \"" + oDesign.notClasses[n] + "\""
                         );
                     }
-                    
+
                     // Check for ToolPopups and whether their inverted-property is set correctly
                     var aToolPopups = oShell.getToolPopups();
                     for (var n = 0; n < aToolPopups.length; ++n) {
                     	ok(
                     		aToolPopups[n].getInverted() == !oDesign.isLight,
-                    		"ToolPopup \"" + aToolPopups[n].getId() + "\" is " + 
+                    		"ToolPopup \"" + aToolPopups[n].getId() + "\" is " +
                     		  (oDesign.isLight ? "not " : " ") + "inverted."
                     	);
                     }
-                    
-                    
+
+
                 }
-                
+
 			});
-			
+
 
             test("PaneBar Overflow", function() {
-                
+
                 try {
                     oShell.destroy();
                 } catch (e) {/* ignore if undefined... */}
@@ -629,23 +627,23 @@
                     title : "ToolPopup for testing purposes"
                 }));
                 oShell.placeAt("uiArea1");
-            	
+
                 // Apply changes immediately
                 sap.ui.getCore().applyChanges();
-                
+
                 $OverflowButton = jQuery(".sapUiUx3ShellPaneOverflowButton");
-                
+
                 ok(
-                	$OverflowButton.length == 1, 
+                	$OverflowButton.length == 1,
                     "Overflow button was rendered."
                 );
-                
+
                 ok(
                 	$OverflowButton.css("display") == "none",
                 	"Overflow button is not displayed initially."
                 );
-                
-                
+
+
                 for (var i = 0; i < 20; ++i) {
                     oShell.addPaneBarItem(new sap.ui.core.Item(
                         "pane_" + i, { text : "Pane Item " + i }
@@ -657,32 +655,32 @@
                 }
 
                 ok($OverflowButton.css(
-                	"display") != "none", 
+                	"display") != "none",
                     "Overflow button visible after adding a ****load of items to the pane."
                 );
-                
+
                 // The overflow Menu should contain _ALL_ entries but only the ones not in the
                 // shell pane should be visible
-                
+
                 var oMenu = oShell._getPaneOverflowMenu();
                 var aMenuItems = oMenu.getItems();
-                
-                
+
+
                 var bAllHiddenItemsInPane = true;
                 for (var i = 0; i < aMenuItems.length; ++i) {
                 	if (!aMenuItems[i].getVisible()) {
                 		// Invisible menu items can be found in the pane and the other way around.
                 		var sPaneId = aMenuItems[i].getId().replace("-overflow", "");
                 		var oPaneItem = jQuery(".sapUiUx3ShellPaneEntries").children("#" + sPaneId);
-                		
+
                 		if (oPaneItem.length !== 1) {
                 			bAllHiddenItemsInPane = false;
                 		}
                 	}
                 }
-                
+
                 ok(
-                	bAllHiddenItemsInPane, 
+                	bAllHiddenItemsInPane,
                     "All hidden overflow menu items are in the pane."
                 );
             });
@@ -693,22 +691,22 @@
                 } catch (e) {/* ignore if undefined... */}
                 oShell = new sap.ui.ux3.Shell("myShell");
                 oShell.placeAt("uiArea1");
-                
+
                 // Apply changes immediately
                 sap.ui.getCore().applyChanges();
-                
+
                 $PaletteArea = jQuery(".sapUiUx3ShellToolPaletteArea");
-                
+
                 ok($PaletteArea.length == 1, "Palette area was rendered.");
-                
-                
-                
+
+
+
                 var iLastWidth = $PaletteArea.width();
                 var i = 0;
                 var fnGrowPalette = function() {
                     ++i;
                     oShell.addToolPopup(new sap.ui.ux3.ToolPopup(
-                        "palette_" + i, { 
+                        "palette_" + i, {
                         	title : "ToolPopup for overflow testing No. " + i,
                         	icon : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAHWlUWHRDb21tZW50AAAAAABDcmVhdGVkIHdpdGggR0lNUGQuZQcAAAFFSURBVFjD7ZWxSgNBEIa/3RxpIqlSphFiZauNhSRgI4qVBLGy0DfwAfIUEjCxsgiHpLsgFjmxEFHbdBYWKimsAjbB27GQgIKH2U3gmv3K3Zn5/xmYXfB4PBmj0i7iWIJChT2dYw0oOdZ/Nwm3H090ajX1+VdAkJa5sMS+0mzP2GBJ59gpVAA4tzKAYh3AJJw9j+jXl9XYRjkcSH6xyIbKcaA01TQDOlVfUQTotbmyFQeoL6tx1ObyZy0rAxMaDWVc5z9Nrs56C7wBb2CKLRDtvgX/56YGiDAC2Dyk6iIeDiS/dfT9kk5qWf0FDy+yqzT1eYxZDOFqWV1YTSBq0TUJHRGGzsLC0CR0ohZd6wlMw+ObhL8ODP2VsmpmsgVGuLYVn5sBEW56pzRdcoPZW+cuanEyy6flzP2rHMexBGRFpuIez7z4Atp7ZA1vyiIaAAAAAElFTkSuQmCC",
                         }
@@ -718,12 +716,12 @@
                     // added to the pane
                     oShell._checkToolPaletteSize();
                     sap.ui.core.RenderManager.forceRepaint(document.getElementsByTagName("body")[0]);
-                    
+
                     if ($PaletteArea.width() > iLastWidth) {
                         ok (true, "Palette area grew");
                     }
                     iLastWidth = $PaletteArea.width();
-                    
+
                     if (i < 500) {
                     	if ($PaletteArea.width() >= sap.ui.ux3.Shell.SIDE_BAR_BASE_WIDTH * 4) {
                     		ok(
@@ -738,7 +736,7 @@
                     	}
                     } else {
                         ok(
-                            false, 
+                            false,
                             "Palette area did not grow enough, even after 500 Toolpopups were added."
                         );
                         start();
@@ -746,13 +744,17 @@
                 };
                 window.setTimeout(fnGrowPalette, 10);
             });
+
+            QUnit.done(function() {
+            	oShell.destroy();
+            });
 		</script>
 	</head>
 	<body>
+    <div id="uiArea1"></div>
     <h1 id="qunit-header">qUnit Page for sap.ui.ux3.Shell</h1>
     <h2 id="qunit-banner"></h2>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests"></ol>
-    
-    <div id="uiArea1"></div>
+
 	</body></html>

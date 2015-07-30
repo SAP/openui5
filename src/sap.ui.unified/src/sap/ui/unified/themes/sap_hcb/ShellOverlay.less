@@ -2,33 +2,20 @@
 /* CSS for sap.ui.unfied.ShellOverlay.control (hcb)*/
 /* ============================================== */
 
-.sapUiUfdShellOvrlyBrand {
-	background-color: transparent;
-}
-
-.sapUiUfdShellOvrlyCntnt {
-	background-color: @sapHCStandardBG;
-}
-
+.sapUiUfdShellOvrlyCntnt,
 .sapUiUfdShellOvrlyHeadCntnt {
 	background-color: @sapHCStandardBG;
-
-	-webkit-box-shadow: none;
-	box-shadow: none;
 }
 
 .sapUiUfdShellOvrlyHeadClose,
-.sapUiUfdShellOvrlyHeadClose:active,
-.sapUiUfdShellOvrlyHeadClose:hover,
 .sapUiUfdShellOvrlyHeadClose:focus,
 .sapUiUfdShellOvrlyHeadClose:visited {
 	color: @sapHCStandardFG;
-	text-shadow: none;
 }
 
-.sapUiUfdShellOvrlyHeadClose:active {
-	background-color: @sapHCStandardBG;
-	color: @sapHCStandardFG;
+.sapUiUfdShellOvrlyHeadClose:active,
+.sapUiUfdShellOvrlyHeadClose:hover{
+	background-color: @sapHCHighlightBG;
 }
 
 .sapUiUfdShellOvrlyHeadClose {
@@ -38,6 +25,9 @@
 	padding-top: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
+	border: 1px solid @sapHCStandardFG;
+	border-radius: 6px;
+	line-height: 1;
 }
 
 .sapUiUfdShellOvrlyHeadClose:before {
@@ -50,15 +40,17 @@
 	width: 1px;
 }
 
-.sapUiMedia-Std-Desktop .sapUiUfdShellOvrlyHeadClose:hover {
-	background-color: @sapHCHighlightBG;
-}
+.sapUiUfdShellOvrlyHeadClose:focus {
+		border: 2px dotted @sapHCStandardFG;
+		border-radius: 0;
+		padding: 9px;
+	}
 
+.sapUiMedia-Std-Desktop .sapUiUfdShellOvrlyHeadClose:hover,
 .sapUiMedia-Std-Desktop .sapUiUfdShellOvrlyHeadClose:active:hover {
 	background-color: @sapHCHighlightBG;
 }
 
-/* HCB Additional Styles */
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrly {
 	background: fade(@sapHCStandardBG, 30);
 }
@@ -72,23 +64,6 @@
 	border-width: 0 2px 1px 2px;
 	border-color: @sapHCStandardFG;
 	border-style: solid;
-}
-
-.sapUiUfdShellOvrlyHeadClose {
-	border: 1px solid @sapHCStandardFG;
-	border-radius: 6px;
-	line-height: 1;
-}
-
-.sapUiUfdShellOvrlyHeadClose:active,
-.sapUiUfdShellOvrlyHeadClose:hover {
-	background-color: @sapHCHighlightBG;
-}
-
-.sapUiUfdShellOvrlyHeadClose:focus {
-	border: 2px dotted @sapHCStandardFG;
-	border-radius: 0;
-	padding: 9px;
 }
 
 .sapUiMedia-Std-Phone .sapUiUfdShellOvrlyCntnt > div,

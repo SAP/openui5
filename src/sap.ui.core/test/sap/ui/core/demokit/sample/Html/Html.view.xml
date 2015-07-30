@@ -4,8 +4,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
-		width="90%">
+		class="sapUiContentPadding"
+		width="100%">
 		<l:content>
 			<core:HTML content='&lt;div class=&quot;content&quot;&gt;&lt;h4&gt;Lorem ipsum&lt;/h4&gt;&lt;div&gt;Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.&lt;/div&gt;&lt;a target=&quot;_blank&quot; href=&quot;http://en.wikipedia.org/wiki/Lorem_ipsum&quot;&gt;Learn more about Lorem Ipsum ...&lt;/a&gt;&lt;/div&gt;'>
 			</core:HTML>

@@ -6,14 +6,14 @@ sap.ui.define(['jquery.sap.global', './TileRenderer'],
 	"use strict";
 
 /**
-	 * @class CustomTile renderer. 
-	 * @static
+	 * CustomTile renderer.
+	 * @namespace
 	 */
 	var CustomTileRenderer = sap.ui.core.Renderer.extend(TileRenderer);
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *                oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control}
@@ -28,17 +28,26 @@ sap.ui.define(['jquery.sap.global', './TileRenderer'],
 			rm.addStyle("visibility", "hidden");
 			rm.writeStyles();
 		}
+
+		/* WAI ARIA if in TileContainer context */
+		if (oControl.getParent() instanceof sap.m.TileContainer) {
+			rm.writeAccessibilityState({
+				role: "option",
+				posinset: oControl._getTileIndex(),
+				setsize: oControl._getTilesCount()
+			});
+		}
+
 		rm.write(">");
 		rm.write("<div id=\"" + oControl.getId() + "-remove\" class=\"sapMTCRemove\"></div>");
 		rm.write("<div class=\"sapMCustomTileContent\">");
 		this._renderContent(rm,oControl);
 		rm.write("</div></div>");
 	};
-	
+
 	CustomTileRenderer._renderContent = function (rm, oTile) {
 		rm.renderControl(oTile.getContent());
 	};
-	
 
 	return CustomTileRenderer;
 

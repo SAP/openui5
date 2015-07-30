@@ -262,19 +262,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 		},$.device.is);
 
 		// Windows Phone specific handling
-		if (sap.ui.Device.os.windows_phone) {
+		if (Device.os.windows_phone) {
+			var oTag;
 			// Disable grey highlights over tapped areas.
 			// This meta tag works since Windows 8.1.
 			// Write in-place, otherwise IE ignores it:
-			document.write('<meta name="msapplication-tap-highlight" content="no">');
+			oTag = document.createElement("meta");
+			oTag.setAttribute("name", "msapplication-tap-highlight");
+			oTag.setAttribute("content", "no");
+			document.head.appendChild(oTag);
+
 			// Style for correct viewport size and scale definition.
 			// It works correctly since Windows 8.1.
 			// Older 8.0 patches return wrong device-width:
-			document.write('<style>@-ms-viewport{width:device-width;}</style>');
+			oTag = document.createElement("style");
+			oTag.appendChild(document.createTextNode('@-ms-viewport{width:device-width;}'));
+			document.head.appendChild(oTag);
 		}
 
 		var _bInitMobileTriggered = false;
-	
 		/**
 		 * Does some basic modifications to the HTML page that make it more suitable for mobile apps.
 		 * Only the first call to this method is executed, subsequent calls are ignored. Note that this method is also called by the constructor of toplevel controls like sap.m.App, sap.m.SplitApp and sap.m.Shell.
@@ -391,17 +397,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 					});
 				}
 			}
-	
-			if (options.homeIcon) {
-	
+
+			if (options && options.homeIcon) {
 				var oIcons;
-	
+
 				if (typeof options.homeIcon === "string") {
 					oIcons = { phone: options.homeIcon };
 				} else {
 					oIcons = $.extend({}, options.homeIcon);
 				}
-	
+
 				oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
 				oIcons.favicon = options.homeIcon.icon || oIcons.favicon;
 				oIcons.icon = undefined;
@@ -543,4 +548,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 	
 	return jQuery;
 	
-}, /* bExport= */ false);
+});

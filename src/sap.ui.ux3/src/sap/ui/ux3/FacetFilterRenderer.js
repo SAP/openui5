@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FacetFilter renderer.
-	 * @static
+	 * FacetFilter renderer.
+	 * @namespace
 	 */
 	var FacetFilterRenderer = {
 	};
@@ -23,11 +23,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FacetFilterRenderer.render = function(oRenderManager, oControl) {
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		var rm = oRenderManager;
 		var bFullHeight = (oControl.getVisibleItemCountMode() === sap.ui.ux3.VisibleItemCountMode.Auto); // "Auto"
 		rm.write("<div");

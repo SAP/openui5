@@ -64,6 +64,9 @@
 					"de_XX",
 					"xx_XX"
 	];
+	
+	var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$ US", "$US", "$", "US$", "US$", "$",
+		"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
 
 	// Run generic test for all supported locales, run custom tests where it is defined
 	jQuery.each(aLocales, function(i, sLocale) {
@@ -71,45 +74,75 @@
 			var oLocale = new sap.ui.core.Locale(sLocale),
 				oLocaleData = new sap.ui.core.LocaleData(oLocale),
 				fnCustomTests = window["customTests_" + sLocale];
-			genericTests(oLocaleData);
+			genericTests(oLocaleData, sLocale);
 			if (fnCustomTests) fnCustomTests(oLocaleData);
 		});
 	});
-	
-	
+
 	/*
 	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods", 
 	"getDatePattern", "getTimePattern", "getDateTimePattern", "getNumberSymbol"
 	*/
-	function genericTests(oLocaleData) {
+	function genericTests(oLocaleData, sLocale) {
+		var aCalendarTypes = [undefined],
+				sCalendarType,
+				i, j;
+
 		equal(typeof oLocaleData.getOrientation(), "string", "getOrientation()");
 		equal(typeof oLocaleData.getLanguages(), "object", "getLanguages()");
-		equal(typeof oLocaleData.getScripts(), "object", "getLanguages()");
-		equal(typeof oLocaleData.getTerritories(), "object", "getLanguages()");
-		equal(oLocaleData.getMonths("narrow") && oLocaleData.getMonths("narrow").length, 12, "getMonths(\"narrow\")");
-		equal(oLocaleData.getMonths("abbreviated") && oLocaleData.getMonths("abbreviated").length, 12, "getMonths(\"abbreviated\")");
-		equal(oLocaleData.getMonths("wide") && oLocaleData.getMonths("wide").length, 12, "getMonths(\"wide\")");
-		equal(oLocaleData.getDays("narrow") && oLocaleData.getDays("narrow").length, 7, "getDays(\"narrow\")");
-		equal(oLocaleData.getDays("abbreviated") && oLocaleData.getDays("abbreviated").length, 7, "getDays(\"abbreviated\")");
-		equal(oLocaleData.getDays("wide") && oLocaleData.getDays("wide").length, 7, "getDays(\"wide\")");
-		equal(oLocaleData.getQuarters("narrow") && oLocaleData.getQuarters("narrow").length, 4, "getQuarters(\"narrow\")");
-		equal(oLocaleData.getQuarters("abbreviated") && oLocaleData.getQuarters("abbreviated").length, 4, "getQuarters(\"abbreviated\")");
-		equal(oLocaleData.getQuarters("wide") && oLocaleData.getQuarters("wide").length, 4, "getQuarters(\"wide\")");
-		equal(oLocaleData.getDayPeriods("narrow") && oLocaleData.getDayPeriods("narrow").length, 2, "getDayPeriods(\"narrow\")");
-		equal(oLocaleData.getDayPeriods("abbreviated") && oLocaleData.getDayPeriods("abbreviated").length, 2, "getDayPeriods(\"abbreviated\")");
-		equal(oLocaleData.getDayPeriods("wide") && oLocaleData.getDayPeriods("wide").length, 2, "getDayPeriods(\"wide\")");
-		equal(typeof oLocaleData.getDatePattern("short"), "string", "getDatePattern(\"short\")");
-		equal(typeof oLocaleData.getDatePattern("medium"), "string", "getDatePattern(\"medium\")");
-		equal(typeof oLocaleData.getDatePattern("long"), "string", "getDatePattern(\"long\")");
-		equal(typeof oLocaleData.getDatePattern("full"), "string", "getDatePattern(\"full\")");
-		equal(typeof oLocaleData.getTimePattern("short"), "string", "getTimePattern(\"short\")");
-		equal(typeof oLocaleData.getTimePattern("medium"), "string", "getTimePattern(\"medium\")");
-		equal(typeof oLocaleData.getTimePattern("long"), "string", "getTimePattern(\"long\")");
-		equal(typeof oLocaleData.getTimePattern("full"), "string", "getTimePattern(\"full\")");
-		equal(typeof oLocaleData.getDateTimePattern("short"), "string", "getTimePattern(\"short\")");
-		equal(typeof oLocaleData.getDateTimePattern("medium"), "string", "getTimePattern(\"medium\")");
-		equal(typeof oLocaleData.getDateTimePattern("long"), "string", "getTimePattern(\"long\")");
-		equal(typeof oLocaleData.getDateTimePattern("full"), "string", "getTimePattern(\"full\")");
+		equal(typeof oLocaleData.getScripts(), "object", "getScripts()");
+		equal(typeof oLocaleData.getTerritories(), "object", "getTerritories()");
+
+		if (sLocale !== "xx_XX") {
+			for (sCalendarType in sap.ui.core.CalendarType) {
+				aCalendarTypes.push(sap.ui.core.CalendarType[sCalendarType]);
+			}
+		}
+
+		for (i = 0 ; i < aCalendarTypes.length ; i++) {
+			equal(oLocaleData.getMonths("narrow", aCalendarTypes[i]) && oLocaleData.getMonths("narrow", aCalendarTypes[i]).length, 12, "getMonths(\"narrow\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getMonths("abbreviated", aCalendarTypes[i]) && oLocaleData.getMonths("abbreviated", aCalendarTypes[i]).length, 12, "getMonths(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getMonths("wide", aCalendarTypes[i]) && oLocaleData.getMonths("wide", aCalendarTypes[i]).length, 12, "getMonths(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getDays("narrow", aCalendarTypes[i]) && oLocaleData.getDays("narrow", aCalendarTypes[i]).length, 7, "getDays(\"narrow\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getDays("abbreviated", aCalendarTypes[i]) && oLocaleData.getDays("abbreviated", aCalendarTypes[i]).length, 7, "getDays(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getDays("wide", aCalendarTypes[i]) && oLocaleData.getDays("wide", aCalendarTypes[i]).length, 7, "getDays(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getQuarters("narrow", aCalendarTypes[i]) && oLocaleData.getQuarters("narrow", aCalendarTypes[i]).length, 4, "getQuarters(\"narrow\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getQuarters("abbreviated", aCalendarTypes[i]) && oLocaleData.getQuarters("abbreviated", aCalendarTypes[i]).length, 4, "getQuarters(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getQuarters("wide", aCalendarTypes[i]) && oLocaleData.getQuarters("wide", aCalendarTypes[i]).length, 4, "getQuarters(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getDayPeriods("narrow", aCalendarTypes[i]) && oLocaleData.getDayPeriods("narrow", aCalendarTypes[i]).length, 2, "getDayPeriods(\"narrow\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getDayPeriods("abbreviated", aCalendarTypes[i]) && oLocaleData.getDayPeriods("abbreviated", aCalendarTypes[i]).length, 2, "getDayPeriods(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getDayPeriods("wide", aCalendarTypes[i]) && oLocaleData.getDayPeriods("wide", aCalendarTypes[i]).length, 2, "getDayPeriods(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDatePattern("short", aCalendarTypes[i]), "string", "getDatePattern(\"short\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDatePattern("medium", aCalendarTypes[i]), "string", "getDatePattern(\"medium\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDatePattern("long", aCalendarTypes[i]), "string", "getDatePattern(\"long\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDatePattern("full", aCalendarTypes[i]), "string", "getDatePattern(\"full\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getTimePattern("short", aCalendarTypes[i]), "string", "getTimePattern(\"short\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getTimePattern("medium", aCalendarTypes[i]), "string", "getTimePattern(\"medium\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getTimePattern("long", aCalendarTypes[i]), "string", "getTimePattern(\"long\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getTimePattern("full", aCalendarTypes[i]), "string", "getTimePattern(\"full\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDateTimePattern("short", aCalendarTypes[i]), "string", "getTimePattern(\"short\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDateTimePattern("medium", aCalendarTypes[i]), "string", "getTimePattern(\"medium\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDateTimePattern("long", aCalendarTypes[i]), "string", "getTimePattern(\"long\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getDateTimePattern("full", aCalendarTypes[i]), "string", "getTimePattern(\"full\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("wide", aCalendarTypes[i]), "string", "getEra(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("abbreviated", aCalendarTypes[i]), "string", "getEra(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("narrow", aCalendarTypes[i]), "string", "getEra(\"narrow\", \"" + aCalendarTypes[i] + "\")");
+			for (j = -2 ; j <= 2 ; j++) {
+				equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + ")");
+				if (j === 0) {
+					strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + ")");
+					strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + ")");
+				} else {
+					equal(typeof oLocaleData.getRelativeMinute(j), "string", "getRelativeMinute(" + j + ")");
+					equal(typeof oLocaleData.getRelativeHour(j), "string", "getRelativeHour(" + j + ")");
+				}
+				equal(typeof oLocaleData.getRelativeDay(j), "string", "getRelativeDay(" + j + ")");
+				equal(typeof oLocaleData.getRelativeWeek(j), "string", "getRelativeWeek(" + j + ")");
+				equal(typeof oLocaleData.getRelativeMonth(j), "string", "getRelativeMonth(" + j + ")");
+				equal(typeof oLocaleData.getRelativeYear(j), "string", "getRelativeYear(" + j + ")");
+			}
+		}
+
 		equal(typeof oLocaleData.getNumberSymbol("decimal"), "string", "getNumberSymbol(\"decimal\")");
 		equal(typeof oLocaleData.getNumberSymbol("group"), "string", "getNumberSymbol(\"group\")");
 		equal(typeof oLocaleData.getNumberSymbol("plusSign"), "string", "getNumberSymbol(\"plusSign\")");
@@ -120,8 +153,15 @@
 		ok(oLocaleData.getWeekendStart() >= 0 && oLocaleData.getWeekendStart() <7, "getWeekendStart()");
 		equal(typeof oLocaleData.getWeekendEnd(), "number", "getWeekendEnd()");
 		ok(oLocaleData.getWeekendEnd() >= 0 && oLocaleData.getWeekendEnd() <7, "getWeekendEnd()");
+		ok(oLocaleData.getPreferredCalendarType() in sap.ui.core.CalendarType, "getPreferredCalendar()");
+
+		// there's no currency symbol defined for EUR and USD in 'es_MX' locale in CLDR data version 26
+		if (sLocale !== "xx_XX" /*&& sLocale !== "es_MX"*/) {
+			equal(oLocaleData.getCurrencyCodeBySymbol(oLocaleData.getCurrencySymbol("EUR")), "EUR", "Currency Symbol € has currency code EUR");
+			equal(oLocaleData.getCurrencyCodeBySymbol(oLocaleData.getCurrencySymbol("USD")), "USD", "Currency Symbol for US Dollar has currency code USD");
+		}
 	}
-	
+
 	function customTests_de_AT(oLocaleData) {
 		equal(oLocaleData.getMonths("wide")[0], "Jänner", "1st month");
 	}
@@ -132,14 +172,14 @@
 		equal(oLocaleData.getScripts()["Latn"], "Lateinisch", "scripts");
 		equal(oLocaleData.getTerritories()["DE"], "Deutschland", "territories");
 		equal(oLocaleData.getMonths("wide")[0], "Januar", "1st month");
-		equal(oLocaleData.getMonths("abbreviated")[0], "Jan", "1st month abbreviated");
+		equal(oLocaleData.getMonths("abbreviated")[0], "Jan.", "1st month abbreviated");
 		equal(oLocaleData.getMonths("narrow")[0], "J", "1st month narrow");
 		equal(oLocaleData.getDays("wide")[0], "Sonntag", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "So.", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
-		equal(oLocaleData.getDatePattern("medium"), "dd.MM.yyyy", "date pattern \"medium\"");
+		equal(oLocaleData.getDatePattern("medium"), "dd.MM.y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
-		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} 'um' {0}", "datetime pattern \"long\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
@@ -150,14 +190,14 @@
 	function customTests_de_XX(oLocaleData) {
 		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		equal(oLocaleData.getMonths("wide")[0], "Januar", "1st month");
-		equal(oLocaleData.getMonths("abbreviated")[0], "Jan", "1st month abbreviated");
+		equal(oLocaleData.getMonths("abbreviated")[0], "Jan.", "1st month abbreviated");
 		equal(oLocaleData.getMonths("narrow")[0], "J", "1st month narrow");
 		equal(oLocaleData.getDays("wide")[0], "Sonntag", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "So.", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
-		equal(oLocaleData.getDatePattern("medium"), "dd.MM.yyyy", "date pattern \"medium\"");
+		equal(oLocaleData.getDatePattern("medium"), "dd.MM.y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
-		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} 'um' {0}", "datetime pattern \"long\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
 	}
@@ -175,12 +215,14 @@
 		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
 		equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
-		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} 'at' {0}", "datetime pattern \"long\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+		equal(oLocaleData.getEra("abbreviated"), "AD", "Abbreviated Era Name");
+		equal(oLocaleData.getEra("abbreviated", 0), "BC", "Abbreviated Era Name");
 	}
 	
 	function customTests_en_ZA(oLocaleData) {
@@ -226,9 +268,9 @@
 		equal(oLocaleData.getDays("wide")[0], "日曜日", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "日", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "日", "1st day narrow");
-		equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "date pattern \"medium\"");
+		equal(oLocaleData.getDatePattern("medium"), "y/MM/dd", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
-		equal(oLocaleData.getDateTimePattern("long"), "{1}{0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 	}
@@ -240,17 +282,17 @@
 	function customTests_ru_RU(oLocaleData) {
 		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		equal(oLocaleData.getLanguages()["de"], "немецкий", "language");
-		equal(oLocaleData.getScripts()["Latn"], "Латиница", "scripts");
+		equal(oLocaleData.getScripts()["Latn"], "латиница", "scripts");
 		equal(oLocaleData.getTerritories()["DE"], "Германия", "territories");
 		equal(oLocaleData.getMonths("wide")[0], "января", "1st month");
-		equal(oLocaleData.getMonths("abbreviated")[0], "янв", "1st month abbreviated");
+		equal(oLocaleData.getMonths("abbreviated")[0], "янв.", "1st month abbreviated");
 		equal(oLocaleData.getMonths("narrow")[0], "Я", "1st month narrow");
 		equal(oLocaleData.getDays("wide")[0], "воскресенье", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "вс", "1st day abbreviated");
-		equal(oLocaleData.getDays("narrow")[0], "В", "1st day narrow");
-		equal(oLocaleData.getDatePattern("medium"), "dd.MM.yyyy", "date pattern \"medium\"");
+		equal(oLocaleData.getDays("narrow")[0], "вс", "1st day narrow");
+		equal(oLocaleData.getDatePattern("medium"), "d MMM y 'г'.", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
-		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1}, {0}", "datetime pattern \"long\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
@@ -266,8 +308,43 @@
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
-	
-	
+
+	test("Calendar type should use the value set in configuration when getting calendar related values", function() {
+		sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
+
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
+
+		deepEqual(oLocaleData.getMonths("narrow"), oLocaleData.getMonths("narrow", sap.ui.core.CalendarType.Islamic), "getMonths uses calendar type in configuration");
+		deepEqual(oLocaleData.getDays("narrow"), oLocaleData.getDays("narrow", sap.ui.core.CalendarType.Islamic), "getDays uses calendar type in configuration");
+		deepEqual(oLocaleData.getQuarters("narrow"), oLocaleData.getQuarters("narrow", sap.ui.core.CalendarType.Islamic), "getQuarters uses calendar type in configuration");
+		deepEqual(oLocaleData.getDayPeriods("narrow"), oLocaleData.getDayPeriods("narrow", sap.ui.core.CalendarType.Islamic), "getDayPeriods uses calendar type in configuration");
+		deepEqual(oLocaleData.getDatePattern("short"), oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "getDatePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getTimePattern("short"), oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "getTimePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getDateTimePattern("short"), oLocaleData.getDateTimePattern("short", sap.ui.core.CalendarType.Islamic), "getDateTimePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getEra("narrow"), oLocaleData.getEra("narrow", sap.ui.core.CalendarType.Islamic), "getEra uses calendar type in configuration");
+
+		sap.ui.getCore().getConfiguration().setCalendarType(null);
+	});
+
+	test("Locale data with customization from format settings in configuration", function() {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+
+		oFormatSettings.setLegacyDateFormat("3");
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(oFormatSettings.getFormatLocale());
+		equal(oLocaleData.getDatePattern("short"), "MM-dd-yyyy", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("medium"), "MM-dd-yyyy", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "M/d/y GGGGG", "short pattern for Islamic calendar type should be fetched from locale data");
+
+		oFormatSettings.setLegacyTimeFormat("0");
+		equal(oLocaleData.getTimePattern("short"), "HH:mm", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "h:mm a", "short pattern for Islamic calendar type should be fetched from locale data");
+
+		oFormatSettings.setLegacyDateFormat("A");
+		equal(oLocaleData.getDatePattern("short"), "yyyy/MM/dd", "short pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "medium pattern should be the one defined in format settings");
+		equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
+	});
 </script>
 
 </head>

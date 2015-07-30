@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class TaskCircle renderer.
-	 * @static
+	 * TaskCircle renderer.
+	 * @namespace
 	 */
 	var TaskCircleRenderer = function() {
 	};

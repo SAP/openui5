@@ -1,150 +1,571 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>qUnit Page for sap.m.MessageBox</title>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta charset="UTF-8">
+	<title>qUnit Page for sap.m.MessageBox</title>
 
-		<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
-		</script>
+	</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-		<script language="javascript">
-			sinon.config.useFakeTimers = true;
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-			sap.ui.test.qunit.delayTestStart();
+	<script language="javascript">
+		sinon.config.useFakeTimers = true;
 
-			var page = new sap.m.Page("myFirstPage", {
-				title : "MessageBox Test",
-				showNavButton : true
+		sap.ui.test.qunit.delayTestStart();
+
+		var page = new sap.m.Page("myFirstPage", {
+			title: "MessageBox Test",
+			showNavButton: true
+		});
+
+		var app = new sap.m.App("myApp", {
+			initPage: "myFirstPage"
+		});
+		app.addPage(page).placeAt("content");
+
+		var sMessageText = "Text to be tested";
+		var sMessageTitle = "Title to be tested";
+
+		function callback(oAction) {
+			ok(!oAction, "Dialog is closed by calling close method, so the action parameter is null");
+			start();
+		}
+
+		var sClassName = "sapUiSizeCompact";
+
+		jQuery.sap.require("sap.m.MessageBox");
+		jQuery.sap.require("sap.ui.layout.VerticalLayout");
+		jQuery.sap.require("sap.m.InputListItem");
+
+		test("show", function () {
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
+				onClose: callback,
+				id: "messagebox1",
+				styleClass: sClassName
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagebox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("simple show usage", function () {
+			sap.m.MessageBox.show(sMessageText);
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
+			ok(oMessageBox, "Dialog should be created");
+			oMessageBox.destroy();
+		});
+
+		test("show error", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.error(sMessageText, {
+				id: "messageboxError"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxError");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_CLOSE") , "Default action Cancel is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_ERROR"), "The title should be Error");
+			oMessageBox.destroy();
+		});
+
+		test("show information", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.information(sMessageText, {
+				id: "messageboxInfo"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxInfo");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_INFO"), "The title should be Info");
+			oMessageBox.destroy();
+		});
+
+		test("show warning", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.warning(sMessageText, {
+				id: "messageboxWarning"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxWarning");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_WARNING"), "The title should be Warning");
+			oMessageBox.destroy();
+		});
+
+		test("show success", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.success(sMessageText, {
+				id: "messageboxSuccess"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxSuccess");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_SUCCESS"), "The title should be Success");
+			oMessageBox.destroy();
+		});
+
+		test("disable horizontal scrolling", function () {
+			var sLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus.";
+
+			var oLayout = new sap.ui.layout.VerticalLayout({
+				width: "100%",
+				content: [
+					new sap.m.List({
+						inset: false,
+						width: "100%",
+						items: [
+							new sap.m.InputListItem({
+								label: sLongText
+							}), new sap.m.InputListItem({
+								label: sLongText
+							}), new sap.m.InputListItem({
+								label: sLongText
+							})
+						]
+					})
+				]
 			});
 
-			var app = new sap.m.App("myApp", {
-				initPage: "myFirstPage"
+			sap.m.MessageBox.show(oLayout, {
+						icon: sap.m.MessageBox.Icon.WARNING,
+						title: "Title of first MessageBox",
+						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, sap.m.MessageBox.Action.Cancel],
+						onClose: null,
+						id: "messageBoxScrolling",
+						verticalScrolling: false,
+						horizontalScrolling: false
+					}
+			);
+
+
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageBoxScrolling");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getHorizontalScrolling(), false, "The horizontal scrolling is disabled");
+			equal(oMessageBox.getVerticalScrolling(), false, "The vertical scrolling is disabled");
+			oMessageBox.destroy();
+		});
+
+
+		test("initial focus to control", function () {
+			var oButton = new sap.m.Button({
+				text: 'Do something'
 			});
-			app.addPage(page).placeAt("content");
 
-			var sMessageText = "Text to be tested";
-			var sMessageTitle = "Title to be tested";
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text", oButton],
+				onClose: callback,
+				id: "messagebox2",
+				styleClass: sClassName,
+				initialFocus: oButton
+			});
+			sap.ui.getCore().applyChanges();
 
-			function callback(oAction){
-				ok(!oAction, "Dialog is closed by calling close method, so the action parameter is null");
-				start();
+			var oMessageBox = sap.ui.getCore().byId("messagebox2");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 4, "All four buttons are added to dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			equal(oMessageBox.getInitialFocus(), oButton.sId, "InitialFocus is set correctly");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("initial focus with string", function () {
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
+				onClose: callback,
+				id: "messagebox3",
+				styleClass: sClassName,
+				initialFocus: "Custom Text"
+			});
+			sap.ui.getCore().applyChanges();
+
+			var oMessageBox = sap.ui.getCore().byId("messagebox3");
+			var aButtons = oMessageBox.getButtons();
+
+			var sInitialFocusControlId = (function () {
+				var result;
+				for (var i = 0; i < aButtons.length; i++) {
+					if (aButtons[i].mProperties.text.toLowerCase() === "Custom Text".toLowerCase()) {
+						result = aButtons[i].sId;
+					}
+				}
+				return result;
+			})();
+
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			equal(oMessageBox.getInitialFocus(), sInitialFocusControlId, "InitialFocus is set correctly");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("show with set initial focus with sap.m.MessageBox.Action", function () {
+			var oFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			sap.ui.getCore().getConfiguration().setFormatLocale("bg");
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, sap.m.MessageBox.Action.Cancel],
+				onClose: callback,
+				id: "messagebox4",
+				styleClass: sClassName,
+				initialFocus: sap.m.MessageBox.Action.NO
+			});
+			sap.ui.getCore().applyChanges();
+
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oMessageBox = sap.ui.getCore().byId("messagebox4");
+			var aButtons = oMessageBox.getButtons();
+			var getInitialFocusControlId = (function () {
+				var sInitialFocusControlId;
+				for (var i = 0; i < aButtons.length; i++) {
+					if (aButtons[i].mProperties.text.toLowerCase() === oResourceBundle.getText("MSGBOX_NO").toLowerCase()) {
+						sInitialFocusControlId = aButtons[i].sId;
+					}
+				}
+				return sInitialFocusControlId;
+			})();
+
+			ok(oMessageBox, "Dialog should be created");
+			equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "bg", "locale of page");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			equal(oMessageBox.getInitialFocus(), getInitialFocusControlId, "InitialFocus is set correctly");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+			sap.ui.getCore().getConfiguration().setFormatLocale(oFormatLocale);
+		});
+
+
+		test("alert", function () {
+			sap.m.MessageBox.alert(sMessageText, {
+				onClose: callback,
+				title: sMessageTitle,
+				id: "alertbox1",
+				styleClass: sClassName
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("alertbox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("confirm", function () {
+			sap.m.MessageBox.confirm(sMessageText, {
+				onClose: callback,
+				title: sMessageTitle,
+				id: "confirmbox1",
+				styleClass: sClassName
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("show with OLD API", function () {
+			sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Custom Text", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagebox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("alert with OLD API", function () {
+			// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
+			sap.m.MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("alertbox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("confirm with OLD API", function () {
+			sap.m.MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("alert with message which contains curly bracket", function () {
+			sap.m.MessageBox.alert("I have {abc}");
+			sap.ui.getCore().applyChanges();
+			equal(jQuery("span:contains('I have {abc}')").length, 1, "Text with curly bracket is rendered");
+			jQuery.sap.require("sap.m.InstanceManager");
+			sap.m.InstanceManager.getOpenDialogs()[0].destroy();
+		});
+
+		test("Text Direction Tests", function () {
+			var sMessageBoxId = "messageboxRTL",
+					oMessageBox,
+					oMessageTextContainer;
+
+			// RTL
+			sap.m.MessageBox.confirm(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
+				onClose: callback,
+				id: sMessageBoxId,
+				textDirection: sap.ui.core.TextDirection.RTL
+			});
+
+			sap.ui.getCore().applyChanges();
+			oMessageBox = sap.ui.getCore().byId(sMessageBoxId);
+			oMessageTextContainer = oMessageBox.$().find("span.sapMText");
+			equals(jQuery(oMessageTextContainer).attr("dir"), "rtl", "Attribute 'dir' for Text Direction is set to RTL");
+			oMessageBox.destroy();
+
+			// LTR
+			sap.m.MessageBox.confirm(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
+				onClose: callback,
+				id: sMessageBoxId,
+				textDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			sap.ui.getCore().applyChanges();
+			oMessageBox = sap.ui.getCore().byId(sMessageBoxId);
+			oMessageTextContainer = oMessageBox.$().find("span.sapMText");
+			equals(jQuery(oMessageTextContainer).attr("dir"), "ltr", "Attribute 'dir' for Text Direction is set to LTR");
+			oMessageBox.destroy();
+		});
+
+		//sap.ca.ui.MessageDialog replacemet
+		// these examples cover the usage of sap.ca.ui.MessageDialog described in sap.ca.ui.messageDialog.qunit.html
+		test("add details", function () {
+			var sDetails = "Lorem ipsum dolor sit amet, eum an vidit porro ocurreret, has elit illud probatus ut. Ut est audire necessitatibus, case denique scribentur vel no. Ipsum suscipit te quo, eam ne justo insolens. His dico impedit offendit ea, decore eripuit volumus sea an, ut omnes cetero delectus eos.\n\nTota paulo graecis ei usu, mei te alii alia harum. Nulla singulis in nec, qui vide solum inani no. Lorem timeam posidonium nec te, decore noster ut eum, sit mazim delicata deterruisset cu. Id mea nemore delenit, eu ignota propriae eum.\n\nSolum atqui persecuti ut est, altera corrumpit te his. Nam justo epicurei mnesarchum ut, ne nam error ludus. Aeque utinam eum ad, homero audiam recteque nec ne, mazim constituam ne pri. Cum tollit dolorum interesset at. Pri partem tempor reprehendunt in, delectus vulputate sed ne. Etiam aeterno dolores eum ut.\n\nEx conceptam omittantur quo. Sit et petentium scripserit, te mea simul civibus scaevola. Mel solum ludus ea, ut sed cibo choro exerci. Eum discere quaestio ei, sed legendos platonem necessitatibus in. Eu duo populo mnesarchum vituperata."
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog1",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: sDetails,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagedialog1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
 			}
 
-			var sClassName = "sapUiSizeCompact";
+			sap.ui.getCore().applyChanges();
+			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			deepEqual(oMessageBox.$().find('textarea').focus()[0].value, sDetails);
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
-			jQuery.sap.require("sap.m.MessageBox");
-
-			test("show", function(){
-				sap.m.MessageBox.show(sMessageText,{
-					title: sMessageTitle,
-					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
-					onClose: callback,
-					id: "messagebox1",
-					styleClass: sClassName
-				});
-				this.clock.tick(500);
-				var oMessageBox = sap.ui.getCore().byId("messagebox1");
-				ok(oMessageBox, "Dialog should be created");
-				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-				equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
-				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-				ok(oMessageBox.$().hasClass(sClassName));
-				oMessageBox.destroy();
+		test("add details within control content", function () {
+			var oLayout = new sap.ui.layout.VerticalLayout({
+				width: "100%",
+				content: [
+					new sap.m.Text({
+						text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
+					}),
+					new sap.m.CheckBox("checkBoxId", {
+						text: "The CheckBox this checked",
+						selected: false
+					})
+				]
+			});
+			sap.m.MessageBox.show(oLayout, {
+				id: "messagedialog2",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: "Lorem ipsum dolor sit amet, eum an vidit porro ocurreret, has elit illud probatus ut. Ut est audire necessitatibus, case denique scribentur vel no. Ipsum suscipit te quo, eam ne justo insolens. His dico impedit offendit ea, decore eripuit volumus sea an, ut omnes cetero delectus eos.\n\nTota paulo graecis ei usu, mei te alii alia harum. Nulla singulis in nec, qui vide solum inani no. Lorem timeam posidonium nec te, decore noster ut eum, sit mazim delicata deterruisset cu. Id mea nemore delenit, eu ignota propriae eum.\n\nSolum atqui persecuti ut est, altera corrumpit te his. Nam justo epicurei mnesarchum ut, ne nam error ludus. Aeque utinam eum ad, homero audiam recteque nec ne, mazim constituam ne pri. Cum tollit dolorum interesset at. Pri partem tempor reprehendunt in, delectus vulputate sed ne. Etiam aeterno dolores eum ut.\n\nEx conceptam omittantur quo. Sit et petentium scripserit, te mea simul civibus scaevola. Mel solum ludus ea, ut sed cibo choro exerci. Eum discere quaestio ei, sed legendos platonem necessitatibus in. Eu duo populo mnesarchum vituperata.",
+				styleClass: sClassName,
+				initialFocus: "OK"
 			});
 
-			test("alert", function(){
-				sap.m.MessageBox.alert(sMessageText, {
-					onClose: callback,
-					title: sMessageTitle,
-					id: "alertbox1",
-					styleClass: sClassName
-				});
-				this.clock.tick(500);
-				var oMessageBox = sap.ui.getCore().byId("alertbox1");
-				ok(oMessageBox, "Dialog should be created");
-				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-				ok(oMessageBox.getLeftButton(), "Left button is created");
-				ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
-				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-				ok(oMessageBox.$().hasClass(sClassName));
-				oMessageBox.destroy();
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagedialog2");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.getContent()[0] instanceof sap.ui.core.Control, "Content is control");
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("pass simple json to details", function () {
+			var oJSON = {x: 1, y: 2, z: 3};
+
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog2",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: oJSON,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagedialog2");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+
+			sap.ui.getCore().applyChanges();
+			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			deepEqual(oMessageBox.$().find('textarea').focus()[0].value, JSON.stringify(oJSON, null,'\t'));
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("pass control to details", function () {
+			var oJSON = new sap.m.Text("Hi");
+
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog3",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: oJSON,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagedialog3");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			ok(oMessageBox.getLeftButton(), "Left button is created");
+			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+
+			sap.ui.getCore().applyChanges();
+			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			deepEqual(oMessageBox.$().find('textarea').focus()[0].value, JSON.stringify(oJSON, null, '\t'));
+			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		// When the message box is used on phone device and contains exactly 2 buttons it should use internally beginButton and endButton aggregations instead of buttons.
+		test("When the message box is used on phone device and contains exactly 2 buttons:", function () {
+			this.stub(sap.ui.Device, "system", {
+				phone: true,
+				tablet: false,
+				desktop: false
 			});
 
-			test("confirm", function(){
-				sap.m.MessageBox.confirm(sMessageText, {
-					onClose: callback,
-					title: sMessageTitle,
-					id: "confirmbox1",
-					styleClass: sClassName
-				});
-				this.clock.tick(500);
-				var oMessageBox = sap.ui.getCore().byId("confirmbox1");
-				ok(oMessageBox, "Dialog should be created");
-				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-				ok(oMessageBox.getLeftButton(), "Left button is created");
-				ok(oMessageBox.getRightButton(), "Right button is also created");
-				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-				ok(oMessageBox.$().hasClass(sClassName));
-				oMessageBox.destroy();
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO],
+				onClose: callback,
+				id: "messagebox5",
+				styleClass: sClassName
 			});
 
-			test("show with OLD API", function(){
-				sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
-				this.clock.tick(500);
-				var oMessageBox = sap.ui.getCore().byId("messagebox1");
-				ok(oMessageBox, "Dialog should be created");
-				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-				equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
-				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-				ok(oMessageBox.$().hasClass(sClassName));
-				oMessageBox.destroy();
-			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagebox5");
+			ok(oMessageBox.getLeftButton(), "Left button is created and leftButton aggregation is used.");
+			ok(oMessageBox.getRightButton(), "Right button is created and rightButton aggregation is used.");
+			equal(oMessageBox.getButtons().length, 0, "Buttons aggregation is empty and not used.");
+			oMessageBox.destroy();
+		});
 
-			test("alert with OLD API", function(){
-				sap.m.MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
-				this.clock.tick(500);
-				var oMessageBox = sap.ui.getCore().byId("alertbox1");
-				ok(oMessageBox, "Dialog should be created");
-				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-				ok(oMessageBox.getLeftButton(), "Left button is created");
-				ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
-				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-				ok(oMessageBox.$().hasClass(sClassName));
-				oMessageBox.destroy();
-			});
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">qUnit Page for sap.m.MessageBox</h1>
 
-			test("confirm with OLD API", function(){
-				sap.m.MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
-				this.clock.tick(500);
-				var oMessageBox = sap.ui.getCore().byId("confirmbox1");
-				ok(oMessageBox, "Dialog should be created");
-				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-				ok(oMessageBox.getLeftButton(), "Left button is created");
-				ok(oMessageBox.getRightButton(), "Right button is also created");
-				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-				ok(oMessageBox.$().hasClass(sClassName));
-				oMessageBox.destroy();
-			});
-		</script>
-	</head>
-	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.MessageBox</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
-	</body>
+<h2 id="qunit-banner"></h2>
+
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+</body>
 </html>

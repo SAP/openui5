@@ -14,7 +14,7 @@
 <script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" 
-	data-sap-ui-xx-bindingSyntax="complex"
+	data-sap-ui-compatversion="edge"
 	data-sap-ui-language="en_US">
 </script>
 
@@ -22,16 +22,26 @@
 <script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+	data-cover-flags="branchTracking"></script>
 <script>
 
+	jQuery.sap.require("sap.ui.base.ExpressionParser");
 	jQuery.sap.require("sap.ui.model.odata.Filter");
+	jQuery.sap.require("sap.ui.model.type.Currency");
 
 	var Global = {
 		type : sap.ui.model.type.String,
+		joiningFormatter : function () {
+			return Array.prototype.join.call(arguments);
+		},
 		formatter : function($) { return $; },
 		instancedType : new sap.ui.model.type.Date({
 			pattern : "yyyy-MM-dd"
-		})
+		}),
+		eventHandler: function() {}
 	}
 	
 	var oController = {
@@ -39,11 +49,14 @@
 		myformatter : function($) { return $; },
 		myInstancedType : new sap.ui.model.type.Date({
 			pattern : "yyyy-MM-dd"
-		})
+		}),
+		myeventHandler: function() {}
 	}
 	
 	var parse = sap.ui.base.ManagedObject.bindingParser;
-		
+
+	module("sap.ui.base.BindingParser");
+
 	test("Binding Parser", function(){
 		equal(parse, sap.ui.base.BindingParser.complexParser, "configuration should have set the right binding parser");
 	});
@@ -64,6 +77,14 @@
 		equal(o.path, "something", "path should be as specified");
 		ok(o.type instanceof sap.ui.model.type.String, "parse should return the global type");
 		equal(o.formatter, undefined, "parse should return the name of the formatter function");
+	});
+
+	test("Single Binding with event", function(){
+		var o = parse("{path:'something', events: {event: 'Global.eventHandler'}}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		equal(o.events.event, Global.eventHandler, "parse should return the global event handler function");
 	});
 
 	test("Single Binding with constraint regex", function(){
@@ -175,6 +196,7 @@
 		o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
 		ok(o.bindingString, "binding String should exist in binding info object");
 		equal(o.bindingString, "Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix", "bindingString stored correctly");	
+		sap.ui.base.BindingParser._keepBindingStrings = false;
 	});
 	
 	test("Escaping", function(){
@@ -197,9 +219,10 @@
 	});
 	
 	test("Context Object", function(){
-		var o = parse("Some prefix {path:'something', type: '.mytype'}, some other {path:'/lastName', formatter: '.myformatter'}", oController);
+		var o = parse("Some prefix {path:'something', type: '.mytype', events: {event: '.myeventHandler'}}, some other {path:'/lastName', formatter: '.myformatter'}", oController);
 		equal(o.parts.length, 2, "binding info should contain two parts");
 		ok(o.parts[0].type instanceof sap.ui.model.type.String, "parse should return the controller type for part 1");
+		equal(o.parts[0].events.event.guid, oController.myeventHandler.guid, "event handler for part 1 should have been resolved to eventhandler function from controller");
 		equal(o.parts[1].formatter.guid, oController.myformatter.guid, "formatter for part 2 should have been resolved to formatter function from controller");
 	});
 
@@ -207,12 +230,192 @@
 		var o = parse("{path:'something', type: '.myInstancedType'}", oController);
 		ok(o.type instanceof sap.ui.model.type.Date, "parse should return the controller type");
 	});
-	
+
+
+	jQuery.each([{
+			expression: "{={birthday/day} > 10 && {birthday/month} > 0 && {birthday/month} < 4}",
+			parts: [{path: 'birthday/day'}, {path: 'birthday/month'}, {path: 'birthday/month'}]
+		}, {
+			expression: "{={path:'birthday/day',model:'special}Name'} > 10}",
+			parts: [{path: 'birthday/day', model:'special}Name'}]
+		}], function(iIndex, oFixture) {
+
+		test("Expression binding: " + oFixture.expression , function () {
+			var oBindingInfo,
+				oParseResult = {
+					result: {
+						formatter: function () {/*empty*/},
+						parts: oFixture.parts
+					},
+					at: oFixture.expression.length - 1
+				};
+
+			this.stub(sap.ui.base.ExpressionParser, "parse", function () {
+				return oParseResult;
+			});
+
+			oBindingInfo = parse(oFixture.expression);
+
+			strictEqual(typeof sap.ui.base.ExpressionParser.parse.args[0][0], "function");
+			strictEqual(sap.ui.base.ExpressionParser.parse.args[0][1], oFixture.expression);
+			strictEqual(sap.ui.base.ExpressionParser.parse.args[0][2], 2);
+			deepEqual(oBindingInfo, {
+				formatter: oParseResult.result.formatter,
+				mode: sap.ui.model.BindingMode.OneWay,
+				parts: oFixture.parts
+			}, "binding info in success case");
+		});
+	});
+
+	test("} in complex binding property value", function() {
+		var o = parse("{path:'birthday/day',model:'special}Name'}");
+		strictEqual(typeof o, "object", "parse returns an object");
+		strictEqual(o.path, "birthday/day");
+		strictEqual(o.model, "special}Name");
+	});
+
+	test("Expression binding: error handling", function () {
+		var sMsg;
+
+		this.stub(sap.ui.base.ExpressionParser, "parse", function (fnResolveBinding, sInput) {
+			if (sInput === "{=invalid}") {
+				throw new Error("error message");
+			}
+			if (sInput === "{='foo',}") {
+				return {at: sInput.length - 2, result: {}};
+			}
+			return {at: sInput.length - 1, result: {}};
+		});
+
+		throws(function() {
+			parse("{=invalid}");
+		}, /error message/, "propagate ExpressionParser exception");
+
+		sMsg = "Expected '}' and instead saw ',' in expression binding {='foo',} at position 7";
+		throws(function() {
+			parse("{='foo',}");
+		}, new RegExp(jQuery.sap.escapeRegExp(sMsg)), "expression binding must end with }");
+	});
+
+	test("Expression binding: usage in composite binding", function () {
+		var oBindingInfo,
+			oControl = new (sap.ui.base.ManagedObject.extend("TestControl", {
+				metadata: {
+					properties: {
+						text: "string"
+					}
+				}
+			}));
+
+		oControl.setModel(new sap.ui.model.json.JSONModel(
+			{p1 : 0, p2 : "foo", p3 : "bar", p4 : 1}));
+
+		// code under test
+		oBindingInfo = parse("prefix {= ${/p1} + 10} {= ${/p2} + ${/p3}} {= ${/p4} + 20}");
+
+		strictEqual(oBindingInfo.formatter(0, "foo", "bar", 1), "prefix 10 foobar 21");
+		strictEqual(oBindingInfo.parts.length, 4, "# embedded bindings in composite binding");
+		strictEqual(oBindingInfo.parts[0].path, "/p1");
+		strictEqual(oBindingInfo.parts[1].path, "/p2");
+		strictEqual(oBindingInfo.parts[2].path, "/p3");
+		strictEqual(oBindingInfo.parts[3].path, "/p4");
+
+		// code under test
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 10 foobar 21", "prefix 10 foobar 21");
+
+		// composite binding with simple binding (no parts) + binding with parts
+		oBindingInfo = parse("prefix {= ${/p1} + 10} {/p2}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 10 foo", "prefix 10 foo");
+
+		// ...the other way 'round
+		oBindingInfo = parse("prefix {/p2} {= ${/p1} + 10}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix foo 10", "prefix foo 10");
+
+		// composite binding with complex binding syntax
+		oBindingInfo = parse("prefix {= ${path:'/p1'} + 10} {path:'/p2'}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 10 foo",
+			"composite binding with complex binding syntax");
+
+		// constant expression
+		oBindingInfo = parse("prefix {= 10} {/p2}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 10 foo", "prefix 10 foo");
+
+		// complex binding with parts
+		oBindingInfo = parse("prefix {parts:[{path:'/p1'},{path:'/p2'},{path:'/p3'}],"
+			+ "formatter:'Global.joiningFormatter'}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 0,foo,bar", "prefix 0,foo,bar");
+
+		//TODO complex binding with type: does not work (but is left untouched by mergeParts())
+		oBindingInfo = parse("prefix {parts:[{path:'/p1'},{path:'/p2'}],"
+			+ "type:'sap.ui.model.type.Currency'}");
+//		throws(function () {
+//			oControl.bindProperty("text", oBindingInfo);
+//			strictEqual(oControl.getText(), "foo0.00", "foo0.00");
+//		});
+
+		strictEqual(oBindingInfo.parts.length, 1, "# embedded bindings in composite binding");
+		ok(oBindingInfo.parts[0].type instanceof sap.ui.model.type.Currency);
+	});
+
+	test("parseExpression: uses Expression.parse", function () {
+		var sInput = "foo",
+			iStart = 0,
+			oResult = {};
+
+		this.mock(sap.ui.base.ExpressionParser).expects("parse")
+			.withExactArgs(sinon.match.func, sInput, iStart).returns(oResult);
+
+		strictEqual(sap.ui.base.BindingParser.parseExpression(sInput, iStart), oResult);
+	});
+
+	test("parseExpression: resolving", function () {
+		var sExpression = "[${/blue}?'blue':'red']",
+			oIcon = new sap.ui.core.Icon(),
+			oResult = sap.ui.base.BindingParser.parseExpression(sExpression, 1),
+			oModel = new sap.ui.model.json.JSONModel({blue: false});
+
+		strictEqual(oResult.at, sExpression.length - 1);
+		oIcon.setModel(oModel);
+		oIcon.bindProperty("color", oResult.result);
+		strictEqual(oIcon.getColor(), "red");
+
+		oModel.setProperty("/blue", true);
+		strictEqual(oIcon.getColor(), "blue");
+	});
+
+	test("Expression binding: one time binding", function () {
+		var oIcon = new sap.ui.core.Icon(),
+			oModel = new sap.ui.model.json.JSONModel({blue: false});
+
+		oIcon.setModel(oModel);
+		oIcon.bindProperty("color", parse("{:= ${/blue} ? 'blue' : 'red' }"));
+		strictEqual(oIcon.getColor(), "red");
+
+		oModel.setProperty("/blue", true);
+		strictEqual(oIcon.getColor(), "red", "one time binding -> value unchanged");
+
+		oIcon.bindProperty("color", parse("{/blue} {:= 'green' }"));
+		strictEqual(oIcon.getColor(), "true green");
+	});
+
 	</script>
 
+	<title>QUnit tests: Data binding Calculated Fields</title>
 </head>
 <body>
-<h1 id="qunit-header">QUnit tests: Data binding Calculated Fields</h1>
+<h1 id="qunit-header"></h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>

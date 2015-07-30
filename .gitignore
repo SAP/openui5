@@ -22,3 +22,11 @@ npm-debug.log
 
 # Ignore bower folder
 bower_components
+
+# Ignore Mac files
+.DS_Store
+
+# Ignore Visual Studio project and settings files
+*.sln
+*.suo
+web.config

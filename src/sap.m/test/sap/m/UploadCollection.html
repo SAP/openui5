@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>sap.m.UploadCollection</title>
-<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
 </script>
 
@@ -13,97 +13,412 @@
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 	jQuery.sap.require("sap.m.MessageToast");
 
-	// create JSON sample data
-	var oData = {
-		"items" : [{
-			"contributor" : "Susan Baker",
-			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
-			"enableEdit" : false,
-			"enableDelete" : false,
-			"fileName" : "Screenshot.jpg",
-			"fileSize" : 20,
-			"mimeType" : "image/jpg",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-30",
-			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt",
-		}, {
-			"contributor" : "John Smith",
-			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
-			"enableEdit" : true,
-			"enableDelete" : false,
-			"fileName" : "Notes.txt",
-			"fileSize" : 10,
-			"mimeType" : "text/plain",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-08-01",
-			"url" : "/pathToTheFile/Notes.txt",
-		}, {
-			"contributor" : "J Edgar Hoover",
-			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
-			"enableEdit" : true,
-			"enableDelete" : true,
-			"fileName" : "Document.txt",
-			"fileSize" : 15,
-			"mimeType" : "text/plain",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-09-01",
-			"url" : "/pathToTheFile/Document.txt",
-		}, {
-			"contributor" : "Sean O'Connel",
-			"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e028",
-			"enableEdit" : false,
-			"enableDelete" : true,
-			"fileName" : "Third Quarter Results.ppt",
-			"fileSize" : 30,
-			"mimeType" : "application/vnd.ms-powerpoint",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-29",
-			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
-		}, {
-			"contributor" : "Jane Burns",
-			"documentId" : "34e484e4-a523-6c50-685b-e5ae66069250",
-			"enableEdit" : true,
-			"enableDelete" : true,
-			"fileName" : "Business Plan Agenda.doc",
-			"fileSize" : 40,
-			"mimeType" : "application/msword",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-28",
-			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
-		}, {
-			"contributor" : "John Black",
-			"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
-			"enableEdit" : true,
-			"enableDelete" : true,
-			"fileName" : "Business Plan Topics.xls",
-			"fileSize" : 50,
-			"mimeType" : "application/msexcel",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-27",
-			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
-		}, {
-			"contributor" : "David Keane",
-			"documentId" : "6b6ccd2f-e5c2-15b7-3b67-191564850063",
-			"enableEdit" : true,
-			"enableDelete" : true,
-			"fileName" : "Instructions.pdf",
-			"fileSize" : 60,
-			"mimeType" : "application/pdf",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-07-26",
-			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
-		}, {
-			"contributor" : "Kate Brown",
-			"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
-			"enableEdit" : true,
-			"enableDelete" : true,
-			"fileName" : "Picture of a woman.png",
-			"fileSize" : 70,
-			"mimeType" : "image/png",
-			"thumbnailUrl" : "images/Woman_04.png",
-			"uploadedDate" : "2014-07-25",
-			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
+	/* =========================================================== */
+	/* ComboBox for simulation of uploading status                 */
+	/* =========================================================== */
+	var oModelCBSR = new sap.ui.model.json.JSONModel();
+	var bSimulateUploadingStatusSR = "false";
+	var oUploadCompleteStub;
+	var mDataCBSR = {
+		"items": [
+			{
+				"key": "false",
+				"text": "false"
+			},
+			{
+				"key": "true",
+				"text": "true"
+			}
+		],
+		"selected": "false"
+	};
+
+	oModelCBSR.setData(mDataCBSR);
+
+	var oListItemTemplate = new sap.ui.core.ListItem({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oComboBoxSR = new sap.m.Select({
+		items: {
+			path: "/items",
+			template: oListItemTemplate
+		},
+		selectedKey: {
+			path: "/selected"
+		},
+		change : function(oControlEvent) {
+			bSimulateUploadingStatusSR = oControlEvent.mParameters.selectedItem.getKey();
 		}
+	});
+
+	var oBackendErrorCheckBox = new sap.m.CheckBox();
+
+	oComboBoxSR.setModel(oModelCBSR);
+
+	/* =========================================================== */
+	/* ComboBox for Selection of Separator Style                   */
+	/* =========================================================== */
+	var oModelCB = new sap.ui.model.json.JSONModel();
+
+	var mDataCB = {
+		"items": [
+			{
+				"key": "All",
+				"text": "sap.m.ListSeparators.All"
+			},
+			{
+				"key": "None",
+				"text": "sap.m.ListSeparators.None"
+			}
+		],
+
+		"selected": "All"
+	};
+
+	oModelCB.setData(mDataCB);
+
+	var oComboBox = new sap.m.Select({
+		items: {
+			path: "/items",
+			template: oListItemTemplate
+		},
+
+		selectedKey: {
+			path: "/selected"
+		},
+
+		change : function(oControlEvent) {
+				var sSelected = oControlEvent.mParameters.selectedItem.getKey();
+				oUploadCollection.setShowSeparators(sSelected);
+		}
+	});
+
+	oComboBox.setModel(oModelCB);
+
+	/* =========================================================== */
+	/* UploadCollection                                            */
+	/* =========================================================== */
+	// create JSON sample data
+	// prefixes 'Dr.' & 'Date' stand for a deprecated property
+	var oData = {
+		"items" : [
+			{
+				// item contains deprecated properties and aggregations (attributes & statuses)
+				"contributor" : "Dr. David Silver",
+				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"visibleEdit" : false,
+				"visibleDelete" : false,
+				"fileName" : "Screenshot.jpg",
+				"fileSize" : 20,
+				"mimeType" : "image/jpg",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-07-30",
+				"attributes" : [{
+					"title" : "Co-author",
+					"text" : "Martin Silver"
+				}],
+				"statuses" : [{
+					"title" : "First status' title",
+					"text" : "First status' text"
+				}]
+			}, {
+				// item w/o aggregation statuses
+				"contributor" : "Dr. John Smith",
+				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
+				"enableEdit" : true,
+				"enableDelete" : false,
+				"fileName" : "Notes.txt",
+				"fileSize" : 10,
+				"mimeType" : "text/plain",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-08-01",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Notes.txt",
+				"attributes" : [{
+					"title" : "First attribute",
+					"text" : "First attribute's text"
+				}, {
+					"title" : "Second attribute",
+					"text" : "Second attribute's text"
+				}]
+			}, {
+				// item w/o aggregation attributes
+				"contributor" : "Dr. J Edgar Hoover",
+				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"visibleDelete" : false,
+				"fileName" : "Document.txt",
+				"fileSize" : 15,
+				"mimeType" : "text/plain",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-09-01",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Document.txt",
+				"statuses" : [{
+					"title" : "First status' title",
+					"text" : "First status' text"
+				}, {
+					"title" : "Second status' title",
+					"text" : "Second status' text"
+				}]
+			}, {
+				// item w/o deprecated properties
+				"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e028",
+				"enableEdit" : false,
+				"enableDelete" : true,
+				"visibleEdit" : false,
+				"fileName" : "Third Quarter Results.ppt",
+				"mimeType" : "application/vnd.ms-powerpoint",
+				"thumbnailUrl" : "",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt",
+				"attributes" : [{
+					"title" : "Uploaded",
+					"text" : "2014-07-29"
+				}, {
+					"title" : "Contributor",
+					"text" : "Sean O'Connel"
+				}, {
+					"title" : "File size",
+					"text" : "30kB"
+				}]
+			}, {
+				// item with a long attribute's text
+				"documentId" : "34e484e4-a523-6c50-685b-e5ae66069250",
+				"enableEdit" : false,
+				"enableDelete" : true,
+				"fileName" : "Business Plan Agenda.doc",
+				"mimeType" : "application/msword",
+				"thumbnailUrl" : "",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+				"attributes" : [{
+					"title" : "Uploaded",
+					"text" : "2014-07-28"
+				}, {
+					"title" : "Contributor",
+					"text" : "Jane Burns"
+				}, {
+					"title" : "Third attribute with a very long text",
+					"text" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+				}]
+			}, {
+				// item with a long attribute's title and aggregation statuses
+				"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Business Plan Topics of 2015",
+				"mimeType" : "application/msexcel",
+				"thumbnailUrl" : "",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls",
+				"attributes" : [{
+					"title" : "Uploaded",
+					"text" : "2014-07-27"
+				}, {
+					"title" : "Contributor",
+					"text" : "John Blacksmith Henderson"
+				}, {
+					"title" : "This attribute's title is as long as the story about The Wind and the Sun",
+					"text" : "no value"
+				}],
+				"statuses" : [{
+					"title" : "Status",
+					"text" : "Success",
+					"state" : sap.ui.core.ValueState.Success
+				}]
+			}, {
+				// item with aggregation statuses
+				"contributor" : "Dr. David Keane",
+				"documentId" : "6b6ccd2f-e5c2-15b7-3b67-191564850063",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Instructions.pdf",
+				"fileSize" : 60,
+				"mimeType" : "application/pdf",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-07-26",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf",
+				"statuses" : [{
+					"title" : "Status",
+					"text" : "Warning",
+					"state" : sap.ui.core.ValueState.Warning
+				}]
+			}, {
+				// item with aggregation statuses
+				"contributor" : "Dr. Kate Brown",
+				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Picture of a woman.png",
+				"fileSize" : 70,
+				"mimeType" : "image/png",
+				"thumbnailUrl" : "images/Woman_04.png",
+				"uploadedDate" : "Date: 2014-07-25",
+				"url" : "images/Woman_04.png",
+				"statuses" : [{
+					"title" : "Status",
+					"text" : "Error",
+					"state" : sap.ui.core.ValueState.Error
+				}]
+			}, {
+				// item with aggregation statuses
+				"contributor" : "Dr. Susan Baker",
+				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9d1",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Screenshot2.JPEG",
+				"fileSize" : 20,
+				"mimeType" : "image/jpg",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-07-30",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg",
+				"statuses" : [{
+					"title" : "Status",
+					"text" : "None",
+					"state" : sap.ui.core.ValueState.None
+				}]
+			}, {
+				// item with aggregation containing many attributes
+				"contributor" : "Dr. John Smith",
+				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcd2",
+				"enableEdit" : true,
+				"enableDelete" : false,
+				"fileName" : "Notes2.txt",
+				"fileSize" : 10,
+				"mimeType" : "text/plain",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-08-01",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Notes.txt",
+				"attributes" : [{
+					"title" : "Attribute 01",
+					"text" : "Value 01"
+				}, {
+					"title" : "Attribute 02",
+					"text" : "Value 02"
+				}, {
+					"title" : "Attribute 03",
+					"text" : "Value 03"
+				}, {
+					"title" : "Attribute 04",
+					"text" : "Value 04"
+				}, {
+					"title" : "Attribute 05",
+					"text" : "Value 05"
+				}, {
+					"title" : "Attribute 06",
+					"text" : "Value 06"
+				}, {
+					"title" : "Attribute 07",
+					"text" : "Value 07"
+				}, {
+					"title" : "Attribute 08",
+					"text" : "Value 08"
+				}, {
+					"title" : "Attribute 09",
+					"text" : "Value 09"
+				}, {
+					"title" : "Attribute 10",
+					"text" : "Value 10"
+				}, {
+					"title" : "Attribute 11",
+					"text" : "Value 11"
+				}, {
+					"title" : "Attribute 12",
+					"text" : "Value 12"
+				}, {
+					"title" : "Attribute 13",
+					"text" : "Value 13"
+				}, {
+					"title" : "Attribute 14",
+					"text" : "Value 14"
+				}, {
+					"title" : "Attribute 15",
+					"text" : "Value 15"
+				}, {
+					"title" : "Attribute 16",
+					"text" : "Value 16"
+				}, {
+					"title" : "Attribute 17",
+					"text" : "Value 17"
+				}, {
+					"title" : "Attribute 18",
+					"text" : "Value 18"
+				}, {
+					"title" : "Attribute 19",
+					"text" : "Value 19"
+				}, {
+					"title" : "Attribute 20",
+					"text" : "Value 20"
+				}]
+			}, {
+				// item w/o aggregations
+				"contributor" : "Dr. J Edgar Hoover",
+				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcd1",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Document2.txt",
+				"fileSize" : 15,
+				"mimeType" : "text/plain",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-09-01",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Document.txt",
+			}, {
+				"contributor" : "Dr. Sean O'Connel",
+				"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e02a",
+				"enableEdit" : false,
+				"enableDelete" : true,
+				"fileName" : "Third Quarter Results2.ppt",
+				"fileSize" : 30,
+				"mimeType" : "application/vnd.ms-powerpoint",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-07-29",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt",
+			}, {
+				"contributor" : "Dr. Jane Burns",
+				"documentId" : "34e484e4-a523-6c50-685b-e5ae6606925a",
+				"enableEdit" : false,
+				"enableDelete" : true,
+				"fileName" : "Business Plan Agenda2.doc",
+				"fileSize" : 40,
+				"mimeType" : "application/msword",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-07-28",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+			}, {
+				"contributor" : "Dr. John Black",
+				"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685aa",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Business Plan Topics2.xls",
+				"fileSize" : 50,
+				"mimeType" : "application/msexcel",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-07-27",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls",
+			}, {
+				"contributor" : "Dr. David Keane",
+				"documentId" : "6b6ccd2f-e5c2-15b7-3b67-19156485006a",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Instructions2.pdf",
+				"fileSize" : 60,
+				"mimeType" : "application/pdf",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "Date: 2014-07-26",
+				"url" : "",
+			}, {
+				"contributor" : "Dr. Kate Brown",
+				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd3217a",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Picture of a woman and Picture of a woman2 Hurra!?!?!?!.png",
+				"fileSize" : 70,
+				"mimeType" : "image/png",
+				"thumbnailUrl" : "images/Woman_04.png",
+				"uploadedDate" : "Date: 2014-07-25",
+				"url" : "images/Woman_04.png"
+			}
 		]
 	};
 
@@ -116,129 +431,187 @@
 	// set the model to the core
 	sap.ui.getCore().setModel(oModel);
 
-	// get current date
-	var fnCurrentDate = function() {
-		var date = new Date();
-		var day = date.getDate();
-		var month = date.getMonth() + 1;
-		var year = date.getFullYear();
+	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
 
-		if (day < 10) {
-			day = '0' + day
-		};
-		if (month < 10) {
-			month = '0' + month
+	/* =========================================================== */
+	/* Handle UploadCollection events                              */
+	/* =========================================================== */
+	var fnChange = function(oEvent) {
+		sap.m.MessageToast.show("Change event triggered.");
+		// simulate status uploading for screen reader support
+		if(bSimulateUploadingStatusSR === "true") {
+			if (oUploadCompleteStub === undefined) {
+				oUploadCompleteStub = oUploadCollection._onUploadComplete;
+				oUploadCollection._onUploadComplete = function () {
+					return;
+				};
+			};
+			oUploadCollection.invalidate();
+		} else if (oUploadCompleteStub) {
+			oUploadCollection._onUploadComplete = oUploadCompleteStub;
 		}
-		return day + '.' + month + '.' + year;
 	};
 
-	/* =========================================================== */
-	/* Handle FileUploader events                                  */
-	/* =========================================================== */
-	var fnChange = function(oEvent){
-	};
-	var fnFileAllowed = function(oEvent) {
-	};
 	var fnFileDeleted = function(oEvent) {
-		var oData = oModel.getData();
-		var aItems = oData.items;
+		var oData = oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
 		var sDocumentId = oEvent.getParameter("documentId");
-		var bSetData = false;
-
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems.splice(index, 1);
-				bSetData = true;
 			};
 		});
-		if (bSetData === true) {
-			oModel.setData(oData);
-		};
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("FileDeleted event triggered.");
 	};
-	var fnFileRenamed = function(oEvent) {
-		var oData = oModel.getData();
-		var aItems = oData.items;
-		var sDocumentId = oEvent.getParameter("documentId");
-		var bSetData = false;
 
+	var fnfilenameLengthExceed = function(oEvent) {
+		sap.m.MessageToast.show("FilenameLengthExceed event triggered.");
+	}
+
+	var fnFileRenamed = function(oEvent) {
+		var oData = oUploadCollection.getModel().getData();
+		var aItems = jQuery.extend(true, {}, oData).items;
+		var sDocumentId = oEvent.getParameter("documentId");
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
-				aItems[index].fileName = oEvent.getParameter("fileName");
+				aItems[index].fileName = oEvent.getParameter("item").getFileName();
 			};
 		});
-		oModel.setData(oData);
-	};
-	var fnFileSizeExceed = function(oEvent) {
-	};
-	var fnTypeMissmatch = function(oEvent) {
-	};
-	var fnUploadAborted = function(oEvent) {
-	};
-	var fnUploadComplete = function(oEvent) {
-		if (oEvent) {
-			var oData = oModel.getData();
-			var oItem = {};
-			var sUploadedFiles = oEvent.getParameters().oSource.mProperties.value;
-			sUploadedFiles = sUploadedFiles.substring(1, sUploadedFiles.length - 2);
-			var aUploadedFiles = sUploadedFiles.split(/\" "/);
-			for (var i = 0; i < aUploadedFiles.length; i++) {
-				oItem = {
-					"contributor" : "You",
-					"documentId" : new Date().getTime().toString(),
-					"fileName" : aUploadedFiles[i],
-					"fileSize" : 10, // TODO get file size
-					"mimeType" : "",
-					"thumbnailUrl" : "",
-					"uploadedDate" : fnCurrentDate(),
-					"url" : "myUrl"
-				};
-				oData.items.unshift(oItem);
-			};
-			oModel.setData(oData);
-			sap.m.MessageToast.show("Upload successful");
-		}
-	};
-	var fnUploadProgress = function(oEvent) {
+		oModel.setData({
+			"items" : aItems
+		});
+		sap.m.MessageToast.show("FileRenamed event triggered.");
 	};
 
+	var fnFileSizeExceed = function(oEvent) {
+		sap.m.MessageToast.show("FileSizeExceed event triggered.");
+	};
+
+	var fnTypeMissmatch = function(oEvent) {
+		sap.m.MessageToast.show("TypeMissmatch event triggered.");
+	};
+
+	var fnUploadComplete = function(oEvent) {
+		if (oBackendErrorCheckBox.getSelected() === false) {
+			var oData = oUploadCollection.getModel().getData();
+			var aItems = jQuery.extend(true, {}, oData).items;
+			var oItem = {};
+			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
+			// at the moment parameter fileName is not set in IE9
+			if (!sUploadedFile) {
+				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
+				sUploadedFile = aUploadedFile[0];
+			}
+			oItem = {
+				"contributor" : "You",
+				"documentId" : jQuery.now().toString(), // generate Id
+				"fileName" : sUploadedFile,
+				"fileSize" : 10, // TODO get file size
+				"mimeType" : "",
+				"thumbnailUrl" : "",
+				"uploadedDate" : new Date(jQuery.now()).toLocaleDateString(),
+				"url" : ""
+			};
+			aItems.unshift(oItem);
+			oModel.setData({
+				"items" : aItems
+			});
+		} else {
+			oUploadCollection.getBinding("items").refresh(true);
+		}
+		setTimeout(function () {
+			sap.m.MessageToast.show("UploadComplete event triggered.");
+		}, 3000);
+	};
+
+	var oAttributeTemplate = new sap.m.ObjectAttribute({
+		title : "{title}",
+		text : "{text}",
+		textDirection : "{textDirection}"
+	});
+
+	var oStatusTemplate = new sap.m.ObjectStatus({
+		title : "{title}",
+		text : "{text}",
+		state : "{state}",
+		icon : "{icon}",
+		iconDensityAware : "{iconDensityAware}",
+		textDirection : "{textDirection}"
+	});
 	
 	var oItemTemplate = new sap.m.UploadCollectionItem({
 		contributor : "{contributor}",
 		documentId : "{documentId}",
 		enableEdit : "{enableEdit}",
 		enableDelete : "{enableDelete}",
+		visibleEdit : "{visibleEdit}",
+		visibleDelete : "{visibleDelete}",
 		fileName : "{fileName}",
 		fileSize : "{fileSize}",
 		mimeType : "{mimeType}",
 		thumbnailUrl : "{thumbnailUrl}",
 		uploadedDate : "{uploadedDate}",
-		url : "{url}"
+		url : "{url}",
+		ariaLabelForPicture : "{ariaLabelForPicture}",
+		attributes : {
+			path : "attributes",
+			template : oAttributeTemplate
+		},
+		statuses : {
+			path : "statuses",
+			template : oStatusTemplate
+		}
 	});
 
 	// create instance of UploadCollection and set model
 	var oUploadCollection = new sap.m.UploadCollection({
-		maximumFilenameLength : 35,
+		maximumFilenameLength : 55,
+		multiple : true,
+		fileType : aFileTypes,
 		items : {
-			path : "/items",
+			path : "/items/",
 			template : oItemTemplate
 		},
-		multiple : true,
+		sameFilenameAllowed : false,
 		// events
 		change : fnChange,
-		fileAllowed : fnFileAllowed,
 		fileDeleted : fnFileDeleted,
+		filenameLengthExceed : fnfilenameLengthExceed,
 		fileRenamed : fnFileRenamed,
 		fileSizeExceed : fnFileSizeExceed,
 		typeMissmatch : fnTypeMissmatch,
-		uploadAborted : fnUploadAborted,
-		uploadComplete : fnUploadComplete,
-		uploadProgress : fnUploadProgress
+		uploadComplete : fnUploadComplete
 	});
-	// 	}).addStyleClass("sapUiSizeCompact");
 
-	// create a page
+	oUploadCollection.setShowSeparators(oComboBox.getSelectedKey());
+
+	/* =========================================================== */
+	/* Create Page                   */
+	/* =========================================================== */
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection",
+		headerContent : [
+			new sap.m.Button({
+				text : "Rerender UC",
+				press : function (oEvent) {
+					oUploadCollection.invalidate();
+				}
+			}),
+			new sap.m.Label({
+				text : "Simulates a backend error:"
+			}),
+			oBackendErrorCheckBox,
+			new sap.m.Label({
+				text : "Simulates the uploading status for screen reader:"
+			}),
+			oComboBoxSR,
+			new sap.m.Label({
+				text : "Layout:"
+			}),
+			oComboBox],
 		content : oUploadCollection
 	});
 

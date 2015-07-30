@@ -1,0 +1,51 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.UploadCollectionForPendingUpload.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<Page id="Page" showHeader="false">
+		<content>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Label
+					text="Layout:">
+				</Label>
+				<Select
+					id="tbSelect"
+					selectedKey="All"
+					change="onSelectChange" >
+					<core:Item key="All" text="sap.m.ListSeparators.All"/>
+					<core:Item key="None" text="sap.m.ListSeparators.None"/>
+				</Select>
+			</Toolbar>
+			<Label text="Notes"/>
+			<TextArea
+				id="TextArea"
+				cols="200"
+				height="100px" />
+			<UploadCollection
+				id="UploadCollection"
+				maximumFilenameLength="55"
+				maximumFileSize="10"
+				multiple="true"
+				sameFilenameAllowed="true"
+				instantUpload="false"
+				showSeparators="All"
+				change="onChange"
+				fileDeleted="onFileDeleted"
+				filenameLengthExceed="onFilenameLengthExceed"
+				fileSizeExceed="onFileSizeExceed"
+				typeMissmatch="onTypeMissmatch"
+				uploadComplete="onUploadComplete">
+			</UploadCollection>
+			<Button
+				id="Button"
+				text="Upload Now"
+				press="onStartUpload">
+			</Button>
+		</content>
+	</Page>
+</mvc:View>

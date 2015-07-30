@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 
 
 	/**
-	 * @class PasswordFieldRenderer.
-	 * @static
+	 * PasswordFieldRenderer.
+	 * @namespace
 	 */
 	var PasswordFieldRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
 	

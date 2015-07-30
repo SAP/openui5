@@ -1,0 +1,15 @@
+{
+	"config": {
+		"sample": {
+			"files": [
+				"Component.js",
+				"Field.fragment.xml",
+				"Template.view.xml"
+			]
+		}
+	},
+	"dependencies": [],
+	"description": "Component for XML Templating tiny sample",
+	"name": "sap.ui.core.demokit.sample.ViewTemplate.tiny",
+	"version": "1.27.1-SNAPSHOT"
+}

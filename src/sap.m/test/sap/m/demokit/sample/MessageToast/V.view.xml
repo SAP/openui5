@@ -4,7 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiSmallMarginBottom" 
 		width="100%">
 		<l:content>
 			<Button

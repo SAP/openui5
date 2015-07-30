@@ -75,8 +75,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 		var sValue = this.mProperties[sKey];
 		if (typeof (sValue) == "string") {
 			return sValue;
-		}
-		else if (sDefaultValue) {
+		} else if (sDefaultValue) {
 			return sDefaultValue;
 		}
 		return null;
@@ -123,15 +122,15 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 * RegExp used to split file into lines, also removes leading whitespace.
 	 * Note: group must be non-capturing, otherwise the line feeds will be part of the split result.
 	 */
-	var rLines = /(?:^|\r\n|\r|\n)[ \t\f]*/;
+	var rLines = /(?:\r\n|\r|\n|^)[ \t\f]*/;
 
 	/**
 	 * RegExp that handles escapes, continuation line markers and key/value separators
-	 * 
+	 *
 	 *              [---unicode escape--] [esc] [cnt] [---key/value separator---]
 	 */
 	var rEscapes = /(\\u[0-9a-fA-F]{0,4})|(\\.)|(\\$)|([ \t\f]*[ \t\f:=][ \t\f]*)/g;
-	
+
 	/**
 	 * Special escape characters as supported by properties format
 	 * @see JDK API doc for java.util.Properties
@@ -151,10 +150,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 * @private
 	 */
 	function parse(sText, oProp) {
-		
+
 		var aLines = sText.split(rLines), // split file into lines
 			sLine,sKey,sValue,bKey,i,m,iLastIndex;
-		
+
 		oProp.mProperties = {};
 		oProp.aKeys = [];
 
@@ -189,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 					sLine = aLines[++i];
 					rEscapes.lastIndex = iLastIndex = 0;
 				} else if ( m[4] ) {
-					// key/value separator					
+					// key/value separator
 					if ( bKey ) {
 						bKey = false;
 						sKey = sValue;
@@ -209,7 +208,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 			oProp.aKeys.push(sKey);
 			oProp.mProperties[sKey] = sValue;
 		}
-		
+
 		// remove duplicates from keyset (sideeffect:sort)
 		jQuery.sap.unique(oProp.aKeys);
 	}
@@ -243,26 +242,26 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 * @param {object} [mParams] Parameters used to initialize the property list
 	 * @param {string} [mParams.url] The URL to the .properties file which should be loaded.
 	 * @param {boolean} [mParams.async] Whether the .properties file which should be loaded asynchronously (Default: <code>false</code>)
-	 * @param {object} [mParams.headers] A map of additional header key/value pairs to send along with the request (see headers option of jQuery.ajax). 
+	 * @param {object} [mParams.headers] A map of additional header key/value pairs to send along with the request (see headers option of jQuery.ajax).
 	 * @return {jQuery.sap.util.Properties|Promise} A new property list instance (synchronous case). In case of asynchronous loading an ECMA Script 6 Promise is returned.
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	jQuery.sap.properties = function properties(mParams) {
 		mParams = jQuery.extend({url: undefined, headers: {}}, mParams);
-		
+
 		var bAsync = !!mParams.async,
 			oProp = new Properties();
-		
-		
+
+
 		function _parse(sText){
 			if (typeof (sText) == "string") {
 				parse(sText, oProp);
 			}
 		}
-		
+
 		function _load(){
 			var oRes;
-			
+
 			if (typeof (mParams.url) == "string") {
 				oRes = jQuery.sap.loadResource({
 					url: mParams.url,
@@ -272,10 +271,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 					async: bAsync
 				});
 			}
-			
+
 			return oRes;
 		}
-		
+
 		if (bAsync) {
 			return new window.Promise(function(resolve, reject){
 				var oRes = _load();
@@ -283,7 +282,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 					resolve(oProp);
 					return;
 				}
-				
+
 				oRes.then(function(oVal){
 					try {
 						_parse(oVal);
@@ -303,4 +302,4 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

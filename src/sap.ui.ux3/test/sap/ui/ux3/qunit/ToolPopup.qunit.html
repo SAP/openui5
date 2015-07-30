@@ -8,18 +8,19 @@
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3">
-	
+
 </script>
 
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 
 <style>
 .widePopup {
@@ -36,6 +37,12 @@
 </style>
 
 <script language="javascript">
+	sinon.config.useFakeTimers = false;
+	<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
 	var bTest = false;
 	var sBorderWidth = "";
 	var iBorderWidth = 0;
@@ -485,7 +492,7 @@
 			$Arrow = jQuery.sap.byId("tp3-arrow");
 			oArrowRect = $Arrow.rect();
 
-			sBorderWidth = oTP1.$().css("border-left-width");
+			sBorderWidth = oTP3.$().css("border-left-width");
 			iBorderWidth = parseInt(sBorderWidth, 10);
 
 			if (bTest) {
@@ -553,9 +560,9 @@
 	});
 	asyncTest("default button is focused by default", function() {
 		expect(1);
-		
+
 		oTPFocus.setDefaultButton("defaultBtn1");
-		
+
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
@@ -570,23 +577,23 @@
 	});
 	asyncTest("default button is focused by pressEnter", function() {
 		expect(1);
-		
+
 		oTPFocus.setInitialFocus("focusBtn2");
 		oTPFocus.setDefaultButton("defaultBtn1");
-		
+
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
 			var sKeyEnter = jQuery.sap.KeyCodes.ENTER;
 			var oDomRef = sap.ui.getCore().byId("FormattedTextView1").getDomRef();
 			sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyEnter);
-			
+
 			start();
 
 			bTest = document.activeElement.id === "defaultBtn1";
 			ok(bTest, "Default button was focused by pressEnter");
 		};
-		
+
 		oTPFocus.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
@@ -649,24 +656,24 @@
 
 	test("Focusable area (type check)", function() {
 		expect(4);
-		
+
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
 		oTPFocus.setAutoClose(true);
-		
+
 		// since a wrong type is given 'oValue' should be null
 		var oValue = oTPFocus.addFocusableArea(oTF);
 		ok(!!!oValue, "Wrong type is recognized while adding");
 		oValue = null; // reset result for next test
-		
+
 		oValue = oTPFocus.addFocusableArea(oTF.getId());
 		ok(!!oValue, "Correct type is accepted while adding");
 		oValue = null;
-		
+
 		oValue = oTPFocus.removeFocusableArea(oTF);
 		// since a wrong type is given 'oValue' should be null
 		ok(!!!oValue, "Wrong type is recognized while removal");
 		oValue = null;
-		
+
 		oValue = oTPFocus.removeFocusableArea(oTF.getId());
 		ok(!!oValue, "Correct type is accepted while removal");
 		oValue = null;
@@ -784,28 +791,29 @@
 
 	asyncTest("Autoclose on opener removal", function() {
 		expect(2);
-		
-		oTP1.setCloseDuration(0).close();
+
+		oTPFocus.setCloseDuration(0).close();
 		sap.ui.getCore().applyChanges();
 
-		oTP1.setCloseDuration(100).setOpenDuration(100);
-		oTP1.attachOpened(function() {
+		oTPFocus.setCloseDuration(100).setOpenDuration(100);
+		oTPFocus.attachOpened(function() {
 			// Yay, it opened...
-			ok("ToolPopup opened");
-			oTP1.attachClosed(function() {
+			ok(true, "ToolPopup opened");
+			oTPFocus.attachClosed(function() {
 				// Yay, it closed...
-				ok("ToolPopup closed itself after opener removal");
+				ok(true, "ToolPopup closed itself after opener removal");
 				start();
 			});
 
-			
+
 			oBtn1.$().remove();
+			sap.ui.getCore().applyChanges();
 		});
-		
-		
-		oTP1.open(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop);
+
+
+		oTPFocus.open(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop);
 	});
-	
+
 	var oTPMaxHeight;
 	module("Size of the ToolPopup", {
 		setup : function() {
@@ -832,8 +840,6 @@
 					text : "button10"
 				}) ],
 				opener : oBtn1,
-				maxHeight : "200px",
-				maxWidth : "120px",
 				openDuration : 0,
 				closeDuration : 0
 			}).addStyleClass("highPopup"); // setting the height to 400px
@@ -841,6 +847,8 @@
 			oBtn1.press = function() {
 				oTPMaxHeight.open();
 			};
+
+			oBtn1.placeAt("uiArea1");
 		},
 		teardown : function() {
 			oTPMaxHeight.destroy();
@@ -864,6 +872,7 @@
 			}
 		};
 
+		oTPMaxHeight.setMaxHeight("200px");
 		oTPMaxHeight.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
@@ -877,26 +886,180 @@
 			start();
 
 			oTPRect = oTPMaxHeight.$().rect();
-			bTest = oTPRect.width === 120;
+			// IE10, 11 are adding some fractions to the calculation in some cases
+			bTest = parseInt(oTPRect.width, 10) === 120;
 			ok(bTest, "ToolPopup's width of 120px");
 		};
+
+		oTPMaxHeight.setMaxWidth("120px");
+		oTPMaxHeight.attachOpened(fnOpened);
+		oBtn1.press();
+		sap.ui.getCore().applyChanges();
+	});
+
+	asyncTest("Check Resize Handler Registration", function() {
+		expect(3);
+
+		var fnOpened = function() {
+			oTPMaxHeight.detachOpened(fnOpened);
+
+			ok(!!oTPMaxHeight._sResizeID, "Resize handler attached after ToolPopup has been opened");
+
+			oTPMaxHeight.close();
+		};
+		var fnClosed = function() {
+			oTPMaxHeight.detachOpened(fnOpened);
+
+			ok(!!!oTPMaxHeight._sResizeID, "Resize handler deregistered again");
+
+			start();
+		}
+
+		oTPMaxHeight.attachOpened(fnOpened);
+		oTPMaxHeight.attachClosed(fnClosed);
+
+		ok(!!!oTPMaxHeight._sResizeID, "No resize handler attached if ToolPopup is closed");
+		oBtn1.press();
+		sap.ui.getCore().applyChanges();
+	});
+
+	asyncTest("Check if ToolPopup exceeds window", function() {
+		var fnOpened = function() {
+			oTPMaxHeight.detachOpened(fnOpened);
+
+			var iWinHeight = jQuery(window).height();
+			var oRect = oTPMaxHeight.$().rect();
+
+			ok(oRect.top + oRect.height < iWinHeight, "ToolPopup isn't bigger than window");
+
+			oRect = oTPMaxHeight.$("content").rect();
+			ok(oRect.top + oRect.height < iWinHeight, "Content properly shrinked to ToolPopup size and not bigger than window");
+
+			start();
+		};
+
+		oTPMaxHeight.setMaxHeight("0px");
+		for (var i = 0; i < 100; i++) {
+			oTPMaxHeight.addContent(new sap.ui.commons.Button({
+				text : "Blow it up"
+			}));
+		}
 
 		oTPMaxHeight.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
+
+	var oButtonContent;
+	var oTPContent;
+	module("Changing content", {
+		setup : function() {
+			oButtonContent = new sap.ui.commons.Button({
+				text : "Open"
+			}).placeAt("uiArea1");
+			oButtonContent.press = 	function() {
+					oTPContent.open();
+			};
+
+			oTPContent = new sap.ui.ux3.ToolPopup({
+				maxWidth : '200px',
+				opener : oButtonContent
+			});
+		},
+
+		teardown : function() {
+			oTPContent.destroy();
+			oButtonContent.destroy();
+		}
+	});
+
+	asyncTest("Change Content", function(){
+		expect(2);
+		var that = this;
+
+		function row(sLabel, sText, sUrl) {
+			var oControl;
+			if (!sUrl) {
+				oControl = new sap.ui.commons.TextView({
+					text : sText,
+					tooltip : sText
+				});
+			} else {
+				oControl = new sap.ui.commons.Link({
+					text : sText,
+					href : sUrl,
+					tooltip : sText,
+					target : "_blank"
+				});
+			}
+
+			var oLabel = new sap.ui.commons.Label({
+				text : sLabel + ":",
+				labelFor : oControl
+			});
+
+			var oMLCell1 = new sap.ui.commons.layout.MatrixLayoutCell({
+				hAlign : sap.ui.commons.layout.HAlign.End,
+				vAlign : sap.ui.commons.layout.VAlign.Top,
+				content : [ oLabel ]
+			});
+			var oMLCell2 = new sap.ui.commons.layout.MatrixLayoutCell({
+				hAlign : sap.ui.commons.layout.HAlign.Begin,
+				vAlign : sap.ui.commons.layout.VAlign.Top,
+				content : [ oControl ]
+			});
+
+			return new sap.ui.commons.layout.MatrixLayoutRow({
+				cells : [ oMLCell1, oMLCell2 ]
+			});
+		};
+
+		fnOpened = function() {
+			oTPContent.detachOpened(fnOpened);
+			start();
+
+			var fnApplyPosition = sinon.spy(oTPContent.oPopup, "_applyPosition");
+
+			var $Rect = oTPContent.$().rect();
+			var iOldHeight = $Rect.height;
+
+			var oLayout = new sap.ui.commons.layout.MatrixLayout({
+				rows : [ row("Date of birth", "09/09/1999"), row("Gender", "male"),
+					row("Nationality", "german"), row("VIP", "yes"),
+					row("Address", "Hauptstraße 10, Musterstadt, Germany"),
+					row("Phone", "06221/23428374"),
+					row("Fax", "06221/23423432"),
+					row("E-mail", "m.m@sap.com", "mailto:m.m@sap.com"),
+					row("Web Site", "www.sap.com", "http://www.sap.com")
+				]
+			});
+
+			oTPContent.addContent(oLayout);
+			sap.ui.getCore().applyChanges();
+
+			$Rect = oTPContent.$().rect();
+			var iNewHeight = $Rect.height;
+
+			ok(iNewHeight > iOldHeight, "Content was added when Popup was open");
+			ok(fnApplyPosition.calledOnce, "Position of Popup was updated");
+		};
+
+		oTPContent.attachOpened(fnOpened);
+		oButtonContent.press();
+	});
 </script>
 
 </head>
 <body class="sapUiBody">
+	<div style="margin-top: 100px; margin-left: 200px;" id="uiArea1"></div>
+	<div style="margin-top: 20px; margin-right: 100px; text-align: right;" id="uiArea2"></div>
+	<div style="margin-top: 100px;" id="Placeholder" tabindex="0">Placeholder for space below</div>
+
 	<h1 id="qunit-header">qUnit Page for sap.ui.ux3.ToolPopup</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture">test markup, will be hidden</div>
 
-	<div style="margin-top: 250px; margin-left: 200px;" id="uiArea1"></div>
-	<div style="margin-top: 20px; margin-right: 100px; text-align: right;" id="uiArea2"></div>
-	<div style="margin-top: 100px;" id="Placeholder" tabindex="0">Placeholder for space below</div>
 </body>
 </html>

@@ -554,23 +554,12 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Parse simple JS objects.
-	 * 
-	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
-	 * the JSON specification as a format description, but a subset of the JavaScript language.
-	 * The main difference is, that keys in objects do not need to be quoted and strings can also
-	 * be defined using apostrophes instead of quotation marks.
-	 * 
-	 * The parser does not support functions, but only boolean, number, string, object and array.
-	 * 
-	 * @param {string} The string containing the JS objects
-	 * @throws an error, if the string does not contain a valid JS object
-	 * @returns {object} the JS object
-	 * 
-	 * @since 1.11
+	 * A factory returning a tokenizer object for JS values.
+	 * Contains functions to consume tokens on an input string.
+	 * @private
+	 * @returns {object} - the tokenizer
 	 */
-	jQuery.sap.parseJS = (function() {
-
+	jQuery.sap._createJSTokenizer = function() {
 		var at, // The index of the current character
 			ch, // The current character
 			escapee = {
@@ -845,7 +834,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// Return the parse function. It will have access to all of the above
 		// functions and variables.
-		return function(source, start) {
+		function parseJS(source, start) {
 			var result;
 
 			text = source;
@@ -863,9 +852,133 @@ sap.ui.define(['jquery.sap.global'],
 				return { result : result, at : at - 1 };
 			}
 
-		};
-	}());
+		}
 
+		return {
+			array: array,
+			error: error,
+			/**
+			 * Returns the index of the current character.
+			 * @returns {number} The current character's index.
+			 */
+			getIndex: function() {
+				return at - 1;
+			},
+			getCh: function() {
+				return ch;
+			},
+			init: function(source, iIndex) {
+				text = source;
+				at = iIndex || 0;
+				ch = ' ';
+			},
+			name: name,
+			next: next,
+			number: number,
+			parseJS: parseJS,
+			/**
+			 * Advances the index in the text to <code>iIndex</code>. Fails if the new index
+			 * is smaller than the previous index.
+			 *
+			 * @param {number} iIndex - the new index
+			 */
+			setIndex: function(iIndex) {
+				if (iIndex < at - 1) {
+					throw new Error("Must not set index " + iIndex
+						+ " before previous index " + (at - 1));
+				}
+				at = iIndex;
+				next();
+			},
+			string: string,
+			value: value,
+			white: white,
+			word: word
+		};
+	};
+
+	/**
+	 * Parse simple JS objects.
+	 * 
+	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
+	 * the JSON specification as a format description, but a subset of the JavaScript language.
+	 * The main difference is, that keys in objects do not need to be quoted and strings can also
+	 * be defined using apostrophes instead of quotation marks.
+	 * 
+	 * The parser does not support functions, but only boolean, number, string, object and array.
+	 * 
+	 * @param {string} The string containing the JS objects
+	 * @throws an error, if the string does not contain a valid JS object
+	 * @returns {object} the JS object
+	 * 
+	 * @since 1.11
+	 */
+	jQuery.sap.parseJS = jQuery.sap._createJSTokenizer().parseJS;
+	
+	/**
+	 * Merge the contents of two or more objects together into the first object.
+	 * Usage is the same as jQuery.extend, but Arguments that are null or undefined are NOT ignored.
+	 * 
+	 * @since 1.26
+	 */
+	jQuery.sap.extend = function() {
+		var src, copyIsArray, copy, name, options, clone,
+			target = arguments[0] || {},
+			i = 1,
+			length = arguments.length,
+			deep = false;
+
+		// Handle a deep copy situation
+		if ( typeof target === "boolean" ) {
+			deep = target;
+
+			// skip the boolean and the target
+			target = arguments[ i ] || {};
+			i++;
+		}
+
+		// Handle case when target is a string or something (possible in deep copy)
+		if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
+			target = {};
+		}
+
+		for ( ; i < length; i++ ) {
+			
+			options = arguments[ i ];
+			
+			// Extend the base object
+			for ( name in options ) {
+				src = target[ name ];
+				copy = options[ name ];
+
+				// Prevent never-ending loop
+				if ( target === copy ) {
+					continue;
+				}
+
+				// Recurse if we're merging plain objects or arrays
+				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+					if ( copyIsArray ) {
+						copyIsArray = false;
+						clone = src && jQuery.isArray(src) ? src : [];
+
+					} else {
+						clone = src && jQuery.isPlainObject(src) ? src : {};
+					}
+
+					// Never move original objects, clone them
+					target[ name ] = jQuery.sap.extend( deep, clone, copy );
+
+				} else {
+					target[ name ] = copy;
+				}
+			}
+		}
+
+		// Return the modified object
+		return target;
+	};
+	
 	return jQuery;
 
-}, /* bExport= */ false);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Label.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup'],
-	function(jQuery, library, Control, Popup) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, library, Control, Popup, LabelEnablement) {
 	"use strict";
 
 
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Label
+	 * @alias sap.ui.commons.Label
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Label = Control.extend("sap.ui.commons.Label", /** @lends sap.ui.commons.Label.prototype */ { metadata : {
@@ -68,13 +68,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			text : {type : "string", group : "Misc", defaultValue : ''},
 	
 			/**
-			 * 
-			 * Invisible labels are not rendered.
-			 * @since 1.14.0
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
 			 * Icon to be displayed in the control.
 			 * This can be an URI to an image or an icon font URI.
 			 */
@@ -109,27 +102,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 	
-	
 	Label.prototype.onAfterRendering = function () {
 	
-		var sFor = this.getLabelForRendering();
-	
-		if (sFor) {
-			var oFor = sap.ui.getCore().byId(sFor);
-	
-			if (oFor) {
-				if (this.getTooltip_AsString() == "" || !(this.getTooltip() instanceof sap.ui.core.TooltipBase)) {
-					// no own tooltip use RichTooltip of labeled control if available
-					if (oFor.getTooltip() instanceof sap.ui.core.TooltipBase) {
-						this.oForTooltip = oFor.getTooltip();
-						this.addDelegate(this.oForTooltip);
-					}
+		var oFor = this._getLabeledControl();
+		
+		if (oFor) {
+			if (this.getTooltip_AsString() == "" || !(this.getTooltip() instanceof sap.ui.core.TooltipBase)) {
+				// no own tooltip use RichTooltip of labeled control if available
+				if (oFor.getTooltip() instanceof sap.ui.core.TooltipBase) {
+					this.oForTooltip = oFor.getTooltip();
+					this.addDelegate(this.oForTooltip);
 				}
-	
-				// attach to change of required flag of labeled control
-				oFor.attachEvent("requiredChanged",this._handleRequiredChanged, this);
-				this._oFor = oFor;
 			}
+
+			// attach to change of required flag of labeled control
+			oFor.attachEvent("requiredChanged",this._handleRequiredChanged, this);
+			this._oFor = oFor;
 		}
 	
 	};
@@ -180,7 +168,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// the value of the local required flag is ORed with the result of a "getRequired" 
 		// method of the associated "labelFor" control. If the associated control doesn't 
 		// have a getRequired method, this is treated like a return value of "false".
-		var oFor = sap.ui.getCore().byId(this.getLabelForRendering());
+		var oFor = this._getLabeledControl();
 		return this.getRequired() || (oFor && oFor.getRequired && oFor.getRequired() === true);
 	
 	};
@@ -195,16 +183,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	};
 	
-	/*
-	 * As own function to make possible to overwrite it (e.G. from Form).
-	 */
-	Label.prototype.getLabelForRendering = function(){
-	
-		return this.getLabelFor();
-	
-	};
-	
-	
 	/**
 	 * @deprecated
 	 */
@@ -218,6 +196,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Label.prototype.getReqiuredAtBegin = function(){
 		return this.getRequiredAtBegin();
 	};
+	
+	/**
+	 * Returns the labeled control instance, if exists.
+	 * @return {sap.ui.core.Control} the labeled control instance, if exists
+	 * @private
+	 */
+	Label.prototype._getLabeledControl = function() {
+		var sId = this.getLabelForRendering();
+		if (!sId) {
+			return null;
+		}
+		return sap.ui.getCore().byId(sId);
+	};
+	
+	
 	/*
 	sap.ui.commons.Label.prototype.onmouseover = function(oEvent) {
 		var oRef = this.getDomRef();
@@ -255,6 +248,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			that._oPopup.close();
 		});
 	};*/
+	
+	//Enrich Label functionality
+	LabelEnablement.enrich(Label.prototype);
 
 	return Label;
 

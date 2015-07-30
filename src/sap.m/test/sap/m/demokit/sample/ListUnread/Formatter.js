@@ -1,8 +1,13 @@
-jQuery.sap.declare("sap.m.sample.ListUnread.Formatter");
+sap.ui.define(function() {
+	"use strict";
 
-sap.m.sample.ListUnread.Formatter = {
+	var Formatter = {
 
-	randomBoolean : function () {
-		return (Math.random() < 0.5);
-	}
-};
+		randomBoolean : function () {
+			return (Math.random() < 0.5);
+		}
+	};
+
+	return Formatter;
+
+}, /* bExport= */ true);

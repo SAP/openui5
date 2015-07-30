@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/**
 		 * Constructor for a new SelectList.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+		 * @param {string} [sId] id for the new control, generated automatically if no id is given
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
@@ -23,140 +23,76 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @constructor
 		 * @public
 		 * @since 1.26.0
-		 * @name sap.m.SelectList
+		 * @alias sap.m.SelectList
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata : {
+		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * Determines whether the user can change the selection.
 				 */
-				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-				/**
-				 * Determines whether this control is visible when its parent is visible.
-				 */
-				visible : {type : "boolean", group : "Appearance", defaultValue : true},
+				enabled : { type: "boolean", group: "Behavior", defaultValue: true },
 
 				/**
 				 * Defines the width of the control. This value can be provided in all CSS units.
 				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
 
 				/**
 				 * Defines the maximum width of the control. This value can be provided in all CSS units.
 				 */
-				maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
 
 				/**
 				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
 				 */
-				selectedKey : {type : "string", group : "Data", defaultValue : null},
+				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
 				 * Id of the selected item. If the id has no corresponding aggregated item, no changes will apply.
 				 */
-				selectedItemId : {type : "string", group : "Misc", defaultValue : null}
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
 			},
-			defaultAggregation : "items",
-			aggregations : {
+			defaultAggregation: "items",
+			aggregations: {
 
 				/**
 				 * Aggregation of items to be displayed.
 				 */
-				items : {type : "sap.ui.core.Item", multiple : true, singularName : "item", bindable : "bindable"}
+				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" }
 			},
-			associations : {
+			associations: {
 
 				/**
 				 * Sets or retrieves the selected item from the aggregation named items.
 				 */
-				selectedItem : {type : "sap.ui.core.Item", multiple : false}
+				selectedItem: { type: "sap.ui.core.Item", multiple: false },
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
-			events : {
+			events: {
 
 				/**
 				 * Occurs when the user changes the selected item.
 				 */
-				selectionChange : {
-					parameters : {
+				selectionChange: {
+					parameters: {
 
 						/**
 						 * The selected item.
 						 */
-						selectedItem : {type : "sap.ui.core.Item"}
+						selectedItem: { type: "sap.ui.core.Item" }
 					}
 				}
 			}
 		}});
-
-		/**
-		 * Retrieves the item with the given key from the aggregation named items.
-		 * If duplicate keys exist, the first item matching the key is returned.
-		 *
-		 * @name sap.m.SelectList#getItemByKey
-		 * @function
-		 * @param {string} sKey
-		 *         An item key that identifies the item to retrieve.
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the first item from the aggregation named items.
-		 *
-		 * @name sap.m.SelectList#getFirstItem
-		 * @function
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the last item from the aggregation named items.
-		 *
-		 * @name sap.m.SelectList#getLastItem
-		 * @function
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the item from the aggregation named items at the given 0-based index.
-		 *
-		 * @name sap.m.SelectList#getItemAt
-		 * @function
-		 * @param {int} iIndex
-		 *         Index of the item to return.
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the enabled items from the aggregation named items.
-		 *
-		 * @name sap.m.SelectList#getEnabledItems
-		 * @function
-		 * @type sap.ui.core.Item[]
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Clear the selection.
-		 *
-		 * @name sap.m.SelectList#clearSelection
-		 * @function
-		 * @type sap.m.SelectList
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
 
 		/* =========================================================== */
 		/* Private methods and properties                              */
@@ -171,8 +107,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @param {int} iIndex
 		 * @private
-		 * @name sap.m.SelectList#_setSelectedIndex
-		 * @function
 		 */
 		SelectList.prototype._setSelectedIndex = function(iIndex, _aItems /* only for internal usage */) {
 			var oItem;
@@ -194,11 +128,8 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * according to the data model.
 		 *
 		 * @private
-		 * @name sap.m.SelectList#updateItems
-		 * @function
 		 */
 		SelectList.prototype.updateItems = function(sReason) {
-			this._bDataAvailable = false;
 			this.updateAggregation("items");
 			this._bDataAvailable = true;
 		};
@@ -213,10 +144,9 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 *
 		 * @private
-		 * @name sap.m.SelectList#refreshItems
-		 * @function
 		 */
 		SelectList.prototype.refreshItems = function() {
+			this._bDataAvailable = false;
 			this.refreshAggregation("items");
 		};
 
@@ -225,8 +155,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @param {sap.ui.core.Item} oItem The item to be activated.
 		 * @private
-		 * @name sap.m.SelectList#_activateItem
-		 * @function
 		 */
 		SelectList.prototype._activateItem = function(oItem) {
 
@@ -245,8 +173,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {object} [oDomRef] The selectList DOM reference.
 		 * @returns {array} The enabled items DOM references.
 		 * @private
-		 * @name sap.m.SelectList#_queryEnabledItemsDomRefs
-		 * @function
 		 */
 		SelectList.prototype._queryEnabledItemsDomRefs = function(oDomRef) {
 			var CSS_CLASS = "." + SelectListRenderer.CSS_CLASS + "Item";
@@ -255,16 +181,41 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			return oDomRef ? Array.prototype.slice.call(oDomRef.querySelectorAll(CSS_CLASS + ":not(" + CSS_CLASS + "Disabled)")) : [];
 		};
 
+		SelectList.prototype._handleARIAActivedescendant = function() {
+			var oActiveDescendant = jQuery(document.activeElement).control(0),
+				oDomRef = this.getDomRef();
+
+			if (oActiveDescendant && oDomRef) {
+				oDomRef.setAttribute("aria-activedescendant", oActiveDescendant.getId());
+			}
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
 		/**
+		 * Initialization hook.
+		 *
+		 * @private
+		 */
+		SelectList.prototype.init = function() {
+
+			// timeoutID used to cancel the active state added on touchstart
+			this._iStartTimeout = 0;
+
+			// id of the active touch point during the touch session
+			this._iActiveTouchId = 0;
+
+			// track coordinates of the touch point
+			this._fStartX = 0;
+			this._fStartY = 0;
+		};
+
+		/**
 		 * Required adaptations before rendering.
 		 *
 		 * @private
-		 * @name sap.m.SelectList#onBeforeRendering
-		 * @function
 		 */
 		SelectList.prototype.onBeforeRendering = function() {
 			this.synchronizeSelection();
@@ -276,28 +227,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.onAfterRendering = function() {
-			var oDomRef = this.getDomRef();
-
-			// initialize the item navigation and add apply it to the control (only once)
-			if (!this._oItemNavigation) {
-				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
-				this.addDelegate(this._oItemNavigation);
-			}
-
-			// set the root dom node that surrounds the items
-			this._oItemNavigation.setRootDomRef(oDomRef);
-
-			// set the array of DOM elements representing the items
-			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
-
-			// turn of the cycling
-			this._oItemNavigation.setCycling(false);
-
-			// set the selected index
-			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
-
-			// set the page size
-			this._oItemNavigation.setPageSize(10);
+			this.createItemNavigation();
 		};
 
 		/**
@@ -312,6 +242,8 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				this._oItemNavigation.destroy();
 				this._oItemNavigation = null;
 			}
+
+			this._$ItemPressed = null;
 		};
 
 		/* =========================================================== */
@@ -319,12 +251,10 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/* =========================================================== */
 
 		/**
-		 * Handle the touch start event on the Select.
+		 * Handle the touch start event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.SelectList#ontouchstart
-		 * @function
 		 */
 		SelectList.prototype.ontouchstart = function(oEvent) {
 
@@ -338,31 +268,91 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// add the active state to the pressed item
-			oEvent.srcControl.$().addClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
-			this._$ItemPressed = oEvent.srcControl.$();
+			var oTargetTouch = oEvent.targetTouches[0];
+
+			// track the id of the first active touch point
+			this._iActiveTouchId = oTargetTouch.identifier;
+
+			// track coordinates of the touch point relative to the viewport to determine movement/scrolling
+			this._fStartX = oTargetTouch.pageX;
+			this._fStartY = oTargetTouch.pageY;
+
+			// after a delay, set the active state to the pressed item
+			// note: the active state should not be set during scrolling
+			this._iStartTimeout = setTimeout(function() {
+				var oItemDomRef = oEvent.srcControl.$();
+
+				if (oItemDomRef) {
+
+					// add the active state to the pressed item
+					oItemDomRef.addClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
+					this._$ItemPressed = oItemDomRef;
+				}
+			}.bind(this), 100);
 		};
 
 		/**
-		 * Handle the touch end event on the Select.
+		 * Handle the touch move event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.SelectList#ontouchend
-		 * @function
 		 */
-		SelectList.prototype.ontouchend = function(oEvent) {
+		SelectList.prototype.ontouchmove = function(oEvent) {
+			var oTouch = null;
 
-			if (this.getEnabled()) {
+			if (!this.getEnabled()) {
+				return;
+			}
 
-				// mark the event for components that needs to know if the event was handled
-				oEvent.setMarked();
+			// find the active touch point
+			oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId);
+
+			// only process the active touch
+			if (oTouch && ((Math.abs(oTouch.pageX - this._fStartX) > 10) || (Math.abs(oTouch.pageY - this._fStartY) > 10))) {
+
+				// don't set the active state, there is movement and therefore no click or tap
+				clearTimeout(this._iStartTimeout);
 
 				// remove the active state
 				if (this._$ItemPressed) {
 					this._$ItemPressed.removeClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
 					this._$ItemPressed = null;
 				}
+			}
+		};
+
+		/**
+		 * Handle the touch end event on the select list.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		SelectList.prototype.ontouchend = function(oEvent) {
+			var oTouch = null;
+
+			if (!this.getEnabled()) {
+				return;
+			}
+
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+
+			// find the active touch point
+			oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId);
+
+			// process this event only if the touch we're tracking has changed
+			if (oTouch) {
+
+				setTimeout(function() {
+
+					// remove the active state
+					if (this._$ItemPressed) {
+						this._$ItemPressed.removeClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
+						this._$ItemPressed = null;
+					}
+
+					this._iStartTimeout = null;
+				}.bind(this), 100);
 			}
 		};
 
@@ -375,12 +365,10 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		SelectList.prototype.ontouchcancel = SelectList.prototype.ontouchend;
 
 		/**
-		 * Handle the tap event on the SelectList.
+		 * Handle the tap event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.SelectList#ontap
-		 * @function
 		 */
 		SelectList.prototype.ontap = function(oEvent) {
 			if (this.getEnabled()) {
@@ -411,6 +399,16 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			}
 		};
 
+		/**
+		 * Handle after an item is focused.
+		 *
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @private
+		 */
+		SelectList.prototype.onAfterFocus = function(oControlEvent) {
+			this._handleARIAActivedescendant();
+		};
+
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
@@ -419,14 +417,12 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/* protected methods                                           */
 		/* ----------------------------------------------------------- */
 
-		/**
+		/*
 		 * Retrieves the first enabled item from the aggregation named <code>items</code>.
 		 *
 		 * @param {array} [aItems]
 		 * @returns {sap.ui.core.Item | null}
 		 * @protected
-		 * @name sap.m.SelectList#findFirstEnabledItem
-		 * @function
 		 */
 		SelectList.prototype.findFirstEnabledItem = function(aItems) {
 			aItems = aItems || this.getItems();
@@ -441,46 +437,35 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Retrieves the last enabled item from the aggregation named <code>items</code>.
-		 *
-		 * @param {array} [aItems]
-		 * @returns {sap.ui.core.Item | null}
-		 * @protected
-		 * @name sap.m.SelectList#findLastEnabledItem
-		 * @function
-		 */
-		SelectList.prototype.findLastEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-			return this.findFirstEnabledItem(aItems.reverse());
-		};
-
-		/**
 		 * Update and synchronize "selectedItem" association, "selectedItemId", "selectedKey" properties and
 		 * the "selectedItem".
 		 *
 		 * @param {string | sap.ui.core.Item | null} vItem
 		 * @protected
-		 * @name sap.m.SelectList#setSelection
-		 * @function
 		 */
 		SelectList.prototype.setSelection = function(vItem) {
 			var oSelectedItem = this.getSelectedItem(),
 				CSS_CLASS = SelectListRenderer.CSS_CLASS;
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setAssociation("selectedItem", vItem || null, true);
-			this.setProperty("selectedItemId", vItem ? vItem.getId() : "", true);
+			this.setAssociation("selectedItem", vItem, true);
+			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem, true);
+
+			if (typeof vItem === "string") {
+				vItem = sap.ui.getCore().byId(vItem);
+			}
+
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
 
 			if (oSelectedItem) {
-				oSelectedItem.$().removeClass(CSS_CLASS + "ItemSelected");
+				oSelectedItem.$().removeClass(CSS_CLASS + "ItemSelected")
+								.attr("aria-selected", "false");
 			}
 
 			oSelectedItem = this.getSelectedItem();
 
 			if (oSelectedItem) {
-				oSelectedItem.$().addClass(CSS_CLASS + "ItemSelected");
+				oSelectedItem.$().addClass(CSS_CLASS + "ItemSelected")
+								.attr("aria-selected", "true");
 			}
 		};
 
@@ -488,8 +473,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * Synchronize selected item and key.
 		 *
 		 * @protected
-		 * @name sap.m.SelectList#synchronizeSelection
-		 * @function
 		 */
 		SelectList.prototype.synchronizeSelection = function() {
 
@@ -512,13 +495,11 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
-			} else if (!this.isBound("items") || this._bDataAvailable) {
-
-				vItem = this.getDefaultSelectedItem();
+			} else if (this.getDefaultSelectedItem() && (!this.isBound("items") || this._bDataAvailable)) {
 
 				// update and synchronize "selectedItem" association,
 				// "selectedKey" and "selectedItemId" properties
-				this.setSelection(vItem);
+				this.setSelection(this.getDefaultSelectedItem());
 			}
 		};
 
@@ -527,33 +508,10 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {boolean}
 		 * @protected
-		 * @name sap.m.SelectList#isSelectionSynchronized
-		 * @function
 		 */
 		SelectList.prototype.isSelectionSynchronized = function() {
 			var vItem = this.getSelectedItem();
 			return this.getSelectedKey() === (vItem && vItem.getKey());
-		};
-
-		/*
-		 * Retrieves the first enabled item from the aggregation named <code>items</code>.
-		 *
-		 * @param {array} [aItems]
-		 * @returns {sap.ui.core.Item | null}
-		 * @protected
-		 * @name sap.m.SelectList#findFirstEnabledItem
-		 * @function
-		 */
-		SelectList.prototype.findFirstEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-
-			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i].getEnabled()) {
-					return aItems[i];
-				}
-			}
-
-			return null;
 		};
 
 		/*
@@ -562,8 +520,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {array} [aItems]
 		 * @returns {sap.ui.core.Item | null}
 		 * @protected
-		 * @name sap.m.SelectList#findLastEnabledItem
-		 * @function
 		 */
 		SelectList.prototype.findLastEnabledItem = function(aItems) {
 			aItems = aItems || this.getItems();
@@ -575,8 +531,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @return {sap.ui.core.Item[]}
 		 * @protected
-		 * @name sap.m.SelectList#getVisibleItems
-		 * @function
 		 */
 		SelectList.prototype.getVisibleItems = function() {
 			return this.getItems();
@@ -587,8 +541,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
 		 * @protected
-		 * @name sap.m.SelectList#getSelectableItems
-		 * @function
 		 */
 		SelectList.prototype.getSelectableItems = function() {
 			return this.getEnabledItems(this.getVisibleItems());
@@ -602,8 +554,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {string} sValue An item value that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 * @protected
-		 * @name sap.m.SelectList#findItem
-		 * @function
 		 */
 		SelectList.prototype.findItem = function(sProperty, sValue) {
 			var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
@@ -624,8 +574,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {string} sText An item value that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 * @protected
-		 * @name sap.m.SelectList#getItemByText
-		 * @function
 		 */
 		SelectList.prototype.getItemByText = function(sText) {
 			return this.findItem("text", sText);
@@ -637,8 +585,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {sap.ui.core.Item} oItem
 		 * @returns {boolean}
 		 * @protected
-		 * @name sap.m.SelectList#isItemSelected
-		 * @function
 		 */
 		SelectList.prototype.isItemSelected = function(oItem) {
 			return oItem && (oItem.getId() === this.getAssociation("selectedItem"));
@@ -650,8 +596,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {sap.ui.core.Item[]} [aItems]
 		 * @returns {sap.ui.core.Item | null}
 		 * @protected
-		 * @name sap.m.SelectList#getDefaultSelectedItem
-		 * @function
 		 */
 		SelectList.prototype.getDefaultSelectedItem = function(aItems) {
 			return null;
@@ -661,11 +605,41 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * Clear the selection.
 		 *
 		 * @protected
-		 * @name sap.m.SelectList#clearSelection
-		 * @function
 		 */
 		SelectList.prototype.clearSelection = function() {
 			this.setSelection(null);
+		};
+
+		/*
+		 * Creates the item navigation.
+		 *
+		 */
+		SelectList.prototype.createItemNavigation = function() {
+			var oDomRef;
+
+			// initialize the item navigation and add apply it to the control (only once)
+			if (!this._oItemNavigation) {
+				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
+				this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this.onAfterFocus, this);
+				this.addEventDelegate(this._oItemNavigation);
+			}
+
+			oDomRef = this.getDomRef();
+
+			// set the root dom node that surrounds the items
+			this._oItemNavigation.setRootDomRef(oDomRef);
+
+			// set the array of DOM elements representing the items
+			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
+
+			// turn of the cycling
+			this._oItemNavigation.setCycling(false);
+
+			// set the selected index
+			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
+
+			// set the page size
+			this._oItemNavigation.setPageSize(10);
 		};
 
 		/* ----------------------------------------------------------- */
@@ -682,8 +656,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.SelectList#setSelectedItem
-		 * @function
 		 */
 		SelectList.prototype.setSelectedItem = function(vItem) {
 
@@ -715,26 +687,10 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {string | undefined} vItem New value for property <code>selectedItemId</code>.
 		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.SelectList#setSelectedItemId
-		 * @function
 		 */
 		SelectList.prototype.setSelectedItemId = function(vItem) {
 			vItem = this.validateProperty("selectedItemId", vItem);
-			var oItem = sap.ui.getCore().byId(vItem);
-
-			if (!(oItem instanceof sap.ui.core.Item) && vItem !== "" && vItem !== undefined) {
-				jQuery.sap.log.warning('Warning: setSelectedItemId() "sItem" has to be a string id of an sap.ui.core.Item instance, an empty string or undefined on', this);
-				return this;
-			}
-
-			if (!oItem) {
-				oItem = this.getDefaultSelectedItem();
-			}
-
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setSelection(oItem);
-
+			this.setSelection(vItem);
 			return this;
 		};
 
@@ -746,8 +702,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {string} sKey New value for property <code>selectedKey</code>.
 		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.SelectList#setSelectedKey
-		 * @function
 		 */
 		SelectList.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
@@ -777,8 +731,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.ui.core.Item | null} The current target of the <code>selectedItem</code> association, or null.
 		 * @public
-		 * @name sap.m.SelectList#getSelectedItem
-		 * @function
 		 */
 		SelectList.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
@@ -791,8 +743,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {int} iIndex Index of the item to return.
 		 * @returns {sap.ui.core.Item | null} Item at the given index, or null if none.
 		 * @public
-		 * @name sap.m.SelectList#getItemAt
-		 * @function
 		 */
 		SelectList.prototype.getItemAt = function(iIndex) {
 			return this.getItems()[ +iIndex] || null;
@@ -803,8 +753,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.ui.core.Item | null} The first item, or null if there are no items.
 		 * @public
-		 * @name sap.m.SelectList#getFirstItem
-		 * @function
 		 */
 		SelectList.prototype.getFirstItem = function() {
 			return this.getItems()[0] || null;
@@ -815,8 +763,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.ui.core.Item | null} The last item, or null if there are no items.
 		 * @public
-		 * @name sap.m.SelectList#getLastItem
-		 * @function
 		 */
 		SelectList.prototype.getLastItem = function() {
 			var aItems = this.getItems();
@@ -830,8 +776,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {sap.ui.core.Item[]} [aItems=getItems()] items to filter
 		 * @return {sap.ui.core.Item[]} An array containing the enabled items.
 		 * @public
-		 * @name sap.m.SelectList#getEnabledItems
-		 * @function
 		 */
 		SelectList.prototype.getEnabledItems = function(aItems) {
 			aItems = aItems || this.getItems();
@@ -847,8 +791,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {string} sKey An item key that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null}
 		 * @public
-		 * @name sap.m.SelectList#getItemByKey
-		 * @function
 		 */
 		SelectList.prototype.getItemByKey = function(sKey) {
 			return this.findItem("key", sKey);
@@ -860,8 +802,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or id.
 		 * @returns {sap.ui.core.Item} The removed item or null.
 		 * @public
-		 * @name sap.m.SelectList#removeItem
-		 * @function
 		 */
 		SelectList.prototype.removeItem = function(vItem) {
 
@@ -887,8 +827,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
 		 * @public
-		 * @name sap.m.SelectList#removeAllItems
-		 * @function
 		 */
 		SelectList.prototype.removeAllItems = function() {
 			var aItems = this.removeAllAggregation("items");
@@ -904,8 +842,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.SelectList#destroyItems
-		 * @function
 		 */
 		SelectList.prototype.destroyItems = function() {
 			this.destroyAggregation("items");

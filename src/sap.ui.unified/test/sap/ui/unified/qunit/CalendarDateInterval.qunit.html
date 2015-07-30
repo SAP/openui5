@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.unified.CalendarDateInterval
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>CalendarDateInterval - sap.ui.unified</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.CalendarDateInterval.gif">
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.unified"
+			data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- Test functions -->
+		<script language="javascript">
+
+			jQuery.sap.require("sap.ui.core.LocaleData");
+			jQuery.sap.require("sap.ui.model.type.Date");
+
+			var bSelectFired = false;
+			var oSelectedDate = undefined;
+			var oLocaleUS = new sap.ui.core.Locale("en-US");
+			var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
+
+			var oCal1 = new sap.ui.unified.CalendarDateInterval("Cal1",{
+				select: function(oEvent){
+					bSelectFired = true;
+					var oCalendar = oEvent.oSource;
+					var aSelectedDates = oCalendar.getSelectedDates();
+					if (aSelectedDates.length > 0 ) {
+						oSelectedDate = aSelectedDates[0].getStartDate();
+					}
+				}
+			}).placeAt("uiArea1");
+
+			var oCal2 = new sap.ui.unified.CalendarDateInterval("Cal2",{
+				width: "1000px",
+				startDate: new Date("2015", "1", "2"),
+				days: 14,
+				intervalSelection: true,
+				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "1", "4"), endDate: new Date("2015", "1", "6")})],
+				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "8"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
+				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "9"), endDate: new Date("2015", "1", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})]
+			}).placeAt("uiArea2");
+
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			var oToday = new Date();
+
+			qutils.delayTestStart();
+
+			module("Rendering");
+
+			test("rendered days", function() {
+				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
+				var aWeekHeaders = $DatesRow.find(".sapUiCalWH");
+				var aDays = $DatesRow.find(".sapUiCalDay");
+				equal(aWeekHeaders.length, 7, "Calendar1: 7 weekheaders rendered");
+				equal(aDays.length, 7, "Calendar1: 7 days rendered");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), oFormatYyyymmdd.format(oToday), "Calendar1: curent date is first day");
+
+				$DatesRow = sap.ui.getCore().byId("Cal2").getAggregation("month")[0].$();
+				aWeekHeaders = $DatesRow.find(".sapUiCalWH");
+				aDays = $DatesRow.find(".sapUiCalDay");
+				equal(aWeekHeaders.length, 14, "Calendar2: 14 weekheaders rendered");
+				equal(aDays.length, 14, "Calendar2: 14 days rendered");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150202", "Calendar2: first day");
+				equal(jQuery(aWeekHeaders[0]).text(), "Mon", "Weekday of first day");
+			});
+
+			test("width", function() {
+				ok(!jQuery("#Cal1").attr("style"), "Calendar1: no width set");
+				equal(jQuery("#Cal2").css("width"), "1000px", "Calendar2: width set");
+			});
+
+			module("change date via API");
+			test("setStartDate", function() {
+				oCal1.setStartDate(new Date("2015", "2", "10"));
+				var aDays = jQuery("#Cal1").find(".sapUiCalDay");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150310", "Calendar1: new start date");
+			});
+
+			test("focusDate", function() {
+				oCal1.focusDate(new Date("2015", "2", "11"));
+				var aDays = jQuery("#Cal1").find(".sapUiCalDay");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150310", "Calendar1: start date not changed");
+				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day has focus");
+
+				oCal1.focusDate(new Date("2015", "3", "11"));
+				aDays = jQuery("#Cal1").find(".sapUiCalDay");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150410", "Calendar1: new start date");
+				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
+			});
+
+			module("change date via navigation");
+			test("next/prev days", function() {
+				qutils.triggerEvent("click", "Cal1--Head-next");
+				var aDays = jQuery("#Cal1").find(".sapUiCalDay");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150417", "Calendar1: new start date");
+				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
+
+				qutils.triggerEvent("click", "Cal1--Head-prev");
+				aDays = jQuery("#Cal1").find(".sapUiCalDay");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150410", "Calendar1: new start date");
+				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
+			});
+
+			module("MonthPicker");
+			test("displayed months", function() {
+				qutils.triggerEvent("click", "Cal1--Head-B1");
+				var aMonths = jQuery("#Cal1").find(".sapUiCalMonth");
+				equal(aMonths.length, 3, "Calendar1: 3 Months rendered");
+				equal(jQuery(aMonths[0]).text(), "April", "Calendar1: first displayed month");
+				equal(jQuery(aMonths[0]).attr("tabindex"), "0", "Calendar1: first displayed month is focused");
+
+				qutils.triggerEvent("click", "Cal2--Head-B1");
+				aMonths = jQuery("#Cal2").find(".sapUiCalMonth");
+				equal(aMonths.length, 5, "Calendar2: 5 Months rendered");
+				equal(jQuery(aMonths[0]).text(), "January", "Calendar2: first displayed month");
+				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second displayed month is focused");
+			});
+
+			test("change block", function() {
+				qutils.triggerEvent("click", "Cal1--Head-prev");
+				var aMonths = jQuery("#Cal1").find(".sapUiCalMonth");
+				equal(jQuery(aMonths[0]).text(), "January", "Calendar1: first displayed month");
+				equal(jQuery(aMonths[0]).attr("tabindex"), "0", "Calendar1: first displayed month is focused");
+				qutils.triggerEvent("click", "Cal1--Head-B1");
+
+				qutils.triggerEvent("click", "Cal2--Head-next");
+				aMonths = jQuery("#Cal2").find(".sapUiCalMonth");
+				equal(jQuery(aMonths[0]).text(), "June", "Calendar2: first displayed month");
+				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second displayed month is focused");
+				qutils.triggerEvent("click", "Cal2--Head-B1");
+			});
+
+			module("YearPicker");
+			test("displayed years", function() {
+				qutils.triggerEvent("click", "Cal1--Head-B2");
+				var aYears = jQuery("#Cal1").find(".sapUiCalYear");
+				equal(aYears.length, 3, "Calendar1: 3 Years rendered");
+				equal(jQuery(aYears[0]).text(), "2014", "Calendar1: first displayed year");
+				equal(jQuery(aYears[1]).attr("tabindex"), "0", "Calendar1: second displayed year is focused");
+
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				aYears = jQuery("#Cal2").find(".sapUiCalYear");
+				equal(aYears.length, 7, "Calendar2: 7 years rendered");
+				equal(jQuery(aYears[0]).text(), "2012", "Calendar2: first displayed year");
+				equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar2: 4. displayed year is focused");
+			});
+
+			test("change block", function() {
+				qutils.triggerEvent("click", "Cal1--Head-prev");
+				var aYears = jQuery("#Cal1").find(".sapUiCalYear");
+				equal(jQuery(aYears[0]).text(), "2011", "Calendar1: first displayed year");
+				equal(jQuery(aYears[1]).attr("tabindex"), "0", "Calendar1: second displayed year is focused");
+				qutils.triggerEvent("click", "Cal1--Head-B2");
+
+				qutils.triggerEvent("click", "Cal2--Head-next");
+				aYears = jQuery("#Cal2").find(".sapUiCalYear");
+				equal(jQuery(aYears[0]).text(), "2019", "Calendar2: first displayed year");
+				equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar2: 4. displayed year is focused");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+			});
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.CalendarDateInterval</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea1"></div>
+		<br>
+		<div id="uiArea2"></div>
+	</body>
+</html>

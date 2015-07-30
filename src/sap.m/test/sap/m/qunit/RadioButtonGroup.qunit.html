@@ -236,6 +236,52 @@
 			oRBGroup.destroyButtons();
 			oRBGroup.destroy();
 		});
+
+		/*	--------------------------------------- 	*/
+		/*	        tests textDirection	            	*/
+		/*	--------------------------------------- 	*/
+
+		test("textDirection set to RTL", function() {
+			// arrange
+			var oRBGroup = new sap.m.RadioButtonGroup({
+				textDirection: sap.ui.core.TextDirection.RTL,
+				columns: 2,
+				buttons: [
+					new sap.m.RadioButton({text: "Option 1, First Column"}),
+					new sap.m.RadioButton({text: "Option 2, Second Column"})
+				]
+			});
+
+			oRBGroup.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "rtl", "Control has 'dir' property set to right to left");
+
+			// cleanup
+			oRBGroup.destroy();
+		});
+
+		test("textDirection set to LTR", function() {
+			// arrange
+			var oRBGroup = new sap.m.RadioButtonGroup({
+				textDirection: sap.ui.core.TextDirection.LTR,
+				columns: 2,
+				buttons: [
+					new sap.m.RadioButton({text: "Option 1, First Column"}),
+					new sap.m.RadioButton({text: "Option 2, Second Column"})
+				]
+			});
+
+			oRBGroup.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "ltr", "Control has 'dir' property set to left to right");
+
+			// cleanup
+			oRBGroup.destroy();
+		});
 		</script>
 	</head>
 	<body id="body">

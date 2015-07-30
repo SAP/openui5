@@ -2,30 +2,67 @@
 /* CSS for control sap.m/ActionListItem.control  */
 /* ============================================= */
 
+/* ------------------------------ */
+/* ActionListItem container       */
+/* ------------------------------ */
 .sapMALI {
 	height: 3rem;
 }
 
-/*The active indicator of the list is not specific enough to overwrite this style*/
-.sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapHCStandardBG;
-	border-color: none;
+.sapMLIB.sapMALI {
+	border-bottom: 0; /* overrides LIB style */
+	padding: 0 0.25rem; /* overrides LIB style */
 }
 
-.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapHCStandardBG;
-	border-color: none;
+/*The active indicator of the list is not specific enough to overwrite this style */
+.sapMList .sapMLIB.sapMALI {
+	background: @sapHCStandardBG; /* overrides LIB style */
 }
 
 .sapMList .sapMLIB.sapMALI:focus {
-	outline: none;
-	outline-offset: 0;
+	outline: none; /* overrides LIB style */
 }
+
+/* ------------------------------ */
+/* ActionListItem content         */
+/* ------------------------------ */
 
 .sapMALI > .sapMLIBContent {
 	height: 2.5rem;
+	border: 0.0625rem solid @sapHCStandardFG;
+	border-radius: 0.375rem;
+	box-sizing: border-box;
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
 }
 
+/* active */
+.sapMLIBActive.sapMLIB.sapMALI .sapMLIBContent {
+	background: @sapHCHighlightBG;
+}
+
+/* focus */
+.sapMList .sapMLIB.sapMALI:focus .sapMLIBContent {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: -0.125rem;
+	border: none;
+}
+/* focus in IE (outline-offset is ignored in IE) */
+[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus .sapMLIBContent {
+	outline: none;
+	border-width: 0.125rem;
+	border-style: dotted;
+	border-radius: 0;
+}
+
+/* hover */
+.sap-desktop .sapMList .sapMLIB.sapMALI:hover .sapMLIBContent {
+	background: @sapHCHighlightBG;
+}
+
+/* nested text */
 .sapMALIText {
 	color: @sapHCStandardFG;
 	font-weight: normal;
@@ -34,11 +71,9 @@
 	margin: 0 0 0 0.5rem;
 }
 
-.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
-	background: @sapHCStandardBG;
-}
-
-/* Compact size */
+/* ------------------------------ */
+/* Compact size                   */
+/* ------------------------------ */
 .sapUiSizeCompact .sapMALI {
 	height: 2rem;
 }
@@ -49,55 +84,4 @@
 
 .sapUiSizeCompact .sapMALIText {
 	font-size: @sapMFontMediumSize;
-}
-
-/* HCB Additional Styles */
-
-/* outer area */
-.sapMALI.sapMLIB {
-	border-bottom: none; /* overriding ListItemBase style */
-	padding: 0 0.25rem 0 0.25rem;
-}
-
-/* content area */
-.sapMALI > .sapMLIBContent {
-	border: 0.0625rem solid @sapHCStandardFG;
-	border-radius: 0.375rem;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-align: center;
-	-moz-box-align: center;
-	-ms-flex-align: center;
-	align-items: center;
-}
-
-/* outer area active */
-.sapMLIBActive.sapMLIB.sapMALI {
-	background: @sapHCStandardBG; /* overriding ListItemBase style */
-}
-
-/* content area active */
-.sapMLIBActive.sapMLIB.sapMALI .sapMLIBContent {
-	background: @sapHCHighlightBG;
-}
-
-/* content area focus */
-.sapMList .sapMLIB.sapMALI:focus .sapMLIBContent { /* focus on content area */
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.0625rem;
-	-moz-outline-radius: 0.375rem;
-	border: none;
-	-moz-box-sizing: content-box;
-	-webkit-box-sizing: content-box;
-	box-sizing: content-box;
-}
-
-/* content area hover */
-.sap-desktop .sapMList .sapMLIB.sapMALI:hover .sapMLIBContent {
-	background: @sapHCHighlightBG;
 }

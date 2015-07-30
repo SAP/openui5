@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * @class DOM element renderer.
 	 * @static
-	 * @name sap.ui.core.tmpl.DOMElementRenderer
+	 * @alias sap.ui.core.tmpl.DOMElementRenderer
 	 */
 	var DOMElementRenderer = {};
 	
@@ -25,8 +25,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control}
 	 *            oElement Object representation of the DOM element that should be
 	 *            rendered
-	 * @name sap.ui.core.tmpl.DOMElementRenderer.render
-	 * @function
 	 */
 	DOMElementRenderer.render = function(oRM, oElement) {
 			

@@ -19,6 +19,8 @@
 		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-calendarType="islamic"
+		data-sap-ui-language="en"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.core">
 	</script>
@@ -44,7 +46,49 @@
 			ok(window.jQuery, "window.jQuery is available");
 			ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 		});
-		
+
+		test("LegacyDateCalendarCustomizing", function() {
+			var oCfg = new sap.ui.core.Configuration(),
+				oFormatSettings = oCfg.getFormatSettings();
+
+			var aData = [{
+				"dateFormat": "A",
+				"islamicMonthStart": "14351201",
+				"gregDate": "20140925"
+			}, {
+				"dateFormat": "A",
+				"islamicMonthStart": "14360101",
+				"gregDate": "20141024"
+			}, {
+				"dateFormat": "A",
+				"islamicMonthStart": "14360201",
+				"gregDate": "20141123"
+			}];
+
+			ok(oFormatSettings, "FormatSettings object is created");
+			oFormatSettings.setLegacyDateCalendarCustomizing(aData);
+			strictEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
+		});
+
+		test("getter and setter for option 'calendar'", function() {
+			var oCfg = new sap.ui.core.Configuration(),
+				oFormatSettings = oCfg.getFormatSettings();
+
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The bootstrap parameter is respected");
+
+			oCfg.setCalendarType(null);
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The default calendar type is determined using the current locale");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+
+			oCfg.setCalendarType(sap.ui.core.CalendarType.Gregorian);
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
+
+			oCfg.setCalendarType(null);
+			oFormatSettings.setLegacyDateFormat("B");
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+		});
 	</script>
   
 </head>

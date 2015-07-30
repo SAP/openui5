@@ -10,10 +10,10 @@ sap.ui.define(['jquery.sap.global'],
 
 	
 	/**
-	 * @class Currency renderer.
+	 * Currency renderer.
 	 *
 	 * @version ${version}
-	 * @static
+	 * @namespace
 	 */
 	var CurrencyRenderer = {
 	};
@@ -28,8 +28,15 @@ sap.ui.define(['jquery.sap.global'],
 	 *            oMenu An object representation of the control that should be rendered
 	 */
 	CurrencyRenderer.render = function(oRm,oCurrency) {
+		var sTooltip = oCurrency.getTooltip_AsString();
+
 		oRm.write("<div");
 		oRm.writeControlData(oCurrency);
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+
 		oRm.addClass("sapUiUfdCurrency");
 		if (!oCurrency._hasValue()) {
 			oRm.addClass("sapUiUfdCurrencyNoVal");

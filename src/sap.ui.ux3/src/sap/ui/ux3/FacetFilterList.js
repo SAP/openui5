@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.FacetFilterList
+	 * @alias sap.ui.ux3.FacetFilterList
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilterList = Control.extend("sap.ui.ux3.FacetFilterList", /** @lends sap.ui.ux3.FacetFilterList.prototype */ { metadata : {

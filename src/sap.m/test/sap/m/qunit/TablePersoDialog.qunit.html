@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.TablePersoController</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -21,8 +21,8 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
-		
-		sinon.config.useFakeTimers = false;
+
+		sinon.config.useFakeTimers = true;
 
 		jQuery.sap.require("sap.m.TablePersoDialog");
 
@@ -37,7 +37,7 @@
 			],
 			cols: ["Name", "Color", "Number"]
 		};
-		
+
 		var oData1 = {
 				items: [
 					{ name: "Michelle"},
@@ -45,9 +45,9 @@
 					{ name: "David"},
 				],
 				cols: ["Name"]
-			};	
-	
-		
+			};
+
+
 		var oTable = new sap.m.Table("idRandomDataTable", {
 			headerToolbar: new sap.m.Toolbar({
 				content: [
@@ -69,7 +69,7 @@
 				return new sap.m.Label({ text: "{" + colname.toLowerCase() + "}" })
 			})
 		}));
-		
+
 		var oTable1 = new sap.m.Table("idRandomDataTable1", {
 			headerToolbar: new sap.m.Toolbar({
 				content: [
@@ -84,15 +84,15 @@
 				return new sap.m.Column( "column1" + colname, { header: new sap.m.Label({ text: colname })})
 			})
 		});
-		
-		oTable1.setModel(new sap.ui.model.json.JSONModel(oData1), "dataModel1");	
+
+		oTable1.setModel(new sap.ui.model.json.JSONModel(oData1), "dataModel1");
 		oTable1.bindAggregation("items", "dataModel1>/items", new sap.m.ColumnListItem({
 			cells: oData1.cols.map(function (colname) {
 				return new sap.m.Label({ text: "{" + colname.toLowerCase() + "}" })
 			})
-		}));	
-		
-		
+		}));
+
+
 		var oPersoService = {
 
 			getPersData : function () {
@@ -108,7 +108,7 @@
 				oDeferred.resolve();
 				return oDeferred.promise();
 			},
-			
+
 			getCaption : function(oColumn) {
 				if(oColumn.getHeader() && oColumn.getHeader().getText) {
 					if( oColumn.getHeader().getText() == "Color") {
@@ -117,7 +117,7 @@
 				}
 				return null;
 			},
-			
+
 			getGroup : function(oColumn) {
 				if(oColumn.getHeader() && oColumn.getHeader().getText) {
 					if( oColumn.getHeader().getText() == "Color") {
@@ -126,9 +126,9 @@
 				}
 				return "Secondary Group";
 			}
-				
+
 		};
-		
+
 		var oPersoService1 = {
 				getPersData : function () {
 					var oDeferred = new jQuery.Deferred();
@@ -143,10 +143,10 @@
 					oDeferred.resolve();
 					return oDeferred.promise();
 				}
-			};			
+			};
 
 
-		
+
 		jQuery.sap.require("sap.m.TablePersoController");
 
 		var oTPC = new sap.m.TablePersoController({
@@ -159,17 +159,7 @@
 			table: oTable1,
 			persoService: oPersoService1,
 			hasGrouping: false
-		}).activate();		
-		
-		
-		/* var oTablePersoDialog = new sap.m.TablePersoDialog({persoDialogFor: oTable});
-		oTablePersoDialog.attachConfirm(function() {
-			var oPersoData = oTablePersoDialog.retrievePersonalizations();
-			for (var c = 0, cl = oPersoData.aColumns.length; c < cl; c++) {
-				var oCol = oPersoData.aColumns[c];
-				jQuery.sap.log.info("Column '" + oCol.text + "', order " + oCol.order + ", visible: " + oCol.visible);
-			}
-		}); */
+		}).activate();
 
 		var page = new sap.m.Page("myFirstPage", {
 			title : "TablePersoDialog Test",
@@ -181,9 +171,9 @@
 		});
 
 		app.addPage(page).placeAt("content");
-		
+
 		var oTablePersoDialog = null;
-		
+
 		var oTablePersoDialog1 = null;
 
 
@@ -215,16 +205,16 @@
 			ok(jQuery('#'+oTPC.getAggregation("_tablePersoDialog")._oDialog.getId() + '-header-BarRight').children().length == 0, 'Reset All button should be hidden');
 			//Check if Select All is invisible
 			ok(!jQuery('.sapMPersoDialogLIHeader').is(':visible'), 'Select All Header should be hidden');
-			
+
 			oTPC.setShowResetAll(true);
 			oTPC.setShowSelectAll(true);
 			sap.ui.getCore().applyChanges();
 			//Check if Reset ALL Button is visible
 			ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getContent()[0].getContent()[1].$().length > 0, 'Reset All should be shown');
 			//Check if Select All is vsible
-			ok(jQuery('.sapMPersoDialogLIHeader').is(':visible'), 'Select All Header should be shown');
+				ok(jQuery('.sapMPersoDialogSelectAllCb').is(':visible'), 'Select All Checkbox should be shown');
 		});
-		
+
 
 		module("Personalizations");
 
@@ -251,41 +241,41 @@
 			var oButtonUp = sap.ui.getCore().byId("__button0");
 			var oButtonDown = sap.ui.getCore().byId("__button1");
 			var length = oDataList.getItems().length;
-			
+
 //			nothing is selected => both buttons have to be disabled!
 			ok(oButtonUp.$().hasClass('sapMBtnDisabled'), "Nothing is selected: Button Arrow Up is disabled => OK!");
 			ok(oButtonDown.$().hasClass('sapMBtnDisabled'), "Nothing is selected: Button Arrow Down is disabled => OK!");
-			
+
 			if (length > 0) {
-				oDataList.setSelectedItem(oDataList.getItems()[0], true, true);	
+				oDataList.setSelectedItem(oDataList.getItems()[0], true, true);
 				sap.ui.getCore().applyChanges();
 				ok(oButtonUp.$().hasClass('sapMBtnDisabled'), "More than one item in List, first item is selected: Button Arrow Up is disabled => OK!");
 				ok(!oButtonDown.$().hasClass('sapMBtnDisabled'), "More than one item in List, first item is selected: Button Arrow Down is enabled => OK!");
-	
-				oDataList.setSelectedItem(oDataList.getItems()[length - 1], true, true);			
+
+				oDataList.setSelectedItem(oDataList.getItems()[length - 1], true, true);
 				sap.ui.getCore().applyChanges();
 				ok(oButtonDown.$().hasClass('sapMBtnDisabled'), "More than one item in List, last item is selected: Button Arrow Down is disabled => OK!");
-				ok(!oButtonUp.$().hasClass('sapMBtnDisabled'), "More than one item in List, last item is selected: Button Arrow Up is enabled => OK!");	
+				ok(!oButtonUp.$().hasClass('sapMBtnDisabled'), "More than one item in List, last item is selected: Button Arrow Up is enabled => OK!");
 			};
-			
-			oTablePersoDialog1 = oTPC1.getTablePersoDialog();			
-			oTPC1.openDialog();			
 
-			var oDataList1 = oTablePersoDialog1._oDialog.getContent()[0].getContent()[0];
+			oTablePersoDialog1 = oTPC1.getTablePersoDialog();
+			oTPC1.openDialog();
+
+			var oDataList1 = oTablePersoDialog1._oDialog.getContent()[1].getContent()[0];
 			var oButtonUp1 = oTablePersoDialog1._oDialog.getSubHeader().getContent()[0];
 			var oButtonDown1 = oTablePersoDialog1._oDialog.getSubHeader().getContent()[1];
 //			only one item in list is available(selected) => both buttons have to be disabled!
 			if (oDataList1.getItems().length == 1) {
-				oDataList1.setSelectedItem(oDataList1.getItems()[0], true, true);	
-				sap.ui.getCore().applyChanges();			
+				oDataList1.setSelectedItem(oDataList1.getItems()[0], true, true);
+				sap.ui.getCore().applyChanges();
 				ok(oButtonUp1.$().hasClass('sapMBtnDisabled'), "One item available(selected): Button Arrow Up is disabled => OK!");
-				ok(oButtonDown1.$().hasClass('sapMBtnDisabled'), "One item available(selected): Button Arrow Down is disabled => OK!");							
+				ok(oButtonDown1.$().hasClass('sapMBtnDisabled'), "One item available(selected): Button Arrow Down is disabled => OK!");
 			};
 			var oButtonCancel1 = sap.ui.getCore().byId(oTablePersoDialog1._oDialog.getRightButton());
 			oButtonCancel1.firePress();
 		});
 
-		
+
 
 		test("After Personalization but OK pressed", function() {
 			// Re open dialog
@@ -316,7 +306,7 @@
 			strictEqual(oPersData.aColumns[1].text, "Number", "Column 1 (Color) order is now 2");
 			strictEqual(oPersData.aColumns[2].text, "Modified Color", "Column 2 (Number) is now 1");
 		});
-		
+
 		module("Many columns");
 		test("Table has more than 100 columns", function(){
 			//Arrange
@@ -343,29 +333,30 @@
 					return new sap.m.Column( "column1" + colname, { header: new sap.m.Label({ text: colname })})
 				})
 			});
-			
-			oTable2.setModel(new sap.ui.model.json.JSONModel(oData2), "dataModel2");	
-			
+
+			oTable2.setModel(new sap.ui.model.json.JSONModel(oData2), "dataModel2");
+
 			var oTPC2 = new sap.m.TablePersoController({
 				table: oTable2,
 				persoService: oPersoService,
 				hasGrouping: false
 			}).activate();
-			
+
 			//Act
 			page.addContent(oTable2);
 			sap.ui.getCore().applyChanges();
 			oTPC2.openDialog();
 			sap.ui.getCore().applyChanges();
-			
+
 			//Assert
 			var oTablePersoDialog2 = oTPC2.getTablePersoDialog();
 			strictEqual(oTablePersoDialog2._oList.getItems().length == 110, true, "TablePersoDialog displays 110 rows");
-			
+
 			//Clean up
 			oTPC2.destroy();
+			oTable2.destroy();
 		});
-		
+
 		test("Arrow buttons and scrolling", function(){
 			//Arrange
 			var oData3 = {
@@ -396,8 +387,8 @@
 					persoService: oPersoService,
 					hasGrouping: false
 				}).activate();
-			
-			
+
+
 			page.addContent(oTable3);
 			sap.ui.getCore().applyChanges();
 			oTPC3.openDialog();
@@ -407,14 +398,14 @@
 				oScrollCont = oTablePersoDialog3._oScrollContainer,
 				oButtonUp = oTablePersoDialog3._oButtonUp,
 				oButtonDown = oTablePersoDialog3._oButtonDown;
-				
-			
+
+
 			//Act
 			//Select first item
 			oTablePersoDialog3._oList.setSelectedItem(oTablePersoDialog3._oList.getItems()[0]);
 			sap.ui.getCore().applyChanges();
-			
-			
+
+
 			var spyScrollTo = this.spy(oScrollCont, "scrollTo");
 			//press 'Down button 7 times to trigger scroll down
 			for(var i=0; i<7; i++) {
@@ -428,12 +419,12 @@
 				sap.ui.getCore().applyChanges();
 			}
 		    equal(spyScrollTo.callCount, 2, "scrollTo should be called once when moving up");
-		    oTPC3.destroy();			
+		    oTPC3.destroy();
+			oTable3.destroy();
 		});
-		
+
 		module("Reset All");
-		
-		
+
 		test("Check column captions after Reset All", function(){
 			//Arrange
 			var oData4 = {
@@ -464,32 +455,41 @@
 					persoService: oPersoService,
 					hasGrouping: false
 				}).activate();
-			
-			
+
+
 			page.addContent(oTable4);
 			sap.ui.getCore().applyChanges();
-			
+
 			//Change title of first table column
 			oTable4.getColumns()[0].getHeader().setText('Bingo!');
 			sap.ui.getCore().applyChanges();
-			
+
 			oTPC4.openDialog();
 			sap.ui.getCore().applyChanges();
 			var oTablePersoDialog4 = oTPC4.getTablePersoDialog(),
-				oResetButton = oTablePersoDialog4._oDialog.getContent()[0].getContent()[1];
+				oResetButton = oTablePersoDialog4._oDialog.getContent()[0].getContent()[1],
+				oButtonDown = oTablePersoDialog4._oButtonDown,
 				oList = oTablePersoDialog4._oList;
-			
+
 			//Act
 			//Press 'Reset All'
 			oResetButton.firePress();
 			sap.ui.getCore().applyChanges();
 			equal(oList.getItems()[0].getLabel(), 'Bingo!', 'Even after reset, label should be the last rendered column name');
-			
-		    oTPC4.destroy();			
+			oList.setSelectedItem(oList.getItems()[0]);
+			oButtonDown.firePress();
+			sap.ui.getCore().applyChanges();
+			oResetButton.firePress();
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1);
+			equal(oList.getSelectedItem(), oList.getItems()[0], 'After repositioning and after reset, the last selected item is still selected');
+
+			oTPC4.destroy();
+			oTable4.destroy();
 		});
-		
-		
-		
+
+
+
 
 		module("Close");
 
@@ -503,6 +503,144 @@
 			strictEqual(oTablePersoDialog._oRb, null, "Resource bundle is nulled");
 			strictEqual(oTablePersoDialog._oP13nModel, null, "Model bundle is nulled");
 		});
+
+		module("Keyboard handling");
+
+		test("Test Initial focus", function () {
+			// arrange
+			var oTable = new sap.m.Table("testInitialFocusTable", {
+				columns: [
+					new sap.m.Column("col0", {
+						header : new sap.m.Label({text : "Column 0"}),
+						visible : true,
+					}),
+					new sap.m.Column("col1", {
+						header: new sap.m.Label({text: "Column 1"}),
+						visible : true,
+					}),
+					new sap.m.Column("col2", {
+						header: new sap.m.Label({text: "Column 2"}),
+						visible : true,
+					})]
+			});
+
+			var oPersoService = {
+				oPersoData : {
+					_persoSchemaVersion: "1.0",
+					aColumns : []
+				},
+				getPersData : function () {
+					var oDeferred = new jQuery.Deferred();
+					if(!this._oBundle) {
+						this._oBundle = this.oPersoData;
+					}
+					var oBundle = this._oBundle;
+					oDeferred.resolve(oBundle);
+					return oDeferred.promise();
+				},
+				setPersData : function (oBundle) {
+					var oDeferred = new jQuery.Deferred();
+					this._oBundle = oBundle;
+					oDeferred.resolve();
+					return oDeferred.promise();
+				}
+			};
+
+			var oTPC = new sap.m.TablePersoController({
+				table: oTable,
+				persoService: oPersoService
+			}).activate();
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oTPC.openDialog();
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1);
+
+			// assert
+			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
+			var expected = oTPC.getTablePersoDialog()._oList.getItems()[0].getId();
+			strictEqual(actual, expected, 'The focus should be on the first list item.');
+			oTPC.destroy();
+			oTable.destroy();
+				
+		});
+		
+		test("Test Initial focus with grouping", function () {
+			// arrange
+			var oTable = new sap.m.Table("testInitialFocusTable", {
+				columns: [
+					new sap.m.Column("col0", {
+						header : new sap.m.Label({text : "Column 0"}),
+						visible : true,
+					}),
+					new sap.m.Column("col1", {
+						header: new sap.m.Label({text: "Column 1"}),
+						visible : true,
+					}),
+					new sap.m.Column("col2", {
+						header: new sap.m.Label({text: "Column 2"}),
+						visible : true,
+					})]
+			});
+
+			var oPersoService = {
+				oPersoData : {
+					_persoSchemaVersion: "1.0",
+					aColumns : []
+				},
+				getPersData : function () {
+					var oDeferred = new jQuery.Deferred();
+					if(!this._oBundle) {
+						this._oBundle = this.oPersoData;
+					}
+					var oBundle = this._oBundle;
+					oDeferred.resolve(oBundle);
+					return oDeferred.promise();
+				},
+				setPersData : function (oBundle) {
+					var oDeferred = new jQuery.Deferred();
+					this._oBundle = oBundle;
+					oDeferred.resolve();
+					return oDeferred.promise();
+				},
+				
+				getGroup : function(oColumn) {
+					if(oColumn.getHeader() && oColumn.getHeader().getText) {
+						if( oColumn.getHeader().getText() == "Column 0") {
+							return "Primary Group";
+						}
+					}
+					return "Secondary Group";
+				}
+			};
+
+			var oTPC = new sap.m.TablePersoController({
+				table: oTable,
+				persoService: oPersoService,
+				hasGrouping: true
+			}).activate();
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oTPC.openDialog();
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1);
+
+			// assert
+			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
+			var expected = oTPC.getTablePersoDialog()._oList.getItems()[1].getId();
+			strictEqual(actual, expected, 'The focus should be on the first list item.');
+			oTPC.destroy();
+			oTable.destroy();
+		});
+		
+		
+		
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

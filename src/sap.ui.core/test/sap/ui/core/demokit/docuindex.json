@@ -1,20 +1,28 @@
 {
 	"explored" : {
 		"entitiesDefaults" : {
-			"appComponent" : "CA-UI5",
 			"formFactors" : "-"
 		},
-		"samplesRef" : {
-			"namespace" : "sap.ui.core.sample",
-			"ref" : "test-resources/sap/ui/core/demokit/sample"
-		},
+		"samplesRef": [
+			{
+				"namespace" : "sap.ui.core.sample",
+				"ref" : "test-resources/sap/ui/core/demokit/sample"
+			},
+			{
+				"namespace" : "sap.ui.core.tutorial",
+				"ref" : "test-resources/sap/ui/core/demokit/tutorial"
+			}
+		],
 		"entities" : [
 			{
 				"id" : "sap.ui.core.Control",
 				"name" : "Control",
 				"category" : "Display",
 				"since" : "1.0",
-				"samples" : [ "sap.ui.core.sample.ControlBusyIndicator" ]
+				"samples" : [
+					"sap.ui.core.sample.ControlBusyIndicator",
+					"sap.ui.core.sample.FieldGroup"
+				]
 			},
 			{
 				"id" : "sap.ui.core.HTML",
@@ -31,31 +39,199 @@
 				"samples" : [ "sap.ui.core.sample.Icon" ]
 			},
 			{
+				"id" : "sap.ui.core.InvisibleText",
+				"name" : "InvisibleText",
+				"category" : "Display",
+				"since" : "1.28",
+				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
+			},
+			{
+				"id" : "sap.ui.core.mvc.View",
+				"name" : "View",
+				"category" : "Display",
+				"appComponent" : "CA-UI-COR",
+				"formFactors" : "-",
+				"since" : "\"The Elders may know...\"",
+				"samples" : [
+					"sap.ui.core.sample.View.async",
+					"sap.ui.core.sample.View.preprocessor"
+				]
+			},
+			{
+				"id" : "sap.ui.core.mvc.XMLView",
+				"name" : "XMLView",
+				"category" : "Display",
+				"since" : "1.26",
+				"samples" : [
+					"sap.ui.core.sample.ViewTemplate.scenario",
+					"sap.ui.core.sample.ViewTemplate.scenario.extension",
+					"sap.ui.core.sample.ViewTemplate.tiny",
+					"sap.ui.core.sample.ViewTemplate.types",
+					"sap.ui.core.sample.ViewTemplate.valuelist"
+				]
+			},
+			{
 				"id" : "sap.ui.test.Opa5",
 				"name" : "OPA5",
 				"category" : "Testing",
 				"since" : "1.24",
-				"samples" : [ 
+				"samples" : [
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
-					"sap.ui.core.sample.OpaReuse"
+					"sap.ui.core.sample.OpaDynamicWait",
+					"sap.ui.core.sample.OpaPageObject"
 				]
 			},
 			{
 				"id" : "sap.ui.core.theming",
 				"name" : "Theming",
 				"category" : "Theming",
-				"since" : "0",
+				"since" : "1.26",
 				"samples" : [
-					"sap.ui.core.sample.ThemeCustomClasses"
+					"sap.ui.core.sample.ThemeCustomClasses",
+					"sap.ui.core.sample.BasicThemeParameters"
+				]
+			},
+		 	{
+				"id" : "sap.ui.core.routing.Targets",
+				"name" : "Targets",
+				"category" : "Routing",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TargetsStandalone"
+				]
+			},
+			{
+				"id" : "sap.ui.core.routing.Route",
+				"name" : "Route",
+				"category" : "Routing",
+				"since" : "1.16",
+				"samples" : [
+					"sap.ui.core.sample.PatternMatching"
+				]
+			},
+			{
+				"id" : "sap.ui.core.routing.Router",
+				"name" : "Router",
+				"category" : "Routing",
+				"since" : "1.16",
+				"samples" : [
+					"sap.ui.core.sample.RoutingFullscreen"
+				]
+			},
+			{
+			  "id" : "sap.ui.model.type.Date",
+			  "name" : "Date Type",
+			  "category" : "Data Binding",
+			  "since" : "1.10",
+			  "samples" : [
+				"sap.ui.core.sample.TypeDateAsDate",
+				"sap.ui.core.sample.TypeDateAsString"
+			  ]
+			},
+			{
+				"id" : "sap.ui.core.type.DateTime",
+				"name" : "DateTime Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeDateTime"
+				]
+			},
+			{
+				"id" : "sap.ui.core.type.Integer",
+				"name" : "Integer Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeInteger"
+				]
+			},
+			{
+				"id" : "sap.ui.core.type.Float",
+				"name" : "Float Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeFloat"
+				]
+			},
+			{
+				"id" : "sap.ui.core.type.Currency",
+				"name" : "Currency Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeCurrency"
+				]
+			},
+			{
+				"id" : "sap.ui.core.type.FileSize",
+				"name" : "FileSize Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeFileSize"
+				]
+			},
+			{
+				"id": "sap.ui.core.tutorial.navigation",
+				"name": "Navigation",
+				"category": "Tutorial",
+				"since": "1.30",
+				"formFactors": "-",
+				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps.",
+				"samplesAsSteps": [
+					"Creating the initial app",
+					"Enable Routing in the app",
+					"Catching invalid hashes similar to 'Not Found'",
+					"Adding a Back Button to the NotFound Page",
+					"Displaying a Target without changing the hash",
+					"Navigating to routes with hard coded patterns",
+					"Navigating to routes with mandatory parameters",
+					"Navigation to a page with a flip transition",
+					"Allowing bookmarkable tabs with optional query parameters",
+					"Lazy loading of content",
+					"Assigning multiple targets to a route",
+					"Making a search bookmarkable",
+					"Making table sorting bookmarkable",
+					"Making dialogs bookmarkable",
+					"Reusing an existing route",
+					"Handling invalid hashes by listening for bypassed events",
+					"Listening for matched events of any route"
 				]
 			}
 		],
 		"samples" : [
 			{
+				"id": "sap.ui.core.sample.TypeDateAsDate",
+				"name": "Date Type - Source As Date",
+				"description": "This sample explains the formatting options of the date type with the date being available as date object."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeDateAsString",
+				"name": "Date Type - Source As String",
+				"description": "This sample explains the formatting options of the date type with the date being available as string."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeDateTime",
+				"name": "DateTime Type",
+				"description": "This sample explains the formatting options of the datetime type."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeFileSize",
+				"name": "FileSize Type",
+				"description": "This sample explains the formatting options of the filesize type."
+			},
+			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
 				"name": "Control Busy Indicator",
 				"description": "A control's busy indicator can be used to block parts of the screen until an operation has finished. In this example we block the content of only one out of two panels."
+			},
+			{
+				"id": "sap.ui.core.sample.FieldGroup",
+				"name": "Field Groups",
+				"description": "A control's field group id can be used to define a virtual group of fields that should be validated together. Field groups can be validated usinf the ValidateFieldGroup event if the user presses the enter key in a field belonging to the field group or focusses a control outside of the field group."
 			},
 			{
 				"id": "sap.ui.core.sample.Html",
@@ -68,6 +244,61 @@
 				"description": "Built with an embedded font, icons scale well, and can be altered with CSS. They can also fire a press event. See the Icon Explorer for more icons."
 			},
 			{
+				"id": "sap.ui.core.sample.TypeInteger",
+				"name": "Integer Format",
+				"description": "Formats and parses only the integer digits. The decimal digits are ignored."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeFloat",
+				"name": "Float Format",
+				"description": "Formats and parses both integer and decimal digits."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeCurrency",
+				"name": "Currency Format",
+				"description": "Formats the number by using the parameters defined for the given currency code. Either currency symbol, currency code or none of them can be included in the final formatted string. It parses the given string into an array which contains both the currency number and currency code."
+			},
+			{
+				"id" : "sap.ui.core.sample.InvisibleText",
+				"name" : "InvisibleText",
+				"description" : "Many controls provide the associations ariaLabelledBy and ariaDescribedBy for accessibility purposes. The InvisibleText control can be used by application to provide hidden texts on the UI which can be referenced via these associations."
+			},
+			{
+				"id": "sap.ui.core.sample.View.async",
+				"name": "Async View loading and rendering",
+				"description": "Example for Views with async source loading and the impact on rendering."
+			},
+			{
+				"id": "sap.ui.core.sample.View.preprocessor",
+				"name": "Preprocessor example with XMLView",
+				"description": "A small example for View Preprocessor usage with XMLViews."
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.scenario",
+				"name": "XML Templating: demo scenario",
+				"description": "Complete demo scenario for XML Templating based on OData V4 annotations"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.scenario.extension",
+				"name": "XML Templating: demo scenario extension",
+				"description": "Complete demo scenario for XML Templating based on OData V4 annotations incl. custom extensions"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.tiny",
+				"name": "XML Templating: minimal sample",
+				"description": "Minimal sample for XML Templating. BEWARE: This is meant to be a pure code sample. (To run it, you would need a proxy which is configured properly.)"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.types",
+				"name": "XML Templating: UI5 OData types",
+				"description": "XML Templating sample with UI5 core primitive OData types"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.valuelist",
+				"name": "Separate Value List Loading",
+				"description": "Separate loading of value lists to reduce size of OData service metadata to be loaded"
+			},
+			{
 				"id": "sap.ui.core.sample.OpaMatchers",
 				"name": "Using Matchers",
 				"description": "Matchers are used to retrieve controls that have to match a condition, eg: Property matching a value"
@@ -78,14 +309,39 @@
 				"description": "OPA finds a control by its id, triggers a tap and then finds multiple controls by their ids"
 			},
 			{
-				"id": "sap.ui.core.sample.OpaReuse",
-				"name": "How to structure your OPA tests",
-				"description": "If you have complex apps you should build reuse functions to make your OPA tests maintainable."
+				"id": "sap.ui.core.sample.OpaDynamicWait",
+				"name": "How to write nested actions",
+				"description": "If you have complex control structures you are able to add actions based on the result of previous actions."
+			},
+			{
+				"id": "sap.ui.core.sample.OpaPageObject",
+				"name": "How to structure your OPA tests with Page Objects",
+				"description": "If you have multiple pages or UI areas that have several operations, you should place reuse functions in Page Objects to make your OPA tests maintainable. The example shows as well how to share and reuse functionality within and across page objects."
 			},
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
 				"name" : "Theme-dependent CSS-classes",
-				"description" : "'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls" 
+				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
+			},
+			{
+				"id" : "sap.ui.core.sample.BasicThemeParameters",
+				"name" : "Basic Theme Parameters",
+				"description" : "This sample displays a set of basic theme parameters. Available in the predefined themes 'Blue Crystal' and 'High Contrast Black'. They can be used for custom HTML or custom controls to ensure theme-dependent styling. Please ensure a semantic correct usage."
+			},
+			{
+				"id" : "sap.ui.core.sample.PatternMatching",
+				"name" : "Route Patterns",
+				"description" : "Syntax for the Route pattern property."
+			},
+			{
+				"id" : "sap.ui.core.sample.TargetsStandalone",
+				"name" : "Targets without a Router",
+				"description" : "If you do not need bookmarks, a router is too complicated you can use Targets to lazy load your views and navigate through your application."
+			},
+			{
+				"id" : "sap.ui.core.sample.RoutingFullscreen",
+				"name" : "Routing between Fullscreen pages a simple sample",
+				"description" : "A mini app with 2 pages. Both are bookmarkable."
 			}
 		]
 	}

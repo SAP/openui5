@@ -162,6 +162,7 @@
 				}, Math.round(DELAY * 6.5));
 			});
 */
+
 			asyncTest("with function pointer, two iterations", function() {
 				expect(4);
 				var callId = jQuery.sap.intervalCall(DELAY, myObject, myObject.myFunction, ["myParam1"]);
@@ -919,7 +920,95 @@
 				}	
 			});
 			
+			test("tokenizer with enhancements getCh, getIndex, init, setIndex", function () {
+				var oTokenizer = jQuery.sap._createJSTokenizer(),
+					oTokenizer2 = jQuery.sap._createJSTokenizer();
+
+				oTokenizer.init("{='foo'}");
+				strictEqual(oTokenizer.getIndex(), -1, "index after init without start index");
+				strictEqual(oTokenizer.getCh(), " ");
+
+				oTokenizer.init("{='foo'}", 2);
+				strictEqual(oTokenizer.getIndex(), 1, "index after init with start index");
+				strictEqual(oTokenizer.getCh(), " ");
+
+				oTokenizer.next();
+				strictEqual(oTokenizer.getIndex(), 2, "index after next");
+				strictEqual(oTokenizer.getCh(), "'");
+
+				oTokenizer.setIndex(7);
+				strictEqual(oTokenizer.getIndex(), 7, "index after setIndex");
+				strictEqual(oTokenizer.getCh(), "}");
+
+				throws(function() {
+					oTokenizer.setIndex(0);
+				}, /Must not set index 0 before previous index 7/, "setIndex must not go back in text");
+				oTokenizer.setIndex(42);
+				strictEqual(oTokenizer.getCh(), "", "move index beyond text end");
+
+				oTokenizer2.init("{='other foo'}");
+				ok(oTokenizer2.getIndex() !== oTokenizer.getIndex(), "different instances");
+			});
 			
+			module("jQuery.sap.extend", {
+				setup : function() {
+					myObject = {
+						prop1: "test", 
+						prop2: [0,1,2], 
+						prop3: 2, 
+						prop4: null, 
+						prop5: undefined, 
+						prop6: {
+							prop61:"test", 
+							prop62:[0,2,3], 
+							prop63: undefined, 
+							prop64: null,
+							prop65: 2
+						}
+					}
+				},
+				teardown : function() {
+					delete myObject;
+				}
+			});
+			
+			test("extend first level", function() {
+				var oClone = jQuery.sap.extend({}, myObject);
+				ok(typeof(oClone) == "object", "object clone created");
+				ok(!jQuery.isEmptyObject(oClone), "clone not plain object");
+				ok(myObject !== oClone, "object cloned successfully");
+				equal(myObject.prop6, oClone.prop6, "no deep clone");
+				equal(myObject.prop1, oClone.prop1, "property cloned successfully");
+				equal(myObject.prop2, oClone.prop2, "property cloned successfully");
+				ok(jQuery.isArray(oClone.prop2), "property cloned successfully");
+				equal(myObject.prop3, oClone.prop3, "property cloned successfully");
+				equal(myObject.prop4, oClone.prop4, "property cloned successfully");
+				equal(myObject.prop5, oClone.prop5, "property cloned successfully");
+				
+			});
+			
+			test("extend deep", function() {
+				var oClone = jQuery.sap.extend(true, {}, myObject);
+				ok(typeof(oClone) == "object", "object clone created");
+				ok(!jQuery.isEmptyObject(oClone), "clone not plain object");
+				ok(myObject !== oClone, "object cloned successfully");
+				ok(myObject.prop6 !== oClone.prop6, "deep clone");
+				equal(myObject.prop1, oClone.prop1, "property cloned successfully");
+				ok(myObject.prop2 !== oClone.prop2, "property cloned successfully");
+				ok(jQuery.isArray(oClone.prop2), "property cloned successfully");
+				equal(myObject.prop3, oClone.prop3, "property cloned successfully");
+				equal(myObject.prop4, oClone.prop4, "property cloned successfully");
+				equal(myObject.prop5, oClone.prop5, "property cloned successfully");
+			});
+			
+			test("extend: undefined/null properties", function() {
+				var oClone = jQuery.sap.extend({}, myObject);
+				equal(oClone.prop4, null, "null property cloned successfully");
+				equal(oClone.prop5, undefined, "undefined property cloned successfully");
+				equal(oClone.prop6.prop64, null, "null property cloned successfully");
+				equal(oClone.prop6.prop63, undefined, "undefined property cloned successfully");
+			});
+		
 		</script>
 	</head>
 	<body>

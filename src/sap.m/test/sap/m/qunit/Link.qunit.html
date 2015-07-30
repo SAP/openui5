@@ -18,7 +18,7 @@
 		<script type="text/javascript">
 
 		var sText = "Hello World";
-		
+
 		var oLink1 = new sap.m.Link("l1", {
 			text : sText,
 			href: "x.html",
@@ -28,8 +28,14 @@
 				ok(true, "This should be executed when the link is triggered");
 			}
 		}).placeAt("uiArea1");
-		
-		// test property accessor methods 
+
+		var oLink2 = new sap.m.Link("l2", {
+			text : sText,
+			href: "x.html",
+			enabled: false
+		}).placeAt("uiArea1");
+
+		// test property accessor methods
 
 		test("Text in HTML", function() {
 			equal(oLink1.$().text(), sText, "oLink1 text should be correct");
@@ -38,32 +44,32 @@
 		test("Width", function() {
 			strictEqual(oLink1.getDomRef().offsetWidth, 200, "oLink1 width should be correct");
 		});
-		
+
 		test("href", function() {
 			var href = oLink1.getDomRef().href;
 			strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
 		});
-		
+
 		test("Target", function() {
 			strictEqual(oLink1.getDomRef().target, "_blank", "oLink1 target should be correct");
 		});
-		
+
 		test("Press event", function(){
 			expect(1); // verifies the event handler was executed
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
-		
+
 		test("Disabled", function(){
 			expect(0); // verifies the event handler was NOT executed
 			oLink1.setEnabled(false);
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
-		
+
 		test("When width is not set max-width should apply to control", function() {
 			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();			
+			sap.ui.getCore().applyChanges();
 			ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
-			
+
 			sut.setWidth("100px");
 			sap.ui.getCore().applyChanges();
 			ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
@@ -73,21 +79,159 @@
 			oLink1.setSubtle(true);
 			sap.ui.getCore().applyChanges();
 			ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
-			
 		});
-		
+
 		test("Emphasized", function() {
 			oLink1.setEmphasized(true);
 			sap.ui.getCore().applyChanges();
 			ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
-			
+			oLink1.destroy();
+		});
+
+		test("Non-rendered Subtle values", function() {
+			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
+			expect(0);
+			var oLinkNRS = new sap.m.Link({subtle: false});
+			oLinkNRS.setSubtle(true);
+			oLinkNRS.setSubtle(false);
+			oLinkNRS.destroy();
 		});
 		
+		test("Non-rendered Emphasized values", function() {
+			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
+			expect(0);
+			var oLinkNRE = new sap.m.Link({emphasized: false});
+			oLinkNRE.setEmphasized(true);
+			oLinkNRE.setEmphasized(false);
+			oLinkNRE.destroy();
+		});
+		
+		test("Rendered initial Subtle values", function() {
+			expect(1);
+			var oLinkRIS = new sap.m.Link({subtle: true});
+			oLinkRIS.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+			ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
+			oLinkRIS.destroy();
+		});
+		
+		test("Rendered initial Emphasized values", function() {
+			expect(1);
+			var oLinkRIE = new sap.m.Link({emphasized: true});
+			oLinkRIE.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+			ok(oLinkRIE.$().hasClass('sapMLnkEmphasized'), "Link should have the 'sapMLnkEmphasized' CSS class.");
+			oLinkRIE.destroy();
+		});
+
 		test("Link should be shrinkable", function() {
-			var oLink = new sap.m.Link;
+			var oLink = new sap.m.Link();
 			ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
 			oLink.destroy();
 		});
+
+		test("Disabled link should not have the preseted href", function() {
+			equal(oLink2.$().attr("href"), "javascript:void(0);", "oLink2 href should be 'javascript:void(0);'");
+			oLink2.setEnabled(true);
+			sap.ui.getCore().applyChanges();
+			equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
+			oLink2.destroy();
+		});
+
+
+		// ARIA specific tests
+		test("ARIA specific test", function() {
+			var oLink1 = new sap.m.Link("l1", {
+				text : sText,
+				href: "x.html",
+				target: "_blank",
+				width : "200px",
+				press:function() {
+					ok(true, "This should be executed when the link is triggered");
+				}
+			}).placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+
+			// ARIA role
+			strictEqual(oLink1.$().attr("role"), "link", "Property 'role' should be 'link'");
+			// ARIA disabled
+			oLink1.setEnabled(false);
+			strictEqual(oLink1.$().attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
+			oLink1.setEnabled(true);
+			strictEqual(oLink1.$().attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
+			// ARIA describedby for Subtle link
+			oLink1.setSubtle(true);
+			notEqual(jQuery.sap.domById(oLink1.getId() + "-linkSubtle"), null, "Element with ID '" + oLink1.getId() + "-linkSubtle' should exist");
+			oLink1.setSubtle(false);
+			strictEqual(jQuery.sap.domById(oLink1.getId() + "-linkSubtle"), null, "Element with ID '" + oLink1.getId() + "-linkSubtle' should not exist");
+			// ARIA describedby for Emphasized link
+			oLink1.setEmphasized(true);
+			notEqual(jQuery.sap.domById(oLink1.getId() + "-linkEmphasized"), null, "Element with ID '" + oLink1.getId() + "-linkEmphasized' should exist");
+			oLink1.setEmphasized(false);
+			strictEqual(jQuery.sap.domById(oLink1.getId() + "-linkEmphasized"), null, "Element with ID '" + oLink1.getId() + "-linkEmphasized' should not exist");
+
+			oLink1.destroy();
+		});
+
+		test("textAlign set to END", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333",
+				textAlign: sap.ui.core.TextAlign.End
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+
+			oLink.destroy();
+		});
+
+		test("textDirection set to RTL and textAlign set to Begin", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333",
+				textAlign: sap.ui.core.TextAlign.Begin,
+				textDirection: sap.ui.core.TextDirection.RTL
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
+			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+
+			oLink.destroy();
+		});
+
+		test("textDirection set to LTR and textAlign set to END", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333",
+				textAlign: sap.ui.core.TextAlign.End,
+				textDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
+			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+
+			oLink.destroy();
+		});
+
+		test("textDirection not set", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333"
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
+
+			oLink.destroy();
+		});
+
 		</script>
 
 	</head>
@@ -97,8 +241,8 @@
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<div id="qunit-fixture">test markup, will be hidden</div>
-		<ol id="qunit-tests"></ol>	
-		
+		<ol id="qunit-tests"></ol>
+
 		<div id="uiArea1"></div>
 	</body>
 </html>

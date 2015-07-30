@@ -20,28 +20,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] initial sort order (can be either a sorter or an array of sorters)
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
-	 * @name sap.ui.model.json.JSONListBinding
+	 * @alias sap.ui.model.json.JSONListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
 	var JSONListBinding = ClientListBinding.extend("sap.ui.model.json.JSONListBinding");
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.json.JSONListBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.json.JSONListBinding.extend
-	 * @function
-	 */
-	
 	
 	/**
 	 * Return contexts for the list or a specified subset of contexts
@@ -51,8 +33,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 *
 	 * @return {Array} the contexts array
 	 * @protected
-	 * @name sap.ui.model.json.JSONListBinding#getContexts
-	 * @function
 	 */
 	JSONListBinding.prototype.getContexts = function(iStartIndex, iLength) {
 		this.iLastStartIndex = iStartIndex;
@@ -93,20 +73,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		
 		return aContexts;
 	};
+
+	JSONListBinding.prototype.getCurrentContexts = function() {
+		if (this.bUseExtendedChangeDetection) {
+			return this.aLastContexts || [];
+		} else {
+			return this.getContexts(this.iLastStartIndex, this.iLastLength);
+		}
+	};
 	
+	/**
+	 * Get indices of the list
+	 */
+	JSONListBinding.prototype.updateIndices = function() {
+		var i;
+
+		this.aIndices = [];
+		if (jQuery.isArray(this.oList)) {
+			for (i = 0; i < this.oList.length; i++) {
+				this.aIndices.push(i);
+			}
+		} else {
+			for (i in this.oList) {
+				this.aIndices.push(i);
+			}
+		}
+	};
+
 	/**
 	 * Update the list, indices array and apply sorting and filtering
 	 * @private
-	 * @name sap.ui.model.json.JSONListBinding#update
-	 * @function
 	 */
 	JSONListBinding.prototype.update = function(){
 		var oList = this.oModel._getObject(this.sPath, this.oContext);
-		if (oList && jQuery.isArray(oList)) {
-			if (this.bUseExtendedChangeDetection) {
-				this.oList = jQuery.extend(true, [], oList);
+		if (oList) {
+			if (jQuery.isArray(oList)) {
+				if (this.bUseExtendedChangeDetection) {
+					this.oList = jQuery.extend(true, [], oList);
+				} else {
+					this.oList = oList.slice(0);
+				}
 			} else {
-				this.oList = oList.slice(0);
+				this.oList = jQuery.extend(this.bUseExtendedChangeDetection, {}, oList);
 			}
 			this.updateIndices();
 			this.applyFilter();
@@ -125,8 +133,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * 
 	 * @param {boolean} bForceupdate
 	 * 
-	 * @name sap.ui.model.json.JSONListBinding#checkUpdate
-	 * @function
 	 */
 	JSONListBinding.prototype.checkUpdate = function(bForceupdate){
 		
@@ -146,6 +152,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			
 			//If the list has changed we need to update the indices first
 			var oList = this.oModel._getObject(this.sPath, this.oContext);
+			if (oList && this.oList.length != oList.length) {
+				bChangeDetected = true;
+			}
 			if (!jQuery.sap.equal(this.oList, oList)) {
 				this.update();
 			}
@@ -175,4 +184,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 
 	return JSONListBinding;
 
-}, /* bExport= */ true);
+});

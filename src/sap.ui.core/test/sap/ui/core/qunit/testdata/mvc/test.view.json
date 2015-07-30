@@ -10,6 +10,9 @@
 			"press": "doIt"
 		},
 		{
+			"Type": "sap.ui.commons.SearchField"
+		},
+		{
 			"Type":"sap.ui.commons.Button",
 			"id":"Button2",
 			"text":"Hello"

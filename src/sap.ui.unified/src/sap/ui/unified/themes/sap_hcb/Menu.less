@@ -1,17 +1,12 @@
 @sapUiMnuItmHeight: 2rem;
 @sapUiMnuItmPadding: 0.5rem;
-
-@sapUiMnuItmDfltFontsize_IE8: 16px;
-@sapUiMnuItmHeight_IE8: 2 * @sapUiMnuItmDfltFontsize_IE8;
-@sapUiMnuItmPadding_IE8: 0.5 * @sapUiMnuItmDfltFontsize_IE8;
-@sapUiMnuItmFontsize_IE8: @sapUiMnuItmDfltFontsize_IE8 - 2px;
+@sapUiMnuItmHeightCozy: 3rem;
+@sapUiMnuItmPaddingCozy: 1rem;
 
 .sapUiMnu {
 	font-family: @sapUiFontFamily;
-	font-size: @sapUiMnuItmFontsize_IE8;
 	font-size: @sapMFontMediumSize;
 	padding: 0;
-	min-width: 5 * @sapUiMnuItmDfltFontsize_IE8;
 	min-width: 5rem;
 	background-color: @sapHCStandardBG;
 	border: 2px solid @sapHCStandardFG;
@@ -27,14 +22,11 @@
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItmR {
-	width: @sapUiMnuItmPadding_IE8 + @sapUiMnuItmDfltFontsize_IE8;
 	width: @sapUiMnuItmPadding + 1rem;
 }
 
 .sapUiMnuItm {
-	height: @sapUiMnuItmHeight_IE8;
 	height: @sapUiMnuItmHeight;
-	line-height: @sapUiMnuItmHeight_IE8;
 	line-height: @sapUiMnuItmHeight;
 	border-top: 1px solid @sapHCReducedAltFG;
 	border-top: 0.0625rem solid @sapHCReducedAltFG;
@@ -47,7 +39,6 @@
 .sapUiMnuLst {
 	color: @sapHCStandardFG;
 	font-family: @sapUiFontFamily;
-	font-size: @sapUiMnuItmFontsize_IE8;
 	font-size: @sapMFontMediumSize;
 }
 
@@ -78,12 +69,10 @@
 
 .sapUiMnuItmR,
 .sapUiMnuNoIco .sapUiMnuItmL {
-	width: @sapUiMnuItmPadding_IE8;
 	width: @sapUiMnuItmPadding;
 }
 
 .sapUiMnuItmIco {
-	width: @sapUiMnuItmHeight_IE8;
 	width: @sapUiMnuItmHeight;
 	color: @sapHCStandardFG;
 }
@@ -102,8 +91,6 @@
 
 .sapUiMnuItmIco > img {
 	padding-left: 0;
-	max-width: @sapUiMnuItmHeight_IE8 / 2;
-	max-height: @sapUiMnuItmHeight_IE8 / 2;
 	max-width: @sapUiMnuItmHeight / 2;
 	max-height: @sapUiMnuItmHeight / 2;
 }
@@ -119,24 +106,20 @@
 }
 
 .sapUiMnuItmTxt {
-	padding-right: @sapUiMnuItmHeight_IE8 + @sapUiMnuItmPadding_IE8;
 	padding-right: @sapUiMnuItmHeight + @sapUiMnuItmPadding;
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItmTxt {
-	padding-right: @sapUiMnuItmHeight_IE8 + @sapUiMnuItmPadding_IE8 + @sapUiMnuItmDfltFontsize_IE8;
 	padding-right: @sapUiMnuItmHeight + @sapUiMnuItmPadding + 1rem;
 }
 
 .sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
 .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
-	padding-right: @sapUiMnuItmPadding_IE8;
 	padding-right: @sapUiMnuItmPadding;
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
-	padding-right: @sapUiMnuItmPadding_IE8 + @sapUiMnuItmDfltFontsize_IE8;
 	padding-right: @sapUiMnuItmPadding + 1rem;
 }
 
@@ -145,19 +128,14 @@
 }
 
 .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt > .sapUiMnuTfItemWrppr {
-	right: @sapUiMnuItmPadding_IE8;
 	right: @sapUiMnuItmPadding;
 }
 
 .sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
 	font-family: @sapUiFontFamily;
-	font-size: @sapUiMnuItmFontsize_IE8;
 	font-size: @sapMFontMediumSize;
-	padding: 0.125*@sapUiMnuItmDfltFontsize_IE8 0.3125*@sapUiMnuItmDfltFontsize_IE8 0.125*@sapUiMnuItmDfltFontsize_IE8 0.3125*@sapUiMnuItmDfltFontsize_IE8;
 	padding: 0.125rem 0.3125rem 0.125rem 0.3125rem;
-	margin-top: 0.1875 * @sapUiMnuItmDfltFontsize_IE8;
 	margin-top: 0.1875rem;
-	height: @sapUiMnuItmHeight_IE8 - 0.375*@sapUiMnuItmDfltFontsize_IE8;
 	height: @sapUiMnuItmHeight - 0.375rem;
 }
 
@@ -167,13 +145,10 @@
 }
 
 .sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemLbl {
-	line-height: @sapUiMnuItmHeight_IE8;
 	line-height: @sapUiMnuItmHeight;
 	font-family: @sapUiFontFamily;
-	font-size: @sapUiMnuItmFontsize_IE8;
 	font-size: @sapMFontMediumSize;
 	color: @sapHCStandardFG;
-	margin-right: @sapUiMnuItmPadding_IE8;
 	margin-right: @sapUiMnuItmPadding;
 }
 
@@ -187,14 +162,76 @@
 
 .sapUiMnuItmSbMnu {
 	right: 0;
-	width: @sapUiMnuItmHeight_IE8;
 	width: @sapUiMnuItmHeight;
 	text-align: center;
-	font-size: 0.75*@sapUiMnuItmDfltFontsize_IE8;
 	font-size: 0.75rem;
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItmSbMnu {
-	right: @sapUiMnuItmDfltFontsize_IE8;
 	right: 1rem;
+}
+
+/** Cozy Mode **/
+
+.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy {
+
+	&.sapUiMnuScroll .sapUiMnuItmR {
+		width: @sapUiMnuItmPaddingCozy + 1rem;
+	}
+	
+	.sapUiMnuItm {
+		height: @sapUiMnuItmHeightCozy;
+		line-height: @sapUiMnuItmHeightCozy;
+	}
+	
+	.sapUiMnuItmR,
+	.sapUiMnuNoIco .sapUiMnuItmL {
+		width: @sapUiMnuItmPaddingCozy;
+	}
+	
+	.sapUiMnuItmIco {
+		width: @sapUiMnuItmHeightCozy;
+		font-size: @sapUiMnuItmHeightCozy / 2 - 0.125rem;
+	}
+	
+	.sapUiMnuItmIco > img {
+		max-width: @sapUiMnuItmHeightCozy / 2 - 0.125rem;
+		max-height: @sapUiMnuItmHeightCozy / 2 - 0.125rem;
+	}
+	
+	.sapUiMnuItmTxt {
+		padding-right: @sapUiMnuItmHeightCozy + @sapUiMnuItmPaddingCozy;
+	}
+	
+	&.sapUiMnuScroll .sapUiMnuItmTxt {
+		padding-right: @sapUiMnuItmHeightCozy + @sapUiMnuItmPaddingCozy + 1rem;
+	}
+	
+	.sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
+		padding-right: @sapUiMnuItmPaddingCozy;
+	}
+	
+	&.sapUiMnuScroll .sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
+	&.sapUiMnuScroll .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
+		padding-right: @sapUiMnuItmPaddingCozy + 1rem;
+	}
+	
+	.sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt > .sapUiMnuTfItemWrppr {
+		right: @sapUiMnuItmPaddingCozy;
+	}
+	
+	.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
+		height: @sapUiMnuItmHeightCozy - 0.375rem;
+	}
+	
+	.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemLbl {
+		line-height: @sapUiMnuItmHeightCozy;
+		margin-right: @sapUiMnuItmPaddingCozy;
+	}
+	
+	.sapUiMnuItmSbMnu {
+		width: @sapUiMnuItmHeightCozy;
+	}
+
 }

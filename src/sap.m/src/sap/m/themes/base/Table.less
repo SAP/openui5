@@ -10,11 +10,6 @@
 	overflow: hidden;
 }
 
-.sapMListTbl th,
-.sapMListTbl td {
-	overflow: hidden;
-}
-
 .sapMListTbl .sapMLIB{
 	display: table-row;
 }
@@ -26,17 +21,18 @@
 	outline: none;
 }
 
-.sapMListTblCell {
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
 .sapMListTblCellNoData {
 	text-align: center;
 }
 
 .sapMListTblHeaderNone {
 	height: 0;
+}
+
+.sapMListTblCellDup > .sapMListTblCellDupCnt {
+	/* hide content visually but have it available for screen readers */
+	position: absolute;
+	clip: rect(0, 0, 0, 0);
 }
 
 tr.sapMListTblHeaderNone > th {
@@ -85,6 +81,7 @@ tr.sapMListTblHeaderNone > th {
 .sapMListTblSubCntHdr,
 .sapMListTblSubCntVal {
 	display: inline-block;
+	vertical-align: middle;
 }
 
 .sapMListTblSubCntValBlock{
@@ -146,3 +143,6 @@ tr.sapMListTblHeaderNone > th {
 		display: none;
 	}
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMListTbl");

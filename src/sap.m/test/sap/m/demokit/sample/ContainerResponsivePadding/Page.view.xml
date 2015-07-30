@@ -1,0 +1,34 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ContainerResponsivePadding.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessageStrip text="A panel by default has a fixed content padding of 1rem (16px).
+		By by setting the CSS class 'sapUiResponsiveContentPadding' to the container control
+		you will get a responsive padding based on the current screen size and the app mode around
+		the content area. On phone devices and small screens no padding is applied, on tablet devices
+		and inside a SplitApp control a medium padding is applied, and on desktop and fullscreen
+		applications a large padding is applied. Try the fullscreen mode of the Explored
+		app to see the difference" class="sapUiTinyMargin"/>
+	<Panel class="sapUiResponsiveContentPadding">
+		<headerToolbar>
+			<Toolbar height="3rem">
+				<Text text="Header" class="sapMH4FontSize"/>
+				<ToolbarSpacer />
+				<Button icon="sap-icon://settings" />
+				<Button icon="sap-icon://drop-down-list" />
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<l:HorizontalLayout>
+				<Image
+					width="10em"
+					densityAware="false"
+					src="{img>/products/pic1}" />
+			</l:HorizontalLayout>
+			<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+		</content>
+	</Panel>
+</mvc:View>

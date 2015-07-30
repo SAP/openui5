@@ -8,7 +8,7 @@
 	font-size: @sapUiDesktopFontSize;
 }
 
-.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:first-child{
+.sapUiGrid > tbody > tr.sapUiGridTitle{
 	background-color: transparent;
 }
 
@@ -17,53 +17,53 @@
 }
 
 .sapUiGrid > tbody > tr > td:first-child{
-	padding-left: 16px;
+	padding-left: 1rem;
 }
 
 .sapUiGrid > tbody > tr:first-child > td, /* if no title */
-.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td{
-	padding-top: 16px;
+.sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td{
+	padding-top: 1rem;
 }
 
 .sapUiGrid > tbody > tr > td:last-child{
-	padding-right: 16px;
+	padding-right: 1rem;
 }
 
 .sapUiGrid > tbody > tr:last-child > td{
-	padding-bottom: 16px;
+	padding-bottom: 1rem;
 }
 
 .sapUiGrid > tbody > tr > td{
-	padding: 4px 0 4px 8px;
+	padding: 0.25rem 0 0.25rem 0.5rem;
 }
 
 .sapUiFormM > .sapUiGrid > tbody > tr > td{
-	padding: 0 0 0 8px;
+	padding: 0 0 0 0.5rem;
 }
 
 .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-right: 4px;
+	padding-right: 0.25rem;
 }
 
 .sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
-	padding-bottom: 2px;
+	padding-bottom: 0.125rem;
 }
 
 .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 16px;
+	padding-top: 1rem;
 }
 
 html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 15px;
+	padding-top: 0.375rem;
 }
 
 .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 8px;
+	padding-top: 0.5rem;
 }
 
 html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel,
 html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 7px;
+	padding-top: 0.4375rem;
 }
 
 .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
@@ -75,34 +75,34 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .s
 }
 
 .sapUiGrid th > .sapUiFormTitle{
-	height: 48px;
-	line-height: 48px;
+	height: 3rem;
+	line-height: 3rem;
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
-	padding: 0 16px 0 16px;
+	padding: 0 1rem 0 1rem;
 	text-shadow: 0em 0.0625em 0em fade(@sapUiTextInverted, 100%);
 }
 
 .sapUiGrid > tbody > tr > td > .sapUiFormTitle{
 	border: none;
-	margin-bottom: 16px;
-	margin-top: 32px;
+	margin-bottom: 1rem;
+	margin-top: 2rem;
 }
 
 .sapUiGrid > tbody > tr:first-child > td > .sapUiFormTitle, /* if no title */
-.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle{
+.sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle{
 	margin-top: 0;
 }
 
 .sapUiGridSpace{
-	width: 32px;
+	width: 2rem;
 }
 
 .sapUiGrid .sapUiFormTitle > img,
 .sapUiGrid .sapUiFormTitle > span{
-	margin-right: 4px;
+	margin-right: 0.25rem;
 }
 
 .sapUiGridHeader > .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite{
-	bottom: 5px;
+	bottom: 0.3125rem;
 }

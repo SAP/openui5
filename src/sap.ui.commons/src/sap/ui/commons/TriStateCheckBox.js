@@ -7,8 +7,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	function(jQuery, library, Control) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new TriStateCheckBox.
 	 *
@@ -24,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @constructor
 	 * @public
 	 * @since 1.7.2
-	 * @name sap.ui.commons.TriStateCheckBox
+	 * @alias sap.ui.commons.TriStateCheckBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TriStateCheckBox = Control.extend("sap.ui.commons.TriStateCheckBox", /** @lends sap.ui.commons.TriStateCheckBox.prototype */ { metadata : {
@@ -41,11 +39,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Defines the text displayed next to the check box
 			 */
 			text : {type : "string", group : "Appearance", defaultValue : null},
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true},
 	
 			/**
 			 * Using this property, the control could be disabled, if required.
@@ -91,20 +84,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 	
-	
-	/**
-	 * 
-	 * Changes the current value of the control.
-	 *
-	 * @name sap.ui.commons.TriStateCheckBox#toggle
-	 * @function
-	 * @param {string} sDestState
-	 * 
-	 *         destined selection state of checkbox
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	/**
 	 * Event handler called when the check box is clicked.
@@ -174,7 +153,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Method called whenever a user clicks on a tri-state checkbox
 	 *
 	 * @param {sap.ui.commons.TriStateCheckBoxState} destState 
+	 *         destined selection state of checkbox
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TriStateCheckBox.prototype.toggle = function(destState) {
 		if (destState in sap.ui.commons.TriStateCheckBoxState) {

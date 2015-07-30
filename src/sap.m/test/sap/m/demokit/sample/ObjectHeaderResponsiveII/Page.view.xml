@@ -7,10 +7,15 @@
 	<ObjectHeader
 		id="oh1"
 		responsive="true"
-		binding="{/ProductCollection/1}"
+		fullScreenOptimized="false"
+		binding="{/ProductCollection/0}"
 		intro="{Description}"
-		title="{Name}"
-		number="{Price}"
+		title="Long title truncated to 80 chars on all devices and to 50 chars on phone portrait"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}"
 		showMarkers="true"
 		markFlagged="true"
@@ -21,19 +26,70 @@
 			<ObjectAttribute
 				title="Manufacturer"
 				text="{SupplierName}"/>
-			<ObjectAttribute 
-				title="Category"
-				text="{Category}"/>				
 		</attributes>
 		<statuses>
 			<ObjectStatus
 				title="Approval"
 				text="Pending"
 				state="Warning"/>
-			<ObjectStatus
-				title="Confirmation"
-				text="Done"
-				state="Success"/>				
 		</statuses>
+		<headerContainer>
+			<IconTabBar
+				id="itb1"
+				selectedKey="key3"
+				upperCase="true"
+				class="sapUiResponsiveContentPadding">
+				<items>
+				<IconTabFilter
+					text="Info"
+					count="{Quantity}"
+					key="key1">
+					<content>
+						<l:VerticalLayout
+							class="sapUiContentPadding"
+							width="100%">
+							<l:content>
+								<Image src="{ProductPicUrl}"/>
+								<Text text="{Width} x {Depth} x {Height} {DimUnit}"/>
+							</l:content>
+						</l:VerticalLayout>					
+					</content>
+				</IconTabFilter>
+				<IconTabFilter
+					text="Activities"
+					count="10"
+					key="key2">
+					<content>
+						<l:VerticalLayout
+							class="sapUiContentPadding"
+							width="100%">
+							<l:content>
+								<Text text="Activity content goes here ..."/>
+							</l:content>
+						</l:VerticalLayout>
+					</content>
+				</IconTabFilter>
+				<IconTabFilter
+					text="Attachments"
+					count="1"
+					key="key3">
+					<content>
+						<Link text="Attachment" press="onPress"/>
+					</content>
+				</IconTabFilter>
+				<IconTabFilter
+					text="PartnerInfo"
+					key="key4"
+					count="1">
+					<content>
+						<Link
+							text="Partner SAP SE"
+							target="_blank"
+							href="http://www.sap.com/"/>
+					</content>
+				</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</headerContainer>
 	</ObjectHeader>
 </mvc:View>

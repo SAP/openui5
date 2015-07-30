@@ -26,19 +26,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.14
-	 * @name sap.m.RatingIndicator
+	 * @alias sap.m.RatingIndicator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RatingIndicator = Control.extend("sap.m.RatingIndicator", /** @lends sap.m.RatingIndicator.prototype */ { metadata : {
 
 		library : "sap.m",
 		properties : {
-
-			/**
-			 * If set to invisible, the control is not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-
 			/**
 			 * Value "true" is required to let the user rate with this control. It is recommended to set this parameter to "false" for the "Small" size which is meant for indicating a value only
 			 */
@@ -96,6 +90,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			_iconsHovered : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsHovered", visibility : "hidden"}
 		},
+		associations : {
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy" },
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+		},
 		events : {
 
 			/**
@@ -151,20 +156,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iIconCounter = 0;
 		this._fHoverValue = 0;
 
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+
 		if (RatingIndicator._pxCalculations === undefined) {
 			RatingIndicator._pxCalculations = [];
 		}
 	};
 
 	/**
-	 * Sets the rating value. The method is automatically checking whether the value is in the valid range of 0-{@link #getMaxValue maxValue} and if it is a valid number.
+	 * Sets the rating value. The method is automatically checking whether the value is in the valid range of 0-{@link #getMaxValue maxValue} and if it is a valid number. Calling the setter with null or undefined will reset the value to it's default.
 	 *
 	 * @param {float} fValue The rating value to be set.
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setValue = function (fValue) {
+		// validates the property and sets null/undefined values to the default
+		fValue = this.validateProperty("value", fValue);
 
 		// do not set negative values (will be returned by calculation function if there is an error)
 		if (fValue < 0) {
@@ -197,9 +206,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Sets the icon size value. The method is automatically updating the UI components if the control has been rendered before.
 	 *
-	 * @param {float} sIconSize
+	 * @param {sap.ui.core.CSSSize} sIconSize
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconSize = function (sIconSize) {
@@ -219,11 +228,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.ui.core.URI} sURI
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconSelected = function (sURI) {
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
+			this.setProperty("iconSelected", sURI, true);
 			return;
 		}
 
@@ -241,15 +251,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Handler for theme changing
+	 *
+	 * @param oEvent {jQuery.Event} oEvent The event object passed to the event handler.
+	 */
+	RatingIndicator.prototype.onThemeChanged = function (oEvent){
+		this.invalidate(); // triggers a re-rendering
+	};
+
+	/**
 	 * Sets the unselected icon without rerendering the control.
 	 *
 	 * @param {sap.ui.core.URI} sURI
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconUnselected = function (sURI) {
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
+			this.setProperty("iconUnselected", sURI, true);
 			return;
 		}
 
@@ -271,11 +291,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.ui.core.URI} sURI
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconHovered = function (sURI) {
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
+			this.setProperty("iconHovered", sURI, true);
 			return;
 		}
 
@@ -314,6 +335,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Called by the framework when rendering is completed.
+	 *
+	 * @private
+	 */
+	RatingIndicator.prototype.onAfterRendering = function() {
+		this._updateAriaValues();
+	};
+
+	/**
 	 * Destroys the control.
 	 *
 	 * @private
@@ -324,6 +354,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		delete this._iPxIconSize;
 		delete this._iPxPaddingSize;
 		delete this._fHoverValue;
+
+		delete this._oResourceBundle;
 	};
 
 	/* =========================================================== */
@@ -386,6 +418,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iSelectedWidth = 0;
 		}
 
+		this._updateAriaValues(fValue);
+
 		// adjust unselected container with the remaining width
 		$UnselectedContainerDiv.width((iWidth - iSelectedWidth) + sIconSizeMeasure);
 
@@ -404,6 +438,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Updates the ARIA values.
+	 *
+	 * @private
+	 */
+	RatingIndicator.prototype._updateAriaValues = function (newValue) {
+		var $this = this.$();
+
+		var fValue;
+		if (newValue === undefined) {
+			fValue = this.getValue();
+		} else {
+			fValue = newValue;
+		}
+
+		var fMaxValue = this.getMaxValue();
+
+		$this.attr("aria-valuenow", fValue);
+		$this.attr("aria-valuemax", fMaxValue);
+
+		var sValueText = this._oResourceBundle.getText("RATING_VALUEARIATEXT", [fValue, fMaxValue]);
+		$this.attr("aria-valuetext", sValueText);
+	};
+
+	/**
 	 * Load the icons/images of the rating for the different rating states.
 	 *
 	 * @param {int} iState The icon to be returned (0 = {@link #getIconSelected iconSelected},  1 = {@link #getIconUnselected  iconUnselected}, 2 = {@link #getIconHovered iconHovered}
@@ -416,7 +474,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oImage = null,
 			sURI = null;
 
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === false) {
+		if (sap.ui.getCore().getConfiguration().getTheme() !== "sap_hcb") {
 			// preset the variables based on the state requested
 			switch (iState) {
 				case 1: // unselected
@@ -452,7 +510,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (sURI) {
 			oImage = IconPool.createControlByURI({
 				id: this.getId() + "__icon" + this._iIconCounter++,
-				src: sURI
+				src: sURI,
+				useIconTooltip: false
 			}, sap.m.Image);
 
 			// store the icons in the corresponding internal aggregation

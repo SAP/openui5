@@ -17,9 +17,49 @@
 	jQuery.sap.require("sap.m.ObjectStatus");
 	
 	var list = new sap.m.List("test_list", {
-		headerText: "Object List Items",
+		headerText: "Object List Items"
 	});
-		
+
+    var lockedItem = new sap.m.ObjectListItem({
+        intro: "Optional Intro Text",
+        title: "Sed ut perspiciatis, unde omnis iste natus",
+        number: "802",
+        numberUnit: "Euro",
+        numberState : sap.ui.core.ValueState.Success,
+        attributes: [
+            new sap.m.ObjectAttribute({text: "First Attribute Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}),
+            new sap.m.ObjectAttribute({text: "Second Attribute"})
+        ],
+        firstStatus: new sap.m.ObjectStatus({text: "Critical Status", state: "Error"}),
+        showMarkers: true,
+        markFlagged: true,
+        markFavorite: true,
+        markLocked: true
+    });
+    list.addItem(lockedItem);
+
+
+    var rtlTestItem = new sap.m.ObjectListItem({
+        type: "Active",
+        intro: "0882 13 14 15",
+        icon: sap.ui.core.IconPool.getIconURI("inbox"),
+        title: "0882 13 14 15",
+        number: "0882 13 14 15",
+        //numberUnit: "Euro",
+        numberState : sap.ui.core.ValueState.Success,
+        attributes: [ new sap.m.ObjectAttribute({text: "+359 04 05 06", textDirection: sap.ui.core.TextDirection.LTR })],
+        firstStatus: new sap.m.ObjectStatus({text: "+359 04 05 06", state: "Success", textDirection: sap.ui.core.TextDirection.LTR }),
+        secondStatus: new sap.m.ObjectStatus({title: "לִהְיוֹת לָכֶם לֵאלֹהִים",
+            text: "+359 04 05 06", state: "Warning", textDirection: sap.ui.core.TextDirection.LTR }),
+        showMarkers: true,
+        markFlagged: true,
+        markFavorite: true,
+        titleTextDirection: sap.ui.core.TextDirection.LTR,
+        introTextDirection: sap.ui.core.TextDirection.LTR,
+        numberTextDirection: sap.ui.core.TextDirection.LTR
+    });
+    list.addItem(rtlTestItem);
+
 	var listItemId = "worst_case";
 	var worstCaseAttrs = new Array();
 	worstCaseAttrs.push(new sap.m.ObjectAttribute({text: "attribute text 1 attribute text 1", tooltip: "Attribute tip"}));
@@ -212,7 +252,7 @@
 		intro: "On behalf of John Smith",
 		title: "First status using icon font",
 		number: "3.62449",
-		firstStatus: new sap.m.ObjectStatus({icon: sap.ui.core.IconPool.getIconURI("inbox")}),
+		firstStatus: new sap.m.ObjectStatus({icon: sap.ui.core.IconPool.getIconURI("inbox")})
 	});	
 	list.addItem(withFirstStatusIcon);	
 
@@ -269,7 +309,7 @@
 		intro: "On behalf of John Smith",
 		title: "First status using image",
 		number: "3.62449",
-		firstStatus: new sap.m.ObjectStatus({icon: "images/favorite_24.png"}),
+		firstStatus: new sap.m.ObjectStatus({icon: "images/favorite_24.png"})
 	});	
 	list.addItem(withFirstStatusImage);	
 	
@@ -322,8 +362,8 @@
 		secondStatus: new sap.m.ObjectStatus({text: "Second status info"}),
 		showMarkers: true
 	});
-	list.addItem(markersAndStatuses);	
-	
+	list.addItem(markersAndStatuses);
+
 	var app = new sap.m.App();
 	var page = new sap.m.Page({title: "Object List Item Test"});
 	app.setInitialPage(page.getId());
@@ -353,6 +393,13 @@
 			markersAndStatuses.setMarkFavorite(!markersAndStatuses.getMarkFavorite());
 		}
 	}));
+    page.addContent(new sap.m.Button({
+        id: "locked-button",
+        text: "Locked",
+        press: function() {
+            markersAndStatuses.setMarkLocked(!markersAndStatuses.getMarkLocked());
+        }
+    }));
 	app.placeAt('body');
 	
 </script>

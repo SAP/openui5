@@ -1,0 +1,104 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('IN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('IN')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "IN",
+					"Msehl" : "Inch"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('CM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('CM')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "CM",
+					"Msehl" : "Centimeter"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('DM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('DM')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "DM",
+					"Msehl" : "Decimeter"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('FT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('FT')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "FT",
+					"Msehl" : "Foot"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('KM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('KM')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "KM",
+					"Msehl" : "Kilometer"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('M')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('M')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "M",
+					"Msehl" : "Meter"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MI')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "MI",
+					"Msehl" : "Mile"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MM')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "MM",
+					"Msehl" : "Millimeter"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('NAM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('NAM')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "NAM",
+					"Msehl" : "Nanometer"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('YD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('YD')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "YD",
+					"Msehl" : "Yards"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MIM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MIM')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
+					},
+					"Msehi" : "MIM",
+					"Msehl" : "Micrometer"
+				}]
+	}
+}

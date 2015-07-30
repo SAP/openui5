@@ -20,7 +20,12 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script type="text/javascript" charset="utf-8">
+
+		// sinon must not use FakeXDomainRequest
+		sinon.xhr.supportsCORS = true;
 
 		var _test = "äöü";
 		
@@ -162,6 +167,40 @@
 				start();
 			});
 		});
+
+		var FIRST_LINE_TESTS = [
+			{
+				caption : "Empty first line",
+				properties : '\nfoo=bar'
+			},
+			{
+				caption : "Empty first line, key w. WS",
+				properties : '\n \tfoo=bar'
+			},
+			{
+				caption : "Empty first line w. whitespace",
+				properties : ' \t\nfoo=bar'
+			},
+			{
+				caption : "Empty first line w. whitespace, key w. WS",
+				properties : ' \t\n \tfoo=bar'
+			}
+		];
+		
+		for(var i=0; i<FIRST_LINE_TESTS.length; i++) {
+			(function(info) {
+				test(info.caption, function() {
+					var server = sinon.fakeServer.create();
+					server.respondWith(/fake.properties/, info.properties);
+					var oProps = jQuery.sap.properties({url : "fake.properties"});
+					var aKeys = oProps.getKeys();
+					equal(aKeys.length, 1, "properties should have 1 key/value pair");
+					equal(aKeys[0], "foo", "key must not contain whitespace or newline");
+					equal(oProps.getProperty("foo"), "bar", "value must be retrieved");
+					server.restore();
+				});
+			}(FIRST_LINE_TESTS[i]));
+		}
 
 		test("getKeys", function () {
 			var oProps = jQuery.sap.properties({url : "testdata/test.properties"});

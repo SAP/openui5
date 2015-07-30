@@ -7,10 +7,19 @@
 	<ObjectHeader
 		id="oh1"
 		responsive="true"
+		fullScreenOptimized="false"
 		binding="{/ProductCollection/3}"
+		icon="{ProductPicUrl}"
+		iconAlt="{Name}"
 		intro="{Description}"
 		title="{Name}"
-		number="{Price}"
+		titleActive="true"
+		titlePress="handleTitlePress"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}"
 		showTitleSelector="true"
 		titleSelectorPress="onPress"
@@ -46,82 +55,45 @@
 			<IconTabBar
 				id="itb1"
 				selectedKey="key3"
-				upperCase="true">
+				upperCase="true"
+				class="sapUiResponsiveContentPadding">
 				<items>
-				<IconTabFilter
-					text="Product Info"
-					count="{Quantity}"
-					key="key1">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Image src="{ProductPicUrl}"/>
-								<Text text="{Width} x {Depth} x {Height} {DimUnit}"/>
-							</l:content>
-						</l:VerticalLayout>					
-					</content>
-				</IconTabFilter>
-				<IconTabSeparator icon=""/>
-				<IconTabFilter
-					text="BOM"
-					tooltip= "Bill of Material"
-					count="15"
-					key="key2">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Bill of Material (BOM) goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabFilter
-					text="Working Plan"
-					count="20"
-					key="key2">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Working Plan goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabFilter
-					text="Quality"
-					count="7"
-					key="key3">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Quality Info content goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabFilter
-					text="ATP"
-					tooltip="Available to Promise"
-					count="4"
-					key="key3">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Available to Promise (ATP) Info goes here"/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://hint">
+						<Text text="Info content goes here ..." />
+					</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://attachment"
+						count="3">
+						<Text text="Attachments go here ..." />
+					</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://notes"
+						count="12">
+						<Text text="Notes go here ..." />
+					</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://group">
+						<Text text="People content goes here ..." />
+					</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://hint">
+						<Text text="Info content goes here ..." />
+					</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://attachment"
+						count="3">
+						<Text text="Attachments go here ..." />
+					</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://notes"
+						count="12">
+						<Text text="Notes go here ..." />
+					</IconTabFilter>
+					<IconTabFilter
+						icon="sap-icon://group">
+						<Text text="People content goes here ..." />
+					</IconTabFilter>
 				</items>
 			</IconTabBar>
 		</headerContainer>

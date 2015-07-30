@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The Grid control is a layout which positions its child controls in a 12 column flow layout. Its children can be specified to take on a variable amount of columns depending on available screen size. With this control it is possible to achieve flexible layouts and line-breaks for large-, medium- and small-sized screens, such as desktop, tablet, and mobile. The Grid control's width can be percentage- or pixel-based and the spacing between its columns can be set to various pre-defined values.
+	 * The Grid control is a layout which positions its child controls in a 12 column flow layout. Its children can be specified to take on a variable amount of columns depending on available screen size. With this control it is possible to achieve flexible layouts and line-breaks for extra large-, large-, medium- and small-sized screens, such as large desktop, desktop, tablet, and mobile. The Grid control's width can be percentage- or pixel-based and the spacing between its columns can be set to various pre-defined values.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
-	 * @name sap.ui.layout.Grid
+	 * @alias sap.ui.layout.Grid
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Grid = Control.extend("sap.ui.layout.Grid", /** @lends sap.ui.layout.Grid.prototype */ { metadata : {
@@ -56,12 +56,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			/**
 			 * Optional. A string type that represents Grid's default span values for large, medium and small screens for the whole Grid. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
 			 */
-			defaultSpan : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : "L3 M6 S12"},
+			defaultSpan : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : "XL3 L3 M6 S12"},
 	
 			/**
-			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins. It can be defined for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 0 to 11 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
+			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins. It can be defined for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 0 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
 			 */
-			defaultIndent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : "L0 M0 S0"},
+			defaultIndent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : "XL0 L0 M0 S0"},
 	
 			/**
 			 * If true then not the media Query ( device screen size), but the size of the container surrounding the grid defines the current range (large, medium or small).
@@ -84,8 +84,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	(function() {
 		
 		Grid.prototype.init = function() {
-			this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD].points[0];
-			this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD].points[1];
+			this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
+			this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
+			this._iBreakPointLargeDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
+			
+			// Backward compatibility - if no any settings for XL - the settings for L are used
+			this._indentXLChanged = false;
+			this._spanXLChanged = false;
 		};
 		
 		/**
@@ -98,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this, jQuery.proxy(this._onParentResize, this));
 				this._onParentResize();
 			} else {
-				sap.ui.Device.media.attachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+				sap.ui.Device.media.attachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
 			}
 		};
 		
@@ -125,7 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 			
 			// Device Media Change handler
-			sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+			sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
 		};
 		
 		Grid.prototype._handleMediaChange  = function(oParams) {
@@ -138,6 +143,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		Grid.prototype._setBreakPointDesktop = function( breakPoint) {
 			this._iBreakPointDesktop = breakPoint;
+		};
+		
+		Grid.prototype._setBreakPointLargeDesktop = function( breakPoint) {
+			this._iBreakPointLargeDesktop = breakPoint;
+		};
+		
+		Grid.prototype.setDefaultIndent = function( sDefaultIndent) {
+			if (/XL/gi.test(sDefaultIndent)) {
+				this._setIndentXLChanged(true);
+			}
+			this.setProperty("defaultIndent", sDefaultIndent);
+		};
+		
+		Grid.prototype._setIndentXLChanged = function( bChanged) {
+			this._indentXLChanged = bChanged;
+		};
+		
+		Grid.prototype._getIndentXLChanged = function() {
+			return this._indentXLChanged;
+		};
+		
+	
+		Grid.prototype.setDefaultSpan = function( sDefaultSpan) {
+			if (/XL/gi.test(sDefaultSpan)) {
+				this._setSpanXLChanged(true);
+			}
+			this.setProperty("defaultSpan", sDefaultSpan);
+		};
+		
+		Grid.prototype._setSpanXLChanged = function( bChanged) {
+			this._spanXLChanged = bChanged;
+		};
+		
+		Grid.prototype._getSpanXLChanged = function() {
+			return this._spanXLChanged;
 		};
 		
 		Grid.prototype._onParentResize = function() {
@@ -157,8 +197,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this._toggleClass("Phone");
 			} else if ((iCntWidth > this._iBreakPointTablet) && (iCntWidth <= this._iBreakPointDesktop)) {
 				this._toggleClass("Tablet");
-			} else {
+			} else if ((iCntWidth > this._iBreakPointDesktop) && (iCntWidth <= this._iBreakPointLargeDesktop)) {
 				this._toggleClass("Desktop");
+			} else {
+				this._toggleClass("LargeDesktop");
 			}
 		};
 		
@@ -175,11 +217,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			
 			$DomRef.toggleClass("sapUiRespGridMedia-Std-" + sMedia, true);
 			if (sMedia === "Phone") {
-				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false);
+				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false).toggleClass("sapUiRespGridMedia-Std-LargeDesktop", false);
 			} else if (sMedia === "Tablet") {
-				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Phone", false);
+				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-LargeDesktop", false);
+			} else if (sMedia === "LargeDesktop") {
+				$DomRef.toggleClass("sapUiRespGridMedia-Std-Desktop", false).toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false);
 			} else {
-				$DomRef.toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false);
+				$DomRef.toggleClass("sapUiRespGridMedia-Std-Phone", false).toggleClass("sapUiRespGridMedia-Std-Tablet", false).toggleClass("sapUiRespGridMedia-Std-LargeDesktop", false);
 			}
 			
 			this.fireEvent("mediaChanged", {media: sMedia});
@@ -221,6 +265,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this.invalidate();
 			}
 		};
+
+		/**
+		 * Gets the role used for accessibility
+		 * Set by the Form control if Grid represents a FormContainer
+		 * @return {string} sRole accessibility role
+		 * @since 1.28.0
+		 * @private
+		 */
+		Grid.prototype._getAccessibleRole = function() {
+
+			return null;
+
+		};
+
 	}());
 	
 

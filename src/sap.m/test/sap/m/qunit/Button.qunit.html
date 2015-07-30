@@ -138,6 +138,20 @@
 	oBtnUp.setVisible(false);
 	oBtnUp.placeAt("contentBtnInvisible");
 
+	// RTL Button
+	var oBtnRtl = new sap.m.Button("b13");
+	oBtnRtl.setText("Button TextDirection RTL");
+	oBtnRtl.setIcon(sap.ui.core.IconPool.getIconURI("employee"));
+	oBtnRtl.setTextDirection(sap.ui.core.TextDirection.RTL);
+	oBtnRtl.placeAt("contentBtnTextDirectionRTL");
+
+	// LTR Button
+	var oBtnLtr = new sap.m.Button("b14");
+	oBtnLtr.setText("Button TextDirection LTR");
+	oBtnLtr.setIcon(sap.ui.core.IconPool.getIconURI("employee"));
+	oBtnLtr.setTextDirection(sap.ui.core.TextDirection.LTR);
+	oBtnLtr.placeAt("contentBtnTextDirectionLTR");
+
 	qutils.delayTestStart();
 
 	module("Basic", {
@@ -153,6 +167,8 @@
 			b10 = sap.ui.getCore().getControl("b10");
 			b11 = sap.ui.getCore().getControl("b11");
 			b12 = sap.ui.getCore().getControl("b12");
+			b13 = sap.ui.getCore().getControl("b13");
+			b14 = sap.ui.getCore().getControl("b14");
 		},
 		teardown : function() {
 			b1 = null;
@@ -166,11 +182,13 @@
 			b10 = null;
 			b11 = null;
 			b12 = null;
+			b13 = null;
+			b14 = null;
 		}
 	});
 
 
-	// test property accessor methods 
+	// test property accessor methods
 	test("TextOk", function() {
 		equals(b1.getText(), sText, "Text - button1 is correct using 'equals()'!");
 	});
@@ -204,7 +222,17 @@
 	test("IconOk", function() {
 		equals(b9.getIcon(), sIcon, "Icon for button9 is correct using 'equals()'!");
 	});
-	 
+
+	test("TextDirectionRtlOk", function() {
+		var $btnText = jQuery(b13.getDomRef()).find('.sapMBtnContent');
+		equals($btnText.attr("dir"), "rtl", "Control text has 'dir' property set to right-to-left");
+	});
+
+	test("TextDirectionLtrOk", function() {
+		var $btnText = jQuery(b14.getDomRef()).find('.sapMBtnContent');
+		equals($btnText.attr("dir"), "ltr", "Control text has 'dir' property set to left-to-right");
+	});
+
 	test("PressOk", function() {
 		try {
 			b1.firePress();
@@ -409,5 +437,7 @@
 	<div id="contentBtnUp" class="ButtonSpace"></div>
 	<div id="contentBtnUnstyled" class="ButtonSpace"></div>
 	<div id="contentBtnInvisible" class="ButtonSpace"></div>
+	<div id="contentBtnTextDirectionRTL" class="ButtonSpace"></div>
+	<div id="contentBtnTextDirectionLTR" class="ButtonSpace"></div>
 </body>
 </html>

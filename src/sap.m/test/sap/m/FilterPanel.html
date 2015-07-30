@@ -22,11 +22,9 @@
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nFilterPanel");
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
+	jQuery.sap.require("sap.ui.layout.Grid");	
 	
-	var oCondition1= { "key": "i1", "text": "CompanyCode: a..z"   , "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": "a", "value2": "z"};
-	var oCondition2= { "key": "i2", "text": "CompanyCode: =foo"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "foo", "value2": ""};
-	var oCondition3= { "key": "e1", "text": "CompanyCode: !(=foo)", "exclude": true , "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "foo", "value2": ""};
-	var	aConditions= [oCondition1, oCondition2, oCondition3];   
+ 	var	aConditions= [];   
 	var oFilterPanel;
 	var oModel;
 	var iCount= 100;
@@ -34,10 +32,10 @@
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
-			oPanel.setLayoutMode("Desktop");
+			//oPanel.setLayoutMode("Desktop");
 			//oPanel.setLayoutMode("Tablet");
 			
-			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel]});
+			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel]});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
 			}			
@@ -54,42 +52,27 @@
 		}		
 	};	
 	
+
 	var btnShow = new sap.m.Button({
-		text: "show FilterPanel",
-		press: function() {
-			oFilterPanel = new sap.m.P13nFilterPanel({
-	 			maxIncludes: -1,
-	  			maxExcludes: -1
-			});
-			
-			oFilterPanel.setKeyFields([{key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}]); 
-			//oFilterPanel.setIncludeOperations([ sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ ]);			
-			oFilterPanel.setExcludeOperations([ sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ ]);			
-			oFilterPanel.setConditions(aConditions);			
-	
-			show(oFilterPanel, "Filter");
-		}		
-	});
-	
-	
-	var btnShow2 = new sap.m.Button({
 		text: "show bound FilterPanel",
 		press: function() {
 			var oData = {
 				"items" : [{
 					"key" : "c0",
-					"text" : "Name"
+					"text" : "Name",
+					"maxLength" : "10" 
 				}, {
 					"key" : "c1",
 					"text" : "Date",
-					
-					"type" : "date" 
+					"type" : "date",
+					"isDefault" : true
 				}, {
 					"key" : "c2",
 					"text" : "Number",
 					"tooltip" : "My Tooltip",
-					"maxlength" : "10", 
-					"type" : "numeric"
+					"type" : "numeric",
+					"precision" : "5", 
+					"scale": "2"
 				}],
 				"filterItems" : [{
 					"key" : "f0",
@@ -134,13 +117,13 @@
 				addFilterItem: function(oEvent) {
 					var params = oEvent.getParameters();
 					var oData = oModel.getData();
-					var oFilterItem = {
+ 					var oFilterItem = {
 						key : params.key,
-						columnKey : params.newItem.getColumnKey(),
-						operation : params.newItem.getOperation(),
-						exclude : params.newItem.getExclude(),
-						value1 : params.newItem.getValue1(),
-						value2 : params.newItem.getValue2()
+						columnKey : params.filterItemData.columnKey,
+						operation : params.filterItemData.operation,
+						exclude : params.filterItemData.exclude,
+						value1 : params.filterItemData.value1,
+						value2 : params.filterItemData.value2
 					};
 					if (params.index) {
 						oData.filterItems.splice(params.index, 0, oFilterItem);
@@ -158,7 +141,10 @@
 				text : "{text}",
 				tooltip : "{tooltip}",
 				type : "{type}",
-				maxlength : "{maxlength}"
+				maxLength : "{maxLength}",
+				precision: "{precision}", 
+				scale: "{scale}",				
+				isDefault : "{isDefault}"
 			}));
 			oFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
 				key : "{key}",
@@ -188,6 +174,21 @@
 		text: "validate",
 		press: function() {
 			sap.m.MessageToast.show("validate= "+oFilterPanel.validateConditions());
+		}
+	});
+	
+	var btnClearErrors = new sap.m.Button({
+		text: "Clear Errors",
+		press: function() {
+			oFilterPanel.removeValidationErrors();
+		}
+	});
+	
+	
+	var btnRemoveInvalidConditions = new sap.m.Button({
+		text: "Remove Invalid Conditions",
+		press: function() {
+			oFilterPanel.removeInvalidConditions();
 		}
 	});
 	
@@ -286,8 +287,9 @@
 	
 	
 	btnShow.placeAt("content");
-	btnShow2.placeAt("content2");
 	btnValidate.placeAt("content");
+	btnClearErrors.placeAt("content");
+	btnRemoveInvalidConditions.placeAt("content");
 	btnConditions.placeAt("content");
 	oFieldKey.placeAt("content2");
 	oFieldKeyField.placeAt("content2");

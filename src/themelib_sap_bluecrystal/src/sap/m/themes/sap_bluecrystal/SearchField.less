@@ -4,8 +4,6 @@
 /* ============================================= */
 
 .sapMSF{
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: 100%;
 	min-width: 7rem;
@@ -23,13 +21,11 @@
 }
 
 .sapMSFF{
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	height: 2.5rem;
 	line-height: 2.375rem;
-	border: 1px solid @sapUiInputBaseBorder;
-	background: @sapUiInputBaseBG;
+	border: 1px solid @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
 	vertical-align: top;
 
 	width: 100%;
@@ -59,13 +55,16 @@
 	white-space: nowrap;
 }
 
-.sapMFocus>.sapMSFF,
+.sapMFocus>.sapMSFF{
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
 :not(.sapMSFDisabled) > .sapMSFF:hover{
-	border-color: @sapUiHighlight;
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 .sapMSFI{
-	color: @sapUiLightText;
+	color: @sapUiElement;
 	font-family: @sapUiFontFamily;
 	background: transparent;
 	width: 100%;
@@ -99,15 +98,15 @@
 /* custom buttons */
 .sapMSFB {
 	position: absolute;
-	width: 2.375rem;
-	height: 2.375rem;
+	width: 2.38rem;
+	height: 2.38rem; /* due to incorrect rounding in Windows Phone, it should be 2.38 instead of 2.375 */
 	font-size: 1.125rem;
 	color: @sapUiElement;
 	text-align: center;
 	cursor: default;
 	margin:0;
 	padding:0;
-	line-height: 2.375rem;
+	line-height: 2.38rem;
 	right: 0;
 	top: 0;
 }
@@ -124,17 +123,17 @@
 }
 
 .sapMFocus>.sapMSFF>.sapMSFB:active{
-	color: @sapUiBtnTextActive;
+	color: @sapUiButtonActiveTextColor;
 }
 
 .sapMSFB:hover{
-	background-color: @sapUiBtnBGTransparentHover;
+	background-color: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA,
-.sapMSFB:active{
-	background-color: @sapUiBtnBGTransparentDown;
-	color: @sapUiBtnTextActive;
+.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
+.sapMSFF>.sapMSFB.sapMSFBA{
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiButtonActiveTextColor;
 }
 
 .sapMSFB:after{
@@ -177,27 +176,21 @@
 	content: "\e00a";
 }
 
-
-/* active state colors */
-.sapMSFI:focus{
-	color: @sapUiDarkText;
-}
-
 /*grouping is not allowed here*/
 .sapMSFI::-webkit-input-placeholder {
-	color:		   @sapUiInputBasePlaceholder;
+	color:		   @sapUiFieldPlaceholderTextColor;
 	font-size:	   0.875rem;
 	font-style:	   italic;
 }
 
 .sapMSFI:-ms-input-placeholder {
-	color:		   @sapUiInputBasePlaceholder;
+	color:		   @sapUiFieldPlaceholderTextColor;
 	font-size:	   0.875rem;
 	font-style:	   italic;
 }
 
 .sapMSFI::-moz-placeholder {
-	color:		   @sapUiInputBasePlaceholder;
+	color:		   @sapUiFieldPlaceholderTextColor;
 	font-size:	   0.875rem;
 	font-style:	   italic;
 }
@@ -205,7 +198,7 @@
 /* custom placeholder if not natively supported (IE9) */
 .sapMSF>.sapMSFF>.sapMSFPlaceholder {
 	display: block;
-	color: @sapUiInputBasePlaceholder;
+	color: @sapUiFieldPlaceholderTextColor;
 	font-size: 0.875rem;
 	font-style: italic;
 	position: absolute;

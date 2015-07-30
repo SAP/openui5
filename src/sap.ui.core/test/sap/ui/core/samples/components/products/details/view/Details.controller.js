@@ -1,6 +1,14 @@
-sap.ui.controller("samples.components.products.details.view.Details", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	onContextChanged: function(oContext, oView) {
-		oView.setBindingContext(oContext);  
-	}	
+	var DetailsController = Controller.extend("samples.components.products.details.view.Details", {
+
+		onContextChanged: function(oContext, oView) {
+			oView.setBindingContext(oContext);  
+		}	
+	});
+
+	return DetailsController;
+
 });

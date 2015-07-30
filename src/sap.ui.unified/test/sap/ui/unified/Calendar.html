@@ -1,7 +1,7 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Calendar - sap.ui.unified</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.unified.Calendar.gif">
@@ -18,7 +18,7 @@
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
-			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var aSpecialDays = [["20140101",undefined,"Neujahr",1],
 			                    ["20140106",undefined,"Heilige Drei Könige",1],
@@ -144,6 +144,7 @@
 			// single interval selection
 			oCal = new sap.ui.unified.Calendar("Cal2",{
 				intervalSelection: true,
+				ariaLabelledBy: ["H-C2"],
 				select: function(oEvent){
 					var oTF1 = sap.ui.getCore().byId("TF2-start");
 					var oTF2 = sap.ui.getCore().byId("TF2-end");
@@ -182,6 +183,8 @@
 			oCal = new sap.ui.unified.Calendar("Cal3",{
 				intervalSelection: false,
 				singleSelection: false,
+				firstDayOfWeek: 2,
+				nonWorkingDays: [3, 5],
 				select: function(oEvent){
 					var oLB = sap.ui.getCore().byId("LB");
 					var oCalendar = oEvent.oSource;
@@ -223,6 +226,77 @@
 				width: "8em"
 			}).placeAt("event3");
 
+			oCal = new sap.ui.unified.Calendar("Cal4",{
+				months: 2,
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF4");
+					var oCalendar = oEvent.oSource;
+					var aSelectedDates = oCalendar.getSelectedDates();
+					var oDate;
+					if (aSelectedDates.length > 0 ) {
+						oDate = aSelectedDates[0].getStartDate();
+						oTF.setValue(oFormatYyyymmdd.format(oDate));
+					} else {
+						oTF.setValue("");
+					}
+				},
+				cancel: function(oEvent){
+					alert("Cancel");
+				}
+			}).placeAt("sample4");
+
+			oLabel = new sap.ui.commons.Label({text: "selected date", labelFor: "TF4"}).placeAt("event4");
+			oInput = new sap.ui.commons.TextField("TF4",{
+				editable: true,
+				placeholder: "yyyyMMdd",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oCalendar = sap.ui.getCore().byId("Cal4");
+					if(sValue.length == 8 && !isNaN(sValue)){
+						var oDate = oFormatYyyymmdd.parse(sValue);
+						var aSelectedDates = oCalendar.getSelectedDates();
+						var oDateRange;
+						if (aSelectedDates.length == 0 ) {
+							oDateRange = new sap.ui.unified.DateRange({startDate: oDate});
+							oCalendar.addSelectedDate(oDateRange);
+						} else {
+							oDateRange = aSelectedDates[0];
+							oDateRange.setStartDate(oDate);
+						}
+					}else if(!sValue){
+						oCalendar.destroySelectedDates();
+					}
+				}
+			}).placeAt("event4");
+
+			oButton = new sap.ui.commons.Button({
+				text: "focus today",
+				press: function(oEvent){
+					sap.ui.getCore().byId("Cal4").focusDate(new Date());
+				}
+			}).placeAt("event4");
+
+			oLabel = new sap.ui.commons.Label({text: "displayed months", labelFor: "TF4-2"}).placeAt("event4");
+			oInput = new sap.ui.commons.TextField("TF4-2",{
+				editable: true,
+				value: "2",
+				width: "4em",
+				placeholder: "integer",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oCalendar = sap.ui.getCore().byId("Cal4");
+					var iMonths = parseInt(sValue);
+					if(iMonths > 0){
+						oCalendar.setMonths(iMonths);
+						oTF.setValueState(sap.ui.core.ValueState.None);
+					}else {
+						oTF.setValueState(sap.ui.core.ValueState.Error);
+					}
+				}
+			}).placeAt("event4");
+
 		</script>
 
 	</head>
@@ -232,22 +306,29 @@
 		<div>Single day Selection Calendar</div>
 		<br>
 		<div>
-		<div id="sample1" style="display:inline-block;"></div>
-		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+			<div id="sample1" style="display:inline-block;"></div>
+			<div id="event1" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
-		<div>Single interval Selection Calendar</div>
+		<div id="H-C2">Single interval Selection Calendar</div>
 		<br>
 		<div>
-		<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
-		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
+			<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
+			<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
-		<div>multiple day Selection Calendar</div>
+		<div>multiple day Selection Calendar (with custom weekend and weekstart)</div>
 		<br>
 		<div>
-		<div id="sample3" style="display:inline-block;"></div>
-		<div id="event3" style="display:inline-block; vertical-align: top;"></div>
+			<div id="sample3" style="display:inline-block;"></div>
+			<div id="event3" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>Calendar with multiple months</div>
+		<br>
+		<div>
+			<div id="sample4" style="display:inline-block;"></div>
+			<div id="event4" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 
 	</body>

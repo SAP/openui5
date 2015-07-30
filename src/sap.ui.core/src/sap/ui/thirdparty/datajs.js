@@ -987,7 +987,7 @@
         // added usage of _createAttributeNS as fallback (see function above)
         var attribute =
             dom.createAttributeNS && dom.createAttributeNS(namespaceURI, qualifiedName) ||
-            dom.createNode && dom.createNode(2, qualifiedName, namespaceURI || undefined) ||
+            "createNode" in dom && dom.createNode(2, qualifiedName, namespaceURI || undefined) ||
             _createAttributeNS(namespaceURI, qualifiedName);
         // ##### END: MODIFIED BY SAP
 
@@ -2530,18 +2530,23 @@
                     if (statusCode >= 200 && statusCode <= 299) {
                         success(response);
                     } else {
+                    		// ##### BEGIN: MODIFIED BY SAP
+                    		// normalize response headers here which is also done in the success function call above
+                      	normalizeHeaders(response.headers);
+                      	// ##### END: MODIFIED BY SAP
                         error({ message: "HTTP request failed", request: request, response: response });
                     }
                 };
 
                 // ##### BEGIN: MODIFIED BY SAP
-                if (request.withCredentials) {
-                    xhr.withCredentials = true;
-                }
                 if (request.user && request.password) {
                 	xhr.open(request.method || "GET", url, request.async, request.user, request.password);
                 } else {
                 	xhr.open(request.method || "GET", url, request.async);
+                }
+                // do it after open call because IE 10 may throw InvalidStateError exception.
+                if (request.withCredentials) {
+                	xhr.withCredentials = true;
                 }
                 // ##### END: MODIFIED BY SAP
 

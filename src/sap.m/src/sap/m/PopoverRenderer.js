@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Popover renderer. 
-	 * @static
+	 * Popover renderer. 
+	 * @namespace
 	 */
 	var PopoverRenderer = {
 	};
@@ -39,6 +39,16 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.writeAttribute("tabindex", "-1");
 	
+		rm.writeAccessibilityState(oControl, {
+			role: "dialog"
+		});
+
+		if (oControl.getShowHeader() && oControl._getAnyHeader()) {
+			rm.writeAccessibilityState(oControl, {
+				labelledby: oControl._getAnyHeader().getId()
+			});
+		}
+
 		rm.write(">");
 	
 		this.renderContent(rm, oControl);
@@ -71,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 		var oHeader,
 			sId = oControl.getId(),
 			i = 0,
-			contents = oControl.getContent(),
+			contents = oControl._getAllContent(),
 			oFooter = oControl.getFooter(),
 			oSubHeader = oControl.getSubHeader(),
 			sContentWidth = oControl.getContentWidth(),
@@ -84,7 +94,7 @@ sap.ui.define(['jquery.sap.global'],
 		
 		if (sap.ui.Device.system.desktop) {
 			//Invisible element for cycling keyboard navigation
-			rm.write("<span id='" + oControl.getId() + "-firstfe' tabindex='0'></span>");
+			rm.write("<span class='sapMPopoverHiddenFocusable' id='" + oControl.getId() + "-firstfe' tabindex='0'></span>");
 		}
 	
 		//header
@@ -139,20 +149,22 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			rm.renderControl(oFooter.addStyleClass(sFooterClass));
 		}//footer
-	
-		//arrow
-		rm.write("<span");
-		rm.writeAttribute("id", sId + "-arrow");
-		rm.addClass("sapMPopoverArr");
-		rm.writeClasses();
-		rm.write("></span>");//arrow tip
-	
+
+		if (oControl.getShowArrow()) {
+			//arrow
+			rm.write("<span");
+			rm.writeAttribute("id", sId + "-arrow");
+			rm.addClass("sapMPopoverArr");
+			rm.writeClasses();
+			rm.write("></span>");//arrow tip
+		}
+
 		if (sap.ui.Device.system.desktop) {
 			//Invisible element for desktop keyboard navigation
-			rm.write("<span id='" + oControl.getId() + "-lastfe' tabindex='0'></span>");
+			rm.write("<span class='sapMPopoverHiddenFocusable' id='" + oControl.getId() + "-lastfe' tabindex='0'></span>");
 		}
 	};
-	
+
 	PopoverRenderer.generateRootClasses = function(oControl){
 		var aClassNames = ["sapMPopover"],
 			oSubHeader = oControl.getSubHeader(),

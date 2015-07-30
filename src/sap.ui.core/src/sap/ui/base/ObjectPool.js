@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.ObjectPool
-sap.ui.define(['jquery.sap.global', './Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['./Object'],
+	function(BaseObject) {
 	"use strict";
 
 
@@ -41,13 +41,13 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 * @author Malte Wedel
 	 * @version ${version}
 	 * @constructor
-	 * @name sap.ui.base.ObjectPool
+	 * @alias sap.ui.base.ObjectPool
 	 * @public
 	 */
 	var ObjectPool = BaseObject.extend("sap.ui.base.ObjectPool", /** @lends sap.ui.base.ObjectPool.prototype */ {
 		constructor: function(oObjectClass) {
 		
-			BaseObject.apply(this);
+			BaseObject.call(this);
 		
 			this.oObjectClass = oObjectClass;
 		
@@ -64,8 +64,6 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 * @param {any} [any] optional initialization parameters for the borrowed object
 	 * @return {object} the borrowed object of the same type that has been specified for this pool
 	 * @public
-	 * @name sap.ui.base.ObjectPool#borrowObject
-	 * @function
 	 */
 	ObjectPool.prototype.borrowObject = function() {
 	
@@ -86,8 +84,6 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 *
 	 * @param {object} oObject the object to return to the pool
 	 * @public
-	 * @name sap.ui.base.ObjectPool#returnObject
-	 * @function
 	 */
 	ObjectPool.prototype.returnObject = function(oObject) {
 	
@@ -138,4 +134,4 @@ sap.ui.define(['jquery.sap.global', './Object'],
 
 	return ObjectPool;
 
-}, /* bExport= */ true);
+});

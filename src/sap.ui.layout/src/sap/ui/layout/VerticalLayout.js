@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.layout.VerticalLayout
+	 * @alias sap.ui.layout.VerticalLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VerticalLayout = Control.extend("sap.ui.layout.VerticalLayout", /** @lends sap.ui.layout.VerticalLayout.prototype */ { metadata : {
@@ -42,12 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			 * 
 			 * If not enabled all controls inside are not enabled automatically.
 			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Whether this VerticalLayout is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			enabled : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -56,7 +51,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			 * Child Controls within the layout.
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		}
+		},
+		designTime : true
 	}});
 	
 	

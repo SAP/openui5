@@ -16,7 +16,6 @@
 
 .sapMScrollbarV > div,
 .sapMScrollbarH > div {
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
@@ -56,7 +55,8 @@
 	color: @sapHCStandardFG;
 }
 
-.sapMObjStatusMarker .sapUiIcon + .sapUiIcon {
+.sapMObjStatusMarker .sapUiIcon + .sapUiIcon,
+.sapMObjStatusMarker .sapUiHiddenPlaceholder + .sapUiIcon {
 	margin-left: .5rem;
 }
 

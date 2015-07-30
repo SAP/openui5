@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global'],
 
 	
 	/**
-	 * @class MenuBarRenderer.
-	 * @static
+	 * MenuBarRenderer.
+	 * @namespace
 	 */
 	var MenuBarRenderer = {
 	};
@@ -26,11 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 	
 		oMenuBar.doBeforeRendering();
-	
-		if (!oMenuBar.getVisible()) {
-			return;
-		}
-	
+
 		rm.write("<div");
 		rm.writeControlData(oMenuBar);
 		rm.addClass("sapUiMnuBar");
@@ -68,7 +64,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeClasses();
 				rm.writeAttribute("itemidx", "" + i);
 				var sTooltip = oItem.getTooltip_AsString();
-				MenuBarRenderer.writeAria(rm, "menuitem", sTooltip, bDsbld, iVisibleItemIdx);
+				MenuBarRenderer.writeAria(rm, "menuitem", sTooltip, bDsbld, iVisibleItemIdx, !!oItem.getSubmenu());
 				rm.writeAttribute("tabindex", "-1");
 				rm.write("><span>");
 				rm.writeEscaped(oItem.getText());
@@ -92,11 +88,11 @@ sap.ui.define(['jquery.sap.global'],
 		if (rb) {
 			sOverFlowText = rb.getText("MNUBAR_OVRFLW");
 		}
-		MenuBarRenderer.writeAria(rm, "menuitem", sOverFlowText, false, 0);
+		MenuBarRenderer.writeAria(rm, "menuitem", sOverFlowText, false, 0, true);
 		rm.write("><span></span></li></ul></div>");
 	};
 	
-	MenuBarRenderer.writeAria = function(rm, sRole, sText, bDisabled, iIdx){
+	MenuBarRenderer.writeAria = function(rm, sRole, sText, bDisabled, iIdx, bHasSubMenu){
 		if (sText) {
 			rm.writeAttributeEscaped("title", sText);
 		}
@@ -107,7 +103,9 @@ sap.ui.define(['jquery.sap.global'],
 	
 		rm.writeAttribute("role", sRole);
 		if (sRole == "menuitem") {
-			rm.writeAttribute("aria-haspopup", true);
+			if (bHasSubMenu) {
+				rm.writeAttribute("aria-haspopup", true);
+			}
 			rm.writeAttribute("aria-posinset", iIdx);
 		}
 		if (bDisabled) {

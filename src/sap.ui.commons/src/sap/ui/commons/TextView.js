@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.TextView
+	 * @alias sap.ui.commons.TextView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextView = Control.extend("sap.ui.commons.TextView", /** @lends sap.ui.commons.TextView.prototype */ { metadata : {
@@ -45,11 +45,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Available options are LTR and RTL. Alternatively, the control can inherit the text direction from its parent control.
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
-	
-			/**
-			 * Invisible text views are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
 			 * When the control is disabled, it is greyed out and no longer focusable.
@@ -113,15 +108,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setProperty("text", sText, true); // no re-rendering!
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			var aLines = this.getText().split("\n");
-			for (var i = 0; i < aLines.length; i++) {
-				aLines[i] = jQuery.sap.encodeHTML(aLines[i]);
-			}
-			sText = aLines.join("<br>");
-			oDomRef.innerHTML = sText;
+			// in case of 
+			sText = this.getText(); // the default value '' ensures valid text string
+			oDomRef.innerHTML = jQuery.sap.encodeHTML(sText).replace(/&#xa;/g, "<br>");
 			// when no tooltip is applied use the text as tooltip
-			if (!this.getTooltip_AsString() && sText) {
-				oDomRef.title = this.getText(); // IE8 doesn't like HTML encoded attribute values
+			if (!this.getTooltip_AsString()) {
+				oDomRef.title = sText; // IE8 doesn't like HTML encoded attribute values
 			}
 		}
 		if (this._oPopup) {

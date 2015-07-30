@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.ExactAttribute
+	 * @alias sap.ui.ux3.ExactAttribute
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactAttribute = Element.extend("sap.ui.ux3.ExactAttribute", /** @lends sap.ui.ux3.ExactAttribute.prototype */ { metadata : {
@@ -108,34 +108,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	}});
 	
 	
-	/**
-	 * See attribute showSubAttributesIndicator
-	 *
-	 * @name sap.ui.ux3.ExactAttribute#getShowSubAttributesIndicator_Computed
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
-	/**
-	 * Scrolls the corresponding list of this attribute until the given direct child attribute is visible. If the corresponding list is not yet visible the call is buffered until the list is available.
-	 *
-	 * @name sap.ui.ux3.ExactAttribute#scrollTo
-	 * @function
-	 * @param {sap.ui.ux3.ExactAttribute} oOAttribute
-	 *         The direct child attribute
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
+	
 	
 	(function() {
 	
 	ExactAttribute._MINWIDTH = 70;
 	ExactAttribute._MAXWIDTH = 500;
 	
+
+	/**
+	 * Scrolls the corresponding list of this attribute until the given direct child attribute is visible. If the corresponding list is not yet visible the call is buffered until the list is available.
+	 *
+	 * @param {sap.ui.ux3.ExactAttribute} oOAttribute
+	 *         The direct child attribute
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ExactAttribute.prototype.scrollTo = function(oAttribute) {
 		if (!(oAttribute instanceof ExactAttribute)) {
 			this._scrollToAttributeId = undefined;
@@ -290,6 +282,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	};
 	
 	
+
+	/**
+	 * See attribute showSubAttributesIndicator
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ExactAttribute.prototype.getShowSubAttributesIndicator_Computed = function() {
 		return this.hasListeners("supplyAttributes") && this.getSupplyActive() ? this.getShowSubAttributesIndicator() : this.getAttributesInternal().length > 0;
 	};

@@ -39,15 +39,15 @@
 					{ lastName: "Zara", name: "Lou", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 1, money: 123, birthday: "1965-01-01" },
 					{ lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 678.45, birthday: "1978-01-01" },
 					{ lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 123.45, birthday: "1968-01-01" },
-					{ lastName: "Lester, Haas", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-01-01" },
+					{ lastName: "Town", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-01-01" },
 					{ lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 3, money: 8756.2, birthday: "1968-01-01" },
 					{ lastName: "Time", name: "Justin", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 4, money: 836.4, birthday: "1968-01-01" },
-					{ lastName: "Barr", name: "Gaye", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-01-01" },
+					{ lastName: "Barr", name: "Sandy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-01-01" },
 					{ lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 1, money: 6344.21, birthday: "1968-01-01" },
 					{ lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 563.2, birthday: "1968-01-01" },
 					{ lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 8564.4, birthday: "1968-01-01" },
 					{ lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01" },
-					{ lastName: "Haas", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-01-01" },
+					{ lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-01-01" },
 					{ lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01" },
 					{ lastName: "Mul\r\nti\r\nLi\r\nne", name: "Peter", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" }
 				];
@@ -99,7 +99,7 @@
 				})
 				.generate()
 				.done(function(sContent) {
-					var sExpected = 
+					var sExpected =
 					"\"First; name\";Last name;Foo bar\r\n" +
 					"Al;Dente;Yes\r\n" +
 					"Andy;Friese;Yes\r\n" +
@@ -110,15 +110,15 @@
 					"Lou;Zara;Yes\r\n" +
 					"Tim;Burr;Yes\r\n" +
 					"Tish;Hughes;Yes\r\n" +
-					"Mo;Lester, Haas;Yes\r\n" +
+					"Mo;Town;Yes\r\n" +
 					"Justin;Case;No\r\n" +
 					"Justin;Time;Yes\r\n" +
-					"Gaye;Barr;Yes\r\n" +
+					"Sandy;Barr;Yes\r\n" +
 					"Gene;Poole;Yes\r\n" +
 					"Corey;Ander;No\r\n" +
 					"Brighton;Early;Yes\r\n" +
 					"Constance;Noring;Yes\r\n" +
-					"Jack;Haas;Yes\r\n" +
+					"Jack;O'Lantern;Yes\r\n" +
 					"Matt;Tress;Yes\r\n" +
 					"Peter;\"Mul\r\nti\r\nLi\r\nne\";Yes";
 					equal(sContent, sExpected, "Generated file content should be correct.");
@@ -157,29 +157,78 @@
 				})
 				.generate()
 				.done(function(sContent) {
-					var sExpected = 
+					var sExpected =
 					"\"First; name\";Last name;Foo bar\r\n" +
 					"Corey;Ander;No\r\n" +
-					"Gaye;Barr;Yes\r\n" +
+					"Sandy;Barr;Yes\r\n" +
 					"Tim;Burr;Yes\r\n" +
 					"Justin;Case;No\r\n" +
 					"Al;Dente;Yes\r\n" +
 					"Kenya;Dewit;No\r\n" +
 					"Brighton;Early;Yes\r\n" +
 					"Andy;Friese;Yes\r\n" +
-					"Jack;Haas;Yes\r\n" +
 					"Tish;Hughes;Yes\r\n" +
-					"Mo;Lester, Haas;Yes\r\n" +
 					"Anita;Mann;No\r\n" +
 					"Peter;\"Mul\r\n" +
 					"ti\r\n" +
 					"Li\r\n" +
 					"ne\";Yes\r\n" +
 					"Constance;Noring;Yes\r\n" +
+					"Jack;O'Lantern;Yes\r\n" +
 					"Doris;Open;Yes\r\n" +
 					"Gene;Poole;Yes\r\n" +
 					"Doris;Schutt;Yes\r\n" +
 					"Justin;Time;Yes\r\n" +
+					"Mo;Town;Yes\r\n" +
+					"Matt;Tress;Yes\r\n" +
+					"Lou;Zara;Yes";
+					equal(sContent, sExpected, "Generated file content should be correct.");
+				})
+				.fail(function() {
+					ok(false, 'Generate should not fail.');
+				})
+				.always(function() {
+					this.destroy();
+					start();
+				});
+
+			});
+
+			asyncTest("Generate with old binding syntax", 1, function() {
+
+				var oExport = new sap.ui.core.util.Export({
+					exportType: new sap.ui.core.util.ExportTypeCSV({
+						separatorChar: ";"
+					}),
+					models: createJSONModel(),
+					columns: createColumns()
+				});
+
+				// old binding syntax should also work
+				oExport.bindRows('/', null, new sap.ui.model.Sorter("lastName", false), [ new sap.ui.model.Filter({ path: "checked", operator: "EQ", value1: true }) ]);
+
+				oExport
+				.generate()
+				.done(function(sContent) {
+					var sExpected =
+					"\"First; name\";Last name;Foo bar\r\n" +
+					"Sandy;Barr;Yes\r\n" +
+					"Tim;Burr;Yes\r\n" +
+					"Al;Dente;Yes\r\n" +
+					"Brighton;Early;Yes\r\n" +
+					"Andy;Friese;Yes\r\n" +
+					"Tish;Hughes;Yes\r\n" +
+					"Peter;\"Mul\r\n" +
+					"ti\r\n" +
+					"Li\r\n" +
+					"ne\";Yes\r\n" +
+					"Constance;Noring;Yes\r\n" +
+					"Jack;O'Lantern;Yes\r\n" +
+					"Doris;Open;Yes\r\n" +
+					"Gene;Poole;Yes\r\n" +
+					"Doris;Schutt;Yes\r\n" +
+					"Justin;Time;Yes\r\n" +
+					"Mo;Town;Yes\r\n" +
 					"Matt;Tress;Yes\r\n" +
 					"Lou;Zara;Yes";
 					equal(sContent, sExpected, "Generated file content should be correct.");

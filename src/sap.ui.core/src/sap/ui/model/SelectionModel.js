@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Constructs an instance of a sap.ui.model.SelectionModel.
 	 *
-	 * @class sap.ui.model.SelectionModel
+	 * @class
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.model.SelectionModel
+	 * @alias sap.ui.model.SelectionModel
 	 */
 	var SelectionModel = EventProvider.extend("sap.ui.model.SelectionModel", /** @lends sap.ui.model.SelectionModel.prototype */ {
 	
@@ -49,14 +49,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * SelectionMode: Single Selection
 	 * @public
-	 * @name sap.ui.model.SelectionModel.SINGLE_SELECTION
 	 */
 	SelectionModel.SINGLE_SELECTION = 0;
 	
 	/**
 	 * SelectionMode: Multi Selection
 	 * @public
-	 * @name sap.ui.model.SelectionModel.MULTI_SELECTION
 	 */
 	SelectionModel.MULTI_SELECTION = 1;
 	
@@ -65,8 +63,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Returns the current selection mode.
 	 * @return {int} the current selection mode
 	 * @public
-	 * @name sap.ui.model.SelectionModel#getSelectionMode
-	 * @function
 	 */
 	SelectionModel.prototype.getSelectionMode = function() {
 		return this.iSelectionMode;
@@ -87,8 +83,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {int} iSelectionMode selection mode
 	 * @public
-	 * @name sap.ui.model.SelectionModel#setSelectionMode
-	 * @function
 	 */
 	SelectionModel.prototype.setSelectionMode = function(iSelectionMode) {
 		this.iSelectionMode = iSelectionMode || SelectionModel.SINGLE_SELECTION;
@@ -99,8 +93,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iIndex
 	 * @return {boolean} true if the specified index is selected.
 	 * @public
-	 * @name sap.ui.model.SelectionModel#isSelectedIndex
-	 * @function
 	 */
 	SelectionModel.prototype.isSelectedIndex = function(iIndex) {
 		return jQuery.inArray(iIndex, this.aSelectedIndices) !== -1;
@@ -111,8 +103,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * setSelectionInterval(), addSelectionInterval() or removeSelectionInterval().
 	 * @return {int} lead selected index
 	 * @public
-	 * @name sap.ui.model.SelectionModel#getLeadSelectedIndex
-	 * @function
 	 */
 	SelectionModel.prototype.getLeadSelectedIndex = function() {
 		return this.iLeadIndex;
@@ -123,8 +113,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iLeadIndex sets the lead selected index
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @private
-	 * @name sap.ui.model.SelectionModel#setLeadSelectedIndex
-	 * @function
 	 */
 	SelectionModel.prototype.setLeadSelectedIndex = function(iLeadIndex) {
 		jQuery.sap.assert(typeof iLeadIndex === "number", "iLeadIndex must be an integer");
@@ -141,8 +129,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Returns the first selected index or -1 if the selection is empty.
 	 * @return {int} first selected index or -1
 	 * @private
-	 * @name sap.ui.model.SelectionModel#getMinSelectionIndex
-	 * @function
 	 */
 	SelectionModel.prototype.getMinSelectionIndex = function() {
 		if (this.aSelectedIndices.length > 0) {
@@ -157,8 +143,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Returns the last selected index or -1 if the selection is empty.
 	 * @return {int} last selected index or -1
 	 * @private
-	 * @name sap.ui.model.SelectionModel#getMaxSelectionIndex
-	 * @function
 	 */
 	SelectionModel.prototype.getMaxSelectionIndex = function() {
 		if (this.aSelectedIndices.length > 0) {
@@ -175,8 +159,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @return {int[]} array of selected indices
 	 * @public
-	 * @name sap.ui.model.SelectionModel#getSelectedIndices
-	 * @function
 	 */
 	SelectionModel.prototype.getSelectedIndices = function() {
 		var aIndices = this.aSelectedIndices.sort(this.fnSort);
@@ -197,8 +179,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iToIndex other end of the interval
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#setSelectionInterval
-	 * @function
 	 */
 	SelectionModel.prototype.setSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
@@ -243,8 +223,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iToIndex other end of the interval
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#addSelectionInterval
-	 * @function
 	 */
 	SelectionModel.prototype.addSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
@@ -284,8 +262,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iMove
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#moveSelectionInterval
-	 * @function
 	 */
 	SelectionModel.prototype.moveSelectionInterval = function(iStartIndex, iMove) {
 		jQuery.sap.assert(typeof iStartIndex === "number", "iFromIndex must be an integer");
@@ -324,8 +300,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iToIndex other end of the interval
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#removeSelectionInterval
-	 * @function
 	 */
 	SelectionModel.prototype.removeSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
@@ -369,8 +343,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iToIndex other end of the interval
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#sliceSelectionInterval
-	 * @function
 	 */
 	SelectionModel.prototype.sliceSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
@@ -440,8 +412,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#clearSelection
-	 * @function
 	 */
 	SelectionModel.prototype.clearSelection = function() {
 		if (this.aSelectedIndices.length > 0 || this.iLeadIndex !== -1 ) {
@@ -464,8 +434,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#attachSelectionChanged
-	 * @function
 	 */
 	SelectionModel.prototype.attachSelectionChanged = function(oData, fnFunction, oListener) {
 		this.attachEvent("selectionChanged", oData, fnFunction, oListener);
@@ -483,8 +451,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.SelectionModel#detachSelectionChanged
-	 * @function
 	 */
 	SelectionModel.prototype.detachSelectionChanged = function(fnFunction, oListener) {
 		this.detachEvent("selectionChanged", fnFunction, oListener);
@@ -505,8 +471,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int[]} [mArguments.rowIndices] Other selected indices (if available)
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.model.SelectionModel#fireSelectionChanged
-	 * @function
 	 */
 	SelectionModel.prototype.fireSelectionChanged = function(mArguments) {
 		this.fireEvent("selectionChanged", mArguments);
@@ -522,8 +486,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iLeadSelection lead selection index
 	 * @param {int[]} aChangedRowIndices changed row indices
 	 * @private
-	 * @name sap.ui.model.SelectionModel#_update
-	 * @function
 	 */
 	SelectionModel.prototype._update = function(aSelectedIndices, iLeadSelection, aChangedRowIndices) {
 	
@@ -553,4 +515,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return SelectionModel;
 
-}, /* bExport= */ true);
+});

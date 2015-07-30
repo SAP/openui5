@@ -1,18 +1,27 @@
-sap.ui.controller("sap.m.sample.InputSuggestionsDynamic.C", {
+sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/Filter','sap/ui/model/json/JSONModel'],
+	function(jQuery, Controller, Filter, JSONModel) {
+	"use strict";
 
-	onInit: function() {
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		this.getView().setModel(oModel);
-	},
+	var CController = Controller.extend("sap.m.sample.InputSuggestionsDynamic.C", {
 
-	handleSuggest: function(oEvent) {
-		var sTerm = oEvent.getParameter("suggestValue");
-		var aFilters = [];
-		if (sTerm) {
-			aFilters.push(new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.StartsWith, sTerm));
+		onInit: function() {
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+		},
+
+		handleSuggest: function(oEvent) {
+			var sTerm = oEvent.getParameter("suggestValue");
+			var aFilters = [];
+			if (sTerm) {
+				aFilters.push(new Filter("Name", sap.ui.model.FilterOperator.StartsWith, sTerm));
+			}
+			oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
 		}
-		oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
-	}
+
+	});
+
+
+	return CController;
 
 });

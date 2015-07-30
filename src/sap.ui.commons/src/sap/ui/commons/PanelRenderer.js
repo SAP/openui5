@@ -9,8 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 * @static
+	 * @namespace
 	 */
 	var PanelRenderer = function() {
 	};
@@ -24,12 +23,6 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	PanelRenderer.render = function(rm, oControl) {
 		var id = oControl.getId();
-	
-		// do not render anything for invisible Panels
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 	
 		//var hasToolbar = false; // TODO: this can be used in the future; rendering should already be quite ok, but minor adjustments are expected
@@ -146,6 +139,7 @@ sap.ui.define(['jquery.sap.global'],
 			var mAttributes = {};
 	
 			mAttributes["id"] = id + "-ico";
+			mAttributes["title"] = null; // prevent icon tooltip
 			aClasses.push("sapUiPanelIco");
 			aClasses.push("sapUiPanelHdrItem");
 			aClasses.push("sapUiTv" + sLevel); // use same font-size like header level (if icon font is used (for image it dosn't matters)

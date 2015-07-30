@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 	
 	/**
-	 * @class DateTimeInput renderer.
-	 * @static
+	 * DateTimeInput renderer.
+	 * @namespace
 	 *
 	 * For a common look & feel,
 	 * DateTimeInputRenderer extends the InputRenderer

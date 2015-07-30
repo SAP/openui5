@@ -1,0 +1,65 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.StandardNoMargins.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Text text="ObjectHeader with its top and end margins removed:" class="sapUiExploredNoMarginInfo"/>
+	<ObjectHeader
+		binding="{/ProductCollection/0}"
+		title="{Name}"
+		number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+		numberUnit="{CurrencyCode}" 
+		class="sapUiNoMarginTop sapUiNoMarginEnd">
+		<statuses>
+			<ObjectStatus
+				text="Some Damaged"
+				state="Error" />
+			<ObjectStatus
+				text="In Stock"
+				state="Success" />
+		</statuses>
+		<attributes>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+			<ObjectAttribute text="{Description}" />
+			<ObjectAttribute
+				text="www.sap.com"
+				active="true"
+				press="handleLinkObjectAttributePress" />
+		</attributes>
+	</ObjectHeader>
+	<Text text="ObjectHeader with its bottom and begin margins removed:" class="sapUiExploredNoMarginInfo"/>
+	<ObjectHeader
+		binding="{/ProductCollection/1}"
+		title="{Name}"
+		number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+		numberUnit="{CurrencyCode}" 
+		class="sapUiNoMarginBottom sapUiNoMarginBegin">
+		<statuses>
+			<ObjectStatus
+				text="Some Damaged"
+				state="Error" />
+			<ObjectStatus
+				text="In Stock"
+				state="Success" />
+		</statuses>
+		<attributes>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+			<ObjectAttribute text="{Description}" />
+			<ObjectAttribute
+				text="www.sap.com"
+				active="true"
+				press="handleLinkObjectAttributePress" />
+		</attributes>
+	</ObjectHeader>
+	<Text text="By default, ObjectHeader instances come with a 16px (1rem) margin all around. In our example, we added pre-defined css classes 'sapUiNoMarginTop' and 'sapUiNoMarginEnd' to remove the top and right margin from the first ObjectHeader and 'sapUiNoMarginBottom' and 'sapUiNoMarginBegin' to remove the bottom and left margin from the second ObjectHeader(in left-to-right mode). To see what happens in Right-To-Left mode open 'Settings' by pressing the cog wheel button next to 'Entities'." class="sapUiExploredNoMarginInfo"/>	
+</mvc:View>

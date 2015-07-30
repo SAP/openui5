@@ -3,8 +3,8 @@
 /* BlueCrystal theme                             */
 /* ============================================= */
 
-/* 
-  Carousel control base styling 
+/*
+  Carousel control base styling
 */
 .sapMCrslControls {
 	padding-top: 0.625rem;
@@ -36,6 +36,7 @@
 
 /* Carousel controls: Bulleted */
 .sapMCrslBulleted > span {
+	text-indent: 2rem;
 	line-height: 0;
 	text-decoration: none;
 	overflow: hidden;
@@ -44,8 +45,8 @@
 	width: 0;
 	height: 0;
 	margin: 0 0.25rem;
-	color: @sapUiExtraDarkBorder;
-	background-color: @sapUiExtraDarkBorder;
+	color: lighten(@sapUiBase, 10);
+	background-color: lighten(@sapUiBase, 10);
 	-webkit-transition: background-color 0.1s ease-in;
 	-moz-transition: background-color 0.1s ease-in;
 	transition: background-color 0.1s ease-in;
@@ -63,8 +64,8 @@
 }
 
 .sapMCrslBulleted > span.sapMCrslActive {
-	color: @sapUiHighlight;
-	background-color: @sapUiHighlight;
+	color: @sapUiSelected;
+	background-color: @sapUiSelected;
 }
 
 
@@ -84,7 +85,7 @@
 	padding: 0;
 	text-decoration: none;
 	overflow: hidden;
-	background-color: @sapUiLightestBorder;
+	background-color: @sapUiLightestBG;
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
 	border-radius: 50%;
@@ -122,6 +123,7 @@
 .sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
 .sapMCrsl .sapMCrslHud.sapMCrslRightmost a.sapMCrslNext {
 	opacity: 0;
+	display: none;
 }
 
 .sapMCrslHud .sapMCrslHudInner {
@@ -159,8 +161,6 @@
 
 html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
 .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon {
-	display: table-cell;
-	vertical-align: middle;
 	left: auto;
 	right: 0;
 	text-indent: 0.0625rem;
@@ -168,14 +168,16 @@ html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
 
 html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
 .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon {
-	display: table-cell;
-	vertical-align: middle;
 	right: auto;
 	left: 0;
 	text-indent: -0.0625rem;
 }
 
-
+.sapMCrslHudInner > .sapUiIcon {
+	display: table-cell;
+	vertical-align: middle;
+	cursor: inherit !important;
+}
 
 /* extra bits */
 

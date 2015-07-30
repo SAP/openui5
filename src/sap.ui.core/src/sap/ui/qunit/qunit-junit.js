@@ -6,7 +6,7 @@
 (function() {
 
 	if (typeof QUnit !== "undefined") {
-		
+
 		//extract base URL from script to attach the qunit-reporter-junit script
 		var sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
 				aScripts = document.getElementsByTagName("script"),
@@ -39,15 +39,49 @@
 
 		// avoid . in module names to avoid displaying issues in Jenkins results
 		var formatModuleName = function(sName) {
-			return sName.replace(/\./g, "_");
+			return String(sName || 'default').replace(/\./g, "_");
 		};
+
+		// HACK: insert our hook in front of QUnit's own hook so that we execute first
+		QUnit.config.callbacks.begin.unshift(function() {
+			// ensure proper structure of DOM
+			var $qunit = jQuery("#qunit");
+			var $qunitDetails = jQuery('#qunit-header,#qunit-banner,qunit-userAgent,#qunit-testrunner-toolbar,#qunit-tests');
+			var $qunitFixture = jQuery("#qunit-fixture");
+			if ( $qunit.size() === 0 && $qunitDetails.size() > 0 ) {
+				// create a "qunit" section and place it before the existing detail DOM 
+				$qunit = jQuery("<div id='qunit'></div>").insertBefore($qunitDetails[0]);
+				// move the existing DOM into the wrapper
+				$qunit.append($qunitDetails);
+			}
+			if ( $qunitFixture.size === 0 ) {
+				$qunit.after("<div id='qunit-fixture'></div>");
+			}
+		});
+
+		// TODO: Remove deprecated code once all projects adapted
+		QUnit.equals = window.equals = window.equal;
+		QUnit.raises = window.raises = window["throws"];
 
 		// register QUnit event handler to manipulate module names for better reporting in Jenkins
 		QUnit.moduleStart(function(oData) {
 			oData.name = sTestPageName + "." + formatModuleName(oData.name);
 		});
 		QUnit.testStart(function(oData) {
-			oData.module = sTestPageName + "." + formatModuleName(oData.module || 'default');
+			oData.module = sTestPageName + "." + formatModuleName(oData.module);
+			window.assert = QUnit.config.current.assert;
+		});
+		QUnit.testDone(function(assert) {
+			delete window.assert;
+		});
+		QUnit.log(function(data) {
+			// manipulate data.message for failing tests with source info
+			if (!data.result && data.source) {
+				// save original error message (see QUnit.log below)
+				data.___message = data.message;
+				// add source info to message for detailed reporting
+				data.message += '\n' + 'Source: ' + data.source;
+			}
 		});
 
 		// load and execute qunit-reporter-junit script synchronously via XHR
@@ -64,6 +98,15 @@
 			}
 		};
 		req.send(null);
+
+		// this will be executed after the hooks from qunit-reporter-junit
+		QUnit.log(function(data) {
+			if (!data.result && data.source) {
+				// restore original message to prevent adding the source info to the error message title (see qunit-reporter-junit)
+				data.message = data.___message;
+				data.___message = undefined;
+			}
+		});
 
 		//callback to put results on window object
 		QUnit.jUnitReport = function(oData) {
@@ -109,5 +152,5 @@
 	} else {
 		throw new Error("qunit-junit.js: QUnit is not loaded yet!");
 	}
-	
+
 })();

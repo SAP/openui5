@@ -11,6 +11,10 @@
 	cursor:           pointer;
 }
 
+.sapMBtnBase {
+	position: relative;
+}
+
 /*Needed for firefox if you set 100px to a div inside a button the width will be 106px */
 .sapMBtn::-moz-focus-inner {
 	padding: 0;
@@ -24,8 +28,6 @@
 	-ms-user-select: none;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	height: 2.500rem;
 	min-width: 2.500em;
@@ -79,6 +81,5 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 }
 
 .sapMBtnDisabled {
-	pointer-events: none;
 	cursor: default;
 }

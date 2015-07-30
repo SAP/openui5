@@ -11,38 +11,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	/**
 	 * Constructor for a new TablePersoController.
 	 *
-	 * Accepts an object literal <code>mSettings</code> that defines initial
-	 * property values, aggregated and associated objects as well as event handlers.
-	 *
-	 * If the name of a setting is ambiguous (e.g. a property has the same name as an event),
-	 * then the framework assumes property, aggregation, association, event in that order.
-	 * To override this automatic resolution, one of the prefixes "aggregation:", "association:"
-	 * or "event:" can be added to the name of the setting (such a prefixed name must be
-	 * enclosed in single or double quotes).
-	 *
-	 * The supported settings are:
-	 * <ul>
-	 * <li>Properties
-	 * <ul>
-	 * <li>{@link #getAutoSave autoSave} : boolean (default: true)</li>
-	 * <li>{@link #getPersoService persoService} : any</li></ul>
-	 * <li>{@link #getCustomDataKey customDataKey} : string (default: "persoKey")</li></ul>
-	 * </li>
-	 * <li>Aggregations
-	 * <ul>
-	 * </ul>
-	 * </li>
-	 * <li>Associations
-	 * <ul>
-	 * <li>{@link #getTable table} : string | sap.ui.table.Table</li></ul>
-	 * </li>
-	 * <li>Events
-	 * <ul>
-	 * </ul>
-	 * </li>
-	 * </ul>
-	
-	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
@@ -56,9 +24,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.table.TablePersoController
+	 * @alias sap.ui.table.TablePersoController
 	 */
-	var TablePersoController = ManagedObject.extend("sap.ui.table.TablePersoController", /** @lends sap.ui.table.TablePersoController */ {
+	var TablePersoController = ManagedObject.extend("sap.ui.table.TablePersoController", /** @lends sap.ui.table.TablePersoController.prototype */ {
 	
 		constructor: function(sId, mSettings) {
 			ManagedObject.apply(this, arguments);
@@ -66,19 +34,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	
 		metadata: {
 			properties: {
+				
+				/**
+				 * Auto save state
+				 */
 				"autoSave": {
 					type: "boolean",
 					defaultValue: true
 				},
+				
+				/**
+				 * Personalization Service object. Needs to have the following methods:
+				 * <ul>
+				 * <li>getPersData() : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
+				 * <li>setPersData(oBundle) : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
+				 * <li>delPersData() : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
+				 * </ul>
+				 */
 				"persoService": {
 					type: "any"
 				},
+				
+				/**
+				 * By defining a custom data key the <code>TablePersoController</code>
+				 * will try to get the key for saving the perso data from the custom
+				 * data of the Table and Column instead of creating it by concatenating 
+				 * the ID of the Table and the Column. Basically this will be more stable 
+				 * than using the auto IDs.
+				 */
 				"customDataKey": {
 					type: "string",
 					defaultValue: "persoKey"
 				}
 			},
 			associations: {
+				/**
+				 * The target table of this controller.
+				 */
 				"table": {
 					type: "sap.ui.table.Table",
 					multiple: false
@@ -90,24 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.table.TablePersoController with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.base.ManagedObject.extend ManagedObject.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.table.TablePersoController.extend
-	 * @function
-	 */
-	
-	/**
-	 * @function
-	 * @name sap.ui.table.TablePersoController.prototype.init
 	 * @private
 	 */
 	TablePersoController.prototype.init = function() {
@@ -131,8 +105,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	};
 	
 	/**
-	 * @function
-	 * @name sap.ui.table.TablePersoController.prototype.exit
 	 * @private
 	 */
 	TablePersoController.prototype.exit = function() {
@@ -152,35 +124,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	
 	};
 	
-	/**
-	 * Getter for property <code>persoService</code>.<br/>
-	 * Personalization Service object. Needs to have the following methods:
-	 * <ul>
-	 * <li>getPersData() : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
-	 * <li>setPersData(oBundle) : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
-	 * <li>delPersData() : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
-	 * </ul>
-	 * @return {any}
-	 * @public
-	 * @name sap.ui.table.TablePersoController#getPersoService
-	 * @function
-	 */
-	
-	/**
-	 * Setter for property <code>persoService</code>.<br/>
-	 * Personalization Service object. Needs to have the following methods:
-	 * <ul>
-	 * <li>getPersData() : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
-	 * <li>setPersData(oBundle) : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
-	 * <li>delPersData() : <code>jQuery Promise</code> (http://api.jquery.com/promise/)</li>
-	 * </ul>
-	 *
-	 * @param {any} oPersoService
-	 * @return {sap.ui.table.TablePersoController} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.table.TablePersoController#setPersoService
-	 * @function
-	 */
 	TablePersoController.prototype.setPersoService = function(oService) {
 		oService = this.validateProperty("persoService", oService);
 		if (oService &&
@@ -203,26 +146,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		return this;
 	};
 	
-	/**
-	 * Getter for property <code>autoSave</code>.<br/>
-	 * Auto save state
-	 * <p>Default value is <code>true</code></p>
-	 *
-	 * @return {boolean}
-	 * @public
-	 * @name sap.ui.table.TablePersoController#getAutoSave
-	 * @function
-	 */
-	
-	/**
-	 * Setter for property <code>autoSave</code>.
-	 *
-	 * @param {boolean} bAutoSave
-	 * @return {sap.ui.table.TablePersoController} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.table.TablePersoController#setAutoSave
-	 * @function
-	 */
 	TablePersoController.prototype.setAutoSave = function(bAutoSave) {
 		var oOldValue = this.getAutoSave();
 		this.setProperty("autoSave", bAutoSave, true);
@@ -236,26 +159,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		return this;
 	};
 	
-	/**
-	 * Getter for association <code>table</code>.<br/>
-	 *
-	 * @return {string} Id of the element which is the current target of the <code>table</code> association, or null
-	 * @public
-	 * @name sap.ui.table.TablePersoController#getTable
-	 * @function
-	 */
-	
-	/**
-	 * Setter for association <code>table</code>.<br/>
-	 *
-	 * @param {string | sap.ui.table.Table} vTable
-	 *    Id of an element which becomes the new target of this <code>table</code> association.
-	 *    Alternatively, an element instance may be given.
-	 * @return {sap.ui.table.TablePersoController} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.table.TablePersoController#setTable
-	 * @function
-	 */
 	TablePersoController.prototype.setTable = function(vTable) {
 		var oOldTable = this._getTable();
 		if (oOldTable) {
@@ -292,31 +195,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		return this;
 	};
 	
-	/**
-	 * Getter for property <code>customDataKey</code>.<br/>
-	 * By defining a custom data key the <code>TablePersoController</code>
-	 * will try to get the key for saving the perso data from the custom
-	 * data of the Table and Column instead of creating it by concatenate 
-	 * the ID of the Table and the Column. Basically this will be more stable 
-	 * than using the auto IDs.
-	 *
-	 * <p>Default value is <code>"persoKey"</code></p>
-	 * 
-	 * @return {string}
-	 * @public
-	 * @name sap.ui.table.TablePersoController#getCustomDataKey
-	 * @function
-	 */
-	
-	/**
-	 * Setter for property <code>customDataKey</code>.
-	 *
-	 * @param {string} sCustomDataKey
-	 * @return {sap.ui.table.TablePersoController} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.table.TablePersoController#setAutoSave
-	 * @function
-	 */
 	TablePersoController.prototype.setCustomDataKey = function(sCustomDataKey) {
 		var sOldValue = this.getCustomDataKey();
 		this.setProperty("customDataKey", sCustomDataKey, true);
@@ -343,7 +221,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 *
 	 * @return {jQuery.Promise} <code>jQuery Promise</code> which is resolved once the refresh is finished
 	 * @public
-	 * @function
 	 */
 	TablePersoController.prototype.refresh = function() {
 		var that = this;
@@ -372,7 +249,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 *
 	 * @return {jQuery.Promise} <code>jQuery Promise</code> which is resolved once the save is finished
 	 * @public
-	 * @function
 	 */
 	TablePersoController.prototype.savePersonalizations = function() {
 		var oService = this.getPersoService();
@@ -515,8 +391,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * 
 	 * @param {object} mSettings
 	 * @public
-	 * @name sap.ui.table.TablePersoController#openDialog
-	 * @function
 	 * @experimental since 1.21.2 - API might change / feature requires the sap.m library!
 	 */
 	TablePersoController.prototype.openDialog = function(mSettings) {

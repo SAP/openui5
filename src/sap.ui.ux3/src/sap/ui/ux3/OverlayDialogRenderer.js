@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 	"use strict";
 
 /**
-	 * @class OverlayDialog renderer.
-	 * @static
+	 * OverlayDialog renderer.
+	 * @namespace
 	 */
 	var OverlayDialogRenderer = Renderer.extend(OverlayRenderer);
 	

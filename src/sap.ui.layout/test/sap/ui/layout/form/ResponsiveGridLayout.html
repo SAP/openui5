@@ -7,7 +7,7 @@
 		<title>ResponsiveGridLayout - sap.ui.layout.form</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.GridLayout.gif">
 		<script id="sap-ui-bootstrap" type="text/javascript"
-				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.layout, sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js"></script>
 
@@ -36,10 +36,48 @@
 				}
 			};
 
+			var moveContainer = function(oEvent){
+
+				var oForm = sap.ui.getCore().byId("F1");
+				var oContainer = sap.ui.getCore().byId("C2");
+				oForm.removeFormContainer(oContainer);
+				if(oEvent.getParameter("pressed")){
+					oForm.insertFormContainer(oContainer, 0);
+				}else{
+					oForm.insertFormContainer(oContainer, 1);
+				}
+
+			};
+
+			var newContainer = function(oEvent){
+
+				var oForm = sap.ui.getCore().byId("F1");
+				var oContainer = sap.ui.getCore().byId("CX");
+				if(oEvent.getParameter("pressed")){
+					oForm.addFormContainer(oContainer);
+				}else{
+					oForm.removeFormContainer(oContainer);
+				}
+
+			};
+
+			var visibilityContainer = function(oEvent){
+
+				var oForm = sap.ui.getCore().byId("F1");
+				var oContainer = sap.ui.getCore().byId("C6");
+				if(oEvent.getParameter("pressed")){
+					oContainer.setVisible(false);
+				}else{
+					oContainer.setVisible(true);
+				}
+
+			};
+
 			var oLayout1 = new sap.ui.layout.form.ResponsiveGridLayout("L1");
 
 			var oForm1 = new sap.ui.layout.form.Form("F1",{
 				title: new sap.ui.core.Title({text: "Form Title", icon: "../../commons/images/help.gif", tooltip: "Title tooltip", emphasized: true}),
+				editable: true,
 				layout: oLayout1,
 				formContainers: [
 					new sap.ui.layout.form.FormContainer("C1",{
@@ -202,6 +240,15 @@
 										new sap.ui.commons.Button({text: 'Reset LayoutData',
 																	press: deleteLayoutData,
 																	layoutData: new sap.ui.layout.GridData({span: "L3 M3 S3"})}),
+										new sap.ui.commons.ToggleButton({text: "move Container",
+																	press: moveContainer,
+																	layoutData: new sap.ui.layout.GridData({span: "L3 M3 S3"})}),
+										new sap.ui.commons.ToggleButton({text: "new Container",
+																	press: newContainer,
+																	layoutData: new sap.ui.layout.GridData({span: "L3 M3 S3"})}),
+										new sap.ui.commons.ToggleButton({text: "visibility Container",
+																	press: visibilityContainer,
+																	layoutData: new sap.ui.layout.GridData({linebreak: true, span: "L3 M3 S3"})}),
 										new sap.ui.commons.Button({text: 'OK',
 																	layoutData: new sap.ui.layout.GridData({span: "L1 M1 S1"})}),
 										new sap.ui.commons.Button({text: 'Cancel',
@@ -210,6 +257,19 @@
 						]
 					})
 				]
+			});
+
+			var oTitle = new sap.ui.core.Title("TitleX",{text: "new Container", level: sap.ui.core.TitleLevel.H2});
+			var oContainer = new sap.ui.layout.form.FormContainer("CX",{
+					title: oTitle,
+					formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: new sap.ui.commons.Label({text:"Label1"}),
+								fields: [new sap.ui.commons.TextField({value: "Text1", required: true}),
+								         new sap.ui.commons.TextField({value: "Text2"}),
+								         new sap.ui.commons.TextField({value: "Text3"})]
+							})
+					]
 			});
 
 			oForm1.placeAt("content");

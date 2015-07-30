@@ -1,0 +1,11 @@
+<mvc:View xmlns="sap.m"
+	xmlns:c="sap.ui.commons"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App id="app">
+		<Page id="intro">
+			<c:Tree nodes="{/root}">
+				<c:TreeNode text="{name}" expanded="false"></c:TreeNode>
+			</c:Tree>
+		</Page>
+	</App>
+</mvc:View>

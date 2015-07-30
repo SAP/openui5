@@ -1,0 +1,69 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.ui.layout.sample.DynamicSideContentProduct.DynamicSideContent"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		showHeader="false"
+		showNavButton="false">
+		<content>
+			<Page
+				id="sideContentContainer"
+				showHeader="false"
+				showNavButton="false">
+				<l:DynamicSideContent id="DynamicSideContent" class="sapUiDSCExplored sapUiContentPadding" containerQuery="true" breakpointChanged="updateToggleButtonState">
+					<l:mainContent>
+						<VBox>
+							<Title level="H1" text="Product" />
+							<Image src="{img>/products/pic1}" densityAware="false" width="10em" />
+							<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+							Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+							Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+							Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+							Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."></Text>
+						</VBox>
+					</l:mainContent>
+					<l:sideContent>
+						<l:VerticalLayout
+								width="100%">
+							<l:content>
+								<List
+										headerText="Comments"
+										items="{/EntryCollection}" >
+									<FeedListItem
+											sender="{Author}"
+											icon="{AuthorPicUrl}"
+											senderPress="onPress"
+											iconPress="onPress"
+											iconDensityAware="false"
+											info="{Type}"
+											timestamp="{Date}"
+											text="{Text}" />
+								</List>
+								<FeedInput
+										post="onPost"
+										showIcon="true"
+										icon="http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg" />
+							</l:content>
+						</l:VerticalLayout>
+					</l:sideContent>
+				</l:DynamicSideContent>
+			</Page>
+		</content>
+		<footer>
+			<Bar>
+				<contentLeft>
+					<Button text="Toggle" type="Accept" press="handleToggleClick" id="toggleButton"></Button>
+				</contentLeft>
+				<contentMiddle>
+					<Slider value="100" width="300px" liveChange="handleSliderChange" />
+				</contentMiddle>
+				<contentRight>
+					<Text text="Best view in full screen"></Text>
+				</contentRight>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

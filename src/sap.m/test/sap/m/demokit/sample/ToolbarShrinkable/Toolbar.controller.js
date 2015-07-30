@@ -1,9 +1,17 @@
-sap.ui.controller("sap.m.sample.ToolbarShrinkable.Toolbar", {
-	onSliderLiveChange: function (oEvent) {
-		var sWidth = oEvent.getParameter("value") + "%";
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-		this.getView().byId("toolbar1").setWidth(sWidth);
-		this.getView().byId("toolbar2").setWidth(sWidth);
-		this.getView().byId("toolbar3").setWidth(sWidth);
-	},
+	var ToolbarController = Controller.extend("sap.m.sample.ToolbarShrinkable.Toolbar", {
+		onSliderLiveChange: function (oEvent) {
+			var sWidth = oEvent.getParameter("value") + "%";
+
+			this.getView().byId("toolbar1").setWidth(sWidth);
+			this.getView().byId("toolbar2").setWidth(sWidth);
+			this.getView().byId("toolbar3").setWidth(sWidth);
+		},
+	});
+
+	return ToolbarController;
+
 });

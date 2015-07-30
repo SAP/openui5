@@ -4,10 +4,6 @@
 /* HCB Theme                                                                             */
 /* ===================================================================================== */
 
-
-/* ************************************************************************************* */
-/* Common Styles                                                                         */
-/* ************************************************************************************* */
 /* List Header */
 .sapMTB.sapMUCListHeader {
 	background-color:		@sapHCStandardBG;
@@ -17,62 +13,66 @@
 	font-weight:			@sapUiFontHeaderWeight;
 	color:					@sapHCStandardFG;
 	text-shadow:			none;
-}
-
-.sapMLIB.sapMUCListSingleItem,
-.sapMLIB.sapMUCListFirstItem,
-.sapMLIB.sapMUCListLastItem,
-.sapMLIB.sapMUCListItem {
-	border-bottom-color:	@sapHCStandardFG;
+	box-sizing:				border-box;
 }
 
 /* Item Icon */
-span[id*="ia_iconHL"] {
+.sapMUCItemIcon {
 	color:					@sapHCStandardFG;
 }
 
-/* Buttons */
-.sapMBtn.sapMUCEditBtn,
-.sapMBtn.sapMUCDeleteBtn,
-.sapMBtn.sapMUCCancelBtn,
-.sapMBtn.sapMUCOkBtn {
-	margin-left:		0.25rem;
+/*if no image is provided a placeholder camera is displayed */
+.sapMUCItemPlaceholder {
+	background-color: @sapHCStandardBG;
+	box-sizing: border-box;
+	border-width: 0.0625rem;
+	border-style: solid;
+	border-color: @sapHCReducedAltFG;
+	border-radius: 0;
 }
 
-.sapMUCDeleteBtn>.sapMBtnTransparent>.sapMBtnIcon {
-	color:					@sapHCNegative;
+/*pictogram color for the placeholder */
+.sapMUCItemPlaceholder.sapUiIcon::before {
+	color: @sapHCReducedAltFG;
 }
 
-/* Text: Filename */
-.sapMUCFileName.sapMLnk {
-	font-size:			@sapMFontLargeSize;
+/*padding between buttons */
+.sapMBtn.sapMUCFirstButton {
+	padding-right:		0.5rem;
 }
 
-/* Text: Description (/Progress) */
-.sapMUCDescriptionHL .sapMLabel{
+
+/*padding between buttons */
+.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+	padding-right:		0.5rem;
+}
+
+
+/* Text: Description (Progress) */
+.sapMLabel.sapMUCProgress {
 	font-size:				@sapMFontMediumSize;
 	color:					@sapHCStandardFG;
 }
 
-/* ************************************************************************************* */
-/* Compact Mode                                                                          */
-/* ************************************************************************************* */
-.sapUiSizeCompact {
-	.sapMLIB.sapMUCListSingleItem,
-	.sapMLIB.sapMUCListFirstItem,
-	.sapMLIB.sapMUCListLastItem,
-	.sapMLIB.sapMUCListItem {
-		border-bottom-style:	none;
-	}
+/* Text: Filename */
+.sapMUCFileName.sapMLnk {
+	font-size: 			@sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
+}
 
-	.sapMUCFileName.sapMLnk {
-		font-size:			@sapMFontMediumSize;
-	}
+.sapMUCAttrContainer, .sapMUCStatusContainer {
+	font-size: @sapMFontMediumSize; /* it cannot be moved to base as the LESS constant is not known there */
+}
 
-	/* ----------------------------------*/
-	/* Last List Item in Compact Mode    */
-	/* ----------------------------------*/
-	.sapMLIB.sapMUCListLastItem {
-		padding-bottom:		1rem;
-	}
+/*if no link is provided the file name is displayed as an disabled link */
+.sapMLnkDsbl.sapMUCFileName {
+	color: @sapHCStandardFG;
+}
+
+/* ************************************************************************************* */
+/* local fixes: should be done by used simple controls
+/* ************************************************************************************* */
+.sapMUCItemIcon.sapUiIcon:focus,
+.sapMUCItemImage:focus {
+	outline-width:			0.125rem;
+	outline-style:			dotted;
 }

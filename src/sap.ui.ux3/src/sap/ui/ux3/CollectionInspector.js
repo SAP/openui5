@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @constructor
 	 * @public
 	 * @since 1.9.0
-	 * @name sap.ui.ux3.CollectionInspector
+	 * @alias sap.ui.ux3.CollectionInspector
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CollectionInspector = Control.extend("sap.ui.ux3.CollectionInspector", /** @lends sap.ui.ux3.CollectionInspector.prototype */ { metadata : {
@@ -354,8 +354,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *             the last position        
 	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#insertCollection
-	 * @function
 	 */
 	CollectionInspector.prototype.insertCollection = function(oCollection, iIndex) {
 		var oButton = new sap.ui.commons.Button();
@@ -382,8 +380,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *            oCollection the collection to add; if empty, nothing is inserted
 	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#addCollection
-	 * @function
 	 */
 	CollectionInspector.prototype.addCollection = function(oCollection) {
 		var oButton = new sap.ui.commons.Button();
@@ -408,8 +404,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @param {int | string | sap.ui.ux3.Collection} vCollection the collection to remove or its index or id
 	 * @return {sap.ui.ux3.Collection} the removed collection or null
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#removeCollection
-	 * @function
 	 */
 	CollectionInspector.prototype.removeCollection = function(vCollection) {
 		var iIndex;
@@ -433,8 +427,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Additionally unregisters them from the hosting UIArea.
 	 * @return {sap.ui.ux3.Collection[]} an array of the removed elements (might be empty)
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#removeAllCollections
-	 * @function
 	 */
 	CollectionInspector.prototype.removeAllCollections = function() {
 		this._oCollectionSelector.removeAllButtons();
@@ -446,8 +438,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Destroys the collection aggregation
 	 * @return {sap.ui.ux3.CollectionInspector} this to allow method chaining
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#destroyCollections
-	 * @function
 	 */
 	CollectionInspector.prototype.destroyCollections = function() {
 		this._oCollectionSelector.destroyButtons();
@@ -484,8 +474,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *             the last position        
 	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#insertContent
-	 * @function
 	 */
 	CollectionInspector.prototype.insertContent = function(oContent, iIndex) {
 		this.insertAggregation("content",oContent,iIndex,true);
@@ -500,8 +488,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *            oContent the content to add; if empty, nothing is inserted
 	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#addContent
-	 * @function
 	 */
 	CollectionInspector.prototype.addContent = function(oContent) {
 		this.addAggregation("content",oContent,true);
@@ -514,8 +500,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @param {int | string | sap.ui.core.Control} vContent the content to remove or its index or id
 	 * @return {sap.ui.core.Control} the removed content or null
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#removeContent
-	 * @function
 	 */
 	CollectionInspector.prototype.removeContent = function(vContent) {
 		this.removeAggregation("content",vContent,true);
@@ -527,8 +511,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Additionally unregisters them from the hosting UIArea.
 	 * @return {sap.ui.core.Control[]} an array of the removed elements (might be empty)
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#removeAllContent
-	 * @function
 	 */
 	CollectionInspector.prototype.removeAllContent = function() {
 		this.removeAllAggregation("content",true);
@@ -540,8 +522,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * named <code>content</code>.
 	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.ux3.CollectionInspector#destroyContent
-	 * @function
 	 */
 	CollectionInspector.prototype.destroyContent = function() {
 		this.destroyAggregation("content",true);

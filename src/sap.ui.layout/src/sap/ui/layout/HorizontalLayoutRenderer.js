@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class HorizontalLayout renderer.
-	 * @static
+	 * HorizontalLayout renderer.
+	 * @namespace
 	 */
 	var HorizontalLayoutRenderer = {
 	};
@@ -22,11 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	HorizontalLayoutRenderer.render = function(oRenderManager, oControl){
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// convenience variable
 		var rm = oRenderManager;
 		var bNoWrap = !oControl.getAllowWrapping();

@@ -8,8 +8,8 @@
 
 
 	/**
-	 * @class Shell renderer. 
-	 * @static
+	 * Shell renderer. 
+	 * @namespace
 	 */
 	var ShellRenderer = {
 	};
@@ -93,22 +93,25 @@
 		
 		rm.write("</section></div></div>");
 	};
-	
+
 	ShellRenderer.getLogoImageHtml = function(oControl) {
 		var sImage = oControl.getLogo(); // configured logo
 		if (!sImage) {
 			jQuery.sap.require("sap.ui.core.theming.Parameters");
 			sImage = sap.ui.core.theming.Parameters._getThemeImage(); // theme logo
 		}
-		
+
 		var result = "";
 		if (sImage) {
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			result = "<div class='sapMShellLogo'>";
 			if (sap.ui.Device.browser.internet_explorer) {
 				result += "<span class='sapMShellLogoImgAligner'></span>";
 			}
 			result += "<img id='" + oControl.getId() + "-logo' class='sapMShellLogoImg' src='";
 			result += jQuery.sap.encodeHTML(sImage);
+			result += "' alt='";
+			result += oRb.getText("SHELL_ARIA_LOGO");
 			result += "' /></div>";
 		}
 		return result;

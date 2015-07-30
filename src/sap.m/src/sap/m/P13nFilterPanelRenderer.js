@@ -1,17 +1,17 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([
+	'jquery.sap.global'
+], function(jQuery) {
 	"use strict";
 
-
 	/**
-	 * @class FilterPanel renderer.
-	 * @static
+	 * FilterPanel renderer.
+	 * @namespace
 	 */
 	var P13nFilterPanelRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -21,11 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 *          oControl an object representation of the control that should be rendered
 	 */
 	P13nFilterPanelRenderer.render = function(oRm, oControl) {
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// start ConditionPanel
 		oRm.write("<section");
 		oRm.writeControlData(oControl);
@@ -35,24 +30,24 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">");
-	
+
 		// render content
 		oRm.write("<div");
 		oRm.addClass("sapMFilterPanelContent");
 		oRm.addClass("sapMFilterPanelBG");
-	
+
 		oRm.writeClasses();
 		oRm.write(">");
 		var aChildren = oControl.getAggregation("content");
 		var iLength = aChildren.length;
-		for ( var i = 0; i < iLength; i++) {
+		for (var i = 0; i < iLength; i++) {
 			oRm.renderControl(aChildren[i]);
 		}
 		oRm.write("</div>");
-	
+
 		oRm.write("</section>");
 	};
 
 	return P13nFilterPanelRenderer;
 
-}, /* bExport= */ true);
+}, /* bExport= */true);

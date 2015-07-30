@@ -174,7 +174,7 @@
 				ok(jQuery("#DP3-cal")[0], "calendar rendered");
 				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 
-				var aDays = jQuery("#DP3-cal-days").children();
+				var aDays = jQuery("#DP3-cal--Month0-days").find(".sapUiCalDay");
 				var oDay;
 				for ( var i = 0; i < aDays.length; i++) {
 					oDay = aDays[i];
@@ -186,7 +186,7 @@
 
 				// use ENTER to not run into itemNavigation
 				qutils.triggerKeyboardEvent(oDay, jQuery.sap.KeyCodes.ENTER, false, false, false);
-				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is now invisible");
+				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 				equal(sId, "DP3", "Change event fired");
 				equal(sValue, "4/10/14", "Value in internal format priovided");
 				equal(oDP3.getValue(), "4/10/14", "Value in internal format set");
@@ -200,6 +200,33 @@
 
 				oDP3.setEditable(true);
 				sap.ui.getCore().applyChanges();
+			});
+
+			module("ARIA");
+			test("Tooltip and date annoncement should be set correctly at the described by", function() {
+				var sTooltip = "tooltip";
+				var sPlaceholder = "placeholder";
+				var oDP = new sap.m.DatePicker({
+					placeholder: sPlaceholder
+				}).placeAt("uiArea4");
+				sap.ui.getCore().applyChanges();
+
+				var $Input = jQuery(oDP.getFocusDomRef());
+				var $LabelledByReference = jQuery.sap.byId($Input.attr("aria-labelledby"));
+				var $DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
+				var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
+				
+				strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
+				strictEqual($LabelledByReference.text(), sPlaceholder, "Placholder announcement added into aria-labelledby");
+
+				oDP.setTooltip(sTooltip);
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oDP.getFocusDomRef());
+				$DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
+
+				strictEqual($DescribedByReference.text(), sDateAnnouncement + " " + sTooltip, "Date announcement and tootip is added into aria-describedby");
+
+				oDP.destroy();
 			});
 
 		</script>
@@ -217,5 +244,7 @@
 		<div id="uiArea2"></div>
 		<br>
 		<div id="uiArea3"></div>
+		<br>
+		<div id="uiArea4"></div>
 	</body>
 </html>

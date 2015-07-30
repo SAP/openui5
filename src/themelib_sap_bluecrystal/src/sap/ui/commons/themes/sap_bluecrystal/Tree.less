@@ -11,6 +11,7 @@
 	font-size: @sapUiDesktopFontSize;
 	background-color: @sapUiLightestBG;
 	border: 1px solid @sapUiDarkBorder;
+	box-sizing: border-box;
 }
 
 .sapUiTreeTransparent {
@@ -34,8 +35,7 @@
 
 .sapUiTreeNode:hover{
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
-	background-image: url(img/tree/TreeNode-white.gif);
+	background-image: url(img/tree/TreeNode.gif);
 }
 
 .sapUiTreeNode:focus {
@@ -43,8 +43,7 @@
 }
 
 .sapUiTreeNodeSelectedParent:Hover, .sapUiTreeNodeSelected:Hover {
-	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 .sapUiTreeNodeSelectedParent, .sapUiTreeNodeSelected {
@@ -59,10 +58,14 @@
 
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent:Hover,
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelected:Hover,
+.sapUiTreeNodeExpanded.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	background-image: url(img/tree/TreeNode_Exp.gif);
+}
+
 .sapUiTreeNodeExpanded.sapUiTreeNode:Hover{
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
-	background-image: url(img/tree/TreeNode_Exp-white.gif);
+	background-image: url(img/tree/TreeNode_Exp.gif);
 }
 
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent,
@@ -72,10 +75,14 @@
 
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent:Hover,
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelected:Hover,
-.sapUiTreeNodeCollapsed.sapUiTreeNode:Hover{
+.sapUiTreeNodeCollapsed.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	background-image: url(img/tree/TreeNode_Coll.gif);
+}
+
+.sapUiTreeNodeCollapsed.sapUiTreeNode:Hover {
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
-	background-image: url(img/tree/TreeNode_Coll-white.gif);
+	background-image: url(img/tree/TreeNode_Coll.gif);
 }
 
 .sapUiTreeTbCont > .sapUiBtn.sapUiBtnS.sapUiBtnLite{

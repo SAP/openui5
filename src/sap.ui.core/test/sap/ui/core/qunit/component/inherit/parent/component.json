@@ -1,0 +1,30 @@
+{
+
+	"name": "sap.ui.test.inherit.parent.Component",
+	
+	"version": "1.0.0",
+	
+	"manifest": "json",
+
+	"config": {
+		"any7": {
+			"entry": "configuration"
+		},
+		"any8": {
+			"anyobject": {
+				"key1": "value1"
+			}
+		}
+	},
+	
+	"custom.entry": {
+		"key5": "value1",
+		"key6": "value2",
+		"key7": {
+			"subkey1": "subvalue1",
+			"subkey2": "subvalue2"
+		},
+		"key8": ["value1", "value2"]
+	}
+
+}

@@ -23,6 +23,12 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<!-- use the sinon faketimers for this test -->
+		<script type="text/javascript">
+			sinon.config.useFakeTimers = true;
+		</script>
+
 		<script>
 			var oApp = new sap.m.App("myApp", {
 				initialPage: "page1"
@@ -49,7 +55,7 @@
 					sap.ui.getCore().applyChanges();
 				}
 
-				// assertions
+				// assert
 				test("method: get" + sProperty + "()", function() {
 					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description + " on " + mOptions.control);
 				});
@@ -206,7 +212,7 @@
 				var aSliders = [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8, oSlider9, oSlider10, oSlider11];
 				var CSS_CLASS = sap.m.SliderRenderer.CSS_CLASS;
 
-				// assertions
+				// assert
 				for (var iIndex = 0, oSlider; iIndex < aSliders.length; iIndex++) {
 					oSlider = aSliders[iIndex];
 
@@ -243,6 +249,11 @@
 						if (oSlider.getName()) {
 							ok(oSlider.$("input").hasClass(CSS_CLASS + "Input"), 'The slider HTML Input element "must have" the CSS class "' + CSS_CLASS + 'Input"');
 						}
+
+						strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is not set');
+					} else {
+						strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), "true", 'The "aria-disabled" attribute is set');
+						ok(oSlider.$().hasClass(CSS_CLASS + "Disabled"), 'The slider HTML DIV element container must have the CSS class "' + CSS_CLASS + 'Disabled"');
 					}
 
 					strictEqual(jQuery.trim(oSlider.getDomRef().style.width), oSlider.getWidth(), 'Check if the style attribute has the correct value');
@@ -252,10 +263,6 @@
 					if (oSlider.getName()) {
 						strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'The "value" attribute of the INPUT is 0');
 						strictEqual(oSlider.getValue(), +oSlider.$("input").prop("value"), 'The "value" property of the INPUT is 0');
-					}
-
-					if (!oSlider.getEnabled()) {
-						ok(oSlider.$().hasClass(CSS_CLASS + "Disabled"), 'The slider HTML DIV element container must have the CSS class "' + CSS_CLASS + 'Disabled"');
 					}
 
 					// cleanup
@@ -282,7 +289,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getWidth(), "100%", "Default slider width");
 				strictEqual(oSlider.getEnabled(), true, "By default the slider is enabled");
 				strictEqual(oSlider.getVisible(), true, "By default the slider is visible");
@@ -292,6 +299,13 @@
 				strictEqual(oSlider.getStep(), 1, "By default the slider step is 1");
 				strictEqual(oSlider.getProgress(), true, "By default the slider progress is true");
 				strictEqual(oSlider.getValue(), 0, "By default the slider value is 0");
+				strictEqual(oSlider.getFocusDomRef().getAttribute("role"), "slider", "The role slider is set");
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-orientation"), "horizontal", 'The "aria-orientation" attribute is set to "horizontal"');
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "0", 'The "aria-valuemin" attribute is set to its default value');
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "100", 'The "aria-valuemax" attribute is set to its default value');
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "0", 'The "aria-valuenow" attribute is set to its default value');
+				strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
+				strictEqual(oSlider.getDomRef("progress").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSlider.destroy();
@@ -458,7 +472,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.$().outerWidth() + "px", "100px", "Check the slider width after rendering");
 
 				// cleanup
@@ -480,7 +494,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'Check the "value" attribute of the native input');
 				strictEqual(oSlider.$("input").attr("name"), "mySlider", 'Check the "value" attribute of the native input');
 
@@ -505,7 +519,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 50);
 				strictEqual(vReturnedValue, oSlider);
 
@@ -527,7 +541,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 100);
 
 				// cleanup
@@ -548,7 +562,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 95);
 
 				// cleanup
@@ -569,7 +583,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 90);
 
 				// cleanup
@@ -596,10 +610,47 @@
 				oSlider.setValue(1e+309);	// infinite positive number
 				oSlider.setValue(-1e+309);	// infinite negative number
 
-				// assertions
+				// assert
 				strictEqual(fnErrorSpy.callCount, 5, "jQuery.sap.log.error() method was called");
 				strictEqual(oSlider.getValue(), 90);
 				equal(oReturnedValue, oSlider);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test('method: setValue() the attribute "aria-valuenow" is updated accordingly (initial rendering)', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					value: 50,
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test('method: setValue() the attribute "aria-valuenow" is updated accordingly', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider();
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(50);
+
+				// assert
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
 
 				// cleanup
 				oSlider.destroy();
@@ -623,8 +674,48 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test('method: setMin() the attribute "aria-valuemin" is updated accordingly (initial rendering)', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					min: 5
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "5");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			/* ------------------------------ */
+			/* setMax()                       */
+			/* ------------------------------ */
+
+			test('method: setMax() the attribute "aria-valuemax" is updated accordingly (initial rendering)', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					max: 200
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "200");
 
 				// cleanup
 				oSlider.destroy();
@@ -645,7 +736,7 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSlider.getDomRef("progress"), "The progress indicator HTMLDivElement is in DOM");
 				ok(oSlider.$("progress").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Progress"), 'Check if the slider has the CSS class "' + sap.m.SliderRenderer.CSS_CLASS + 'Progress"');
 
@@ -669,7 +760,7 @@
 				// act
 				oSlider.stepUp(2);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 10);
 
 				// cleanup
@@ -688,7 +779,7 @@
 				// act
 				oSlider.stepUp(20);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 100);
 
 				// cleanup
@@ -712,7 +803,7 @@
 				// act
 				oSlider.stepDown(2);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 40);
 
 				// cleanup
@@ -732,7 +823,7 @@
 				// act
 				oSlider.stepDown(20);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 0);
 
 				// cleanup
@@ -759,9 +850,89 @@
 				oSlider.setStep(-1);	// if the step is negative or 0, set to 1 and log a warning
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getStep(), 1);
 				strictEqual(oSlider.getValue(), 50);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			/* ------------------------------ */
+			/* handle tooltip                 */
+			/* ------------------------------ */
+
+			test("it should render the handle tooltip (test case 1)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					showHandleTooltip: true
+				});
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(oSlider.getDomRef("handle").hasAttribute("title"));
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should render the handle tooltip (test case 2)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider();
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(5);
+
+				// assert
+				ok(oSlider.getDomRef("handle").hasAttribute("title"));
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should not render the handle tooltip (test case 1)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					showHandleTooltip: false
+				});
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should not render the handle tooltip (test case 2)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					showHandleTooltip: false
+				});
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(5);
+
+				// assert
+				strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
 
 				// cleanup
 				oSlider.destroy();
@@ -809,7 +980,7 @@
 
 				this.clock.tick(1);
 
-				// assertions
+				// assert
 				ok(oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchstart event the slider innner div muss have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
 				ok(jQuery(oSlider.getFocusDomRef()).hasClass(sap.m.SliderRenderer.CSS_CLASS + "Handle"), "The focus should be in the slider handle");
 				strictEqual(fnFocus.callCount, 1);
@@ -858,7 +1029,7 @@
 						pageX: i
 					});
 
-					// assertions
+					// assert
 					strictEqual(oSlider.getValue(), i);
 				}
 
@@ -866,7 +1037,7 @@
 					targetTouches: oTouches
 				});
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 100);
 
 				// cleanup
@@ -900,6 +1071,18 @@
 						length: 1
 					};
 
+					var fnHasEventListeners = function(oDomRef, sEventType) {
+						var aEventListeners = jQuery._data(oDomRef, "events")[sEventType] || [];
+
+						if (!aEventListeners.length) {
+							return false;
+						}
+
+						return aEventListeners.some(function(oEventListener) {
+							return oEventListener.namespace === sap.m.SliderRenderer.CSS_CLASS;
+						});
+					};
+
 					// act
 					sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
 						targetTouches: oTouches
@@ -909,9 +1092,12 @@
 						targetTouches: oTouches
 					});
 
-					// assertions
+					// assert
 					strictEqual(oSlider.getValue(), iPageX);
 					ok(!oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchend the slider muss not have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
+					strictEqual(fnHasEventListeners(document, "touchend"), false);
+					strictEqual(fnHasEventListeners(document, "touchcancel"), false);
+					strictEqual(fnHasEventListeners(document, "mouseup"), false);
 
 					// cleanup
 					oSlider.destroy();
@@ -956,7 +1142,7 @@
 					targetTouches: oTouches
 				});
 
-				// assertions
+				// assert
 				strictEqual(fnFireLiveChangeSpy.callCount, 1, 'The "livechange" event handler must be fired exactly once');
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event handler must be fired exactly once');
 
@@ -987,7 +1173,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
 				strictEqual(fnIncreaseSpy.callCount, 2);
 				strictEqual(fnFireChangeSpy.callCount, 1);
@@ -1018,7 +1204,7 @@
 					// act
 					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
 
-					// assertions
+					// assert
 					strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be increased to " + mOptions.expectedValue);
 					strictEqual(fnFireChangeSpy.callCount, 1);
 					strictEqual(fnFireLiveChangeSpy.callCount, 1);
@@ -1084,7 +1270,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 0, "The slider value must be decreased to 0");
 				strictEqual(fnDecreaseSpy.callCount, 2);
 				strictEqual(fnFireChangeSpy.callCount, 1);
@@ -1115,7 +1301,7 @@
 					// act
 					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
 
-					// assertions
+					// assert
 					strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be decreased to " + mOptions.expectedValue);
 					strictEqual(fnDecreaseModifiersSpy.callCount, 1);
 					strictEqual(fnFireChangeSpy.callCount, 1);
@@ -1181,7 +1367,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
 				strictEqual(fnPageUpSpy.callCount, 1);
 				strictEqual(fnFireChangeSpy.callCount, 1);
@@ -1213,7 +1399,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 0, "The slider value must be increased to 0");
 				strictEqual(fnPageDownSpy.callCount, 1);
 				strictEqual(fnFireChangeSpy.callCount, 1);
@@ -1246,7 +1432,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.HOME);
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.HOME);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 0);
 				strictEqual(fnHomeSpy.callCount, 2);
 				strictEqual(fnFireChangeSpy.callCount, 1);
@@ -1277,7 +1463,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.END);
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.END);
 
-				// assertions
+				// assert
 				strictEqual(oSlider.getValue(), 100);
 				strictEqual(fnEndSpy.callCount, 2);
 				strictEqual(fnFireChangeSpy.callCount, 1);
@@ -1323,7 +1509,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.TAB);
 
-				// assertions
+				// assert
 				strictEqual(fnTabNextSpy.callCount, 1);
 				strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
 
@@ -1370,7 +1556,7 @@
 				// act
 				oSlider.onsaptabprevious();
 
-				// assertions
+				// assert
 				strictEqual(fnTabPreviousSpy.callCount, 1);
 				strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
 
@@ -1412,13 +1598,13 @@
 					targetTouches: oTouches
 				});
 
-				// post-assertions
+				// post-assert
 				strictEqual(oSlider.getValue(), 80);
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
-				// assertions
+				// assert
 				strictEqual(fnOnEscapeSpy.callCount, 1);
 				strictEqual(oSlider.getValue(), 50);
 
@@ -1457,13 +1643,13 @@
 					targetTouches: oTouches
 				});
 
-				// pre-assertions
+				// pre-assert
 				strictEqual(oSlider.getValue(), 80);
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
-				// assertions
+				// assert
 				strictEqual(fnOnEscapeSpy.callCount, 1);
 				strictEqual(oSlider.getValue(), 10);
 

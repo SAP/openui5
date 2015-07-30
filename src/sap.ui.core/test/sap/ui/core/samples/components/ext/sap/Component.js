@@ -1,20 +1,27 @@
-jQuery.sap.declare("samples.components.ext.sap.Component");
-jQuery.sap.require("sap.ui.core.UIComponent");
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
+	function(jQuery, UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("samples.components.ext.sap.Component", {
+	
+	var Component = UIComponent.extend("samples.components.ext.sap.Component", {
 
-	metadata : {
-		version : "1.0",
-		rootView : {
-			viewName: "samples.components.ext.sap.Main",
-			type: "XML"
-		},
-		config : {
-			"myConfig": {
-				"key1": "value1"
+		metadata : {
+			version : "1.0",
+			rootView : {
+				viewName: "samples.components.ext.sap.Main",
+				type: "XML"
+			},
+			config : {
+				"myConfig": {
+					"key1": "value1"
+				}
 			}
 		}
-	}
+
+	});
+
+
+
+	return Component;
 
 });
-

@@ -2,13 +2,9 @@
 /* CSS for control sap.m/InputBase.control       */
 /* ============================================= */
 
-@sapMInputBaseMsgBG: @sapUiWhite;
-
 .sapMInputBase,
 .sapMInputBaseInner,
 .sapMInputBasePlaceholder {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -37,6 +33,13 @@
 	margin: 0;
 }
 
+/* remove user agent pseudo-element clear button (IE specifix) */
+.sapMInputBaseInner::-ms-clear {
+
+	/* note: don't use display: none; see BCP 1570024996 */
+	height: 0;
+}
+
 .sapMInputBaseInner {
 	-webkit-appearance: none;
 	border-radius: 0;
@@ -48,22 +51,27 @@
 
 .sapMInputBaseDisabled {
 	opacity: 0.5;
-	pointer-events: none; /* disable events */
 }
 
-.sapMInputBaseInner::-webkit-input-placeholder {
+.sapMInputBaseInner[placeholder] {
 	text-overflow: ellipsis;
+}
+.sapMInputBaseInner::-webkit-input-placeholder{
+	text-overflow: ellipsis !important; /* important is necessary to overwrite inline style of shadow dom */
 }
 
 .sapMInputBaseMessage {
 	padding: 0.3125rem;
-	background: @sapMInputBaseMsgBG;
+	background: @sapUiFieldBackground;
 	display: inline-block;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
 .sapMInputBaseMessageText {
 	width: 100%;
+}
+
+.sapMInputBaseInner:invalid{
+	/* disable native browser input validation visualization e.g. for type email or number */
+	box-shadow: none;
 }

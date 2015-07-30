@@ -1,15 +1,3 @@
-.str{color:rgb(42,0,255)}						/* string literal */
-.kwd{color:rgb(127,0,85);font-weight:bold} 		/* keyword */
-.com{color:rgb(63,127,95)}						/* comment */
-.typ{color:#606}
-.lit{color:#066}
-.pun{color:#660}
-.pln{color:#000}
-.tag{color:rgb(127,159,191)}					/* JSDOC tags */
-.atn{color:#606}
-.atv{color:#080}
-.dec{color:#606}
-
 pre.sapUiCodeViewer {
 	background-color:rgb(240,240,240);
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -22,4 +10,17 @@ pre.sapUiCodeViewer.editable {
 	background-color:white !important;
 }
 
-@media print{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun{color:#440}.pln{color:#000}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}
+/* styles from google-code-prettify */
+@import "../../js/google-code-prettify/prettify.css";
+
+@media screen {
+	.str{color:rgb(42,0,255)}						/* string literal */
+	.kwd{color:rgb(127,0,85);font-weight:bold} 		/* keyword */
+	.com{color:rgb(63,127,95)}						/* comment */
+	.tag{color:rgb(127,159,191)}					/* JSDOC tags */
+}
+
+/* make code changes appear yellow in the demokit (tutorials), they are marked with the emphasis tag in dita */
+pre.codeblock .emphasis {
+  background-color: #ffff00;
+}

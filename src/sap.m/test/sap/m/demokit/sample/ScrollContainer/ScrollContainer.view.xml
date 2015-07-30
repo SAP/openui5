@@ -8,9 +8,8 @@
 		height="100%"
 		width="100%"
 		horizontal="true"
-		vertical="true" >
-		<Image
-			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-			width="{/width}" />
+		vertical="true"
+		focusable="true">
+		<Image src="{img>/products/pic1}" densityAware="false" width="{/width}" />
 	</ScrollContainer>
 </mvc:View>

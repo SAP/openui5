@@ -5,12 +5,10 @@
 /*
  * Provides the AppCacheBuster mechanism to load application files using a timestamp
  */
-sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Core, URI1) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/ui/thirdparty/URI'],
+	function(jQuery, ManagedObject, Core, URI) {
 	"use strict";
 
-	/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
-	
 	/*
 	 * The AppCacheBuster is only aware of resources which are relative to the
 	 * current application or have been registered via:
@@ -43,7 +41,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 	// nested components? 
 	//   indexOf check in convertURL will not work here!
 	
-	
 	// determine the language and loading mode from the configuration
 	var oConfiguration = sap.ui.getCore().getConfiguration();
 	var sLanguage = oConfiguration.getLanguage();
@@ -57,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 	var fnAjaxOrig = jQuery.ajax;
 	var fnIncludeScript = jQuery.sap.includeScript;
 	var fnIncludeStyleSheet = jQuery.sap.includeStyleSheet;
-	var fnValidateProperty = sap.ui.base.ManagedObject.prototype.validateProperty;
+	var fnValidateProperty = ManagedObject.prototype.validateProperty;
 	
 	// determine the application base url
 	var sLocation = document.location.href.replace(/\?.*|#.*/g, "");
@@ -148,6 +145,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 						contentType: "text/plain",
 						data: sContent.join("\n"),
 						success: function(data) {
+							// notify that the content has been loaded
+							AppCacheBuster.onIndexLoaded(sUrl, data);
 							// add the index file to the index map
 							jQuery.extend(mIndex, data);
 						},
@@ -184,6 +183,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 						async: !bSync && !!oSyncPoint,
 						dataType: "json",
 						success: function(data) {
+							// notify that the content has been loaded
+							AppCacheBuster.onIndexLoaded(sUrl, data);
 							// add the index file to the index map
 							mIndex[sAbsoluteBaseUrl] = data;
 						},
@@ -199,27 +200,38 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		// only request in case of having a correct request object!
 		if (oRequest) {
 			
-			// use the syncpoint only during boot => otherwise the syncpoint
-			// is not given because during runtime the registration needs to
-			// be done synchrously.
-			if (oRequest.async) {
-				var iSyncPoint = oSyncPoint.startTask("load " + sUrl);
-				var fnSuccess = oRequest.success, fnError = oRequest.error;
-				jQuery.extend(oRequest, {
-					success: function(data) {
-						fnSuccess.apply(this, arguments);
-						oSyncPoint.finishTask(iSyncPoint);
-					},
-					error: function() {
-						fnError.apply(this, arguments);
-						oSyncPoint.finishTask(iSyncPoint, false);
-					}
-				});
-			}
+			// hook to onIndexLoad to allow to inject the index file manually
+			var mIndexInfo = AppCacheBuster.onIndexLoad(oRequest.url);
+			// if anything else than undefined or null is returned we will use this
+			// content as data for the cache buster index
+			if (mIndexInfo != null) {
+				jQuery.sap.log.info("AppCacheBuster index file injected for: \"" + sUrl + "\".");
+				oRequest.success(mIndexInfo);
+			} else {
+				
+				// use the syncpoint only during boot => otherwise the syncpoint
+				// is not given because during runtime the registration needs to
+				// be done synchrously.
+				if (oRequest.async) {
+					var iSyncPoint = oSyncPoint.startTask("load " + sUrl);
+					var fnSuccess = oRequest.success, fnError = oRequest.error;
+					jQuery.extend(oRequest, {
+						success: function(data) {
+							fnSuccess.apply(this, arguments);
+							oSyncPoint.finishTask(iSyncPoint);
+						},
+						error: function() {
+							fnError.apply(this, arguments);
+							oSyncPoint.finishTask(iSyncPoint, false);
+						}
+					});
+				}
 
-			// load it
-			jQuery.sap.log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
-			jQuery.ajax(oRequest);
+				// load it
+				jQuery.sap.log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
+				jQuery.ajax(oRequest);
+				
+			}
 			
 		}
 		
@@ -233,7 +245,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 	 *  
 	 * @namespace
 	 * @public
-	 * @name sap.ui.core.AppCacheBuster
+	 * @alias sap.ui.core.AppCacheBuster
 	 */
 	var AppCacheBuster = /** @lends sap.ui.core.AppCacheBuster */ {
 			
@@ -243,7 +255,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * 
 			 * @param {jQuery.sap.syncPoint} [oSyncPoint] the sync point
 			 *  
-			 * @namespace
 			 * @private
 			 */
 			boot: function(oSyncPoint) {
@@ -302,7 +313,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * <li><code>sap.ui.base.ManagedObject.prototype.validateProperty</code></li>
 			 * </ul>
 			 *  
-			 * @namespace
 			 * @private
 			 */
 			init: function() {
@@ -350,9 +360,9 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				// enhance the validateProperty function to intercept URI types
 				//  test via: new sap.ui.commons.Image({src: "acctest/img/Employee.png"}).getSrc()
 				//            new sap.ui.commons.Image({src: "./acctest/../acctest/img/Employee.png"}).getSrc()
-				sap.ui.base.ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
+				ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
 					var oMetadata = this.getMetadata(),
-						oProperty = oMetadata.getAllProperties()[sPropertyName],
+						oProperty = oMetadata.getProperty(sPropertyName),
 						oArgs;
 					if (oProperty && oProperty.type === "sap.ui.core.URI") {
 						oArgs = Array.prototype.slice.apply(arguments);
@@ -375,7 +385,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * specific functions. This will also clear the index which is used 
 			 * to prefix matching URLs.
 			 *  
-			 * @namespace
 			 * @private
 			 */
 			exit: function() {
@@ -384,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				jQuery.ajax = fnAjaxOrig;
 				jQuery.sap.includeScript = fnIncludeScript;
 				jQuery.sap.includeStyleSheet = fnIncludeStyleSheet;
-				sap.ui.base.ManagedObject.prototype.validateProperty = fnValidateProperty;
+				ManagedObject.prototype.validateProperty = fnValidateProperty;
 				
 				// clear the index
 				mIndex = {};
@@ -398,7 +407,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * 
 			 * @param {string} base URL of an application providing a cachebuster index file
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			register: function(sBaseUrl) {
@@ -414,7 +422,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * @param {string} sUrl any URL
 			 * @return {string} modified URL when matching the index or unmodified when not
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			convertURL: function(sUrl) {
@@ -462,7 +469,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * @param {string} sUrl any URL
 			 * @return {string} normalized URL
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			normalizeURL: function(sUrl) {
@@ -488,17 +494,54 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * @param {string} sUrl any URL
 			 * @return {boolean} <code>true</code> to rewrite or <code>false</code> to ignore 
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			handleURL: function(sUrl) {
 				// API function to be overridden by apps 
 				// to exclude URLs from being manipulated
 				return true;
+			},
+			
+			/**
+			 * Hook to intercept the load of the cache buster info. Returns either the 
+			 * JSON object with the cache buster info or null/undefined if the URL should
+			 * be handled.
+			 * <p>
+			 * The cache buster info object is a map which contains the relative
+			 * paths for the resources as key and a timestamp/etag as string as
+			 * value for the entry. The value is used to be added as part of the
+			 * URL to create a new URL if the resource has been changed.
+			 * @param {string} sUrl URL from where to load the cachebuster info
+			 * @return {object} cache buster info object or null/undefined
+			 * @private
+			 */
+			onIndexLoad: function(sUrl) {
+				return null;
+			},
+			 
+			/**
+			 * Hook to intercept the result of the cache buster info request. It will pass
+			 * the loaded cache buster info object to this function to do something with that
+			 * information.
+			 * @param {string} sUrl URL from where to load the cachebuster info
+			 * @param {object} mIndexInfo cache buster info object
+			 * @private
+			 */
+			onIndexLoaded: function(sUrl, mIndexInfo) {
 			}
 			
 	};
 
+	// check for pre-defined callback handlers and register the callbacks
+	var mHooks = oConfiguration.getAppCacheBusterHooks();
+	if (mHooks) {
+		jQuery.each(["handleURL", "onIndexLoad", "onIndexLoaded"], function(iIndex, sFunction) {
+			if (typeof mHooks[sFunction] === "function") {
+				AppCacheBuster[sFunction] = mHooks[sFunction];
+			}
+		});
+	}
+	
 	return AppCacheBuster;
 
 }, /* bExport= */ true);

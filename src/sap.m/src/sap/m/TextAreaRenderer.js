@@ -8,15 +8,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 
 	/**
-	 * @class TextArea renderer.
-	 * @static
+	 * TextArea renderer.
+	 * @namespace
 	 */
 	var TextAreaRenderer = {};
 	
 	
 	/**
-	 * @class Input renderer.
-	 * @static
+	 * Input renderer.
+	 * @namespace
 	 *
 	 * TextAreaRenderer extends the TextAreaRenderer
 	 */
@@ -48,13 +48,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	
 	// Write the value of the TextArea
 	TextAreaRenderer.writeInnerContent = function(oRm, oControl) {
-		oRm.writeEscaped(oControl.getValue());
+		var sValue = oControl.getValue();
+		sValue = jQuery.sap.encodeHTML(sValue);
+		
+		// convert the new line HTML entity rather than displaying it as a text
+		sValue = sValue.replace(/&#xa;/g, "&#13;");
+		oRm.write(sValue);
 	};
 	
 	// Add extra classes for TextArea element
 	TextAreaRenderer.addInnerClasses = function(oRm, oControl) {
 		oRm.addClass("sapMTextAreaInner");
 	};
+	
+	// Returns the accessibility state of the control.
+	TextAreaRenderer.getAccessibilityState = function(oControl) {
+		var mBaseAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
+		return jQuery.extend(mBaseAccessibilityState, {
+			multiline: true
+		});
+	}; 
 	
 	// Add extra attributes to TextArea
 	TextAreaRenderer.writeInnerAttributes = function(oRm, oControl) {

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.table.ColumnMenu
+	 * @alias sap.ui.table.ColumnMenu
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ { metadata : {
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	
 			this._oTable = this._oColumn.getParent();
 			if (this._oTable) {
-				jQuery.sap.assert(this._oTable instanceof sap.ui.table.Table, "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
+				jQuery.sap.assert(this._oTable instanceof sap.ui.table.Table || this._oTable instanceof sap.ui.table.DataTable, "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
 			}
 		}
 	};
@@ -146,12 +146,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 		// put the focus back into the column header after the 
 		// popup is being closed.
 		var that = this;
-	
+
 		if (!sap.ui.Device.support.touch) {
 			this.getPopup().attachClosed(function(oEvent) {
 				that._iPopupClosedTimeoutId = window.setTimeout(function() {
 					if (that._oColumn) {
-						that._oColumn.focus();
+						if (that._lastFocusedDomRef) {
+							that._lastFocusedDomRef.focus();
+						} else {
+							that._oColumn.focus();
+						}
 					}
 				}, 0);
 			});
@@ -172,6 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 		}
 	
 		if (this.getItems().length > 0) {
+			this._lastFocusedDomRef = arguments[4];
 			Menu.prototype.open.apply(this, arguments);
 		}
 	};
@@ -182,6 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @private
 	 */
 	ColumnMenu.prototype._addMenuItems = function() {
+		// when you add or remove menu items here, remember to update the hasItems function
 		if (this._oColumn) {
 			this._addSortMenuItem(false);
 			this._addSortMenuItem(true);
@@ -191,8 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 			this._addColumnVisibilityMenuItem();
 		}
 	};
-	
-	
+
 	/**
 	 * Adds the sort menu item to the menu.
 	 * @param {boolean} bDesc the sort direction. <code>true</code> for descending.
@@ -377,7 +382,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 				if (bVisible || this._oTable._getVisibleColumnCount() > 1) {
 					var oTable = oColumn.getParent();
 					var bExecuteDefault = true;
-					if (oTable && oTable instanceof sap.ui.table.Table) {
+					if (oTable && (oTable instanceof sap.ui.table.Table || oTable instanceof sap.ui.table.DataTable)) {
 						bExecuteDefault = oTable.fireColumnVisibility({
 							column: oColumn,
 							newVisible: bVisible

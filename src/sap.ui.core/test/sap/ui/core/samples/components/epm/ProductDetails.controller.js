@@ -1,6 +1,12 @@
-sap.ui.controller("sap.ui.epm.ProductDetails", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	onRowSelect: function(oContext) {    
-		this.getView().setBindingContext(oContext);  
-	}  	
+	return Controller.extend("sap.ui.epm.ProductDetails", {
+
+		onRowSelect: function(oContext) {    
+			this.getView().setBindingContext(oContext);  
+		}  	
+	});
+
 });

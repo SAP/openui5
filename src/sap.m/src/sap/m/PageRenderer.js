@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Page renderer.
-	 * @static
+	 * Page renderer.
+	 * @namespace
 	 */
 	var PageRenderer = {};
 	
@@ -22,14 +22,17 @@ sap.ui.define(['jquery.sap.global'],
 	PageRenderer.render = function(rm, oPage) {
 		var oHeader = null,
 			oFooter = null,
+			oSubHeader = null,
 			sEnableScrolling = oPage.getEnableScrolling() ? " sapMPageScrollEnabled" : "";
 	
 		if (oPage.getShowHeader()) {
 			oHeader = oPage._getAnyHeader();
 		}
 	
-		var oSubHeader = oPage.getSubHeader();
-		
+		if (oPage.getShowSubHeader()) {
+			oSubHeader = oPage.getSubHeader();
+		}
+	
 		if (oPage.getShowFooter()) {
 			oFooter = oPage.getFooter();
 		}
@@ -50,6 +53,10 @@ sap.ui.define(['jquery.sap.global'],
 		if (oFooter) {
 			// it is used in the PopOver to remove additional margin bottom for page with footer
 			rm.addClass("sapMPageWithFooter");
+		}
+		
+		if (!oPage.getContentOnlyBusy()) {
+			rm.addClass("sapMPageBusyCoversAll");
 		}
 	
 		rm.writeClasses();
@@ -75,7 +82,10 @@ sap.ui.define(['jquery.sap.global'],
 	
 		// render child controls
 		rm.write('<section id="' + oPage.getId() + '-cont">');
-		rm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
+		
+		if (oPage._bUseScrollDiv) { // fallback to old rendering
+			rm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
+		}
 	
 		var aContent = oPage.getContent();
 		var l = aContent.length;
@@ -84,7 +94,9 @@ sap.ui.define(['jquery.sap.global'],
 			rm.renderControl(aContent[i]);
 		}
 	
-		rm.write("</div>");
+		if (oPage._bUseScrollDiv) { // fallback to old rendering
+			rm.write("</div>");
+		}
 	
 		rm.write("</section>");
 	

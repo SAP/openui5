@@ -3,13 +3,13 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="marginVerticalContent"
-		width="100%">
+	xmlns="sap.m"
+	class="sapUiSmallMargin">
+	<l:VerticalLayout>
 		<l:content>
 			<ActionSelect
 				id="select"
+				class="sapUiSmallMarginBottom"
 				items="{
 					path: '/ProductCollection',
 					sorter: { path: 'Name' }

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class RatingIndicatorRenderer.
-	 * @static
+	 * RatingIndicatorRenderer.
+	 * @namespace
 	 */
 	var RatingIndicatorRenderer = function() {
 	};
@@ -25,12 +25,6 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	RatingIndicatorRenderer.render = function(oRenderManager, oRating) {
 		var rm = oRenderManager;
-	
-		// return immediately if control is invisible
-		if (!oRating.getVisible()) {
-			return;
-		}
-	
 		var iNumberOfSymbols = oRating.getMaxValue();
 	
 		rm.write("<div");

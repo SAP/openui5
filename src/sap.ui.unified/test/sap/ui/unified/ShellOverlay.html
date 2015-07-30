@@ -35,7 +35,13 @@
 				icon: sap.ui.core.IconPool.getIconURI("log")
 			})]
 		});
-		oShell.placeAt("content");
+		oShell.placeAt("content");	
+		
+		oShell.setUser(new sap.ui.unified.ShellHeadUserItem({
+			image: "images/person.jpg",
+			username: "Karl Mustermann",
+			press: function(){alert("User Item pressed");}
+		}));
 		
 		function sizeChanged(mParams){
 			var bSmallSize = mParams.name === "Phone";
@@ -47,12 +53,15 @@
 		
 		var oOverlay = new sap.ui.unified.ShellOverlay({
 			search: createTestSearchField("sf2"),
-			content: [new sap.ui.commons.TextView({text: window.sLorem})],
+			content: [new sap.ui.commons.Button({text: "Some Button"}), new sap.ui.commons.TextView({text: window.sLorem})],
 			closed: function(){
 				jQuery.sap.log.warning("ShellOverlay was closed - some cleanup can be done ...");
 			},
-			shell: oShell
+			shell: oShell,
+			ariaLabelledBy: ["OverlyTitle"]
 		});
+		
+		(new sap.ui.core.InvisibleText("OverlyTitle", {text: "Search Dialog"})).toStatic();
 	</script>
 </head>
 <body class="sapUiBody" role="application">

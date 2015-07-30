@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 
 	/**
-	 * @class NotificationBar renderer.
-	 * @static
+	 * NotificationBar renderer.
+	 * @namespace
 	 */
 	var NotificationBarRenderer = {};
 	
@@ -112,8 +112,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	
 				oRm.writeClasses();
 	
-				// set toggler always to visible if running on a mobile device
-				if (sap.ui.Device.browser.mobile) {
+				// check the status of the property. For mobile it should be set to true on init
+				if (oControl.getAlwaysShowToggler()) {
 					oRm.addStyle("display", "block");
 					oRm.writeStyles();
 				}
@@ -127,10 +127,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	
 				oRm.write("</div>"); // div Toggler
 			} else {
-				if (sap.ui.Device.browser.mobile) {
-					oRm.addStyle("display", "none");
-					oRm.writeStyles();
-				}
+				// if the NotificationBar is in VisibleStatus:None also hide the toggler
+				oRm.addStyle("display", "none");
+				oRm.writeStyles();
 			}
 		};
 	

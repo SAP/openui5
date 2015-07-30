@@ -1,0 +1,35 @@
+<html>
+<head>
+	<title>TestSuite for sap.ui.core: GTP testcase CORE/ROUTING</title>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+	<script src="../../../../../../resources/sap-ui-core.js"></script>
+	<script>
+
+		/**
+		 * Add test pages to this test suite function.
+		 * Please order alphabetically
+		 */
+		function suite() {
+			var suite = new parent.jsUnitTestSuite();
+			var contextPath = "/" + window.location.pathname.split("/")[1];
+
+			var sUrlParameters = "";
+			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
+				sUrlParameters = "?noglobals=true";
+			}
+
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/routing/HashChanger.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/routing/History.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/routing/Router.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/routing/Route.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/routing/Target.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/routing/Targets.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/routing/Views.qunit.html" + sUrlParameters);
+			return suite;
+		}
+
+	</script>
+</head>
+<body>
+</body>
+</html>

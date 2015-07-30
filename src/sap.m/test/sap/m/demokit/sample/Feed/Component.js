@@ -1,23 +1,28 @@
-jQuery.sap.declare("sap.m.sample.Feed.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.Feed.Component", {
+	var Component = UIComponent.extend("sap.m.sample.Feed.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.Feed.V",
-		dependencies : {
-			libs : [
-				"sap.m"
-			]
-		},
-		includes : [ "Feed/style.css" ],
-		config : {
-			sample : {
-				files : [
-					"V.view.xml",
-					"C.controller.js",
-					"style.css"
+		metadata : {
+			rootView : "sap.m.sample.Feed.V",
+			dependencies : {
+				libs : [
+					"sap.m"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"V.view.xml",
+						"C.controller.js",
+						"style.css"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class MessageToast renderer.
-	 * @static
+	 * MessageToast renderer.
+	 * @namespace
 	 */
 	var MessageToastRenderer = {
 	};

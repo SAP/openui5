@@ -1,0 +1,711 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>QUnit Page for sap.m.MessagePopover</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<!-- use the sinon faketimers for this test -->
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+	</script>
+
+	<script type="text/javascript">
+		QUnit.module("Public API", {
+			sCustomId: "custom-msg-popover-id",
+			oSpies : {},
+			setup: function () {
+				this.oSpies.beforeOpen = sinon.spy();
+				this.oSpies.afterOpen = sinon.spy();
+				this.oSpies.beforeClose = sinon.spy();
+				this.oSpies.afterClose = sinon.spy();
+
+				this.oMessagePopover = new sap.m.MessagePopover(this.sCustomId, {
+					beforeOpen: this.oSpies.beforeOpen,
+					afterOpen: this.oSpies.afterOpen,
+					beforeClose: this.oSpies.beforeClose,
+					afterClose: this.oSpies.afterClose
+				});
+
+				this.oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+				this.oMockupData = {
+					count: 5,
+					messages: [{
+					type: "Error",
+					title: "Error message",
+					description: "<p>First Error message description</p>"
+				}, {
+					type: "Warning",
+					title: "Warning without description",
+					description: ""
+				}, {
+					type: "Success",
+					title: "Success message",
+					description: "<p>First Success message description</p>"
+				}, {
+					type: "Error",
+					title: "Error",
+					description: "<p>Second Error message description</p>"
+				}, {
+					type: "Information",
+					title: "Information message (Long)",
+					description: "<h1>HTML sanitization test</h1><h3>heading</h3><p>paragraph</p><embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>",
+					longtextUrl: "protocol://domain.tld"
+				}]};
+
+				this.mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
+				"<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
+				"<ul>" +
+				"	<li>Unordered list item 1 <a href=\"http://sap.com/some/url\">Absolute URL</a></li>" +
+				"	<li>Unordered list item 2</li>" +
+				"</ul>" +
+				"<ol>" +
+				"	<li>Ordered list item 1 <a href=\"/relative/url\">Relative URL</a></li>" +
+				"	<li>Ordered list item 2</li>" +
+				"</ol>";
+
+				this.oMessageTemplate = new sap.m.MessagePopoverItem({
+					type: "{type}",
+					title: "{title}",
+					description: "{description}",
+					longtextUrl: "{longtextUrl}",
+					markupDescription: true
+				});
+
+				this.oButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function(){});
+			},
+			bindMessagePopover: function(oMessagePopover, oData) {
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(oData);
+				sap.ui.getCore().setModel(oModel);
+
+				oMessagePopover.bindAggregation("items", {
+					path: "/messages",
+					template: this.oMessageTemplate
+				});
+			},
+			openDetailPageAfterOpen: function(oMessagePopover, iItem) {
+				oMessagePopover.attachAfterOpen(function() {
+					var oItem = oMessagePopover._oLists['all'].getItems()[iItem].getDomRef();
+					sap.ui.test.qunit.triggerEvent("tap", oItem);
+				});
+			},
+			teardown: function() {
+				this.oMessagePopover.destroy();
+				this.oButton.destroy();
+
+				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				this.oMessagePopover = null;
+				this.oButton = null;
+				this.oMockupData = null;
+				this.oMessageTemplate.destroy();
+			}
+		});
+
+		QUnit.test("setDescription() propety", function(assert) {
+			var done = assert.async();
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
+
+			this.oMessagePopover._navContainer.attachAfterNavigate(function() {
+				assert.ok(jQuery(".markupDescription"), "markupDescription class should be applied");
+				assert.strictEqual(jQuery(".markupDescription").html().indexOf("h1") >= 1, true, "There should be h1 tag");
+				assert.strictEqual(jQuery(".markupDescription").html().indexOf("embed"), -1, "There should be no embed tag in the html");
+				assert.strictEqual(jQuery(".markupDescription").html().indexOf("object"), -1, "There should be no object tag in the html");
+				done();
+			}, this);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
+
+		QUnit.test("Busy indicator should be shown", function(assert) {
+			var done = assert.async(),
+				that = this;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.oMessagePopover.setAsyncDescriptionHandler(function(config) {
+				assert.ok(that.oMessagePopover._detailsPage.getBusy(), "when there is an async description loading");
+				config.item.setDescription(that.mockMarkupDescription);
+				config.promise.resolve();
+				done();
+			});
+
+			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
+
+		QUnit.test("AsyncURL handler", function(assert) {
+			var done = assert.async(),
+				that = this,
+				bAsyncURLHandlerCalled = false;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.oMessagePopover.setAsyncURLHandler(function(config) {
+				var allowed = config.url.lastIndexOf("http", 0) < 0;
+				bAsyncURLHandlerCalled = true;
+				config.promise.resolve({
+					allowed: allowed,
+					id: config.id
+				});
+			});
+
+			this.oMessagePopover._navContainer.attachAfterNavigate(function() {
+				assert.ok(bAsyncURLHandlerCalled, "should be called on navigation");
+				assert.strictEqual(this.oMessagePopover.$().find('.sapMMsgPopoverItemDisabledLink').length, 1, "should disable one link");
+				done();
+			}, this);
+
+			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.getItems()[4].setDescription(this.mockMarkupDescription);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
+
+		QUnit.test("getId() should return correct id", function (assert) {
+			var sId = this.oMessagePopover.getId();
+
+			assert.strictEqual(sId, this.sCustomId, "#" + sId + " should be equal to #" + this.sCustomId);
+		});
+
+		QUnit.test("getDomRef() should return HTML element", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.ok(oDomRef instanceof HTMLElement, "return value should be an instance of HTMLElement");
+		});
+
+		QUnit.test("$() should return jQuery object", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok($oDomRef instanceof jQuery, "return value should be an instance of jQuery");
+		});
+
+		QUnit.test("setPlacement() should set the placement when valid placement is used", function (assert) {
+			this.oMessagePopover.setPlacement(sap.m.VerticalPlacementType.Bottom);
+			assert.strictEqual(this.oMessagePopover.getPlacement(), sap.m.VerticalPlacementType.Bottom, "message popover should be placed at the Bottom");
+
+			this.oMessagePopover.setPlacement(sap.m.VerticalPlacementType.Top);
+			assert.strictEqual(this.oMessagePopover.getPlacement(), sap.m.VerticalPlacementType.Top, "message popover should be placed at the Top");
+
+			this.oMessagePopover.setPlacement(sap.m.VerticalPlacementType.Vertical);
+			assert.strictEqual(this.oMessagePopover.getPlacement(), sap.m.VerticalPlacementType.Vertical, "message popover should be placed Vertical");
+		});
+
+		QUnit.test("setPlacement() should throw and error when invalid placement is used", function (assert) {
+			assert.throws(function () {
+				this.oMessagePopover.setPlacement(sap.m.PlacementType.Left);
+			}, "message popover should throw an error when positioned on the Left");
+
+			assert.throws(function () {
+				this.oMessagePopover.setPlacement(sap.m.PlacementType.Right);
+			}, "message popover should throw an error when positioned on the Right");
+
+			assert.throws(function () {
+				this.oMessagePopover.setPlacement(sap.m.PlacementType.Horizontal);
+			}, "message popover should throw an error when positioned Horizontal");
+
+			assert.throws(function () {
+				this.oMessagePopover.setPlacement(sap.m.PlacementType.Auto);
+			}, "message popover should throw an error when positioned Auto");
+		});
+
+		QUnit.test("isOpen() should return correct boolean value", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			assert.strictEqual(this.oMessagePopover.isOpen(), true, "message popover should be open");
+
+			this.oMessagePopover.close();
+			this.clock.tick(500);
+			assert.strictEqual(this.oMessagePopover.isOpen(), false, "message popover should be closed");
+		})
+
+		QUnit.test("openBy() should open the popover with arrow", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			assert.equal(this.oMessagePopover.$("arrow").length, 1, "message popover should has arrow");
+		});
+
+		QUnit.test("openBy() called from sap.m.Toolbar button should open the popover without arrow", function (assert) {
+			var oToolbar = new sap.m.Toolbar({ content: this.oButton });
+			oToolbar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			assert.equal(this.oMessagePopover.$("arrow").length, 0, "message popover should not has arrow");
+
+			oToolbar.destroy();
+		});
+
+		QUnit.test("beforeOpen callback should be called with correct parameter and this binding", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+
+			assert.strictEqual(this.oSpies.beforeOpen.calledOnce, true, "callback is called only once");
+
+			assert.strictEqual(this.oSpies.beforeOpen.calledBefore(this.oSpies.afterOpen), true, "callback should be called before afterOpen");
+			assert.strictEqual(this.oSpies.beforeOpen.calledBefore(this.oSpies.beforeClose), true, "callback should be called before beforeClose");
+			assert.strictEqual(this.oSpies.beforeOpen.calledBefore(this.oSpies.afterClose), true, "callback should be called before afterClose");
+
+			assert.strictEqual(this.oSpies.beforeOpen.calledOn(this.oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(this.oSpies.beforeOpen.args[0][0].getParameter("openBy").getId(), this.oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.test("afterOpen callback should be called with correct argument and this binding", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			assert.strictEqual(this.oSpies.afterOpen.calledOnce, true, "callback should be called only once");
+
+			assert.strictEqual(this.oSpies.afterOpen.calledAfter(this.oSpies.beforeOpen), true, "callback should be called after beforeOpen");
+			assert.strictEqual(this.oSpies.afterOpen.calledBefore(this.oSpies.beforeClose), true, "callback should be called before beforeClose");
+			assert.strictEqual(this.oSpies.afterOpen.calledBefore(this.oSpies.afterClose), true, "callback should be called before afterClose");
+
+			assert.strictEqual(this.oSpies.afterOpen.calledOn(this.oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(this.oSpies.afterOpen.args[0][0].getParameter("openBy").getId(), this.oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.test("beforeClose callback should be called with correct argument and this binding", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			this.oMessagePopover.close();
+
+			assert.strictEqual(this.oSpies.beforeClose.calledOnce, true, "callback should be called only once");
+
+			assert.strictEqual(this.oSpies.beforeClose.calledAfter(this.oSpies.beforeOpen), true, "callback should be called after beforeOpen");
+			assert.strictEqual(this.oSpies.beforeClose.calledAfter(this.oSpies.afterOpen), true, "callback should be called after afterOpen");
+			assert.strictEqual(this.oSpies.beforeClose.calledBefore(this.oSpies.afterClose), true, "callback should be called before afterClose");
+
+			assert.strictEqual(this.oSpies.beforeClose.calledOn(this.oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(this.oSpies.beforeClose.args[0][0].getParameter("openBy").getId(), this.oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.test("afterClose callback should be called with correct argument and this binding", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			this.oMessagePopover.close();
+			this.clock.tick(500);
+
+			assert.strictEqual(this.oSpies.afterClose.calledOnce, true, "callback should be called only once");
+
+			assert.strictEqual(this.oSpies.afterClose.calledAfter(this.oSpies.beforeOpen), true, "callback should be called after beforeOpen");
+			assert.strictEqual(this.oSpies.afterClose.calledAfter(this.oSpies.afterOpen), true, "callback should be called after afterOpen");
+			assert.strictEqual(this.oSpies.afterClose.calledAfter(this.oSpies.beforeClose), true, "callback should be called after beforeClose");
+
+			assert.strictEqual(this.oSpies.afterClose.calledOn(this.oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(this.oSpies.afterClose.args[0][0].getParameter("openBy").getId(), this.oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.test("AfterOpen should always load control's overview screen", 2, function (assert) {
+			var done = assert.async(),
+				that = this,
+				fnAfterOpen = function() {
+					assert.ok(that.oMessagePopover._isListPage());
+					that.oMessagePopover._navContainer.to(that.oMessagePopover._detailsPage);
+					that.oMessagePopover.close();
+					that.clock.tick(500);
+				};
+
+				that.oMessagePopover.attachAfterOpen(fnAfterOpen);
+				that.oMessagePopover.openBy(that.oButton);
+				that.clock.tick(500);
+
+				assert.ok(that.oMessagePopover._isListPage());
+				done();
+		});
+
+		QUnit.test("addStyleClass should add class", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.addStyleClass("test");
+
+			assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+		});
+
+		QUnit.test("removeStyleClass should remove class", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.addStyleClass("test");
+
+			assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+
+			this.oMessagePopover.removeStyleClass("test");
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+		});
+
+		QUnit.test("toggleStyleClass should toggle class", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.toggleStyleClass("test");
+
+			assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+
+			this.oMessagePopover.toggleStyleClass("test");
+
+			assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+		});
+
+		QUnit.test("hasStyleClass should check if class is added", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var $oDomRef = this.oMessagePopover.$();
+
+			assert.ok(!this.oMessagePopover.hasStyleClass("test"), "should not have 'test' class");
+
+			this.oMessagePopover.addStyleClass("test");
+
+			assert.ok(this.oMessagePopover.hasStyleClass("test"), "should have 'test' class");
+		});
+
+		QUnit.test("_collapseMsgPopover() is called on opening when initiallyExpanded=false", function (assert) {
+			var shrinkSpy = sinon.spy();
+
+			this.oMessagePopover._collapseMsgPopover = shrinkSpy;
+			this.oMessagePopover.setInitiallyExpanded(false);
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.oMessagePopover.close();
+
+			assert.strictEqual(shrinkSpy.calledOnce, true, "_collapseMsgPopover() is called the first time");
+
+			this.oMessagePopover.openBy(this.oButton);
+
+			assert.strictEqual(shrinkSpy.callCount, 2, "_collapseMsgPopover() is called the second time");
+		});
+
+		QUnit.module("HTML representation", {
+			setup: function () {
+				this.oMessagePopover = new sap.m.MessagePopover();
+
+				this.oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+				this.oButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oMessagePopover.destroy();
+				this.oButton.destroy();
+
+				this.oMessagePopover = null;
+				this.oButton = null;
+			}
+		});
+
+		QUnit.test("sapMMsgPopover class should be present", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover"), -1, "sapMMsgPopover class should present on the HTML element");
+		});
+
+		QUnit.test("sapMMsgPopover-init class should be present when initiallyExpanded=false", function (assert) {
+			this.oMessagePopover.setInitiallyExpanded(false);
+			this.oMessagePopover.openBy(this.oButton);
+			var oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover-init"), -1,
+				"sapMMsgPopover-init class should present on the HTML element");
+		});
+
+		QUnit.test("sapMMsgPopover-init class should be present after shrinking the MessagePopover", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.oMessagePopover._collapseMsgPopover();
+			sap.ui.getCore().applyChanges();
+
+			var oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover-init"), -1,
+				"sapMMsgPopover-init class should present on the HTML element");
+		});
+
+		QUnit.module("Public API for async handlers", {
+			sCustomId: "custom-msg-popover-id",
+			oSpies : {},
+			setup: function () {
+				var that = this;
+
+				that.promiseDescription = new window.Promise(function(resolve) {
+					that.resolveDescription = resolve;
+				});
+
+				that.promiseURL = new window.Promise(function(resolve) {
+					that.resolveURL = resolve;
+				});
+
+				jQuery.sap.require("sap.m.MessagePopover");
+
+				sap.m.MessagePopover.setDefaultHandlers({
+					asyncDescriptionHandler: function(config) {
+						config.item.setDescription(that.mockMarkupDescription);
+						config.promise.resolve();
+						that.resolveDescription();
+					},
+					asyncURLHandler: function(config) {
+						var allowed = config.url.lastIndexOf("http", 0) < 0;
+						config.promise.resolve({
+							allowed: allowed,
+							id: config.id
+						});
+						that.resolveURL();
+					}
+				});
+
+				this.oMessagePopover = new sap.m.MessagePopover(this.sCustomId, {});
+
+				this.oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+				this.oMockupData = {
+					count: 5,
+					messages: [{
+						type: "Error",
+						title: "Error message",
+						description: "<p>First Error message description</p>"
+					}, {
+						type: "Warning",
+						title: "Warning without description",
+						description: ""
+					}, {
+						type: "Success",
+						title: "Success message",
+						description: "<p>First Success message description</p>"
+					}, {
+						type: "Error",
+						title: "Error",
+						description: "<p>Second Error message description</p>"
+					}, {
+						type: "Information",
+						title: "Information message (Long)",
+						description: "<h1>HTML sanitization test</h1><h3>heading</h3><p>paragraph</p><embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>",
+						longtextUrl: "protocol://domain.tld"
+					}]};
+
+				this.mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
+						"<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
+						"<ul>" +
+						"	<li>Unordered list item 1 <a href=\"http://sap.com/some/url\">Absolute URL</a></li>" +
+						"	<li>Unordered list item 2</li>" +
+						"</ul>" +
+						"<ol>" +
+						"	<li>Ordered list item 1 <a href=\"/relative/url\">Relative URL</a></li>" +
+						"	<li>Ordered list item 2</li>" +
+						"</ol>";
+
+				this.oMessageTemplate = new sap.m.MessagePopoverItem({
+					type: "{type}",
+					title: "{title}",
+					description: "{description}",
+					longtextUrl: "{longtextUrl}",
+					markupDescription: true
+				});
+
+				this.oButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function(){});
+			},
+			bindMessagePopover: function(oMessagePopover, oData) {
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(oData);
+				sap.ui.getCore().setModel(oModel);
+
+				oMessagePopover.bindAggregation("items", {
+					path: "/messages",
+					template: this.oMessageTemplate
+				});
+			},
+			openDetailPageAfterOpen: function(oMessagePopover, iItem) {
+				oMessagePopover.attachAfterOpen(function() {
+					var oItem = oMessagePopover._oLists['all'].getItems()[iItem].getDomRef();
+					sap.ui.test.qunit.triggerEvent("tap", oItem);
+				});
+			},
+			teardown: function() {
+				this.oMessagePopover.destroy();
+				this.oButton.destroy();
+
+				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				this.oMessagePopover = null;
+				this.oButton = null;
+				this.oMockupData = null;
+				this.oMessageTemplate.destroy();
+			}
+		});
+
+		QUnit.test("Async description handler", function (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.promiseDescription.then(function () {
+				assert.ok(true, "Default async description handler has been executed");
+				done();
+			});
+
+			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
+
+		QUnit.test("Async URL handler", function (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.promiseURL.then(function () {
+				assert.ok(true, "Default async URL handler has been executed");
+				done();
+			});
+
+			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
+
+		QUnit.module("Internal ResponsivePopover");
+
+		QUnit.test("openBy method should not call setShowArrow on phone", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			});
+
+			var oMessagePopover = new sap.m.MessagePopover(),
+				oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
+			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
+
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+
+			assert.equal(spySetShowArrow.callCount, 0, "setShowArrow should not be called when opened on phone");
+
+			oMessagePopover.destroy();
+			oButton.destroy();
+			spySetShowArrow.restore();
+		});
+
+		QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: true,
+				tablet: false,
+				phone: false
+			});
+
+			var oMessagePopover = new sap.m.MessagePopover(),
+					oButton = new sap.m.Button({
+						text: "Show MessagePopover"
+					});
+
+			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
+			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
+
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+
+			assert.equal(spySetShowArrow.callCount, 1, "setShowArrow should be called once when opened on desktop");
+			assert.ok(spySetShowArrow.calledWith(true), "setShowArrow should be called once when opened from button which is not part of toolbar or SemanticPage");
+
+			oMessagePopover.destroy();
+			oButton.destroy();
+			spySetShowArrow.restore();
+		});
+
+		QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: true,
+				tablet: false,
+				phone: false
+			});
+
+			var oMessagePopover = new sap.m.MessagePopover(),
+					oButton = new sap.m.Button({
+						text: "Show MessagePopover"
+					}),
+					oToolbar = new sap.m.Toolbar({
+						content: oButton
+					});
+
+			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
+			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
+
+			oToolbar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+
+			assert.equal(spySetShowArrow.callCount, 1, "setShowArrow should be called once when opened on desktop");
+			assert.ok(spySetShowArrow.calledWith(false), "setShowArrow should be called once when opened from button which in Toolbar or SemanticPage");
+
+			oMessagePopover.destroy();
+			oToolbar.destroy();
+			spySetShowArrow.restore();
+		});
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

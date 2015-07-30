@@ -14,7 +14,7 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Products"></Label>
+				<Title text="Products" level="H2"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -44,8 +44,7 @@
 				<cells>
 					<ObjectIdentifier
 						title="{Name}"
-						text="{ProductId}"
-						class="sapMTableContentMargin" />
+						text="{ProductId}" />
 					
 					<Input value="{Quantity}" type="{Text}" description="{UoM}" fieldWidth="{60%}"/>
 
@@ -57,8 +56,12 @@
 							formatter: 'sap.m.sample.TableVerticalAlignment.Formatter.weightState'
 						}" />
 					<ObjectNumber
-						number="{Price}"
-						unit="{CurrencyCode}" />
+							number="{
+								parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+							unit="{CurrencyCode}" />
 				</cells>
 			</ColumnListItem>
 		</items>

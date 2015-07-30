@@ -4,17 +4,39 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
+		showNavButton="{/showNavButton}"
 		navButtonPress="onNavBack" >
 		<headerContent>
 			<Button
+				id="prevSample"
+				icon="sap-icon://navigation-up-arrow"
 				class="sapUiHideOnPhone"
-				text="Show Code"
-				icon="sap-icon://display"
-				press="onNavToCode" />
+				tooltip="{i18n>samplePreviousTooltip}"
+				enabled="{= ${/previousSampleId} !== undefined }"
+				press="onPreviousSample"/>
 			<Button
-				class="sapUiVisibleOnlyOnPhone"
-				icon="sap-icon://display"
+				id="nextSample"
+				icon="sap-icon://navigation-down-arrow"
+				class="sapUiHideOnPhone"
+				tooltip="{i18n>sampleNextTooltip}"
+				enabled="{= ${/nextSampleId} !== undefined }"
+				press="onNextSample"/>
+			<Button
+				id="toggleFullScreenBtn"
+				icon="sap-icon://full-screen"
+				class="sapUiHideOnPhone"
+				tooltip="{i18n>sampleFullScreenTooltip}"
+				press="onToggleFullScreen" />
+			<Button
+				id="code"
+				icon="sap-icon://syntax"
+				tooltip="{i18n>sampleShowCodeTooltip}"
 				press="onNavToCode" />
+			<Button visible="{/showNewTab}"
+					id="newTab"
+					tooltip="{i18n>sampleNewTabTooltip}"
+					icon="sap-icon://inspect"
+					press="onNewTab" />
 		</headerContent>
 	</Page>
 </mvc:View>

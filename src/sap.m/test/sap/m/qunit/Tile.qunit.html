@@ -20,12 +20,12 @@
 		var core = sap.ui.getCore();
 
 		module("Dimensions");
-		
-		
+
+
 		test("ShouldRoundDimensionsToFloor", function() {
 			// SUT
 			var sut = new sap.m.Tile();
-						
+
 			// Act
 			sut.setPos(1.8,2.4);
 
@@ -39,23 +39,23 @@
 			var sut, $sut,
 				xPosition = 5,
 				yPosition = 8;
-			
-						
+
+
 			// SUT
 			sut = new sap.m.Tile();
-			
+
 			sut.placeAt("qunit-fixture");
-			core.applyChanges();	
-			
+			core.applyChanges();
+
 			// Act
 			sut.setPos(xPosition,yPosition);
-			core.applyChanges();	
+			core.applyChanges();
 			$sut = sut.$();
-			
-			setTimeout(function(){		
+
+			setTimeout(function(){
 
 				var result = $sut.css("transform") || $sut.css("-webkit-transform") || $sut.css("msTransform") || $sut.css("MozTransform");
-			
+
 				// Assert
 				if (result.indexOf('matrix3d')==0) {
 					equal(result,"matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, " + xPosition + ", " + yPosition + ", 0, 1)" );
@@ -65,7 +65,7 @@
 				start();
 			},800);
 		});
-		
+
 		test("ShouldSetTheSize", function() {
 			// Arrange
 			var sut,
@@ -82,112 +82,159 @@
 			equal(sut._width,width);
 			equal(sut._height,height);
 		});
-		
+
 
 		module("Properties");
-		
+
 
 		test("ShouldSetRemoveable", function() {
 			// SUT
 			var sut = new sap.m.Tile();
-			
+
 			// ACT
 			sut.isEditable(false);
-			
+
 			// Assert
 			equals(sut._bIsEditable,false)
 		});
 
-		
+
 		test("ShouldSetIfATileIsDragged", function() {
 				// SUT
 				var sut = new sap.m.Tile();
 				sut.isEditable(true);
 				sut.placeAt("qunit-fixture");
 
-				core.applyChanges();	
-				
+				core.applyChanges();
+
 				// Act
 				sut.isDragged(true);
 
 				// Assert
 
-				ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");	
+				ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");
 		});
-			
+
 		module("Events");
-		
+
 		test("ShouldReactOnTouchstart", function() {
 			// SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
 
-			core.applyChanges();	
-			
+			core.applyChanges();
+
 			// Act
 			sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(),{clientX: 0, clientY: 0});
-			
+
 			// Assert
 			ok(sut.$().hasClass("sapMTileActive"));
 			ok(sut.$().hasClass("sapMTileActive-CTX"));
 		});
-		
+
 		test("ShouldReactOnTouchEnd", function() {
 			//SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
-			core.applyChanges();	
-			
+			core.applyChanges();
+
 			sut.$().toggleClass("sapMTileActive",true);
 			sut.$().toggleClass("sapMTileActive-CTX",true);
-			
+
 			//Act
 			sap.ui.test.qunit.triggerTouchEvent("touchend",sut.getDomRef());
-			
+
 			//Assert
 			ok(!sut.$().hasClass("sapMTileActive"));
 			ok(!sut.$().hasClass("sapMTileActive-CTX"))
-			
+
 		});
-		
+
 		test("ShouldReactOnTouchMove", function() {
 			//SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
-			core.applyChanges();	
-			
+			core.applyChanges();
+
 			sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(), {clientX: 0, clientY: 0});
-			
+
 			//Act
 			sap.ui.test.qunit.triggerTouchEvent("touchmove",sut.getDomRef(), {clientX: 100, clientY: 100});
-			
+
 			//Assert
 			ok(!sut.$().hasClass("sapMTileActive"));
 			ok(!sut.$().hasClass("sapMTileActive-CTX"))
-			
+
 		});
-		
+
 		test("ShouldPreventTapEventForChildren", function() {
 			//Arrange
 			var result ,
-			
+
 			//SUT
 				sut = new sap.m.Tile(),
-				
+
 			    container = new sap.m.TileContainer({tiles: [sut]});
-			
+
 			container._bAvoidChildTapEvent = true;
 			container.placeAt("qunit-fixture");
-			core.applyChanges();	
-		
+			core.applyChanges();
+
 			//Act
 			result = sut._parentPreventsTapEvent;
 			sut._parentPreventsTapEvent = 5;
-		
+
 			//Assert
 			equal(result,true);
 			equal(result,sut._parentPreventsTapEvent);
 			container.destroy();
+		});
+
+        module("Keyboard handling");
+
+        test("ShouldFirePressOnEnterOrSpace", function() {
+            //Arrange
+            var result = 0,
+            //SUT
+            sut = new sap.m.Tile({ press: handleTilePress });
+
+            function handleTilePress() {
+                result++;
+            };
+
+            sut.placeAt("qunit-fixture");
+            core.applyChanges();
+
+            //Act
+            sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+            //Assert
+            equal(result, 1);
+
+            //Act
+            sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+            //Assert
+            equal(result, 2);
+        });
+
+
+		test('ShouldHaveAccessibilityAttributes', function () {
+			// SUT
+			var m 	  	= sap.m,
+				sut 	= new m.Tile(),
+				tiles 	= [sut, new m.Tile()],
+				cnt 	= new m.TileContainer({tiles: tiles});
+
+			cnt.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+
+			// Assert
+			equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+			equal(sut.$().attr('aria-posinset'), "1", 'position in the set must equal to 1');
+			equal(sut.$().attr('aria-setsize'), "2", 'the size of the set must equal to 2');
+
+			cnt.destroy();
 		});
 
 	</script>

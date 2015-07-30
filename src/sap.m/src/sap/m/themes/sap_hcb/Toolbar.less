@@ -19,34 +19,18 @@
 	margin-left: 0;
 }
 
-/* Solid Toolbar Context */
-.sapMTB-Solid-CTX.sapMTB {
-	background: @sapHCStandardBG;
-}
-
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
-	height: 2rem;
+	height: 1.75rem;
 	padding: 0 .5rem;
-	background: @sapHCStandardBG;
-	border-bottom: 1px solid @sapHCStandardFG;
+	margin: 0.125rem 0.1875rem;
+	border: 0.125rem solid @sapHCStandardFG;
+	border-radius: 0.3125rem;
 }
 
-.sapMTB-Info-CTX.sapMTBActive:hover {
-	background: @sapHCStandardBG;
-}
-
-.sapMTB-Info-CTX.sapMTBActive:active {
-	background: @sapHCStandardBG;
-}
-
-.sap-desktop .sapMTBActive:focus {
+.sapMTBActive:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.1875rem;
-}
-
-.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
-	outline-color: @sapHCStandardFG;
 }
 
 .sapMTB-Info-CTX.sapMTB > * {
@@ -58,7 +42,6 @@
 	margin: 0 .5rem;
 }
 
-
 /********** COMPACT DESIGN ************/
 
 /* toolbar has 2rem height in compact mode */
@@ -67,8 +50,9 @@
 }
 
 /* default min-width value for the shrinkable items */
-.sapUiSizeCompact .sapMTBShrinkItem {
-	min-width: 2rem; 
+.sapUiSizeCompact .sapMTBShrinkItem,
+.sapUiSizeCondensed .sapMTBShrinkItem {
+	min-width: 2rem;
 }
 
 /* HCB Additional Styles */

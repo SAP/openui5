@@ -3,14 +3,13 @@
  */
 
 // Provides default renderer for View
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
 	/**
 	 * @namespace View renderer.
-	 * @name sap.ui.core.mvc.ViewRenderer
+	 * @alias sap.ui.core.mvc.ViewRenderer
 	 */
 	var ViewRenderer = {
 	};

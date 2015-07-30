@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>Test Page for sap.m.semantic.Segment</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script>
+
+		jQuery.sap.require("sap.m.semantic.Segment");
+		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		module("Segment", {
+			setUp: function () {
+
+			},
+
+			tearDown: function () {
+				jQuery("#qunit-fixture-visible").html("");
+			}
+		});
+
+		test("has correct init state", function () {
+			// Arrange
+			var oToolbar = new sap.m.Toolbar();
+
+			// Act
+			var oSegment = new sap.m.semantic.Segment(null, oToolbar);
+
+			// Assert
+			strictEqual(oSegment != null, true, "Segment is created");
+
+			// Cleanup
+			oToolbar.destroy();
+		});
+
+		test("content is managed correctly", function () {
+			// Arrange
+			var oToolbar = new sap.m.Toolbar(),
+					oSegment = new sap.m.semantic.Segment(null, oToolbar, "content"),
+					oBtn1 = new sap.m.Button(),
+					oBtn2 = new sap.m.Button(),
+					oBtn3 = new sap.m.Button();
+
+			// Act
+			oSegment.addContent(oBtn1);
+
+			// Assert
+			strictEqual(oToolbar.indexOfContent(oBtn1), 0, "Button is added");
+
+			// Act
+			oSegment.addContent(oBtn2);
+
+			// Assert
+			strictEqual(oToolbar.indexOfContent(oBtn2), 1, "Button is added");
+
+			// Act
+			oSegment.insertContent(oBtn3, 1);
+
+			// Assert
+			strictEqual(oToolbar.indexOfContent(oBtn3), 1, "Button is inserted");
+
+			// Act
+			var oResult = oSegment.removeContent(oBtn1);
+
+			// Assert
+			strictEqual(oResult, oBtn1, "Button is removed");
+			strictEqual(oSegment.getContent().length, 2, "has correct length");
+
+			// Act
+			oResult = oSegment.removeAllContent();
+
+			// Assert
+			strictEqual(oResult.length, 2, "Buttons are removed");
+			strictEqual(oSegment.getContent().length, 0, "has correct length");
+
+			// Cleanup
+			oToolbar.destroy();
+		});
+
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">QUnit tests: sap.m.semantic.SemanticPage</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<!--<div id="qunit-testrunner-toolbar"></div>-->
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+<div id="qunit-fixture-visible"></div>
+</body>
+</html>

@@ -198,17 +198,17 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * This function escapes the reserved letters in Regular Expression
-   * @param {string} sString string to escape
-   * @return The escaped string
-   * @type {string}
-   * @since 1.9.3
-   * @public
-   * @SecPassthrough {0|return}
+	 * @param {string} sString string to escape
+	 * @return The escaped string
+	 * @type {string}
+	 * @since 1.9.3
+	 * @public
+	 * @SecPassthrough {0|return}
 	 */
 	jQuery.sap.escapeRegExp = function escapeRegExp(sString) {
 		return sString.replace(rEscapeRegExp, "\\$&");
 	};
-	
+
 	/**
 	 * Creates a string from a pattern by replacing placeholders with concrete values.
 	 *
@@ -298,4 +298,4 @@ sap.ui.define(['jquery.sap.global'],
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.Selection</title>
+
+		<style>
+			#content {
+				position: absolute;
+				bottom: 0px;
+				z-index: 1000;
+				width: 700px;
+				height: 300px;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		jQuery.sap.require("sap.ui.dt.Overlay");
+		jQuery.sap.require("sap.ui.dt.Selection");
+
+		QUnit.module("Given that an Selection is initialized with mode SingleSelection", {
+			beforeEach : function() {
+				this.oSelection = new sap.ui.dt.Selection();
+			},
+			afterEach : function() {
+				this.oSelection.destroy();
+			}
+		});
+
+		QUnit.test("when it's initialized", function(assert) {
+			assert.strictEqual(this.oSelection.getSelection().length, 0, "selection exists and is empty");
+		});
+
+		QUnit.test("when overlay is added to selection", function(assert) {
+			var done = assert.async();
+			var oOverlay = new sap.ui.dt.Overlay();
+
+			this.oSelection.attachEventOnce("change", function(oEvent) {
+				assert.deepEqual(oEvent.getParameter("selection"), this.oSelection.getSelection(), "selection change event is fired with a correct selection");
+				assert.strictEqual(this.oSelection.getSelection().length, 1, "one overlay is selected");
+				assert.strictEqual(this.oSelection.getSelection()[0], oOverlay, "right overlay is selected");
+				done();
+				oOverlay.destroy();
+			}, this);
+
+			this.oSelection.add(oOverlay);
+		});
+
+		QUnit.test("when overlay is added to selection and then removed from selection", function(assert) {
+			var done = assert.async();
+
+			var oOverlay = new sap.ui.dt.Overlay();
+			this.oSelection.add(oOverlay);
+
+			this.oSelection.attachEventOnce("change", function(oEvent) {
+				var aSelection = oEvent.getParameter("selection");
+				assert.strictEqual(aSelection.length, 0, "selection from event is empty");
+				assert.strictEqual(this.oSelection.getSelection().length, 0, "selection is empty");
+				oOverlay.destroy();
+				done();
+			}, this);
+
+			this.oSelection.remove(oOverlay);
+		});
+
+
+		QUnit.test("when two overlay are added to selection", function(assert) {
+			var oOverlay1 = new sap.ui.dt.Overlay();
+			var oOverlay2 = new sap.ui.dt.Overlay();
+			this.oSelection.add(oOverlay1);
+			this.oSelection.add(oOverlay2);
+			assert.strictEqual(this.oSelection.getSelection().length, 1, "one overlay is selected");
+			assert.strictEqual(this.oSelection.getSelection()[0], oOverlay2, "just a second overlay is selected");
+			oOverlay1.destroy();
+			oOverlay2.destroy();
+		});
+
+		QUnit.module("Given that an Selection is initialized with mode MultipleSelection", {
+			beforeEach : function() {
+				this.oSelection = new sap.ui.dt.Selection({mode : "Multi"});
+			},
+			afterEach : function() {
+				this.oSelection.destroy();
+			}
+		});
+
+		QUnit.test("when two overlays are added to selection", function(assert) {
+			var oOverlay1 = new sap.ui.dt.Overlay();
+			var oOverlay2 = new sap.ui.dt.Overlay();
+			this.oSelection.add(oOverlay1);
+			this.oSelection.add(oOverlay2);
+			assert.strictEqual(this.oSelection.getSelection().length, 2, "two overlays are selected");
+			oOverlay1.destroy();
+			oOverlay2.destroy();
+		});
+
+		QUnit.test("when two overlays are added to selection and then a second one is removed from selection", function(assert) {
+			var oOverlay1 = new sap.ui.dt.Overlay();
+			var oOverlay2 = new sap.ui.dt.Overlay();
+			this.oSelection.set(oOverlay1, true); //.	 add
+			this.oSelection.set(oOverlay2, true); //.add
+			this.oSelection.set(oOverlay2, false); //.remove
+			assert.strictEqual(this.oSelection.getSelection().length, 1, "one overlay is selected");
+			assert.strictEqual(this.oSelection.getSelection()[0], oOverlay1, "just a first overlay is selected");
+			oOverlay1.destroy();
+			oOverlay2.destroy();
+		});
+
+		QUnit.test("when more 3 overlays are added to selection, selectionMode is switched to Single and one more overlay is added", function(assert) {
+			var oOverlay1 = new sap.ui.dt.Overlay();
+			var oOverlay2 = new sap.ui.dt.Overlay();
+			var oOverlay3 = new sap.ui.dt.Overlay();
+			this.oSelection.add(oOverlay1);
+			this.oSelection.add(oOverlay2); 
+			this.oSelection.setMode("Single");
+			assert.strictEqual(this.oSelection.getSelection().length, 2, "2 overlays are selected after mode switch");
+			this.oSelection.add(oOverlay3);
+			assert.strictEqual(this.oSelection.getSelection().length, 1, "1 overlay is selected after add in single mode");
+			assert.strictEqual(this.oSelection.getSelection()[0], oOverlay3, "last overlay is selected");
+			oOverlay1.destroy();
+			oOverlay2.destroy();
+			oOverlay3.destroy();
+		});
+
+		QUnit.test("when more 3 overlays are added to selection, selectionMode is switched to Single and one overlay is removed from selection", function(assert) {
+			var oOverlay1 = new sap.ui.dt.Overlay();
+			var oOverlay2 = new sap.ui.dt.Overlay();
+			this.oSelection.add(oOverlay1);
+			this.oSelection.add(oOverlay2); 
+			this.oSelection.setMode("Single");
+			this.oSelection.remove(oOverlay2);
+			assert.strictEqual(this.oSelection.getSelection().length, 0, "no overlays is selected after remove in single mode");
+			oOverlay1.destroy();
+			oOverlay2.destroy();
+		});
+		
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.Selection</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

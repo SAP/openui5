@@ -13,33 +13,29 @@
 }*/
 
 .sapUiForm .sapUiFormTitle > button{
-	height: 16px;
-	width: 16px;
+	height: 1rem;
+	width: 1rem;
 	padding-left: 0;
 	padding-right:0;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite{
-	padding-top: 1px;
-}
-
 html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite > img{
-	margin-top: -2px;
+	margin-top: -0.125rem;
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiBtnAct{
 	padding-left: 0;
-	padding-right:0px;
-	padding-top: 0px;
+	padding-right:0;
+	padding-top: 0;
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiBtnAct > img{
-	margin-left: -1px;
-	margin-top: -3px;
+	margin-left: -0.0625rem;
+	margin-top: -0.1875rem;
 }
 
 html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiBtnAct > img{
-	margin-left: -2px;
+	margin-left: -0.125rem;
 }
 
 .sapUiFormTitle > .sapMBtn{
@@ -49,9 +45,9 @@ html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiB
 }
 
 .sapUiFormTitle > .sapMBtn > .sapMBtnContent{
-	line-height: 16px;
-	height: 16px;
-	width: 16px;
+	line-height: 1rem;
+	height: 1rem;
+	width: 1rem;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -61,10 +57,9 @@ html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiB
 	vertical-align: top;
 }
 
-
-/* Form placed directly in a body of a Fiori page */
-.sap-tablet .sapUiFioriObjectPage > section > div > .sapUiForm,
-.sap-desktop .sapUiFioriObjectPage > section > div > .sapUiForm {
+.sap-tablet .sapUiFioriObjectPage > section > .sapUiForm,
+.sap-desktop .sapUiFioriObjectPage > section > .sapUiForm {
+	margin: 1rem 0;
 	padding: 0 1rem;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;

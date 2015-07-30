@@ -1,0 +1,28 @@
+<mvc:View
+		controllerName="sap.ui.unified.sample.CalendarMultipleMonth.CalendarMultipleMonth"
+		xmlns:l="sap.ui.layout"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		class="viewPadding">
+	<l:VerticalLayout>
+		<l:content>
+			<u:Calendar
+					id="calendar"
+					months="2"
+					select="handleCalendarSelect" />
+			<l:HorizontalLayout>
+				<Button
+						press="handleSelectToday"
+						text="Select Today" />
+				<Label
+						text="Selected Date (yyyy-mm-dd):"
+						class="labelMarginLeft" />
+				<Text
+						id="selectedDate"
+						text="No Date Selected"
+						class="labelMarginLeft"/>
+			</l:HorizontalLayout>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

@@ -12,7 +12,7 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Products"></Label>
+				<Title text="Products" level="H2"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -34,11 +34,11 @@
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Center">
+				hAlign="Right">
 				<Text text="Weight" />
 			</Column>
 			<Column
-				hAlign="Right">
+				hAlign="Right"> <!-- not using "Begin" because the content is left-to-right text -->
 				<Text text="Price" />
 			</Column>
 		</columns>
@@ -57,8 +57,12 @@
 						number="{WeightMeasure}"
 						unit="{WeightUnit}"/>
 					<ObjectNumber
-					number="{Price}"
-					unit="{CurrencyCode}" />
+						number="{
+							parts:[{path:'Price'},{path:'CurrencyCode'}],
+							type: 'sap.ui.model.type.Currency',
+							formatOptions: {showMeasure: false}
+						}"
+						unit="{CurrencyCode}" />
 				</cells>
 			</ColumnListItem>
 		</items>

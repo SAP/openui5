@@ -1,12 +1,18 @@
-jQuery.sap.declare("appUnderTest.Component");
+sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
+	function(UIComponent, View) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("appUnderTest.Component", {
+	var Component = UIComponent.extend("appUnderTest.Component", {
 
-	createContent : function () {
-		return sap.ui.view({
-			viewName : "view.Main",
-			type : "XML"
-		});
-	}
+		createContent : function () {
+			return sap.ui.view({
+				viewName : "view.Main",
+				type : "XML"
+			});
+		}
+
+	});
+
+	return Component;
 
 });

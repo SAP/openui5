@@ -1,23 +1,29 @@
-jQuery.sap.declare("sap.m.sample.DatePicker.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.DatePicker.Component", {
+	var Component = UIComponent.extend("sap.m.sample.DatePicker.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.DatePicker.Group",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout",
-				"sap.ui.unified"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"Group.view.xml",
-					"Group.controller.js"
+		metadata : {
+			rootView : "sap.m.sample.DatePicker.Group",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout",
+					"sap.ui.unified"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"Group.view.xml",
+						"Group.controller.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

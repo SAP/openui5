@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './ContextBinding'],
-	function(jQuery, ContextBinding) {
+sap.ui.define(['./ContextBinding'],
+	function(ContextBinding) {
 	"use strict";
 
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 	 * @param {Object} [mParameters]
 	 * @abstract
 	 * @public
-	 * @name sap.ui.model.ClientContextBinding
+	 * @alias sap.ui.model.ClientContextBinding
 	 */
 	var ClientContextBinding = ContextBinding.extend("sap.ui.model.ClientContextBinding", /** @lends sap.ui.model.ClientContextBinding.prototype */ {
 	
@@ -36,26 +36,7 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.model.ClientContextBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.ClientContextBinding.extend
-	 * @function
-	 */
-	
-	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * @name sap.ui.model.ClientContextBinding#refresh
-	 * @function
 	 */
 	ClientContextBinding.prototype.refresh = function(bForceUpdate) {
 		var that = this;
@@ -72,8 +53,6 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 	
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * @name sap.ui.model.ClientContextBinding#initialize
-	 * @function
 	 */
 	ClientContextBinding.prototype.initialize = function() {
 		var that = this;
@@ -86,8 +65,6 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 	
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.setContext
-	 * @name sap.ui.model.ClientContextBinding#setContext
-	 * @function
 	 */
 	ClientContextBinding.prototype.setContext = function(oContext) {
 		var that = this;
@@ -102,4 +79,4 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 
 	return ClientContextBinding;
 
-}, /* bExport= */ true);
+});

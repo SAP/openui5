@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SearchField.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, InvisibleText, Parameters) {
 	"use strict";
 
 
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.SearchField
+	 * @alias sap.m.SearchField
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ { metadata : {
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
 	
 			/**
-			 * Defines the width of the input.
+			 * Defines the CSS width of the input. If not set, width is 100%.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 	
@@ -94,6 +94,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			selectOnFocus : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -135,14 +147,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	IconPool.insertFontFaceStyle();
 	
-	
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an F5 ARIA announcement and remember its ID for later use in the renderer:
+	SearchField.prototype._sAriaF5LabelId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("SEARCHFIELD_ARIA_F5")
+	}).toStatic().getId();
+
 	SearchField.prototype.init = function() {
 	
 		// IE9 does not fire input event when characters are deleted in an input field, use keyup instead
 		this._inputEvent = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10 ? "keyup" : "input";
-	
+
 		// Default placeholder: "Search"
-		this.setProperty("placeholder", sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH"),true);
+		this.setProperty("placeholder", oRb.getText("FACETFILTER_SEARCH"),true);
 		// TODO: suggestions and search provider
 	};
 	
@@ -186,16 +204,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			.bind("focus",  jQuery.proxy(this.onFocus,  this))
 			.bind("blur",   jQuery.proxy(this.onBlur,  this));
 		
-		// Listen to native touchstart/mousedown.
-		// Windows Phone has both, one is enough.
-		var pointerDown = sap.ui.Device.os.windows_phone ? "mousedown" : "touchstart mousedown";
-		this.$().bind(pointerDown, jQuery.proxy(this.onButtonPress,  this));
-		
-		// FF does not set :active by preventDefault, use class:
-		if (sap.ui.Device.browser.firefox) { 
-			this.$().find(".sapMSFB").bind("mouseup mouseout", function(oEvent){
-				jQuery(oEvent.target).removeClass("sapMSFBA");
-			});
+		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+			// Listen to native touchstart/mousedown.
+			this.$().bind("touchstart mousedown", jQuery.proxy(this.onButtonPress,  this));
+
+			// FF does not set :active by preventDefault, use class:
+			if (sap.ui.Device.browser.firefox) { 
+				this.$().find(".sapMSFB").bind("mouseup mouseout", function(oEvent){
+					jQuery(oEvent.target).removeClass("sapMSFBA");
+				});
+			}
 		}
 	};
 	
@@ -218,13 +236,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// do not remove focus from the inner input but allow it to react on clicks
 		if (document.activeElement === this._inputElement && oEvent.target !== this._inputElement) {
 			oEvent.preventDefault();
-			
-			// FF does not set :active by preventDefault, use class:
-			if (sap.ui.Device.browser.firefox){ 
-				var button = jQuery(oEvent.target);
-				if (button.hasClass("sapMSFB")) {
-					button.addClass("sapMSFBA");
-				}
+		}
+		// FF does not set :active by preventDefault, use class:
+		if (sap.ui.Device.browser.firefox){
+			var button = jQuery(oEvent.target);
+			if (button.hasClass("sapMSFB")) {
+				button.addClass("sapMSFBA");
 			}
 		}
 	};
@@ -378,29 +395,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SearchField.prototype.onFocus = function(event) {
-	
+
 		this.$().toggleClass("sapMFocus", true);
-	
+
+		// clear tooltip of the refresh button
+		if (this.getShowRefreshButton()) {
+			this.$("search").removeAttr("title");
+		} 
 		// Some applications do re-render during the liveSearch event.
 		// The input is focused and most browsers select the input text for copy.
 		// Any following key press deletes the whole selection.
 		// Disable selection by focus:
 		var input = this._inputElement;
 		if (input && input.value && !this.getSelectOnFocus()) {
-			window.setTimeout(function(){input.setSelectionRange(input.value.length,input.value.length);},0);
+			input.setSelectionRange(input.value.length,input.value.length);
 		}
 	};
-	
+
 	/**
 	 * Restore the background color on blur.
 	 *
 	 * @private
 	 */
 	SearchField.prototype.onBlur = function(oEvent) {
+		var tooltip;
+		
 		this.$().toggleClass("sapMFocus", false);
+		
+		// restore toltip of the refresh button
+		if (this.getShowRefreshButton()) {
+			tooltip = this.getRefreshButtonTooltip();
+			if (tooltip) {
+				this.$("search").attr("title", tooltip);
+			}
+		} 
 	};
 	
 	SearchField.prototype.setValue = function(value){
+		value = value || "";
 		if (this._inputElement) {
 	
 			if (this._inputElement.value !== value) {

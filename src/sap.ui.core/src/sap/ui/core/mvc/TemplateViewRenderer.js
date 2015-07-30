@@ -3,15 +3,15 @@
  */
 
 // Provides default renderer for JSView
-sap.ui.define(['jquery.sap.global', './ViewRenderer'],
-	function(jQuery, ViewRenderer) {
+sap.ui.define(['./ViewRenderer'],
+	function(ViewRenderer) {
 	"use strict";
 
 
 	/**
 	 * @class TemplateView renderer.
 	 * @static
-	 * @name sap.ui.core.mvc.TemplateViewRenderer
+	 * @alias sap.ui.core.mvc.TemplateViewRenderer
 	 */
 	var TemplateViewRenderer = {
 	};
@@ -22,8 +22,6 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 * @name sap.ui.core.mvc.TemplateViewRenderer.render
-	 * @function
 	 */
 	TemplateViewRenderer.render = function(oRenderManager, oControl){
 		// convenience variable

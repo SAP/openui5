@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class CalloutBase renderer.
-	 * @static
+	 * CalloutBase renderer.
+	 * @namespace
 	 */
 	var CalloutBaseRenderer = {
 	};

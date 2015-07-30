@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Header - sap.ui.unified.calendar</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.calendar.Header.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				src="../../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script type="text/javascript">
+
+			var oHeader = new sap.ui.unified.calendar.Header("H1",{
+				textButton1: "Month",
+				textButton2: "Year",
+				pressPrevious: function(oEvent){
+						alert("Previous");
+					},
+				pressNext: function(oEvent){
+					alert("Previous");
+				},
+				pressButton1: function(oEvent){
+					alert("Button 1");
+				},
+			pressButton2: function(oEvent){
+					alert("Button2");
+				}
+			}).placeAt("sample1");
+
+			var oLabel = new sap.ui.commons.Label({text: "Text 1", labelFor: "TF1"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF1",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oHeader = sap.ui.getCore().byId("H1");
+					oHeader.setTextButton1(sValue);
+				}
+			}).placeAt("event1");
+
+			var oLabel = new sap.ui.commons.Label({text: "Text 2", labelFor: "TF2"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF2",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oHeader = sap.ui.getCore().byId("H1");
+					oHeader.setTextButton2(sValue);
+				}
+			}).placeAt("event1");
+
+			var oButton = new sap.ui.commons.ToggleButton({
+				text: "Pevious",
+				pressed: true,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setEnabledPrevious(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Next",
+				pressed: true,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setEnabledNext(bPressed);
+				}
+			}).placeAt("event1");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.unified.calendar.Header</code></h1>
+		<br>
+		<div>
+		<div id="sample1"></div>
+		<br>
+		<div id="event1"></div>
+		</div>
+
+	</body>
+</html>

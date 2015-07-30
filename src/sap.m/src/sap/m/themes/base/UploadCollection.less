@@ -4,352 +4,348 @@
 /* Base Theme                                                                            */
 /* ===================================================================================== */
 
+/* until the central focus concept is implemented a workaround is built in sap.m.UploadCollection so that all focus frames are visible */
+/* to remove the workaround the changes below are necessary: */
+/* for .sapMLIB.sapMUCItem.sapMUCListSingleItem, .sapMLIB.sapMUCItem.sapMUCListFirstItem,.sapMLIB.sapMUCItem.sapMUCListLastItem, .sapMLIB.sapMUCItem.sapMUCListItem change padding-left from 0.9rem to 1rem    */
+/* for .sapMUCFileName.sapMLnk delete margin-left:	0.1rem */
+/* for .sapMUCItemIcon, .sapMUCItemImage change margin-right from 0.65rem to 0.75rem, delete margin-top: 0.1rem; margin-bottom:	0.1rem; margin-left: 0.1rem; */
+/* for .sapMUCAttrContainer, .sapMUCStatusContainer delete margin-left: 0.1rem*/
 
-/* ************************************************************************************* */
-/* Common Styles                                                                         */
-/* ************************************************************************************* */
+
+/* Align Upload Button in Toolbar */
+.sapMUC .sapMIBar > .sapMBarChild:last-child {
+	margin-right: 		0rem;
+}
+
 /* List Header */
 .sapMTB.sapMUCListHeader {
 	width:				100%;
 	height:				3rem;
 	padding-left:		1rem;
 	padding-right:		1rem;
-//	background-color:	fade(@sapUiLightestBG,0%);
 	border-bottom-width: 0.0625rem;
 	border-bottom-style: solid;
-//	border-bottom-color: @sapUiMediumBorder;
-	font-family:		@sapUiFontFamily;
-//	font-size:			@sapMFontHeader4Size;
-//	font-weight:		@sapUiFontHeaderWeight;
-//	color: 				@sapUiHeaderText;
 	white-space:		nowrap;
 	overflow:			hidden;
 	text-overflow:		ellipsis;
-//	text-shadow:		0.0625rem 0rem @sapUiLightShadowTint;
 	vertical-align:		middle;
 }
 
-.sapMLIB.sapMUCListSingleItem,
-.sapMLIB.sapMUCListFirstItem,
-.sapMLIB.sapMUCListLastItem,
-.sapMLIB.sapMUCListItem {
-	height: 				5rem;
+/* List with borders*/
+.sapMLIB.sapMUCItem.sapMUCListSingleItem,
+.sapMLIB.sapMUCItem.sapMUCListFirstItem,
+.sapMLIB.sapMUCItem.sapMUCListLastItem,
+.sapMLIB.sapMUCItem.sapMUCListItem {
+	padding-left:			0.9rem;       /* a workaround until the central focus concept is implemented( after that make it 1rem); 0.1rem gets the image/icon so that the left side of the keyboard frame is displayed */
 	padding-top:			1rem;
-	padding-bottom: 		0.9375rem;	// border-bottom: 0.0625
+	padding-bottom: 		1rem;
 	border-bottom-width: 	0.0625rem;
 	border-bottom-style: 	solid;
-//	border-bottom-color: 	@sapUiMediumBorder;
+	padding-right:			1rem;
 }
 
-.sapMUCItemHL {
-	height:				5rem;
-	width:				100%;
-	padding-left:		1rem;
-	padding-right:		1rem;
-	box-sizing:			border-box;
-	flex: 				auto;
+/* List containing no borders */
+.sapMListShowSeparatorsNone {
+	.sapMLIB.sapMUCListFirstItem,
+	.sapMLIB.sapMUCListLastItem,
+	.sapMLIB.sapMUCListItem {
+		border-bottom-color: 	transparent; /* this is the central switch to have inner separators or not */
+	}
 }
 
-/* Item Icon */
-span[id*="ia_iconHL"] {
-	font-family:		SAP-icons;
+/* List containing no borders */
+.sapMListShowSeparatorsNone {
+	.sapMLIB.sapMUCListLastItem,
+	.sapMLIB.sapMUCListItem {
+		padding-top: 0.5rem;
+	}
+}
+
+/* List containing no borders */
+.sapMListShowSeparatorsNone {
+	.sapMLIB.sapMUCListFirstItem,
+	.sapMLIB.sapMUCListItem {
+		padding-bottom: 0.5rem;
+	}
+}
+
+/* List with a single item containing no borders */
+.sapMListShowSeparatorsNone .sapMLIB.sapMUCListSingleItem {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+/* fallback for IE9 */
+.sapMUCItem .sapMLIBContentNF {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+/* Item icon */
+.sapMUCItemIcon {
 	font-size:			2.5rem;
-//	color: 				@sapUiElement;
 }
-
 
 .sapMImg.sapMUCItemImage{
-	height:				3rem;
+	background-size:	cover;
 }
 
-div[id*="ta_textVL"] {
-	margin:				1rem 0rem 1rem 0rem;
-}
-
-
-/* Button Horizontal Layout  */
-.sapMUCBtnHL {
-	position:			absolute;
-	right:				0rem;
-	padding:			1rem 1rem 1rem 0rem;
-	display:			flex;
-}
-
-/* Buttons */
-.sapMBtn.sapMUCEditBtn,
-.sapMBtn.sapMUCDeleteBtn,
-.sapMBtn.sapMUCCancelBtn,
-.sapMBtn.sapMUCOkBtn {
-	margin-left:		0.125rem;
-}
-
-/* Text: Filename */
-.sapMUCFileName.sapMLnk {
-	padding-top:		0.125rem;
-
-	font-family:		@sapUiFontFamily;
-//	font-size:			@sapMFontLargeSize;
-	font-weight:		normal;
-	white-space:		nowrap;
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	vertical-align:		top;
-}
-
-/* Text: Description (/Progress) */
-.sapMUCDescriptionHL .sapMLabel{
-	height:				1rem;
-	padding-top:		0.625rem;
-	padding-bottom:		0.125rem;
-
-	font-family: 		@sapUiFontFamily;
-//	font-size:			@sapMFontMediumSize;
-	font-weight:		normal;
-//	color:				@sapUiLightText;
-	white-space:		nowrap;
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	vertical-align:		bottom;
-}
-
-div[id*="ta_textVL"] {
-	height:				3rem;
-}
-
-
-.sapMUCItemHL > .sapUiHLayoutChildWrapper {
-	height:				3rem;
-	vertical-align: 	middle;
-}
-
-.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
-.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+.sapMUCItemIcon,
+.sapMUCItemImage {
 	height:				3rem;
 	width:				3rem;
-	padding-left:		0rem;
-	padding-right:		0.75rem;
-	padding-top:		1rem;
-	padding-bottom:		1rem;
-	vertical-align:		middle;
+	margin-right:		0.65rem; /* because of the keyboard frame it should be margin and not padding */
+	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	-webkit-box-flex:	0;		 	/* OLD - iOS 6-, Safari 3.1-6 */
+	-moz-box-flex: 		0;         	/* OLD - Firefox 19- */
+	-webkit-flex:		none;			/* Chrome */
+	-moz-flex:			none;
+	-ms-flex:			none;			/* IE 10 */
+	flex:				none;			/* NEW, Firefox 20+ */
 }
 
-.sapMUCEditHL {
-	position:			absolute;
-	width:				50%;
+/* fallback for IE9 as it does not support flex */
+ html[data-sap-ui-browser="ie9"]  .sapMUCItemIcon,
+ html[data-sap-ui-browser="ie9"]  .sapMUCItemImage {
+	float: left;
 }
 
-/* Text: File Extension */
-.sapMUCEditHL .sapMUCExtension {
-	padding-left:		0.5rem;
-	line-height:		3rem;
-	white-space: 		nowrap;
+/* Text: File name */
+.sapMUCFileName.sapMLnk {
+	font-family:		@sapUiFontFamily;
+	font-weight:		normal;
+	white-space:		nowrap;
+	padding-bottom: 	0.25rem;
+	overflow:			hidden;
+	text-overflow:		ellipsis;
+	opacity:			100;
+	margin-left:		0.1rem;
+}
+
+/*focus for the file name */
+.sapMUCItem .sapMUCTextContainer > .sapMUCFileName.sapMLnk:focus {
+	outline:			1px dotted;
+	outline-offset:		0.0625rem;
+}
+
+/*positioning of the Progress label */
+.sapMLabel.sapMUCProgress {
+	display: block;
+	padding-top: 0.5rem;
 }
 
 /* Busy Indicator */
 .sapMBusyIndicator.sapMUCloadingIcon {
 	padding-top:		1.25rem;
 	padding-bottom:		1.25rem;
-	padding-right:		1rem;
-	padding-left:		0rem;
+	padding-right:		1.3rem;
+	padding-left:		0.5rem;
 }
 
 .sapMBusyIndicator.sapMUCloadingIcon .sapMBusySvg {
-	height:				2.5rem;
-	width:				2.5rem;
+	height:				2rem;
+	width:				2rem;
 }
 
 
 /* ************************************************************************************* */
-/* Compact Mode                                                                          */
+/* local fixes: should be done by used simple controls                                   */
 /* ************************************************************************************* */
-.sapUiSizeCompact {
-	.sapMLIB.sapMUCListSingleItem,
-	.sapMLIB.sapMUCListFirstItem,
-	.sapMLIB.sapMUCListLastItem,
-	.sapMLIB.sapMUCListItem {
-		padding-top:		0.5rem;
-		padding-bottom: 	0.5rem;
+.sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
+	padding-left:		0rem;
+}
+
+.sapMUC .sapUiIcon:focus {
+	outline-style: dotted;
+	outline-width: 1px; /*suddenly there comes 3 px outline-width from the Icon control which is not in sync with other outlines of our control */
+}
+/* ************************************************************************************* */
+
+
+.sapMUCListFirstItem > .sapMLIBContent,
+.sapMUCListLastItem > .sapMLIBContent,
+.sapMUCListSingleItem > .sapMLIBContent,
+.sapMUCListItem > .sapMLIBContent {
+	display:		-webkit-box; 		/* OLD - iOS 6-, Safari 3.1-6 */
+	display:		-ms-flexbox; 		/* IE10 */
+	display:		-webkit-flex; 		/* NEW - Chrome */
+	dispaly:		-moz-box;
+	display: 		-moz-flex;			/*NEW		*/
+	display: 		-ms-flex;			/*NEW 		*/
+	display:		flex; 				/*FF 20+ 	*/
+	overflow:		hidden;				/*necessary for text truncation in FF */
+}
+
+/*Container for a textContainer and a button container */
+@media(min-width: 30rem) {
+	.sapMUCTextButtonContainer {
+		display:		-webkit-box; 		/* OLD - iOS 6-, Safari 3.1-6 */
+		display:		-ms-flexbox; 		/* IE10 */
+		display:		-webkit-flex; 		/* NEW - Chrome */
+		display:		-moz-box;
+		display: 		-moz-flex;			/*NEW		*/
+		display: 		-ms-flex;			/*NEW 		*/
+		display:		flex; 				/*FF 20+ 	*/
+		width: 			100%;
+		-ms-flex-negative: 1;  /*IE10 */
+		min-width: 		0; /* to avoid FF bug with flex*/
 	}
+}
 
-	.sapMUCEditHL {
-		margin-top:			0.5rem;
+.sapMUCTextButtonContainer {
+	min-width: 		0; /* to avoid FF bug with truncation */
+	width: 			100%; /* it is necessary for the file name truncation in IE10 */
+}
+
+@media(max-width: 30rem) {
+	.sapMUCTextButtonContainer {
+		-ms-flex-negative: 1;  /*strangely it is needed even for display:inline-block in IE10 for the proper truncation of the file name */
 	}
-
-	.sapMUCBtnHL {
-		margin-top:			1rem;
+}
+/*text container holding the file name, a container for attributes and a container for statuses */
+@media(min-width: 30rem) {
+	.sapMUCTextContainer {
+		-webkit-box-flex:	10;			/* OLD - iOS 6-, Safari 3.1-6 */
+		-webkit-flex:		10;			/* Chrome */
+		-moz-box-flex:		10;
+		-moz-flex:			10;
+		-ms-flex-positive:	10;			/* IE 10 */
+		-ms-flex-negative:	10;
+		-ms-flex-preferred-size: auto;
+		flex:	 			10 10 auto;			/* NEW, Firefox 20+	*/
+		padding-top: 		0.125rem;
+		padding-bottom: 	0.125rem;
+		display: 			block;
 	}
+}
 
-	.sapMUCEditMode .sapMUCBtnHL {
-		margin:				0rem;
+/*fallback for IE9 as it does not support flex */
+html[data-sap-ui-browser="ie9"] .sapMUCTextContainer {
+	width: 80%;
+}
+
+/*fallback for IE9 as it does not support flex */
+html[data-sap-ui-browser="ie9"] .sapMUCItem .sapMLIBContentNF {
+	position: relative;
+}
+
+.sapMUCTextContainer.sapMUCEditMode {
+	padding-top: 0rem;
+}
+
+.sapMUCTextContainer {
+	width: 100%;
+	white-space: nowrap; /* necessary for text ellipsis of the file name in FF */
+	overflow: hidden;
+}
+
+/*display the attributes inline */
+.sapMUCAttrContainer .sapMObjectAttributeDiv {
+	display: inline;
+}
+
+/* display the statuses inline */
+.sapMUCStatusContainer .sapMObjStatus {
+	display: inline;
+}
+
+/* overwrite display: -webkit-box so that the text does not get truncated */
+.sapMUCAttr .sapMTextMaxLine {
+	display: initial;
+	overflow: visible;
+}
+
+.sapMUCAttrContainer, .sapMUCStatusContainer {
+	padding-top: 0.375rem;
+	font-weight: normal;
+	line-height: normal;
+	white-space: pre-line;
+	text-align: start;
+	margin-left: 0.1rem;
+}
+
+@media(min-width: 30rem) {
+	/* !important is necessary here for overriding inline style of sap.m.input */
+	.sapMUCEditBox >.sapMInputBaseInner {
+		width: 60% !important;
 	}
+}
 
-	.sapMUCExtension {
-		line-height:		2rem;
+.sapMInputBase.sapMUCEditBox {
+	margin-bottom: 0.1875rem;
+}
+
+@media(min-width: 30rem) {
+	.sapMUCButtonContainer {
+		white-space: nowrap; /* so that buttons are displayed in a row */
+		padding-left: 1rem;
+		padding-top: 0rem;
+		align-self: flex-end; /* for buttons alignment at the bottom */
+		-webkit-align-self: flex-end; /* for buttons alignment at the bottom in Safari */
+		-ms-flex-item-align:		end; /* for buttons alignment at the bottom in IE10 */
+		-webkit-box-flex:	0;			/* OLD - iOS 6-, Safari 3.1-6 */
+		-webkit-flex:		none;		 	/* Chrome */
+		-moz-box-flex:		0;
+		-moz-flex:			none;
+		-ms-flex:			none;			/* IE 10 */
+		flex:				none;		 	/* NEW, Firefox 20+	*/
 	}
+}
 
-//	.sapMUCFileName.sapMLnk {
-//		font-size:			@sapMFontMediumSize;
-//	}
+/*fallback for IE9 as it does not support flex */
+html[data-sap-ui-browser="ie9"] .sapMUCButtonContainer {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
 
-	.sapMUCDescriptionHL .sapMLabel{
-		padding-top:		0.75rem;
+@media(max-width: 30rem) {
+	.sapMUCButtonContainer {
+		padding-top: 0.75rem;
 	}
+}
 
-	.sapMBusyIndicator.sapMUCloadingIcon {
-		padding-top:		0.75rem;
-		padding-bottom:		0.75rem;
+/* this padding is only needed if both buttons are displayed */
+/* for the width less than 30 rem */
+.sapMBtn.sapMUCFirstButton {
+	padding-right: 0.5rem;
+}
+
+/* this padding is only needed if both buttons are displayed */
+/* for the width >=30rem */
+@media(min-width: 30rem) {
+	.sapMBtn.sapMUCFirstButton {
+		padding-right: 0.125rem;
 	}
+}
 
-/* ----------------------------------*/
-/* Single List Item in Compact Mode  */
-/* ----------------------------------*/
-	.sapMLIB.sapMUCListSingleItem {
-		height:					5rem;
-		padding-top:			1rem;
-		padding-bottom:			0.9375rem;	// border-bottom: 0.0625
+/* for compact form: for the width less than 30rem */
+.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+	padding-right: 0.5rem;
+}
 
-		.sapMUCItemHL {
-			height:				5rem;
-		}
-
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
-			padding-top:		1rem;
-			padding-bottom:		1rem;
-		}
-
-		.sapMUCBtnHL {
-			padding:			1rem 1rem 1rem 0rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			margin-top:			0.5rem;
-			padding:			1rem 1rem 1rem 0rem;
-		}
-
-		.sapMBusyIndicator.sapMUCloadingIcon {
-			margin-top:			0.5rem;
-			margin-bottom:		0.5rem;
-		}
+/* for compact form: this padding is only needed if both buttons are displayed */
+@media(min-width: 30rem) {
+	.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+		padding-right: 0.125rem;
 	}
+}
 
-	/* ----------------------------------*/
-	/* First List Item in Compact Mode   */
-	/* ----------------------------------*/
-	.sapMLIB.sapMUCListFirstItem {
-		height:				4.5rem;
-		padding-top:		1rem;
-		padding-bottom:		0.5rem;
-		border-bottom:		none;
+.sapMUCButtonContainer > .sapMBtn {
+	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
+	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
+	height:			2.5rem;
+}
 
-		>.sapMLIBContent.sapMLIBContentMargin {
-			margin-top:			-0.5rem;	// no idea why this is needed to align
-		}
 
-		.sapMUCItemHL {
-			height:				4.5rem;
-		}
+/*compact form */
+.sapUiSizeCompact .sapMUCButtonContainer > .sapMBtn {
+	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
+	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
+}
 
-		.sapMUCBtnHL {
-			padding:			1rem 1rem 0.5rem 0rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			margin-top:			.5625rem;
-			padding:			1rem 1rem 1rem 0rem;
-		}
-
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper {
-			height:				3rem;
-			vertical-align: 	middle;
-		}
-
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
-			padding-top:		1rem;
-			padding-bottom:		0.5rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			margin-top:			1rem;
-			margin-bottom:		0.5rem;
-			padding:			0.5rem 1rem 0.5rem 0rem;
-		}
-
-		div[id*="ta_textVL"] {
-			margin:				1rem 0rem 0.5rem 0rem;
-		}
-
-		.sapMBusyIndicator.sapMUCloadingIcon {
-			margin-top:			0.5rem;
-		}
-	}
-
-	/* ----------------------------------*/
-	/* Last List Item in Compact Mode    */
-	/* ----------------------------------*/
-	.sapMLIB.sapMUCListLastItem {
-		height:				4.5rem;
-		padding-top:		0.5rem;
-		padding-bottom:		0.9375rem;  // border-bottom: 0.0625
-
-		>.sapMLIBContent.sapMLIBContentMargin {
-			margin-top:			0.5rem;	//	no idea why this is needed to align
-		}
-
-		.sapMUCItemHL {
-			height:				4.5rem;
-		}
-
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
-			padding-top:		0.5rem;
-			padding-bottom:		1rem;
-		}
-
-		div[id*="ta_textVL"] {
-			margin: 			0.5rem 0rem 1rem 0rem;
-		}
-
-		.sapMUCBtnHL {
-			margin-bottom:		0.5rem;
-			padding:			0.5rem 1rem 0.5rem 0rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			padding:			1rem 1rem 1rem 0rem;
-		}
-	}
-
-	/* ----------------------------------*/
-	/* General List Item in Compact Mode */
-	/* ----------------------------------*/
-	.sapMLIB.sapMUCListItem {
-		height:					4rem;
-		padding-top:			0.5rem;
-		padding-bottom:			0.5rem;
-		border-bottom:			none;
-
-		.sapMUCItemHL {
-			height:				4rem;
-		}
-
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
-			padding-top:		0.5rem;
-			padding-bottom:		0.5rem;
-		}
-
-		div[id*="ta_textVL"] {
-			margin:				0.5rem 0rem 0.5rem 0rem;
-		}
-
-		.sapMUCBtnHL {
-			padding:			0.5rem 1rem 0.5rem 0rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			padding:			1rem 1rem 1rem 0rem;
-		}
-	}
+.sapMUCSeparator {
+	display: inline;
 }

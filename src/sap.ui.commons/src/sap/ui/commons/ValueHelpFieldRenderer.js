@@ -9,13 +9,13 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 
 
 	/**
-	 * @class ValueHelpField renderer.
+	 * ValueHelpField renderer.
 	 * For a common look&feel, the ValueHelpField extends the TextField control,
 	 * just like the ComboBox does.
-	 * @static
+	 * @namespace
 	 */
 	var ValueHelpFieldRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
-	
+
 	/**
 	 * Hint: "renderOuterAttributes" is a reserved/hard-coded TextField extending function!
 	 *       It is used to allow extensions to display help icons.
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	//as only input field gets focus, render aria info there
 		rm.writeAttribute("aria-owns", oControl.getId() + '-input ' + oControl.getId() + '-icon');
 	};
-	
+
 	/**
 	 * Renders additional HTML for the ComboBox to the TextField (sets the icon)
 	 *
@@ -48,41 +48,42 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	 *                                     be rendered.
 	 */
 	ValueHelpFieldRenderer.renderOuterContent = function(rm, oControl){
-	
+
 		var sIconUrl = oControl.getIconURL();
 		var aClasses = [];
 		var mAttributes = {};
 		mAttributes["id"] = oControl.getId() + "-icon";
 		mAttributes["role"] = "button";
-	
+
 		// As mentioned above, a more generic "sapUiTfIcon" className could have been used...
 		// One would just have had to add its own icon className!
 		// Using "sapUiTfValueHelpIcon" for now, as it proved easier to define instead of overwriting
 		// the ComboBox image sources and backgrounds.
 		aClasses.push("sapUiTfValueHelpIcon");
-	
+
 		if (sIconUrl && sap.ui.core.IconPool.isIconURI(sIconUrl)) {
 			oControl.bIsIconURI = true;
+			mAttributes.title = oControl.getTooltip_AsString();
 		} else {
 			oControl.bIsIconURI = false;
 			if (oControl.getEnabled() && oControl.getEditable()) {
 				aClasses.push("sapUiTfValueHelpRegularIcon");
 			}
-	
+
 			sIconUrl = this.renderIcon(rm, oControl, aClasses);
 		}
-	
+
 		rm.writeIcon(sIconUrl, aClasses, mAttributes);
-	
+
 	};
-	
-	/**
+
+		/**
 	 * as onBeforeRendering only runs while re-rendering this module is called in renderer
 	 */
 	ValueHelpFieldRenderer.renderIcon = function(rm, oControl, aClasses){
-	
+
 		var sIcon = "";
-	
+
 		if (!oControl.getEnabled()) {
 			if (oControl.getIconDisabledURL()) {
 				oControl.sIconDsblUrl = oControl.getIconDisabledURL();
@@ -98,10 +99,10 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 			sIcon = oControl.sIconRegularUrl;
 		}
 		return sIcon;
-	
+
 	};
-	
-	///**
+
+		///**
 	// * Renders ARIA information for the outer DIV
 	// *
 	// * @param {sap.ui.fw.RenderManager} oRenderManager the RenderManager that can be used for

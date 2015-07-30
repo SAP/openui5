@@ -2,18 +2,21 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox class="marginBoxContent">
+	<VBox class="sapUiSmallMargin">
 		<Label text="Date" />
 		<DateTimeInput
 			type="Date"
-			placeholder="Enter Date ..." />
+			placeholder="Enter Date ..."
+			class="sapUiSmallMarginBottom" />
 		<Label text="Time" />
 		<DateTimeInput
 			type="Time"
-			placeholder="Enter Time ..." />
+			placeholder="Enter Time ..."
+			class="sapUiSmallMarginBottom" />
 		<Label text="Date &amp; Time" />
 		<DateTimeInput
 			type="DateTime"
-			placeholder="Enter Date &amp; Time ..." />
+			placeholder="Enter Date &amp; Time ..."
+			class="sapUiSmallMarginBottom" />
 	</VBox>
 </mvc:View>

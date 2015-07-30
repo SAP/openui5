@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.Column
+	 * @alias sap.m.Column
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Column = Element.extend("sap.m.Column", /** @lends sap.m.Column.prototype */ { metadata : {
@@ -88,18 +88,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			popinHAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin, deprecated: true},
 	
 			/**
-			 * Defines the display options of pop-in.
-			 * Possible values are
-			 * 1 - "Block"(Header is displayed in first line and value field in next line.)
-			 * 2 - "Inline" (Value field is displayed next to the header in same line.)
+			 * Defines enumerated display options for the pop-in.
 			 * @since 1.13.2
 			 */
 			popinDisplay : {type : "sap.m.PopinDisplay", group : "Appearance", defaultValue : sap.m.PopinDisplay.Block},
 	
 			/**
-			 * Set "true" to merge repeating cells(duplicates) into one.
-			 * Also see "mergeFunctionName" property to customize.
-			 * Note: this property gets disabled if any column is in pop-in!
+			 * Set "true" to merge repeating cells(duplicates) into one cell block.
+			 * Please see "mergeFunctionName" property to customize this property.
+			 * Note: This feature must not be used together with two-way binding. This property is ignored if a column is shown in the pop-in.
 			 * @since 1.16
 			 */
 			mergeDuplicates : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -202,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	// Checks the given width(px or em), if it is a predefined screen value
 	Column.prototype._isWidthPredefined = function(sWidth) {
 		var that = this,
-			unit = sWidth.replace(/[^a-z]/g, ""),
+			unit = sWidth.replace(/[^a-z]/ig, ""),
 			baseFontSize = parseFloat(sap.m.BaseFontSize) || 16;
 	
 		jQuery.each(sap.m.ScreenSizes, function(screen, size) {
@@ -215,6 +212,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 				return false;
 			}
 		});
+		
+		if (this._minWidth) {
+			return true;
+		}
+		
+		if (unit == "px") {
+			this._minWidth = sWidth;
+		} else {
+			this._minWidth = parseFloat(sWidth) * baseFontSize + "px";
+		}
 	};
 	
 	/**
@@ -399,10 +406,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			cells = oTableDomRef.querySelectorAll("tr > td:nth-child(" + i + ")"),
 			length = cells.length;
 	
-		// set display
+		// set display and aria
 		header.style.display = display;
+		header.setAttribute("aria-hidden", !bDisplay);
 		for (i = 0; i < length; i++) {
 			cells[i].style.display = display;
+			cells[i].setAttribute("aria-hidden", !bDisplay);
 		}
 	
 		// let the parent know the visibility change
@@ -437,12 +446,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	};
 	
 	Column.prototype.setVisible = function(bVisible) {
+		if (bVisible == this.getVisible()) {
+			return this;
+		}
+		
 		var oParent = this.getParent(),
 			oTableDomRef = oParent && oParent.getTableDomRef && oParent.getTableDomRef(),
-			bInvalidate = oTableDomRef && this._index >= 0;
+			bSupressInvalidate = oTableDomRef && this._index >= 0;
 	
-		this.setProperty("visible", bVisible, bInvalidate);
-		if (bInvalidate) {
+		this.setProperty("visible", bVisible, bSupressInvalidate);
+		if (bSupressInvalidate) {
 			this.setDisplay(oTableDomRef, bVisible);
 		}
 	
@@ -472,23 +485,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			sWidth = sWidth.toLowerCase();
 			var width = sap.m.ScreenSizes[sWidth];
 			if (width) {
-				width += "px";
 				this._screen = sWidth;
+				this._minWidth = width + "px";
 			} else {
 				this._isWidthPredefined(sWidth);
-				width = sWidth;
 			}
-	
-			// keep the minimum width value
-			this._minWidth = width;
-	
-			/*
-			// OLD: if pop-in is requested or if unknown screen-size is given then go with JS media queries
-			// NEW: We always need JS media queries to detect table header visibility
-			if (this.getDemandPopin() || !this._screen) {
-				this._addMedia();
-			}
-			*/
+
 			this._addMedia();
 		}
 	
@@ -582,9 +584,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		return this._lastValue;
 	};
 	
-	
 	/**
-	 * Calls from Table to notify all items are removed
+	 * Gets called from the Table when the all items are removed
 	 *
 	 * @since 1.16
 	 * @protected
@@ -593,6 +594,68 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		this.clearLastValue();
 	};
 	
+	/**
+	 * Determines whether the given width is relative or not
+	 *
+	 * @private
+	 * @returns {boolean}
+	 */
+	Column.prototype.isRelativeWidth = function() {
+		return /^(|auto|[-+]?\d+\.?\d*%|inherit)$/i.test(this.getWidth());
+	};
+	
+	/**
+	 * Determines whether box-sizing content-box works for columns or not
+	 * Native android browsers does not honour content-box for fixed table layout
+	 * https://bugs.webkit.org/show_bug.cgi?id=18565
+	 * 
+	 * @protected
+	 * @readonly
+	 * @static
+	 */
+	Column.bContentBoxSupport = (function() {
+		var iWidth = 5,
+			sTable = "<table style='table-layout:fixed; width:" + iWidth + "px; position:absolute; left:-999px; top:-999px'>" +
+						"<tr><td style='width:" + iWidth + "px; padding:1px; border:1px solid transparent;'></td></tr>" +
+					"</table>",
+			$Table = jQuery(sTable);
+
+		jQuery(document.documentElement).append($Table);
+		var iContentWidth = $Table.find("td").width();
+		$Table.remove();
+
+		return (iContentWidth == iWidth);
+	})();
+	
+	/**
+	 * Gets called from the parent after all cells in column are rendered
+	 *
+	 * @param {jQuery} $Table Table jQuery reference
+	 * @param {Boolean} [bAutoTableLayout] Table layout
+	 * @see sap.m.Column#bContentBoxSupport
+	 * @protected
+	 */
+	Column.prototype.onColumnRendered = function($Table, bAutoTableLayout) {
+		// native android browsers does not honour box-sizing content-box for fixed table layout
+		// if there is no content-box support and column is visible and not in popin then run the workaround
+		if (bAutoTableLayout ||
+			Column.bContentBoxSupport ||
+			!this.getVisible() ||
+			this.isRelativeWidth() ||
+			this.isPopin() ||
+			this.isNeverVisible()) {
+			return;
+		}
+
+		var $Header = $Table.find("th").eq(this._index),
+			iOuterWidth = $Header.outerWidth(),
+			iContentWidth = $Header.width(),
+			iWidth = 2 * iOuterWidth - iContentWidth;
+
+		// set the outer-width as column width
+		$Header.attr("data-sap-width", iWidth + "px");
+		$Header.width(iWidth);
+	};
 
 	return Column;
 

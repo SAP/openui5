@@ -5,10 +5,10 @@ sap.ui.controller("view.Cart", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);
-		this._router.attachRoutePatternMatched(this._routePatternMatched, this);
+		this._router.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
 
 		// set initial ui configuration model
-		oCfgModel = new sap.ui.model.json.JSONModel({});
+		var oCfgModel = new sap.ui.model.json.JSONModel({});
 		this.getView().setModel(oCfgModel, "cfg");
 		this._toggleCfgModel();
 	},
@@ -21,13 +21,11 @@ sap.ui.controller("view.Cart", {
 			this._orderBusyDialog.destroy();
 		}
 	},
-	
+
 	_routePatternMatched : function(oEvent) {
-		if (oEvent.getParameter("name") === "cart") {
-			//set selection of list back
-			var oEntryList = this.getView().byId("entryList");
-			oEntryList.removeSelections();
-		}
+		//set selection of list back
+		var oEntryList = this.getView().byId("entryList");
+		oEntryList.removeSelections();
 	},
 
 	handleEditOrDoneButtonPress : function (oEvent) {
@@ -43,14 +41,14 @@ sap.ui.controller("view.Cart", {
 		oCfgModel.setData({
 			inDelete : !bInDelete,
 			notInDelete : bInDelete,
-			listMode : (!bInDelete) ? "Delete" : (sap.ui.Device.system.phone) ? "None": "SingleSelectMaster",
-			listItemType : (!bInDelete) ? "Inactive" : (sap.ui.Device.system.phone) ? "Active": "Inactive",
+			listMode: bInDelete ? sap.ui.Device.system.phone ? "None" : "SingleSelectMaster" : "Delete",
+			listItemType: bInDelete ? sap.ui.Device.system.phone ? "Active" : "Inactive" : "Inactive",
 			pageTitle : (bInDelete) ? oBundle.getText("CART_TITLE_DISPLAY") : oBundle.getText("CART_TITLE_EDIT")
 		});
 	},
 
 	handleNavButtonPress : function (oEvent) {
-		this._router._myNavBack();
+		this.getOwnerComponent().myNavBack();
 	},
 
 	handleEntryListPress : function (oEvent) {
@@ -60,47 +58,46 @@ sap.ui.controller("view.Cart", {
 	handleEntryListSelect : function (oEvent) {
 		this._showProduct(oEvent.getParameter("listItem"));
 	},
-	
+
 	_showProduct : function (item) {
 		// send event to refresh
 		var sPath = item.getBindingContext("cartProducts").getPath();
 		var oEntry = this.getView().getModel("cartProducts").getProperty(sPath);
 		var sId = oEntry.ProductId;
 		if (!sap.ui.Device.system.phone) {
-			this._router._myNavToWithoutHash("view.Product", "XML", false,  {productId: sId});
+			this._router.getTargets().display("product");
 			var bus = sap.ui.getCore().getEventBus();
 			bus.publish("shoppingCart", "updateProduct", {productId: sId});
 		} else {
 			this._router.navTo("cartProduct", {productId: sId});
 		}
 	},
-	
+
 	handleEntryListDelete : function (oEvent) {
 		// show confirmation dialog
 		var sEntryId = oEvent.getParameter("listItem").getBindingContext("cartProducts").getObject().Id;
 		var oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
 		sap.m.MessageBox.show(
-				oBundle.getText("CART_DELETE_DIALOG_MSG"),
-				null,
-				oBundle.getText("CART_DELETE_DIALOG_TITLE"),
-				[sap.m.MessageBox.Action.DELETE, sap.m.MessageBox.Action.CANCEL],
-				jQuery.proxy(function (oAction) {
-					if (sap.m.MessageBox.Action.DELETE === oAction) {
-						var oModel = this.getView().getModel("cartProducts");
-						var oData = oModel.getData();
-						var aNewEntries = jQuery.grep(oData.entries, function (oEntry) {
-							var keep = (oEntry.Id !== sEntryId);
-							if (!keep) {
-								oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
-							}
-							return keep;
-						});
-						oData.entries = aNewEntries;
-						oData.showEditAndProceedButton = aNewEntries.length > 0;
-						oModel.setData(oData);
-					}
-				}, this)
-		);
+				oBundle.getText("CART_DELETE_DIALOG_MSG"), {
+					title: oBundle.getText("CART_DELETE_DIALOG_TITLE"),
+					actions: [sap.m.MessageBox.Action.DELETE, sap.m.MessageBox.Action.CANCEL],
+					onClose: jQuery.proxy(function (oAction) {
+						if (sap.m.MessageBox.Action.DELETE === oAction) {
+							var oModel = this.getView().getModel("cartProducts");
+							var oData = oModel.getData();
+							var aNewEntries = jQuery.grep(oData.entries, function (oEntry) {
+								var keep = (oEntry.Id !== sEntryId);
+								if (!keep) {
+									oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
+								}
+								return keep;
+							});
+							oData.entries = aNewEntries;
+							oData.showEditAndProceedButton = aNewEntries.length > 0;
+							oModel.setData(oData);
+						}
+					}, this)
+				});
 	},
 
 	handleProceedButtonPress : function (oEvent) {
@@ -115,10 +112,9 @@ sap.ui.controller("view.Cart", {
 				showCancelButton : false,
 				close : function () {
 					sap.m.MessageBox.show(
-						oBundle.getText("CART_ORDER_SUCCESS_MSG"),
-						null,
-						oBundle.getText("CART_ORDER_SUCCESS_TITLE")
-					);
+						oBundle.getText("CART_ORDER_SUCCESS_MSG"), {
+							title: oBundle.getText("CART_ORDER_SUCCESS_TITLE")
+					});
 				}
 			});
 
@@ -141,7 +137,6 @@ sap.ui.controller("view.Cart", {
 						var bInputValid = oInputView.getController()._checkInput();
 						if (bInputValid) {
 							that._orderDialog.close();
-							jQuery.sap.require("sap.m.MessageToast");
 							var msg = "Your order was placed.";
 							that._resetCart();
 							sap.m.MessageToast.show(msg, {});
@@ -160,7 +155,7 @@ sap.ui.controller("view.Cart", {
 		// open order dialog
 		this._orderDialog.open();
 	},
-	
+
 	_resetCart: function() {
 		//delete cart content
 		var oCartProductsModel = this.getView().getModel("cartProducts");
@@ -171,7 +166,7 @@ sap.ui.controller("view.Cart", {
 		oCartProductsModel.setData(oCartProductsModelData);
 		this._router.navTo("Home");
 		if (!sap.ui.Device.system.phone) {
-			this._router._myNavToWithoutHash("view.Welcome", "XML", false);
+			this._router.getTargets().display("welcome");
 		}
 	}
 });

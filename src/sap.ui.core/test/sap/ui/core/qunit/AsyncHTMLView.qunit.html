@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+	Tested classes: sap.ui.core.mvc.HTMLView
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for async sap.ui.core.mvc.HTMLView</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons"
+	>
+</script>
+
+<link rel="stylesheet"
+  href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script type="text/javascript" src="AnyViewAsync.qunit.js"></script>
+
+<script>
+
+// setup test config with generic factory
+var oConfig = {
+	type : "HTML",
+	factory : function(bAsync) {
+		return sap.ui.view({
+			type : "HTML",
+			viewName : "testdata.mvc.Async",
+			async : bAsync
+		});
+	},
+	receiveSource : function(source) {
+		return source;
+	}
+};
+asyncTestsuite("Generic View Factory", oConfig);
+
+// switch factory function
+oConfig.factory = function(bAsync) {
+	return sap.ui.htmlview({
+		viewName : "testdata.mvc.Async",
+		async : bAsync
+	});
+};
+asyncTestsuite("HTMLView Factory", oConfig);
+
+</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for async sap.ui.core.mvc.HTMLView</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+</body>
+</html>

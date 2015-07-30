@@ -11,7 +11,7 @@
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table">
 	</script>
 
 <link rel="stylesheet"
@@ -35,7 +35,10 @@
 
 <!-- Test functions -->
 <script language="javascript">
-
+	sinon.config.useFakeTimers = false;
+	
+	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel")
+	
 	//TODO currently we rely on northwind odata service for tests...
 	//TODO tests depends on server response time and northwind content...so tests may be unstable
 	
@@ -45,27 +48,52 @@
 	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
 
 	var oLabel = new sap.ui.commons.Label("myLabel");
-	oLabel.placeAt("target1");
-
+	var oPanel = new sap.ui.commons.Panel();
+	oPanel.addContent(oLabel);
+	oPanel.placeAt("target1");
+	
+	var oPanel2 = new sap.ui.commons.Panel();
+	var oTable = new sap.ui.table.Table({ // create Table UI
+		columns : [
+			new sap.ui.table.Column({
+				label: new sap.ui.commons.Label({text:"Product Name"}),
+				template: new sap.ui.commons.TextField({value: "{ProductName}"})
+			})
+		],
+	});
+	oTable.bindRows("Products");
+	oPanel2.addContent(oTable);
+	oPanel2.placeAt("target2");
+	
 	// create a dummy AMD fdefine to check if shim works for datajs
 	window.define = function() {
 		throw Error("define should not be called");
 	}
 	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
 
-	function removeSharedMetadata(sURI){
-		var sServiceURI = sURI.replace(/\/$/, "");
+	function removeSharedServicedata(sURI){
+		var aParts = sURI.split('?');
+		var sServiceURI = aParts[0].replace(/\/$/, "");
+		
 		if(sap.ui.model.odata.v2.ODataModel.mServiceData && sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]){
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
+			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI];
 		}
 	}
 
-	function initModel(sURI, bJSON){
-		removeSharedMetadata(sURI);
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {json:bJSON,loadMetadataAsync:false, useBatch: false});
+	function initModel(sURI, mParameters, bRemoveMetadata){
+		if (!mParameters) {
+			mParameters = {};
+		}
+		
+		mParameters.useBatch = mParameters.useBatch === true;
+		bRemoveMetadata = bRemoveMetadata !== false;
+		
+		if (bRemoveMetadata) {
+			removeSharedServicedata(sURI);
+		}
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, mParameters);
 		return oModel;
 	}
-
 
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
 
@@ -96,9 +124,9 @@
 		var mOptions = {
 				json : true,
 				loadMetadataAsync: true,
-				useBatch:false
+				useBatch: false
 			};
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, mOptions);
+		var oModel = initModel(sURI, mOptions);
 		var oModel2 = {};
 
 		oModel.oMetadata.attachLoaded(function() {
@@ -106,7 +134,9 @@
 		});
 
 		oModel.attachMetadataLoaded(function(){
-			oModel2 = new sap.ui.model.odata.v2.ODataModel(sURI, mOptions);
+			ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
+			oModel.destroy();
+			oModel2 = initModel(sURI, mOptions, false);
 
 			var bFiredAtMetadata = false;
 
@@ -119,35 +149,50 @@
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
 				jQuery.sap.log.debug("metadata loaded is fired");
+				ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
 				if (!bFiredAtMetadata) {
 					ok(true, 'Metadata loaded fired at model only');
 				} else {
 					ok(false, 'Metadata loaded fired at metadata object')
-					if (that.clock) that.clock.restore();
 				}
 				start();
 			});
-			if (that.clock) that.clock.tick(1);
 		});
-		if (that.clock) that.clock.tick(1);
 	});
 
+	asyncTest("metadata failed handling", function(){
+		var that = this;
+		var mOptions = {
+				json : true,
+				loadMetadataAsync: true,
+				useBatch:false
+			};
+		var oModel = initModel("/DOESNOTEXIST", mOptions);
+ 		var handleFailed = function(){
+			ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
+			ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
+			var oModel2 = initModel("/DOESNOTEXIST", mOptions);
+			oModel2.attachMetadataFailed(function(){
+				ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
+			});
+			oModel.detachMetadataFailed(handleFailed);
+			start();
+ 		};
+		oModel.attachMetadataFailed(handleFailed);
+	});
+	
 	asyncTest("test oDataModel _loadData XML",function(){
-		var oModel = initModel(sURI, false);
-		oModel.attachMetadataLoaded(function(){
-			oModel.read("/Categories", {success: function(){
-				performTest(oModel);
-			}});
-		});
+		var oModel = initModel(sURI, {json:false});
+		oModel.read("/Categories", {success: function(){
+			performTest(oModel);
+		}});
 	});
 
 	asyncTest("test oDataModel _loadData JSON",function(){
-		var oModel = initModel(sURI, true);
-		oModel.attachMetadataLoaded(function(){
-			oModel.read("/Categories", {success: function(){
-				performTest(oModel);
-			}});
-		});
+		var oModel = initModel(sURI);
+		oModel.read("/Categories", {success: function(){
+			performTest(oModel);
+		}});
 	});
 	
 	function performTest(oModel){
@@ -166,7 +211,7 @@
 	};
 
 	asyncTest("test bindList", function(){
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindList("/Categories").initialize();	
@@ -185,7 +230,7 @@
 	});
 
 	asyncTest("test bindList inlinecount", function(){
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Inline" }).initialize();	
@@ -204,7 +249,7 @@
 	});
 
 	asyncTest("test bindList no count", function(){
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None" }).initialize();	
@@ -223,7 +268,7 @@
 	});
 	
 	asyncTest("test select", function(){
-		var oModel = initModel(sURI, true, "Categories");
+		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();	
@@ -242,7 +287,7 @@
 	});
 	
 	asyncTest("test select with create binding context", function(){
-		var oModel = initModel(sURI, true, "Categories");
+		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();	
@@ -270,7 +315,7 @@
 	});
 	
 	asyncTest("test select with create binding context select", function(){
-		var oModel = initModel(sURI, true, "Categories");
+		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();	
@@ -299,7 +344,7 @@
 	});
 	
 	asyncTest("test expand", function(){
-		var oModel = initModel(sURI, true, "Products");
+		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
@@ -318,7 +363,7 @@
 	
 	asyncTest("test expand with create binding context", function(){
 		
-		var oModel = initModel(sURI, true, "Products");
+		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
@@ -344,7 +389,7 @@
 	
 	asyncTest("test select expand with create binding context", function(){
 		
-		var oModel = initModel(sURI, true, "Products");
+		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
@@ -373,81 +418,73 @@
 	
 	asyncTest("test getProperty on label", function(){
 		oLabel.setText("testText");
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
-		oModel.attachMetadataLoaded(function() {
-			oModel.read("/Categories", {success: function(){
-				equal(oLabel.getText(),"testText", "old text value");
-				oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-				equal(oLabel.getText(), "Condiments", "text value from model");	
-				oLabel.unbindProperty("text");
-				start();
-			}});
-		});
+		oModel.read("/Categories", {success: function(){
+			equal(oLabel.getText(),"testText", "old text value");
+			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
+			equal(oLabel.getText(), "Condiments", "text value from model");	
+			oLabel.unbindProperty("text");
+			start();
+		}});
 	});
 	
 	asyncTest("test double load update", function(){
 		oLabel.setText("testText");
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
-		oModel.attachMetadataLoaded(function() {
-			oModel.read("/Categories", {success: function(){
-				equal(oLabel.getText(),"testText", "old text value");
-				oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-				equal(oLabel.getText(), "Condiments", "new text value from model");
+		oModel.read("/Categories", {success: function(){
+			equal(oLabel.getText(),"testText", "old text value");
+			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
+			equal(oLabel.getText(), "Condiments", "new text value from model");
+			oLabel.unbindProperty("text");
+			oModel.read("/Regions", {success: function(){
+				equal(oLabel.getText(),"", "default value");
+				oLabel.bindProperty("text", "/Regions(2)/RegionID");
+				equal(oLabel.getText(), "2", "2nd new text value from model");
 				oLabel.unbindProperty("text");
-				oModel.read("/Regions", {success: function(){
-					equal(oLabel.getText(),"", "default value");
-					oLabel.bindProperty("text", "/Regions(2)/RegionID");
-					equal(oLabel.getText(), "2", "2nd new text value from model");
-					oLabel.unbindProperty("text");
-					start();
-				}});
+				start();
 			}});
-		});
+		}});
 	});
 	
 	asyncTest("test remove data", function(){
 		oLabel.setText("testText");
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
-		oModel.attachMetadataLoaded(function() {
-			oModel.read("/Categories", {success: function(){
-				equal(oLabel.getText(),"testText", "old text value");
-				oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-				equal(oLabel.getText(), "Condiments", "text value from model");
-				oModel.removeData();
-				oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-				equal(oLabel.getText(), "", "text value from model");
-				oLabel.unbindProperty("text");
-				start();
-			}});
-		});
+		oModel.read("/Categories", {success: function(){
+			equal(oLabel.getText(),"testText", "old text value");
+			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
+			equal(oLabel.getText(), "Condiments", "text value from model");
+			oModel.removeData();
+			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
+			equal(oLabel.getText(), "", "text value from model");
+			oLabel.unbindProperty("text");
+			start();
+		}});
 	});
 	
 	asyncTest("test create binding context", function(){
 		oLabel.setText("testText");
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
-		oModel.attachMetadataLoaded(function() {
-			oModel.read("/Categories", {success: function(){
-				oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-				oModel.createBindingContext("/Categories(2)", null, function(oContext){
-					equal(oContext.getPath(), "/Categories(2)","new Context");
-					oModel.createBindingContext("", oContext, function(oContext2){
-						equal(oContext2.getPath(), "/Categories(2)","new Context");
-						oModel.createBindingContext("/Products(2)", null, function(oContext3){
-							equal(oContext3.getPath(), "/Products(2)","new Context");
-							start();	
-						});					
-					});
+		oModel.read("/Categories", {success: function(){
+			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
+			oModel.createBindingContext("/Categories(2)", null, function(oContext){
+				equal(oContext.getPath(), "/Categories(2)","new Context");
+				oModel.createBindingContext("", oContext, function(oContext2){
+					equal(oContext2.getPath(), "/Categories(2)","new Context");
+					oModel.createBindingContext("/Products(2)", null, function(oContext3){
+						equal(oContext3.getPath(), "/Products(2)","new Context");
+						start();	
+					});					
 				});
-			}});
-		});
+			});
+		}});
 	});
 	
 	asyncTest("test bindElement", 2, function(){
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
@@ -455,14 +492,143 @@
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			//oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
+	asyncTest("test bindElement 2", 2, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Products(2)");
+		oLabel.setBindingContext(oTestContext);
+		oLabel.bindElement("Category");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
+	asyncTest("test bindElement - set ParentContext null", 5, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Products(2)");
+		oLabel.setBindingContext(oTestContext);
+		oLabel.bindElement("Category");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().attachChange(fnHandler2);
+			oLabel.setBindingContext(null);
+		}
+		var fnHandler2 = function() {
+			ok(!oLabel.getBindingContext(), "no bindingContext");
+			ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
+			ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
+			oLabel.getElementBinding().detachChange(fnHandler2);
+			oLabel.setBindingContext(null);
+			oLabel.unbindElement();
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
+	asyncTest("test bindElement 3", 2, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oLabel.bindElement("Category");
+		var oTestContext = oModel.getContext("/Products(2)");
+		oLabel.setBindingContext(oTestContext);
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.setBindingContext(null);
+			oLabel.unbindElement();
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
+	asyncTest("test bindElement 4", 2, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oLabel.bindElement("/Categories(2)");
+		var oTestContext = oModel.getContext("/Test");
+		oLabel.setBindingContext(oTestContext);
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.setBindingContext(null);
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.unbindElement();
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	asyncTest("test bindElement 5 - change parentContext", 3, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Products(2)");
+		oLabel.setBindingContext(oTestContext);
+		oLabel.bindElement("Category");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().attachChange(fnHandler2);
+			oModel.attachRequestSent(fnHandler2);
+			oTestContext = oModel.getContext("/Products(1)");
+			oLabel.setBindingContext(oTestContext);
+		}
+		var fnHandler2 = function(oEvent) {
+			var sUrl =  oEvent.getParameter("url");
+			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			oLabel.getElementBinding().detachChange(fnHandler2);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
+	asyncTest("test bindElement 6 - change parentContext with propagation", 3, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Products(2)");
+		oPanel.setBindingContext(oTestContext);
+		oLabel.bindElement("Category");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().attachChange(fnHandler2);
+			oModel.attachRequestSent(fnHandler2);
+			oTestContext = oModel.getContext("/Products(1)");
+			oPanel.setBindingContext(oTestContext);
+		}
+		var fnHandler2 = function(oEvent) {
+			var sUrl =  oEvent.getParameter("url");
+			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			oLabel.getElementBinding().detachChange(fnHandler2);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
 			start();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 	
 	asyncTest("test data events for bindElement",3, function(){
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
@@ -480,12 +646,84 @@
 		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
 	});
 	
+	asyncTest("test data events for bindElement 204", 3, function(){
+		var oModel = initModel(sURI, false, "Categories");
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Test");
+		oLabel.setBindingContext(oTestContext);
+		oLabel.bindElement("/Employees(2)/Employee1");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		//Currently no event fired on bind element
+		var fnRequestedHandler = function() {
+			equal(true, true, "Data requested event was fired");
+		};
+		var fnRecievedHandler = function() {
+			equal(true, true, "Data received event was fired");
+			start();
+		};
+		oLabel.getElementBinding().attachDataRequested(fnRequestedHandler);
+		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
+	});
+	
+	asyncTest("test refresh(true) - dependant bindings should reload data",3, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oPanel2.bindElement("/Categories(7)");
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		
+		var oHandler = function() {
+			equal(spy.callCount, 3, "element binding as well as Table should load data");
+			oTable.getBinding("rows").detachDataReceived(oHandler);
+			oPanel2.getElementBinding().attachDataReceived(oHandler2);
+			oPanel2.getElementBinding().refresh();
+		}
+		
+		var oHandler2 = function() {
+			equal(spy.callCount, 4, "dependant bindings should not refresh");
+			oPanel2.getElementBinding().detachDataReceived(oHandler2);
+			oTable.getBinding("rows").attachDataReceived(oHandler3);
+			oPanel2.getElementBinding().refresh(true);
+		}
+		
+		var oHandler3 = function() {
+			equal(spy.callCount, 7, "element binding as well as Table should refetch data");
+			OData.defaultHttpClient.request.restore();
+			start();
+		}
+		
+		oTable.getBinding("rows").attachDataReceived(oHandler);
+	});
+	
+	asyncTest("test bindElement with batchGroupId", 2, function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setUseBatch(true);
+		oModel.setDeferredBatchGroups(["test"]);
+		sap.ui.getCore().setModel(oModel);
+		oLabel.bindElement("/Categories(2)", {batchGroupId:"test"});
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.setBindingContext(null);
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.unbindElement();
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+		
+		oModel.oMetadata.loaded().then(function() {	
+			oLabel.getElementBinding().refresh();
+			setTimeout(function() {
+				ok(oModel.mDeferredRequests['test'].requests.length === 2, "request deferred");
+				oModel.submitChanges("test");
+			}, 0);
+		});
+	});
+	
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
 	var oItemTemplate = new sap.ui.core.ListItem();	
 	oLB.placeAt("target2");
 	
 	asyncTest("test model bindAggregation on Listbox", function(){
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
@@ -501,8 +739,9 @@
 		oBinding.attachChange(handler);
 	});
 	
-	asyncTest("test model bindAggregation on Listbox events", 1, function(){
-		
+	asyncTest("test model bindAggregation on Listbox events", 2, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
 		
@@ -519,54 +758,46 @@
 	});
 	
 	asyncTest("PropertyBinding getValue", function(){
-		var oModel = initModel(sURI, false, "Categories");
-		oModel.attachMetadataLoaded(function() {
-			oModel.read("/Categories", {success: function(){			
-				var oBinding = oModel.bindProperty("/Categories(2)/CategoryName");
-				equal(oBinding.getValue(), "Condiments", "text value from model");
-				start();
-			}});
-		});
+		var oModel = initModel(sURI, {json:false});
+		oModel.read("/Categories", {success: function(){			
+			var oBinding = oModel.bindProperty("/Categories(2)/CategoryName");
+			equal(oBinding.getValue(), "Condiments", "text value from model");
+			start();
+		}});
 	});
 		
 	asyncTest("createBindingContext expand", function(){
-		var oModel = initModel(sURI, false, "Categories");
-		oModel.attachMetadataLoaded(function(){
-			oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
-				equal(oContext.getPath(), "/Products(1)", "Context path");
-				ok(oContext.getProperty("Category"), "Category loaded");
-				start();          // resume normal testing
-			});
+		var oModel = initModel(sURI, {json:false});
+		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
+			equal(oContext.getPath(), "/Products(1)", "Context path");
+			ok(oContext.getProperty("Category"), "Category loaded");
+			start();          // resume normal testing
 		});
 	});
 
 	asyncTest("test Context.getPath/getObject", function(){
 		
-		var oModel = initModel(sURI, false, "Categories");
-		oModel.attachMetadataLoaded(function(){
-			oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
-				equal(oContext.getPath("Category"), "/Products(1)/Category", "Expanded entity path");
-				equal(oContext.getObject("Category").CategoryID, 1, "Expanded entity object");
-				start();          // resume normal testing
-			});
+		var oModel = initModel(sURI, {json:false});
+		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
+			equal(oContext.getPath("Category"), "/Products(1)/Category", "Expanded entity path");
+			equal(oContext.getObject("Category").CategoryID, 1, "Expanded entity object");
+			start();          // resume normal testing
 		});
 	});
 
 	asyncTest("test getKey", function(){
 		
-		var oModel = initModel(sURI, false, "Categories");
-		oModel.attachMetadataLoaded(function(){
-			oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
-				equal(oModel.getKey(oContext), "Products(1)", "Context key");
-				equal(oModel.getKey(oContext.getObject("Category")), "Categories(1)", "Expanded entity key");
-				start();          // resume normal testing
-			});
+		var oModel = initModel(sURI, {json:false});
+		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
+			equal(oModel.getKey(oContext), "Products(1)", "Context key");
+			equal(oModel.getKey(oContext.getObject("Category")), "Categories(1)", "Expanded entity key");
+			start();          // resume normal testing
 		});
 	});
 	
 	asyncTest("test createKey", function(){
 		
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		oModel.attachMetadataLoaded(function(){
 			equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
 			equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Expanded entity key");
@@ -576,7 +807,7 @@
 	
 	asyncTest("metadata check", function(){
 		
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("/Categories").initialize();	
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
@@ -600,7 +831,7 @@
 	
 	asyncTest("metadata get entity type check", function(){
 		
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("/Categories").initialize();	
 		var handler = function() { // delay the following test
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
@@ -647,7 +878,7 @@
 	
 	asyncTest("metadata get entity type check with context", function(){
 
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)")).initialize();	
 		var handler = function() { // delay the following test
 			oResult = oBinding.oEntityType;
@@ -663,7 +894,7 @@
 	});
 	
 	asyncTest("metadata get property metadata", function(){
-		var oModel = initModel(sURI, false, "Categories");
+		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("/Categories").initialize();	
 		var handler = function() { // delay the following test
 			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
@@ -690,41 +921,44 @@
 	});
 	
 	asyncTest("Custom Header test", function(){
-		var oModel = initModel(sURI, true);
-		oModel.setHeaders({"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"});
-		
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		oModel.attachMetadataLoaded(function() {
-			oModel.read("/Categories", {async: false} ); // sync call
-			
-			equal(spy.callCount, 1, "spy read count");
-			ok(spy.calledOnce, "spy called once");
+		var oModel = initModel(sURI, {headers: {"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"}});
+		
+		oModel.metadataLoaded().then(function() {
 			equal(spy.args[0][0].headers['myCustomHeader1'], "value1", "spy check custom header");
 			equal(spy.args[0][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
+			oModel.setHeaders({"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"});
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['myCustomHeader1'], "value1", "spy check custom header");
+					equal(spy.args[1][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
+				}
+			});
 			
 			// override headers
 			oModel.setHeaders({"myCustomHeader1" : "666", "TesT": "new Header", "MyCustomHeader2" : "blubb"});		
-			oModel.read("/Categories", {async: false}); // sync call
-			
-			equal(spy.callCount, 2, "spy read count");
-			equal(spy.args[1][0].headers['myCustomHeader1'], "666", "spy check custom header");
-			equal(spy.args[1][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
-			equal(spy.args[1][0].headers['TesT'], "new Header", "spy check custom header");
-	
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[2][0].headers['myCustomHeader1'], "666", "spy check custom header");
+					equal(spy.args[2][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
+					equal(spy.args[2][0].headers['TesT'], "new Header", "spy check custom header");
+					equal(spy.callCount, 3, "spy read count");
+					OData.defaultHttpClient.request.restore();
+					start();
+				}
+			});
 			var aHeaders = oModel.getHeaders();
 			equal(aHeaders['myCustomHeader1'], "666", "model check custom header");
 			equal(aHeaders['MyCustomHeader2'], "blubb", "model check custom header");
 			equal(aHeaders['TesT'], "new Header", "model check custom header");
-			start();
 		});
 	});
 
 	asyncTest("async metadata request check", function(){
-		removeSharedMetadata(sURI);
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+		var oModel = initModel(sURI, {
 			json: true, 
-			bUseBatch: false
-		});
+			useBatch: false
+		}, true);
 
 		var handler = function() {
 			ok(true, "Metadata callback handler called");
@@ -737,12 +971,11 @@
 
 
 	asyncTest("async metadata request check with bindings", function(){
-		removeSharedMetadata(sURI);
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+		var oModel = initModel(sURI, {
 			json: true, 
 			loadMetadataAsync: true,
-			bUseBatch: false
-		});
+			useBatch: false
+		}, true);
 
 		var handler = function() { 
 			ok(true, "Metadata callback handler called");
@@ -771,13 +1004,11 @@
 	});
 
 	asyncTest("async metadata request check with bindings die zwote", function(){
-
-		removeSharedMetadata(sURI);
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+		var oModel = initModel(sURI, {
 			json: true, 
 			loadMetadataAsync: true,
-			bUseBatch: false
-		});
+			useBatch: false
+		}, true);
 
 		// when metadata loaded a refresh is called which will trigger the data loading
 		// if not yet happened
@@ -802,18 +1033,18 @@
 	});
 	
 	asyncTest("async test createEntity", function(){
-
-		removeSharedMetadata(sURI);
-
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+		var oModel = initModel(sURI, {
 			json: true,
 			loadMetadataAsync: true,
-			bUseBatch: false
-		});
+			useBatch: false,
+			refreshAfterChange: false
+		}, true);
 
 		var oBinding = oModel.bindList("/Categories").initialize();
+		oModel.setDeferredBatchGroups(["myId"]);
 		var handler = function() { // delay the following test
-			var oContext = oModel.createEntry("Categories",{properties:{CategoryID:99,CategoryName:"Food",Description:"Food Desc"}});
+			var oContext = oModel.createEntry("Categories",{properties:{CategoryID:99,CategoryName:"Food",Description:"Food Desc"},
+				batchGroupId : "myId"});
 			ok(oContext, "context check");
 			var oEntry = oModel.getProperty("", oContext);
 			ok(oEntry, "entry check");
@@ -822,14 +1053,16 @@
 			equal(oEntry.CategoryID, 99, "category ID check");
 			equal(oEntry.Description, "Food Desc", "category ID check");
 			
-			ok(oModel.mDeferredRequests['undefined'].changes['undefined'].length == 1, "queue check");
+			//oModel.setProperty("CategoryName", "test",oContext);
+			
+			ok(oModel.mDeferredRequests['myId'].changes['undefined'].length == 1, "queue check");
 			ok(oModel.mContexts[oContext.getPath()], "context check");
 			equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
-			// TODO: implement deleteCreatedEntry 
-			//oModel.deleteCreatedEntry(oContext);
-			//equal(oModel.oRequestQueue[oContext.getPath().substr(1)], undefined, "queue check");
-			//equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
-			//equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
+			 
+			oModel.deleteCreatedEntry(oContext);
+			equal(oModel.mDeferredRequests['myId'].changes['undefined'][0].request._aborted, true, "queue check");
+			equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
+			equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
 			
 			// check default values
 			oContext = oModel.createEntry("Categories");
@@ -846,10 +1079,643 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 	});
+
+	var aRequestEvents = [
+			"RequestSent", "RequestFailed", "RequestCompleted",
+			"BatchRequestSent", "BatchRequestFailed", "BatchRequestCompleted"
+		];
+	function attachRequestEvents(oModel, oInfo, iBatchRequestSentCount, iBatchRequestCompletedCount, iBatchRequestFailedCount) {
+		var fnHandler = function(oEvent) {
+			var sId = oEvent.getId();
+			if (!oInfo[sId]) {
+				oInfo[sId] = 0;
+			}
+			oInfo[sId]++;
+			// Check for correct event parameters
+			var mParameters = oEvent.getParameters();
+			switch (sId) {
+				case "batchRequestSent":
+					ok(mParameters.requests, sId + " contains requests");
+					if (iBatchRequestSentCount !== undefined) {
+						equal(mParameters.requests.length, iBatchRequestSentCount, "Event should contain " + iBatchRequestSentCount + " requests");
+					}
+				case "requestSent":
+					ok(mParameters.url, sId + " contains url");
+					ok(mParameters.method, sId + " contains method");
+					ok(mParameters.headers, sId + " contains headers");
+					break;
+				case "batchRequestFailed":
+					ok(mParameters.requests, sId + " contains requests");
+					if (iBatchRequestFailedCount !== undefined) {
+						equal(mParameters.requests.length, iBatchRequestFailedCount, "Event should contain " + iBatchRequestFailedCount + " requests");
+					}
+				case "requestFailed":
+					ok(mParameters.url, sId + " contains url");
+					ok(mParameters.method, sId + " contains method");
+					ok(mParameters.headers, sId + " contains headers");
+					ok(mParameters.response, sId + " contains response");
+					ok(mParameters.response.statusCode !== undefined, sId + " contains response.statusCode");
+					ok(mParameters.response.statusText, sId + " contains response.statusText");
+					ok(mParameters.response.headers, sId + " contains response.headers");
+					ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
+					break;
+				case "batchRequestCompleted":
+					ok(mParameters.requests, sId + " contains requests");
+					if (iBatchRequestCompletedCount !== undefined) {
+						equal(mParameters.requests.length, iBatchRequestCompletedCount, "Event should contain " + iBatchRequestCompletedCount + " requests");
+					}
+				case "requestCompleted":
+					ok(mParameters.url, sId + " contains url");
+					ok(mParameters.method, sId + " contains method");
+					ok(mParameters.headers, sId + " contains headers");
+					ok(mParameters.response, sId + " contains response");
+					ok(mParameters.response.statusCode !== undefined, sId + " contains response.statusCode");
+					ok(mParameters.response.statusText, sId + " contains response.statusText");
+					ok(mParameters.response.headers, sId + " contains response.headers");
+					ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
+					ok(mParameters.success !== undefined, sId + " contains success");
+					break;
+			}
+		};
+		jQuery.each(aRequestEvents, function(i, sEvent) {
+			oInfo[sEvent.charAt(0).toLowerCase() + sEvent.substr(1)] = 0;
+			oModel["attach" + sEvent](fnHandler);
+		});   
+		return fnHandler;
+	}		
+	
+	function detachRequestEvents(oModel, fnHandler) {
+		jQuery.each(aRequestEvents, function(i, sEvent) {
+			oModel["detach" + sEvent](fnHandler);
+		});             
+	}
+	
+	asyncTest("async test request events - single", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: false
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			},
+			iCount = 0;
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(9999)", {success: fnSuccess, error: fnError});
+		oModel.attachRequestCompleted(function() {
+			iCount++;
+			if (iCount == 3) {
+				_setTimeout(function() {
+					equal(oInfo.requestSent, 3, "Three requests sent");
+					equal(oInfo.requestFailed, 1, "One request failed");
+					equal(oInfo.requestCompleted, 3, "Three requests completed");
+					equal(oInfo.success, 2, "Two success callbacks called");
+					equal(oInfo.error, 1, "One error callback called");
+					equal(oInfo.batchRequestSent, 0, "No batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
+					start();
+				}, 0);
+			}
+		});
+	});	
+
+	asyncTest("async test request events - batch", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			};
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(9999)", {success: fnSuccess, error: fnError});
+		oModel.attachBatchRequestCompleted(function() {
+			_setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, 1, "One request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.success, 2, "Two success callbacks called");
+				equal(oInfo.error, 1, "One error callback called");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 0);
+		});
+		
+	});	
+
+	asyncTest("async test request events - batch with one changeset", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			};
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(2)", {success: fnSuccess, error: fnError});
+		oModel.attachBatchRequestCompleted(function() {
+			_setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, 0, "No request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.success, 3, "Three success callbacks called");
+				equal(oInfo.error, 0, "None error callback called");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 0);
+		});
+	});	
+
+	asyncTest("async test request events - batch with two changeset", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+			success: 0,
+			error: 0
+		};
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(1)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(2)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(1)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.attachBatchRequestCompleted(function() {
+			_setTimeout(function() {
+				equal(oInfo.requestSent, 5, "Five requests sent");
+				equal(oInfo.requestFailed, 0, "No request failed");
+				equal(oInfo.requestCompleted, 5, "Five requests completed");
+				equal(oInfo.success, 5, "Five success callbacks called");
+				equal(oInfo.error, 0, "None error callback called");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 0);
+		});		
+	});	
+
+	asyncTest("async test request events - batch with two changeset, one failing", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			};
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(1)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(2)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(1)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.remove("/Fail500(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.attachBatchRequestCompleted(function() {
+			_setTimeout(function() {
+				equal(oInfo.requestSent, 5, "Five requests sent");
+				equal(oInfo.requestFailed, 2, "Two request failed");
+				equal(oInfo.requestCompleted, 5, "Five requests completed");
+				equal(oInfo.success, 3, "Three success callbacks called");
+				equal(oInfo.error, 2, "Two error callbacks called");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 0);
+		});	
+	});	
+	
+	asyncTest("async test request events - batch fail", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			};
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Batch500(9999)", {success: fnSuccess, error: fnError});
+		oModel.attachBatchRequestCompleted(function() {
+			_setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, 3, "Three request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.success, 0, "None success callbacks called");
+				equal(oInfo.error, 3, "Three error callbacks called");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, 1, "One batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 0);
+		});
+	});	
+
+	asyncTest("async test request events - aborted requests single", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: false
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest1.abort();
+			oRequest2.abort();
+			oModel.attachRequestCompleted(function() {
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.success, 1, "One success callbacks called");
+					equal(oInfo.error, 2, "Two error callbacks called");
+					equal(oInfo.batchRequestSent, 0, "No batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
+					start();
+				}, 0);
+			})
+		})
+		
+	});	
+
+	asyncTest("async test request events - aborted requests single after sent", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: false
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3,
+			iCount = 0;
+		attachRequestEvents(oModel, oInfo);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oModel.attachRequestSent(function() {
+				iCount++;
+				if (iCount == 3) {
+					oRequest1.abort();
+					oRequest2.abort();
+				}
+			});
+			oModel.attachRequestCompleted(function() {
+				iCount++;
+				if (iCount == 6) {
+					setTimeout(function() {
+						equal(oInfo.requestSent, 3, "Three requests sent");
+						equal(oInfo.requestFailed, 0, "No request failed");
+						equal(oInfo.requestCompleted, 3, "Three requests completed");
+						equal(oInfo.success, 1, "One success callbacks called");
+						equal(oInfo.error, 2, "Two error callbacks called");
+						equal(oInfo.batchRequestSent, 0, "No batch requests sent");
+						equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+						equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
+						start();
+					}, 0);
+				}
+			})
+		})
+		
+	});	
+
+	asyncTest("async test request events - aborted requests batch", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo, 1, 1, 0);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
+			oRequest1.abort();
+			oRequest2.abort();
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 1, "1 requests");
+				equal(oRequests[0].url, "Categories(4)", "request url check");
+				ok(oRequests[0].success, "request success check");
+				
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.success, 1, "One success callbacks called");
+					equal(oInfo.error, 2, "Two error callbacks called");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			})
+		})
+		
+	});	
+	
+	asyncTest("async test request events - aborted requests batch after sent", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo, 3, 3, 0);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
+			oModel.attachBatchRequestSent(function() {
+				oRequest1.abort();
+				oRequest2.abort();
+			});
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 3, "3 requests");
+				equal(oRequests[0].url, "Categories(1)", "request url check");
+				ok(!oRequests[0].success, "request success check");
+				equal(oRequests[0].response.statusCode, "0", "request aborted");
+				equal(oRequests[0].response.statusText, "abort", "request aborted");
+				equal(oRequests[1].url, "Categories(3)", "request url check");
+				ok(!oRequests[1].success, "request success check");
+				equal(oRequests[1].response.statusCode, "0", "request aborted");
+				equal(oRequests[1].response.statusText, "abort", "request aborted");
+				equal(oRequests[2].url, "Categories(4)", "request url check");
+				ok(oRequests[2].success, "request success check");
+				
+				setTimeout(function() {
+					equal(oInfo.requestSent, 3, "Three requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 3, "Three requests completed");
+					equal(oInfo.success, 1, "One success callbacks called");
+					equal(oInfo.error, 2, "Two error callbacks called");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			})
+		})
+		
+	});	
+	
+	asyncTest("async test request events - aborted deferred requests batch", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo, 1, 1, 0);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredBatchGroups(["myId"]);
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest1.abort();
+			oRequest2.abort();
+			
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 1, "1 requests");
+				equal(oRequests[0].url, "Categories(4)", "request url check");
+				ok(oRequests[0].success, "request success check");
+				
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.success, 1, "One success callbacks called");
+					equal(oInfo.error, 2, "Two error callbacks called");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			});
+			oModel.submitChanges();
+		})
+		
+	});
+	
+	asyncTest("async test request events - aborted deferred requests batch after sent", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {
+				success: 0,
+				error: 0
+			}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo, 3, 3, 0);
+		function fnSuccess() { oInfo.success++; }
+		function fnError() { oInfo.error++; }
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredBatchGroups(["myId"]);
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+
+			oModel.attachBatchRequestSent(function() {
+				oRequest1.abort();
+				oRequest2.abort();
+			});
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				var oRequests = oEvent.getParameter('requests');
+				equal(oRequests.length, 3, "3 requests");
+				equal(oRequests[0].url, "Categories(1)", "request url check");
+				ok(!oRequests[0].success, "request success check");
+				equal(oRequests[0].response.statusCode, "0", "request aborted");
+				equal(oRequests[0].response.statusText, "abort", "request aborted");
+				equal(oRequests[1].url, "Categories(3)", "request url check");
+				ok(!oRequests[1].success, "request success check");
+				equal(oRequests[1].response.statusCode, "0", "request aborted");
+				equal(oRequests[1].response.statusText, "abort", "request aborted");
+				equal(oRequests[2].url, "Categories(4)", "request url check");
+				ok(oRequests[2].success, "request success check");
+				
+				setTimeout(function() {
+					equal(oInfo.requestSent, 3, "Three requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 3, "Three requests completed");
+					equal(oInfo.success, 1, "One success callbacks called");
+					equal(oInfo.error, 2, "Two error callbacks called");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			});
+			oModel.submitChanges();
+		});
+		
+	});	
+	
+	asyncTest("async test request events - auto refresh element binding", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, oCount = 0, fnHandler;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindContext("/Categories(1)");
+		oBinding.attachChange(function(){});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;				
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.update("/Categories(1)", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});	
+	
+	asyncTest("async test request events - auto refresh list binding", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, fnHandler, oCount = 0;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindList("/Invoices", null, null, null, {countMode: "None"});
+		oBinding.attachChange(function(){});
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;				
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.update("/Invoices(CustomerName='Alfreds%20Futterkiste',Discount=0f,OrderID=10702,ProductID=3,ProductName='Aniseed%20Syrup',Quantity=6,Salesperson='Margaret%20Peacock',ShipperName='Speedy%20Express',UnitPrice=10.0000M)", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});	
 	
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
-		var oModel = initModel(sURI, true, "Categories");
+		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel2");
 		oLabel.setModel(oModel);
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: fnDataReceived}});
@@ -866,7 +1732,7 @@
 
 	asyncTest("Event order: bindElement (setModel after binding)", function(){
 		expect(4);
-		var oModel = initModel(sURI, true, "Categories");
+		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel3");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		var handler = function(oEvent) {
@@ -882,7 +1748,7 @@
 	
 	asyncTest("Event order: bindElement (already bound)", function(){
 		expect(6);
-		var oModel1 = initModel(sURI, true, "Categories");
+		var oModel1 = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel4");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		var handler = function(oEvent) {
@@ -910,8 +1776,7 @@
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var spy = this.spy(OData, "request");
-		removeSharedMetadata(sURI);
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false });
+		var oModel = initModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false }, true);
 		oModel.attachMetadataLoaded(this, function(oEvent) {
 			ok(false, "Metadata should not be loaded");
 		})
@@ -922,10 +1787,118 @@
 
 		equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		OData.request.restore();
 		
 	});
 	
+	asyncTest("test metadata url parameters: no parameters", function() {
+		var spy = sinon.spy(OData, "request");
+		var oModel = initModel(sURI);
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
+			OData.request.restore();
+			start();	
+		});
+	});
+	asyncTest("test metadata url parameters: service url parameters", function() {
+		var spy = sinon.spy(OData, "request");
+		var oModel = initModel(sURI+'?test=x');
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
+			OData.request.restore();
+			start();	
+		});
+	});
+	asyncTest("test metadata url parameters: metadataUrlParameters", function() {
+		var spy = sinon.spy(OData, "request");
+		oModel = initModel(sURI, {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
+			OData.request.restore();
+			start();
+		});
+	});
+	asyncTest("test metadata url parameters: serviceUrl + metadataUrlParameters", function() {
+		var spy = sinon.spy(OData, "request");
+		oModel = initModel(sURI+'?test=x', {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			OData.request.restore();
+			start();	
+		});
+	});
+	asyncTest("test metadata url parameters: no parameters", function() {
+		var spy = sinon.spy(OData, "request");
+		var oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
+			OData.request.restore();
+			start();	
+		});
+	});
+	asyncTest("test metadata url parameters: service url parameters", function() {
+		var spy = sinon.spy(OData, "request");
+		var oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
+			OData.request.restore();
+			start();	
+		});
+	});
+	asyncTest("test metadata url parameters: metadataUrlParameters", function() {
+		var spy = sinon.spy(OData, "request");
+		oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
+			OData.request.restore();
+			start();
+		});
+	});
+	asyncTest("test metadata url parameters: serviceUrl + metadataUrlParameters", function() {
+		var spy = sinon.spy(OData, "request");
+		oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			OData.request.restore();
+			start();	
+		});
+	});
 	
+	asyncTest("test service url parameters: serviceUrlParams", function() {
+		var spy = sinon.spy(OData, "request");
+		oModel = initModel(sURI+'?test=x', {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			OData.request.restore();
+			spy = sinon.spy(OData, "request");
+			oModel.read("/Categories", {success: function(oData, oResponse) {
+				ok(true, "success handler called");
+				equal(oResponse.requestUri, sURI + "Categories?test=x&hubel=dubel", "request uri with parameters");
+				OData.request.restore();
+				start();
+			}, error: function() {
+				ok(false, "error handler shouldn't be called");
+			}});
+		});
+	});
+	
+	asyncTest("test service url parameters: serviceUrlParams", function() {
+		var spy = sinon.spy(OData, "request");
+		oModel = initModel(sURI, {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
+		oModel.attachMetadataLoaded(function() {
+			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			OData.request.restore();
+			spy = sinon.spy(OData, "request");
+			oModel.read("/Categories", {success: function(oData, oResponse) {
+				ok(true, "success handler called");
+				equal(oResponse.requestUri, sURI + "Categories?hubel=dubel", "request uri with parameters");
+				OData.request.restore();
+				start();
+			}, error: function() {
+				ok(false, "error handler shouldn't be called");
+			}});
+		});
+	});
 	/*test("test ODataModel destroy cancel load data", function(){
 		var oModel = initModel(sURI, true, "Categories");
 		//var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: false });
@@ -963,7 +1936,7 @@
 
 	module("ODataModel.read", {
 		setup: function() {
-			this.oModel = initModel(sURI, false);
+			this.oModel = initModel(sURI, {json:false});
 		},
 		teardown: function() {
 			this.oModel.destroy();
@@ -984,18 +1957,16 @@
 
 	asyncTest("syntax with url parameters as map", function() {
 		var that = this;
-		this.oModel.attachMetadataLoaded(function() {
-			that.oModel.read("/Categories", {urlParameters: { "horst": true }, json: true, success: function(oData, oResponse) {
-				ok(true, "success handler called");
-				equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
-				start();
-			}, error: function() {
-				ok(false, "error handler shouldn't be called");
-				start();
-			}});
-		});
+		that.oModel.read("/Categories", {urlParameters: { "horst": true }, json: true, success: function(oData, oResponse) {
+			ok(true, "success handler called");
+			equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
+			start();
+		}, error: function() {
+			ok(false, "error handler shouldn't be called");
+			start();
+		}});
 	});
-
+	
 	asyncTest("syntax with sorter and url parameters", function() {
 		var that = this;
 		var aSorters = [
@@ -1004,20 +1975,18 @@
 			{ foo: "bar" },
 			false
 		];
-		this.oModel.attachMetadataLoaded(function() {
-			that.oModel.read("/Categories", {
-				urlParameters: {"$skip": "0","$top":"8"},
-				sorters: aSorters,
-				success: function(oData, oResponse) {
-					ok(true, "success handler called");
-					equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc", "request uri contains custom parameters and sorter");
-					start();
-				},
-				error: function() {
-					ok(false, "error handler shouldn't be called");
-					start();
-				}
-			});
+		that.oModel.read("/Categories", {
+			urlParameters: {"$skip": "0","$top":"8"},
+			sorters: aSorters,
+			success: function(oData, oResponse) {
+				ok(true, "success handler called");
+				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc", "request uri contains custom parameters and sorter");
+				start();
+			},
+			error: function() {
+				ok(false, "error handler shouldn't be called");
+				start();
+			}
 		});
 	});
 
@@ -1026,29 +1995,352 @@
 		var aFilters = [
 			new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages")
 		];
-		this.oModel.attachMetadataLoaded(function() {
-			that.oModel.read("/Categories", {
-				urlParameters: {"$skip": "0","$top":"1"},
-				filters: aFilters,
-				success: function(oData, oResponse) {
-					ok(true, "success handler called");
-					equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27", "request uri contains custom parameters and filter");
-					start();
-				},
-				error: function() {
-					ok(false, "error handler shouldn't be called");
-					start();
-				}
+		that.oModel.read("/Categories", {
+			urlParameters: {"$skip": "0","$top":"1"},
+			filters: aFilters,
+			success: function(oData, oResponse) {
+				ok(true, "success handler called");
+				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27", "request uri contains custom parameters and filter");
+				start();
+			},
+			error: function() {
+				ok(false, "error handler shouldn't be called");
+				start();
+			}
+		});
+	});
+	
+	asyncTest("test metadata loading: sap-value-list",function(){
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.metadataLoaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl(sURI+"$metadata?sap-value-list=all").then(function(oParams) {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				ok(oParams.entitySets, "array of entitySets returned");
+				ok(oParams.entitySets.length === 1, "1 entitySet added");
+				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				start();
 			});
 		});
 	});
+	asyncTest("test metadata loading: sap-value-list",function(){
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.metadataLoaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				ok(oParams.entitySets, "array of entitySets returned");
+				ok(oParams.entitySets.length === 2, "2 entitySet added");
+				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
+				start();
+			});
+		});
+	});
+	
+	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.metadataLoaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				start();
+			});
+		});
+	});
+	
+	module("CSRF Token handling", {
+		setup: function() {
+			window.odataFakeServiceData.forbidHeadRequest = false;
+			window.odataFakeServiceData.csrfRequests = [];
+			this.oModel = initModel(sURI, true);
+			updateCsrfToken();
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			removeSharedServicedata(sURI);
+			delete this.oModel;
+			deleteCsrfToken();
+		}
+	});
+	
+	asyncTest("No token request for GET requests", function() {
+		this.oModel.setUseBatch(false);
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.read("/Categories(1)", {
+			success: function() {
+				ok(!refreshSpy.called, "No security token needed for GET requests")
+				start();
+			}
+		});
+	});
+	
+	asyncTest("Token request for GET request inside batch", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.read("/Categories(1)", {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
+				start();
+			}
+		});
+	});
+	
+	asyncTest("Token request for POST requests", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(refreshSpy.calledOnce, "No additional token request")
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
 
+	asyncTest("Token request, automatic resubmit", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
+			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				updateCsrfToken();
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
+						ok(refreshSpy.calledTwice, "Token was fetched again after update");
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
 
+	asyncTest("Token request, manual refresh", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
+			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				updateCsrfToken();
+				this.oModel.refreshSecurityToken();
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						ok(!resetSpy.called, "No reset, as token was explicitely refreshed before");
+						ok(refreshSpy.calledTwice, "Token was fetched in explicit refresh call");
+						start();
+					}
+				});					
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request using HEAD method", function() {
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF Request sent");
+				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
+
+				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF request replied to");
+						ok(refreshSpy.calledOnce, "No additional token request");
+						start();
+					}
+				});
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request trying HEAD, then fallback to GET method", function() {
+		window.odataFakeServiceData.forbidHeadRequest = true;
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests sent");
+				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
+				equals(window.odataFakeServiceData.csrfRequests[1], "GET", "CSRF-Token requested using GET method");
+
+				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests replied to");
+						ok(refreshSpy.calledOnce, "No additional token request");
+						start();
+					}
+				});
+			}.bind(this)
+		});
+	});
+
+	asyncTest("Token request using only GET method", function() {
+		// Replace model with model that should not use HEAD
+		this.oModel.destroy();
+		this.oModel = initModel(sURI, {
+			json: true,
+			disableHeadRequestForToken: true
+		});
+		updateCsrfToken();
+		
+		
+		window.odataFakeServiceData.forbidHeadRequest = false; // !
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests sent");
+				equals(window.odataFakeServiceData.csrfRequests[0], "GET", "CSRF-Token requested using GET method");
+
+				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests replied to");
+						ok(refreshSpy.calledOnce, "No additional token request");
+						start();
+					}
+				});
+			}.bind(this)
+		});
+	});
+
+	module("Metamodel binding", {
+		setup: function() {
+			this.oModel = initModel(sURI);
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
+
+	asyncTest("Entityset metadata w/o context", function() {
+		this.oModel.getMetaModel().loaded().then(function() {
+			equal(this.oModel.getProperty("/Categories(1)/##name"), "Category");
+			equal(this.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
+			equal(this.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
+			equal(this.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
+			equal(this.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
+			start();
+		}.bind(this))
+	});
+
+	asyncTest("Entityset metadata w/ context", function() {
+		this.oModel.getMetaModel().loaded().then(function() {
+			var oContext = this.oModel.getContext("/Categories(1)")
+			equal(this.oModel.getProperty("##name", oContext), "Category");
+			equal(this.oModel.getProperty("##property/0/name", oContext), "CategoryID");
+			equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
+			equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
+			equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
+			start();
+		}.bind(this))
+	});
+	
+	asyncTest("test setProperty on complex Types (internal)",function(){
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function(){
+			// create dummy testdata
+			oModel.oData = { "Suppliers(0)" : {
+					Name : "xy",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : {
+							code: 1,
+							number: 22234
+						}
+					},
+					Products : {
+						__deferred: "Uri"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"	
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"	
+					}
+				}
+			};
+			oModel.setProperty("/Suppliers(0)/Name", "blabla");
+			equal(oModel.getProperty("/Suppliers(0)/Name"), "blabla", "set Property name check");
+			oModel.setProperty("/Suppliers(0)/temp", "temp");
+			equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create non existent property");
+			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
+			oModel.setProperty("/Suppliers(0)/Address/notExist", "1337");
+			equal(oModel.getProperty("/Suppliers(0)/Address/notExist"), "1337", "set Property create new property in complex type");
+			oModel.setProperty("/Suppliers(0)/Address/Plz/code", 3);
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 3, "set Property modify complex type in complex type property check");
+			oModel.setProperty("/Suppliers(0)/Address/Plz/notExist2", "337");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/notExist2"), "337", "set Property create new property in complex type");
+			oModel.setProperty("/Suppliers(0)/Address/", {
+				City: "Berlin",
+				Street: "Dorfgasse",
+				Plz : {
+					code: 4,
+					number: 12345
+				}
+			});
+			equal(oModel.getProperty("/Suppliers(0)/Address/City"), "Berlin", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "Dorfgasse", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 4, "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/number"), 12345, "set Property with complete complex type data structure");
+			var iCount = 0;
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address"), function(i, oValue){
+				iCount++;
+			});
+			equal(iCount, 3, "number of properties in complex type");
+			iCount = 0;
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address/Plz"), function(i, oValue){
+				iCount++;
+			});
+			equal(iCount, 2, "number of properties in sub complex type");
+			
+			oModel.setProperty("/Products(0)/Supplier/Name", "Juergen");
+			equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Juergen", "set Property on expanded nav property");
+			oModel.setProperty("/Products(0)/Supplier/Address/Street", "GatterStreet");
+			equal(oModel.getProperty("/Products(0)/Supplier/Address/Street"), "GatterStreet", "set Property on expanded nav property with complex type");
+			
+			start();
+		});
+	});
 	</script>
 
 </head>
 <body>
-<h1 id="qunit-header">QUnit tests: Data binding OData Model</h1>
+<h1 id="qunit-header">QUnit tests: Data binding OData Model (V2)</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>

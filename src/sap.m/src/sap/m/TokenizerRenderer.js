@@ -1,14 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
+	function(jQuery, Device) {
 	"use strict";
 
 
 	/**
-	 * @class Tokenizer renderer. 
-	 * @static
+	 * Tokenizer renderer. 
+	 * @namespace
 	 */
 	var TokenizerRenderer = {
 	};
@@ -21,17 +21,34 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenizerRenderer.render = function(oRm, oControl){
-		// Return immediately if control is invisible
-	       if (!oControl.getVisible()) {
-	             return;
-	       }
-	
 		//write the HTML into the render manager
 		oRm.write("<div tabindex=\"-1\"");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMTokenizer");
 		oRm.writeClasses();
+		
+		oRm.writeAttribute("role", "list");		
+		
+		var oAccAttributes = {}; // additional accessibility attributes
+		
+		//ARIA attributes
+		oAccAttributes.labelledby = {
+			value: oControl._sAriaTokenizerLabelId,
+			append: true
+		};
+		
+		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		
 		oRm.write(">"); // div element
+
+		if (Device.system.desktop || Device.system.combi) {
+			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
+			if (window.clipboardData) { //IE
+				oRm.writeAttribute("contenteditable", "true");
+				oRm.writeAttribute("tabindex", "-1");
+			}
+			oRm.write(">&nbsp;</div>");
+		}
 	
 		var sClass = "class=\"sapMTokenizerScrollContainer\">";
 		var sSpace = " ";

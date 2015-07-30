@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['sap/ui/base/EventProvider'],
+	function(EventProvider) {
 	"use strict";
 
 
@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.util.serializer.delegate.Delegate
+	 * @alias sap.ui.core.util.serializer.delegate.Delegate
 	 * @experimental Since 1.15.1. The abstract serializer delegate is still under construction, so some implementation details can be changed in future.
 	 */
 	var Delegate = EventProvider.extend("sap.ui.core.util.serializer.delegate.Delegate", /** @lends sap.ui.core.util.serializer.delegate.Delegate.prototype */
@@ -36,8 +36,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.Delegate#start
-	 * @function
 	 */
 	Delegate.prototype.start = function (oControl, sAggregationName, isDefaultAggregation) {
 		return "";
@@ -52,8 +50,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.Delegate#middle
-	 * @function
 	 */
 	Delegate.prototype.middle = function (oControl, sAggregationName, isDefaultAggregation) {
 		return "";
@@ -68,8 +64,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.Delegate#end
-	 * @function
 	 */
 	Delegate.prototype.end = function (oControl, sAggregationName, isDefaultAggregation) {
 		return "";
@@ -83,8 +77,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.Delegate#startAggregation
-	 * @function
 	 */
 	Delegate.prototype.startAggregation = function (oControl, sAggregationName) {
 		return "";
@@ -98,8 +90,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @return {string} the created string.
-	 * @name sap.ui.core.util.serializer.delegate.Delegate#endAggregation
-	 * @function
 	 */
 	Delegate.prototype.endAggregation = function (oControl, sAggregationName) {
 		return "";
@@ -107,4 +97,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return Delegate;
 
-}, /* bExport= */ true);
+});

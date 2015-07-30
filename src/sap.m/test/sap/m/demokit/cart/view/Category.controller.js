@@ -4,29 +4,27 @@ sap.ui.controller("view.Category", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);
-		this._router.attachRouteMatched(this._loadCategory, this);
+		this._router.getRoute("category").attachMatched(this._loadCategory, this);
 	},
 
 	_loadCategory : function(oEvent) {
-		if (oEvent.getParameter("name") === "category") {
-			var oProductList = this.getView().byId("productList");
-			this._changeNoDataTextToIndicateLoading(oProductList);
-			var oBinding = oProductList.getBinding("items");
-			oBinding.attachDataReceived(this.fnDataReceived, this);
-			var sId = oEvent.getParameter("arguments").id;
-			this._sProductId = oEvent.getParameter("arguments").productId;
-			this.getView().byId("page").setTitle(sId);
-			var oFilter = new sap.ui.model.Filter("Category", sap.ui.model.FilterOperator.EQ, sId);
-			oBinding.filter([ oFilter ]);
-		}
+		var oProductList = this.getView().byId("productList");
+		this._changeNoDataTextToIndicateLoading(oProductList);
+		var oBinding = oProductList.getBinding("items");
+		oBinding.attachDataReceived(this.fnDataReceived, this);
+		var sId = oEvent.getParameter("arguments").id;
+		this._sProductId = oEvent.getParameter("arguments").productId;
+		this.getView().byId("page").setTitle(sId);
+		var oFilter = new sap.ui.model.Filter("Category", sap.ui.model.FilterOperator.EQ, sId);
+		oBinding.filter([ oFilter ]);
 	},
-	
+
 	_changeNoDataTextToIndicateLoading: function (oList) {
 		var sOldNoDataText = oList.getNoDataText();
 		oList.setNoDataText("Loading...");
 		oList.attachEventOnce("updateFinished", function() {oList.setNoDataText(sOldNoDataText);});
 	},
-	
+
 	fnDataReceived: function(oEvent) {
 		var that = this,
 			oList = this.getView().byId("productList");
@@ -59,12 +57,12 @@ sap.ui.controller("view.Category", {
 		var sProductId = oModel.getData(oBindContext.getPath()).ProductId;
 		this._router.navTo("product", {id: sCategoryId, productId: sProductId}, !sap.ui.Device.system.phone);
 	},
-	
+
 	handleNavButtonPress : function (oEvent) {
-		this._router._myNavBack();
+		this.getOwnerComponent().myNavBack();
 	},
-	
+
 	handleCartButtonPress :  function (oEvent) {
 		this._router.navTo("cart");
 	}
-}); 
+});

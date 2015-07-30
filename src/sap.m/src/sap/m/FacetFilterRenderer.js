@@ -8,11 +8,13 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FacetFilter renderer. 
-	 * @static
+	 * FacetFilter renderer. 
+	 * @namespace
 	 */
 	var FacetFilterRenderer = {
 	};
+	// create ARIA announcements 
+	var mAriaAnnouncements = {};
 	
 	
 	/**
@@ -22,12 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FacetFilterRenderer.render = function(oRm, oControl){
-		
-		// Return immediately if control is invisible.
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		switch (oControl.getType()) {
 	
 		case sap.m.FacetFilterType.Simple:
@@ -90,8 +86,14 @@ sap.ui.define(['jquery.sap.global'],
 			
 			var aLists = oControl._getSequencedLists();
 			for (var i = 0; i < aLists.length; i++) {
-				
-				oRm.renderControl(oControl._getButtonForList(aLists[i]));
+						var button = oControl._getButtonForList(aLists[i]);
+						if (oControl.getShowPersonalization()) {
+								if (!button.getAriaDescribedBy() || button.getAriaDescribedBy() == '')	 {
+									button.addAriaDescribedBy(this.getAriaAnnouncement("ARIA_REMOVE"));
+								}
+						}
+				oRm.renderControl(button);
+			//	oRm.writeAccessibilityState(oControl, this.getAccessibilityState(oControl));
 				if (oControl.getShowPersonalization()) {
 					
 					oRm.renderControl(oControl._getFacetRemoveIcon(aLists[i]));
@@ -139,6 +141,68 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.renderControl(oSummaryBar);
 		oRm.write("</div>");
 	};
+	
+	
+	/**
+	 * Creates an invisible aria node for the given message bundle text  
+	 * in the static UIArea and returns its id for ARIA announcements
+	 * 
+	 * This method should be used when text is reached frequently.
+	 * 
+	 * @param {String} sKey key of the announcement
+	 * @param {String} [sBundleText] key of the announcement
+	 * @returns {String} id of the generated invisible aria node
+	 * @protected
+	 */
+	FacetFilterRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
+		if (mAriaAnnouncements[sKey]) {
+			return mAriaAnnouncements[sKey];
+		}
+		
+		sBundleText = sBundleText || "FACETFILTER_" + sKey.toUpperCase();
+		mAriaAnnouncements[sKey] = new sap.ui.core.InvisibleText({
+			text : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sBundleText)
+		}).toStatic().getId();
+		
+		return mAriaAnnouncements[sKey];
+	};
+	
+
+	
+	/**
+	 * Returns the inner aria describedby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @returns {String|undefined} 
+	 * @protected
+	 */
+	FacetFilterRenderer.getAriaDescribedBy = function(oControl) {
+		var aDescribedBy = [];
+	
+		if (oControl.getShowPersonalization()) {
+			aDescribedBy.push(this.getAriaAnnouncement("ARIA_REMOVE"));
+		}
+		
+		
+		return aDescribedBy.join(" ");
+	};
+	
+	
+	/**
+	 * Returns the accessibility state of the control
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @protected
+	 */
+	FacetFilterRenderer.getAccessibilityState = function(oControl) {
+		return {
+			describedby : {
+				value : this.getAriaDescribedBy(oControl),
+				append : true
+			}
+		};
+	};
+	
 	
 
 	return FacetFilterRenderer;

@@ -13,3 +13,13 @@
 .fullHeight {
 	height:100%;
 }
+
+.sap-phone .sapUiCal {
+	position: relative;
+}
+
+.sap-phone .sapUiCal > .sapUiCancel {
+	position: relative;
+	bottom: 0;
+	margin-top: 10px;
+}

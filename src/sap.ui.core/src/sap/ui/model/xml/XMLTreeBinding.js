@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 * @param {object} [oContext=null] the context object for this binding (optional)
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object} [mParameters=null] additional model specific parameters (optional)
-	 * @name sap.ui.model.xml.XMLTreeBinding
+	 * @alias sap.ui.model.xml.XMLTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
 	var XMLTreeBinding = ClientTreeBinding.extend("sap.ui.model.xml.XMLTreeBinding");
@@ -30,8 +30,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
 	 * @return {Array} the contexts array
 	 * @protected
-	 * @name sap.ui.model.xml.XMLTreeBinding#getNodeContexts
-	 * @function
 	 */
 	XMLTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -75,10 +73,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 				}
 			}
 		});
-
+		
+		this._applySorter(aContexts);
+		this._setLengthCache(sContextPath, aContexts.length);
+		
 		return aContexts.slice(iStartIndex, iStartIndex + iLength);
 	};
 
 	return XMLTreeBinding;
 
-}, /* bExport= */ true);
+});

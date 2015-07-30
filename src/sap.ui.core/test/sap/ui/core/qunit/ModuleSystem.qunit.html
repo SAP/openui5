@@ -2,7 +2,7 @@
 <html>
 	<head>
 	
-		<title>Test Page for Module Loading (require/declare)</title>
+		<title>Test Page for Module Loading (define/require/declare)</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				type="text/javascript"
@@ -15,56 +15,193 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-		module('old syntax APIs');
+		QUnit.module('old syntax APIs');
 		
-		test("getModulePath", function(){
+		QUnit.test("getModulePath", function(assert) {
 			jQuery.sap.registerModulePath("", "resources/");
-			equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/sap/ui/Global.js", "standard case 'sap.ui.Global'"); 
-			equal(jQuery.sap.getModulePath("jquery.sap.xml", ".js"), "resources/jquery.sap.xml.js", "special case 'jquery.sap.xml'");
-			equal(jQuery.sap.getModulePath("sap.ui.core", "/"), "resources/sap/ui/core/", "folder case"); 
-			equal(jQuery.sap.getModulePath("sap.ui.core", ""), "resources/sap/ui/core", "no suffix"); 
+			assert.equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/sap/ui/Global.js", "standard case 'sap.ui.Global'"); 
+			assert.equal(jQuery.sap.getModulePath("jquery.sap.xml", ".js"), "resources/jquery.sap.xml.js", "special case 'jquery.sap.xml'");
+			assert.equal(jQuery.sap.getModulePath("sap.ui.core", "/"), "resources/sap/ui/core/", "folder case"); 
+			assert.equal(jQuery.sap.getModulePath("sap.ui.core", ""), "resources/sap/ui/core", "no suffix"); 
 			
 			jQuery.sap.registerModulePath("sap.ui.Global", "resources/Global/");
-			equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/Global.js", "special case base name mapping"); 
+			assert.equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/Global.js", "special case base name mapping"); 
 			jQuery.sap.registerModulePath("sap.ui.Global", "resources/sap/ui/Global/");
 			
 		});
 		
-		module('new syntax APIs');
+		QUnit.module('new syntax APIs');
 		
-		test("getResourcePath(r)", function(){
+		QUnit.test("getResourcePath", function(assert) {
 
 			jQuery.sap.registerResourcePath("", "resources/");
-			equal(jQuery.sap.getResourcePath("sap/ui/Global.js"), "resources/sap/ui/Global.js", "standard case with extension .js: 'sap/ui/Global.js'"); 
-			equal(jQuery.sap.getResourcePath("sap/ui/Global.view.js"), "resources/sap/ui/Global.view.js", "standard case with extension .view.js: 'sap/ui/Global.view.js'"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui/Global.js"), "resources/sap/ui/Global.js", "standard case with extension .js: 'sap/ui/Global.js'"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui/Global.view.js"), "resources/sap/ui/Global.view.js", "standard case with extension .view.js: 'sap/ui/Global.view.js'"); 
 
 			jQuery.sap.registerResourcePath("sap/ui/Global", "resources/Global");
-			equal(jQuery.sap.getResourcePath("sap/ui/Global", ".js"), "resources/Global.js", "special case: mapping of the base name"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui/Global", ".js"), "resources/Global.js", "special case: mapping of the base name"); 
 			jQuery.sap.registerResourcePath("sap/ui/Global");
 
 			jQuery.sap.registerResourcePath("sap.ext", "resources/some/");
-			equal(jQuery.sap.getResourcePath("sap.ext/Global", ".js"), "resources/some/Global.js", "special case folder with dots in folder and single name"); 
+			assert.equal(jQuery.sap.getResourcePath("sap.ext/Global", ".js"), "resources/some/Global.js", "special case folder with dots in folder and single name"); 
 			jQuery.sap.registerResourcePath("sap.ext", "resources/sap.ext/");
 			
 			jQuery.sap.registerResourcePath("sap/ui.ext", "resources/some/");
-			equal(jQuery.sap.getResourcePath("sap/ui.ext/Global", ".js"), "resources/some/Global.js", "special case: mapping with dots in folder"); 
-			equal(jQuery.sap.getResourcePath("sap/ui.ext.js"), "resources/some.js", "special case: base name mapping with dots in folder"); 
-			equal(jQuery.sap.getResourcePath("sap/ui.ext.view.js"), "resources/some.view.js", "special case: base name mapping with dots in folder and complex extension"); 
-			equal(jQuery.sap.getResourcePath("sap/ui.ext", ".js"), "resources/some.js", "special case base name mapping with dots in folder"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext/Global", ".js"), "resources/some/Global.js", "special case: mapping with dots in folder"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext.js"), "resources/some.js", "special case: base name mapping with dots in folder"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext.view.js"), "resources/some.view.js", "special case: base name mapping with dots in folder and complex extension"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext", ".js"), "resources/some.js", "special case base name mapping with dots in folder"); 
 			jQuery.sap.registerResourcePath("sap/ui.ext");
 			
 		});
 		
+		QUnit.module('Module Name Resolution', {
+			
+			beforeEach: function(assert) {
+				
+				sap.ui.predefine('sap/test/myapp/Component', function(mod2) {
+					return "Component";
+				});
+				
+				sap.ui.predefine('sap/test/myapp/views/DetailView', function(mod2) {
+					return "DetailView";
+				});
+				
+				sap.ui.predefine('sap/test/myapp/utils/Formatter', function(mod2) {
+					return "Formatter";
+				});
+				
+				sap.ui.predefine('thirdparty/SomeOpenSource', function(mod2) {
+					return "SomeOpenSource";
+				});
+			},
+			
+			afterEach: function() {
+				jQuery.sap.unloadResources('sap/test/myapp/Component.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/myapp/views/MainView.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/myapp/views/DetailView.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/myapp/utils/Formatter.js', false, true, true);
+				jQuery.sap.unloadResources('thirdparty/SomeOpenSource.js', false, true, true);
+			}
+			
+		});
+		
+		QUnit.test("simple cases", function(assert) {
+			
+			var doneModule1 = assert.async();
+			var doneModule2 = assert.async();
+
+			sap.ui.predefine('sap/test/myapp/views/MainView',
+			[
+				'./DetailView', // same package 
+				'../Component', // parent package 
+				'../utils/Formatter', // relative to parent package 
+				'thirdparty/SomeOpenSource', // absolut name 
+				'../../../../thirdparty/SomeOpenSource', // navigation to root and then down again 
+				'sap/test/myapp/views/../utils/Formatter' // nav-to-parent somewhere inside a name 
+			], 
+			function(mod1, mod2, mod3, mod4, mod5, mod6) {
+					assert.equal(mod1, 'DetailView');
+					assert.equal(mod2, 'Component');
+					assert.equal(mod3, 'Formatter');
+					assert.equal(mod4, 'SomeOpenSource');
+					assert.equal(mod5, 'SomeOpenSource');
+					assert.equal(mod6, 'Formatter');
+					return "MainView";
+			});
+			
+			
+			sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+				assert.equal(mod1, 'MainView', "required module value should be MainView");
+				doneModule1();
+			});
+			
+			sap.ui.require(['sap/test/myapp/utils/../views/MainView'], function (mod1) {
+				assert.equal(mod1, 'MainView', "required module value should be MainView");
+				doneModule2();
+			});
+		});
+
+		QUnit.test("navigate to parent of root (begin)", function(assert) {
+			
+			sap.ui.predefine('sap/test/myapp/views/MainView',
+			[
+				'../../../../../thirdparty/SomeOpenSource' 
+			], function(mod1) {
+				return "MainView";
+			});
+			
+			QUnit["throws"](function() { 
+				sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error 
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /parent of root/i, "module loading should fail due to dependency");
+
+		});
+
+		QUnit.test("navigate to parent of root (inside)", function(assert) {
+			
+			sap.ui.predefine('sap/test/myapp/views/MainView',
+			[
+				'sap/test/myapp/../../../../thirdparty/SomeOpenSource' 
+			], function(mod1) {
+				return "MainView";
+			});
+			
+			QUnit["throws"](function() { 
+				sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error 
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /parent of root/i, "module loading should fail due to dependency");
+
+		});
+
+		QUnit.test("invalid dot-segment", function(assert) {
+			
+			sap.ui.predefine('sap/test/myapp/views/MainView', ['./.../Component'], function(mod1) {
+				return "MainView";
+			});
+			
+			QUnit["throws"](function() { 
+				sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error 
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /illegal.*segment/i, "module loading should fail due to dependency");
+		});
+
+		QUnit.test("invalid use of relative paths in require", function(assert) {
+
+			// sap.ui.require doesn't support relative paths
+			QUnit["throws"](function() { 
+				sap.ui.require(['./test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error 
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /not supported/i, "module loading should fail due to relative path ");
+
+			// sap.ui.require doesn't support relative paths
+			QUnit["throws"](function() { 
+				sap.ui.require(['../test/myapp/views/MainView'], function (mod1) {
+				});
+			}, /not supported/i, "module loading should fail due to relative path ");
+			
+			// sap.ui.require also doesn't support invalid segment
+			QUnit["throws"](function() { 
+				sap.ui.require(['.../test/myapp/views/MainView'], function (mod1) {
+				});
+			}, /not supported/i, "module loading should fail due to relative path ");
+			
+		});
+
 		</script>
 		
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
+		<div id="qunit"></div>
 	</body>
 </html>

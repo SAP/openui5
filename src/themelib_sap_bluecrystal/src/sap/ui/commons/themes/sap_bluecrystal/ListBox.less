@@ -35,18 +35,15 @@
 	padding-right: 3px;
 }
 
-.sapUiLbxI > .sapUiLbxILastChild { /* IE8 workaround; must be a separate rule, as the unknown "last-child" selector confuses IE8 */
-	border-right-width: 2px;
-	padding-right: 3px;
-}
-
 .sapUiLbxI:hover:not(.sapUiLbxIDis),
-.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover,
 .sapUiLbx:not(.sapUiLbxDis) > ul > .sapUiLbxI:hover:not(.sapUiLbxISel):not(.sapUiLbxIDis) > span {  /* Fix for IE10 :hover bug - need to set the color on children as well */
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiHighlightTextColor;
+}
+
+.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover {
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 /*
@@ -83,16 +80,8 @@ no special style for focus!
 	padding-right: 16px; /* when width is not set, a scrollbar may cover the last part of the text which is not nice because no width means "adapted to content" */
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 14px;
-}
-
 html[data-sap-ui-browser="ie9"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
 	padding-right: 0; /* above mentioned problem does not appear in IE9 */
-}
-
-html[dir=rtl][data-sap-ui-browser=ff3] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 18px; /* in FF3.6 in RTL the scrollbar is still on the right, so increase the padding a bit because clipping looks more unlogical */
 }
 
 .sapUiLbxStd > ul > .sapUiLbxISel > span, /* Fix for IE10 bug - need to set the color on children as well */

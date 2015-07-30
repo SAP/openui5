@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 
 	/**
-	 * @class RichToltip renderer.
-	 * @static
+	 * RichToltip renderer.
+	 * @namespace
 	 */
 	var RichTooltipRenderer = {};
 	

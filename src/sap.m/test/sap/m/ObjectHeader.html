@@ -19,8 +19,6 @@
 		}));
 	}
 
-	var marginStyle = jQuery.device.is.phone ? "sapUiSmallMargin" : "sapUiMediumMargin";
-
 	var attrs = [ new sap.m.ObjectAttribute({
 		text : "Ñagçyfox Contract #D1234567890"
 	}), new sap.m.ObjectAttribute({
@@ -47,10 +45,16 @@
 	var oh1 = new sap.m.ObjectHeader(
 			"oh1", {
 				intro : "On behalf of John Smith Ñagçyfox",
-				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				title : "some normal title",
 				number : "3.624,00",
+				intro : "1234 On behalf of John Smith Ñagçyfox RTL",
+				introTextDirection: sap.ui.core.TextDirection.RTL,
+				title : "5678 some normal title RTL",
+				titleTextDirection: sap.ui.core.TextDirection.RTL,
+				number : "3.624,00 RTL",
 				numberUnit : "Euro",
 				numberState : sap.ui.core.ValueState.Success,
+				numberTextDirection: sap.ui.core.TextDirection.RTL,
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Lorem ipsum dolor sit amet",
 					icon : sap.ui.core.IconPool.getIconURI("inbox"),
@@ -62,12 +66,15 @@
 			});
 	
 	var oh1Icon = new sap.m.ObjectHeader("oh1-with-icon",{
-				icon : sap.ui.core.IconPool.getIconURI("attachment"),
-				intro : "On behalf of John Smith Ñagçyfox",
-				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
-				number : "3.624,00",
+				intro : "1234 On behalf of John Smith Ñagçyfox LTR",
+				introTextDirection: sap.ui.core.TextDirection.LTR,
+				title : "5678 some normal title LTR",
+				titleTextDirection: sap.ui.core.TextDirection.LTR,
+				icon: "sap-icon://nutrition-activity",
+				number : "3.624,00 LTR",
 				numberUnit : "Euro",
 				numberState : sap.ui.core.ValueState.Success,
+				numberTextDirection: sap.ui.core.TextDirection.LTR,
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Lorem ipsum dolor sit amet",
 					icon : sap.ui.core.IconPool.getIconURI("inbox"),
@@ -79,7 +86,7 @@
 			"oh1-with-icon-no-number",	{
 				icon : sap.ui.core.IconPool.getIconURI("attachment"),
 				intro : "On behalf of John Smith Ñagçyfox",
-				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				title : "The quick brown fox jumps over the lazy dog. Very long title going on more lines. An apple a day keeps the doctor away. Very long title going on more lines. Very long title going on more lines.",
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Lorem ipsum dolor sit amet",
 					icon : sap.ui.core.IconPool.getIconURI("inbox"),
@@ -186,12 +193,14 @@
 				intro : "On behalf of John Smith",
 				introActive : true,
 				introPress : function() {
-
-					oh5
-							.setTitle("Intro pressed. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.");
+					alert("intro is pressed");
+					//oh5
+						//	.setTitle("Intro pressed. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.");
 				},
 				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 				titleActive : true,
+				titleHref: "http://www.google.com",
+				titleTarget: "_blank",
 				titlePress : function() {
 
 					oh5
@@ -222,6 +231,10 @@
 		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 		titleActive : true,
 		titlePress : oh7PressHandler,
+		intro : "On behalf of John Smith",
+		introActive : true,
+		introHref: "http://www.google.com",
+		introTarget: "_blank",
 		number : "3,00",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Success,
@@ -267,7 +280,7 @@
 		new sap.m.ProgressIndicator("oh10-pi", {
 			visible : true,
 			enabled : true,
-			barColor : sap.ui.core.BarColor.NEUTRAL,
+			state : sap.ui.core.ValueState.NEUTRAL,
 			displayValue : '80%',
 			percentValue : 80,
 			showValue : true,
@@ -281,7 +294,7 @@
 		new sap.m.ProgressIndicator("oh10-pi2", {
 			visible : true,
 			enabled : true,
-			barColor : sap.ui.core.BarColor.NEUTRAL,
+			state : sap.ui.core.ValueState.NEUTRAL,
 			displayValue : '80%',
 			percentValue : 80,
 			showValue : true,
@@ -482,7 +495,7 @@
 		}), new sap.m.ProgressIndicator("oh18-pi", {
 			visible : true,
 			enabled : true,
-			barColor : sap.ui.core.BarColor.NEUTRAL,
+			state : sap.ui.core.ValueState.NEUTRAL,
 			displayValue : '56%',
 			percentValue : 56,
 			showValue : true,
@@ -492,7 +505,7 @@
 		}), new sap.m.ProgressIndicator("oh18-pi2", {
 			visible : true,
 			enabled : true,
-			barColor : sap.ui.core.BarColor.NEUTRAL,
+			state : sap.ui.core.ValueState.NEUTRAL,
 			displayValue : '90%',
 			percentValue : 90,
 			showValue : true,
@@ -631,15 +644,6 @@
 		enableScrolling : true
 	});
 
-	oh1.addStyleClass(marginStyle);
-	oh2.addStyleClass(marginStyle);
-	oh3.addStyleClass(marginStyle);
-	oh3_1.addStyleClass(marginStyle);
-	oh3_2.addStyleClass(marginStyle);
-	oh4.addStyleClass(marginStyle);
-	oh5.addStyleClass(marginStyle);
-	oh6.addStyleClass(marginStyle);
-
 	app.setInitialPage(page.getId());
 	app.addPage(page);
 	page.addContent(new sap.ui.core.HTML({
@@ -713,6 +717,6 @@
 </script>
 
 </head>
-<body id="body" class="sapUiBody">
+<body id="body" class="sapUiBody" role="application">
 </body>
 </html>

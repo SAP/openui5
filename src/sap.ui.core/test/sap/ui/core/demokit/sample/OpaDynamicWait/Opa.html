@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Opa sample for nested actions</title>
+
+		<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"></script>
+
+		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<script>
+			(function () {
+				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.test.Opa5");
+				jQuery.sap.require("sap.ui.test.opaQunit");
+				var Opa5 = sap.ui.test.Opa5;
+
+				module("Nested waitFors", {
+					setup : function () {
+
+						Opa5.extendConfig({
+							viewName : "view.Main",
+	
+							actions : new Opa5({
+
+								iExpandRecursively : function() {
+									return this.waitFor({
+										controlType : "sap.ui.commons.TreeNode",
+										matchers : new sap.ui.test.matchers.PropertyStrictEquals({
+											name : "expanded", 
+											value : false
+										}),
+										success : function (aTreeNodes) {
+											var that = this;
+											aTreeNodes.forEach(function(oTreeNode) {
+												if (oTreeNode.getNodes().length){
+													oTreeNode.expand();
+													that.iExpandRecursively()
+												}
+											});
+										},
+										errorMessage : "Didn't find collapsed tree nodes"
+									});
+								}
+							}),
+							assertions : new Opa5({
+
+								iSeeAllNodesExpanded : function() {
+									return this.waitFor({
+										controlType : "sap.ui.commons.TreeNode",
+										matchers : new sap.ui.test.matchers.PropertyStrictEquals({
+											name : "expanded", 
+											value : true
+										}),
+										success : function (aTreeNodes) {
+											strictEqual(aTreeNodes.length, 4, "All nodes with childrean are expanded");
+										},
+										errorMessage : "Didn't find expanded tree nodes"
+									});
+								}
+							})
+						});
+
+					}
+				});
+				opaTest("Should expand all items in the tree", function(Given, When, Then) {
+
+					// Act
+					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+					When.iExpandRecursively();
+
+					Then.iSeeAllNodesExpanded();
+					Then.iTeardownMyAppFrame();
+				});
+
+			})();
+		</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">Opa sample for dynamic wait statements</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

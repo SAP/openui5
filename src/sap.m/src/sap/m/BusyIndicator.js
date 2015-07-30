@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.BusyIndicator
+	 * @alias sap.m.BusyIndicator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BusyIndicator = Control.extend("sap.m.BusyIndicator", /** @lends sap.m.BusyIndicator.prototype */ { metadata : {
@@ -88,6 +88,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * light: light theme, useful within a dark context
 			 */
 			design : {type : "string", group : "Appearance", defaultValue : 'auto'}
+		},
+		associations: {
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.27.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
 		aggregations : {
 	
@@ -258,7 +265,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// Create internal label
 	BusyIndicator.prototype._createLabel = function(sName, sValue){
 		if (!this._oLabel) {
-			this._oLabel = new sap.m.Label(this.getId() + "-label", {}).addStyleClass("sapMBsyIndLabel");
+			this._oLabel = new sap.m.Label(this.getId() + "-label", {labelFor: this.getId()}).addStyleClass("sapMBsyIndLabel");
 			this.setAggregation("_busyLabel", this._oLabel);
 		}
 		this._oLabel[sName](sValue);

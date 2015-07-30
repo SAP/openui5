@@ -39,6 +39,7 @@
 
 html[data-sap-ui-browser^="ie"] .sapUiRb:focus{
 	outline: none;
+	position: relative; /* otherwise the Border is not displayed */
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiRb:focus:after {
@@ -50,4 +51,5 @@ html[data-sap-ui-browser^="ie"] .sapUiRb:focus:after {
 	bottom: 0;
 	display: block;
 	border: 1px dotted @sapUiBaseBorder;
+	pointer-events: none;
 }

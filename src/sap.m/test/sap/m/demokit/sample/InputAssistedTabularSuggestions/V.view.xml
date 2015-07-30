@@ -4,9 +4,10 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		class="marginBoxContent" >
-		<items>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
 			<Label text="Product" />
 			<Input
 				id="productInput"
@@ -48,11 +49,16 @@
 						<Label text="{Name}"/>
 						<Label text="{ProductId}"/>
 						<Label text="{SupplierName}"/>
-						<Label text="{Price} {CurrencyCode}"/>
+						<Label
+							text="{
+ 		 						parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+		 						formatOptions: {showMeasure: true}
+							}"/>
 					</cells>
 					</ColumnListItem>
 				</suggestionRows>
 			</Input>
-		</items>
-	</VBox>
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>

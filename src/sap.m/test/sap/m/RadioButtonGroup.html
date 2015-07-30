@@ -436,6 +436,31 @@
 				oLyt.placeAt("target5");
 				var oLabel = new sap.m.Label({ text: "Test for interaction: ", labelFor: oRBGroup});
 				oLabel.placeAt("label5");
+
+				var oRBGroup = new sap.m.RadioButtonGroup("RBG6", {
+					textDirection: sap.ui.core.TextDirection.RTL,
+					width: "400px",
+					columns: 2,
+					buttons: [
+						new sap.m.RadioButton("RB6-1", {
+							text: "Option 1, First Column"
+						}),
+						new sap.m.RadioButton("RB6-2", {
+							text: "Option 2, Second Column"
+						}),
+						new sap.m.RadioButton("RB6-3", {
+							text: "Option 3"
+						}),
+						new sap.m.RadioButton("RB6-4", {
+							text: "Option 4"
+						})
+					]
+				});
+
+				oRBGroup.placeAt("target6");
+
+				var oLabel = new sap.m.Label({ text: "Group with 2 colums, width 400px, RTL: ", labelFor: oRBGroup});
+				oLabel.placeAt("label6");
 			});
 		</script>
 	</head>
@@ -458,5 +483,8 @@
 		<br> <!-- Test for interaction: -->
 		<div id="label5"></div>
 		<div id="target5"></div>
+		<br><!-- Group with 2 columns Right-to-Left -->
+		<div id="label6"></div>
+		<div id="target6"></div>
 	</body>
 </html>

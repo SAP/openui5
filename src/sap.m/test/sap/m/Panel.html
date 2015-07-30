@@ -6,7 +6,6 @@
 <style>
 #text1,#text2,#text3,#text4,#text5,#text6,#text7,#text8 {
 	margin: 0.4375em 0.4375em 0em 0.4375em;
-	border
 }
 
 #text4 {
@@ -17,11 +16,15 @@
 	color: blue;
 	background-color: #FFFFDD;
 }
+
+.sapMPanel {
+	margin: 3rem;
+}
 </style>
 <script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m,sap.ui.commons"
 	data-sap-ui-theme="sap_bluecrystal">
-	
+
 </script>
 <script>
 	// create and add app
@@ -41,10 +44,10 @@
 		}), new sap.m.Panel({
 			headerText : "This is the Panel header",
 			content : [new sap.m.Text({
-				text : "This is a Panel with a defined size."
+				text : "This is a Panel with a defined size.\n" + lorem
 			})],
 			width : "400px",
-			height : "150px"
+			height : "80px"
 		}), new sap.m.Panel({
 			headerText : "This is the Panel header",
 			headerToolbar : new sap.m.Toolbar({
@@ -75,7 +78,8 @@
 				sap.m.MessageToast.show("InfoBar Pressed!");
 			}),
 			content : [new sap.m.Text({
-				text : "This is a Panel with a header toolbar and an info toolbar."
+				text : "This is a Panel with a header toolbar and an info toolbar.\n" +
+					lorem + lorem + lorem + lorem + lorem + lorem + lorem + lorem + lorem
 			})],
 			height : "200px"
 		}),
@@ -96,8 +100,10 @@
 				})]
 			}),
 			content : [new sap.m.Text({
-				text : "1st This is a Panel with a header toolbar and an info toolbar - this is the content."
-			})]
+				text : "1st This is a Panel with a header toolbar and an info toolbar - this is the content." +
+					lorem + lorem + lorem + lorem + lorem
+			})],
+			height: "100px"
 		}), new sap.m.Panel({
 			expandable : true,
 			expanded : true,
@@ -212,6 +218,6 @@
 	app.addPage(page);
 </script>
 </head>
-<body id="body" class="sapUiBody">
+<body id="body" class="sapUiBody" role="application" >
 </body>
 </html>

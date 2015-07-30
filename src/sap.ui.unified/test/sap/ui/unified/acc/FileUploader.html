@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>FileUploader ACC Test - sap.ui.unified</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.m, sap.ui.unified"
+				src="../../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script type="text/javascript">
+
+		var oFileUploader1 = new sap.ui.unified.FileUploader("FU1", {
+			name: "FU1",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			change: function(oEvent){
+				if(oEvent.getParameter("newValue") == "Test1.html") {
+					oEvent.oSource.setValueState(sap.ui.core.ValueState.Error);
+				}else {
+					oEvent.oSource.setValueState(sap.ui.core.ValueState.None);
+				}
+			}
+		}).placeAt("sample1");
+
+		var oLabel2 = new sap.m.Label({text: "Label", labelFor: "FU2"}).placeAt("sample2");
+		var oFileUploader2 = new sap.ui.unified.FileUploader("FU2", {
+			name: "FU2",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456"
+		}).placeAt("sample2");
+
+		var oFileUploader3 = new sap.ui.unified.FileUploader("FU3", {
+			name: "FU3",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			enabled: false
+		}).placeAt("sample3");
+
+		var oFileUploader4 = new sap.ui.unified.FileUploader("FU4", {
+			name: "FU4",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			tooltip: "Tooltip"
+		}).placeAt("sample4");
+
+		var oLabel5 = new sap.m.Label({text: "Label", labelFor: "FU5"}).placeAt("sample5");
+		var oFileUploader5 = new sap.ui.unified.FileUploader("FU5", {
+			name: "FU5",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			tooltip: "Tooltip"
+		}).placeAt("sample5");
+
+		var oFileUploader6 = new sap.ui.unified.FileUploader("FU6", {
+			name: "FU6",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			buttonOnly: true,
+			buttonText: "Choose"
+		}).placeAt("sample6");
+
+		var oFileUploader7 = new sap.ui.unified.FileUploader("FU7", {
+			name: "FU7",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			valueState: sap.ui.core.ValueState.Error
+		}).placeAt("sample7");
+
+		var oFileUploader8 = new sap.ui.unified.FileUploader("FU8", {
+			name: "FU8",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			placeholder: "choose file"
+		}).placeAt("sample8");
+
+		var oFileUploader9 = new sap.ui.unified.FileUploader("FU9", {
+			name: "FU9",
+			uploadUrl: "../../../../../upload/",
+			sendXHR: true,
+			value: "",
+			width: "400px",
+			additionalData: "abc=123&test=456",
+			icon: "sap-icon://save",
+			iconOnly: true
+		}).placeAt("sample9");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.unified.FileUploader</code></h1>
+		<h2 id="H-FU1">Simple FileUploader</h2>
+		<div id="sample1"></div>
+		<h2 id="H-FU2">FileUploader with Label</h2>
+		<div id="sample2"></div>
+		<h2 id="H-FU3">Disabled FileUploader</h2>
+		<div id="sample3"></div>
+		<h2 id="H-FU4">FileUploader with Tooltip</h2>
+		<div id="sample4"></div>
+		<h2 id="H-FU5">FileUploader with Tooltip and Label</h2>
+		<div id="sample5"></div>
+		<h2 id="H-FU6">FileUploader with only Button</h2>
+		<div id="sample6"></div>
+		<h2 id="H-FU7">FileUploader with ValueState</h2>
+		<div id="sample7"></div>
+		<h2 id="H-FU8">FileUploader with Placeholder</h2>
+		<div id="sample8"></div>
+		<h2 id="H-FU9">FileUploader with icon only</h2>
+		<div id="sample9"></div>	</body>
+</html>

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
-	 * @name sap.ui.layout.GridData
+	 * @alias sap.ui.layout.GridData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridData = LayoutData.extend("sap.ui.layout.GridData", /** @lends sap.ui.layout.GridData.prototype */ { metadata : {
@@ -37,7 +37,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 			 * A string type that represents Grid's span values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
 			 */
 			span : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : null},
-	
+			
+			/**
+			 * Optional. Defines a span value for extra large screens. This value overwrites the value for extra large screens defined in the parameter "span".
+			 */
+			spanXL : {type : "int", group : "Behavior", defaultValue : null},
+			
 			/**
 			 * Optional. Defines a span value for large screens. This value overwrites the value for large screens defined in the parameter "span".
 			 */
@@ -59,6 +64,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 			indent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : null},
 	
 			/**
+			 * Optional. Defines a span value for extra large screens. This value overwrites the value for extra large screens defined in the parameter "indent".
+			 */
+			indentXL : {type : "int", group : "Behavior", defaultValue : null},
+			
+			/**
 			 * Optional. Defines a span value for large screens. This value overwrites the value for large screens defined in the parameter "indent".
 			 */
 			indentL : {type : "int", group : "Behavior", defaultValue : null},
@@ -73,6 +83,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 			 */
 			indentS : {type : "int", group : "Behavior", defaultValue : null},
 	
+			/**
+			 * Defines if this Control is visible on XL - extra Large screens.
+			 */
+			visibleXL : {type : "boolean", group : "Behavior", defaultValue : true},
+			
 			/**
 			 * Defines if this Control is visible on Large screens.
 			 */
@@ -103,6 +118,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 			 */
 			linebreak : {type : "boolean", group : "Misc", defaultValue : false},
 	
+			/**
+			 * Optional. If this property is set to true, the control on extra large screens causes a line break within the Grid and becomes the first within the next line.
+			 */
+			linebreakXL : {type : "boolean", group : "Misc", defaultValue : false},
+			
 			/**
 			 * Optional. If this property is set to true, the control on large screens causes a line break within the Grid and becomes the first within the next line.
 			 */
@@ -187,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 * This file defines behavior for the control
 	 */
 	(function() {
-	
+		
 		GridData.prototype._setStylesInternal = function(sStyles) {
 			if (sStyles && sStyles.length > 0) {
 				this._sStylesInternal = sStyles;
@@ -195,6 +215,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 				this._sStylesInternal = undefined;
 			}
 		};
+	
+		/*
+		 * Get span information for the large screens
+		 * @return {int} the value of the span 
+		 * @private
+		 */
+		GridData.prototype._getEffectiveSpanXLarge = function() {
+	
+			var iSpan = this.getSpanXL();
+			if (iSpan && (iSpan > 0) && (iSpan < 13)) {
+				return iSpan;
+			}
+			
+			var SPANPATTERN = /XL([1-9]|1[0-2])(?:\s|$)/i;
+	
+			var aSpan = SPANPATTERN.exec(this.getSpan());
+	
+			if (aSpan) {
+				var span = aSpan[0];
+				if (span) {
+					span = span.toUpperCase();
+					if (span.substr(0,2) === "XL") {
+						return parseInt(span.substr(1), 10);
+					}
+				}
+			}
+			return undefined;
+		};
+		
 		
 		/*
 		 * Get span information for the large screens
@@ -279,7 +328,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 			return undefined;
 		};
 		
+		// Identifier for explicit changed line break property for XL size
+		var _bLinebreakXLChanged = false;
 		
+		// Finds out if the line break for XL was explicitly set
+		GridData.prototype.setLinebreakXL = function(bLinebreak) {
+			//set property XL
+			this.setProperty("linebreakXL", bLinebreak);
+			_bLinebreakXLChanged = true;
+		};
+		
+		// Internal function. Informs the Grid Renderer if the line break property for XL size was changed explicitly
+		GridData.prototype._getLinebreakXLChanged = function(bLinebreak) {
+			return _bLinebreakXLChanged;
+		};
+			
 		// Deprecated properties handling
 		//Setter
 		GridData.prototype.setSpanLarge = function(iSpan) {

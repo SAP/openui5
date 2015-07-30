@@ -1,4 +1,3 @@
-
 /* ============================================= */
 /* CSS High Contrast Black for control sap.m/ObjectListItem.control */
 /* ============================================= */
@@ -35,15 +34,13 @@
 	width: 3rem;
 	height: 3rem;
 	text-align: center;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
 
 .sapMObjLNumber {
 	font-family: @sapUiFontFamily;
-	font-size: @sapMFontHeader2Size;
+	font-size: 1.375rem;
 	font-weight: @sapUiFontHeaderWeight;
 	color: @sapHCStandardFG;
 }
@@ -59,15 +56,14 @@
 
 .sapMObjLAdditAttribs {
 	color: @sapHCStandardFG;
-	
 }
 
 /* special rendering for browsers without flex support (IE9) */
 li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF>div{
-	/* the outer container has 16px vertical padding */  
-	padding-top: 1rem; 
+	/* the outer container has 16px vertical padding */
+	padding-top: 1rem;
 	padding-bottom: 1rem;
-} 
+}
 li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF .sapMObjLIntro,
 li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF .sapMObjLAttrRow{
 	display: table;
@@ -81,11 +77,11 @@ li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF .sapMObj
 	display: table-cell;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: nowrap;			
+	white-space: nowrap;
 }
 
 .sapMObjLAttrDiv.sapMObjAttrWithMarker {
-	padding-top: .1875rem
+	padding-top: .1875rem;
 }
 
 .sapMObjLNumberStateNone {
@@ -93,13 +89,21 @@ li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF .sapMObj
 }
 
 .sapMObjLNumberStateError {
-	color: @sapHCStandardFG;		
+	color: @sapUiNegativeText;
 }
 
 .sapMObjLNumberStateWarning {
-	color: @sapHCStandardFG;
+	color: @sapUiCriticalText;
 }
 
 .sapMObjLNumberStateSuccess {
+	color: @sapUiPositiveText;
+}
+
+.sapMLIB:hover .sapMObjLNumber {
+	color: @sapHCStandardFG;
+}
+
+.sapMLIB:hover .sapMObjLNumberUnit {
 	color: @sapHCStandardFG;
 }

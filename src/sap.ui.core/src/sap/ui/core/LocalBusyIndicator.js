@@ -3,12 +3,11 @@
  */
 
 // Provides control sap.ui.core.LocalBusyIndicator.
-sap.ui.define(['jquery.sap.global', './Control', './LocalBusyIndicatorRenderer', './library', './theming/Parameters'],
-	function(jQuery, Control, LocalBusyIndicatorRenderer, library, Parameters) {
+sap.ui.define(['jquery.sap.global', './Control', './library', './theming/Parameters'],
+	function(jQuery, Control, library, Parameters) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new LocalBusyIndicator.
 	 *
@@ -33,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './Control', './LocalBusyIndicatorRenderer',
 	 * @since 1.11.0
 	 * @deprecated Since version 1.14.2. 
 	 * The LocalBusyIndicator Control is not needed anymore by the new implementation of the LBI. Hence, it is not used anymore.
-	 * @name sap.ui.core.LocalBusyIndicator
+	 * @alias sap.ui.core.LocalBusyIndicator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var LocalBusyIndicator = Control.extend("sap.ui.core.LocalBusyIndicator", /** @lends sap.ui.core.LocalBusyIndicator.prototype */ { metadata : {
@@ -182,4 +181,4 @@ sap.ui.define(['jquery.sap.global', './Control', './LocalBusyIndicatorRenderer',
 
 	return LocalBusyIndicator;
 
-}, /* bExport= */ true);
+});

@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 *
 	 * @public
 	 * @since 1.22.0
-	 * @name sap.ui.core.util.File
+	 * @alias sap.ui.core.util.File
 	 */
 	var File = {
 
@@ -46,8 +46,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		 * @param {string} sCharset file charset
 		 *
 		 * @public
-		 * @name sap.ui.core.util.File.save
-		 * @function
 		 */
 		save: function(sData, sFileName, sFileExtension, sMimeType, sCharset) {
 			var sFullFileName = sFileName + '.' + sFileExtension;

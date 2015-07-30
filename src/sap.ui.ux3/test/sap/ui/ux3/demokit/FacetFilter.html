@@ -18,6 +18,8 @@
 		var aFilters1 = [];
 		var aFilters2 = [];
 		var aFilters3 = [];
+
+		var prevFilter1, prevFilter2, prevFilter3;
 			
 		var oData = {cars : [
 				{brand: "BMW", model: "320d", type: "Limousine"},
@@ -130,11 +132,19 @@
 				
 			if(oEvent.getParameter("all")) {
 				applyFilter(oFFL2, oFFL3, [], []);
+				prevFilter1 = undefined;
 				return;
+			}
+
+			// If a previous filter was already in place, we must unfilter first so that
+			// the lists of check items in calcFilter contain all possible values.
+			if(prevFilter1 && prevFilter1.length > 0) {
+				applyFilter(oFFL2, oFFL3, [], []);
 			}
 
 			var oFilters = calcFilter(oEvent, "brand", oFFL2, "model", oFFL3, "type");
 			aFilters1 = oFilters.filter;
+			prevFilter1 = oEvent.getParameter("selectedItems");
 			applyFilter(oFFL2, oFFL3, oFilters.crossFilters1, oFilters.crossFilters2);	
 		});
 		oFacetFilter.addList(oFFL1);
@@ -149,11 +159,19 @@
 				
 			if(oEvent.getParameter("all")) {
 				applyFilter(oFFL1, oFFL3, [], []);
+				prevFilter2 = undefined;
 				return;
+			}
+
+			// If a previous filter was already in place, we must unfilter first so that
+			// the lists of check items in calcFilter contain all possible values.
+			if(prevFilter2 && prevFilter2.length > 0) {
+				applyFilter(oFFL1, oFFL3, [], []);
 			}
 
 			var oFilters = calcFilter(oEvent, "model", oFFL1, "brand", oFFL3, "type");
 			aFilters2 = oFilters.filter;
+			prevFilter2 = oEvent.getParameter("selectedItems");
 			applyFilter(oFFL1, oFFL3, oFilters.crossFilters1, oFilters.crossFilters2);	
 		});
 		oFacetFilter.addList(oFFL2);
@@ -167,11 +185,19 @@
 				
 			if(oEvent.getParameter("all")) {
 				applyFilter(oFFL1, oFFL2, [], []);
+				prevFilter3 = undefined;
 				return;
+			}
+
+			// If a previous filter was already in place, we must unfilter first so that
+			// the lists of check items in calcFilter contain all possible values.
+			if(prevFilter3 && prevFilter3.length > 0) {
+				applyFilter(oFFL1, oFFL2, [], []);
 			}
 
  			var oFilters = calcFilter(oEvent, "type", oFFL1, "brand", oFFL2, "model");
 			aFilters2 = oFilters.filter;
+			prevFilter3 = oEvent.getParameter("selectedItems");
  			applyFilter(oFFL1, oFFL2, oFilters.crossFilters1, oFilters.crossFilters2);	
 		});
 		oFacetFilter.addList(oFFL3);

@@ -57,7 +57,7 @@ These eight requirements are the mandatory base of a good bug report:
    * precisely state the expected and the actual behavior
    * give information about the used browser/device and its version, if possible also the behavior in other browsers/devices
    * if the bug is about wrong UI appearance, attach a screenshot and mark what is wrong
-   * generally give as much additional information as possible. (But find the right balance: don not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)
+   * generally give as much additional information as possible. (But find the right balance: do not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)
  7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can create a gist. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.
  8. Only one bug per report: open different tickets for different issues
 
@@ -67,7 +67,12 @@ Please report bugs in English, so all users can understand them.
 
 If the bug appears to be a regression introduced in a new version of UI5, try to find the closest versions between which it was introduced and take special care to make sure the issue is not caused by your application's usage of any internal method which changed its behavior.
 
-Be aware that issues cannot be deleted once they are created, so be careful when creating them and do not use the issue tracker for testing.
+
+### Issue handling process
+
+When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "approved" label), close it if it is not an issue, or ask for more details. Approved issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes.
+
+An issue that is about a real bug is closed as soon as the fix is committed. The closing comment explains which patch version(s) of UI5 will contain the fix.
 
 
 ### Reporting Security Issues
@@ -91,6 +96,7 @@ Status of open issues:
  * unconfirmed: this report needs confirmation whether it is really a bug (no label; this is the default status)
  * approved: this issue is confirmed to be a bug
  * author action: the author is required to provide information
+ * contribution welcome: this fix/enhancement is approved and you are invited to contribute it
 
 Status/resolution of closed issues:
  * fixed: a fix for the issue was provided
@@ -115,18 +121,16 @@ You are welcome to contribute code to OpenUI5 in order to fix bugs or to impleme
 
 There are three important things to know:
 
-1.  You must be aware of the Apache License (which describes contributions) and **agree to the Contributors License Agreement**. This is common practice in all major Open Source projects and we made it as simple as possible for you to express your consent: just mention it in your commit message. See the respective section below for details, also for special rules for company contributors.
+1.  You must be aware of the Apache License (which describes contributions) and **agree to the Contributors License Agreement**. This is common practice in all major Open Source projects. To make this process as simple as possible, we are using *[CLA assistant](https://cla-assistant.io/)* for individual contributions. CLA assistant is an open source tool that integrates with GitHub very well and enables a one-click-experience for accepting the CLA. For company contributers special rules apply. See the respective section below for details.
 2.  There are **several requirements regarding code style, quality, and product standards** which need to be met (we also have to follow them). The respective section below gives more details on the coding guidelines.
-3.  **Not all proposed contributions can be accepted**. Some features may e.g. just fit a third-party add-on better. The code must fit the overall direction of OpenUI5 and really improve it, so there should be some "bang for the byte". For most bug fixes this is a given, but major feature implementation must first be discussed with one of the [OpenUI5 committers](https://github.com/orgs/SAP/teams/openui5). The more effort you invest, the better you should clarify in advance whether the contribution fits: open an enhancement ticket in the issue tracker to discuss the feature you plan to implement, this avoids disappointment.
+3.  **Not all proposed contributions can be accepted**. Some features may e.g. just fit a third-party add-on better. The code must fit the overall direction of OpenUI5 and really improve it, so there should be some "bang for the byte". For most bug fixes this is a given, but major feature implementation first need to be discussed with one of the OpenUI5 committers (the top 20 or more of the [Contributors List](https://github.com/SAP/openui5/graphs/contributors)), possibly one who touched the related code recently. The more effort you invest, the better you should clarify in advance whether the contribution fits: the best way would be to just open an enhancement ticket in the issue tracker to discuss the feature you plan to implement. We will then forward the proposal to the respective code owner, this avoids disappointment.
 
 ### Contributor License Agreement
 
 When you contribute (code, documentation, or anything else), you have to be aware that your contribution is covered by the same [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0) that is applied to OpenUI5 itself.
 In particular you need to agree to the Individual Contributor License Agreement,
-which can be [downloaded here](https://github.com/SAP/openui5/blob/master/docs/SAP Individual Contributor License Agreement.pdf).
-(this applies to all contributors, including those contributing on behalf of a company). If you agree to its content, express this consent in the commit message of your pull request.
-You can e.g. write:
-```I hereby declare to agree to the OpenUI5 Individual Contributor License Agreement```
+which can be [found here](https://gist.github.com/CLAassistant/bd1ea8ec8aa0357414e8).
+(This applies to all contributors, including those contributing on behalf of a company). If you agree to its content, you simply have to click on the link posted by the CLA assistant as a comment to the pull request. Click it to check the CLA, then accept it on the following screen if you agree to it. CLA assistant will save this decision for upcoming contributions and will notify you if there is any change to the CLA in the meantime.
 
 #### Company Contributors
 
@@ -181,16 +185,18 @@ If this list sounds lengthy and hard to achieve - well, that's what WE have to c
 1.  Make sure the change would be welcome (e.g. a bugfix or a useful feature); best do so by proposing it in a GitHub issue
 2.  Create a branch forking the openui5 repository and do your change
 3.  Commit and push your changes on that branch
-    -   When you have several commits, squash them into one
+    -   When you have several commits, squash them into one (see [this explanation](http://davidwalsh.name/squash-commits-git)) - this also needs to be done when additional changes are required after the code review
 
-4.  In the Commit message, state that you agree to our CLA (see above)
+4.  In the commit message follow the [commit message guidelines](docs/guidelines.md#git-guidelines)
 5.  If your change fixes an issue reported at GitHub, add the following line to the commit message: 
     - ```Fixes https://github.com/SAP/openui5/issues/(issueNumber)```
     - Do NOT add a colon after "Fixes" - this prevents automatic closing.
+	- When your pull request number is known (e.g. because you enhance a pull request after a code review), you can also add the line ```Closes https://github.com/SAP/openui5/pull/(pullRequestNumber)```
 6.  Create a Pull Request to github.com/SAP/openui5
-7.  Wait for our code review and approval, possibly enhancing your change on request
+7.  Follow the link posted by the CLA assistant to your pull request and accept it, as described in detail above.
+8.  Wait for our code review and approval, possibly enhancing your change on request
     -   Note that the UI5 developers also have their regular duties, so depending on the required effort for reviewing, testing and clarification this may take a while
 
-8.  Once the change has been approved we will inform you in a comment
-9.  Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
-10.  We will close the pull request, feel free to delete the now obsolete branch
+9.  Once the change has been approved we will inform you in a comment
+10.  Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
+11.  We will close the pull request, feel free to delete the now obsolete branch

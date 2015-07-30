@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', 'sap/ui/core/support/Pl
 		 * @version ${version}
 		 * @constructor
 		 * @private
-		 * @name sap.ui.core.support.plugins.Selector
+		 * @alias sap.ui.core.support.plugins.Selector
 		 */
 		var Selector = Plugin.extend("sap.ui.core.support.plugins.Selector", {
 			constructor : function(oSupportStub) {
@@ -41,8 +41,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', 'sap/ui/core/support/Pl
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Selector#onsapUiSupportSelectorHighlight
-		 * @function
 		 */
 		Selector.prototype.onsapUiSupportSelectorHighlight = function(oEvent){
 			highlight(oEvent.getParameter("id"), this, oEvent.getParameter("sendInfo"));
@@ -138,4 +136,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', 'sap/ui/core/support/Pl
 
 	return Selector;
 
-}, /* bExport= */ true);
+});

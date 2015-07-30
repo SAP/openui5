@@ -1,15 +1,28 @@
-sap.ui.controller("sap.m.sample.ListGrouping.List", {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/m/GroupHeaderListItem',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, GroupHeaderListItem, Controller, JSONModel) {
+	"use strict";
 
-	onInit : function (evt) {
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		this.getView().setModel(oModel);
-	},
-	
-	getGroupHeader: function (oGroup){
-		return new sap.m.GroupHeaderListItem( {
-			title: oGroup.key,
-			upperCase: false
-		} );
-	}
+	var ListController = Controller.extend("sap.m.sample.ListGrouping.List", {
+
+		onInit : function (evt) {
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+		},
+
+		getGroupHeader: function (oGroup){
+			return new GroupHeaderListItem( {
+				title: oGroup.key,
+				upperCase: false
+			} );
+		}
+	});
+
+
+	return ListController;
+
 });

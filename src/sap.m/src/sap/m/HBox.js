@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './FlexBox', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.HBox
+	 * @alias sap.m.HBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HBox = FlexBox.extend("sap.m.HBox", /** @lends sap.m.HBox.prototype */ { metadata : {

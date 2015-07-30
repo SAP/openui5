@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Month - sap.ui.unified.calendar</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.calendar.Month.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				src="../../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.model.type.Date");
+
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
+
+			var aSpecialDays = [["20140101",undefined,"Neujahr",1],
+			                    ["20140106",undefined,"Heilige Drei Könige",1],
+			                    ["20140214",undefined,"Valentinstag",2],
+			                    ["20140303",undefined,"Rosenmontag",2],
+			                    ["20140304",undefined,"Fastnacht",2],
+			                    ["20140305",undefined,"Aschermittwoch",2],
+			                    ["20140418",undefined,"Karfreitag",1],
+			                    ["20140420",undefined,"Ostersonntag",1],
+			                    ["20140421",undefined,"Ostermontag",1],
+			                    ["20140501",undefined,"Maifeiertag",1],
+			                    ["20140511",undefined,"Muttertag",2],
+			                    ["20140529",undefined,"Christi Himmelfahrt",1],
+			                    ["20140608",undefined,"Pfingstsonntag",1],
+			                    ["20140609",undefined,"Pfingstmontag",1],
+			                    ["20140619",undefined,"Fronleichnam",1],
+			                    ["20140815",undefined,"Mariä Himmelfahrt",2],
+			                    ["20141003",undefined,"Tag der Deutschen Einheit",1],
+			                    ["20141005",undefined,"Erntedankfest",2],
+			                    ["20141031",undefined,"Reformationstag",2],
+			                    ["20141101",undefined,"Allerheiligen",1],
+			                    ["20141116",undefined,"Volkstrauertag",2],
+			                    ["20141119",undefined,"Buß- und Bettag",2],
+			                    ["20141123",undefined,"Totensonntag",2],
+			                    ["20141130",undefined,"1. Advent",2],
+			                    ["20141206",undefined,"Nikolaus",2],
+			                    ["20141207",undefined,"2. Advent",2],
+			                    ["20141214",undefined,"3. Advent",2],
+			                    ["20141221",undefined,"4. Advent",2],
+			                    ["20141224",undefined,"Heiligabend",2],
+			                    ["20141225","20141226","Weihnachten",1],
+			                    ["20141231",undefined,"Silvester",2],
+			                    ["20150101",undefined,"Neujahr",1],
+			                    ["20150106",undefined,"Heilige Drei Könige",1],
+			                    ["20140804","20140810","Urlaub",3],
+			                    ["20140701",undefined,"Type01",1],
+			                    ["20140702",undefined,"Type02",2],
+			                    ["20140703",undefined,"Type03",3],
+			                    ["20140704",undefined,"Type04",4],
+			                    ["20140705",undefined,"Type05",5],
+			                    ["20140706",undefined,"Type06",6],
+			                    ["20140707",undefined,"Type07",7],
+			                    ["20140708",undefined,"Type08",8],
+			                    ["20140709",undefined,"Type09",9],
+			                    ["20140710",undefined,"Type10",10]];
+
+			var oMonth = new sap.ui.unified.calendar.Month("Month1",{
+				focus: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF1");
+					var oMonth = oEvent.oSource;
+					var oDate = oEvent.getParameter("date");
+					if (oDate) {
+						oTF.setValue(oFormatYyyymmdd.format(oDate));
+					} else {
+						oTF.setValue("");
+					}
+					if (!oEvent.getParameter("otherMonth")) {
+						oTF.setValueState(sap.ui.core.ValueState.None);
+					} else {
+						oTF.setValueState(sap.ui.core.ValueState.Error);
+					}
+				},
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF2");
+					var oMonth = oEvent.oSource;
+					var aSelectedDates = oMonth.getSelectedDates();
+					var oDate;
+					if (aSelectedDates.length > 0 ) {
+						oDate = aSelectedDates[0].getStartDate();
+						oTF.setValue(oFormatYyyymmdd.format(oDate));
+					} else {
+						oTF.setValue("");
+					}
+				}
+			}).placeAt("sample1");
+
+			var oLabel = new sap.ui.commons.Label({text: "focused date", labelFor: "TF1"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF1",{
+				editable: true,
+				placeholder: "yyyyMMdd",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oMonth = sap.ui.getCore().byId("Month1");
+					var oDate = oFormatYyyymmdd.parse(sValue);
+					oMonth.setDate(oDate);
+					oTF.setValueState(sap.ui.core.ValueState.None);
+				}
+			}).placeAt("event1");
+
+			oLabel = new sap.ui.commons.Label({text: "selected date", labelFor: "TF2"}).placeAt("event1");
+			oInput = new sap.ui.commons.TextField("TF2",{
+				editable: true,
+				placeholder: "yyyyMMdd",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oMonth = sap.ui.getCore().byId("Month1");
+					if(sValue.length == 8 && !isNaN(sValue)){
+						var oDate = oFormatYyyymmdd.parse(sValue);
+						var aSelectedDates = oMonth.getSelectedDates();
+						var oDateRange;
+						if (aSelectedDates.length == 0 ) {
+							oDateRange = new sap.ui.unified.DateRange({startDate: oDate});
+							oMonth.addSelectedDate(oDateRange);
+						} else {
+							oDateRange = aSelectedDates[0];
+							oDateRange.setStartDate(oDate);
+						}
+					}else if(!sValue){
+						oMonth.destroySelectedDates();
+					}
+				}
+			}).placeAt("event1");
+
+			var oButton = new sap.ui.commons.ToggleButton({
+				text: "special days",
+				press: function(oEvent){
+					var bPressed = oEvent.getParameter("pressed");
+					if (bPressed) {
+						for (var i = 0; i < aSpecialDays.length; i++) {
+							var aSpecialDay = aSpecialDays[i];
+							var sType = "";
+							if(aSpecialDay[3] < 10) {
+								sType = "Type0"+aSpecialDay[3];
+							}else {
+								sType = "Type"+aSpecialDay[3];
+							}
+							sap.ui.getCore().byId("Month1").addSpecialDate(new sap.ui.unified.DateTypeRange({
+								startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
+								endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
+								type: sType,
+								tooltip: aSpecialDay[2]
+							}));
+						}
+					} else {
+						sap.ui.getCore().byId("Month1").destroySpecialDates();
+					}
+				}
+			}).placeAt("event1");
+
+			// single interval selection
+			oMonth = new sap.ui.unified.calendar.Month("Month2",{
+				intervalSelection: true,
+				select: function(oEvent){
+					var oTF1 = sap.ui.getCore().byId("TF2-start");
+					var oTF2 = sap.ui.getCore().byId("TF2-end");
+					var oMonth = oEvent.oSource;
+					var aSelectedDates = oMonth.getSelectedDates();
+					var oDate;
+					if (aSelectedDates.length > 0 ) {
+						oDate = aSelectedDates[0].getStartDate();
+						if (oDate) {
+							oTF1.setValue(oFormatYyyymmdd.format(oDate));
+						} else {
+							oTF1.setValue("");
+						}
+						oDate = aSelectedDates[0].getEndDate();
+						if (oDate) {
+							oTF2.setValue(oFormatYyyymmdd.format(oDate));
+						} else {
+							oTF2.setValue("");
+						}
+					} else {
+						oTF1.setValue("");
+						oTF2.setValue("");
+					}
+				}
+			}).placeAt("sample2");
+
+			oLabel = new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
+			oInput = new sap.ui.commons.TextField("TF2-start",{
+				editable: false
+			}).placeAt("event2");
+			oLabel = new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
+			oInput = new sap.ui.commons.TextField("TF2-end",{
+				editable: false
+			}).placeAt("event2");
+
+			oMonth = new sap.ui.unified.calendar.Month("Month3",{
+				intervalSelection: false,
+				singleSelection: false,
+				showHeader: true,
+				firstDayOfWeek: 2,
+				nonWorkingDays: [3, 5],
+				select: function(oEvent){
+					var oLB = sap.ui.getCore().byId("LB");
+					var oMonth = oEvent.oSource;
+					var aSelectedDates = oMonth.getSelectedDates();
+					var oDate;
+					if (aSelectedDates.length > 0 ) {
+						var aItems = oLB.getItems();
+						var oItem;
+						for(var i=0; i<aSelectedDates.length; i++){
+							oDate = aSelectedDates[i].getStartDate();
+							if(aItems[i]) {
+								oItem = aItems[i];
+							}else {
+								oItem = new sap.ui.core.Item();
+								oLB.addItem(oItem);
+							}
+							if (oDate) {
+								oItem.setText(oFormatYyyymmdd.format(oDate));
+							} else {
+								oItem.setText("");
+							}
+						}
+						if(aItems.length > aSelectedDates.length) {
+							for(var i=aSelectedDates.length; i<aItems.length; i++){
+								oLB.removeItem(i);
+								aItems[i].destroy();
+							}
+						}
+					} else {
+						oLB.destroyItems();
+					}
+				}
+			}).placeAt("sample3");
+
+			oLabel = new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
+			var oListBox = new sap.ui.commons.ListBox("LB",{
+				editable: false,
+				visibleItems: 10,
+				width: "8em"
+			}).placeAt("event3");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.unified.calendar.Month</code></h1>
+		<div>Single day Selection</div>
+		<br>
+		<div>
+		<div id="sample1" style="display:inline-block;"></div>
+		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>Single interval Selection</div>
+		<br>
+		<div>
+		<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
+		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>multiple day Selection (with custom weekend and weekstart)</div>
+		<br>
+		<div>
+		<div id="sample3" style="display:inline-block;"></div>
+		<div id="event3" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+
+	</body>
+</html>

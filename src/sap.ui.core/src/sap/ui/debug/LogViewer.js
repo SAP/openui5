@@ -3,8 +3,7 @@
  */
 
 // Provides a log viewer for debug purposes
-sap.ui.define('sap/ui/debug/LogViewer', ['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define('sap/ui/debug/LogViewer', function() {
 	"use strict";
 
 
@@ -16,7 +15,7 @@ sap.ui.define('sap/ui/debug/LogViewer', ['jquery.sap.global'],
 	 * @param {sRootId} sRootId id of the top level element that will contain the log entries
 	 *
 	 * @class HTML LogViewer that displays all entries of a Logger, as long as they match a filter and a minimal log level
-	 * @name sap.ui.debug.LogViewer
+	 * @alias sap.ui.debug.LogViewer
 	 */
 	var LogViewer = function(oWindow, sRootId) {
 		this.oWindow = oWindow;
@@ -57,8 +56,6 @@ sap.ui.define('sap/ui/debug/LogViewer', ['jquery.sap.global'],
 	 * @param {string} sText the string that is escaped.
 	 * @return {string} an XML escaped version of a given string sText
 	 * @private
-	 * @name sap.ui.debug.LogViewer.xmlEscape
-	 * @function
 	 */
 	LogViewer.xmlEscape = function(sText) {
 		sText = sText.replace(/\&/g, "&amp;");
@@ -70,8 +67,6 @@ sap.ui.define('sap/ui/debug/LogViewer', ['jquery.sap.global'],
 	 * Renders a single log entry to the DOM. Could be overwritten in subclasses.
 	 * @param {object} oLogEntry
 	 * @protected
-	 * @name sap.ui.debug.LogViewer#addEntry
-	 * @function
 	 */
 	LogViewer.prototype.addEntry = function(oLogEntry) {
 	

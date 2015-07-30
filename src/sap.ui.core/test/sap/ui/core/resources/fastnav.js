@@ -121,6 +121,8 @@
 		var oRoot = jQuery("#content");
 		var sStyle = null;
 		
+		oRoot.attr("data-"+jQuery.sap._FASTNAVIGATIONKEY, "true");
+		
 		oRoot.append(container(true, null, "Visible", [nl(),
 		    popup(1, false, false, false, "NONE", []),
 			popup(2, false, true, false, "DOCK", []),
@@ -162,6 +164,7 @@
 		    tabbable(true, false, null), nl()
 		]));
 		
+		
 		oRoot = jQuery("#content2");
 		oRoot.append(container(false, null, "", [
 		    tabbable(true, false, null), nl(),
@@ -169,7 +172,16 @@
 		]));
 		
 		
-		jQuery("#content").attr("data-"+jQuery.sap._FASTNAVIGATIONKEY, "true");
+		oRoot = jQuery("#content3");
+		
+		oRoot.append(container(true, null, "", [
+			tabbable(true)
+		]));
+		oRoot.append(tabbable(false, false, "height:auto;", 0).append(container(true, null, "", [
+		   tabbable(true)
+		])));
+		oRoot.append(tabbable(true));
+		
 		
 		setTimeout(function(){
 			sap.ui.getCore().getEventBus().publish("fastnav", "screenready");

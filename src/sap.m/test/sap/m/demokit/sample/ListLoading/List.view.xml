@@ -9,10 +9,10 @@
 		busyIndicatorDelay="500"
 		enableBusyIndicator="true"
 		noDataText="No products available"
-		items="{productmodel>/Products}">
+		items="{/ProductCollection}">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Products" />
+				<Title text="Products" level="H2" />
 				<ToolbarSpacer />
 				<Button
 					icon="sap-icon://refresh"
@@ -20,8 +20,10 @@
 			</Toolbar>
 		</headerToolbar>
 		<StandardListItem
-			title="{productmodel>Name}"
-			info="{productmodel>Price} EUR"
-			description="{productmodel>ShortDescription}" />
+			title="{Name}"
+			description="{ProductId}"
+			icon="{ProductPicUrl}"
+			iconDensityAware="false"
+			iconInset="false" />
 	</List>
 </mvc:View>

@@ -26,20 +26,260 @@
 //require the mock server before testing
 jQuery.sap.require("sap.ui.core.util.MockServer");
 
-	var oMockServer = new sap.ui.core.util.MockServer({
-   	 rootUri: "/myService/"
-	});
-	var simpleXML = 'testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
-	var simpleJSON = 'testdata/apfapp/';
-	 oMockServer.simulate(simpleXML, simpleJSON);
-	 oMockServer.start();
+
+module('GIVEN data and complex filter features in MockServer', {
+    setup: function () {
+    	this.oMockServer = new sap.ui.core.util.MockServer({
+   	   	 rootUri: "/myService/"
+   		});
+   		this.simpleXML = 'testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
+   		this.simpleJSON = 'testdata/apfapp/';
+   		this.oMockServer.simulate(this.simpleXML, this.simpleJSON);
+   		this.oMockServer.start();
+    	
+        this.log = function (text) {
+            var prevLevel = jQuery.sap.log.getLevel();
+            jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+            jQuery.sap.log.debug("  ##test: " + text);
+            jQuery.sap.log.setLevel(prevLevel);
+        };
+        this.post = function (object, type) {
+            var oSettings = JSON.stringify(object);
+            this.oResponse = jQuery.sap.syncPost("/myService/" + type, oSettings, "json");
+        };
+        this.postSet = function (aSet, type) {
+            var i = 0;
+            for (i; i < aSet.length; ++i) {
+                this.oResponse = jQuery.sap.syncPost("/myService/" + type, JSON.stringify(aSet[i]), "json");
+            }
+        };
+        this.postTable = function (aTable, oTemplate, sType) {
+            var row, attr = 0, member;
+            var obj;
+            for (row = 0; row < aTable.length; ++row) {
+                obj = {};
+                attr = 0;
+                for (member in oTemplate) {
+                    if (oTemplate.hasOwnProperty(member)) {
+                        var value = (aTable[row])[attr];
+                        obj["" + member] = value;
+                        ++attr;
+                    }
+                }
+                this.oResponse = jQuery.sap.syncPost("/myService/" + sType, JSON.stringify(obj), "json");
+            }
+        };
+    },
+    teardown: function () {
+        this.oMockServer.stop();
+        this.oMockServer.destroy();
+    }
+});
+
+// EQ upper case not supported, no hint/error message what goes wrong
+   test("row filter condition", function () {
+    var rowExpr = "(SAPClient eq 'SAPClient_0') and (Currency_E eq 6287.57)";
+    var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    ok(this.oResponse !== undefined, "response not undefined");
+    equal(this.oResponse.statusCode, 200);
+    equal(this.oResponse.data.d.results.length, 1, "1 row");
+});
+test("row filter condition", function () {
+    var rowExpr = "(SAPClient EQ 'SAPClient_0')";
+    var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, 400, "is as expected");
+});
+
+test("AND not supported", function () {
+    var rowExpr = "(SAPClient eq 'SAPClient_0') AND (Currency_E eq 6287.57)";
+    var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    //ok(isNaN(this.oResponse.statusCode), "is as expected");
+    equal(this.oResponse.statusCode, 400);
+});
+test("row filter condition", function () {
+    var rowExpr = "(SAPClient eq 'SAPClient_0')";
+    var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    ok(this.oResponse !== undefined, "response not undefined");
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results.length, 1, "1 row");
+});
+test("row filter condition w/o brackets", function () {
+    var rowExpr = "SAPClient eq 'SAPClient_0' and Currency_E eq 6287.57 and P_SAPClient eq 776";
+    var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    ok(this.oResponse !== undefined, "response not undefined");
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results.length, 1, "1 row");
+});
+
+test("BUG row filter condition w/o brackets shall fail", function () {
+    var row1 = "SAPClient eq 'SAPClient_0' and Currency_E eq 6287.57 and P_SAPClient eq 776";
+    var row2 = "SAPClient eq 'SAPClient_1' and Currency_E eq 3878.94 and P_SAPClient eq 776";
+    var wcaQuery = "TestQueryResults?$filter=" + row1 + " or " + row2;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    ok(this.oResponse !== undefined, "response not undefined");
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results.length, 1, "correct 2 rows <<<<< BUG");
+    equal(this.oResponse.data.d.results[0].ID, "ID_1", " correct ID_0 <<<<< BUG");
+});
+
+test("row filter condition with brackets", function () {
+    var row1 = "(SAPClient eq 'SAPClient_0' and Currency_E eq 6287.57 and P_SAPClient eq 776)";
+    var row2 = "(SAPClient eq 'SAPClient_1' and Currency_E eq 3878.94 and P_SAPClient eq 776)";
+    var wcaQuery = "TestQueryResults?$filter=" + row1 + " or " + row2;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    ok(this.oResponse !== undefined, "response not undefined");
+    equal(this.oResponse.statusCode, "200", "200 expected");
+    equal(this.oResponse.data.d.results.length, 2, "2 row");
+});
+
+test("multi rows, 1", function () {
+    var orExpr = "SAPClient eq 'SAPClient_0' or Currency_E eq 6287.57 or P_SAPClient eq 776";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+});
+
+test("multi rows, 2", function () {
+    var orExpr = "SAPClient eq 'SAPClient_0' or SAPClient eq 'SAPClient_1'";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+});
+
+test("multi rows, 2", function () {
+    var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776) or (SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200", "200 expected");
+    equal(this.oResponse.data.d.results.length, 2, "2 row");
+});
+
+test("multi rows, 2", function () {
+    var orExpr = "SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    equal(this.oResponse.data.d.results[1].ID, "ID_1");
+});
+
+test("multi rows, 2, brackets around or", function () {
+    var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    equal(this.oResponse.data.d.results[1].ID, "ID_1");
+});
+
+// BUG with brackets
+test("multi rows, 2, brackets around or", function () {
+    var orExpr = "((SAPClient eq 'SAPClient_0') and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    equal(this.oResponse.data.d.results.length, 1, "1 row  <<<<<<<<<<< BUG");  // should be 2 rows
+});
+
+test("multi rows, 2, brackets around or AND eq ", function () {
+    var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776) and P_SAPClient eq 776";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200");
+    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    equal(this.oResponse.data.d.results[1].ID, "ID_1");
+});
+
+test("multi rows, 2, brackets around or AND eq in brackets", function () {
+    var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1' and P_SAPClient eq 776) and (P_SAPClient eq 776 or P_SAPClient eq 776)";
+    var wcaQuery = "TestQueryResults?$filter=" + orExpr;
+    this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(this.oResponse.statusCode, "200", "200 expected");
+    equal(this.oResponse.data.d.results.length, 2, "2 row");
+});
+
+
+test("POST object", function () {
+    var myData = {
+        "ID": "ID_100",
+        "P_SAPClient": 778,
+        "SAPClient": "SAPClient_100",
+        "Currency_E": 1234
+    };
+    this.post(myData, "TestQueryResults");
+    ok(this.oResponse !== undefined, "response undefined");
+
+    var rowExpr = "(SAPClient eq 'SAPClient_100')";
+    var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
+    var response = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
+    equal(response.statusCode, "200");
+    var atomId = "/myService/TestQueryResults(ID='ID_100',P_SAPClient=778)";
+    response = jQuery.sap.sjax({url: atomId });
+    equal(response.statusCode, "200");
+});
+
+test("POST set of objects", function () {
+    var aSet = [];
+    aSet.push({
+        "ID": "ID_101",
+        "P_SAPClient": 999,
+        "SAPClient": "SAPClient_999",
+        "Currency_E": 1234
+    });
+    aSet.push({
+        "ID": "ID_102",
+        "P_SAPClient": 999,
+        "SAPClient": "SAPClient_999",
+        "Currency_E": 11234
+    });
+    this.postSet(aSet, "TestQueryResults");
+
+    var response = jQuery.sap.sjax({url: "/myService/TestQueryResults?$filter=(SAPClient eq 'SAPClient_999')"});
+    equal(response.statusCode, "200");
+    equal(response.data.d.results.length, 2, "many");
+
+    response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_101',P_SAPClient=999)" });
+    ok(response.data.d !== undefined, "match");
+    response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_102',P_SAPClient=999)" });
+    ok(response.data.d !== undefined, "match");
+});
+
+test("POST table", function () {
+    var aTable = [
+        ["ID_101", 999, "SAPClient_999", 11234],
+        ["ID_102", 999, "SAPClient_999", 111234]
+    ];
+    var template = { 'ID': null, 'P_SAPClient': null, SAPClient: null, 'Currency_E': null };
+    this.postTable(aTable, template, "TestQueryResults");
+
+    var response = jQuery.sap.sjax({url: "/myService/TestQueryResults?$filter=(SAPClient eq 'SAPClient_999')"});
+    equal(response.statusCode, "200");
+    equal(response.data.d.results.length, 2, "many");
+
+    response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_101',P_SAPClient=999)" });
+    ok(response.data.d !== undefined, "match");
+    response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_102',P_SAPClient=999)" });
+    ok(response.data.d !== undefined, "match");
+});
 	 
 	 module('MockServer URI ', {
 	        setup: function () {
-	            this.localhost = "http://localhost:9999"; /* avoid running on the same host:port -> test will fail! */ 
+	            
+        		this.simpleXML = 'testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
+        		this.simpleJSON = 'testdata/apfapp/';
+	        	this.localhost = "http://localhost:9999"; /* avoid running on the same host:port -> test will fail! */ 
 	            this.path = "/mickeyMouse"
-	            this.absUri = simpleXML;
+	            this.absUri = this.simpleXML;
 	            this.metaUri = "/$metadata";
+	            
 	        }
 	    });
 	    test("test full URL path", function() {
@@ -47,7 +287,7 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 	            rootUri : this.localhost + this.path + "/"
 	        });
 	        var sMetadataUrl = this.localhost + this.path + this.metaUri;
-	        stubbedServer.simulate(simpleXML);
+	        stubbedServer.simulate(this.simpleXML);
 	        stubbedServer.start();
 	        ok(stubbedServer.isStarted(), "Mock server is started");
 
@@ -63,7 +303,7 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 	            rootUri : this.path + "/"
 	        });
 	        var sMetadataUrl = this.path + this.metaUri;
-	        stubbedServer.simulate(simpleXML);
+	        stubbedServer.simulate(this.simpleXML);
 	        stubbedServer.start();
 	        ok(stubbedServer.isStarted(), "Mock server is started");
 
@@ -93,7 +333,13 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 */
 	    module('MockServer requests', {
 	        setup: function () {
-
+	        	this.oMockServer = new sap.ui.core.util.MockServer({
+	        	   	 rootUri: "/myService/"
+	        		});
+	        		this.simpleXML = 'testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
+	        		this.simpleJSON = 'testdata/apfapp/';
+	        		this.oMockServer.simulate(this.simpleXML, this.simpleJSON);
+	        		this.oMockServer.start();
 	        },
 	        teardown: function () {
 	            this.oResponse = undefined;
@@ -101,6 +347,7 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 	            this.oFilter = undefined;
 	            this.oCoreApi = undefined;
 	            this.oMetadata = undefined;
+	            this.oMockServer.destroy();
 	        }
 	    });
 
@@ -453,244 +700,7 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 	        equal(this.oResponse.data.d.results.length, resultCounter, "same results");
 	    });
 */
-	    module('GIVEN data and complex filter features in MockServer', {
-	        setup: function () {
-	            this.rootUri = "/myService/";
-	            this.oMockServer = new sap.ui.core.util.MockServer({
-	                rootUri: this.rootUri
-	            });
-	            this.oMockServer.simulate(simpleXML, simpleJSON);
-	            this.oMockServer.start();
-	            this.log = function (text) {
-	                var prevLevel = jQuery.sap.log.getLevel();
-	                jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
-	                jQuery.sap.log.debug("  ##test: " + text);
-	                jQuery.sap.log.setLevel(prevLevel);
-	            };
-	            this.post = function (object, type) {
-	                var oSettings = JSON.stringify(object);
-	                this.oResponse = jQuery.sap.syncPost(this.rootUri + type, oSettings, "json");
-	            };
-	            this.postSet = function (aSet, type) {
-	                var i = 0;
-	                for (i; i < aSet.length; ++i) {
-	                    this.oResponse = jQuery.sap.syncPost(this.rootUri + type, JSON.stringify(aSet[i]), "json");
-	                }
-	            };
-	            this.postTable = function (aTable, oTemplate, sType) {
-	                var row, attr = 0, member;
-	                var obj;
-	                for (row = 0; row < aTable.length; ++row) {
-	                    obj = {};
-	                    attr = 0;
-	                    for (member in oTemplate) {
-	                        if (oTemplate.hasOwnProperty(member)) {
-	                            var value = (aTable[row])[attr];
-	                            obj["" + member] = value;
-	                            ++attr;
-	                        }
-	                    }
-	                    this.oResponse = jQuery.sap.syncPost(this.rootUri + sType, JSON.stringify(obj), "json");
-	                }
-	            };
-	        },
-	        teardown: function () {
-	            this.oMockServer.stop();
-	            this.oMockServer.destroy();
-	        }
-	    });
 
-	// EQ upper case not supported, no hint/error message what goes wrong
-	    test("row filter condition", function () {
-	        var rowExpr = "(SAPClient EQ 'SAPClient_0')";
-	        var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, 400, "is as expected");
-	    });
-	    test("row filter condition", function () {
-	        var rowExpr = "(SAPClient eq 'SAPClient_0') and (Currency_E eq 6287.57)";
-	        var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, 200);
-	        equal(this.oResponse.data.d.results.length, 1, "1 row");
-	    });
-	    test("AND not supported", function () {
-	        var rowExpr = "(SAPClient eq 'SAPClient_0') AND (Currency_E eq 6287.57)";
-	        var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        ok(isNaN(this.oResponse.statusCode), "is as expected");
-	    });
-	    test("row filter condition", function () {
-	        var rowExpr = "(SAPClient eq 'SAPClient_0')";
-	        var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results.length, 1, "1 row");
-	    });
-	    test("row filter condition w/o brackets", function () {
-	        var rowExpr = "SAPClient eq 'SAPClient_0' and Currency_E eq 6287.57 and P_SAPClient eq 776";
-	        var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results.length, 1, "1 row");
-	    });
-
-	    test("BUG row filter condition w/o brackets shall fail", function () {
-	        var row1 = "SAPClient eq 'SAPClient_0' and Currency_E eq 6287.57 and P_SAPClient eq 776";
-	        var row2 = "SAPClient eq 'SAPClient_1' and Currency_E eq 3878.94 and P_SAPClient eq 776";
-	        var wcaQuery = "TestQueryResults?$filter=" + row1 + " or " + row2;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results.length, 1, "correct 2 rows <<<<< BUG");
-	        equal(this.oResponse.data.d.results[0].ID, "ID_1", " correct ID_0 <<<<< BUG");
-	    });
-
-	    test("row filter condition with brackets", function () {
-	        var row1 = "(SAPClient eq 'SAPClient_0' and Currency_E eq 6287.57 and P_SAPClient eq 776)";
-	        var row2 = "(SAPClient eq 'SAPClient_1' and Currency_E eq 3878.94 and P_SAPClient eq 776)";
-	        var wcaQuery = "TestQueryResults?$filter=" + row1 + " or " + row2;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 expected");
-	        equal(this.oResponse.data.d.results.length, 2, "2 row");
-	    });
-
-	    test("multi rows, 1", function () {
-	        var orExpr = "SAPClient eq 'SAPClient_0' or Currency_E eq 6287.57 or P_SAPClient eq 776";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results[0].ID, "ID_0");
-	    });
-
-	    test("multi rows, 2", function () {
-	        var orExpr = "SAPClient eq 'SAPClient_0' or SAPClient eq 'SAPClient_1'";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results[0].ID, "ID_0");
-	    });
-
-	    test("multi rows, 2", function () {
-	        var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776) or (SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200", "200 expected");
-	        equal(this.oResponse.data.d.results.length, 2, "2 row");
-	    });
-
-	    test("multi rows, 2", function () {
-	        var orExpr = "SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results[0].ID, "ID_0");
-	        equal(this.oResponse.data.d.results[1].ID, "ID_1");
-	    });
-
-	    test("multi rows, 2, brackets around or", function () {
-	        var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results[0].ID, "ID_0");
-	        equal(this.oResponse.data.d.results[1].ID, "ID_1");
-	    });
-
-	// BUG with brackets
-	    test("multi rows, 2, brackets around or", function () {
-	        var orExpr = "((SAPClient eq 'SAPClient_0') and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results[0].ID, "ID_0");
-	        equal(this.oResponse.data.d.results.length, 1, "1 row  <<<<<<<<<<< BUG");  // should be 2 rows
-	    });
-
-	    test("multi rows, 2, brackets around or AND eq ", function () {
-	        var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776) and P_SAPClient eq 776";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200");
-	        equal(this.oResponse.data.d.results[0].ID, "ID_0");
-	        equal(this.oResponse.data.d.results[1].ID, "ID_1");
-	    });
-
-	    test("multi rows, 2, brackets around or AND eq in brackets", function () {
-	        var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1' and P_SAPClient eq 776) and (P_SAPClient eq 776 or P_SAPClient eq 776)";
-	        var wcaQuery = "TestQueryResults?$filter=" + orExpr;
-	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200", "200 expected");
-	        equal(this.oResponse.data.d.results.length, 2, "2 row");
-	    });
-
-
-	    test("POST object", function () {
-	        var myData = {
-	            "ID": "ID_100",
-	            "P_SAPClient": 778,
-	            "SAPClient": "SAPClient_100",
-	            "Currency_E": 1234
-	        };
-	        this.post(myData, "TestQueryResults");
-	        ok(this.oResponse !== undefined, "response undefined");
-
-	        var rowExpr = "(SAPClient eq 'SAPClient_100')";
-	        var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
-	        var response = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(response.statusCode, "200");
-	        var atomId = "/myService/TestQueryResults(ID='ID_100',P_SAPClient=778)";
-	        response = jQuery.sap.sjax({url: atomId });
-	        equal(response.statusCode, "200");
-	    });
-
-	    test("POST set of objects", function () {
-	        var aSet = [];
-	        aSet.push({
-	            "ID": "ID_101",
-	            "P_SAPClient": 999,
-	            "SAPClient": "SAPClient_999",
-	            "Currency_E": 1234
-	        });
-	        aSet.push({
-	            "ID": "ID_102",
-	            "P_SAPClient": 999,
-	            "SAPClient": "SAPClient_999",
-	            "Currency_E": 11234
-	        });
-	        this.postSet(aSet, "TestQueryResults");
-
-	        var response = jQuery.sap.sjax({url: "/myService/TestQueryResults?$filter=(SAPClient eq 'SAPClient_999')"});
-	        equal(response.statusCode, "200");
-	        equal(response.data.d.results.length, 2, "many");
-
-	        response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_101',P_SAPClient=999)" });
-	        ok(response.data.d !== undefined, "match");
-	        response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_102',P_SAPClient=999)" });
-	        ok(response.data.d !== undefined, "match");
-	    });
-
-	    test("POST table", function () {
-	        var aTable = [
-	            ["ID_101", 999, "SAPClient_999", 11234],
-	            ["ID_102", 999, "SAPClient_999", 111234]
-	        ];
-	        var template = { 'ID': null, 'P_SAPClient': null, SAPClient: null, 'Currency_E': null };
-	        this.postTable(aTable, template, "TestQueryResults");
-
-	        var response = jQuery.sap.sjax({url: "/myService/TestQueryResults?$filter=(SAPClient eq 'SAPClient_999')"});
-	        equal(response.statusCode, "200");
-	        equal(response.data.d.results.length, 2, "many");
-
-	        response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_101',P_SAPClient=999)" });
-	        ok(response.data.d !== undefined, "match");
-	        response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_102',P_SAPClient=999)" });
-	        ok(response.data.d !== undefined, "match");
-	    });
 	
 </script>
 </head>

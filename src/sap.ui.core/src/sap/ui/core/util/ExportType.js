@@ -9,35 +9,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	/**
 	 * Constructor for a new ExportType.
-	 * 
-	 * Accepts an object literal <code>mSettings</code> that defines initial 
-	 * property values, aggregated and associated objects as well as event handlers. 
-	 * 
-	 * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
-	 * then the framework assumes property, aggregation, association, event in that order. 
-	 * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
-	 * or "event:" can be added to the name of the setting (such a prefixed name must be
-	 * enclosed in single or double quotes).
-	 *
-	 * The supported settings are:
-	 * <ul>
-	 * <li>Properties
-	 * <ul>
-	 * <li>{@link #getFileExtension fileExtension} : string</li>
-	 * <li>{@link #getMimeType mimeType} : string</li>
-	 * <li>{@link #getCharset charset} : string</li></ul>
-	 * </li>
-	 * <li>Aggregations
-	 * <ul></ul>
-	 * </li>
-	 * <li>Associations
-	 * <ul></ul>
-	 * </li>
-	 * <li>Events
-	 * <ul></ul>
-	 * </li>
-	 * </ul>
-
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
 	 * @param {object} [mSettings] initial settings for the new control
@@ -52,14 +23,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.util.ExportType
+	 * @alias sap.ui.core.util.ExportType
 	 */
 	var ExportType = ManagedObject.extend('sap.ui.core.util.ExportType', {
 
 		metadata: {
+			library: "sap.ui.core",
 			properties: {
+				/**
+				 *  File extension.
+				 */
 				fileExtension: 'string',
+				
+				/**
+				 * MIME type.
+				 */
 				mimeType: 'string',
+				
+				/**
+				 * Charset.
+				 */
 				charset: 'string'
 			}
 		}
@@ -67,97 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	});
 
 	/**
-	 * Creates a new subclass of class sap.ui.core.util.ExportType with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.core.util.ExportType.extend
-	 * @function
-	 */
-
-	/**
-	 * Getter for property <code>fileExtension</code>.
-	 * File extension
-	 *
-	 * Default value is empty/<code>undefined</code>
-	 *
-	 * @return {string} the value of property <code>fileExtension</code>
-	 * @public
-	 * @name sap.ui.core.util.ExportType#getFileExtension
-	 * @function
-	 */
-
-	/**
-	 * Setter for property <code>fileExtension</code>.
-	 *
-	 * Default value is empty/<code>undefined</code> 
-	 *
-	 * @param {string} sFileExtension  new value for property <code>fileExtension</code>
-	 * @return {sap.ui.core.util.ExportType} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.core.util.ExportType#setFileExtension
-	 * @function
-	 */
-
-	/**
-	 * Getter for property <code>mimeType</code>.
-	 * MIME type
-	 *
-	 * Default value is empty/<code>undefined</code>
-	 *
-	 * @return {string} the value of property <code>mimeType</code>
-	 * @public
-	 * @name sap.ui.core.util.ExportType#getMimeType
-	 * @function
-	 */
-
-	/**
-	 * Setter for property <code>mimeType</code>.
-	 *
-	 * Default value is empty/<code>undefined</code> 
-	 *
-	 * @param {string} sMimeType  new value for property <code>mimeType</code>
-	 * @return {sap.ui.core.util.ExportType} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.core.util.ExportType#setMimeType
-	 * @function
-	 */
-
-	/**
-	 * Getter for property <code>charset</code>.
-	 * Charset
-	 *
-	 * Default value is empty/<code>undefined</code>
-	 *
-	 * @return {string} the value of property <code>charset</code>
-	 * @public
-	 * @name sap.ui.core.util.ExportType#getCharset
-	 * @function
-	 */
-
-	/**
-	 * Setter for property <code>charset</code>.
-	 *
-	 * Default value is empty/<code>undefined</code> 
-	 *
-	 * @param {string} sCharset  new value for property <code>charset</code>
-	 * @return {sap.ui.core.util.ExportType} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.core.util.ExportType#setCharset
-	 * @function
-	 */
-
-	/**
 	 * @private
-	 * @name sap.ui.core.util.ExportType#init
-	 * @function
 	 */
 	ExportType.prototype.init = function() {
 		this._oExport = null;
@@ -170,8 +63,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @return {string} content
 	 *
 	 * @protected
-	 * @name sap.ui.core.util.ExportType#_generate
-	 * @function
 	 */
 	ExportType.prototype._generate = function(oExport) {
 		this._oExport = oExport;
@@ -187,8 +78,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @return {string} content
 	 *
 	 * @protected
-	 * @name sap.ui.core.util.ExportType#generate
-	 * @function
 	 */
 	ExportType.prototype.generate = function() {
 		return '';
@@ -200,8 +89,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @return {int} count
 	 *
 	 * @protected
-	 * @name sap.ui.core.util.ExportType#getColumnCount
-	 * @function
 	 */
 	ExportType.prototype.getColumnCount = function() {
 		if (this._oExport) {
@@ -216,8 +103,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @return {int} count
 	 *
 	 * @protected
-	 * @name sap.ui.core.util.ExportType#getRowCount
-	 * @function
 	 */
 	ExportType.prototype.getRowCount = function() {
 		if (this._oExport && this._oExport.getBinding("rows")) {
@@ -231,8 +116,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 *
 	 * @return {Generator} generator
 	 * @protected
-	 * @name sap.ui.core.util.ExportType#columnGenerator
-	 * @function
 	 */
 	ExportType.prototype.columnGenerator = function() {
 		/*
@@ -281,8 +164,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 *
 	 * @return {Generator} generator
 	 * @protected
-	 * @name sap.ui.core.util.ExportType#cellGenerator
-	 * @function
 	 */
 	ExportType.prototype.cellGenerator = function() {
 		/*
@@ -341,8 +222,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 *
 	 * @return {Generator} generator
 	 * @protected
-	 * @name sap.ui.core.util.ExportType#rowGenerator
-	 * @function
 	 */
 	ExportType.prototype.rowGenerator = function() {
 		/*
@@ -400,4 +279,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	return ExportType;
 
-}, /* bExport= */ true);
+});

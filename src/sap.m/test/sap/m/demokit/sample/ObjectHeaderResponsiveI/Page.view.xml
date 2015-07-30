@@ -7,10 +7,15 @@
 	<ObjectHeader
 		id="oh1"
 		responsive="true"
+		fullScreenOptimized="true"
 		binding="{/ProductCollection/0}"
 		intro="{Description}"
-		title="{Name}"
-		number="{Price}"
+		title="Long title truncated to 80 chars on all devices and to 50 chars on phone portrait"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}"
 		showMarkers="true"
 		markFlagged="true"
@@ -32,7 +37,8 @@
 			<IconTabBar
 				id="itb1"
 				selectedKey="key3"
-				upperCase="true">
+				upperCase="true"
+				class="sapUiResponsiveContentPadding">
 				<items>
 				<IconTabFilter
 					text="Info"
@@ -40,7 +46,7 @@
 					key="key1">
 					<content>
 						<l:VerticalLayout
-							class="marginVerticalContent"
+							class="sapUiContentPadding"
 							width="100%">
 							<l:content>
 								<Image src="{ProductPicUrl}"/>
@@ -55,7 +61,7 @@
 					key="key2">
 					<content>
 						<l:VerticalLayout
-							class="marginVerticalContent"
+							class="sapUiContentPadding"
 							width="100%">
 							<l:content>
 								<Text text="Activity content goes here ..."/>
@@ -68,13 +74,7 @@
 					count="1"
 					key="key3">
 					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Link text="Attachment" press="onPress"/>
-							</l:content>
-						</l:VerticalLayout>
+						<Link text="Attachment" press="onPress"/>
 					</content>
 				</IconTabFilter>
 				<IconTabFilter
@@ -82,16 +82,10 @@
 					key="key4"
 					count="1">
 					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Link
-									text="Partner SAP SE"
-									target="_blank"
-									href="http://www.sap.com/"/>
-							</l:content>
-						</l:VerticalLayout>
+						<Link
+							text="Partner SAP SE"
+							target="_blank"
+							href="http://www.sap.com/"/>
 					</content>
 				</IconTabFilter>
 				</items>

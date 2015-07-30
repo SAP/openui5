@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Control property "invisible" - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_goldreflection">
+</script>
+
+<style>
+#status {
+	position: fixed;
+	display: block;
+	width: 350px;
+	height: 2rem;
+	line-height: 2rem;
+	text-align: center;
+	top: 0.5rem;
+	right: 0.5rem;
+	background-color: rgba(255, 255, 255, 0.85);
+	border-radius: 0.5rem;
+}
+
+#status_renderings {
+	font-weight: bold;
+	color: red;
+}
+
+.displayTable {
+	margin: 2.5%;
+	border: 1px solid black;
+}
+.displayTable td {
+	padding: 0.5rem;
+	border: 1px dashed grey;
+}
+
+.firstRow {
+	border-bottom: 2px solid black;
+}
+.firstRow td {
+	font-weight: bold;
+	text-align: center;
+}
+
+.sapUiLbl.heading {
+	font-size: 1.5rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+}
+
+.groupsSeparator {
+	font-size: 1.5rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+	font-weight: bold;
+	text-align: center;
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+</style>
+
+<script>
+	try{
+		sap.ui.getCore().loadLibrary("sap.ui.commons");
+		sap.ui.getCore().loadLibrary("sap.ui.ux3");
+		sap.ui.getCore().loadLibrary("sap.ui.unified");
+		sap.ui.getCore().loadLibrary("sap.m");
+		sap.ui.getCore().loadLibrary("sap.ui.table");
+	}catch(e){
+		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		throw(e);
+	}
+
+	var aInvisibleControls = [];
+	var oLayout = new sap.ui.commons.layout.MatrixLayout({
+		width: "95%"
+	}).addStyleClass("displayTable").addDelegate({
+		onAfterRendering: function() {
+			var $Status = jQuery("#status_renderings");
+			$Status.text(parseInt($Status.text(), 10) + 1);
+		}
+	});
+
+	function toggleVisible(i, oControl) {
+		oControl.setVisible(!oControl.getVisible());
+	}
+
+	function toggleAllVisible() {
+		jQuery.each(aInvisibleControls, toggleVisible);
+	}
+
+	function addRow(sTitle, oControl) {
+		var oInvisibleControl = oControl.clone().setVisible(false);
+		aInvisibleControls.push(oInvisibleControl);
+
+		oLayout.createRow(
+			new sap.ui.commons.Label({ text: sTitle }),
+			oControl,
+			oInvisibleControl,
+			new sap.ui.commons.Button({
+				text: "toggle",
+				press: function() {
+					toggleVisible(0, oInvisibleControl);
+				}
+			})
+		);
+	}
+	
+	function addHeadingRow() {
+		var aRowArgs = [];
+		
+		for (var i = 0; i < arguments.length; i++) {
+			var oContent = arguments[i];
+			if (typeof oContent === "string") {
+				oContent = new sap.ui.commons.Label({text: oContent});
+			}
+			var oCell = new sap.ui.commons.layout.MatrixLayoutCell({content: oContent});
+			oCell.addStyleClass("heading");
+			aRowArgs.push(oCell);
+		}
+		
+		switch (arguments.length) {
+			case 1:
+				oCell.setColSpan(4);
+				oCell.addStyleClass("groupsSeparator");
+		}
+		
+		return oLayout.createRow.apply(oLayout, aRowArgs);
+	}
+
+	
+	var oFirstRow = addHeadingRow(
+		"Control name",
+		"Visible",
+		"Invisible",
+		new sap.ui.commons.Button({ text: "Toggle All", press: toggleAllVisible })
+	);
+	oLayout.getRows()[0].addStyleClass("firstRow")
+
+	oLayout.placeAt("uiArea1");
+
+	addHeadingRow("sap.ui.core");
+	addRow("core/Icon", new sap.ui.core.Icon({src: "sap-icon://menu"}));
+
+	addHeadingRow("sap.ui.layout");
+	addRow("layout/FixFlex", new sap.ui.layout.FixFlex({ fixContent: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})] }));
+	addRow("layout/HorizontalLayout", new sap.ui.layout.HorizontalLayout({ content: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})] }));
+	addRow("layout/VerticalLayout", new sap.ui.layout.VerticalLayout({ content: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})] }));
+
+	addHeadingRow("sap.ui.commons");
+	addRow("commons/Button", new sap.ui.commons.Button({ text: "A" }));
+	addRow("commons/CheckBox", new sap.ui.commons.CheckBox());
+	addRow("commons/FormattedTextView", new sap.ui.commons.FormattedTextView({ htmlText: "Test<strong>Test</strong>Test" }));
+	addRow("commons/HorizontalDivider", new sap.ui.commons.HorizontalDivider());
+	addRow("commons/Image", new sap.ui.commons.Image({ src: "https://openui5.hana.ondemand.com/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png" }));
+	addRow("commons/Label", new sap.ui.commons.Label({ text: "A" }));
+	addRow("commons/Link", new sap.ui.commons.Link({text: "Link", href: "https://openui5.hana.ondemand.com/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png"}));
+	addRow("commons/ListBox", new sap.ui.commons.ListBox({ items: [new sap.ui.core.Item({ text: 'A'}),new sap.ui.core.Item({ text: 'B'}) ]}));
+	addRow("commons/MenuBar", new sap.ui.commons.MenuBar({ items: [new sap.ui.unified.MenuItem({text: "A"}), new sap.ui.unified.MenuItem({text: "B"})]}));
+	// addRow("commons/MessageBar", new sap.ui.commons.MessageBar()); // TODO: Not a standard rendered control. Talk to owner.
+	// addRow("commons/MessageList", new sap.ui.commons.MessageList()); // TODO: Not a standard rendered control. Talk to owner.
+	addRow("commons/Panel", new sap.ui.commons.Panel({ content: new sap.ui.commons.Button({text: "A"})}));
+	addRow("commons/ProgressIndicator", new sap.ui.commons.ProgressIndicator());
+	addRow("commons/RadioButton", new sap.ui.commons.RadioButton());
+	addRow("commons/RadioButtonGroup", new sap.ui.commons.RadioButtonGroup({ items: [new sap.ui.core.Item({ text: 'A'}),new sap.ui.core.Item({ text: 'B'}) ]}));
+	addRow("commons/RatingIndicator", new sap.ui.commons.RatingIndicator());
+	addRow("commons/RoadMap", new sap.ui.commons.RoadMap({ steps: [new sap.ui.commons.RoadMapStep({label: "A"}), new sap.ui.commons.RoadMapStep({label: "B"})] }));
+	addRow("commons/RowRepeater", new sap.ui.commons.RowRepeater({ rows: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})] }));
+	addRow("commons/SearchField", new sap.ui.commons.SearchField());
+	addRow("commons/SegmentedButton", new sap.ui.commons.SegmentedButton({ buttons: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})] }));
+	addRow("commons/Slider", new sap.ui.commons.Slider());
+	addRow("commons/Splitter", new sap.ui.commons.Splitter({ firstPaneContent: new sap.ui.commons.Button({ text: "A"}), secondPaneContent: new sap.ui.commons.Button({ text: "B"}) }));
+	addRow("commons/TextField", new sap.ui.commons.TextField());
+	addRow("commons/TriStateCheckBox", new sap.ui.commons.TriStateCheckBox());
+	addRow("commons/TextView", new sap.ui.commons.TextView({ text: "Test" }));
+	addRow("commons/Toolbar", new sap.ui.commons.Toolbar({ items: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})] }));
+
+	addHeadingRow("sap.ui.commons.layout");
+	addRow("commons.layout/AbsoluteLayout", new sap.ui.commons.layout.AbsoluteLayout({width: "100%", height: "30px", positions: [
+		new sap.ui.commons.layout.PositionContainer({top: "0", left: "0", control: new sap.ui.commons.Button({ text: "B"})})
+	]})); // TODO: Renderer had doBeforeRendring before returning when invisible.
+	addRow("commons.layout/MatrixLayout", new sap.ui.commons.layout.MatrixLayout({ rows: [
+		new sap.ui.commons.layout.MatrixLayoutRow({cells: [
+			new sap.ui.commons.layout.MatrixLayoutCell({content: [
+				new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})
+			]})
+		]})
+	]}));
+	
+	addHeadingRow("sap.ui.layout.form");
+	addRow("layout.form/Form", new sap.ui.layout.form.Form({ 
+		title: "Test",
+		layout: new sap.ui.layout.form.GridLayout(),
+		formContainers: [
+			new sap.ui.layout.form.FormContainer({
+				formElements: [
+					new sap.ui.layout.form.FormElement({
+						label: "A",
+						fields: [new sap.ui.commons.Button({ text: "A"})]
+					})
+				]
+			})
+		]
+	}));
+	
+	addHeadingRow("sap.ui.table");
+	addRow("table/Table", new sap.ui.table.Table({
+		columns: [
+			new sap.ui.table.Column({
+				label: new sap.ui.commons.Label({text: "Test"})
+			})
+		]
+	}));
+
+	addHeadingRow("sap.ui.unified");
+	addRow("unified/FileUploader", new sap.ui.unified.FileUploader());
+	
+	
+	addHeadingRow("sap.ui.ux3");
+	addRow("ux3/ExactArea", new sap.ui.ux3.ExactArea({ content: [new sap.ui.commons.Button({text: "A"})]}));
+	addRow("ux3/ExactBrowser", new sap.ui.ux3.ExactBrowser({ attributes: [new sap.ui.ux3.ExactAttribute({text: "A"}), new sap.ui.ux3.ExactAttribute({text: "B"})]}));
+	addRow("ux3/FacetFilter", new sap.ui.ux3.FacetFilter({ lists: [new sap.ui.ux3.FacetFilterList({ items: [new sap.ui.core.ListItem({text: "A"}), new sap.ui.core.ListItem({text: "B"})]}), new sap.ui.ux3.FacetFilterList({ items: [new sap.ui.core.ListItem({text: "A"}), new sap.ui.core.ListItem({text: "B"})]})]}));
+	addRow("ux3/NavigationBar", new sap.ui.ux3.NavigationBar({ items: [new sap.ui.ux3.NavigationItem({text: "A"}), new sap.ui.ux3.NavigationItem({text: "B"})]}));
+
+	addHeadingRow("sap.m");
+	addRow("m/BusyIndicator", new sap.m.BusyIndicator());
+	addRow("m/Bar", new sap.m.Bar({contentLeft: new sap.ui.commons.Button({ text: "A"}), contentMiddle: new sap.ui.commons.Button({ text: "B"}), contentRight: new sap.ui.commons.Button({ text: "C"})}));
+	addRow("m/Button", new sap.m.Button({text: "A"}));
+	addRow("m/CheckBox", new sap.m.CheckBox({text: "A"}));
+	addRow("m/Carousel", new sap.m.Carousel({pages: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})]}));
+	addRow("[TODO: Leads to double rendering] m/FacetFilter", new sap.m.FacetFilter({lists: [new sap.m.FacetFilterList({title: "A"}), new sap.m.FacetFilterList({title: "B"})]}));
+	addRow("m/FacetFilterList", new sap.m.FacetFilterList({title: "A"}));
+	addRow("m/FeedInput", new sap.m.FeedInput({value: "A"}));
+	addRow("m/FlexBox", new sap.m.FlexBox({items: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})]}));
+	addRow("m/IconTabBar", new sap.m.IconTabBar({content: [new sap.ui.commons.Button({ text: "A"}), new sap.ui.commons.Button({ text: "B"})]}));
+	// addRow("m/IconTabHeader", new sap.m.IconTabHeader({items: [new sap.m.IconTabFilter({ text: "A"}), new sap.m.IconTabFilter({ text: "B"})]}));
+	addRow("m/Image", new sap.m.Image({src: "https://openui5.hana.ondemand.com/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png"}));
+	addRow("m/Input(Base)", new sap.m.Input({value: "A"}));
+	addRow("m/Label", new sap.m.Label({text: "A"}));
+	addRow("m/Link", new sap.m.Link({text: "Link", href: "https://openui5.hana.ondemand.com/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png"}));
+	addRow("m/List(Base),ListItem(Base)", new sap.m.List({items: [new sap.m.StandardListItem({title: "A"}), new sap.m.StandardListItem({title: "B"})]}));
+	addRow("m/NavContainer", new sap.m.NavContainer({height: "20px", initialPage: "navpage1", pages: [new sap.ui.commons.Button("navpage1", { text: "A"}), new sap.ui.commons.Button({ text: "B"})]}));
+	addRow("m/ObjectAttribute", new sap.m.ObjectAttribute({text: "A"}));
+	// addRow("m/ObjectHeader", new sap.m.ObjectHeader({title: "A"})); // TODO: Uses its own invisible logic in renderer, talk to owner..
+	addRow("m/ObjectIdentifier", new sap.m.ObjectIdentifier({text: "A"}));
+	addRow("m/ObjectNumber", new sap.m.ObjectNumber({number: 1, unit: "A"}));
+	addRow("m/ObjectStatus", new sap.m.ObjectStatus({text: "A"}));
+	addRow("m/P13nColumnsPanel", new sap.m.P13nColumnsPanel({title: "A"}));
+	addRow("m/P13nFilterPanel", new sap.m.P13nFilterPanel({title: "A"}));
+	jQuery.sap.require("sap.m.P13nGroupPanel"); // WTF?
+	addRow("m/P13nGroupPanel", new sap.m.P13nGroupPanel({title: "A"}));
+	addRow("m/P13nPanel", new sap.m.P13nPanel({title: "A"}));
+	addRow("m/P13nSortPanel", new sap.m.P13nSortPanel({title: "A"}));
+	addRow("m/Panel", new sap.m.Panel({headerText: "A"}));
+	addRow("m/ProgressIndicator", new sap.m.ProgressIndicator({percentValue: 33, displayValue: "33%"}));
+	addRow("m/PullToRefresh", new sap.m.PullToRefresh({description: "A"}));
+	addRow("m/RadioButton", new sap.m.RadioButton({text: "A"}));
+	addRow("m/RadioButtonGroup", new sap.m.RadioButtonGroup({buttons: [new sap.m.RadioButton({text: "A"}), new sap.m.RadioButton({text: "B"})]}));
+	addRow("m/RatingIndicator", new sap.m.RatingIndicator({text: "A"}));
+	addRow("m/ScrollContainer", new sap.m.ScrollContainer({content: [new sap.m.Button({text: "A"})]}));
+	addRow("m/SearchField", new sap.m.SearchField({value: "A"}));
+	addRow("m/SegmentedButton", new sap.m.SegmentedButton({buttons: [new sap.m.Button({text: "A"}), new sap.m.Button({text: "B"})]}));
+	addRow("m/Select", new sap.m.Select({items: [new sap.ui.core.Item({text: "A"}), new sap.ui.core.Item({text: "B"})]}));
+	addRow("m/SelectList", new sap.m.SelectList({items: [new sap.ui.core.Item({text: "A"}), new sap.ui.core.Item({text: "B"})]}));
+	addRow("m/Slider", new sap.m.Slider());
+	addRow("m/Switch", new sap.m.Switch());
+	addRow("m/Text", new sap.m.Text({text: "A"}));
+	addRow("m/Token", new sap.m.Token({text: "A"}));
+	addRow("m/Tokenizer", new sap.m.Tokenizer({tokens: [new sap.m.Token({text: "A"}), new sap.m.Token({text: "B"})]}));
+	addRow("m/Toolbar", new sap.m.Toolbar({content: [new sap.m.Button({text: "A"}), new sap.m.Button({text: "B"})]}));
+	
+	
+	
+	
+</script>
+</head>
+<body class="sapUiBody" role="application">
+<h1>Test Page for sap.ui.core.Control property "visible"</h1>
+
+<h2>Controls which had their own visible property before:</h2>
+<div id="status">
+	Matrix Layout has been rendered 
+	<span id="status_renderings">0</span>
+	times.
+</div>
+<div id="uiArea1"></div>
+</body>
+</html>

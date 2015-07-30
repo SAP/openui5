@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 
 	/**
-	 * @class form/ResponsiveGridLayout renderer.
-	 * @static
+	 * form/ResponsiveGridLayout renderer.
+	 * @namespace
 	 */
 	var ResponsiveGridLayoutRenderer = Renderer.extend(FormLayoutRenderer);
 	

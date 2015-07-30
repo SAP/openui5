@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ResponsiveContainer
+	 * @alias sap.ui.commons.ResponsiveContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveContainer = Control.extend("sap.ui.commons.ResponsiveContainer", /** @lends sap.ui.commons.ResponsiveContainer.prototype */ { metadata : {

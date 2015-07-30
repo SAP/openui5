@@ -27,7 +27,7 @@ module.exports = function(grunt, config) {
 					expand: true,
 					cwd: library.path + '/src',
 					src: '**/themes/*/library.source.less',
-					dest: 'target/openui5/resources'
+					dest: 'target/openui5-' + library.name + '/resources'
 				}
 			]
 		}

@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a property binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
-	function(jQuery, PropertyBinding) {
+sap.ui.define(['sap/ui/model/PropertyBinding'],
+	function(PropertyBinding) {
 	"use strict";
 
 
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	 * @param {sap.ui.model.control.ControlModel} oModel
 	 * @param {string} sPath 
 	 * @param {object} [oContext] 
-	 * @name sap.ui.model.control.ControlPropertyBinding
+	 * @alias sap.ui.model.control.ControlPropertyBinding
 	 * @extends sap.ui.model.PropertyBinding
 	 */
 	var ControlPropertyBinding = PropertyBinding.extend("sap.ui.model.control.ControlPropertyBinding", /** @lends sap.ui.model.control.ControlPropertyBinding.prototype */ {
@@ -30,8 +30,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	/**
 	 * Returns the current value of the bound target
 	 * @return {object} the current value of the bound target
-	 * @name sap.ui.model.control.ControlPropertyBinding#getValue
-	 * @function
 	 */
 	ControlPropertyBinding.prototype.getValue = function(){
 		return this.oValue;
@@ -39,8 +37,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	
 	/**
 	 * Sets the current value on the control
-	 * @name sap.ui.model.control.ControlPropertyBinding#setValue
-	 * @function
 	 */
 	ControlPropertyBinding.prototype.setValue = function(oValue){
 		this.oValue = oValue;
@@ -50,8 +46,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	/**
 	 * Returns the current value of the bound target (incl. re-evaluation)
 	 * @return {object} the current value of the bound target
-	 * @name sap.ui.model.control.ControlPropertyBinding#_getValue
-	 * @function
 	 */
 	ControlPropertyBinding.prototype._getValue = function () {
 		return this.oContext.getProperty(this.sPath);
@@ -59,8 +53,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	
 	/**
 	 * Setter for context
-	 * @name sap.ui.model.control.ControlPropertyBinding#setContext
-	 * @function
 	 */
 	ControlPropertyBinding.prototype.setContext = function(oContext) {
 		this.oContext = oContext;
@@ -71,8 +63,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 * @protected
-	 * @name sap.ui.model.control.ControlPropertyBinding#checkUpdate
-	 * @function
 	 */
 	ControlPropertyBinding.prototype.checkUpdate = function() {
 		var oValue = this._getValue();
@@ -84,4 +74,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 
 	return ControlPropertyBinding;
 
-}, /* bExport= */ true);
+});

@@ -13,7 +13,7 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Products"></Label>
+				<Title text="Products" level="H2"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>

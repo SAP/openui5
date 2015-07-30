@@ -27,7 +27,6 @@
 			$PageSubHeader = $Page.children("header.sapMBar.sapMSubHeader-CTX");
 			$PageFooter = $Page.children("footer.sapMBar.sapMFooter-CTX");
 			$PageSection = $Page.children("section");
-			$PageScroll = $PageSection.children();
 		};
 
 		/* =========================================================== */
@@ -87,10 +86,7 @@
 				// assertions
 				ok($Page.length, "The page HTML div element exists");
 				ok($PageSection.length, "The page section HTML element exists");
-				ok($PageScroll.length, "The page scroll HTML div element exists");
 				ok($Page.hasClass("sapMPage"), 'The page HTML Div element "must have" the CSS class "sapMPage"');
-				ok($PageScroll.hasClass("sapMPageScroll"), 'The page scroll HTML Div element "must have" the CSS class "sapMPageScroll"');
-				ok($PageScroll.hasClass("sapMPageScrollEnabled"), 'The page scroll HTML Div element "must have" the CSS class "sapMPageScrollEnabled"');
 				strictEqual($Page.css("position"), "absolute", 'The page HTML Div element is absolute positioned, "position: absolute"');
 
 				if (oPage.getShowHeader()) {

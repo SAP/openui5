@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 	 * @public
 	 * @experimental Since version 1.2. 
 	 * API is not yet finished and might change completely
-	 * @name sap.ui.ux3.Exact
+	 * @alias sap.ui.ux3.Exact
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Exact = Control.extend("sap.ui.ux3.Exact", /** @lends sap.ui.ux3.Exact.prototype */ { metadata : {
@@ -99,26 +99,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 	}});
 	
 	
-	/**
-	 * Returns the ExactArea representing the result section. Arbitrary content can be added here.
-	 *
-	 * @name sap.ui.ux3.Exact#getResultArea
-	 * @function
-	 * @type sap.ui.ux3.ExactArea
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
-	/**
-	 * Returns the SearchField control which is used by the Exact control.
-	 *
-	 * @name sap.ui.ux3.Exact#getSearchField
-	 * @function
-	 * @type sap.ui.commons.SearchField
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
+	
 	
 	
 	
@@ -233,10 +217,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 	};
 	
 	
+
+	/**
+	 * Returns the ExactArea representing the result section. Arbitrary content can be added here.
+	 *
+	 * @type sap.ui.ux3.ExactArea
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Exact.prototype.getResultArea = function() {
 		return this._resultArea;
 	};
 	
+
+	/**
+	 * Returns the SearchField control which is used by the Exact control.
+	 *
+	 * @type sap.ui.commons.SearchField
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Exact.prototype.getSearchField = function() {
 		return this._search_input;
 	};

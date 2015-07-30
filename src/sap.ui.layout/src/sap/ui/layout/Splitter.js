@@ -32,9 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
-	 * @experimental Since version 1.22.0. 
-	 * API is not yet finished and might change completely
-	 * @name sap.ui.layout.Splitter
+	 * @alias sap.ui.layout.Splitter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Splitter = Control.extend("sap.ui.layout.Splitter", /** @lends sap.ui.layout.Splitter.prototype */ { metadata : {
@@ -125,6 +123,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		// Switch resizing parameters based on orientation - this must be done to initialize the values
 		this._switchOrientation();
+		
+		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		
 		// Create bound listener functions for keyboard event handling
 		this._keyListeners = {
@@ -436,8 +436,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 		
 		var iPos = oEvent[this._moveCord];
+
 		var iDelta = (iPos - this._move.start);
-		
+		iDelta = this._bRtl ? -iDelta : iDelta;
+
 		var c1NewSize = this._move.c1Size + iDelta;
 		var c2NewSize = this._move.c2Size - iDelta;
 		
@@ -454,9 +456,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			this._$SplitterOverlayBar.css(this._sizeDir, this._move.relStart + iDelta);
 			
 			if (this._liveResize) {
+				var fMove = (this._move["start"] - oEvent[this._moveCord]);
 				this._resizeContents(
 					/* left content number:    */ this._move["barNum"],
-					/* number of pixels:       */ 0 - (this._move["start"] - oEvent[this._moveCord]),
+					/* number of pixels:       */ this._bRtl ? fMove : -fMove,
 					/* also change layoutData: */ false
 				);
 			}
@@ -483,9 +486,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		var iPos = oEvent[this._moveCord];
 
+		var fMove = this._move["start"] - iPos;
 		this._resizeContents(
 			/* left content number:    */ this._move["barNum"],
-			/* number of pixels:       */ 0 - (this._move["start"] - iPos),
+			/* number of pixels:       */ this._bRtl ? fMove : -fMove,
 			/* also change layoutData: */ true
 		);
 
@@ -501,7 +505,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		document.removeEventListener("touchmove", this._boundBarMove);
 
 		// Enable auto resize after bar move if it was enabled before
-		this.disableAutoResize(/* temporarily: */ true);
+		this.enableAutoResize(/* temporarily: */ true);
 
 		jQuery.sap.focus(this._move.bar);
 	};
@@ -594,18 +598,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 	
 	/**
+	 * Resizes the Splitter bars to fit the current content height. Must be done before and after content sizes have
+	 * been calculated.
+	 *
+	 * @param {sap.ui.core.Control[]} aContentAreas - The content areas of the Splitter
+	 * @returns {void}
+	 * @private
+	 */
+	Splitter.prototype._resizeBars = function(aContentAreas) {
+		var i, $Bar;
+		// In case the Splitter has a relative height or width set (like "100%"), and the surrounding 
+		// container does not have a size set, the content of the Splitter defines the height/width,
+		// in which case the size of the splitter bars is incorrect.
+		var $this = this.$();
+		// First remove the size from the splitter bar so it does not lead to growing the content
+		for (i = 0; i < aContentAreas.length - 1; ++i) {
+			$Bar = this.$("splitbar-" + i);
+			$Bar.css(this._sizeTypeNot, "");
+		}
+		// Now measure the content and adapt the size of the Splitter bar
+		for (i = 0; i < aContentAreas.length - 1; ++i) {
+			$Bar = this.$("splitbar-" + i);
+			var iSize = this._bHorizontal ? $this.height() : $this.width();
+			$Bar.css(this._sizeType, "");
+			$Bar.css(this._sizeTypeNot, iSize + "px");
+		}
+	};
+	
+	/**
 	 * Recalculates the content sizes and manipulates the DOM accordingly.
 	 *
 	 * @private
 	 */
 	Splitter.prototype._resize = function() {
 		var i = 0, $Bar;
-		
+		var aContentAreas = this.getContentAreas();
+
+		// Resize Splitter bars so that they do not influence the content sizes the wrong way
+		this._resizeBars(aContentAreas);
+
 		// Save calculated sizes to be able to tell whether a resize occurred
 		var oldCalculatedSizes = this.getCalculatedSizes();
 		this._recalculateSizes();
 		var newCalculatedSizes = this.getCalculatedSizes();
-		
+
 		var bSizesValid = false;
 		for (i = 0; i < newCalculatedSizes.length; ++i) {
 			if (newCalculatedSizes[i] !== 0) {
@@ -619,7 +655,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			return;
 		}
 		
-		var aContentAreas = this.getContentAreas();
 		var bLastContentResizable = true;
 		for (i = 0; i < aContentAreas.length; ++i) {
 			var $Content = this.$("content-" + i);
@@ -641,23 +676,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 			bLastContentResizable = bContentResizable;
 		}
-		
-		// In case the Splitter has a relative height or width set (like "100%"), and the surrounding 
-		// container does not have a size set, the content of the Splitter defines the height/width,
-		// in which case the size of the splitter bars is incorrect.
-		var $this = this.$();
-		// First remove the size from the splitter bar so it does not lead to growing the content
-		for (i = 0; i < aContentAreas.length - 1; ++i) {
-			$Bar = this.$("splitbar-" + i);
-			$Bar.css(this._sizeTypeNot, "");
-		}
-		// Now measure the content and adapt the size of the Splitter bar
-		for (i = 0; i < aContentAreas.length - 1; ++i) {
-			$Bar = this.$("splitbar-" + i);
-			var iSize = this._bHorizontal ? $this.height() : $this.width();
-			$Bar.css(this._sizeTypeNot, iSize + "px");
-		}
-		
+
+		// Resize Splitter bars again so that the updated content sizes are calculated correctly
+		this._resizeBars(aContentAreas);
+
 		// In case something was resized, change sizes and fire resize event
 		if (_sizeArraysDiffer(oldCalculatedSizes, newCalculatedSizes)) {
 			this.fireResize({
@@ -840,11 +862,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	Splitter.prototype._switchOrientation = function() {
 		this._bHorizontal = this.getOrientation() === sap.ui.core.Orientation.Horizontal;
 		if (this._bHorizontal) {
-			this._moveCord    = "pageX";
-			this._sizeType    = "width";
-			this._sizeTypeNot = "height";
-			this._sizeDir     = "left";
 			this._sizeDirNot  = "top";
+			this._sizeTypeNot = "height";
+			this._sizeType    = "width";
+			this._moveCord    = "pageX";
+
+			if (this._bRtl) {
+				this._sizeDir     = "right";
+			} else {
+				this._sizeDir     = "left";
+			}
 		} else {
 			this._moveCord    = "pageY";
 			this._sizeType    = "height";
@@ -1073,7 +1100,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		this._switchOrientation();
 		this._delayedResize();
-		
+
+		this.$().find(".sapUiLoSplitterBar").attr("aria-orientation", this._bHorizontal ? "vertical" : "horizontal");
+
 		return vReturn;
 	};
 	

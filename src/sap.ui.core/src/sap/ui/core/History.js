@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @name sap.ui.core.History
+	 * @alias sap.ui.core.History
 	 * @protected
 	 */
 	var History = BaseObject.extend("sap.ui.core.History", /** @lends sap.ui.core.History.prototype */ {
@@ -140,4 +140,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 	return History;
 
-}, /* bExport= */ true);
+});

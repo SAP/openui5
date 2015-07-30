@@ -13,12 +13,12 @@
 }
 
 .sapMInputBaseInner {
-	color: 				   @sapUiInputBaseText;
-	background-color:	   @sapUiInputBaseBG;
-	border:		           1px solid @sapUiInputBaseBorder;
+	color: 				   @sapUiFieldTextColor;
+	background-color:	   @sapUiFieldBackground;
+	border:		           1px solid @sapUiFieldBorderColor;
 	margin:                0;
 	font-size: 			   @sapMFontMediumSize;
-	font-family: 		   @sapUiInputBaseFont;
+	font-family: 		   @sapUiFontFamily;
 	line-height:		   normal;
 	height: 			   2.5rem;
 	vertical-align:		   top;
@@ -27,25 +27,25 @@
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
-	color:				   @sapUiInputBasePlaceholder;
+	color:				   @sapUiFieldPlaceholderTextColor;
 	font-size: 			   @sapMFontMediumSize;
 	font-style:			   italic;
 }
 
 .sapMInputBaseInner::-moz-placeholder {
-	color:				   @sapUiInputBasePlaceholder;
+	color:				   @sapUiFieldPlaceholderTextColor;
 	font-size: 			   @sapMFontMediumSize;
 	font-style:			   italic;
 }
 
 .sapMInputBaseInner:-ms-input-placeholder {
-	color:				   @sapUiInputBasePlaceholder;
+	color:				   @sapUiFieldPlaceholderTextColor;
 	font-size: 			   @sapMFontMediumSize;
 	font-style:			   italic;
 }
 
 .sapMInputBasePlaceholder {
-	color:				   @sapUiInputBasePlaceholder;
+	color:				   @sapUiFieldPlaceholderTextColor;
 	font-size: 			   @sapMFontMediumSize;
 	font-style:			   italic;
 	position:			   absolute;
@@ -67,15 +67,15 @@
 }
 
 .sapMInputBaseWarningInner {
-	border-color: @sapUiInputBaseWarning;
+	border-color: @sapUiFieldWarningColor;
 }
 
 .sapMInputBaseErrorInner {
-	border-color: @sapUiInputBaseError;
+	border-color: @sapUiFieldInvalidColor;
 }
 
 .sapMInputBaseSuccessInner {
-	border-color: @sapUiInputBaseSuccess;
+	border-color: @sapUiFieldSuccessColor;
 }
 
 .sapMInputBaseInner.sapMInputBaseReadonlyInner {
@@ -83,9 +83,12 @@
 	background-color: transparent;
 }
 
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus,
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):hover {
-	border-color: @sapUiInputBaseFocus;
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 .sapMILI-CTX .sapMInputBase {
@@ -111,30 +114,32 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 }
 
 .sapMLIBActive .sapMInputBaseInner {
-	color: @sapUiLITextInverted;
+	color: @sapUiListActiveTextColor;
 	background: transparent;
 }
 
 .sapMLIBActive .sapMInputBaseInner::-webkit-input-placeholder {
-	color: @sapUiLITextInverted;
+	color: @sapUiListActiveTextColor;
 }
 
 .sapMInputBaseMessage {
-	color: 				   @sapUiInputBaseText;
+	color: 				   @sapUiFieldTextColor;
 	border-width:          0;
 	font-size:             @sapMFontSmallSize;
 	font-family:           @sapUiFontFamily;
 	padding:               0.3rem 0.625rem;
+	min-width:             6rem;
+	max-width:             22rem;
 }
 
 .sapMInputBaseMessageError {
-	background: @sapUiInputBaseErrorBG;
-	border: @sapUiInputBaseError;
+	background: @sapUiFieldInvalidBackground;
+	border-color: @sapUiFieldInvalidColor;
 }
 
 .sapMInputBaseMessageWarning {
-	background: @sapUiInputBaseWarningBG;
-	border: @sapUiInputBaseWarning;
+	background: @sapUiFieldWarningBackground;
+	border-color: @sapUiFieldWarningColor;
 }
 
 /* Compact size */

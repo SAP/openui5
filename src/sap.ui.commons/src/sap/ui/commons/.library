@@ -15,6 +15,9 @@
     <dependency>
       <libraryName>sap.ui.layout</libraryName>
     </dependency>
+    <dependency>
+      <libraryName>sap.ui.unified</libraryName>
+    </dependency>
   </dependencies>
   
   <appData>
@@ -24,6 +27,12 @@
         <exclude name="sap.ui.commons.js." />
         <exclude name="sap.ui.commons.DatePicker*" />
     </jscoverage>
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/commons/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
+    <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+        <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+    </ownership>
   </appData>
   
 </library>

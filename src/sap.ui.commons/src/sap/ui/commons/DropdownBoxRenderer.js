@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 
 
 	/**
-	 * @class DropdownBox renderer.
-	 * @static
+	 * DropdownBox renderer.
+	 * @namespace
 	 */
 	var DropdownBoxRenderer = sap.ui.core.Renderer.extend(ComboBoxRenderer);
 	

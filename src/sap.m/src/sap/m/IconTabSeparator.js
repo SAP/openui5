@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.IconTabSeparator
+	 * @alias sap.m.IconTabSeparator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IconTabSeparator = Element.extend("sap.m.IconTabSeparator", /** @lends sap.m.IconTabSeparator.prototype */ { metadata : {
@@ -60,7 +60,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	IconTabSeparator.prototype._getImageControl = function(aCssClasses, oParent) {
 		var mProperties = {
 			src : this.getIcon(),
-			densityAware : this.getIconDensityAware()
+			densityAware : this.getIconDensityAware(),
+			useIconTooltip : false
 		};
 		
 		this._oImageControl = sap.m.ImageHelper.getImageControl(this.getId() + "-icon", this._oImageControl, oParent, mProperties, aCssClasses);
@@ -83,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			sap.ui.core.Item.prototype.exit.call(this, oEvent);
 		}
 	};
-
+	
 	return IconTabSeparator;
 
 }, /* bExport= */ true);

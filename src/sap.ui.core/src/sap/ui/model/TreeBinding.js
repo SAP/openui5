@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './Binding'],
-	function(jQuery, Binding) {
+sap.ui.define(['./Binding'],
+	function(Binding) {
 	"use strict";
 
 
@@ -25,13 +25,14 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional) 
 	 * @public
-	 * @name sap.ui.model.TreeBinding
+	 * @alias sap.ui.model.TreeBinding
 	 */
 	var TreeBinding = Binding.extend("sap.ui.model.TreeBinding", /** @lends sap.ui.model.TreeBinding.prototype */ {
 		
-		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
+		constructor : function(oModel, sPath, oContext, aFilters, mParameters, aSorters){
 			Binding.call(this, oModel, sPath, oContext, mParameters);
 			this.aFilters = aFilters;
+			this.aSorters = aSorters;
 			this.bDisplayRootNode = mParameters && mParameters.displayRootNode === true;
 		},
 	
@@ -43,23 +44,6 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 		}
 		
 	});
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.TreeBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.TreeBinding.extend
-	 * @function
-	 */
 	
 	
 	// the 'abstract methods' to be implemented by child classes
@@ -102,8 +86,6 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	/**
 	 * Returns the number of child nodes of a specific context
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype.getChildCount
 	 * @param {Object} oContext the context element of the node
 	 * @return {integer} the number of children
 	 *
@@ -128,13 +110,21 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 */
 	
 	/**
+	 * Sorts the tree according to the sorter definitions.
+	 *
+	 * @function
+	 * @name sap.ui.model.TreeBinding.prototype.sort
+	 * @param {sap.ui.model.Sorter[]} aSorters Array of sap.ui.model.Sorter objects
+	 *
+	 * @public
+	 */
+	
+	/**
 	 * Attach event-handler <code>fnFunction</code> to the '_filter' event of this <code>sap.ui.model.TreeBinding</code>.<br/>
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
 	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
-	 * @name sap.ui.model.TreeBinding#attachFilter
-	 * @function
 	 */
 	TreeBinding.prototype.attachFilter = function(fnFunction, oListener) {
 		this.attachEvent("_filter", fnFunction, oListener);
@@ -146,8 +136,6 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
 	 * @deprecated use the change event.
-	 * @name sap.ui.model.TreeBinding#detachFilter
-	 * @function
 	 */
 	TreeBinding.prototype.detachFilter = function(fnFunction, oListener) {
 		this.detachEvent("_filter", fnFunction, oListener);
@@ -158,8 +146,6 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
 	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
-	 * @name sap.ui.model.TreeBinding#_fireFilter
-	 * @function
 	 */
 	TreeBinding.prototype._fireFilter = function(mArguments) {
 		this.fireEvent("_filter", mArguments);
@@ -168,4 +154,4 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 
 	return TreeBinding;
 
-}, /* bExport= */ true);
+});

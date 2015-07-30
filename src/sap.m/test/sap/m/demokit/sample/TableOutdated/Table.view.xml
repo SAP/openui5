@@ -1,20 +1,22 @@
 <mvc:View height="100%" controllerName="sap.m.sample.TableOutdated.Table"
-	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:fb="sap.ui.comp.filterbar"
-	xmlns:l="sap.ui.layout" xmlns="sap.m">
-	<fb:FilterBar reset="onReset" search="onSearch"
-		simplifiedMode="true" id="filterBar" >
-		<fb:filterItems>
-			<fb:FilterItem name="A" label="Suppliers">
-				<fb:control>
-					<ComboBox change="onChange" selectionChange="onChange" id="oComboBox" 
-						items="{
-                       		path: '/ProductCollectionStats/Filters/1/values'
-                       }">
-						<core:Item text="{text}" />
-					</ComboBox>
-				</fb:control>
-			</fb:FilterItem>
-		</fb:filterItems>
-	</fb:FilterBar>
+	 xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" xmlns="sap.m">
+
+	<Toolbar>
+		<ComboBox change="onChange" selectionChange="onChange" id="oComboBox"
+		 items="{ path: '/ProductCollectionStats/Filters/1/values'}">
+			<core:Item text="{text}" />
+		</ComboBox>
+
+		<Button  text="Filter" press="onSearch" icon="sap-icon://filter"/>
+		<Button  text="Reset" press="onReset" type="Transparent"/>
+		<ToolbarSpacer/>
+
+		<SegmentedButton enabled="false">
+			<Button icon="sap-icon://settings" />
+			<Button icon="sap-icon://settings" />
+			<Button icon="sap-icon://settings" />
+		</SegmentedButton>
+
+	</Toolbar>
  	<l:VerticalLayout id="tableLayout"/>
 </mvc:View>

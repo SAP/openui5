@@ -6004,7 +6004,11 @@ var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figca
 	rtagName = /<([\w:]+)/,
 	rtbody = /<tbody/i,
 	rhtml = /<|&#?\w+;/,
-	rnoInnerhtml = /<(?:script|style|link)/i,
+	// ##### BEGIN: MODIFIED BY SAP
+	// This fix solves performance issues of the IE regex engine
+	// rnoInnerhtml = /<(?:script|style|link)/i,
+	rnoInnerhtml = /(?:<script|<style|<link)/i,
+	// ##### END: MODIFIED BY SAP
 	manipulation_rcheckableType = /^(?:checkbox|radio)$/i,
 	// checked="checked" or checked
 	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,

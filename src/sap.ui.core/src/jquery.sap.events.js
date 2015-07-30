@@ -3,8 +3,8 @@
  */
 
 // Provides functionality related to eventing.
-sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
-	function(jQuery/* , jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, Device/* , jQuerySap1 */) {
 	"use strict";
 
 	var onTouchStart,
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		aMouseEvents,
 		bIsSimulatingTouchToMouseEvent = false;
 
-	if (sap.ui.Device.browser.webkit && /Mobile/.test(navigator.userAgent) && sap.ui.Device.support.touch) {
+	if (Device.browser.webkit && /Mobile/.test(navigator.userAgent) && Device.support.touch) {
 
 		bIsSimulatingTouchToMouseEvent = true;
 
@@ -168,39 +168,50 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 			document.addEventListener('touchmove', onTouchMove, true);
 			document.addEventListener('touchend', onTouchEnd, true);
 			document.addEventListener('touchcancel', onTouchCancel, true);
+			
+			/**
+			 * Disable touch to mouse handling
+			 *
+			 * @public
+			 */
+			jQuery.sap.disableTouchToMouseHandling = function() {
+				var i = 0;
+
+				if (!bIsSimulatingTouchToMouseEvent) {
+					return;
+				}
+
+				// unbind touch events
+				document.removeEventListener('touchstart', onTouchStart, true);
+				document.removeEventListener('touchmove', onTouchMove, true);
+				document.removeEventListener('touchend', onTouchEnd, true);
+				document.removeEventListener('touchcancel', onTouchCancel, true);
+
+				// unbind mouse events
+				for (; i < aMouseEvents.length; i++) {
+					document.removeEventListener(aMouseEvents[i], onMouseEvent, true);
+				}
+			};
+			
 		}());
 	}
-
-	/**
-	 * Disable touch to mouse handling
-	 *
-	 * @public
-	 */
-	jQuery.sap.disableTouchToMouseHandling = function() {
-		var i = 0;
-
-		if (!bIsSimulatingTouchToMouseEvent) {
-			return;
-		}
-
-		// unbind touch events
-		document.removeEventListener('touchstart', onTouchStart, true);
-		document.removeEventListener('touchmove', onTouchMove, true);
-		document.removeEventListener('touchend', onTouchEnd, true);
-		document.removeEventListener('touchcancel', onTouchCancel, true);
-
-		// unbind mouse events
-		for (; i < aMouseEvents.length; i++) {
-			document.removeEventListener(aMouseEvents[i], onMouseEvent, true);
-		}
-	};
+	
+	if (!jQuery.sap.disableTouchToMouseHandling) {
+		jQuery.sap.disableTouchToMouseHandling = function() {};
+	}
 
 	/**
 	 * List of DOM events that a UIArea automatically takes care of.
 	 *
 	 * A control/element doesn't have to bind listeners for these events.
 	 * It instead can implement an <code>on<i>event</i>(oEvent)</code> method
-	 * for any of these events that it wants to be notified about.
+	 * for any of the following events that it wants to be notified about:
+	 * 
+	 * click, dblclick, contextmenu, focusin, focusout, keydown, keypress, keyup, mousedown, mouseout, mouseover, 
+	 * mouseup, select, selectstart, dragstart, dragenter, dragover, dragleave, dragend, drop, paste, cut, input
+	 * 
+	 * In case touch events are natively supported the following events are available in addition:
+	 * touchstart, touchend, touchmove, touchcancel
 	 *
 	 * @public
 	 */
@@ -234,7 +245,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	];
 
 	// touch events natively supported
-	if (sap.ui.Device.support.touch) {
+	if (Device.support.touch) {
 
 		// Define additional native events to be added to the event list.
 		// TODO: maybe add "gesturestart", "gesturechange", "gestureend" later?
@@ -754,7 +765,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		var aAdditionalControlEvents = [];
 		var aAdditionalPseudoEvents = [];
 
-		if (sap.ui.Device.support.touch) { // touch events natively supported
+		if (Device.support.touch) { // touch events natively supported
 			jQuery.sap.touchEventMode = "ON";
 
 			// ensure that "oEvent.touches", ... works (and not only "oEvent.originalEvent.touches", ...)
@@ -920,7 +931,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 				}
 			}
 		};
-		if (!(sap.ui.Device.support.pointer && sap.ui.Device.support.touch)) {
+		if (!(Device.support.pointer && Device.support.touch)) {
 			createSimulatedEvent("touchstart", ["mousedown"], fnMouseToTouchHandler);
 			createSimulatedEvent("touchend", ["mouseup", "mouseout"], fnMouseToTouchHandler);
 			createSimulatedEvent("touchmove", ["mousemove"], fnMouseToTouchHandler);
@@ -948,7 +959,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 					!!oCfgData[sKey.toLowerCase()]; // currently, properties of oCfgData are converted to lower case (DOM attributes)
 			}
 
-			return sap.ui.Device.support.touch || // tap, swipe, etc. events are needed when touch is supported
+			return Device.support.touch || // tap, swipe, etc. events are needed when touch is supported
 				hasConfig("xx-test-mobile") || // see sap.ui.core.Configuration -> M_SETTINGS
 				// also simulate touch events when sap-ui-xx-fakeOS is set (independently of the value and the current browser)
 				hasConfig("xx-fakeOS") ||
@@ -963,37 +974,14 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 
 			// Simulate mouse events on touch devices
 			// Except for Windows Phone with touch events support.
-			if (sap.ui.Device.support.touch && !sap.ui.Device.support.pointer) {
+			if (Device.support.touch && !Device.support.pointer) {
 				var bFingerIsMoved = false,
 					iMoveThreshold = jQuery.vmouse.moveDistanceThreshold,
 					iStartX, iStartY,
-					iOffsetX, iOffsetY;
-
-				/**
-				 * This function simulates the corresponding mouse event by listening to touch event.
-				 * 
-				 * The simulated event will be dispatch through UI5 event delegation which means that the on"EventName" function is called
-				 * on control's prototype.
-				 * 
-				 * @param {jQuery.Event} oEvent The original event object
-				 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
-				 */
-				var fnTouchToMouseHandler = function(oEvent, oConfig) {
-					var oTouch = oEvent.originalEvent.touches[0],
-						bEventHandledByUIArea;
-
-					if (oEvent.type === "touchstart") {
-						bFingerIsMoved = false;
-						iStartX = oTouch.pageX;
-						iStartY = oTouch.pageY;
-						iOffsetX = Math.round(oTouch.pageX - jQuery(oEvent.target).offset().left);
-						iOffsetY = Math.round(oTouch.pageY - jQuery(oEvent.target).offset().top);
-					} else if (oEvent.type === "touchmove") {
-						bFingerIsMoved = bFingerIsMoved ||
-									(Math.abs(oTouch.pageX - iStartX) > iMoveThreshold ||
-											Math.abs(oTouch.pageY - iStartY) > iMoveThreshold);
-					}
-
+					iOffsetX, iOffsetY,
+					iLastTouchMoveTime;
+				
+				var fnCreateNewEvent = function(oEvent, oConfig, oMappedEvent) {
 					var oNewEvent = jQuery.event.fix(oEvent.originalEvent || oEvent);
 					oNewEvent.type = oConfig.sapEventName;
 					//reset the _sapui_handledByUIArea flag
@@ -1004,9 +992,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 					delete oNewEvent.touches;
 					delete oNewEvent.changedTouches;
 					delete oNewEvent.targetTouches;
-
-					var oMappedEvent = (oConfig.eventName === "mouseup" ? oEvent.changedTouches[0] : oEvent.touches[0]);
-
+					
 					//TODO: add other properties that should be copied to the new event
 					oNewEvent.screenX = oMappedEvent.screenX;
 					oNewEvent.screenY = oMappedEvent.screenY;
@@ -1016,14 +1002,66 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 					oNewEvent.altKey = oMappedEvent.altKey;
 					oNewEvent.shiftKey = oMappedEvent.shiftKey;
 					// The simulated mouse event should always be clicked by the left key of the mouse
-					oNewEvent.button = (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8 ? 1 : 0);
+					oNewEvent.button = (Device.browser.msie && Device.browser.version <= 8 ? 1 : 0);
+					
+					return oNewEvent;
+				};
+				
+				/**
+				 * This function simulates the corresponding mouse event by listening to touch event (touchmove).
+				 * 
+				 * The simulated event will be dispatch through UI5 event delegation which means that the on"EventName" function is called
+				 * on control's prototype.
+				 * 
+				 * @param {jQuery.Event} oEvent The original event object
+				 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
+				 */
+				var fnTouchMoveToMouseHandler = function(oEvent, oConfig) {
+					if (!bFingerIsMoved) {
+						var oTouch = oEvent.originalEvent.touches[0];
+						bFingerIsMoved = (Math.abs(oTouch.pageX - iStartX) > iMoveThreshold ||
+												Math.abs(oTouch.pageY - iStartY) > iMoveThreshold);
+					}
 
-					bEventHandledByUIArea = oNewEvent.isMarked("handledByUIArea");
+					if (Device.os.blackberry) {
+						//Blackberry sends many touchmoves -> create a simulated mousemove every 200ms
+						if (iLastTouchMoveTime && oEvent.timeStamp - iLastTouchMoveTime < 200) {
+							return;
+						}
+						iLastTouchMoveTime = oEvent.timeStamp;
+					}
+
+					var oNewEvent = fnCreateNewEvent(oEvent, oConfig, oEvent.touches[0]);
+					oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
+				};
+
+				/**
+				 * This function simulates the corresponding mouse event by listening to touch event (touchstart, touchend, touchcancel).
+				 * 
+				 * The simulated event will be dispatch through UI5 event delegation which means that the on"EventName" function is called
+				 * on control's prototype.
+				 * 
+				 * @param {jQuery.Event} oEvent The original event object
+				 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
+				 */
+				var fnTouchToMouseHandler = function(oEvent, oConfig) {
+					if (oEvent.type === "touchstart") {
+						var oTouch = oEvent.originalEvent.touches[0];
+						bFingerIsMoved = false;
+						iLastTouchMoveTime = 0;
+						iStartX = oTouch.pageX;
+						iStartY = oTouch.pageY;
+						iOffsetX = Math.round(oTouch.pageX - jQuery(oEvent.target).offset().left);
+						iOffsetY = Math.round(oTouch.pageY - jQuery(oEvent.target).offset().top);
+					}
+					
+					var oNewEvent = fnCreateNewEvent(oEvent, oConfig, oConfig.eventName === "mouseup" ? oEvent.changedTouches[0] : oEvent.touches[0]);
+					var bIsClick = oEvent.type === "touchend" && !oNewEvent.isMarked("handledByUIArea") && !bFingerIsMoved;
 
 					oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
 
 					// also call the onclick event handler when touchend event is received and the movement is within threshold
-					if (oEvent.type === "touchend" && !bEventHandledByUIArea && !bFingerIsMoved) {
+					if (bIsClick) {
 						oNewEvent.type = "click";
 						oNewEvent.setMark("handledByUIArea", false);
 						oNewEvent.offsetX = iOffsetX; // use offset from touchstart
@@ -1036,7 +1074,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 				jQuery.sap.disableTouchToMouseHandling();
 
 				createSimulatedEvent("mousedown", ["touchstart"], fnTouchToMouseHandler);
-				createSimulatedEvent("mousemove", ["touchmove"], fnTouchToMouseHandler);
+				createSimulatedEvent("mousemove", ["touchmove"], fnTouchMoveToMouseHandler);
 				createSimulatedEvent("mouseup", ["touchend", "touchcancel"], fnTouchToMouseHandler);
 			}
 
@@ -1182,34 +1220,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		}
 	};
 
-
-	/*
-	 * store reference to original preventDefault method
-	 */
-	var _preventDefault = jQuery.Event.prototype.preventDefault;
-	/*
-	 * and introduce some keyCode fixing for IE...
-	 * this e.g. suppresses the address-field drop down opening in case of sapshow (i.e. F4) in ComboBoxes
-	 */
-	jQuery.Event.prototype.preventDefault = function() {
-		_preventDefault.apply(this, arguments);
-
-		var e = this.originalEvent;
-
-		if ( !e ) {
-			return;
-		}
-
-		if ( e.keyCode != 0 ) {
-			try { // Sometimes setting keycode results in "Access Denied"
-				if (!sap.ui.Device.browser.firefox) {
-					e.keyCode = 0;
-				}
-			} catch (ex) {}
-		}
-
-	};
-
 	/**
 	 * Binds all events for listening with the given callback function.
 	 *
@@ -1259,7 +1269,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 			if ( parent !== element ) {
 				isMouseEnterLeave = true;
 			}
-		} catch (e) { }
+		} catch (e) {
+			//escape eslint check for empty block
+		}
 
 		return isMouseEnterLeave;
 	};
@@ -1529,9 +1541,18 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	
 	// Returns a jQuery object which contains all next/previous (bNext) tabbable DOM elements of the given starting point (oRef) within the given scopes (DOMRefs)
 	function findTabbables(oRef, aScopes, bNext) {
-		var $Ref = jQuery(oRef);
-		var $All = bNext ? jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()) : jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
-		var $Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
+		var $Ref = jQuery(oRef),
+			$All, $Tabbables;
+		
+		if (bNext) {
+			$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+			$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
+		} else {
+			$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
+		} 
+
+		var $Tabbables = jQuery.unique($Tabbables);
 		return $Tabbables.filter(function(){
 			return isContained(aScopes, this);
 		});
@@ -1685,7 +1706,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	 * @param {object} [oSettings] further options in case the handler is called manually.
 	 * @param {boolean} [oSettings.skip=false] whether the event should be ignored by the central handler (see above)
 	 * @param {Element} [oSettings.target=document.activeElement] the DOMNode which should be used as starting point to find the next DOMNode in the F6 chain.
-	 * @param {[Element]} [oSettings.scope=[document]] the DOMNodes(s) which are used for the F6 chain search
+	 * @param {Element[]} [oSettings.scope=[document]] the DOMNodes(s) which are used for the F6 chain search
 	 * @static
 	 * @private
 	 * @since 1.25.0
@@ -1721,11 +1742,31 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		jQuery(document).on("keydown", function(oEvent) {
 			jQuery.sap.handleF6GroupNavigation(oEvent, null);
 		});
-    });
-	
+	});
+
+	/**
+	 * Whether the current browser fires mouse events after touch events with long delay (~300ms)
+	 *
+	 * Mobile browsers fire mouse events after touch events with a delay (~300ms)
+	 * Some modern mobile browsers already removed the delay under some condition. Those browsers are:
+	 *  1. iOS Safari in iOS 8.
+	 *  2. Chrome on Android from version 32 (exclude the Samsung stock browser which also uses Chrome kernel)
+	 *
+	 * @private
+	 * @since 1.30.0
+	 */
+	jQuery.sap.isMouseEventDelayed =
+		(Device.browser.mobile
+			&& !(
+				(Device.os.ios && Device.os.version >= 8 && Device.browser.safari)
+				|| (Device.browser.chrome && !/SAMSUNG/.test(navigator.userAgent) && Device.browser.version >= 32)
+			)
+		);
+
+
 	/* ************************************************ */
 
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

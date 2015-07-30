@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.Notifier
+	 * @alias sap.ui.ux3.Notifier
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Notifier = Element.extend("sap.ui.ux3.Notifier", /** @lends sap.ui.ux3.Notifier.prototype */ { metadata : {
@@ -77,15 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	}});
 
 
-	/**
-	 * This method checks if the notifier has any items.
-	 *
-	 * @name sap.ui.ux3.Notifier#hasItems
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
 	/**
@@ -115,6 +107,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 			}
 		};
 
+
+		/**
+		 * This method checks if the notifier has any items.
+		 *
+		 * @type boolean
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 		Notifier.prototype.hasItems = function() {
 			if (this.getMessages().length > 0) {
 				return true;

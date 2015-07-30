@@ -17,6 +17,12 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<!-- use the sinon faketimers for this test -->
+		<script type="text/javascript">
+			sinon.config.useFakeTimers = true;
+		</script>
+
 		<script>
 
 		// app

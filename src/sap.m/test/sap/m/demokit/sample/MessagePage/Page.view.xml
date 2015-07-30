@@ -1,0 +1,8 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
+	<MessagePage showHeader="false">
+	</MessagePage>
+</mvc:View>

@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	 * @since 1.15.0
 	 * @experimental Since version 1.15.0. 
 	 * API is not yet finished and might change completely
-	 * @name sap.ui.unified.SplitContainer
+	 * @alias sap.ui.unified.SplitContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitContainer = Control.extend("sap.ui.unified.SplitContainer", /** @lends sap.ui.unified.SplitContainer.prototype */ { metadata : {
@@ -101,6 +101,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		this._canvasRenderer.destroy();
 		delete this._canvasRenderer;
 	
+		if (this._closeContentDelayId) {
+			jQuery.sap.clearDelayedCall(this._closeContentDelayId);
+			delete this._closeContentDelayId;
+		}
 		delete this._contentContainer;
 		delete this._secondaryContentContainer;
 	};
@@ -183,6 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			
 			if (this._closeContentDelayId) {
 				jQuery.sap.clearDelayedCall(this._closeContentDelayId);
+				delete this._closeContentDelayId;
 			}
 			
 			this._secondaryContentContainer.css(sSize, sSizeValue);
@@ -260,9 +265,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		return this;
 	};
 	
-	/**
-	 * Backwards compatibility with old property name
-	 */
+	// Backwards compatibility with old property name
+
 	SplitContainer.prototype.getSecondaryContentWidth = function() {
 		jQuery.sap.log.warning(
 			"SplitContainer: Use of deprecated property \"SecondaryContentWidth\", please use " +

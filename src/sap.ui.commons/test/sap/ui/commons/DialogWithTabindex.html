@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Dialog - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				>
+		</script>
+
+		<script>
+		// example with sap.ui.commons
+		var btn = new sap.ui.commons.Button({text:'Icon first in tab chain'});
+		btn.placeAt('content');
+		
+		var dialog = new sap.ui.commons.Dialog({modal: true, showCloseButton: true});
+		
+		dialog.addContent(new sap.ui.commons.Image({decorative: true, src: 'https://sapui5.neo.ondemand.com/sdk/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png'}));
+		dialog.addContent(new sap.ui.commons.TextField());
+		dialog.addContent(new sap.ui.commons.TextField());
+		
+		btn.attachPress(function() { dialog.open() });
+		
+		var btn2 = new sap.ui.commons.Button({text:'Icon not first in tab chain'});
+		btn2.placeAt('content');
+		
+		var dialog2 = new sap.ui.commons.Dialog({modal: true, showCloseButton: true});
+		
+		dialog2.addContent(new sap.ui.commons.TextField());
+		dialog2.addContent(new sap.ui.commons.Image({decorative: true, src: 'https://sapui5.neo.ondemand.com/sdk/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png'}));
+		dialog2.addContent(new sap.ui.commons.TextField());
+		
+		btn2.attachPress(function() { dialog2.open() });
+		btn2.attachPress(function() { dialog2.open() });	
+	</script>
+
+</head>
+<body class='sapUiBody'>
+	<div id='content'></div>
+</body>
+</html>

@@ -9,92 +9,93 @@
 </script>
 
 <script>
-jQuery.sap.require("sap.ui.qunit.qunit-css");
 jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
-if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-}
-jQuery.sap.require("sap.ui.test.Opa");
-jQuery.sap.require("sap.ui.test.opaQunit");
-var Opa = sap.ui.test.Opa;
+QUnit.config.autostart = false;
+sap.ui.require([
+		"sap/ui/test/Opa",
+		"sap/ui/test/opaQunit",
+		"sap/ui/qunit/qunit-css",
+		"sap/ui/qunit/qunit-junit",
+		"sap/ui/qunit/qunit-coverage"
+	],
+	function (Opa, opaTest) {
 
-function startApp () {
-	var iNumberOfButtons = 1;
+		function startApp () {
+			var iNumberOfButtons = 1;
 
-	function addButtonAfterSomeTime() {
-			window.setTimeout(function () {
-				var $button = jQuery('<button id="button' + iNumberOfButtons + '">' + iNumberOfButtons + '</button>').click(addButtonAfterSomeTime);
-				jQuery("body").append($button);
-				iNumberOfButtons ++;
-			}, Math.random()*10000);
-	}
+			function addButtonAfterSomeTime() {
+				window.setTimeout(function () {
+					var $button = jQuery('<button id="button' + iNumberOfButtons + '">' + iNumberOfButtons + '</button>').click(addButtonAfterSomeTime);
+					jQuery("body").append($button);
+					iNumberOfButtons ++;
+				}, Math.random()*10000);
+			}
 
-	//add the first button
-	addButtonAfterSomeTime();
-}
+			//add the first button
+			addButtonAfterSomeTime();
+		}
 
-var arrangements = new Opa({
-	iStartMyApp : function () {
-		startApp();
-		return this;
-	}
-});
-
-var actions = new Opa({
-	iPressOnAButton : function (sButtonId) {
-		this.waitFor({
-			check : function () {
-				return jQuery("#" + sButtonId).length;
-			},
-			success : function () {
-				jQuery("#" + sButtonId).click();
+		var arrangements = new Opa({
+			iStartMyApp : function () {
+				startApp();
+				return this;
 			}
 		});
-		return this;
-	}
-});
 
-var assertions = new Opa({
-	iSeeTheButtonWithTheIdAndText : function (sButtonId, sText) {
-		this.waitFor({
-			check : function () {
-				return jQuery("#" + sButtonId).length;
-			},
-			success : function () {
-				strictEqual(jQuery("#" + sButtonId).text(), sText, "Found the button with the id " + sButtonId);
+		var actions = new Opa({
+			iPressOnAButton : function (sButtonId) {
+				this.waitFor({
+					check : function () {
+						return jQuery("#" + sButtonId).length;
+					},
+					success : function () {
+						jQuery("#" + sButtonId).click();
+					}
+				});
+				return this;
 			}
 		});
-		return this;
+
+		var assertions = new Opa({
+			iSeeTheButtonWithTheIdAndText : function (sButtonId, sText) {
+				this.waitFor({
+					check : function () {
+						return jQuery("#" + sButtonId).length;
+					},
+					success : function () {
+						strictEqual(jQuery("#" + sButtonId).text(), sText, "Found the button with the id " + sButtonId);
+					}
+				});
+				return this;
+			}
+		});
+
+		Opa.extendConfig({
+			arrangements : arrangements,
+			actions : actions,
+			assertions : assertions
+		});
+
+		opaTest("Should create two buttons", function (Given, When, Then) {
+			// Arrangements
+			Given.iStartMyApp();
+
+			//Actions
+			When.iPressOnAButton("button1");
+
+			// Assertions
+			Then.iSeeTheButtonWithTheIdAndText("button2", "2");
+		});
+
+		QUnit.start();
+
 	}
-});
-
-sap.ui.test.Opa.extendConfig({
-	arrangements : arrangements,
-	actions : actions,
-	assertions : assertions
-});
-
-opaTest("Should create two buttons", function (Given, When, Then) {
-	// Arrangements
-	Given.iStartMyApp();
-
-	//Actions
-	When.iPressOnAButton("button1");
-
-	// Assertions
-	Then.iSeeTheButtonWithTheIdAndText("button2", "2");
-});
+);
 
 </script>
 </head>
 <body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.test.Opa</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture"></div>
-
 </body>
 </html>

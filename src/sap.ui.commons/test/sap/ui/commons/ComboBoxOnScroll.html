@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>ComboBox - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ComboBox.gif">
+
+		<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="false"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.commons"
+			src="../../../../resources/sap-ui-core.js"
+			>
+		</script>
+		
+		<style>
+			#content {
+    			height: 400px;
+    			width: 200px;
+    			overflow: hidden;
+    			overflow-y: scroll;
+    			background: red;
+			}
+		</style>
+
+		<script type="text/javascript">
+		var oLayout = new sap.ui.layout.VerticalLayout("Layout1", {
+			content: [
+		        new sap.ui.commons.TextView({
+		        	text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed vestibulum nisl. Maecenas eget porta odio, eu vulputate felis. Sed consequat tempor lacinia. In vel semper mi, vitae eleifend nulla. Cras rhoncus mi eu fringilla varius. Praesent convallis sem libero, at bibendum massa volutpat vel. Nulla lobortis justo nec ante suscipit, nec tempor lectus tincidunt. Vivamus nisl libero, viverra ac dapibus nec, ultrices et libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed vestibulum nisl. Maecenas eget porta odio, eu vulputate felis. Sed consequat tempor lacinia. In vel semper mi, vitae eleifend nulla. Cras rhoncus mi eu fringilla varius. Praesent convallis sem libero, at bibendum massa volutpat vel. Nulla lobortis justo nec ante suscipit, nec tempor lectus tincidunt. Vivamus nisl libero, viverra ac dapibus nec, ultrices et libero." 
+				}),
+				new sap.ui.commons.DropdownBox({
+					items:[	
+						new sap.ui.core.ListItem({text: "This is a very long item", }),
+						new sap.ui.core.ListItem({text: "This is a very long item", }),
+						new sap.ui.core.ListItem({text: "This is a very long item", }),
+					] 
+				}),
+				new sap.ui.commons.TextView({
+					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed vestibulum nisl. Maecenas eget porta odio, eu vulputate felis. Sed consequat tempor lacinia. In vel semper mi, vitae eleifend nulla. Cras rhoncus mi eu fringilla varius. Praesent convallis sem libero, at bibendum massa volutpat vel. Nulla lobortis justo nec ante suscipit, nec tempor lectus tincidunt. Vivamus nisl libero, viverra ac dapibus nec, ultrices et libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed vestibulum nisl. Maecenas eget porta odio, eu vulputate felis. Sed consequat tempor lacinia. In vel semper mi, vitae eleifend nulla. Cras rhoncus mi eu fringilla varius. Praesent convallis sem libero, at bibendum massa volutpat vel. Nulla lobortis justo nec ante suscipit, nec tempor lectus tincidunt. Vivamus nisl libero, viverra ac dapibus nec, ultrices et libero." 
+				}),   
+		    ]
+		});
+
+		// attach it to some element in the page
+		oLayout.placeAt("content");
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.ComboBox</h1>
+		<div id='content'></div>
+	</body>
+</html>

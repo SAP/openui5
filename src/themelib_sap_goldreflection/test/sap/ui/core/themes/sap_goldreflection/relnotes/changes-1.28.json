@@ -1,0 +1,52 @@
+{
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "75aa3c7bc2a39a4ffb8482c9c0818ccebaa0032e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "unifield.Calendar: Implemented display of multiple months",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "8d9aa761da91d56e75547ea94e675c68a86b3a33",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Removed Unnecessary CSS-class",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "cc71e7b852bd95dbe12d6d10224c7d7ed2b74623",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: Incorrect text alignment in Internet Explorer 10 corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "185708fa4d39caa28199fa931ff29c778581083a",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Scrollbars in 100% height containers avoided",
+        "references": []
+      }
+    ]
+  }
+}

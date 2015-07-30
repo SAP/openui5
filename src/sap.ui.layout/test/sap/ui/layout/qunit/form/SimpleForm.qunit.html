@@ -25,6 +25,7 @@
 	var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 			"sf1",
 			{
+				width: "100%",
 				minWidth : 1024,
 				maxContainerCols: 2,
 				content:[
@@ -52,7 +53,8 @@
 			        new sap.ui.commons.TextField("tf2-4",{value:"Value 3/1", layoutData:new sap.ui.commons.layout.ResponsiveFlowLayoutData("LD_tf2-4", {weight:3})}),
 			        new sap.ui.commons.TextField("tf2-5",{value:"Value 3/2"}),
 			        new sap.ui.commons.TextField("tf2-6",{value:"Value 3/3"})
-				]
+					    ],
+				ariaLabelledBy: ["ARIA-1"]
 			}).placeAt("uiArea1");
 
 	var oSimpleForm2 = new sap.ui.layout.form.SimpleForm(
@@ -103,6 +105,11 @@
 		qutils.delayTestStart();
 
 		module("Setter/Getter");
+
+		test("width", function() {
+			ok(/width:/.test(oSimpleForm.$().attr("style")) && /100%/.test(oSimpleForm.$().attr("style")), "SimpleForm1: width set");
+			ok(!/width:/.test(oSimpleForm2.$().attr("style")), "SimpleForm2: no width set");
+		});
 
 		test("used Layout", function() {
 			var oForm = oSimpleForm.getAggregation("form");
@@ -469,6 +476,19 @@
 			sap.ui.getCore().applyChanges();
 		});
 
+
+		module("ARIA");
+
+		test("aria-labelledby", function() {
+			var oForm = oSimpleForm.getAggregation("form");
+			ok(jQuery.sap.equal(oForm.getAriaLabelledBy(), ["ARIA-1"]), "Form1 gets AriaLabelledBy from SimpleForm");
+			var sIds = oForm.$().attr("aria-labelledby");
+			ok(sIds.search("ARIA-1") >= 0, "AriaLabelledBy rendered on Form");
+			ok(!oSimpleForm.$().attr("aria-labelledby"), "SimpleForm has no aria-labelledby rendered");
+
+			oForm = oSimpleForm3.getAggregation("form");
+			equal(oForm.getAriaLabelledBy().length, 0, "Form3 no AriaLabelledBy");
+		});
 
 		</script>
 

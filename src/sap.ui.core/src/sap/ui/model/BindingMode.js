@@ -3,8 +3,7 @@
  */
 
 // Provides enumeration sap.ui.model.FilterOperator
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
@@ -13,7 +12,7 @@ sap.ui.define(['jquery.sap.global'],
 	*
 	* @namespace
 	* @public
-	* @name sap.ui.model.BindingMode
+	* @alias sap.ui.model.BindingMode
 	*/
 	var BindingMode = /** @lends sap.ui.model.BindingMode */ {
 	

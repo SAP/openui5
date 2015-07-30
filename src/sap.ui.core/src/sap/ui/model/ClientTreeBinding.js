@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './TreeBinding'],
-	function(jQuery, TreeBinding) {
+sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBinding', 'sap/ui/model/SorterProcessor', 'sap/ui/model/FilterProcessor'],
+	function(jQuery, ChangeReason, Context, TreeBinding, SorterProcessor, FilterProcessor) {
 	"use strict";
 
 
@@ -17,13 +17,14 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * @param {string} sPath the path pointing to the tree / array that should be bound
 	 * @param {object} [oContext=null] the context object for this databinding (optional)
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
-	 * @param {object} [mParameters=null] additional model specific parameters (optional) 
-	 * @name sap.ui.model.ClientTreeBinding
+	 * @param {object} [mParameters=null] additional model specific parameters (optional)
+	 * @param {sap.ui.model.Sorter[]} [aSorters=null] predefined sorter/s contained in an array (optional)
+	 * @alias sap.ui.model.ClientTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
 	var ClientTreeBinding = TreeBinding.extend("sap.ui.model.ClientTreeBinding", /** @lends sap.ui.model.ClientTreeBinding.prototype */ {
 	
-		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
+		constructor : function(oModel, sPath, oContext, aFilters, mParameters, aSorters){
 			TreeBinding.apply(this, arguments);
 			if (!this.oContext) {
 				this.oContext = "";
@@ -37,36 +38,19 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 					this.filter(aFilters);
 				}
 			}
+			
+			this._mLengthsCache = {};
 		}
 		
 	});
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.ClientTreeBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.ClientTreeBinding.extend
-	 * @function
-	 */
 	
 	/**
 	 * Return root contexts for the tree
 	 *
 	 * @return {object[]} the contexts array
 	 * @protected
-	 * @name sap.ui.model.ClientTreeBinding#getRootContexts
 	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
 	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
-	 * @function
 	 */
 	ClientTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -77,6 +61,8 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 		}
 
 		var aContexts = [];
+		var that = this;
+		
 		if (!this.oModel.isList(this.sPath)) {
 			var oContext = this.oModel.getContext(this.sPath);
 			if (this.bDisplayRootNode) {
@@ -85,11 +71,14 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 				aContexts = this.getNodeContexts(oContext);
 			}
 		} else {
-			var that = this;
 			jQuery.each(this.oModel._getObject(this.sPath), function(iIndex, oObject) {
 				that._saveSubContext(oObject, aContexts, that.sPath + (jQuery.sap.endsWith(that.sPath, "/") ? "" : "/"), iIndex);
 			});
 		}
+		
+		this._applySorter(aContexts);
+		
+		this._setLengthCache(this.sPath, aContexts.length);
 		
 		return aContexts.slice(iStartIndex, iStartIndex + iLength);
 	};
@@ -101,8 +90,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
 	 * @return {object[]} the contexts array
 	 * @protected
-	 * @name sap.ui.model.ClientTreeBinding#getNodeContexts
-	 * @function
 	 */
 	ClientTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -121,23 +108,22 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 		}
 	
 		var aContexts = [],
-		that = this,
-		oNode = this.oModel._getObject(sContextPath),
-		aArrayNames = this.mParameters && this.mParameters.arrayNames,
-		aChildArray;
+			that = this,
+			oNode = this.oModel._getObject(sContextPath),
+			aArrayNames = this.mParameters && this.mParameters.arrayNames,
+			aChildArray;
 		
-		if (aArrayNames && jQuery.isArray(aArrayNames)) {
-			
-			jQuery.each(aArrayNames, function(iIndex, sArrayName){
-				aChildArray = oNode[sArrayName];
-				if (aChildArray) {
-					jQuery.each(aChildArray, function(sSubName, oSubChild) {
-						that._saveSubContext(oSubChild, aContexts, sContextPath, sArrayName + "/" + sSubName);
-					});
-				}
-			});
-		} else {
-			if (oNode) {
+		if (oNode) {
+			if (aArrayNames && jQuery.isArray(aArrayNames)) {
+				jQuery.each(aArrayNames, function(iIndex, sArrayName){
+					aChildArray = oNode[sArrayName];
+					if (aChildArray) {
+						jQuery.each(aChildArray, function(sSubName, oSubChild) {
+							that._saveSubContext(oSubChild, aContexts, sContextPath, sArrayName + "/" + sSubName);
+						});
+					}
+				});
+			} else {
 				jQuery.sap.each(oNode, function(sName, oChild) {
 					if (jQuery.isArray(oChild)) {
 						jQuery.each(oChild, function(sSubName, oSubChild) {
@@ -149,21 +135,33 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 				});
 			}
 		}
+		
+		this._applySorter(aContexts);
+		
+		this._setLengthCache(sContextPath, aContexts.length);
+		
 		return aContexts.slice(iStartIndex, iStartIndex + iLength);
 	};
-	
+
 	/**
 	 * Returns if the node has child nodes
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype.hasChildren
 	 * @param {object} oContext the context element of the node
 	 * @return {boolean} true if node has children
 	 *
 	 * @public
 	 */
 	ClientTreeBinding.prototype.hasChildren = function(oContext) {
-		return oContext ? this.getNodeContexts(oContext).length > 0 : false;
+		if (oContext) {
+			//check if the context's child count is already cached
+			if (this._mLengthsCache[oContext.sPath] !== undefined) {
+				return this._mLengthsCache[oContext.sPath] > 0;
+			} else {
+				// if not: find the child contexts, cache is set implicitly 
+				return this.getNodeContexts(oContext).length > 0;
+			}
+		}
+		return false;
 	};
 	
 	ClientTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
@@ -191,9 +189,8 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * 
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
+	 * @return {sap.ui.model.ClientTreeBinding} returns <code>this</code> to facilitate method chaining
 	 * @public
-	 * @name sap.ui.model.ClientTreeBinding#filter
-	 * @function
 	 */
 	ClientTreeBinding.prototype.filter = function(aFilters){
 		// The filtering is applied recursively through the tree and stores all filtered contexts and its parent contexts in an array.
@@ -206,20 +203,20 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 		} else {
 			this.aFilters = aFilters;
 			// start with binding path root
-			var oContext = new sap.ui.model.Context(this.oModel, this.sPath);
+			var oContext = new Context(this.oModel, this.sPath);
 			this.filterRecursive(oContext);
 		}
 		this._fireChange({reason: "filter"});
 		// TODO remove this if the filter event is removed
 		this._fireFilter({filters: aFilters});
+		
+		return this;
 	};
 	
 	/**
 	 * filters the tree recursively.
 	 * @param {object} oParentContext the context where to start. The children of this node context are then filtered recursively.
 	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#filterRecursive
-	 * @function
 	 */
 	ClientTreeBinding.prototype.filterRecursive = function(oParentContext){
 	
@@ -241,70 +238,22 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * Performs the real filtering and stores all filtered contexts and its parent context into an array.
 	 * @param {object} oParentContext the context where to start. The children of this node context are filtered.
 	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#applyFilter
-	 * @function
 	 */
 	ClientTreeBinding.prototype.applyFilter = function(oParentContext){
 		if (!this.aFilters) {
 			return;
 		}
 		var that = this,
-			oFilterGroups = {},
-			aFilterGroup,
-			aFiltered = [],
-			bGroupFiltered = false,
-			bFiltered = true;
+			aFiltered = [];
+		
 		this.bIsFiltering = true;
 		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
-		jQuery.each(that.aFilters, function(j, oFilter) {
-			if (oFilter.sPath) {
-				aFilterGroup = oFilterGroups[oFilter.sPath];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups[oFilter.sPath] = [];
-				}
-			} else {
-				aFilterGroup = oFilterGroups["__multiFilter"];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups["__multiFilter"] = [];
-				}
-			}
-			aFilterGroup.push(oFilter);
+		
+		aFiltered = FilterProcessor.apply(aUnfilteredContexts, this.aFilters, function (oContext, sPath) {
+			return that.oModel.getProperty(sPath, oContext);
 		});
-		jQuery.each(aUnfilteredContexts, function(i, oUnfilteredContext) {
-			bFiltered = true;
-			jQuery.each(oFilterGroups, function(sPath, aFilterGroup) {
-				if (sPath !== "__multiFilter") {
-					var oValue = that.oModel._getObject(sPath, oUnfilteredContext);
-					if (typeof oValue == "string") {
-						oValue = oValue.toUpperCase();
-					}
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						var fnTest = that.getFilterFunction(oFilter);
-						if (oValue != undefined && fnTest(oValue)) {
-							bGroupFiltered = true;
-							return false;
-						}
-					});
-				} else {
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						bGroupFiltered = that._resolveMultiFilter(oFilter, oUnfilteredContext);
-						if (bGroupFiltered) {
-							return false;
-						}
-					});
-				}
-				if (!bGroupFiltered) {
-					bFiltered = false;
-					return false;
-				}
-			});
-			if (bFiltered) {
-				aFiltered.push(oUnfilteredContext);
-			}
-		});
+		
 		if (aFiltered.length > 0) {
 			jQuery.merge(this.filterInfo.aFilteredContexts, aFiltered);
 			this.filterInfo.aFilteredContexts.push(oParentContext);
@@ -320,92 +269,46 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	};
 	
 	/**
-	 * Resolve the client list binding and check if an index matches
-	 *
-	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#_resolveMultiFilter
-	 * @function
+	 * Sorting on ClientTreeBindings is not yet supported.
+	 * Sorting is only possible in the ODataTreeBinding.
+	 * 
+	 * @param {sap.ui.model.Sorter[]} an array of Sorter instances which will be applied
+	 * @return {sap.ui.model.ClientTreeBinding} returns <code>this</code> to facilitate method chaining
 	 */
-	ClientTreeBinding.prototype._resolveMultiFilter = function(oMultiFilter, oUnfilteredContext){
-		var that = this,
-			bMatched = false,
-			aFilters = oMultiFilter.aFilters;
+	ClientTreeBinding.prototype.sort = function (aSorters) {
+		jQuery.sap.log.warning("The ClientTreeBindings (e.g. JSONTreeBinding, XMLTreeBinding) do not yet support sorting.");
 		
-		if (aFilters) {
-			jQuery.each(aFilters, function(i, oFilter) {
-				var bLocalMatch = false;
-				if (oFilter._bMultiFilter) {
-					bLocalMatch = that._resolveMultiFilter(oFilter, oUnfilteredContext);
-				} else if (oFilter.sPath) {
-					var oValue = that.oModel.getProperty(oFilter.sPath, oUnfilteredContext);
-					if (typeof oValue == "string") {
-						oValue = oValue.toUpperCase();
-					}
-					var fnTest = that.getFilterFunction(oFilter);
-					if (oValue != undefined && fnTest(oValue)) {
-						bLocalMatch = true;
-					}
-				}
-				if (bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = true;
-				} else if (!bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = false;
-					return false;
-				} else if (bLocalMatch) {
-					bMatched = true;
-					return false;
-				}
-			});
-		}
+		aSorters = aSorters || [];
+		this.aSorters = jQuery.isArray(aSorters) ? aSorters : [aSorters];
 		
-		return bMatched;
+		this._fireChange({reason: ChangeReason.Sort});
+		
+		return this;
 	};
 	
 	/**
-	 * Provides a JS filter function for the given filter
-	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#getFilterFunction
-	 * @function
+	 * internal function to apply the defined this.aSorters for the given array
+	 * @param {array} aContexts the context array which should be sorted (inplace)
 	 */
-	ClientTreeBinding.prototype.getFilterFunction = function(oFilter){
-		if (oFilter.fnTest) {
-			return oFilter.fnTest;
-		}
-		var oValue1 = oFilter.oValue1,
-			oValue2 = oFilter.oValue2;
-		if (typeof oValue1 == "string") {
-			oValue1 = oValue1.toUpperCase();
-		}
-		if (typeof oValue2 == "string") {
-			oValue2 = oValue2.toUpperCase();
-		}
-		switch (oFilter.sOperator) {
-			case "EQ":
-				oFilter.fnTest = function(value) { return value == oValue1; }; break;
-			case "NE":
-				oFilter.fnTest = function(value) { return value != oValue1; }; break;
-			case "LT":
-				oFilter.fnTest = function(value) { return value < oValue1; }; break;
-			case "LE":
-				oFilter.fnTest = function(value) { return value <= oValue1; }; break;
-			case "GT":
-				oFilter.fnTest = function(value) { return value > oValue1; }; break;
-			case "GE":
-				oFilter.fnTest = function(value) { return value >= oValue1; }; break;
-			case "BT":
-				oFilter.fnTest = function(value) { return (value > oValue1) && (value < oValue2); }; break;
-			case "Contains":
-				oFilter.fnTest = function(value) { return value.indexOf(oValue1) != -1; }; break;
-			case "StartsWith":
-				oFilter.fnTest = function(value) { return value.indexOf(oValue1) == 0; }; break;
-			case "EndsWith":
-				oFilter.fnTest = function(value) { return value.indexOf(oValue1) == value.length - new String(oFilter.oValue1).length; }; break;
-			default:
-				oFilter.fnTest = function(value) { return true; };
-		}
-		return oFilter.fnTest;
+	ClientTreeBinding.prototype._applySorter = function (aContexts) {
+		var that = this;
+		SorterProcessor.apply(aContexts, this.aSorters, function(oContext, sPath) {
+			return that.oModel.getProperty(sPath, oContext);
+		},
+		function (oContext) {
+			//the context path is used as a key for internal use in the SortProcessor.
+			return oContext.getPath();
+		});
 	};
 	
+	/**
+	 * Sets the length cache.
+	 * Called by get*Contexts() to keep track of the child count (after filtering)
+	 */
+	ClientTreeBinding.prototype._setLengthCache = function (sKey, iLength) {
+		// keep track of the child count for each context (after filtering)
+		this._mLengthsCache[sKey] = iLength;
+	};
 	
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
@@ -413,14 +316,13 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * 
 	 * @param {boolean} bForceupdate
 	 * 
-	 * @name sap.ui.model.ClientTreeBinding#checkUpdate
-	 * @function
 	 */
 	ClientTreeBinding.prototype.checkUpdate = function(bForceupdate){
+		this._mLengthsCache = {};
 		this._fireChange();
 	};
 	
 
 	return ClientTreeBinding;
 
-}, /* bExport= */ true);
+});

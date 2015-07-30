@@ -5,7 +5,7 @@
 		<meta charset="UTF-8" />
 		<title>qUnit Page for sap.m.ObjectHeader in Responsive mode</title>
 		
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />	
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		
 		<!-- UI5 Bootstrap -->
 		<script id="sap-ui-bootstrap"
@@ -22,1052 +22,768 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 		
-		<script type="text/javascript">
-			
-			// Creates a responsive ObjectHeader with generic properties		
-			function createObjectHeader() {
-				
-				return new sap.m.ObjectHeader({			
-					
-					title : "Responsive ObjectHeader",
-					number : "1000",
-					numberUnit : "EUR",
-					responsive : true
-				});
+		<script>
+			var sControlId = "ROHId",
+				oCore = sap.ui.getCore();
+
+			// Creates a ResponsiveObjectHeader with generic properties	
+			// Config object can be passed as argument. If some property already exist it will be overridden
+			function createObjectHeader(oProps) {
+				var oHeaderProps = {
+					title: "Responsive Object Header",
+					number: "1000",
+					numberUnit: "EUR",
+					responsive: true
+				};
+				oProps && jQuery.extend(oHeaderProps, oProps);
+
+				return new sap.m.ObjectHeader(sControlId, oHeaderProps);
 			}
 			
 			// Adds iCount statuses to the oObjectHeader	
-			function addStatuses(oObjectHeader, iCount) {
-				
-				for(var i=1; i<=iCount; i++) {
-					oObjectHeader.addStatus(
+			function addStatuses(oResponsiveObjectHeader, iCount) {
+				for (var i = 1; i <= iCount; i++) {
+					oResponsiveObjectHeader.addStatus(
 							new sap.m.ObjectStatus({
-								text : "Status " + i,
-								state : sap.ui.core.ValueState.Success
+								text: "Status " + i,
+								state: sap.ui.core.ValueState.Success
 							})
 					);
 				}
 			}
 			
-			// Adds iCount attributes to the oObjectHeader
-			function addAttributes(oObjectHeader, iCount) {
-				
-				for(var i=1; i<=iCount; i++) {
-					oObjectHeader.addAttribute(
+			// Adds iCount attributes to the oResponsiveObjectHeader
+			function addAttributes(oResponsiveObjectHeader, iCount) {
+				for (var i = 1; i <= iCount; i++) {
+					oResponsiveObjectHeader.addAttribute(
 							new sap.m.ObjectAttribute({
-								text : "Contract #D" + i
+								text: "Contract #D" + i
 							})
 					);
 				}
 			}
 			
-			// Initializes a sap.m.IconTabBar with iCount tabs and adds it to the oObjectHeader	
-			function initTabs(oObjectHeader, iCount) {
-				
-				var oIconTabBar = new sap.m.IconTabBar();
-				
-				for(var i=1; i<=iCount; i++) {
-					oIconTabBar.addItem(new sap.m.IconTabFilter ({ icon: "sap-icon://instance" }));
-				}
-				
-				oObjectHeader.setHeaderContainer(oIconTabBar);
+			// It's used many times and save a lot of line that's why has long name and do more than one thing
+			function getColsCountAfterAddingStates(iStatusCount, iAttrCount, sCssQuery) {
+				var oObjectHeader = oCore.byId(sControlId);
+			
+				addStatuses(oObjectHeader, iStatusCount);
+				addAttributes(oObjectHeader, iAttrCount);
+				oCore.applyChanges();
+			
+				return oObjectHeader.$().find(sCssQuery).length;
 			}
 			
 			module("Basic rendering");
 			
-			test("Responsive header", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
+				test("Responsive header", function() {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
 
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOH"), "Object header is rendered.");
-				ok($objectHeader.hasClass("sapMOHR"), "Object header is responsive.");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title without title div", function() {
-				
-				// Arrange
-				var oObjectHeader = new sap.m.ObjectHeader({					
-					number : "1000",
-					numberUnit : "EUR",
-					responsive : true
-				});
-
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeaderNumber = oObjectHeader.$("number");
-				var $objectHeaderTitle = oObjectHeader.$("title");
-				
-				ok($objectHeaderNumber.hasClass("sapMObjectNumberFull"), "Object has class \"sapMObjectNumberFull\".");
-				ok(!$objectHeaderTitle.hasClass("sapMOHTitle"), "Object does not have class \"sapMOHTitle\".");
-				ok(!$objectHeaderTitle.hasClass("sapMOHTitleDivFull"), "Object does not have class \"sapMOHTitleDivFull\".");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title without number and number unit", function() {
-				
-				// Arrange
-				var oObjectHeader = new sap.m.ObjectHeader({
-					title: "title",
-					responsive : true
-				});
-
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeaderTitle = oObjectHeader.$("title");
-				var $objectHeaderNumber = oObjectHeader.$("number");
-				
-				ok($objectHeaderTitle.hasClass("sapMOHTitleDivFull"), "Object has class \"sapMOHTitleDivFull\".");
-				ok(!$objectHeaderNumber.hasClass("sapMObjectNumber"), "Object does not have class \"sapMObjectNumber\".");
-				ok(!$objectHeaderNumber.hasClass("sapMObjectNumberFull"), "Object does not have class \"sapMObjectNumberFull\".");
-								
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title with icon", function() {
-				
-				// Arrange
-				var oObjectHeader = new sap.m.ObjectHeader({
-					title: "title",
-					icon: "sap-icon://instance",
-					responsive : true
-				});
-
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$("titlediv");
-				
-				ok($objectHeader.hasClass("sapMOHTitleIcon"), "Object has class \"sapMOHTitleIcon\".");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			module("Rendering of statuses");
-			
-			test("2 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
-
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header has two statuses.");
-				ok(!$objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header does not have class sapMOHStatesThreeOrFour");
-				ok(!$objectHeader.hasClass("sapMOHStatesFiveOrMore"), "Object header does not have class sapMOHStatesFiveOrMore");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("4 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 4);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();	
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header has three or four statuses.");
-				ok(!$objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header does not have class sapMOHStatesTwoOrLess");
-				ok(!$objectHeader.hasClass("sapMOHStatesFiveOrMore"), "Object header does not have class sapMOHStatesFiveOrMore");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			test("6 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 6);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-
-				ok($objectHeader.hasClass("sapMOHStatesFiveOrMore"), "Object header has five or more statuses.");
-				ok(!$objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header does not have class sapMOHStatesTwoOrLess");
-				ok(!$objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header does not have class sapMOHStatesThreeOrFour");
-				
-				// Clean up
-				oObjectHeader.destroy();			
-			});
-			
-			module("Rendering of attributes");
-			
-			test("2 attributes", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addAttributes(oObjectHeader, 2);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header has class sapMOHStatesTwoOrLess.");
-				ok(!$objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header does not have class sapMOHStatesThreeOrFour");
-				ok(!$objectHeader.hasClass("sapMOHStatesFiveOrMore"), "Object header does not have class sapMOHStatesFiveOrMore");
-				
-				// Clean up
-				oObjectHeader.destroy();			
-			});
-			
-			test("4 attributes", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addAttributes(oObjectHeader, 4);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();	
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header has class sapMOHStatesThreeOrFour.");
-				ok(!$objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header does not have class sapMOHStatesTwoOrLess");
-				ok(!$objectHeader.hasClass("sapMOHStatesFiveOrMore"), "Object header does not have class sapMOHStatesFiveOrMore");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			test("6 attributes", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addAttributes(oObjectHeader, 6);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-
-				ok($objectHeader.hasClass("sapMOHStatesFiveOrMore"), "Object header has class sapMOHStatesFiveOrMore.");
-				ok(!$objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header does not have class sapMOHStatesTwoOrLess");
-				ok(!$objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header does not have class sapMOHStatesThreeOrFour");
-				
-				// Clean up
-				oObjectHeader.destroy();			
-			});
-			
-			module("Rendering of statuses and attributes");
-			
-			test("2 attributes and 3 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addAttributes(oObjectHeader, 2);
-				addStatuses(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-
-				ok($objectHeader.hasClass("sapMOHStatesFiveOrMore"), "Object header has class sapMOHStatesFiveOrMore.");
-				ok(!$objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header does not have class sapMOHStatesTwoOrLess");
-				ok(!$objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header does not have class sapMOHStatesThreeOrFour");
-				
-				// Clean up
-				oObjectHeader.destroy();			
-			});
-			
-			module("Rendering of markers");		
-
-			test("No markers", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				// Assert
-				ok(oObjectHeader.$().children(0).hasClass("sapMOHNoMarkers"), "Markers are not rendered.");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			test("Markers", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				oObjectHeader.setShowMarkers(true);
-				oObjectHeader.setMarkFavorite(true);
-				oObjectHeader.setMarkFlagged(true);
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
 					
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				// Assert
-				ok(!oObjectHeader.$().children(0).hasClass("sapMOHNoMarkers"), "ObjectHeader does not have class sapMOHNoMarkers");
-				ok(oObjectHeader.$().children(0).children(0).hasClass("sapMObjStatusMarker"), "Markers div is rendered.");
-				ok(oObjectHeader.$("flag"), "markerFlagged is rendered.");
-				ok(oObjectHeader.$("favorite"), "markerFavorite is rendered.");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-	
-			module("Rendering of tabs");
-			
-			test("No tabs", function() {
-				
-				// Arrange				
-				var oObjectHeader = createObjectHeader();
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOHNoTabs"), "Object header has no tabs.");
-				ok(!$objectHeader.hasClass("sapMOHWithITB"), "Object header has no class \"sapMOHWithITB\".");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			test("3 tabs", function() {
-				
-				// Arrange				
-				var oObjectHeader = createObjectHeader();
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOHWithITB"), "Object header has tabs.");
-				ok(!$objectHeader.hasClass("sapMOHNoTabs"), "Object header has no class \"sapMOHNoTabs\".");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});		
-			
-			test("8 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
-				initTabs(oObjectHeader, 8);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-				
-				ok($objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header has two statuses.");
-				ok($objectHeader.hasClass("sapMOHWithITB"), "Object header has tabs.");
-				ok($objectHeader.hasClass("sapMOHTabsMoreThanSeven"), "Object header has 8 tabs.");	
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-		
-			module("Rerendering");
-			
-			test("Markers", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				oObjectHeader.setShowMarkers(true);
-				oObjectHeader.setMarkFavorite(true);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-										
-				// Assert
-				ok(!oObjectHeader.$().children(0).hasClass("sapMOHNoMarkers"), "Markers are rendered.");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			test("Add status (initially 2)", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
-
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Add one more status
-				addStatuses(oObjectHeader, 1);
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-
-				ok($objectHeader.hasClass("sapMOHStatesThreeOrFour"), "Object header has class sapMOHStatesThreeOrFour");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			test("Remove status (initially 3)", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 3);
-
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Remove the first status
-				oObjectHeader.removeStatus(0);
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $objectHeader = oObjectHeader.$().children(0);
-
-				ok($objectHeader.hasClass("sapMOHStatesTwoOrLess"), "Object header has class sapMOHStatesTwoOrLess");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			module("Layout desktop", {
-				setup: function() {
-					// Simulate desktop
-					jQuery("html").removeClass("sap-desktop");
-					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").removeClass("sap-phone");
-					jQuery("html").removeClass("sapUiMedia-Std-Phone");
-					jQuery("html").removeClass("sap-tablet");
-					jQuery("html").removeClass("sapUiMedia-Std-Tablet");
+					// Assert
+					var $objectHeader = oObjectHeader.$();
 					
+					ok($objectHeader.hasClass("sapMOHROuter"), "Object header is rendered in responsive mode.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Icon should be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						icon: sap.ui.core.IconPool.getIconURI("inbox")
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var iconEl = jQuery.sap.domById(sControlId + "-img");
+					ok(iconEl, "Icon is rendered.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Icon shouldn't be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var iconEl = jQuery.sap.domById(sControlId + "-img");
+					ok(!iconEl, "Icon isn't rendered.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title with icon should be rendered", function() {
+					// Arrange
+					var oObjectHeader = new sap.m.ObjectHeader({
+						title: "title",
+						icon: "sap-icon://instance",
+						responsive : true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $objectHeader = oObjectHeader.$("titlediv");
+					
+					ok($objectHeader.hasClass("sapMOHRTitleIcon"), "Object has class \"sapMOHRTitleIcon\".");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title without icon should be rendered", function() {
+					// Arrange
+					var oObjectHeader = new sap.m.ObjectHeader({
+						title: "title",
+						responsive : true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $objectHeader = oObjectHeader.$("titlediv");
+					
+					ok(!$objectHeader.hasClass("sapMOHRTitleIcon"), "Object doesn't have class \"sapMOHRTitleIcon\".");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title arrow should be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						showTitleSelector: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var titleSelectorEl = jQuery.sap.domById(sControlId + "-titleArrow");
+					ok(titleSelectorEl, "Title arrow is rendered.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title arrow shouldn't be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var titleSelectorEl = jQuery.sap.domById(sControlId + "-titleArrow");
+					ok(!titleSelectorEl, "Title arrow is not rendered.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Info should be rendered", function () {
+					var sIntro = "Some intro text that describes the object!";
+
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						intro: sIntro
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var introEl = jQuery.sap.domById(sControlId + "-intro");
+					ok(introEl, "Intro is rendered");
+					equal(introEl.textContent, sIntro, "Intro exist and it is with the right value.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Info shouldn't be rendered", function () {
+
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var introEl = jQuery.sap.domById(sControlId + "-intro");
+					ok(!introEl, "Intro isn't rendered");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title is active and is rendered as a link", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true,
+						titleHref: "http://www.sap.com"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok($sTitle.attr("href"), "Title has attribute href and is a link.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title is active but it's not a link", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Intro is sap.mLink when it is active", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						intro: "OH intro text",
+						introActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sIntro = oObjectHeader.$("intro");
+					ok($sIntro.hasClass("sapMLnk"), "Intro is sap.m.Link");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Active title tap", function() {
+					var domRef = null;
+					var eventHandler = function(oEvent) {
+						domRef = oEvent.getParameters().domRef;
+					}
+					
+					var oObjectHeader = createObjectHeader({
+						title: "OH title - last word will be cut from the rest of the title",
+						titleActive: true,
+						titlePress: eventHandler,
+						showMarkers: true,
+						markFlagged: true,
+						markFavorite: true
+					});
+			
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					sap.ui.test.qunit.triggerEvent("tap", oObjectHeader.$("txt"));
+					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "Title should be clickable when clicking on \"a\" element");
+					domRef = null;
+					
+					qutils.triggerEvent("tap", oObjectHeader.$("txt").children(0));
+					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "When clicking inner span element of the \"a\" element event should return \"a\" element id as source");
+					domRef = null;
+				
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
+				
+			module("Basic aggregations rendering", {
+				teardown: function () {
+					oCore.byId(sControlId).destroy();
+				}
+			});
+
+				test("Attribute should be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						attributes: [
+							new sap.m.ObjectAttribute({
+								title: "Manufacturer",
+								text: "ACME Corp",
+								active: true
+							})
+						]
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok(attr.length, "One attribute is rendered.");
+				});
+				
+				test("Attribute shouldn't be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok(!attr.length, "Zero attributes are rendered.");
+				});
+				
+				test("Status should be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						statuses: [
+							new sap.m.ObjectStatus({
+								title: "Approval",
+								text: "Pending",
+								state: sap.ui.core.ValueState.Warning
+							})
+						]
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(status.length, "Status is rendered.");
+				});
+				
+				test("Status shouldn't be rendered", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(!status.length, "Zero statuses are rendered.");
+				});
+					
+					
+			module("Desktop master detail rendering", {
+				setup: function () {
+					var oObjectHeader = createObjectHeader();
+					oObjectHeader.placeAt("qunit-fixture");
+				},
+				teardown: function () {
+					oCore.byId(sControlId).destroy();
+				}
+			});
+
+				test("3 states rendered in 2 columns", function () {
+					var count = getColsCountAfterAddingStates(1, 2, ".sapMOHRTwoCols");
+					
+					// Assert
+					equal(count, 2, "States are rendered in 2 columns.");
+					notEqual(count, 3, "States aren't rendered in 3 columns.");
+				});
+
+				test("5 states rendered in 3 columns", function () {
+					var count = getColsCountAfterAddingStates(2, 3, ".sapMOHRThreeCols");
+					
+					// Assert
+					equal(count, 3, "States are rendered in 3 columns.");
+					notEqual(count, 2, "States aren't rendered in 2 columns.");
+				});
+
+			module("Desktop fullScreenOptimized rendering", {
+				setup: function () {
+					var oObjectHeader = createObjectHeader({
+						fullScreenOptimized: true
+					});
+
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+				},
+				teardown: function () {
+					oCore.byId(sControlId).destroy();
+				}
+			});
+
+				test("2 states rendered next to title block", function () {
+					var count = getColsCountAfterAddingStates(1, 1, ".sapMOHRStatesOneOrThree .sapMOHROneCols");
+					var count2 = getColsCountAfterAddingStates(1, 1, "sapMOHRTwoCols");
+					
+					// Assert
+					equal(count, 1, "2 states are rendered next to title block");
+					equal(count2, 0, "2 states aren't rendered below the title block in two columns");
+				});
+				
+				test("5 states rendered in 4 columns", function () {
+					var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRFourCols");
+					
+					// Assert
+					equal(count, 4, "5 states are rendered in 4 columns");
+					notEqual(count, 3, "States aren't rendered in 3 columns.");
+				});
+				
+				
+			module("Desktop rendering resized to Tablet size", {
+				setup: function () {
 					jQuery("html").addClass("sap-desktop");
+					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+					jQuery("html").addClass("sapUiMedia-Std-Tablet");
+				},
+				teardown: function () {
+					jQuery("html").removeClass("sapUiMedia-Std-Tablet");
 					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					
+					oCore.byId(sControlId).destroy();
 				}
 			});
 			
-			test("Title and 2 statuses", function() {
-				
-				// Arrange
+			test("Master detail rendering: 3 states rendered in 2 columns", function () {
 				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
+				
+				// System Under Test
+				oObjectHeader.placeAt("qunit-fixture");
+				oCore.applyChanges();
+				
+				var count = getColsCountAfterAddingStates(2, 1, ".sapMOHRTwoCols");
+				
+				// Assert
+				equal(count, 2, "3 states are rendered in two columns");
+				notEqual(count, 1, "States aren't rendered in 1 column.");
+			});
+			
+			test("2 states in fullScreenOptimized mode rendered in 2 columns", function () {
+				
+				var oObjectHeader = createObjectHeader({
+					fullScreenOptimized: true
+				});
+				
+				// System Under Test
+				oObjectHeader.placeAt("qunit-fixture");
+				oCore.applyChanges();
+				
+				var count = getColsCountAfterAddingStates(1, 1, ".sapMOHRTwoCols");
+				
+				//Assert
+				equal(count, 2, "2 states are rendered in two columns in FullscreenOptimized mode (desktop - tablet size)");
+				notEqual(count, 1, "States aren't rendered in 1 column.");
+			});
+			
+			test("5 states in fullScreenOptimized mode rendered in 3 columns", function () {
+				
+				var oObjectHeader = createObjectHeader({
+					fullScreenOptimized: true
+				});
+				
+				// System Under Test
+				oObjectHeader.placeAt("qunit-fixture");
+				oCore.applyChanges();
+				
+				var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRThreeCols");
+				
+				//Assert
+				equal(count, 3, "5 states are rendered in three columns in FullscreenOptimized mode (desktop - tablet size)");
+				notEqual(count, 4, "States aren't rendered in 4 columns.");
+			});
+			
+			module("Desktop rendering resized to Phone size", {
+				setup: function () {
+					jQuery("html").addClass("sap-desktop");
+					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+					jQuery("html").addClass("sapUiMedia-Std-Phone");
+				},
+				teardown: function () {
+					jQuery("html").removeClass("sapUiMedia-Std-Phone");
+					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					
+					oCore.byId(sControlId).destroy();
+				}
+			});
+			
+			test("5 states rendered in 1 column", function () {
+				var oObjectHeader = createObjectHeader();
+				
+				// System under Test
+				oObjectHeader.placeAt("qunit-fixture");
+				oCore.applyChanges();
 
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert		
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				equal($titleDiv.position().top, $statusesDiv.position().top, "Title and statuses should be rendered on the same row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
+				var count = getColsCountAfterAddingStates(2, 3,".sapMOHROneCols");
+				// Assert
+				equal(count, 1, "5 states are rendered in one column on desktop - phone size");
+				notEqual(count, 2, "States aren't rendered in 2 columns.");
 			});
 			
-			test("Title and 4 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 4);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				equal($titleDiv.position().top, $statusesDiv.position().top, "Title and statuses should be rendered on the same row");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
 			
-			test("Title and 6 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 6);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();			
-			});
-			
-			test("Title and 3 tabs", function() {
-				
-				// Arrange				
-				var oObjectHeader = createObjectHeader();
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $tabsDiv = $titleDiv.next();
-				
-				equal($titleDiv.position().top, $tabsDiv.position().top, "Title and tabs should be rendered on the same row");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});			
-			
-			test("Title, 2 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				equal($titleDiv.position().top, $statusesDiv.position().top, "Title and statuses should be rendered on the same row");
-				equal($titleDiv.position().top, $tabsDiv.position().top, "Tabs should be rendered on the same row as title and statuses");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title, 4 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 4);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				equal($titleDiv.position().top, $statusesDiv.position().top, "Title and statuses should be rendered on the same row");				
-				ok($titleDiv.position().top < $tabsDiv.position().top, "Title and statuses are the first row and tabs are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title, 6 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 6);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				ok($statusesDiv.position().top < $tabsDiv.position().top, "Statuses are on the second row and tabs are on the third row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title, 2 statuses and 8 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
-				initTabs(oObjectHeader, 8);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				equal($titleDiv.position().top, $statusesDiv.position().top, "Title and statuses should be rendered on the same row");
-				ok($titleDiv.position().top < $tabsDiv.position().top, "Title and statuses are the first row and tabs are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			module("Layout tablet", {
-				setup: function() {
-					// Simulate tablet
+			module("Tablet rendering", {
+				setup: function () {
 					jQuery("html").removeClass("sap-desktop");
 					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").removeClass("sap-phone");
-					jQuery("html").removeClass("sapUiMedia-Std-Phone");
-					jQuery("html").removeClass("sap-tablet");
-					jQuery("html").removeClass("sapUiMedia-Std-Tablet");
-					
 					jQuery("html").addClass("sap-tablet");
 					jQuery("html").addClass("sapUiMedia-Std-Tablet");
 				},
-				teardown: function() {
-					// Restore html element
-					jQuery("html").addClass("sap-desktop");
-					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+				teardown: function () {
 					jQuery("html").removeClass("sap-tablet");
 					jQuery("html").removeClass("sapUiMedia-Std-Tablet");
+					jQuery("html").addClass("sap-desktop");
+					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					
+					oCore.byId(sControlId).destroy();
 				}
 			});
-			
-			test("Title and 2 statuses", function() {
-				
-				// Arrange
+
+			test("Master detail rendering: 3 states rendered in 2 columns", function () {
 				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
 				
-				// System under test
+				// System Under Test
 				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				
-				// Assert		
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				equal($titleDiv.position().top, $statusesDiv.position().top, "Title and statuses should be rendered on the same row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title and 4 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 4);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				var count = getColsCountAfterAddingStates(2, 1, ".sapMOHRTwoCols");
 				
 				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();
+				equal(count, 2, "3 states are rendered in two columns");
+				notEqual(count, 3, "States aren't rendered in 3 columns.");
 			});
 			
-			test("Title and 6 statuses", function() {
+			test("4 states in fullScreenOptimized mode rendered in 2 columns in portrait mode", function () {
+				sap.ui.Device.orientation.landscape = false;
+				sap.ui.Device.orientation.portrait = true;
+
 				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 6);
+				var oObjectHeader = createObjectHeader({
+					fullScreenOptimized: true
+				});
 				
-				// System under test
+				// System Under Test
 				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
+				var count = getColsCountAfterAddingStates(2, 2, ".sapMOHRTwoCols");
 				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();			
+				//Assert
+				equal(count, 2, "4 states are rendered in two columns in portrait mode");
+				notEqual(count, 4, "States aren't rendered in 4 columns.");
 			});
 			
-			test("Title and 3 tabs", function() {
+			test("2 states in fullScreenOptimized mode rendered in 2 columns in landscape mode", function () {
+				sap.ui.Device.orientation.landscape = true;
+				sap.ui.Device.orientation.portrait = false;
+
+				var oObjectHeader = createObjectHeader({
+					fullScreenOptimized: true
+				});
 				
-				// Arrange				
-				var oObjectHeader = createObjectHeader();
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
+				// System under Test
 				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
+				
+				var count = getColsCountAfterAddingStates(1, 1, ".sapMOHRTwoCols");
 				
 				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $tabsDiv = $titleDiv.next();
-				
-				equal($titleDiv.position().top, $tabsDiv.position().top, "Title and tabs should be rendered on the same row");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});			
-			
-			test("Title, 2 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				equal($titleDiv.position().top, $statusesDiv.position().top, "Title and statuses should be rendered on the same row");
-				ok($titleDiv.position().top < $tabsDiv.position().top, "Title and statuses are the first row and tabs are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
+				equal(count, 2, "2 states are rendered in two columns in landscape mode");
+				notEqual(count, 1, "States aren't rendered in 1 column.");
 			});
 			
-			test("Title, 4 statuses and 3 tabs", function() {
+			test("5 states in fullScreenOptimized mode rendered in 3 columns in landscape mode", function () {
+				sap.ui.Device.orientation.landscape = true;
+				sap.ui.Device.orientation.portrait = false;
 				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 4);
-				initTabs(oObjectHeader, 3);
+				var oObjectHeader = createObjectHeader({
+					fullScreenOptimized: true
+				});
 				
-				// System under test
+				// System under Test
 				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
+				
+				var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRThreeCols");
 				
 				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				ok($statusesDiv.position().top < $tabsDiv.position().top, "Statuses are on the second row and tabs are on the third row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
+				equal(count, 3, "5 states are rendered in 3 columns in landscape mode");
+				notEqual(count, 2, "States aren't rendered in 2 columns.");
 			});
-			
-			test("Title, 6 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 6);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				ok($statusesDiv.position().top < $tabsDiv.position().top, "Statuses are on the second row and tabs are on the third row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			module("Layout phone", {
-				setup: function() {
-					// Simulate phone
+		
+
+		module("Phone rendering", {
+				setup: function () {
 					jQuery("html").removeClass("sap-desktop");
 					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").removeClass("sap-phone");
-					jQuery("html").removeClass("sapUiMedia-Std-Phone");
-					jQuery("html").removeClass("sap-tablet");
-					jQuery("html").removeClass("sapUiMedia-Std-Tablet");
-					
 					jQuery("html").addClass("sap-phone");
 					jQuery("html").addClass("sapUiMedia-Std-Phone");
+					
+					sap.ui.Device.orientation.landscape = false;
+					sap.ui.Device.orientation.portrait = true;
 				},
-				teardown: function() {
-					// Restore html element
-					jQuery("html").addClass("sap-desktop");
-					jQuery("html").addClass("sapUiMedia-Std-Desktop");
-					jQuery("html").removeClass("sap-phone");
-					jQuery("html").removeClass("sapUiMedia-Std-Phone");
+				teardown: function () {
+					jQuery("html").removeClass("sap-tablet");
+					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+					jQuery("html").addClass("sap-phone");
+					jQuery("html").addClass("sapUiMedia-Std-Phone");
+					
+					sap.ui.Device.orientation.landscape = true;
+					sap.ui.Device.orientation.portrait = false;
+					
+					oCore.byId(sControlId).destroy();
 				}
 			});
-			
-			test("Title and 2 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
 
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert		
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title and 4 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 4);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
-			test("Title and 6 statuses", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 6);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();			
-			});
-			
-			test("Title and 3 tabs", function() {
-				
-				// Arrange				
-				var oObjectHeader = createObjectHeader();
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $tabsDiv = $titleDiv.next();
-				
-				ok($titleDiv.position().top < $tabsDiv.position().top, "Title is on the first row and tabs are on the second row");
-				
-				// Clean up
-				oObjectHeader.destroy();
-			});			
-			
-			test("Title, 2 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 2);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				ok($statusesDiv.position().top < $tabsDiv.position().top, "Statuses are on the second row and tabs are on the third row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title, 4 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 4);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				ok($statusesDiv.position().top < $tabsDiv.position().top, "Statuses are on the second row and tabs are on the third row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			test("Title, 6 statuses and 3 tabs", function() {
-				
-				// Arrange
-				var oObjectHeader = createObjectHeader();
-				addStatuses(oObjectHeader, 6);
-				initTabs(oObjectHeader, 3);
-				
-				// System under test
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				
-				// Assert
-				var $titleDiv = oObjectHeader.$("titlediv");
-				var $statusesDiv = $titleDiv.next();
-				var $tabsDiv = $statusesDiv.next();
-				
-				ok($titleDiv.position().top < $statusesDiv.position().top, "Title is on the first row and statuses are on the second row");
-				ok($statusesDiv.position().top < $tabsDiv.position().top, "Statuses are on the second row and tabs are on the third row");
-				
-				// Clean up
-				oObjectHeader.destroy();				
-			});
-			
-			module("Device specific rendering");
-			
-			test("Android < 4.4 (does not support calc)", function() {
-				// Arrange
-				var oSystem = {
-						desktop: false,
-						phone: false,
-						tablet: true
-					},
-					oOS = {
-						name: "Android",
-						version: 4.3
-					},
-					oBrowser = {
-						name: "an",
-						version: 4.3
-					};
+				test("6 states rendered in 1 column", function () {
+					var oObjectHeader = createObjectHeader();
+					
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
 
-				// simulate an android 4.3 tablet
-				this.stub(sap.ui.Device, "system", oSystem);
-				this.stub(sap.ui.Device, "os", oOS);
-				this.stub(sap.ui.Device, "browser", oBrowser);
-				// System Under Test
-				var oObjectHeader = createObjectHeader();
+					var count = getColsCountAfterAddingStates(3, 3,".sapMOHROneCols");
+					// Assert
+					equal(count, 1, "6 states are rendered in one column on phone");
+					notEqual(count, 3, "States aren't rendered in 3 columns.");
+				});
 				
-				// Act
-				oObjectHeader.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();	
 				
-				var $objectHeader = oObjectHeader.$().children(0);
-				ok($objectHeader.hasClass("sapMOHNoCalc"), "Object header has class sapMOHNoCalc.");
+				/******************************************************************/
+		module("OH Screen Reader support", {
+			teardown: function () {
+				oCore.byId(sControlId).destroy();
+			}
+		});
 				
-				// Clean up
-				oObjectHeader.destroy();
-			});
-			
+				test("OH has aria-labelledby", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					ok(oObjectHeader.$().attr("aria-labelledby"), "OH has attribute aria-labelledby");
+				});
+				
+				test("OH has attribute role=region", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					var $objectHeader = oObjectHeader.$();
+					
+					ok($objectHeader.attr("role"), "OH has attribute role");
+					equal($objectHeader.attr("role"), "region", "role is region");
+				});
+				
+				test("Active title has aria attributes", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok($sTitle.attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
+					equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
+				});
+				
+				
+				test("Title arrow has aria-haspopup", function(){ 
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						showTitleSelector: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					ok(oObjectHeader.$("titleArrow").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
+				});
+				
+				test("Active icon has aria attributes", function(){ 
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						icon: sap.ui.core.IconPool.getIconURI("inbox"),
+						iconActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					ok(jQuery(".sapMOHRIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
+					equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
+				});
+				
+				test("Title Image has aria-labelledby", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						icon: "../images/SAPUI5.jpg",
+						iconAlt: "test image"
+					});
+					
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					var $sImg = oObjectHeader.$("img"); 
+					ok($sImg.attr("aria-label"), "image has attribute aria-label");
+				});
+				
 		</script>
 		
 	</head>
 	
 	<body class="sapUiBody">
-			
-		<!-- <div id="qunit"></div>
-		<div id="objectHeaders"></div>
-		<div id="destroy-oh"></div>
-		<div id="flagAndFavorite-oh"></div>
-		<div id="titleArrowOH-oh"></div> -->
 		
-		<h1 id="qunit-header">qUnit Page for sap.m.ObjectHeader in Responsive mode</h1>
+		<h1 id="qunit-header">qUnit Page for sap.m.ObjectHeader responsive behaviour</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>

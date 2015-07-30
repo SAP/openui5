@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	 * @public
 	 * @experimental Since version 1.15. 
 	 * The templating might be changed in future versions.
-	 * @name sap.ui.core.tmpl.DOMElement
+	 * @alias sap.ui.core.tmpl.DOMElement
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DOMElement = Control.extend("sap.ui.core.tmpl.DOMElement", /** @lends sap.ui.core.tmpl.DOMElement.prototype */ { metadata : {
@@ -57,33 +57,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	}});
 	
 	
-	/**
-	 * Returns the value of a DOM attribute if available or undefined if the DOM attribute is not available when using this method with the parameter name only. When using the method with the parameter name and value the method acts as a setter and sets the value of a DOM attribute. Int this case the return value is the reference to this DOM element to support method chaining. If you pass null as value of the attribute the attribute will be removed.
-	 *
-	 * @name sap.ui.core.tmpl.DOMElement#attr
-	 * @function
-	 * @param {string} sName
-	 *         The name of the DOM attribute.
-	 * @param {string} sValue
-	 *         The value of the DOM attribute. If the value is undefined the DOM attribute will be removed.
-	 * @type string
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes the DOM attribute for the given name and returns the reference to this DOM element to support method chaining.
-	 *
-	 * @name sap.ui.core.tmpl.DOMElement#removeAttr
-	 * @function
-	 * @param {string} sName
-	 *         The name of the DOM attribute.
-	 * @type sap.ui.core.tmpl.DOMElement
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	// TODO: maybe this is something for the sap.ui.core itself - something more general for UI5!!
 	
 	/*
@@ -94,11 +67,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		// apply the settings
 		Control.prototype.applySettings.apply(this, arguments);
 	
-		// all unknown keys which value is a string will be added 
+		// all unknown keys whose value is a string will be added 
 		// as attribute to the DOM element
 		var that = this,
 			oMetadata = this.getMetadata(),
-			mJSONKeys = oMetadata.getJSONKeys();
+			mJSONKeys = oMetadata.getJSONKeys(); // must handle all keys that applySettings accepts
 		jQuery.each(mSettings, function(sKey, oValue) {
 			if (sKey !== "id" && sKey !== "text" && !mJSONKeys[sKey] && typeof oValue === "string") {
 				that.attr(sKey, oValue);
@@ -156,8 +129,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	};
 	
 	
-	/*
-	 * gets, sets or removes the attribute
+	/**
+	 * Returns the value of a DOM attribute if available or undefined if the DOM attribute is not available when using this method with the parameter name only. 
+	 * When using the method with the parameter name and value the method acts as a setter and sets the value of a DOM attribute. 
+	 * In this case the return value is the reference to this DOM element to support method chaining. If you pass null as value of the attribute the attribute will be removed.
+	 *
+	 * @param {string} sName
+	 *         The name of the DOM attribute.
+	 * @param {string} sValue
+	 *         The value of the DOM attribute. If the value is undefined the DOM attribute will be removed.
+	 * @return {any} value of attribute or <code>this</code> when called as a setter
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DOMElement.prototype.attr = function(sKey, sValue) {
 	
@@ -205,9 +188,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		
 	};
 	
-	/*
-	 * remove the attribute for the given name
+	/**
+	 * Removes the DOM attribute for the given name and returns the reference to this DOM element to support method chaining.
+	 *
+	 * @param {string} sName
+	 *         The name of the DOM attribute.
+	 * @return {sap.ui.core.tmpl.DOMElement}
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
+	
 	DOMElement.prototype.removeAttr = function(sKey) {
 		// remove the attribute
 		this.attr(sKey, null);
@@ -232,4 +222,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 	return DOMElement;
 
-}, /* bExport= */ true);
+});

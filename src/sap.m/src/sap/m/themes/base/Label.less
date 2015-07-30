@@ -4,7 +4,7 @@
 /* ============================================= */
 
 .sapMLabel {
-	color: @sapUiText;
+	color: @sapUiBaseText;
 	font-size: @sapUiFontSize;
 	display: inline-block;
 	text-overflow: ellipsis;
@@ -39,6 +39,7 @@
 /* make labels right aligned if left from fields*/
 .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel {
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
 	float: right;
 }

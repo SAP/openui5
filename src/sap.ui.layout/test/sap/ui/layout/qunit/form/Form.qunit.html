@@ -28,6 +28,7 @@
 		var oForm = new sap.ui.layout.form.Form("F1",{
 			title: new sap.ui.core.Title("F1T",{text: "Form Title", icon: "../../images/controls/sap.ui.layout.form.Form.gif", tooltip: "Title tooltip"}),
 			tooltip: "Form tooltip",
+			editable: true,
 			layout: oLayout1,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("C1",{
@@ -90,7 +91,7 @@
 						}),
 						new sap.ui.layout.form.FormElement("C4E2",{
 							visible: false,
-							fields: [new sap.ui.commons.TextField("C4E2T1", {text: 'invisible'})]
+							fields: [new sap.ui.commons.TextField("C4E2T1", {value: 'invisible'})]
 						})
 					]
 				}),
@@ -99,7 +100,7 @@
 					visible: false,
 					formElements: [
 						new sap.ui.layout.form.FormElement("C5E1",{
-							fields: [new sap.ui.commons.TextField("C5E1T1", {text: 'invisible'})]
+							fields: [new sap.ui.commons.TextField("C5E1T1", {value: 'invisible'})]
 						})
 					]
 				})]
@@ -111,6 +112,7 @@
 			title: new sap.ui.core.Title("F2T",{text: "Form with width of 300px", emphasized: true, level: sap.ui.core.TitleLevel.H1}),
 			width: "300px",
 			layout: oLayout2,
+			ariaLabelledBy: ["TestLabel"],
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F2C1",{
 					title: "Container1",
@@ -160,6 +162,8 @@
 			//title must return text if text entered, control if control enterd
 			equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
 			ok(oContainer2.getTitle() instanceof sap.ui.core.Title, "getTitle(): Title as control entered must return control");
+
+			equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
 		});
 
 		test("Element", function() {
@@ -171,6 +175,8 @@
 			oElement = sap.ui.getCore().byId("C1E2");
 			ok(oElement.getLabel() instanceof sap.ui.commons.Label, "getLabel(): Label as control entered must return control");
 			equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
+
+			equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
 		});
 
 		module("Rendering");
@@ -180,7 +186,7 @@
 			ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
 			equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
 			ok(jQuery.sap.domById("F1T"), "Form title is rendered");
-			ok(jQuery("#F1T").is("h5"), "Form title is rendered as H5 as default");
+			ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
 			ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
 			ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
 			equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
@@ -220,10 +226,23 @@
 			ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
 			equal(jQuery("#L1").attr("for"), "DP1-input", "Label1 is renderd for DatePicker");
 			ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
-			equal(jQuery("#DP1-input").attr("aria-labelledby"), "dummy", "DatePicker aria-labelledby not changed")
+			equal(jQuery("#DP1-input").attr("aria-labelledby"), "L1 dummy", "DatePicker aria-labelledby changed (contains reference to label)");
 			ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
 			ok(!jQuery.sap.domById("C4E2T1"), "Content of invisible Element is not rendered");
 			ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
+		});
+
+		test("Aria", function() {
+			equal(jQuery("#F1").attr("role"), "form", "Form1: role \"form\" set");
+			equal(jQuery("#F1").attr("aria-labelledby"), "F1T", "Form1: aria-labelledby set");
+			ok(!jQuery("#F1").attr("aria-readonly"), "Form1: aria-readonly not set");
+			equal(jQuery("#F2").attr("aria-readonly"), "true", "Form2: aria-readonly set");
+			equal(jQuery("#F2").attr("aria-labelledby"), "TestLabel F2T", "Form2: aria-labelledby set");
+
+			equal(jQuery("#C1").attr("role"), "form", "Container1: role \"form\" set");
+			equal(jQuery("#C1").attr("aria-labelledby"), "C1--title", "Container1: aria-labelledby set");
+			equal(jQuery("#C2").attr("aria-labelledby"), "C2T", "Container2: aria-labelledby set");
+			ok(!jQuery("#C4").attr("aria-labelledby"), "Container4: aria-labelledby not set");
 		});
 
 		module("Interaction");
@@ -254,12 +273,13 @@
 <body class="sapUiBody">
 	<h1 id="qunit-header">QUnit tests: sap.ui.layout.form.Form</h1>
 	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
+	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
 	<br>
 	<div id="uiArea1"></div>
 	<br>
+	<label id="TestLabel">Test Label</label>
 	<div id="uiArea2"></div>
 	<br>
 	<div id="uiArea3"></div>

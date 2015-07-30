@@ -44,7 +44,7 @@
 	}), new sap.m.ProgressIndicator(ohBasicId + "-pi", {
 		visible : true,
 		enabled : true,
-		barColor : sap.ui.core.BarColor.NEUTRAL,
+		state : sap.ui.core.ValueState.NEUTRAL,
 		displayValue : '80%',
 		percentValue : 80,
 		showValue : true,
@@ -217,17 +217,34 @@
 	test("NumberRendered", function() {
 
 		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
-	});
-
-	test("NumberUnitRendered", function() {
-
-		notEqual(jQuery.sap.domById(ohBasicId + "-numberUnit"), null, "Number Unit should be rendered.");
+		ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	test("AttributesRendered", function() {
 
 		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
 		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+	});
+	
+	test("Attribute rerendered after being empty", function() {
+		var oOA = new sap.m.ObjectAttribute({text: "Test"});
+		var oOH = new sap.m.ObjectHeader({attributes: [oOA]});
+
+		oOH.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oOH.invalidate();
+		oOA.setText("");
+		sap.ui.getCore().applyChanges();
+
+		oOA.setText("rerendered");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		strictEqual(oOA.$("text").html(), "rerendered", "Attribute is rendered inside ObjectHeader");
+
+		// cleanup
+		oOH.destroy();
 	});
 
 	test("StatusesRendered", function() {
@@ -266,8 +283,8 @@
 
 	test("Flag Rendering Position", function() {
 
-		equal(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop, jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop,
-				"Attribute and flag should be rendered on the same row");
+		ok(Math.abs(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop)<=1,
+		"Attribute and flag should be rendered on the same row");
 	});
 
 	test("ProgressIndicatorRendered", function() {
@@ -280,7 +297,7 @@
 	test("NumberStateColorRendered", function() {
 
 		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
-		ok(jQuery("#ohBasic .sapMOHNumberStateSuccess").length, "Number color uses value state success color.");
+		ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
 	asyncTest("Placeholders for invisible attributes", function() {
@@ -332,11 +349,11 @@
 				visible : true
 			}) ],
 			attributes : [ 
-			    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "First invisible attribute",
 					visible : false
 				}),
-			    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "First visible attribute",
 					visible : true
 				}),	]
@@ -356,7 +373,7 @@
 		var oH = new sap.m.ObjectHeader({
 			title : "Reserved space for invisible status issue",
 			statuses : [
-			    new sap.m.ProgressIndicator({
+				new sap.m.ProgressIndicator({
 				displayValue : '30%',
 				percentValue : 30,
 				state : sap.ui.core.ValueState.Error,
@@ -369,7 +386,7 @@
 					visible : true
 				})],
 			attributes : [ 
-			    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "Visible attribute",
 					visible : true
 				}),	]
@@ -426,11 +443,7 @@
 	test("NumberRendered", function() {
 
 		notEqual(jQuery.sap.domById(ohCondensedId + "-number"), null, "Number should be rendered.");
-	});
-
-	test("NumberUnitRendered", function() {
-
-		notEqual(jQuery.sap.domById(ohCondensedId + "-numberUnit"), null, "Number Unit should be rendered.");
+		ok(jQuery("#" + ohCondensedId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	test("Background is transparent", function() {
@@ -454,7 +467,8 @@
 		equal(jQuery("#" + ohBasicId + ".sapMOHBgSolid").length, 0, "Solid background style should not be set.");
 		equal(jQuery.sap.byId(ohBasicId).css("background-color"), transparentCssString, "Background color is transparent");
 	});
-
+	
+	
 	/******************************************************************/
 
 	module("Internal API");
@@ -697,17 +711,17 @@
 
 	test("TestTitleTap", function() {
 
-		qutils.triggerEvent("tap", ohe._titleText.getId());
+		qutils.triggerEvent("tap", oheId + "-title");
 		ok(domRef, "domRef is set");
-		equal(domRef.id, ohe._titleText.getId(), "Title should be clickable");
+		equal(domRef.id, oheId + "-title", "Title should be clickable");
 		domRef = null;
 		
-		qutils.triggerEvent("tap", ohe._titleText.getDomRef("inner"));
+		qutils.triggerEvent("tap", oheId + "-titleText-inner");
 		ok(domRef, "domRef is set");
-		equal(domRef.id, ohe._titleText.getId(), "When clicking inner text div event should return outer div as source");
+		equal(domRef.id, oheId + "-title", "When clicking inner text div event should return outer div as source");
 		domRef = null;
 
-		qutils.triggerEvent("tap", ohBasic._titleText.getId());
+		qutils.triggerEvent("tap", ohBasicId + "-title");
 		ok(domRef === null, ohBasicId + " Title should not be clickable");
 		domRef = null;
 	});
@@ -767,6 +781,42 @@
 			equal(jQuery.sap.byId("titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
 		}, 100);
 
+	});
+	
+	/******************************************************************/
+	module("OH Screen Reader support");
+	
+	test("OH has aria-labelledby", function(){
+		ok(jQuery("#" + ohBasicId).attr("aria-labelledby"), "OH has attribute aria-labelledby");
+	});
+	
+	test("OH has attribute role=region", function(){
+		ok(jQuery("#" + ohBasicId).attr("role"), "OH has attribute role");
+		equal(jQuery("#" + ohBasicId).attr("role"), "region", "role is region");
+	});
+	
+	test("OH Condensed has aria-labelledby", function(){
+		ok(jQuery("#" + ohCondensedId).attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
+	});
+	
+	test("OH Condensed has attribute role=region", function(){
+		ok(jQuery("#" + ohCondensedId).attr("role"), "OH condensed has attribute role");
+		equal(jQuery("#" + ohCondensedId).attr("role"), "region", "role is region");
+	});
+	
+	test("Active title has aria attributes", function(){
+		ok(jQuery("#" + oheId+"-title").attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
+		equal(jQuery("#" + oheId+"-title").attr("role"), "link", "ActiveTitle has role=link");
+	});
+	
+	test("Title arrow has aria-haspopup", function(){ 
+		// Assert
+		ok(jQuery("#" + ohBasicId+"-titleArrow").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
+	});
+	
+	test("Active icon has aria attributes", function(){ 
+		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
+		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 	});
 
 	/******************************************************************/
@@ -830,11 +880,6 @@
 		// assert: default in constructor
 		strictEqual (oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem");
 
-		// assert: setter true
-		oObjectHeader.setCondensed(true);
-		sap.ui.getCore().applyChanges();
-		strictEqual (oObjectHeader._oTitleArrowIcon.getSize(), "1.125rem", "for condensed object header the icon size is 1rem");
-
 		// assert: setter false
 		oObjectHeader.setCondensed(false);
 		sap.ui.getCore().applyChanges();
@@ -843,6 +888,9 @@
 		// cleanup
 		oObjectHeader.destroy();
 	});
+	
+	
+	
 </script>
 </head>
 
@@ -852,5 +900,6 @@
 	<div id="destroy-oh"></div>
 	<div id="flagAndFavorite-oh"></div>
 	<div id="titleArrowOH-oh"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

@@ -27,11 +27,14 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-server.js"></script>
 
 <!-- Test functions -->
 <script language="javascript" charset="utf-8"> // IE needs this :-/
 
+	// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage 
+	// of jQuery.ajax function / sinon also needs to be synchronized with this
+	// adoption by applying the CORS support flag from jQuery to sinon!
+	sinon.xhr.supportsCORS = jQuery.support.cors;
 
 	// some prerequisites ;-)
 	jQuery.sap.require("sap.ui.core.AppCacheBuster");
@@ -286,7 +289,7 @@
 	
 	test("check includeScript handling", function() {
 
-		// check script prefixing		
+		// check script prefixing
 		jQuery.sap.includeScript("http://anyserver:4711/anyapp/js/script.js", "myjs");
 		var sSource = jQuery.sap.byId("myjs").attr("src");
 		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
@@ -295,7 +298,7 @@
 	
 	test("check includeStyleSheet handling", function() {
 
-		// check script prefixing		
+		// check script prefixing
 		jQuery.sap.includeStyleSheet("http://anyserver:4711/anyapp/css/style.css", "mycss");
 		var sSource = jQuery.sap.byId("mycss").attr("href");
 		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
@@ -304,13 +307,97 @@
 	
 	test("check sap.ui.core.URI.type handling", function() {
 
-		// check script prefixing	
+		// check script prefixing
 		var oControl = new sap.ui.core.UriControl({
 			src: "http://anyserver:4711/anyapp/img/image.png"
 		});
 		var sSource = oControl.getSrc();
 		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 		oControl.destroy();
+
+	});
+	
+	module("hook scenario", {
+		setup : function() {
+
+			// count the amount of requests
+			var that = this;
+			this.iRequestCount = 0;
+
+			// fake the XHR server
+			this.server = sinon.fakeServer.create();
+
+			// content of the cachebuster request for later comparision check
+			this.mIndexInfo = {
+				"my/view/MyView.view.js": sTimestamp,
+				"my/view/MyView.controller.js": sTimestamp,
+				"js/script.js": sTimestamp,
+				"css/style.css": sTimestamp,
+				"img/image.png": sTimestamp
+			};
+			
+			// fake the cachebuster request
+			this.server.respondWith(/http:\/\/anyserver:4711\/anyapp\/sap-ui-cachebuster-info.json/, function (xhr, id) {
+				xhr.respond(200, { "Content-Type": "application/json" }, JSON.stringify(that.mIndexInfo));
+				that.iRequestCount++;
+			});
+			
+			// initialize the cachebuster
+			sap.ui.core.AppCacheBuster.init();
+			
+		},
+		teardown : function() {
+
+			// exits the cachebuster
+			sap.ui.core.AppCacheBuster.exit();
+			
+			// unfake the server
+			this.server.restore();
+			
+		}
+	});
+
+	test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook", 4, function() {
+
+		var that = this;
+		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sBaseUrl = "http://anyserver:4711/anyapp/";
+		var sCacheBusterUrl = sBaseUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
+		
+		// check that the hooks are executed properly
+		sap.ui.core.AppCacheBuster.onIndexLoad = function(sUrl) {
+			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+		};
+		sap.ui.core.AppCacheBuster.onIndexLoaded = function(sUrl, mIndexInfo) {
+			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+			ok(JSON.stringify(that.mIndexInfo) === JSON.stringify(mIndexInfo), "IndexInfo is correctly passed!");
+		};
+		sap.ui.core.AppCacheBuster.register(sBaseUrl);
+
+		// check that the request was triggered
+		ok(this.iRequestCount === 1, "Request triggered!")
+
+	});
+	
+	test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook (override)", 4, function() {
+
+		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sBaseUrl = "http://anyserver:4711/anyapp/";
+		var sCacheBusterUrl = sBaseUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
+		
+		// check that override the index load request works
+		sap.ui.core.AppCacheBuster.onIndexLoad = function(sUrl) {
+			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+			return {"a": "b"};
+		};
+		sap.ui.core.AppCacheBuster.onIndexLoaded = function(sUrl, mIndexInfo) {
+			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+			ok(JSON.stringify({"a": "b"}) === JSON.stringify(mIndexInfo), "IndexInfo is correctly passed!");
+		};
+		sap.ui.core.AppCacheBuster.register(sBaseUrl);
+
+		// check that the request was not triggered
+		ok(this.iRequestCount === 0, "Request not triggered!")
 
 	});
 	

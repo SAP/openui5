@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ImageMap renderer.
-	 * @static
+	 * ImageMap renderer.
+	 * @namespace
 	 */
 	var ImageMapRenderer = {
 	};
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 				rm.writeElementData(aAreas[index]);
 				
-				rm.write(' style="display: block;"');
+				rm.write(' style="display: inline;"');
 	
 				if (accessibility) {
 					rm.writeAttribute("aria-describedby", oImageMap.getId() + "-Descr");

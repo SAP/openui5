@@ -175,7 +175,7 @@
 		var feedData = {
 				chunks : [ {
 					icon: "images/male.jpg",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5.consumption/wiki/SprintPlanning/Kelley/CustomStuffAfterECC#StillEmptySpaceinObjectListItemsandObjectHeaders/vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5.consumption/wiki/SprintPlanning/Kelley/CustomStuffAfterECC#StillEmptySpaceinObjectListItemsandObjectHeaders/vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5.consumption/wiki/SprintPlanning/Kelley/CustomStuffAfterECC#StillEmptySpaceinObjectListItemsandObjectHeadersQuisque ut ipsum est.",
+					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://this.is.some.very.long.url.sap.com/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit#LoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElit Quisque ut ipsum est.",
 					sender: "Jeremy Dash",
 					senderActive: true,
 					iconActive: true,
@@ -263,7 +263,7 @@
 					timestamp: "Nov 01, 2012",
 				}, {
 					icon: "images/male.jpg",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5.consumption/wiki/SprintPlanning/Kelley/CustomStuffAfterECC#StillEmptySpaceinObjectListItemsandObjectHeaders/vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5.consumption/wiki/SprintPlanning/Kelley/CustomStuffAfterECC#StillEmptySpaceinObjectListItemsandObjectHeaders/vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5.consumption/wiki/SprintPlanning/Kelley/CustomStuffAfterECC#StillEmptySpaceinObjectListItemsandObjectHeadersQuisque ut ipsum est.",
+					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://this.is.some.very.long.url.sap.com/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit#LoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElit Quisque ut ipsum est.",
 					sender: "Jeremy has a really long long long middle-name Dash",
 					senderActive: true,
 					iconActive: true,
@@ -274,17 +274,25 @@
 		
 		bindFeedListData(feedData, oFeedListItemTemplate, oFeedList);
 		
-		var appFeedList = new sap.m.App("myApp", {initialPage:"feedListPage"});
-		
-		var feedListPage = new sap.m.Page("feedListPage", 
-			{title: "Feed List Item Test Page"}
-		);
-		
-		
-		feedListPage.addContent(oFeedList);
+		var oRerenderButton = new sap.m.Button({
+			text : "Invalidate / Rerender",
+			press : function (oEvent) {
+				sap.m.MessageToast.show("Rerender triggered.");
+				sap.ui.getCore().byId("feedListPage").invalidate();
+			}
+		});
+
+		var appFeedList = new sap.m.App("myApp", {
+			initialPage : "feedListPage"
+		});
+
+		var feedListPage = new sap.m.Page("feedListPage", {
+			title: "Feed List Item Test Page",
+			content : [oRerenderButton, oFeedList]
+		});
+
 		appFeedList.addPage(feedListPage);
 		appFeedList.placeAt("body");
-		
 		
 		</script>
 		

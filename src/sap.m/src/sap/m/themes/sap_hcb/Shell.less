@@ -1,4 +1,3 @@
-
 @media (min-height: @sapMShellMinHeightForHeader) {
 	.sapMShellHeader {
 		border-top: 0.25rem solid @sapHCStandardFG;
@@ -8,40 +7,41 @@
 		color: @sapHCStandardFG;
 	}
 }
+
 .sapUiUfdShell .sapMShellHeader {
 	border-top: none;
 }
 
-
 /* background color class for Shell header */
-.sapMShellBackgroundColorOnlyIfDefaultMixin() when not (@sapUiGlobalBackgroundImage = '') {
-	background-color: @sapHCStandardBG;
-}
-.sapMShellBackgroundColorOnlyIfDefaultMixin() when (@sapUiGlobalBackgroundImage = '') {
-	background-color: @sapHCStandardBG;
-}
 .sapMShellBackgroundColorOnlyIfDefault {
 	background-color: @sapHCStandardBG;
 }
 
+.sap-desktop {
+	.sapMShellHeaderText {
+		font-size: @sapMFontHeader2Size;
+		color: @sapHCStandardFG;
+	}
 
-.sap-desktop .sapMShellHeaderText {
-	font-size: @sapMFontHeader2Size;
-	color: @sapHCStandardFG;
+	.sapMShellCentralBox {
+		-moz-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
+		-webkit-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
+		box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
+		border-right: 1px solid @sapHCReducedAltFG;
+		border-left: 1px solid @sapHCReducedAltFG;
+	}
 }
 
-.sap-desktop .sapMShellCentralBox {
-	-moz-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-	-webkit-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-	box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-}
-
-/* HCB Additional Styles */
 .sapMShellBrandingBar {
 	background: none;
 }
 
-.sap-desktop .sapMShellCentralBox {
-	border-right: 1px solid @sapHCReducedAltFG;
-	border-left: 1px solid @sapHCReducedAltFG;
+@media (min-width: @sapMShellAppWidthLimit) {
+	.sap-desktop {
+		.sapMShellAppWidthLimited {
+			.sapMShellCentralBox {
+				background-color: @sapHCStandardBG;
+			}
+		}
+	}
 }

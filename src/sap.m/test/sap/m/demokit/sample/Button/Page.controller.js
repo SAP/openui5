@@ -1,7 +1,14 @@
-sap.ui.controller("sap.m.sample.Button.Page", {
+sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
+	function(MessageToast, Controller) {
+	"use strict";
 
-	onPress: function (evt) {
-		jQuery.sap.require("sap.m.MessageToast");
-		sap.m.MessageToast.show(evt.getSource().getId() + " Pressed");
-	}
+	var PageController = Controller.extend("sap.m.sample.Button.Page", {
+
+		onPress: function (evt) {
+			MessageToast.show(evt.getSource().getId() + " Pressed");
+		}
+	});
+
+	return PageController;
+
 });

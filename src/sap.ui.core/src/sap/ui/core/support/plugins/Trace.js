@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @version ${version}
 		 * @constructor
 		 * @private
-		 * @name sap.ui.core.support.plugins.Trace
+		 * @alias sap.ui.core.support.plugins.Trace
 		 */
 		var Trace = Plugin.extend("sap.ui.core.support.plugins.Trace", {
 			constructor : function(oSupportStub) {
@@ -35,6 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					this._oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
 				} else {
 					var that = this;
+					this._oldLogLevel = jQuery.sap.log.getLevel();
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
 					jQuery.sap.log.addLogListener({
 						onLogEntry: function(oLogEntry){
@@ -53,8 +54,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Trace#onsapUiSupportTraceEntry
-		 * @function
 		 */
 		Trace.prototype.onsapUiSupportTraceEntry = function(oEvent){
 			log(this, oEvent.getParameter("entry"));
@@ -120,17 +119,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		
 		
 		Trace.prototype.exit = function(oSupportStub){
-			if (this._fClearHandler) {
-				this.$("clear").unbind("click", this._fClearHandler);
-				this._fClearHandler = null;
-			}
-			if (this._fFilterHandler) {
-				this.$("filter").unbind("change", this._fFilterHandler);
-				this._fFilterHandler = null;
-			}
-			if (this._fLogLevelHandler) {
-				this.$("loglevel").unbind("change", this._fLogLevelHandler);
-				this._fLogLevelHandler = null;
+			if (this.isToolPlugin()) {
+				if (this._fClearHandler) {
+					this.$("clear").unbind("click", this._fClearHandler);
+					this._fClearHandler = null;
+				}
+				if (this._fFilterHandler) {
+					this.$("filter").unbind("change", this._fFilterHandler);
+					this._fFilterHandler = null;
+				}
+				if (this._fLogLevelHandler) {
+					this.$("loglevel").unbind("change", this._fLogLevelHandler);
+					this._fLogLevelHandler = null;
+				}
+			} else {
+				jQuery.sap.log.setLevel(this._oldLogLevel);
+				this._oldLogLevel = null;
 			}
 			Plugin.prototype.exit.apply(this, arguments);
 		};
@@ -204,4 +208,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 	return Trace;
 
-}, /* bExport= */ true);
+});

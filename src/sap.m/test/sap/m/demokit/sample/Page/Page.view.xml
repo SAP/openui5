@@ -4,10 +4,10 @@
 	xmlns="sap.m">
 	<Page
 		title="Centered Title"
-		class="marginBoxContent"
+		class="sapUiContentPadding"
 		showNavButton="true" >
 		<headerContent>
-			<Button icon="sap-icon://action" />
+			<Button icon="sap-icon://action" tooltip="Share" />
 		</headerContent>
 		<subHeader>
 			<Toolbar>

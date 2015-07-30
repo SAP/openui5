@@ -10,12 +10,12 @@ Setting up the UI5 development environment
 UI5 content is developed in an environment based on node.js, used as server, with a build process based on Grunt. To set up this environment follow these simple steps:
 
 1. Install node.js (get it from  [nodejs.org](http://nodejs.org/)); this includes npm, the node package manager.
-  * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line, using the settings required within SAP):
+  * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line. You may have to adopt the settings according to your specific proxy configuration):
   ```
 @SET HTTP_PROXY=http://proxy:8080
 @SET HTTPS_PROXY=http://proxy:8080
 @SET FTP_PROXY=http://proxy:8080
-@SET NO_PROXY=localhost,127.0.0.1,.sap.corp,.corp.sap
+@SET NO_PROXY=localhost,127.0.0.1,.mycompany.corp
 ```
 2. Install grunt-cli globally
 
@@ -40,7 +40,7 @@ npm install
 ```
 6. Point your browser to this server running UI5: [http://localhost:8080/testsuite/](http://localhost:8080/testsuite/)  - done!
 
-```grunt serve``` has various configuration options, e.g. you can give the parameter ```-port=9090``` to use a different HTTP port.
+```grunt serve``` has various configuration options, e.g. you can give the parameter ```--port=9090``` to use a different HTTP port.
  See the [documentation](tools.md) for more details.
 
 
@@ -73,20 +73,21 @@ The build is responsible for the following tasks:
 
  * Creation of the bundled library.css and library-RTL.css file for all available themes
  * Minification of CSS
- * Minification of JavaScript (not yet re-implemented)
+ * Minification of JavaScript (for library-preload.json files)
  * Combination of JavaScript control files into a single library-preload.json file
- * Combination of the most important UI5 core files into sap-ui-core.js (not yet re-implemented)
+ * Combination of the most important UI5 core files into sap-ui-core.js (not yet optimized; minification missing)
 
 #### Troubleshooting
 
 If you encounter errors like the one below, re-do the ```npm install``` command: there might be new build tools required which need to be downloaded first.
 
-> jit-grunt: Plugin for the "replace" task not found.
-> If you have installed the plugin already, please setting the static mapping.
-> See https://github.com/shootaroo/jit-grunt#static-mappings
->
-> Warning: Task "replace:target" not found. Use --force to continue.
+```
+jit-grunt: Plugin for the "replace" task not found.
+If you have installed the plugin already, please setting the static mapping.
+See https://github.com/shootaroo/jit-grunt#static-mappings
 
+Warning: Task "replace:target" not found. Use --force to continue.
+```
 
 
 Testing UI5
@@ -94,16 +95,12 @@ Testing UI5
 
 ### Running the static code checks (ESLint)
 
-All UI5 code must conform to a certain ruleset which is checked with ESLint (http://eslint.org/). ESLint can be installed from the command line with:
+All UI5 code must conform to a certain ruleset which is checked with ESLint (http://eslint.org/).  
+To run an ESLint check, navigate to the root directory of the repository and execute:
 ```
-npm i -g eslint
+grunt lint
 ```
-
-To run an ESLint check, navigate to the directory you want to check and execute:
-```
-eslint .
-```
-
+Optionally, only a selected library can be checked or just a single file or directory, see [the documentation](tools.md) for details.
 
 ### Running the Unit Tests
 
@@ -118,18 +115,17 @@ NOTE: by default this command runs tests for all libraries in the Chrome browser
 
 By giving parameters you can change this default behavior:
 
-> grunt test --browsers="safari,firefox"   # run tests of all libraries on Safari and Firefox
-
-
-The parameter {{{--coverage=true}}} to also report the test coverage is not yet supported.
-
+```
+grunt test --browsers="safari,firefox"   # run tests of all libraries on Safari and Firefox
+```
 
 #### Troubleshooting proxy issues
 ```grunt test``` will download the "selenium-server-standalone" when run for the first time. If you are working behind a proxy and have no environment variables set for the proxy, this will fail for the first time:
 
-> selenium-server-standalone.jar not found. Downloading...
-> >> Error: getaddrinfo ENOTFOUND
-
+```
+selenium-server-standalone.jar not found. Downloading...
+>> Error: getaddrinfo ENOTFOUND
+```
 
 To solve this issue, set the environment variables for the proxy as described above.
 
@@ -138,9 +134,10 @@ To solve this issue, set the environment variables for the proxy as described ab
 
 Selenium needs to find the browser executable on the PATH, otherwise you will see the following error message:
 
-> firefox
-> Fatal error: Cannot find firefox binary in PATH. Make sure firefox is installed.
-
+```
+firefox
+Fatal error: Cannot find firefox binary in PATH. Make sure firefox is installed.
+```
 
 Solution: add the Firefox installation folder to the PATH environment variable.
 
@@ -148,8 +145,9 @@ Solution: add the Firefox installation folder to the PATH environment variable.
 
 If you get the following error, remember that for browsers other than Firefox you need to install extra Selenium Web Drivers:
 
-> Fatal error: The path to the driver executable must be set by the webdriver.chrome.driver system property; for more information, see http://code.google.com/p/selenium/wiki/ChromeDriver. The latest version can be downloaded from http://chromedriver.storage.googleapis.com/index.html
-
+```
+Fatal error: The path to the driver executable must be set by the webdriver.chrome.driver system property; for more information, see http://code.google.com/p/selenium/wiki/ChromeDriver. The latest version can be downloaded from http://chromedriver.storage.googleapis.com/index.html
+```
 
 Solution: download the Selenium driver for the respective browser and make sure the Selenium Web Driver finds it; for Chrome:
 

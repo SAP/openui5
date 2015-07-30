@@ -1,168 +1,182 @@
-jQuery.sap.declare("sap.ui.demo.cart.Component");
+sap.ui.define([
+	'sap/ui/core/UIComponent',
+	'sap/m/routing/Router',
+	'sap/ui/model/resource/ResourceModel',
+	'sap/ui/model/odata/ODataModel',
+	'sap/ui/model/json/JSONModel'
+], function (UIComponent,
+			Router,
+			ResourceModel,
+			ODataModel,
+			JSONModel) {
 
-sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
-	
-	metadata: {
-		routing: {
-			config: {
-				viewType: "XML",
-				viewPath: "view",
-				targetControl: "splitApp",
-				clearTarget: false,
-				transition: "slide"
-			},
-			routes: [
-				{
-					pattern: "category/{id}",
-					name: "category",
-					view: "Category",
-					viewLevel: 2,
-					targetAggregation: "masterPages",
-					subroutes: [
-						{
-							pattern: "category/{id}/product/{productId}",
-							name: "product",
-							view: "Product",
-							viewLevel: 3,
-							targetAggregation: "detailPages"
-						}
-					]
+	return UIComponent.extend("sap.ui.demo.cart.Component", {
+
+		metadata: {
+			routing: {
+				config: {
+					routerClass: Router,
+					viewType: "XML",
+					viewPath: "view",
+					controlId: "splitApp",
+					transition: "slide",
+					bypassed: {
+						target: ["home" , "notFound"]
+					}
 				},
-				{
-					pattern: "cart",
-					name: "cart",
-					view: "Cart",
-					targetAggregation: "masterPages"
-				},
-				{	pattern: "",
-					name : "home",
-					view : "Home",
-					viewLevel : 1,
-					targetAggregation : "masterPages",
-					subroutes : [
-						{
-							pattern: "product/{productId}",
-							name: "cartProduct",
-							view: "Product",
-							viewLevel: 3,
-							targetAggregation: "detailPages"
-						},
-						{
-						pattern : "{all*}",
-						name : "notFound",
-						view : "notFound",
-						viewLevel : 3,
-						targetAggregation : "detailPages"
-						}
-					]
+				routes: [
+					{
+						pattern: "",
+						name: "home",
+						target: "home"
+					},
+					{
+						pattern: "category/{id}",
+						name: "category",
+						target: "categoryView"
+					},
+					{
+						pattern: "category/{id}/product/{productId}",
+						name: "product",
+						target: ["categoryView", "productView"]
+					},
+					{
+						pattern: "cart",
+						name: "cart",
+						target: "cart"
+					},
+					{
+						pattern: "product/{productId}",
+						name: "cartProduct",
+						target: ["home" , "productView"]
+					}
+				],
+				targets: {
+					productView: {
+						viewName: "Product",
+						viewLevel: 3,
+						controlAggregation: "detailPages"
+					},
+					categoryView: {
+						viewName: "Category",
+						viewLevel: 2,
+						controlAggregation: "masterPages"
+					},
+					notFound: {
+						viewName: "NotFound",
+						viewLevel: 3,
+						controlAggregation: "detailPages"
+					},
+					welcome: {
+						viewName: "Welcome",
+						viewLevel: 0,
+						controlAggregation: "detailPages"
+					},
+					home: {
+						viewName: "Home",
+						viewLevel: 1,
+						controlAggregation: "masterPages"
+					},
+					cart: {
+						viewName: "Cart",
+						controlAggregation: "masterPages"
+					}
 				}
-			]
-		}
-	},
+			}
+		},
 
-	init : function () {
+		init: function () {
+			// call overwritten init (calls createContent)
+			UIComponent.prototype.init.apply(this, arguments);
 
-		jQuery.sap.require("sap.m.routing.RouteMatchedHandler");
-		jQuery.sap.require("sap.ui.core.routing.HashChanger");
-		jQuery.sap.require("sap.ui.demo.cart.myRouter");
+			//extend the router
+			this._router = this.getRouter();
 
-		// call overwritten init (calls createContent)
-		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+			//navigate to initial page for !phone
+			if (!sap.ui.Device.system.phone) {
+				this._router.getTargets().display("welcome");
+			}
 
-		//extend the router
-		this._router = this.getRouter();
-		jQuery.extend(this._router, sap.ui.demo.cart.myRouter);
-		
-		//navigate to initial page for !phone
-		if (!sap.ui.Device.system.phone) {
-			this._router._myNavToWithoutHash("view.Welcome", "XML", false);
-		}
-		
-		// initialize the router
-		this._routeHandler = new sap.m.routing.RouteMatchedHandler(this._router);
-		this._router.initialize();
+			// initialize the router
+			this._router.initialize();
 
-	},
+		},
 
-	destroy : function () {
-		
-		if (this._routeHandler) {
-			this._routeHandler.destroy();
-		}
+		myNavBack : function () {
+			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oPrevHash = oHistory.getPreviousHash();
+			if (oPrevHash !== undefined) {
+				window.history.go(-1);
+			} else {
+				this._router.navTo("home", {}, true);
+			}
+		},
 
-		// call overriden destroy
-		sap.ui.core.UIComponent.prototype.destroy.apply(this, arguments);
-	},
+		createContent: function () {
 
-	createContent : function () {
-
-		// set i18n model
-		var oI18nModel = new sap.ui.model.resource.ResourceModel({
-			bundleUrl : "i18n/appTexts.properties"
-		});
-		sap.ui.getCore().setModel(oI18nModel, "i18n");
-
-		// create root view
-		var oView = sap.ui.view({
-			id : "app",
-			viewName : "view.App",
-			type : "JS",
-			viewData : { component : this }
-		});
-
-		oView.setModel(oI18nModel, "i18n");
-
-		
-		jQuery.sap.require("model.Config");
-		// set data model
-		var sUrl = model.Config.getServiceUrl();
-
-		// start mock server
-		if (model.Config.isMock) {
-			jQuery.sap.require("sap.ui.core.util.MockServer");
-			var oMockServer = new sap.ui.core.util.MockServer({
-				rootUri: sUrl
+			// set i18n model
+			var oI18nModel = new ResourceModel({
+				bundleUrl: "i18n/appTexts.properties"
 			});
-			oMockServer.simulate("model/metadata.xml", "model/");
-			oMockServer.start();
+			sap.ui.getCore().setModel(oI18nModel, "i18n");
 
-			jQuery.sap.require("sap.m.MessageToast");
-			var sMsg = "Running in demo mode with mock data.";
-			sap.m.MessageToast.show(sMsg, {
-				duration: 2000
+			// create root view
+			var oView = sap.ui.view({
+				viewName: "view.App",
+				type: "XML"
 			});
+
+			oView.setModel(oI18nModel, "i18n");
+
+			jQuery.sap.require("model.Config");
+			// set data model
+			var sUrl = model.Config.getServiceUrl();
+
+			// start mock server
+			if (model.Config.isMock) {
+				jQuery.sap.require("sap.ui.core.util.MockServer");
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri: sUrl
+				});
+				oMockServer.simulate("model/metadata.xml", "model/");
+				oMockServer.start();
+				var sMsg = "Running in demo mode with mock data.";
+				sap.m.MessageToast.show(sMsg, {
+					duration: 2000
+				});
+			}
+
+			var oModel = new ODataModel(sUrl, true, model.Config.getUser(), model.Config.getPwd());
+			//if we do not set this property to false, this would lead to a synchronized request which blocks the ui
+			oModel.setCountSupported(false);
+
+			oView.setModel(oModel);
+
+			//create and set cart model
+			var oCartModel = new JSONModel({
+				entries: [],
+				totalPrice: "0",
+				showEditAndProceedButton: false
+			});
+			oView.setModel(oCartModel, "cartProducts");
+
+
+			// set device model
+			var oDeviceModel = new JSONModel({
+				isTouch: sap.ui.Device.support.touch,
+				isNoTouch: !sap.ui.Device.support.touch,
+				isPhone: sap.ui.Device.system.phone,
+				isNoPhone: !sap.ui.Device.system.phone,
+				listMode: (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
+				listItemType: (sap.ui.Device.system.phone) ? "Active" : "Inactive"
+			});
+			oDeviceModel.setDefaultBindingMode("OneWay");
+			oView.setModel(oDeviceModel, "device");
+
+
+			// done
+			return oView;
 		}
-
-		var oModel = new sap.ui.model.odata.ODataModel(sUrl, true, model.Config.getUser(), model.Config.getPwd());
-		//if we do not set this property to false, this would lead to a synchronized request which blocks the ui
-		oModel.setCountSupported(false);
-
-		oView.setModel(oModel);
-		
-		//create and set cart model
-		var oCartModel = new sap.ui.model.json.JSONModel({
-			entries : [],
-			totalPrice: "0",
-			showEditAndProceedButton: false
-		});
-		oView.setModel(oCartModel, "cartProducts");
-		
-		
-		// set device model
-		var oDeviceModel = new sap.ui.model.json.JSONModel({
-			isTouch : sap.ui.Device.support.touch,
-			isNoTouch : !sap.ui.Device.support.touch,
-			isPhone : sap.ui.Device.system.phone,
-			isNoPhone : !sap.ui.Device.system.phone,
-			listMode : (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-			listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive"
-		});
-		oDeviceModel.setDefaultBindingMode("OneWay");
-		oView.setModel(oDeviceModel, "device");
-
-
-		// done
-		return oView;
-	}
+	});
 
 });

@@ -28,20 +28,24 @@
 
 <script type="text/javascript">
 
-	var oToggleButton1,
-		oToggleButton2;
-
-	oToggleButton1 = new sap.m.ToggleButton("testToggleButton_1", {
+	var oToggleButton1 = new sap.m.ToggleButton("testToggleButton_1", {
 		text : "TestButton 1",
 		pressed : true
 	});
 	oToggleButton1.placeAt("uiArea1");
 
-	oToggleButton2 = new sap.m.ToggleButton("testToggleButton_2", {
+	var oToggleButton2 = new sap.m.ToggleButton("testToggleButton_2", {
 		text : "TestButton 2",
 		pressed : false
 	});
 	oToggleButton2.placeAt("uiArea2");
+
+	var oToggleButton3 = new sap.m.ToggleButton("testToggleButton_3", {
+		text : "TestButton 3",
+		pressed : true,
+		enabled : false
+	});
+	oToggleButton3.placeAt("uiArea3");
 
 	module("pressed state");
 
@@ -50,16 +54,24 @@
 		equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
 	});
 
+	test("Check Accessibility States", function() {
+		strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
+		strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
+		strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
+	});
+
 	test("TestPressedToUnpressedOK", function() {
 		qutils.triggerEvent("tap", oToggleButton1.getId());
 		sap.ui.getCore().applyChanges();
 		equal(oToggleButton1.getPressed(), false, "getPressedState");
+		strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
 	});
 
 	test("TestUnpressedToPressedOK", function() {
 		qutils.triggerEvent("tap", oToggleButton2.getId());
 		sap.ui.getCore().applyChanges();
 		equal(oToggleButton2.getPressed(), true, "getPressedState");
+		strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
 	});
 
 	test("Should not change the pressed state, from toggled to untoggled, on a tap Event if the toggle button is disabled", function() {
@@ -79,6 +91,7 @@
 		// Assert
 		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+		strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
 	});
 
 	test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function() {
@@ -159,6 +172,7 @@
 
 		// Assert
 		strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
+		strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
 		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 		ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
 		strictEqual(oTapSpy.callCount, 1, "tap was fired");
@@ -175,5 +189,6 @@
 
 	<div id="uiArea1"></div>
 	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
 </body>
 </html>

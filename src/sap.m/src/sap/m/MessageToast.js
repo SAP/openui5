@@ -9,8 +9,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		/**
 		 * @class
 		 * A message toast notification offers simple feedback about an operation in a pop-up.
-		 * Toasts automatically disappear after a timeout and will never receive focus in order
-		 * to be unobtrusive as possible.
+		 * Toasts automatically disappear after a timeout unless the user moves the mouse over
+		 * the toast or taps on it. In this case the toast will remain on the screen and can
+		 * be closed when the user moves the mouse out or taps out of the toast.
 		 * Toasts appears close the bottom of the screen, centered horizontally, but you can change
 		 * this position which is not dependent on the default values of the position settings.
 		 * The default position applies as long as the application does not do any position setting.
@@ -43,9 +44,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * @author SAP SE
 		 * @since 1.9.2
 		 *
-		 * @static
+		 * @namespace
 		 * @public
-		 * @name sap.m.MessageToast
+		 * @alias sap.m.MessageToast
 		 */
 		var MessageToast = {};
 
@@ -53,9 +54,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		/* Internal methods and properties                             */
 		/* =========================================================== */
 
-		MessageToast._OFFSET = "0 -64";
-
-		MessageToast._CSSCLASS = "sapMMessageToast";
+		var OFFSET = "0 -64",
+			CSSCLASS = "sapMMessageToast",
+			ENABLESELECTIONCLASS = "sapUiSelectable";
 
 		MessageToast._mSettings = {
 			duration: 3000,
@@ -176,7 +177,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			}
 		};
 
-		MessageToast._hasDefaulPosition = function(mOptions) {
+		function hasDefaulPosition(mOptions) {
 			for (var aPositionOptions = ["my", "at", "of", "offset"], i = 0; i < aPositionOptions.length; i++) {
 				if (mOptions[aPositionOptions[i]] !== undefined) {
 					return false;
@@ -184,26 +185,27 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			}
 
 			return true;
-		};
+		}
 
-		MessageToast._createHTMLMarkup = function(mSettings) {
+		function createHTMLMarkup(mSettings) {
 			var oMessageToastDomRef = document.createElement("div");
 
 			oMessageToastDomRef.style.width = mSettings.width;
-			oMessageToastDomRef.className = MessageToast._CSSCLASS;
+			oMessageToastDomRef.className = CSSCLASS + " " + ENABLESELECTIONCLASS;
+			oMessageToastDomRef.setAttribute("role", "alert");
 			oMessageToastDomRef.appendChild(document.createTextNode(mSettings.message));
 
 			return oMessageToastDomRef;
-		};
+		}
 
-		MessageToast._normalizeOptions = function(mOptions) {
+		function normalizeOptions(mOptions) {
 			if (mOptions) {
 
 				// if no position options are provided
-				if (this._hasDefaulPosition(mOptions)) {
+				if (hasDefaulPosition(mOptions)) {
 
 					// change the default offset
-					mOptions.offset = this._OFFSET;
+					mOptions.offset = OFFSET;
 				}
 
 				// if the document object is provided as an option, replace it with the window object,
@@ -216,12 +218,12 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 				mOptions = {
 
 					// if no options are provided, change the default offset
-					offset: this._OFFSET
+					offset: OFFSET
 				};
 			}
 
 			return mOptions;
-		};
+		}
 
 		/* =========================================================== */
 		/* Event handlers                                              */
@@ -237,8 +239,10 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		};
 
 		MessageToast._handleMouseDownEvent = function(oEvent) {
+			var bIsMessageToast = oEvent.target.hasAttribute("class") &&
+				oEvent.target.getAttribute("class").indexOf(CSSCLASS) !== -1;
 
-			if (oEvent.isMarked("delayedMouseEvent")) {
+			if (bIsMessageToast || oEvent.isMarked("delayedMouseEvent")) {
 				return;
 			}
 
@@ -283,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 		MessageToast._setCloseAnimation = function($MessageToastDomRef, iDuration, fnClose, mSettings) {
 			var sCssTransition = "opacity " + mSettings.animationTimingFunction + " " + mSettings.animationDuration + "ms",
-				sTransitionEnd = "webkitTransitionEnd." + MessageToast._CSSCLASS + " transitionend." + MessageToast._CSSCLASS;
+				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS;
 
 			if (mSettings.animationDuration > 0) {
 				$MessageToastDomRef[0].style.webkitTransition = sCssTransition;
@@ -313,7 +317,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * The only mandatory parameter is <code>sMessage</code>.
 		 *
 		 * @param {string} sMessage The message to be displayed.
-		 * @param {object} [mOptions] Optionally other options.
+		 * @param {object} [mOptions] Object which can contain all other options. Not all entries in this object are required. This property is optional.
 		 * @param {int} [mOptions.duration=3000] Time in milliseconds before the close animation starts. Needs to be a finite positive nonzero integer.
 		 * @param {sap.ui.core.CSSSize} [mOptions.width='15em'] The width of the message toast, this value can be provided in %, em, px and all possible CSS measures.
 		 * @param {sap.ui.core.Popup.Dock} [mOptions.my='center bottom'] Specifies which point of the message toast should be aligned.
@@ -325,21 +329,20 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * @param {boolean} [mOptions.autoClose=true] Specify whether the message toast should close as soon as the end user touches the screen.
 		 * @param {string} [mOptions.animationTimingFunction='ease'] Describes how the close animation will progress. Possible values "ease", "linear", "ease-in", "ease-out", "ease-in-out". This feature is not supported in android and ie9 browsers.
 		 * @param {int} [mOptions.animationDuration=1000] Time in milliseconds that the close animation takes to complete. Needs to be a finite positive integer. For not animation set to 0. This feature is not supported in android and ie9 browsers.
-		 * @param {boolean} [mOptions.closeOnBrowserNavigation=true] Whether the message toast closes on browser navigation.
+		 * @param {boolean} [mOptions.closeOnBrowserNavigation=true] Specifies if the message toast closes on browser navigation.
 		 *
 		 * @type void
 		 * @public
-		 * @name sap.m.MessageToast.show
-		 * @function
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
 			var that = this,
 				mSettings = jQuery.extend({}, this._mSettings, { message: sMessage }),
 				oPopup = new Popup(),
 				iPos,
-				oMessageToastDomRef;
+				oMessageToastDomRef,
+				iCloseTimeoutId;
 
-			mOptions = this._normalizeOptions(mOptions);
+			mOptions = normalizeOptions(mOptions);
 
 			// merge mOptions into mSettings
 			jQuery.extend(mSettings, mOptions);
@@ -348,7 +351,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			this._validateSettings(mSettings);
 
 			// create the message toast HTML markup
-			oMessageToastDomRef = this._createHTMLMarkup(mSettings);
+			oMessageToastDomRef = createHTMLMarkup(mSettings);
 
 			// save this pop-up instance and the position,
 			// to be used inside fnMTAttachClosed closure
@@ -363,7 +366,6 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			if (jQuery.support.cssTransitions) {
 
 				// sets the animation functions to use for opening and closing the message toast
-				// note: this custom animations are using CSS3 transitions
 				oPopup.setAnimations(function fnMessageToastOpen($MessageToast, iDuration, fnOpened) {
 					fnOpened();
 				}, function fnMessageToastClose($MessageToastDomRef, iDuration, fnClose) {
@@ -384,8 +386,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			if (!this._bBoundedEvents) {
 
 				// bind to the resize event to handle orientation change and resize events
-				jQuery(window).on("resize." + MessageToast._CSSCLASS, jQuery.proxy(this._handleResizeEvent, this));
-				jQuery(document).on("mousedown." + MessageToast._CSSCLASS, jQuery.proxy(this._handleMouseDownEvent, this));
+				jQuery(window).on("resize." + CSSCLASS, this._handleResizeEvent.bind(this));
+				jQuery(document).on("mousedown." + CSSCLASS, this._handleMouseDownEvent.bind(this));
 
 				this._bBoundedEvents = true;
 			}
@@ -404,8 +406,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 				if (that._iOpenedPopups === 0) {
 					that._aPopups = [];
-					jQuery(window).off("resize." + MessageToast._CSSCLASS);
-					jQuery(document).off("mousedown." + MessageToast._CSSCLASS);
+					jQuery(window).off("resize." + CSSCLASS);
+					jQuery(document).off("mousedown." + CSSCLASS);
 
 					that._bBoundedEvents = false;
 				}
@@ -419,7 +421,22 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			oPopup.attachClosed(handleMTClosed);
 
 			// close the message toast
-			jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+			iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+
+			function fnClearTimeout() {
+				jQuery.sap.clearDelayedCall(iCloseTimeoutId);
+				iCloseTimeoutId = null;
+			}
+
+			oPopup.getContent().addEventListener("touchstart", fnClearTimeout);
+			oPopup.getContent().addEventListener("mouseover", fnClearTimeout);
+
+			// WP 8.1 fires mouseleave event on tap
+			if (sap.ui.Device.system.desktop) {
+				oPopup.getContent().addEventListener("mouseleave", function () {
+					iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration,  oPopup, "close");
+				});
+			}
 		};
 
 		MessageToast.toString = function() {

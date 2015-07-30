@@ -15,8 +15,6 @@
 		<script type="text/javascript">
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 
-
-
 			var label1 = new sap.m.Label({
 				text : "Progress Indicator with 50% neutral"
 			});
@@ -51,8 +49,6 @@
 			var oProgInd2 = new sap.m.ProgressIndicator("pi2", {
 				width:"100%",
 				percentValue:75,
-				displayValue:"75%",
-				showValue:false,
 				state: sap.ui.core.ValueState.Error
 			});
 
@@ -164,6 +160,6 @@
 		</script>
 
 	</head>
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>

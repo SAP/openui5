@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.OverlayRegistry</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+				z-index: 1000;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+
+			QUnit.module("Given that an OverlayRegistry is created", {
+				beforeEach : function() {
+					this.oOverlayRegistry = sap.ui.dt.OverlayRegistry;
+				},
+				afterEach : function() {
+				}
+			});
+
+			QUnit.test("when an overlay is created and registered...", function(assert) {	
+				var oOverlay = { a : "b"};		
+				this.oOverlayRegistry.register("id1", oOverlay);
+				assert.deepEqual(this.oOverlayRegistry.getOverlay("id1"), oOverlay, "getOverlay should return registered overlay for registered id");
+				assert.ok(this.oOverlayRegistry.hasOverlays(), "oOverlayRegistry has overlays");
+			});
+
+			QUnit.module("Given that an OverlayRegistry is created and registered", {
+				beforeEach : function() {
+					this.oOverlayRegistry = sap.ui.dt.OverlayRegistry;
+					this.oOverlay = { a : "b"};		
+					this.oOverlayRegistry.register("id1", this.oOverlay);
+				},
+				afterEach : function() {
+					delete this.oOverlay;
+				}
+			});
+
+			QUnit.test("when an overlay is deregistered...", function(assert) {
+				this.oOverlayRegistry.deregister("id1");	
+				assert.strictEqual(this.oOverlayRegistry.getOverlay("id1"), undefined, "getOverlay should return undefined for it's id");
+				assert.strictEqual(this.oOverlayRegistry.hasOverlays(), false, "oOverlayRegistry has no overlays");
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.OverlayRegistry</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ShellOverlay renderer.
-	 * @static
+	 * ShellOverlay renderer.
+	 * @namespace
 	 */
 	var ShellOverlayRenderer = {};
 	
@@ -32,18 +32,29 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass("sapUiUfdShellOvrlyAnim");
 		}
 		rm.writeClasses();
-		rm.write("><div>");
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAccessibilityState(oControl, {
+				role: "dialog"
+			});
+		}
+		rm.write("><span id='", oControl.getId(), "-focfirst' tabIndex='0'></span><div id='", oControl.getId(), "-inner'>");
 		
 		rm.write("<header class='sapUiUfdShellOvrlyHead'>");
 		rm.write("<hr class='sapUiUfdShellOvrlyBrand'/>");
-		rm.write("<div class='sapUiUfdShellOvrlyHeadCntnt'>");
-		rm.write("<div id='" + oControl.getId() + "-hdr-center' class='sapUiUfdShellOvrlyHeadCenter'>");
+		rm.write("<div class='sapUiUfdShellOvrlyHeadCntnt'");
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "toolbar");
+		}
+		rm.write("><div id='" + oControl.getId() + "-hdr-center' class='sapUiUfdShellOvrlyHeadCenter'>");
 		ShellOverlayRenderer.renderSearch(rm, oControl);
 		rm.write("</div>");
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sCloseTxt = rb.getText("SHELL_OVERLAY_CLOSE");
 		rm.write("<a tabindex='0' href='javascript:void(0);' id='" + oControl.getId() + "-close' class='sapUiUfdShellOvrlyHeadClose'");
 		rm.writeAttributeEscaped("title", sCloseTxt);
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "button");
+		}
 		rm.write(">");
 		rm.writeEscaped(sCloseTxt);
 		rm.write("</a></div></header>");
@@ -51,7 +62,7 @@ sap.ui.define(['jquery.sap.global'],
 		ShellOverlayRenderer.renderContent(rm, oControl);
 		rm.write("</div>");
 		
-		rm.write("</div></div>");
+		rm.write("</div><span id='", oControl.getId(), "-foclast' tabIndex='0'></span></div>");
 	};
 	
 	ShellOverlayRenderer.renderSearch = function(rm, oControl) {
@@ -70,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 	
 	ShellOverlayRenderer.renderContent = function(rm, oControl) {
-		rm.write("<div>");
+		rm.write("<div tabindex='-1'>");
 		var aContent = oControl.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			rm.renderControl(aContent[i]);

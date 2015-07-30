@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 	 * @public
 	 * @deprecated Since version 1.4.0. 
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
-	 * @name sap.ui.commons.Message
+	 * @alias sap.ui.commons.Message
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Message = Control.extend("sap.ui.commons.Message", /** @lends sap.ui.commons.Message.prototype */ { metadata : {
@@ -55,20 +55,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 			design : {type : "string", group : "Misc", defaultValue : null}
 		}
 	}});
-	
-	
-	/**
-	 * Registers a callback function to be invoked if long text Details are to be made available. This callback function will be supplied the corresponding Message "id", and should return the HTML string to be displayed within the Message Details Dialog.
-	 * E.g.: myMessage.bindDetails(getDetails);
-	 * where
-	 * function getDetails(sId) {... return htmlString;}
-	 *
-	 * @name sap.ui.commons.Message#bindDetails
-	 * @function
-	 * @type string
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	Message.prototype.init = function(){
@@ -278,17 +264,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 	// #############################################################################
 	// Public APIs
 	// #############################################################################
+
 	/**
-	 * This interface registers a CallBack function, to be called for rendering
-	 * the longText Details of a Message.
-	 * This function will be supplied the ID of the Message.
-	 * This function is expected to return the (simple) HTML string giving the
-	 * details belonging to this message ID.
-	 * @param {Function} fnCallBack
+	 * Registers a callback function to be invoked if long text Details are to be made available. 
+	 * 
+	 * This callback function will be supplied the corresponding Message "id", and should 
+	 * return the (simple) HTML string to be displayed within the Message Details Dialog.
+	 * 
+	 * E.g.: myMessage.bindDetails(getDetails);
+	 * function getDetails(sId) {... return htmlString;}
+	 *
+	 * @param {function} fnCallBack the callback function 
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @public
 	 */
 	Message.prototype.bindDetails = function(fnCallBack) {
-	  this.fnCallBack = fnCallBack;
+		this.fnCallBack = fnCallBack;
 	};
 
 	return Message;

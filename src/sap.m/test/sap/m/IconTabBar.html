@@ -4,22 +4,22 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>sap.m.IconTabBar</title>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		
+
 		<style>
 		.label {
 			font-weight:bold;
 			padding: 3rem 1rem 1rem;
 			width: auto;
-			white-space: normal; 
+			white-space: normal;
 		}
 		</style>
 		<script>
-		
+
 			jQuery.sap.require("sap.ui.core.format.NumberFormat");
 			var oFloat = sap.ui.core.format.NumberFormat.getFloatInstance({minFractionDigits: 2, maxFractionDigits: 2});
 
@@ -37,26 +37,26 @@
 				]
 			});
 			sap.ui.getCore().setModel(model);
-		
+
 			// create and add app
 			var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
 			app.placeAt("body");
-			
+
 			var label1 = new sap.m.Label({
 				text: "IconTabBar with one content on the IconTabBar which is filtered on the different Tabs. Tabs are not expandable. Semantic colors are used."
 			});
 			label1.addStyleClass("label");
-			
+
 			var label2 = new sap.m.Label({
 				text: "IconTabBar with different contents on the single Tabs (no labels). Tabs are expandable. Only default (brand) color is used."
 			});
 			label2.addStyleClass("label");
-			
+
 			var label3 = new sap.m.Label({
 				text: "IconTabBar with tabs which have labels. Tabs are expandable. Semantic colors are used. Some tabs are invisible."
 			});
 			label3.addStyleClass("label");
-			
+
 			var label4 = new sap.m.Label({
 				text: "IconTabBar with tabs which have no icons, only labels. Tabs are expandable. Only default (brand) color is used."
 			});
@@ -76,7 +76,7 @@
 				text: "Initially collapsed IconTabBar with no active item."
 			});
 			label6.addStyleClass("label");
-			
+
 			var label7 = new sap.m.Label({
 				text: "Initially collapsed IconTabBar with no content and expandable set to false."
 			});
@@ -94,10 +94,10 @@
 			});
 			label11.addStyleClass("label");
 
-			// create and add a page with icon tab bar 
+			// create and add a page with icon tab bar
 			var page = new sap.m.Page("tabBarPage", {
 				title:"IconTabBar",
-				content : [ 
+				content : [
 					label1,
 					new sap.m.IconTabBar({
 						expandable: false,
@@ -138,7 +138,7 @@
 								oFilter;
 							if (sKey == "All") {
 								oBinding.filter([]);
-							} 
+							}
 							else {
 								oFilter = new sap.ui.model.Filter("status", "EQ", sKey);
 								oBinding.filter([oFilter]);
@@ -730,7 +730,7 @@
 								design: sap.m.IconTabFilterDesign.Horizontal,
 								key: "key1",
 								text: "Neutral with long long long text"
-								
+
 							}),
 							new sap.m.IconTabSeparator({icon: "sap-icon://process"}),
 							new sap.m.IconTabFilter({
@@ -781,7 +781,7 @@
 								design: sap.m.IconTabFilterDesign.Horizontal,
 								key: "key1",
 								text: "Neutral with long long long text"
-								
+
 							}),
 							new sap.m.IconTabSeparator({icon: "sap-icon://process"}),
 							new sap.m.IconTabFilter({
@@ -813,16 +813,16 @@
 						content: [
 									new sap.m.Label({
 										text: "info info info"
-									}),
+									})
 								]
 					}),
-					new sap.m.Label({text: " "}), // placeholder to see content below
+					new sap.m.Label({text: " "}) // placeholder to see content below
 				]
 			});
 			app.addPage(page);
-			
+
 		</script>
 	</head>
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>

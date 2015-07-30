@@ -77,6 +77,57 @@
 		oBinding.getContexts();
 	});
 	
+	asyncTest("ListBinding getCurrentContexts", function(){
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("/Categories");
+
+		var handler = function() {
+			var aContexts = oBinding.getContexts(0, 5),
+				aCurrentContexts = oBinding.getCurrentContexts();
+			
+			equal(aCurrentContexts.length, 5, "amount of items in current contexts");
+			jQuery(aCurrentContexts).each(function(i, context){
+				equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+			});
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		}
+		oBinding.attachChange(handler);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+	});
+
+	asyncTest("ListBinding relative with context", function(){
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("Products");
+		var iCount = 0;
+
+		var changeHandler = function() {
+			iCount++;
+			if (iCount == 1) {
+				equal(oBinding.getPath(), "Products", "ListBinding path");
+				ok(oBinding.getModel() == oModel, "ListBinding model");
+				equal(oBinding.getLength(), 5, "length of items");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				oBinding.setContext(null);
+			} else {
+				equal(oBinding.getLength(), 0, "length of items");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				oBinding.detachChange(changeHandler);
+				start(); // resume normal testing
+			}
+		}
+		
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.attachChange(changeHandler);
+		oBinding.initialize();
+		oModel.createBindingContext("/Categories(7)", function(oContext) {
+			oBinding.setContext(oContext);
+		});
+	});
+	
 	asyncTest("ListBinding with expand with empty data, runs only with sinon because of response manipulation!!!", function(){
 		var oModel = initModel(sURI, true, "Regions");
 		var oBinding = oModel.bindList("/Regions", null,null,null, {expand:"Territories"});
@@ -632,6 +683,15 @@
 		oBinding.attachChange(handler);
 		oBinding.filter(oFilter.convert());
 		oBinding.getContexts();
+	});
+	
+	test("Export to file URL", function(){
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("/Categories");
+		var sUrl = oBinding.getDownloadUrl("csv");
+		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
+		sUrl = oBinding.getDownloadUrl("xlsx");
+		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
 	});
 	</script>
 

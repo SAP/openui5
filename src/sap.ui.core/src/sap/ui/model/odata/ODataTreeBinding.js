@@ -9,19 +9,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 
 	/**
-	*
-	* @class
-	* Tree binding implementation for client models
-	*
+	 *
+	 * @class
+	 * Tree binding implementation for client models
+	 *
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * 
-	* @name sap.ui.model.odata.ODataTreeBinding
-	* @extends sap.ui.model.TreeBinding
-	*/
+	 * @alias sap.ui.model.odata.ODataTreeBinding
+	 * @extends sap.ui.model.TreeBinding
+	 */
 	var ODataTreeBinding = TreeBinding.extend("sap.ui.model.odata.ODataTreeBinding", /** @lends sap.ui.model.odata.ODataTreeBinding.prototype */ {
 	
 		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
@@ -44,27 +44,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 				} else {
 					this.oNavigationPaths = mParameters.navigation;
 				}
+			} else {
+				jQuery.sap.log.warning("Tree hierarchy annotations are deprecated and may not work correctly with the sap.ui.model.odata.ODataModel." +
+						" Please use the sap.ui.model.odata.v2.ODataModel (since version 1.28) instead which fully supports hierarchy annotations.");
 			}
 		}
 	
 	});
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.odata.ODataTreeBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.odata.ODataTreeBinding.extend
-	 * @function
-	 */
 	
 	/**
 	 * Return root contexts for the tree
@@ -73,8 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {integer} iThreshold
 	 * @return {Array} the contexts array
 	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBinding#getRootContexts
-	 * @function
 	 */
 	ODataTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength, iThreshold) {
 		var sNodeId = null,
@@ -105,18 +89,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 			var bIsList = this.oModel.isList(this.sPath, this.getContext());
 
-			//We are bound to a single entity which represents the root context
-			if (!bIsList) {
+			if (bIsList) {
+				//We are bound to a collection which represents the first level
+				this.bDisplayRootNode = true;
+			} else {
+				//We are bound to a single entity which represents the root context
 				//Get the binding context for the root element, it is created if it doesn't exist yet
 				bRequestRootContexts = false;
-				this.oModel.createBindingContext(sNodeId, null, { skip: iStartIndex, top: iLength, expand: mRequestParameters.navPath }, function(oNewContext) {
+				this.oModel.createBindingContext(sNodeId, null, {expand: mRequestParameters.navPath }, function(oNewContext) {
 					aRootContexts = [oNewContext];
 					if (that.oRootContext !== oNewContext) {
 						that.oRootContext = oNewContext;
 						that._processODataObject(oNewContext.getObject(), sNodeId, mRequestParameters.navPath);
 						that.bNeedsUpdate = true;
 					}
-				});
+				}, this.bRefresh);
+				this.bRefresh = false;
 			}
 		}
 
@@ -130,11 +118,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 		}
 
 		if (!this.bDisplayRootNode && aRootContexts.length > 0) {
-			if (aRootContexts.length > 1) {
-				jQuery.sap.log.fatal("Disabling the display of the root node doesn't make sense if you have multiple root nodes");
-			}
 			this.oRootContext = aRootContexts[0];
-			return this.getNodeContexts(aRootContexts[0], iStartIndex, iLength, iThreshold);
+			aRootContexts = this.getNodeContexts(aRootContexts[0], iStartIndex, iLength, iThreshold);
 		}
 
 		return aRootContexts;
@@ -147,8 +132,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {integer} iThreshold
 	 * @return {Array} the contexts array
 	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBinding#getNodeContexts
-	 * @function
 	 */
 	ODataTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength, iThreshold) {
 		var sNodeId,
@@ -182,30 +165,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	/**
 	 * Returns if the node has child nodes
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype.hasChildren
 	 * @param {Object} oContext the context element of the node
 	 * @return {boolean} true if node has children
 	 *
 	 * @public
 	 */
 	ODataTreeBinding.prototype.hasChildren = function(oContext) {
+		if (!oContext) {
+			return false;
+		}
 		if (this.bHasTreeAnnotations) {
-			if (!oContext) {
-				return false;
-			}
 			var sDrilldownState = oContext.getProperty(this.oTreeProperties["hierarchy-drill-state-for"]);
 			return sDrilldownState === "expanded" || sDrilldownState === "collapsed";
-		} else {
-			return oContext && this.oLengths[oContext.getPath()] > 0;
+		} else {			
+			var sNavPath = this._getNavPath(oContext.getPath());
+			var sPathToChildren = oContext.getPath() + "/" + sNavPath;
+			return sNavPath && this.oLengths[sPathToChildren] > 0;
 		}
 	};
 	
 	/**
 	 * Returns the number of child nodes
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype.getChildCount
 	 * @param {Object} oContext the context element of the node
 	 * @return {integer} the number of children
 	 *
@@ -236,8 +217,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	/**
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype._getContextsForPath
 	 * @param {String} sNodeId the absolute path to be loaded
 	 * @param {integer} iStartIndex
 	 * @param {integer} iLength
@@ -357,8 +336,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	
 	/**
 	 * Load list data from the server
-	 * @name sap.ui.model.odata.ODataTreeBinding#loadSubNodes
-	 * @function
 	 */
 	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters) {
 		var that = this,
@@ -466,8 +443,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * Resets the current list data and length
 	 * 
 	 * @private
-	 * @name sap.ui.model.odata.ODataTreeBinding#resetData
-	 * @function
 	 */
 	ODataTreeBinding.prototype.resetData = function(oContext) {
 		if (oContext) {
@@ -481,6 +456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 			this.oKeys = {};
 			this.oLengths = {};
 			this.oFinalLengths = {};
+			this.oRootContext = null;
 		}
 	};
 	
@@ -495,8 +471,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {string} [mEntityTypes]
 	 * 
 	 * @public
-	 * @name sap.ui.model.odata.ODataTreeBinding#refresh
-	 * @function
 	 */
 	ODataTreeBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
@@ -528,6 +502,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 		if (bForceUpdate || bChangeDetected) {
 			this.resetData();
 			this.bNeedsUpdate = false;
+			this.bRefresh = true;
 			this._fireChange();
 		}
 	};
@@ -536,8 +511,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @public
-	 * @name sap.ui.model.odata.ODataTreeBinding#filter
-	 * @function
 	 */
 	ODataTreeBinding.prototype.filter = function(aFilters){
 		jQuery.sap.log.warning("Filtering is currently not possible in the ODataTreeBinding");
@@ -550,8 +523,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * 
 	 * @param {boolean} bForceUpdate
 	 * 
-	 * @name sap.ui.model.odata.ODataTreeBinding#checkUpdate
-	 * @function
 	 */
 	ODataTreeBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities){
 		var bChangeDetected = false;
@@ -614,13 +585,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 			this.oKeys[sPath] = oRef;
 			this.oLengths[sPath] = oRef.length;
 			this.oFinalLengths[sPath] = true;
-		} else if (typeof oRef === "object") {
-			this.oKeys[sPath] = [];
-			this.oLengths[sPath] = 0;
-			this.oFinalLengths[sPath] = true;
-		}
+		} 
 		
-		if (aNavPath.length > 0 && oObject[sNavPath]) {
+		if (sNavPath && oObject[sNavPath]) {
 			if (jQuery.isArray(oRef)) {
 				jQuery.each(oRef, function(iIndex, sRef) {
 					var oObject = that.getModel().getData("/" + sRef);
@@ -681,4 +648,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 	return ODataTreeBinding;
 
-}, /* bExport= */ true);
+});

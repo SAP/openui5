@@ -14,6 +14,7 @@
 	-moz-box-flex: 1;
 	-ms-flex: auto;
 	flex: auto;
+	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
@@ -26,6 +27,7 @@
 	-moz-box-pack: center;
 	-ms-justify-content: center;
 	justify-content: center;
+	overflow: hidden;
 }
 
 .sapMSLITitle,
@@ -38,6 +40,7 @@
 	-moz-box-flex: 9;
 	-ms-flex: auto;
 	flex: auto;
+	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 }
 
 .sapMSLITitleDiv,
@@ -70,6 +73,11 @@
 	text-align: right;
 }
 
+/* The info is aligned right and therefore in RTL mode should be aligned on the left */
+html[dir=rtl] .sapMSLIInfo {
+	text-align: left;
+}
+
 .sapMSLI > .sapMLIBContent {
 	white-space: nowrap;
 	overflow: hidden;
@@ -78,6 +86,7 @@
 	-moz-box-flex: 1;
 	-ms-flex: auto;
 	flex: auto;
+	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;

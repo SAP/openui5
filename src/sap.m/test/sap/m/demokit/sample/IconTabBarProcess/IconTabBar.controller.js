@@ -1,40 +1,53 @@
-sap.ui.controller("sap.m.sample.IconTabBarProcess.IconTabBar", {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/Filter',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, Controller, Filter, JSONModel) {
+	"use strict";
 
-	onInit: function () {
-		
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		this.getView().setModel(oModel);
+	var IconTabBarController = Controller.extend("sap.m.sample.IconTabBarProcess.IconTabBar", {
 
-		// reuse table sample component
-		var oComp = sap.ui.getCore().createComponent({
-			name : 'sap.m.sample.Table'
-		});
-		oComp.setModel(this.getView().getModel());
-		this._oTable = oComp.getTable();
-		this.getView().byId("idIconTabBar").insertContent(this._oTable);
+		onInit: function () {
 
-		// update table
-		this._oTable.setHeaderText(null);
-		this._oTable.setShowSeparators("Inner");
-	},
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
 
-	handleIconTabBarSelect : function (oEvent) {
-		var oTable = oEvent.getSource().getContent()[0];
-		var oBinding = oTable.getBinding("items"),
-			sKey = oEvent.getParameter("selectedKey"),
-			oFilter;
-		if (sKey === "Ok") {
-			oFilter = new sap.ui.model.Filter("WeightMeasure", "LE", 1000);
-			oBinding.filter([oFilter]);
-		} else if (sKey === "Heavy") {
-			oFilter = new sap.ui.model.Filter("WeightMeasure", "BT", 1001, 2000);
-			oBinding.filter([oFilter]);
-		} else if (sKey === "Overweight") {
-			oFilter = new sap.ui.model.Filter("WeightMeasure", "GT", 2000);
-			oBinding.filter([oFilter]);
-		} else {
-			oBinding.filter([]);
+			// reuse table sample component
+			var oComp = sap.ui.getCore().createComponent({
+				name : 'sap.m.sample.Table'
+			});
+			oComp.setModel(this.getView().getModel());
+			this._oTable = oComp.getTable();
+			this.getView().byId("idIconTabBar").insertContent(this._oTable);
+
+			// update table
+			this._oTable.setHeaderText(null);
+			this._oTable.setShowSeparators("Inner");
+		},
+
+		handleIconTabBarSelect : function (oEvent) {
+			var oTable = oEvent.getSource().getContent()[0];
+			var oBinding = oTable.getBinding("items"),
+				sKey = oEvent.getParameter("selectedKey"),
+				oFilter;
+			if (sKey === "Ok") {
+				oFilter = new Filter("WeightMeasure", "LE", 1000);
+				oBinding.filter([oFilter]);
+			} else if (sKey === "Heavy") {
+				oFilter = new Filter("WeightMeasure", "BT", 1001, 2000);
+				oBinding.filter([oFilter]);
+			} else if (sKey === "Overweight") {
+				oFilter = new Filter("WeightMeasure", "GT", 2000);
+				oBinding.filter([oFilter]);
+			} else {
+				oBinding.filter([]);
+			}
 		}
-	}
+	});
+
+
+	return IconTabBarController;
+
 });

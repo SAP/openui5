@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a property binding
-sap.ui.define(['jquery.sap.global', './PropertyBinding'],
-	function(jQuery, PropertyBinding) {
+sap.ui.define(['./PropertyBinding'],
+	function(PropertyBinding) {
 	"use strict";
 
 
@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding'],
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {Object} [mParameters]
 	 * 
-	 * @name sap.ui.model.ClientPropertyBinding
+	 * @alias sap.ui.model.ClientPropertyBinding
 	 * @extends sap.ui.model.PropertyBinding
 	 */
 	var ClientPropertyBinding = PropertyBinding.extend("sap.ui.model.ClientPropertyBinding", /** @lends sap.ui.model.ClientPropertyBinding.prototype */ {
@@ -32,8 +32,6 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding'],
 	
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.getValue
-	 * @name sap.ui.model.ClientPropertyBinding#getValue
-	 * @function
 	 */
 	ClientPropertyBinding.prototype.getValue = function(){
 		return this.oValue;
@@ -43,8 +41,6 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding'],
 	/**
 	 * Returns the current value of the bound target (incl. re-evaluation)
 	 * @return {object} the current value of the bound target
-	 * @name sap.ui.model.ClientPropertyBinding#_getValue
-	 * @function
 	 */
 	ClientPropertyBinding.prototype._getValue = function(){
 		var sProperty = this.sPath.substr(this.sPath.lastIndexOf("/") + 1);
@@ -57,8 +53,6 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding'],
 	
 	/**
 	 * Setter for context
-	 * @name sap.ui.model.ClientPropertyBinding#setContext
-	 * @function
 	 */
 	ClientPropertyBinding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
@@ -71,4 +65,4 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding'],
 
 	return ClientPropertyBinding;
 
-}, /* bExport= */ true);
+});

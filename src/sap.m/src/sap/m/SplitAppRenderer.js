@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', './SplitContainerRenderer', 'sap/ui/core/Ren
 	"use strict";
 
 /**
-	 * @class SplitApp renderer. 
-	 * @static
+	 * SplitApp renderer. 
+	 * @namespace
 	 */
 	var SplitAppRenderer = {
 	};

@@ -3,15 +3,11 @@
  */
 
 // Provides class sap.ui.core.DeclarativeSupport
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', './Control', './CustomData', './HTML', './mvc/View'],
+	function(jQuery, DataType, ManagedObject, Control, CustomData, HTML, View) {
 	"use strict";
 
 
-	
-	
-	
-	
 	/**
 	 * @class Static class for enabling declarative UI support.  
 	 *
@@ -19,13 +15,12 @@ sap.ui.define(['jquery.sap.global'],
 	 * @version ${version}
 	 * @since 1.7.0
 	 * @public
-	 * @name sap.ui.core.DeclarativeSupport
+	 * @alias sap.ui.core.DeclarativeSupport
 	 */
 	var DeclarativeSupport = {
 	};
-	
-	
-	
+
+
 	/**
 	 * Defines the attributes of an element that should be handled differently.
 	 * Set key/value pairs. The key indicates the attribute. The value can be of type <code>Boolean</code> or <code>Function</code>.
@@ -34,14 +29,14 @@ sap.ui.define(['jquery.sap.global'],
 	 * <code>mSettings</code> the settings of the control
 	 * <code>fnClass</code> the control class
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.attributes
 	 */
 	DeclarativeSupport.attributes = {
 		"data-sap-ui-type" : true,
+		"data-sap-ui-id" : true,
 		"data-sap-ui-aggregation" : true,
 		"data-sap-ui-default-aggregation" : true,
 		"data-sap-ui-binding" : function(sValue, mSettings) {
-			var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue);
+			var oBindingInfo = ManagedObject.bindingParser(sValue);
 			// TODO reject complex bindings, types, formatters; enable 'parameters'? 
 			mSettings.objectBindings = mSettings.objectBindings || {};
 			mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
@@ -60,8 +55,8 @@ sap.ui.define(['jquery.sap.global'],
 		"style" : true,
 		"id" : true
 	};
-	
-	
+
+
 	/**
 	 * Enhances the given DOM element by parsing the Control and Elements info and creating
 	 * the SAPUI5 controls for them.
@@ -70,8 +65,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
 	 * @public
-	 * @name sap.ui.core.DeclarativeSupport.compile
-	 * @function
 	 */
 	DeclarativeSupport.compile = function(oElement, oView, isRecursive) {
 		// Find all defined classes
@@ -82,9 +75,9 @@ sap.ui.define(['jquery.sap.global'],
 			that._compile(this, oView, isRecursive);
 		});
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Enhances the given element by parsing the attributes and child elements.
 	 * 
@@ -92,16 +85,14 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._compile
-	 * @function
 	 */
 	DeclarativeSupport._compile = function(oElement, oView, isRecursive) {
 		var $element = jQuery(oElement);
-	
+
 		var sType = $element.attr("data-sap-ui-type");
 		var aControls = [];
 		var bIsUIArea = sType === "sap.ui.core.UIArea";
-	
+
 		if (bIsUIArea) {
 			// use a UIArea / better performance when rendering multiple controls
 			// parse and create the controls / children of element
@@ -118,10 +109,10 @@ sap.ui.define(['jquery.sap.global'],
 				aControls.push(oControl);
 			}
 		}
-		
+
 		// remove the old content
 		$element.empty();
-	
+
 		// in case of the root control is not a UIArea we remove all HTML attributes
 		// for a UIArea we remove only the data HTML attributes and keep the others
 		// also marks the control as parsed (by removing data-sap-ui-type) 
@@ -135,10 +126,10 @@ sap.ui.define(['jquery.sap.global'],
 		if (aAttr.length > 0) {
 			$element.removeAttr(aAttr.join(" "));
 		}
-	
+
 		// add the controls
 		jQuery.each(aControls, function(vKey, oControl) {
-			if (oControl instanceof sap.ui.core.Control) {
+			if (oControl instanceof Control) {
 				if (oView && !isRecursive) {
 					oView.addContent(oControl);
 				} else {
@@ -151,77 +142,73 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		});
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Parses a given DOM ref and converts it into a Control.
 	 * @param {Element} oElement reference to a DOM element
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {sap.ui.core.Control} reference to a Control
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._createControl
-	 * @function
 	 */
 	DeclarativeSupport._createControl = function(oElement, oView) {
 		var $element = jQuery(oElement);
-	
+
 		var oControl = null;
-	
+
 		var sType = $element.attr("data-sap-ui-type");
 		if (sType) {
 			jQuery.sap.require(sType); // make sure fnClass.getMatadata() is available
 			var fnClass = jQuery.sap.getObject(sType);
 			jQuery.sap.assert(typeof fnClass !== "undefined", "Class not found: " + sType);
-			
-				
+
+
 			var mSettings = {};
 			mSettings.id = this._getId($element, oView);
 			this._addSettingsForAttributes(mSettings, fnClass, oElement, oView);
 			this._addSettingsForAggregations(mSettings, fnClass, oElement, oView);
-	
+
 			var oControl;
-			if (sap.ui.core.mvc.View.prototype.isPrototypeOf(fnClass.prototype) && typeof fnClass._sType === "string") {
+			if (View.prototype.isPrototypeOf(fnClass.prototype) && typeof fnClass._sType === "string") {
 				// for views having a factory function defined we use the factory function!
 				oControl = sap.ui.view(mSettings, undefined, fnClass._sType);
 			} else {
 				oControl = new fnClass(mSettings);
 			}
-	
+
 			if (oElement.className) {
 				oControl.addStyleClass(oElement.className);
 			}
-	
+
 			// mark control as parsed
 			$element.removeAttr("data-sap-ui-type");
-	
+
 		} else {
 			oControl = this._createHtmlControl(oElement, oView);
 		}
-	
+
 		return oControl;
 	};
-	
-	
+
+
 	/**
 	 * Parses a given DOM ref and converts it into a HTMLControl.
 	 * @param {Element} oElement reference to a DOM element
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {sap.ui.core.HTML} reference to a Control
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._createHtmlControl
-	 * @function
 	 */
 	DeclarativeSupport._createHtmlControl = function(oElement, oView) {
 		//include HTML content
-		var oHTML = new sap.ui.core.HTML();
+		var oHTML = new HTML();
 		oHTML.setDOMContent(oElement);
 		// check for declarative content
 		this.compile(oElement, oView, true);
 		return oHTML;
 	};
-	
-	
+
+
 	/**
 	 * Adds all defined attributes to the settings object of a control.
 	 * 
@@ -232,24 +219,22 @@ sap.ui.define(['jquery.sap.global'],
 	 * @return {object} the settings of the control.
 	 * @throws {Error} if an attribute is not supported
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._addSettingsForAttributes
-	 * @function
 	 */
 	DeclarativeSupport._addSettingsForAttributes = function(mSettings, fnClass, oElement, oView) {
 		var that = this;
 		var oSpecialAttributes = DeclarativeSupport.attributes;
-		var fnBindingParser = sap.ui.base.ManagedObject.bindingParser;
+		var fnBindingParser = ManagedObject.bindingParser;
 		var aCustomData = [];
 		var reCustomData = /^data-custom-data:(.+)/i;
-	
+
 		jQuery.each(oElement.attributes, function(iIndex, oAttr) {
 			var sName = oAttr.name;
 			var sValue = oAttr.value;
-			
+
 			if (!reCustomData.test(sName)) {
-	
+
 				// no custom data attribute:
-				
+
 				if (typeof oSpecialAttributes[sName] === "undefined") {
 					sName = that.convertAttributeToSettingName(sName, mSettings.id);
 					var oProperty = that._getProperty(fnClass, sName);
@@ -293,59 +278,48 @@ sap.ui.define(['jquery.sap.global'],
 							throw new Error("Aggregation " + sName + " not supported");
 						}
 					} else if (that._getEvent(fnClass, sName)) {
-						var fnHandler = jQuery.sap.getObject(sValue);
-						
-						if (oView && typeof fnHandler === "undefined") {
-							var oController = (oView._oContainingView || oView).getController();
-							fnHandler = oController[sValue];
-							if (typeof fnHandler === "function") {
-								// the handler name is set as property on the function to keep this information
-								// e.g. for serializers which converts a control tree back to a declarative format
-								// TODO: Remember events and attach them without using jQuery proxy
-								fnHandler = jQuery.proxy(fnHandler, oController);
-								fnHandler._sapui_handlerName = sValue;
-							}
-						}
-	
-						if (typeof fnHandler === "function") {
-							mSettings[sName] = fnHandler;
+						var oController = oView && (oView._oContainingView || oView).getController();
+						var vHandler = View._resolveEventHandler(sValue, oController);
+						if ( vHandler ) {
+							mSettings[sName] = vHandler;
 						} else {
 							throw new Error('Control "' + mSettings.id + '": The function "' + sValue + '" for the event "' + sName + '" is not defined');
-							
 						}
+					} else {
+						jQuery.sap.assert((sName === "id"), "DeclarativeSupport encountered unknown setting '" + sName + "' for class '" + fnClass.getMetadata().getName() + "' (value:'" + sValue + "')");
 					}
 				} else if (typeof oSpecialAttributes[sName] === "function") {
 					oSpecialAttributes[sName](sValue, mSettings, fnClass);
 				}
-				
+
 			} else {
-	
+
 				// custom data handling:
-	
+
 				// determine the key of the custom data entry
 				sName = jQuery.sap.camelCase(reCustomData.exec(sName)[1]);
-	
+
 				// create a binding info object if necessary
 				var oBindingInfo = fnBindingParser(sValue, oView && oView.getController());
-	
+
 				// create the custom data object
-				aCustomData.push(new sap.ui.core.CustomData({
+				aCustomData.push(new CustomData({
 					key: sName,
 					value: oBindingInfo || sValue
 				}));
-	
+
 			}
-	
+
 		});
-		
+
 		if (aCustomData.length > 0) {
 			mSettings.customData = aCustomData;
 		}
-		
+
 		return mSettings;
 	};
-	
-	
+
+
 	/**
 	 * Adds all defined aggregations to the settings object of a control.
 	 * 
@@ -355,17 +329,15 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {object} the settings of the control.
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._addSettingsForAggregations
-	 * @function
 	 */
 	DeclarativeSupport._addSettingsForAggregations = function(mSettings, fnClass, oElement, oView) {
 		var $element = jQuery(oElement);
-	
+
 		var sDefaultAggregation = this._getDefaultAggregation(fnClass, oElement);
-	
+
 		var that = this;
 		var oAggregations = fnClass.getMetadata().getAllAggregations();
-	
+
 		$element.children().each(function() {
 			// check for an aggregation tag of in case of a sepcifiying the
 			// aggregration on the parent control this will be used in case
@@ -373,17 +345,17 @@ sap.ui.define(['jquery.sap.global'],
 			var $child = jQuery(this);
 			var sAggregation = $child.attr("data-sap-ui-aggregation");
 			var sType = $child.attr("data-sap-ui-type");
-	
+
 			var bUseDefault = false;
 			if (!sAggregation) {
 				bUseDefault = true;
 				sAggregation = sDefaultAggregation;
 			}
-	
+
 			// add the child to the aggregation
 			if (sAggregation && oAggregations[sAggregation]) {
 				var bMultiple = oAggregations[sAggregation].multiple;
-	
+
 				var addControl = function(oChildElement) {
 					var oControl = that._createControl(oChildElement, oView);
 					if (oControl) {
@@ -398,14 +370,14 @@ sap.ui.define(['jquery.sap.global'],
 							} else {
 								mSettings[sAggregation].push(oControl);
 							}
-	
+
 						} else {
 							// 1..1 AGGREGATION
 							mSettings[sAggregation] = oControl;
 						}
 					}
 				};
-	
+
 				if (bUseDefault || (sType && !bUseDefault)) {
 					addControl(this);
 				} else {
@@ -414,15 +386,15 @@ sap.ui.define(['jquery.sap.global'],
 					});
 				}
 			}
-	
+
 			$child.removeAttr("data-sap-ui-aggregation");
 			$child.removeAttr("data-sap-ui-type");
 		});
 		return mSettings;
-		
+
 	};
-	
-	
+
+
 	/**
 	 * Returns the id of the element.
 	 *
@@ -430,8 +402,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {string} the id of the element
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getId
-	 * @function
 	 */
 	DeclarativeSupport._getId = function(oElement, oView) {
 		var $element = jQuery(oElement);
@@ -449,8 +419,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return sId;
 	};
-	
-	
+
+
 	/**
 	 * Returns the property of a given class and property name.
 	 *
@@ -458,14 +428,12 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sName the name of the property
 	 * @return {object} reference to the property object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getProperty
-	 * @function
 	 */
 	DeclarativeSupport._getProperty = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllProperties()[sName];
+		return fnClass.getMetadata().getProperty(sName);
 	};
-	
-	
+
+
 	/**
 	 * Converts a given value to the right property type.
 	 *
@@ -473,19 +441,17 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sValue the value to convert
 	 * @return {string} the converted value
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.convertValueToType
-	 * @function
 	 */
 	DeclarativeSupport.convertValueToType = function(oType, sValue) {
-		if (oType instanceof sap.ui.base.DataType) {
+		if (oType instanceof DataType) {
 			sValue = oType.parseValue(sValue);
 		}
 		// else return original sValue (e.g. for enums)
 		// Note: to avoid double resolution of binding expressions, we have to escape string values once again 
-		return typeof sValue === "string" ? sap.ui.base.ManagedObject.bindingParser.escape(sValue) : sValue;
+		return typeof sValue === "string" ? ManagedObject.bindingParser.escape(sValue) : sValue;
 	};
-	
-	
+
+
 	/**
 	 * Returns the data type object for a certain property.
 	 *
@@ -493,19 +459,17 @@ sap.ui.define(['jquery.sap.global'],
 	 * @return {object} the type of the property
 	 * @throws {Error} if no type for the property is found
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.getPropertyDataType
-	 * @function
 	 */
 	DeclarativeSupport.getPropertyDataType = function(oProperty) {
-		var oType = sap.ui.base.DataType.getType(oProperty.type);
+		var oType = DataType.getType(oProperty.type);
 		if (!oType) {
 			throw new Error("Property " + oProperty.name + " has no known type");
 		}
 		return oType;
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Returns the settings name for a given html attribute (converts data-my-setting to mySetting)
 	 *
@@ -514,8 +478,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {boolean} bDeprecationWarning whether to show a deprecation warning or not
 	 * @return {string} the settings name
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.convertAttributeToSettingName
-	 * @function
 	 */
 	DeclarativeSupport.convertAttributeToSettingName = function(sAttribute, sId, bDeprecationWarning) {
 		if (sAttribute.indexOf("data-") === 0) {
@@ -527,8 +489,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return jQuery.sap.camelCase(sAttribute);
 	};
-	
-	
+
+
 	/**
 	 * Returns the association of a given class and association name.
 	 *
@@ -536,13 +498,11 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sName the name of the association
 	 * @return {object} reference to the association object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getAssociation
-	 * @function
 	 */
 	DeclarativeSupport._getAssociation = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllAssociations()[sName];
+		return fnClass.getMetadata().getAssociation(sName);
 	};
-	
+
 	/**
 	 * Returns the aggregations of a given class and aggregation name.
 	 *
@@ -550,14 +510,12 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sName the name of the association
 	 * @return {object} reference to the association object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getAggregation
-	 * @function
 	 */
 	DeclarativeSupport._getAggregation = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllAggregations()[sName];
+		return fnClass.getMetadata().getAggregation(sName);
 	};
-	
-	
+
+
 	/**
 	 * Returns the event of a given class and event name.
 	 *
@@ -565,14 +523,12 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sName the name of the event
 	 * @return {object} reference to the event object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getEvent
-	 * @function
 	 */
 	DeclarativeSupport._getEvent = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllEvents()[sName];
+		return fnClass.getMetadata().getEvent(sName);
 	};
-	
-	
+
+
 	/**
 	 * Returns the default aggregation of the control.
 	 *
@@ -580,8 +536,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {Element} oElement reference to a DOM element
 	 * @return {string} the default aggregation
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getDefaultAggregation
-	 * @function
 	 */
 	DeclarativeSupport._getDefaultAggregation = function(fnClass, oElement) {
 		var $element = jQuery(oElement);
@@ -589,7 +543,7 @@ sap.ui.define(['jquery.sap.global'],
 		$element.removeAttr("data-sap-ui-default-aggregation");
 		return sDefaultAggregation;
 	};
-	
+
 
 	return DeclarativeSupport;
 

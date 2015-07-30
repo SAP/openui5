@@ -400,7 +400,7 @@
 			ok(jQuery.sap.domById("Layout1"), "Grid1 is rendered");
 			ok(jQuery("#Layout1").is("table"), "Grid1 is rendered as table");
 			ok(jQuery.sap.domById("F1T"), "Form1 title is rendered");
-			ok(jQuery("#F1T").is("h5"), "Form title is rendered as H5 as default");
+			ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
 			ok(jQuery("#F1T").parent().is("th"), "Form1 title is in <TH>");
 			equal(jQuery("#F1T").parent().attr("colspan"), "17", "Form1 title is stretched over full width");
 			ok(jQuery("#F2T").is("h1"), "Form title is rendered as H1 as defined on control");

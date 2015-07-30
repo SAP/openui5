@@ -1,0 +1,370 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>QUnit Page for sap.m.Wizard</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script type="text/javascript">
+		jQuery.sap.require("sap.m.WizardProgressNavigator");
+		jQuery.sap.require("sap.m.WizardStep");
+
+		QUnit.module("Wizard Public API", {
+			sWizardId: "wizard-id",
+			oSpies: {},
+			setup: function () {
+				var that = this;
+				this.oParams = {};
+				this.oSpies.onStepActivated = sinon.spy(function (oEvent) {
+					that.oParams.index = oEvent.getParameter("index");
+				});
+				this.oSpies.onStepChanged = sinon.spy(function (oEvent) {
+					that.oParams.previous = oEvent.getParameter("previous");
+					that.oParams.current = oEvent.getParameter("current");
+				});
+				this.oSpies.onComplete = sinon.spy();
+				this.oSpies.error = sinon.spy(jQuery.sap.log, "error");
+
+				this.oSpies.firstStep = {
+					onActivate: sinon.spy(),
+					onComplete: sinon.spy()
+				};
+
+				this.oSpies.secondStep = {
+					onActivate: sinon.spy(),
+					onComplete: sinon.spy()
+				};
+
+				this.oWizard = new sap.m.Wizard(this.sWizardId, {
+					stepActivate: this.oSpies.onStepActivated,
+					complete: this.oSpies.onComplete,
+					steps: [
+						new sap.m.WizardStep({
+							title: "Step 1",
+							activate: this.oSpies.firstStep.onActivate,
+							complete: this.oSpies.firstStep.onComplete
+						}),
+						new sap.m.WizardStep({
+							validated: true,
+							title: "Step 2",
+							activate: this.oSpies.secondStep.onActivate,
+							complete: this.oSpies.secondStep.onComplete
+						}),
+						new sap.m.WizardStep({
+							title: "Step 3"
+						})
+					]
+				});
+
+				this.oWizard.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function () {
+				});
+			},
+			teardown: function () {
+				this.oWizard.destroy();
+				this.oSpies.error.restore();
+				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				this.oWizard = null;
+			}
+		});
+
+		QUnit.test("getId() should return correct id", function (assert) {
+			var sId = this.oWizard.getId();
+			assert.strictEqual(sId, this.sWizardId, "#" + sId + " should be equal to #" + this.sWizardId);
+		});
+
+		QUnit.test("default text of finish button", function (assert) {
+			this.oWizard.nextStep();
+			this.oWizard.nextStep();
+			var text = this.oWizard._getNextButton().getText();
+			assert.strictEqual(text, "Finish", "Default text of finish button should be equal to 'Finish'");
+		});
+
+		QUnit.test("setFinishLabel() should change the finish button text", function (assert) {
+			this.oWizard.setFinishButtonText("changed_finish");
+			this.oWizard.nextStep();
+			this.oWizard.nextStep();
+			var text = this.oWizard._getNextButton().getText();
+			assert.strictEqual(text, "changed_finish", "Text of finish button should be equal to 'changed_finish'");
+		});
+
+		QUnit.test("addStep() should increment the default value", function (assert) {
+			this.oWizard.addStep(new sap.m.WizardStep());
+			assert.strictEqual(this.oWizard._getProgressNavigator().getStepCount(), 4, " of the progress navigator steps");
+			assert.strictEqual(this.oWizard.getSteps().length, 4, " of the step navigator");
+		});
+
+		QUnit.test("addStep() should log an error", function (assert) {
+			// 3 steps are already added to the Wizard
+			for (var i = 0; i < 6; i++) {
+				this.oWizard.addStep(new sap.m.WizardStep());
+			}
+
+			assert.strictEqual(this.oSpies.error.calledOnce, true, "Wizard should log error when maximum allowed steps are exceeded.");
+		});
+
+		QUnit.test("validateStep(step) should validate the given step", function (assert) {
+			var step1 = this.oWizard._getWizardStep(0);
+			this.oWizard.validateStep(step1);
+			assert.ok(this.oWizard.getSteps()[0].getValidated(), "Step should be validated");
+		});
+
+		QUnit.test("validateStep(step) shoud log an error", function (assert) {
+			this.oWizard.validateStep(new sap.m.WizardStep({}));
+			assert.strictEqual(this.oSpies.error.calledOnce, true, "Wizard should log an error if step does not exist in wizard");
+		});
+
+		QUnit.test("invalidateStep(step) should invalidate the given step", function (assert) {
+			this.oWizard._getNextButton().firePress();
+			this.oWizard.invalidateStep(this.oWizard._getWizardStep(0));
+			assert.ok(!this.oWizard.getSteps()[0].getValidated(), "Step should not be validated");
+		});
+
+		QUnit.test("validateStep(step) should change the enablement of the button", function (assert) {
+			this.oWizard.validateStep(this.oWizard._getWizardStep(0));
+			var oButton = this.oWizard._getNextButton();
+			assert.ok(oButton.getEnabled(), "Button should be enabled");
+		});
+
+		QUnit.test("Click on next button should change the current step", function (assert) {
+			var iCurrentStep = this.oWizard._getProgressNavigator().getCurrentStep();
+			this.oWizard.validateStep(0);
+			this.oWizard._getNextButton().firePress();
+			assert.strictEqual(iCurrentStep + 1, this.oWizard._getProgressNavigator().getCurrentStep(), "Should change the current step with 1.");
+		});
+
+		QUnit.test("Click on next button should fire WizardStep events", function (assert) {
+			this.oWizard._getNextButton().firePress();
+			assert.strictEqual(this.oSpies.firstStep.onActivate.called, true, "Activation of first step should be called by default");
+			assert.strictEqual(this.oSpies.firstStep.onComplete.calledOnce, true, "Complete of first step should be called");
+			assert.strictEqual(this.oSpies.secondStep.onActivate.calledOnce, true, "Activation of second step should be called");
+			assert.strictEqual(this.oSpies.firstStep.onComplete.calledBefore(this.oSpies.secondStep.onActivate), true, "Complete of first step should be called before activation of second");
+		});
+
+		QUnit.test("Click on next button should fire Wizard events", function (assert) {
+			this.oWizard._getNextButton().firePress();
+			assert.strictEqual(this.oSpies.onStepActivated.calledOnce, true, "StepActivate should be fired");
+		});
+
+		QUnit.test("Click on next button should change the enable state of the button", function (assert) {
+			this.oWizard.invalidateStep(this.oWizard._getWizardStep(0));
+			var firstStepEnablement = this.oWizard._getNextButton().getEnabled();
+			this.oWizard._getNextButton().firePress();
+			assert.strictEqual(firstStepEnablement, false, "On the first step button should not be enabled");
+			assert.strictEqual(this.oWizard._getNextButton().getEnabled(), true, "On the second step button should be enabled");
+		});
+
+		QUnit.test("Click on next on lastStep should call complete", function (assert) {
+			this.oWizard._getNextButton().firePress();	//step2
+			this.oWizard._getNextButton().firePress();	//step3
+			this.oWizard._getNextButton().firePress(); //complete
+			assert.strictEqual(this.oSpies.onComplete.calledOnce, true, "OnComplete should be called");
+		});
+
+		QUnit.test("Click on next button should change text going to last step", function (assert) {
+			this.oWizard._getNextButton().firePress();	//step2
+			this.oWizard._getNextButton().firePress();	//step3
+			assert.strictEqual(this.oWizard._getNextButton().getText(), "Finish", "Text should be changed to finish");
+		});
+
+		QUnit.test("Click on next button should change WizardStep visibility", function (assert) {
+			assert.strictEqual(this.oWizard._getWizardStep(0).$().css("display"), "block", "First step should be visible");
+			assert.strictEqual(this.oWizard._getWizardStep(1).$().css("display"), "none", "Second step should not be visible");
+			this.oWizard._getNextButton().firePress();
+			assert.strictEqual(this.oWizard._getWizardStep(1).$().css("display"), "block", "Second step should be visible");
+
+		});
+
+		QUnit.test("Wizard events should be called with proper parameters", function (assert) {
+			this.oWizard._getNextButton().firePress();
+			assert.strictEqual(this.oParams.index, 2, "StepActivated() should be called with parameter=2");
+		});
+
+		QUnit.test("Next button should not be enabled on non validated step", function (assert) {
+			var oButton = this.oWizard._getNextButton();
+			this.oWizard.getSteps()[0].setValidated(false);
+			assert.ok(!oButton.getEnabled(), "Button should not be enabled");
+		});
+
+		QUnit.test("GetProgress() should return the progress of the wizard", function (assert) {
+			var oButton = this.oWizard._getNextButton();
+			oButton.firePress();
+			oButton.firePress();
+			assert.strictEqual(this.oWizard.getProgress(), 3, "Progress should be 3");
+		});
+
+		QUnit.test("DiscardProgress() should reset the steps after a given step", function (assert) {
+			var oButton = this.oWizard._getNextButton();
+			oButton.firePress();
+			oButton.firePress();
+			oButton.firePress();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[1]);
+			assert.strictEqual(this.oWizard.getProgress(), 2, "Progress should be 1");
+		});
+
+		QUnit.test("DiscardProgress() should hide the steps after the step", function (assert) {
+			var oButton = this.oWizard._getNextButton();
+			oButton.firePress();
+			oButton.firePress();
+			oButton.firePress();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[1]);
+			assert.strictEqual(this.oWizard._getWizardStep(2).$().css("display"), "none", "Step should be hidden");
+		});
+
+		QUnit.test("nextStep() should change the current step of the wizard", function (assert) {
+			this.oWizard.nextStep();
+			assert.strictEqual(this.oWizard.getProgress(), 2, "Should be at step 2");
+		});
+
+		QUnit.test("previousStep() should change the current step of the wizard", function (assert) {
+			 this.oWizard.nextStep();
+			 this.oWizard.nextStep();
+			 this.oWizard.previousStep();
+			 assert.strictEqual(this.oWizard.getProgress(), 2, "Should be at step 1");
+		 });
+
+		QUnit.module("Wizard Branching", {
+			sWizardId: "wizard-branching-id",
+			setup: function () {
+				var that = this;
+
+				this.externalStep = new sap.m.WizardStep();
+				this.step6 = new sap.m.WizardStep({
+					content : []
+				});
+				this.stepDummy = new sap.m.WizardStep("Dummy_Step", {
+					nextStep: this.step6,
+					content: []
+				});
+				this.step5 = new sap.m.WizardStep("Card_Contents",{
+					nextStep: this.stepDummy,
+					content : []
+				});
+				this.step4 = new sap.m.WizardStep("CreditCard_Information",{
+					nextStep: this.step6,
+					content : []
+				});
+				this.step3 = new sap.m.WizardStep("Payment_Details",{
+					subsequentSteps: [this.step4, this.step5],
+					content: []
+				});
+				this.step2 = new sap.m.WizardStep("Personal_Information",{
+					nextStep: this.step3,
+					content: []
+				});
+				this.step1 = new sap.m.WizardStep({
+					subsequentSteps: [this.step2, this.step3],
+					content: []
+				});
+
+				this.oWizard = new sap.m.Wizard({
+					enableBranching: true,
+					steps: [this.step1, this.step2, this.step3, this.step4, this.step5, this.stepDummy, this.step6]
+				});
+
+				this.oWizard.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function () {
+				});
+			},
+			teardown: function () {
+				this.oWizard.destroy();
+				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				this.oWizard = null;
+			}
+		});
+
+		QUnit.test("Progress navigator steps count", function (assert) {
+			var progressNavigator = this.oWizard._getProgressNavigator();
+			var stepsAtStart = progressNavigator.getStepCount();
+			this.step1.setNextStep(this.step2);
+			this.oWizard.nextStep();
+			var stepsAfterStep1 = progressNavigator.getStepCount();
+			assert.strictEqual(stepsAtStart, 1, "should be equal to 1 at start.");
+			assert.strictEqual(stepsAfterStep1, 3 , "should be equal to 3 after step1.");
+		});
+
+		QUnit.test("Discard after braching should reset progress navigator steps count", function (assert) {
+			var progressNavigator = this.oWizard._getProgressNavigator();
+			this.step1.setNextStep(this.step2);
+			this.oWizard.nextStep();
+			var stepsAfterStep1 = progressNavigator.getStepCount();
+			this.oWizard.discardProgress(this.step1);
+			var stepsAfterDiscard = progressNavigator.getStepCount();
+			assert.strictEqual(stepsAfterStep1, 3, "should be equal to 3");
+			assert.strictEqual(stepsAfterDiscard, 1, "should be equal to 1");
+		});
+
+		QUnit.test("Branching should change progress navigator varyingStepCount property", function (assert) {
+			var progressNavigator = this.oWizard._getProgressNavigator();
+			var varyingStepCountAtStart = progressNavigator.getVaryingStepCount();
+			this.step1.setNextStep(this.step3);
+			this.oWizard.nextStep();
+			var varyingStepCountAtStep3 = progressNavigator.getVaryingStepCount();
+			this.step3.setNextStep(this.step4);
+			this.oWizard.nextStep();
+			var varyingStepCountAtStep4 = progressNavigator.getVaryingStepCount();
+			this.oWizard.discardProgress(this.step1);
+			var varyingStepCountAfterDiscard = progressNavigator.getVaryingStepCount();
+			assert.strictEqual(varyingStepCountAtStart, true, "Should be equal to true at start");
+			assert.strictEqual(varyingStepCountAtStep3, true, "Should be equal to true at step3");
+			assert.strictEqual(varyingStepCountAtStep4, false, "Should be equal to true at step4");
+			assert.strictEqual(varyingStepCountAfterDiscard, true, "Should be reset after discard");
+		});
+
+		QUnit.test("Wizard should log error if next step is already in the step path", function (assert) {
+			var that = this;
+			assert.throws(function () {
+				that.step1.setNextStep(that.step1);
+				that.oWizard.nextStep();
+			}, "Should raise an error.");
+		});
+
+		QUnit.test("Wizard should log an error if no next step is set", function (assert) {
+			var that = this;
+			assert.throws(function () {
+				that.oWizard.nextStep();
+			}, "Should raise an error.");
+		});
+
+		QUnit.test("Wizard should log an error if next step in not present in previous step's subsequent aggregation",
+			function (assert) {
+				var that = this;
+				assert.throws(function () {
+					that.step1.setNextStep(that.step4);
+					that.oWizard.nextStep();
+				}, "Should raise an error.");
+		});
+
+		QUnit.test("Wizard should log an error if next step is outside the wizard", function (assert) {
+			var that = this;
+			assert.throws(function () {
+				that.step1.setNextStep(that.externalStep);
+				that.oWizard.nextStep();
+			}, "Should raise an error.");
+		});
+
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

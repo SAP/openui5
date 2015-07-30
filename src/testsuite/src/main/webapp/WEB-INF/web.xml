@@ -8,6 +8,24 @@
 	<display-name>testsuite</display-name>
 
 	<filter>
+		<filter-name>CacheControlFilter</filter-name>
+		<filter-class>com.sap.openui5.CacheControlFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>CORSFilter</filter-name>
+		<filter-class>com.sap.openui5.CORSFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CORSFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
 		<filter-name>ConcatFilter</filter-name>
 		<filter-class>com.sap.openui5.ConcatFilter</filter-class>
 	</filter>
@@ -47,8 +65,37 @@
 		<url-pattern>/discovery/*</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>ProxyServlet</servlet-name>
+		<servlet-class>com.sap.openui5.SimpleProxyServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ProxyServlet</servlet-name>
+		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
+	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-	
+
+<!--SimpleProxyServlet  NOT WORKING SO FAR
+	because of missing SimpleProxyServlet library in openUI5 testsuite
+	<servlet>
+		<servlet-name>SimpleProxyServlet</servlet-name>
+		<servlet-class>com.sap.ui5.proxy.SimpleProxyServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SimpleProxyServlet</servlet-name>
+		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
+
+	<context-param>
+		this configuration will done in the tomcat server configuration
+		e.g. -Dcom.sap.ui5.proxy.REMOTE_LOCATION="..."
+		<param-name>com.sap.ui5.proxy.REMOTE_LOCATION</param-name>
+		<param-value>http://dewdflhanaui5.emea.global.corp.sap:8001</param-value>
+	</context-param>
+-->
+
 </web-app>

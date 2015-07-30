@@ -1,0 +1,59 @@
+.sapMWizardProgressNav {
+	background: @sapUiGroupContentBackground;
+	border-color: @sapUiGroupContentBorderColor;
+}
+
+.sapMWizardProgressNavAnchor {
+	color: @sapUiContentLabelColor;
+	background: @sapUiGroupContentBackground;
+	border-color: @sapUiActive;
+
+	&:hover {
+		background: darken(@sapUiGroupContentBackground, 5);
+	}
+
+	&:focus {
+		outline: none;
+
+		&::before {
+			content: " ";
+			position: absolute;
+			display: block;
+			border: 1px dotted @sapUiFocus;
+			top: -2px;
+			right: -2px;
+			bottom: -2px;
+			left: -2px;
+		}
+	}
+}
+
+.sapMWizardProgressNavSeparator::after {
+	border-color: @sapUiActive;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+	&::after {
+		background: @sapUiActive;
+	}
+
+	& > .sapMWizardProgressNavAnchor {
+		color: @sapUiContentContrastTextColor;
+		background: @sapUiActive;
+		border: none;
+	}
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+
+	/* anchors in all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
+		background: @sapUiGroupContentBackground;
+		border-color: @sapUiGroupContentBorderColor;
+	}
+
+	/* all separators after the active step have inactive style */
+	& ~ .sapMWizardProgressNavSeparator::after {
+		border-color: @sapUiGroupContentBorderColor;
+	}
+}

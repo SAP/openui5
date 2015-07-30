@@ -27,90 +27,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 *         [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
-	 *         If the mParameter <code>arrayNames</code> is specified with an array of string names this names will be checked against the tree data structure
-	 *         and the found data in this array is included in the tree but only if also the parent array is included.
-	 *         If this parameter is not specified then all found arrays in the data structure are bound.
-	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter. 
+	 * @param {string[]} [mParameters.arrayNames]
+	 *         If this parameter is specified with an array of string names, these names will be used to construct the tree data structure.
+	 *         Only the nested objects contained in arrays, with names specified by mParameters.arrayNames, will be included in the tree.
+	 *         Of course this will only happen if all parent-nodes up to the top-level are also included.
+	 *         If you do NOT specify this parameter: by default all nested objects/arrays will be used to build the trees hierarchy.
 	 * 
-	 * @name sap.ui.model.json.JSONTreeBinding
+	 * @alias sap.ui.model.json.JSONTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
 	var JSONTreeBinding = ClientTreeBinding.extend("sap.ui.model.json.JSONTreeBinding");
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.json.JSONTreeBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.json.JSONTreeBinding.extend
-	 * @function
-	 */
-	
-	/**
-	 * Return node contexts for the tree
-	 * @param {object} oContext to use for retrieving the node contexts
-	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
-	 * @return {Array} the contexts array
-	 * @protected
-	 * @name sap.ui.model.json.JSONTreeBinding#getNodeContexts
-	 * @function
-	 */
-	JSONTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength) {
-		if (!iStartIndex) {
-			iStartIndex = 0;
-		}
-		if (!iLength) {
-			iLength = this.oModel.iSizeLimit;
-		}
-	
-		var sContextPath = oContext.getPath();
-		if (!jQuery.sap.endsWith(sContextPath,"/")) {
-			sContextPath = sContextPath + "/";
-		}
-		if (!jQuery.sap.startsWith(sContextPath,"/")) {
-			sContextPath = "/" + sContextPath;
-		}
-	
-		var aContexts = [],
-			that = this,
-			oNode = this.oModel._getObject(sContextPath),
-			aArrayNames = this.mParameters && this.mParameters.arrayNames,
-			aChildArray;
-		
-		if (oNode) {
-			if (aArrayNames && jQuery.isArray(aArrayNames)) {
-				jQuery.each(aArrayNames, function(iIndex, sArrayName){
-					aChildArray = oNode[sArrayName];
-					if (aChildArray) {
-						jQuery.each(aChildArray, function(sSubName, oSubChild) {
-							that._saveSubContext(oSubChild, aContexts, sContextPath, sArrayName + "/" + sSubName);
-						});
-					}
-				});
-			} else {
-				jQuery.sap.each(oNode, function(sName, oChild) {
-					if (jQuery.isArray(oChild)) {
-						jQuery.each(oChild, function(sSubName, oSubChild) {
-							that._saveSubContext(oSubChild, aContexts, sContextPath, sName + "/" + sSubName);
-						});
-					} else if (oChild && typeof oChild == "object") {
-						that._saveSubContext(oChild, aContexts, sContextPath, sName);
-					}
-				});
-			}
-		}
-		return aContexts.slice(iStartIndex, iStartIndex + iLength);
-	};
-	
 	
 	JSONTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
 		if (typeof oNode == "object") {
@@ -128,4 +54,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 
 	return JSONTreeBinding;
 
-}, /* bExport= */ true);
+});

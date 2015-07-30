@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
-		<title>Select - sap.m</title>
+		<title>sap.m.Select</title>
 		<style type="text/css">
 			.vBoxSelectTestPage {
 				margin: 0.5rem 1rem 0rem 1rem;
@@ -34,12 +34,6 @@
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script>
-		jQuery.sap.require("sap.m.MessageToast");
-
-		var oApp = new sap.m.App("myApp", {
-			initialPage:"page1"
-		});
-
 		var oModel = new sap.ui.model.json.JSONModel();
 
 		var mData = {
@@ -1087,7 +1081,7 @@
 			design: sap.m.LabelDesign.Bold
 		}).addStyleClass("labelSelectTestPageHeader");
 
-		var oPage = new sap.m.Page("page1", {
+		new sap.m.App().addPage(new sap.m.Page({
 			customHeader: oBar0 = new sap.m.Bar({
 
 				contentLeft: oSelect14,
@@ -1110,11 +1104,9 @@
 				contentLeft: oSelect8,
 				contentRight: [oSelect11, oSelect13]
 			})
-		});
-
-		oApp.addPage(oPage);
-		oApp.placeAt("body");
+		})).placeAt("body");
 		</script>
 	</head>
-	<body id="body" class="sapUiBody"></body>
+	<body id="body" class="sapUiBody">
+	</body>
 </html>

@@ -1,21 +1,27 @@
-jQuery.sap.declare("sap.m.sample.FlexBoxBasicAlignment.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.FlexBoxBasicAlignment.Component", {
+	var Component = UIComponent.extend("sap.m.sample.FlexBoxBasicAlignment.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.FlexBoxBasicAlignment.V",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"V.view.xml"
+		metadata : {
+			rootView : "sap.m.sample.FlexBoxBasicAlignment.V",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"V.view.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

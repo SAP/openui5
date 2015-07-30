@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 	
 	/**
-	 * @class GoldReflectionPageLayout renderer.
-	 * @static
+	 * GoldReflectionPageLayout renderer.
+	 * @namespace
 	 */
 	var ShellRenderer = {
 	};
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	
 		ShellRenderer.renderFacetBar(rm, oControl);
 	
-		rm.write("<article class='sapUiUx3ShellContent' id='" + sId + "-content' role='main'>");
+		rm.write("<article class='sapUiUx3ShellContent' id='" + sId + "-content' role='main' data-sap-ui-fastnavgroup='true'>");
 		var aContent = oControl.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			rm.renderControl(aContent[i]);
@@ -299,7 +299,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					rm.write(" tabindex='0' role='button' aria-pressed='false'>");
 					var sIconUrl = oToolItem.getIcon();
 					if (IconPool.isIconURI(sIconUrl)) {
-						rm.writeIcon(sIconUrl, ["sapUiUx3ShellToolFontIcon"], {});
+						rm.writeIcon(sIconUrl, ["sapUiUx3ShellToolFontIcon"], {
+							// prevent default icon tooltip / ARIA attribute
+							// the outer <a> tag has the information required
+							"title": null,
+							"aria-label": null
+						});
 					} else {
 						rm.write("<img src='");
 						rm.writeEscaped(sIconUrl);

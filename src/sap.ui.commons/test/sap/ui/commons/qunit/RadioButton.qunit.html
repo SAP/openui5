@@ -12,7 +12,6 @@
 		<title>Test Page for sap.ui.commons.RadioButton</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
-				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js">
@@ -60,6 +59,57 @@
 		sap.ui.setRoot("uiArea2", oRadioButton2);
 
 		var rb1, rb2;
+
+		QUnit.module('API', {
+			setup: function() {
+				// arrange
+				this.oRadioButton1 = new sap.ui.commons.RadioButton();
+				this.oRadioButton2 = new sap.ui.commons.RadioButton();
+				this.oRadioButton3 = new sap.ui.commons.RadioButton();
+
+				this.oRadioButton1.placeAt("qunit-fixture");
+				this.oRadioButton2.placeAt("qunit-fixture");
+				this.oRadioButton3.placeAt("qunit-fixture");
+			},
+			teardown: function() {
+				// cleanup
+				this.oRadioButton1.destroy();
+				this.oRadioButton2.destroy();
+				this.oRadioButton3.destroy();
+			}
+		});
+
+		QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
+			// act
+			this.oRadioButton1.setSelected(true);
+			this.oRadioButton2.setSelected(true);
+			this.oRadioButton3.setSelected(true);
+
+			// assert
+			assert.ok(!this.oRadioButton1.getSelected(), "RadioButton should not be selected");
+			assert.ok(!this.oRadioButton2.getSelected(), "RadioButton should not be selected");
+			assert.ok(this.oRadioButton3.getSelected(), "RadioButton should be selected");
+
+			// cleanup
+			this.oRadioButton1.destroy();
+			this.oRadioButton2.destroy();
+		});
+
+		QUnit.test("setGroupName", function (assert) {
+			sap.ui.getCore().applyChanges();
+
+			this.oRadioButton1.setGroupName("test");
+
+			// act
+			this.oRadioButton1.setSelected(true);
+			this.oRadioButton2.setSelected(true);
+			this.oRadioButton3.setSelected(true);
+
+			// assert
+			assert.strictEqual(this.oRadioButton1.getSelected(), true, "RadioButton1 should be selected");
+			assert.strictEqual(this.oRadioButton2.getSelected(), false, "RadioButton2 should not be selected");
+			assert.strictEqual(this.oRadioButton3.getSelected(), true, "RadioButton3 should be selected");
+		});
 
 
 		module("Basic", {
@@ -236,6 +286,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
 		<div id="uiArea1"></div>
 		<div id="uiArea2"></div>
 	</body>

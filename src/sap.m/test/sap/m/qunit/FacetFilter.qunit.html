@@ -16,7 +16,7 @@
 <script type="text/javascript">
 	
 	
-	if(navigator.userAgent.indexOf("MSIE") === -1) {
+	//if(navigator.userAgent.indexOf("MSIE") === -1) {
 		
 	
 	module("Control Design");
@@ -1149,7 +1149,6 @@
 		test("FacetFilterItem.init", function() {
 			var oItem = new sap.m.FacetFilterItem();
 
-			equal(oItem._mode, "None", "Mode is initialized by default");
 			ok(oItem.hasStyleClass("sapMFFLI"), "sapMFFLI style class set");
 			oItem.destroy();
 		});
@@ -2351,7 +2350,8 @@
 
 					start();
 					sap.ui.getCore().applyChanges();
-					var oButton = getButtonCtrl(oFF, 0);
+					// var oButton = getButtonCtrl(oFF, 0);
+					var oButton = oFF._getButtonForList(oFFL);
 					ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
 					destroyFF(oFF);
 				});
@@ -2944,7 +2944,7 @@
 			oFF.destroy();
 		}
 
-	}
+	//}
 </script>
 </head>
 

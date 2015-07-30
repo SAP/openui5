@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.layout.ResponsiveFlowLayout
+	 * @alias sap.ui.layout.ResponsiveFlowLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveFlowLayout = Control.extend("sap.ui.layout.ResponsiveFlowLayout", /** @lends sap.ui.layout.ResponsiveFlowLayout.prototype */ { metadata : {
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			this._bIsRegistered = false;
 			this._proxyComputeWidths = jQuery.proxy(computeWidths, this);
 	
-			this.oRm = new sap.ui.core.RenderManager();
+			this.oRm = sap.ui.getCore().createRenderManager();
 			this.oRm.writeStylesAndClasses = function() {
 				this.writeStyles();
 				this.writeClasses();
@@ -628,11 +628,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		};
 	
 		/**
-		 * These function needs to be overridden to prevent any rendering while some
+		 * This function needs to be overridden to prevent any rendering while some
 		 * content is still being added.
 		 * 
-		 * @param {Object}
-		 *            [oContent] the content that should be added to the layout
+		 * @param {sap.ui.core.Control}
+		 *            oContent the content that should be added to the layout
 		 * @public
 		 */
 		ResponsiveFlowLayout.prototype.addContent = function(oContent) {
@@ -647,10 +647,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 * These function needs to be overridden to prevent any rendering while some
 		 * content is still being added.
 		 * 
-		 * @param {Object}
-		 *            [oContent] the content that should be inserted to the layout
+		 * @param {sap.ui.core.Control}
+		 *            oContent the content that should be inserted to the layout
 		 * @param {int}
-		 *            [iIndex] the index where the content should be inserted into
+		 *            iIndex the index where the content should be inserted into
 		 * @public
 		 */
 		ResponsiveFlowLayout.prototype.insertContent = function(oContent, iIndex) {
@@ -665,8 +665,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 * These function needs to be overridden to prevent any rendering while some
 		 * content is still being added.
 		 * 
-		 * @param {Object}
-		 *            [oContent] the content that should be removed from the layout
+		 * @param {int|string|sap.ui.core.Control}
+		 *            oContent the content that should be removed from the layout
+		 * @returns {sap.ui.core.Control} the removed control
 		 * @public
 		 */
 		ResponsiveFlowLayout.prototype.removeContent = function(oContent) {
@@ -676,6 +677,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 			this.removeAggregation("content", oContent);
 		};
+
+		/**
+		 * Gets the role used for accessibility
+		 * Set by the Form control if Grid represents a FormContainer
+		 * @return {string} sRole accessibility role
+		 * @since 1.28.0
+		 * @private
+		 */
+		ResponsiveFlowLayout.prototype._getAccessibleRole = function() {
+
+			return null;
+
+		};
+
 	}());
 
 	return ResponsiveFlowLayout;

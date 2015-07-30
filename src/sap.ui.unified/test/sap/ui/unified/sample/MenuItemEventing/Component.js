@@ -1,23 +1,29 @@
-jQuery.sap.declare("sap.ui.unified.sample.MenuItemEventing.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.ui.unified.sample.MenuItemEventing.Component", {
+	var Component = UIComponent.extend("sap.ui.unified.sample.MenuItemEventing.Component", {
 
-	metadata : {
-		rootView : "sap.ui.unified.sample.MenuItemEventing.MenuItemEventing",
-		dependencies : {
-			libs : [
-				"sap.ui.unified"
-			]
-		},
-		
-		config : {
-			sample : {
-				files : [
-					"MenuItemEventing.view.xml",
-					"MenuItemEventing.fragment.xml",
-					"MenuItemEventing.controller.js"
+		metadata : {
+			rootView : "sap.ui.unified.sample.MenuItemEventing.MenuItemEventing",
+			dependencies : {
+				libs : [
+					"sap.ui.unified"
 				]
+			},
+		
+			config : {
+				sample : {
+					files : [
+						"MenuItemEventing.view.xml",
+						"MenuItemEventing.fragment.xml",
+						"MenuItemEventing.controller.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

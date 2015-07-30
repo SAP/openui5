@@ -2,47 +2,56 @@
  * ${copyright}
  */
 
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 
-(function() {
 	"use strict";
+
 	/**
 	 * @callback createDefaultContent
-	 * @return {sap.ui.core.Control|[sap.ui.core.Control]} a control or an array with 0..n controls
+	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} a control or an array with 0..n controls
 	 */
 
 	/**
 	 * Creates 0..n UI5 controls from an ExtensionPoint.
 	 * One control if the ExtensionPoint is e.g. filled with a View, zero for ExtensionPoints without configured extension and
 	 * n controls for multi-root Fragments as extension.
+	 *
 	 * In JSViews, this function allows both JSON notation in aggregation content as well as adding an extension point to an aggregation after the target control
 	 * has already been instantiated. In the latter case the optional parameters oTargetControls and oTargetAggregation need to be specified.
-	 * 
+	 *
 	 * @param {sap.ui.core.mvc.View|sap.ui.core.Fragment} oContainer The view or fragment containing the extension point
-	 * @param {String} sExtName The extensionName used to identify the extension point in the customizing
-	 * @param {createDefaultContent} [fnCreateDefaultContent] Optional callback function creating default content, returning an Array of controls. It is executed 
+	 * @param {string} sExtName The extensionName used to identify the extension point in the customizing
+	 * @param {createDefaultContent} [fnCreateDefaultContent] Optional callback function creating default content, returning an Array of controls. It is executed
 	 * 			when there's no customizing, if not provided, no default content will be rendered.
-	 * @param {sap.ui.base.Control} [oTargetControl] Optional - use this parameter to attach the extension point to a particular aggregation
-	 * @param {String} [sAggregationName] Optional - if provided along with oTargetControl, the extension point content is added to this particular aggregation at oTargetControl,
+	 * @param {sap.ui.core.Control} [oTargetControl] Optional - use this parameter to attach the extension point to a particular aggregation
+	 * @param {string} [sAggregationName] Optional - if provided along with oTargetControl, the extension point content is added to this particular aggregation at oTargetControl,
 	 * 			if not given, but an oTargetControl is still present, the function will attempt to add the extension point to the default aggregation of oTargetControl.
 	 * 			If no oTargetControl is provided, sAggregationName will also be ignored.
-	 * 
-	 * @return an array with 0..n controls created from an ExtensionPoint
+	 *
+	 * @return {sap.ui.core.Control[]} an array with 0..n controls created from an ExtensionPoint
 	 * @public
 	 * @static
 	 */
 	sap.ui.extensionpoint = function(oContainer, sExtName, fnCreateDefaultContent,  oTargetControl, sAggregationName) {
 		var extensionConfig, oView, vResult;
 
+		// Note: the existing dependencies to ./Fragment and ./View are not statically declared to avoid cyclic dependencies
+		// Note: the dependency to CustomizingConfiguration is not statically declared to not enforce the loading of that module
+
+		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration'),
+			View = sap.ui.require('sap/ui/core/mvc/View'),
+			Fragment = sap.ui.require('sap/ui/core/Fragment');
+
 		// Extension Point - is something configured?
-		if (sap.ui.core.CustomizingConfiguration) {
+		if (CustomizingConfiguration) {
 
 			// do we have a view to check or do we need to check for configuration for a fragment?
-			if (oContainer instanceof sap.ui.core.mvc.View){
-				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName);
+			if (View && oContainer instanceof View){
+				extensionConfig = CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName, oContainer);
 				oView = oContainer;
-			}
-			else if (oContainer instanceof sap.ui.core.Fragment) {
-				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.getFragmentName(), sExtName);
+			} else if (Fragment && oContainer instanceof Fragment) {
+				extensionConfig = CustomizingConfiguration.getViewExtension(oContainer.getFragmentName(), sExtName, oContainer);
 				oView = oContainer._oContainingView;
 			}
 
@@ -77,7 +86,7 @@
 			}
 		}
 
-		if (!vResult && jQuery.isFunction(fnCreateDefaultContent)) {
+		if (!vResult && typeof fnCreateDefaultContent === 'function') {
 			// if there is no extension configured or found or customizing disabled - check for default content
 			// do we have a callback function?
 			vResult = fnCreateDefaultContent();
@@ -88,18 +97,11 @@
 			vResult = [vResult];
 		}
 
-		//if we have any result from either default content or customizing AND a target control is provided: 
+		//if we have any result from either default content or customizing AND a target control is provided:
 		if (vResult && oTargetControl) {
 			//directly add the extension to the corresponding aggregation at the target control:
-			var oAggregationInfo;
-			if (!sAggregationName) {
-				// no aggregation name for the target control is provided, so we try to retrieve the default aggregation and use this instead
-				jQuery.sap.log.debug("no target aggregationName given - trying to attach the extension point content to the targetControl's default aggregation");
-				oAggregationInfo = oTargetControl.getMetadata().getDefaultAggregation();
-			} else {
-				oAggregationInfo = oTargetControl.getMetadata().getJSONKeys()[sAggregationName];
-			}
-			if (oAggregationInfo){
+			var oAggregationInfo = oTargetControl.getMetadata().getAggregation(sAggregationName);
+			if (oAggregationInfo) {
 				for (var i = 0, l = vResult.length; i < l; i++) {
 					// call the corresponding mutator for each element within the extension point - may be one or multiple elements
 					oTargetControl[oAggregationInfo._sMutator](vResult[i]);
@@ -113,4 +115,7 @@
 
 		return vResult || [];
 	};
-}());
+
+	return sap.ui.extensionpoint;
+
+}, /* bExport= */ false);

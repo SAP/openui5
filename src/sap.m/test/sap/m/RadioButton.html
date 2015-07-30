@@ -6,11 +6,38 @@
 		<title>RadioButton - sap.m</title>
 
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.core, sap.ui.commons"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
+
+        <style>
+            #vboxStates {
+                padding: 2rem;
+            }
+
+            #vboxStates .sapMVBox {
+                padding-right: 2rem;
+            }
+
+            #hBoxStatesSecondLine {
+                padding-top: 2rem;
+            }
+
+            #flexbox2 {
+                padding: 0 2rem;
+            }
+
+			#heading {
+				font-size: 1rem;
+				font-weight: bold;
+			}
+
+			#label1, #label2, #label3 {
+				line-height: 3rem;
+			}
+        </style>
 
 		<script type="text/javascript">
 			jQuery.sap.initMobile();
@@ -38,7 +65,7 @@
 
 			var randomControl = new sap.m.Label({ text : "A label to rerender the whole page"});
 			var anotherRandomControl = new sap.m.Label({ text : "A second label to rerender the whole page"});
-			
+
 			oRadioButton11.attachSelect(function(oEvent) {
 				var oControlToAdd = oEvent.getParameter("selected") ? anotherRandomControl : randomControl;
 				var oControlToRemove = oEvent.getParameter("selected") ? randomControl : anotherRandomControl;
@@ -80,6 +107,94 @@
 				]
 			});
 			oFBox2.setDirection('Column');
+
+            // States
+            var hBoxStatesFirstLine = new sap.m.HBox({
+                items:[
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Regular'}),
+                            new sap.m.RadioButton({groupName:'v01', selected: true, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v01', selected: false, text: 'Not Selected'})
+                        ]
+                    }),
+
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'For Hover'}),
+                            new sap.m.RadioButton({groupName:'v02', selected: true, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v02', selected: false, text: 'Not Selected'})
+                        ]
+                    }),
+
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Read Only'}),
+                            new sap.m.RadioButton({groupName:'v03', selected: true, editable: false, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v03', selected: false, editable: false, text: 'Not Selected'})
+                        ]
+                    }),
+
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Invalid/Error'}),
+                            new sap.m.RadioButton({groupName:'v04', selected: true, valueState: sap.ui.core.ValueState.Error, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v04', selected: false, valueState: sap.ui.core.ValueState.Error, text: 'Not Selected'})
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Warning'}),
+                            new sap.m.RadioButton({groupName:'v05', selected: true, valueState: sap.ui.core.ValueState.Warning, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v05', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected'})
+                        ]
+                    })
+                ]
+            });
+
+            var hBoxStatesSecondLine = new sap.m.HBox('hBoxStatesSecondLine', {
+                items: [
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Disabled'}),
+                            new sap.m.RadioButton({groupName:'v06', selected: true, enabled: false, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v06', selected: false, enabled: false, text: 'Not Selected'}),
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'For Focus'}),
+                            new sap.m.RadioButton({groupName:'v07', selected: true, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v07', selected: false, text: 'Not Selected'})
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Display-Mode?'}),
+                            new sap.m.RadioButton({groupName:'v08', selected: true, enabled: false, editable: false, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v08', selected: false, enabled: false, editable: false, text: 'Not Selected'})
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Invalid Read Only'}),
+                            new sap.m.RadioButton({groupName:'v09', selected: true, valueState: sap.ui.core.ValueState.Error, text: 'Selected', editable: false}),
+                            new sap.m.RadioButton({groupName:'v09', selected: false, valueState: sap.ui.core.ValueState.Error, text: 'Not Selected', editable: false}),
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Warning Read Only'}),
+                            new sap.m.RadioButton({groupName:'v10', selected: true, valueState: sap.ui.core.ValueState.Warning, text: 'Selected', editable: false}),
+                            new sap.m.RadioButton({groupName:'v10', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected', editable: false}),
+                        ]
+                    })
+                ]
+            });
+
+            var vboxStates = new sap.m.VBox("vboxStates", {
+                items: [hBoxStatesFirstLine, hBoxStatesSecondLine]
+            });
 
 			jQuery.sap.require("sap.ui.model.json.JSONModel");
 			// JSON sample data
@@ -132,7 +247,7 @@
 				headerText : "List with Radio Buttons",
 				footerText : "Example"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -159,7 +274,45 @@
 				]
 			});
 
+			var RTLSimpleForm = new sap.ui.layout.form.SimpleForm("RTLSimpleForm", {
+				minWidth : 1024,
+				maxContainerCols : 2,
+				content: [
+					new sap.m.Text("heading", {
+						text: 'Below are examples for testing the right-to-left special cases such as numerals, phone numbers, etc. To switch the page direction to right-to-left, please paste the following parameter at the end of the URL -> &sap-ui-rtl=true. Text align switch is possible only when radio button has setted width'
+					}),
+					new sap.m.Label("label1", {
+						text: "Default behavior"
+					}),
+					new sap.m.RadioButton({
+						width: "200px",
+						text: "(012) 345 678",
+						groupName:"group5"
+					}),
+					new sap.m.Label("label2", {
+						text: "Text direction - LTR"
+					}),
+					new sap.m.RadioButton({
+						width: "200px",
+						text: "(012) 345 678",
+						groupName:"group5",
+						textDirection: "LTR"
+					}),
+					new sap.m.Label("label3", {
+						text: "Text direction - LTR, text align - right"
+					}),
+					new sap.m.RadioButton({
+						width: "200px",
+						text: "(012) 345 678",
+						groupName:"group5",
+						textDirection: "LTR",
+						textAlign: "Right"
+					})
+				]
+			});
+
 			bindListData(data, oItemTemplate, oList2);
+            radioBtnPage.addContent(vboxStates);
 			radioBtnPage.addContent(oFBox2);
 			radioBtnPage.addContent(oList2);
 			radioBtnPage.addContent(toolbar);
@@ -170,11 +323,13 @@
 					toolbar.setEnabled(bToolbarAEnabled);
 				}
 			}));
+			radioBtnPage.addContent(RTLSimpleForm);
+
 			radioBtnPage.placeAt('body');
 		</script>
 
 	</head>
 
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>

@@ -3,8 +3,7 @@
  */
 
 // Provides enumeration sap.ui.core.ws.ReadyState
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
@@ -14,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @version ${version}
 	 * @static
 	 * @public
-	 * @name sap.ui.core.ws.ReadyState
+	 * @alias sap.ui.core.ws.ReadyState
 	 */
 	var ReadyState = {
 	

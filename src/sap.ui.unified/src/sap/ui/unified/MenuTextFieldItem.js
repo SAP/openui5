@@ -10,23 +10,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 
 	
 	/**
-	 * Constructor for a new MenuTextFieldItem.
+	 * Constructor for a new MenuTextFieldItem element.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Menu item which contains an text field. This menu item is e.g. helpful for filters.
-	 * The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
+	 * Special menu item which contains a label and a text field. This menu item is e.g. helpful for filter implementations.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @extends sap.ui.unified.MenuItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.21.0
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.unified.MenuTextFieldItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @alias sap.ui.unified.MenuTextFieldItem
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var MenuTextFieldItem = MenuItemBase.extend("sap.ui.unified.MenuTextFieldItem", /** @lends sap.ui.unified.MenuTextFieldItem.prototype */ { metadata : {
 	
@@ -34,22 +35,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		properties : {
 	
 			/**
-			 * The label of the contained text field.
+			 * Defines the label of the text field of the item.
 			 */
 			label : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * Icon to be displayed.
+			 * Defines the icon of the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * Value of the contained text field.
+			 * Defines the value of the text field of the item.
 			 */
 			value : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Visualizes warnings or errors.
+			 * Defines the value state of the text field of the item. This allows you to visualize e.g. warnings or errors.
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None}
 		}
@@ -58,10 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	
 	(function() {
 	
-	/**
-	 * Called by the Menu renderer when the item should be rendered.
-	 * @private
-	 */
 	MenuTextFieldItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
 		var rm = oRenderManager,
 			bIsEnabled = oMenu.checkEnabled(oItem),
@@ -87,7 +84,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		// ARIA
 		if (oInfo.bAccessible) {
 			rm.writeAttribute("role", "menuitem");
-			rm.writeAttribute("aria-labelledby", oMenu.getId() + " " + itemId + "-txt " + itemId + "-scuttxt");
 			rm.writeAttribute("aria-disabled", !bIsEnabled);
 			rm.writeAttribute("aria-posinset", oInfo.iItemNo);
 			rm.writeAttribute("aria-setsize", oInfo.iTotalItems);
@@ -99,22 +95,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		// icon/check column 
 		rm.write("<div class=\"sapUiMnuItmIco\">");
 		if (oItem.getIcon()) {
-			rm.writeIcon(oItem.getIcon());
+			rm.writeIcon(oItem.getIcon(), null, {title: null});
 		}
 		rm.write("</div>");
 		
 		// Text filed column 
 		rm.write("<div id=\"" + itemId + "-txt\" class=\"sapUiMnuItmTxt\">");
-		rm.write("<label id=\"" + itemId + "-lbl\" for=\"" + itemId + "-tf\" class=\"sapUiMnuTfItemLbl\">");
+		rm.write("<label id=\"" + itemId + "-lbl\" class=\"sapUiMnuTfItemLbl\">");
 		rm.writeEscaped(oItem.getLabel() || "");
 		rm.write("</label>");
 		rm.write("<div id=\"" + itemId + "-str\" class=\"sapUiMnuTfItmStretch\"></div>"); // Helper to strech the width if needed
 		rm.write("<div class=\"sapUiMnuTfItemWrppr\">");
-		rm.write("<input id=\"" + itemId + "-tf\" tabindex=\"-1\" role=\"textbox\" aria-multiline=\"false\" aria-autocomplete=\"none\"");
+		rm.write("<input id=\"" + itemId + "-tf\" tabindex=\"-1\"");
 		rm.writeAttributeEscaped("value", oItem.getValue() || "");
 		rm.writeAttribute("class", bIsEnabled ? "sapUiMnuTfItemTf sapUiMnuTfItemTfEnbl" : "sapUiMnuTfItemTf sapUiMnuTfItemTfDsbl");
 		if (!bIsEnabled) {
 			rm.writeAttribute("disabled", "disabled");
+		}
+		if (oInfo.bAccessible) {
+			rm.writeAccessibilityState(oMenu, { //Pass the Menu here to write aria-labelledby
+				role: "textbox",
+				disabled: !bIsEnabled,
+				multiline: false,
+				autocomplete: "none",
+				labelledby: {value: oMenu.getId() + "-label " + itemId + "-lbl", append: true}
+			});
 		}
 		rm.write("></input></div></div>");
 		
@@ -125,32 +130,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	};
 	
 	
-	/**
-	 * Called by the Menu renderer when the item is hovered.
-	 * @private
-	 */
 	MenuTextFieldItem.prototype.hover = function(bHovered, oMenu){
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
 		
-		var that = this;
-		function focusTF() {
-			that.$("tf").focus();
-		}
-		
 		if (bHovered && oMenu.checkEnabled(this)) {
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
-				setTimeout(focusTF, 0);
-			} else {
-				focusTF();
-			}
+			oMenu.closeSubmenu(false, true);
+			this.$("tf").focus();
 		}
 	};
 	
 	
-	/**
-	 * Called by the Menu renderer after the item is rendered.
-	 * @private
-	 */
 	MenuTextFieldItem.prototype.onAfterRendering = function(){
 		this._adaptSizes();
 		this.setValueState(this.getValueState());
@@ -211,6 +200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	
 	
 	MenuTextFieldItem.prototype.onclick = function(oEvent){
+		this.getParent().closeSubmenu(false, true);
 		if (!sap.ui.Device.system.desktop && this.getParent().checkEnabled(this)) {
 			this.focus();
 		}
@@ -230,34 +220,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	// ************ Overridden API functions *************
 	
 	/**
-	 * Getter for aggregation <code>submenu</code>.<br/>
-	 * Aggregation of a menu item's sub menu.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * 
 	 * @return {sap.ui.unified.Menu}
 	 * @public
 	 * @name sap.ui.unified.MenuTextFieldItem#getSubmenu
-	 * @deprecated The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @function
 	 */
 	 
 	/**
-	 * Destroys the submenu in the aggregation 
-	 * named <code>submenu</code>.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * 
 	 * @return {sap.ui.unified.MenuTextFieldItem} <code>this</code> to allow method chaining
 	 * @public
 	 * @name sap.ui.unified.MenuTextFieldItem#destroySubmenu
-	 * @deprecated The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @function
 	 */
 	
 	/**
-	 * Setter for the aggregated <code>submenu</code>.
+	 * The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * 
 	 * @param {sap.ui.unified.Menu} oSubmenu
 	 * @return {sap.ui.unified.MenuTextFieldItem} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.unified.MenuTextFieldItem#setSubmenu
-	 * @deprecated The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
-	 * @function
+	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 */
 	MenuTextFieldItem.prototype.setSubmenu = function(oMenu){
 		jQuery.sap.log.warning("The aggregation 'submenu' is not supported for this type of menu item.", "", "sap.ui.unified.MenuTextFieldItem");

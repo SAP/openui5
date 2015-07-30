@@ -3,35 +3,35 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ListBox
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'],
-	function(jQuery, Renderer/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'jquery.sap.strings'],
+	function(jQuery, Renderer, IconPool /* , jQuerySap */) {
 	"use strict";
 
 
 	/**
-	 * @class ListBox Renderer
+	 * ListBox Renderer
 	 *
-	 * @author d046011
+	 * @author SAP SE
 	 * @version ${version}
-	 * @static
+	 * @namespace
 	 */
 	var ListBoxRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the ListBox, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render-output-buffer.
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render-output-buffer.
 	 * @param {sap.ui.commons.ListBox} oListBox The ListBox control that should be rendered.
 	 */
 	ListBoxRenderer.render = function(rm, oListBox) {
 		var r = ListBoxRenderer;
-	
+
 		// TODO: this is a prototype experimenting with an alternative to onAfterRendering for size calculations and corrections
 		// Do not copy this approach for now!
 		// Main problem: renderers are supposed to create a string, not DOM elements, e.g. so they could also run on the server. At least that was the idea in former times.
 		if (r.borderWidths === undefined) {
-			if (!!sap.ui.Device.browser.internet_explorer) { // all known IE versions have this issue (min-width does not include borders)  TODO: update
+			if (sap.ui.Device.browser.internet_explorer) { // all known IE versions have this issue (min-width does not include borders)  TODO: update
 				var oFakeLbx = document.createElement("div");
 				var oStaticArea = sap.ui.getCore().getStaticAreaRef();
 				oStaticArea.appendChild(oFakeLbx);
@@ -46,13 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 				r.borderWidths = 0;
 			}
 		}
-	
-	
-		// Return immediately if control is invisible
-		if (!oListBox.getVisible()) {
-			return;
-		}
-	
+
 		rm.addClass("sapUiLbx");
 		var bStd = true;
 		if (!oListBox.getEditable()) {
@@ -66,13 +60,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 		if (bStd) {
 			rm.addClass("sapUiLbxStd"); // neither readonly nor disabled - this helps the CSS
 		}
-	
+
 		// Open the containing <div> tag
 		rm.write("<div");
-	
+
 		rm.writeControlData(oListBox);
 		rm.writeAttribute("tabindex", "-1");
-	
+
 		var sWidth = oListBox.getWidth();
 		if (sWidth) {
 			rm.addStyle("width", sWidth);
@@ -84,17 +78,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 				rm.addClass("sapUiLbxFixed");
 			}
 		}
-	
+
 		if (!sWidth || (sWidth == "auto") || (sWidth == "inherit")) {
 			rm.addClass("sapUiLbxFlexWidth");
 		}
-	
+
 		rm.writeClasses();
-	
+
 		// min/max-widths need fixes in IE
 		var sMinWidth = oListBox.getMinWidth();
 		var sMaxWidth = oListBox.getMaxWidth();
-		if (!!sap.ui.Device.browser.internet_explorer) {
+		if (sap.ui.Device.browser.internet_explorer) {
 			sMinWidth = r.fixWidth(sMinWidth);
 			sMaxWidth = r.fixWidth(sMaxWidth);
 		}
@@ -104,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 		if (sMaxWidth) {
 			rm.addStyle("max-width", sMaxWidth);
 		}
-	
+
 		if (oListBox._bHeightInItems) {
 			if (oListBox._sTotalHeight != null) {
 				rm.addStyle("height", oListBox._sTotalHeight); // calculated height available
@@ -116,56 +110,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 			}
 		}
 		rm.writeStyles();
-	
+
 		var tooltip = oListBox.getTooltip_AsString();
 		if (tooltip) {
 			rm.writeAttributeEscaped("title", tooltip);
 		}
 		rm.write(">");
-	
+
 		this.renderItemList(oListBox, rm);
-	
+
 		rm.write("</div>");
 	};
-	
+
 	/**
+	 * @param {sap.ui.commons.ListBox} oListBox ListBox instance
+	 * @param {sap.ui.core.RenderManager} rm RenderManager instance
 	 * Renders all items
 	 */
 	ListBoxRenderer.renderItemList = function (oListBox, rm) {
-	
+
 		// Write the start tag
 		rm.write("<ul id='" + oListBox.getId() + "-list'");
-	
+
 		rm.writeAttribute("tabindex", this.getTabIndex(oListBox));
-	
+
 		// add ARIA stuff
 		rm.writeAccessibilityState(oListBox, {
 			role: "listbox",
 			multiselectable: oListBox.getAllowMultiSelect()
 		});
 		rm.write(">");
-	
+
 		var items = oListBox.getItems(),
 			iRealItemIndex = 0, // to not count separators
 			iRealItemCount = 0;
-	
-		for (var i = 0; i < items.length; i++) { // TODO: required only for ARIA setsize
+
+		var i;
+		for (i = 0; i < items.length; i++) { // TODO: required only for ARIA setsize
 			if (!(items[i] instanceof sap.ui.core.SeparatorItem)) {
 				iRealItemCount++;
 			}
 		}
-	
-		var bMarkLastChild = (!!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version == 8)); // IE8 workaround for "last-child"
+
 		var bDisplaySecondaryValues = oListBox.getDisplaySecondaryValues();
-	
+
 		// Write the rows with the items
-		for (var i = 0; i < items.length; i++) {
+		for (i = 0; i < items.length; i++) {
 			var item = items[i];
-	
+
 			if (item instanceof sap.ui.core.SeparatorItem) {
 				// draw a separator
 				rm.write("<div id='", item.getId(), "' class='sapUiLbxSep' role='separator'><hr/>");
-	
+
 				// colspan is not available, so add more separator cells
 				if (oListBox.getDisplayIcons()) {
 					rm.write("<hr/>");
@@ -174,13 +170,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 					rm.write("<hr/>");
 				}
 				rm.write("</div>");
-	
+
 			} else {
 				// regular ListItem or just a plain Item
 				rm.write("<li");
 				rm.writeElementData(item);
 				rm.writeAttribute("data-sap-ui-lbx-index", i);
-	
+
 				rm.addClass("sapUiLbxI");
 				if (!item.getEnabled()) {
 					rm.addClass("sapUiLbxIDis");
@@ -190,18 +186,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 					rm.addClass("sapUiLbxISel");
 				}
 				rm.writeClasses();
-	
+
 				// get the text values
 				var sText = item.getText();
 				var sSecondaryValue = item.getAdditionalText ? item.getAdditionalText() : ""; // allow usage of sap.ui.core.Item
-	
+
 				// tooltip
 				if (item.getTooltip_AsString()) {
 					rm.writeAttributeEscaped("title", item.getTooltip_AsString());
 				} else {
 					rm.writeAttributeEscaped("title", sText + ((bDisplaySecondaryValues && sSecondaryValue) ? "  --  " + sSecondaryValue : ""));
 				}
-	
+
 				// ARIA
 				rm.writeAccessibilityState(item, {
 					role: "option",
@@ -209,10 +205,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 					setsize: iRealItemCount,
 					posinset: iRealItemIndex + 1
 				});
-	
+
 				rm.write(">");
-	
-	
+
+
 				// write icon column if required
 				if (oListBox.getDisplayIcons()) {
 					var sIcon;
@@ -220,10 +216,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 						sIcon = item.getIcon();
 					}
 					rm.write("<span");
-					if (sap.ui.core.IconPool.isIconURI(sIcon)) {
+					if (IconPool.isIconURI(sIcon)) {
 						rm.addClass("sapUiLbxIIco");
 						rm.addClass("sapUiLbxIIcoFont");
-						var oIconInfo = sap.ui.core.IconPool.getIconInfo(sIcon);
+						var oIconInfo = IconPool.getIconInfo(sIcon);
 						rm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
 						if (oIconInfo && !oIconInfo.skipMirroring) {
 							rm.addClass("sapUiIconMirrorInRTL");
@@ -244,17 +240,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 					}
 					rm.write("</span>");
 				}
-	
+
 				// write the main text
 				rm.write("<span class='sapUiLbxITxt");
-				if (bMarkLastChild && !bDisplaySecondaryValues) {
-					rm.write(" sapUiLbxILastChild");
-				}
 				rm.write("'");
 				rm.writeAttribute("id", item.getId() + "-txt");
-				var sTextAlign = ListBoxRenderer.getTextAlign(oListBox.getValueTextAlign(), null);
-				if (sTextAlign) {
-					rm.write("style='text-align:" + sTextAlign + "'"); // TODO: check whether the ListBox needs its own textDirection property
+				var sValueTextAlign = ListBoxRenderer.getTextAlign(oListBox.getValueTextAlign(), null);
+				if (sValueTextAlign) {
+					rm.write("style='text-align:" + sValueTextAlign + "'"); // TODO: check whether the ListBox needs its own textDirection property
 				}
 				rm.write(">");
 				if (sText === "" || sText === null) {
@@ -262,35 +255,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 				} else {
 					rm.writeEscaped(sText);
 				}
-	
+
 				// Potentially display second column
 				if (bDisplaySecondaryValues) {
 					rm.write("</span><span class='sapUiLbxISec");
-					if (bMarkLastChild) {
-						rm.write(" sapUiLbxILastChild");
-					}
 					rm.write("'");
-					var sTextAlign = ListBoxRenderer.getTextAlign(oListBox.getSecondaryValueTextAlign(), null);
-					if (sTextAlign) {
-						rm.write("style='text-align:" + sTextAlign + "'"); // TODO: check whether the ListBox needs its own textDirection property
+					var sSecondaryValueTextAlign = ListBoxRenderer.getTextAlign(oListBox.getSecondaryValueTextAlign(), null);
+					if (sSecondaryValueTextAlign) {
+						rm.write("style='text-align:" + sSecondaryValueTextAlign + "'"); // TODO: check whether the ListBox needs its own textDirection property
 					}
 					rm.write(">");
 					rm.writeEscaped(sSecondaryValue);
 				}
-	
+
 				rm.write("</span></li>");
 				iRealItemIndex++;
 			}
 		}
-	
+
 		// Close the surrounding element
 		rm.write("</ul>");
 	};
-	
-	
+
+
 	/**
 	 * If the given width is set in pixels, this method reduces the pixel width by the known total width of the borders.
 	 * Needed for IE which doesn't handle the combination of border-box and min/max-width correctly.
+	 *
+	 * @param {string} sCssWidth CSS width
+	 * @return {string} Fixed CSS width
 	 * @private
 	 */
 	ListBoxRenderer.fixWidth = function(sCssWidth) {
@@ -305,11 +298,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 		}
 		return sCssWidth;
 	};
-	
+
 	/**
 	 * The default TabIndex that should be set for the ListBox as well as for the selected element.
 	 * Can be overwritten in extending sub-classes.
-	 * @param {sap.ui.commons.ListBox} oListBox
+	 * @param {sap.ui.commons.ListBox} oListBox ListBox instance
+	 * @return {int} Tab index
 	 * @protected
 	 */
 	ListBoxRenderer.getTabIndex = function(oListBox) {
@@ -319,9 +313,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 			return -1;
 		}
 	};
-	
+
 	/**
 	 * Adapts the item CSS classes after a selection change
+	 *
+	 * @param {sap.ui.commons.ListBox} oListBox ListBox instance
 	 * @private
 	 */
 	ListBoxRenderer.handleSelectionChanged = function(oListBox) { // TODO: handle tab stop
@@ -336,9 +332,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 			}
 		}
 	};
-	
+
 	/**
 	 * Set the active descendant of the ListBox to get correct announcements
+	 *
+	 * @param {sap.ui.commons.ListBox} oListBox ListBox instance
+	 * @param {int} iIndex Item index
 	 * @private
 	 */
 	ListBoxRenderer.handleARIAActivedescendant = function(oListBox, iIndex) {
@@ -348,14 +347,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 			$list.attr("aria-activedescendant", $selectedChild.attr("id"));
 		}
 	};
-	
+
 	/**
 	 * Dummy inheritance of static methods/functions.
 	 * @see sap.ui.core.Renderer.getTextAlign
 	 * @private
 	 */
 	ListBoxRenderer.getTextAlign = Renderer.getTextAlign;
-	
+
 
 	return ListBoxRenderer;
 

@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	IconPool.insertFontFaceStyle();
 	
 	/**
-	 * @class PullToRefresh renderer. 
-	 * @static
+	 * PullToRefresh renderer. 
+	 * @namespace
 	 */
 	var PullToRefreshRenderer = {
 	};
@@ -23,12 +23,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	PullToRefreshRenderer.render = function(oRm, oControl){
-	
-		// do not render invisible P2R
-		if (!oControl.getVisible()) {
-			return;
-		}
-		
 		var bShowIcon = oControl.getShowIcon();
 		var sCustomIcon = oControl.getCustomIcon();
 	
@@ -44,7 +38,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRm.addClass("sapMPullDownLogo");
 		}
 		oRm.writeClasses();
-		oRm.write(" tabindex=\"0\">"); // div element
+		oRm.write(" tabindex=\"0\""); // div element		
+		oRm.write(" role='button' aria-controls='" + oControl.getParent().sId + "-cont'>"); // aria attribute
 	
 		if (bShowIcon && sCustomIcon) {
 			var oCustomImage = oControl.getCustomIconImage();

@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class Switch renderer.
-		 * @static
+		 * Switch renderer.
+		 * @namespace
 		 */
 		var SwitchRenderer = {};
 
@@ -31,14 +31,11 @@ sap.ui.define(['jquery.sap.global'],
 				sTooltip = oSwitch.getTooltip_AsString(),
 				bEnabled = oSwitch.getEnabled(),
 				sName = oSwitch.getName(),
+				bAccessibilityEnabled = sap.ui.getCore().getConfiguration().getAccessibility(),
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
-			// suppress rendering if not visible
-			if (!oSwitch.getVisible()) {
-				return;
-			}
-
-			oRm.write('<div');
+			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Cont");
 
 			if (!bEnabled) {
@@ -57,8 +54,13 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
 
+			if (bAccessibilityEnabled) {
+				this.writeAccessibilityState(oRm, oSwitch);
+			}
+
 			oRm.write("><div");
 			oRm.writeAttribute("id", oSwitch.getId() + "-switch");
+			oRm.writeAttribute("aria-hidden", "true");
 			oRm.addClass(CSS_CLASS);
 			oRm.addClass(bState ? CSS_CLASS + "On" : CSS_CLASS + "Off");
 			oRm.addClass(CSS_CLASS + oSwitch.getType());
@@ -72,9 +74,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.writeClasses();
-
+			oRm.write("><div");
+			oRm.addClass(CSS_CLASS + "Inner");
+			oRm.writeAttribute("id", oSwitch.getId() + "-inner");
+			oRm.writeClasses();
 			oRm.write(">");
-			oRm.write('<div class="' + CSS_CLASS + 'Inner">');
 
 			// text
 			this.renderText(oRm, oSwitch);
@@ -91,16 +95,32 @@ sap.ui.define(['jquery.sap.global'],
 				this.renderCheckbox(oRm, oSwitch, sState);
 			}
 
+			if (bAccessibilityEnabled) {
+				this.renderInvisibleElement(oRm, oSwitch, {
+					id: oSwitch.getInvisibleElementId(),
+					text: oRb.getText(oSwitch.getInvisibleElementText())
+				});
+			}
+
 			oRm.write("</div>");
 		};
 
 		SwitchRenderer.renderText = function(oRm, oSwitch) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				bDefaultType = oSwitch.getType() === "Default";
+				bDefaultType = oSwitch.getType() === sap.m.SwitchType.Default;
 
 			// on
-			oRm.write('<div class="' + CSS_CLASS + 'Text ' + CSS_CLASS + 'TextOn">');
-			oRm.write("<span>");
+			oRm.write("<div");
+			oRm.addClass(CSS_CLASS + "Text");
+			oRm.addClass(CSS_CLASS + "TextOn");
+			oRm.writeAttribute("id", oSwitch.getId() + "-texton");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("<span");
+			oRm.addClass(CSS_CLASS + "Label");
+			oRm.addClass(CSS_CLASS + "LabelOn");
+			oRm.writeClasses();
+			oRm.write(">");
 
 			if (bDefaultType) {
 				oRm.writeEscaped(oSwitch._sOn);
@@ -110,8 +130,17 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</div>");
 
 			// off
-			oRm.write('<div class="' + CSS_CLASS + 'Text ' + CSS_CLASS + 'TextOff">');
-			oRm.write("<span>");
+			oRm.write("<div");
+			oRm.addClass(CSS_CLASS + "Text");
+			oRm.addClass(CSS_CLASS + "TextOff");
+			oRm.writeAttribute("id", oSwitch.getId() + "-textoff");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("<span");
+			oRm.addClass(CSS_CLASS + "Label");
+			oRm.addClass(CSS_CLASS + "LabelOff");
+			oRm.writeClasses();
+			oRm.write(">");
 
 			if (bDefaultType) {
 				oRm.writeEscaped(oSwitch._sOff);
@@ -152,6 +181,54 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write(">");
+		};
+
+		/**
+		 * Writes the accessibility state.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 */
+		SwitchRenderer.writeAccessibilityState = function(oRm, oSwitch) {
+			var mAriaLabelledby = oSwitch.getAriaLabelledBy(),
+				mAccessibilityStates;
+
+			if (mAriaLabelledby) {
+				mAriaLabelledby = {
+					value: oSwitch.getInvisibleElementId(),
+					append: true
+				};
+			}
+
+			mAccessibilityStates = {
+				role: "checkbox",
+				checked: oSwitch.getState(),
+				labelledby: mAriaLabelledby
+			};
+
+			oRm.writeAccessibilityState(oSwitch, mAccessibilityStates);
+		};
+
+		/**
+		 * Writes an invisible span element with a text node that is referenced in the ariaLabelledBy
+		 * associations for screen reader announcement.
+		 *
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 * @param {object} mOptions
+		 */
+		SwitchRenderer.renderInvisibleElement = function(oRm, oSwitch, mOptions) {
+			oRm.write("<span");
+			oRm.writeAttribute("id", mOptions.id);
+			oRm.writeAttribute("aria-hidden", "true");
+			oRm.addClass("sapUiInvisibleText");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(mOptions.text);
+			oRm.write("</span>");
 		};
 
 		return SwitchRenderer;

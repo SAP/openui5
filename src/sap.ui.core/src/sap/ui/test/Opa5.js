@@ -3,77 +3,81 @@
  */
 
 sap.ui.define(['jquery.sap.global',
+			'sap/ui/thirdparty/URI',
 			'./Opa',
 			'./OpaPlugin',
+			'./PageObjectFactory',
 			'sap/ui/qunit/QUnitUtils',
 			'sap/ui/base/Object',
+			'sap/ui/Device',
 			'./matchers/Matcher',
 			'./matchers/AggregationFilled',
 			'./matchers/PropertyStrictEquals',
-			'./everyPolyfill'],
-	function($, Opa, OpaPlugin, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
-		var fnOpa5,
-			oPlugin = new OpaPlugin(),
+			'./matchers/Properties',
+			'./matchers/Ancestor',
+			'./matchers/AggregationContainsPropertyEqual'],
+	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, Matcher, AggregationFilled, PropertyStrictEquals) {
+		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
 			oFrameJQuery = null,
 			oFramePlugin = null,
 			oFrameUtils = null,
 			$Frame = null,
 			bFrameLoaded = false,
-			bUi5Loaded = false,
-			oHashChanger = null;
+			bUi5Loaded = false;
 
 		/**
-		 * @class UI 5 extension of the OPA framework
+		 * Helps you writing tests for UI5 applications.
+		 * Provides convenience to wait and retrieve for UI5 controls without relying on global ids.
+		 * Makes it easy to wait until your UI is in the state you need for testing eg: waiting for backend data.
+		 *
+		 * @class UI5 extension of the OPA framework
 		 * @extends sap.ui.base.Object
 		 * @public
-		 * @name sap.ui.test.Opa5
+		 * @alias sap.ui.test.Opa5
 		 * @author SAP SE
 		 * @since 1.22
 		 */
-		fnOpa5 = Ui5Object.extend("sap.ui.test.Opa5",
-			jQuery.extend({}, Opa.prototype, {
-				constructor : function() {
-					Opa.apply(this, arguments);
+		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5",
+			jQuery.extend({},
+				Opa.prototype,
+				{
+					constructor : function() {
+						Opa.apply(this, arguments);
+					}
 				}
-			})
+			)
 		);
 
-		/**
-		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @name sap.ui.test.Opa5#iStartMyAppInAFrame
-		 * @param {string} sSource the source of the iframe
-		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
-		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @public
-		 * @function
-		 * @static
-		 */
-		fnOpa5.iStartMyAppInAFrame = function (sSource, iTimeout) {
+		function iStartMyAppInAFrame (sSource, iTimeout) {
 			//invalidate the cache
 			$Frame = $("#OpaFrame");
+
+			// include styles
+			var sIframeStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaFrame",".css");
+			jQuery.sap.includeStyleSheet(sIframeStyleLocation);
 
 			if (!$Frame.length) {
 				//invalidate other caches
 
-				$Frame = $('<iframe id="OpaFrame" src="' + sSource + '"></iframe>');
-
-				$Frame.css({
-					width: "60%",
-					height: "60%",
-					position: "absolute",
-					opacity: "0.7",
-					top: "5%",
-					right: "5%"
-				});
+				$Frame = $('<iframe id="OpaFrame" class="opaFrame" src="' + sSource + '"></iframe>');
 
 				$("body").append($Frame);
 
 			}
 
-			$Frame.on("load", handleFrameLoad);
+			if ($Frame[0].contentDocument && $Frame[0].contentDocument.readyState === "complete") {
+				handleFrameLoad();
+			} else {
+				$Frame.on("load", handleFrameLoad);
+			}
 
 			return this.waitFor({
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false,
 				check : function () {
 					if (!bFrameLoaded) {
 						return;
@@ -81,31 +85,32 @@ sap.ui.define(['jquery.sap.global',
 
 					return checkForUI5ScriptLoaded();
 				},
-				timeout : iTimeout || 90,
+				timeout : iTimeout || 80,
 				errorMessage : "unable to load the iframe with the url: " + sSource
 			});
-		};
+		}
 
 		/**
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @name sap.ui.test.Opa5#iStartMyAppInAFrame
+		 * @param {string} sSource the source of the iframe
+		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
+		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @public
+		 * @function
+		 */
+		Opa5.iStartMyAppInAFrame = iStartMyAppInAFrame;
+
+		/**
+		 * Starts an app in an iframe. Only works reliably if running on the same server.
 		 * @param {string} sSource the source of the iframe
 		 * @param {integer} [iTimeout] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @function
 		 * @public
+		 * @function
 		 */
-		fnOpa5.prototype.iStartMyAppInAFrame = fnOpa5.iStartMyAppInAFrame;
+		Opa5.prototype.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
-		/**
-		 * Removes the iframe from the dom and removes all the references on its objects
-		 * @name sap.ui.test.Opa5#iTeardownMyAppFrame
-		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @public
-		 * @function
-		 * @static
-		 */
-		fnOpa5.iTeardownMyAppFrame = function () {
+		function iTeardownMyAppFrame () {
 
 			return this.waitFor({
 				success : function () {
@@ -117,41 +122,88 @@ sap.ui.define(['jquery.sap.global',
 				}
 			});
 
-		};
-	
+		}
+
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
-		 * @name sap.ui.test.Opa5#iTeardownMyAppFrame
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @function
 		 * @public
+		 * @function
 		 */
-		fnOpa5.prototype.iTeardownMyAppFrame = fnOpa5.iTeardownMyAppFrame;
+		Opa5.iTeardownMyAppFrame = iTeardownMyAppFrame;
+
+		/**
+		 * Removes the iframe from the dom and removes all the references on its objects
+		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.iTeardownMyAppFrame = iTeardownMyAppFrame;
 
 		/**
 		 * Same as the waitFor method of Opa. Also allows you to specify additional parameters:
-		 * <ul>
-		 * <li> id - the global id of a control, or the id of a control inside of a view.</li>
-		 * <li> viewName - the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.</li>
-		 * <li> viewNamespace - get appended before the viewName </li>
-		 * <li> matchers - a single matcher or an array of matchers @see sap.ui.test.matchers. All of the matchers have to match. Check will not be called if the matchers filtered out all controls before.</li>
-		 * <li> controlType - a string eg: sap.m.Button will search for all buttons inside of a container. If an id is given, this is ignored</li>
-		 * <li> searchOpenDialogs - boolean : if true, OPA will only look in open dialogs. All the other values except control type will be ignored</li>
-		 * <li> visible - boolean : default: true - if set to false OPA will also look for not rendered and invisible controls</li><li>timeout: default 15 (seconds) specifies how long the waitFor function polls before it fails</li>
-		 * <li>pollingInterval: default 400 (milliseconds) specifies how often the waitFor function polls</li>
-		 * <li>check: function will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop</li>
-		 * <li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked</li>
-		 * <li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
 		 *
-		 * </ul>
-		 * 
-		 * @name sap.ui.test.Opa5#waitFor
-		 * @param {object} oOptions
-		 * @function
+		 * @param {object} oOptions an Object containing conditions for waiting and callbacks
+		 * @param {string|regexp} [oOptions.id] the global id of a control, or the id of a control inside of a view.
+		 * If a regex and a viewName is provided, Opa5 will only look for controls in the view with a matching id.<br/>
+		 * Example of a waitFor:
+		 * <pre>
+		 *     <code>
+		 *         this.waitFor({
+		 *             id: /my/,
+		 *             viewName: "myView"
+		 *         });
+		 *     </code>
+		 * </pre>
+		 * The view that is searched in:
+		 * <pre>
+		 *     <code>
+		 *         &lt;core:View xmlns:core="sap.ui.core" xmlns="sap.m"&gt;
+		 *             &lt;Button id="myButton"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="bar"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="baz"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Image id="myImage"&gt;&lt;/Image&gt;
+		 *         &lt;/core:View&gt;
+		 *     </code>
+		 * </pre>
+		 * Will result in matching two Controls, the image with the effective id myView--myImage and the button myView--myButton.
+		 * Although the ids of the controls myView--bar and myView--baz contain a my,
+		 * they will not be matched since only the part you really write in your views will be matched.
+		 * @param {string} [oOptions.viewName] the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
+		 * @param {string} [oOptions.viewNamespace] get appended before the viewName - should probably be set to the OPA config.
+		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers {@link sap.ui.test.matchers}. Matchers will be applied to an every control found by the waitFor function. The matchers are a pipeline, first matcher gets a control as an input parameter, each next matcher gets the same input, as the previous one, if the previous output is 'true'. If the previous output is a truthy value, the next matcher will receive this value as an input parameter. If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values. Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
+		 * @param {string} [oOptions.controlType] eg: sap.m.Button will search for all buttons inside of a container. If an id is given, this is ignored.
+		 * @param {boolean} [oOptions.searchOpenDialogs] if true, OPA will only look in open dialogs. All the other values except control type will be ignored
+		 * @param {boolean} [oOptions.visible] default: true - if set to false OPA will also look for not rendered and invisible controls.
+		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) specifies how long the waitFor function polls before it fails.
+		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) specifies how often the waitFor function polls.
+		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * The first parameter passed into the function is the same value that gets passed to the success function.
+		 * Returning something different than boolean in check will not change the first parameter of success.
+		 * @param {function} [oOptions.success] Will get invoked after
+		 * <ol>
+		 *     <li>
+		 *         One or multiple controls where found using controlType, Id, viewName. If visible is true (it is by default), the controls also need to be rendered.
+		 *     </li>
+		 *     <li>
+		 *          the whole matcher pipeline returned true for at least one control, or there are no matchers
+		 *     </li>
+		 *     <li>
+		 *         the check function returns true, or there is no check function
+		 *     </li>
+		 * </ol>
+		 * The first parameter passed into the function is either a single control (when a single string id was used),
+		 *  or an array of controls (viewName, controlType, multiple id's, regex id's) that matched all matchers.
+		 * Matchers can alter the array or single control to something different. Please read the matcher documentation.
+		 * @param {function} [oOptions.error] Will get invoked, when the timeout is reached and check did never return a true.
+		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is QUnit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 */
-		fnOpa5.prototype.waitFor = function (oOptions) {
+		Opa5.prototype.waitFor = function (oOptions) {
 			oOptions = $.extend({},
 					Opa.config,
 					oOptions);
@@ -159,27 +211,24 @@ sap.ui.define(['jquery.sap.global',
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
 				aMatchers,
-				fnOriginalSuccess = oOptions.success;
+				fnOriginalSuccess = oOptions.success,
+				aControls,
+				vResult;
 
 			oOptions.check = function () {
-				var vControlType = oOptions.controlType,
-					sOriginalControlType = null;
-
 				//retrieve the constructor instance
-				if (typeof oOptions.controlType === "string") {
+				if (!this._modifyControlType(oOptions)) {
 
-					sOriginalControlType = vControlType;
-					var oWindow = oFrameWindow || window;
-					oOptions.controlType = oWindow.jQuery.sap.getObject(vControlType);
-				} else if (vControlType) {
-					sOriginalControlType = vControlType.prototype.getMetadata()._sClassName;
+					// skip - control type resulted in undefined or lazy stub
+					return false;
+
 				}
 
-				vControl = fnOpa5.getPlugin().getMatchingControls(oOptions);
+				vControl = Opa5.getPlugin().getMatchingControls(oOptions);
 
 				//Search for a controlType in a view or open dialog
 				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
-					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + sOriginalControlType, "", "Opa");
+					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
 
@@ -208,40 +257,53 @@ sap.ui.define(['jquery.sap.global',
 					return false;
 				}
 
-				if (sOriginalControlType && !vControl.length) {
-					jQuery.sap.log.debug("found no controls with the type  " + sOriginalControlType, "", "Opa");
+				if (oOptions.sOriginalControlType && !vControl.length) {
+					jQuery.sap.log.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
 
 				aMatchers = this._checkMatchers(oOptions.matchers);
 
+				var iExpectedAmount;
 				if (aMatchers && aMatchers.length) {
 
 					if (!$.isArray(vControl)) {
-
-						if (!this._doesControlMatch(aMatchers, vControl)) {
-							jQuery.sap.log.debug("control was filtered out by the matchers - skipping the check");
-							return false;
-						}
-
+						iExpectedAmount = 1;
+						aControls = [vControl];
 					} else {
-
-						vControl = vControl.filter(function (oControl) {
-							return this._doesControlMatch(aMatchers, oControl);
-						}, this);
-
-						if (!vControl.length) {
-							jQuery.sap.log.debug("all controls were filtered out by the matchers - skipping the check");
-							return false;
-						}
+						aControls = vControl;
 					}
 
+					var aMatchedValues = [];
+					aControls.forEach(function (oControl) {
+						var vMatchResult =  this._doesValueMatch(aMatchers, oControl);
+						if (vMatchResult) {
+							if (vMatchResult === true) {
+								aMatchedValues.push(oControl);
+					} else {
+								// if matching result is a truthy value, then we pass this value as a result
+								aMatchedValues.push(vMatchResult);
+							}
+						}
+					}, this);
+
+					if (!aMatchedValues.length) {
+						jQuery.sap.log.debug("all results were filtered out by the matchers - skipping the check");
+							return false;
+						}
+
+					if (iExpectedAmount === 1) {
+						vResult = aMatchedValues[0];
+					} else {
+						vResult = aMatchedValues;
+					}
+
+				} else {
+					vResult = vControl;
 				}
 
 				if (fnOriginalCheck) {
-
-					return this._executeCheck(fnOriginalCheck, vControl);
-
+					return this._executeCheck(fnOriginalCheck, vResult);
 				}
 
 				//no check defined - continue
@@ -250,7 +312,7 @@ sap.ui.define(['jquery.sap.global',
 
 			if (fnOriginalSuccess) {
 				oOptions.success = function () {
-					fnOriginalSuccess.call(this, vControl);
+					fnOriginalSuccess.call(this, vResult);
 				};
 			}
 
@@ -260,117 +322,193 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * Returns the opa plugin used for retrieving controls. If an iframe is used it will return the iFrame's plugin.
 		 * @returns {sap.ui.test.OpaPlugin} the plugin instance
-		 * @name sap.ui.test.Opa5#getPlugin
 		 * @public
-		 * @function
-		 * @static
 		 */
-		fnOpa5.getPlugin = function () {
+		Opa5.getPlugin = function () {
 			return oFramePlugin || oPlugin;
 		};
 
 		/**
 		 * Returns the jQuery object of the iframe. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getJQuery
 		 * @returns {jQuery} the jQuery object
-		 * @static
 		 * @public
-		 * @function
 		 */
-		fnOpa5.getJQuery = function () {
+		Opa5.getJQuery = function () {
 			return oFrameJQuery;
 		};
 
 		/**
 		 * Returns the window object of the iframe or the current window. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getWindow
 		 * @returns {oWindow} the window of the iframe
-		 * @static
 		 * @public
-		 * @function
 		 */
-		fnOpa5.getWindow = function () {
+		Opa5.getWindow = function () {
 			return oFrameWindow;
 		};
 
 		/**
 		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getUtils
 		 * @public
-		 * @static
-		 * @function
 		 * @returns {sap.ui.test.qunit} the qunit utils
 		 */
-		fnOpa5.getUtils = function () {
+		Opa5.getUtils = function () {
 			return oFrameUtils;
 		};
 
 		/**
-		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getHashChanger
+		 * Returns Hashchanger object of the iframe. If the iframe is not loaded it will return null.
 		 * @public
-		 * @static
-		 * @function
-		 * @returns {sap.ui.core.routing.HashChanger} the hashchange
+		 * @returns {sap.ui.core.routing.HashChanger} the hashchanger instance
 		 */
-		fnOpa5.getHashChanger = function () {
-			return oHashChanger;
+		Opa5.getHashChanger = function () {
+			if (!oFrameWindow) {
+				return null;
+			}
+			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
+
+			return oFrameWindow.sap.ui.core.routing.HashChanger.getInstance();
 		};
 
 
 		/**
 		 * Extends the default config of Opa
-		 * @name sap.ui.test.Opa5#extendConfig
+		 * see {@link sap.ui.test.Opa#extendConfig}
 		 * @public
 		 * @function
-		 * @static
 		 */
-		fnOpa5.extendConfig = Opa.extendConfig;
+		Opa5.extendConfig = Opa.extendConfig;
+
+		/**
+		 * Reset Opa.config to its default values
+		 * see {@link sap.ui.test.Opa5#waitFor} for the description
+		 * Default values for OPA5 are:
+		 * <ul>
+		 * 	<li>viewNamespace: empty string</li>
+		 * 	<li>arrangements: instance of OPA5</li>
+		 * 	<li>actions: instance of OPA5</li>
+		 * 	<li>assertions: instance of OPA5</li>
+		 * 	<li>visible: true</li>
+		 * </ul>
+		 * @public
+		 * @since 1.25
+		 */
+		Opa5.resetConfig = function() {
+			Opa.resetConfig();
+			Opa.extendConfig({
+				viewNamespace : "",
+				arrangements : new Opa5(),
+				actions : new Opa5(),
+				assertions : new Opa5(),
+				visible : true,
+				_stackDropCount : 1
+			});
+		};
 
 		/**
 		 * Waits until all waitFor calls are done
-		 * @name sap.ui.test.Opa5#emptyQueue
+		 * see {@link sap.ui.test.Opa#.emptyQueue} for the description
 		 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 		 * @public
 		 * @function
-		 * @static
 		 */
-		fnOpa5.emptyQueue = Opa.emptyQueue;
+		Opa5.emptyQueue = Opa.emptyQueue;
 
-		fnOpa5.matchers = {};
+		/**
+		 * Gives access to a singleton object you can save values in.
+		 * see {@link sap.ui.test.Opa#.getContext} for the description
+		 * @since 1.29.0
+		 * @returns {object} the context object
+		 * @public
+		 * @function
+		 */
+		Opa5.getContext = Opa.getContext;
 
-		fnOpa5.matchers.Matcher = Matcher;
-		fnOpa5.matchers.AggregationFilled = AggregationFilled;
-		fnOpa5.matchers.PropertyStrictEquals = PropertyStrictEquals;
+
+		//Dont document these as public they are just for backwards compatibility
+		Opa5.matchers = {};
+		Opa5.matchers.Matcher = Matcher;
+		Opa5.matchers.AggregationFilled = AggregationFilled;
+		Opa5.matchers.PropertyStrictEquals = PropertyStrictEquals;
+
+		/**
+		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
+		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help structuring your tests.
+		 * @param {map} mPageObjects
+		 * @param {map} mPageObjects.&lt;your-page-object-name&gt; Multiple page objects are possible, provide at least actions or assertions
+		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.baseClass] Base class for the page object's actions and assertions, default: Opa5
+		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
+		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.actions] can be used as arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt;
+		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions]
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-1&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-2&gt;
+		 * @returns {map} mPageObject
+		 * @returns {map} mPageObject.&lt;your-page-object-name&gt;
+		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.actions an instance of baseClass or Opa5 with all the actions defined above
+		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.assertions an instance of baseClass or Opa5 with all the assertions defined above
+		 * @public
+		 * @since 1.25
+		 */
+		Opa5.createPageObjects = function(mPageObjects) {
+			//prevent circular dependency
+			return PageObjectFactory.create(mPageObjects,Opa5);
+		};
 
 		/*
 		 * Privates
 		 */
 
 		/**
-		 * Checks if a single control matches all the matchers
+		 * Checks if a value matches all the matchers and returns result of matching
 		 * @private
 		 */
-		fnOpa5.prototype._doesControlMatch = function (aMatchers, oControl) {
-			return aMatchers.every(function (oMatcher) {
-				return oMatcher.isMatching(oControl);
+		Opa5.prototype._doesValueMatch = function (aMatchers, vValue) {
+			var vOriginalValue = vValue;
+			var bIsMatching = true;
+			jQuery.each(aMatchers, function (i, oMatcher) {
+				var vMatch = oMatcher.isMatching(vValue);
+				if (vMatch) {
+					if (vMatch !== true) {
+						vValue = vMatch;
+					}
+				} else {
+					bIsMatching = false;
+					return false;
+				}
 			});
+			if (bIsMatching) {
+				return (vOriginalValue === vValue) ? true : vValue;
+			} else {
+				return false;
+			}
 		};
 
 		/**
-		 * Validates the matchers and makes sure to return them in an array or undefined
+		 * Validates the matchers and makes sure to return them in an array
 		 * @private
 		 */
-		fnOpa5.prototype._checkMatchers = function (vMatchers) {
+		Opa5.prototype._checkMatchers = function (vMatchers) {
 			var aMatchers = [];
 
-			if (vMatchers instanceof fnOpa5.matchers.Matcher) {
-				aMatchers = [vMatchers];
-			} else if ($.isArray(vMatchers)) {
+			if ($.isArray(vMatchers)) {
 				aMatchers = vMatchers;
 			} else if (vMatchers) {
-				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
+				aMatchers = [vMatchers];
 			}
+
+			aMatchers = aMatchers.map(function(vMatcher) {
+				if (vMatcher instanceof Opa5.matchers.Matcher) {
+					return vMatcher;
+				} else if (typeof vMatcher == "function") {
+					return {isMatching : vMatcher};
+				}
+
+				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
+				return undefined;
+			}).filter(function(oMatcher) {
+				return !!oMatcher;
+			});
 
 			return aMatchers;
 		};
@@ -378,8 +516,38 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * logs and executes the check function
 		 * @private
+		 * @returns {boolean} true if check should continue false if it should not
 		 */
-		fnOpa5.prototype._executeCheck = function (fnCheck, vControl) {
+		Opa5.prototype._modifyControlType = function (oOptions) {
+			var vControlType = oOptions.controlType;
+			//retrieve the constructor instance
+			if (typeof vControlType !== "string") {
+				return true;
+			}
+
+			oOptions.sOriginalControlType = vControlType;
+			var oWindow = oFrameWindow || window;
+			var fnControlType = oWindow.jQuery.sap.getObject(vControlType);
+
+			// no control type
+			if (!fnControlType) {
+				jQuery.sap.log.debug("The control type " + vControlType + " is undefined. Skipped check and will wait until it is required", this);
+				return false;
+			}
+			if (fnControlType._sapUiLazyLoader) {
+				jQuery.sap.log.debug("The control type " + vControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", this);
+				return false;
+			}
+
+			oOptions.controlType = fnControlType;
+			return true;
+		};
+
+		/**
+		 * logs and executes the check function
+		 * @private
+		 */
+		Opa5.prototype._executeCheck = function (fnCheck, vControl) {
 			jQuery.sap.log.debug("Opa is executing the check: " + fnCheck);
 
 			var bResult = fnCheck.call(this, vControl);
@@ -391,33 +559,57 @@ sap.ui.define(['jquery.sap.global',
 		/*
 		 * Apply defaults
 		 */
-
-		Opa.extendConfig({
-			viewNamespace : "",
-			arrangements : new fnOpa5(),
-			actions : new fnOpa5(),
-			assertions : new fnOpa5(),
-			visible : true
-		});
+		Opa5.resetConfig();
 
 		/*
 		 * INTERNALS
 		 */
 		function setFrameVariables() {
 			oFrameJQuery = oFrameWindow.jQuery;
+			//All Opa related resources in the iframe should be the same version
+			//that is running in the test and not the (evtl. not available) version of Opa of the running App.
+			registerAbsoluteModulePathInIframe("sap.ui.test");
 			oFrameJQuery.sap.require("sap.ui.test.OpaPlugin");
 			oFramePlugin = new oFrameWindow.sap.ui.test.OpaPlugin();
+
+			registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 			oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-			oFrameUtils = oFrameWindow.sap.ui.test.qunit;
-			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
-			modifyHashChanger(oFrameWindow.sap.ui.core.routing.HashChanger.getInstance());
+			oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
+		}
+
+		function registerAbsoluteModulePathInIframe(sModule) {
+			var sOpaLocation = jQuery.sap.getModulePath(sModule);
+			var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
+			oFrameJQuery.sap.registerModulePath(sModule,sAbsoluteOpaPath);
 		}
 
 		function handleFrameLoad () {
+
 			oFrameWindow = $Frame[0].contentWindow;
+
+			registerOnError();
+
 			bFrameLoaded = true;
 			//immediately check for UI5 to be loaded, to intercept any hashchanges
 			checkForUI5ScriptLoaded();
+		}
+
+		function registerOnError () {
+			// In IE9 retrieving the active element in an iframe when it has no focus produces an error.
+			// Since we use it all over the UI5 libraries, the only solution is to ignore frame errors in IE9.
+			if (Device.browser.internet_explorer && Device.browser.version === 9) {
+				return;
+			}
+
+			var fnFrameOnError = oFrameWindow.onerror;
+
+			oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine) {
+				if (fnFrameOnError) {
+					fnFrameOnError.apply(this, arguments);
+				}
+				throw "OpaFrame error message: " + sErrorMsg + " url: " + sUrl + " line: " + iLine;
+			};
+
 		}
 
 		function checkForUI5ScriptLoaded () {
@@ -434,71 +626,100 @@ sap.ui.define(['jquery.sap.global',
 
 		function handleUi5Loaded () {
 			setFrameVariables();
+			modifyIFrameNavigation();
+		}
 
+		/**
+		 * Disables most of the navigations in an iframe, only setHash has an effect on the real iframe history after running this function.
+		 * Reason: replace hash does not work in an iframe so it may not be called at all.
+		 * This makes it necessary to hook into all navigation methods
+		 * @private
+		 */
+		function modifyIFrameNavigation () {
+			oFrameWindow.jQuery.sap.require("sap.ui.thirdparty.hasher");
 			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.History");
+			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
-			var oHistory = oFrameWindow.sap.ui.core.routing.History.getInstance(),
-				fnOriginalGo = oFrameWindow.history.go,
-				fnOriginalReplaceHashChanger = oFrameWindow.sap.ui.core.routing.HashChanger.replaceHashChanger;
+			var oHashChanger = new oFrameWindow.sap.ui.core.routing.HashChanger(),
+				oHistory = new oFrameWindow.sap.ui.core.routing.History(oHashChanger),
+				oHasher = oFrameWindow.hasher,
+				fnOriginalSetHash = oHasher.setHash,
+				fnOriginalGetHash = oHasher.getHash,
+				sCurrentHash,
+				fnOriginalGo = oFrameWindow.history.go;
 
-			// also patch new hashChangers
-			oFrameWindow.sap.ui.core.routing.HashChanger.replaceHashChanger = function (oNewHashChanger) {
-				modifyHashChanger(oNewHashChanger);
-				fnOriginalReplaceHashChanger.apply(this,arguments);
+			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
+			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
+			oHasher.replaceHash = function (sHash) {
+				var sOldHash = this.getHash();
+				sCurrentHash = sHash;
+				oHashChanger.fireEvent("hashReplaced",{ sHash : sHash });
+				this.changed.dispatch(sHash, sOldHash);
+			};
+
+			oHasher.setHash = function (sHash) {
+				var sRealCurrentHash = fnOriginalGetHash.call(this);
+
+				sCurrentHash = sHash;
+				oHashChanger.fireEvent("hashSet", { sHash : sHash });
+				fnOriginalSetHash.apply(this, arguments);
+
+				// Happens when setHash("a") back setHash("a") is called.
+				// Then dispatch the previous hash as new one because hasher does not dispatch if the real hash stays the same
+				if (sRealCurrentHash === this.getHash()) {
+					// always dispatch the current position of the history, since this can only happen in the backwards / forwards direction
+					this.changed.dispatch(sRealCurrentHash, oHistory.aHistory[oHistory.iHistoryPosition]);
+				}
+
+			};
+
+			// This function also needs to be manipulated since hasher does not know about our intercepted replace
+			oHasher.getHash = function() {
+				//initial hash
+				if (sCurrentHash === undefined) {
+					return fnOriginalGetHash.apply(this, arguments);
+				}
+
+				return sCurrentHash;
 			};
 
 			oHashChanger.init();
 
 			function goBack () {
-				oHashChanger._sCurrentHash = oHistory.getPreviousHash();
-				oHashChanger.fireEvent("hashChanged", { newHash : oHistory.getPreviousHash(), oldHash : oHashChanger.getHash() });
+				var sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition],
+					sNewCurrentHash = oHistory.getPreviousHash();
+
+				sCurrentHash = sNewCurrentHash;
+				oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
+			}
+
+			function goForward () {
+				var sNewCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition + 1],
+					sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition];
+
+				if (sNewCurrentHash === undefined) {
+					jQuery.sap.log.error("Could not navigate forwards, there is no history entry in the forwards direction", this);
+					return;
+				}
+
+				sCurrentHash = sNewCurrentHash;
+				oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
 			}
 
 			oFrameWindow.history.back = goBack;
+			oFrameWindow.history.forward = goForward;
 
 			oFrameWindow.history.go = function (iSteps) {
 				if (iSteps === -1) {
 					goBack();
 					return;
-				}
-				return fnOriginalGo.apply(this, arguments);
-			};
-
-		}
-
-		function modifyHashChanger (oNewHashChanger) {
-			oHashChanger = oNewHashChanger;
-
-			var oFrameHasher = oFrameWindow.hasher,
-				fnOriginalSetHash = oHashChanger.setHash;
-
-			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
-			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
-			oHashChanger.replaceHash = function (sHash) {
-				var sOldHash = oHashChanger.getHash();
-				this.fireEvent("hashReplaced", { sHash : sHash });
-				this._sCurrentHash = sHash;
-				oHashChanger.fireEvent("hashChanged", { newHash : sHash, oldHash : sOldHash });
-
-			};
-
-			oHashChanger.setHash = function (sHash) {
-
-				this._sCurrentHash = sHash;
-				fnOriginalSetHash.apply(this, arguments);
-
-			};
-
-			// This function also needs to be manipulated since hasher does not know about our intercepted replace hashgetHash
-			oHashChanger.getHash = function() {
-
-				//initial hash
-				if (this._sCurrentHash === undefined) {
-					return oFrameHasher.getHash();
+				} else if (iSteps === 1) {
+					goForward();
+					return;
 				}
 
-				return this._sCurrentHash;
-
+				jQuery.sap.log.error("Using history.go with a number greater than 1 is not supported by OPA5", this);
+				return fnOriginalGo.apply(oFrameWindow.history, arguments);
 			};
 		}
 
@@ -508,7 +729,6 @@ sap.ui.define(['jquery.sap.global',
 			oFrameJQuery = null;
 			oFramePlugin = null;
 			oFrameUtils = null;
-			oHashChanger = null;
 		}
 
 		$(function () {
@@ -517,6 +737,6 @@ sap.ui.define(['jquery.sap.global',
 			$("body").height("100%");
 			$("html").height("100%");
 		});
-	
-		return fnOpa5;
-}, /* bExport= */ true);
+
+		return Opa5;
+});

@@ -19,6 +19,18 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+
+.sapMPullDownNontouch:focus:after {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	top: 0;
+	border: 0.125rem dotted @sapHCStandardFG;
+}
+
 .sapMPullDownTouch {
 	min-height: 3rem;
 	border-bottom: 0.0625rem solid @sapHCStandardFG;
@@ -63,7 +75,7 @@
 	box-sizing: border-box;
 }
 .sapMPullDownNontouch > .sapMPullDownText {
-	margin: 0 0.875em;
+	margin: 0 0.875rem;
 	text-transform: uppercase;
 	vertical-align: middle;
 }

@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
-<!-- 
-  JSUNIT: 
+<!--
+  JSUNIT:
     Tested control/class: jquery.sap.dom.js
     Author: Martin Schaus, Andreas Kunz
  -->
@@ -11,20 +10,18 @@
 		<title>Test Page for jquery.sap.dom</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-language="de"
-				data-sap-ui-noConflict="true"
-				>
+				data-sap-ui-noConflict="true">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
-		
-		test("ById", function () {
+
+		test("ById", function() {
 			ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
 			equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
 
@@ -34,11 +31,12 @@
 			equal(jQuery.sap.domById('CoNtRoL1'), null, "jQuery.sap.domById('CoNtRoL1') should be null");
 			equal(jQuery.sap.domById('CONTROL1'), null, "jQuery.sap.domById('CONTROL1') should be null");
 		});
-		
+
 		test("focus", function () {
 			expect(1);
 			var invisibleDiv = jQuery.sap.domById("invisibleDiv");
 			var result = jQuery.sap.focus(invisibleDiv);
+
 			// result will be "false" in IE8 and "true" in other browsers, as they have no error
 			ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
 		});
@@ -48,9 +46,9 @@
 			equal(jQuery('#textinput').cursorPos(), 4, "wrong cursor position after setting and getting");
 		});
 
-		test("SelectText", function () {
-			if(window.getSelection) {// Firefox, Opera, Safari
-			
+		test("SelectText", function() {
+			if (window.getSelection) {	// Firefox, Opera, Safari
+
 				jQuery('#testsel').selectText(2,5);
 				var start = jQuery('#testsel').get(0).selectionStart;
 				var end = jQuery('#testsel').get(0).selectionEnd;
@@ -63,32 +61,30 @@
 				equal(start, 0);
 				equal(end, jQuery('#testsel').get(0).value.length);
 
-				jQuery('#testsel').selectText(2,null);
+				jQuery('#testsel').selectText(2, null);
 				var start = jQuery('#testsel').get(0).selectionStart;
 				var end = jQuery('#testsel').get(0).selectionEnd;
 				equal(start, 0);
 				equal(end, 0);
 			} else {
-				if (document.selection.createRange) {        // Internet Explorer
+				if (document.selection.createRange) {	// Internet Explorer
 
 					jQuery('#testsel').selectText(2,5);
-					seltext = document.selection.createRange().text;						
+					seltext = document.selection.createRange().text;
 					equal(seltext, "lec");
-	
-					jQuery('#testsel').selectText(-2,50);
-					seltext = document.selection.createRange().text;						
-					equal(seltext, "Selection Test");
-	
-					jQuery('#testsel').selectText(2,null);
-					seltext = document.selection.createRange().text;						
-					equal(seltext, "");
 
+					jQuery('#testsel').selectText(-2,50);
+					seltext = document.selection.createRange().text;
+					equal(seltext, "Selection Test");
+
+					jQuery('#testsel').selectText(2,null);
+					seltext = document.selection.createRange().text;
+					equal(seltext, "");
 				}
 			}
-				
 		});
 
-		test("selectText(): The input element's type 'number' does not support selection", function() {
+		test("selectText()/getSelectedText(): The input element's type 'number' does not support selection", function() {
 
 			// arrange
 			var $DomRef = jQuery("<input>", {
@@ -100,13 +96,31 @@
 
 			// act
 			var oReturnValue = $DomRef.selectText(0 , 6);
+			$DomRef.getSelectedText();
 
 			// assertions
 			strictEqual(oReturnValue, $DomRef, "No exception is thrown");
-			strictEqual($DomRef.getSelectedText(), "", "No exception is thrown");
 
 			// cleanup
 			$DomRef.remove();
+		});
+
+		test("selectText() should return this to allow method chaining", function() {
+
+			// arrange
+			var $Empty = jQuery();
+
+			// act
+			var $This = $Empty.selectText(0, 6);
+
+			// assert
+			strictEqual($This, $Empty);
+		});
+
+		test("getSelectedText() should return an empty string when the jQuery collection is empty", function() {
+
+			// assert
+			strictEqual(jQuery().getSelectedText(), "");
 		});
 
 		function fnGetSelectedTextCase(mSettings) {
@@ -182,14 +196,14 @@
 					var quote = sap.ui.Device.browser.internet_explorer && (document.documentMode == undefined || document.documentMode && document.documentMode < 9) ? "" : "\""; //No '"' in IE8
 					return " " + n + "=" + quote + v + quote;
 				}
-				
+
 				var sRes = "<DIV";
 				sRes += bReversAttributeOrder ? att("ID", "CONTROL3") : att("TABINDEX", "0");
 				sRes += bReversAttributeOrder ? att("TABINDEX", "0") : att("ID", "CONTROL3");
 				sRes += ">CONTROL 3</DIV>";
 				return sRes;
 			}
-			
+
 			var sOuterHTML = jQuery("#control3").outerHTML().toUpperCase(); //Uppercase needed for cross browser consistency (IE returns uppercase tags, Firefox lowercase)
 			ok(sOuterHTML === getExpected(false) || sOuterHTML === getExpected(true), "outerHTML is wrong, Current: '"+sOuterHTML+"'")
 		});
@@ -232,7 +246,7 @@
 			ok(oFocusableItem, "jQuery(oDomRef).firstFocusableDomRef() not found");
 			equal(oDomRef, oFocusableItem, "jQuery(oDomRef).firstFocusableDomRef() is not control6");
 		});
-		
+
 		test("ParentByAttribute", function () {
 			var oDomRef = jQuery.sap.domById('control2');
 			var oParentWithAttribute = jQuery(oDomRef).parentByAttribute("data-sap-ui-test");
@@ -250,14 +264,13 @@
 		test("OwnerWindow", 0, function () {
 			// tests not easily possible, as there is no defined, stable environment with different windows
 		});
-		
+
 		test("Focus", function () { // actually tests jQuery itself
 			var oDomRef = jQuery.sap.domById('control3');
 			jQuery(oDomRef).focus();
 			equal(document.activeElement, oDomRef, "jQuery().focus() failed");
 		});
-		
-		
+
 		test("ScrollbarSize", function () {
 			var size = jQuery.sap.scrollbarSize(true);
 			ok(size, "No size for scroll bar returned")
@@ -318,9 +331,84 @@
 			// cleanup
 			document.body.removeChild(oDomRef);
 		});
+		
+		test("jQuery aria extensions", function() {
+			var $El = jQuery("<div>Aria Test</div>");
+			jQuery(document.body).append($El);
+
+			$El.addAriaLabelledBy("test1");
+			strictEqual($El.attr("aria-labelledby"), "test1", "aria-labelledby attribute is added to the DOM");
+			$El.addAriaDescribedBy("test1");
+			strictEqual($El.attr("aria-describedby"), "test1", "aria-describedby attribute is added to the DOM");
+
+			$El.addAriaLabelledBy("test1");
+			strictEqual($El.attr("aria-labelledby"), "test1", "already existing aria-labelledby is ignored");
+			$El.addAriaDescribedBy("test1");
+			strictEqual($El.attr("aria-describedby"), "test1", "already existing aria-describedby is ignored");
+
+			$El.addAriaLabelledBy("test");
+			strictEqual($El.attr("aria-labelledby"), "test1 test", "new aria-labelledby attribute is added with space concating");
+			$El.addAriaDescribedBy("test");
+			strictEqual($El.attr("aria-describedby"), "test1 test", "new aria-describedby attribute is added with space concating");
+
+			$El.removeAriaLabelledBy("t");
+			strictEqual($El.attr("aria-labelledby"), "test1 test", "non-existing aria-labelledby is ignored");
+			$El.removeAriaDescribedBy("t");
+			strictEqual($El.attr("aria-describedby"), "test1 test", "non-existing aria-describedby is ignored");
+
+			$El.removeAriaLabelledBy("test1");
+			strictEqual($El.attr("aria-labelledby"), "test", "existing aria-labelledby is removed from DOM");
+			$El.removeAriaDescribedBy("test1");
+			strictEqual($El.attr("aria-describedby"), "test", "existing aria-describedby is removed from DOM");
+
+			$El.removeAriaLabelledBy("test");
+			strictEqual($El.attr("aria-labelledby"), undefined, "last existing aria-labelledby is removed the attribute");
+			$El.removeAriaDescribedBy("test");
+			strictEqual($El.attr("aria-describedby"), undefined, "last existing aria-describedby is removed the attribute");
+
+			$El.removeAriaLabelledBy("test");
+			strictEqual($El.attr("aria-labelledby"), undefined, "non-existing aria-labelledby is ignored");
+			$El.removeAriaDescribedBy("test");
+			strictEqual($El.attr("aria-describedby"), undefined, "non-existing aria-describedby is ignored");
+
+			$El.remove();
+		});
+		
+		test("DOMPatching", function() {
+			var $Ref = jQuery('' +
+			'<div id="id" title="Ref" style="color:black" class="x" tabindex="-1">' +
+				'<!--Ref-->' +
+				'<span title="Ref" style="color:black" class="x" tabindex="-1">Ref</span>' +
+				'Ref' +
+			'</div>').click(jQuery.noop);
+
+			var $New = jQuery('' +
+			'<div id="id" dir="rtl" style="color:blue" class="x y" tabindex="0">' +
+				'<!--New-->' +
+				'<span dir="rtl" style="color:blue" class="x y" tabindex="0">Something Deep</span>' +
+				'New' +
+			'</div>');
+
+			// let the reference have parent to replace
+			jQuery(document.body).append($Ref);
+
+			// test the patch
+			strictEqual(jQuery.sap.replaceDOM($Ref[0], $New.outerHTML(), true), true, "Should apply the patch");
+			ok($Ref[0].isEqualNode($New[0]), "Patch is applied correctly");
+			strictEqual($Ref._sapTest_dataEvents(), undefined, "Events are removed while patching");
+
+			// test replace
+			$Ref.append("<div></div>");
+			strictEqual(jQuery.sap.replaceDOM($Ref[0], $New[0]), false, "Should replace the reference DOM");
+			$Ref = jQuery("#id"); // get it again since it is replaced
+			ok($Ref[0].isEqualNode($New[0]), "Replace is done correctly");
+
+			$Ref.remove();
+		});
+		
+		
 		</script>
 	</head>
-	
 	<body>
 		<h1 id="qunit-header">QUnit page for jquery.sap.dom</h1>
 		<h2 id="qunit-banner"></h2>
@@ -340,7 +428,7 @@
 				<a name="control5" href="#">Control 5</a>
 				<a id="control6" href="#">Control 6</a>
 				Simple Text
-		</div>		
+		</div>
 		</b>
 		<input id="testsel" value="Selection Test"></input>
 		</div>

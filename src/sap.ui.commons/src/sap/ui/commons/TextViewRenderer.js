@@ -9,9 +9,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class TextView renderer.
+	 * TextView renderer.
 	 * @author SAP SE
-	 * @static
+	 * @namespace
 	 */
 	var TextViewRenderer = {
 	};
@@ -23,14 +23,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.Control} oTextView An object representation of the control that should be rendered.
 	 */
 	TextViewRenderer.render = function(oRenderManager, oTextView) {
-	
 		var rm = oRenderManager;
 		var r = TextViewRenderer;
-	
-		// return immediately if control is invisible
-		if (!oTextView.getVisible()) {
-			return;
-		}
 	
 		// Get parameters
 		var enabled = oTextView.getEnabled() === true,

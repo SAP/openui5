@@ -77,15 +77,15 @@
 					{name: "Zar, Lou", userid: "U07"},
 					{name: "Burr, Tim", userid: "U08"},
 					{name: "Hughes, Tish", userid: "U09"},
-					{name: "Lester, Mo", userid: "U10"},
+					{name: "Town, Mo", userid: "U10"},
 					{name: "Case, Justin", userid: "U11"},
 					{name: "Time, Justin", userid: "U12"},
-					{name: "Barr, Gaye", userid: "U13"},
+					{name: "Barr, Sandy", userid: "U13"},
 					{name: "Poole, Gene", userid: "U14"},
 					{name: "Ander, Corey", userid: "U15"},
 					{name: "Early, Brighton", userid: "U16"},
 					{name: "Noring, Constance", userid: "U17"},
-					{name: "Haas, Jack", userid: "U18"},
+					{name: "O'Lantern, Jack", userid: "U18"},
 					{name: "Tress, Matt", userid: "U19"},
 					{name: "Turner, Paige", userid: "U20"}
 				];
@@ -900,6 +900,15 @@
 						value: "This is the end",
 						placeholder: "placeholder",
 						textAlign: sap.ui.core.TextAlign.End
+					}),
+					new sap.m.Input({
+						placeholder: "placeholder",
+						description: "Test",
+						fieldWidth: "30%",
+						showValueHelp: true,
+						valueHelpRequest: function(oEvent) {
+							sap.m.MessageBox.alert("Value help requested");
+						}
 					})
 			],
 			footer: createFooter()

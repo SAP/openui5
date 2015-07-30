@@ -3,8 +3,6 @@
 /* High contrast Black theme                     */
 /* ============================================= */
 .sapMCb {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	height: 3rem;
 	line-height: 3rem;
@@ -13,13 +11,13 @@
 	padding: 0 0 0 3rem;
 }
 
-.sapMCb>label {
+.sapMCb > label {
 	vertical-align: top;
 	overflow: hidden;
-	text-overflow:ellipsis;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 	/* If you put a CB in a form the with has to be 100% in rtl for text align */
-	width : 100%;
+	width: 100%;
 }
 
 /* check box itself */
@@ -44,9 +42,8 @@
 	-webkit-focus-ring-color: none;
 }
 
-/*In forms, align to the left*/
-.sapUiForm .sapMCbBg {
-	left: 0;
+.sapUiForm .sapMCbBg { /* In forms, align left with '0.125rem' ( the focus width) */
+	left: 0.125rem;
 }
 
 .sapMCbBg.sapMCbMarkChecked:before {
@@ -55,15 +52,16 @@
 	color: @sapHCStandardFG;
 }
 
-.sapMCbBg > input{
+.sapMCbBg > input {
 	position: absolute;
 	/* in FF the input needs to be positioned exactly behind the visible checkbox for the focus outline */
 	left: 0;
-	-webkit-appearance:none;
+	-webkit-appearance: none;
 	visibility: hidden;
 }
 
-.sapMCbBg:focus {
+.sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
+.sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus, { /* in IE clicking on checkbox input does not cause focus on checkbox wrapper div */
 	outline-color: @sapHCStandardFG;
 	outline-width: 0.125rem;
 	outline-style: dotted;
@@ -82,22 +80,26 @@
 }
 
 .sapMCbBgDis > .sapMCbBg.sapMCbMarkChecked:before {
-	color:  @sapHCReducedAltFG;
+	color: @sapHCReducedAltFG;
 }
 
 .sapMCbBgDis > .sapMCbBg:focus {
 	outline: 0;
 }
 
+.sapMCbBgDis > .sapMCbLabel {
+	color: @sapHCReducedFG;
+}
+
 /* this needed for ie9 in multi select list */
 .sapMLIBSelectM > .sapMCb {
-	width : 3rem;
+	width: 3rem;
 }
 
 /* Compact size */
-.sapUiSizeCompact{
+.sapUiSizeCompact {
 
-	.sapMCb{
+	.sapMCb {
 		height: 2rem;
 		line-height: 2rem;
 		padding-left: 2rem;
@@ -114,20 +116,20 @@
 	}
 
 	.sapMLIBSelectM > .sapMCb {
-		width : 2rem;
+		width: 2rem;
 	}
 }
 
 /* Condensed size */
-.sapUiSizeCondensed{
+.sapUiSizeCondensed {
 
-	.sapMCb{
+	.sapMCb {
 		height: 1.5rem;
 		line-height: 1.5rem;
 		padding-left: 1.5rem;
 	}
 
-	.sapUiTableCell>.sapMCb{
+	.sapUiTableCell > .sapMCb {
 		margin-left: 0.25rem;
 		padding-left: 1.75rem;
 	}

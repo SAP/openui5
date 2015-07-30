@@ -1,0 +1,288 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>sap.m.QuickView</title>
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<style>
+		.label {
+			font-weight:bold;
+			padding: 3rem 1rem 1rem;
+			width: auto;
+			white-space: normal;
+		}
+	</style>
+	<script>
+
+		//		create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		// JSON sample data
+		var mData = {
+			"pages": [
+				{
+					pageId	: "customPageId",
+					title	: "John Doe",
+					icon	: "",
+					description: "Department Manager1",
+					groups: [
+						{
+							visible : false,
+							heading: "Job",
+							elements: [
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								},
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								}
+							]
+						},
+						{
+							heading: "Other",
+							elements: [
+								{
+									label: "Best Friend",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								},
+								{
+									label: "Favorite Player",
+									value: "Ivaylo Ivanov",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId3"
+								}
+							]
+						}
+
+					]
+				},
+				{
+					pageId	: "customPageId2",
+					header	: "Page 2",
+					icon	: "sap-icon://person-placeholder",
+					title	: "Michael Muller",
+					description: "Account Manager",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Hobby",
+							elements: [
+								{
+									label: "Name",
+									value: "Jaga",
+									elementType: "text"
+								},
+								{
+									label: "Level",
+									value: "Beginner"
+								}
+
+							]
+						}
+
+					]
+				},
+				{
+					pageId	: "customPageId3",
+					header	: "Page 3",
+					icon	: "sap-icon://person-placeholder",
+					title	: "Ivaylo Ivanov",
+					description: "Developer",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Hobby",
+							elements: [
+								{
+									label: "Name",
+									value: "Table Tennis",
+									elementType: "text"
+								},
+								{
+									label: "Level",
+									value: "Beginner"
+								}
+
+							]
+						}
+
+					]
+				},
+				{
+					pageId	: "customPageId4",
+					header	: "Company View",
+					icon	: "sap-icon://building",
+					title	: "SAP AG",
+					description: "Run it simple",
+					groups: [
+						{
+							heading: "Contact Information",
+							elements: [
+								{
+									label: "Address",
+									value: "Waldorf, Germany",
+									url: "http://sap.com",
+									elementType: "link"
+								},
+								{
+									label: "Email",
+									value: "office@sap.com",
+									elementType: "email"
+								}
+							]
+						},
+						{
+							heading: "Main Contact",
+							elements: [
+								{
+									label: "Name",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								},
+								{
+									label: "Mobile",
+									value: "+359 888 999 999",
+									elementType: "phone"
+								}
+							]
+						}
+
+					]
+				}
+			]
+
+		};
+
+		// set the data for the model
+		oModel.setData(mData);
+		sap.ui.getCore().setModel(oModel);
+
+		// create and add app
+		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
+		app.placeAt("body");
+
+		var oQuickViewCard = new sap.m.QuickViewCard({
+			afterNavigate : function (oEvent) {
+				if (oButton) {
+					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
+				}
+			},
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					icon: "{icon}",
+					title: "{title}",
+					description: "{description}",
+					groups : {
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : '{heading}',
+							elements : {
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
+		var oButton = new sap.m.Button({
+			text : 'Back',
+			enabled : false,
+			press : function () {
+				oQuickViewCard.navigateBack();
+			}
+		});
+
+		var oHideScrollButton = new sap.m.Button({
+			text : 'Hide ScrollBar',
+			press : function () {
+				oQuickViewCard.setShowVerticalScrollBar(false);
+			}
+		});
+
+		var oShowScrollButton = new sap.m.Button({
+			text : 'Show ScrollBar',
+			press : function () {
+				oQuickViewCard.setShowVerticalScrollBar(true);
+			}
+		});
+
+		var oPanel = new sap.m.Panel('quickViewCardPanel', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store',
+			content : [
+				oQuickViewCard
+			]
+		});
+
+		// create and add a page
+		var page = new sap.m.Page("quickViewPage", {
+			title : "Quick View Card",
+			content : [
+				oButton,
+				oHideScrollButton,
+				oShowScrollButton,
+				oPanel
+			]
+		});
+		app.addPage(page);
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

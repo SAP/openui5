@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class ToolbarSpacer renderer.
-	 * @static
+	 * ToolbarSpacer renderer.
+	 * @namespace
 	 */
 	var ToolbarSpacerRenderer = {};
 	
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	
 		var sWidth = oControl.getWidth();
 		if (sWidth) {
-			rm.addStyle("width", oControl.getWidth());
+			rm.addStyle("width", sWidth);
 		} else {
 			rm.addClass(sap.m.ToolbarSpacer.flexClass);
 		}

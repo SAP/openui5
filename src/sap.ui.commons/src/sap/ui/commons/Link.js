@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Link
+	 * @alias sap.ui.commons.Link
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Link = Control.extend("sap.ui.commons.Link", /** @lends sap.ui.commons.Link.prototype */ { metadata : {
@@ -49,12 +49,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Whether the link can be triggered by the user.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * 
-			 * Invisible links are not rendered.
-			 */
-			visible : {type : "boolean", defaultValue : true},
 	
 			/**
 			 * 

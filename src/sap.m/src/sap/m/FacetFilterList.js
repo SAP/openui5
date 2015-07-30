@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.FacetFilterList
+	 * @alias sap.m.FacetFilterList
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilterList = List.extend("sap.m.FacetFilterList", /** @lends sap.m.FacetFilterList.prototype */ { metadata : {
@@ -34,6 +34,10 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			 * The title of the facet. The facet title is displayed on the facet button when the FacetFilter type is set to Simple. It is also displayed as a list item in the facet page of the dialog.
 			 */
 			title : {type : "string", group : "Appearance", defaultValue : null},
+			/**
+             * If true, item text wraps when it is too long.
+             */
+             wordWrap: {type : "boolean", group : "Appearance", defaultValue : false},
 	
 			/**
 			 * Specifies whether multiple or single selection is used.
@@ -46,7 +50,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			 * Indicates that the list is displayed as a button when the FacetFilter type is set to Simple.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
+
+            /**
+             * If true, enable case-insensitive search for OData .
+             */
+			enableCaseInsensitiveSearch: {type : "boolean", group : "Behavior", defaultValue : false, deprecated: false},
+
 			/**
 			 * Number of objects that match this item in the target data set when all filter items are selected.
 			 */
@@ -110,61 +120,6 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Returns the keys of the selected elements as an associative array. An empty object is returned if no items are selected.
-	 *
-	 * @name sap.m.FacetFilterList#getSelectedKeys
-	 * @function
-	 * @type object
-	 * @public
-	 * @since 1.20.3
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Use this method to pre-select FacetFilterItems, such as when restoring FacetFilterList selections from a variant. Keys are cached separately from the actual FacetFilterItems so that they remain even when the physical items are removed by filtering or sorting. If aKeys is undefined, null, or {} (empty object) then all keys are deleted. After this method completes only those items with matching keys will be selected. All other items in the list will be deselected.
-	 *
-	 * @name sap.m.FacetFilterList#setSelectedKeys
-	 * @function
-	 * @param {object} oAKeys
-	 *         Associative array indicating which FacetFilterItems should be selected in the list. Each property must be set to the value of a FacetFilterItem.key property. Each property value should be set to the FacetFilterItem.text property value. The text value is used to display the FacetFilterItem text when the FacetFilterList button or FacetFilter summary bar is displayed. If no property value is set then the property key is used for the text.
-	 * @type void
-	 * @public
-	 * @since 1.20.3
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Remove the specified key from the selected keys cache and deselect the item.
-	 *
-	 * @name sap.m.FacetFilterList#removeSelectedKey
-	 * @function
-	 * @param {string} sKey
-	 *         The key of the selected item to be removed from the cache. If null then the text parameter will be used as the key.
-	 * @param {string} sText
-	 *         The text of the selected item to be removed from the cache. If the key parameter is null then text will be used as the key.
-	 * @type void
-	 * @public
-	 * @since 1.20.4
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Remove all selected keys from the selected keys cache and deselect all items.
-	 *
-	 * @name sap.m.FacetFilterList#removeSelectedKeys
-	 * @function
-	 * @type void
-	 * @public
-	 * @since 1.20.4
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	
 	
 	FacetFilterList.prototype.setTitle = function(sTitle) {
@@ -272,6 +227,15 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return this;
 	};
 	
+
+	/**
+	 * Returns the keys of the selected elements as an associative array. An empty object is returned if no items are selected.
+	 *
+	 * @type object
+	 * @public
+	 * @since 1.20.3
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.getSelectedKeys = function() {
 		var oResult = {};
 		var oKeys = this._oSelectedKeys;
@@ -279,6 +243,17 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return oResult;
 	};
 	
+
+	/**
+	 * Use this method to pre-select FacetFilterItems, such as when restoring FacetFilterList selections from a variant. Keys are cached separately from the actual FacetFilterItems so that they remain even when the physical items are removed by filtering or sorting. If aKeys is undefined, null, or {} (empty object) then all keys are deleted. After this method completes only those items with matching keys will be selected. All other items in the list will be deselected.
+	 *
+	 * @param {object} oAKeys
+	 *         Associative array indicating which FacetFilterItems should be selected in the list. Each property must be set to the value of a FacetFilterItem.key property. Each property value should be set to the FacetFilterItem.text property value. The text value is used to display the FacetFilterItem text when the FacetFilterList button or FacetFilter summary bar is displayed. If no property value is set then the property key is used for the text.
+	 * @type void
+	 * @public
+	 * @since 1.20.3
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.setSelectedKeys = function(oKeys) {
 		
 		this._oSelectedKeys = {};
@@ -295,6 +270,19 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 	};
 	
+
+	/**
+	 * Remove the specified key from the selected keys cache and deselect the item.
+	 *
+	 * @param {string} sKey
+	 *         The key of the selected item to be removed from the cache. If null then the text parameter will be used as the key.
+	 * @param {string} sText
+	 *         The text of the selected item to be removed from the cache. If the key parameter is null then text will be used as the key.
+	 * @type void
+	 * @public
+	 * @since 1.20.4
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.removeSelectedKey = function(sKey, sText) {
 		
 		if (this._removeSelectedKey(sKey, sText)) {
@@ -305,6 +293,15 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 	};
 	
+
+	/**
+	 * Remove all selected keys from the selected keys cache and deselect all items.
+	 *
+	 * @type void
+	 * @public
+	 * @since 1.20.4
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.removeSelectedKeys = function() {
 		this._oSelectedKeys = {};
 		sap.m.ListBase.prototype.removeSelections.call(this, true);
@@ -473,13 +470,18 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 					}
 				}
 			}
-	
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
 											// possible
 				if (sSearchVal || numberOfsPath > 0) {
 					var path = this.getBindingInfo("items").template.getBindingInfo("text").parts[0].path;
 					if (path) {
 						var oUserFilter = new sap.ui.model.Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
+						if (oBinding.getModel() instanceof sap.ui.model.odata.ODataModel && this.getEnableCaseInsensitiveSearch()){
+							 //notice the single quotes wrapping the value from the UI control!
+							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
+							sEncodedString = sEncodedString.toLowerCase();
+							oUserFilter = new sap.ui.model.Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
+						}
 						if (numberOfsPath > 1) {
 							var oFinalFilter = new sap.ui.model.Filter([oUserFilter, this._saveBindInfo], true);
 						} else {
@@ -561,7 +563,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	
 	/**
 	 * Remove the given key from the selected keys cache. This does not deselect the associated item and therefore does
-	 * not cause onItemSetSelected to be called.
+	 * not cause onItemSelectedChange to be called.
 	 * 
 	 * @param sKey The key to remove. If null, then the value of sText will be used as the key.
 	 * @param sText If key is null then this parameter will be used as the key.
@@ -609,7 +611,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 	
 	
-	FacetFilterList.prototype.onItemSetSelected = function(oItem, bSelect) {
+	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
 		
 		// This method override runs when setSelected is called from ListItemBase. Here we update
 		// the selected keys cache based on whether the item is being selected or not. We also
@@ -620,7 +622,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		} else {
 			this._removeSelectedKey(oItem.getKey(), oItem.getText());
 		}
-		sap.m.ListBase.prototype.onItemSetSelected.apply(this, arguments);
+		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 		
 		this._updateSelectAllCheckBox(bSelect);
 		this.setActive(this.getActive() || bSelect);

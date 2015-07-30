@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.Component (asynchronous preloading)
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-preload="sync">
+	</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script>
+
+	QUnit.module("Async (Pre-)Loading", {
+		afterEach: function() {
+			// unload libs andcomponents
+			jQuery.sap.unloadResources('sap.test.lib2.library-preload', true, true, true);
+			jQuery.sap.unloadResources('sap.test.lib3.library-preload', true, true, true);
+			jQuery.sap.unloadResources('sap.test.lib4.library-preload', true, true, true);
+			jQuery.sap.unloadResources('sap/test/mycomp/Component-preload', true, true, true);
+			jQuery.sap.unloadResources('sap/test/mysubcomp/Component-preload', true, true, true);
+			jQuery.sap.registerResourcePath("sap/test");
+			jQuery.sap.registerResourcePath("sap/test/lib2");
+			jQuery.sap.registerResourcePath("sap/test/lib3");
+			jQuery.sap.registerResourcePath("sap/test/lib4");
+			jQuery.sap.registerResourcePath("sap/test/mycomp");
+			jQuery.sap.registerResourcePath("sap/test/mysubcomp");
+			jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
+		}
+	});
+	
+	QUnit.test("dependencies as simple strings", function (assert) {
+
+		var done = assert.async();
+
+		jQuery.sap.registerModulePath("sap.test", "./testdata/components/async")
+		var oResult = sap.ui.component.load({
+			name: "sap.test.mycomp",
+			async: true,
+			asyncHints: {
+				libs: [ 'sap.test.lib2', 'sap.test.lib3' ],
+				components: ['sap.test.mysubcomp']
+			}
+		});
+		assert.ok(oResult instanceof Promise, "load should return a promise");
+		oResult.then(function() {
+			sap.ui.component({name: "sap.test.mycomp"});
+			done();
+		}, function() {
+			assert.ok(false, "loading component failed");
+			done();
+		});
+
+		// TODO spy on requireModule, check that expected modules have been loaded
+	});
+
+	QUnit.test("dependencies with objects names", function (assert) {
+
+		var done = assert.async();
+
+		jQuery.sap.registerModulePath("sap.test", "./testdata/components/async")
+		var oResult = sap.ui.component.load({
+			name: "sap.test.mycomp",
+			async: true,
+			asyncHints: {
+				libs: [ 
+					{
+						name: 'sap.test.lib2'
+					},
+					'sap.test.lib3' 
+				],
+				components: [ {
+					name: 'sap.test.mysubcomp'
+				}]
+			}
+		});
+		assert.ok(oResult instanceof Promise, "load should return a promise");
+		oResult.then(function() {
+			sap.ui.component({name: "sap.test.mycomp"});
+			done();
+		}, function() {
+			assert.ok(false, "loading component failed");
+			done();
+		});
+
+		// TODO spy on requireModule, check that expected modules have been loaded
+	});
+	
+	QUnit.test("dependencies with names and some URLs", function (assert) {
+
+		var done = assert.async();
+
+		// register URls for those entities that are not listed in the hints below
+		jQuery.sap.registerModulePath("sap.test.lib3", "./testdata/components/async/lib3");
+		jQuery.sap.registerModulePath("sap.test.lib4", "./testdata/components/async/lib4");
+		jQuery.sap.registerModulePath("sap.test.mycomp", "./testdata/components/async/mycomp");
+		
+		var oResult = sap.ui.component.load({
+			name: "sap.test.mycomp",
+			async: true,
+			asyncHints: {
+				libs: [ 
+					{
+						name: 'sap.test.lib2',
+						url: './testdata/components/async/lib2'
+					},
+					'sap.test.lib3' 
+				],
+				components: [ {
+					name: 'sap.test.mysubcomp',
+					url: './testdata/components/async/mysubcomp'
+				}]
+			}
+		});
+		
+		assert.ok(oResult instanceof Promise, "load should return a promise");
+		oResult.then(function() {
+			sap.ui.component({name: "sap.test.mycomp"});
+			done();
+		}, function() {
+			assert.ok(false, "loading component failed");
+			done();
+		});
+
+		// TODO spy on requireModule, check that expected modules have been loaded
+	});
+	
+	</script>
+	</head>
+	<body><h1 id="qunit-header">QUnit tests: Components (async)</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+	</body>
+</html>

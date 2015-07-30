@@ -1,44 +1,34 @@
 <mvc:View
-	controllerName="sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection"
-	xmlns:l="sap.ui.layout"
-	xmlns:u="sap.ui.unified"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	class="viewPadding">
-	<l:HorizontalLayout>
+		controllerName="sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection"
+		xmlns:l="sap.ui.layout"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		class="viewPadding">
+	<l:VerticalLayout>
 		<l:content>
-			<l:VerticalLayout>
-				<u:Calendar
+			<u:Calendar
 					id="calendar"
 					select="handleCalendarSelect"
 					intervalSelection="true" />
-				<Button
-					press="handleSelectThisWeek"
-					text="Select this Week" />
-				<Button
-					press="handleSelectWorkWeek"
-					text="Select Work-Week" />
-			</l:VerticalLayout>
-			<l:VerticalLayout>
-				<l:HorizontalLayout>
-					<Label
+			<l:HorizontalLayout>
+				<Label
 						text="Selected From (yyyy-mm-dd):"
 						class="labelMarginLeft" />
-					<Text
+				<Text
 						id="selectedDateFrom"
 						text="No Date Selected"
 						class="labelMarginLeft"/>
-				</l:HorizontalLayout>
-				<l:HorizontalLayout>
-					<Label
+			</l:HorizontalLayout>
+			<l:HorizontalLayout>
+				<Label
 						text="Selected To (yyyy-mm-dd):"
 						class="labelMarginLeft" />
-					<Text
+				<Text
 						id="selectedDateTo"
 						text="No Date Selected"
 						class="labelMarginLeft"/>
-				</l:HorizontalLayout>
-			</l:VerticalLayout>
+			</l:HorizontalLayout>
 		</l:content>
-	</l:HorizontalLayout>
+	</l:VerticalLayout>
 </mvc:View>

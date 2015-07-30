@@ -1,0 +1,16 @@
+{
+	"tests" : [
+		{
+			"control" : "sap.ui.layout.form.ResponsiveGridLayout",
+			"url" : "ResponsiveGridLayout.html",
+			"desc" : "Form using ResponsiveGridLayout",
+			"appComponent" : "CA-UI5-CTR-WDF"
+		},
+		{
+			"control" : "sap.ui.layout.form.ResponsiveLayout",
+			"url" : "ResponsiveLayout.html",
+			"desc" : "Form using ResponsiveLayout",
+			"appComponent" : "CA-UI5-CTR-WDF"
+		}
+	]
+}

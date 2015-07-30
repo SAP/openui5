@@ -8,19 +8,21 @@
 		id="oh1"
 		responsive="true"
 		binding="{/ProductCollection/0}"
+		icon="{ProductPicUrl}"
+		iconAlt="{Name}"
 		intro="{Description}"
 		title="{Name}"
-		number="{Price}"
-		numberUnit="{CurrencyCode}"
 		showMarkers="false"
 		markFlagged="true"
 		markFavorite="true"
-		numberState="Success"
 		backgroundDesign="Translucent">
 		<attributes>
 			<ObjectAttribute
 				title="Manufacturer"
 				text="{SupplierName}"/>
+			<ObjectAttribute
+				title="Dimension per unit"
+				text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		</attributes>
 		<statuses>
 			<ObjectStatus
@@ -28,118 +30,5 @@
 				text="Pending"
 				state="Warning"/>
 		</statuses>
-		<headerContainer>
-			<IconTabBar
-				id="itb1"
-				selectedKey="key3"
-				upperCase="true">
-				<items>
-				<IconTabFilter
-					text="Product Info"
-					count="{Quantity}"
-					key="key1">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Image src="{ProductPicUrl}"/>
-								<Text text="{Width} x {Depth} x {Height} {DimUnit}"/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabFilter
-					text="ATP"
-					tooltip="Available to Promise"
-					count="4"
-					key="key7">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Available to Promise (ATP) Info goes here"/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabSeparator icon=""/>
-				<IconTabFilter
-					text="Sales Orders"
-					count="15"
-					key="key2">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="List of Sales Orders goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabFilter
-					text="Sales Statistics"
-					count="15"
-					key="key3">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Sales Statistics goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabSeparator icon=""/>
-				<IconTabFilter
-					text="BOM"
-					tooltip= "Bill of Material"
-					count="15"
-					key="key4">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Bill of Material (BOM) goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabFilter
-					text="Working Plan"
-					count="20"
-					key="key5">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Working Plan goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-				<IconTabFilter
-					text="Quality"
-					count="6"
-					key="key3">
-					<content>
-						<l:VerticalLayout
-							class="marginVerticalContent"
-							width="100%">
-							<l:content>
-								<Text text="Quality Info content goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
-				</IconTabFilter>
-
-				</items>
-			</IconTabBar>
-		</headerContainer>
 	</ObjectHeader>
 </mvc:View>

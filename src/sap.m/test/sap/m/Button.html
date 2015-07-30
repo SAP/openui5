@@ -124,6 +124,10 @@
 		},
 		resetText : function(oButton) {
 			oButton.setText("Test Button To Show Changes");
+		},
+		toggleTextDirection: function(oButton) {
+			var sTextDir = oButton.getTextDirection();
+			oButton.setTextDirection(sTextDir === "RTL" ? "LTR" : "RTL");
 		}
 	};
 
@@ -317,6 +321,7 @@
 		type: sap.m.ButtonType.Default,
 		text: "Add Icon",
 		icon: sAddIconURI,
+		activeIcon: sChangeIconURI,
 		enabled: true,
 		press : function() {
 			oHelper.addIcon(oButtonBarButtonSample)
@@ -397,12 +402,22 @@
 		}
 	});
 
+	var oButtonBarToggleTextDirection = new sap.m.Button("myButtonBarToggleTextDirection", {
+		type: sap.m.ButtonType.Default,
+		text: "Toggle TextDirection",
+		enabled: true,
+		press: function() {
+			oHelper.toggleTextDirection(oButtonBarButtonSample);
+		}
+	});
+
 	/* ---------------------------------------- */
 
 	var oButtonSample = new sap.m.Button("myButtonSample", {
 		type: sap.m.ButtonType.Default,
 		text: "Test Button To Show Changes",
 		enabled: true,
+		tooltip: "tooltip",
 		press : function() {
 			oHelper.alert("event: 'press' on " + oButtonSample)
 		}
@@ -628,6 +643,15 @@
 		}
 	});
 
+	var oButtonToggleTextDirection = new sap.m.Button("myButtonToggleTextDirection", {
+		type: sap.m.ButtonType.Default,
+		text: "Toggle TextDirection",
+		enabled: true,
+		press: function() {
+			oHelper.toggleTextDirection(oButtonSample);
+		}
+	});
+
 	oPage1.addContent(oBar2)
 	      .addContent(new sap.ui.core.HTML("myEmptyLine1", {content: "<br>"}))
 				.addContent(new sap.ui.core.HTML("myHtmlBarDefault", {content: ""}))
@@ -678,6 +702,8 @@
 				.addContent(oButtonBarChangeText)
 				.addContent(new sap.ui.core.HTML("myHtmlBarResetText", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBarResetText)
+				.addContent(new sap.ui.core.HTML("myHtmlBarToggleTextDirection", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonBarToggleTextDirection)
 				.addContent(new sap.ui.core.HTML("myEmptyLine2", {content: "<br><br>"}))
 				.addContent(new sap.ui.core.HTML("myDividerLine1", {content: "<br><hr style='border:solid #000000; border-width: 5px 0 0;'>"}))
 				.addContent(oButtonSample)
@@ -729,7 +755,9 @@
 				.addContent(new sap.ui.core.HTML("myHtmlChangeText", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonChangeText)
 				.addContent(new sap.ui.core.HTML("myHtmlResetText", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
-				.addContent(oButtonResetText);
+				.addContent(oButtonResetText)
+				.addContent(new sap.ui.core.HTML("myHtmlToggleTextDirection", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonToggleTextDirection);
 
 	oApp.addPage(oPage1);
 	oApp.placeAt("body");

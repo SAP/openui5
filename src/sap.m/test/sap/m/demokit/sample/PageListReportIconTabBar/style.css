@@ -1,61 +1,11 @@
-.sapMSampleFioriListReportIconTabBar > .sapMFlexItem:nth-child(1) {
-	-webkit-flex: none;
-	-ms-flex: none;
-	flex: none;
+.sapUiMedia-Std-Desktop .sapMSampleFioriListReportIconTabBar .sapMITBContent {
+	padding: 1rem 2rem;
 }
 
-.sapMSampleFioriListReportIconTabBar > .sapMFlexItem:nth-child(2) {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
-	display: flex;
+.sapUiMedia-Std-Tablet .sapMSampleFioriListReportIconTabBar .sapMITBContent {
+	padding: 1rem;
 }
 
-.sapMSampleFioriListReportIconTabBar .sapMITB {
-	box-sizing: border-box;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-orient: horizontal;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
-	flex-direction: column;
-	-webkit-box-flex: 1;
-	-webkit-flex: auto;
-	-ms-flex: auto;
-	flex: auto;
-	padding: 0 2rem 0.5rem;
-}
-
-.sapMSampleFioriListReportIconTabBar .sapMITB > .sapMITBContainerContent {
-	border-bottom: none;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-flex: 1; 
-	-webkit-flex: auto;
-	-ms-flex: auto;
-	flex: auto;
-}
-
-.sapMSampleFioriListReportIconTabBar .sapMITB .sapMITBContent {
-	background-color: transparent;
-	-webkit-box-flex: 1;
-	-webkit-flex: auto;
-	-ms-flex: auto;
-	flex: auto;
-	padding: 0;
-	width: 100%;
-}
-
-.sapMSampleFioriListReportIconTabBarOverflow .sapMPageScroll {
-	overflow: auto;
-}
-
-.sapMSampleFioriListReportIconTabBar .sapMITB > .sapMITH {
-	-webkit-flex: none;
-	-ms-flex: none;
-	flex: none;
+.sapUiMedia-Std-Phone .sapMSampleFioriListReportIconTabBar .sapMITBContent {
+	padding: 1rem 0;
 }

@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Title - sap.m</title>
+		<script src="../../../resources/sap-ui-core.js"
+				type="text/javascript" id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		
+		<style>
+			body.Highlight .sapMTitle {
+				background-color: red;
+			}
+		</style>
+		
+		<script>
+		
+		var idCounter = 0;
+		var oData = {
+		     text: "This is the text of the title.",
+		     width: "",
+		     visible: true,
+		     align: "Initial",
+		     level: "Auto"
+		}
+		
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oData);
+		sap.ui.getCore().setModel(oModel);
+		
+		function createSetting(sLabel, oDefaultValue, aValues, fHandler){
+			var sDom, fHandle;
+			var sId = "setting"+(idCounter++);
+			if(!aValues || aValues.length == 0){
+				if(typeof oDefaultValue == "string"){
+					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'></input>";
+					fHandle = function(oEvent){
+						fHandler(oEvent, jQuery(oEvent.target).val());
+					};
+				}else if(typeof oDefaultValue == "number"){
+					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'></input>";
+					fHandle = function(oEvent){
+						fHandler(oEvent, parseInt(jQuery(oEvent.target).val()));
+					};
+				}else if(typeof oDefaultValue == "boolean"){
+					sDom = "<input type='checkbox' id='"+sId+"'"+(oDefaultValue ? " checked='"+oDefaultValue+"'" : "")+"></input>";
+					fHandle = function(oEvent){
+						fHandler(oEvent, jQuery(oEvent.target).is(":checked"));
+					}
+				}
+			}else{
+				sDom = "<select id='"+sId+"'>";
+				for(var i=0; i<aValues.length; i++){
+					sDom += "<option value='"+aValues[i]+"'" + (aValues[i] == oDefaultValue ? " selected='selected'" : "") + ">" + aValues[i] + "</option>";
+				}
+				sDom += "</select>";
+				fHandle = function(oEvent){
+					fHandler(oEvent, jQuery(oEvent.target).find(":selected").attr("value"));
+				}
+			}
+			
+			if(!sDom){
+				return;
+			}
+			
+			jQuery.sap.byId("settings").append("<div style='margin-top:5px;'><div style='display:inline-block;width:100px;'>" + sLabel + ":</div>" + sDom + "</div>");
+			
+			jQuery.sap.byId(sId).change(fHandle);
+		}
+		
+		
+		jQuery(function(){
+			
+			for(var level in sap.ui.core.TitleLevel){
+				jQuery("#content").append("<hr>");
+				jQuery("#content").append("<div id='content"+idCounter+"' ></div>");
+				var title = new sap.m.Title("title"+idCounter, {
+					titleStyle: level,
+					tooltip: "Title with style '" + level + "'",
+					text: "{/text}",
+					width: "{/width}",
+					visible: "{/visible}",
+					textAlign: "{/align}",
+					level: "{/level}"
+				});
+				title.placeAt("content"+idCounter);
+				idCounter++;
+			}
+			
+			createSetting("Text", oData.text, null, function(oEvent, val){
+				oData.text = val;
+				oModel.setData(oData);
+			});
+			createSetting("Width", oData.width, null, function(oEvent, val){
+				oData.width = val;
+				oModel.setData(oData);
+			});
+			createSetting("Visible", oData.visible, null, function(oEvent, val){
+				oData.visible = val;
+				oModel.setData(oData);
+			});
+			createSetting("Align", oData.align, ["Begin", "End", "Left", "Right", "Center", "Initial"], function(oEvent, val){
+				oData.align = val;
+				oModel.setData(oData);
+			});
+			createSetting("Level", oData.style, ["Auto", "H1", "H2", "H3", "H4", "H5", "H6"], function(oEvent, val){
+				oData.level = val;
+				oModel.setData(oData);
+			});
+			createSetting("Highlight", false, null, function(oEvent, val){
+				jQuery("body").toggleClass("Highlight", val);
+			});
+			createSetting("Bar Context", false, null, function(oEvent, val){
+				jQuery("#content").children().toggleClass("sapMIBar-CTX", val);
+			});
+			createSetting("ToolBar Context", false, null, function(oEvent, val){
+				jQuery("#content").children().toggleClass("sapMTB-Transparent-CTX", val);
+			});
+		});
+		
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.m.Title</h1>
+		<div id="settings"></div>
+		<hr>
+		<div id="content"></div>
+	</body>
+</html>

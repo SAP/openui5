@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>ResponsiveLayout ACC Test - sap.ui.layout</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
+	<script id="sap-ui-bootstrap" type="text/javascript"
+	        data-sap-ui-theme="sap_bluecrystal"
+	        data-sap-ui-libs="sap.ui.layout, sap.m"
+	        src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script type="text/javascript">
+
+		var oSimpleForm = new sap.ui.layout.form.SimpleForm("SF1",{
+			minWidth : 1024,
+			maxContainerCols: 2,
+			editable: true,
+			title: new sap.ui.core.Title({text: "Customer data"}),
+			content:[
+				new sap.ui.core.Title({text: "contact data"}),
+				new sap.m.Label({text:"Name",}),
+				new sap.m.Input({value: "Mustermann"}),
+				new sap.m.Label({text:"First name"}),
+				new sap.m.Input({value: "Max"}),
+				new sap.m.Label({text:"Date of birth"}),
+				new sap.m.DatePicker(),
+				new sap.m.Label({text: "Gender"}),
+				new sap.m.RadioButtonGroup({
+					columns: 2,
+					buttons: [
+						new sap.m.RadioButton({text: "male", selected: true}),
+						new sap.m.RadioButton({text: "female", selected: false})
+						]
+					}),
+				new sap.m.Label({text: "Info"}),
+				new sap.m.Text({text:"additional information"}),
+				new sap.ui.core.Title({text: "Address"}),
+				new sap.m.Label({text: "Street / Housenumber"}),
+				new sap.m.Input({placeholder: "Street"}),
+				new sap.m.Input({placeholder: "Number"}),
+				new sap.m.Label({text: "City"}),
+				new sap.m.Input(),
+				new sap.m.Label({text: "Post code"}),
+				new sap.m.Input(),
+				new sap.m.Label({text:"Country"}),
+				new sap.m.Select({
+								items: [new sap.ui.core.Item({text: "Germany"}),
+								        new sap.ui.core.Item({text: "USA"}),
+								        new sap.ui.core.Item({text: "England"})]
+							})
+				]
+		});
+
+		oSimpleForm.placeAt("content");
+
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+
+	<h1 id="header">Test Page for <code>sap.ui.layout.form.ResponsiveLayout</code></h1>
+
+	<div id="button"></div>
+	<br>
+	<div id="content"></div>
+
+</body>
+</html>

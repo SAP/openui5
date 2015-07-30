@@ -3,8 +3,7 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
@@ -30,7 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *     }
 	 * }
 	 *
-	 * @name sap.ui.base.Exception
+	 * @alias sap.ui.base.Exception
 	 */
 	var Exception = function(message) {
 		this.name = "Exception";

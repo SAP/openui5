@@ -1,0 +1,44 @@
+<html>
+ <head>
+  <title>QUnit TestSuite for sap.ui.table</title>
+  <script id="sap-ui-bootstrap" src='../../../../../resources/sap-ui-core.js'> </script>
+  <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+  <script language="javascript">
+
+  /**
+   * Add test pages to this test suite function.
+   * Please order alphabetically
+   */
+  function suite() {
+    var suite = new parent.jsUnitTestSuite();
+    var contextPath = "/" + window.location.pathname.split("/")[1];
+
+    var isSupported = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari || sap.ui.Device.browser.firefox;
+
+    if(isSupported){
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayRegistry.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Preloader.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Overlay.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/AggregationScrolling.qunit.html");
+      
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ManagedObjectObserver.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ControlObserver.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DOMUtil.qunit.html");
+     
+
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Plugin.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Selection.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/DragDrop.qunit.html");
+
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/FormInDesignTime.qunit.html");
+    }
+
+    return suite;
+  }
+
+  </script>
+ </head>
+ <body>
+ </body>
+</html>

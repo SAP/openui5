@@ -1,13 +1,44 @@
-sap.ui.controller("sap.m.sample.ListDeletion.List", {
+// require mock server implementation
+sap.ui.define(['./MockServer','sap/ui/core/mvc/Controller','sap/ui/model/odata/ODataModel'],
+	function(MockServer, Controller, ODataModel) {
+	"use strict";
 
-	onInit : function (evt) {
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		this.getView().setModel(oModel);
-	},
+	var ListController = Controller.extend("sap.m.sample.ListDeletion.List", {
 
-	handleDelete: function(evt) {
-		evt.getSource().removeItem(evt.getParameter("listItem"));
-	}
+		onInit: function(oEvent) {
+
+			// NOTE TO DEVELOPERS: You do not need to reproduce this following section
+			// It is just so we can simulate 1000ms delay from the fictional OData service
+			MockServer.start();
+
+			// create and set ODATA Model
+			this.oProductModel = new ODataModel("/mockserver", true);
+			this.getView().setModel(this.oProductModel);
+		},
+
+		onExit : function() {
+			// NOTE TO DEVELOPERS: You do not need to reproduce this following section
+			// It stops the fictional OData service generated onInit
+			MockServer.stop();
+
+			// destroy the model and clear the model data
+			this.oProductModel.destroy();
+		},
+
+		handleDelete: function(oEvent) {
+			var oList = oEvent.getSource(),
+				oItem = oEvent.getParameter("listItem"),
+				sPath = oItem.getBindingContext().getPath();
+
+			// after deletion put the focus back to the list
+			oList.attachEventOnce("updateFinished", oList.focus, oList);
+
+			// send a delete request to the odata service
+			this.oProductModel.remove(sPath);
+		},
+	});
+
+
+	return ListController;
 
 });

@@ -33,7 +33,7 @@
 				{firstName:"Steave", lastName:"Ander", gender:"male"},
 				{firstName:"Michael", lastName:"Spring", gender:"male"},
 				{firstName:"Marc", lastName:"Green", gender:"male"},
-				{firstName:"Frank", lastName:"Wallace", gender:"male"}
+				{firstName:"Frank", lastName:"Wallace", gender: null}
 			],
 			teamMembersNew:[
 				{firstName:"Andreas", lastName:"Klark", gender:"male"},
@@ -43,6 +43,13 @@
 				{firstName:"Michael", lastName:"Spring", gender:"male"},
 				{firstName:"Marc", lastName:"Green", gender:"male"},
 				{firstName:"Peter", lastName:"Franklin", gender:"male"}
+			],
+			filterData:[
+				{form:"Original", string:"ẛ̣", representation:"\\u1E9B\\u0323"},
+				{form:"NFC", string:"ẛ̣", representation:"\\u1E9B\\u0323"},
+				{form:"NFD", string:"ẛ̣", representation:"\\u017F\\u0323\\u0307"},
+				{form:"NFKC", string:"ṩ", representation:"\\u1E69"},
+				{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307"},
 			],
 			sortData:[
 				{word: "Fuß"},
@@ -55,8 +62,8 @@
 			"root":[
 				{
 					"name": "item1",
-					"nodes": [ 
-						{ 
+					"nodes": [
+						{
 							"name": "subitem1",
 							"nodes": [
 								{ "name": "subsubitem1" },
@@ -78,7 +85,12 @@
 						{ "name": "subitem3" }
 					]
 				}
-			]
+			],
+			map : {
+				first : {lastName : "Dente", name : "Al", checked : true, linkText : "www.sap.com", href : "http://www.sap.com", rating : 4},
+				second : {lastName : "Friese", name : "Andy", checked : true, linkText : "www.spiegel.de", href : "http://www.spiegel.de", rating : 2},
+				third : {lastName : "Mann", name : "Anita", checked : false, linkText : "www.kicker.de", href : "http://www.kicker.de", rating : 3}
+			}
 		};
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testData);
@@ -95,15 +107,19 @@
 			bindings[0] = oModel.bindList(sPath, oContext);
 		}
 	};
-	
+
 	function callBackOnChange(){
 		ok(true,"ChangeEvent fired");
 	};
-	
-	test("ListBinding getContexts", function(){
-		setup();
-		createListBinding("/teamMembers", "");
 
+	module("Listbinding getContexts", {
+		beforeEach: function() {
+			setup();
+			createListBinding("/teamMembers", "");
+		}
+	});
+
+	test("method", function(){
 		equal(bindings.length, 1, "amount of ListBindings");
 		var listBinding = bindings[0];
 		equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
@@ -117,20 +133,7 @@
 
 	});
 
-	test("ListBinding refresh", 3, function() {
-		setup();
-		var oBinding = oModel.bindList("/teamMembers");
-		equal(oBinding.getLength(), 7, "ListBinding returns correct length");
-		oBinding.attachChange(function() {
-			ok("ListBinding fires change event when changed");
-		});
-		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
-		oBinding.refresh();
-		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
-	});
-
-	test("ListBinding getContexts with wrong path", function(){
-		setup();
+	test("wrong path", function(){
 		createListBinding("/xyz", "");
 		ok(bindings);
 		equal(bindings.length, 1, "amount of ListBindings");
@@ -141,8 +144,7 @@
 		equal(listBinding.getContexts().length, 0, "ListBinding get Contexts with wrong path");
 	});
 
-	test("ListBinding getContexts with wrong path and checkUpdate", function(){
-		setup();
+	test("wrong path and checkUpdate", function(){
 		createListBinding("teamMembers", "");
 
 		equal(bindings.length, 1, "amount of ListBindings");
@@ -159,48 +161,116 @@
 		});
 	});
 
-	test("ListBinding set new data with no merge and check update and getContexts test", function(){
-		setup();
-		createListBinding("/teamMembers", "");
+	test("getCurrentContexts", function(){
+		var listBinding = bindings[0],
+			contexts = listBinding.getContexts(0,5),
+			currentContexts = listBinding.getCurrentContexts();
 
-		equal(bindings.length, 1, "amount of ListBindings");
-		var listBinding = bindings[0];
-		listBinding.attachChange(fnFunc);
-		function fnFunc(){
-			equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
-			equal(listBinding.getContexts().length, 0, "ListBinding contexts length");
-			equal(listBinding.getModel().oData, newData, "ListBinding model");
-			equal(listBinding.getModel().getProperty("/test/0/firstName"), "Andreas", "model new property value");
-			listBinding.detachChange(fnFunc);
-		}
-		equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
-		ok(listBinding.getModel() === oModel, "ListBinding model");
-		// does not work...recursion because bining is set on model
-		//equal(listBinding.getModel(), oModel, "ListBinding model");
-		var newData = {
-			test:[
-				{ firstName:"Andreas", lastName:"Klark", gender:"male" }
-			]
-		};
-		listBinding.getModel().setData(newData, false);
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/" + i, "ListBinding context");
+		});
 	});
 
-	test("JSONListBinding getLength", function(){
-		setup();
-		createListBinding("/teamMembers");
-
-		equal(bindings.length, 1, "amount of ListBindings");
+	test("extended change detection", function(){
 		var listBinding = bindings[0];
-		equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
-		equal(listBinding.getModel(), oModel, "ListBinding model");
+		listBinding.enableExtendedChangeDetection();
 
-		equal(listBinding.getLength(), testData.teamMembers.length, "ListBinding length");
+		var	contexts = listBinding.getContexts(0,5),
+			currentContexts = listBinding.getCurrentContexts();
 
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/" + i, "ListBinding context");
+		});
+
+		testData.teamMembers[4].gender = "female";
+		listBinding.checkUpdate();
+
+		currentContexts = listBinding.getCurrentContexts();
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/" + i, "ListBinding context");
+		});
+
+		contexts = listBinding.getContexts(0,5);
+		equal(contexts.diff.length, 2, "Delta information is available");
+	});
+
+	module("Listbinding refresh", {
+		beforeEach: function() {
+			setup();
+			createListBinding("/teamMembers", "");
+			this.oBinding = oModel.bindList("/teamMembers");
+			this.oBinding.initialize();
+		},
+		afterEach: function() {
+			this.oBinding.destroy();
+		}
+	});
+
+	test("method", 3, function() {
+		equal(this.oBinding.getLength(), 7, "ListBinding returns correct length");
+		this.oBinding.attachChange(function() {
+			ok(true, "ListBinding fires change event when changed");
+		});
+		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
+		this.oBinding.refresh();
+		equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
+	});
+
+	test("getContexts", 1, function() {
+		var aContexts = this.oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		this.oBinding.attachChange(function() {
+			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+		});
+		testData.teamMembers[6].firstName = "Jonas";
+		this.oBinding.refresh();
+	});
+
+	test("extended change detection and getContexts", 1, function() {
+		this.oBinding.enableExtendedChangeDetection();
+		var aContexts = this.oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		this.oBinding.attachChange(function() {
+			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+		});
+		testData.teamMembers[6].firstName = "Jonas";
+		this.oBinding.refresh();
+	});
+
+	test("getContexts und length change", 3, function() {
+		var aContexts = this.oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		this.oBinding.attachChange(function() {
+			ok(true, "ListBinding fires change event, as length has changed");
+		});
+		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
+		this.oBinding.refresh();
+		equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
+	});
+
+	test("extended change detection, getContexts und length change", 3, function() {
+		this.oBinding.enableExtendedChangeDetection();
+		var aContexts = this.oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		this.oBinding.attachChange(function() {
+			ok(true, "ListBinding fires change event, as length has changed");
+		});
+		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
+		this.oBinding.refresh();
+		equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
+	});
+
+	module("Listbinding sort", {
+		beforeEach: function() {
+			setup();
+		}
 	});
 
 	// should also work with other ListBinding implementations
-	test("ListBinding sort", function(){
-		setup();
+	test("method", function(){
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -208,7 +278,7 @@
 		equal(listBinding.oList[0].firstName, "Andreas", "ListBinding before sort");
 		equal(listBinding.oList[1].firstName, "Peter", "ListBinding before sort");
 		equal(listBinding.oList[2].firstName, "Gina", "ListBinding before sort");
-		equal(listBinding.oList[3].firstName, "Steave", "ListBinding before sort");	
+		equal(listBinding.oList[3].firstName, "Steave", "ListBinding before sort");
 		equal(listBinding.oList[4].firstName, "Michael", "ListBinding before sort");
 		equal(listBinding.oList[5].firstName, "Marc", "ListBinding before sort");
 		equal(listBinding.oList[6].firstName, "Frank", "ListBinding before sort");
@@ -246,21 +316,19 @@
 		equal(sorted[4], "Gina", "ListBinding after sort");
 		equal(sorted[5], "Frank", "ListBinding after sort");
 		equal(sorted[6], "Andreas", "ListBinding after sort");
-		
+
 	});
 
-	test("ListBinding sort invalid binding", function(){
-		setup();
+	test("invalid binding", function(){
 		createListBinding("/unknown");
 
 		var listBinding = bindings[0];
 		listBinding.sort();
 		expect(0);
 	});
-	
+
 	// should also work with other ListBinding implementations
-	test("ListBinding locale sort", function(){
-		setup();
+	test("locale sort", function(){
 		createListBinding("/sortData");
 
 		var listBinding = bindings[0];
@@ -268,7 +336,7 @@
 		var oSorter = new sap.ui.model.Sorter("word", false);
 		listBinding.sort(oSorter);
 
-		var sortedContexts = listBinding.getContexts();		
+		var sortedContexts = listBinding.getContexts();
 		var sorted = [];
 		jQuery(sortedContexts).each(function(i, context){
 			sorted[i] = oModel.getProperty("word", context);
@@ -290,10 +358,9 @@
 
 	});
 
-	test("ListBinding multi sort", function(){
-		setup();
+	test("multi sort", function(){
 		createListBinding("/teamMembersNew");
-		
+
 		var listBinding = bindings[0];
 
 		var oSorter = [
@@ -415,8 +482,7 @@
 	});
 
 	// test for custom compare function
-	test("ListBinding custom sort", function(){
-		setup();
+	test("custom sort", function(){
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -430,11 +496,11 @@
 			if (a > b) {
 				return 1;
 			}
-			return 0;	
+			return 0;
 		};
 		listBinding.sort(oSorter);
 
-		var sortedContexts = listBinding.getContexts();		
+		var sortedContexts = listBinding.getContexts();
 		var sorted = [];
 		jQuery(sortedContexts).each(function(i, context){
 			sorted[i] = oModel.getProperty("firstName",context);
@@ -449,8 +515,7 @@
 		equal(sorted[6], "Steave", "ListBinding after sort");
 	});
 
-	test("ListBinding sort change event test", function(){
-		setup();
+	test("change event test", function(){
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -472,14 +537,20 @@
 		ok(attach, "change event fired with sorter");
 	});
 
-	test("ListBinding filter", function(){
-		setup();
+	module("Listbinding filter", {
+		beforeEach: function() {
+			setup();
+			createListBinding("/teamMembers", "");
+		}
+	});
+
+	test("method", function(){
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
 
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
+		var oFilter = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.EQ, null);
 		listBinding.filter([oFilter]);
 		var filteredContexts = listBinding.getContexts();
 		var filtered = [];
@@ -487,7 +558,7 @@
 			filtered[i] = oModel.getProperty(context.getPath());
 		});
 		equal(filtered.length, 1, "ListBinding filtered length");
-		equal(filtered[0].firstName, "Peter", "ListBinding filter value");
+		equal(filtered[0].gender, null, "ListBinding filter value");
 
 		// NE, contains
 		oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.NE, "Peter");
@@ -529,8 +600,7 @@
 
 	});
 
-	test("ListBinding filter invalid binding", function(){
-		setup();
+	test("invalid binding", function(){
 		createListBinding("/unknown");
 
 		var listBinding = bindings[0];
@@ -538,8 +608,7 @@
 		expect(0);
 	});
 
-	test("ListBinding filter (without array)", function(){
-		setup();
+	test("without array", function(){
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -569,12 +638,11 @@
 
 	});
 
-	test("ListBinding complex filters", function(){
-		setup();
+	test("complex filters", function(){
 		createListBinding("/teamMembers");
-		
-		var listBinding = bindings[0];		
-		
+
+		var listBinding = bindings[0];
+
 		//check OR
 		var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
 		var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Frank");
@@ -587,7 +655,7 @@
 		equal(filtered.length, 2, "ListBinding filtered length");
 		equal(filtered[0].firstName, "Peter", "ListBinding filter value");
 		equal(filtered[1].firstName, "Frank", "ListBinding filter value");
-			
+
 		//check OR & AND
 		var oFilter3 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Wallace");
 		var oFilter4 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Rush");
@@ -602,20 +670,19 @@
 
 	});
 
-	test("ListBinding multi filters", function(){
-		setup();
+	test("multi filters", function(){
 		createListBinding("/teamMembers");
-		
-		var listBinding = bindings[0];		
-		
-		//check (gender=male AND (lastName = Green OR (firstName = Peter OR firstName = Frank OR firstName = Gina)))
+
+		var listBinding = bindings[0];
+
+		//check (gender != female AND (lastName = Green OR (firstName = Peter OR firstName = Frank OR firstName = Gina)))
 		var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
 		var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Frank");
 		var oFilter3 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Gina");
 		var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
 		var oFilter4 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Green");
 		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter4], false);
-		var oFilter5 = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.EQ, "male");
+		var oFilter5 = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.NE, "female");
 		var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
 		listBinding.filter(oMultiFilter3);
 		var filteredContexts = listBinding.getContexts();
@@ -629,9 +696,27 @@
 		equal(filtered[2].firstName, "Frank", "ListBinding filter value");
 
 	});
-	
-	test("ListBinding filter change event test", function(){
-		setup();
+
+	test("test function", function() {
+		createListBinding("/teamMembers");
+
+		var listBinding = bindings[0];
+
+		var oFilter = new sap.ui.model.Filter("firstName", function(sValue) {
+			return (sValue.indexOf("A") !== -1 && sValue.indexOf("G") === 0);
+		});
+
+		listBinding.filter(oFilter);
+		var filteredContexts = listBinding.getContexts();
+		var filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		equal(filtered.length, 1, "ListBinding filtered length");
+		equal(filtered[0].firstName, "Gina", "ListBinding filter value");
+	});
+
+	test("change event", function(){
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -654,8 +739,55 @@
 		ok(attach, "change event fired with filter");
 	});
 
-	test("ListBinding nested array structure", function(){
-		setup();
+	// only relevant for browsers supporting this
+	if (String.prototype.normalize) {
+		test("normalization", function() {
+			createListBinding("/filterData");
+
+			var mFilters = {}, listBinding = bindings[0];
+
+			mFilters["NFC"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u1E9B\u0323");
+			mFilters["NFD"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u017F\u0323\u0307");
+			// "NFKC" and "NFKD" are not supported for filter
+
+			function fnTest(sProp, sVal) {
+				listBinding.filter(sVal);
+				var filteredContexts = listBinding.getContexts();
+				var filtered = [];
+				jQuery(filteredContexts).each(function(i, context){
+					filtered[i] = oModel.getProperty(context.getPath());
+				});
+				equal(filtered.length, 3, "Filter working for " + sProp);
+			}
+
+			jQuery.each(mFilters, fnTest);
+		});
+	}
+
+	module("Listbinding general", {
+		beforeEach: function() {
+			setup();
+		}
+	});
+
+	test("with map, not array", function(){
+		var aKeysInMap = ["first", "second", "third"];
+		createListBinding("/map");
+
+		equal(bindings.length, 1, "amount of ListBindings");
+		var listBinding = bindings[0];
+		equal(listBinding.getPath(), "/map", "ListBinding path");
+		equal(listBinding.getModel(), oModel, "ListBinding model");
+		equal(listBinding.getLength(), 3, "ListBinding getLength");
+		equal(listBinding.isLengthFinal(), true, "ListBinding isLengthFinal");
+
+		jQuery(listBinding.getContexts()).each(function(i, context){
+			equal(context.getPath(), "/map/" + aKeysInMap[i], "ListBinding context");
+		});
+
+	});
+
+	test("nested array structure", function(){
 		createListBinding("/root");
 		var binding = bindings[0];
 		var contexts = binding.getContexts();
@@ -667,15 +799,14 @@
 		ok(oModel.getProperty("/root/0/nodes/1").collapsed);
 		equal(oModel.getProperty("name",contexts[1]), "item2");
 		equal(oModel.getProperty("nodes",contexts[1]).length, 1);
-		equal(oModel.getProperty("nodes/0",contexts[1]).name, "subitem3");		
+		equal(oModel.getProperty("nodes/0",contexts[1]).name, "subitem3");
 	});
 
-	test("ListBinding nested array structure", function(){
-		setup();
+	test("nested array structure", function(){
 		bindings[0] = oModel.bindList("/root");
 		bindings[1] = oModel.bindList("/root/0/nodes");
 		bindings[2] = oModel.bindList("/root/1/nodes");
-		
+
 		var binding = bindings[1];
 		var contexts = binding.getContexts();
 		ok(jQuery.isArray(contexts));
@@ -684,7 +815,7 @@
 		equal(oModel.getProperty("name",contexts[1]), "subitem2");
 
 		binding = bindings[2];
-		contexts = binding.getContexts();		
+		contexts = binding.getContexts();
 		equal(contexts.length, 1);
 		equal(oModel.getProperty("name", contexts[0]), "subitem3");
 
@@ -698,8 +829,7 @@
 		ok(jQuery.sap.equal(bindings[0].oList[1].nodes[0], bindings[2].oList[0]));
 	});
 
-	test("ListBinding getDistinctValues", function(){
-		setup();
+	test("getDistinctValues", function(){
 		createListBinding("/teamMembers");
 		var binding = bindings[0],
 			distinctValues;
@@ -712,13 +842,14 @@
 
 		distinctValues = binding.getDistinctValues("gender");
 		ok(jQuery.isArray(distinctValues), "Result is an array");
-		equal(distinctValues.length, 2, "Number of distinct values");
+		equal(distinctValues.length, 3, "Number of distinct values");
 		equal(distinctValues[0], "male", "Distinct value content");
 		equal(distinctValues[1], "female", "Distinct value content");
+		equal(distinctValues[2], null, "Distinct value content");
 
 	});
 
-	test("ListBinding setSizeLimit", function(){
+	test("setSizeLimit", function(){
 		var aManyItems = [];
 		for (var i = 0; i < 200; i++) {
 			aManyItems.push(i);
@@ -735,13 +866,60 @@
 		equal(aContext.length, 150, "Custom size limit 150");
 	});
 
-	test("ListBinding setData delta", function() {
-		var oModel = new sap.ui.model.json.JSONModel(testData.teamMembers);
-		var oListBinding = oModel.bindList("/");
-		oListBinding.bUseExtendedChangeDetection = true;
-		var aContexts = oListBinding.getContexts(0, 10);
-		oModel.setData(testData.teamMembersNew);
-		aContexts = oListBinding.getContexts(0, 10);
+	test("getLength", function(){
+		createListBinding("/teamMembers");
+
+		equal(bindings.length, 1, "amount of ListBindings");
+		var listBinding = bindings[0];
+		equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
+		equal(listBinding.getModel(), oModel, "ListBinding model");
+
+		equal(listBinding.getLength(), testData.teamMembers.length, "ListBinding length");
+
+	});
+
+	test("set new data with no merge and check update and getContexts test", function(){
+		createListBinding("/teamMembers", "");
+
+		equal(bindings.length, 1, "amount of ListBindings");
+		var listBinding = bindings[0];
+		listBinding.attachChange(fnFunc);
+		function fnFunc(){
+			equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
+			equal(listBinding.getContexts().length, 0, "ListBinding contexts length");
+			equal(listBinding.getModel().oData, newData, "ListBinding model");
+			equal(listBinding.getModel().getProperty("/test/0/firstName"), "Andreas", "model new property value");
+			listBinding.detachChange(fnFunc);
+		}
+		equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
+		ok(listBinding.getModel() === oModel, "ListBinding model");
+		// does not work...recursion because bining is set on model
+		//equal(listBinding.getModel(), oModel, "ListBinding model");
+		var newData = {
+			test:[
+				{ firstName:"Andreas", lastName:"Klark", gender:"male" }
+			]
+		};
+		listBinding.getModel().setData(newData, false);
+	});
+
+	module("Listbinding diff calculation", {
+		beforeEach: function() {
+			setup();
+			this.oModel = new sap.ui.model.json.JSONModel(testData.teamMembers);
+			this.oListBinding = this.oModel.bindList("/");
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			this.oListBinding.destroy();
+		}
+	});
+
+	test("setData delta", function() {
+		this.oListBinding.bUseExtendedChangeDetection = true;
+		var aContexts = this.oListBinding.getContexts(0, 10);
+		this.oModel.setData(testData.teamMembersNew);
+		aContexts = this.oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [
 			{ index : 1, type : "delete" },
 			{ index : 3, type : "insert" },
@@ -750,28 +928,26 @@
 		], "Replace new data");
 	});
 
-	test("ListBinding setProperty delta", function() {
-		var oModel = new sap.ui.model.json.JSONModel(testData.teamMembers);
-		var oListBinding = oModel.bindList("/");
-		oListBinding.bUseExtendedChangeDetection = true;
-		var aContexts = oListBinding.getContexts(0, 10);
-		oModel.setProperty("/4/firstName", "Paul");
-		aContexts = oListBinding.getContexts(0, 10);
+	test("setProperty delta", function() {
+		this.oListBinding.bUseExtendedChangeDetection = true;
+		var aContexts = this.oListBinding.getContexts(0, 10);
+		this.oModel.setProperty("/4/firstName", "Paul");
+		aContexts = this.oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [
 			{ index : 4, type : "delete" },
 			{ index : 4, type : "insert" }
 		], "Replace one property");
-		oModel.setProperty("/4", {
+		this.oModel.setProperty("/4", {
 			firstName : "Peter",
 			lastName : "Johnson",
 			gender : "male"
 		});
-		aContexts = oListBinding.getContexts(0, 10);
+		aContexts = this.oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [
 			{ index : 4, type : "delete" },
 			{ index : 4, type : "insert" }
 		], "Replace whole entry");
-		aContexts = oListBinding.getContexts(0, 10);
+		aContexts = this.oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [], "Nothing changed");
 	});
 

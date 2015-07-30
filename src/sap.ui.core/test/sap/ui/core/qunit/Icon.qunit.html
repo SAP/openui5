@@ -3,14 +3,14 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for Icon control</title>
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.core" >
 		</script>
-    
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -19,12 +19,12 @@
 		<script language="javascript">
 			jQuery.sap.require("sap.ui.core.Icon");
 			jQuery.sap.require("sap.ui.core.IconPool");
-			
+
 			QUnit.config.autostart = false;
 			jQuery(document).ready(function() {
 				QUnit.start();
 			});
-			
+
 			var oIcon = new sap.ui.core.Icon("icon1", {
 				src: sap.ui.core.IconPool.getIconURI("wrench"),
 				size: "20px",
@@ -37,9 +37,9 @@
 				width: "24px",
 				height: "24px"
 			}), $icon, $dummy;
-			
+
 			oIcon.placeAt("uiAreaA");
-			
+
 			module("Icon Control");
 
 			test("Initial Check", function() {
@@ -47,14 +47,14 @@
 				$icon = oIcon.$();
 				$dummy = jQuery.sap.byId("dummy");
 			});
-			
+
 			asyncTest("Loading font file", function(){
 				setTimeout(function(){
 					notEqual(jQuery.sap.byId("icon1").height(), 0, "Font file is loaded successfully");
 					start();
 				}, 500);
 			});
-			
+
 			test("Normal state properties", function(){
 				$dummy.css({
 					"color": "#666666",
@@ -66,8 +66,8 @@
 				equal($icon.css("color"), $dummy.css("color"));
 				equal($icon.css("background-color"), $dummy.css("background-color"));
 			});
-			
-			
+
+
 			test("Active color", function(){
 				$dummy.css("color", "#222222");
 				$dummy.css("background-color", "#999999");
@@ -76,8 +76,8 @@
 				equal($icon.css("background-color"), $dummy.css("background-color"));
 				qutils.triggerEvent(jQuery.support.touch ? "touchend" : "mouseup", oIcon.getId());
 			});
-			
-			
+
+
 			if(!jQuery.support.touch){
 				test("Hover color", function(){
 					$dummy.css("color", "#444444");
@@ -87,11 +87,11 @@
 					equal($icon.css("background-color"), $dummy.css("background-color"));
 				});
 			}
-			
+
 			test("Attach press handler", function(){
 				var fn1 = function(){}, fn2 = function(){};
 				var oIcon = new sap.ui.core.Icon({
-					src: sap.ui.core.IconPool.getIconURI("mananger"),
+					src: sap.ui.core.IconPool.getIconURI("manager"),
 					press: fn1
 				});
 
@@ -107,6 +107,208 @@
 
 				oIcon.destroy();
 			});
+
+			test("Set color with values in sap.ui.core.IconColor enum", function() {
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("manager"),
+					color: sap.ui.core.IconColor.Critical
+				});
+
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+				ok(oIcon.$().hasClass("sapUiIconColorCritical"), "The color property set in instantiation is applied");
+				oIcon.setColor(sap.ui.core.IconColor.Positive);
+				ok(oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is set");
+				oIcon.setColor(sap.ui.core.IconColor.Negative);
+				ok(!oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is removed");
+				ok(oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is set");
+				oIcon.setColor("red");
+				ok(!oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is removed");
+
+				oIcon.destroy();
+			});
+
+			test("Set background-color with values in sap.ui.core.IconColor enum", function() {
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("manager"),
+					backgroundColor: sap.ui.core.IconColor.Critical
+				});
+
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+				ok(oIcon.$().hasClass("sapUiIconBGColorCritical"), "The backgroundColor property set in instantiation is applied");
+				oIcon.setBackgroundColor(sap.ui.core.IconColor.Positive);
+				ok(oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is set");
+				oIcon.setBackgroundColor(sap.ui.core.IconColor.Negative);
+				ok(!oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is removed");
+				ok(oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is set");
+				oIcon.setBackgroundColor("red");
+				ok(!oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is removed");
+
+				oIcon.destroy();
+			});
+
+			QUnit.module("ARIA Support", {
+				setup: function () {
+					this.sIconName = "add";
+					this.sTooltip = "tooltip";
+					this.sAlt = "alt";
+					this.oAriaIcon = new sap.ui.core.Icon({
+						src: sap.ui.core.IconPool.getIconURI(this.sIconName)
+					});
+
+					this.oAriaIcon.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown: function () {
+					this.oAriaIcon.destroy();
+					this.oAriaIcon = null;
+				}
+			});
+
+			QUnit.test("When decorative is defaulting to true", function (assert) {
+				var $icon = this.oAriaIcon.$();
+
+				assert.strictEqual($icon.attr("role"), "presentation", "role should be set to presentation");
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
+				assert.notEqual($icon.attr("aria-label"), undefined, "aria-label is output using icon text");
+
+				this.oAriaIcon.setTooltip(this.sTooltip);
+				sap.ui.getCore().applyChanges();
+
+				$icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
+				assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label is output using tooltip");
+			});
+
+			QUnit.test("When decorative is set to false", function (assert) {
+				this.oAriaIcon.setDecorative(false);
+				sap.ui.getCore().applyChanges();
+
+				var $icon = this.oAriaIcon.$();
+
+				assert.strictEqual($icon.attr("role"), "img", "role should be set to img");
+				assert.notEqual($icon.attr("title"), undefined, "title is rendered with property 'tooltip'");
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
+			});
+
+			QUnit.test("press handler, noTabStop and accessbility", function(assert) {
+				var fnPressHandler = function() {};
+
+				this.oAriaIcon.attachPress(fnPressHandler);
+
+				var $icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("role"), "button", "role is set to button");
+				assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
+
+				this.oAriaIcon.setNoTabStop(true);
+				sap.ui.getCore().applyChanges();
+				$icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex when noTabStop is set to true");
+
+				this.oAriaIcon.setNoTabStop(false);
+				sap.ui.getCore().applyChanges();
+				$icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is restored when noTabStop is set to false");
+
+				this.oAriaIcon.detachPress(fnPressHandler);
+				assert.strictEqual($icon.attr("role"), "presentation", "role is set back to presentation");
+				assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is output");
+			});
+
+			QUnit.test("alt and accessbility", function(assert) {
+				this.oAriaIcon.setAlt(this.sAlt);
+				this.oAriaIcon.setTooltip(this.sTooltip);
+				sap.ui.getCore().applyChanges();
+
+				var $icon = this.oAriaIcon.$();
+				assert.strictEqual($icon.attr("aria-label"), this.sAlt, "aria-label is output using alt property");
+			});
+
+			QUnit.test("When ariaLabelledBy IS set", function (assert) {
+				var sId = "non-existing-id",
+					$icon;
+
+				this.oAriaIcon.addAriaLabelledBy(sId);
+				sap.ui.getCore().applyChanges();
+
+				$icon = this.oAriaIcon.$();
+
+				assert.strictEqual($icon.attr("aria-label"), undefined, "aria-label should be undefined");
+				assert.strictEqual($icon.attr("aria-labelledby"), sId, "aria-labelledby should be " + sId);
+			});
+
+			QUnit.test("Property noTabStop", function (assert) {
+				var fnPressHandler = function() {};
+
+				this.oAriaIcon.setNoTabStop(true);
+				sap.ui.getCore().applyChanges();
+
+				var $Icon = this.oAriaIcon.$();
+				assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists");
+
+				this.oAriaIcon.attachPress(fnPressHandler);
+				assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists after attach press event handler");
+
+				this.oAriaIcon.detachPress(fnPressHandler);
+				assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists after detach press event handler");
+			});
+
+			QUnit.module("Property 'useIconTooltip'", {
+				createIcon: function(mSettings) {
+					this.oIcon = new sap.ui.core.Icon(mSettings).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown: function() {
+					if (this.oIcon) {
+						this.oIcon.destroy();
+						this.oIcon = null;
+					}
+				}
+			});
+			QUnit.test("useIconTooltip = true (default) / without tooltip", function (assert) {
+				var oIconInfo = sap.ui.core.IconPool.getIconInfo("add");
+
+				this.createIcon({
+					src: oIconInfo.uri
+				});
+
+				assert.equal(this.oIcon.getUseIconTooltip(), true, "Default value of property 'useIconTooltip' should be 'true'");
+				assert.notEqual(this.oIcon.$().attr("title"), undefined, "title should not be empty");
+				assert.equal(this.oIcon.$().attr("aria-label"), oIconInfo.text, "aria-label should be set by using the icon's text");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
+			});
+			QUnit.test("useIconTooltip = true (default) / with tooltip", function (assert) {
+				var sTooltip = "this is a tooltip";
+				this.createIcon({
+					src: sap.ui.core.IconPool.getIconURI("add"),
+					tooltip: sTooltip
+				});
+				assert.equal(this.oIcon.$().attr("title"), sTooltip, "title should be set");
+				assert.equal(this.oIcon.$().attr("aria-label"), sTooltip, "aria-label should be set");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
+			});
+			QUnit.test("useIconTooltip = false / without tooltip", function (assert) {
+				this.createIcon({
+					src: sap.ui.core.IconPool.getIconURI("add"),
+					useIconTooltip: false
+				});
+				assert.equal(this.oIcon.$().attr("title"), undefined, "title should be undefined");
+				assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
+			});
+			QUnit.test("useIconTooltip = false / with tooltip", function (assert) {
+				var sTooltip = "this is a tooltip";
+				this.createIcon({
+					src: sap.ui.core.IconPool.getIconURI("add"),
+					useIconTooltip: false,
+					tooltip: sTooltip
+				});
+				assert.equal(this.oIcon.$().attr("title"), sTooltip, "title should be set");
+				assert.equal(this.oIcon.$().attr("aria-label"), sTooltip, "aria-label should be set");
+				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
+			});
+
 		</script>
 	</head>
 	<body>

@@ -107,12 +107,55 @@
 
 	});
 
+	test("ListBinding getCurrentContexts", function(){
+		setup();
+		createListBinding("/teamMembers/member");
+		
+		var listBinding = bindings[0],
+			contexts = listBinding.getContexts(0,5),
+			currentContexts = listBinding.getCurrentContexts();
+		
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/member/" + i, "ListBinding context");
+		});
+	});
+	
+	test("ListBinding getCurrentContexts and extended change detection", function(){
+		setup();
+		createListBinding("/teamMembers/member", "");
+		
+		var listBinding = bindings[0];
+		listBinding.enableExtendedChangeDetection();
+		
+		var	contexts = listBinding.getContexts(0,5),
+			currentContexts = listBinding.getCurrentContexts();
+		
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/member/" + i, "ListBinding context");
+		});
+		
+		oModel.getData().firstChild.childNodes[1].childNodes[4].setAttribute("gender", "female");
+		listBinding.checkUpdate();
+
+		currentContexts = listBinding.getCurrentContexts();
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/member/" + i, "ListBinding context");
+		});
+		
+		contexts = listBinding.getContexts(0,5);
+		equal(contexts.diff.length, 2, "Delta information is available");
+	});
+	
 	test("ListBinding refresh", 3, function() {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
+		oBinding.initialize();
 		equal(oBinding.getLength(), 7, "ListBinding returns correct length");
 		oBinding.attachChange(function() {
-			ok("ListBinding fires change event when changed");
+			ok(true, "ListBinding fires change event when changed");
 		});
 		var oDoc = oModel.getData();
 		oDoc.firstChild.childNodes[1].appendChild(oDoc.createElement("member"));
@@ -120,6 +163,34 @@
 		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
+	test("ListBinding refresh with getContexts", 1, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers/member");
+		oBinding.initialize();
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+		});
+		var oDoc = oModel.getData();
+		oDoc.firstChild.childNodes[1].childNodes[6].setAttribute("firstName", "Jonas");
+		oBinding.refresh();
+	});
+
+	test("ListBinding refresh with getContexts und length change", 3, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers/member");
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(true, "ListBinding fires change event, as length has changed");
+		});
+		var oDoc = oModel.getData();
+		oDoc.firstChild.childNodes[1].appendChild(oDoc.createElement("member"));
+		oBinding.refresh();
+		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
+	});
+	
 	test("ListBinding getContexts with wrong path", function(){
 		setup();
 		createListBinding("xyz");
@@ -686,6 +757,26 @@
 		equal(filtered[1], "Marc", "ListBinding filter value");
 		equal(filtered[2], "Frank", "ListBinding filter value");
 
+	});
+
+	test("ListBinding with test function", function() {
+		setup();
+		createListBinding("/teamMembers/member");
+
+		var listBinding = bindings[0];
+
+		var oFilter = new sap.ui.model.Filter("@firstName", function(sValue, oContext) {
+			return (sValue.indexOf("A") !== -1 && sValue.indexOf("G") === 0); 
+		});
+
+		listBinding.filter(oFilter);
+		var filteredContexts = listBinding.getContexts();
+		var filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty("@firstName", context);
+		});
+		equal(filtered.length, 1, "ListBinding filtered length");
+		equal(filtered[0], "Gina", "ListBinding filter value");
 	});
 
 	test("ListBinding change event filter test", function(){

@@ -8,13 +8,9 @@
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
 </script>
 
-<style type="text/css">
-
-</style>
+<style type="text/css"></style>
 
 <script>
-
-
 	// initialize
 	var oUriParameters = jQuery.sap.getUriParameters();
 	jQuery.sap.require("sap.m.MessageToast");
@@ -22,7 +18,6 @@
 	jQuery.sap.require("sap.m.Toolbar");
 	jQuery.sap.require("sap.ui.core.IconPool");
 
-	
 	// for behaviour testing
 	if (oUriParameters.get("noFlex")) {
 		sap.m.Toolbar.hasNewFlexBoxSupport = false;
@@ -48,7 +43,7 @@
 				items : [
 					new sap.ui.core.Item({
 							key: "0",
-							text: "item 0",
+							text: "item 0"
 						}),
 					new sap.ui.core.Item({
 							key: "0",
@@ -150,14 +145,17 @@
 	}
 
 	TBHeader = new sap.m.Toolbar({
+        active: true,
 		content : getToolbarContent("This is a Header")
 	});
 
 	TBSubHeader = new sap.m.Toolbar({
+        active: true,
 		content : getToolbarContent("This is a SubHeader")
 	});
 
 	TBFooter = new sap.m.Toolbar({
+        active: true,
 		content : getToolbarContent("This is a Footer")
 	});
 
@@ -262,7 +260,7 @@
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SearchField({
-						placeholder : "This has 100% width by default",
+						placeholder : "This has 100% width by default"
 					})
 				]
 			}),
@@ -390,13 +388,6 @@
 
 	var oApp = new sap.m.App();
 	oApp.addPage(oPage).placeAt("body");
-	
-	// inform about the less for the polyfill
-	if (!oUriParameters.get("sap-ui-xx-noless") && !sap.m.Toolbar.hasFlexBoxSupport) {
-		setTimeout(function() {
-			sap.m.MessageToast.show("Beaware maybe LESS is running!");
-		}, 2000);
-	}
 </script>
 </head>
 <body id="body" class="sapUiBody">

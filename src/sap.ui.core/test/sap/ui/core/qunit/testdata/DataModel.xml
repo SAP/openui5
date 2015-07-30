@@ -80,6 +80,8 @@
 					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
 				<EntitySet Name="LeaveItemCollection" EntityType="ZMYLEAVEREQUEST_SRV.LeaveItem"
 					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+					<EntitySet Name="LeaveItemSubCollection" EntityType="ZMYLEAVEREQUEST_SRV.LeaveItem"
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
 				<AssociationSet Name="Asoc_HeaderItems_AssocSet"
 					Association="ZMYLEAVEREQUEST_SRV.Asoc_HeaderItems" sap:creatable="false"
 					sap:updatable="false" sap:deletable="false" sap:content-version="1">

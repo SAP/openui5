@@ -1,9 +1,8 @@
-
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>CheckBox - sap.m</title>
+		<title>sap.m.CheckBox</title>
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript" 
 			id="sap-ui-bootstrap"
@@ -12,75 +11,130 @@
 		</script>
 		<script type="text/javascript">
 			jQuery.sap.initMobile();
-			
-			var checkBox = new sap.m.CheckBox({selected:true, visible: true, enabled: true});
-			var checkBox1 = new sap.m.CheckBox({selected:false, visible: true, enabled: true});
-			var checkBox2 = new sap.m.CheckBox({selected:true, visible: true, enabled: false});
-			var checkBox3 = new sap.m.CheckBox({selected:false, visible: true, enabled: false});
-			var checkBox4 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, text: "123"});
-			var checkBox5 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, text: "text length test", width:"100px"});
-			var checkBox6 = new sap.m.CheckBox({activeHandling:false , selected:true, visible:true, enabled: true, text: "RTL", width:"100px", textDirection:"RTL"});
-			var checkBox7 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, editable: false, text: "Not editable"});
-			
-			
-			var bToolbarAEnabled = true;
 
-			var toolbar = new sap.m.Toolbar("toolbar", {
-				enabled: bToolbarAEnabled,
+			/* Global helper objects */
+			var oToolbar = new sap.m.Toolbar("toolbar", {
+				enabled: true,
 				content: [
 					new sap.m.CheckBox({
-						text: "Enabled in toolbar"
+						text: "In toolbar"
 					})
 				]
 			});
 
-			oForm = new sap.ui.layout.form.SimpleForm({
-				editable : true,
-				content : [
-					new sap.m.Label({text:"In a Form"}),
-					new sap.m.CheckBox({selected:true, text : "I am a text"})
-				]
+			var oCheckBoxRTL = new sap.m.CheckBox({
+				text: "+012 345 679",
+				textDirection: sap.ui.core.TextDirection.LTR
 			});
+			oCheckBoxRTL.setTextAlign = function(){};
+
+			function createContent() {
+				return [
+					new sap.m.CheckBox({
+						visible: true,
+						selected:true,
+						enabled: true
+					}),
+					new sap.m.CheckBox({
+						visible: true,
+						selected: true,
+						enabled: false
+					}),
+					new sap.m.CheckBox({
+						visible: true,
+						selected: false,
+						enabled: true
+					}),
+					new sap.m.CheckBox({
+						visible: true,
+						selected: false,
+						enabled: false
+					}),
+					new sap.m.CheckBox({
+						visible:true,
+						selected: true,
+						enabled: true,
+						width:"100px",
+						text: "Label 100px"
+					}),
+					new sap.m.CheckBox({
+						enabled: true,
+						visible: true,
+						selected: true,
+						editable: false,
+						text: "Not editable"
+					}),
+					new sap.m.CheckBox({
+						visible: true,
+						selected: true,
+						enabled: true,
+						width:"100px",
+						textDirection:"RTL",
+						text: "Text direcrtion RTL"
+					}),
+					new sap.m.CheckBox({
+						visible:true,
+						selected: true,
+						enabled: true,
+						text: "Enable/disable toolbar",
+						select: function () {
+							oToolbar.setEnabled(this.getSelected());
+						}
+					}),
+					oToolbar,
+					new sap.ui.layout.form.SimpleForm({
+						editable : true,
+						content : [
+							new sap.m.Label({text:"CheckBox in a Form"}),
+							new sap.m.CheckBox({selected:true, text : "I am a label"})
+						]
+					}),
+					// RTL sapmple - set page in rtl mode to explore (sap-ui-rtl='true')
+					new sap.m.Toolbar({
+						content:
+							new sap.m.Text({
+								text: "RTL sapmple - set page in rtl mode to explore (sap-ui-rtl='true')"
+							})
+					}),
+                    new sap.m.Toolbar({
+                    	content: [
+							new sap.m.CheckBox({
+								text: "+012 345 678"
+							}),
+							new sap.m.Text({text: "Default"})
+						]
+                    }),
+					new sap.m.Toolbar({
+					content: [
+							oCheckBoxRTL,
+							new sap.m.Text({text: "textDirection: LTR, no textAlign"})
+						]
+					}),
+					new sap.m.Toolbar({
+						content: [
+							new sap.m.CheckBox({
+								text: "+012 345 670", 
+								textAlign: sap.ui.core.TextAlign.Right,
+								textDirection: sap.ui.core.TextDirection.LTR
+							}),
+							new sap.m.Text({text: "textDirection: LTR, textAlign: Right"})
+ 						]
+                    })
+				]
+			}
 
 			new sap.m.App({
 				pages : [
 					new sap.m.Page({
 						content : [
-									checkBox,
-									checkBox1,
-									checkBox2,
-									checkBox3,
-									checkBox4,
-									checkBox5,
-									checkBox6,
-									checkBox7,
-									toolbar,
-									new sap.m.Button({
-										text: "Toggle Enabled",
-										press: function() {
-											bToolbarAEnabled = !bToolbarAEnabled;
-											toolbar.setEnabled(bToolbarAEnabled);
-										}
-									}),
-									oForm
-								],
-						enableScolling : false
+							createContent()
+						]
 					})
 				]
-				
 			}).placeAt('content');
 		</script>
-		<style type="text/css">
-		</style>
 	</head>
-	<body id="body" class="sapUiBody" style="background-color:white;">
-	<div id="content" class="holder"></div>
-	<div id="c0" class="holder"></div>
-	<div id="c1" class="holder"></div>
-	<div id="c2" class="holder"></div>
-	<div id="c3" class="holder"></div>
-	<div id="c4" class="holder"></div>
-	<div id="c5" class="holder"></div>
-	<div id="c6" class="holder"></div>
+	<body id="body" class="sapUiBody" role="application">
+		<div id="content" class="holder"></div>
 	</body>
 </html>

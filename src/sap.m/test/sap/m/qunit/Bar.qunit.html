@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.Bar</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -18,7 +18,7 @@
 
 			// required if you spy a property on the prototype before using the contructor.
 			jQuery.sap.require("sap.m.Bar");
-			
+
 			// for noglobals in IE9 we need to require this immediately
 			jQuery.sap.require("sap.ui.thirdparty.flexie");
 
@@ -27,6 +27,7 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sinon.config.useFakeTimers = true;
 
 			module("rendering");
 
@@ -75,6 +76,7 @@
 
 			});
 
+			// This is more like visual test, but will leave it as it is for now.
 			test("Should position the bars", function() {
 
 				renderingTest.call(this, function() {
@@ -85,7 +87,7 @@
 				});
 
 			});
-			
+
 			test("content Element position", function(){
 
 				renderingTest.call(this, function() {
@@ -103,8 +105,7 @@
 
 			test("Should set the design class to the containers", function() {
 				// Arrange
-				var sBarBaseContext = "sapMIBar-CTX",
-					oLeftButton = new sap.m.Button();
+				var sBarBaseContext = "sapMIBar-CTX";
 
 				// System under Test
 				var oBar = new sap.m.Bar().placeAt("qunit-fixture");
@@ -130,15 +131,21 @@
 					ok(jQuery.sap.byId("myBar1").is("div"), "bar1 should be rendered as div");
 
 					var bar = sap.ui.getCore().byId("myBar");
-					bar.setHTMLTag('header');
+					bar.setHTMLTag('Header');
 					bar.rerender();
 					ok(jQuery.sap.byId("myBar").is("header"), "bar should be rendered as header");
 
 					var bar1 = sap.ui.getCore().byId("myBar1");
-					bar1.setHTMLTag('footer');
+					bar1.setHTMLTag('Footer');
 					bar1.rerender();
 					ok(jQuery.sap.byId("myBar1").is("footer"), "bar1 should be rendered as footer");
 
+					var bar2 = sap.ui.getCore().byId("myBar2");
+					bar2.setHTMLTag('H1');
+					bar2.rerender();
+					ok(jQuery.sap.byId("myBar2").is("H1"), "bar2 should be rendered as H1");
+					equal(bar2.getHTMLTag(), "H1", "Even when sap.m.Bar has HTML tag set with value different than header and footer, " +
+						"the getHTMLTag should behave in one and the same way- should return the tag value itself");
 				});
 
 			});
@@ -158,7 +165,7 @@
 					ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
 
 				});
-			});	
+			});
 
 			test("Should set the translucent class if on a touch device", function() {
 				var //System under Test
@@ -203,11 +210,11 @@
 				oBar.destroy();
 			});
 
-			var iMargin = 8;
+			var iMargin = 4;
 			var iStartEndPadding = 4;
 
 			jQuery.sap.require("sap.m.Button");
-			test("Should collapse borders of elements with borders in a Bar", function() {
+			test("Each first child should not have margins and each none first should have", function() {
 				// Arrange
 				var oFirstButton = new sap.m.Button("first"),
 					oMiddleButton = new sap.m.Button("middle"),
@@ -221,10 +228,6 @@
 						oLastButton
 					]
 				});
-
-				// Act + assert
-				oBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
 
 				// Act + assert
 				oBar.placeAt("qunit-fixture");
@@ -773,7 +776,7 @@
 				sut.destroy();
 				jQuery("#qunit-fixture").width("");
 			});
-			
+
 		})();
 		</script>
 

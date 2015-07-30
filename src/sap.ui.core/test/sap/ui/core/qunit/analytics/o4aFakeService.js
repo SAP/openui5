@@ -132,6 +132,8 @@ var o4aFakeService =  {
 	 * Same as in test/sap/ui/core/qunit/ODataModelFakeService.js
 	 */
 	fake: function (mParams) {
+
+		
 		mParams = mParams || {};
 		this.setBaseURI(mParams.baseURI);
 		this.setResponseDelay(mParams.responseDelay || 200);
@@ -140,7 +142,7 @@ var o4aFakeService =  {
 		var xhr = sinon.useFakeXMLHttpRequest(),
 			_setTimeout = window.setTimeout,
 			that = this;
-		
+
 		//let through all requests which are not against the base URL
 		xhr.useFilters = true;
 		xhr.addFilter(function(method, url) {
@@ -157,7 +159,7 @@ var o4aFakeService =  {
 					if (request.async === true) {
 						_setTimeout(function() {
 							request.respond(200, oResponse.header, oResponse.content);
-						}, this.__iResponseDelay);
+						}, that._iResponseDelay);
 					} else {
 						request.respond(200, oResponse.header, oResponse.content);
 					}

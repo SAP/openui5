@@ -11,9 +11,11 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AnnotationHelper.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CalculatedFields.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BindingParser.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DataBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ExpressionParser.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSONBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSONPropertyBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSONListBinding.qunit.html");
@@ -24,10 +26,12 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MasterDetail.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/OData4Analytics.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataAnnotations.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataMetaModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataSharedMetadata.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataListBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataTreeBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataUtils.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ResourceBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ResourceModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/XMLBinding.qunit.html");
@@ -38,6 +42,13 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/XMLModelNS.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/XMLTwoWay.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataMetadata.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataV2Model.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/V2ODataModel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/V2ODataModelB.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataV2ListBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataV2TreeBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AnalyticalBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataMessages.qunit.html");
 			return suite;
 		}
 		  

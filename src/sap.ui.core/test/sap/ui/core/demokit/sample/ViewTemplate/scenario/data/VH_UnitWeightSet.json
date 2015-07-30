@@ -1,0 +1,77 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('G')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('G')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "G",
+					"Msehl" : "Gram"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KG')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "KG",
+					"Msehl" : "Kilogram"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KT')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "KT",
+					"Msehl" : "Kilotonne"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('LB')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('LB')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "LB",
+					"Msehl" : "US pound"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('MG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('MG')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "MG",
+					"Msehl" : "Milligram"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('OZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('OZ')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "OZ",
+					"Msehl" : "Ounce"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TO')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "TO",
+					"Msehl" : "Tonne"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TON')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TON')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+					},
+					"Msehi" : "TON",
+					"Msehl" : "US ton"
+				}]
+	}
+}

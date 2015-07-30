@@ -1,29 +1,18 @@
 <mvc:View
+	controllerName="sap.m.sample.CustomListItem.List"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<List
-		headerText="Custom Content" >
-		<CustomListItem type="Inactive">
-				<Label text="A first custom list item ..."  class="content"/>
-				<Button text="Press me!" class="content"/>
-		</CustomListItem>
-		<CustomListItem type="Navigation">
-			<core:Icon
-				src="sap-icon://lab"
-				size="2em"
-				class="content" />
-			<Label text="... and another one ..."   class="content" />
-			<core:Icon
-				src="sap-icon://competitor"
-				size="2em"
-				class="content" />
-		</CustomListItem>
-		<CustomListItem type="Navigation">
-			<Switch state="true"  class="content"/>
-			<Switch state="false"  class="content"/>
-			<Label text="... followed by the very last." class="content" />
+	<List headerText="Custom Content" mode="Delete" items="{path: '/ProductCollection'}" >
+		<CustomListItem>
+			<HBox>
+				<core:Icon size="2rem" src="sap-icon://attachment-photo" class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
+				<VBox  class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+					<Link text="{Name}" target="{ProductPicUrl}" press="handlePress"/>
+					<Label text="{ProductId}"/>
+				</VBox>
+			</HBox>
 		</CustomListItem>
 	</List>
 </mvc:View>

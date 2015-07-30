@@ -1,11 +1,19 @@
-sap.ui.controller("view.Main", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	onInit : function () {
-		var that = this;
+	var MainController = Controller.extend("view.Main", {
 
-		window.setTimeout(function () {
-			that.byId("changingButton").setText("Changed text");
-		},5000);
-	}
+		onInit : function () {
+			var that = this;
+
+			window.setTimeout(function () {
+				that.byId("changingButton").setText("Changed text");
+			},5000);
+		}
+
+	});
+
+	return MainController;
 
 });

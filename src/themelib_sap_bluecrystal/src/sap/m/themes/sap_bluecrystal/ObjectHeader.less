@@ -2,11 +2,11 @@
 /* CSS for control sap.m/ObjectHeaderItem.control */
 /* ============================================= */
 
-.sapMOHC.sapMOHBgTransparent{
+.sapMOHC.sapMOHBgTransparent {
 	background-color: transparent;
 }
 
-.sapMOHC.sapMOHBgSolid{
+.sapMOHC.sapMOHBgSolid {
 	background-color: @sapUiLightestBG;
 	border-bottom: 0.063rem @sapUiLightBG;
 }
@@ -16,42 +16,41 @@
 }
 
 .sapMOHIntro {
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMOHIntro.sapMOHIntroActive,
-.sapMOHTitle.sapMOHTitleActive>.sapMText{
+.sapMOHTitle.sapMOHTitleActive > h1 .sapMText {
 	color: @sapUiLink;
 	cursor: pointer;
 }
 
-.sapMOHTitle .sapMText {
+a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
+	text-decoration: underline;
+}
+
+.sapMOHTitle h1 .sapMText {
 	color: @sapUiDarkText;
-	font-size: @sapMFontHeader2Size;
 }
 
-.sapMOHC .sapMOHTitle>.sapMText {
-	line-height: 1.313rem;
-	font-size: @sapMFontLargeSize;
-}
-
-.sap-phone .sapMOHTitle>.sapMText {
+.sap-phone .sapMOHTitle h1 > .sapMText {
 	font-size: @sapMFontHeader4Size;
 }
 
-.sapMOHTitleArrow {
-	color: @sapUiLink;	
+.sapMOHNumberDiv .sapMObjectNumberText {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: 1.375rem;
+	font-weight: @sapUiFontHeaderWeight;
 }
 
-.sapMOHNumber {
-	font-family: @sapUiFontCondensedFamily;
-	font-stretch: condensed;	
-	font-size: @sapMFontHeader1Size;
+.sapMOHNumberDiv .sapMObjectNumberUnit {
+	padding: 0;
+	display: block;
 }
 
-.sapMOHNumberUnit {
-	font-size: @sapMFontSmallSize;
+.sapMOHC .sapMOHNumberDiv .sapMObjectNumberText {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: 1.375rem;
 }
 
 .sapMOHBottomRow {
@@ -62,7 +61,7 @@
 	color: @sapUiLightText;
 }
 
-.sapMOH .sapMObjectAttributeActive{
+.sapMOH .sapMObjectAttributeActive {
 	color: @sapUiLink;
 }
 
@@ -71,7 +70,7 @@
 }
 
 .sapMOHNumberStateError {
-	color: @sapUiNegativeText;		
+	color: @sapUiNegativeText;
 }
 
 .sapMOHNumberStateWarning {
@@ -82,100 +81,227 @@
 	color: @sapUiPositiveText;
 }
 
-/*** styles for responsive object header ***/
-
-.sapMOHR .sapMObjectNumberText {
-	font-family: @sapUiFontCondensedFamily;
-	font-stretch: condensed;
-	font-size: @sapMFontHeader1Size;
-}
-
-.sapMOHR > .sapMOHTitleDiv.sapMOHTitleIcon > .sapMOHIcon > .sapUiIcon{
-	line-height: 3rem;
-	font-size: 2.5rem;
+.sapMOHIcon .sapUiIcon {
 	color: @sapUiElement;
 }
 
-
-.sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle {
-	font-family:@sapUiFontHeaderFamily;
-	font-size:@sapMFontHeader2Size;
-	font-weight:@sapUiFontHeaderWeight;
-	color:@sapUiHeaderText;
-	line-height: 1.125;
+.sapMOHTitleArrow {
+	color: @sapUiElement;
 }
 
-.sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHIntro {
+.sapMOHTitleArrow > .sapUiIcon {
+	outline-offset: -1px;
+}
+
+.sapMOHIntro.sapMOHIntroActive >.sapMLnk:active {
+	background: none;
+}
+
+.sapMOHTitle.sapMOHTitleActive:focus {
+	outline: none;
+}
+
+.sapMOHTitle.sapMOHTitleActive:focus > h1 span,
+.sapMOHTitleIcon > .sapMOHIcon:focus,
+.sapMOHTitleArrow .sapUiIcon:focus {
+	outline: 1px dotted @sapUiFocus;
+	outline-offset: -1px;
+}
+
+.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
+	background-color: @sapUiLightBG;
+}
+
+.sapMOHC .sapMOHTitleArrow .sapUiIcon:active,
+.sapMOH .sapMOHTitleArrow .sapUiIcon:active {
+	background-color: @sapUiAccent5;
+	color: @sapUiTextInverted;
+}
+
+html[data-sap-ui-browser ^= "ie"] {
+	.sapMOH {
+		.sapMOHTitleActive, .sapMOHTitle {
+			border: 1px solid transparent;
+			margin-top: 0.125rem;
+			padding-top: 0.125rem;
+			padding-left: 0.125rem;
+		}
+
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h1 > span {
+			outline: none;
+			border: 1px dotted @sapUiFocus;
+		}
+
+		.sapMOHIntro {
+			padding: 0.125rem 0.125rem 0.125rem 0.25rem;
+		}
+
+		.sapMObjectAttributeDiv {
+			padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+		}
+		.sapMObjStatusMarker .sapUiIcon:focus {
+			outline: none;
+		}
+	}
+}
+
+/*** styles for responsive object header ***/
+.sapMOHR {
+	background: fade(@sapUiLightestBG, 60%);
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	box-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 5%);
+}
+
+.sapMOHRTitle h1 {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: 1.375rem;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiHeaderText;
+}
+
+.sap-phone .sapMOHRTitle h1,
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h1 {
+	font-size: @sapMFontHeader4Size;
+}
+
+.sapMOHRIcon .sapUiIcon {
+	font-family: SAP-icons;
+	font-size: 2.5rem;
+	font-weight: normal;
+	color: @sapUiElement;
+}
+
+.sapMOHRTitleArrow .sapUiIcon {
+	color: @sapUiElement;
+}
+
+.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
+	background-color: @sapUiLightBG;
+}
+
+.sapMOHRTitleIcon .sapMOHRTitleFollowArrow .sapMOHRTitleArrow .sapUiIcon:active {
+	background-color: @sapUiAccent5;
+	color: @sapUiTextInverted;
+}
+
+.sapMOHRTitleArrow .sapUiIcon:focus {
+	outline: @sapUiFocus dotted 1px;
+	outline-offset: -1px;
+}
+
+.sapMOHRIcon.sapMPointer:focus {
+	outline: @sapUiFocus dotted 1px;
+	outline-offset: -1px;
+}
+
+.sapMOHR .sapMObjStatusMarker{
+	color: @sapUiAccent5;
+}
+
+.sapMOHRIntro {
+	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
 	color: @sapUiLightText;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
-.sapMOHR.sapMOH  >.sapMOHStates .sapMOHStatus > .sapMObjStatus {
-	font-size: @sapMFontMediumSize;
-	font-weight: normal;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+.sapMOHRTitleActive .sapMOHRTitleText {
+	cursor: pointer;
+	color: @sapUiLink;
+	text-decoration: none;
 }
 
-.sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMObjectNumber > .sapMObjectNumberText {
+.sapMOHRTitleActive .sapMOHRTitleText:focus {
+	outline: @sapUiFocus dotted 1px;
+	outline-offset: -1px;
+}
+
+.sapMOHRIntro.sapMOHRIntroActive >.sapMLnk:active {
+	background: none;
+}
+
+html[data-sap-ui-browser ^= "ie"] {
+	.sapMOHR {
+		.sapMOHRTitleText {
+			border: 1px solid transparent;
+			margin-top: 0.125rem;
+			padding-top: 0.125rem;
+			padding-left: 0.125rem;
+		}
+
+		.sapMOHRTitleActive .sapMOHRTitleText:focus {
+			outline: none;
+			border: 1px dotted @sapUiFocus;
+		}
+
+		.sapMOHRIcon.sapMPointer {
+			border: 1px solid transparent;
+		}
+
+		.sapMOHRIcon.sapMPointer:focus {
+			outline: none;
+			border: 1px dotted @sapUiFocus;
+		}
+
+		.sapMOHRIntro, .sapMOHRIntroActive {
+			padding: 0.125rem;
+			span, a {
+				margin: 0.125rem;
+			}
+		}
+
+		.sapMOHRStates {
+			padding-left: 0.125rem;
+		}
+
+		.sapMObjStatusMarker .sapUiIcon:focus {
+			outline: none;
+		}
+
+		.sapMObjectAttributeDiv {
+			padding: 0.125rem 0.125rem 0 0.125rem;
+		}
+
+		.sapMOHRStatus {
+			padding: 0.125rem 0.125rem 0.5rem 0.125rem;
+		}
+	}
+}
+
+.sapMOHR .sapMObjectNumberText {
 	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader2Size;
+	font-size: 1.375rem;
 	font-weight: @sapUiFontHeaderWeight;
 }
 
-.sapMOHR.sapMOH.sapMOHBgTranslucent {
-	background: fade(@sapUiLightestBG, 60%);
+.sapMOHR .sapMObjectNumberUnit{
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
 }
 
-.sapMOHR.sapMOH.sapMOHBgTransparent {
-	background: transparent;
+.sapMOHR .sapMOHRAttr,
+.sapMOHR .sapMOHRStatus,
+.sapMOHR .sapMObjStatus {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiLightText;
 }
 
-.sapMOHR.sapMOH.sapMOHBgSolid {
-	background: @sapUiLightestBG;
+.sapMOHR .sapMOHRAttr,
+.sapMOHR .sapMOHRStatus {
+	padding-bottom: 0.5rem;
 }
 
-.sapMOHR.sapMOH.sapMOHNoTabs {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+.sapMOHRStatus .sapMObjStatusNone .sapMObjStatusText {
+	color: @sapUiStandardText;
 }
-
-.sapMOHR.sapMOH.sapMOHNoTabs:not(.sapMOHBgTransparent) {
-	border-bottom: 0.0625rem solid @sapUiLightBorder;
-	-webkit-box-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 5%);
-	box-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 5%);
-} 
-
-.sapUiMedia-Std-Phone .sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle {
-	line-height: 1.5;
+.sapMOHRStatus .sapMObjStatusSuccess .sapMObjStatusText {
+	color: @sapUiPositiveText;
 }
-
-.sapUiMedia-Std-Phone .sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle > .sapMText {
-	font-size: @sapMFontHeader4Size;
-	line-height: 1.5;
+.sapMOHRStatus .sapMObjStatusError .sapMObjStatusText {
+	color: @sapUiNegativeText;
 }
-
-.sapUiMedia-Std-Phone .sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle > .sapMOHIntro {
-	/* there is an unwanted distance, for now we can solve the problem like this */
-	margin-top: -0.25rem;
-}
-
-.sapMOHR .sapSuiteHdrCntr {
-	background: transparent;
-}
-
-.sapUiMedia-Std-Desktop .sapMOHR .sapMITH,
-.sapUiMedia-Std-Desktop .sapMOHR.sapMOHTabsMoreThanSeven > .sapMOHTabsNoStates .sapMITH,
-.sapUiMedia-Std-Tablet .sapMOHR > .sapMOHTabsNoStates .sapMITH {
-	border-left:  0.0625rem solid @sapUiLightBorder;
-}
-
-.sapMOHR.sapMOHStatesFiveOrMore .sapMITH {
-	border: none;
+.sapMOHRStatus .sapMObjStatusWarning .sapMObjStatusText {
+	color: @sapUiCriticalText;
 }

@@ -5,11 +5,11 @@
 		<script src="../../../../../../resources/sap/ui/Device.js"></script>
 		<script language="javascript">
 
+
 			/**
 			 * Add test pages to this test suite function.
 			 * Please order alphabetically
 			 */
-
 			function suite() {
 				var suite = new parent.jsUnitTestSuite();
 				var contextPath = "/" + window.location.pathname.split("/")[1];
@@ -18,30 +18,33 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Encoding.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HTMLSanitizer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.dom.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.logger.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.promise.qunit.html");
-				if(sap.ui.Device.browser.firefox && sap.ui.Device.browser.version > 28 || sap.ui.Device.browser.chrome && sap.ui.Device.browser.version > 32){
-					//Let the test run against the native browser API to early detect changes
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.promise.qunit.html?native=x");
-				}
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.properties.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.resources.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.script.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.strings.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.storage.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.unicode.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.Version.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.xml.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/LabelEnablement.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/PerformanceMeasurement.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Popup.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/SelectionModel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Serializer.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/support/SupportTool.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/Export.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/ExportTypeCSV.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/XMLPreprocessor.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ValidateUrl.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ValueStateSupport.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ViewSerializer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ws/SapPcpWebSocket.qunit.html");
-			    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ws/WebSocket.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ws/WebSocket.qunit.html");
+				// Integration test via OPA
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/Opa.qunit.html");
 				return suite;
 			}
 

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * @public
 	 * @experimental Since version 1.2. 
 	 * The API may change. User with care.
-	 * @name sap.ui.suite.VerticalProgressIndicator
+	 * @alias sap.ui.suite.VerticalProgressIndicator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VerticalProgressIndicator = Control.extend("sap.ui.suite.VerticalProgressIndicator", /** @lends sap.ui.suite.VerticalProgressIndicator.prototype */ { metadata : {
@@ -61,15 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	}});
 	
 	
-	/**
-	 * Puts the focus to the control.
-	 *
-	 * @name sap.ui.suite.VerticalProgressIndicator#focus
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	EnabledPropagator.call(VerticalProgressIndicator.prototype);
 	
@@ -78,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * Values higher than 100 will be displayed as 100%, values lower than zero will be displayed as 0%. 
 	 * A new rendering is not necessary, only the bar will be moved
 	 *
-	 * @param  iPercentage
+	 * @param {int} iPercentage
 	 * @return {sap.ui.suite.VerticalProgressIndicator} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -133,6 +125,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	
 	
 	// Implementation of API method focus(). Documentation available in generated code.
+
+	/**
+	 * Puts the focus to the control.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	VerticalProgressIndicator.prototype.focus = function() {
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {

@@ -13,18 +13,9 @@ html[data-sap-ui-browser^="ie"] .sapUiRb:focus:after {
 	border-color: @sapUiFocus;
 }
 
-html[data-sap-ui-browser^="ie"] .sapUiRb{
-	position: static; /* otherwise the RadioButton will move 1px on click */
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiRb:focus{
-	position: relative; /* otherwise the Border is not displayed */
-}
-
 .sapUiRb > input { /* make the real radiobutton vanish from the screen */
 	position: absolute;
 	visibility: hidden;
-	margin: 3px 1px; /* only needed for QTP tests which may derive the click position from <input> position */
 	left: 0;
 }
 

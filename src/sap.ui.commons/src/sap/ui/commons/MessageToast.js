@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 * @deprecated Since version 1.4.0. 
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
-	 * @name sap.ui.commons.MessageToast
+	 * @alias sap.ui.commons.MessageToast
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MessageToast = Control.extend("sap.ui.commons.MessageToast", /** @lends sap.ui.commons.MessageToast.prototype */ { metadata : {
@@ -46,33 +46,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			next : {}
 		}
 	}});
-	
-	
-	/**
-	 * Triggers the toasting of a message, on top of the MessageBar.
-	 * If no message is supplied, displayes the "Multiple new messages..." message.
-	 *
-	 * @name sap.ui.commons.MessageToast#toast
-	 * @function
-	 * @param {sap.ui.commons.Message} oMessage
-	 *         The Message to be toasted.
-	 * @param {string} sAnchorId
-	 *         DOM ID of the anchor against which the Toast Arrow should align for a given Toast.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns TRUE if no message is being toasted.
-	 *
-	 * @name sap.ui.commons.MessageToast#isIdle
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	MessageToast.prototype.init = function(){
@@ -234,9 +207,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * This public API receives the list of Messages to be displayed,
 	 * and re-render this Control if visible.
-	 * @param {object} oMessage
+	 * 
+	 * Triggers the toasting of a message, on top of the MessageBar.
+	 * If no message is supplied, displays the "Multiple new messages..." message.
+	 *
+	 * @param {sap.ui.commons.Message} oMessage
+	 *         The Message to be toasted.
 	 * @param {string} sAnchorId
+	 *         DOM ID of the anchor against which the Toast Arrow should align for a given Toast.
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageToast.prototype.toast = function(oMessage, sAnchorId) {
 	  // Storing the supplied data:
@@ -251,8 +232,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Returns the idle state of the control.
+	 * Returns true if no message is being toasted.
+	 *
+	 * @type boolean
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageToast.prototype.isIdle = function() {
 	  return this.bIdle;

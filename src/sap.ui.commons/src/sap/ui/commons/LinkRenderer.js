@@ -9,11 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 *
 	 * @author SAP SE
-	 * @version 0.1
-	 * @static
+	 * @namespace
 	 */
 	var LinkRenderer = {
 	};
@@ -25,12 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oLink An object representation of the control that should be rendered.
 	 */
 	LinkRenderer.render = function(rm, oLink) {
-	
-		// Return immediately if control is invisible
-		if (!oLink.getVisible()) {
-			return;
-		}
-	
 		// Link is rendered as a "<a>" element
 		rm.write("<a");
 		rm.writeControlData(oLink);

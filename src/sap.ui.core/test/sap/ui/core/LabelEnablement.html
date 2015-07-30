@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+	
+	<title>LabelEnablement - sap.ui.core</title>
+	
+	<script id='sap-ui-bootstrap' type='text/javascript'
+		src='../../../../resources/sap-ui-core.js'
+		data-sap-ui-theme='sap_bluecrystal'
+		data-sap-ui-libs='sap.ui.core'></script>
+	
+	<script id="view1" type="sapui5/xmlview">
+		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
+				controllerName="my.own.controller" xmlns:html="http://www.w3.org/1999/xhtml">
+			
+			<Label id="someFieldLabel" text="SomeLabel" labelFor="someField"/>
+			<TextField id="someField"/>
+
+			<f:Form id="FormChange354" minWidth="1024" maxContainerCols="2" editable="true">
+				<f:title>
+					<core:Title text="Address" />
+				</f:title>
+				<f:layout>
+					<f:ResponsiveGridLayout labelSpanL="3" labelSpanM="3" emptySpanL="4" emptySpanM="4" columnsL="1" columnsM="1" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="Label via text">
+								<f:fields>
+									<TextField id="labelText"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<Label id="labelControlNoForLabel" text="Label via control - no for"/>
+								</f:label>
+								<f:fields>
+									<TextField id="labelControlNoFor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<Label id="labelControlWithForLabel" text="Label via control - with for" labelFor="labelControlWithFor"/>
+								</f:label>
+								<f:fields>
+									<TextField id="labelControlWithFor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Label via text - multiple fields">
+								<f:fields>
+									<TextField id="labelTextMultiple1" />
+                  					<TextField id="labelTextMultiple2">
+										<layoutData>
+											<l:GridData span="L2 M2 S4" />
+										</layoutData>
+									</TextField>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<Label id="labelControlMultipleNoForLabel" text="Label via control - multiple fields/no for"/>
+								</f:label>
+								<f:fields>
+									<TextField id="labelControlMultipleNoFor1" />
+                  					<TextField id="labelControlMultipleNoFor2">
+										<layoutData>
+											<l:GridData span="L2 M2 S4" />
+										</layoutData>
+									</TextField>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<Label id="labelControlMultipleWithForLabel" text="Label via control - multiple fields/with for" labelFor="labelControlMultipleWithFor2"/>
+								</f:label>
+								<f:fields>
+									<TextField id="labelControlMultipleWithFor1" />
+                  					<TextField id="labelControlMultipleWithFor2">
+										<layoutData>
+											<l:GridData span="L2 M2 S4" />
+										</layoutData>
+									</TextField>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</mvc:View> 
+	</script>
+
+	<script>
+		try {
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		} catch (e) {
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw (e);
+		}
+		try {
+			sap.ui.getCore().loadLibrary("sap.ui.layout");
+		} catch (e) {
+			alert("This test page requires the library 'sap.ui.layout' which is not available.");
+			throw (e);
+		}
+	
+		sap.ui.controller("my.own.controller", {});
+		var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
+		myView.placeAt("content");
+	</script>
+	
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

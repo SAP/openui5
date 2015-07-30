@@ -1,0 +1,48 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectListItemMarkLocked.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		items="{/ProductCollection}"
+		headerText="Products">
+		<items>
+			<ObjectListItem
+					title="{Name}"
+					type="Active"
+					press="onListItemPress"
+					number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
+					numberUnit="{CurrencyCode}"
+                    showMarkers="true"
+                    markFlagged="{
+							path: 'Quantity',
+							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.intBoolRandomizer'
+						}"
+                    markFavorite="{
+							path: 'Status',
+							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.favorite'
+						}"
+					markLocked="{
+							path: 'WeightMeasure',
+							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.intBoolRandomizer'
+						}">
+				<firstStatus>
+					<ObjectStatus
+						text="{Status}"
+						state="{
+							path: 'Status',
+							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.status'
+						}" />
+				</firstStatus>
+				<attributes>
+					<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+					<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+				</attributes>
+			</ObjectListItem>
+		</items>
+	</List>
+</mvc:View>

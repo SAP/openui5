@@ -16,8 +16,6 @@
 
 .sapMSwtText,
 .sapMSwtAcceptReject .sapMSwtHandle {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -31,7 +29,7 @@
 
 /* focus */
 
-.sap-desktop .sapMSwtCont:focus .sapMSwt {
+.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	outline: 0.0625rem dotted @sapUiFocus;
 }
 
@@ -56,23 +54,23 @@
 /* background */
 
 .sapMSwtOn:not(.sapMSwtAcceptReject) {
-	background: @sapUiSwitchOnBG;
-	border-color: @sapUiSwitchOnBorder;
+	background: @sapUiFieldActiveBackground;
+	border-color: @sapUiFieldActiveBorderColor;
 }
 
 .sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: @sapUiSwitchOffBG;
-	border-color: @sapUiSwitchOffBorder;
+	background: @sapUiFieldBackground;
+	border-color: @sapUiFieldBorderColor;
 }
 
 /* hover */
 
 .sapMSwt.sapMSwtHoverable:hover {
-	border-color: @sapUiSwitchBorderColorHover;
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 .sapMSwtHoverable.sapMSwtOn:not(.sapMSwtAcceptReject):hover {
-	background: @sapUiSwitchOnHoverBG;
+	background: darken(@sapUiFieldActiveBackground, 5);
 }
 
 /* disabled */
@@ -85,18 +83,22 @@
 /* Switch inner                   */
 /* ------------------------------ */
 
-.sapMSwtOff .sapMSwtInner {
+.sapMSwtOff > .sapMSwtInner {
 	left: -2rem;
+}
+
+.sapMSwtOn > .sapMSwtInner {
+	left: 0;
 }
 
 /* CSS transitions */
 
-.sapMSwtTrans .sapMSwtInner {
+.sapMSwtTrans > .sapMSwtInner {
 	-webkit-transition: left 0.125s ease-in-out;
 	transition: left 0.125s ease-in-out;
 }
 
-html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
+html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 	-webkit-transition-property: right;
 	transition-property: right;
 }
@@ -112,18 +114,18 @@ html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
 }
 
 .sapMSwtOn .sapMSwtText {
-	color: @sapUiSwitchTextOn;
+	color: @sapUiContentContrastTextColor;
 }
 
 .sapMSwtOff .sapMSwtText {
-	color: @sapUiSwitchTextOff;
+	color: @sapUiContentLabelColor;
 }
 
 .sapMSwtTextOff {
 	left: 2rem;
 }
 
-.sapMSwtText > span {
+.sapMSwtLabel {
 	display: block;
 	width: 1.875rem;
 	padding: 0 0.1875rem;
@@ -131,7 +133,7 @@ html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
 	line-height: inherit;
 }
 
-.sapMSwtTextOff > span {
+.sapMSwtLabelOff {
 	float: right;
 }
 
@@ -157,11 +159,11 @@ html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
 /* background */
 
 .sapMSwtOn .sapMSwtHandle {
-	background: @sapUiSwitchHandleOnBG;
+	background: @sapUiInvertedElement;
 }
 
 .sapMSwtOff .sapMSwtHandle {
-	background: @sapUiSwitchHandleOffBG;
+	background: @sapUiFieldBorderColor;
 }
 
 /* ====================================================== */
@@ -189,7 +191,7 @@ html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
 /* background */
 
 .sapMSwtAcceptReject.sapMSwt {
-	background: @sapUiSwitchAcceptRejectBG;
+	background: @sapUiFieldBackground;
 }
 
 /* ------------------------------ */
@@ -198,16 +200,16 @@ html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
 
 /* icon fonts */
 
-.sapMSwtAcceptReject .sapMSwtText > span {
+.sapMSwtAcceptReject .sapMSwtLabel {
 	font-size: @sapMFontLargeSize;
 }
 
-.sapMSwtAcceptReject .sapMSwtTextOn > span::before {
+.sapMSwtAcceptReject .sapMSwtLabelOn::before {
 	content: "\e05b";
 	color: @sapUiPositiveElement;
 }
 
-.sapMSwtAcceptReject .sapMSwtTextOff > span::before {
+.sapMSwtAcceptReject .sapMSwtLabelOff::before {
 	content: "\e03e";
 	color: @sapUiNegativeElement;
 }
@@ -217,7 +219,7 @@ html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
 /* ------------------------------ */
 
 .sapMSwtAcceptReject .sapMSwtHandle {
-	background: @sapUiSwitchAcceptRejectBG;
+	background: @sapUiFieldBackground;
 	border-style: solid;
 	border-width: 0.125rem;
 }

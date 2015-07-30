@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.search.OpenSearchProvider
+	 * @alias sap.ui.core.search.OpenSearchProvider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var OpenSearchProvider = SearchProvider.extend("sap.ui.core.search.OpenSearchProvider", /** @lends sap.ui.core.search.OpenSearchProvider.prototype */ { metadata : {
@@ -48,8 +48,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 	 * The given callback function is called with the suggest value (type 'string', 1st parameter)
 	 * and an array of the suggestions (type '[string]', 2nd parameter).
 	 *
-	 * @name sap.ui.core.search.SearchProvider.prototype.suggest
-	 * @function
 	 * @param {string} sValue The value for which suggestions are requested.
 	 * @param {function} fCallback The callback function which is called when the suggestions are available.
 	 * @type void
@@ -98,4 +96,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 
 	return OpenSearchProvider;
 
-}, /* bExport= */ true);
+});

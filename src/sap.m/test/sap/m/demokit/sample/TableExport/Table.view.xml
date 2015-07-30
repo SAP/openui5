@@ -14,7 +14,7 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Products"></Label>
+				<Title text="Products" level="H2"/>
 				<ToolbarSpacer></ToolbarSpacer>
 				<Button	icon="sap-icon://download" press="onDataExport" />
 			</Toolbar>
@@ -56,8 +56,7 @@
 				<cells>
 					<ObjectIdentifier
 						title="{Name}"
-						text="{ProductId}"
-						class="sapMTableContentMargin"  />
+						text="{ProductId}" />
 					<Text
 						text="{SupplierName}" />
 					<Text
@@ -70,8 +69,12 @@
 							formatter: 'sap.m.sample.TableExport.Formatter.weightState'
 						}" />
 					<ObjectNumber
-					number="{Price}"
-					unit="{CurrencyCode}" />
+							number="{
+								parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+							unit="{CurrencyCode}" />
 				</cells>
 			</ColumnListItem>
 		</items>

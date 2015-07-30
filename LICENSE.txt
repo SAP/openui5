@@ -202,26 +202,53 @@
    limitations under the License.
 
 
---------------------------------------------------------------------------------------------------------------------------
-SAPUI5 SUBCOMPONENTS:
 
-SAPUI5 includes the following subcomponents that are subject to separate license terms. 
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+--------------------------------------------------------------------------------------------------------------------------
+APIs
+
+This project may include APIs to SAP or third party products or services. The use of these APIs, products and services may be subject to additional agreements. In no event shall the application of the Apache Software License, v.2 to this project grant any rights in or to these APIs, products or services that would alter, expand, be inconsistent with, or supersede any terms of these additional agreements. “API” means application programming interfaces, as well as their respective specifications and implementing code that allows other software products to communicate with or call on SAP or third party products or services (for example, SAP Enterprise Services, BAPIs, Idocs, RFCs and ABAP calls or other user exits) and may be made available through SAP or third party products, SDKs, documentation or other media. 
+
+------------------------------------------------------------------------------
+OpenUI5 SUBCOMPONENTS:
+
+OpenUI5 includes the following subcomponents that are subject to separate license terms.
 Your use of these subcomponents is subject to the seperate license terms applicable to
 each subcomponent.
 
-Component: Array Reduce Method
+Component: Array every Method
 Licensor: Mozilla Developer Network
-Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every#Polyfill
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
-Component: Array.prototype.reduceright
+Component: Array indexOf Method
 Licensor: Mozilla Developer Network
-Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
+Component: Array map Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
+Component: Array reduce Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Polyfill
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
 Component: Array reduceRight Method
 Licensor: Mozilla Developer Network
-Website: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/ReduceRight
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/ReduceRight#Polyfill
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
 Component: blanket.js 1.1.5
@@ -238,20 +265,27 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Miller Medeiros
 
-Component: d3 2.9.5
+Component: d3 3.4.12
 Licensor: Michael Bostock
 Website: http://github.com/mbostock/d3/
 License: BSD 3-clause "New" or "Revised" License
 <OWNER> = Michael Bostock
 <ORGANIZATION> = Michael Bostock
-<YEAR> = 2013
+<YEAR> = 2010-2014
 
 Component: datajs - JavaScript Library for data-centric web applications 1.1.0
 Licensor: Microsoft
-Website: http://datajs.codeplex.com/ 
+Website: http://datajs.codeplex.com/
 License: MIT License
 <year> = unspecified
 <copyright holders> = Microsoft
+
+Component: es6-promise 2.3.0 - a tiny implementation of Promises/A+.
+Licensor: Jake Archibald
+Website: https://github.com/jakearchibald/es6-promise
+License: MIT License
+<year> = 2014
+<copyright holders> = Yehuda Katz, Tom Dale, Stefan Penner, Jake Archibald and contributors
 
 Component: Flexie 1.0.3
 Licensor: Richard Herrera
@@ -265,24 +299,32 @@ Licensor: Mozilla Developer Network
 Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
+Component: Esprima
+Licensor: Ariya Hidayat
+Website: http://esprima.org/
+License: BSD 2-clause "Simplified" License
+<YEAR> = 2011-2013
+<OWNER> = Ariya Hidayat and other contributors
+<COPYRIGHT HOLDER> = Ariya Hidayat and other contributors
+
 Component: google-caja Build 4884
 Licensor: Various
 Website: http://code.google.com/p/google-caja/
 License: Apache License 2.0
 
-Component: google-code-prettify 20080701
+Component: google-code-prettify 20130304
 Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0
 
-Component: Handlebars
+Component: Handlebars 3.0.3
 Licensor: Yehuda Katz
 Website: http://handlebarsjs.com/
 License: MIT License
-<year> = 2011
+<year> = 2011-2014
 <copyright holders> = Yehuda Katz
 
-Component: Hasher
+Component: Hasher 1.2.0
 Licensor: Miller Medeiros
 Website: http://github.com/millermedeiros/hasher
 License: MIT License
@@ -322,6 +364,13 @@ Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
 License: MIT License
 <year> = 2013
+<copyright holders> = jQuery Foundation and other contributors
+
+Component: jQuery 1.11.1
+Licensor: jQuery Foundation and other contributors
+Website: http://jquery.com/
+License: MIT License
+<year> = 2014
 <copyright holders> = jQuery Foundation and other contributors
 
 Component: jQuery-UI 1.10.4
@@ -366,12 +415,12 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Miller Medeiros
 
-Component: JSON in JavaScript 
+Component: JSON in JavaScript
 Licensor: Douglas Crockford
 Website: http://www.json.org/js.html
 License: Public Domain
 
-Component: JSZip 6.3.2
+Component: JSZip 2.2.0
 Licensor: Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso
 Website: https://github.com/Stuk/jszip
 License: MIT License
@@ -388,13 +437,6 @@ Licensor: Alexis Sellier & The Core Less Team
 Website: http://github.com/cloudhead/less.js/
 License: Apache License 2.0
 
-Component: punycode.js
-Licensor: Acid Media
-Website: http://github.com/bestiejs/punycode.js/
-License: MIT License
-<year> = 2010
-<copyright holders> = Acid Media
-
 Component: mobify.js 1.1
 Licensor: Mobify R&D Inc
 Website: http://www.mobify.com/
@@ -402,18 +444,32 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Mobify R&D Inc
 
-Component: mobiscroll
+Component: mobiscroll 2.9.0
 Licensor: Mathias Bynens
 Website: http://mobiscroll.codeplex.com/
 License: MIT License
 <year> = unspecified
 <copyright holders> = Mathias Bynens
 
-Component: qunit 1.10.0
+Component: punycode.js 1.2.3
+Licensor: Acid Media
+Website: http://github.com/bestiejs/punycode.js/
+License: MIT License
+<year> = 2010
+<copyright holders> = Acid Media
+
+Component: qunit 1.16.0
 Licensor: jQuery Foundation and other contributors
 Website: http://github.com/jquery/qunit/
 License: MIT License
-<year> = 2012
+<year> = 2006, 2014
+<copyright holders> = jQuery Foundation and other contributors
+
+Component: qunit composite 1.0.4
+Licensor: jQuery Foundation and other contributors
+Website:https://github.com/JamesMGreene/qunit-composite
+License: MIT License
+<year> = unspecified
 <copyright holders> = jQuery Foundation and other contributors
 
 Component: requirejs 2.1.8
@@ -423,7 +479,7 @@ License: MIT License
 <year> = 2010-2011
 <copyright holders> = The Dojo Foundation
 
-Component: sinon-qunit 1.0.0
+Component: sinon-qunit 2.0.0
 Licensor: Christian Johansen
 Website: http://github.com/cjohansen/sinon-qunit/
 License: BSD 3-clause "New" or "Revised" License
@@ -431,27 +487,39 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION> = Christian Johansen
 <YEAR> = 2010-2011
 
-Component: Sinon.JS 1.5.2
+Component: Sinon.JS 1.14.1
 Licensor: Christian Johansen
 Website: http://github.com/cjohansen/Sinon.JS/
 License: BSD 3-clause "New" or "Revised" License
 <OWNER> = Christian Johansen
 <ORGANIZATION> = Christian Johansen
-<YEAR> = 2010-2012 
+<YEAR> = 2010-2014
 
-Component: SwipeView
+Component: SwipeView 1.0
 Licensor: Matteo Spinelli
 Website: http://github.com/cubiq/SwipeView/
 License: MIT License
 <year> = 2012
 <copyright holders> = Matteo Spinelli
 
+Component: TDOP
+Licensor: Douglas Crockford
+Website: https://github.com/douglascrockford/TDOP
+License: Apache License 2.0, granted to SAP by Douglas Crockford
+
 Component: Unicode Common Locale Data Repository
 Licensor: Unicode, Inc.
 Website: http://cldr.unicode.org/
 License: Unicode, Inc. License Agreement - Data Files And Software (http://www.unicode.org/copyright.html)
 
-Component: URI.js
+Component: unorm 1.3.3
+Licensor: Bjarke Walling
+Website: http://github.com/walling/unorm/
+License: MIT License
+<copyright holders> = Bjarke Walling
+<year> = 2014
+
+Component: URI.js 1.11.2
 Licensor: Rodney Rehm
 Website: http://github.com/medialize/URI.js/
 License: MIT License
@@ -472,12 +540,12 @@ License: MIT License
 <year> = 2011
 <copyright holders> = Zynga Inc.
 
-	
+
 --------------------------------------------------------------------------------------------------------------------------
 
 CC0 1.0 Universal (CCO 1.0) Public Domain Dedication
 
-CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER. 
+CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER.
 
 Statement of Purpose
 
@@ -487,7 +555,7 @@ Certain owners wish to permanently relinquish those rights to a Work for the pur
 
 For these and/or other purposes and motivations, and without any expectation of additional consideration or compensation, the person associating CC0 with a Work (the "Affirmer"), to the extent that he or she is an owner of Copyright and Related Rights in the Work, voluntarily elects to apply CC0 to the Work and publicly distribute the Work under its terms, with knowledge of his or her Copyright and Related Rights in the Work and the meaning and intended legal effect of CC0 on those rights.
 
-1. Copyright and Related Rights. A Work made available under CC0 may be protected by copyright and related or neighboring rights ("Copyright and Related Rights"). Copyright and Related Rights include, but are not limited to, the following: 
+1. Copyright and Related Rights. A Work made available under CC0 may be protected by copyright and related or neighboring rights ("Copyright and Related Rights"). Copyright and Related Rights include, but are not limited to, the following:
 i. the right to reproduce, adapt, distribute, perform, display, communicate, and translate a Work;
 ii. moral rights retained by the original author(s) and/or performer(s);
 iii. publicity and privacy rights pertaining to a person's image or likeness depicted in a Work;
@@ -496,7 +564,7 @@ v. rights protecting the extraction, dissemination, use and reuse of data in a W
 vi. database rights (such as those arising under Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, and under any national implementation thereof, including any amended or successor version of such directive); and
 vii. other similar, equivalent or corresponding rights throughout the world based on applicable law or treaty, and any national implementations thereof.
 
-2. Waiver. To the greatest extent permitted by, but not in contravention of, applicable law, Affirmer hereby overtly, fully, permanently, irrevocably and unconditionally waives, abandons, and surrenders all of Affirmer's Copyright and Related Rights and associated claims and causes of action, whether now known or unknown (including existing as well as future claims and causes of action), in the Work (i) in all territories worldwide, (ii) for the maximum duration provided by applicable law or treaty (including future time extensions), (iii) in any current or future medium and for any number of copies, and (iv) for any purpose whatsoever, including without limitation commercial, advertising or promotional purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each member of the public at large and to the detriment of Affirmer's heirs and successors, fully intending that such Waiver shall not be subject to revocation, rescission, cancellation, termination, or any other legal or equitable action to disrupt the quiet enjoyment of the Work by the public as contemplated by Affirmer's express Statement of Purpose. 
+2. Waiver. To the greatest extent permitted by, but not in contravention of, applicable law, Affirmer hereby overtly, fully, permanently, irrevocably and unconditionally waives, abandons, and surrenders all of Affirmer's Copyright and Related Rights and associated claims and causes of action, whether now known or unknown (including existing as well as future claims and causes of action), in the Work (i) in all territories worldwide, (ii) for the maximum duration provided by applicable law or treaty (including future time extensions), (iii) in any current or future medium and for any number of copies, and (iv) for any purpose whatsoever, including without limitation commercial, advertising or promotional purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each member of the public at large and to the detriment of Affirmer's heirs and successors, fully intending that such Waiver shall not be subject to revocation, rescission, cancellation, termination, or any other legal or equitable action to disrupt the quiet enjoyment of the Work by the public as contemplated by Affirmer's express Statement of Purpose.
 
 3. Public License Fallback. Should any part of the Waiver for any reason be judged legally invalid or ineffective under applicable law, then the Waiver shall be preserved to the maximum extent permitted taking into account Affirmer's express Statement of Purpose. In addition, to the extent the Waiver is so judged Affirmer hereby grants to each affected person a royalty-free, non transferable, non sublicensable, non exclusive, irrevocable and unconditional license to exercise Affirmer's Copyright and Related Rights in the Work (i) in all territories worldwide, (ii) for the maximum duration provided by applicable law or treaty (including future time extensions), (iii) in any current or future medium and for any number of copies, and (iv) for any purpose whatsoever, including without limitation commercial, advertising or promotional purposes (the "License"). The License shall be deemed effective as of the date CC0 was applied by Affirmer to the Work. Should any part of the License for any reason be judged legally invalid or ineffective under applicable law, such partial invalidity or ineffectiveness shall not invalidate the remainder of the License, and in such case Affirmer hereby affirms that he or she will not (i) exercise any of his or her remaining Copyright and Related Rights in the Work or (ii) assert any associated claims and causes of action with respect to the Work, in either case contrary to Affirmer's express Statement of Purpose.
 
@@ -544,3 +612,30 @@ Redistribution and use in source and binary forms, with or without modification,
 
 3. Neither the name of the <ORGANIZATION> nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+--------------------------------------------------------------------------------------------------------------------------
+
+The BSD 2-Clause License
+
+Copyright (c) <YEAR>, <OWNER>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

@@ -57,7 +57,7 @@
 					{lastName:"Dufke",gender:"Fale"},
 					{lastName:"Alioli",gender:"Male"},
 					{lastName:"Delorean",gender:"Female"},
-					{lastName:"Botticelli",gender:"Female"}					
+					{lastName:"Botticelli",gender:"Female"}
 				]};
 
 			// create JSON model instance
@@ -107,20 +107,15 @@
 			sap.ui.getCore().applyChanges();
 			
 			var oTable = sap.ui.getCore().byId("MergeDuplicates");
-			// set text to "initial" to make sure the program goes into the function and merged object should get "" value in the end 
-			var mergedLabel = "initial";
-			var mergedIcon = "initial";
-			if( oTable.getItems()[3] ){
-				//test for label value
-				mergedLabel = oTable.getItems()[3].getCells()[2].$().text();
-				//test for icon value
-				mergedIcon = oTable.getItems()[3].getCells()[0].getDomRef();
-			}
+			$MergedLabel = oTable.getItems()[3].getCells()[2].$();
+			$MergedIcon = oTable.getItems()[3].getCells()[0].$();
 		
- 			strictEqual(mergedLabel, "", "duplicated label should be merged.");
- 			ok(!mergedIcon, "duplicated icon should be merged.");
- 			  
-		    //clean up
+ 			ok($MergedLabel.hasClass("sapMListTblCellDupCnt"), "duplicated label should be merged.");
+ 			strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+
+ 			ok($MergedIcon.hasClass("sapMListTblCellDupCnt"), "duplicated icon should be merged.");
+ 		
+			//clean up
 			sut.destroy();
 		});
 		
@@ -132,7 +127,7 @@
 			var oDeferred = jQuery.Deferred();
 			oDeferred.promise(sut);
 			sut.attachUpdateFinished(
-			    oDeferred.resolve()
+				oDeferred.resolve()
 			);
 			
 			var firstLabelAfterGrowing = "initial";
@@ -140,14 +135,14 @@
 			sut._oGrowingDelegate.requestNewPage();
 			sut.done(function() {
 				var oTable = sap.ui.getCore().byId("MergeDuplicates");
-				//test for label text
-				firstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$().text();
-				//test for icon
-				firstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].getDomRef();
+				var $FirstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$();
+				var $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
+				
+				ok($FirstLabelAfterGrowing.hasClass("sapMListTblCellDupCnt"), "label of the first item after growing should be merged.");
+	 			strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+
+				ok($FirstIconAfterGrowing.hasClass("sapMListTblCellDupCnt"), "icon of the first item after growing should be merged.");
 			});
-			
-			strictEqual(firstLabelAfterGrowing, "", "label of the first item after growing should be merged.");
-			ok(!firstIconAfterGrowing, "icon of the first item after growing should be merged.");
 			
 			//clean up
 			sut.destroy();
@@ -178,12 +173,10 @@
 			iconAfterHeader = oTable.getItems()[5].getCells()[0].getDomRef();
 			
 			ok(iconAfterHeader, "icon src after group header should not be merged");
-		    
-		    //clean up
-		    sut.destroy();
-		});	
-		
-		
+			
+			//clean up
+			sut.destroy();
+		});
 		
 		test("Merge when Rerendering", function() {
 			var sut = createSUT("MergeDuplicates");
@@ -192,31 +185,26 @@
 			
 			var data = {
 					teamMembers:[
-						{lastName:"Doe" ,gender:"Male"}						
+						{lastName:"Doe" ,gender:"Male"}
 					]};
 
 			sut.setModel(new sap.ui.model.json.JSONModel(data));
 			sap.ui.getCore().applyChanges();
 				
 			var oTable = sap.ui.getCore().byId("MergeDuplicates");
-			var labelLastValue = "";
-			var iconLastValue = "";
-			var labelAfterRender = "initial";
-			var iconAfterRender = "initial";
 			
-			if( oTable.getItems()[0] instanceof sap.m.ColumnListItem ){
-				//test for label value
-				labelLastValue = oTable.getColumns()[2].getLastValue();
-				//test for icon value
-				iconLastValue = oTable.getColumns()[0].getLastValue();		
-			}
+			//test for label value
+			var labelLastValue = oTable.getColumns()[2].getLastValue();
+			//test for icon value
+			var iconLastValue = oTable.getColumns()[0].getLastValue();
+	
 			
 			//rerender the table
 			oTable.rerender();
 			sap.ui.getCore().applyChanges();
-				
-			labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
-			iconAfterRender = oTable.getItems()[0].getCells()[0].getSrc();
+			
+			var labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
+			var iconAfterRender = oTable.getItems()[0].getCells()[0].getSrc();
 			
 			ok(labelLastValue == labelAfterRender, "last value of label should be cleared if there is only one row");
 			ok(iconLastValue == iconAfterRender, "last value of icon should be cleared if there is only one row")

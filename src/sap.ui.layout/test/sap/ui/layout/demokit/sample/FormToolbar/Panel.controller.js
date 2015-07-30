@@ -1,11 +1,23 @@
-sap.ui.controller("sap.ui.layout.sample.FormToolbar.Panel", {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, Controller, JSONModel) {
+	"use strict";
 
-	onInit: function (oEvent) {
+	var PanelController = Controller.extend("sap.ui.layout.sample.FormToolbar.Panel", {
 
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/supplier.json");
-		this.getView().setModel(oModel);
+		onInit: function (oEvent) {
 
-		this.getView().bindElement("/SupplierCollection/0");
-	}
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/supplier.json"));
+			this.getView().setModel(oModel);
+
+			this.getView().bindElement("/SupplierCollection/0");
+		}
+	});
+
+
+	return PanelController;
+
 });

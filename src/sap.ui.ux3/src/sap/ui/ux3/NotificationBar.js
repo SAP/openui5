@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @constructor
 	 * @public
 	 * @since 1.7.0
-	 * @name sap.ui.ux3.NotificationBar
+	 * @alias sap.ui.ux3.NotificationBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NotificationBar = Control.extend("sap.ui.ux3.NotificationBar", /** @lends sap.ui.ux3.NotificationBar.prototype */ { metadata : {
@@ -42,7 +42,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * This property enables the bar to be resized by the user.
 			 */
-			resizeEnabled : {type : "boolean", group : "Misc", defaultValue : true}
+			resizeEnabled : {type : "boolean", group : "Misc", defaultValue : true},
+			
+			/**
+			 * This property defines if the toggler should be displayed the whole time when the NotificationBar is shown.
+			 */
+			alwaysShowToggler : {
+				type : "boolean",
+				defaultValue : false,
+				since : "1.24.5"
+			}
 		},
 		aggregations : {
 	
@@ -86,17 +95,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		}
 	}});
-	
-	
-	/**
-	 * This method checks if the NotificationBar has any items (notifications or messages) to show and returns true if there are any items to show. So the application should decide if the bar should be displayed.
-	 *
-	 * @name sap.ui.ux3.NotificationBar#hasItems
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	/**
@@ -356,6 +354,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 	
 		};
+		
+		var fnSortMessages = function(that, oNotifier) {
+			var aSortMessages = oNotifier.getMessages().concat([]);
+			if (aSortMessages.length > 0) {
+				// sort ascending the messages via their level
+				aSortMessages.sort(sap.ui.core.Message.compareByType);
+
+				var iIndex = aSortMessages.length - 1;
+				that._sSeverestMessageLevel = aSortMessages[iIndex].getLevel();
+			}
+		};
 	
 		/**
 		 * This is the eventListener of the NotificationBar. All triggered events
@@ -376,14 +385,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	
 				if (this.getMessageNotifier() && this.getMessageNotifier().getId() === oNotifier.getId()) {
 					// clone the message array to sort it
-					var aSortMessages = oNotifier.getMessages().concat([]);
-					if (aSortMessages.length > 0) {
-						// sort ascending the messages via their level
-						aSortMessages.sort(sap.ui.core.Message.compareByType);
-	
-						var iIndex = aSortMessages.length - 1;
-						this._sSeverestMessageLevel = aSortMessages[iIndex].getLevel();
-					}
+					fnSortMessages(this, this.getMessageNotifier());
 				}
 	
 				if (fnChangeVisibility(this)) {
@@ -533,6 +535,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
 			
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+
+			// set toggler always to visible if running on a mobile device
+			this.setAlwaysShowToggler(false);
 		};
 	
 		NotificationBar.prototype.exit = function() {
@@ -1032,7 +1037,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				$messageCount.removeClass("sapUiMessageSuccess");
 				$messageCount.removeClass("sapUiMessageWarning");
 				$messageCount.removeClass("sapUiMessageError");
-	
+
+				// re-sort the messages and re-calc the severity level because they could have been changed 
+				// if the NotiBar was invisible
+				fnSortMessages(oThis, oMN);
 				// add new corresponding class
 				var sLvl = oThis._sSeverestMessageLevel;
 				$messageCount.addClass("sapUiMessage" + sLvl);
@@ -1111,6 +1119,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			return false;
 		};
 	
+
+		/**
+		 * This method checks if the NotificationBar has any items (notifications or messages) to show and returns true if there are any items to show. So the application should decide if the bar should be displayed.
+		 *
+		 * @type boolean
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
 		NotificationBar.prototype.hasItems = function() {
 			// Checking all notifiers if any has items
 			var mNotifiers = this.getNotifiers();
@@ -1372,8 +1388,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				});
 			}
 		};
+
+		/**
+		 * @param [boolean]
+		 *            {bAlwaysShow} if the toggler should be visible all the time
+		 *            set this parameter to <b>true</b>
+		 * @public
+		 * @since 1.22.11
+		 */
+		sap.ui.ux3.NotificationBar.prototype.setAlwaysShowToggler = function(bAlwaysShow) {
+			// set toggler always to visible if running on a mobile device
+			if (sap.ui.Device.browser.mobile) {
+				bAlwaysShow = true;
+			}
+			
+			this.setProperty("alwaysShowToggler", bAlwaysShow, true);
+			
+			var $toggler = this.$("toggler");
+			if (bAlwaysShow) {
+				$toggler.css("display", "block");
+			} else {
+				$toggler.css("display", "none");
+			}
+		};
 	}());
-	
 
 	return NotificationBar;
 

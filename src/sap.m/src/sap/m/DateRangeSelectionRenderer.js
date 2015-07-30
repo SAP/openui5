@@ -7,11 +7,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './DatePickerRendere
 
 
 	/**
-	 * @class DateRangeSelection renderer.
-	 * @static
+	 * DateRangeSelection renderer.
+	 * @namespace
 	 */
 	var DateRangeSelectionRenderer = Renderer.extend(DatePickerRenderer);
-	
+
 	/**
 	 * Write the value of the input.
 	 *
@@ -20,9 +20,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './DatePickerRendere
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	DateRangeSelectionRenderer.writeInnerValue = function(oRm, oControl) {
-	
+
 		oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue(), oControl.getSecondDateValue()));
-	
+
 	};
 
 	return DateRangeSelectionRenderer;

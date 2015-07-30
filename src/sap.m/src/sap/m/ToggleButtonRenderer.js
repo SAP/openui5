@@ -9,32 +9,42 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class ToggleButton renderer.
-	 * @static
+	 * ToggleButton renderer.
+	 * @namespace
 	 */
-	
+
 	var ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
-	
+
 	/**
-	 * Hint: "renderButtonAttributes" is a reserved/hard-coded Button extending function!
-	 *       It is used to allow extensions to display content after the actual button content.
+	 * Callback for specific rendering of accessibility attributes.
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager currently rendering this control
+	 *            oRm the RenderManager currently rendering this control
+	 * @param {sap.m.ToggleButton}
+	 *            oToggleButton the ToggleButton that should be rendered
+	 * @param {object} mAccProps Accessibillity properties
+	 * @private
+	 */
+	ToggleButtonRenderer.renderAccessibilityAttributes = function(oRm, oToggleButton, mAccProps) {
+
+		mAccProps["pressed"] = oToggleButton.getPressed();
+
+	};
+
+	/**
+	 * Callback for specific rendering of inner button attributes.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRm the RenderManager currently rendering this control
 	 * @param {sap.m.ToggleButton}
 	 *            oToggleButton the ToggleButton that should be rendered
 	 * @private
 	 */
-	ToggleButtonRenderer.renderButtonAttributes = function(rm, oToggleButton) {
-		var bPressed = oToggleButton.getPressed();
-	
-		if (bPressed) {
-			rm.addClass("sapMToggleBtnPressed");
+	ToggleButtonRenderer.renderButtonAttributes = function(oRm, oToggleButton) {
+		if (oToggleButton.getPressed() && !oToggleButton._isUnstyled()) {
+			oRm.addClass("sapMToggleBtnPressed");
 		}
-	
-		rm.writeAttribute('pressed', bPressed);
 	};
-	
 
 	return ToggleButtonRenderer;
 

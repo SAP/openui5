@@ -1,8 +1,10 @@
 <html>
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/OPA</title>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script language="javascript">
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../../../../../../resources/sap-ui-core.js"></script>
+
+		<script>
 
 		/**
 		 * Add test pages to this test suite function.
@@ -29,14 +31,21 @@
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaPlugin.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaIntegration.qunit.html");
 
+			// Introduces globals
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/Opa5PageObject.qunit.html?sap-ui-xx-noless=true");
+
 			//OPA matchers
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationFilled.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationLengthEquals.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/PropertyStrictEquals.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationContainsPropertyEquals.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Ancestor.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Properties.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/BindingPath.qunit.html");
 
 			return suite;
 		}
-		  
+
 		</script>
 	</head>
 	<body>

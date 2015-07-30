@@ -8,13 +8,13 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class SimpleForm renderer.
-	 * @static
+	 * SimpleForm renderer.
+	 * @namespace
 	 */
 	var SimpleFormRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -22,21 +22,25 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	SimpleFormRenderer.render = function(oRm, oControl){
-	
+
 		oControl._bChangedByMe = true;
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiSimpleForm");
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
+		}
+		oRm.writeStyles();
 		oRm.writeClasses();
 		oRm.write(">"); // div element
 		var oForm = oControl.getAggregation("form");
 		oRm.renderControl(oForm);
 		oRm.write("</div>");
 		oControl._bChangedByMe = false;
-	
+
 	};
-	
+
 
 	return SimpleFormRenderer;
 

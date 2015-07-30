@@ -1,23 +1,29 @@
-jQuery.sap.declare("sap.m.sample.TableExport.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.TableExport.Component", {
+	var Component = UIComponent.extend("sap.m.sample.TableExport.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.TableExport.Table",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"Table.view.xml",
-					"Table.controller.js",
-					"Formatter.js"
+		metadata : {
+			rootView : "sap.m.sample.TableExport.Table",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"Table.view.xml",
+						"Table.controller.js",
+						"Formatter.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

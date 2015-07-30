@@ -1,0 +1,42 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ContainerPaddingAndMargin.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessageStrip text="A layout container by default does not add margins or paddings to the content area.
+		By combining the margin and padding concepts you can flexibly design your application layout
+		without having to add any custom CSS. This example shows a HorizontalLayout that is layouted
+		with the standard margin and padding classes provided by UI5." class="sapUiTinyMargin"/>
+	<ScrollContainer>
+		<l:HorizontalLayout class="sapUiContentPadding">
+			<Image
+				densityAware="false"
+				src="{img>/products/pic1}"
+				width="{/widthS}"
+				class="sapUiSmallMarginEnd">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Image>
+			<Image
+				densityAware="false"
+				src="{img>/products/pic1}"
+				width="{/widthM}"
+				class="sapUiSmallMarginEnd">
+				<layoutData>
+					<FlexItemData growFactor="2" />
+				</layoutData>
+			</Image>
+			<Image
+				densityAware="false"
+				src="{img>/products/pic1}"
+				width="{/widthL}" >
+				<layoutData>
+					<FlexItemData growFactor="3" />
+				</layoutData>
+			</Image>
+		</l:HorizontalLayout>
+	</ScrollContainer>
+</mvc:View>

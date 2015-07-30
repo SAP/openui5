@@ -57,16 +57,29 @@
 			ok(jQuery.sap.domById("myApp"), "App should be rendered");
 			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 		});
-		
-		
+
+
+		test("Shell should hide the branding bar when another Shell-like control is parent and has one", function() {
+			strictEqual(oShell.$().find(".sapMShellBrandingBar").length, 1, "branding bar should be rendered");
+			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
+			
+			jQuery(document.body).addClass("sapMBrandingBar-CTX");
+			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "none", "branding bar should not be visible when a Shell is ancestor");
+			
+			jQuery(document.body).removeClass("sapMBrandingBar-CTX");
+			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
+		});
+
+
 		// Shell features
 		test("Shell features", function() {
 			equal(byIdSuffix("-hdrTxt").text(), "Test Shell", "Title should be rendered");
 			equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
 			equal(byIdSuffix("-logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
+			equal(byIdSuffix("-logo").attr("alt"), "Logo", "Logo ALT should be 'Logo''");
 		});
 
-		
+
 		// logout event
 		test("Shell logout event", function() {
 			expect(2); // incl. logout handler

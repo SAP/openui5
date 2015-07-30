@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ColorPicker.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -24,14 +24,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ColorPicker
+	 * @alias sap.ui.commons.ColorPicker
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColorPicker = Control.extend("sap.ui.commons.ColorPicker", /** @lends sap.ui.commons.ColorPicker.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * This is the import-parameter of the ColorPicker.
 			 * As input-parameter, it can be a Hexadecimal string (#FFFFFF), a RGB-string rgb(255,255,255), a HSV-string hsv(360,100,100) or a CSS-colorname 'red'.
@@ -40,96 +40,96 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			colorString : {type : "string", group : "Misc", defaultValue : null}
 		},
 		events : {
-	
+
 			/**
 			 * Value was changed. This event is fired if the value has changed by an user action.
 			 */
 			change : {
 				parameters : {
-	
+
 					/**
 					 * Parameter containing the RED value (0-255)
 					 */
-					r : {type : "int"}, 
-	
+					r : {type : "int"},
+
 					/**
 					 * Parameter containing the GREEN value (0-255)
 					 */
-					g : {type : "int"}, 
-	
+					g : {type : "int"},
+
 					/**
 					 * Parameter containing the BLUE value (0-255)
 					 */
-					b : {type : "int"}, 
-	
+					b : {type : "int"},
+
 					/**
 					 * Parameter containing the HUE value (0-360)
 					 */
-					h : {type : "int"}, 
-	
+					h : {type : "int"},
+
 					/**
 					 * Parameter containing the SATURATION value (0-100)
 					 */
-					s : {type : "int"}, 
-	
+					s : {type : "int"},
+
 					/**
 					 * Parameter containing the VALUE value (0-100)
 					 */
-					v : {type : "int"}, 
-	
+					v : {type : "int"},
+
 					/**
 					 * Parameter containing the Hexadecimal string (#FFFFFF)
 					 */
-					hex : {type : "string"}, 
-	
+					hex : {type : "string"},
+
 					/**
 					 * Parameter containing the alpha value (transparency)
 					 */
 					alpha : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Value was changed. This event is fired during the mouse move. The normal change event ist only fired by mouseup.
 			 */
 			liveChange : {
 				parameters : {
-	
+
 					/**
 					 * Parameter containing the RED value (0-255)
 					 */
-					r : {type : "int"}, 
-	
+					r : {type : "int"},
+
 					/**
 					 * Parameter containing the GREEN value (0-255)
 					 */
-					g : {type : "int"}, 
-	
+					g : {type : "int"},
+
 					/**
 					 * Parameter containing the BLUE value (0-255)
 					 */
-					b : {type : "int"}, 
-	
+					b : {type : "int"},
+
 					/**
 					 * Parameter containing the HUE value (0-360)
 					 */
-					h : {type : "int"}, 
-	
+					h : {type : "int"},
+
 					/**
 					 * Parameter containing the SATURATION value (0-100)
 					 */
-					s : {type : "int"}, 
-	
+					s : {type : "int"},
+
 					/**
 					 * Parameter containing the VALUE value (0-100)
 					 */
-					v : {type : "int"}, 
-	
+					v : {type : "int"},
+
 					/**
 					 * Parameter containing the Hexadecimal string (#FFFFFF)
 					 */
-					hex : {type : "string"}, 
-	
+					hex : {type : "string"},
+
 					/**
 					 * Parameter containing the alpha value (transparency)
 					 */
@@ -138,28 +138,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	}});
-	
-	
-	/**
-	 * This method delivers the current RGB-values
-	 *
-	 * @name sap.ui.commons.ColorPicker#getRGB
-	 * @function
-	 * @type object
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	/**
-	 * This file defines behavior for the control sap.ui.commons.ColorPicker
-	 */
-	
-	
+
+
 	/**
 	 * Initialization hook... creating composite parts
 	 */
 	ColorPicker.prototype.init = function(){
-	
+
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
+
 		//	declare global variable for the ColorObject
 		this.Color = {
 				r   :  255,
@@ -173,7 +160,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				hex :  "#FFFFFF",
 				old :  "#FFFFFF"
 		};
-	
+
 		//	create global variables
 		this.HexString = "FFFFFF";
 		this.rgbString = "";
@@ -184,10 +171,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				g : 0,
 				b : 0
 		};
-	
+
 		//	check if we are in RTL mode
 		this.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		//	create Matrix layout (outer control)
 		this.oMatrix = new sap.ui.commons.layout.MatrixLayout({
 			layoutFixed : true,
@@ -197,177 +184,194 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		});
 		this.oMatrix.setParent(this);
 		this.oMatrix.addStyleClass("sapUiColorPicker-ColorPickerMatrix");
-	
+
 		//	HTML-Control containing the ColorPickerBox
 		var cpBoxID = this.getId() + '-cpBox';
 		var cpCurID = this.getId() + '-cpCur';
 		this.oHtmlBox = new sap.ui.core.HTML({
 			content : "<DIV id=" + cpBoxID + " class=sapUiColorPicker-ColorPickerBox><DIV id=" + cpCurID + " class=sapUiColorPicker-ColorPickerCircle></DIV></DIV>"
 		});
-	
+
 		//	HTML-Control containing the Old Color Box
 		var ocBoxID = this.getId() + '-ocBox';
 		this.oHtmlOldCol = new sap.ui.core.HTML({
 			content : "<DIV id=" + ocBoxID + " class=sapUiColorPicker-ColorPickerOldColor></DIV>"
 		});
-	
+
 		//	HTML-Control containing the New Color Box
 		var ncBoxID = this.getId() + '-ncBox';
 		this.oHtmlNewCol = new sap.ui.core.HTML({
 			content : "<DIV id=" + ncBoxID + " class=sapUiColorPicker-ColorPickerNewColor></DIV>"
 		});
-	
+
 		//	label and input field for Hexadecimal value
 		var inpID = this.getId() + '-hxF';
 		var hexValue = this.Color.hex.substr(1);
 		this.oHexField = new sap.ui.commons.TextField({id: inpID, value : hexValue});
 		this.oHexField.addStyleClass("sapUiColorPicker-ColorPickerHexField");
+		this.oHexField.setTooltip(oRb.getText("COLORPICKER_HEX"));
 		this.oHexLabel = new sap.ui.commons.Label();
 		this.oHexLabel.addStyleClass("sapUiColorPicker-ColorPickerLabels");
 		this.oHexLabel.setText("#:");
+		this.oHexLabel.setTooltip(oRb.getText("COLORPICKER_HEX"));
 		this.oHexLabel.setLabelFor(this.oHexField);
-	
+
 		//	label and input field for Red Value
 		inpID = this.getId() + '-rF';
 		this.oRedField = new sap.ui.commons.TextField({id: inpID, value: this.Color.r, width:"3em"});
 		this.oRedField.addStyleClass("sapUiColorPicker-ColorPickerInputFieldsLeft");
+		this.oRedField.setTooltip(oRb.getText("COLORPICKER_RED"));
 		this.oRedLabel = new sap.ui.commons.Label();
 		this.oRedLabel.addStyleClass("sapUiColorPicker-ColorPickerLabels");
 		this.oRedLabel.setText("R:");
+		this.oRedLabel.setTooltip(oRb.getText("COLORPICKER_RED"));
 		this.oRedLabel.setLabelFor(this.oRedField);
-	
+
 		//	label and input field for Green Value
 		inpID = this.getId() + '-gF';
 		this.oGreenField = new sap.ui.commons.TextField({id: inpID, value : this.Color.g, width:"3em"});
 		this.oGreenField.addStyleClass("sapUiColorPicker-ColorPickerInputFieldsLeft");
+		this.oGreenField.setTooltip(oRb.getText("COLORPICKER_GREEN"));
 		this.oGreenLabel = new sap.ui.commons.Label();
 		this.oGreenLabel.addStyleClass("sapUiColorPicker-ColorPickerLabels");
 		this.oGreenLabel.setText("G:");
+		this.oGreenLabel.setTooltip(oRb.getText("COLORPICKER_GREEN"));
 		this.oGreenLabel.setLabelFor(this.oGreenField);
-	
+
 		//	label and input field for Blue Value
 		inpID = this.getId() + '-bF';
 		this.oBlueField = new sap.ui.commons.TextField({id: inpID, value : this.Color.b, width:"3em"});
 		this.oBlueField.addStyleClass("sapUiColorPicker-ColorPickerInputFieldsLeft");
+		this.oBlueField.setTooltip(oRb.getText("COLORPICKER_BLUE"));
 		this.oBlueLabel = new sap.ui.commons.Label();
 		this.oBlueLabel.addStyleClass("sapUiColorPicker-ColorPickerLabels");
 		this.oBlueLabel.setText("B:");
+		this.oBlueLabel.setTooltip(oRb.getText("COLORPICKER_BLUE"));
 		this.oBlueLabel.setLabelFor(this.oBlueField);
-	
+
 		//	label and input field for Hue Value
 		inpID = this.getId() + '-hF';
 		this.oHueField = new sap.ui.commons.TextField({id: inpID, value : this.Color.h, width:"3em"});
 		this.oHueField.addStyleClass("sapUiColorPicker-ColorPickerInputFieldsRight");
+		this.oHueField.setTooltip(oRb.getText("COLORPICKER_HUE"));
 		this.oHueLabel = new sap.ui.commons.Label();
 		this.oHueLabel.addStyleClass("sapUiColorPicker-ColorPickerLabels");
 		this.oHueLabel.setText("H:");
+		this.oHueLabel.setTooltip(oRb.getText("COLORPICKER_HUE"));
 		this.oHueLabel.setLabelFor(this.oHueField);
-	
+
 		//	label and input field for Saturation Value
 		inpID = this.getId() + '-sF';
 		this.oSatField = new sap.ui.commons.TextField({id: inpID, value : this.Color.s, width:"3em"});
 		this.oSatField.addStyleClass("sapUiColorPicker-ColorPickerInputFieldsRight");
+		this.oSatField.setTooltip(oRb.getText("COLORPICKER_SAT"));
 		this.oSatLabel = new sap.ui.commons.Label();
 		this.oSatLabel.addStyleClass("sapUiColorPicker-ColorPickerLabels");
 		this.oSatLabel.setText("S:");
+		this.oSatLabel.setTooltip(oRb.getText("COLORPICKER_SAT"));
 		this.oSatLabel.setLabelFor(this.oSatField);
-	
+
 		//	label and input field for Value
 		inpID = this.getId() + '-vF';
 		this.oValField = new sap.ui.commons.TextField({id: inpID, value : this.Color.v, width:"3em"});
 		this.oValField.addStyleClass("sapUiColorPicker-ColorPickerInputFieldsRight");
+		this.oValField.setTooltip(oRb.getText("COLORPICKER_VALUE"));
 		this.oValLabel = new sap.ui.commons.Label();
 		this.oValLabel.addStyleClass("sapUiColorPicker-ColorPickerLabels");
 		this.oValLabel.setText("V:");
+		this.oValLabel.setTooltip(oRb.getText("COLORPICKER_VALUE"));
 		this.oValLabel.setLabelFor(this.oValField);
-	
+
 		//	slider
 		inpID = this.getId() + '-hSLD';
 		this.oSlider = new sap.ui.commons.Slider({id: inpID});
+		this.oSlider.setSmallStepWidth(1);
 		this.oSlider.setMax(360);
 		this.oSlider.setValue(parseInt(this.oHueField.getValue(), 10),10);
+		this.oSlider.setTooltip(oRb.getText("COLORPICKER_HUE"));
 		this.oSlider.addStyleClass("sapUiColorPicker-ColorPickerSlider");
-	
+
 		// alpha slider
 		inpID = this.getId() + '-aSLD';
 		this.oAlphaSlider = new sap.ui.commons.Slider({id: inpID});
 		this.oAlphaSlider.setMax(1);
 		this.oAlphaSlider.setValue(1);
 		this.oAlphaSlider.setSmallStepWidth(0.01);
+		this.oAlphaSlider.setTooltip(oRb.getText("COLORPICKER_ALPHA"));
 		this.oAlphaSlider.addStyleClass("sapUiColorPicker-ColorPickerAlphaSlider");
-	
+
 		//	1.Horizontal Layout
 		this.oHLayout1 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oRedLabel, this.oRedField]
 		});
-	
+
 		//	2.Horizontal Layout
 		this.oHLayout2 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oGreenLabel, this.oGreenField]
 		});
-	
+
 		//	3.Horizontal Layout
 		this.oHLayout3 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oBlueLabel, this.oBlueField]
 		});
-	
+
 		//	4.Horizontal Layout
 		this.oHLayout4 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oHexLabel, this.oHexField]
 		});
-	
+
 		//	5.Horizontal Layout
 		this.oHLayout5 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oHueLabel, this.oHueField]
 		});
-	
+
 		//	6.Horizontal Layout
 		this.oHLayout6 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oSatLabel, this.oSatField]
 		});
-	
+
 		//	7.Horizontal Layout
 		this.oHLayout7 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oValLabel, this.oValField]
 		});
-	
+
 		//	8.Horizontal Layout
 		this.oHLayout8 = new sap.ui.layout.HorizontalLayout({
 			content: [this.oHtmlOldCol, this.oHtmlNewCol]
 		});
-		
+
 		//	Vertical Layout1 containing first four horizontal layouts
 		this.oVLayout1 = new sap.ui.layout.VerticalLayout({
 			content:[ this.oHLayout1, this.oHLayout2, this.oHLayout3, this.oHLayout4]
 		});
-	
+
 		//	Vertical Layout2 containing 2.nd four horizontal layouts
 		this.oVLayout2 = new sap.ui.layout.VerticalLayout({
 			content:[ this.oHLayout5, this.oHLayout6, this.oHLayout7, this.oHLayout8]
 		});
 		this.oVLayout2.addStyleClass("sapUiColorPicker-ColorPickerLastColumn");
-	
+
 		//	add first Row to the Matrix Layout
 		this.oMatrix.createRow(this.oHtmlBox, this.oVLayout1, this.oVLayout2);
-	
+
 		//	create second Row containing slider
 		this.oRow2 = new sap.ui.commons.layout.MatrixLayoutRow();
 		this.oCell = new sap.ui.commons.layout.MatrixLayoutCell({ colSpan : 3 });
 		this.oCell.addContent(this.oSlider);
 		this.oRow2.addCell(this.oCell);
-	
+
 		//	add second Row to the Matrix Layout
 		this.oMatrix.addRow(this.oRow2);
-	
+
 		// add another row for the alpha slider
 		this.oRow3 = new sap.ui.commons.layout.MatrixLayoutRow();
 		this.oCell = new sap.ui.commons.layout.MatrixLayoutCell({ colSpan : 3 });
 		this.oCell.addContent(this.oAlphaSlider);
 		this.oRow3.addCell(this.oCell);
-	
+
 		//	add third Row to the Matrix Layout
 		this.oMatrix.addRow(this.oRow3);
-	
+
 		//	attach Eventhandler
 		this.oHexField.attachChange(jQuery.proxy(this._handleHexValueChange,this));
 		this.oRedField.attachChange(jQuery.proxy(this._handleRedValueChange,this));
@@ -380,40 +384,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oSlider.attachChange(jQuery.proxy(this._handleSliderChange,this));
 		this.oAlphaSlider.attachLiveChange(jQuery.proxy(this._handleAlphaSliderLiveChange,this));
 		this.oAlphaSlider.attachChange(jQuery.proxy(this._handleAlphaSliderChange,this));
-		
+
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Clean-up hook... destroying composite parts.
 	 */
 	ColorPicker.prototype.exit = function(){
-	
+
 		//	unbind Mouse-Event-Handler
 		if (this.$cpBox) {
 			this.$cpBox.unbind("mousedown", this.handleMouseDown);
 		}
-	
+
 		jQuery(document)
 		.unbind("mousemove", this.handleMousePos)
 		.unbind("mouseup", this.handleMouseUp);
-	
+
 		//	destroy Objects
 		this.oMatrix.destroy();
 	};
-	
-	
-	
-	/**
+
+
+
+	/*
 	 * Evaluate parameter values
 	 */
 	ColorPicker.prototype.setColorString = function(iColorString) {
-	
+
 		//	parse string; get the color object
 		this._parseColorString(iColorString);
-	
+
 		//	update UI
 		this.oHexField.setValue(this.Color.hex.substr(1));
 		this.oRedField.setValue(this.Color.r);
@@ -424,68 +428,68 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oValField.setValue(this.Color.v);
 		this.oSlider.setValue(this.Color.h);
 		this.oAlphaSlider.setValue(this.Color.a);
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler of the mouse down event
 	 */
 	ColorPicker.prototype.handleMouseDown = function(e) {
-	
+
 		//	exit if the HEXfield is errorneous
 		if (this.oHexField.getValueState() == sap.ui.core.ValueState.Error) {
 			return;
 		}
-	
+
 		//	call mouse position handler
 		this.handleMousePos(e);
 		jQuery(document)
 		.bind("mousemove", jQuery.proxy(this.handleMousePos, this))
 		.bind("mouseup", jQuery.proxy(this.handleMouseUp, this));
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler of the mouse up event
 	 */
 	ColorPicker.prototype.handleMouseUp = function(e) {
-	
+
 		//	exit if the HEXfield is errorneous
 		if (this.oHexField.getValueState() == sap.ui.core.ValueState.Error) {
 			return;
 		}
-	
+
 		//	call mouse position handler
 		this.handleMousePos(e);
 		jQuery(document)
 		.unbind("mousemove", this.handleMousePos)
 		.unbind("mouseup", this.handleMouseUp);
-	
+
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for the mouse position
 	 */
 	ColorPicker.prototype.handleMousePos = function(e) {
-	
+
 		//	get offset of the colorpicker box
 		var cpBoxOffset = this.$cpBox.offset();
-	
+
 		//	get width & height if the colorpicker box
 		var cpBoxWidth  = this.$cpBox.width();
 		var cpBoxHeight = this.$cpBox.height();
-	
+
 		//	calculate the hue and saturation values from the mouse position
 		var x = e.pageX - cpBoxOffset.left;
 		var y = e.pageY - cpBoxOffset.top;
@@ -498,107 +502,107 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		y = Math.min(Math.max(y, 0), cpBoxHeight);
 		var valValue = parseInt(x / cpBoxWidth * 100,10);
 		var satValue = parseInt((1 - y / cpBoxHeight) * 100,10);
-	
+
 		//	set the new values
 		this.oSatField.setValue(satValue);
 		this.oValField.setValue(valValue);
-	
+
 		//	process changes
 		this._processHSVchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for Slider LIVE changes
 	 */
 	ColorPicker.prototype._handleSliderLiveChange = function() {
-	
+
 		//	get the new value
 		var sliderValue = parseInt(this.oSlider.getValue(),10);
-	
+
 		//	set the new hue value in the hue inut field
 		this.oHueField.setValue(sliderValue);
-	
+
 		//	process changes
 		this._processHSVchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for Slider changes
 	 */
 	ColorPicker.prototype._handleSliderChange = function() {
-	
+
 		//	get the new value
 		var sliderValue = parseInt(this.oSlider.getValue(),10);
-	
+
 		//	set the new hue value in the hue inut field
 		this.oHueField.setValue(sliderValue);
-	
+
 		//	process changes
 		this._processHSVchanges();
-	
+
 		//	fire Change event
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	* Event handler for Alpha-Slider LIVE changes
 	*/
 	ColorPicker.prototype._handleAlphaSliderLiveChange = function() {
-	
+
 		// get the new value
 		this.Color.a = this.oAlphaSlider.getValue();
-		
+
 		//	process changes
 		this._processHSVchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for Alpha-Slider changes
 	 */
 	ColorPicker.prototype._handleAlphaSliderChange = function() {
-	
+
 		//	get the new value
 		this.Color.a = this.oAlphaSlider.getValue();
-		
+
 		//	process changes
 		this._processHSVchanges();
-	
+
 		//	fire Change event
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for changes of hue input field
 	 */
 	ColorPicker.prototype._handleHueValueChange = function(){
-	
+
 		//	get the new value
 		var hueValue = parseInt(this.oHueField.getValue(),10);
-	
+
 		//	check for correct value (0 - 360)
 		if (hueValue < 0 || isNaN(hueValue)) {
 			hueValue = 0;
@@ -606,32 +610,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (hueValue > 360) {
 			hueValue = 359.9;
 		}
-	
+
 		//	set the new value (maybe the value has been changed in the above lines)
 		this.oHueField.setValue(hueValue);
-	
+
 		//	update slider value
 		this.oSlider.setValue(hueValue);
-	
+
 		//	process Changes
 		this._processHSVchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for changes of saturation input field
 	 */
 	ColorPicker.prototype._handleSatValueChange =  function(){
-	
+
 		//	get the new value
 		var satValue = parseInt(this.oSatField.getValue(),10);
-	
+
 		//	check for correct value (0-100)
 		if (satValue < 0 || isNaN(satValue)) {
 			satValue = 0;
@@ -639,29 +643,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (satValue > 100) {
 			satValue = 100;
 		}
-	
+
 		//	set the new value (maybe the value has been changed in the above lines)
 		this.oSatField.setValue(satValue);
-	
+
 		//	process Changes
 		this._processHSVchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for changes of value input field
 	 */
 	ColorPicker.prototype._handleValValueChange = function(){
-	
+
 		//	get the new value
 		var valValue = parseInt(this.oValField.getValue(),10);
-	
+
 		//	check for correct value (0-100)
 		if (valValue < 0 || isNaN(valValue)) {
 			valValue = 0;
@@ -669,29 +673,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (valValue > 100) {
 			valValue = 100;
 		}
-	
+
 		//	set the new value (maybe the value has been changed in the above lines)
 		this.oValField.setValue(valValue);
-	
+
 		//	process Changes
 		this._processHSVchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for changes of RED input field
 	 */
 	ColorPicker.prototype._handleRedValueChange = function(){
-	
+
 		//	get the new value
 		var redValue = parseInt(this.oRedField.getValue(),10);
-	
+
 		//	check for correct value (0-255)
 		if (redValue < 0 || isNaN(redValue)) {
 			redValue = 0;
@@ -699,29 +703,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (redValue > 255) {
 			redValue = 255;
 		}
-	
+
 		//	set the new value (maybe the value has been changed in the above lines)
 		this.oRedField.setValue(redValue);
-	
+
 		//	process changes
 		this._processRGBchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for changes of GREEN input field
 	 */
 	ColorPicker.prototype._handleGreenValueChange = function(){
-	
+
 		//	get the new value
 		var greenValue = parseInt(this.oGreenField.getValue(),10);
-	
+
 		//	check for correct value
 		if (greenValue < 0 || isNaN(greenValue)) {
 			greenValue = 0;
@@ -729,29 +733,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (greenValue > 255) {
 			greenValue = 255;
 		}
-	
+
 		//	set the new value (maybe the value has been changed in the above lines)
 		this.oGreenField.setValue(greenValue);
-	
+
 		//	process changes
 		this._processRGBchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for changes of BLUE input field
 	 */
 	ColorPicker.prototype._handleBlueValueChange = function(){
-	
+
 		//	get the new value
 		var blueValue = parseInt(this.oBlueField.getValue(),10);
-	
+
 		//	check for correct value
 		if (blueValue < 0 || isNaN(blueValue)) {
 			blueValue = 0;
@@ -759,31 +763,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (blueValue > 255) {
 			blueValue = 255;
 		}
-	
+
 		//	set the new value (maybe the value has been changed in the above lines)
 		this.oBlueField.setValue(blueValue);
-	
+
 		//	process changes
 		this._processRGBchanges();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Process changes of Hue, Value and Saturation
 	 */
 	ColorPicker.prototype._processHSVchanges = function(){
-	
+
 		//	get HSV-values
 		var hueValue   = parseInt(this.oHueField.getValue(),10);
 		var satValue   = parseInt(this.oSatField.getValue(),10);
 		var valValue   = parseInt(this.oValField.getValue(),10);
-	
+
 		//	calculate and set new RGB-values
 		this._calculateRGB(hueValue, satValue, valValue);
 		this.Color.r = this.RGB.r;
@@ -792,12 +796,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oRedField.setValue(this.Color.r);
 		this.oGreenField.setValue(this.Color.g);
 		this.oBlueField.setValue(this.Color.b);
-	
+
 		//	calculate and set HEX-values from the RGB-values
 		this._calculateHEX(this.Color.r,this.Color.g,this.Color.b);
 		this.oHexField.setValue(this.HexString);
 		this.Color.hex =  "#" + this.oHexField.getValue();
-	
+
 		//	set HSV-values
 		this.Color.h = hueValue;
 		this.Color.s = satValue;
@@ -805,66 +809,66 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 		this.oValField.setValue(this.Color.v);
-	
+
 		//	update gradient box background
 		this._updateGradientBoxBackground(this.Color.h);
-	
+
 		//	update cursor position
 		this._updateCursorPosition();
-	
+
 		//	update selected color background
 		this._updateSelColorBackground();
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Process changes of Red, Green and Blue values
 	 */
 	ColorPicker.prototype._processRGBchanges = function(){
-	
+
 		//	calculate and set HEX-value from the RGB-values
 		var redValue   = Math.round(parseInt(this.oRedField.getValue(),10));
 		var greenValue = Math.round(parseInt(this.oGreenField.getValue(),10));
 		var blueValue  = Math.round(parseInt(this.oBlueField.getValue(),10));
 		this._calculateHEX(redValue, greenValue, blueValue);
 		this.oHexField.setValue(this.HexString);
-	
+
 		//	calculate and set HSV-values from the RGB-values
 		this._calculateHSV(redValue, greenValue, blueValue);
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 		this.oValField.setValue(this.Color.v);
-	
+
 		//	update slider value
 		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
-	
+
 		//	store the values in variable
 		this.Color.r   = redValue;
 		this.Color.g   = greenValue;
 		this.Color.b   = blueValue;
 		this.Color.hex =  "#" + this.oHexField.getValue();
-	
+
 		//	update gradient box background
 		this._updateGradientBoxBackground(this.Color.h);
-	
+
 		//	update cursor position
 		this._updateCursorPosition();
-	
+
 		//	update selected color background
 		this._updateSelColorBackground();
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event handler for changes of HEX input field
 	 */
 	ColorPicker.prototype._handleHexValueChange = function(){
-	
+
 		//	get the new value and convert to uppercase
 		var hexValue = this.oHexField.getValue().toUpperCase();
-	
+
 		//	check for correct value
 		if (hexValue.substr(0, 1) == '#') {
 			hexValue = hexValue.substr(1);
@@ -892,16 +896,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.oSatField.setEnabled(true);
 			this.oValField.setEnabled(true);
 		}
-	
+
 		//	convert from short to long hex (if needed)
 		if (hexValue.length == 3) {
 			var tempValue = hexValue.charAt(0) + hexValue.charAt(0) + hexValue.charAt(1) + hexValue.charAt(1) + hexValue.charAt(2) + hexValue.charAt(2);
 			hexValue = tempValue;
 		}
-	
+
 		//	process Changes
 		this._processHexChanges(hexValue);
-	
+
 		//	update UI
 		this.oHexField.setValue(hexValue);
 		this.oRedField.setValue(this.Color.r);
@@ -912,56 +916,56 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oValField.setValue(this.Color.v);
 		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
 		this.oAlphaSlider.setValue(1);
-	
+
 		//	update gradient box background
 		this._updateGradientBoxBackground(this.Color.h);
-	
+
 		//	update cursor position
 		this._updateCursorPosition();
-	
+
 		//	update selected color background
 		this._updateSelColorBackground();
-	
+
 		//	fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
 		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Hex-Values have changed ==> process changes
 	 */
 	ColorPicker.prototype._processHexChanges = function (ihexValue){
-	
+
 		//	convert RGB-values
 		this._convertRGB(ihexValue);
-	
+
 		//	calculate and set HSV-values from the RGB-values
 		this._calculateHSV(this.Color.r, this.Color.g, this.Color.b);
-	
+
 		//	all values except hex set; set the hex value
 		this.Color.hex = "#" + ihexValue.toUpperCase();
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Update Cursor position in the ColorPicker Box
 	 */
 	ColorPicker.prototype._updateCursorPosition = function(){
-	
+
 		//	get the width & height
 		var cpCurWidth  = this.$cpCur.width();
 		var cpCurHeight = this.$cpCur.height();
 		var cpBoxWidth  = this.$cpBox.width();
 		var cpBoxHeight = this.$cpBox.height();
-	
+
 		//	get the saturation and value
 		var satValue = this.oSatField.getValue();
 		var valValue = this.oValField.getValue();
-	
+
 		//	calculate the x and y values
 		var x = parseInt(valValue * cpBoxWidth / 100,10);
 		//	calculate x if we are in RTL mode
@@ -972,18 +976,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var y = parseInt((1 - satValue / 100) * cpBoxHeight,10);
 		x = Math.min(Math.max(x, 0), cpBoxWidth - cpCurWidth / 2) - cpCurWidth / 2;
 		y = Math.min(Math.max(y, 0), cpBoxHeight - cpCurHeight / 2) - cpCurHeight / 2;
-	
+
 		//	set the new cursor position
 		this.$cpCur.css("left", x).css("top", y);
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Calculate RGB-Values from Hue/Saturation/Value
 	 */
 	ColorPicker.prototype._calculateRGB = function( hue, sat, val){
-	
+
 		//hue value is cyclic, so 360 = 0
 		if (hue == 360) {
 			hue = 0;
@@ -991,17 +995,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		hue /= 60;
 		sat /= 100;
 		val /= 100;
-		
-		
+
+
 		//Formula taken from http://www.rapidtables.com/convert/color/hsv-to-rgb.htm
 		var c = val * sat;
 		var x = c * (1 - Math.abs(hue % 2 - 1));
 		var m = val - c;
-		
+
 		// calculate values
 		var redValue = 0, greenValue = 0, blueValue = 0;
 		var i = Math.floor(hue);
-		
+
 		switch (i) {
 			case 0:
 				redValue   = c;
@@ -1028,14 +1032,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				blueValue  = x;
 				break;
 		}
-		
+
 		this.RGB.r = Math.floor((redValue + m) * 255);
 		this.RGB.g = Math.floor((greenValue + m) * 255);
 		this.RGB.b = Math.floor((blueValue + m) * 255);
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Get RGB-String from the current RGB-Values
 	 */
@@ -1046,14 +1050,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return "rgb(" + this.Color.r + "," + this.Color.g + "," + this.Color.b + ")";
 		}
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Calculate HEX-Values when RGB-values change
 	 */
 	ColorPicker.prototype._calculateHEX = function(red,green,blue){
-	
+
 		//	convert values
 		var redStr     = red.toString(16);
 		var greenStr   = green.toString(16);
@@ -1067,18 +1071,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (blueStr.length == 1)  {
 			blueStr  = '0' + blueStr;
 		}
-	
+
 		//	return the HexValue
 		this.HexString = (redStr + greenStr + blueStr).toUpperCase();
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Calculate HSV-Values from RGB-values
 	 */
 	ColorPicker.prototype._calculateHSV = function (red, green, blue){
-	
+
 		//	calculate values
 		var max			= Math.max(Math.max(red, green), blue);
 		var min			= Math.min(Math.min(red, green), blue);
@@ -1088,14 +1092,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var hueValue = 0;
 		if (satValue == 0) {
 			hueValue = 0;
-		}
-		else if (red == max)   {
+		} else if (red == max)   {
 			hueValue = 60.0 * (green - blue) / delta;
-		}
-		else if (green == max) {
+		} else if (green == max) {
 			hueValue = 120.0 + 60.0 * (blue - red) / delta;
-		}
-		else if (blue == max)  {
+		} else if (blue == max)  {
 			hueValue = 240.0 + 60.0 * (red - green) / delta;
 		}
 		if (hueValue < 0.0) {
@@ -1103,74 +1104,74 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		hueValue = Math.round(hueValue);
 		satValue = Math.round(satValue);
-	
+
 		//	store the new values
 		this.Color.h = hueValue;
 		this.Color.s = satValue;
 		this.Color.v = valValue;
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Convert HEX-Value to RGB-Values
 	 */
 	ColorPicker.prototype._convertRGB = function(hex){
-	
+
 		//	calculate the new values
 		var red   = parseInt(hex.substr(0, 2), 16);
 		var green = parseInt(hex.substr(2, 2), 16);
 		var blue  = parseInt(hex.substr(4, 2), 16);
-	
+
 		//	return the new values
 		this.Color.r = red;
 		this.Color.g = green;
 		this.Color.b = blue;
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Update GradientBox Background
 	 */
 	ColorPicker.prototype._updateGradientBoxBackground = function(hue){
-	
+
 		//	calculate RGB-values
 		this._calculateRGB(hue, 100, 100);
-	
+
 		//	calculate Hex-value
 		this._calculateHEX(this.RGB.r,this.RGB.g,this.RGB.b);
-	
+
 		//	set backgroundColor
 		this.$cpBox.css('background-color','rgb(' + this.RGB.r + ', '  + this.RGB.g + ', ' + this.RGB.b + ')');
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Update background of "new color box"
 	 */
 	ColorPicker.prototype._updateSelColorBackground = function(){
-	
+
 		//	set the new color
 		this.$("ncBox").css('background-color',this._getRGBString());
-	
+
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Parse Input Parameter; evaluate color
 	 */
 	ColorPicker.prototype._parseColorString = function(iColorString){
-	
+
 		//	delete #, trim and convert to lower case
 		if (iColorString.substr(0, 1) == '#') {
 			iColorString = iColorString.substr(1);
 		}
 		iColorString = iColorString.replace(/ /g,'');
 		iColorString = iColorString.toLowerCase();
-	
+
 		//	parse Names
 		var searchKey = "";
 		var hexValue = "";
@@ -1319,20 +1320,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				yellow: 				'ffff00',
 				yellowgreen: 			'9acd32'
 		};
-	
+
 		for (searchKey in colorNames) {
 			if (iColorString == searchKey) {
 				hexValue = colorNames[searchKey].toUpperCase();
 			}
 		}
-	
+
 		if (hexValue != "") {
 			//Found a name; get RGB and HSV values
 			this._processHexChanges(hexValue);
 			this.Color.old = this.Color.hex;
 		}
-	
-	
+
+
 		//	parse HEX
 		//	allowed input: #aabbcc, aabbcc, #abc, abc
 		//	'#' has already been deleted, search only for values
@@ -1349,8 +1350,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this._processHexChanges(hexValue);
 			this.Color.old = this.Color.hex;
 		}
-	
-	
+
+
 		//	parse RGBA
 		//	allowed input: rgba(255,255,255,0.3); rgba255,255,255,0.3
 		//	check if the string begins with "rgba"
@@ -1372,8 +1373,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				this.Color.a = this.Color.a_old = parseFloat(sAlpha);
 			}
 		}
-	
-		
+
+
 		//	parse RGB
 		//	allowed input: rgb(255,255,255); rgb255,255,255
 		//	check if the string begins with "rgb"
@@ -1393,8 +1394,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				this.Color.old = this.Color.hex;
 			}
 		}
-	
-	
+
+
 		//	parse HSV
 		//	allowed input: hsv(360,100,100); hsv360,100,100; [hsv(360,0.5,0.5); hsv360,0.5,0.5 later]
 		//	check if the string begins with "rgb"
@@ -1426,55 +1427,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return false;
 		}
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event after rendering the page
 	 */
 	ColorPicker.prototype.onAfterRendering = function (){
-	
+
 		// get the jQuery-Object for cpBox and cpCur
 		this.$cpBox = this.$("cpBox");
 		this.$cpCur = this.$("cpCur");
-	
+
 		//	add Mousehandler for ColorPickerBox
 		this.$cpBox.bind("mousedown", jQuery.proxy(this.handleMouseDown, this));
-	
+
 		//	set the background color of the Color Boxes
 		this.$("ncBox").css('background-color',this._getRGBString());
 		this.$("ocBox").css('background-color',this._getRGBString());
-	
+
 		//	update the background color of the 'new color box'
 		this._updateGradientBoxBackground(this.Color.h);
-	
+
 		//	update cursor position
 		this._updateCursorPosition();
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Event before rendering the page
 	 */
 	ColorPicker.prototype.onBeforeRendering = function (){
-	
+
 		//	unbind Mousehandler for ColorPickerBox
 		this.$("cpBox").unbind("mousedown", this.handleMouseDown);
-	
+
 	};
-	
-	
-	
+
+
 	/**
-	 * Deliver current RGB-values
+	 * Deliver current RGB-values.
+	 *
+	 * @name sap.ui.commons.ColorPicker#getRGB
+	 * @function
+	 * @type object
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ColorPicker.prototype.getRGB = function (){
-	
+
 		return {r:this.Color.r, g:this.Color.g, b:this.Color.b};
-	
+
 	};
-	
+
 
 	return ColorPicker;
 

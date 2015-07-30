@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/Ver
 	 * @public
 	 * @deprecated Since version 1.16.0. 
 	 * Moved to sap.ui.layout library. Please use this one.
-	 * @name sap.ui.commons.layout.VerticalLayout
+	 * @alias sap.ui.commons.layout.VerticalLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VerticalLayout = VerticalLayout1.extend("sap.ui.commons.layout.VerticalLayout", /** @lends sap.ui.commons.layout.VerticalLayout.prototype */ { metadata : {

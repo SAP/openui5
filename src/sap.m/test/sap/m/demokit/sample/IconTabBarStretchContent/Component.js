@@ -1,20 +1,26 @@
-jQuery.sap.declare("sap.m.sample.IconTabBarStretchContent.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.IconTabBarStretchContent.Component", {
+	var Component = UIComponent.extend("sap.m.sample.IconTabBarStretchContent.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.IconTabBarStretchContent.IconTabBar",
-		dependencies : {
-			libs : [
-				"sap.m"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"IconTabBar.view.xml"
+		metadata : {
+			rootView : "sap.m.sample.IconTabBarStretchContent.IconTabBar",
+			dependencies : {
+				libs : [
+					"sap.m"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"IconTabBar.view.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

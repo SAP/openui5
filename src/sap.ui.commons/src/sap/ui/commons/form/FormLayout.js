@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 	 * @since 1.9.1
 	 * @deprecated Since version 1.16.0. 
 	 * moved to sap.ui.layout library. Please use this one.
-	 * @name sap.ui.commons.form.FormLayout
+	 * @alias sap.ui.commons.form.FormLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormLayout = FormLayout1.extend("sap.ui.commons.form.FormLayout", /** @lends sap.ui.commons.form.FormLayout.prototype */ { metadata : {

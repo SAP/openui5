@@ -20,6 +20,7 @@
 
 <script type="text/javascript">	
 	jQuery.sap.require("sap.m.P13nConditionPanel");
+	jQuery.sap.require("sap.ui.layout.Grid");	
 	
 	var	aConditions;    
 	
@@ -28,7 +29,7 @@
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
-			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel]});
+			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel]});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
 			}			
@@ -56,7 +57,7 @@
 			oConditionPanel = new sap.m.P13nConditionPanel({
 	 			maxConditions: -1,
 	 			autoReduceKeyFieldItems: true,
-	 			showLabel: true
+	 			showLabel: false
 			});
 			
 			oConditionPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 
@@ -70,9 +71,9 @@
 	var btnShow2 = new sap.m.Button({
 		text: "Filtering",
 		press: function() {
-		  	var oCondition1= { "key": "i1", "text": "CompanyCode: -100.5..1000"   , "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": -100.5, "value2": 1000};
-			var oCondition2= { "key": "i2", "text": "CompanyName: =foo"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
-			var oCondition3= { "key": "i3", "text": "CompanyDate: =1/1/00"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyDate", "value1": new Date(), "value2": ""};
+		  	var oCondition1= { "key": "i1", "text": "CompanyCode: -100.5..1000", "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": -100.5, "value2": 1000};
+			var oCondition2= { "key": "i2", "text": "CompanyName: =foo", "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
+			var oCondition3= { "key": "i3", "text": "CompanyDate: =1/1/00", "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyDate", "value1": new Date(), "value2": ""};
 			aConditions= [oCondition1, oCondition2, oCondition3];    
 	
 			oConditionPanel = new sap.m.P13nConditionPanel({
@@ -82,9 +83,9 @@
 	 			alwaysShowAddIcon: false
 			});
 			
-			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxlength: "10", tooltip : "Company Code"}, {key: "CompanyName", text: "Name", type: "text", isDefault: true}, {key: "CompanyDate", text: "Date", type: "date"}]);
- 			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.BT, 
-				                     		sap.m.P13nConditionOperation.EQ, 
+			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", precision: "5", scale: "2", tooltip : "Company Code", isDefault: true}, {key: "CompanyName", text: "Name", type: "text", maxLength: "10"}, {key: "CompanyDate", text: "Date", type: "date"}]);
+ 			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.EQ, 
+				                     		sap.m.P13nConditionOperation.BT, 
 		                             		sap.m.P13nConditionOperation.Contains, 
 		                             		sap.m.P13nConditionOperation.StartsWith,
 		                             		sap.m.P13nConditionOperation.EndsWith, 
@@ -92,14 +93,16 @@
 		                             		sap.m.P13nConditionOperation.LE, 
 		                             		sap.m.P13nConditionOperation.GT, 
 		                             		sap.m.P13nConditionOperation.GE ]);
- 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "date");
- 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "numeric");
-			oConditionPanel.setConditions(aConditions);			
-	
+			aConditions.forEach(function(oCondition){
+				oConditionPanel.addCondition(oCondition);
+			}, this)
+
 			show(oConditionPanel, "Filter");
 		}		
 	});
@@ -107,8 +110,8 @@
 	var btnShow3 = new sap.m.Button({
 		text: "Grouping",
 		press: function() {
-			var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", grouping: true};
-			var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", grouping: false};
+			var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
+			var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
 			aConditions= [oCondition1, oCondition2];    
 	
 			oConditionPanel = new sap.m.P13nConditionPanel({
@@ -149,6 +152,20 @@
 			}
 	});
 	
+	var btnClearErrors = new sap.m.Button({
+		text: "Clear Errors",
+		press: function() {
+			oConditionPanel.removeValidationErrors();
+		}
+	});
+	
+	var btnRemoveInvalidConditions = new sap.m.Button({
+		text: "Remove Invalid Conditions",
+		press: function() {
+			oConditionPanel.removeInvalidConditions();
+		}
+	});
+	
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
@@ -184,6 +201,8 @@
 	btnShow3.placeAt("content");
 	btnShow4.placeAt("content");
 	btnValidate.placeAt("content");
+	btnClearErrors.placeAt("content");
+	btnRemoveInvalidConditions.placeAt("content");
 	btnConditions.placeAt("content");
 	theCompactMode.placeAt("content");
 	theDialogMode.placeAt("content");

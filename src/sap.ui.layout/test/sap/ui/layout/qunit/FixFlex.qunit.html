@@ -76,9 +76,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(oFixFlex.$().hasClass("sapUIFixFlex"), "FixFlex should be rendered");
-		ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUIFixFlexFixed"), "Fixed container should be rendered");
-		ok(jQuery(oFixFlex.$().children()[1]).hasClass("sapUIFixFlexFlexible"), "Flex container should be rendered");
+		ok(oFixFlex.$().hasClass("sapUiFixFlex"), "FixFlex should be rendered");
+		ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUiFixFlexFixed"), "Fixed container should be rendered");
+		ok(jQuery(oFixFlex.$().children()[1]).hasClass("sapUiFixFlexFlexible"), "Flex container should be rendered");
 		ok(oButton1.$().hasClass("sapMBtn"), "Button should be rendered");
 		ok(oButton2.$().hasClass("sapMBtn"), "Button should be rendered");
 		ok(oButton3.$().hasClass("sapMBtn"), "Button should be rendered");
@@ -111,7 +111,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUIFixFlexFlexible"), "Flex container should be the first child");
+		ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUiFixFlexFlexible"), "Flex container should be the first child");
 
 		// Cleanup
 		oFixFlex.destroy();
@@ -135,20 +135,20 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(jQuery(oFixFlex.$()).hasClass("sapUIFixFlexRow"), "The layout direction should be horizontal (row)");
+		ok(jQuery(oFixFlex.$()).hasClass("sapUiFixFlexRow"), "The layout direction should be horizontal (row)");
 
 		// Cleanup
 		oFixFlex.destroy();
 	});
-	
+
 	test("Legacy support", function() {
-		var	$FixChild, 
-			$FlexChild, 
-			iFixChildWidth, 
-			iFixChildHeight, 
-			iFlexChildWidth, 
+		var	$FixChild,
+			$FlexChild,
+			iFixChildWidth,
+			iFixChildHeight,
+			iFlexChildWidth,
 			iFlexChildHeight;
-		
+
 		// Arrange
 		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
 
@@ -163,16 +163,16 @@
 
 		$FixChild = oFixFlex.$("Fixed");
 		$FlexChild = oFixFlex.$("Flexible");
-		
+
 		iFixChildWidth = $FixChild.outerWidth();
-		iFixChildHeight = $FixChild.outerHeight();	
+		iFixChildHeight = $FixChild.outerHeight();
 		iFlexChildWidth = $FlexChild.outerWidth();
 		iFlexChildHeight = $FlexChild.outerHeight();
 
 		// Act
-		oFixFlex._handlerResize();
+		oFixFlex._handlerResizeNoFlexBoxSupport();
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
 		strictEqual(iFixChildWidth, $FixChild.outerWidth(), "Width is not changed");
 		strictEqual(iFixChildHeight, $FixChild.outerHeight(), "Height is not changed");

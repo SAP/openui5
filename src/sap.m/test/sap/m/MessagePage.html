@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>MessagePage - sap.m</title>
+
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript"
+			data-sap-ui-libs="sap.m"
+			src="../../../resources/sap-ui-core.js"
+			>
+	</script>
+	<script>
+		// Simple MessagePage
+		var oMessagePage = new sap.m.MessagePage("messagePage",{
+			title:"Opportunity",
+			text:"No Items are present",
+			description: "Description",
+			customDescription: new sap.m.Link({text: "Custom Description", href: "http://go.sap.com/index.html"})
+		});
+
+		var oPageWithMessagePage = new sap.m.Page("pageWithMessagePage", {
+			title: "Detail",
+			content: new sap.m.MessagePage({title: "Opportunity",showNavButton: true})
+		});
+
+		var oCarousel = new sap.m.Carousel("carousel", {
+			activePage: oMessagePage,
+			loop: true,
+			pages: [
+				new sap.m.MessagePage({
+					title: "Opportunity1",
+					showNavButton: true,
+					text: "MessagePage 1"
+				}),
+				new sap.m.MessagePage({
+					title: "Opportunity2",
+					showNavButton: true,
+					text: "MessagePage 2"
+				}),
+				new sap.m.MessagePage({
+					title: "Opportunity3",
+					showNavButton: true,
+					text: "MessagePage 3"
+			})]
+		});
+
+		var oNavContainer = new sap.m.NavContainer("navContainer", {
+			pages: [
+				new sap.m.MessagePage({
+				title: "Opportunity1",
+				showNavButton: true,
+				customText: new sap.m.Link({text: "MessagePage insight NavContainer", href: "http://go.sap.com/index.html"})
+			})]
+		});
+
+		var oMasterPage = new sap.m.Page("master", {
+			title: "Master",
+			icon: "images/SAPUI5.jpg",
+			content: [new sap.m.List({
+				items: [new sap.m.StandardListItem({
+					title: "Just the message page",
+					type: "Navigation",
+					press: function() {
+						oSplitApp.toDetail("messagePage");
+					}
+				}),
+					new sap.m.StandardListItem({
+						title: "Page with message page",
+						type: "Navigation",
+						press: function() {
+							oSplitApp.toDetail("pageWithMessagePage");
+						}
+					}),
+					new sap.m.StandardListItem({
+						title: "Carousel with message page",
+						type: "Navigation",
+						press: function() {
+							oSplitApp.toDetail("carousel");
+						}
+					}),
+					new sap.m.StandardListItem({
+						title: "Nav container with message page",
+						type: "Navigation",
+						press: function() {
+							oSplitApp.toDetail("navContainer");
+						}
+					})]
+			})]
+		});
+
+		var oSplitApp = new sap.m.SplitApp({
+			detailPages: [oMessagePage, oPageWithMessagePage, oCarousel, oNavContainer],
+			masterPages: [oMasterPage],
+			initialDetail: "messagePage",
+			initialMaster: "master"
+		});
+
+		oSplitApp.placeAt('content');
+	</script>
+</head>
+
+<body class="sapUiBody" role="application">
+	<div id="content" class="sapUiBody"></div>
+</body>
+</html>

@@ -3,8 +3,8 @@
  */
 
 // Provides the concept of a sorter for list bindings
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/ui/base/Object'],
+	function(BaseObject) {
 	"use strict";
 
 
@@ -22,11 +22,13 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {boolean|function} vGroup configure grouping of the content, can either be true to enable grouping
 	 *        based on the raw model property value, or a function which calculates the group value out of the 
 	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
-	 *        implement the grouping behaviour for the aggregation which you want to group.
+	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function 
+	 *        is provided it must either return a primitive type value as the group key or an object containing
+	 *        a "key" property an may contain additional properties needed for group visualization.
 	 * @public
-	 * @name sap.ui.model.Sorter
+	 * @alias sap.ui.model.Sorter
 	 */
-	var Sorter = sap.ui.base.Object.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
+	var Sorter = BaseObject.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 		
 		constructor : function(sPath, bDescending, vGroup){
 			if (typeof sPath === "object") {
@@ -53,28 +55,28 @@ sap.ui.define(['jquery.sap.global'],
 			if (typeof vGroup == "function") {
 				this.fnGroup = vGroup;
 			}
+		},
+		
+		/**
+		 * Returns a group object, at least containing a key property for group detection.
+		 * May contain additional properties as provided by a custom group function.
+		 * 
+		 * @param {sap.ui.model.Context} oContext the binding context
+		 * @return {object} An object containing a key property and optional custom properties
+		 * @public
+		 */
+		getGroup : function(oContext) {
+			var oGroup = this.fnGroup(oContext);
+			if (typeof oGroup === "string" || typeof oGroup === "number" || typeof oGroup === "boolean" || oGroup == null) {
+				oGroup = {
+					key: oGroup
+				};
+			} 
+			return oGroup;
 		}
 	
 	});
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.Sorter with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.Sorter.extend
-	 * @function
-	 */
-	
 
 	return Sorter;
 
-}, /* bExport= */ true);
+});

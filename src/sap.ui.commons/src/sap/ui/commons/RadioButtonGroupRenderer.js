@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class RadioButtonGroup renderer.
-	 * @static
+	 * RadioButtonGroup renderer.
+	 * @namespace
 	 */
 	var RadioButtonGroupRenderer = {
 	};
@@ -26,8 +26,8 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 	
-		// Return immediately if control is invisible or has no RadioButtons
-		if (!oRBGroup.getVisible() || !oRBGroup.aRBs) {
+		// Return immediately if control has no RadioButtons
+		if (!oRBGroup.aRBs) {
 			return;
 		}
 	

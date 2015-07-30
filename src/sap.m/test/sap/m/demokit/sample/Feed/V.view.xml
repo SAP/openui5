@@ -4,8 +4,8 @@
 	xmlns="sap.m">
 	<FeedInput 
 		post="onPost"
-		icon="test-resources/sap/ui/demokit/explored/img/Woman_10.png"
-		class="sapUiExploredFeedMargin" />
+		icon="http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg"
+		class="sapUiSmallMarginTopBottom" />
 	<List
 		showSeparators="Inner"
 		items="{/EntryCollection}" >

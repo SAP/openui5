@@ -8,9 +8,8 @@
 
 .sapMSlt,
 .sapMSltNative,
-.sapMSlt > .sapMSltLabel {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
+.sapMSlt > .sapMSltLabel,
+.sapMSltPicker-CTX .sapMIBar {
 	box-sizing: border-box;
 }
 
@@ -25,14 +24,14 @@
 	display: inline-block;
 }
 
+.sapMSlt,
+.sapMSltLabel {
+	overflow: hidden;
+}
+
 .sapMSlt:not(.sapMSltDisabled),
 .sapMSlt:not(.sapMSltDisabled) > .sapMSltLabel {
 	cursor: pointer;
-}
-
-li.sapMSltItemDisabled,
-.sapMSltDisabled {
-	pointer-events: none;
 }
 
 /* ------------------------------ */
@@ -53,7 +52,6 @@ li.sapMSltItemDisabled,
 	position: absolute;
 	left: 0;
 	right: 0;
-	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	text-decoration: none;

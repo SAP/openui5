@@ -9,13 +9,13 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Tree renderer.
-	 * @static
+	 * Tree renderer.
+	 * @namespace
 	 */
 	var TreeRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -25,14 +25,14 @@ sap.ui.define(['jquery.sap.global'],
 	TreeRenderer.render = function(oRenderManager, oTree){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		//First node get is focusable.
 		TreeRenderer.bFirstNodeRendered = false;
-	
+
 		rm.write("<div");
 		rm.writeControlData(oTree);
 		rm.addClass("sapUiTree");
-	
+
 		if (oTree.getHeight() != "" && oTree.getHeight() != "auto") {
 			rm.addClass("sapUiTreeFixedHeight");
 		}
@@ -40,51 +40,51 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass("sapUiTreeTransparent");
 		}
 		rm.writeClasses();
-	
+
 		rm.addStyle("width", oTree.getWidth() || "auto");
 		rm.addStyle("height", oTree.getHeight());
 		rm.addStyle("min-width", oTree.getMinWidth());
-	
+
 		rm.writeStyles();
-	
+
 		//ARIA
 		rm.writeAttribute('role', 'tree');
 		rm.write(">");
-	
+
 		if (oTree.getShowHeader()) {
-	
+
 			rm.write("<div id=\"" + oTree.getId() + "-Header\" class=\"sapUiTreeHeader\""); //Header
 			rm.writeAttribute('role', 'heading');
 			rm.write(">");
-	
+
 			//Title
 			rm.write("<div class='sapUiTreeTitle'");
-	
+
 			if (oTree.getTooltip_AsString()) {
 				rm.writeAttributeEscaped( "title", oTree.getTooltip_AsString());//Tree tooltip
 			}
 			rm.write(">");
 			rm.writeEscaped(oTree.getTitle());
 			rm.write("</div>");
-	
-	
+
+
 			if (oTree.getShowHeaderIcons()) {
 				rm.write("<div id='" + oTree.getId() + "-TBCont' class='sapUiTreeTbCont'"); //ToolbarContainer
 				rm.writeAttribute('role', 'toolbar');
 				rm.write(">");
 				rm.renderControl(oTree.oCollapseAllButton);
 				rm.renderControl(oTree.oExpandAllButton );
-	
+
 				rm.write("</div>");
 			}
-	
-	
+
+
 			rm.write("</div>");//End of Header
 		}
-	
+
 		rm.write("<div id=\"" + oTree.getId() + "-TreeCont\""); //tree container
-	
-	
+
+
 		rm.addClass("sapUiTreeCont");
 		var showScroll = oTree.getShowHorizontalScrollbar();
 		if (showScroll) {
@@ -93,22 +93,22 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass("sapUiTreeContNoScroll");
 		}
 		rm.writeClasses();
-	
+
 		rm.write(">");
-	
+
 		// write the HTML into the render manager
 		rm.write("<ul class=\"sapUiTreeList\">");
-	
+
 		var aNodes = oTree.getNodes();
 		 for (var i = 0;i < aNodes.length;i++) {
 		   TreeRenderer.renderNode(rm, aNodes[i], 1, aNodes.length, i + 1);
 		}
-	
+
 		rm.write("</ul>");
 		rm.write("</div>");//Tree Container
 		rm.write("</div>");//Tree
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -120,37 +120,36 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var bExpanded;
-	
+
 		// write the HTML into the render manager
 		rm.write("<li");
 		rm.writeElementData(oNode);
 		rm.addClass("sapUiTreeNode");
-	
+
 		if (oNode.getExpanded() && (oNode.getHasExpander() || oNode.hasChildren() )) {
 			rm.addClass("sapUiTreeNodeExpanded");
 			bExpanded = true;
-		}
-		else if (!oNode.getExpanded() && (oNode.getHasExpander() || oNode.hasChildren() )) {
-	
+		} else if (!oNode.getExpanded() && (oNode.getHasExpander() || oNode.hasChildren() )) {
+
 			rm.addClass("sapUiTreeNodeCollapsed");
 			bExpanded = false;
 		}
-	
+
 		if (oNode.getSelectable() && oNode.getIsSelected()) {
 			rm.addClass("sapUiTreeNodeSelected");
 			rm.writeAttribute('aria-selected', 'true');
 		}
-	
-		if (! bExpanded && oNode.hasSelectedHiddenChild()) {
+
+		if (!bExpanded && oNode.hasSelectedHiddenChild()) {
 			rm.addClass("sapUiTreeNodeSelectedParent");
 			rm.writeAttribute('aria-selected', 'true');
 		}
-	
+
 		rm.writeClasses(oNode);
-	
+
 		//ARIA
 		var mProps = {role: 'treeitem', level: iLevel, setsize: iSize, posinset: iPos};
-	
+
 		if (bExpanded) {
 			mProps["expanded"] = true;
 		} else {
@@ -160,46 +159,48 @@ sap.ui.define(['jquery.sap.global'],
 				mProps["expanded"] = false;
 			}
 		}
-	
+
 		rm.writeAccessibilityState(oNode, mProps);
-	
+
 		//Tooltip
 		rm.writeAttributeEscaped( "title", oNode.getTooltip_AsString());
-	
+
 		if (!TreeRenderer.bFirstNodeRendered) {
 			rm.write("tabindex='0'");
 			TreeRenderer.bFirstNodeRendered = true;
 		}
 		rm.write(">");
-	
-	
+
+
 		rm.write("<span");  //Node Content
-	
+
 		rm.addClass("sapUiTreeNodeContent");
 		if (!oNode.getSelectable()) {
 			rm.addClass("sapUiTreeNodeNotSelectable");
 		}
 		rm.writeClasses();
-	
+
 		rm.write(">");  //Node Content
-	
+
 		if (oNode.getIcon()) {
-			rm.writeIcon(oNode.getIcon(), "sapUiTreeIcon");
+			rm.writeIcon(oNode.getIcon(), "sapUiTreeIcon", {
+				"title": null // prevent default icon tooltip
+			});
 		}
-	
+
 		rm.writeEscaped( oNode.getText());
-	
-	
+
+
 		rm.write("</span>"); //Node Content
-	
+
 		rm.write("</li>");
-	
+
 		if (oNode.getNodes()) {
 			var aSubNodes = oNode.getNodes();
 			rm.write("<ul");
-	
+
 			rm.writeAttribute("id", oNode.getId() + "-children");
-	
+
 			rm.addClass("sapUiTreeChildrenNodes");
 			if (!bExpanded) {
 				rm.addClass("sapUiTreeHiddenChildrenNodes");
@@ -207,16 +208,16 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttribute("style", "display: block;");//For animation sake
 			}
 			rm.writeClasses();
-	
+
 			rm.write(">");
-			iLevel ++;
+			iLevel++;
 			for (var i = 0;i < aSubNodes.length;i++) {
 				TreeRenderer.renderNode(rm, aSubNodes[i], iLevel, aSubNodes.length, i + 1);
 			}
 			rm.write("</ul>");
 		}
 	};
-	
+
 
 	return TreeRenderer;
 

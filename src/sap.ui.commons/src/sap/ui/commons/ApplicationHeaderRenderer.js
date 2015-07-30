@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ApplicationHeader renderer.
-	 * @static
+	 * ApplicationHeader renderer.
+	 * @namespace
 	 */
 	var ApplicationHeaderRenderer = {};
 	

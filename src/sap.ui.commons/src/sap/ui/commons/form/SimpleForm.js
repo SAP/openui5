@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 	 * @since 1.12
 	 * @deprecated Since version 1.16.0. 
 	 * moved to sap.ui.layout library. Please use this one.
-	 * @name sap.ui.commons.form.SimpleForm
+	 * @alias sap.ui.commons.form.SimpleForm
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SimpleForm = SimpleForm1.extend("sap.ui.commons.form.SimpleForm", /** @lends sap.ui.commons.form.SimpleForm.prototype */ { metadata : {

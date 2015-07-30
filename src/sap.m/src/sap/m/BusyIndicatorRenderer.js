@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class BusyIndicator renderer.
-	 * @static
+	 * BusyIndicator renderer.
+	 * @namespace
 	 */
 	var BusyIndicatorRenderer = {
 	};
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 		var sSize = oControl.getSize();
 		var iDesignClass = "";
-	
+
 		if (oControl.getDesign() == "auto") {
 			iDesignClass = "sapMBusyIndicator";
 		} else {
@@ -43,6 +43,13 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addStyle("visibility", "hidden");
 			oRm.writeStyles();
 		}
+
+		oRm.writeAccessibilityState(oControl, {
+			role : "progressbar",
+			valuemin: "0", // required by the ARIA specification
+			valuemax: "100" // required by the ARIA specification
+			
+		});
 		oRm.write(">");
 	
 		if (oControl.getCustomIcon()) {

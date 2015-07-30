@@ -3,8 +3,6 @@
 /* ============================================= */
 .sapMList {
 	position: relative;	/* This should not break the list but help swipe list content position calculation */
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -36,11 +34,9 @@
 	opacity: 0;
 	pointer-events: auto;
 	display: -webkit-box;
-	display: -moz-box;
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-align: center;
-	-moz-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
 }
@@ -91,24 +87,24 @@
 }
 
 .sapMListNoData {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 	list-style-type: none;
 	display: -webkit-box;
-	display: -moz-box;
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-align: center;
-	-moz-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
 	-webkit-box-pack: center;
-	-moz-box-pack: center;
-	-ms-justify-content: center;
+	-ms-flex-pack: center;
 	justify-content: center;
 	height: 2.75em;
+}
+
+.sapMListNoDataText{
+	-ms-flex-negative: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .sapMListShowSeparatorsAll{
@@ -144,3 +140,6 @@
 	float: none;
 	visibility: visible;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMList");

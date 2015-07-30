@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/CalloutBase', 'sap/ui/core/d
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.QuickView
+	 * @alias sap.ui.ux3.QuickView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var QuickView = CalloutBase.extend("sap.ui.ux3.QuickView", /** @lends sap.ui.ux3.QuickView.prototype */ { metadata : {

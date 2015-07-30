@@ -104,7 +104,7 @@
 
 		// assertions
 		var nItems= 4;
-		strictEqual(oP13nSortPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+		strictEqual(oP13nSortPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nSortPanel.destroy();
@@ -123,7 +123,7 @@
 
 		// assertions
 		var nItems= 2;
-		strictEqual(oP13nSortPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nSortPanel.destroy();
@@ -151,8 +151,8 @@
 				var oData = oModel.getData();
 				var oSortItem = {
 					key : params.key,
-					columnKey : params.newItem.getColumnKey(),
-					operation : params.newItem.getOperation()
+					columnKey : params.sortItemData.getColumnKey(),
+					operation : params.sortItemData.getOperation()
 				};
 				if (params.index) {
 					oData.sortItems.splice(params.index, 0, oSortItem);
@@ -173,19 +173,19 @@
 		// Remove item
  		var nItems= 1;
 		var oConditionPanel= oP13nSortPanel._oSortPanel;
-		oConditionPanel._triggerRemoveCondition(oConditionPanel, oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		strictEqual(oP13nSortPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 		
 		// Add item
 		nItems= 2;
- 		oConditionPanel._triggerAddCondition(oConditionPanel, oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+ 		oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		
  		// Change item
 		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.keyField.setSelectedKey("c0");
-		oConditionPanel._changeField(oConditionPanel, oConditionGrid);		
+		oConditionPanel._changeField(oConditionGrid);		
 		
-		strictEqual(oP13nSortPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nSortPanel.destroy();

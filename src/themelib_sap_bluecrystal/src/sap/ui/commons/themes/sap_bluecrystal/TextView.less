@@ -39,7 +39,7 @@
 /* success state */
 .sapUiTvSucc,
 .sapUiInverted-CTX .sapUiTvSucc {
-	color: @sapUiFieldSuccessColor;
+	color: @sapUiPositiveText;
 	background-color: transparent;
 }
 
@@ -58,11 +58,11 @@
 	-webkit-transition: color .25s linear;
 	-moz-transition: color .25s linear;
 	background-color: transparent;
-	color: darken(@sapUiFieldInvalidColor, 8);
+	color: @sapUiNegativeText;
 }
 
 .sapUiInverted-CTX .sapUiTvErr {
-	color: darken(@sapUiFieldInvalidColor, 8);
+	color: @sapUiNegativeText;
 }
 
 /* warning state */
@@ -94,6 +94,7 @@ html[data-sap-ui-browser="ie8"] .sapUiGrid td > .sapUiTv{
 /* ResponsiveGridLayout */
 .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div > .sapUiTv,
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > div > .sapUiTv,
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiTv {
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiTv,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > div > .sapUiTv {
 	margin-top: 2px;
 }

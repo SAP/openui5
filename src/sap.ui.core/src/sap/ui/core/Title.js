@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.Title.
-sap.ui.define(['jquery.sap.global', './Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['./Element', './library'],
+	function(Element, library) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.core.Title
+	 * @alias sap.ui.core.Title
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Title = Element.extend("sap.ui.core.Title", /** @lends sap.ui.core.Title.prototype */ { metadata : {
@@ -62,4 +62,4 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 
 	return Title;
 
-}, /* bExport= */ true);
+});

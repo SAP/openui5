@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.DataSetSimpleView
+	 * @alias sap.ui.ux3.DataSetSimpleView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataSetSimpleView = Control.extend("sap.ui.ux3.DataSetSimpleView", /** @lends sap.ui.ux3.DataSetSimpleView.prototype */ { metadata : {
@@ -213,6 +213,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @protected
 	 */
 	DataSetSimpleView.prototype.updateView = function(aDiff) {
+		//if view is not rendered no Dom update is necessary
+		if (!this.getDomRef()) {
+			return;
+		}
 		var rm = sap.ui.getCore().createRenderManager(),
 			iLastLength = this.items.length;
 			

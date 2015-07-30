@@ -1,0 +1,23 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('AD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('AD')",
+						"type" : "GWSAMPLE_BASIC.VH_ProductTypeCode"
+					},
+					"TypeCode" : "AD",
+					"Shorttext" : "Advertisement"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('PR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('PR')",
+						"type" : "GWSAMPLE_BASIC.VH_ProductTypeCode"
+					},
+					"TypeCode" : "PR",
+					"Shorttext" : "Product"
+				}]
+	}
+}

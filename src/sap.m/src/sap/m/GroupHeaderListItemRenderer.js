@@ -8,10 +8,49 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 
 	/**
-	 * @class GroupHeaderListItem renderer.
-	 * @static
+	 * GroupHeaderListItem renderer.
+	 * @namespace
 	 */
 	var GroupHeaderListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	
+	GroupHeaderListItemRenderer.openItemTag = function(rm, oLI) {
+		rm.write(oLI.getTable() ? "<tr" : "<li");
+	};
+
+	GroupHeaderListItemRenderer.closeItemTag = function(rm, oLI) {
+		rm.write(oLI.getTable() ? "</tr>" : "</li>");
+	};
+	
+	GroupHeaderListItemRenderer.renderType = function(rm, oLI) {
+		var oTable = oLI.getTable();
+		
+		// for table render navigation column always
+		oTable && rm.write('<td role="gridcell" class="sapMListTblNavCol">');
+		ListItemBaseRenderer.renderType.apply(this, arguments);
+		oTable && rm.write('</td>');
+	};
+	
+	// it is not necessary to handle non flex case
+	GroupHeaderListItemRenderer.handleNoFlex = function(rm, oLI) {
+	};
+	
+	// GroupHeaderListItem does not respect counter property of the LIB
+	GroupHeaderListItemRenderer.renderCounter = function(rm, oLI) {
+	};
+	
+	// Returns aria accessibility role
+	GroupHeaderListItemRenderer.getAriaRole = function(oLI) {
+		return oLI.getTable() ? "row" : "option";
+	};
+	
+	// Returns the inner aria describedby ids for the accessibility
+	GroupHeaderListItemRenderer.getAriaDescribedBy = function(oLI) {
+		// announce group header first
+		var sDescribedBy = this.getAriaAnnouncement("group_header"),
+			sBaseDescribedBy = ListItemBaseRenderer.getAriaDescribedBy.call(this, oLI) || "";
+
+		return sDescribedBy + " " + sBaseDescribedBy;
+	};
 	
 	/**
 	 * Renders the attributes for the given list item, using the provided
@@ -41,29 +80,40 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 * @param {sap.ui.core.Control}
 	 *          oLI an object representation of the list item that should be
 	 *          rendered
-	 * @param {sap.m.Table} [oTable]
-	 *          If this control is inside the table then this param can be used for col spanning
 	 */
-	GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI, oTable) {
-		var sTitle = oLI.getTitle();
-		oTable && rm.write("<td class='sapMGHLICell' colspan='" + (oTable.getColSpan()) + "'>");
-	
-		// List item label
-		if (sTitle) {
-			oTable && rm.write("<div class='sapMLIBContent sapMLIBContentMargin'>");
-			rm.write("<label for='" + oLI.getId() + "-value' class='sapMGHLITitle'>");
-			rm.writeEscaped(sTitle);
-	
-			var iCount = oLI.getCount();
-			if (iCount !== undefined && iCount !== "") {
-				rm.writeEscaped(" (" + iCount + ")");
-			}
-	
-			rm.write("</label>");
-			oTable && rm.write("</div>");
+	GroupHeaderListItemRenderer.renderLIContentWrapper = function(rm, oLI) {
+		var oTable = oLI.getTable();
+		
+		if (oTable) {
+			rm.write('<td class="sapMGHLICell" role="gridcell"');
+			rm.writeAttribute("colspan", oTable.getColSpan());
+			rm.write(">");
 		}
 	
-		oTable && rm.write("</td>");
+		ListItemBaseRenderer.renderLIContentWrapper.apply(this, arguments);
+	
+		if (oTable) {
+			rm.write("</td>");
+		}
+	};
+	
+	GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI) {
+		var sTextDir = oLI.getTitleTextDirection();
+		rm.write("<label class='sapMGHLITitle'");
+		
+		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+			rm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
+		rm.write(">");
+		
+		rm.writeEscaped(oLI.getTitle());
+		
+		var iCount = oLI.getCount();
+		if (iCount) {
+			rm.writeEscaped(" (" + iCount + ")");
+		}
+
+		rm.write("</label>");
 	};
 	
 

@@ -4,12 +4,18 @@
 
 	<title>SAPUI5 QUnit TestRunner</title>
 
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/jquery/jquery-1.11.1.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/jquery.js"></script>
+
+	<!-- fall back to previous jQuery versions to support using testrunner with older UI5 versions -->
+	<script>window.jQuery || document.write('<script src="../../../../resources/sap/ui/thirdparty/jquery/jquery-1.10.2.js"><\/script>')</script>
+	<script>window.jQuery || document.write('<script src="../../../../resources/sap/ui/thirdparty/jquery/jquery-1.8.1.js"><\/script>')</script>
+	<script>window.jQuery || document.write('<script src="../../../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"><\/script>')</script>
+
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/handlebars.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/blanket.js"></script>
 	<script type="text/javascript" src="TestRunner.js"></script>
 	<link rel="stylesheet" href="testrunner.css"/>
-	
+
 	<script id="qunitResults" type="text/x-handlebars-template">
 		<select id="testPageSelect" name="testPages" size="10" multiple style="width: 100%" >
 			{{#pages}}
@@ -17,35 +23,35 @@
 			{{/pages}}
 		</select>
 	</script>
-	
+
 	<script>
 	var oContext = { pages:[] };
-	jQuery.fn.filterByText = function(textbox){
-		return this.each(function(){
+	jQuery.fn.filterByText = function(textbox) {
+		return this.each(function() {
 			var selectbox = this;
 			var options = [];
-			$(selectbox).find("option").each(function(){
-				options.push({value: $(this).val(), text: $(this).text()});
+			jQuery(selectbox).find("option").each(function() {
+				options.push({value: jQuery(this).val(), text: jQuery(this).text()});
 			});
-			$(selectbox).data("options", options); 
-			
-			$(textbox).bind("change keyup", function() {
-				var options = $(selectbox).empty().data("options"); 
-				var search = $(this).val().trim();
+			jQuery(selectbox).data("options", options);
+
+			jQuery(textbox).bind("change keyup", function() {
+				var options = jQuery(selectbox).empty().data("options");
+				var search = jQuery(this).val().trim();
 				var regex = new RegExp(search, "gi");
-				
-				$.each(options, function(i){                  
+
+				jQuery.each(options, function(i) {
 					var option = options[i];
 					if(option.text.match(regex) !== null) {
-						$(selectbox).append($("<option>").text(option.text).val(option.value).dblclick(function() {
-							$("#selectedTests").append(jQuery(this).clone());
+						jQuery(selectbox).append(jQuery("<option>").text(option.text).val(option.value).dblclick(function() {
+							jQuery("#selectedTests").append(jQuery(this).clone());
 						}));
 					}
 				});
 			});
 		});
 	};
-	
+
 	function prepareNewRun() {
 		jQuery("#open").click();
 		jQuery("div#innerBar").width("0%");
@@ -56,45 +62,46 @@
 		jQuery("span.failed").text("0");
 		jQuery("#coverageFrame").remove();
 		jQuery("div.test-coverage").hide();
-	};
-	
+	}
+
 	jQuery(function() {
-		
+
 		jQuery("#testPageLabel").text(window.location.origin);
-		
-		function showResults(){
+
+		function showResults() {
 			jQuery("div.test-reporting").attr("style", "padding: 0px; display: block; border: 1px solid rgb(170, 170, 170); margin: 10px;");
 			jQuery("#openReporting").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			var $this = jQuery("#showResults");
 			if($this.val() === "Show all results") {
-				$("div.testResult").show();
+				jQuery("div.testResult").show();
 				$this.val("Show errors only");
 			} else {
-				$("div.testResult.pass").hide();
-				$("div.testResult.fail").show();
+				jQuery("div.testResult.pass").hide();
+				jQuery("div.testResult.fail").show();
 				$this.val("Show all results");
 			}
 		}
 		jQuery("#showResults").click(showResults);
-		
+
 		jQuery("#testPage").val(sap.ui.qunit.TestRunner.getTestPageUrl());
-		
+
 		function find() {
+			prepareNewRun();
 			var oDeferred = jQuery.Deferred();
 			sap.ui.qunit.TestRunner.checkTestPage(jQuery("#testPage").val()).done(function(aTestPages) {
 				window.aTestPages = aTestPages;
-				for (var i = 0; i < aTestPages.length; i++){
+				for (var i = 0; i < aTestPages.length; i++) {
 					oContext.pages.push({page: aTestPages[i]});
-				};
+				}
 				var fnTemplate = Handlebars.compile(jQuery("#qunitResults").html());
 				var sHTML = fnTemplate(oContext);
 				jQuery("#testPageSelectDiv").html(sHTML);
 				jQuery("#testPageSelect > option").dblclick(function () {
-					$("#selectedTests").append(jQuery("#find").clone());
+					jQuery("#selectedTests").append(jQuery("#find").clone());
 				});
 				jQuery("#copyButtons").show();
 				jQuery("#selectedTestsDiv").show();
-				
+
 				jQuery("#testPageSelect").filterByText(jQuery("#filter"));
 				jQuery("#filter").show();
 				jQuery("#console").val(aTestPages.join("\n"));
@@ -103,83 +110,86 @@
 			return oDeferred.promise();
 		}
 		jQuery("#find").click(find);
-		
+
 		function copy() {
 			var aSelectedTests = jQuery("#testPageSelect")[0].selectedOptions;
-			for (var i = 0; i < aSelectedTests.length; i++){
-				$("#selectedTests").append($("<option>").text(aSelectedTests[i].innerText).val(aSelectedTests[i].innerText));
-			};
+			for (var i = 0; i < aSelectedTests.length; i++) {
+				jQuery("#selectedTests").append(jQuery("<option>").text(jQuery(aSelectedTests[i]).text()).val(jQuery(aSelectedTests[i]).text()));
+			}
 		}jQuery("#copy").click(copy);
-		
+
 		function copyAll() {
 			jQuery("#selectedTests").append(jQuery("#testPageSelect > option").clone());
 		}
 		jQuery("#copyall").click(copyAll);
-		
+
 		function remove() {
 			var aSelectedTests = jQuery("#selectedTests")[0].selectedOptions;
-			for (var i = aSelectedTests.length-1; i >= 0; i--){
+			for (var i = aSelectedTests.length-1; i >= 0; i--) {
 				jQuery(aSelectedTests[i]).remove();
-			};
+			}
 		}jQuery("#remove").click(remove);
-		
+
 		function removeAll() {
 			jQuery("#selectedTests > option").remove();
 		}
 		jQuery("#removeall").click(removeAll);
-				
+
 		function run() {
-			if(jQuery("#selectedTests>option").length === 0){
+			var $this = jQuery("#run");
+			if ($this.val() === "Run") {
+				//$this.val("Stop");
+				var aTests = [];
+				var aSelectedTests = jQuery("#selectedTests")[0].children;
+				for (var i = 0; i < aSelectedTests.length; i++) {
+					aTests.push(jQuery(aSelectedTests[i]).text());
+				}
+				var nStep = 100 / aTests.length;
+				console.log(aTests.length);
+				console.log(nStep);
+				jQuery("#reportingHeader").toggle();
+				sap.ui.qunit.TestRunner.runTests(aTests, nStep).then(function(oResult) {
+					$this.val("Run");
+					jQuery("#stop").toggle();
+					if (sap.ui.qunit.TestRunner.hasCoverage() && window.blanket) {
+						window.blanket.report({});
+						jQuery("div.test-coverage").toggle();
+					}
+				}).always(function() {
+					$this.val("Run");
+				});
+
+			} else {
+				sap.ui.qunit.TestRunner.stopTests();
+			}
+		}
+
+		jQuery("#run").click(function () {
+			if(jQuery("#selectedTests>option").length === 0) {
 				alert("Please select at least on test to execute");
 			} else {
 				prepareNewRun();
-				var $this = jQuery("#run");
-				if ($this.val() === "Run") {
-					//$this.val("Stop");
-					var aTests = [];
-					var aSelectedTests = jQuery("#selectedTests")[0].children;
-					for (var i = 0; i < aSelectedTests.length; i++){
-						aTests.push(aSelectedTests[i].innerText);
-					};
-					var nStep = 100 / aTests.length;
-					console.log(aTests.length);
-					console.log(nStep);
-					jQuery("#reportingHeader").toggle();
-					sap.ui.qunit.TestRunner.runTests(aTests, nStep).then(function(oResult) {
-						$this.val("Run");
-						jQuery("#stop").toggle();
-						if (sap.ui.qunit.TestRunner.hasCoverage()) {
-							window.blanket.report({});
-							jQuery("div.test-coverage").toggle();
-						}
-					}).always(function() {
-						$this.val("Run");
-					});
-					
-				} else {
-					sap.ui.qunit.TestRunner.stopTests();
-				}
+				run();
 			}
-		}
-		jQuery("#run").click(run);
-		
-		function open(){
-			if(jQuery("div#test-selection").css("height")=== "300px"){
+		});
+
+		function open() {
+			if(jQuery("div#test-selection").css("height")=== "300px") {
 				jQuery("div#elements").toggle();
 				jQuery("div#test-selection").animate({height: "40px"}, 500);
 				jQuery("#open").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width: 12px 12px 0 12px;border-color:#007dc0 transparent transparent transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			} else {
-				jQuery("div#test-selection").animate({height: "300px"}, 500, function(){
+				jQuery("div#test-selection").animate({height: "300px"}, 500, function() {
 					jQuery("div#elements").toggle();
 				});
 				jQuery("#open").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			}
 		}
 		jQuery("#open").click(open);
-		
-		
-		function openCoverage(){
-			if(jQuery("#coverageContent").is(":visible")){
+
+
+		function openCoverage() {
+			if(jQuery("#coverageContent").is(":visible")) {
 				jQuery("#coverageContent").hide();
 				jQuery("#openCoverage").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width: 12px 12px 0 12px;border-color:#007dc0 transparent transparent transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			} else {
@@ -188,44 +198,44 @@
 			}
 		}
 		jQuery("#openCoverage").click(openCoverage);
-		
-		function openReporting(){
+
+		function openReporting() {
 			jQuery("#showResults").toggle();
-			if(jQuery("#showResults").css("display") === "none"){
+			if(jQuery("#showResults").css("display") === "none") {
 				jQuery("div.testResult").hide();
 				jQuery("div.test-reporting").attr("style", "padding: 0px; display: block; border: 1px solid rgb(170, 170, 170); margin: 10px; height: 40px;");
 				jQuery("#openReporting").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width: 12px 12px 0 12px;border-color:#007dc0 transparent transparent transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			} else {
 				jQuery("div.test-reporting").attr("style", "padding: 0px; display: block; border: 1px solid rgb(170, 170, 170); margin: 10px;");
-				$("div.testResult").show();
+				jQuery("div.testResult").show();
 				jQuery("#showResults").val("Show errors only");
 				jQuery("#openReporting").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			}
 		}
 		jQuery("#openReporting").click(openReporting);
-		
-		function stop(){
+
+		function stop() {
 			sap.ui.qunit.TestRunner.stopTests();
 		}
 		jQuery("#stop").click(stop);
-		
+
 		setInterval(function() {
 			if (window.aTestPages) {
 				jQuery("#run").show();
 			}
 		}, 500);
-		
+
 		if (sap.ui.qunit.TestRunner.getAutoStart()) {
 			find().done(function() {
 				copyAll();
 				run();
 			})
 		}
-		
+
 	});
-	
+
 	</script>
-	
+
 </head>
 
 <body class="sapUiBody" style="padding: 0; margin: 0;">
@@ -268,7 +278,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="test-execution" style="padding: 10px;">
 	</div>
 	<div id="reportingHeader" class="test-reporting" style="display: none; padding: 0px; border: 1px solid;border-color: #aaa;margin: 10px;">

@@ -1,4 +1,4 @@
-// configure the connect server
+// configure the openui5 connect server
 module.exports = function(grunt, config) {
 
 	// libraries are sorted alphabetically
@@ -7,21 +7,14 @@ module.exports = function(grunt, config) {
 		return a.name.localeCompare(b.name);
 	});
 
-	// forward the configuration for the openui5-connect plugin
 	var openui5_connect = {
 
 		options: {
 
-			port: grunt.option('port'),
-
-			livereload: grunt.option('watch') || false,
-
 			contextpath: config.testsuite.name,
-
+			proxypath: 'proxy',
 			cors: {
-				
 				origin: "*"
-					
 			}
 
 		},
@@ -30,9 +23,7 @@ module.exports = function(grunt, config) {
 
 			options: {
 
-				useLess: true,
-
-				appresources: [config.testsuite.path + '/src/main/webapp'],
+				appresources: config.testsuite.path + '/src/main/webapp',
 
 				resources: aLibraries.map(function(lib) {
 					return lib.path + '/src';
@@ -50,15 +41,15 @@ module.exports = function(grunt, config) {
 
 			options: {
 
-				appresources: ['target/openui5'],
+				appresources: 'target/openui5-testsuite',
 
-				resources: ['target/openui5/resources'],
+				resources: aLibraries.map(function(lib) {
+					return 'target/openui5-' + lib.name + '/resources';
+				}),
 
-				registerResources: false,
-
-				testresources: ['target/openui5/test-resources'],
-
-				registerTestresources: false
+				testresources: aLibraries.map(function(lib) {
+					return 'target/openui5-' + lib.name + '/test-resources';
+				})
 
 			}
 

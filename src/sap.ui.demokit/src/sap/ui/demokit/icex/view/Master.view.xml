@@ -1,0 +1,75 @@
+<mvc:View controllerName="sap.ui.demokit.icex.view.Master"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:control="control"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+	<Page
+		id="page"
+		title="Icon Explorer"
+		showFooter="{ui>/showFooter}"
+		icon="{img>/icon/ui5}">
+		<headerContent>
+			<Button
+				icon="sap-icon://favorite-list" 
+				tooltip="Show Favorites"
+				press="toFavorite">
+			</Button>
+		</headerContent>
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<SearchField
+					id="search"
+					placeholder="Search ..."
+					liveChange="search"
+					tooltip="Search for Icons"
+					width="100%">
+				</SearchField>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+		<content>
+			<!-- This list shows the search results -->
+			<List
+				id="iconList"
+				growing="true"
+				select="selectIconList"
+				noDataText="No matches for your search"
+				mode="{ui>/listMode}"
+				growingScrollToLoad="false"
+				growingThreshold="{ui>/listPageSize}"
+				items="{/groups/0/icons}">  <!-- the first group is assumed to be 'All' -->
+				<items>
+					<StandardListItem
+						title="{name}"
+						type="{ui>/listItemType}"
+						press="pressIconListItem"
+						icon="sap-icon://{name}"
+						iconInset="true">
+					</StandardListItem>
+				</items>
+			</List>
+			<!-- This list shows the icon groups -->
+			<List
+				id="groupList"
+				headerText="Categories"
+				mode="None"
+				items="{/groups}">
+				<items>
+					<StandardListItem
+						title="{text}"
+						type="Active"
+						counter="{count}"
+						press="pressGroupListItem"
+						iconInset="true">
+					</StandardListItem>
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>

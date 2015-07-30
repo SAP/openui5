@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @name sap.ui.core.support.Plugin
+	 * @alias sap.ui.core.support.Plugin
 	 */
 	var Plugin = BaseObject.extend("sap.ui.core.support.Plugin", {
 		constructor : function(sId, sTitle, oStub) {
@@ -33,13 +33,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	
 	
 	/**
-	 * Inititalization function called each time the support mode is started
+	 * Initialization function called each time the support mode is started
 	 * (support popup is opened).
 	 * 
 	 * @param {sap.ui.core.support.Support} oSupportStub the support stub
 	 * @private
-	 * @name sap.ui.core.support.Plugin#init
-	 * @function
 	 */
 	Plugin.prototype.init = function(oSupportStub){
 		for (var i = 0; i < this._aEventIds.length; i++) {
@@ -58,8 +56,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * 
 	 * @param {sap.ui.core.support.Support} oSupportStub the support stub
 	 * @private
-	 * @name sap.ui.core.support.Plugin#exit
-	 * @function
 	 */
 	Plugin.prototype.exit = function(oSupportStub){
 		for (var i = 0; i < this._aEventIds.length; i++) {
@@ -77,8 +73,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * 
 	 * @return {string} the id
 	 * @private
-	 * @name sap.ui.core.support.Plugin#getId
-	 * @function
 	 */
 	Plugin.prototype.getId = function(){
 		return this._id;
@@ -90,8 +84,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * 
 	 * @return {string} the title
 	 * @private
-	 * @name sap.ui.core.support.Plugin#getTitle
-	 * @function
 	 */
 	Plugin.prototype.getTitle = function(){
 		return this._title;
@@ -104,8 +96,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * @see sap.ui.core.support.Support.StubType.TOOL
 	 * @return {boolean} whether this plugin instance runs in the support tool
 	 * @private
-	 * @name sap.ui.core.support.Plugin#isToolPlugin
-	 * @function
 	 */
 	Plugin.prototype.isToolPlugin = function(){
 		return this._bIsToolPlugin;
@@ -125,8 +115,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * @param {string} [sSuffix] ID suffix to get a jQuery object for
 	 * @return {jQuery} The jQuery wrapped plugin's DOM reference
 	 * @private
-	 * @name sap.ui.core.support.Plugin#$
-	 * @function
 	 */
 	Plugin.prototype.$ = function(sSuffix){
 		var jRef = jQuery.sap.byId(sSuffix ? this.getId() + "-" + sSuffix : this.getId());
@@ -143,8 +131,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * 
 	 * @return {boolean} whether the plugin is currently active or not
 	 * @private
-	 * @name sap.ui.core.support.Plugin#isActive
-	 * @function
 	 */
 	Plugin.prototype.isActive = function(){
 		return this._bActive;
@@ -152,4 +138,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 
 	return Plugin;
 
-}, /* bExport= */ true);
+});

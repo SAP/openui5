@@ -11,27 +11,29 @@
 <script>
 
 	var aData = [
-		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 4, money: 5.67, birthday: "1984-06-01", currency: "EUR"},
-		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "leads", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR"},
-		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "employee", gender: "female", rating: 3, money: 1345.212, birthday: "1987-01-07", currency: "EUR"},
-		{lastName: "Schutt", name: "Doris", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "female", rating: 4, money: 1.1, birthday: "2001-03-01", currency: "USD"},
-		{lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "female", rating: 2, money: 55663.1, birthday: "1953-01-04", currency: "USD"},
-		{lastName: "Dewit", name: "Kenya", checked: false, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "employee", gender: "female", rating: 3, money: 34.23, birthday: "1957-01-01", currency: "EUR"},
-		{lastName: "Zar", name: "Lou", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 1, money: 123, birthday: "1965-02-08", currency: "EUR"},
-		{lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 2, money: 678.45, birthday: "1978-08-11", currency: "DEM"},
-		{lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "male", rating: 5, money: 123.45, birthday: "1972-03-04", currency: "EUR"},
-		{lastName: "Lester", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 678.90, birthday: "1968-03-03", currency: "JPY"},
-		{lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 3, money: 8756.2, birthday: "1968-01-06", currency: "EUR"},
-		{lastName: "Time", name: "Justin", checked: true, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "employee", gender: "male", rating: 4, money: 836.4, birthday: "1968-08-01", currency: "EUR"},
-		{lastName: "Barr", name: "Gaye", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 2, money: 9.3, birthday: "1968-09-12", currency: "USD"},
-		{lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 1, money: 6344.21, birthday: "1968-03-21", currency: "EUR"},
-		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 5, money: 563.2, birthday: "1968-05-14", currency: "JPY"},
-		{lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 8564.4, birthday: "1968-01-22", currency: "EUR"},
-		{lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "female", rating: 4, money: 3563, birthday: "1968-09-19", currency: "USD"},
-		{lastName: "Haas", name: "Jack", checked: true, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "employee", gender: "male", rating: 2, money: 5.67, birthday: "1968-08-13", currency: "EUR"},
-		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-15", currency: "EUR"},
-		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR"}
+		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 4, money: 5.67, birthday: "1984-06-01", currency: "EUR", type: "Inactive"},
+		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "leads", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", type: "Inactive"},
+		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "employee", gender: "female", rating: 3, money: 1345.212, birthday: "1987-01-07", currency: "EUR", type: "Inactive"},
+		{lastName: "Schutt", name: "Doris", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "female", rating: 4, money: 1.1, birthday: "2001-03-01", currency: "USD", type: "Inactive"},
+		{lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "female", rating: 2, money: 55663.1, birthday: "1953-01-04", currency: "USD", type: "Inactive"},
+		{lastName: "Dewit", name: "Kenya", checked: false, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "employee", gender: "female", rating: 3, money: 34.23, birthday: "1957-01-01", currency: "EUR", type: "Inactive"},
+		{lastName: "Zar", name: "Lou", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 1, money: 123, birthday: "1965-02-08", currency: "EUR", type: "Inactive"},
+		{lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 2, money: 678.45, birthday: "1978-08-11", currency: "DEM", type: "Inactive"},
+		{lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "male", rating: 5, money: 123.45, birthday: "1972-03-04", currency: "EUR", type: "Inactive"},
+		{lastName: "Town", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 678.90, birthday: "1968-03-03", currency: "JPY", type: "Inactive"},
+		{lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 3, money: 8756.2, birthday: "1968-01-06", currency: "EUR", type: "Inactive"},
+		{lastName: "Time", name: "Justin", checked: true, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "employee", gender: "male", rating: 4, money: 836.4, birthday: "1968-08-01", currency: "EUR", type: "Inactive"},
+		{lastName: "Barr", name: "Sandy", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 2, money: 9.3, birthday: "1968-09-12", currency: "USD", type: "Inactive"},
+		{lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 1, money: 6344.21, birthday: "1968-03-21", currency: "EUR", type: "Inactive"},
+		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 5, money: 563.2, birthday: "1968-05-14", currency: "JPY", type: "Inactive"},
+		{lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 8564.4, birthday: "1968-01-22", currency: "EUR", type: "Inactive"},
+		{lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "female", rating: 4, money: 3563, birthday: "1968-09-19", currency: "USD", type: "Inactive"},
+		{lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "employee", gender: "male", rating: 2, money: 5.67, birthday: "1968-08-13", currency: "EUR", type: "Inactive"},
+		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-15", currency: "EUR", type: "Inactive"},
+		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR", type: "Inactive"}
 	];
+	
+	var oApp = new sap.m.App;
 	
 	jQuery.sap.require("sap.m.MessageBox");
 	jQuery.sap.require("sap.m.MessageToast");
@@ -50,7 +52,6 @@
 
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: aData});
-	oModel.setDefaultBindingMode("OneWay");
 	
 	var aModes = Object.keys(sap.m.ListMode).map(function(sMode) {
 		return new sap.ui.core.Item({
@@ -62,7 +63,6 @@
 	var oModes = new sap.m.Select({
 		tooltip: "Mode",
 		items: aModes,
-		adjustAutoWidth: true,
 		change: function(oEvent) {
 			var sMode = oEvent.getParameter("selectedItem").getKey();
 			oTable.setMode(sMode);
@@ -79,7 +79,6 @@
 	var oTypes = new sap.m.Select({
 		tooltip: "Item Type",
 		items: aTypes,
-		adjustAutoWidth: true,
 		change: function(oEvent) {
 			var sType = oEvent.getParameter("selectedItem").getKey();
 			oTable.getItems().forEach(function(oItem) {
@@ -93,6 +92,7 @@
 		text : "Growing",
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
+			oModel.setDefaultBindingMode(oGrowing.getPressed() ? "OneWay" : "TwoWay"); 
 			oTable.bindItems("/modelData", oTemplate);
 		}
 	});
@@ -165,9 +165,8 @@
 	
 	var oTableHeader = new sap.m.Toolbar({
 		content : [
-			new sap.m.Text({
-				text : "Keyboard Handling Test Page",
-				wrapping : false
+			new sap.m.Title({
+				text : "Keyboard Handling Test Page"
 			}),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Button({
@@ -218,7 +217,7 @@
 				text : "Raiting"
 			}),
 			minScreenWidth : "Tablet",
-			popinDisplay : "Inline",
+			popinDisplay : "WithoutHeader",
 			demandPopin : true
 		}),
 		new sap.m.Column({
@@ -241,6 +240,7 @@
 		
 	var oTemplate = new sap.m.ColumnListItem({
 		vAlign: "Middle",
+		type : "{type}",
 		detailPress: function() {
 			setTimeout(function() {
 				sap.m.MessageToast.show("detail is pressed");
@@ -256,8 +256,7 @@
 				wrapping : false
 			}),
 			new sap.m.CheckBox({
-				selected: "{checked}",
-				wrapping : false
+				selected: "{checked}"
 			}), 
 			new sap.m.Link({
 				text: "{linkText}"
@@ -270,8 +269,8 @@
 			}),
 			new sap.m.DatePicker({
 				value : "{birthday}",
-				valueFormat : "yyyy-mm-dd",
-				displayFormat : "dd.mm.yyyy"
+				valueFormat : "yyyy-MM-dd",
+				displayFormat : "dd.MM.yyyy"
 			}),
 			new sap.m.Text({
 				text : "{money} EUR",
@@ -287,20 +286,6 @@
 		}
 	});
 	
-	var oKeyDownDelegate = {
-		onkeydown : function(oEvent) {
-			var mKeyCodes = jQuery.sap.KeyCodes;
-			var bControlKey = oEvent.metaKey || oEvent.ctrlKey;
-			
-			if (bControlKey && oEvent.which === mKeyCodes.DOT) {
-				openViewSettingsDialog();
-			} else if (bControlKey && oEvent.which === mKeyCodes.COMMA) {
-				openPersonalizationDialog();
-			}
-			
-		}
-	};
-	
 	var oTable = new sap.m.Table({
 		growingThreshold: 5,
 		growingScrollToLoad : false,
@@ -312,7 +297,7 @@
 		selectionChange : function(e) {
 			sap.m.MessageToast.show("selection is changed");
 		},
-		delete : function(oEvent) {
+		"delete" : function(oEvent) {
 			var oItem = oEvent.getParameter("listItem");
 			
 			sap.m.MessageBox.confirm("Are you sure to delete this record?", {
@@ -335,7 +320,6 @@
 	
 	oTable.setModel(oModel);
 	oTable.bindItems("/modelData", oTemplate);
-	oTable.addEventDelegate(oKeyDownDelegate);
 	
 	var oPage = new sap.m.Page({
 		title : "Table Test Page",
@@ -344,13 +328,7 @@
 		content : [oTable]
 	});
 
-	var oApp = new sap.m.App({
-		pages : [oPage]
-	});
-	
-	oApp.placeAt("body");
-
-
+	oApp.addPage(oPage).placeAt("body");
 </script>
 </head>
 <body id="body" class="sapUiBody sapUiSizeCompact">

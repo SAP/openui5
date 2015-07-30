@@ -1,0 +1,96 @@
+{
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "79f6fadff8a8af07e64842b9b15831f3a42ad432",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataSet: Fixed updating Items when doing multiple setData calls",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "49d3529654d39bc33d77bb5bc71fd92d56bb8bf6",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Setting focus in Internet Explorer after opening fixed",
+        "references": []
+      },
+      {
+        "id": "b31b7d60e1c851e54d2f3aad3c55137a20da55f8",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "Overlay: Focus restored correctly when closing Overlay",
+        "references": []
+      },
+      {
+        "id": "411b70dee72ebfd3454c1571f97ab52536ad77a3",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThingViewer: Added ellipsis for long subtitle in header (Internet Explorer)",
+        "references": []
+      },
+      {
+        "id": "ef0aecdb5517ea77a077b88cb3a6803d3adcc495",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup commons.Dialog: Fixed focusable elements",
+        "references": []
+      },
+      {
+        "id": "b0165489c41d4081ddf11ed44fe956919702c9cc",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: Fixed popup position after changing its size",
+        "references": []
+      },
+      {
+        "id": "144726d39fecbb39ad7f00e2f9a94e973f952214",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: Overflow when ToolPopup exceeds window fixed",
+        "references": []
+      },
+      {
+        "id": "d53dc0e325b7a183a7852d2fe482a8fb2f283490",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: ToolPopup made aware when content re-renders",
+        "references": []
+      },
+      {
+        "id": "52b7ce3039e0a5669755969419d9998d4e09dda7",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ToolPopup: Constant increase in height for the control triggered by first resize corrected",
+        "references": []
+      },
+      {
+        "id": "7cb4cb4d1defd0ec6f398e05f1831e238592ebc3",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataSetSimpleView: View update suppressed if not rendered",
+        "references": []
+      }
+    ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "9fdcf23bd2678e0b7ba32fdce8ad90da12ecb129",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Resize functionality now works under jQuery 1.7.1",
+        "references": []
+      }
+    ]
+  }
+}

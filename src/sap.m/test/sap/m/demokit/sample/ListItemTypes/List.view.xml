@@ -11,10 +11,11 @@
 		<headerToolbar>
 			<Toolbar>
 				<content>
-					<Label text="Products" />
+					<Title text="Products" level="H2"/>
 					<ToolbarSpacer />
-					<Label text="List Item type:" />
+					<Label text="List Item type:" labelFor="state"/>
 					<Select
+						id="state"
 						selectedKey="Inactive"
 						change="handleSelectChange">
 						<items>

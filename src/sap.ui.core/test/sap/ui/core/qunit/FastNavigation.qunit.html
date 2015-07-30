@@ -58,7 +58,7 @@
 		});
 		
 		test("Forward Navigation", function() {
-			var aFields = [95, 98, 131, 136, 139, 92];
+			var aFields = [95, 98, 131, 136, 139, 142, 144, 145, 147, 92];
 			
 			for(var i=0; i<aFields.length-1; i++){
 				triggerTestEvent("id"+aFields[i], true);
@@ -67,7 +67,7 @@
 		});
 		
 		test("Backward Navigation", function() {
-			var aFields = [95, 139, 136, 131, 98, 92];
+			var aFields = [95, 147, 145, 144, 142, 139, 136, 131, 98, 92];
 			
 			for(var i=0; i<aFields.length-1; i++){
 				triggerTestEvent("id"+aFields[i], false);
@@ -94,7 +94,7 @@
 			triggerTestEvent("id14", true);
 			equal(_FocusedId, "id98", "F6 on non-modal Popup with Nav Mode DOCK moves the focus to next element in F6 chain after the dock element");
 			triggerTestEvent("id14", false);
-			ok(_FocusedId == "dummy" || _FocusedId == "id139", "Shift+F6 on non-modal Popup with Nav Mode DOCK moves the focus to previous element in F6 chain before the dock element");
+			ok(_FocusedId == "dummy" || _FocusedId == "id147", "Shift+F6 on non-modal Popup with Nav Mode DOCK moves the focus to previous element in F6 chain before the dock element");
 			
 			oPopup2.close(0);
 		});
@@ -170,6 +170,7 @@
 	<div id="scope">
 		<div id="content"></div>
 		<div id="content2"></div>
+		<div id="content3"></div>
 	</div>
 </body>
 </html>

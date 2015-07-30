@@ -3,8 +3,17 @@
  */
 
 // Provides helper class sap.ui.core.Popup
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Object', './Control', './IntervalTrigger', './RenderManager', './UIArea', './PopupSupport', 'jquery.sap.script'],
-	function(jQuery, ManagedObject, BaseObject, Control, IntervalTrigger, RenderManager, UIArea, PopupSupport/* , jQuerySap */) {
+sap.ui.define([
+		'jquery.sap.global', 'sap/ui/Device',
+		'sap/ui/base/ManagedObject', 'sap/ui/base/Object',
+		'./Control', './IntervalTrigger', './RenderManager', './ResizeHandler', './PopupSupport', './Element',
+		'jquery.sap.script'
+	], function(
+		jQuery, Device,
+		ManagedObject, BaseObject,
+		Control, IntervalTrigger, RenderManager, ResizeHandler, PopupSupport, Element
+		/* , jQuerySap */) {
+
 	"use strict";
 
 
@@ -48,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.Popup
+	 * @alias sap.ui.core.Popup
 	 */
 	var Popup = ManagedObject.extend("sap.ui.core.Popup", /** @lends sap.ui.core.Popup.prototype */ {
 		constructor: function (oContent, bModal, bShadow, bAutoClose) {
@@ -113,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 					var oDomNode = oEvent.target,
 						oPopupDomNode = this._$().get(0),
-						bInsidePopup = jQuery.contains(oPopupDomNode, oDomNode);
+						bInsidePopup = jQuery.sap.containsOrEquals(oPopupDomNode, oDomNode);
 
 					if (!bInsidePopup) {
 						var aChildPopups = this.getChildPopups();
@@ -203,12 +212,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * Enumeration providing options for docking of some element to another.
 	 * "Right" and "Left" will stay the same in RTL mode, but "Begin" and "End" will flip to the other side ("Begin" is "Right" in RTL).
 	 *
-	 * @static
-	 * @namespace
 	 * @public
-	 * @name sap.ui.core.Popup.Dock
+	 * @namespace
 	 */
-	Popup.Dock = /** @lends sap.ui.core.Popup.Dock */ {
+	Popup.Dock = {
 
 			/**
 			 * @public
@@ -294,84 +301,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @static
 	 * @type {boolean}
 	 * @private
-	 * @name sap.ui.core.Popup#touchEnabled
 	 */
-	Popup.prototype.touchEnabled = sap.ui.Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
+	Popup.prototype.touchEnabled = Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
 
 	/**
 	 * This property changes how focus handling works. When it's set to true, focus will be restored after Popup is closed to the previous focused element before Popup is open. Otherwise, this function is disabled.
 	 *
 	 * By default, the focus is restored only in non-touch environments.
 	 *
-	 * @static
 	 * @type {boolean}
 	 * @private
-	 * @name sap.ui.core.Popup#restoreFocus
 	 */
-	Popup.prototype.restoreFocus = !sap.ui.Device.support.touch && !jQuery.sap.simulateMobileOnDesktop;
-
-	//****************************************************
-	// Event handlers
-	//****************************************************
-
-	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'opened' event of this <code>sap.ui.core.Popup</code>.<br/>
-	 *
-	 * Event is fired when the popup has completely opened (after any animation).
-	 *
-	 *
-	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present)
-	 * @param {object}
-	 *            [oListener] object on which to call the given function.
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.core.Popup#attachOpened
-	 * @function
-	 */
-
-	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'closed' event of this <code>sap.ui.core.Popup</code>.<br/>
-	 *
-	 * Event is fired when the popup has completely closed (after any animation).
-	 *
-	 *
-	 * @param {function}
-	 *            fnFunction The function to call when the popup has completely closed (after any animation).
-	 * @param {object}
-	 *            [oListener] object on which to call the given function.
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.core.Popup#attachClosed
-	 * @function
-	 */
-
-	/**
-	 * Detach event handler <code>fnFunction</code> from the 'opened' event of this <code>sap.ui.core.Popup</code>.<br/>
-	 *
-	 * @param {function}
-	 *            fnFunction The function to call when the popup has completely opened (after any animation).
-	 * @param {object}
-	 *            oListener (optional) The object, that wants to be notified, when the event occurs
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.core.Popup#detachOpened
-	 * @function
-	 */
-
-	/**
-	 * Detach event handler <code>fnFunction</code> from the 'closed' event of this <code>sap.ui.core.Popup</code>.<br/>
-	 *
-	 * @param {function}
-	 *            fnFunction The function to call when the popup has completely closed (after any animation).
-	 * @param {object}
-	 *            oListener (optional) The object, that wants to be notified, when the event occurs
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
-	 * @public
-	 * @name sap.ui.core.Popup#detachClosed
-	 * @function
-	 */
+	Popup.prototype.restoreFocus = !Device.support.touch && !jQuery.sap.simulateMobileOnDesktop;
 
 	//****************************************************
 	//Layer et al
@@ -488,7 +429,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * Facility for reuse of created iframes.
 	 * @type sap.ui.base.ObjectPool
 	 * @private
-	 * @name sap.ui.core.Popup#oBlindLayerPool
 	 */
 	Popup.prototype.oBlindLayerPool = new sap.ui.base.ObjectPool(Popup.BlindLayer);
 	// End of BlindLayer
@@ -516,7 +456,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	* Facility for reuse of created shield layers.
 	* @type sap.ui.base.ObjectPool
 	* @private
-	* @name sap.ui.core.Popup#oShieldLayerPool
 	*/
 	Popup.prototype.oShieldLayerPool = new sap.ui.base.ObjectPool(Popup.ShieldLayer);
 	//End of ShieldLayer
@@ -524,14 +463,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	// Begin of Popup-Stacking facilities
 	(function() {
 		var iLastZIndex = 0;
+		// TODO: Implement Number.SAFE_MAX_INTEGER (Math.pow(2, 53) -1) when ECMAScript 6 is mostly supported
+		var iMaxInteger = Math.pow(2, 32) - 1;
+
+		/**
+		 * Set an initial z-index that should be used by all Popup so all Popups start at least
+		 * with the set z-index.
+		 * If the given z-index is lower than any current available z-index the highest z-index will be used.
+		 *
+		 * @param {Number} iInitialZIndex is the initial z-index
+		 * @public
+		 * @since 1.30.0
+		 */
+		Popup.setInitialZIndex = function(iInitialZIndex){
+			if (iInitialZIndex >= iMaxInteger) {
+				throw new Error("Z-index can't be higher than Number.MAX_SAFE_INTEGER");
+			}
+
+			iLastZIndex = Math.max(iInitialZIndex, this.getLastZIndex());
+		};
 
 		/**
 		 * Returns the last z-index that has been handed out. does not increase the internal z-index counter.
 		 *
 		 * @returns {Number}
 		 * @public
-		 * @name sap.ui.core.Popup.getLastZIndex
-		 * @function
 		 */
 		Popup.getLastZIndex = function(){
 			return iLastZIndex;
@@ -542,8 +498,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		 *
 		 * @returns {Number}
 		 * @public
-		 * @name sap.ui.core.Popup#getLastZIndex
-		 * @function
 		 */
 		Popup.prototype.getLastZIndex = function(){
 			return Popup.getLastZIndex();
@@ -554,11 +508,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		 *
 		 * @returns {Number} the next z-index on top of the Popup stack
 		 * @public
-		 * @name sap.ui.core.Popup.getNextZIndex
-		 * @function
 		 */
 		Popup.getNextZIndex = function(){
 			iLastZIndex += 10;
+			if (iLastZIndex >= iMaxInteger) {
+				throw new Error("Z-index can't be higher than Number.MAX_SAFE_INTEGER");
+			}
 			return iLastZIndex;
 		};
 
@@ -567,14 +522,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		 *
 		 * @returns {Number} the next z-index on top of the Popup stack
 		 * @public
-		 * @name sap.ui.core.Popup#getNextZIndex
-		 * @function
 		 */
 		Popup.prototype.getNextZIndex = function(){
 			return Popup.getNextZIndex();
 		};
 	}());
 	// End of Popup-Stacking facilites
+
+	/**
+	 * This function compares two different objects (created via jQuery(DOM-ref).rect()).
+	 * If the left, top, width or height differs more than a set puffer this function
+	 * will return false.
+	 *
+	 * @param {object} oRectOne the first object
+	 * @param {object} oRectTwo the other object
+	 * @return {boolean} if the given objects are equal
+	 * @private
+	 */
+	var fnRectEqual = function(oRectOne, oRectTwo) {
+		var iPuffer = 3;
+		var iLeft = Math.abs(oRectOne.left - oRectTwo.left);
+		var iTop = Math.abs(oRectOne.top - oRectTwo.top);
+		var iWidth = Math.abs(oRectOne.width - oRectTwo.width);
+		var iHeight = Math.abs(oRectOne.height - oRectTwo.height);
+
+		// check if the of has moved more pixels than set in the puffer
+		// Puffer is needed if the opener changed its position only by 1 pixel:
+		// this happens in IE if a control was clicked (is a reported IE bug)
+		if (iLeft > iPuffer || iTop > iPuffer || iWidth > iPuffer || iHeight > iPuffer) {
+			return false;
+		}
+		return true;
+	};
 
 	/**
 	 * Opens the popup's content at the position either specified here or beforehand via {@link #setPosition}.
@@ -591,8 +570,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {string} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the window in some direction.
 	 * @param {boolean} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
 	 * @public
-	 * @name sap.ui.core.Popup#open
-	 * @function
 	 */
 	Popup.prototype.open = function(iDuration, my, at, of, offset, collision, followOf) {
 		jQuery.sap.assert(this.oContent, "Popup content must have been set by now");
@@ -672,6 +649,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._oPreviousFocus = Popup.getCurrentFocusInfo();
 		}
 
+		// It is mandatroy to check if the new Popup runs within another Popup because
+		// if this new Popup is rendered via 'this._$(true)' and focused (happens e.g. if
+		// the Datepicker runs in a Popup and the corresponding Calendar will also open
+		// in a Popup. Then the corresponding date will be focused immediatelly. If the
+		// Calendar-Popup wasn't added to the previous Popup as child it is impossible to
+		// check in 'onFocusEvent' properly if the focus is being set to a Calendar-Popup which is
+		// a child of a Popup.
+		if (this.isInPopup(of) || this.isInPopup(this._oPosition.of)) {
+			var sParentId = this.getParentPopupId(of) ||  this.getParentPopupId(this._oPosition.of);
+			var sChildId = "";
+
+			var oContent = this.getContent();
+			if (oContent instanceof Element) {
+				sChildId = oContent.getId();
+			} else if (typeof oContent === "object") {
+				sChildId = oContent.id;
+			}
+
+			this.addChildToPopup(sParentId, sChildId);
+			this.addChildToPopup(sParentId, this._popupUID);
+		}
+
 		var $Ref = this._$(true);
 
 		var iRealDuration = "fast";
@@ -685,6 +684,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		var _oPosition;
 		if (my || at || of || offset || collision) {
 			_oPosition = this._createPosition(my, at, of, offset, collision);
+			// position object has to be set accordingly otherwise "oPosition.of" of a DOM-reference
+			// would be the "document" even if a proper "of" was provided
+			this._oPosition = _oPosition;
 		} else {
 			_oPosition = this._oPosition;
 		}
@@ -714,8 +716,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		var that = this;
 
-		// shield layer is needs for iOS devices to prevent the delayed mouse events from reaching the dom element in popup while it's being open.
-		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
+		//  to prevent the delayed mouse events from reaching the dom element in popup while it's being open.
+		if (jQuery.sap.isMouseEventDelayed) {
 			if (this._oTopShieldLayer) {
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
 				// reuse the same shieldlayer and clear the timeout
@@ -734,7 +737,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		var fnOpened = function() {
+			// internal status that any animation has been finished should set to true;
+			that.bOpen = true;
 			$Ref.css("display","block");
+
 
 			// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
 			if (that._bModal || that._bAutoClose || that._sInitialFocusId) {
@@ -745,14 +751,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 					if (control) {
 						domRefToFocus = control.getFocusDomRef();
 					}
+
 					domRefToFocus = domRefToFocus || jQuery.sap.domById(that._sInitialFocusId);
 				}
 
 				jQuery.sap.focus(domRefToFocus || $Ref.firstFocusableDomRef());
+				// if the opener was focused but it exceeds the current window width
+				// the window will scroll/reposition accordingly.
+				// When this popup registers the followOf-Handler the check if the
+				// opener moved will result in that the opener moved due to the focus
+				// and scrolling of the browser. So it is necessary to resize/reposition
+				// the popup right after the focus.
+
+				var oCurrentOfRef = that._getOfDom(that._oLastPosition.of);
+				var oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+				if (!fnRectEqual(that._oLastOfRect, oCurrentOfRect)) {
+					that._applyPosition(that._oLastPosition);
+				}
 			}
 
 			that.eOpenState = sap.ui.core.OpenState.OPEN;
 
+			// set and register listener of 'followOf' (given via Popup.open()) only when
+			// the popup has been opened already. Otherwise checking the opener's positio
+			// starts to early
 			if (that.getFollowOf()) {
 				Popup.DockTrigger.addListener(Popup.checkDocking, that);
 			}
@@ -760,7 +782,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			that._updateBlindLayer();
 
 			// notify that opening has completed
-			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9) {
+			if (!!Device.browser.internet_explorer && Device.browser.version === 9) {
 				jQuery.sap.delayedCall(0,that,function(){
 					that.fireOpened();
 				});
@@ -772,8 +794,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		// and show the popup content
 		$Ref.toggleClass("sapUiShd", this._bShadow).hide().css("visibility", "visible");
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
-			// internal status that any animation has been finished should set to true;
-			this.bOpen = true;
 			fnOpened.apply(); // otherwise call after-opening functions directly
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, fnOpened);
@@ -782,7 +802,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		// get (and 'show' i.e. activate) the BlindLayer
-		if (!!sap.ui.Device.browser.internet_explorer && !sap.ui.Device.os.windows_phone && Popup._activateBlindLayer) {
+		if (!!Device.browser.internet_explorer && !Device.os.windows_phone && Popup._activateBlindLayer) {
 			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
 		} // -1 = BlindLayer, -2 = BlockLayer
 
@@ -791,26 +811,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		// add Delegate to hosted content for handling of events (e.g. onfocusin)
-		if (this.oContent instanceof sap.ui.core.Element) {
+		if (this.oContent instanceof Element) {
 			this.oContent.addDelegate(this);
 		}
 
 		this.bOpen = true;
-
-		if (this.isInPopup(of) || this.isInPopup(this._oPosition.of)) {
-			var sParentId = this.getParentPopupId(of) ||  this.getParentPopupId(this._oPosition.of);
-			var sChildId = "";
-
-			var oContent = this.getContent();
-			if (oContent instanceof sap.ui.core.Element) {
-				sChildId = oContent.getId();
-			} else if (typeof oContent === "object") {
-				sChildId = oContent.id;
-			}
-
-			this.addChildToPopup(sParentId, sChildId);
-			this.addChildToPopup(sParentId, this._popupUID);
-		}
 
 		if (this._bModal || this._bAutoClose) { // initialize focus handling
 			this._addFocusEventListeners();
@@ -825,7 +830,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		//  register resize handler for blindlayer resizing
 		if (this._oBlindLayer) {
-			this._resizeListenerId = sap.ui.core.ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
+			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
+		}
+
+		// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
+		// preventScroll can be set to false in jQuery.sap.initMobile(),
+		// then the scrolling for popups content in iOS is also scrolling the page content
+		// issue reported in Incident ID: 1472005153
+		if (Device.os.ios && Device.support.touch) {
+			jQuery(document).on("touchmove", this._fnPreventScroll);
 		}
 	};
 
@@ -834,8 +847,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @param oBrowserEvent the browser event
 	 * @private
-	 * @name sap.ui.core.Popup#onFocusEvent
-	 * @function
 	 */
 	Popup.prototype.onFocusEvent = function(oBrowserEvent) {
 		var oEvent = jQuery.event.fix(oBrowserEvent);
@@ -849,7 +860,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		if (type == "focus") {
 			var oDomRef = this._$().get(0);
 			if (oDomRef) {
-				bContains = oDomRef == oEvent.target || jQuery.contains(oDomRef, oEvent.target);
+				bContains = jQuery.sap.containsOrEquals(oDomRef, oEvent.target);
 
 				var aChildPopups = this.getChildPopups();
 				if (!bContains) {
@@ -858,7 +869,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 						// this Popup: oDomRef is reused below.
 						var oChildDomRef = jQuery.sap.domById(aChildPopups[i]);
 						if (oChildDomRef) {
-							bContains = oChildDomRef == oEvent.target || jQuery.contains(oChildDomRef, oEvent.target);
+							bContains = jQuery.sap.containsOrEquals(oChildDomRef, oEvent.target);
 							if (bContains) {
 								break;
 							}
@@ -877,7 +888,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 						// if in desktop browser or the DOM node which has the focus is input outside the popup,
 						// focus on the last blurred element
-						if (!sap.ui.Device.support.touch || jQuery(oEvent.target).is(":input")) {
+						if (!Device.support.touch || jQuery(oEvent.target).is(":input")) {
 
 							// set the focus back to the last focused element inside the popup or at least to the popup root
 							var oDomRefToFocus = this.oLastBlurredElement ? this.oLastBlurredElement : oDomRef;
@@ -898,9 +909,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				// focus/blur for handling autoclose is disabled for desktop browsers which are not in the touch simulation mode
 				// create timeout for closing the popup if there is no focus immediately returning to the popup
 				if (!this.touchEnabled && !this._sTimeoutId) {
+					// If Popup has focus and we click outside of the browser, in Chrome the blur event is fired, but the focused element is still in the Popup and is the same as the focused that triggers the blur event.
+					// if the dom element that fires the blur event is the same as the currently focused element, just return
+					// because in Chrome when the browser looses focus, it fires the blur event of the
+					// dom element that has the focus before, but document.activeElement is still this element
+					if (oEvent.target === document.activeElement) {
+						return;
+					}
+
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
-					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, "close");
+					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
+						this.close(iDuration, "autocloseBlur");
+						var oOf = this._oLastPosition && this._oLastPosition.of;
+						if (oOf) {
+							var sParentPopupId = this.getParentPopupId(oOf);
+							if (sParentPopupId) {
+								// Also inform the parent popup that the focus is lost from the child popup
+								// Parent popup can check whether the current focused element is inside the parent popup. If it's still inside the
+								// parent popup, it keeps open, otherwise parent popup is also closed.
+								var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
+								sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
+							}
+						}
+					});
 				}
 			}
 		}
@@ -913,8 +945,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @param {string} sId the ID of the DOM element to focus
 	 * @public
-	 * @name sap.ui.core.Popup#setInitialFocusId
-	 * @function
 	 */
 	Popup.prototype.setInitialFocusId = function(sId) {
 		jQuery.sap.assert(!sId || typeof sId === "string", "sId must be a string or empty");
@@ -931,10 +961,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @param {int} [iDuration] animation duration in milliseconds; default is the jQuery preset "fast".  For iDuration == 0 the closing happens synchronously without animation.
 	 * @public
-	 * @name sap.ui.core.Popup#close
-	 * @function
 	 */
 	Popup.prototype.close = function(iDuration) {
+		if (Popup._autoCloseDebug) {
+			return;
+		}
 		if (this._sTimeoutId) {
 			jQuery.sap.clearDelayedCall(this._sTimeoutId);
 			this._sTimeoutId = null;
@@ -942,15 +973,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			if (arguments.length > 1) {
 				// arguments[0] = iDuration
 				var sAutoclose = arguments[1];
-				var oDomRef = this._$().get(0);
+
 				/*
 				 * If coming from the delayedCall from the autoclose mechanism
 				 * but the active element is still in the Popup -> events messed up somehow.
 				 * This is especially needed for the IE because it messes up focus and blur
 				 * events if using a scroll-bar within a Popup
 				 */
-				if ((typeof (sAutoclose) == "string" && sAutoclose == "autocloseBlur") &&
-				     (oDomRef && jQuery.contains(oDomRef, document.activeElement))) {
+				if (typeof sAutoclose == "string" && sAutoclose == "autocloseBlur" && this._isFocusInsidePopup()) {
 					return;
 				}
 			}
@@ -1010,7 +1040,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			}
 		}
 
-		if (this.oContent instanceof sap.ui.core.Element) {
+		//stop listening for touchmove on the window for preventing the scroll
+		if (Device.os.ios && Device.support.touch) {
+			jQuery(document).off("touchmove", this._fnPreventScroll);
+		}
+
+		if (this.oContent instanceof Element) {
 			this.oContent.removeDelegate(this);
 		}
 
@@ -1028,8 +1063,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		var that = this;
 
-		// shield layer is needs for iOS devices to prevent the delayed mouse events from reaching the underneath dom element.
-		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
+		//  to prevent the delayed mouse events from reaching the underneath dom element.
+		if (jQuery.sap.isMouseEventDelayed) {
 			if (this._oBottomShieldLayer) {
 
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
@@ -1048,13 +1084,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			});
 		}
 
+		// Check if this instance is a child Popup. If true de-register this from
+		// the parent
+		if (this.isInPopup(this._oLastPosition.of)) {
+			var sParentId = this.getParentPopupId(this._oLastPosition.of);
+			var sChildId = "";
+
+			var oContent = this.getContent();
+			if (oContent instanceof Element) {
+				sChildId = oContent.getId();
+			} else if (typeof oContent === "object") {
+				sChildId = oContent.id;
+			}
+
+			this.removeChildFromPopup(sParentId, sChildId);
+			this.removeChildFromPopup(sParentId, this._popupUID);
+		}
+
 		var fnClosed = function() { // the function to call when the popup closing animation has completed
+			// hide the old DOM ref
 			jQuery($Ref).hide().css({
 				"visibility" : "hidden",
 				"left" : "0px",
 				"top" : "0px",
 				"right" : ""
 			});
+
+			// update the DomRef because it could have been rerendered during closing
+			$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
+			if ($Ref.length) {
+				// also hide the new DOM ref
+				jQuery($Ref).hide().css({
+					"visibility" : "hidden",
+					"left" : "0px",
+					"top" : "0px",
+					"right" : ""
+				});
+			}
 
 			//disabled for mobile or desktop browser in touch mode
 			if (that.restoreFocus) {
@@ -1094,15 +1160,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		//deregister resize handler
 		if (this._resizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
+			ResizeHandler.deregister(this._resizeListenerId);
 			this._resizeListenerId = null;
 		}
 	};
 
 	/**
 	 * Returns an object containing as much information about the current focus as possible, or null if no focus is present or no focus information can be gathered.
-	 * @name sap.ui.core.Popup.getCurrentFocusInfo
-	 * @function
 	 */
 	Popup.getCurrentFocusInfo = function() {
 		var _oPreviousFocus = null;
@@ -1133,8 +1197,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 	/**
 	 *
-	 * @name sap.ui.core.Popup.applyFocusInfo
-	 * @function
 	 */
 	Popup.applyFocusInfo = function(oPreviousFocus) {
 		if (oPreviousFocus) {
@@ -1159,8 +1221,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {sap.ui.core.Control | DOMRef } oContent
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setContent
-	 * @function
 	 */
 	Popup.prototype.setContent = function(oContent) {
 		jQuery.sap.assert(typeof oContent === "object", "oContent must be an object");
@@ -1172,8 +1232,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * Returns this Popup's content.
 	 * @return {sap.ui.core.Control | DOMRef } the content that has been set previously (if any)
 	 * @public
-	 * @name sap.ui.core.Popup#getContent
-	 * @function
 	 */
 	Popup.prototype.getContent = function() {
 		return this.oContent;
@@ -1191,8 +1249,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {string} [collision] defines how the position of an element should be adjusted in case it overflows the window in some direction. The valid values that refer to jQuery-UI's position parameters are "flip", "fit" and "none".
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setPosition
-	 * @function
 	 */
 	Popup.prototype.setPosition = function(my, at, of, offset, collision) {
 		jQuery.sap.assert(typeof my === "string", "my must be a string");
@@ -1236,7 +1292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			if ( Popup._bNewOffset == null ) {
 				// check whether the jQuery UI version is new (no more offset parameter) or not
 				Popup._bNewOffset = true;
-				if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8 && jQuery.sap.Version(jQuery().jquery).compareTo("1.8.1") < 0)) {
+				if (!(Device.browser.internet_explorer && Device.browser.version == 8 && jQuery.sap.Version(jQuery().jquery).compareTo("1.8.1") < 0)) {
 					// In IE8 and jQuery 1.7.1 this check crashes. So it is not supported to use a older jQueryUi version without the core in this case.
 					var $Div = jQuery(document.createElement("div"));
 					$Div.position({
@@ -1328,8 +1384,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * Applies the given position to the Popup which is assumed to be currently open
 	 *
 	 * @private
-	 * @name sap.ui.core.Popup#_applyPosition
-	 * @function
 	 */
 	Popup.prototype._applyPosition = function(oPosition) {
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
@@ -1376,8 +1430,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {String| DomNode | jQuery |sap.ui.core.Element | Event | jQuery.Event} oOf the DOM Element, UI Element instance on which the calculation is done
 	 * @returns {object} the rect infomartion which contains the top, left, width, height of the given object. If Event or jQuery.Event type parameter is given, null is returned because there's no way to calculate the rect info based on a event object.
 	 * @private
-	 * @name sap.ui.core.Popup#_calcOfRect
-	 * @function
 	 */
 	Popup.prototype._calcOfRect = function(oOf){
 		var oOfDom = this._getOfDom(oOf);
@@ -1395,8 +1447,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {String| DomNode | jQuery |sap.ui.core.Element | Event | jQuery.Event} oOf the DOM Element, UI Element instance on which the calculation is done
 	 * @returns {DomNode} the DOM reference calculated based on the given parameter. If Event, or jQuery Event type parameter is given, null is returned.
 	 * @private
-	 * @name sap.ui.core.Popup#_getOfDom
-	 * @function
 	 */
 	Popup.prototype._getOfDom = function(oOf) {
 		if (oOf instanceof jQuery.Event) {
@@ -1410,7 +1460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		} else if (oOf instanceof jQuery) {
 			$Of = oOf;
 		} else {
-			$Of = jQuery(oOf instanceof sap.ui.core.Element ? oOf.getDomRef() : oOf);
+			$Of = jQuery(oOf instanceof Element ? oOf.getDomRef() : oOf);
 		}
 
 		return $Of[0];
@@ -1422,8 +1472,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * The returned object is a clone, the original is unchanged.
 	 *
 	 * @private
-	 * @name sap.ui.core.Popup#_convertPositionRTL
-	 * @function
 	 */
 	Popup.prototype._convertPositionRTL = function(oPosition, bRtl) {
 		var oFixedPos = jQuery.extend({}, oPosition); // don't modify the original object
@@ -1488,8 +1536,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @returns {string} the mirrored offset
 	 *
 	 * @private
-	 * @name sap.ui.core.Popup#_mirrorOffset
-	 * @function
 	 */
 	Popup.prototype._mirrorOffset = function(sOffset) {
 		var aOffset = jQuery.trim(sOffset).split(/\s/);
@@ -1505,8 +1551,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * - RTL mode and horizontal alignment is right, begin or center
 	 *
 	 * @private
-	 * @name sap.ui.core.Popup#_fixPositioning
-	 * @function
 	 */
 	Popup.prototype._fixPositioning = function(sPosition, bRtl) {
 		var my = sPosition.my;
@@ -1539,12 +1583,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {object} oPosition position info object describing the desired position of the popup.
 	 * @returns {object} resolved position info
 	 * @private
-	 * @name sap.ui.core.Popup#_resolveReference
-	 * @function
 	 */
 	Popup.prototype._resolveReference = function(oPosition) {
 		var oResult = oPosition;
-		if ( oPosition.of instanceof sap.ui.core.Element ) {
+		if ( oPosition.of instanceof Element ) {
 			oResult = jQuery.extend({}, oPosition, { of : oPosition.of.getDomRef()});
 		}
 
@@ -1558,8 +1600,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {boolean} bShowShadow whether to show a shadow
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setShadow
-	 * @function
 	 */
 	Popup.prototype.setShadow = function(bShowShadow) {
 		jQuery.sap.assert(typeof bShowShadow === "boolean", "bShowShadow must be boolean");
@@ -1580,8 +1620,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {string} [sModalCSSClass] a CSS class (or space-separated list of classes) that should be added to the block layer
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setModal
-	 * @function
 	 */
 	Popup.prototype.setModal = function(bModal, sModalCSSClass) {
 		jQuery.sap.assert(typeof bModal === "boolean", "bModal must be boolean");
@@ -1622,8 +1660,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @return {boolean] bModal whether the Popup is of modal type
 	 * @public
-	 * @name sap.ui.core.Popup#getModal
-	 * @function
 	 */
 	Popup.prototype.getModal = function() {
 		return this._bModal;
@@ -1656,8 +1692,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {boolean} bAutoClose whether the Popup should close as soon as the focus leaves
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setAutoClose
-	 * @function
 	 */
 	Popup.prototype.setAutoClose = function(bAutoClose) {
 		jQuery.sap.assert(typeof bAutoClose === "boolean", "bAutoClose must be boolean");
@@ -1686,8 +1720,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {DomRef[]} aAutoCloseAreas an array containing DOM elements considered part of the Popup; a value of null removes all previous areas
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setAutoCloseAreas
-	 * @function
 	 */
 	Popup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
 		jQuery.sap.assert(aAutoCloseAreas === null || jQuery.isArray(aAutoCloseAreas), "aAutoCloseAreas must be null or an array");
@@ -1695,7 +1727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		for (var i = 0, l = aAutoCloseAreas.length; i < l; i++) {
 			var sId = "";
 
-			if (aAutoCloseAreas[i] instanceof sap.ui.core.Element) {
+			if (aAutoCloseAreas[i] instanceof Element) {
 				sId = aAutoCloseAreas[i].getId();
 			} else if (typeof aAutoCloseAreas[i] === "object") {
 				sId = aAutoCloseAreas[i].id;
@@ -1720,8 +1752,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {function} fnClose
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setAnimations
-	 * @function
 	 */
 	Popup.prototype.setAnimations = function(fnOpen, fnClose) {
 		jQuery.sap.assert(fnOpen === null || typeof fnOpen === "function", "fnOpen must be a function");
@@ -1748,8 +1778,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {int} iCloseDuration in milliseconds
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Popup#setDurations
-	 * @function
 	 */
 	Popup.prototype.setDurations = function(iOpenDuration, iCloseDuration) {
 		jQuery.sap.assert(iOpenDuration === null || (typeof iOpenDuration === "number" && (iOpenDuration % 1 == 0)), "iOpenDuration must be null or an integer");
@@ -1764,6 +1792,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		return this;
+	};
+
+	Popup.prototype._fnPreventScroll = function(oEvent) {
+		if (!oEvent.isMarked()) {
+			oEvent.preventDefault(); // prevent the rubber-band effect
+		}
 	};
 
 	Popup.CLOSE_ON_SCROLL = "close_Popup_if_of_is_moved";
@@ -1782,34 +1816,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * null deletes all followOf settings.
 	 * @since 1.13.0
 	 * @public
-	 * @name sap.ui.core.Popup#setFollowOf
-	 * @function
 	 */
 	Popup.prototype.setFollowOf = function(followOf) {
-		var bUpdateOfRect = false;
-
 		// deregister any listener to ensure that in every state of the Popup the correct listener is attached (or not)
 		Popup.DockTrigger.removeListener(Popup.checkDocking, this);
 
+		var bUpdateOfRect = false;
+		this._bFollowOf = true;
+		this._followOfHandler = null;
+
 		if (typeof (followOf) === "function") {
-			this._bFollowOf = true;
 			this._followOfHandler = followOf;
 			bUpdateOfRect = true;
 		} else if (typeof (followOf) === "boolean") {
-			this._bFollowOf = followOf;
-			if (!this._bFollowOf) {
-				this._followOfHandler = null;
-			}
 			bUpdateOfRect = followOf;
 		} else if (followOf === Popup.CLOSE_ON_SCROLL) {
-			this._bFollowOf = true;
 			this._followOfHandler = this._fnCloseOnScroll;
 			bUpdateOfRect = true;
 		} else {
 			this._bFollowOf = false;
-			this._followOfHandler = null;
 
-			if (followOf != null) {
+			if (followOf !== null) {
 				jQuery.sap.log.error("Trying to set an invalid type to 'followOf: " + followOf);
 			}
 		}
@@ -1829,8 +1856,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @returns {boolean}
 	 * @since 1.16
 	 * @public
-	 * @name sap.ui.core.Popup#getAutoClose
-	 * @function
 	 */
 	Popup.prototype.getAutoClose = function() {
 		return this._bAutoClose;
@@ -1843,8 +1868,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @returns {boolean | function} if a function was set it is returned otherwise a boolean value whether the follow of is activated
 	 * @since 1.13.0
 	 * @public
-	 * @name sap.ui.core.Popup#getFollowOf
-	 * @function
 	 */
 	Popup.prototype.getFollowOf = function() {
 		if (this._bFollowOf) {
@@ -1859,8 +1882,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @returns {boolean} whether the Popup is opened (or currently being opened or closed)
 	 * @public
-	 * @name sap.ui.core.Popup#isOpen
-	 * @function
 	 */
 	Popup.prototype.isOpen = function() {
 		return this.bOpen;
@@ -1871,8 +1892,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @returns {sap.ui.core.OpenState} whether the Popup is opened
 	 * @public
-	 * @name sap.ui.core.Popup#getOpenState
-	 * @function
 	 */
 	Popup.prototype.getOpenState = function() {
 		return this.eOpenState;
@@ -1882,13 +1901,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * Closes and destroys this instance of Popup.
 	 * Does not destroy the hosted content.
 	 * @public
-	 * @name sap.ui.core.Popup#destroy
-	 * @function
 	 */
 	Popup.prototype.destroy = function() {
 		// deregister resize handler
 		if (this._resizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
+			ResizeHandler.deregister(this._resizeListenerId);
 			this._resizeListenerId = null;
 		}
 
@@ -1909,8 +1926,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * deleted as well to prevent any memory leeks.
 	 *
 	 * @public
-	 * @name sap.ui.core.Popup#exit
-	 * @function
 	 */
 	Popup.prototype.exit = function() {
 		delete this._mFocusEvents;
@@ -1929,7 +1944,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		var oDomRef = {};
 		var i = 0, l = 0;
 
-		if (document.addEventListener && !sap.ui.Device.browser.internet_explorer) { //FF, Safari
+		if (document.addEventListener && !Device.browser.internet_explorer) { //FF, Safari
 			document.addEventListener("focus", this.fEventHandler, true);
 			$PopupRoot.get(0).addEventListener("blur", this.fEventHandler, true);
 
@@ -1967,7 +1982,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		var oDomRef = {};
 		var i = 0, l = 0;
 
-		if (document.removeEventListener && !sap.ui.Device.browser.internet_explorer) { //FF, Safari
+		if (document.removeEventListener && !Device.browser.internet_explorer) { //FF, Safari
 			document.removeEventListener("focus", this.fEventHandler, true);
 			$PopupRoot.get(0).removeEventListener("blur", this.fEventHandler, true);
 
@@ -2030,26 +2045,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {Object} oFocusable object with an id-property
 	 * @since 1.12.3
 	 * @private
-	 * @name sap.ui.core.Popup#_addFocusableArea
-	 * @function
 	 */
 	Popup.prototype._addFocusableArea = function(sChannel, sEvent, oEventData) {
-		var sParentPopupId = this._popupUID; // save for call below
 		if (jQuery.inArray(oEventData.id, this.getChildPopups()) === -1) {
 			this.addChildPopup(oEventData.id);
-		}
-
-		// Forward the blur event of the child to the parent Popup
-		var $ChildDomRef = jQuery('[data-sap-ui-popup="' + oEventData.id + '"]');
-		if ($ChildDomRef.length > 0) {
-			var fnOnBlur = function(oEvent) {
-				$ChildDomRef.off("blur", fnOnBlur);
-
-				var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
-				sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
-			};
-
-			$ChildDomRef.on("blur", fnOnBlur);
 		}
 	};
 
@@ -2064,8 +2063,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {Object} oFocusable object with an id-property and if a autoClose machanism should occur
 	 * @since 1.17.0
 	 * @private
-	 * @name sap.ui.core.Popup#_removeFocusableArea
-	 * @function
 	 */
 	Popup.prototype._removeFocusableArea = function(sChannel, sEvent, oEventData) {
 		this.removeChildPopup(oEventData.id);
@@ -2095,8 +2092,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @param {jQuery} $Ref to which DOM-reference the Popup-id should be added to
 	 * @private
-	 * @name sap.ui.core.Popup#_setIdentity
-	 * @function
 	 */
 	Popup.prototype._setIdentity = function($Ref) {
 		if (typeof $Ref === "object") {
@@ -2118,8 +2113,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @param {boolean} [bGetOnly] Only returns the existing content DOM. When content isn't rendered yet, empty jQuery Object is returned.
 	 * @returns {jQuery} the jQuery object containing the root of the content of the Popup
 	 * @private
-	 * @name sap.ui.core.Popup#_$
-	 * @function
 	 */
 	Popup.prototype._$ = function(bForceReRender, bGetOnly){
 		var $ContentRef;
@@ -2134,7 +2127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				sap.ui.getCore().getRenderManager().render(this.oContent, sap.ui.getCore().getStaticAreaRef());
 				$ContentRef = this.oContent.$();
 			}
-		} else if (this.oContent instanceof sap.ui.core.Element) {
+		} else if (this.oContent instanceof Element) {
 			$ContentRef = this.oContent.$();
 		} else {
 			$ContentRef = jQuery(this.oContent);
@@ -2149,8 +2142,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 *
 	 * @param iZIndex
 	 * @private
-	 * @name sap.ui.core.Popup#_showBlockLayer
-	 * @function
 	 */
 	Popup.prototype._showBlockLayer = function() {
 		var $BlockRef = jQuery("#sap-ui-blocklayer-popup"),
@@ -2197,30 +2188,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 	};
 
+	/**
+	 * Check if the focused element is still inside the Popup
+	 *
+	 * @returns {boolean} true if the focused element is still inside the Popup, otherwise returns false
+	 * @private
+	 */
+	Popup.prototype._isFocusInsidePopup = function () {
+		var oDomRef = this._$(false).get(0);
+
+		if (oDomRef && jQuery.sap.containsOrEquals(oDomRef, document.activeElement)) {
+			return true;
+		}
+
+		return false;
+	};
+
 	//****************************************************
 	//Handling of movement of the dock references
 	//****************************************************
 	Popup.DockTrigger = new IntervalTrigger(200);
-
-	var fnRectEqual = function(oRectOne, oRectTwo) {
-		if (oRectOne.left != oRectTwo.left
-				|| oRectOne.top != oRectTwo.top
-				|| oRectOne.width != oRectTwo.width
-				|| oRectOne.height != oRectTwo.height) {
-			return false;
-		}
-		return true;
-	};
 
 	Popup.checkDocking = function(){
 		if (this.getOpenState() === sap.ui.core.OpenState.OPEN) {
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of),
 				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 
+			// it's not possible to check for the width/height because the "of" could be window.document and the
+			// document doesn't have a height/width
 			if (!oCurrentOfRect) {
-				// Docking not possibe due to missing opener.
 				this.close();
 				return;
+			} else if (oCurrentOfRect.left === 0 && oCurrentOfRect.top === 0 &&
+					oCurrentOfRect.height === 0 && oCurrentOfRect.height === 0 &&
+					this._oLastPosition.of.id) {
+				// sometimes the "of" was rerendered and therefore the new DOM-reference must be used for the checks.
+				// An id is only ensured for controls and only those can be re-rendered
+				this._oLastPosition.of = jQuery.sap.domById(this._oLastPosition.of.id);
+				oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
+				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+
+				if (!oCurrentOfRect) {
+					this.close();
+					return;
+				}
 			}
 
 			// Check if the current 'of' dom element is removed from the dom tree which indicates that it
@@ -2279,8 +2290,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * When ontouchstart is called, the next mousedown event which comes with a 300ms delay will be ignored.
 	 *
 	 * @private
-	 * @name sap.ui.core.Popup#ontouchstart
-	 * @function
 	 */
 	Popup.prototype.ontouchstart = function(oEvent){
 		this.onmousedown(oEvent, true);
@@ -2292,8 +2301,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	/**
 	 * Delegate function for handling of mousedown event on sap.ui.core.Elements as content
 	 * @private
-	 * @name sap.ui.core.Popup#onmousedown
-	 * @function
 	 */
 	Popup.prototype.onmousedown = function(oEvent, bSupressChecking) {
 		if (this._bMousedownCalled && !bSupressChecking) {
@@ -2356,8 +2363,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * Delegate function for onAfterRendering.
 	 * Only active when Popup is opened.
 	 * @private
-	 * @name sap.ui.core.Popup#onAfterRendering
-	 * @function
 	 */
 	Popup.prototype.onAfterRendering = function(oEvent){
 		var $Ref = this.getContent().$();
@@ -2388,7 +2393,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		// register resize handler for blindlayer resizing
 		if (this._oBlindLayer) {
-			this._resizeListenerId = sap.ui.core.ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
+			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
 		}
 
 		if (this.isOpen() && (this.getModal() || this.getAutoClose())) {
@@ -2402,13 +2407,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	/**
 	* Delegate function for onBeforeRendering.
 	* @private
-	* @name sap.ui.core.Popup#onBeforeRendering
-	* @function
 	*/
 	Popup.prototype.onBeforeRendering = function(oEvent) {
 		// deregister resize handler
 		if (this._resizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
+			ResizeHandler.deregister(this._resizeListenerId);
 			this._resizeListenerId = null;
 		}
 
@@ -2425,8 +2428,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * should be updated as well. For example necessary when popup content has absolute positions.
 	 *
 	 * @private
-	 * @name sap.ui.core.Popup#onresize
-	 * @function
 	 */
 	Popup.prototype.onresize = function(oEvent) {
 		if (this.eOpenState != sap.ui.core.OpenState.CLOSED && this._oBlindLayer) {
@@ -2445,4 +2446,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 	return Popup;
 
-}, /* bExport= */ true);
+});

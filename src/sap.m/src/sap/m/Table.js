@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.16
-	 * @name sap.m.Table
+	 * @alias sap.m.Table
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Table = ListBase.extend("sap.m.Table", /** @lends sap.m.Table.prototype */ { metadata : {
@@ -71,6 +71,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	
 	Table.prototype.init = function() {
 		this._hasPopin = false;
+		this._iItemNeedsColumn = 0;
 		this._selectAllCheckBox = null;
 		ListBase.prototype.init.call(this);
 	};
@@ -78,17 +79,15 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	Table.prototype.onBeforeRendering = function() {
 		ListBase.prototype.onBeforeRendering.call(this);
 		this._notifyColumns("ItemsRemoved");
-		this._navRenderedBy = "";
 	};
 	
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 	
-		// if any item has navigation, add required class
-		if (this._navRenderedBy) {
-			jQuery(this.getTableDomRef()).addClass("sapMListTblHasNav");
-		}
-	
+		// notify columns after rendering
+		var $Table = jQuery(this.getTableDomRef());
+		this._notifyColumns("ColumnRendered", $Table, !this.getFixedLayout());
+
 		this.updateSelectAllCheckbox();
 		this._renderOverlay();
 	};
@@ -119,14 +118,14 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		}
 	};
 	
-	Table.prototype.destroyAggregation = function(sAggregationName) {
-		sAggregationName == "items" && this._notifyColumns("ItemsRemoved");
-		return ListBase.prototype.destroyAggregation.apply(this, arguments);
+	Table.prototype.destroyItems = function() {
+		this._notifyColumns("ItemsRemoved");
+		return ListBase.prototype.destroyItems.call(this);
 	};
 	
-	Table.prototype.removeAllAggregation = function(sAggregationName) {
-		sAggregationName == "items" && this._notifyColumns("ItemsRemoved");
-		return ListBase.prototype.removeAllAggregation.apply(this, arguments);
+	Table.prototype.removeAllItems = function() {
+		this._notifyColumns("ItemsRemoved");
+		return ListBase.prototype.removeAllItems.call(this);
 	};
 	
 	Table.prototype.removeSelections = function() {
@@ -138,12 +137,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	Table.prototype.selectAll = function () {
 		ListBase.prototype.selectAll.apply(this, arguments);
 		this.updateSelectAllCheckbox();
-		return this;
-	};
-	
-	Table.prototype.setFixedLayout = function (bFixed) {
-		this.setProperty("fixedLayout", bFixed, true);
-		this.$("listUl").css("table-layout", this.getFixedLayout() ? "fixed" : "auto");
 		return this;
 	};
 	
@@ -170,7 +163,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 */
 	Table.prototype.onAfterPageLoaded = function() {
 		this.updateSelectAllCheckbox();
-		this._navRenderedBy && jQuery(this.getTableDomRef()).addClass("sapMListTblHasNav");
 		ListBase.prototype.onAfterPageLoaded.apply(this, arguments);
 	};
 	
@@ -184,12 +176,21 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		});
 	};
 	
-	/*
-	 * This function runs when setSelected is called from ListItemBase
-	 * @overwrite
-	 */
-	Table.prototype.onItemSetSelected = function(oItem, bSelect) {
-		ListBase.prototype.onItemSetSelected.apply(this, arguments);
+	// this gets called when item type column requirement is changed
+	Table.prototype.onItemTypeColumnChange = function(oItem, bNeedsTypeColumn) {
+		this._iItemNeedsColumn += (bNeedsTypeColumn ? 1 : -1);
+		
+		// update type column visibility
+		if (this._iItemNeedsColumn == 1 && bNeedsTypeColumn) {
+			this._setTypeColumnVisibility(true);
+		} else if (this._iItemNeedsColumn == 0) {
+			this._setTypeColumnVisibility(false);
+		}
+	};
+	
+	// this gets called when selected property of the item is changed
+	Table.prototype.onItemSelectedChange = function(oItem, bSelect) {
+		ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 		jQuery.sap.delayedCall(0, this, function() {
 			this.updateSelectAllCheckbox();
 		});
@@ -247,9 +248,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		var aItemDomRefs = $Header.add($Rows).add($Footer).get();
 		this._oItemNavigation.setItemDomRefs(aItemDomRefs);
 		
-		// header and footer in the item navigation but initial focus is the first item row 
-		if ($Header[0] && aItemDomRefs.length && oItemNavigation.getFocusedIndex() == -1) {
-			oItemNavigation.setFocusedIndex(1);
+		// header and footer are in the item navigation but 
+		// initial focus should be at the first item row
+		if (oItemNavigation.getFocusedIndex() == -1) {
+			oItemNavigation.setFocusedIndex($Header[0] ? 1 : 0);
 		}
 	};
 	
@@ -308,7 +310,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			});
 		}
 	};
-	
+		
 	/*
 	 * This method is called from Column control when column visibility is changed via CSS media query
 	 *
@@ -331,36 +333,52 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		if (aVisibleColumns.length == 1) {
 			$firstVisibleCol.width("");	// cover the space
 		} else {
-			$firstVisibleCol.width($firstVisibleCol.attr("data-sap-orig-width"));
+			$firstVisibleCol.width($firstVisibleCol.attr("data-sap-width"));
 		}
 	
-		// update GroupHeader colspan according to visible column count
-		$table.find(".sapMGHLICell").attr("colspan", aVisibleColumns.length);
+		// update GroupHeader colspan according to visible column count and additional selection column
+		$table.find(".sapMGHLICell").attr("colspan", aVisibleColumns.length + !!sap.m.ListBaseRenderer.ModeOrder[this.getMode()]);
 	
 		// remove or show column header row(thead) according to column visibility value
 		if (!bColVisible && bHeaderVisible) {
 			$headRow[0].className = "sapMListTblRow sapMListTblHeader";
+			this._headerHidden = false;
 		} else if (bColVisible && !bHeaderVisible && !aVisibleColumns.length) {
 			$headRow[0].className = "sapMListTblHeaderNone";
+			this._headerHidden = true;
 		}
 	};
 	
+	// updates the type column visibility and sets the aria flag
+	Table.prototype._setTypeColumnVisibility = function(bVisible) {
+		var $Table = jQuery(this.getTableDomRef()),
+			$TypeColumnHeader = this.$("tblHeadNav"),
+			iTypeColumnIndex = $TypeColumnHeader.index() + 1,
+			$TypeColumnCells = $Table.find("tr > td:nth-child(" + iTypeColumnIndex + ")");
+		
+		$Table.toggleClass("sapMListTblHasNav", bVisible);
+		$TypeColumnHeader.attr("aria-hidden", !bVisible);
+		$TypeColumnCells.attr("aria-hidden", !bVisible);
+	};
+	
 	// notify all columns with given action and param
-	Table.prototype._notifyColumns = function(action, param) {
+	Table.prototype._notifyColumns = function(sAction, vParam1, vParam2) {
 		this.getColumns().forEach(function(oColumn) {
-			oColumn["on" + action](param);
+			oColumn["on" + sAction](vParam1, vParam2);
 		});
 	};
 	
 	// pass pop-in events to ColumnListItem
 	Table.prototype._handlePopinEvent = function(oEvent, bRowOnly) {
+		if (!this.hasPopin()) {
+			return;
+		}
+		
 		if (bRowOnly && !sap.m.ColumnListItem.isPopinFocused()) {
 			return;
 		}
 	
-		if (this.hasPopin()) {
-			return sap.m.ColumnListItem.handleEvents(oEvent, this.getItemsContainerDomRef());
-		}
+		return sap.m.ColumnListItem.handleEvents(oEvent, this.getItemsContainerDomRef());
 	};
 	
 	/**
@@ -371,15 +389,21 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 * @return {sap.m.CheckBox} reference to the internal select all checkbox
 	 */
 	Table.prototype._getSelectAllCheckbox = function() {
-		return this._selectAllCheckBox || (this._selectAllCheckBox = new sap.m.CheckBox(this.getId("sa"), {
-			activeHandling : false
+		return this._selectAllCheckBox || (this._selectAllCheckBox = new sap.m.CheckBox({
+			id: this.getId("sa"),
+			activeHandling: false
 		}).setParent(this, null, true).attachSelect(function () {
 			if (this._selectAllCheckBox.getSelected()) {
 				this.selectAll(true);
 			} else {
 				this.removeSelections(false, true);
 			}
-		}, this).setTabIndex(-1));
+		}, this).setTabIndex(-1).addEventDelegate({
+			onAfterRendering: function() {
+				// hide this from the screen readers
+				this._selectAllCheckBox.getFocusDomRef().setAttribute("aria-hidden", "true");
+			}
+		}, this));
 	};
 	
 	/*
@@ -426,7 +450,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	Table.prototype.hasPopin = function() {
 		return !!this._hasPopin;
 	};
-
 	
 	/*
 	 * Returns whether given event is initialized within header row or not
@@ -447,11 +470,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	};
 	
 	/*
-	 * Returns whether table has column footer row
-	 * @protected
+	 * This gets called after navigation items are focused
+	 * Overwrites the ListItemBase default handling
 	 */
-	Table.prototype.hasFooterRow = function() {
-		return !!this._hasFooter;
+	Table.prototype.onNavigationItemFocus = function() {
 	};
 	
 	// keyboard handling
@@ -509,9 +531,19 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			sTargetId == this.getId("tblHeader") || 
 			sTargetId == this.getId("tblFooter")) {
 			this.forwardTab(false);
+		} else if (sTargetId == this.getId("trigger")) {
+			this.focusPrevious();
+			oEvent.preventDefault();
 		} else {
 			this._handlePopinEvent(oEvent);
 		}
+	};
+	
+	// Handles focus of the popins
+	Table.prototype.onfocusin = function(oEvent) {
+		var oCLI = this._handlePopinEvent(oEvent, true);
+		ListBase.prototype.onfocusin.call(this, oEvent);
+		oCLI && oCLI.focus();
 	};
 
 	return Table;

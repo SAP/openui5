@@ -94,20 +94,22 @@
 	});
 	
 	asyncTest("Open Feed and close it again", function() {
+		expect(2);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
+			equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 1,
+				"Rendered update popup should be available in the page");
 			oActionBar1.closePopups();
 			setTimeout(function() {
 				start();
-				ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered update popup should exist in the page");
-				equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").css("visibility"), "hidden",
-				"Rendered update popup should be hidden in the page");
+				equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
+				"Rendered update popup should have been removed from the page");
 			}, 500);
 		}, 500);
 	});	
 	
 	asyncTest("Press \"Create an Update\" (Feed)", function() {
-		expect(5);
+		expect(4);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered update popup should exist in the page");
@@ -121,9 +123,8 @@
 						qutils.triggerMouseEvent(jQuery('#'+oActionBar1.getId()+'-Feeder-send')[0], "click", 1, 1, 1, 1);
 						setTimeout(function() {
 							start();
-							ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered comment popup should exist in the page");
-							equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").css("visibility"), "hidden",
-							"Rendered update popup should be hidden in the page");
+							equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
+								"Rendered update popup should have been removed from the page");
 						}, 500);
 					}, 500);
 				}, 500);
@@ -131,10 +132,8 @@
 		}, 500);
 	});	
 	
-	stop();
-	
 	// Following test case has caused occasional trouble when being executed on internet explorer 9
-	// What is being tested works on ie. To be save for auromatic tests, the timeout for internet explorer
+	// What is being tested works on ie. To be save for automatic tests, the timeout for internet explorer
 	// tests is twice as big as usual.
 	var iTimeOut = 500; 
 	if(sap.ui.Device.browser.internet_explorer) {
@@ -265,7 +264,6 @@
 				"Favorite Icon is set");
 		}, iTimeOut);
 	});
-	stop();
 	
 	
 	
@@ -297,7 +295,6 @@
 			ok(bIsDisabled, "Create action is disabled");
 		}, 500);
 	});
-	stop();
 	
 
 	
@@ -311,7 +308,6 @@
 			ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
 		}, 500);
 	});
-	stop();
 	
 	test("Remove two business actions: one directly, one by its Id", function() {
 		oActionBar1.removeBusinessAction(oCreateAction);
@@ -346,7 +342,6 @@
 			ok(bIsDisabled, "Delete action is disabled");
 		}, 500);
 	});
-	stop();
 	
 	
 	asyncTest("Hide business action buttons from \"action bar\"", function() {
@@ -360,7 +355,6 @@
 			ok(bVisible, "More Menu Button is visible");
 		}, 500);
 	});
-	stop();
 	
 	asyncTest("Show business action's buttons on \"action bar\" again and destroy them afterwards", function() {
 		expect(1);
@@ -372,7 +366,6 @@
 			ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 		}, 500);
 	});
-	stop();
 	
 	test("Destroy actionBar", function() {
 		oActionBar1.destroy();

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.FocusHandler
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/Object', 'jquery.sap.script'],
-	function(jQuery, Device, Global, BaseObject/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.script'],
+	function(jQuery, Device, BaseObject/* , jQuerySap */) {
 	"use strict";
 
 
@@ -17,7 +17,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * @class Keeps track of the focused element.
 		 * @param {Element} oRootRef e.g. document.body
 		 * @param {sap.ui.core.Core} oCore Reference to the Core implementation
-		 * @name sap.ui.core.FocusHandler
+		 * @alias sap.ui.core.FocusHandler
+		 * @private
 		 */
 		var FocusHandler = BaseObject.extend("sap.ui.core.FocusHandler", /** @lends sap.ui.core.FocusHandler.prototype */ {
 			constructor : function(oRootRef, oCore) {
@@ -31,6 +32,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				this.oLast = null;
 				// buffer the focus/blur events for correct order
 				this.aEventQueue = [];
+				// keep track of last focused element
+				this.oLastFocusedControlInfo = null;
 		
 				this.fEventHandler = jQuery.proxy(this.onEvent, this);
 				this.fDestroyHandler = jQuery.proxy(this.destroy, this);
@@ -54,8 +57,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * Returns the Id of the control/element currently in focus.
 		 * @return {string} the Id of the control/element currently in focus.
 		 * @public
-		 * @name sap.ui.core.FocusHandler#getCurrentFocusedControlId
-		 * @function
 		 */
 		FocusHandler.prototype.getCurrentFocusedControlId = function(){
 			var aCtrls = null;
@@ -64,8 +65,83 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				if ($Act.is(":focus") || (Device.browser.internet_explorer && Device.browser.version == 8 && document.hasFocus())) {
 					aCtrls = $Act.control();
 				}
-			} catch (err) {}
+			} catch (err) {
+				//escape eslint check for empty block
+			}
 			return aCtrls && aCtrls.length > 0 ? aCtrls[0].getId() : null;
+		};
+		
+		/**
+		 * Returns the focus info of the current focused control or the control with the given id, if exists.
+		 * 
+		 * @see sap.ui.core.FocusHandler#restoreFocus
+		 * @see sap.ui.core.FocusHandler#getCurrentFocusedControlId
+		 * @param {string} [sControlId] the id of the control. If not given the id of the current focused control (if exists) is used
+		 * @return {object} the focus info of the current focused control or the control with the given id, if exists.
+		 * @private
+		 */
+		FocusHandler.prototype.getControlFocusInfo = function(sControlId){
+			sControlId = sControlId || this.getCurrentFocusedControlId();
+			
+			if (!sControlId) {
+				return null;
+			}
+			
+			var oControl = this.oCore.getElementById(sControlId);
+			if (oControl) {
+				return {
+				    id : sControlId,
+				    control : oControl,
+				    info : oControl.getFocusInfo(),
+				    type : oControl.getMetadata().getName(),
+				    focusref : oControl.getFocusDomRef()
+				};
+			}
+			return null;
+		};
+		
+		/**
+		 * If the given control is the last known focused control, the stored focusInfo is updated.
+		 * 
+		 * @see sap.ui.core.FocusHandler#restoreFocus
+		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
+		 * @param {string} oControl the control
+		 * @private
+		 */
+		FocusHandler.prototype.updateControlFocusInfo = function(oControl){
+			if (oControl && this.oLastFocusedControlInfo && this.oLastFocusedControlInfo.control === oControl) {
+				var sControlId = oControl.getId();
+				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
+				jQuery.sap.log.debug("Update focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
+			}
+		};
+		
+		/**
+		 * Restores the focus to the last known focused control or to the given focusInfo, if possible.
+		 * 
+		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
+		 * @param {object} [oControlFocusInfo] the focus info previously received from getControlFocusInfo
+		 * @private
+		 */
+		FocusHandler.prototype.restoreFocus = function(oControlFocusInfo){
+			var oInfo = oControlFocusInfo || this.oLastFocusedControlInfo;
+			
+			if (!oInfo) {
+				return;
+			}
+			
+			var oControl = this.oCore.getElementById(oInfo.id);
+			if (oControl && oInfo.info
+					&& oControl.getMetadata().getName() == oInfo.type
+					&& oControl.getFocusDomRef() != oInfo.focusref
+					&& (oControlFocusInfo || /*!oControlFocusInfo &&*/ oControl !== oInfo.control)) {
+				jQuery.sap.log.debug("Apply focus info of control " + oInfo.id, null, "sap.ui.core.FocusHandler");
+				oInfo.control = oControl;
+				this.oLastFocusedControlInfo = oInfo;
+				oControl.applyFocusInfo(oInfo.info);
+			} else {
+				jQuery.sap.log.debug("Apply focus info of control " + oInfo.id + " not possible", null, "sap.ui.core.FocusHandler");
+			}
 		};
 	
 		/**
@@ -74,8 +150,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param {jQuery.Event} event the event that initiated the destruction of the FocusHandler
 		 * @private
-		 * @name sap.ui.core.FocusHandler#destroy
-		 * @function
 		 */
 		FocusHandler.prototype.destroy = function(event) {
 			var oRootRef = event.data.oRootRef;
@@ -97,8 +171,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param oRootRef e.g. document.body
 		 * @private
-		 * @name sap.ui.core.FocusHandler#onEvent
-		 * @function
 		 */
 		FocusHandler.prototype.onEvent = function(oBrowserEvent){
 			var oEvent = jQuery.event.fix(oBrowserEvent);
@@ -116,8 +188,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * Processes the focus/blur events in the event queue.
 		 *
 		 * @private
-		 * @name sap.ui.core.FocusHandler#processEvent
-		 * @function
 		 */
 		FocusHandler.prototype.processEvent = function(){
 			var oEvent = this.aEventQueue[0];
@@ -143,10 +213,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param sControlId Id of the event related control
 		 * @private
-		 * @name sap.ui.core.FocusHandler#onfocusEvent
-		 * @function
 		 */
 		FocusHandler.prototype.onfocusEvent = function(sControlId){
+			var oControl = this.oCore.getElementById(sControlId);
+			if (oControl) {
+				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
+				jQuery.sap.log.debug("Store focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
+			}
+			
 			this.oCurrent = sControlId;
 			if (!this.oLast) {
 				// No last active element to be left... 
@@ -162,8 +236,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param sControlId Id of the event related control
 		 * @private
-		 * @name sap.ui.core.FocusHandler#onblurEvent
-		 * @function
 		 */
 		FocusHandler.prototype.onblurEvent = function(sControlId){
 			if (!this.oCurrent) {
@@ -181,8 +253,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * Called in delayed manner from {@link sap.ui.core.FocusHandler#onblurEvent}.
 		 *
 		 * @private
-		 * @name sap.ui.core.FocusHandler#checkForLostFocus
-		 * @function
 		 */
 		FocusHandler.prototype.checkForLostFocus = function(){
 			if (this.oCurrent == null && this.oLast != null) {
@@ -267,4 +337,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 	return FocusHandler;
 
-}, /* bExport= */ true);
+});

@@ -102,40 +102,60 @@
 		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
 		notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
 	});
+	
+	test("Screen reader", function() {
+		
+		// Arrange
+		var oObjectAttribute = new sap.m.ObjectAttribute({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+		
+		// System under Test
+		oObjectAttribute.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
+		
+		// Clean up
+		oObjectAttribute.destroy();
+		
+	});
 
 	module("Attributes Wrapping");
 	
-	asyncTest("Attributes Wrapping in ObjectHeader", function() {
+	test("Attributes Wrapping in ObjectHeader", function() {
 		
 		// arrange
-		var oAttr = new sap.m.ObjectAttribute("oOA1", {text:"ObjectHeader wrapping test"}),
+		var oAttr = new sap.m.ObjectAttribute("oOA1", {title: "Test",
+			text:"ObjectHeader wrapping"}),
 			oObjectHeader = new sap.m.ObjectHeader("oOH1", {
 				attributes : [oAttr]
-			}),
-			hasNativeLineClamp = (typeof document.documentElement.style.webkitLineClamp != "undefined"); 
+			});
 			
 		oObjectHeader.placeAt("objectAtrributesWrap");
 		
 		sap.ui.getCore().applyChanges()
 		
 		// assertions
-		ok(oAttr.mAggregations._textControl.$("inner").hasClass("sapMTextMaxLine"), "sapMTextMaxLine class is present.");
-		if(hasNativeLineClamp) {
-			ok(oAttr.mAggregations._textControl.$("inner").hasClass("sapMTextLineClamp"), "sapMTextLineClamp class is present.");
-			equal(oAttr.mAggregations._textControl.getMaxLines(),2,"Max lines should be 2");
-		}
+		ok(oAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+		
 		//Cleanup
 		oObjectHeader.destroy(); 
-		
-		setTimeout( function() {
-			start();
-		}, 500);
 	});
 	
-	asyncTest("Attributes Wrapping in Responsive ObjectHeader", function() {
+	test("Attributes Wrapping in Responsive ObjectHeader", function() {
 		
 		// arrange
-		var oAttr = new sap.m.ObjectAttribute("oOA2", {text:"Responsive ObjectHeader wrapping test"});
+		var oAttr = new sap.m.ObjectAttribute("oOA2", {
+			title: "Test",
+			text:"Responsive ObjectHeader wrapping"
+		});
+		
 		var oObjectHeader = new sap.m.ObjectHeader("oOH2", {
 			attributes : [oAttr],
 			responsive : true
@@ -145,22 +165,18 @@
 		sap.ui.getCore().applyChanges()
 		
 		// assertions
-		ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
-		if(!sap.ui.Device.browser.internet_explorer) {
-			equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
-		}
+		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span is rendered.");
+		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span is rendered.");
+		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span is rendered.");
+		
 		//Cleanup
 		oObjectHeader.destroy(); 
-		
-		setTimeout( function() {
-			start();
-		}, 500);
 	});
 	
 	asyncTest("Attributes Wrapping in ObjectListItem", function() {
 		
 		// arrange
-		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectHeader wrapping test"});
+		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectListItem wrapping test"});
 		var oObjectListItem = new sap.m.ObjectListItem("oOL3", {
 			attributes : [oAttr]
 		});
@@ -181,6 +197,29 @@
 		setTimeout( function() {
 			start();
 		}, 500);
+	});
+	/******************************************************************/
+	
+	module("Aggregation attribute");
+	
+	test("Aggregation sap.m.Link", function() {
+		
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute("attr", {
+			text: "Joe Smith",
+			active: true,
+			attribute: new sap.m.Link("alink", {text: "this is sap.m.Link"})
+		});
+
+		oAttr.placeAt("objectAtrributesWrap");
+		
+		sap.ui.getCore().applyChanges();
+		
+		// assertions
+		ok(oAttr.$("attr").find(".sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
+		
+		//Cleanup
+		oAttr.destroy(); 
 	});
 	/******************************************************************/
 
@@ -271,8 +310,27 @@
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();
 		oObjectAttribute.destroy();
-	});	
-		
+	});
+
+    module("rtl support");
+    test("Render text with the opposite direction", function() {
+        // Arrange
+        var oObjectAttribute = new sap.m.ObjectAttribute({
+            title: "a",
+            text: "1 2",
+            textDirection: sap.ui.core.TextDirection.RTL
+        });
+
+        // System under Test
+        oObjectAttribute.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+
+        equal(oObjectAttribute.$().find('.sapMText').text(), "a: \u200f1 2\u200f", "Numbers are read backwards.");
+
+        // Clean up
+        oObjectAttribute.destroy();
+    });
+	
 </script>
 </head>
 

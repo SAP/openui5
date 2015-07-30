@@ -8,12 +8,339 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 
 
 	/**
-	 * @class ListitemBase renderer.
+	 * ListitemBase renderer.
 	 *
-	 * @static
+	 * @namespace
 	 */
 	var ListItemBaseRenderer = {};
 	
+	// create ARIA announcements 
+	var mAriaAnnouncements = {};
+	
+	ListItemBaseRenderer.renderInvisible = function(rm, oLI) {
+		this.openItemTag(rm, oLI);
+		rm.writeInvisiblePlaceholderData(oLI);
+		rm.write(">");
+		this.closeItemTag(rm, oLI);
+	};
+	
+	ListItemBaseRenderer.isModeMatched = function(sMode, iOrder) {
+		var mOrderConfig = (sap.m.ListBaseRenderer || {}).ModeOrder || {};
+		return (mOrderConfig[sMode] == iOrder);
+	};
+
+	/**
+	 * Renders the mode when item mode is in correct order
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {int} [iOrder] expected order for the rendering
+	 * @protected
+	 */
+	ListItemBaseRenderer.renderMode = function(rm, oLI, iOrder) {
+		var sMode = oLI.getMode();
+		if (!this.isModeMatched(sMode, iOrder)) {
+			return;
+		}
+		
+		var oModeControl = oLI.getModeControl(true);
+		if (oModeControl) {
+			this.renderModeContent(rm, oLI, oModeControl);
+		}
+	};
+
+	ListItemBaseRenderer.renderModeContent = function(rm, oLI, oModeControl) {
+		var sMode = oLI.getMode(),
+			mModeConfig = {
+				Delete : "D",
+				MultiSelect : "M",
+				SingleSelect : "S",
+				SingleSelectLeft : "SL"
+			};
+
+		rm.write("<div");
+		rm.writeAttribute("id", oLI.getId() + "-mode");
+		rm.addClass("sapMLIBSelect" + mModeConfig[sMode]);
+		this.decorateMode(rm, oLI);
+		rm.writeClasses();
+		rm.writeStyles();
+		rm.write(">");
+		rm.renderControl(oModeControl);
+		rm.write("</div>");
+	};
+
+	ListItemBaseRenderer.decorateMode = function(rm, oLI) {
+		// determine whether animation is necessary or not
+		if (!sap.ui.getCore().getConfiguration().getAnimation() ||
+			!oLI.getListProperty("modeAnimationOn")) {
+			return;
+		}
+
+		var sMode = oLI.getMode(),
+			sLastListMode = oLI.getListProperty("lastMode");
+		
+		// determine whether list mode is changed or not
+		if (!sLastListMode || sLastListMode == sMode) {
+			return;
+		}
+
+		if (sMode == sap.m.ListMode.None) {
+			rm.addClass("sapMLIBUnselectAnimation");
+		} else {
+			rm.addClass("sapMLIBSelectAnimation");
+		}
+	};
+
+	/**
+	 * Renders counter if it is not empty
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.renderCounter = function(rm, oLI) {
+		var iCounter = oLI.getCounter();
+		if (iCounter) {
+			this.renderCounterContent(rm, oLI, iCounter);
+		}
+	};
+
+	ListItemBaseRenderer.renderCounterContent = function(rm, oLI, iCounter) {
+		rm.write("<div");
+		rm.writeAttribute("id", oLI.getId() + "-counter");
+		var sAriaLabel = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_COUNTER", iCounter);
+		rm.writeAttribute("aria-label", sAriaLabel);
+		rm.addClass("sapMLIBCounter");
+		rm.writeClasses();
+		rm.write(">");
+		rm.write(iCounter);
+		rm.write("</div>");
+	};
+
+	/**
+	 * Renders type for the list item
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.renderType = function(rm, oLI) {
+		var oTypeControl = oLI.getTypeControl();
+		if (oTypeControl) {
+			this.renderTypeContent(rm, oLI, oTypeControl);
+		}
+	};
+
+	ListItemBaseRenderer.renderTypeContent = function(rm, oLI, oTypeControl) {
+		var bDetail = oLI.getType().indexOf("Detail") != -1;
+		if (bDetail) {
+			rm.write("<div class='sapMLIBCursor'>");
+		}
+
+		rm.renderControl(oTypeControl);
+
+		if (bDetail) {
+			rm.write("</div>");
+		}
+	};
+
+	/**
+	 * Renders list item HTML starting tag
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.openItemTag = function(rm, oLI) {
+		rm.write("<li");
+	};
+
+	/**
+	 * Renders list item HTML closing tag
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.closeItemTag = function(rm, oLI) {
+		rm.write("</li>");
+	};
+
+	/**
+	 * Determines whether flex box wrapper is necessary or not.
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.handleNoFlex = function(rm, oLI) {
+		return !jQuery.support.hasFlexBoxSupport;
+	};
+
+	ListItemBaseRenderer.renderTabIndex = function(rm, oLI) {
+		rm.writeAttribute("tabindex", "-1");
+	};
+
+	ListItemBaseRenderer.renderTooltip = function(rm, oLI) {
+		var sTooltip = oLI.getTooltip_AsString();
+		if (sTooltip) {
+			rm.writeAttributeEscaped("title", sTooltip);
+		}
+	};
+	
+	/**
+	 * Creates an invisible aria node for the given message bundle text  
+	 * in the static UIArea and returns its id for ARIA announcements
+	 * 
+	 * This method should be used when text is reached frequently.
+	 * 
+	 * @param {String} sKey key of the announcement
+	 * @param {String} [sBundleText] key of the announcement
+	 * @returns {String} id of the generated invisible aria node
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
+		if (mAriaAnnouncements[sKey]) {
+			return mAriaAnnouncements[sKey];
+		}
+		
+		sBundleText = sBundleText || "LIST_ITEM_" + sKey.toUpperCase();
+		mAriaAnnouncements[sKey] = new sap.ui.core.InvisibleText({
+			text : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sBundleText)
+		}).toStatic().getId();
+		
+		return mAriaAnnouncements[sKey];
+	};
+
+	
+	/**
+	 * Returns aria accessibility role
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @returns {String}
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaRole = function(oLI) {
+		return "option";
+	};
+	
+	/**
+	 * Returns the inner aria labelledby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control 
+	 * @returns {String|undefined}
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaLabelledBy = function(oLI) {
+		if (oLI.getAriaLabelledBy().length) {
+			return oLI.getId();
+		}
+	};
+	
+	/**
+	 * Returns the inner aria describedby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @returns {String|undefined} 
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaDescribedBy = function(oLI) {
+		var aDescribedBy = [],
+			sType = oLI.getType(),
+			mType = sap.m.ListType;
+		
+		if (oLI.getListProperty("showUnread") && oLI.getUnread()) {
+			aDescribedBy.push(this.getAriaAnnouncement("unread"));
+		}
+		
+		if (oLI.getMode() == sap.m.ListMode.Delete) {
+			aDescribedBy.push(this.getAriaAnnouncement("deletable"));
+		}
+		
+		if (sType == mType.Navigation) {
+			aDescribedBy.push(this.getAriaAnnouncement("navigation"));
+		} else if (sType == mType.Detail || sType == mType.DetailAndActive) {
+			aDescribedBy.push(this.getAriaAnnouncement("detail"));
+		}
+		
+		return aDescribedBy.join(" ");
+	};
+	
+	/**
+	 * Returns the accessibility state of the control
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAccessibilityState = function(oLI) {
+		var sAriaLabelledBy = this.getAriaLabelledBy(oLI),
+			sAriaDescribedBy = this.getAriaDescribedBy(oLI),
+			mAccessibilityState = {
+				role: this.getAriaRole(oLI)
+			};
+
+		if (oLI.isSelectable()) {
+			mAccessibilityState.selected = oLI.getProperty("selected");
+		}
+
+		if (sAriaLabelledBy) {
+			mAccessibilityState.labelledby = {
+				value: sAriaLabelledBy.trim(),
+				append: true
+			};
+		}
+
+		if (sAriaDescribedBy) {
+			mAccessibilityState.describedby = {
+				value: sAriaDescribedBy.trim(),
+				append: true
+			};
+		}
+
+		return mAccessibilityState;
+	};
+	
+	/**
+	 * Hook for rendering list item contents
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.renderLIContent = function(rm, oLI) {
+	};
+	
+	/**
+	 * Hook for changing list item attributes
+	 * 
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.renderLIAttributes = function(rm, oLI) {
+	};
+
+	
+	ListItemBaseRenderer.renderLIContentWrapper = function(rm, oLI) {
+		rm.write('<div class="sapMLIBContent"');
+		rm.writeAttribute("id", oLI.getId() + "-content");
+		rm.write(">");
+		
+		// additional content with class for no-flex case
+		if (this.handleNoFlex()) {
+			rm.write('<div class="sapMLIBContentNF">');
+		}
+
+		this.renderLIContent(rm, oLI);
+
+		if (this.handleNoFlex()) {
+			rm.write('</div>');
+		}
+
+		rm.write('</div>');
+	};
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided.
 	 *
@@ -21,393 +348,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
 	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @public
 	 */
 	ListItemBaseRenderer.render = function(rm, oLI) {
-	
-		// return immediately if control is invisible
+
+		// render invisible placeholder
 		if (!oLI.getVisible()) {
-			return;
+			this.renderInvisible(rm, oLI);
+			return false;
 		}
-	
-		// define behavior: list or table
-		var sId = oLI.getId(),
-			oParent = oLI.getParent(),
-			isTable = !oLI.hasOwnProperty("_renderInList") && oParent && oParent.getColumns && oParent.getColumns().length,
-			bNoFlex = oLI._bNoFlex, // IE9 does not support flex-box: render as a table
-			rowEndTag, rowStartTag, openCellTag, closeCellTag, hasPopin = false,
-			sTooltip = oLI.getTooltip_AsString();
-	
-		if (!isTable) {
-			rowEndTag = "</li>";
-			rowStartTag = "<li tabindex='-1'";
-	
-			openCellTag = function() {
-				rm.write("<div");
-			};
-	
-			closeCellTag = function() {
-				rm.write("</div>");
-			};
-	
-		} else {
-			rowEndTag = "</tr>";
-			rowStartTag = "<tr tabindex='-1'";
-			hasPopin = oParent.hasPopin() && sap.m.ColumnListItem && oLI instanceof sap.m.ColumnListItem;
-	
-			openCellTag = function(cls, bDontCreateDiv) {
-				rm.write("<td");
-	
-				if (cls) {
-					rm.addClass(cls);
-					rm.writeClasses();
-				}
-	
-				if (!bDontCreateDiv) {
-					rm.write("><div");
-				}
-			};
-	
-			closeCellTag = function(bDontCreateDiv) {
-	
-				if (!bDontCreateDiv) {
-					rm.write("</div>");
-				}
-	
-				rm.write("</td>");
-			};
-		}
-	
-		rm.write(rowStartTag);
-	
-		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
-		}
-	
+
+		// start
+		this.openItemTag(rm, oLI);
 		rm.writeControlData(oLI);
+
+		// classes
 		rm.addClass("sapMLIB");
 		rm.addClass("sapMLIB-CTX");
-	
-		if (!isTable && bNoFlex) { // switch to the no-flex rendering
-			rm.addClass("sapMLIBNoFlex");
-		}
-	
 		rm.addClass("sapMLIBShowSeparator");
-	
-		if (oLI._includeItemInSelection || oLI._mode == "SingleSelectMaster" || (oLI.getType() != "Inactive" && oLI.getType() != "Detail")) {
+		rm.addClass("sapMLIBType" + oLI.getType());
+
+		if (oLI.isClickable()) {
 			rm.addClass("sapMLIBCursor");
 		}
-	
-		//unread switch... bubble or is shown as bold text
-		if (oLI._showUnread && oLI.getUnread()) {
+
+		if (oLI.getSelected()) {
+			rm.addClass("sapMLIBSelected");
+		}
+
+		if (this.handleNoFlex()) {
+			rm.addClass("sapMLIBNoFlex");
+		}
+
+		if (oLI.getListProperty("showUnread") && oLI.getUnread()) {
 			rm.addClass("sapMLIBUnread");
-			rm.addClass("sapMLIBUnreadBold");
 		}
-	
-		if (hasPopin) {
-			rm.addClass("sapMListTblSupRow");
+
+		// attributes
+		this.renderTooltip(rm, oLI);
+		this.renderTabIndex(rm, oLI);
+		
+		// handle accessibility states
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAccessibilityState(oLI, this.getAccessibilityState(oLI));
 		}
-	
-		// TODO: Remove this unnecessary class name sapMLIBUnread is enough
-		if (oLI._showUnread && oLI.getUnread()) {
-			rm.addClass("sapMLIBUnreadRow");
-		}
-	
-		// LI attributes hook
-		if (this.renderLIAttributes) {
-			this.renderLIAttributes(rm, oLI);
-		}
-	
-		rm.addClass("sapMLIBType" + oLI.getType());
-	
-		// LI content hook
-		if (this.renderLIContent) {
-	
-			// depending on the mode of the list a checkbox or radiobutton will be
-			// rendered. If a switch between list modes happens, an animation will be
-			// added for the selection area
-			var oSelectControl = null;
-	
-			switch (oLI._mode) {
-	
-			case "SingleSelectLeft":
-				oSelectControl = oLI._getRadioButton((sId + "-selectSingle"), oLI._listId + "_selectGroup");
-	
-				if (oLI.getSelected()) {
-					rm.addClass("sapMLIBSelected");
-				}
-	
-				rm.writeClasses();
-				rm.write(">");
-	
-				openCellTag("sapMListTblSelCol");
-				rm.addClass("sapMLIBSelectSL");
-	
-				if (oLI._oldMode === "None" && oLI._modeAnimationOn) {
-					rm.addClass("sapMLIBSelectAnimation");
-				}
-	
-				rm.writeAttribute("id", sId + "-mode");
-				rm.writeClasses();
-				rm.write(">");
-				rm.renderControl(oSelectControl);
-				closeCellTag();
-				oLI._oldMode = oLI._mode;
-				break;
-	
-			case "SingleSelect":
-				oSelectControl = oLI._getRadioButton((sId + "-selectSingle"), oLI._listId + "_selectGroup");
-	
-				if (oLI.getSelected()) {
-					rm.addClass("sapMLIBSelected");
-				}
-	
-				rm.writeClasses();
-				rm.write(">");
-				break;
-	
-			case "SingleSelectMaster":
-				oSelectControl = oLI._getRadioButton((sId + "-selectSingleMaster"), oLI._listId + "_selectMasterGroup");
-	
-				if (oLI.getSelected()) {
-					rm.addClass("sapMLIBSelected");
-				}
-	
-				rm.writeClasses();
-				rm.write(">");
-				openCellTag("sapMListTblNone");
-				rm.addClass("sapMLIBSelectSM");
-				rm.writeAttribute("id", sId + "-mode");
-				rm.writeClasses();
-				rm.write(">");
-				rm.renderControl(oSelectControl);
-				closeCellTag();
-				oLI._oldMode = oLI._mode;
-				break;
-	
-			case "MultiSelect":
-				oSelectControl = oLI._getCheckBox((sId + "-selectMulti"));
-	
-				if (oLI.getSelected()) {
-					rm.addClass("sapMLIBSelected");
-				}
-	
-				rm.writeClasses();
-				rm.write(">");
-				openCellTag("sapMListTblSelCol");
-				rm.addClass("sapMLIBSelectM");
-	
-				if (oLI._oldMode === "None" && oLI._modeAnimationOn) {
-					rm.addClass("sapMLIBSelectAnimation");
-				}
-	
-				rm.writeAttribute("id", sId + "-mode");
-				rm.writeClasses();
-				rm.write(">");
-				rm.renderControl(oSelectControl);
-				closeCellTag();
-				oLI._oldMode = oLI._mode;
-				break;
-	
-			case "Delete":
-				rm.writeClasses();
-				rm.write(">");
-				break;
-	
-			case "None":
-				rm.writeClasses();
-				rm.write(">");
-	
-				if (!isTable && !bNoFlex && oLI._oldMode && oLI._oldMode !== "None"
-						&& oLI._oldMode !== "SingleSelect" && oLI._oldMode !== "SingleSelectMaster"
-						&& oLI._oldMode !== "Delete" && oLI._modeAnimationOn) {
-	
-					openCellTag();
-					rm.addClass("sapMLIBUnselectAnimation");
-					rm.writeAttribute("id", sId + "-mode");
-					rm.writeClasses();
-					rm.write(">");
-					closeCellTag();
-				}
-	
-				break;
-			}
-	
-			var type = oLI.getType(), navIcon = "";
-	
-			switch (type) {
-				case "Navigation":
-					navIcon = "NAV";
-					break;
-				case "Detail":
-				case "DetailAndActive":
-					navIcon = "DET";
-					break;
-			}
-	
-			if (isTable) {
-				this.renderLIContent(rm, oLI, oParent);
-			} else {
-				openCellTag();
-				rm.addClass("sapMLIBContent");
-	
-				// there will be a margin on the right, if no navigation icon or counter is shown
-				if ((type == "Active" || type == "Inactive")  && !oLI.getCounter()) {
-					rm.addClass("sapMLIBContentMargin");
-				}
-	
-				rm.writeClasses();
-				rm.write(">");
-	
-				if (bNoFlex) {
-	
-					// additional content table inside for the no-flex case
-					rm.write('<div class="sapMLIBContentNF">');
-				}
-	
-				this.renderLIContent(rm, oLI);
-	
-				if (bNoFlex) {
-					rm.write("</div>");
-				}
-	
-				closeCellTag();
-			}
-	
-			// if we are not in table mode than counter different than 0 bubble will be shown
-			if (!isTable && oLI.getCounter()) {
-				rm.write("<div");
-				rm.writeAttribute("id", sId + "-counter");
-				rm.addClass("sapMLIBCounter");
-	
-				if (!navIcon) {
-					rm.addClass("sapMLIBContentMargin");
-				}
-	
-				rm.writeClasses();
-				rm.write(">");
-				rm.write(oLI.getCounter());
-				rm.write("</div>");
-			}
-	
-			var detailIcon = null;
-			if (navIcon == "NAV" && oLI.getType() == "Navigation") {
-	
-				isTable && openCellTag("sapMListTblNavCol", true);
-	
-				isTable && rm.write(">");
-				var sURI = IconPool.getIconURI("slim-arrow-right");
-				var	oNavIcon = oLI._navIcon || new sap.ui.core.Icon(sId + "-imgNav",{src:sURI}).setParent(oLI, null, true).addStyleClass("sapMLIBImgNav");
-	
-				if (oNavIcon) {
-					oLI._navIcon = oNavIcon;
-					rm.renderControl(oNavIcon);
-				}
-	
-				isTable && closeCellTag(true);
-				oParent._navRenderedBy = sId + "-imgNav";
-			} else if (navIcon == "DET") {
-	
-				openCellTag("sapMListTblNavCol");
-				rm.addClass("sapMLIBCursor");
-				rm.writeClasses();
-				rm.write(">");
-	
-				if (Parameters.get("sapUiLIDetailIcon") == "false") {
-					detailIcon = oLI._getNavImage((sId + "-imgDet"), "sapMLIBImgDet", "detail_disclosure.png", "detail_disclosure_pressed.png");
-				} else {
-					var sURI = IconPool.getIconURI("edit");
-					detailIcon = oLI._detailIcon || new sap.ui.core.Icon(sId + "-imgDet",{src:sURI}).setParent(oLI, null, true).addStyleClass("sapMLIBIconDet");
-				}
-	
-				if (detailIcon) {
-					oLI._detailIcon = detailIcon;
-					rm.renderControl(detailIcon);
-				}
-	
-				closeCellTag();
-				oParent._navRenderedBy = sId + "-imgDet";
-			} else if (isTable) {
-	
-				// create empty cells for table
-				rm.write("<td></td>");
-			}
-	
-			switch (oLI._mode) {
-	
-			case "SingleSelect":
-				openCellTag("sapMListTblSelCol");
-				rm.addClass("sapMLIBSelectS");
-	
-				if (oLI._oldMode === "None" && oLI._modeAnimationOn) {
-					rm.addClass("sapMLIBSelectAnimation");
-				}
-	
-				rm.writeAttribute("id", sId + "-mode");
-				rm.writeClasses();
-				rm.write(">");
-				rm.renderControl(oSelectControl);
-				closeCellTag();
-				oLI._oldMode = oLI._mode;
-				break;
-	
-			case "Delete":
-	
-				openCellTag("sapMListTblSelCol");
-				rm.addClass("sapMLIBSelectD");
-	
-				if (oLI._oldMode === "None" && oLI._modeAnimationOn) {
-					rm.addClass("sapMLIBSelectAnimation");
-				}
-	
-				rm.writeAttribute("id", sId + "-mode");
-				rm.writeClasses();
-				rm.write(">");
-	
-				//toDo: this happens twice...put it in a method...
-				var delIcon = null;
-	
-				if (Parameters.get("sapUiLIDelIcon") == "false") {
-					delIcon = oLI._getDelImage((sId + "-imgDel"), "sapMLIBImgDel", "delete_icon.png");
-				} else {
-					var sURI = IconPool.getIconURI("sys-cancel");
-					delIcon = oLI._delIcon || new sap.ui.core.Icon(sId + "-imgDel",{src:sURI}).setParent(oLI, null, true).addStyleClass("sapMLIBIconDel").attachPress(oLI._delete);
-				}
-	
-				if (delIcon) {
-					oLI._delIcon = delIcon;
-					rm.renderControl(delIcon);
-				}
-	
-				closeCellTag();
-				oLI._oldMode = oLI._mode;
-	
-	
-				break;
-	
-			case "None":
-	
-				if (!isTable && !bNoFlex && oLI._oldMode && oLI._oldMode !== "None" && (oLI._oldMode === "SingleSelect" || oLI._oldMode === "Delete") && oLI._modeAnimationOn) {
-					openCellTag();
-					rm.addClass("sapMLIBUnselectAnimation");
-					rm.writeAttribute("id", sId + "-mode");
-					rm.writeClasses();
-					rm.write(">");
-					closeCellTag();
-				}
-	
-				oLI._oldMode = oLI._mode;
-				break;
-			}
-		} else {
-			rm.writeClasses();
-			rm.write(">");
-		}
-	
-		rm.write(rowEndTag);
-	
-		if (hasPopin) {
-			this.renderPopin(rm, oLI, oParent);
-		}
+
+		// item attributes hook
+		this.renderLIAttributes(rm, oLI);
+
+		rm.writeClasses();
+		rm.writeStyles();
+		rm.write(">");
+
+		// mode for left hand side of the content
+		this.renderMode(rm, oLI, -1);
+		
+		this.renderLIContentWrapper(rm, oLI);
+		this.renderCounter(rm, oLI);
+		this.renderType(rm, oLI);
+
+		// mode for right hand side of the content
+		this.renderMode(rm, oLI, 1);
+
+		this.closeItemTag(rm, oLI);
 	};
 
 	return ListItemBaseRenderer;

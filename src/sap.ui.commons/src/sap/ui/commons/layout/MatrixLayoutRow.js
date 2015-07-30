@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Custo
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.layout.MatrixLayoutRow
+	 * @alias sap.ui.commons.layout.MatrixLayoutRow
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MatrixLayoutRow = Element.extend("sap.ui.commons.layout.MatrixLayoutRow", /** @lends sap.ui.commons.layout.MatrixLayoutRow.prototype */ { metadata : {

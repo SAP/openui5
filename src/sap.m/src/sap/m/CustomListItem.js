@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.CustomListItem
+	 * @alias sap.m.CustomListItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CustomListItem = ListItemBase.extend("sap.m.CustomListItem", /** @lends sap.m.CustomListItem.prototype */ { metadata : {

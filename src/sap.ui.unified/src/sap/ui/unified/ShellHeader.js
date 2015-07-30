@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './library'],
+	function(jQuery, library) {
 	"use strict";
 
 
@@ -29,6 +29,9 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write("<div");
 				rm.writeControlData(oHeader);
 				rm.writeAttribute("class", "sapUiUfdShellHeader");
+				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					rm.writeAttribute("role", "toolbar");
+				}
 				rm.write(">");
 				
 				rm.write("<div id='", id, "-hdr-begin' class='sapUiUfdShellHeadBegin'>");
@@ -49,6 +52,9 @@ sap.ui.define(['jquery.sap.global'],
 			renderSearch: function(rm, oHeader) {
 				var oSearch = oHeader.getSearch();
 				rm.write("<div id='", oHeader.getId(), "-hdr-search'");
+				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					rm.writeAttribute("role", "search");
+				}
 				rm.writeAttribute("class", "sapUiUfdShellSearch" + (oHeader.getSearchVisible() ? "" : " sapUiUfdShellHidden"));
 				rm.write("><div>");
 				if (oSearch) {
@@ -85,6 +91,13 @@ sap.ui.define(['jquery.sap.global'],
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
+					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+						rm.writeAccessibilityState(aItems[i], {
+							role: "button",
+							selected: null,
+							pressed: aItems[i].getSelected()
+						});
+					}
 					rm.write("><span></span><div class='sapUiUfdShellHeadItmMarker'><div></div></div></a>");
 				}
 				
@@ -93,18 +106,30 @@ sap.ui.define(['jquery.sap.global'],
 					rm.write("<a tabindex='0' href='javascript:void(0);'");
 					rm.writeElementData(oUser);
 					rm.addClass("sapUiUfdShellHeadUsrItm");
+					if (!oUser.getShowPopupIndicator()) {
+						rm.addClass("sapUiUfdShellHeadUsrItmWithoutPopup");
+					}
 					rm.writeClasses();
 					var tooltip = oUser.getTooltip_AsString();
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					rm.write("><span id='", oUser.getId(), "-img' class='sapUiUfdShellHeadUsrItmImg'></span>");
+					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+						rm.writeAccessibilityState(oUser, {
+							role: "button"
+						});
+						if (oUser.getShowPopupIndicator()) {
+							rm.writeAttribute("aria-haspopup", "true");
+						}
+					}
+					
+					rm.write("><span id='", oUser.getId(), "-img' aria-hidden='true' class='sapUiUfdShellHeadUsrItmImg'></span>");
 					rm.write("<span id='" + oUser.getId() + "-name' class='sapUiUfdShellHeadUsrItmName'");
 					var sUserName = oUser.getUsername() || "";
 					rm.writeAttributeEscaped("title", sUserName);
 					rm.write(">");
 					rm.writeEscaped(sUserName);
-					rm.write("</span><span class='sapUiUfdShellHeadUsrItmExp'></span></a>");
+					rm.write("</span><span class='sapUiUfdShellHeadUsrItmExp' aria-hidden='true'></span></a>");
 				}
 				
 				rm.write("</div>");

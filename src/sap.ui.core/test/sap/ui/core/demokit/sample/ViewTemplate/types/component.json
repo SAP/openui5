@@ -1,0 +1,19 @@
+{
+	"config": {
+		"sample": {
+			"files": [
+				"Component.js",
+				"Types.controller.js",
+				"Types.view.xml",
+				"data/annotations.xml",
+				"data/EdmTypesCollection.json",
+				"data/metadata.xml"
+			]
+		}
+	},
+	"dependencies": [],
+	"description": "Component for XMLView sample with UI5 core primitive OData types",
+	"name": "sap.ui.core.demokit.sample.ViewTemplate.Types",
+	"version": "1.27.0-SNAPSHOT",
+	"handleValidation": true
+}

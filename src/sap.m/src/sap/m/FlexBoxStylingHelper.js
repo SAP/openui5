@@ -11,8 +11,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	}
 
 	/**
-	 * @class FlexBox styling helper
-	 * @static
+	 * FlexBox styling helper
+	 * @namespace
 	 */
 	var FlexBoxStylingHelper = {};
 	
@@ -40,11 +40,6 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	
 		// Set width and height for outermost FlexBox only if FitContainer is set
 		if (bFitContainer && !(oControl.getParent() instanceof sap.m.FlexBox)) {
-			if (oControl.getParent() instanceof sap.m.Page) {
-				var $page = oControl.getParent().$();
-				$page.find("sapMPageScroll").height("100%"); // Set height of scroll area to 100% because it's currently not automatically set
-			}
-			//jQuery.sap.log.info("FlexBox fitContainer set to true. Remember, if the FlexBox is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.");
 			oRm.addStyle("width", "auto");
 			oRm.addStyle("height", "100%");
 		}

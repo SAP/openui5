@@ -1,0 +1,271 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<base href="../../../../">
+	<!--[if lte IE 9]><script type="text/javascript">
+		(function() {
+			// The IE9 implementation of the <base> tag is not compliant with the HTML5 spec.
+			// It still requires an absolute URL (as in HMTL 4) and ignores relative URLs.
+			// By re-assigning the href attribute, it becomes an absolute URL and IE9 no longer ignores it.
+			var baseTag = document.getElementsByTagName('base')[0];
+			baseTag.href = baseTag.href;
+		})();
+	</script><![endif]-->
+
+	<title>qUnit Page for sap.m Margin CSS Classes</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			src="resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-resourceroots='{ "sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/" }' >
+	</script>
+
+<script id="marginQUnitView" type="sapui5/xmlview">
+<mvc:View
+    id="testView"
+	height="100%"
+	controllerName="margin.qunit.controller"
+	xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns="sap.m">
+	<Page
+		id="page"
+		title=" Product XY" >
+
+
+		<content>
+			<ObjectHeader
+				id="objectHeader"
+				title="{Name}"
+				number="{Price}"
+				numberUnit="{CurrencyCode}" >
+				<attributes>
+					<ObjectAttribute title="Weight" text="{WeightMeasure} {WeightUnit}" />
+					<ObjectAttribute title="Dimensions" text="{Width} x {Depth} X {Height} {DimUnit}" />
+				</attributes>
+				<statuses>
+					<ObjectStatus title="Status" text="In Stock" state="Success" />
+				</statuses>
+			</ObjectHeader>
+			<IconTabBar
+				id="iconTabBar"
+				expanded="{device>/isNoPhone}">
+				<items>
+					<IconTabFilter
+						text="Info">
+						<f:SimpleForm
+							minWidth="1024"
+							maxContainerCols="2"
+							layout="ResponsiveGridLayout" >
+							<f:title>
+								<core:Title text="A Form" />
+							</f:title>
+							<Label text="Label"/>
+							<Text text="Value"/>
+						</f:SimpleForm>
+					</IconTabFilter>
+					<IconTabFilter
+						text="Attachments">
+						<List headerText="A List" showSeparators="Inner" >
+						</List>
+					</IconTabFilter>
+					<IconTabFilter
+						text="Notes">
+						<FeedInput />
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<f:SimpleForm
+				id="simpleForm"
+				minWidth="1024"
+				maxContainerCols="2">
+				<f:title>
+					<core:Title text="A Form" />
+				</f:title>
+				<Label text="Label"/>
+				<Text text="Value"/>
+			</f:SimpleForm>
+			<List id="list" headerText="A List" backgroundDesign="Translucent"/>
+			<Table id="table" headerText="A Table"/>
+			<Panel id="panel" headerText="A Panel"/>
+			<Panel id="restrictedWidthPanel" width="200px" headerText="A Panel"/>
+			<ScrollContainer
+				id="scrollCont"
+              	height="200px"
+         		width="100%"
+    			horizontal="true"
+    			vertical="true"
+    			focusable="true">
+    			<Image
+      				src="../../../../test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
+  			</ScrollContainer>
+			<Carousel id="carousel">
+				<pages>
+					<l:VerticalLayout>
+						<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
+					</l:VerticalLayout>
+
+					<Image src="test-resources/sap/ui/demokit/explored/img/HT-1073.jpg" />
+
+					<Text class="sapUiSmallMargin"
+						text="Lorem ipsum dolor st amet, consetetur ssadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+
+					<ScrollContainer height="100%" width="100%"
+						horizontal="false" vertical="true">
+						<List headerText="Some List Content 1"
+							items="{
+							            path: '/ProductCollection'
+							          }">
+							<StandardListItem title="{Name}" description="{ProductId}"
+								icon="{ProductPicUrl}" iconDensityAware="false" iconInset="false" />
+						</List>
+					</ScrollContainer>
+
+					<Image src="test-resources/sap/ui/demokit/explored/img/HT-1112.jpg" />
+				</pages>
+			</Carousel>
+			<u:SplitContainer id="splitContainer" showSecondaryContent="true">
+				<u:secondaryContent>
+					<Text text="Hello World!" />
+				</u:secondaryContent>
+				<u:content>
+					<List headerText="An Empty List" backgroundDesign="Translucent"/>
+				</u:content>
+			</u:SplitContainer>
+		</content>
+	</Page>
+</mvc:View>
+</script>
+
+<script>
+	jQuery.sap.require("sap.ui.qunit.qunit-css");
+	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+	sap.ui.controller("margin.qunit.controller", {
+
+		onInit: function(oEvent) {
+			// set explored app's demo model on this sample
+			var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+			this.getView().byId("page").bindElement("/ProductCollection/0");
+		}
+
+	});
+
+	sap.ui.core.UIComponent.extend("margin.qunit.Component", {
+		createContent: function(oEvent) {
+			return sap.ui.xmlview({ viewContent: jQuery('#marginQUnitView').html() });
+		}
+	});
+
+
+	module("Apply pre-defined css classes");
+
+	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue, bHorizontal) {
+		assert.ok( true, " " ); //Group tests
+		assert.ok( true, "TESTING MARGIN CLASS '" + sMarginClass + "'" );
+		var oComponentContainer = new sap.ui.core.ComponentContainer();
+		oComponentContainer.setComponent(new margin.qunit.Component());
+		oComponentContainer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oTestView = sap.ui.getCore().byId("__xmlview" + iCount),
+			aControls = [
+				oPage = oTestView.byId('page'),
+				oObjectHeader = oTestView.byId('objectHeader'),
+				oIconTabBar = oTestView.byId('iconTabBar'),
+				oSimpleForm = oTestView.byId('simpleForm'),
+				oList = oTestView.byId('list'),
+				oTable = oTestView.byId('table'),
+				oPanel = oTestView.byId('panel'),
+				oRestrictedWidthPanel = oTestView.byId('restrictedWidthPanel'),
+				oScrollCont = oTestView.byId('scrollCont'),
+				oCarousel = oTestView.byId('carousel'),
+				oSplitContainer = oTestView.byId('splitContainer'),];
+		//add css classes
+		aControls.forEach(function(oControl) {
+			if(bHorizontal) {
+				if(!oControl.setWidth || oControl == oRestrictedWidthPanel) {
+					//if the control has no width property, we need our special width class
+					oControl.addStyleClass('sapUiForceWidthAuto');
+				} else {
+					//if the control has a width property, we'll set it to 'auto'
+					oControl.setWidth('auto');
+				}
+			}
+			oControl.addStyleClass(sMarginClass);
+		});
+		sap.ui.getCore().applyChanges();
+
+		//check values
+		equal(oPage.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Page " +  sExpectedMarginValue);
+		equal(oObjectHeader.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " ObjectHeader " +  sExpectedMarginValue);
+		equal(oIconTabBar.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " IconTabBar " +  sExpectedMarginValue);
+		equal(oSimpleForm.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Simple Form " +  sExpectedMarginValue);
+		equal(oTable.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Table "  +  sExpectedMarginValue);
+		equal(oPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
+		equal(oRestrictedWidthPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
+		if(bHorizontal) {
+			//Check if 'sapUiForceWidthAuto' changes the width property as expected
+			notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+			oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
+			equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+
+		}
+		equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
+		equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
+		equal(oCarousel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Carousel " +  sExpectedMarginValue );
+		equal(oSplitContainer.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Split Containe " +  sExpectedMarginValue );
+		//Can not check 'auto' because there is no way to  ask for it. Even 'oControl.getDomRef().style.width'
+		//does not deliver the correct result: the inline style is returned even though it is not what
+		//is used for determining the width
+
+		//Clean up
+		oComponentContainer.destroy();
+		iCount++;
+	};
+
+	//Needed to identify the views which are created during test
+	var iCount = 0;
+
+	test("Test responsive margin classes", function() {
+
+		//Test Responsive Margins: resize the containing page and check how the
+		//elements respond.
+		//First check the margins for large desktop screens
+		var oUriParams = jQuery.sap.getUriParameters(),
+			sExpectedMargin = oUriParams.get('sap-ui-expect');
+		if(!sExpectedMargin) {
+			assert.ok( false, "Test Url " + window.location.href + " does not contain parameter 'expected-result'.");
+		} else {
+			fnTest.call(this, 'margin', 'sapUiResponsiveMargin', sExpectedMargin, true);
+		}
+
+
+	});
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.m Margin CSS Classes</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+
+</body>
+</html>
+

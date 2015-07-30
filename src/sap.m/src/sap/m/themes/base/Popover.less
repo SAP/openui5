@@ -6,8 +6,6 @@
 	position: absolute;
 	color: @sapUiText;
 	min-width: 100px;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	outline: none;
 	max-width: 100%;
@@ -16,6 +14,10 @@
 	-webkit-transition: opacity 0.2s linear;
 	-moz-transition: opacity 0.2s linear;
  	transition: opacity 0.2s linear;
+}
+
+.sapMPopoverHeader .sapMTitle {
+	font-size: .865rem;
 }
 
 .sapMPopover .sapMPopoverCont{
@@ -31,8 +33,7 @@
 	display: inline-block;
 	overflow: hidden;
 	vertical-align: middle;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
+	min-width: 100%;
 	box-sizing: border-box;
 }
 
@@ -67,27 +68,27 @@
 
 /* marker for Popover with a bar */
 .sapMPopoverWithBar{
-	
+
 }
 
 /* marker for Popover without a bar */
 .sapMPopoverWithoutBar{
-	
+
 }
 
 /* marker for Popover with NavContainer which includes pages inside */
 .sapMPopoverNav{
-	
+
 }
 /* marker for Popover with footer*/
 .sapMPopoverWithFooter{
-	
+
 }
 
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithBar.sapMPopoverWithFooter > .sapMPopoverCont {
 	margin-bottom: 0;
-	margin-top: 0;	
+	margin-top: 0;
 }
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithoutBar.sapMPopoverWithFooter > .sapMPopoverCont {
@@ -115,14 +116,12 @@
 }
 
 .sapMPopover > .sapMPopoverCont .sapMPage > section {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: auto;
 }
 
 /* This css rule is for mvi theme. Because mvi is deleted right now, this rule will be commented out here in case mvi has to be restored.
-.sapMPopover:not(.sapMPopoverWithFooter) .sapMPopoverCont .sapMPage:not(.sapMPageWithFooter) > section { 
+.sapMPopover:not(.sapMPopoverWithFooter) .sapMPopoverCont .sapMPage:not(.sapMPageWithFooter) > section {
 	bottom: 0.625em;
 }
 */
@@ -130,3 +129,84 @@
 .sapMPopoverWithoutBar .sapMPage footer.sapMIBar{
 	position: absolute;
 }
+
+.sapMPopoverHiddenFocusable {
+	width: 0;
+	height: 0;
+	font-size: 0;
+	line-height: 0;
+}
+
+// Adds a hidden layer below the Popover arrow to prevent closing the Popover when clicking on the arrow. In the past
+// it was working but the area was bigger you could not click near to the arrow
+.sapMPopoverArr {
+	pointer-events: none;
+}
+
+.sapMPopoverArr:before {
+	background: rgba(255, 255, 255, .01); // not fully transparent because of IE 9. Make it transparent when we drop IE 9
+	content: "";
+	display: block;
+	pointer-events: all;
+	-ms-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+	position: absolute;
+	z-index: -1;
+}
+
+.sapMPopoverArrLeft:before,
+.sapMPopoverArrRight:before {
+	margin-top: -.75rem;
+	margin-left: .35rem;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.sapMPopoverArrRight:before {
+	margin-left: -1.85rem;
+}
+
+.sapMPopoverArrUp:before,
+.sapMPopoverArrDown:before {
+	margin-top: .25rem;
+	margin-left: -.75rem;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.sapMPopoverArrDown:before {
+	margin-top: -1.85rem;
+}
+
+.sapMPopover.sapUiSizeCompact {
+	.sapMPopoverArrLeft:before,
+	.sapMPopoverArrRight:before {
+		margin-top: -.5rem;
+		margin-left: .25rem;
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.sapMPopoverArrRight:before {
+		margin-left: -1.25rem;
+	}
+
+	.sapMPopoverArrUp:before,
+	.sapMPopoverArrDown:before {
+		width: 1rem;
+		height: 1rem;
+		margin-left: -.5rem;
+	}
+
+	.sapMPopoverArrDown:before {
+		margin-top: -1.25rem;
+	}
+}
+
+.sapMPopover .sapUiRespGrid {
+	width: 100%;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMPopover", ~"> .sapMPopoverCont > .sapMPopoverScroll");

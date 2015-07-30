@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	* @class UploadCollection renderer.
-	* @static
+	* UploadCollection renderer.
+	* @namespace
 	*/
 	var UploadCollectionRenderer = {};
 	
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global'],
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
-		oRm.addClass("sapMUploadCollection");
+		oRm.addClass("sapMUC");
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl._oList);

@@ -1,93 +1,102 @@
 // define a root UIComponent which exposes the main view
-jQuery.sap.declare("NavigationWithoutMasterDetailPattern.Component");
-jQuery.sap.require("sap.ui.core.routing.Router");
-jQuery.sap.require("sap.ui.core.UIComponent");
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/UIComponent',
+		'sap/ui/core/mvc/View',
+		'sap/ui/core/routing/Router'
+	], function(jQuery, UIComponent, View, Router) {
+	"use strict";
 
-// new Component
-sap.ui.core.UIComponent.extend("NavigationWithoutMasterDetailPattern.Component", {
+	// new Component
+	var Component = UIComponent.extend("NavigationWithoutMasterDetailPattern.Component", {
 
-	// TBC: use inline declaration to save roundtrip?
-	metadata : {
+		// TBC: use inline declaration to save roundtrip?
+		metadata : {
 
-		"library" : "NavigationWithRoutes",
+			"library" : "NavigationWithRoutes",
 
-		"version" : "1.0",
+			"version" : "1.0",
 
-		"includes" : [
+			"includes" : [
 
-		],
+			],
 
-		"dependencies" : {
-			"libs" : [ "sap.m" ],
-			"components" : [],
-			"ui5version" : "1.13.1"
-		},
+			"dependencies" : {
+				"libs" : [ "sap.m" ],
+				"components" : [],
+				"ui5version" : "1.13.1"
+			},
 		
-		"routing": {
+			"routing": {
 			
-			"config": {
+				"config": {
 				
-				"viewType" : "XML",
-				"viewPath" : "NavigationWithoutMasterDetailPattern.view",
-				"targetControl" : "app",
-				"targetAggregation" : "pages",
-				"clearTarget" : false
+					"viewType" : "XML",
+					"viewPath" : "NavigationWithoutMasterDetailPattern.view",
+					"targetControl" : "app",
+					"targetAggregation" : "pages",
+					"clearTarget" : false
 				
-			},
+				},
 			
-			"routes": [{
-				"name" : "view1", // name used for listening or navigating to this route
-				"pattern" : "FirstView/{from}", // will be the url and from has to be provided in the data
-				"view" : "View1"
-			},
-			{
-				"name" : "view2", // name used for listening or navigating to this route
-				"pattern" : "SecondView/{from}:?query:", // will be the url and from has to be provided in the data
-				"view" : "View2"
-			},
-			{
-				"name" : "catchall", // name used for listening or navigating to this route
-				"pattern" : ":all*:", // catchall
-				"view" : "List",
-				"subroutes": [{
-					"name" : "detail", // name used for listening or navigating to this route
-					"pattern" : "Detail/{from}", // will be the url and from has to be provided in the data
-					"targetControl" : "split",
-					"targetAggregation" : "detailPages",
-					"view" : "Detail",
-					"subroutes" : [{
-						"name" : "detaildetail", // name used for listening or navigating to this route
-						"pattern" : "Detail/Detail/{from}", // will be the url  and from has to be provided in the data
+				"routes": [{
+					"name" : "view1", // name used for listening or navigating to this route
+					"pattern" : "FirstView/{from}", // will be the url and from has to be provided in the data
+					"view" : "View1"
+				},
+				{
+					"name" : "view2", // name used for listening or navigating to this route
+					"pattern" : "SecondView/{from}:?query:", // will be the url and from has to be provided in the data
+					"view" : "View2"
+				},
+				{
+					"name" : "catchall", // name used for listening or navigating to this route
+					"pattern" : ":all*:", // catchall
+					"view" : "List",
+					"subroutes": [{
+						"name" : "detail", // name used for listening or navigating to this route
+						"pattern" : "Detail/{from}", // will be the url and from has to be provided in the data
 						"targetControl" : "split",
 						"targetAggregation" : "detailPages",
-						"view" : "DetailDetail"
+						"view" : "Detail",
+						"subroutes" : [{
+							"name" : "detaildetail", // name used for listening or navigating to this route
+							"pattern" : "Detail/Detail/{from}", // will be the url  and from has to be provided in the data
+							"targetControl" : "split",
+							"targetAggregation" : "detailPages",
+							"view" : "DetailDetail"
+						}]
 					}]
 				}]
-			}]
 				
-		}
+			}
 			
-	},
+		},
 
-	getAutoPrefixId : function() {
-		return true;
-	},
+		getAutoPrefixId : function() {
+			return true;
+		},
 
-	createContent : function() {
+		createContent : function() {
 
-		var oView = sap.ui.view({
-			type : sap.ui.core.mvc.ViewType.XML,
-			viewName : "NavigationWithoutMasterDetailPattern.MainXML"
-		});
-		return oView;
+			var oView = sap.ui.view({
+				type : sap.ui.core.mvc.ViewType.XML,
+				viewName : "NavigationWithoutMasterDetailPattern.MainXML"
+			});
+			return oView;
 		
-	}, 
+		}, 
 	
-	init : function() {
-		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+		init : function() {
+			UIComponent.prototype.init.apply(this, arguments);
 		
-		// this component should automatically initialize the router!
-		this.getRouter().initialize();
-	}
+			// this component should automatically initialize the router!
+			this.getRouter().initialize();
+		}
+
+	});
+
+
+	return Component;
 
 });

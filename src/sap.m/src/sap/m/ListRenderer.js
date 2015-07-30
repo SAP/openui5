@@ -8,10 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 
 	/**
-	 * @class List renderer.
-	 * @static
+	 * List renderer.
 	 *
 	 * ListRenderer extends the ListBaseRenderer
+	 * @namespace
+	 * @alias sap.m.ListRenderer
 	 */
 	var ListRenderer = Renderer.extend(ListBaseRenderer);
 	
@@ -22,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			return;
 		}
 		
-		/**
+		/*
 		 * For backwards compatibility we need to render List with columns
 		 * However, if the compatibility version is 1.16 or higher then
 		 * we stop rendering to force using Table control with columns
@@ -32,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			return;
 		}
 		
-		/**
+		/*
 		 * FIXME: Here to support old API if columns are set
 		 * We are trying to extend renderer to render list as table
 		 * This is so ugly and we need to get rid of it ASAP

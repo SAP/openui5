@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.CustomData
+	 * @alias sap.ui.core.CustomData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CustomData = Element.extend("sap.ui.core.CustomData", /** @lends sap.ui.core.CustomData.prototype */ { metadata : {
@@ -102,4 +102,4 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 
 	return CustomData;
 
-}, /* bExport= */ true);
+});

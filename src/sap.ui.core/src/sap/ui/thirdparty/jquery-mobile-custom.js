@@ -788,6 +788,11 @@ jQuery.mobile.orientationChangeEnabled = true;
 		var support = {
 			touch: "ontouchend" in document
 		};
+		// SAP MODIFICATION
+		// => if the device API is loaded we override the touch detection
+		if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support) {
+			support.touch = sap.ui.Device.support.touch
+		}
 
 		$.mobile.support = $.mobile.support || {};
 		$.extend( $.support, support );
@@ -1626,15 +1631,28 @@ function handleTouchEnd( event ) {
 	triggerVirtualEvent( "vmouseup", event, flags );
 
 	if ( !didScroll ) {
-		var ve = triggerVirtualEvent( "vclick", event, flags );
+		// SAP MODIFICATION
+		// The ve variable is removed because the next if expression is changed
+		triggerVirtualEvent( "vclick", event, flags );
 
 		// SAP MODIFICATION
-		// The following code is executed when runs on a touch event supported device
-		// because calling preventDefault on vclick (touchend) event breaks other things such as:
-		// 1. On screen keyboard can't be opened on touch enabled device.
-		// 2. Focused input can't get blurred by tapping outside the input.
-		// Therefore the ve.isDefaultPrevented() is replaced with $.support.touch
-		if ( ve && $.support.touch) {
+		// The next line was written as: if (ve && ve.isDefaultPrevented) originally from jQuery mobile
+		// We have done following changes to this line.
+		//
+		// 1. ve.isDefaultPrevented() replaced by $.support.touch: because calling prevent default breaks
+		// some native features from the browser, for example:
+		// 		On screen keyboard can't be opened on touch enabled device
+		//		Focused input can't get blurred by tapping outside the input
+		// Therefore we make the code within the if executed on mobile device where delayed mouse events
+		// are fired.
+		//
+		// 2. "ve" is removed: because when event.target is detached from DOM tree, "ve" is undefined and
+		// the following logic isn't executed on mobile device. If a DOM node is removed by listening to
+		// "touchend" or "tap" event, the click event is still dispatched to the DOM element which appears
+		// at the same position after the DOM deletion. For example, pressing the delete button in one
+		// ListItem deletes two list items at the end. Therefore we need to activate the code no matter if
+		// the event.target is currently detached from the DOM tree or not.
+		if ($.support.touch) {
 			// The target of the mouse events that follow the touchend
 			// event don't necessarily match the target used during the
 			// touch. This means we need to rely on coordinates for blocking

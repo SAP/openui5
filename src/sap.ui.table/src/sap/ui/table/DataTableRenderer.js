@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './TreeTableRenderer
 
 
 	/**
-	 * @class DataTableRenderer
-	 * @static
+	 * DataTableRenderer
+	 * @namespace
 	 */
 	var DataTableRenderer = Renderer.extend(TreeTableRenderer);
 	

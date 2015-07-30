@@ -9,16 +9,15 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 * @static
+	 * @namespace
 	 */
 	var AccordionRenderer = {};
 	
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 * Renders the HTML for the given control using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oAccordion An object representation of the control that should be rendered
+	 * @param {sap.ui.core.Control} oAccordion An object representation of the control that is rendered
 	 */
 	AccordionRenderer.render = function(oRenderManager, oAccordion){
 	
@@ -156,12 +155,12 @@ sap.ui.define(['jquery.sap.global'],
 			//Disabled --> Unavailable annoucement
 			if (oControl.getEnabled()) {
 				rm.writeAttribute("aria-disabled", "false");
-				if (!!!sap.ui.Device.browser.internet_explorer) {
+				if (!sap.ui.Device.browser.internet_explorer) {
 					rm.writeAttribute("aria-grabbed", "false");
 				}
 			} else {
 				rm.writeAttribute("aria-disabled", "true");
-				if (!!!sap.ui.Device.browser.internet_explorer) {
+				if (!sap.ui.Device.browser.internet_explorer) {
 					rm.writeAttribute("aria-grabbed", "");
 				}
 			}

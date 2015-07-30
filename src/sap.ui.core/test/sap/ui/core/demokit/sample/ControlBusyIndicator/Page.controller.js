@@ -1,13 +1,21 @@
-sap.ui.controller("sap.ui.core.sample.ControlBusyIndicator.Page", {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'jquery.sap.script'],
+	function(jQuery, Controller/*, jQuerySapScript*/) {
+	"use strict";
 
-	onAction : function (oEvt) {
+	var PageController = Controller.extend("sap.ui.core.sample.ControlBusyIndicator.Page", {
 
-		var oPanel = this.getView().byId("panel1");
-		oPanel.setBusy(true);
+		onAction : function (oEvt) {
 
-		// simulate delayed end of operation
-		jQuery.sap.delayedCall(5000, this, function () {
-			oPanel.setBusy(false);
-		});
-	}
+			var oPanel = this.getView().byId("panel1");
+			oPanel.setBusy(true);
+
+			// simulate delayed end of operation
+			jQuery.sap.delayedCall(5000, this, function () {
+				oPanel.setBusy(false);
+			});
+		}
+	});
+
+	return PageController;
+
 });

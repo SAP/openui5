@@ -3,9 +3,9 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-		<VBox class="marginBoxContent">
+		<VBox class="sapUiSmallMargin">
 			<Text text="An example with 'matrix' layout" textAlign="Center"/>
-			<RadioButtonGroup columns="3" width="500px" >
+			<RadioButtonGroup columns="3" width="500px" class="sapUiMediumMarginBottom">
 				<buttons>
 					<RadioButton id="RB1-1" text="Long Option Number 1"/>
 					<RadioButton id="RB1-2" text="Option 2" enabled="false"/>
@@ -16,7 +16,7 @@
 				</buttons>
 			</RadioButtonGroup>
 			<Text text="An example with 3 buttons and 2 columns"/>
-			<RadioButtonGroup columns="2" selectedIndex="2">
+			<RadioButtonGroup columns="2" selectedIndex="2" class="sapUiMediumMarginBottom">
 				<buttons>
 					<RadioButton id="RB2-1" text="Option 1"/>
 					<RadioButton id="RB2-2" text="Option 2" editable="false"/>
@@ -24,7 +24,7 @@
 				</buttons>
 			</RadioButtonGroup>
 			<Text text="If the number of columns is equal to or exceeds the number of radio buttons they align horizontally"/>
-			<RadioButtonGroup columns="5" valueState="Error">
+			<RadioButtonGroup columns="5" valueState="Error" class="sapUiMediumMarginBottom">
 				<buttons>
 					<RadioButton id="RB3-1" text="Option 1"/>
 					<RadioButton id="RB3-2" text="Option 2"/>

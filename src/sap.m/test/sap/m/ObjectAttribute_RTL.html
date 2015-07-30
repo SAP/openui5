@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+
+<title>Object Attribute Test - sap.m</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script type="text/javascript">
+
+jQuery.sap.require("sap.ui.core.IconPool");
+
+//array - [{key: k, values: [v1,v2,v3]}, {key: k2, values: [v4,v5,v6]}]
+var genCombinator = function() {
+    function clone(obj) {
+        if(obj == null || typeof(obj) != 'object')
+            return obj;
+
+        var temp = obj.constructor(); // changed
+
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key)) {
+                temp[key] = clone(obj[key]);
+            }
+        }
+        return temp;
+    }
+
+    var aResult = [{}];
+    var mergeWithValues = function(key, aValues) {
+        var mergeResult = [];
+
+        for( j = 0; j < aResult.length; j++) {
+            for( k = 0; k < aValues.length; k++) {
+                var newObj = clone(aResult[j]);
+                newObj[key] = aValues[k];
+                mergeResult.push(newObj);
+            }
+        };
+
+        for(l = 0; l < mergeResult.length; l++) {
+            aResult.push(mergeResult[l]);
+        }
+    };
+
+    for( i = 0; i < arguments.length; i++) {
+        mergeWithValues(arguments[i].key, arguments[i].values);
+    };
+
+    return aResult;
+};
+
+var getAttributes = function() {
+    var aAttributes = genCombinator({key: "title", values: ["english", "עברית"]},
+            {key: "text", values: ["three words english", "עברית", "0881 234 567"]},
+            {key: "textDirection", values: [sap.ui.core.TextDirection.LTR,
+                sap.ui.core.TextDirection.RTL
+            ]});
+
+    var result = [];
+    for(i = 0; i < aAttributes.length; i++) {
+        if(aAttributes[i].text) {
+            result.push(new sap.m.ObjectAttribute(aAttributes[i]));
+        }
+    }
+
+    return result;
+};
+
+var app = new sap.m.App();
+var page = new sap.m.Page({title: "ObjectAttribute Test"});
+app.setInitialPage(page.getId());
+page.setEnableScrolling(true);
+app.addPage(page);
+
+//attributes in a page
+var aAttrs = getAttributes();
+for(i = 0; i < aAttrs.length; i++) {
+    page.addContent(aAttrs[i]);
+}
+
+//attributes in oli
+var aAttrs1 = getAttributes();
+
+var list = new sap.m.List("test_list", {
+    headerText: "Object List Items"
+});
+
+var listItemId = "worst_case";
+var worstCase = new sap.m.ObjectListItem({
+    type: "Active",
+    intro: "On behalf of John Smith, Ñagçyfox",
+    icon: sap.ui.core.IconPool.getIconURI("inbox"),
+    title: "Ñorst case item with all fields, large number, Ñagçyfox",
+    number: "Ñ999999999",
+    numberUnit: "Euro",
+    numberState : sap.ui.core.ValueState.Success,
+    attributes: aAttrs1,
+    firstStatus: new sap.m.ObjectStatus({text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip"}),
+    secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Error"}),
+    showMarkers: true,
+    markFlagged: true,
+    markFavorite: true
+});
+list.addItem(worstCase);
+page.addContent(list);
+
+
+var oh4PressHandler = function(oEvent) {
+
+    if (oh4.getIcon()) {
+        oh4.setIcon(null);
+    } else {
+        oh4.setIcon(sap.ui.core.IconPool.getIconURI("attachment"));
+    }
+};
+
+//attributes in oh
+var aAttrs2 = getAttributes();
+var oh4 = new sap.m.ObjectHeader("oh4", {
+    intro : "On behalf of John Smith Ñagçyfox",
+    title : "OBJECT HEADER",
+    titleActive : true,
+    titlePress : oh4PressHandler,
+    number : "3.628.000",
+    numberUnit : "EUR",
+    numberState : sap.ui.core.ValueState.None,
+    attributes : aAttrs2,
+    statuses : [ new sap.m.ObjectStatus({
+        text : "Ñgçy Positive Text Ñgçy",
+        state : sap.ui.core.ValueState.Success
+    }), new sap.m.ObjectStatus({
+        text : "Negative Text",
+        state : sap.ui.core.ValueState.Error
+    }) ],
+    icon : sap.ui.core.IconPool.getIconURI("attachment"),
+    iconActive : true,
+    iconPress : oh4PressHandler
+});
+page.addContent(oh4);
+
+//attributes in oh responsive
+var aAttrs3 = getAttributes();
+var oh1Small = new sap.m.ObjectHeader("oh1Small", {
+    responsive: true,
+    backgroundDesign: "Translucent",
+    intro: "Type XS",
+    title: "RESPONSIVE OBJECT HEADER",
+    number: "624,00",
+    numberUnit: "Euro",
+//    numberDirection: "LTR",
+//    numberTextAlign: "???",
+    fullScreenOptimized: false,
+    showMarkers: false,
+    markFlagged: true,
+    markFavorite: true,
+    numberState: sap.ui.core.ValueState.Success,
+    attributes: aAttrs3,
+    statuses: [
+        new sap.m.ObjectStatus({
+            title: "Approval",
+            text: "Pending",
+            state: sap.ui.core.ValueState.Warning
+
+        })
+    ]
+});
+page.addContent(oh1Small);
+
+app.placeAt('body');
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

@@ -6,6 +6,7 @@
 
 //wrapper for loading signals and hasher if module is defined
 (function (global) {
+	"use strict";
 	var original;
 	if (global.module) {
 
@@ -18,21 +19,17 @@ sap.ui.define(['jquery.sap.global',
 				'sap/ui/core/routing/HashChanger',
 				'sap/ui/base/Object',
 				'sap/ui/core/mvc/View',
-				'./mapPolyfill',
-				'./filterPolyfill'],
-	function ($, HashChanger, UI5Object, View) {
-
-		var mViews = {};
-
+				'./matchers/Ancestor'],
+	function ($, HashChanger, UI5Object, View, Ancestor) {
 		/**
 		 * @class A Plugin to search UI5 controls.
-		 * 
+		 *
 		 * @protected
-		 * @name sap.ui.test.OpaPlugin
+		 * @alias sap.ui.test.OpaPlugin
 		 * @author SAP SE
 		 * @since 1.22
 		 */
-		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", {
+		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", /** @lends sap.ui.test.OpaPlugin.prototype */ {
 
 			constructor : function() {
 				var that = this;
@@ -48,23 +45,29 @@ sap.ui.define(['jquery.sap.global',
 
 			/**
 			 * Gets all the controls of a certain type that are currently instantiated.
-			 * 
-			 * @param fnConstructorType the control type, e.g: sap.m.CheckBox
+			 *
+			 * @param {Function} [fnConstructorType] the control type, e.g: sap.m.CheckBox
 			 * @returns {Array} an array of the found controls (can be empty)
 			 * @protected
 			 */
 			getAllControls : function (fnConstructorType) {
 				var oControl,
+					sPropertyName,
 					aResult = [],
 					oCoreElements = this._getCoreElements();
 
 				//Performance critical
-				for (var sPropertyName in oCoreElements) {
+				for (sPropertyName in oCoreElements) {
 					if (!oCoreElements.hasOwnProperty(sPropertyName)) {
 						continue;
 					}
 
 					oControl = oCoreElements[sPropertyName];
+					if (!fnConstructorType) {
+						aResult.push(oControl);
+						continue;
+					}
+
 					if (oControl instanceof fnConstructorType) {
 						aResult.push(oControl);
 					}
@@ -83,28 +86,17 @@ sap.ui.define(['jquery.sap.global',
 
 			/**
 			 * Returns the view with a specific name
-			 * 
-			 * @param sViewName
+			 *
+			 * @param {string} sViewName - the name of the view
 			 * @returns {sap.ui.core.mvc.View} or undefined
 			 * @protected
 			 */
 			getView : function (sViewName) {
-				var oView = mViews[sViewName];
+				var aViews = this.getAllControls(View);
 
-				if (!oView) {
-					var aViews = this.getAllControls(View);
-
-					oView = aViews.filter(function (oViewInstance) {
-						return oViewInstance.getViewName() === sViewName;
-					})[0];
-
-					if (oView) {
-						mViews[sViewName] = oView;
-					}
-
-				}
-
-				return oView;
+				return aViews.filter(function (oViewInstance) {
+					return oViewInstance.getViewName() === sViewName;
+				})[0];
 			},
 
 			/**
@@ -115,24 +107,25 @@ sap.ui.define(['jquery.sap.global',
 			 * eg : { viewName : "bar" } will return all the controls inside the view with the name bar<br/>
 			 * eg : { viewName : "bar", controlType : sap.m.Button } will return all the Buttons inside a view with the name bar<br/>
 			 * eg : { viewName : "bar", viewNamespace : "baz." } will return all the Controls in the view with the name baz.bar<br/>
-			 * 
+			 *
 			 * @param {object} oOptions that may contain a viewName, id, viewNamespace and controlType properties.
-			 * @returns the found control, an array of matching controls, undefined or null
+			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]} the found control, an array of matching controls, undefined or null
 			 * @protected
 			 */
 			getControlInView : function (oOptions) {
 				var sViewPath = oOptions.viewNamespace + oOptions.viewName,
 					oView = this.getView(sViewPath),
 					result = [],
-					oControl;
+					oControl,
+					sViewId;
 
 				if (!oView) {
-					jQuery.sap.log.info("Did not find the view: " + sViewPath);
+					$.sap.log.info("Did not find the view: " + sViewPath);
 					return null;
 				}
 
 				if ($.isArray(oOptions.id)) {
-					jQuery.each(oOptions.id, function (iIndex, sId) {
+					$.each(oOptions.id, function (iIndex, sId) {
 						oControl = oView.byId(sId);
 
 						if (oControl) {
@@ -142,30 +135,51 @@ sap.ui.define(['jquery.sap.global',
 					return result;
 				}
 
-				if (oOptions.id) {
+				if (typeof oOptions.id === "string") {
 					return oView.byId(oOptions.id);
 				}
 
-				return this.getAllControlsInContainer(oView.$(), oOptions.controlType);
+				var aAllControlsOfTheView = this.getAllControlsWithTheParent(oView, oOptions.controlType);
+
+				if ($.type(oOptions.id) === "regexp") {
+					sViewId = oView.getId();
+					aAllControlsOfTheView = aAllControlsOfTheView.filter(function (oControl) {
+						var sUnprefixedControlId = oControl.getId().replace(sViewId, "");
+						return oOptions.id.test(sUnprefixedControlId);
+					});
+				}
+
+				return aAllControlsOfTheView;
+			},
+
+			getAllControlsWithTheParent : function (oParent, fnControlType) {
+				var ancestorMatcher = new Ancestor(oParent);
+
+				return this._filterUniqueControlsByCondition(this.getAllControls(fnControlType),ancestorMatcher);
 			},
 
 			getAllControlsInContainer : function ($Container, fnControlType) {
-				return $Container.find("*").control().filter(function (oControl, iPosition, aAllControls) {
-					var bKeepMe = true;
-
+				return this._filterUniqueControlsByCondition($Container.find("*").control(),function (oControl) {
 					if (fnControlType) {
-						bKeepMe = oControl instanceof fnControlType;
+						return oControl instanceof fnControlType;
 					}
+					return false;
+				});
+			},
 
-					return bKeepMe && aAllControls.indexOf(oControl) == iPosition;
+			_filterUniqueControlsByCondition : function (aControls, fnCondition) {
+				return aControls.filter(function (oControl, iPosition, aAllControls) {
+					var bKeepMe = !!fnCondition(oControl);
+
+					return bKeepMe && aAllControls.indexOf(oControl) === iPosition;
 				});
 			},
 
 			/**
 			 * Tries to find a control depending on the options provided.
-			 * 
+			 *
 			 * @param {object} oOptions can have a control id property as string. Optional a viewName and a viewNamespace if it should search the control in a view
-			 * @returns {sap.ui.core.Control} or undefined
+			 * @returns {sap.ui.core.Element} or undefined
 			 * @protected
 			 */
 			getMatchingControls : function (oOptions) {
@@ -174,10 +188,12 @@ sap.ui.define(['jquery.sap.global',
 					vResult = this.getAllControlsInContainer($("#sap-ui-static"), oOptions.controlType);
 				} else if (oOptions.viewName) {
 					vResult = this.getControlInView(oOptions);
+				} else if (oOptions.id) {
+					vResult = this.getControlByGlobalId(oOptions);
 				} else if (oOptions.controlType) {
 					vResult = this.getAllControlsInContainer($("body"), oOptions.controlType);
 				} else {
-					vResult = this.getControlByGlobalId(oOptions);
+					vResult = null;
 				}
 
 				if (!vResult || oOptions.visible === false) {
@@ -196,32 +212,30 @@ sap.ui.define(['jquery.sap.global',
 			/**
 			 * Returns a control by its id
 			 * accepts an object with an id property the id can be
+			 * will check a control type also, if defined
 			 * <ul>
 			 * 	<li>a single string - function will return the control instance or undefined</li>
 			 * 	<li>an array of strings - function will return an array of found controls or an empty array</li>
 			 * 	<li>a regexp - function will return an array of found controls or an empty array</li>
 			 * </ul>
-			 * 
-			 * @param oOptions should contain an id property. It can be of the type string or regex.
-			 * @returns all controls matched by the regex or the control matched by the string or null
+			 *
+			 * @param oOptions should contain an id property. It can be of the type string or regex. If contains controlType property, will check it as well
+			 * @returns {sap.ui.core.Element[]} all controls matched by the regex or the control matched by the string or null
 			 * @protected
 			 */
 			getControlByGlobalId : function (oOptions) {
-				var vStringOrArrayOrRegex = oOptions.id,
+				var that = this,
+					vStringOrArrayOrRegex = oOptions.id,
 					vControl = [],
 					aIds = [],
 					oCoreElements = this._getCoreElements();
 
-				if (!vStringOrArrayOrRegex) {
-					return null;
-				}
-
 				if (typeof vStringOrArrayOrRegex === "string") {
 					vControl = oCoreElements[vStringOrArrayOrRegex];
-					return vControl ? vControl : null;
+					return vControl && this._checkControlType(vControl, oOptions) ? vControl : null;
 				}
 
-				if (vStringOrArrayOrRegex instanceof RegExp) {
+				if ($.type(vStringOrArrayOrRegex) === "regexp") {
 
 					//Performance critical
 					for (var sPropertyName in oCoreElements) {
@@ -242,7 +256,7 @@ sap.ui.define(['jquery.sap.global',
 					return oCoreElements[sId];
 				}).filter(function (oControl) {
 					//only return defined controls
-					return oControl && !oControl.bIsDestroyed;
+					return that._checkControlType(oControl, oOptions) && oControl && !oControl.bIsDestroyed;
 				});
 			},
 
@@ -254,6 +268,14 @@ sap.ui.define(['jquery.sap.global',
 				}
 
 				return this.oCore.mElements || oElements;
+			},
+
+			_checkControlType : function(oControl, oOptions) {
+				if (oOptions.controlType) {
+					return oControl instanceof oOptions.controlType;
+				} else {
+					return true;
+				}
 			}
 		});
 

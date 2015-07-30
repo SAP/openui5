@@ -1,23 +1,29 @@
-jQuery.sap.declare("sap.m.sample.MultiInputValidators.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.MultiInputValidators.Component", {
+	var Component = UIComponent.extend("sap.m.sample.MultiInputValidators.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.MultiInputValidators.Page",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				stretch : true,
-				files : [
-					"Page.view.xml",
-					"Page.controller.js"
+		metadata : {
+			rootView : "sap.m.sample.MultiInputValidators.Page",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					stretch : true,
+					files : [
+						"Page.view.xml",
+						"Page.controller.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

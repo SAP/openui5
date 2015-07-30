@@ -23,19 +23,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 	 * @constructor
 	 * @public
 	 * @since 1.9.0
-	 * @name sap.ui.commons.FormattedTextView
+	 * @alias sap.ui.commons.FormattedTextView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormattedTextView = Control.extend("sap.ui.commons.FormattedTextView", /** @lends sap.ui.commons.FormattedTextView.prototype */ { metadata : {
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Flag to suppress rendering of the FormattedTextView control
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
 			/**
 			 * The ARIA role for the control.
 			 */
@@ -56,19 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 	}});
 	
 	
-	/**
-	 * Sets text with placeholders and given array of controls
-	 *
-	 * @name sap.ui.commons.FormattedTextView#setContent
-	 * @function
-	 * @param {string} sHtmlText
-	 *         Contains the corresponding HTML-text
-	 * @param {sap.ui.commons.FormattedTextViewControl} oControls
-	 *         Array of controls that should be used within given HTML-text
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	
 	(function() {
@@ -155,8 +137,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 		 * @private
 		 * @param {string}
 		 *            tagName An HTML tag name in lowercase.
-		 * @param {Array.
-		 *            <?string>} attribs An array of alternating names and values.
+		 * @param {Array.<?string>} attribs An array of alternating names and values.
 		 * @return {Array.<?string>} The sanitized attributes as a list of
 		 *         alternating names and values, where a null value means to omit
 		 *         the attribute.
@@ -242,6 +223,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 			}
 		};
 	
+
+		/**
+		 * Sets text with placeholders and given array of controls
+		 *
+		 * @param {string} sHtmlText
+		 *         Contains the corresponding HTML-text
+		 * @param {sap.ui.commons.FormattedTextViewControl} oControls
+		 *         Array of controls that should be used within given HTML-text
+		 * @type void
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
 		FormattedTextView.prototype.setContent = function(sHtmlText, aControls) {
 			// set the text using existing checks and method
 			this.setHtmlText(sHtmlText);

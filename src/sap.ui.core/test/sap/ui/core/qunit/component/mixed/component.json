@@ -1,0 +1,106 @@
+{
+
+	"name": "sap.ui.test.mixed.Component",
+	
+	"version": "1.0.0",
+	
+	"manifest": "json",
+
+	"includes" : [
+		"style1.css",
+		"script1.js"
+	],
+	
+	"dependencies" : {
+		"libs" : [
+			"sap.ui.table"
+		],
+		"components" : [
+			"sap.ui.test.other1"
+		],
+		"ui5version" : "1.26.2"
+	},
+	
+	"config": {
+		"any4": {
+			"entry": "configuration"
+		},
+		"any5": {
+			"anyobject": {
+				"key1": "value1"
+			}
+		},
+		"any6": {
+			"anyarray": [1, 2, 3]
+		}
+	},
+	
+	"models": {
+		"i18n1": {
+			"type": "sap.ui.model.resource.ResourceModel",
+			"uri": "i18n/i18n.properties"
+		},
+		"sfapi1": {
+			"type": "sap.ui.model.odata.ODataModel",
+			"uri": "/sap/opu/odata/snce/PO_S_SRV/"
+		}
+	},
+			
+	"rootView": "sap.ui.test.view.Main",
+	
+	"customizing": {
+		"sap.ui.viewReplacements": {
+			"sap.ui.test.view.Main1": {
+				"viewName": "sap.ui.test.view.Main",
+				"type": "XML"
+			}
+		},
+		"sap.ui.controllerReplacements": {
+			"sap.ui.test.view.Main1": "sap.ui.test.view.Main"
+		},
+		"sap.ui.viewExtensions": {
+			"sap.ui.test.view.Main1": {
+				"extension": {
+					"name": "sap.xx.new.Fragment",
+					"type": "sap.ui.core.XMLFragment"
+				}
+			}
+		},
+		"sap.ui.viewModification": {
+			"sap.ui.test.view.Main1": {
+				"myControlId": {
+					"text": "{i18n_custom>mytext}"
+				}
+			}
+		}
+	},
+
+	"routing": {
+		"config": {
+			"viewType" : "XML",
+			"viewPath": "NavigationWithoutMasterDetailPattern1.view",
+			"targetParent": "myViewId1",
+			"targetControl": "app",
+			"targetAggregation": "pages",
+			"clearTarget": false
+		},
+		"routes": [
+			{
+				"name" : "myRouteName2",
+				"pattern" : "FirstView/{from}",
+				"view" : "myViewId"
+			}
+		]
+	},
+	
+	"custom.entry": {
+		"key1": "value1",
+		"key2": "value2",
+		"key3": {
+			"subkey1": "subvalue1",
+			"subkey2": "subvalue2"
+		},
+		"key4": ["value1", "value2"]
+	}
+
+}

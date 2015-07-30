@@ -20,8 +20,6 @@
 
 /* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
 .sapMPopover > .sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -141,17 +139,6 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 	left: -16px;
 }
 
-.sapMPopoverWithFooter > .sapMPopoverArrDown {
-	border-top-color: @sapHCStandardFG;
-}
-
-.sapMPopoverWithFooter > .sapMPopoverArrDown:after {
-	border-top-color: @sapHCStandardFG;
-}
-.sap-desktop .sapMPopoverWithFooter > .sapMPopoverArrDown:after {
-	border-top-color: @sapHCStandardFG;
-}
-
 /* Arrow Up */
 .sapMPopoverArrUp {
 	border-color: transparent;
@@ -165,11 +152,6 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 	border-bottom-color: @sapHCStandardFG; /* arrow content area when adjacent to Bar */
 	bottom: -17px;
 	left: -16px;
-}
-
-.sapMPopoverWithoutBar > .sapMPopoverArrUp:after {
-	border-color: transparent;
-	border-bottom-color: @sapHCStandardFG;
 }
 
 /*Arrow Left*/
@@ -288,8 +270,8 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverA
 	}
 
 	.sapMPopoverArrUp:after,
-	.sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
-	.sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
+	&.sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
+	&.sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
 		bottom: -9px;
 		left: -8px;
 	}

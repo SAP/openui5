@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.25.0-SNAPSHOT</version>
+	<version>1.31.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 
@@ -23,8 +23,8 @@
 	* POM SECTION: Project Settings
 	***************************************************************************-->
 
-	<name>${project.artifactId}</name>
-	<description>OpenUI5 Reactor</description>
+	<name>OpenUI5</name>
+	<description>OpenUI5 - Reactor POM</description>
 
 
 	<!--**************************************************************************
@@ -42,15 +42,13 @@
 		<module>src/sap.ui.table</module>
 		<module>src/sap.ui.ux3</module>
 		<module>src/sap.ui.suite</module>
+		<module>src/sap.ui.dt</module>
 		<module>src/sap.ui.demokit</module>
 
 		<!-- theme libraries -->
 		<!-- TODO <module>src/themelib_sap_hcb</module> -->
 		<module>src/themelib_sap_bluecrystal</module>
 		<module>src/themelib_sap_goldreflection</module>
-
-		<!-- testsuite -->
-		<module>src/testsuite</module>
 
 	</modules>
 
@@ -71,14 +69,17 @@
 
 		<!-- filtering properties -->
 		<version>${project.version}</version>
-		<copyright><![CDATA[SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+		<copyright><![CDATA[UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 ]]></copyright>
 		<buildtime>${maven.build.timestamp}</buildtime>
 		<lastchange></lastchange><!-- TODO: fill via build parameter -->
 
-	</properties>
+		<!-- JSLint/ESLint report path -->
+		<sonar.javascript.jslint.reportPath>target/jslint/jslint.xml</sonar.javascript.jslint.reportPath>
+
+ 	</properties>
 
 
 	<!--**************************************************************************
@@ -110,7 +111,7 @@
 					<useDefaultDelimiters>false</useDefaultDelimiters>
 				</configuration>
 			</plugin>
-
+			
 		</plugins>
 
 	</build>
@@ -122,6 +123,50 @@
 
 	<profiles>
 
+		<!-- attach the LICENSE.txt file -->
+		<profile>
+		
+			<activation>
+				<file>
+					<exists>${basedir}/LICENSE.txt</exists>
+				</file>
+			</activation>
+		
+			<build>
+		
+				<plugins>
+		
+					<!-- attach the LICENSE.txt as separate artifact -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.9.1</version>
+						<executions>
+							<execution>
+								<id>attach-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<file>${basedir}/LICENSE.txt</file>
+											<type>txt</type>
+											<classifier>LICENSE</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+		
+				</plugins>
+		
+			</build>
+			
+		</profile>
+
 		<!-- internal build related plugins & configuration -->
 		<profile>
 
@@ -130,11 +175,13 @@
 			<properties>
 				<sap.ui5.translationArea>027001</sap.ui5.translationArea>
 				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
+				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
 				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
 				<sap.ui5.translationLanguages></sap.ui5.translationLanguages>
 			</properties>
 
 			<build>
+			
 				<pluginManagement>
 					<plugins>
 
@@ -142,21 +189,49 @@
 						<plugin>
 							<groupId>com.sap.ui5.tools.build</groupId>
 							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.25.0-SNAPSHOT</version>
+							<version>1.31.0-SNAPSHOT</version>
 						</plugin>
 
 						<!-- translation support (for internal use) -->
 						<plugin>
 							<groupId>com.sap.ldi</groupId>
 							<artifactId>translation-plugin</artifactId>
-							<version>0.19.1</version>
+							<version>0.21.0</version>
 							<configuration>
+								<translationArea>${sap.ui5.translationArea}</translationArea>
+								<translationDomain>${sap.ui5.translationDomain}</translationDomain>
+								<translationDeveloper>${sap.ui5.translationDeveloper}</translationDeveloper>
+								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
 								<languages>${sap.ui5.translationLanguages}</languages>
+								<!-- only consider the sources -->
+								<useDefaultTranslationResourceDirs>false</useDefaultTranslationResourceDirs>
+								<translationResources>
+									<translationResource>src</translationResource>
+								</translationResources>
+								<!-- do not change developer English -->
+								<!-- skipUpdateDeveloperEnglish>true</skipUpdateDeveloperEnglish -->
 							</configuration>
 						</plugin>
 
 					</plugins>
 				</pluginManagement>
+				
+				<plugins>
+				
+					<!-- translation support (specify non-existent path to ignore it) -->
+					<plugin>
+						<groupId>com.sap.ldi</groupId>
+						<artifactId>translation-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<translationResources>
+								<translationResource>nonexistentpath</translationResource>
+							</translationResources>
+						</configuration>
+					</plugin>
+					
+				</plugins>
+				
 			</build>
 
 		</profile>
@@ -172,6 +247,9 @@
 				
 				<!-- fail on eslint error -->
 				<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
+				
+				<!-- only validate the changed files -->
+				<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
 
 			</properties>
 
@@ -180,7 +258,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.9</version>
+						<version>2.10</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -200,10 +278,11 @@
 							</artifactItems>
 						</configuration>
 					</plugin>
+					<!-- when adopting the plugin here please also adopt src/testsuite/pom.xml -->
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.0-SNAPSHOT</version>
+						<version>0.1.8</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -213,18 +292,57 @@
 							</execution>
 						</executions>
 						<configuration>
+							<version>0.21.1</version>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
+							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>
+							<quiet>true</quiet>
 							<includes>
 								<include>src/**</include>
 							</includes>
 							<plugins>
 								<openui5>${project.build.directory}/eslint-plugin-openui5/plugin.js</openui5>
 							</plugins>
+							<formatters>
+								<formatter implementation="com.sap.eslint.java.formatters.JSLintSonarFormatter">
+									<outputFile>${project.build.directory}/jslint/jslint.xml</outputFile>
+								</formatter>
+							</formatters>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
+
+		</profile>
+
+		<profile>
+
+			<id>nightly.build</id>
+
+			<properties>
+
+				<!-- validate all files for the nightly build (attention: profile nightly.build must stay after eslint.build!) -->
+				<sap.ui5.eslint.onlyChangedFiles>false</sap.ui5.eslint.onlyChangedFiles>
+
+			</properties>
+
+		</profile>
+
+		<profile>
+
+			<id>testsuite.build</id>
+
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+
+			<modules>
+
+				<!-- testsuite -->
+				<module>src/testsuite-utils</module>
+				<module>src/testsuite</module>
+
+			</modules>
 
 		</profile>
 

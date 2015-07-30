@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/FileUploaderPar
 	 * @public
 	 * @deprecated Since version 1.21.0. 
 	 * Please use the element sap.ui.unified.FileUploaderParameter of the library sap.ui.unified instead.
-	 * @name sap.ui.commons.FileUploaderParameter
+	 * @alias sap.ui.commons.FileUploaderParameter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploaderParameter = UnifiedFileUploaderParameter.extend("sap.ui.commons.FileUploaderParameter", /** @lends sap.ui.commons.FileUploaderParameter.prototype */ { metadata : {

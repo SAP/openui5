@@ -17,15 +17,12 @@
 	line-height: 3rem;
 	color: @sapHCStandardFG;
 	background-color: @sapHCStandardBG;
-	background-image: none;
 	border-bottom: 1px solid @sapHCStandardFG;
 	box-sizing: border-box;
 }
 
-.sapMBar:active {
-	text-shadow: none;
-}
-
+/* this "sapMBrandingBar-CTX" CSS class can be set by any container control that comes with its own branding bar, so any pages inside will not display their branding bar */
+.sapMBrandingBar-CTX .sapMBar.sapMPageHeader:before,
 /* since Shell may run without sap.m and we can run without the shell this selector is currently in our lib */
 .sapUiUfdShell .sapMBar.sapMPageHeader:before {
 	display: none;
@@ -70,8 +67,6 @@
 .sapMBarRight,
 .sapMBarLeft,
 .sapMBarPH {
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
 

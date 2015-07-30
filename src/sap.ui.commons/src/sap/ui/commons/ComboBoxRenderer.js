@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 
 
 	/**
-	 * @class Renderer for the sap.ui.commons.ComboBox
-	 * @static
+	 * Renderer for the sap.ui.commons.ComboBox
+	 * @namespace
 	 */
 	var ComboBoxRenderer = Renderer.extend(TextFieldRenderer);
 	

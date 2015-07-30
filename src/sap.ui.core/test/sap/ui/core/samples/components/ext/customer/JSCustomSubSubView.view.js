@@ -1,8 +1,14 @@
-sap.ui.jsview("samples.components.ext.customer.JSCustomSubSubView", {
+sap.ui.define(['sap/ui/commons/TextView', 'sap/ui/core/mvc/JSView'],
+	function(TextView, JSView) {
+	"use strict";
 
-	createContent : function(oController) {
+	sap.ui.jsview("samples.components.ext.customer.JSCustomSubSubView", {
+
+		createContent : function(oController) {
 		
-		return [new sap.ui.commons.TextView({text: "I am the customer replacement"}),
-		        sap.ui.extensionpoint(this, "extension44")];
-	}
+			return [new TextView({text: "I am the customer replacement"}),
+			        sap.ui.extensionpoint(this, "extension44")];
+		}
+	});
+
 });

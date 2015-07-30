@@ -7,11 +7,11 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ProgressIndicator renderer.
-	 * @static
+	 * ProgressIndicator renderer.
+	 * @namespace
 	 */
 	var ProgressIndicatorRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -19,45 +19,54 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ProgressIndicatorRenderer.render = function(oRm, oC) {
-	
-		// return immediately if control is not visible
-		if (!oC.getVisible()) {
-			return;
-		}
-	
-		var fWidthBar = oC.getPercentValue();
-		var iWidthControl = oC.getWidth();
-		var iHeightControl = oC.getHeight();
-		var sTextValue = oC.getDisplayValue();
-		var bShowText = oC.getShowValue();
-		var sState = oC.getState();
-	
+		var fWidthBar = oC.getPercentValue(),
+			iWidthControl = oC.getWidth(),
+			iHeightControl = oC.getHeight(),
+			sTextValue = oC.getDisplayValue(),
+			bShowText = oC.getShowValue(),
+			sState = oC.getState(),
+			sTextDirectionLowerCase = oC.getTextDirection().toLowerCase(),
+			sControlId = oC.getId();
+
 		// write the HTML into the render manager
-		//PI border
+		// PI border
 		oRm.write("<div");
 		oRm.writeControlData(oC);
 		oRm.addClass("sapMPI");
+		oRm.addStyle("width", iWidthControl);
+
 		if (fWidthBar > 50) {
 			oRm.addClass("sapMPIValueGreaterHalf");
 		}
-		oRm.addStyle("width", iWidthControl);
+
 		if (iHeightControl) {
 			oRm.addStyle("height", iHeightControl);
 		}
-		oRm.writeStyles();
-	
+
 		if (oC.getEnabled()) {
 			oRm.writeAttribute('tabIndex', '-1');
 		} else {
 			oRm.addClass("sapMPIBarDisabled");
 		}
+
 		oRm.writeClasses();
+		oRm.writeStyles();
+		oRm.writeAccessibilityState(oC, {
+			role: "progressbar",
+			valuemin: 0,
+			valuenow: fWidthBar,
+			valuemax: 100,
+			valuetext: oC._getAriaValueText({
+				sText: sTextValue,
+				fPercent: fWidthBar
+			})
+		});
 		oRm.write(">"); // div element
-	
-		//PI bar
+
+		// PI bar
 		oRm.write("<div");
 		oRm.addClass("sapMPIBar");
-	
+
 		switch (sState) {
 		case sap.ui.core.ValueState.Warning:
 			oRm.addClass("sapMPIBarCritical");
@@ -68,42 +77,48 @@ sap.ui.define(['jquery.sap.global'],
 		case sap.ui.core.ValueState.Success:
 			oRm.addClass("sapMPIBarPositive");
 			break;
-		case sap.ui.core.ValueState.None:
-			oRm.addClass("sapMPIBarNeutral");
-			break;
 		default:
 			oRm.addClass("sapMPIBarNeutral");
 			break;
 		}
-	
+
 		oRm.writeClasses();
-		oRm.writeAttribute("id", oC.getId() + "-bar");
+		oRm.writeAttribute("id", sControlId + "-bar");
 		oRm.writeAttribute("style", "width:" + fWidthBar + "%");
 		oRm.write(">"); // div element
-	
+
 		//PI textLeft
-		oRm.write("<span class='sapMPIText sapMPITextLeft' id='" + oC.getId() + "-textLeft'>");
-		
+		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Left", sControlId);
+
 		//textvalue is only showed if showValue set
 		if (bShowText) {
 			oRm.writeEscaped(sTextValue);
 		}
-	
+
 		oRm.write("</span>");
 		oRm.write("</div>"); // div element pi bar
-		
+
 		//PI textRight
-		oRm.write("<span class='sapMPIText sapMPITextRight' id='" + oC.getId() + "-textRight'>");
-	
+		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Right", sControlId);
+
 		//textvalue is only showed if showValue set
 		if (bShowText) {
 			oRm.writeEscaped(sTextValue);
 		}
+
 		oRm.write("</span>");
-	
 		oRm.write("</div>"); //div element pi text
 	};
-	
+
+	ProgressIndicatorRenderer._renderDisplayText = function(oRm, sTextDirectionLowerCase, sTextAlign, oControlId){
+		oRm.write("<span class='sapMPIText sapMPIText" + sTextAlign + "' id='" + oControlId + "-text" + sTextAlign + "'");
+
+		if (sTextDirectionLowerCase !== "inherit") {
+			oRm.writeAttribute("dir", sTextDirectionLowerCase);
+		}
+
+		oRm.write('>');
+	};
 
 	return ProgressIndicatorRenderer;
 

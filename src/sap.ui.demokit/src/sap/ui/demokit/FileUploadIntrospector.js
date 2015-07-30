@@ -53,16 +53,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	}});
 	
 	
-	/**
-	 * Trigger an explicit refresh of the displayed information
-	 *
-	 * @name sap.ui.demokit.FileUploadIntrospector#refresh
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	FileUploadIntrospector.prototype.init = function() {
 		this._aFiles = [];
 		this._iHash = 0;
@@ -79,6 +69,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 	};
 	
+	/**
+	 * Trigger an explicit refresh of the displayed information
+	 *
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FileUploadIntrospector.prototype.refresh = function() {
 		var that = this;
 		jQuery.getJSON(this.getUploadUrl(), function(data) { that._receiveFileList(data); });

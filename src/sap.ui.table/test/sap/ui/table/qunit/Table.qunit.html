@@ -8,12 +8,13 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.ui.table.Table</title>
 	<script id="sap-ui-bootstrap" 
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
-	    data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.table" >
+	    data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table" >
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -21,6 +22,8 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script  language="javascript">
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 	var personImg = "../images/Person.png",
 		jobPosImg = "../images/JobPosition.png",
@@ -37,15 +40,15 @@
 		{lastName: "Zar", name: "Lou", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 1, money: 9.35},
 		{lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 2, money: 10.12},
 		{lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 5, money: 85.23},
-		{lastName: "Lester", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 3, money: 4521},
+		{lastName: "Town", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 3, money: 4521},
 		{lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 3, money: 4563.3},
 		{lastName: "Time", name: "Justin", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 4, money: 665.4},
-		{lastName: "Barr", name: "Gaye", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 2, money: 334.4},
+		{lastName: "Barr", name: "Sandy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 2, money: 334.4},
 		{lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 1, money: 964.3},
 		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 5, money: 2.34},
 		{lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 3, money: 8.45},
 		{lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "female", rating: 4, money: 53.45},
-		{lastName: "Haas", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 2, money: 76.34},
+		{lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 2, money: 76.34},
 		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 4, money: 234.23},
 		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "female", rating: 3, money: 953.3}
 	];
@@ -144,6 +147,20 @@
 
 		equals(oTable.getBinding("rows").iLength, 200, "RowCount beforeFiltering ok");
 		oTable.filter(oColFirstName, "M*");
+
+		// check that the column menu filter input field was updated
+		var oMenu = oColFirstName.getMenu();
+		// open and close the menu to let it generate its items
+		oMenu.open();
+		oMenu.close();
+
+		var oFilterField = sap.ui.getCore().byId(oMenu.getId() + "-filter");
+		if (oFilterField) {
+			equals(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
+			oTable.filter(oColFirstName, "D*");
+			equals(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
+		}
+
 		equals(oTable.getBinding("rows").iLength, 20, "RowCount after filtering FirstName 'M*'");
 		oTable.filter(oColFirstName, "Mo*");
 		equals(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Mo*''");
@@ -184,6 +201,29 @@
 	test("SelectedIndex", 1, function() {
 		oTable.setSelectedIndex(8);
 		equals(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
+	});
+
+	test("Check Selection of Last fixedBottomRow", 1, function() {
+		oTable.setFixedBottomRowCount(3);
+		var aRows = oTable.getRows();
+		var oLastRow = aRows[aRows.length - 1];
+		var $LastRow = oLastRow.getDomRefs(true);
+		if ($LastRow.rowSelector) {
+			$LastRow.rowSelector.click();
+			equals(oTable.getSelectedIndex(), 199, "Selected Index is 199");
+		}
+	});
+
+	test("Check that marked events are not handled by Table", function(oAssert) {
+		var fnStub = this.stub(oTable, "_findAndfireCellEvent", jQuery.noop);
+
+		var tmpEvent = jQuery.Event("click");
+		oTable.onclick(tmpEvent);
+		oAssert.strictEqual(fnStub.callCount, 1, "Stub was called");
+
+		tmpEvent.setMarked();
+		oTable.onclick(tmpEvent);
+		oAssert.strictEqual(fnStub.callCount, 1, "Stub was not called");
 	});
 
 	test("VisibleRowCount", 1, function() {
@@ -391,6 +431,7 @@
 	});
 	
 	test("Resize", function(){
+		oTable._bTouchMode = false;
 		equals(oTable.getVisibleRowCount(), 10, "Row count of 10");
 
 		var barId = oTable.getId() + "-sb";
@@ -398,9 +439,10 @@
 		qutils.triggerMouseEvent(barId, "mousedown", 1, 1, -9950, -10000, 0 );
 		qutils.triggerMouseEvent(barId, "mousemove", 1, 1, -9950, -9500, 0 );
 		qutils.triggerMouseEvent(barId, "mouseup", 1, 1, -9950, -9500, 0 );
+		
 		sap.ui.getCore().applyChanges();
 
-		equals(oTable.getVisibleRowCount(), 16, "Row count of 20");
+		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
 	});
 
 	module("Keyboard navigation", {
@@ -792,6 +834,37 @@
 		.always(function() {
 			start();
 		});
+	});
+	
+	module("Toolbar");
+	test("Table toolbar should have the transparent design by default without changing the design property", function() {
+		var oTB = new sap.m.Toolbar(),
+			oTable = new sap.ui.table.Table({
+				toolbar: oTB
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(sap.m.ToolbarDesign.Auto, oTB.getDesign(), "Design property of the Toolbar is Auto");
+		strictEqual(sap.m.ToolbarDesign.Transparent, oTB.getActiveDesign(), "Active design of the Toolbar is Transparent");
+
+		oTable.destroy();
+	});
+
+	test("Table should respect the design property of the Toolbar when it is set", function() {
+		var oTB = new sap.m.Toolbar({
+				design: "Solid"
+			}),
+			oTable = new sap.ui.table.Table({
+				toolbar: oTB
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(sap.m.ToolbarDesign.Solid, oTB.getDesign(), "Design property of the Toolbar is Solid");
+		strictEqual(sap.m.ToolbarDesign.Solid, oTB.getActiveDesign(), "Active design of the Toolbar is Solid as well");
+
+		oTable.destroy();
 	});
 
 	</script>

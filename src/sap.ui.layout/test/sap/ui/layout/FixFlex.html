@@ -1,703 +1,416 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>FixFlex - sap.ui.layout</title>
-<script id='sap-ui-bootstrap' type='text/javascript'
-	src='../../../../resources/sap-ui-core.js'
-	data-sap-ui-theme='sap_bluecrystal'
-	data-sap-ui-libs='sap.ui.layout, sap.m, sap.ui.table'>
-	
-</script>
-<script type="text/javascript">
-	var app = new sap.m.App('myApp', {
-		initialPage : 'page1'
-	});
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>FixFlex - sap.ui.layout</title>
+		<script id='sap-ui-bootstrap' type='text/javascript'
+				src='../../../../resources/sap-ui-core.js'
+				data-sap-ui-theme='sap_bluecrystal'
+				data-sap-ui-libs='sap.ui.layout, sap.m, sap.ui.table'>
 
-	/* =============================================
-	 * Page 1!
-	 * ============================================ */
+		</script>
+		<script type="text/javascript">
+			var app = new sap.m.App('myApp', {
+				initialPage: 'page1'
+			});
 
-	var oFixFlexColumn = new sap.ui.layout.FixFlex({
+			/* =============================================
+			 * Page 1!
+			 * ============================================ */
 
-		fixContent : [ new sap.m.Panel({
-			expandable: true, 
-			expanded: false, 
-			headerText: "Panel with a header text",
-			content : new sap.m.Button({
-				text : 'Dummy Button'
-			})
-		}) ],
+			var oFixFlexColumn = new sap.ui.layout.FixFlex({
+				minFlexSize: 450,
 
-		flexContent : new sap.m.Carousel({
-			pages : [ new sap.m.Image({
-				src : "../../../../test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-			}), new sap.m.Image({
-				src : "../../../../test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg"
-			}) ]
-		})
+				fixContent: [new sap.m.Panel({
+					expandable: true,
+					expanded: false,
+					headerText: "Panel with a header text",
+					content: new sap.m.Button({
+						text: 'Dummy Button'
+					})
+				})],
 
-	});
+				flexContent: new sap.m.Carousel({
+					height:'800px',
 
-	var page1 = new sap.m.Page('page1', {
-		title : 'FixFlex vertical layout',
-		enableScrolling : false,
-		content : [ oFixFlexColumn ],
-		footer : fnCreateNavigation()
-	});
+					pages: [new sap.m.Image({
+						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg"
+					}), new sap.m.Image({
+						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-1112.jpg"
+					})]
+				})
 
-	/* =============================================
-	 * Page 2!
-	 * ============================================ */
+			});
 
-	var oFixFlexHorizontal = new sap.ui.layout.FixFlex({
-		fixFirst : false,
-		vertical : false,
+			var page1 = new sap.m.Page('page1', {
+				title: 'FixFlex vertical layout',
+				enableScrolling: true,
+				content: [oFixFlexColumn],
+				footer: fnCreateNavigation()
+			});
 
-		fixContent : [
-		// Dummy button
-		new sap.m.Button({
-			text : 'Dummy Button'
-		}),
-		// Dummy button
-		new sap.m.Button({
-			text : 'Dummy Button'
-		}) ],
+			/* =============================================
+			 * Page 2!
+			 * ============================================ */
 
-		flexContent : new sap.m.Carousel({
-			pages : [ new sap.m.Image({
-				src : "../../../../test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-			}), new sap.m.Image({
-				src : "../../../../test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg"
-			}) ]
-		})
-	});
+			var oFixFlexHorizontal = new sap.ui.layout.FixFlex({
+				fixFirst: false,
+				vertical: false,
+				minFlexSize: 455,
 
-	var page2 = new sap.m.Page('page2', {
-		title : 'FixFlex horizontal layout',
-		enableScrolling : false,
-		content : [ oFixFlexHorizontal ],
-		footer : fnCreateNavigation()
-	});
 
-	/* =============================================
-	 * Page 3!
-	 * ============================================ */
+				fixContent: [
+					// Dummy button
+					new sap.m.Button({
+						text: 'Dummy Button'
+					}),
+					// Dummy button
+					new sap.m.Button({
+						text: 'Dummy Button'
+					})],
 
-	var oData = {
-		items : [ {
-			name : 'Michelle',
-			color : 'orange',
-			number : 3.14,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Joseph',
-			color : 'blue',
-			number : 1.618,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'David',
-			color : 'green',
-			number : 0.12,
-			tools : 2.0,
-			support : 'normal',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Michelle',
-			color : 'orange',
-			number : 3.14,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Joseph',
-			color : 'blue',
-			number : 1.618,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'David',
-			color : 'green',
-			number : 0.12,
-			tools : 2.0,
-			support : 'normal',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Michelle',
-			color : 'orange',
-			number : 3.14,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Joseph',
-			color : 'blue',
-			number : 1.618,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'David',
-			color : 'green',
-			number : 0.12,
-			tools : 2.0,
-			support : 'normal',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Michelle',
-			color : 'orange',
-			number : 3.14,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Joseph',
-			color : 'blue',
-			number : 1.618,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'David',
-			color : 'green',
-			number : 0.12,
-			tools : 2.0,
-			support : 'normal',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Michelle',
-			color : 'orange',
-			number : 3.14,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'Joseph',
-			color : 'blue',
-			number : 1.618,
-			tools : 2.0,
-			support : 'prime',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		}, {
-			name : 'David',
-			color : 'green',
-			number : 0.12,
-			tools : 2.0,
-			support : 'normal',
-			events : 'None',
-			city : 'Walldorf',
-			country : 'Germany',
-			phone : '03525-2323-2352352'
-		} ],
-		cols : [ 'Name', 'Color', 'Number', 'Tools', 'Support', 'Events', 'City', 'Country', 'Phone' ]
-	};
+				flexContent: new sap.m.Carousel({
+					width: '800px',
 
-	//make sure table id suffix is set (this is necessary for personalization)
-	var oTable = new sap.m.Table('testTable', {
-		headerToolbar : new sap.m.Toolbar({
-			content : [ new sap.m.Label({
-				text : 'Info'
-			}), new sap.m.ToolbarSpacer({}),
-			/* new sap.m.Button('idPersonalizationResetButton', {
-				icon: 'sap-icon://refresh'
-			}), */
-			new sap.m.Button('idPersonalizationButton', {
-				icon : 'sap-icon://action-settings'
-			}) ]
-		}),
-		columns : oData.cols.map(function(colname) {
-			//make sure column id suffix is set
-			return new sap.m.Column(colname, {
-				header : new sap.m.Label({
-					text : colname
+					pages: [new sap.m.Image({
+						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg"
+					}), new sap.m.Image({
+						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-1112.jpg"
+					})]
+				})
+			});
+
+			var page2 = new sap.m.Page('page2', {
+				title: 'FixFlex horizontal layout',
+				enableScrolling: false,
+				content: [oFixFlexHorizontal],
+				footer: fnCreateNavigation()
+			});
+
+			/* =============================================
+			 * Page 3!
+			 * ============================================ */
+
+			var oFixFlex3 = new sap.ui.layout.FixFlex({
+				fixContent: [new sap.m.ObjectHeader("oh1Small", {
+					responsive: true,
+					backgroundDesign: "Translucent",
+					intro: "Type XS",
+					title: "Example 2 Small container",
+					number: "624,00",
+					numberUnit: "Euro",
+					fullScreenOptimized: false,
+					showMarkers: false,
+					markFlagged: true,
+					markFavorite: true,
+					numberState: sap.ui.core.ValueState.Success,
+					attributes: [
+						new sap.m.ObjectAttribute({
+							title: "Manufacturer",
+							text: "ACME Corp",
+							active: true
+						})
+					],
+					statuses: [
+						new sap.m.ObjectStatus({
+							title: "Approval",
+							text: "Pending",
+							state: sap.ui.core.ValueState.Warning
+
+						})
+					]
+				})],
+
+				flexContent: new sap.m.IconTabBar({
+					upperCase: true,
+					stretchContentHeight: true,
+					backgroundDesign: "Transparent",
+					applyContentPadding: false,
+					layoutData: new sap.m.FlexItemData({
+						growFactor: 1
+					}),
+
+					items: [new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem',
+						count: '3',
+						key: 'k1',
+						content: [new sap.ui.table.AnalyticalTable({
+							visibleRowCountMode: 'Auto',
+							selectionMode: 'MultiToggle',
+							rowHeight: 32
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Ipsum',
+						count: '3',
+						key: 'key2',
+						content: [new sap.m.Input({
+							placeholder: 'input placeholder'
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem Ipsum',
+						key: 'key3',
+						count: '233',
+						content: [new sap.m.RatingIndicator({
+							value: 3
+						})]
+					})]
+
+				})
+			});
+
+			var page3 = new sap.m.Page('page3', {
+				title: 'Table with ObjectHeader',
+				enableScrolling: false,
+				content: [oFixFlex3],
+				footer: fnCreateNavigation()
+			});
+
+			/* =============================================
+			 * Page 4!
+			 * ============================================ */
+
+			var oFixFlexNoFix = new sap.ui.layout.FixFlex({
+				fixContent: [],
+
+				flexContent: new sap.m.IconTabBar({
+					upperCase: true,
+					stretchContentHeight: true,
+					backgroundDesign: "Transparent",
+					applyContentPadding: false,
+					layoutData: new sap.m.FlexItemData({
+						growFactor: 1
+					}),
+
+					items: [new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem',
+						count: '3',
+						key: 'k1',
+						content: [new sap.ui.table.AnalyticalTable({
+							visibleRowCountMode: 'Auto',
+							selectionMode: 'MultiToggle',
+							rowHeight: 32
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Ipsum',
+						count: '3',
+						key: 'key2',
+						content: [new sap.m.Input({
+							placeholder: 'input placeholder'
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem Ipsum',
+						key: 'key3',
+						count: '233',
+						content: [new sap.m.RatingIndicator({
+							value: 3
+						})]
+					})]
+
+				})
+			});
+
+			var page4 = new sap.m.Page('page4', {
+				title: 'FixFlex with no Fix content',
+				enableScrolling: false,
+				content: [oFixFlexNoFix],
+				footer: fnCreateNavigation()
+			});
+
+			/* =============================================
+			 * Page 6!
+			 * ============================================ */
+
+			var oFixFlex6 = new sap.ui.layout.FixFlex({
+				vertical: false,
+
+				fixContent: [
+					// Dummy button
+					new sap.m.Button({
+						text: 'Dummy Button'
+					}),
+					// Dummy button
+					new sap.m.Button({
+						text: 'Dummy Button'
+					})],
+
+				flexContent: new sap.m.IconTabBar({
+					upperCase: true,
+					layoutData: new sap.m.FlexItemData({
+						growFactor: 1
+					}),
+
+					items: [new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem',
+						count: '3',
+						key: 'k1',
+						content: [new sap.ui.table.AnalyticalTable({
+							visibleRowCountMode: 'Auto',
+							selectionMode: 'MultiToggle',
+							rowHeight: 32
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Ipsum',
+						count: '3',
+						key: 'key2',
+						content: [new sap.m.Input({
+							placeholder: 'input placeholder'
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem Ipsum',
+						key: 'key3',
+						count: '233',
+						content: [new sap.m.RatingIndicator({
+							value: 3
+						})]
+					})]
+
+				})
+			});
+
+			var page6 = new sap.m.Page('page6', {
+				title: 'FixFlex horizontal with ITB',
+				enableScrolling: false,
+				content: [oFixFlex6],
+				footer: fnCreateNavigation()
+			});
+
+			/* =============================================
+			 * Page 7!
+			 * ============================================ */
+
+			var oFixFlex7 = new sap.ui.layout.FixFlex({
+
+				fixContent: [
+					// Dummy button
+					new sap.m.Button({
+						text: 'Dummy Button'
+					}),
+					// Dummy button
+					new sap.m.Button({
+						text: 'Dummy Button'
+					})],
+
+				flexContent: new sap.m.IconTabBar({
+					upperCase: true,
+					layoutData: new sap.m.FlexItemData({
+						growFactor: 1
+					}),
+
+					items: [new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem',
+						count: '3',
+						key: 'k1',
+						content: [new sap.ui.table.AnalyticalTable({
+							visibleRowCountMode: 'Auto',
+							selectionMode: 'MultiToggle',
+							rowHeight: 32
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Ipsum',
+						count: '3',
+						key: 'key2',
+						content: [new sap.m.Input({
+							placeholder: 'input placeholder'
+						})]
+					}), new sap.m.IconTabFilter({
+						iconColor: sap.ui.core.IconColor.Default,
+						text: 'Lorem Ipsum',
+						key: 'key3',
+						count: '233',
+						content: [new sap.m.RatingIndicator({
+							value: 3
+						})]
+					})]
+
+				})
+			});
+
+			var oDialog = new sap.m.Dialog({
+				contentWidth: "90%",
+				contentHeight: "500px",
+				content: [
+					new sap.m.Page({
+						title: 'asdf',
+						enableScrolling: false,
+						content: oFixFlex7
+					})
+				],
+				buttons: [
+					new sap.m.Button({
+						text: "Close",
+						press: function (oEvent) {
+							oDialog.close();
+						}
+					})
+				]
+			}).setVerticalScrolling(true).setHorizontalScrolling(true);
+
+			var page7 = new sap.m.Page('page7', {
+				title: 'FixFlex horizontal with ITB',
+				enableScrolling: false,
+				content: new sap.m.Button({
+					text: "Open Dialog",
+					press: function (oEvent) {
+						oDialog.open();
+					}
 				}),
-				visible : colname != 'Color'
-			})
-		})
-	});
+				footer: fnCreateNavigation()
+			});
 
-	oTable.setModel(new sap.ui.model.json.JSONModel(oData));
-	oTable.bindAggregation('items', '/items', new sap.m.ColumnListItem({
-		cells : oData.cols.map(function(colname) {
-			return new sap.m.Label({
-				text : '{' + colname.toLowerCase() + '}'
-			})
-		})
-	}));
-
-	var oPersoService = {
-		getPersData : function() {
-			var oDeferred = new jQuery.Deferred();
-			var oBundle = this._oBundle;
-			oDeferred.resolve(oBundle);
-			return oDeferred.promise();
-		},
-
-		setPersData : function(oBundle) {
-			var oDeferred = new jQuery.Deferred();
-			this._oBundle = oBundle;
-			oDeferred.resolve();
-			return oDeferred.promise();
-		},
-
-		resetPersData : function() {
-			var oDeferred = new jQuery.Deferred();
-
-			var oInitialData = {
-				_persoSchemaVersion : '1.0',
-				aColumns : [ {
-					id : 'empty_component-testTable-Name',
-					order : 2,
-					text : 'Name',
-					visible : true
-				}, {
-					id : 'empty_component-testTable-Number',
-					order : 1,
-					text : 'Number',
-					visible : true
-				}, {
-					id : 'empty_component-testTable-Color',
-					order : 0,
-					text : 'Color',
-					visible : true
-				} ]
-			};
-
-			this._oBundle = oInitialData;
-
-			// this._oBundle = null;
-			oDeferred.resolve();
-			return oDeferred.promise();
-		},
-
-		getCaption : function(oColumn) {
-			if (oColumn.getHeader() && oColumn.getHeader().getText) {
-				if (oColumn.getHeader().getText() == 'Color') {
-					return 'Color: this is a very very very very long Column Name to check how the TablePersoDialog deals with it';
-				}
+			/* =============================================
+			 * Navigation
+			 * ============================================ */
+			function fnCreateNavigation() {
+				return new sap.m.Bar({
+					contentMiddle: [new sap.m.Button({
+						text: 'FixFlex Vertical',
+						press: function () {
+							app.to('page1');
+						}
+					}), new sap.m.Button({
+						text: 'FixFlex Horizontal',
+						press: function () {
+							app.to('page2');
+						}
+					}), new sap.m.Button({
+						text: 'FixFlex with ObjectHeader',
+						press: function () {
+							app.to('page3');
+						}
+					}), new sap.m.Button({
+						text: 'FixFlex with no Fix content',
+						press: function () {
+							app.to('page4');
+						}
+					}), new sap.m.Button({
+						text: 'FixFlex Horizontal ITB',
+						press: function () {
+							app.to('page6');
+						}
+					}), new sap.m.Button({
+						text: 'FixFlex in a Dialog',
+						press: function () {
+							app.to('page7');
+						}
+					})]
+				});
 			}
-			return null;
-		},
 
-		getGroup : function(oColumn) {
-			if (oColumn.getHeader() && oColumn.getHeader().getText) {
-				if (oColumn.getHeader().getText() == 'Color') {
-					return 'Primary Group';
-				}
-			}
-			return 'Secondary Group';
-		}
-	};
+			app.addPage(page1).addPage(page2).addPage(page3).addPage(page4).addPage(page6).addPage(page7).placeAt('body');
+		</script>
 
-	jQuery.sap.require('sap.m.TablePersoController');
-
-	var oTPC = new sap.m.TablePersoController({
-		table : oTable,
-		persoService : oPersoService,
-		hasGrouping : false
-	});
-	oTPC.activate();
-
-	sap.ui.getCore().byId('idPersonalizationButton').attachPress(function() {
-		oTPC.openDialog();
-	});
-
-	var oFixFlex3 = new sap.ui.layout.FixFlex({
-		fixContentSize : '250px',
-
-		fixContent : [ new sap.m.ScrollContainer({
-			vertical: true,
-			content:[oTable],
-			height: "100%"
-		}) ],
-
-		flexContent : new sap.m.IconTabBar({
-			upperCase : true,
-			stretchContentHeight: true,
-			backgroundDesign: "Transparent",
-			applyContentPadding: false,
-			layoutData : new sap.m.FlexItemData({
-				growFactor : 1
-			}),
-
-			items : [ new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem',
-				count : '3',
-				key : 'k1',
-				content : [ new sap.ui.table.AnalyticalTable({
-					visibleRowCountMode : 'Auto',
-					selectionMode : 'MultiToggle',
-					rowHeight : 32
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Ipsum',
-				count : '3',
-				key : 'key2',
-				content : [ new sap.m.Input({
-					placeholder : 'input placeholder'
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem Ipsum',
-				key : 'key3',
-				count : '233',
-				content : [ new sap.m.RatingIndicator({
-					value : 3
-				}) ]
-			}) ]
-
-		})
-	});
-
-	var page3 = new sap.m.Page('page3', {
-		title : 'Table with databinding in FixFlex',
-		enableScrolling : false,
-		content : [ oFixFlex3 ],
-		footer : fnCreateNavigation()
-	});
-
-	/* =============================================
-	 * Page 4!
-	 * ============================================ */
-
-	var oFixFlex4 = new sap.ui.layout.FixFlex({
-		fixContentSize : '50%',
-
-		fixContent : [ new sap.ui.layout.FixFlex({
-			vertical : false,
-
-			flexContent : new sap.m.Button({
-				text : 'Dummy Button - flexContent in FixFlex in fixContent'
-			}),
-
-			fixContent : [ new sap.m.SegmentedButton({
-				buttons : [ new sap.m.Button({
-					text : 'Dummy Button - fixContent in FixFlex in fixContent'
-				}), new sap.m.Button({
-					text : 'Dummy Button - fixContent in FixFlex in fixContent'
-				}) ]
-			}) ]
-		}) ],
-
-		flexContent : new sap.ui.layout.FixFlex({
-			flexContent : new sap.m.Button({
-				text : 'Dummy Button -  flexContent in FixFlex in flexContent'
-			}),
-
-			fixContent : [ new sap.m.SegmentedButton({
-				buttons : [ new sap.m.Button({
-					text : 'Dummy Button - fixContent in FixFlex in flexContent'
-				}), new sap.m.Button({
-					text : 'Dummy Button - fixContent in FixFlex in flexContent'
-				}) ]
-			}) ]
-		})
-	});
-
-	var page4 = new sap.m.Page('page4', {
-		title : 'FixFlex in FixFlex',
-		enableScrolling : false,
-		content : [ oFixFlex4 ],
-		footer : fnCreateNavigation()
-	});
-
-	/* =============================================
-	 * Page 5!
-	 * ============================================ */
-
-	var oFixFlexNoFix = new sap.ui.layout.FixFlex({
-		fixContent : [],
-
-		flexContent : new sap.m.IconTabBar({
-			upperCase : true,
-			stretchContentHeight: true,
-			backgroundDesign: "Transparent",
-			applyContentPadding: false,
-			layoutData : new sap.m.FlexItemData({
-				growFactor : 1
-			}),
-
-			items : [ new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem',
-				count : '3',
-				key : 'k1',
-				content : [ new sap.ui.table.AnalyticalTable({
-					visibleRowCountMode : 'Auto',
-					selectionMode : 'MultiToggle',
-					rowHeight : 32
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Ipsum',
-				count : '3',
-				key : 'key2',
-				content : [ new sap.m.Input({
-					placeholder : 'input placeholder'
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem Ipsum',
-				key : 'key3',
-				count : '233',
-				content : [ new sap.m.RatingIndicator({
-					value : 3
-				}) ]
-			}) ]
-
-		})
-	});
-
-	var page5 = new sap.m.Page('page5', {
-		title : 'FixFlex with no Fix content',
-		enableScrolling : false,
-		content : [ oFixFlexNoFix ],
-		footer : fnCreateNavigation()
-	});
-
-	/* =============================================
-	 * Page 6!
-	 * ============================================ */
-
-	var oFixFlex6 = new sap.ui.layout.FixFlex({
-		vertical: false,
-		
-		fixContent : [
-		// Dummy button
-		new sap.m.Button({
-			text : 'Dummy Button'
-		}),
-		// Dummy button
-		new sap.m.Button({
-			text : 'Dummy Button'
-		}) ],
-		
-		flexContent : new sap.m.IconTabBar({
-			upperCase : true,
-			layoutData : new sap.m.FlexItemData({
-				growFactor : 1
-			}),
-
-			items : [ new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem',
-				count : '3',
-				key : 'k1',
-				content : [ new sap.ui.table.AnalyticalTable({
-					visibleRowCountMode : 'Auto',
-					selectionMode : 'MultiToggle',
-					rowHeight : 32
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Ipsum',
-				count : '3',
-				key : 'key2',
-				content : [ new sap.m.Input({
-					placeholder : 'input placeholder'
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem Ipsum',
-				key : 'key3',
-				count : '233',
-				content : [ new sap.m.RatingIndicator({
-					value : 3
-				}) ]
-			}) ]
-
-		})
-	});
-
-	var page6 = new sap.m.Page('page6', {
-		title : 'FixFlex horizontal with ITB',
-		enableScrolling : false,
-		content : [ oFixFlex6 ],
-		footer : fnCreateNavigation()
-	});
-
-	/* =============================================
-	 * Page 7!
-	 * ============================================ */
-
-	var oFixFlex7 = new sap.ui.layout.FixFlex({
-		
-		fixContent : [
-		// Dummy button
-		new sap.m.Button({
-			text : 'Dummy Button'
-		}),
-		// Dummy button
-		new sap.m.Button({
-			text : 'Dummy Button'
-		}) ],
-		
-		flexContent : new sap.m.IconTabBar({
-			upperCase : true,
-			layoutData : new sap.m.FlexItemData({
-				growFactor : 1
-			}),
-
-			items : [ new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem',
-				count : '3',
-				key : 'k1',
-				content : [ new sap.ui.table.AnalyticalTable({
-					visibleRowCountMode : 'Auto',
-					selectionMode : 'MultiToggle',
-					rowHeight : 32
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Ipsum',
-				count : '3',
-				key : 'key2',
-				content : [ new sap.m.Input({
-					placeholder : 'input placeholder'
-				}) ]
-			}), new sap.m.IconTabFilter({
-				iconColor : sap.ui.core.IconColor.Default,
-				text : 'Lorem Ipsum',
-				key : 'key3',
-				count : '233',
-				content : [ new sap.m.RatingIndicator({
-					value : 3
-				}) ]
-			}) ]
-
-		})
-	});
-
-	var oDialog = new sap.m.Dialog({
-		contentWidth: "90%",
-		contentHeight: "500px",
-		content: [
-			new sap.m.Page({
-				title : 'asdf',
-				enableScrolling : false,
-				content : oFixFlex7
-			})
-		],
-		buttons: [
-			new sap.m.Button({
-				text: "Close",
-				press: function(oEvent){
-					oDialog.close();
-				}
-			})
-		]
-	}).setVerticalScrolling(true).setHorizontalScrolling(true);
-	
-	var page7 = new sap.m.Page('page7', {
-		title : 'FixFlex horizontal with ITB',
-		enableScrolling : false,
-		content : new sap.m.Button({
-			text: "Open Dialog",
-			press: function(oEvent){
-				oDialog.open();
-			}
-		}),
-		footer : fnCreateNavigation()
-	});
-
-	/* =============================================
-	 * Navigation
-	 * ============================================ */
-	function fnCreateNavigation() {
-		return new sap.m.Bar({
-			contentMiddle : [ new sap.m.Button({
-				text : 'FixFlex Vertical',
-				press : function() {
-					app.to('page1');
-				}
-			}), new sap.m.Button({
-				text : 'FixFlex Horizontal',
-				press : function() {
-					app.to('page2');
-				}
-			}), new sap.m.Button({
-				text : 'FixFlex Table',
-				press : function() {
-					app.to('page3');
-				}
-			}), new sap.m.Button({
-				text : 'FixFlex in FixFlex',
-				press : function() {
-					app.to('page4');
-				}
-			}), new sap.m.Button({
-				text : 'FixFlex with no Fix content',
-				press : function() {
-					app.to('page5');
-				}
-			}), new sap.m.Button({
-				text : 'FixFlex Horizontal ITB',
-				press : function() {
-					app.to('page6');
-				}
-			}), new sap.m.Button({
-				text : 'FixFlex in a Dialog',
-				press : function() {
-					app.to('page7');
-				}
-			}) ]
-		});
-	}
-
-	app.addPage(page1).addPage(page2).addPage(page3).addPage(page4).addPage(page5).addPage(page6).addPage(page7).placeAt('body');
-</script>
-
-</head>
-<body id="body" class="sapUiBody">
-</body>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
 </html>

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.layout.ResponsiveFlowLayoutData
+	 * @alias sap.ui.layout.ResponsiveFlowLayoutData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveFlowLayoutData = LayoutData.extend("sap.ui.layout.ResponsiveFlowLayoutData", /** @lends sap.ui.layout.ResponsiveFlowLayoutData.prototype */ { metadata : {

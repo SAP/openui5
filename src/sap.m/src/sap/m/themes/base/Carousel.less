@@ -33,7 +33,7 @@
 	height: 100%;
 	position: relative;
 	white-space: nowrap;
-	text-align: left;
+	text-align: begin;
 	/*  Removes  inline-block  gaps  due  to  whitespace  */
 	font-size: 0;
 	/*  Configure  animations  */
@@ -50,6 +50,15 @@
 	-moz-transition-duration: 0.5s;
 	-ms-transition-duration: 0.5s;
 	transition-duration: 0.5s;
+}
+
+/* special handling for IE, as it does not support text-align: end */
+html[data-sap-ui-browser^="ie"] .sapMCrslInner {
+ 	text-align: left;
+}
+
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner {
+	text-align: right;
 }
 
 .sapMCrslItemTable {
@@ -87,13 +96,24 @@
 
 .sapMCrslFluid>.sapMCrslInner>* {
 	box-sizing: border-box;
-	-ms-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 }
 
 .sapMCrslItemTable,
 .sapMCrslItem>.sapMScrollCont>.sapMScrollContScroll {
 	height: 100%;
 	width: 100%;
-} 
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMCrsl", ~"> .sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll");
+
+
+
+/* Styles needed for keyboard handling
+   ========================================================================== */
+.sapMCrslItem {
+  visibility: hidden;
+}
+.sapMCrslActive {
+  visibility: visible;
+}

@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @name sap.ui.model.control.ControlModel
+	 * @alias sap.ui.model.control.ControlModel
 	 */
 	var ControlModel = Model.extend("sap.ui.model.control.ControlModel", /** @lends sap.ui.model.control.ControlModel.prototype */ {
 		
@@ -42,18 +42,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 	
 	});
 	
-	/**
-	 * @name sap.ui.model.control.ControlModel#destroy
-	 * @function
-	 */
+	/**	 */
 	ControlModel.prototype.destroy = function() {
 		this.oControl.detachEvent("_change", this.checkUpdate, this);
 	};
 	
-	/**
-	 * @name sap.ui.model.control.ControlModel#addFacadeComponent
-	 * @function
-	 */
+	/**	 */
 	ControlModel.prototype.addFacadeComponent = function(oElement) {
 		var i = jQuery.inArray(oElement, this.oElements);
 		if ( i < 0 ) {
@@ -62,10 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 		}
 	};
 	
-	/**
-	 * @name sap.ui.model.control.ControlModel#removeFacadeComponent
-	 * @function
-	 */
+	/**	 */
 	ControlModel.prototype.removeFacadeComponent = function(oElement) {
 		var i = jQuery.inArray(oElement, this.oElements);
 		if ( i >= 0 ) {
@@ -76,8 +67,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 	
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
-	 * @name sap.ui.model.control.ControlModel#bindProperty
-	 * @function
 	 */
 	ControlModel.prototype.bindProperty = function(sPath, oContext) {
 		oContext = oContext || this.oControl;
@@ -87,10 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 		return new ControlPropertyBinding(this, sPath, oContext);
 	};
 	
-	/**
-	 * @name sap.ui.model.control.ControlModel#checkUpdate
-	 * @function
-	 */
+	/**	 */
 	ControlModel.prototype.checkUpdate = function(oEvent) {
 		if ( this._onchange ) {
 			this._onchange(oEvent);
@@ -106,4 +92,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 
 	return ControlModel;
 
-}, /* bExport= */ true);
+});

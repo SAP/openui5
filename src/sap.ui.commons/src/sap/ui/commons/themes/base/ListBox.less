@@ -64,7 +64,6 @@
 .sapUiLbxDis > ul .sapUiLbxIIco > img,
 .sapUiLbxIDis > .sapUiLbxIIco > img {
 	opacity: 0.5;
-	filter: alpha(opacity=50);
 }
 
 .sapUiLbxRo {
@@ -114,17 +113,8 @@ html[data-sap-ui-browser^="ie"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:las
 	padding-right: 2px;
 }
 
-/*ONLY IE8: when width is not set, a scrollbar may cover the last part of the text which is not nice because no width means "adapted to content" */
-html[data-sap-ui-browser="ie8"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 16px;
-}
-
 .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
 	padding-right: 18px; /* above mentioned problem does not appear in IE9 */
-}
-
-html[dir=rtl][data-sap-ui-browser=ff3] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 20px; /* in FF3.6 in RTL the scrollbar is still on the right, so increase the padding a bit because clipping looks more unlogical */
 }
 
 .sapUiLbxIIco,

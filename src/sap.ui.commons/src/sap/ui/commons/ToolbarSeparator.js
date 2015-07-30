@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ToolbarSeparator
+	 * @alias sap.ui.commons.ToolbarSeparator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolbarSeparator = Element.extend("sap.ui.commons.ToolbarSeparator", /** @lends sap.ui.commons.ToolbarSeparator.prototype */ { metadata : {

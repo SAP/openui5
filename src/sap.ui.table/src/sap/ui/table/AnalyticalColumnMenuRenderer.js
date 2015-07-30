@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ColumnMenuRendere
 
 
 	/**
-	 * @class AnalyticalTable renderer.
-	 * @static
+	 * AnalyticalTable renderer.
+	 * @namespace
 	 */
 	var AnalyticalColumnMenuRenderer = Renderer.extend(ColumnMenuRenderer);
 

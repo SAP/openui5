@@ -8,12 +8,13 @@ module.exports = function(grunt, config) {
 		browsers = browsers.split(',');
 	}
 
-	var selenium_qunit = {
-		options: {
-			browsers: browsers,
-			reportsDir: 'target/surefire-reports'
+	return {
+		run: {
+			options: {
+				browsers: browsers,
+				contextPath: '/' + config.testsuite.name,
+				reportsDir: 'target/surefire-reports'
+			}
 		}
 	};
-
-	return selenium_qunit;
 };

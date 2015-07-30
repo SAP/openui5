@@ -11,7 +11,12 @@
       data-sap-ui-noConflict="true"
       data-sap-ui-libs="sap.ui.commons">
     </script>
-    
+    <style>
+        /* Keep appearing scrollbar from messing up our tests... */
+        html {
+            overflow: scroll;
+        }
+    </style>
     <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -301,11 +306,11 @@
     </script>
   </head>
   <body>
+    <div id="qunit-fixture">test markup, will be hidden</div>
+    <div id="uiArea1"></div>  
     <h1 id="qunit-header">qUnit Page for sap.ui.commons.Splitter</h1>
     <h2 id="qunit-banner"></h2>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests"></ol>
-    <div id="qunit-fixture">test markup, will be hidden</div>
-    <div id="uiArea1"></div>  
   </body>
 </html>

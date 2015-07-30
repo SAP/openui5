@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.App
+	 * @alias sap.m.App
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var App = NavContainer.extend("sap.m.App", /** @lends sap.m.App.prototype */ { metadata : {

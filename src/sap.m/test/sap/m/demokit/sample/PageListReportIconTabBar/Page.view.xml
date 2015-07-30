@@ -1,9 +1,11 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
 	xmlns:t="sap.ui.table"
 	xmlns:fb="sap.ui.comp.filterbar"
+	xmlns:var="sap.ui.comp.variants"
 	height="100%">
-	<Page title="Title" enableScrolling="false" class="sapMSampleFioriListReportIconTabBarOverflow">
+	<Page title="Title" enableScrolling="true" class="sapMSampleFioriListReportIconTabBarOverflow">
 		<content>
 			<VBox fitContainer="true" class="sapMSampleFioriListReportIconTabBar">
 				<fb:FilterBar>
@@ -51,8 +53,11 @@
 							</fb:control>
 						</fb:FilterGroupItem>
 					</fb:filterGroupItems>
+					<fb:layoutData>
+						<FlexItemData shrinkFactor="0"/>
+					</fb:layoutData>
 				</fb:FilterBar>
-				<IconTabBar upperCase="true" expandable="false">
+				<IconTabBar upperCase="true" expandable="false" applyContentPadding="true" stretchContentHeight="true" class="sapUiResponsiveContentPadding">
 					<items>
 						<IconTabFilter text="Balances" />
 						<IconTabFilter text="Compare" />
@@ -60,9 +65,12 @@
 					<content>
 						<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 							<t:toolbar>
-								<Toolbar design="Solid">
-									<Label text="Variant:" labelFor="select" />
-									<Select id="select" width="12rem" />
+								<Toolbar>
+									<var:VariantManagement>
+									  <var:items>
+										<c:Item text="My Better Variant" key="MBV"/>
+										</var:items>
+									</var:VariantManagement>
 									<ToolbarSpacer />
 									<SearchField width="12rem" />
 									<ToolbarSpacer width="1rem" />

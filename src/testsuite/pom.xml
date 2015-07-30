@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>testsuite</artifactId>
-	<version>1.25.0-SNAPSHOT</version>
+	<version>1.31.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 
@@ -54,27 +54,10 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.3.2</version>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>testsuite-utils</artifactId>
+			<version>${project.version}</version>
 		 </dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mozilla</groupId>
-			<artifactId>rhino</artifactId>
-			<version>1.7R4</version>
-		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -118,6 +101,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>sap.ui.dt</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>themelib_sap_bluecrystal</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -134,5 +122,205 @@
 
 	</dependencies>
 
+
+	<!--**************************************************************************
+	* POM SECTION: Profile Settings
+	***************************************************************************-->
+
+	<profiles>
+
+		<profile>
+
+			<id>eslint.build</id>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.10</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.sap.ui5.tools.eslint</groupId>
+									<artifactId>eslint-plugin-openui5</artifactId>
+									<version>0.1.0-SNAPSHOT</version>
+									<outputDirectory>${project.build.directory}/eslint-plugin-openui5</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>com.sap.eslint</groupId>
+						<artifactId>eslint-maven-plugin</artifactId>
+						<version>0.1.8</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>eslint</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<version>0.21.1</version>
+							<skip>false</skip>
+							<failOnError>true</failOnError>
+							<onlyChangedFiles>true</onlyChangedFiles>
+							<quiet>true</quiet>
+							<includes>
+								<include>src/**</include>
+							</includes>
+							<plugins>
+								<openui5>${project.build.directory}/eslint-plugin-openui5/plugin.js</openui5>
+							</plugins>
+							<formatters>
+								<formatter implementation="com.sap.eslint.java.formatters.JSLintSonarFormatter">
+									<outputFile>${project.build.directory}/jslint/jslint.xml</outputFile>
+								</formatter>
+							</formatters>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+
+		<profile>
+
+			<id>nightly.build</id>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.sap.eslint</groupId>
+						<artifactId>eslint-maven-plugin</artifactId>
+						<version>0.1.8</version>
+						<configuration>
+							<onlyChangedFiles>false</onlyChangedFiles>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+
+		<profile>
+
+			<!--
+				This profile can be used to run an embedded Jetty with the UI5 testsuite.
+				To start the Jetty you can run the following Maven command: 
+					
+					mvn clean integration-test -P jetty
+				
+				The Jetty will be started on port 8080 and block the console as long as
+				the Jetty is running and can be stopped with CTRL+C.
+				
+				BUT: before this will work you need to install the UI5 libraries into 
+				your local Maven repository once with: mvn clean install within the 
+				reactor of the openui5 project in the root folder of this Git repository.
+				
+				In order to execute the build and run the Jetty afterwards you can do
+				so by executing the following Maven command in the root folder of this
+				Git repository: 
+				
+					mvn clean integration-test -P jetty,testsuite.build
+				
+				This will build all UI5 libraries and the Java artifacts and finally 
+				the build results will be used for the deployment into the Jetty server.
+				Again you can stop the Jetty with CTRL-C once you need to rebuild or
+				retest.
+				
+				INFO: since this server is using the build artifacts changes in the 
+				source code will not directly get reflected in the server without 
+				rebuilding the UI5 library (mvn clean install) which has been changed
+				or execute the build on the full project.
+			-->
+
+			<id>jetty</id>
+
+			<build>
+				<plugins>
+
+					<!-- create the tmpdir for the Jetty container -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>create-temp-dir</id>
+								<phase>initialize</phase>
+								<configuration>
+									<target>
+										<delete dir="${project.build.directory}/temp/"/>
+										<mkdir dir="${project.build.directory}/temp/"/>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Usage of embedded Jetty for deploying test applications -->
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<version>1.4.13</version>
+						<executions>
+							<execution>
+								<id>start-container</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>run</goal><!-- start (non-blocking) || run (blocking) -->
+								</goals>
+							</execution>
+							<execution>
+								<id>stop-container</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<container>
+								<containerId>jetty8x</containerId>
+								<type>embedded</type>
+								<systemProperties>
+									<java.io.tmpdir>${project.build.directory}/temp/</java.io.tmpdir>
+								</systemProperties>
+							</container>
+							<configuration>
+								<properties>
+									<cargo.servlet.port>8080</cargo.servlet.port>
+								</properties>
+							</configuration>
+							<deployables>
+								<deployable>
+									<location>${project.build.directory}/${project.build.finalName}.${project.packaging}</location>
+									<properties>
+										<context>${project.artifactId}</context>
+									</properties>
+								</deployable>
+							</deployables>
+						</configuration>
+					</plugin> 
+
+				</plugins>
+			</build>
+
+		</profile>
+
+	</profiles>
 
 </project>

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.9.0
-	 * @name sap.m.TextArea
+	 * @alias sap.m.TextArea
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextArea = InputBase.extend("sap.m.TextArea", /** @lends sap.m.TextArea.prototype */ { metadata : {
@@ -56,7 +56,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			/**
 			 * The wrap attribute specifies how the text in a text area is to be wrapped when submitted in a form. Possible values are: Soft, Hard, Off.
 			 */
-			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : null}
+			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : null},
+	
+			/**
+			 * Indicates when the value gets updated with the user changes: At each keystroke (true) or first when the user presses enter or tabs out (false).
+			 * @since 1.30
+			 */
+			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		events : {
 	
@@ -75,17 +81,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		}
 	}});
 	
-	TextArea.prototype.init = function() {
-		InputBase.prototype.init.call(this);
-		this._inputProxy = jQuery.proxy(this._onInput, this);
-	};
-	
 	// Attach listeners on after rendering and find iscroll
 	TextArea.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
-	
-		// bind events
-		this.bindToInputEvent(this._inputProxy);
 	
 		// touch browser behaviour differs
 		if (sap.ui.Device.support.touch) {
@@ -115,31 +113,65 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	// Overwrite input base revert handling for escape 
 	// to fire own liveChange event and property set
 	TextArea.prototype.onValueRevertedByEscape = function(sValue) {
-		this._onInput();
-	};
-	
-	TextArea.prototype._onInput = function(oEvent) {
-		var value = this._$input.val();
-	
-		// some browsers does not respect to maxlength property of textarea
-		if (this.getMaxLength() > 0 && value.length > this.getMaxLength()) {
-			value = value.substring(0, this.getMaxLength());
-			this._$input.val(value);
-		}
-	
-		if (value != this.getValue()) {
-			this.setProperty("value", value, true);
+		// update value property if needed
+		if (this.getValueLiveUpdate()) {
+			this.setProperty("value", sValue, true);
 
 			// get the value back maybe there is a formatter
-			value = this.getValue();
-			
-			this.fireLiveChange({
-				value: value,
-	
-				// backwards compatibility
-				newValue: value
-			});
+			sValue = this.getValue();
 		}
+		
+		this.fireLiveChange({
+			value: sValue,
+
+			// backwards compatibility
+			newValue: sValue
+		});
+	};
+	
+	/**
+	 * Getter for property <code>value</code>.
+	 * Defines the value of the control's input field.
+	 *
+	 * Default value is <code>undefined</code>
+	 *
+	 * @return {string} the value of property <code>value</code>
+	 * @public
+	 */
+	TextArea.prototype.getValue = function() {
+		var oDomRef = this.getFocusDomRef();
+		return oDomRef ? oDomRef.value : this.getProperty("value");
+	};
+	
+	TextArea.prototype.oninput = function(oEvent) {
+		InputBase.prototype.oninput.call(this, oEvent);
+		if (oEvent.isMarked("invalid")) {
+			return;
+		}
+
+		var sValue = this._$input.val(),
+			iMaxLength = this.getMaxLength();
+	
+		// some browsers do not respect to maxlength property of textarea
+		if (iMaxLength > 0 && sValue.length > iMaxLength) {
+			sValue = sValue.substring(0, iMaxLength);
+			this._$input.val(sValue);
+		}
+		
+		// update value property if needed
+		if (this.getValueLiveUpdate()) {
+			this.setProperty("value", sValue, true);
+
+			// get the value back maybe there is a formatter
+			sValue = this.getValue();
+		}
+		
+		this.fireLiveChange({
+			value: sValue,
+
+			// backwards compatibility
+			newValue: sValue
+		});
 	};
 	
 	/**

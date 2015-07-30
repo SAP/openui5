@@ -1,98 +1,40 @@
 /* ============================================= */
-/* CSS for control sap.m/BusyDialog.control      */
+/* CSS for control sap.m.BusyDialog              */
 /* High Contrast Black theme                     */
 /* ============================================= */
 
 .sapMDialogBLyInit {
-	opacity: 1;
 	background: fade(@sapHCStandardBG, 30%);
+	opacity: 1;
 }
+
 .sapMBusyDialog {
 	background: @sapHCStandardBG;
 	border: 0.125rem solid @sapHCStandardFG;
-}
-.sapMBusyDialogSimple {
-	background: transparent;
-	border: none;
-}
-.sapMBusyDialog .sapMDialogTitle{
-	height: 3rem;
-	line-height: 3rem;
-	background: none;
-	color: @sapHCStandardFG;
-	text-shadow: none;
-	box-shadow: none;
-}
-.sapMBusyDialog .sapMBusyIndicator {
-	margin: 1rem;
-}
 
-.sapMBusyDialogLabel {
-	margin-top: 1rem;
-}
-footer.sapMBusyDialogFooter {
-	height: 3rem;
-	color: @sapHCStandardFG;
-	background-color: transparent;
-	background-image: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
+	&:not(.sapMBusyDialogSimple) {
+		border-radius: 0.25rem;
+		box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
+	}
 
-.sapMBusyDialog .sapMDialogBtnPhone {
-	color: white;
-	width: 100%;
-	padding: 0;
-	margin: 0;
-	background: transparent;
-	font-size: 0.875rem;
-	line-height: 3.0rem;
-	border: none;
-}
+	.sapMDialogTitle {
+		background: none;
+		border-bottom: 1px solid @sapHCStandardFG;
+		color: @sapHCStandardFG;
+	}
 
-/* Compact size */
-.sapUiSizeCompact.sapMBusyDialog{
-	.sapMDialogTitle{
-		height: 1.625rem;
-		line-height: 1.625rem;
-		padding: 0.1875rem 0.5rem;
-	}
-	.sapMBusyIndicator {
-		margin: 0.5rem;
-	}
-	.sapMBusyDialogLabel {
-		margin-top: 0.5rem;
-	}
 	.sapMBusyDialogFooter {
-		height: 2rem;
-		line-height: 1.625rem;
-		padding: 0.1875rem 0.25rem;
+		border-bottom-left-radius: 0.125rem;
+		border-bottom-right-radius: 0.125rem;
+		border-top: 1px solid @sapHCStandardFG;
+		color: @sapHCStandardFG;
 	}
-	.sapMDialogBtnPhone {
-		line-height: 1.625rem;
-		border: none;
-	}
-}
-
-/* HCB Additional Styles */
-.sapMBusyDialog:not(.sapMBusyDialogSimple) {
-	border-radius: 0.25rem;
-	box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
 }
 
 .sapMBusyDialogSimple .sapMBusyIndicator {
-	padding: 1rem;
 	background: @sapHCStandardBG;
 	border: 0.125rem solid @sapHCStandardFG;
 	border-radius: 0.25rem;
 	box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-}
-
-.sapMBusyDialog .sapMDialogTitle {
-	border-bottom: 1px solid @sapHCStandardFG;
-}
-
-.sapMBusyDialog footer,
-footer.sapMBusyDialogFooter {
-	border-top: 1px solid @sapHCStandardFG;
+	padding: 1rem;
 }

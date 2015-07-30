@@ -1,0 +1,102 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.Sorting.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				selectionMode="MultiToggle"
+				rows="{/ProductCollection}"
+				visibleRowCount="7"
+				sort="sortDeliveryDate">
+				<toolbar>
+					<m:Toolbar>
+						<m:Title text="Products"></m:Title>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://sorting-ranking"
+							tooltip="Sort ascending across Categories and Name"
+							press="sortCategoriesAndName"/>
+						<m:Button
+							icon="sap-icon://sort"
+							tooltip="Sort Categories"
+							press="sortCategories"/>
+						<m:Button
+							icon="sap-icon://decline"
+							tooltip="Clear all sortings"
+							press="clearAllSortings"/>
+					</m:Toolbar>
+				</toolbar>
+				<columns>
+					<Column
+						id="name"
+						width="11rem"
+						sortProperty="Name">
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}"/>
+						</template>
+					</Column>
+					<Column
+						id="categories"
+						width="11rem"
+						showSortMenuEntry="false"
+						sortProperty="Category">
+						<m:Label text="Category" />
+						<template>
+							<m:Text text="{Category}"/>
+						</template>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Image" />
+						<template>
+							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</template>
+					</Column>
+					<Column
+						id="quantity"
+						width="6rem"
+						hAlign="End"
+						sortProperty="Quantity">
+						<m:Label text="Quantity" />
+						<template>
+							<m:Label text="{
+								path: 'Quantity',
+								type: 'sap.ui.model.type.Integer'
+							}" />
+						</template>
+					</Column>
+					<Column
+						id="deliverydate"
+						width="9rem"
+						sortProperty="DeliveryDateStr">
+						<m:Label text="Delivery Date" />
+						<template>
+							<m:Text text="{
+								path: 'DeliveryDateStr',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'dd/MM/yyyy'}, style: 'long'}
+							}"/>
+						</template>
+					</Column>
+				</columns>
+				<footer>
+					<m:Toolbar>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://hint"
+							tooltip="Show information"
+							press="showInfo"/>
+					</m:Toolbar>
+				</footer>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

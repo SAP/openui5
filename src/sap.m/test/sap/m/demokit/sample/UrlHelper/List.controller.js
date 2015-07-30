@@ -1,28 +1,40 @@
-sap.ui.controller("sap.m.sample.UrlHelper.List", {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, Controller, JSONModel) {
+	"use strict";
 
-	onInit : function () {
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/supplier.json");
-		this.getView().setModel(oModel);
-	},
+	var ListController = Controller.extend("sap.m.sample.UrlHelper.List", {
 
-	_getVal: function(evt) {
-		return sap.ui.getCore().byId(evt.getParameter('id')).getValue();
-	},
+		onInit : function () {
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/supplier.json"));
+			this.getView().setModel(oModel);
+		},
 
-	handleTelPress: function (evt) {
-		sap.m.URLHelper.triggerTel(this._getVal(evt));
-	},
+		_getVal: function(evt) {
+			return sap.ui.getCore().byId(evt.getParameter('id')).getValue();
+		},
 
-	handleSmsPress: function (evt) {
-		sap.m.URLHelper.triggerSms(this._getVal(evt));
-	},
+		handleTelPress: function (evt) {
+			sap.m.URLHelper.triggerTel(this._getVal(evt));
+		},
 
-	handleEmailPress: function (evt) {
-		sap.m.URLHelper.triggerEmail(this._getVal(evt), "Info Request");
-	},
+		handleSmsPress: function (evt) {
+			sap.m.URLHelper.triggerSms(this._getVal(evt));
+		},
 
-	handleUrlPress: function (evt) {
-		sap.m.URLHelper.redirect(this._getVal(evt), true);
-	}
+		handleEmailPress: function (evt) {
+			sap.m.URLHelper.triggerEmail(this._getVal(evt), "Info Request");
+		},
+
+		handleUrlPress: function (evt) {
+			sap.m.URLHelper.redirect(this._getVal(evt), true);
+		}
+	});
+
+
+	return ListController;
+
 });

@@ -1,6 +1,13 @@
-sap.ui.controller("sap.ui.core.sample.Icon.IconGroup", {
-	handleStethoscopePress: function(evt) {
-		jQuery.sap.require("sap.m.MessageToast");
-		sap.m.MessageToast.show("Over budget!");
-	}
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'],
+	function(Controller, MessageToast) {
+	"use strict";
+
+	var IconGroupController = Controller.extend("sap.ui.core.sample.Icon.IconGroup", {
+		handleStethoscopePress: function(evt) {
+			MessageToast.show("Over budget!");
+		}
+	});
+
+	return IconGroupController;
+
 });

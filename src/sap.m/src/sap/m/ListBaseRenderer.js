@@ -8,10 +8,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 
 	/**
-	 * @class List renderer.
-	 * @static
+	 * List renderer.
+	 * @namespace
 	 */
 	var ListBaseRenderer = {};
+	
+	/**
+	 * Determines the order of the mode for the renderer
+	 * -1 is for the beginning of the content
+	 * +1 is for the end of the content
+	 *  0 is to ignore this mode 
+	 * @static
+	 */
+	ListBaseRenderer.ModeOrder = {
+		None : 0,
+		Delete : 1,
+		MultiSelect : -1,
+		SingleSelect : 1,
+		SingleSelectLeft : -1,
+		SingleSelectMaster : 0
+	};
 	
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -25,16 +41,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	 *          rendered
 	 */
 	ListBaseRenderer.render = function(rm, oControl) {
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// container
 		rm.write("<div");
 		rm.addClass("sapMList");
 		rm.writeControlData(oControl);
 		rm.writeAttribute("tabindex", "-1");
+		rm.writeAttribute("role", "presentation");
+		
 		if (oControl.getInset()) {
 			rm.addClass("sapMListInsetBG");
 		}
@@ -45,6 +58,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		// background
 		if (oControl.getBackgroundDesign) {
 			rm.addClass("sapMListBG" + oControl.getBackgroundDesign());
+		}
+		
+		// tooltip
+		var sTooltip = oControl.getTooltip_AsString();
+		if (sTooltip) {
+			rm.writeAttributeEscaped("title", sTooltip);
 		}
 	
 		// run hook method
@@ -62,7 +81,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			oHeaderTBar.addStyleClass("sapMListHdrTBar");
 			rm.renderControl(oHeaderTBar);
 		} else if (sHeaderText) {
-			rm.write("<div class='sapMListHdr'>");
+			rm.write("<div class='sapMListHdr'");
+			rm.writeAttribute("id", oControl.getId("header"));
+			rm.write(">");
 			rm.writeEscaped(sHeaderText);
 			rm.write("</div>");
 		}
@@ -74,14 +95,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			oInfoTBar.addStyleClass("sapMListInfoTBar");
 			rm.renderControl(oInfoTBar);
 		}
+		
+		// determine items rendering 
+		var aItems = oControl.getItems(true);
+		var bRenderItems = oControl.shouldRenderItems() && aItems.length;
 	
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
+		
+		// write accessibility state
+		rm.writeAccessibilityState(oControl, this.getAccessibilityState(oControl));
 	
 		// list attributes
 		rm.addClass("sapMListUl");
-		rm.writeAttribute("tabindex", "0");
 		rm.writeAttribute("id", oControl.getId("listUl"));
+		if (bRenderItems || oControl.getShowNoData()) {
+			rm.writeAttribute("tabindex", "0");
+		}
 	
 		// separators
 		rm.addClass("sapMListShowSeparators" + oControl.getShowSeparators());
@@ -101,17 +131,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		this.renderListHeadAttributes(rm, oControl);
 	
 		// render child controls
-		var aItems = oControl.getItems();
-		var bRenderItems = oControl.shouldRenderItems();
-	
-		//TODO: There should be a better way to set these private variables
 		bRenderItems && aItems.forEach(function(oItem) {
-			oControl._applySettingsToItem(oItem, true);
 			rm.renderControl(oItem);
 		});
 	
 		// render no-data if needed
-		if ((!bRenderItems || !aItems.length) && oControl.getShowNoData()) {
+		if (!bRenderItems && oControl.getShowNoData()) {
 			// hook method to render no data
 			this.renderNoData(rm, oControl);
 		}
@@ -120,8 +145,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		this.renderListEndAttributes(rm, oControl);
 	
 		// dummy after focusable area
-		rm.write("<div tabindex='0'");
+		rm.write("<div");
 		rm.writeAttribute("id", oControl.getId("after"));
+		if (bRenderItems || oControl.getShowNoData()) {
+			rm.writeAttribute("tabindex", "0");
+		}
 		rm.write("></div>");
 		
 		// render growing delegate if available
@@ -131,7 +159,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	
 		// footer
 		if (oControl.getFooterText()) {
-			rm.write("<footer class='sapMListFtr'>");
+			rm.write("<footer class='sapMListFtr'");
+			rm.writeAttribute("id", oControl.getId("footer"));
+			rm.write(">");
 			rm.writeEscaped(oControl.getFooterText());
 			rm.write("</footer>");
 		}
@@ -170,6 +200,74 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	};
 	
 	/**
+	 * Returns aria accessibility role
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String}
+	 */
+	ListBaseRenderer.getAriaRole = function(oControl) {
+		return "listbox";
+	};
+	
+	/**
+	 * Returns the inner aria labelledby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control 
+	 * @returns {String|undefined} 
+	 */
+	ListBaseRenderer.getAriaLabelledBy = function(oControl) {
+		var oHeaderTBar = oControl.getHeaderToolbar();
+		if (oHeaderTBar) {
+			return oHeaderTBar.getTitleId();
+		} else if (oControl.getHeaderText()) {
+			return oControl.getId("header");
+		}
+	};
+	
+	/**
+	 * Returns the inner aria describedby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String|undefined} 
+	 */
+	ListBaseRenderer.getAriaDescribedBy = function(oControl) {
+		if (oControl.getFooterText()) {
+			return oControl.getId("footer");
+		}
+	};
+	
+	/**
+	 * Returns the accessibility state of the control
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 */
+	ListBaseRenderer.getAccessibilityState = function(oControl) {
+		
+		var mMode = sap.m.ListMode,
+			sMode = oControl.getMode(),
+			bMultiSelectable;
+		
+		if (sMode == mMode.MultiSelect) {
+			bMultiSelectable = true;
+		} else if (sMode != mMode.None && sMode != mMode.Delete) {
+			bMultiSelectable = false;
+		}
+		
+		return {
+			role : this.getAriaRole(oControl),
+			multiselectable : bMultiSelectable,
+			labelledby : {
+				value : this.getAriaLabelledBy(oControl),
+				append : true
+			}, 
+			describedby : {
+				value : this.getAriaDescribedBy(oControl),
+				append : true
+			}
+		};
+	};
+	
+	/**
 	 * This hook method is called to finish list rendering
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
@@ -193,11 +291,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.writeClasses();
 		rm.write(">");
 		
-		rm.write("<span");
+		rm.write("<div");
+		rm.addClass("sapMListNoDataText");
 		rm.writeAttribute("id", oControl.getId("nodata-text"));
+		rm.writeClasses();
 		rm.write(">");
 		rm.writeEscaped(oControl.getNoDataText(true));
-		rm.write("</span>");
+		rm.write("</div>");
 		
 		rm.write("</li>");
 	};

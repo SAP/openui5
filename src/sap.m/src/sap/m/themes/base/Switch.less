@@ -20,6 +20,10 @@
 	display: inline-block;
 	vertical-align: top;
 	outline: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .sapMSwtCont:not(.sapMSwtContDisabled) {
@@ -28,10 +32,6 @@
 
 .sapMSwtCont > input {
 	display: none;
-}
-
-.sapMSwtContDisabled {
-	pointer-events: none;
 }
 
 /* ------------------------------ */
@@ -71,7 +71,7 @@
 	text-align: center;
 }
 
-.sapMSwtText > span {
+.sapMSwtLabel {
 	white-space: nowrap;
 	text-decoration: none;
 	text-overflow: ellipsis;
@@ -97,8 +97,8 @@
 /* Switch text                    */
 /* ------------------------------ */
 
-.sapMSwtAcceptReject .sapMSwtTextOn > span::before,
-.sapMSwtAcceptReject .sapMSwtTextOff > span::before {
+.sapMSwtAcceptReject .sapMSwtLabelOn::before,
+.sapMSwtAcceptReject .sapMSwtLabelOff::before {
 	font-family: 'SAP-icons';
 	speak: none;
 }

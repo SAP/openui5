@@ -1,36 +1,47 @@
-jQuery.sap.require("sap.m.TablePersoController");
-jQuery.sap.require("sap.m.sample.TablePerso.DemoPersoService");
-jQuery.sap.require("sap.m.sample.TablePerso.Formatter");
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/m/TablePersoController',
+		'./DemoPersoService',
+		'./Formatter',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, TablePersoController, DemoPersoService, Formatter, Controller, JSONModel) {
+	"use strict";
 
-sap.ui.controller("sap.m.sample.TablePerso.Table", {
+	var TableController = Controller.extend("sap.m.sample.TablePerso.Table", {
 
-	onInit: function () {
+		onInit: function () {
 
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
-		var oGroupingModel = new sap.ui.model.json.JSONModel({ hasGrouping: false});
-		this.getView().setModel(oModel);
-		this.getView().setModel(oGroupingModel, 'Grouping');
-		
-		// init and activate controller
-		this._oTPC = new sap.m.TablePersoController({
-			table: this.getView().byId("productsTable"),
-			//specify the first part of persistence ids e.g. 'demoApp-productsTable-dimensionsCol'
-			componentName: "demoApp",
-			persoService: sap.m.sample.TablePerso.DemoPersoService,
-		}).activate();
-	},
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oGroupingModel = new JSONModel({ hasGrouping: false});
+			this.getView().setModel(oModel);
+			this.getView().setModel(oGroupingModel, 'Grouping');
 
-	onPersoButtonPressed: function (oEvent) {
-		this._oTPC.openDialog();
-	},
-	
-	onTablePersoRefresh : function() {
-		sap.m.sample.TablePerso.DemoPersoService.resetPersData();
-		this._oTPC.refresh();	
-	},
-	
-	onTableGrouping : function(oEvent) {
-		this._oTPC.setHasGrouping(oEvent.getSource().getSelected());
-	}
+			// init and activate controller
+			this._oTPC = new TablePersoController({
+				table: this.getView().byId("productsTable"),
+				//specify the first part of persistence ids e.g. 'demoApp-productsTable-dimensionsCol'
+				componentName: "demoApp",
+				persoService: DemoPersoService,
+			}).activate();
+		},
+
+		onPersoButtonPressed: function (oEvent) {
+			this._oTPC.openDialog();
+		},
+
+		onTablePersoRefresh : function() {
+			DemoPersoService.resetPersData();
+			this._oTPC.refresh();
+		},
+
+		onTableGrouping : function(oEvent) {
+			this._oTPC.setHasGrouping(oEvent.getSource().getSelected());
+		}
+	});
+
+
+	return TableController;
+
 });

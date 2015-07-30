@@ -1,24 +1,30 @@
-jQuery.sap.declare("sap.ui.unified.sample.CalendarSpecialDaysLegend.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.Component", {
+	var Component = UIComponent.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.Component", {
 
-	metadata : {
-		rootView : "sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend",
-		dependencies : {
-			libs : [
-				"sap.ui.unified", 
-				"sap.ui.layout", 
-				"sap.m"
-			]
-		},
-		includes: ["style.css"],
-		config : {
-			sample : {
-				files : [
-					"CalendarSpecialDaysLegend.view.xml",
-					"CalendarSpecialDaysLegend.controller.js"
+		metadata : {
+			rootView : "sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend",
+			dependencies : {
+				libs : [
+					"sap.ui.unified", 
+					"sap.ui.layout", 
+					"sap.m"
 				]
+			},
+			includes: ["style.css"],
+			config : {
+				sample : {
+					files : [
+						"CalendarSpecialDaysLegend.view.xml",
+						"CalendarSpecialDaysLegend.controller.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

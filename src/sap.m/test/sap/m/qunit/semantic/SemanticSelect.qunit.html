@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>Test Page for sap.m.semantic.SemanticSelect</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script>
+
+		jQuery.sap.require("sap.m.semantic.SortSelect");
+		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+
+		module("Semantic Select Control", {
+			setUp: function () {
+
+			},
+
+			tearDown: function () {
+				jQuery("#qunit-fixture-visible").html("");
+			}
+		});
+
+		test("has valid behavior", function () {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel(),
+					aSampleData = [
+						{
+							key: "price"
+						},
+						{
+							key: "name"
+						},
+						{
+							key: "date"
+						},
+						{
+							key: "description"
+						}
+					], oItemTemplate = new sap.ui.core.Item({
+						key: "{key}"
+					}),
+					bChangeEventHasFired = false,
+					oSemanticSelect = new sap.m.semantic.SortSelect({
+						items: {
+							path: "/",
+							template: oItemTemplate
+						}, change: function () {
+							bChangeEventHasFired = true;
+						}
+					});
+
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oModel.setData(aSampleData);
+			oSemanticSelect.setModel(oModel);
+
+			// Assert
+			strictEqual(oSemanticSelect.getEnabled(), true, "The property 'enabled' is correctly set to true");
+
+			// Act
+			var bElementEquality = true;
+
+			aSampleData.forEach(function (oItem, iIndex) {
+				if (oItem.key !== oSemanticSelect.getItemAt(iIndex).getKey()) {
+					bElementEquality = false;
+				}
+			});
+
+			// Assert
+			strictEqual(bElementEquality, true, "The model collection is bound to the Items aggregation");
+
+			// Assert
+			strictEqual(bElementEquality, true, "'getItemAt()' returns the correct elements");
+
+			// Act
+			var oItemToSetAsSelected = oSemanticSelect.getItemAt(3);
+			oSemanticSelect.setSelectedItem(oItemToSetAsSelected);
+			var oSelectedItem = oSemanticSelect.getSelectedItem();
+
+			// Assert
+			strictEqual(oSelectedItem, oItemToSetAsSelected, "'setSelectedItem()' changes the selected item correctly");
+
+			// Assert
+			strictEqual(oSemanticSelect.getSelectedItem(), oItemToSetAsSelected, "'getSelectedItem()' returns the selected item correctly");
+		});
+
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">QUnit tests: sap.m.semantic.SemanticSelect</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<!--<div id="qunit-testrunner-toolbar"></div>-->
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+<div id="qunit-fixture-visible"></div>
+</body>
+</html>

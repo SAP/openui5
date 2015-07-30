@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+
+	<form:SimpleForm>
+		<form:title>
+			<core:Title text="Identification"/>
+		</form:title>
+		<!-- to show at most 3 ID fields, use:
+			list="{path:'entityType>com.sap.vocabularies.UI.v1.Identification',length:3}"
+		-->
+		<template:repeat list="{entityType>com.sap.vocabularies.UI.v1.Identification}" var="field">
+			<template:if test="{field>Label}"><!--DataFieldAbstract Label is Nullable -->
+				<template:then>
+					<Label text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				</template:then>
+				<template:else>
+					<template:with path="field>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+						<Label text="{path: 'target>com.sap.vocabularies.Common.v1.Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					</template:with>
+				</template:else>
+			</template:if>
+			<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+		</template:repeat>
+	</form:SimpleForm>
+</core:FragmentDefinition>

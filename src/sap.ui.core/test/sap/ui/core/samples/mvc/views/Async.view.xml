@@ -1,0 +1,67 @@
+<mvc:View controllerName="sap.ui.core.mvctest.controller.Async"
+	xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout" xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<html:style type="text/css">
+		.myMatrixLayout {
+			display:inline-table;
+		}
+	</html:style>
+
+	<Image width="150px" height="110px" src="./images/screw.jpg"></Image>
+
+	<layout:MatrixLayout id="Layout" width="250px" class="myMatrixLayout">
+		<layout:MatrixLayoutRow>
+			<layout:MatrixLayoutCell>
+				<Label text="Product:"></Label>
+			</layout:MatrixLayoutCell>
+			<layout:MatrixLayoutCell>
+				<TextField id="Product" value="Deluxe Async Screw"></TextField>
+			</layout:MatrixLayoutCell>
+		</layout:MatrixLayoutRow>
+		<layout:MatrixLayoutRow>
+			<layout:MatrixLayoutCell>
+				<Label text="Material:"></Label>
+			</layout:MatrixLayoutCell>
+			<layout:MatrixLayoutCell>
+				<TextField id="Material" value="asynchronium"></TextField>
+			</layout:MatrixLayoutCell>
+		</layout:MatrixLayoutRow>
+		<layout:MatrixLayoutRow >
+			<layout:MatrixLayoutCell>
+				<Label id="More1" text="Diameter:"></Label>
+			</layout:MatrixLayoutCell>
+			<layout:MatrixLayoutCell>
+				<TextField id="TFMore1" value="2/4 inch"></TextField>
+			</layout:MatrixLayoutCell>
+		</layout:MatrixLayoutRow>
+		<layout:MatrixLayoutRow >
+			<layout:MatrixLayoutCell>
+				<Label id="More2" text="Length:"></Label>
+			</layout:MatrixLayoutCell>
+			<layout:MatrixLayoutCell>
+				<TextField id="TFMore2" value="2 inch"></TextField>
+			</layout:MatrixLayoutCell>
+		</layout:MatrixLayoutRow>
+		<layout:MatrixLayoutRow >
+			<layout:MatrixLayoutCell>
+				<Label id="More3" text="Package Quantity:"></Label>
+			</layout:MatrixLayoutCell>
+			<layout:MatrixLayoutCell>
+				<TextField id="TFMore3" value="500"></TextField>
+			</layout:MatrixLayoutCell>
+		</layout:MatrixLayoutRow>
+		<layout:MatrixLayoutRow>
+			<layout:MatrixLayoutCell>
+				<Link id="showMore" text="show details..." press="showMore"></Link>
+				<Link id="hideMore" text="hide details..." press="hideMore"
+					></Link>
+			</layout:MatrixLayoutCell>
+		</layout:MatrixLayoutRow>
+	</layout:MatrixLayout>
+
+	<core:Fragment fragmentName="sap.ui.core.mvctest.views.Dummy" type="XML" async="true"></core:Fragment>
+
+	<mvc:XMLView viewName="sap.ui.core.mvctest.views.Dummy" async="true"></mvc:XMLView>
+
+</mvc:View>

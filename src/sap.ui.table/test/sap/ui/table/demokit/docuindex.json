@@ -1,0 +1,79 @@
+{
+	"explored": {
+		"entitiesDefaults": {
+			"formFactors": "ML"
+		},
+		"samplesRef": {
+			"namespace": "sap.ui.table.sample",
+			"ref": "test-resources/sap/ui/table/demokit/sample"
+		},
+		"entities": [
+			{
+				"id": "sap.ui.table.Table",
+				"name": "Grid Table",
+				"category": "List",
+				"since": "1.0",
+				"samples": [
+					"sap.ui.table.sample.Basic",
+					"sap.ui.table.sample.Selection",
+					"sap.ui.table.sample.Sorting",
+					"sap.ui.table.sample.Filtering",
+					"sap.ui.table.sample.Aggregations",
+					"sap.ui.table.sample.Menus",
+					"sap.ui.table.sample.TableFreeze",
+					"sap.ui.table.sample.Resizing",
+					"sap.ui.table.sample.MultiHeader",
+					"sap.ui.table.sample.OData",
+					"sap.ui.table.sample.OData2"
+				]
+			}
+		],
+		"samples": [
+			{
+				"id": "sap.ui.table.sample.Basic",
+				"name": "Basic",
+				"description": "Basic example showing most controls which are intended to be used inside a table."
+			},{
+				"id": "sap.ui.table.sample.Selection",
+				"name": "Selection",
+				"description": "Selection example showing selection modes and selection behaviors of table."
+			},{
+				"id": "sap.ui.table.sample.Sorting",
+				"name": "Sorting",
+				"description": "Example showing the different kinds of sorting capabilities."
+			},{
+				"id": "sap.ui.table.sample.Filtering",
+				"name": "Filtering",
+				"description": "Example showing the different facets of filtering within a table."
+			},{
+				"id": "sap.ui.table.sample.Aggregations",
+				"name": "Aggregations",
+				"description": "Example which shows the different aggregations of the table."
+			},{
+				"id": "sap.ui.table.sample.Menus",
+				"name": "Table related Menus",
+				"description": "Example which focuses the handling of the table related Menus."
+			},{
+				"id": "sap.ui.table.sample.TableFreeze",
+				"name": "Table Freeze",
+				"description": "Example which shows table freeze with fixed columns."
+			},{
+				"id": "sap.ui.table.sample.Resizing",
+				"name": "Resizing",
+				"description": "Example for column resizing and the different row count modes."
+			},{				
+				"id": "sap.ui.table.sample.MultiHeader",
+				"name": "Multi Header",
+				"description": "Example for multi-header of table."
+			},{
+				"id": "sap.ui.table.sample.OData",
+				"name": "OData",
+				"description": "OData related example"
+			},{
+				"id": "sap.ui.table.sample.OData2",
+				"name": "OData Metadata",
+				"description": "Shows an example how an oData metadata driven table creation can look like"
+			}
+		]
+	}
+}

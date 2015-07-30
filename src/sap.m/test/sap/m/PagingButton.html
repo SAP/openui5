@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <title>PagingButton - sap.m</title>
+
+    <script src="../../../resources/sap-ui-core.js"
+            type="text/javascript"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.m"
+            data-sap-ui-theme="sap_bluecrystal">
+    </script>
+    <script type="text/javascript">
+        jQuery.sap.require("sap.m.PagingButton");
+
+    var app = new sap.m.App("myApp", {initialPage: "page1"}),
+            oPagingButton = new sap.m.PagingButton({
+                count: 10, positionChange: function (oEvent) {
+                    var msg = 'Position was ' + oEvent.getParameter("oldPosition")
+                            + ", now is " + oEvent.getParameter("newPosition");
+                    sap.m.MessageToast.show(msg);
+                }
+            }),
+            getButtons = function () {
+                return [
+                    new sap.m.Button({
+                        icon: sap.ui.core.IconPool.getIconURI("add"),
+                        text: "one",
+                        enabled: true
+                    }),
+                    new sap.m.Button({
+                        icon: sap.ui.core.IconPool.getIconURI("attachment"),
+                        text: "two",
+                        enabled: true
+                    }),
+                    new sap.m.Button({
+                        icon: sap.ui.core.IconPool.getIconURI("paper-plane"),
+                        text: "three",
+                        enabled: false
+                    }),
+                    new sap.m.Button({
+                        icon: sap.ui.core.IconPool.getIconURI("synchronize"),
+                        text: "four",
+                        enabled: true
+                    })];
+            },
+            oChangePositionInput = new sap.m.Input({
+                liveChange: function (oEvent) {
+                    oPagingButton.setPosition(+oEvent.getParameter("value"))
+                }
+            }),
+            oChangePositionLabel = new sap.m.Label({text: "Change position value"}),
+            oChangeCountInput = new sap.m.Input({
+                liveChange: function (oEvent) {
+                    oPagingButton.setCount(+oEvent.getParameter("value"))
+                }
+            }),
+            oChangeCountLabel = new sap.m.Label({text: "Change count value"}),
+            page1 = new sap.m.Page("page1", {
+                title: "PagingButton",
+                headerContent: [getButtons(), oPagingButton, getButtons()],
+                content: [new sap.m.Panel({
+                    backgroundDesign: "Transparent",
+                    content: [oChangePositionLabel, oChangePositionInput, oChangeCountLabel,
+                        oChangeCountInput, getButtons(), new sap.m.PagingButton({
+                            count: 10, positionChange: function (oEvent) {
+                                var msg = 'Position was ' + oEvent.getParameter("oldPosition")
+                                        + ", now is " + oEvent.getParameter("newPosition");
+                                sap.m.MessageToast.show(msg);
+                            }
+                        }), getButtons()]
+                })]
+            });
+
+        app.addPage(page1);
+
+        app.placeAt("body");
+    </script>
+
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

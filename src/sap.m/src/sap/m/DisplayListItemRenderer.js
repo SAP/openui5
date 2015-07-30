@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 
 	/**
-	 * @class DisplayListItem renderer.
-	 * @static
+	 * DisplayListItem renderer.
+	 * @namespace
 	 */
 	var DisplayListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 	
@@ -40,10 +40,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		}
 		
 		var isValue = oLI.getValue();
-		
+		var sValueTextDir = oLI.getValueTextDirection();
+
 		// List item value
 		if (isValue) {
-			rm.write("<div id='" + oLI.getId() + "-value' class='sapMDLIValue'>");
+			rm.write("<div id='" + oLI.getId() + "-value' class='sapMDLIValue'");
+
+			if (sValueTextDir != sap.ui.core.TextDirection.Inherit) {
+				rm.writeAttribute("dir", sValueTextDir.toLowerCase());
+			}
+
+			rm.write(">");
 			rm.writeEscaped(oLI.getValue());
 			rm.write("</div>");
 		}

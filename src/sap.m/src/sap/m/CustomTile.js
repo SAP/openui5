@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Tile', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.CustomTile
+	 * @alias sap.m.CustomTile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CustomTile = Tile.extend("sap.m.CustomTile", /** @lends sap.m.CustomTile.prototype */ { metadata : {

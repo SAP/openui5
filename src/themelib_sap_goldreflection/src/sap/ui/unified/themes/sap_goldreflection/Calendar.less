@@ -4,8 +4,13 @@
 /* =============================================== */
 
 .sapUiCal{
-	width: 190px;
-	border: 4px solid @sapUiFieldBackground;
+	border-width: 4px 2px 0 2px;
+	border-style: solid;
+	border-color: @sapUiFieldBackground;
+}
+
+.sapUiCalMulti{
+	max-width: 776px; /* maximal 4 months in one row */
 }
 
 /*** HEADER ***/
@@ -14,27 +19,62 @@
 	height: 22px;
 }
 
-.sapUiCalPrev,
-.sapUiCalNext,
-.sapUiCalMonthPick,
-.sapUiCalYearPick{
+.sapUiCalHead > button{
 	height: 22px;
 	padding: 0;
 }
 
-.sapUiCalPrev,
-.sapUiCalNext{
+.sapUiCalHeadPrev,
+.sapUiCalHeadNext{
 	width: 22px;
 	padding-top: 2px; /* to set arrows in middle */
 }
 
-.sapUiCalMonthPick,
-.sapUiCalYearPick{
+.sapUiCal .sapUiCalHeadPrev{
+	left: 2px;
+}
+
+.sapUiCal .sapUiCalHeadNext{
+	right: 2px;
+}
+
+.sapUiCalHeadB{
 	width: 70px;
 	font-weight: bold;
 }
 
+.sapUiCalMulti .sapUiCalHeadB1,
+.sapUiCalDateIntLarge .sapUiCalHeadB1{
+	width: 150px;
+}
+
 /*** days, months, years ***/
+.sapUiCalMonthView,
+.sapUiCalMonthPicker,
+.sapUiCalYearPicker{
+	width: 190px;
+}
+
+.sapUiCalMonthView,
+.sapUiCalMonthPicker,
+.sapUiCalYearPicker,
+.sapUiCalDatesRow{
+	background-color: @sapUiFieldBackground;
+}
+
+.sapUiCalMonthHead{
+	height: 24px;
+	line-height: 22px;
+	color: @sapUiHighlight;
+}
+
+.sapUiCal .sapUiCalMonthView,
+.sapUiCal .sapUiCalDatesRow{
+	border-width: 0 2px 4px 2px;
+	border-style: solid;
+	border-color: @sapUiFieldBackground;
+}
+
 .sapUiCalWH,
 .sapUiCalDay,
 .sapUiCalWeekNum,
@@ -136,13 +176,42 @@ html[data-sap-ui-browser="ie8"] .sapUiCalDayToday > .sapUiCalDayNum{
 	-webkit-box-shadow: inset 1px 1px 0 0 @sapUiFieldBackground, inset -1px -1px 0 0 @sapUiFieldBackground;
 }
 
-.sapUiCalMonths,
-.sapUiCalYears{
-	top: 31px;
-	padding-top: 24px;
+.sapUiCalContentOver{
+	background-color: @sapUiBlackBG;
+	opacity: 0.4;
+	filter: alpha(opacity=40);
 }
 
-.sapUiCalYears.sapUiCalYearNoTop{
+.sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalContent > .sapUiCalYearPicker{
+	top: 0;
+	padding: 24px 2px 4px 2px;
+	background-color: @sapUiFieldBackground;
+	left: 50%;
+	margin-left: -97px; /* to position in the middle (for multi-month) */
+}
+
+.sapUiCalDateInt > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalDateInt > .sapUiCalContent > .sapUiCalYearPicker{
+	margin-left: 0;
+	left: 0;
+	padding-bottom: 0;
+}
+
+.sapUiCalDateInt.sapUiCalDateIntMonthHead > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalDateInt.sapUiCalDateIntMonthHead > .sapUiCalContent > .sapUiCalYearPicker{
+	padding-top: 48px;
+}
+
+.sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker{
+	top: 20px;
+	bottom: auto;
+	padding: 4px;
+	margin-left: -99px;
+}
+
+.sapUiCalContent > .sapUiCalYears.sapUiCalYearNoTop{
 	padding-top: 0;
 }
 

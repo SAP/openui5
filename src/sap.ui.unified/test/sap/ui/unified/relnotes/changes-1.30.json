@@ -1,0 +1,257 @@
+{
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "e35ecda8da67bb38a641bcb728f5d692ea6c9de5",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Menu: Cozy design for BlueCrystal and HCB theme introduced",
+        "references": []
+      },
+      {
+        "id": "09fe985c2614825fbc6c4059313e9abbf32fcf18",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.unified.Calendar: Added new Dates row view",
+        "references": []
+      },
+      {
+        "id": "129633ef42d03940e0e5ac673be39f4e8ccff3cb",
+        "author": "Christoph Kraemer \u003cchr.kraemer@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: Month picker updated only if rendered",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "729559213060dc84af55e4fd54e076ba570d7139",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: Internet Explorer focus behavior fixed",
+        "references": []
+      },
+      {
+        "id": "4cf9fd7b5f649d677b92b2b8671c488f0cf0e9a0",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Render string tooltip fixed",
+        "references": []
+      },
+      {
+        "id": "ae6fd1f40fc5bbc32bbe6abaea81e4735ab588a4",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: IE change event handling fixed",
+        "references": []
+      },
+      {
+        "id": "9da2b976f7b0d197580689a95b40664bf21ac4cb",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Internet Explorer change event handling fixed",
+        "references": []
+      },
+      {
+        "id": "62f817cc7253215405dafca7c62b331bbc7b98d0",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Setting content-type for Internet Explorer 9 repaired",
+        "references": []
+      },
+      {
+        "id": "6e849c88ff32e31d71f0ac5abcab7188da9ce63e",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: buttonOnly mode fixed when container is invisible",
+        "references": []
+      },
+      {
+        "id": "0cb65025d10143a53e553e4343b20d81f71c2418",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File-type check fixed",
+        "references": []
+      },
+      {
+        "id": "de457d70e5f4c37ac6a2b53ae01522f637c4afa6",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Bug with invisible + % width  fixed",
+        "references": []
+      },
+      {
+        "id": "0b9c898155992da1954cb86aa147586fc8454367",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Bug with invisible + % width  fixed",
+        "references": []
+      },
+      {
+        "id": "694022645a63f4414070347184bfc345ad038706",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu/sap.ui.commons.Menu: Internet Explorer 8 support removed",
+        "references": []
+      },
+      {
+        "id": "5a927abd94669213be699a80deb3fca5b67234fd",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Submenu closes when textfield item is focused",
+        "references": []
+      },
+      {
+        "id": "8e6f2cf7393b51b203cea6936deb4220ca2ad056",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "unified.SplitContainer: Timer cleared on exit",
+        "references": []
+      },
+      {
+        "id": "4f8a97ff3e2232d87c251ca2e1160d76815670ed",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Width for buttonOnly mode fixed",
+        "references": []
+      },
+      {
+        "id": "119415e1724fa3aa01f0701f1841c07c0a7abff6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar, sap.m.DatePicker: Added support for Islamic calendar",
+        "references": []
+      },
+      {
+        "id": "b016147a55b84ff1898cdfdf2bff8dedf94970ab",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.FileUploader: uploadStart event introduced",
+        "references": []
+      },
+      {
+        "id": "aeb2c3e3fd988252e4f17d584989b2ef6b68fb93",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unifiedFileUploader:  ARIA support added",
+        "references": []
+      },
+      {
+        "id": "87a99241ce98d28e0b0ebba26a07ca50802f38af",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Fileuploader is now vertically aligned with other sap.m controls",
+        "references": []
+      },
+      {
+        "id": "2c2d2f5709c15279300439938decb48d46c4a4bf",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setTooltip() fixed",
+        "references": []
+      },
+      {
+        "id": "cc9464eaf90ef2f5e703d8584ffd4a95b96e542f",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Calendar: New properties added to set weekend and first weekday",
+        "references": []
+      },
+      {
+        "id": "444f05a9ac6e31e6c939940b742ca91371927346",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "CalendarLegend: Specify type of an item is allowed",
+        "references": []
+      },
+      {
+        "id": "273867df0bf7e398717b1b95540bb2af68bd17a4",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "FileUploader: Abort function improved",
+        "references": []
+      },
+      {
+        "id": "c92f44fa7fcdf8bb4508484c366f370362765e66",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: Focus issues after change of selectedDates corrected",
+        "references": []
+      },
+      {
+        "id": "f11b8d79cb0a6f6ed68426b8ba22b83dfe7930bd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: specialDates can not be removed",
+        "references": []
+      },
+      {
+        "id": "d65defdb36c4bb57a191b30ea96c10554aebd6eb",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: m styling corrected",
+        "references": []
+      },
+      {
+        "id": "ca1e4e142c1456990a3b35379600db80d5f5ebbc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: sameFilenameAllowed fixed for multiple",
+        "references": []
+      },
+      {
+        "id": "0675e0411b02b55cb7ee3877d7cccd50de0b2610",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Menu: Open Popup before Menu state is set to opened",
+        "references": []
+      },
+      {
+        "id": "5ec685b71babb6323d04b30d04e82187aa69a19c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "calendar.MonthPicker: Avoid browser dependent width rounding issues",
+        "references": []
+      },
+      {
+        "id": "ee9fca67ac845813f0f54997a9a88f82c7bd2b68",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Calendar: All space in islamic case is now used",
+        "references": []
+      },
+      {
+        "id": "7819bdf389ea640d184d3b7d27051160c9a6dd5c",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "FileUploader: Function enhancement aborted",
+        "references": []
+      },
+      {
+        "id": "54c3b9a26a32372744376dbd3ec4c74a6d3d76ea",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: Focus lost on tab on year picker corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "82f608f81530574f4add993795999bd10172ff6d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Consider also opener dom ref for cozy mode check",
+        "references": []
+      }
+    ]
+  }
+}

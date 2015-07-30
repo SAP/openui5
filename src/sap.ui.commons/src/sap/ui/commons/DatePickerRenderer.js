@@ -9,13 +9,13 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 
 
 	/**
-	 * @class DatePicker renderer.
-	 * @static
+	 * DatePicker renderer.
+	 * @namespace
 	 * For a common look&feel, the DatePicker extends the TextField control,
 	 * just like the ComboBox does.
 	 */
 	var DatePickerRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
-	
+
 	/**
 	 * Hint: "renderOuterAttributes" is a reserved/hard-coded TextField extending function!
 	 *       It is used to allow extensions to display help icons.
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 		rm.addClass("sapUiTfCombo");
 		this.renderDatePickerARIAInfo(rm, oControl);
 	};
-	
+
 	/**
 	 * Renders additional HTML for the DatePicker to the TextField (sets the icon)
 	 *
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 	 *                                     be rendered.
 	 */
 	DatePickerRenderer.renderOuterContentBefore = function(rm, oControl){
-	
+
 		rm.write("<div");
 		rm.writeAttribute('id', oControl.getId() + '-icon');
 		rm.writeAttribute('tabindex', '-1'); // to do not close popup by click on it
@@ -59,25 +59,23 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 		rm.addClass("sapUiTfDateIcon");
 		rm.writeClasses();
 		rm.write("></div>"); //No Symbol for HCB Theme, as done by ComboBox.
-	
+
 		// invisible span with description for keyboard navigation
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 			// ResourceBundle always returns the key if the text is not found
-		var sText = rb.getText("DATEPICKER_KEYBOARD");
-		var sDateType = rb.getText("DATEPICKER_DATE_TYPE");
-	
+		var sText = rb.getText("DATEPICKER_DATE_TYPE");
+
 		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
 		if (sTooltip) {
 			// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
-			sText = sTooltip + ". " + sText;
+			sText = sText + ". " + sTooltip;
 		}
-		sText = sDateType + ". " + sText;
 		rm.write('<SPAN id="' + oControl.getId() + '-Descr" style="visibility: hidden; display: none;">');
 		rm.writeEscaped(sText);
 		rm.write('</SPAN>');
-	
+
 	};
-	
+
 	/*
 	 * Renders the inner attributes for the input element of the DatePicker
 	 *
@@ -85,14 +83,14 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 	 * @param {sap.ui.fw.Control} oDatePicker an object representation of the control that should be rendered
 	 */
 	DatePickerRenderer.renderInnerAttributes = function(rm, oDatePicker) {
-	
+
 		if (oDatePicker._bMobile) {
 			rm.writeAttribute('type', 'date');
 			rm.addStyle('position', 'absolute'); // to lay input field over expander icon
 		}
-	
+
 	};
-	
+
 	/*
 	 * Renders ARIA information for the outer DIV
 	 *
@@ -102,48 +100,47 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 	 *                                     be rendered
 	 */
 	DatePickerRenderer.renderDatePickerARIAInfo = function(rm, oControl) {
-	
+
 		// no ARIA on outer DIV because focus is only on the input field
 		// so no ARIA necessary here -> if there it brings some conufing reading by JAWS
-	
+
 		// IMPORTANT: According to jQuery forums, DatePicker Accessibility is to be delivered in a
 		//            future release. No release mentionned.
 		// So there is not much point about doing more about this at the moment.
-	
+
 	};
-	
+
 	DatePickerRenderer.renderARIAInfo = function(rm, oDatePicker) {
-	
+
 		var mProps = {
 			role: oDatePicker.getAccessibleRole().toLowerCase(),
 			multiline: false,
 			autocomplete: "none",
 			haspopup: true,
 			describedby: {value: oDatePicker.getId() + "-Descr", append: true}};
-	
+
 		if (oDatePicker.getValueState() == sap.ui.core.ValueState.Error) {
 			mProps["invalid"] = true;
 		}
-	
+
 		rm.writeAccessibilityState(oDatePicker, mProps);
-	
+
 	};
-	
+
 	DatePickerRenderer.convertPlaceholder = function(oDatePicker) {
-	
+
 		var sPlaceholder = oDatePicker.getPlaceholder();
-	
+
 		if (sPlaceholder.length == 8 && !isNaN(sPlaceholder)) {
 			var oDate = oDatePicker._oFormatYyyymmdd.parse(sPlaceholder);
 			if (oDate) {
 				sPlaceholder = oDatePicker._formatValue(oDate);
 			}
 		}
-	
+
 		return sPlaceholder;
-	
+
 	};
-	
 
 	return DatePickerRenderer;
 

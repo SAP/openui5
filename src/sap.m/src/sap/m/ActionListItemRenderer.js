@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 
 	/**
-	 * @class ActionListItem renderer.
-	 * @static
+	 * ActionListItem renderer.
+	 * @namespace
 	 */
 	var ActionListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 	
@@ -40,6 +40,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		}
 	};
 	
+	// Returns the inner aria describedby ids for the accessibility
+	ActionListItemRenderer.getAriaDescribedBy = function(oLI) {
+		var sDescribedBy = this.getAriaAnnouncement("active"),
+			sBaseDescribedBy = ListItemBaseRenderer.getAriaDescribedBy.call(this, oLI) || "";
+
+		return sDescribedBy + " " + sBaseDescribedBy;
+	};
 
 	return ActionListItemRenderer;
 

@@ -49,6 +49,8 @@
 @sapUiFieldSuccessBackground: #00AA00;
 @sapUiFieldSuccessColor: #00AA00;
 
+@sapUiToolbarSeparatorColor: @sapHCStandardFG;
+
 @sapUiListHeaderBackground: #585858;
 @sapUiListHeaderBorderColor: @sapUiBaseBorder;
 @sapUiListSelectionBackgroundColor: @sapUiHighlightColor;
@@ -67,10 +69,6 @@
 // Grayscale Backgrounds
 @sapUiWhite: #000000;
 @sapUiWhiteBG: #000000;
-@sapUiExtraLightBG: @sapUiBaseBG;
-@sapUiLightBG: @sapUiHighlight;
-@sapUiMediumBG: @sapUiLightBG;
-@sapUiDarkBG: @sapUiLightBG;
 @sapUiDeepBG: #FFFFFF;
 @sapUiBlackBG: #FFFFFF;
 
@@ -81,8 +79,6 @@
 @sapUiButtonPositiveBG: @sapUiButtonStandardBG;
 
 // Semantic Background Colors
-@sapUiErrorBG: #AA0000;
-@sapUiWarningBG: #CCAA00;
 @sapUiReadOnlyBG: #585858;
 
 // Link
@@ -132,7 +128,7 @@
 @sapMFontHeader3Size: 1.250rem; // 20px
 @sapMFontHeader4Size: 1.125rem; // 18px
 @sapMFontHeader5Size: 1rem; // 16px
-@sapMFontHeader6Size: 0.875em; // 14px
+@sapMFontHeader6Size: 0.875rem; // 14px
 
 @sapMFontSmallSize: 0.75rem; // 12px
 @sapMFontMediumSize: 0.875rem; // 14px
@@ -172,79 +168,139 @@
 
 /* Derived Chart Colors */
 
+@sapUiChartLabelHoverColor: @sapHCHighlightBG;             // #7a5100
+@sapUiChartLabelPressedColor: @sapHCHighlightAltBG;        // #0f5d94
+@sapUiChartCategoryAxisLabelFontColor: @sapHCStandardFG;   // #ffffff
+@sapUiChartValueAxisLabelFontColor: @sapHCStandardFG;      // #ffffff
+@sapUiChartCategoryAxisLabelFontSize: @sapMFontSmallSize;  // 12px
+@sapUiChartValueAxisLabelFontSize: @sapMFontSmallSize;     // 12px
+@sapUiChartCategoryAxisLineColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartValueAxisLineColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartCategoryAxisTickColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartValueAxisTickColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartBackgroundColor: @sapHCStandardBG;              // #000000
+@sapUiChartLabelFontWeight: normal;
+@sapUiChartLegendLabelFontColor: @sapHCStandardFG;         // #ffffff
+@sapUiChartLegendTitleFontColor: @sapHCStandardFG;         // #ffffff
+@sapUiChartLegendTitleFontSize: @sapMFontMediumSize;       // 14px
+@sapUiChartLegendLabelFontSize: @sapMFontSmallSize;        // 12px
+@sapUiChartPaletteUndefinedColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartGridlineColor: @sapHCReducedAltFG;              // #999999
+@sapUiChartReferenceLineColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartDataLabelFontColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartReferenceLineLabelColor: @sapHCStandardFG;      // #ffffff
+@sapUiChartDataLabelFontSize: @sapMFontSmallSize;          // 12px
+@sapUiChartPopoverDataItemFontColor: @sapHCStandardFG;     // #ffffff
+@sapUiChartPopoverGroupFontColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartPopoverDataItemFontSize: @sapMFontMediumSize;   // 14px
+@sapUiChartPopoverGroupFontSize: @sapMFontMediumSize;      // 14px
+@sapUiChartPopoverGroupFontWeight: bold;
+@sapUiChartScrollBarThumbColor: @sapHCReducedAltFG;        // #999999
+@sapUiChartScrollBarTrackColor: @sapHCStandardBG;          // #000000
+@sapUiChartScrollBarThumbHoverColor: @sapHCStandardFG;     // #ffffff
+@sapUiChartMainTitleFontColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartAxisTitleFontColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartMainTitleFontSize: @sapMFontLargeSize;          // 16px
+@sapUiChartAxisTitleFontSize: @sapMFontMediumSize;         // 14px
+@sapUiChartTitleFontWeight: bold;
+@sapUiChartLightText: @sapHCStandardFG;                    // #ffffff
+
+@sapUiChartDataPointBorderColor: @sapHCStandardBG;                                       // #000000
+@sapUiChartDataPointBorderHoverSelectedColor: @sapHCStandardFG;
+@sapUiChartDataPointNotSelectedBackgroundOpacity: 0.7;
+
+@sapUiChartValueAxisLineOpacity: 0;
+@sapUiChartCategoryAxisLabelFontHoverColor: @sapHCStandardFG;   // #ffffff
+@sapUiChartCategoryAxisLabelFontPressedColor: @sapHCStandardFG; // #ffffff
+
+@sapUiChartTargetColor: @sapHCStandardFG;
+@sapUiChartTargetShadowColor: @sapHCStandardBG;
+@sapUiChartBubbleBGOpacity: 0.9;
+
+@sapUiChartScrollbarBorderColor: @sapHCReducedAltFG;
+@sapUiChartScrollbarBorderSize: 0.063rem; // 1px
+@sapUiChartScrollbarThumbPadding: 0.125rem; // 2px
+
+
 // qualitative palette
 
-@sapUiChartPaletteQualitativeHue1: @sapUiChart1;
-@sapUiChartPaletteQualitativeHue2: @sapUiChart2;
-@sapUiChartPaletteQualitativeHue3: @sapUiChart3;
-@sapUiChartPaletteQualitativeHue4: @sapUiChart4;
-@sapUiChartPaletteQualitativeHue5: @sapUiChart5;
-@sapUiChartPaletteQualitativeHue6: @sapUiChart6;
-@sapUiChartPaletteQualitativeHue7: @sapUiChart7;
-@sapUiChartPaletteQualitativeHue8: @sapUiChart8;
-@sapUiChartPaletteQualitativeHue9: @sapUiChart9;
-@sapUiChartPaletteQualitativeHue10: @sapUiChart10;
-@sapUiChartPaletteQualitativeHue11: @sapUiChart11;
+@sapUiChartPaletteQualitativeHue1: darken(@sapUiChart1,10);
+@sapUiChartPaletteQualitativeHue2: darken(@sapUiChart2,10);
+@sapUiChartPaletteQualitativeHue3: darken(@sapUiChart3,10);
+@sapUiChartPaletteQualitativeHue4: darken(@sapUiChart5,10);
+@sapUiChartPaletteQualitativeHue5: darken(@sapUiChart6,10);
+@sapUiChartPaletteQualitativeHue6: darken(@sapUiChart8,10);
+@sapUiChartPaletteQualitativeHue7: darken(@sapUiChart1,10);
+@sapUiChartPaletteQualitativeHue8: darken(@sapUiChart2,10);
+@sapUiChartPaletteQualitativeHue9: darken(@sapUiChart3,10);
+@sapUiChartPaletteQualitativeHue10: darken(@sapUiChart5,10);
+@sapUiChartPaletteQualitativeHue11: darken(@sapUiChart6,10);
 
 // semantic palette
 
-@sapUiChartPaletteSemanticBadLight3: lighten(@sapUiChartBad,30);
-@sapUiChartPaletteSemanticBadLight2: lighten(@sapUiChartBad,20);
-@sapUiChartPaletteSemanticBadLight1: lighten(@sapUiChartBad,10);
-@sapUiChartPaletteSemanticBad: @sapUiChartBad;
-@sapUiChartPaletteSemanticBadDark1: darken(@sapUiChartBad,10);
-@sapUiChartPaletteSemanticBadDark2: darken(@sapUiChartBad,15);
+@sapUiChartPaletteSemanticBadLight3: desaturate(darken(@sapHCNegative,15),30);
+@sapUiChartPaletteSemanticBadLight2: desaturate(darken(@sapHCNegative,15),30);
+@sapUiChartPaletteSemanticBadLight1: saturate(lighten(@sapHCNegative,5),10);
+@sapUiChartPaletteSemanticBad: saturate(lighten(@sapHCNegative,5),10);
+@sapUiChartPaletteSemanticBadDark1: saturate(lighten(@sapHCNegative,5),10);
+@sapUiChartPaletteSemanticBadDark2: saturate(lighten(@sapHCNegative,5),10);
 
-@sapUiChartPaletteSemanticCriticalLight3: lighten(@sapUiChartCritical,30);
-@sapUiChartPaletteSemanticCriticalLight2: lighten(@sapUiChartCritical,20);
-@sapUiChartPaletteSemanticCriticalLight1: lighten(@sapUiChartCritical,10);
-@sapUiChartPaletteSemanticCritical: @sapUiChartCritical;
-@sapUiChartPaletteSemanticCriticalDark1: darken(@sapUiChartCritical,10);
-@sapUiChartPaletteSemanticCriticalDark2: darken(@sapUiChartCritical,15);
+@sapUiChartPaletteSemanticCriticalLight3: darken(@sapHCCritical,20);
+@sapUiChartPaletteSemanticCriticalLight2: darken(@sapHCCritical,20);
+@sapUiChartPaletteSemanticCriticalLight1:  @sapHCCritical;
+@sapUiChartPaletteSemanticCritical:  @sapHCCritical;
+@sapUiChartPaletteSemanticCriticalDark1:  @sapHCCritical;
+@sapUiChartPaletteSemanticCriticalDark2:  @sapHCCritical;
 
-@sapUiChartPaletteSemanticGoodLight3: lighten(@sapUiChartGood,30);
-@sapUiChartPaletteSemanticGoodLight2: lighten(@sapUiChartGood,20);
-@sapUiChartPaletteSemanticGoodLight1: lighten(@sapUiChartGood,10);
-@sapUiChartPaletteSemanticGood: @sapUiChartGood;
-@sapUiChartPaletteSemanticGoodDark1: darken(@sapUiChartGood,10);
-@sapUiChartPaletteSemanticGoodDark2: darken(@sapUiChartGood,15);
+@sapUiChartPaletteSemanticGoodLight3: desaturate(darken(@sapHCPositive,22),10);
+@sapUiChartPaletteSemanticGoodLight2: desaturate(darken(@sapHCPositive,22),10);
+@sapUiChartPaletteSemanticGoodLight1: saturate(lighten(@sapHCPositive,5),10);
+@sapUiChartPaletteSemanticGood: saturate(lighten(@sapHCPositive,5),10);
+@sapUiChartPaletteSemanticGoodDark1: saturate(lighten(@sapHCPositive,5),10);
+@sapUiChartPaletteSemanticGoodDark2: saturate(lighten(@sapHCPositive,5),10);
 
-@sapUiChartPaletteSemanticNeutralLight3: saturate(lighten(@sapUiChartNeutral,30),1);
-@sapUiChartPaletteSemanticNeutralLight2: saturate(lighten(@sapUiChartNeutral,20),1);
-@sapUiChartPaletteSemanticNeutralLight1: saturate(lighten(@sapUiChartNeutral,10),1);
-@sapUiChartPaletteSemanticNeutral: @sapUiChartNeutral;
-@sapUiChartPaletteSemanticNeutralDark1: saturate(darken(@sapUiChartNeutral,10),1);
-@sapUiChartPaletteSemanticNeutralDark2: saturate(darken(@sapUiChartNeutral,15),1);
+@sapUiChartPaletteSemanticNeutralLight3: @sapUiChartNeutral;
+@sapUiChartPaletteSemanticNeutralLight2: @sapUiChartNeutral;
+@sapUiChartPaletteSemanticNeutralLight1: saturate(lighten(@sapUiChartNeutral,30),1);
+@sapUiChartPaletteSemanticNeutral: saturate(lighten(@sapUiChartNeutral,30),1);
+@sapUiChartPaletteSemanticNeutralDark1: saturate(lighten(@sapUiChartNeutral,30),1);
+@sapUiChartPaletteSemanticNeutralDark2: saturate(lighten(@sapUiChartNeutral,30),1);
 
 // sequential palette
 
-@sapUiChartPaletteSequentialHue1Light3: lighten(@sapUiChartSequence1,30);
-@sapUiChartPaletteSequentialHue1Light2: lighten(@sapUiChartSequence1,21);
+@sapUiChartPaletteSequentialHue1Light3: desaturate(darken(@sapUiChartSequence1,10),7);
+@sapUiChartPaletteSequentialHue1Light2: desaturate(darken(@sapUiChartSequence1,10),7);
 @sapUiChartPaletteSequentialHue1Light1: lighten(@sapUiChartSequence1,12);
-@sapUiChartPaletteSequentialHue1: @sapUiChartSequence1;
-@sapUiChartPaletteSequentialHue1Dark1: darken(@sapUiChartSequence1,12);
-@sapUiChartPaletteSequentialHue1Dark2: darken(@sapUiChartSequence1,20);
+@sapUiChartPaletteSequentialHue1: lighten(@sapUiChartSequence1,12);
+@sapUiChartPaletteSequentialHue1Dark1: lighten(@sapUiChartSequence1,12);
+@sapUiChartPaletteSequentialHue1Dark2: lighten(@sapUiChartSequence1,12);
 
-@sapUiChartPaletteSequentialHue2Light3: lighten(@sapUiChartSequence2,30);
-@sapUiChartPaletteSequentialHue2Light2: lighten(@sapUiChartSequence2,21);
-@sapUiChartPaletteSequentialHue2Light1: lighten(@sapUiChartSequence2,12);
-@sapUiChartPaletteSequentialHue2: @sapUiChartSequence2;
-@sapUiChartPaletteSequentialHue2Dark1: darken(@sapUiChartSequence2,12);
-@sapUiChartPaletteSequentialHue2Dark2: darken(@sapUiChartSequence2,20);
+@sapUiChartPaletteSequentialHue2Light3: desaturate(darken(@sapUiChartSequence2,7),10);
+@sapUiChartPaletteSequentialHue2Light2: desaturate(darken(@sapUiChartSequence2,7),10);
+@sapUiChartPaletteSequentialHue2Light1: lighten(@sapUiChartSequence2,21);
+@sapUiChartPaletteSequentialHue2: lighten(@sapUiChartSequence2,21);
+@sapUiChartPaletteSequentialHue2Dark1: lighten(@sapUiChartSequence2,21);
+@sapUiChartPaletteSequentialHue2Dark2: lighten(@sapUiChartSequence2,21);
 
-@sapUiChartPaletteSequentialHue3Light3: lighten(@sapUiChartSequence3,30);
-@sapUiChartPaletteSequentialHue3Light2: lighten(@sapUiChartSequence3,21);
-@sapUiChartPaletteSequentialHue3Light1: lighten(@sapUiChartSequence3,12);
-@sapUiChartPaletteSequentialHue3: @sapUiChartSequence3;
-@sapUiChartPaletteSequentialHue3Dark1: darken(@sapUiChartSequence3,12);
-@sapUiChartPaletteSequentialHue3Dark2: darken(@sapUiChartSequence3,20);
+@sapUiChartPaletteSequentialHue3Light3: darken(@sapHCCritical,20);
+@sapUiChartPaletteSequentialHue3Light2: darken(@sapHCCritical,20);
+@sapUiChartPaletteSequentialHue3Light1: @sapHCCritical;
+@sapUiChartPaletteSequentialHue3: @sapHCCritical;
+@sapUiChartPaletteSequentialHue3Dark1: @sapHCCritical;
+@sapUiChartPaletteSequentialHue3Dark2: @sapHCCritical;
 
-@sapUiChartPaletteSequentialNeutralLight3: saturate(lighten(@sapUiChartSequenceNeutral,30),1);
-@sapUiChartPaletteSequentialNeutralLight2: saturate(lighten(@sapUiChartSequenceNeutral,20),1);
-@sapUiChartPaletteSequentialNeutralLight1: saturate(lighten(@sapUiChartSequenceNeutral,10),1);
-@sapUiChartPaletteSequentialNeutral: @sapUiChartSequenceNeutral;
-@sapUiChartPaletteSequentialNeutralDark1: saturate(darken(@sapUiChartSequenceNeutral,10),1);
-@sapUiChartPaletteSequentialNeutralDark2: saturate(darken(@sapUiChartSequenceNeutral,15),1);
+@sapUiChartPaletteSequentialNeutralLight3: @sapUiChartNeutral;
+@sapUiChartPaletteSequentialNeutralLight2: @sapUiChartNeutral;
+@sapUiChartPaletteSequentialNeutralLight1: saturate(lighten(@sapUiChartNeutral,30),1);
+@sapUiChartPaletteSequentialNeutral: saturate(lighten(@sapUiChartNeutral,30),1);
+@sapUiChartPaletteSequentialNeutralDark1: saturate(lighten(@sapUiChartNeutral,30),1);
+@sapUiChartPaletteSequentialNeutralDark2: saturate(lighten(@sapUiChartNeutral,30),1);
+
+@sapUiChoroplethBG: @sapHCStandardBG;
+@sapUiChoroplethRegionBorder: @sapHCStandardBG;
+@sapUiChoroplethRegionBG: @sapUiChartNeutral;
+@sapUiMapLegendBG: @sapHCStandardBG;
+@sapUiMapLegendBorderColor: @sapHCStandardFG;
 
 
 /* Shell */
@@ -276,13 +332,126 @@
 @sapUiButtonEmphasizedDisabledBorderColor: @sapUiButtonDisabledBorderColor;
 @sapUiButtonAcceptDisabledBorderColor: @sapUiButtonDisabledBorderColor;
 @sapUiButtonRejectDisabledBorderColor: @sapUiButtonDisabledBorderColor;
-@sapUiToggleButtonPressedBackground: @sapUiMediumBG;
+
+@sapUiToggleButtonPressedBackground: @sapHCHighlightBG;
+@sapUiButtonActiveBackground: @sapHCHighlightBG;
 @sapUiToggleButtonPressedDisabledBackground: @sapUiExtraLightBG;
 
 @sapUiDatePickerTableBackground: lighten(desaturate(spin(@sapUiHighlightColor,165),18),8);
 @sapUiDatePickerTableBorderColor: @sapUiDatePickerTableBackground;
 
+/* DateTimeInput Custom Picker JavaScript	  */
+@sapUiDTICustomRows: 5;
+@sapUiDTICustomPhoneRows: 3;
+@sapUiDTICustomWidth: 64;
+@sapUiDTICustomHeight: 48;
+@sapUiDTICustomShowLabel: false;
+@sapUiDTICustomHeaderText: true;
+@sapUiDTICustomMode: scroller;			/* mixed, scroller, clickpick */
+@sapUiDTICustomDesktopMode: mixed;		/* mixed, scroller, clickpick */
+@sapUiDTICustomDisplay: bubble;			/* modal, bubble, bottom, top */
+@sapUiDTICustomPhoneDisplay: modal;		/* modal, bubble, bottom, top */
+
 /* Toolbar Separator */
 @sapUiToolbarSeparatorBG: @sapHCStandardFG;
 @sapUiToolbarSeparatorFooterBG: @sapHCStandardFG;
+
+
+
+
+/* ------------------------------------------------------------------- */
+/* Generic Mapping: not for usage in standard control development !!!! */
+/* ------------------------------------------------------------------- */
+
+
+/* Semantic Text Colors */
+@sapUiNegativeText: @sapHCNegative;
+@sapUiPositiveText: @sapHCPositive;
+@sapUiCriticalText: @sapHCCritical;
+
+/* Semantic Element Colors */
+@sapUiNegativeElement: @sapHCNegative;
+@sapUiNeutralElement: @sapHCNeutral;
+@sapUiPositiveElement: @sapHCPositive;
+@sapUiCriticalElement: @sapHCCritical;
+
+/* Semantic Backgrounds */
+@sapUiErrorBG: @sapHCStandardBG;
+@sapUiWarningBG: @sapHCStandardBG;
+@sapUiNeutralBG: @sapHCStandardBG;
+@sapUISuccessBG: @sapHCStandardBG;
+
+
+@sapUiActiveBG: @sapHCHighlightAltBG;
+
+@sapUiSearchHighlight: @sapHCHighlightBG;
+
+/* Background Brand */
+@sapUiBrand: @sapHCStandardFG;
+
+
+@sapUiFocus: @sapHCStandardFG;
+
+
+/* Text Colors */
+@sapUiDarkText: @sapHCStandardFG;
+@sapUiLightText: @sapHCStandardFG;
+@sapUiMediumText: @sapHCStandardFG;
+@sapUiExtraLightText: @sapHCStandardFG;
+
+
+/* Border Colors */
+@sapUiDarkBorder: @sapHCStandardFG;
+@sapUiDarkestBorder: @sapHCStandardFG;
+@sapUiExtraDarkBorder: @sapHCStandardFG;
+@sapUiLightestBorder: @sapHCStandardFG;
+/* @sapUiLightBorder: @sapHCStandardFG; */
+/* @sapUiExtraLightBorder: @sapHCStandardFG; */
+@sapUiMediumBorder: @sapHCStandardFG;
+
+
+@sapUiErrorBorder: @sapHCStandardFG;
+@sapUiSuccessBorder: @sapHCStandardFG;
+
+/* Accent */
+@sapUiAccent1: @sapHCStandardFG;
+@sapUiAccent2: @sapHCStandardFG;
+@sapUiAccent3: @sapHCStandardFG;
+@sapUiAccent4: @sapHCStandardFG;
+@sapUiAccent5: @sapHCStandardFG;
+@sapUiAccent6: @sapHCStandardFG;
+@sapUiAccent7: @sapHCStandardFG;
+@sapUiAccent8: @sapHCStandardFG;
+
+
+@sapUiDarkShadowTint: @sapHCStandardFG;
+@sapUiLightShadowTint: @sapHCStandardFG;
+
+/* Backgrounds Header/Footer */
+@sapUiFooterBG: @sapHCStandardBG;
+@sapUiHeaderBG: @sapHCStandardBG;
+
+/* Background */
+@sapUiLightestBG: @sapHCStandardBG;
+@sapUiDarkestBG: @sapHCStandardBG;
+@sapUiExtraDarkBG: @sapHCStandardBG;
+@sapUiExtraLightBG: @sapHCStandardBG;
+@sapUiLightBG: @sapHCStandardBG;
+@sapUiMediumBG: @sapHCStandardBG; 
+@sapUiDarkBG: @sapHCStandardBG;
+
+/* SAP.ME */
+
+/* OverlapCalendar Event Type */
+@sapMeOverlapCalendarType00 : @sapHCReducedBG;
+@sapMeOverlapCalendarType01 : darken(@sapHCPositive,15);
+@sapMeOverlapCalendarType01Action: darken(@sapHCPositive,15);
+@sapMeOverlapCalendarType04 : lighten(@sapHCPositive,10);
+@sapMeOverlapCalendarType06 : @sapHCCritical;
+@sapMeOverlapCalendarType07 : lighten(@sapHCNegative,10);
+@sapMeOverlapCalendarIndicator : @sapUiAccent2;
+
+/* Calendar Legend */
+@sapMeCalendarLegendIconCollapse: collapse;
+@sapMeCalendarLegendIconExpand: expand;
 

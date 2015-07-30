@@ -1,0 +1,20 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.StandardMarginsTwoSided.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Text text="This sample demonstrates convenience classes which let you set a margin at two opposite sides (top/bottom and begin/end)." class="sapUiExploredNoMarginInfo"/>
+	<Panel class="sapUiMediumMarginTopBottom">
+	    <content>
+	      	<Text text="This panel uses margin class 'sapUiMediumMarginTopBottom' to clear a 32px (2rem) space at the panel's top and bottom." class="sapMH4FontSize"/>
+	      	<Text text="Since we do not apply horizontal margins in this case, we do not need to reset the panel's default width in this case. Therefore it is NOT necessary to set the modify the panel's 'width' property." />
+	    </content>
+	</Panel>
+	<Panel width="auto" class="sapUiMediumMarginBeginEnd">
+	    <content>
+	      	<Text text="This panel uses margin class 'sapUiMediumMarginBeginEnd' to clear a 32px space at the panel's left and right side." class="sapMH4FontSize"/>
+	      	<Text text="Since we do apply horizontal margins in this case, we have to set the panel's width to 'auto'." />
+	    </content>
+	</Panel>
+	
+</mvc:View>

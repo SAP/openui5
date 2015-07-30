@@ -1,5 +1,5 @@
 /**
- * sinon-qunit 1.0.0, 2010/12/09
+ * sinon-qunit 2.0.0, 2014/05/29
  *
  * @author Christian Johansen (christian@cjohansen.no)
  *
@@ -32,7 +32,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*global sinon, QUnit, test*/
-sinon.assert.fail = function (msg) {
+sinon.expectation.fail = sinon.assert.fail = function (msg) {
     QUnit.ok(false, msg);
 };
 
@@ -44,7 +44,7 @@ sinon.config = {
     injectIntoThis: true,
     injectInto: null,
     properties: ["spy", "stub", "mock", "clock", "sandbox"],
-    useFakeTimers: true,
+    useFakeTimers: false,
     useFakeServer: false
 };
 

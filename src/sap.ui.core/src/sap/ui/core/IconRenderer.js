@@ -1,14 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global"],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 	/**
-	 * @class FontIcon renderer.
-	 * @static
-	 * @name sap.ui.core.IconRenderer
+	 * Font-Icon renderer.
+	 * @namespace
+	 * @alias sap.ui.core.IconRenderer
 	 */
 	var IconRenderer = {};
 
@@ -17,16 +16,8 @@ sap.ui.define(["jquery.sap.global"],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 * @name sap.ui.core.IconRenderer.render
-	 * @function
 	 */
 	IconRenderer.render = function(oRm, oControl) {
-
-		// An invisible icon is not rendered
-		if (!oControl.getVisible()) {
-			return;
-		}
-
 		// write the HTML into the render manager
 		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oControl.getSrc()),
 			sWidth = oControl.getWidth(),
@@ -34,28 +25,24 @@ sap.ui.define(["jquery.sap.global"],
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
-			tooltip = oControl.getTooltip_AsString(),
-
-			//in IE8 :before is not supported, text needs to be rendered in span
-			bTextNeeded = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9);
+			sTooltip = oControl.getTooltip_AsString(),
+			bUseIconTooltip = oControl.getUseIconTooltip(),
+			bNoTabStop = oControl.getNoTabStop();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
+		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
-		if (!oControl.getDecorative()) {
+		if (sTooltip || (bUseIconTooltip && oIconInfo)) {
+			oRm.writeAttribute("title", sTooltip || oIconInfo.text || oIconInfo.name);
+		}
+
+		if (oControl.hasListeners("press") && !bNoTabStop) {
 			oRm.writeAttribute("tabindex", 0);
 		}
 
-		if (tooltip) {
-			oRm.writeAttributeEscaped("title", tooltip);
-		}
-
 		if (oIconInfo) {
-
-			if (!bTextNeeded) {
-				oRm.writeAttribute("data-sap-ui-icon-content", oIconInfo.content);
-			}
-
+			oRm.writeAttribute("data-sap-ui-icon-content", oIconInfo.content);
 			oRm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
 		}
 
@@ -68,11 +55,11 @@ sap.ui.define(["jquery.sap.global"],
 			oRm.addStyle("line-height", sHeight);
 		}
 
-		if (sColor) {
+		if (!(sColor in sap.ui.core.IconColor)) {
 			oRm.addStyle("color", sColor);
 		}
 
-		if (sBackgroundColor) {
+		if (!(sBackgroundColor in sap.ui.core.IconColor)) {
 			oRm.addStyle("background-color", sBackgroundColor);
 		}
 
@@ -89,13 +76,7 @@ sap.ui.define(["jquery.sap.global"],
 		oRm.writeClasses();
 		oRm.writeStyles();
 
-		oRm.write(">"); // span element
-
-		if (oIconInfo && bTextNeeded) {
-			oRm.write(oIconInfo.content);
-		}
-
-		oRm.write("</span>");
+		oRm.write("></span>");
 	};
 
 	return IconRenderer;

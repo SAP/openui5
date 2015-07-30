@@ -127,7 +127,7 @@
 
 		// assertions
 		var nItems= 3;
-		strictEqual(oP13nFilterPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+		strictEqual(oP13nFilterPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nFilterPanel.destroy();
@@ -146,7 +146,7 @@
 
 		// assertions
 		var nItems= 3;
-		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nFilterPanel.destroy();
@@ -200,22 +200,23 @@
 					}
 				});							
 			},
+			updateFilterItem : function(oEvent) {
+				var params = oEvent.getParameters();
+				var oModel = oP13nFilterPanel.getModel();
+				var oData = oModel.getData();
+				var oFilterItemData = params.filterItemData;
+				//key : sKey,
+				//index : iIndex,
+			},
 			addFilterItem: function(oEvent) {
 				var params = oEvent.getParameters();
 				var oModel = oP13nFilterPanel.getModel();
 				var oData = oModel.getData();
-				var oFilterItem = {
-					key : params.key,
-					columnKey : params.newItem.getColumnKey(),
-					operation : params.newItem.getOperation(),
-					exclude : params.newItem.getExclude(),
-					value1 : params.newItem.getValue1(),
-					value2 : params.newItem.getValue2()
-				};
+				var oFilterItemData = params.filterItemData;
 				if (params.index) {
-					oData.filterItems.splice(params.index, 0, oFilterItem);
+					oData.filterItems.splice(params.index, 0, oFilterItemData);
 				} else {
-					oData.filterItems.push(oFilterItem);
+					oData.filterItems.push(oFilterItemData);
 				}
 				oModel.setData(oData, true);
 			}				
@@ -228,24 +229,28 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		// Remove item
- 		var nItems= 2;
-		var oConditionPanel= oP13nFilterPanel._oIncludeFilterPanel;
-		oConditionPanel._triggerRemoveCondition(oConditionPanel, oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
 		
-		
+		var oConditionPanel = oP13nFilterPanel._oIncludeFilterPanel;
+
 		// Change item
 		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.value1.setValue("foo");
-		oConditionPanel._changeField(oConditionPanel, oConditionGrid);		
+		oConditionPanel._changeField(oConditionGrid);		
 		var sValue1 = "foo";
-		strictEqual(oP13nFilterPanel.getConditions()[1].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+		strictEqual(oP13nFilterPanel.getFilterItems()[1].getValue1(), sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+
+		// Remove item
+ 		var nItems= 2;
+		oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 		
 		// Add item
 		nItems= 3;
- 		oConditionPanel._triggerAddCondition(oConditionPanel, oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+ 		oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+		oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
+		oConditionGrid.value1.setValue("new");
+		oConditionPanel._changeField(oConditionGrid);		
+		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nFilterPanel.destroy();

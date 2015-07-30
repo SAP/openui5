@@ -2,27 +2,23 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout
-		class="panelBoxContainer sapUiFioriObjectPage"
-		width="100%" >
+	<l:VerticalLayout width="100%" >
 		<l:content>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Horizontally opposing flex items" />
+						<Title level="H2" text="Horizontally opposing flex items" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					alignItems="Start"
 					justifyContent="SpaceBetween">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Button text="1" type="Accept" />
+						<Button text="2" type="Reject" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 		</l:content>

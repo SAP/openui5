@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Feed renderer.
-	 * @static
+	 * Feed renderer.
+	 * @namespace
 	 */
 	var FeedRenderer = {
 	};

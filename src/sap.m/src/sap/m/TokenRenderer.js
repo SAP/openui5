@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Token renderer. 
-	 * @static
+	 * Token renderer. 
+	 * @namespace
 	 */
 	var TokenRenderer = {
 	};
@@ -23,21 +23,43 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer.render = function(oRm, oControl){
-		// Return immediately if control is invisible
-	       if (!oControl.getVisible()) {
-	             return;
-	       }
-	 
 		// write the HTML into the render manager
 		oRm.write("<div tabindex=\"-1\"");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMToken");
 		oRm.writeClasses();
+
+		oRm.writeAttribute("role", "listitem");
+		oRm.writeAttribute("aria-readonly", !oControl.getEditable());
+		oRm.writeAttribute("aria-selected", oControl.getSelected());
+		
+		if (oControl.getSelected()) {
+			oRm.addClass("sapMTokenSelected");
+		}
+		
 		// add tooltip if available
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
+		
+		var oAccAttributes = {}; // additional accessibility attributes
+
+		//ARIA attributes
+		oAccAttributes.describedby = {
+			value: oControl._sAriaTokenLabelId,
+			append: true
+		};
+		
+		if (oControl.getEditable()) {
+			oAccAttributes.describedby = {
+					value: oControl._sAriaTokenDeletableId,
+					append: true
+			};
+		}
+
+		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		
 		oRm.write(">");
 	
 		TokenRenderer._renderInnerControl(oRm, oControl);
@@ -56,7 +78,17 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer._renderInnerControl = function(oRm, oControl){
-		oRm.write("<span class=\"sapMTokenText\">");
+		var sTextDir = oControl.getTextDirection();
+		
+		oRm.write("<span");
+		oRm.addClass("sapMTokenText");
+		oRm.writeClasses();
+		// set text direction
+		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
+		oRm.write(">");
+		
 		var title = oControl.getText();
 		if (title) {
 			oRm.writeEscaped(title);

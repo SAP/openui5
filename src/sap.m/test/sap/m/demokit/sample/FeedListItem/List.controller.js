@@ -1,14 +1,26 @@
-sap.ui.controller("sap.m.sample.FeedListItem.List", {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/m/MessageToast',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel'
+	], function(jQuery, MessageToast, Controller, JSONModel) {
+	"use strict";
 
-	onInit: function () {
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/feed.json");
-		this.getView().setModel(oModel);
-		
-	},
-	
-	onPress: function (oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
-		sap.m.MessageToast.show("Clicked on " + oEvent.getSource().getSender());
-}
+	var ListController = Controller.extend("sap.m.sample.FeedListItem.List", {
+
+		onInit: function () {
+			// set mock model
+			var sPath = jQuery.sap.getModulePath("sap.m.sample.FeedListItem", "/feed.json")
+			var oModel = new JSONModel(sPath);
+			this.getView().setModel(oModel);
+		},
+
+		onPress: function (oEvent) {
+			MessageToast.show("Clicked on " + oEvent.getSource().getSender());
+		}
+	});
+
+
+	return ListController;
+
 });

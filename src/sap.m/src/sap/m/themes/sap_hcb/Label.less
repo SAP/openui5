@@ -10,11 +10,8 @@
 }
 
 .sapMLabel.sapMLabelTBHeader {
-	font-family: @sapUiFontFamily;
 	font-size: @sapMFontHeader5Size;
 	font-weight: @sapUiFontHeaderWeight;
-	color: @sapHCStandardFG;
-	text-shadow: none;
 }
 
 .sapMLabel.sapMLabelBold {
@@ -28,36 +25,22 @@
 	line-height: 0.9375rem;
 }
 
-.sapMIBar-CTX .sapMLabel {
-	color: @sapHCStandardFG;
-}
-
 .sapMIBar-CTX.sapMFooter-CTX .sapMLabel {
-	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
-	color: @sapHCStandardFG;
-	text-shadow: none;
 }
 
 .sapMIBar-CTX.sapMPageHeader .sapMLabel,
 .sapMDialog-CTX .sapMIBar-CTX .sapMLabel {
-	font-family: @sapUiFontFamily;
 	font-size: @sapMFontHeader5Size;
 	font-weight: @sapUiFontHeaderWeight;
-}
-
-.sapMLIBActive .sapMLabel,
-.sapMLIBActive .sapMListTblCell .sapMLabel,
-.sapMLIBActive .sapMListTblSubCntRow .sapMLabel {
-	color: @sapHCStandardFG;
 }
 
 /* collapse lines in a form */
 .sapUiForm .sapMLabel {
 	height: auto;
 	position: relative;
-	/* 
-		We guessed the width of a : here. 0.3em seems to be fine in chrome it works without the padding 
+	/*
+		We guessed the width of a : here. 0.3em seems to be fine in chrome it works without the padding
 		but as long as we do not touch the box-sizing it seems to be fine to set it there too
 		because the padding is outside of the box
 		The use of em is intentional since it has to relate to the current font size applied to the label
@@ -83,7 +66,6 @@
 
 .sapMLIBUnread .sapMLabel,
 .sapMLIBUnread + .sapMListTblSubRow .sapMLabel {
-	font-family: @sapUiFontFamily;
 	font-weight: bold;
 }
 
@@ -91,18 +73,17 @@
 .sapMTB-Info-CTX .sapMLabel {
 	font-style: italic;
 	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
-	color: @sapHCStandardFG;
 }
 
 /* Transparent Toolbar Context*/
 .sapMTB-Transparent-CTX .sapMLabel {
-	margin-right: 1rem;
 	font-weight: @sapUiFontHeaderWeight;
 	font-size: @sapMFontHeader5Size;
-	font-family: @sapUiFontFamily;
-	text-shadow: none;
-	color: @sapHCStandardFG;
+}
+
+/* Transparent Toolbar Label Header */
+.sapMTB-Transparent-CTX > .sapMLabelTBHeader {
+	font-size: @sapMFontHeader4Size;
 }
 
 /* ============================ */
@@ -115,8 +96,8 @@
 	text-align: end !important; /* to overwrite setting on label */
 	width: 100%; /* to react on touch/click on whole label cell */
 	padding-right: 4px;
-	box-sizing: border-box;
 	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 /* in the cases text-align: end is set, we position the colon of the label to absolute so it does not get truncated in the ellipsis*/
@@ -177,7 +158,7 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiForm
 }
 
 /* ================================ */
-/* COMPACT + CONDENSED SIZE                   */
+/* COMPACT + CONDENSED SIZE         */
 /* ================================ */
 .sapUiSizeCompact,
 .sapUiSizeCondensed {
@@ -188,6 +169,10 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiForm
 
 	.sapMTB-Transparent-CTX .sapMLabel {
 		font-size: @sapMFontHeader6Size;
+	}
+	
+	.sapMTB-Transparent-CTX > .sapMLabelTBHeader {
+		font-size: @sapMFontHeader4Size;
 	}
 }
 .sapUiSizeCondensed .sapUiTableCell>.sapMLabel {

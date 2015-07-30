@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
-		<title>SelectList - sap.m</title>
+		<title>sap.m.SelectList</title>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
@@ -11,10 +11,6 @@
 				data-sap-ui-xx-bindingSyntax="complex">
 		</script>
 		<script>
-		var oApp = new sap.m.App("myApp", {
-			initialPage: "page1"
-		});
-
 		var oModel = new sap.ui.model.json.JSONModel();
 
 		var mData = {
@@ -409,13 +405,14 @@
 
 		oSelectList.setModel(oModel);
 
-		var oPage = new sap.m.Page("page1", {
-			title: "SelectList Control demo page",
-			content: [ oSelectList ]
-		});
-
-		oApp.addPage(oPage);
-		oApp.placeAt("body");
+		new sap.m.App({
+			pages: [
+				new sap.m.Page({
+					title: "SelectList Control demo page",
+					content: [ oSelectList ]
+				})
+			]
+		}).placeAt("body");
 		</script>
 	</head>
 	<body id="body" class="sapUiBody"></body>

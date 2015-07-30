@@ -35,10 +35,24 @@
 	var oFormatBinary = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: true, maxFractionDigits: 2}, new sap.ui.core.Locale("en"));
 	var oFormatDecimal = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 2}, new sap.ui.core.Locale("en"));
 	var oFormatDefault = sap.ui.core.format.FileSizeFormat.getInstance({}, new sap.ui.core.Locale("en"));
-	
-	var aBinaryUnits = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-	var aDecimalUnits = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-	
+
+	var aBinaryUnitNames = ["Kibibyte", "Mebibyte", "Gibibyte", "Tebibyte", "Pebibyte", "Exbibyte", "Zebibyte", "Yobibyte"];
+	var aDecimalUnitNames = ["Kilobyte", "Megabyte", "Gigabyte", "Terabyte", "Petabyte", "Exabyte", "Zettabyte", "Yottabyte"];
+	var aBinaryUnits = [];
+	var aDecimalUnits = [];
+
+	function extractUnit(names, units) {
+		jQuery.each(names, function(index, name) {
+			var sPattern = oFormatDefault.oBundle.getText("FileSize." + name);
+			// trim the string
+			var sName = sPattern.split("{0}")[1].replace(/^\s+|\s+$/g, "");
+			units.push(sName);
+		});
+	}
+
+	extractUnit(aBinaryUnitNames, aBinaryUnits);
+	extractUnit(aDecimalUnitNames, aDecimalUnits);
+
 	function checkFormat(format, value, expected){
 		var oFormat, sPrefix;
 		
@@ -181,7 +195,12 @@
 		checkParse("default", "1 Byte", 1);
 		checkParse("default", "888", 888);
 	});
-	
+
+	test("create format instance without giving any option", function() {
+		var oFormat = sap.ui.core.format.FileSizeFormat.getInstance();
+		equal(oFormat.format(100000), "100 KB", "BinarySize is set to false by default");
+	});
+
 </script>
 
 </head>

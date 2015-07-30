@@ -8,7 +8,7 @@
 	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_goldreflection" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
-	
+
 </script>
 
 <script language="javascript">
@@ -296,9 +296,9 @@
 			sap.ui.commons.MessageBox.confirm("Do you want to close the ToolPopup?", function(bResult){if(bResult==true){oToolPopupDefBtn.close();}}, "Confirm");
 		}
 	});
-	
+
 	var oToolPopupDefBtn = new sap.ui.ux3.ToolPopup({
-		content : [ 
+		content : [
 			new sap.ui.commons.FormattedTextView({
 				htmlText : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
 			})
@@ -312,7 +312,7 @@
 	function openAlert(message){
 		sap.ui.commons.MessageBox.alert("You pressed the " + message + "-Button");
 	}
-	
+
 	var oDefFocButton1 = new sap.ui.commons.Button({
 		text : "Open DefaultButton and InitialFocus",
 		press : function() {
@@ -360,6 +360,61 @@
 	oDefFocToolPopup.setInitialFocus(oDefFocBtn2);
 	oDefFocToolPopup.setDefaultButton(oDefFocBtn3);
 
+	var oButtonListBox = new sap.ui.commons.Button({
+		text : "Open Example with ListBox",
+		press : function() {
+			if (oTPListBox.isOpen()) {
+				oTPListBox.close();
+			} else {
+				oTPListBox.open();
+			}
+		}
+	}).placeAt("listboxExample");
+	var oListBoxCostCenter = new sap.ui.commons.ListBox("id_lb", {
+		height: "200px",
+		width: "200px"
+	});
+
+	for (var i = 0; i < 100; i++) {
+      oListBoxCostCenter.addItem(new sap.ui.core.Item({text: i}));
+	}
+	var oTPListBox = new sap.ui.ux3.ToolPopup({
+		id : "popup2211",
+		autoClose : false,
+		inverted: false,
+		opener : oButtonListBox,
+		content : [ oListBoxCostCenter ]
+	});
+
+	// ToolPopup with TabStrip
+	var btnOpener = new sap.ui.commons.Button({
+		text : "Open With TabStrip",
+		press : function() {
+			if (tp.isOpen()) {
+				tp.close();
+			} else {
+				tp.open();
+			}
+		}
+	}).placeAt("tabstrip");
+
+	//Create tab strip
+	var oLabel1 = new sap.ui.commons.Label({ text: "Name:" });
+	var oTextField1 = new sap.ui.commons.TextField();
+	var btnSave = new sap.ui.commons.Button({text:'Save'});
+
+	var oTabProduct = new sap.ui.commons.Tab();
+	oTabProduct.setTitle(new sap.ui.core.Title({text : "Product"}));
+	oTabProduct.addContent(oLabel1);
+	oTabProduct.addContent(oTextField1);
+	var oTabStripComplete = new sap.ui.commons.TabStrip();
+	oTabStripComplete.addTab(oTabProduct);
+
+	var tp = new sap.ui.ux3.ToolPopup({
+		content : [ oTabStripComplete ],
+		opener : btnOpener
+	});
+	tp.addButton(btnSave);
 </script>
 
 <style>
@@ -382,5 +437,8 @@
 	<div class="uiArea" id="sample1"></div>
 	<div class="uiArea" id="sample2"></div>
 
+	<div class="uiArea" id="listboxExample"></div>
+
+	<div class="uiArea" id="tabstrip"></div>
 </body>
 </html>

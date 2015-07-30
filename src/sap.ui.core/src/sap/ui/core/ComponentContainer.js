@@ -3,12 +3,11 @@
  */
 
 // Provides control sap.ui.core.ComponentContainer.
-sap.ui.define(['jquery.sap.global', './Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['./Control', './Component', './Core', './library'],
+	function(Control, Component, Core, library) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new ComponentContainer.
 	 *
@@ -22,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.ComponentContainer
+	 * @alias sap.ui.core.ComponentContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ComponentContainer = Control.extend("sap.ui.core.ComponentContainer", /** @lends sap.ui.core.ComponentContainer.prototype */ { metadata : {
@@ -39,6 +38,12 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			 * The URL of the component. The property can only be applied initially.
 			 */
 			url : {type : "sap.ui.core.URI", defaultValue : null},
+			
+			/**
+			 * Enable/disable validation handling by MessageManager for this component.
+			 * The resulting Messages will be propagated to the controls.
+			 */
+			handleValidation : {type : "boolean", defaultValue : false},
 	
 			/**
 			 * The settings object passed to the component when created. The property can only be applied initially.
@@ -124,6 +129,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 				oComponent = sap.ui.component({
 					name: sName,
 					url: this.getUrl(),
+					handleValidation: this.getHandleValidation(),
 					settings: this.getSettings()
 				});
 				this.setComponent(oComponent, true);
@@ -172,4 +178,4 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 
 	return ComponentContainer;
 
-}, /* bExport= */ true);
+});

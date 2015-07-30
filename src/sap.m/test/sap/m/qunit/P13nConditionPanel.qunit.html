@@ -87,6 +87,13 @@
 		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
 
 
+		oP13nConditionPanel.insertCondition(oCondition1);			
+		
+		// assertions
+		nItems= 3;
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+
+
 		oP13nConditionPanel.removeAllConditions();			
 		
 		// assertions
@@ -232,13 +239,13 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		oP13nConditionPanel._triggerRemoveCondition(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		oP13nConditionPanel._handleRemoveCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 		
 		var nItems= 2;
 		strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
 
 		// assertions
-		oP13nConditionPanel._triggerAddCondition(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 		
 		nItems= 3;
 		strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
@@ -264,8 +271,8 @@
 
 		// assertions
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
-		oConditionGrid.keyField.setSelectedIndex(2);
-		oP13nConditionPanel._triggerChangeKeyfield(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
+		oConditionGrid.keyField.setSelectedKey("CompanyName");
+		oP13nConditionPanel._handleChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
 		
 		var sKeyField= "CompanyName";
 		strictEqual(oP13nConditionPanel.getConditions()[0].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");
@@ -273,14 +280,14 @@
 		
 		
 		oConditionGrid.operation.setSelectedIndex(2);
-		oP13nConditionPanel._triggerChangeOperations(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
+		oP13nConditionPanel._handleChangeOnOperationField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
 		
 		var sOperation= "Contains";
 		strictEqual(oP13nConditionPanel.getConditions()[0].operation, sOperation, "Operation of first condition must be '" + sOperation + "'.");
 		
 
 		oConditionGrid.value1.setValue("foo");
-		oP13nConditionPanel._changeField(oP13nConditionPanel, oConditionGrid);		
+		oP13nConditionPanel._changeField(oConditionGrid);		
 		
 		var sValue1 = "foo";
 		strictEqual(oP13nConditionPanel.getConditions()[0].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
@@ -290,6 +297,30 @@
 		oP13nConditionPanel.destroy();
 	});
 
+	test("test ContainerMode", function(){
+		
+ 		// system under test
+		oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1,
+ 			containerQuery : true
+		});
+		
+ 		fillConditionPanel(oP13nConditionPanel);
+ 
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		
+		strictEqual(oP13nConditionPanel.getContainerQuery(), true, "ContainerQuery must be true!");
+		
+		
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+	
 }());
 
 </script>

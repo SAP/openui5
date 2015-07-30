@@ -18,7 +18,7 @@
 }
 
 .sapMObjStatus > .sapMObjStatusTitle {
-	color: @sapUiLightText;
+	color: @sapUiBarText;
 }
 
 .sapMObjStatusNone > .sapMObjStatusText,
@@ -41,6 +41,10 @@
 	color: @sapUiPositiveText;
 }
 
+.sapUiTableCell .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
+}
+
 /* ============================================= */
 /* FIX: CSS 0120061532 0001316230 2014 */
 /* ============================================= */
@@ -58,5 +62,5 @@
 /* Condensed size */
 .sapUiSizeCondensed .sapUiTableCell>.sapMObjStatus>.sapMObjStatusText{
 	.sapUiCondensedTableCellContent; /* see shared.css */
-	font-size: @sapMFontMediumSize; 
+	font-size: @sapMFontMediumSize;
 }

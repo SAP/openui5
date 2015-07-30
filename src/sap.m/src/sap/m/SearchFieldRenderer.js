@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class SearchField renderer.
-	 * @static
+	 * SearchField renderer.
+	 * @namespace
 	 */
 	var SearchFieldRenderer = {
 	};
@@ -26,9 +26,13 @@ sap.ui.define(['jquery.sap.global'],
 			return;
 		}
 	
-		var sPlaceholder = oSF.getPlaceholder();
-		var sValue = oSF.getValue();
-		var sWidth = oSF.getProperty("width");
+		var sPlaceholder = oSF.getPlaceholder(),
+			sValue = oSF.getValue(),
+			sWidth = oSF.getProperty("width"),
+			sId = oSF.getId(),
+			bShowRefreshButton = oSF.getShowRefreshButton(),
+			bShowSearchBtn = oSF.getShowSearchButton(),
+			oAccAttributes = {}; // additional accessibility attributes
 	
 		// container
 		rm.write("<div");
@@ -51,9 +55,6 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write(">");
 	
-		var sId = oSF.getId();
-		var bShowSearchBtn = oSF.getShowSearchButton();
-	
 			// 1. Input type="search".
 			//    Enclose input into a <form> to show a correct keyboard
 			//    method="post" to prevent unneeded "?" at the end of URL
@@ -61,7 +62,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass('sapMSFF');
 			if (!bShowSearchBtn) {
 				rm.addClass("sapMSFNS"); //no search button
-			} else if (oSF.getShowRefreshButton()) {
+			} else if (bShowRefreshButton) {
 				rm.addClass('sapMSFReload');
 			}
 			rm.writeClasses();
@@ -80,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write("</label>");
 			}
 		
-			rm.write('<input type="search" autocorrect="off"');
+			rm.write('<input type="search" autocorrect="off" autocomplete="off"');
 			rm.writeAttribute("id", oSF.getId() + "-I");
 		
 			rm.addClass("sapMSFI");
@@ -95,7 +96,16 @@ sap.ui.define(['jquery.sap.global'],
 			if (sPlaceholder) { rm.writeAttributeEscaped("placeholder", sPlaceholder); }
 			if (oSF.getMaxLength()) { rm.writeAttribute("maxLength", oSF.getMaxLength()); }
 			if (sValue) { rm.writeAttributeEscaped("value", sValue); }
-		
+
+			//ARIA attributes
+			if (oSF.getEnabled() && bShowRefreshButton) {
+				oAccAttributes.describedby = {
+					value: oSF._sAriaF5LabelId,
+					append: true
+				};
+			}
+			rm.writeAccessibilityState(oSF, oAccAttributes);
+
 			rm.write(">");
 		
 			if (oSF.getEnabled()) {
@@ -104,6 +114,9 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttribute("id", oSF.getId() + "-reset");
 				rm.addClass("sapMSFR"); // reset
 				rm.addClass("sapMSFB"); // button
+				if (sap.ui.Device.browser.firefox) {
+					rm.addClass("sapMSFBF"); // firefox, active state by peventDefault
+				}
 				if (!bShowSearchBtn) {
 					rm.addClass("sapMSFNS"); //no search button
 				}
@@ -116,6 +129,9 @@ sap.ui.define(['jquery.sap.global'],
 					rm.writeAttribute("id", oSF.getId() + "-search");
 					rm.addClass("sapMSFS"); // search
 					rm.addClass("sapMSFB"); // button
+					if (sap.ui.Device.browser.firefox) {
+						rm.addClass("sapMSFBF"); // firefox, active state by peventDefault
+					}
 					rm.writeClasses();
 					if (oSF.getRefreshButtonTooltip()) {
 						rm.writeAttributeEscaped("title", oSF.getRefreshButtonTooltip());

@@ -1,10 +1,11 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
+	xmlns:c="sap.ui.core"
 	xmlns:t="sap.ui.table"
 	xmlns:fb="sap.ui.comp.filterbar"
+	xmlns:var="sap.ui.comp.variants"
 	height="100%">
-	<Page enableScrolling="false" title="Title" class="sapMSampleFioriListReportPageOverflow">
+	<Page enableScrolling="true" title="Title" class="sapMSampleFioriListReportPageOverflow">
 		<content>
 			<VBox fitContainer="true">
 				<fb:FilterBar>
@@ -56,38 +57,24 @@
 						<FlexItemData shrinkFactor="0"/>
 					</fb:layoutData>
 				</fb:FilterBar>
-				<Toolbar height="3rem">
-					<content>
-						<Label text="Title Bar Here" class="sapMH4Style" />
-						<ToolbarSpacer />
-						<Label text="Variant:" labelFor="select" />
-						<Select id="select" width="12rem" />
-					</content>
-					<layoutData>
-						<FlexItemData shrinkFactor="0" styleClass="sapMSampleFioriListReportToolbar" />
-					</layoutData>
-				</Toolbar>
 				<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 					<t:toolbar>
-						<Toolbar design="Solid">
-							<SegmentedButton>
-								<buttons>
-									<Button text="All Accounts" />
-									<Button text="Assets" />
-									<Button text="Liabilities &amp; Equity" />
-									<Button text="Revenues" />
-								</buttons>
-							</SegmentedButton>
+						<Toolbar>
+							<Title text="Title Bar Here"/>
+							<ToolbarSeparator />
+							<var:VariantManagement>
+							  <var:items>
+								<c:Item text="My Better Variant" key="MBV"/>
+								</var:items>
+							</var:VariantManagement>
 							<ToolbarSpacer />
 							<SearchField width="12rem" />
-							<ToolbarSpacer width="1rem" />
 							<SegmentedButton>
 								<buttons>
 									<Button icon="sap-icon://table-view" />
 									<Button icon="sap-icon://bar-chart" />
 								</buttons>
 							</SegmentedButton>
-							<ToolbarSpacer width="1rem" />
 							<Button icon="sap-icon://group-2" type="Transparent" />
 							<Button icon="sap-icon://action-settings" type="Transparent" />
 						</Toolbar>

@@ -3,15 +3,14 @@
 /* CSS for control sap.m/MultiInput.control */
 /* ============================================= */
 
-.sapMMultiInput * {
-	box-sizing: border-box;
-}
-
 .sapMMultiInputBorder {
+	box-sizing: border-box;
 	position: relative;
 	white-space: nowrap;
-	overflow-x: auto;
-	overflow-y: hidden;
+}
+
+.sapMMultiInputInputContainer {
+	box-sizing: border-box;
 }
 
 // on the desktop we hide the overflow
@@ -50,4 +49,8 @@
 	position: absolute;
 	top: 0rem;
 	left: 0rem;	
+}
+
+.sapMMultiInputMultiModeInputContainer {
+	position: static;
 }

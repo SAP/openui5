@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 
 
 	/**
-	 * @class TextArea renderer.
-	 * @static
+	 * TextArea renderer.
+	 * @namespace
 	 */
 	var TextAreaRenderer = Renderer.extend(TextFieldRenderer);
 	
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	
 		rm.addStyle('overflow', 'auto');
 	
-		/*eslint no-empty:1 */
+		/*eslint-disable no-empty */
 		//TODO Rethink if empty block is needed
 		if (oTextArea.getWidth() && oTextArea.getWidth() != '') {
 	//		done in TextField renderer
@@ -42,6 +42,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 				rm.writeAttribute('cols', oTextArea.getCols());
 			}
 		}
+		/*eslint-enable no-empty */
 	
 		if (oTextArea.getHeight() && oTextArea.getHeight() != '') {
 			rm.addStyle('height',oTextArea.getHeight());

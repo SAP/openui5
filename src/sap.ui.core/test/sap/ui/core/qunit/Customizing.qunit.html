@@ -16,7 +16,13 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 	<script>
 	
 	
@@ -33,6 +39,8 @@
 	
 	var aLifeCycleCalls = [];
 	
+	
+	var oLifecycleSpy = sinon.spy();
 	
 	
 	// UI Construction
@@ -96,6 +104,7 @@
 		ok(jQuery.sap.domById("buttonWithCustomerAction"), "JSView Extension should be rendered");
 		// extension within extension
 		ok(jQuery.sap.domById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
+		ok(jQuery.sap.domById("mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
 	});
 
 	
@@ -107,8 +116,8 @@
 		equal(aLifeCycleCalls.length, 6, "6 lifecycle methods should be called");
 		// check calling order
 		equal(aLifeCycleCalls[0], "Sub2 Controller onInit()", "1st lifecycle method to be called should be: Sub2 Controller onInit()");
-		equal(aLifeCycleCalls[1], "Sub2ControllerExtension Controller onInit()", "2st lifecycle method to be called should be: Sub2ControllerExtension Controller onInit()");
-		equal(aLifeCycleCalls[2], "Sub2ControllerExtension Controller onBeforeRendering()", "3st lifecycle method to be called should be: Sub2ControllerExtension Controller onBeforeRendering()");
+		equal(aLifeCycleCalls[1], "Sub2ControllerExtension Controller onInit()", "2nd lifecycle method to be called should be: Sub2ControllerExtension Controller onInit()");
+		equal(aLifeCycleCalls[2], "Sub2ControllerExtension Controller onBeforeRendering()", "3rd lifecycle method to be called should be: Sub2ControllerExtension Controller onBeforeRendering()");
 		equal(aLifeCycleCalls[3], "Sub2 Controller onBeforeRendering()", "4th lifecycle method to be called should be: Sub2 Controller onBeforeRendering()");
 		equal(aLifeCycleCalls[4], "Sub2 Controller onAfterRendering()", "5th lifecycle method to be called should be: Sub2 Controller onAfterRendering()");
 		equal(aLifeCycleCalls[5], "Sub2ControllerExtension Controller onAfterRendering()", "6th lifecycle method to be called should be: Sub2ControllerExtension Controller onAfterRendering()");
@@ -130,6 +139,25 @@
 		ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
 		ok(oController.customerAction, "Extended Sub2 controller should have a customerAction method");
 		equal(oController.originalSAPAction(), "ext", "originalSAPAction method of extended controller should return 'ext'");
+	});
+	
+	test("Controller Extension (Code Extensibility)", function() {
+		
+		// check lifecycle methods
+		equal(oLifecycleSpy.callCount, 9, "9 lifecycle methods should be called");
+		// check calling order
+		equal(oLifecycleSpy.getCall(0).args[0], "Sub6 Controller onInit()", "1st lifecycle method to be called should be: Sub6 Controller onInit()");
+		equal(oLifecycleSpy.getCall(1).args[0], "Sub6ControllerExtension Controller onInit()", "2nd lifecycle method to be called should be: Sub6ControllerExtension Controller onInit()");
+		equal(oLifecycleSpy.getCall(2).args[0], "Sub6AnotherControllerExtension Controller onInit()", "3rd lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onInit()");
+		
+		equal(oLifecycleSpy.getCall(3).args[0], "Sub6AnotherControllerExtension Controller onBeforeRendering()", "4th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
+		equal(oLifecycleSpy.getCall(4).args[0], "Sub6ControllerExtension Controller onBeforeRendering()", "5th lifecycle method to be called should be: Sub6ControllerExtension Controller onBeforeRendering()");
+		equal(oLifecycleSpy.getCall(5).args[0], "Sub6 Controller onBeforeRendering()", "6th lifecycle method to be called should be: Sub6 Controller onBeforeRendering()");
+		
+		equal(oLifecycleSpy.getCall(6).args[0], "Sub6 Controller onAfterRendering()", "7th lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
+		equal(oLifecycleSpy.getCall(7).args[0], "Sub6ControllerExtension Controller onAfterRendering()", "8th lifecycle method to be called should be: Sub6ControllerExtension Controller onAfterRendering()");
+		equal(oLifecycleSpy.getCall(8).args[0], "Sub6AnotherControllerExtension Controller onAfterRendering()", "9th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onAfterRendering()");
+		
 	});
 	
 	

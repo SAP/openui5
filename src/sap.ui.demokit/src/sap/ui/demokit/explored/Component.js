@@ -9,11 +9,11 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 
 
 	var Component = sap.ui.core.UIComponent.extend("sap.ui.demokit.explored.Component", {
-	
+
 		metadata : {
 			includes : [
-				"/css/style.css",
-				"/css/titles.css"
+				"css/style.css",
+				"css/titles.css"
 			],
 			routing : {
 				config : {
@@ -37,6 +37,14 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 						view : "sample",
 						viewLevel : 4,
 						targetAggregation : "detailPages"
+					},
+					{
+						pattern : "sample/{id}/code/{fileName}",
+						name : "code_file",
+						view : "code",
+						viewLevel : 6,
+						targetAggregation : "detailPages",
+						transition: "flip"
 					},
 					{
 						pattern : "sample/{id}/code",
@@ -65,48 +73,50 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 				]
 			}
 		},
-	
+
 		/**
 		 * !!! The steps in here are sequence dependent !!!
 		 */
 		init : function () {
-	
+
 			// 1. some very generic requires
 			jQuery.sap.require("sap.ui.demokit.explored.util.ObjectSearch");
+			jQuery.sap.require("sap.ui.demokit.explored.util.ToggleFullScreenHandler");
 					jQuery.sap.require("sap.ui.core.routing.History");
 			jQuery.sap.require("sap.m.InstanceManager");
 			jQuery.sap.require("sap.m.routing.RouteMatchedHandler");
-	
+
 			// 2. call overridden init (calls createContent)
 			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
-	
+
 			// 3. nav to initial pages
 			var router = this.getRouter();
 			if (!sap.ui.Device.system.phone) {
 				router.myNavToWithoutHash("sap.ui.demokit.explored.view.master", "XML", true);
 				router.myNavToWithoutHash("sap.ui.demokit.explored.view.welcome", "XML", false);
 			}
-	
+
 			// 4. initialize the router
 			this.routeHandler = new sap.m.routing.RouteMatchedHandler(router);
 			router.initialize();
 		},
-	
+
 		destroy : function () {
-			
+
 			if (this.routeHandler) {
 				this.routeHandler.destroy();
 			}
-			
+			sap.ui.demokit.explored.util.ToggleFullScreenHandler.cleanUp();
+
 			// call overridden destroy
 			sap.ui.core.UIComponent.prototype.destroy.apply(this, arguments);
 		},
-	
+
 		/**
-		 * 
+		 *
 		 */
 		createContent : function () {
-	
+
 			// create root view
 			var oView = sap.ui.view({
 				id : "app",
@@ -114,14 +124,14 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 				type : "JS",
 				viewData : { component : this }
 			});
-	
+
 			// set i18n model (must be done before data)
 			var sPath = jQuery.sap.getModulePath("sap.ui.demokit.explored");
 			var i18nModel = new sap.ui.model.resource.ResourceModel({
 				bundleUrl : sPath + "/i18n/messageBundle.properties"
 			});
 			oView.setModel(i18nModel, "i18n");
-	
+
 			// set entity model
 			var oEntData = {
 				entityCount : sap.ui.demokit.explored.data.entityCount,
@@ -130,13 +140,13 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 			var oEntModel = new sap.ui.model.json.JSONModel(oEntData);
 			oEntModel.setSizeLimit(100000);
 			oView.setModel(oEntModel, "entity");
-	
+
 			// set filter model
 			var oFilterData = sap.ui.demokit.explored.data.filter;
 			var oFilterModel = new sap.ui.model.json.JSONModel(oFilterData);
 			oFilterModel.setSizeLimit(100000);
 			oView.setModel(oFilterModel, "filter");
-	
+
 			// set device model
 			var deviceModel = new sap.ui.model.json.JSONModel({
 				isTouch : sap.ui.Device.support.touch,
@@ -148,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 			});
 			deviceModel.setDefaultBindingMode("OneWay");
 			oView.setModel(deviceModel, "device");
-	
+
 			// done
 			return oView;
 		}

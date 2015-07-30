@@ -1,28 +1,22 @@
 <mvc:View
-	controllerName="sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend"
-	xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified" xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml" class="viewPadding">
-	<html:div style="max-width: 480px; background: white">
-		<l:ResponsiveFlowLayout>
-			<l:content>
-				<u:Calendar id="calendar">
-					<u:layoutData>
-						<l:ResponsiveFlowLayoutData minWidth="320"
-							weight="2" margin="false" linebreakable="false">
-						</l:ResponsiveFlowLayoutData>
-					</u:layoutData>
-				</u:Calendar>
-				<u:CalendarLegend id="legend">
-					<u:layoutData>
-						<l:ResponsiveFlowLayoutData minWidth="150" weight="1" 
-							margin="false">
-						</l:ResponsiveFlowLayoutData>
-					</u:layoutData>
-				</u:CalendarLegend>
-			</l:content>
-			<l:layoutData>
-			</l:layoutData>
-		</l:ResponsiveFlowLayout>
-	</html:div>
-	<ToggleButton text="Special Days" press="handleShowSpecialDays"></ToggleButton>
+		controllerName="sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend"
+		xmlns:l="sap.ui.layout"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		class="viewPadding">
+	<l:VerticalLayout>
+		<l:content>
+			<u:Calendar
+					id="calendar1" />
+			<u:CalendarLegend
+					id="legend1" />
+			<u:Calendar
+					id="calendar2" />
+			<u:CalendarLegend
+					id="legend2" />
+		</l:content>
+		<ToggleButton text="Special Days" press="handleShowSpecialDays"></ToggleButton>
+	</l:VerticalLayout>
 </mvc:View>
