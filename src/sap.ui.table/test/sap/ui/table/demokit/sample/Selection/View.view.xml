@@ -134,7 +134,7 @@
 					<Column width="11rem" hAlign="Center">
 						<m:Label text="Delivery Date" />
 						<template>
-							<m:Datepicker value="{
+							<m:DatePicker value="{
 								path: 'DeliveryDate',
 								type: 'sap.ui.model.type.Date',
 								formatOptions: {source: {pattern: 'timestamp'}}
