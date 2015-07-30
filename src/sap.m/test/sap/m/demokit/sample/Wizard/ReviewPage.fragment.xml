@@ -79,7 +79,6 @@
 				<Bar>
 					<contentRight>
 						<Button text="Submit" press="handleWizardSubmit"></Button>
-						<Button text="Edit" press="backToWizardContent"></Button>
 						<Button text="Cancel" press="handleWizardCancel"></Button>
 					</contentRight>
 				</Bar>
