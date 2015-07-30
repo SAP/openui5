@@ -982,13 +982,12 @@ sap.ui
 					});
 					// resolve the navigation properties
 					var aNavProps = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "'] NavigationProperty");
-					
 					jQuery.each(aNavProps, function(iIndex, oNavProp) {
 						var $NavProp = jQuery(oNavProp);
 						var aRelationship  = $NavProp.attr("Relationship").split(".");
-						var aAssociation = jQuery(oMetadata).find("Association[Name = '" + aRelationship[1] + "']" );
-						//TODO find a better soultion
-						var aAssociationSet = jQuery(oMetadata).find("AssociationSet[Association = '" + aRelationship[0] + "\\." + aRelationship[1] + "']" );
+						var aAssociationSet = jQuery(oMetadata).find("AssociationSet[Association = '" + aRelationship.join(".") + "']" );
+						var sName = aRelationship.pop();
+						var aAssociation = jQuery(oMetadata).find("Association[Name = '" + sName + "']" );
 						oEntitySet.navprops[$NavProp.attr("Name")] = {
 							"name": $NavProp.attr("Name"),
 							"from": fnResolveNavProp($NavProp.attr("FromRole"), aAssociation,aAssociationSet, true),

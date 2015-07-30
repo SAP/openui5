@@ -30,3 +30,4 @@ bower_components
 *.sln
 *.suo
 web.config
+/.user.project.json
