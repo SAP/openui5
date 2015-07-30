@@ -1073,7 +1073,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 						var sValue = this._aXhr[i].requestHeaders[j].value;
 						if (sHeader == sHeaderCheck && sValue == sValueCheck) {
 							this._aXhr[i].xhr.abort();
-							jQuery.sap.log.information("File upload aborted.");
+							jQuery.sap.log.info("File upload aborted.");
 						}
 					}
 				} else {
