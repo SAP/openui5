@@ -2163,5 +2163,66 @@
         "references": []
       }
     ]
+  },
+  "1.30.5": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "0046efeee53e00ba9f3614aa575dfb1978363767",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Screen reader support improved",
+        "references": []
+      },
+      {
+        "id": "d896b4bd3581adc894f975051725ccea0d869837",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix error value state in compact mode",
+        "references": []
+      },
+      {
+        "id": "75a8c618211d5db9fa013331a28f26d7617c5346",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: disabled - right border missing in IE",
+        "references": []
+      },
+      {
+        "id": "4d2a5cd7946ba1ffcc41467967766331b7c5262c",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: compact header and footer are now 2.5 rem in height",
+        "references": []
+      },
+      {
+        "id": "f45731aa94c73c72f49abc33b30a6e37214be370",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: click value help icon in multiline multiinput",
+        "references": []
+      },
+      {
+        "id": "cf6b245739854c3a10fa48da37c25ffecf9e5a00",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: scroll to top after focus out of multiline multiinput",
+        "references": []
+      },
+      {
+        "id": "a7f0072d8577c04177b6fba31f8e8ac7964bab57",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: no separator between master and detail areas",
+        "references": []
+      },
+      {
+        "id": "214c70c0bf4ce2a70e227ba67d61116dc78bdd78",
+        "author": "Diana Shtilianova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageBox: Deprecation of usage of sap.ui.Control as content",
+        "references": []
+      }
+    ]
   }
 }

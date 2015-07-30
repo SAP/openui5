@@ -522,5 +522,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.5": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "a7f0072d8577c04177b6fba31f8e8ac7964bab57",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: no separator between master and detail areas",
+        "references": []
+      }
+    ]
   }
 }
