@@ -6,10 +6,10 @@
 sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./List",
 		"./StandardListItem", "./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
 		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
-		"./semantic/SemanticPage"],
+		"./semantic/SemanticPage", "./Popover"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, List,
 			  StandardListItem, library, Control, PlacementType, IconPool,
-			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage) {
+			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Popover) {
 		"use strict";
 
 		/**
@@ -1034,8 +1034,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup");
 
 			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover remove the Arrow
-			if (oResponsivePopoverControl instanceof sap.m.Popover) {
-				if ((oControl.getParent() instanceof sap.m.Toolbar || oControl.getParent() instanceof sap.m.semantic.SemanticPage)) {
+			if (oResponsivePopoverControl instanceof Popover) {
+				if ((oControl.getParent() instanceof Toolbar || oControl.getParent() instanceof SemanticPage)) {
 					oResponsivePopoverControl.setShowArrow(false);
 				} else {
 					oResponsivePopoverControl.setShowArrow(true);
