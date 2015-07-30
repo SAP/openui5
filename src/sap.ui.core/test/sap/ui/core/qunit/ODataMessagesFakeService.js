@@ -197,7 +197,7 @@ xhr.onCreate = function(request) {
 			
 		}
 		
-		if (sRandomServiceUrl) {
+		if (sRandomServiceUrl !== null) {
 			// Use RandomService
 			oRandomService.serveUrl({ 
 				url: sRandomServiceUrl, 
