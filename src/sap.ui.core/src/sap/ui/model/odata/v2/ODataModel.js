@@ -3681,13 +3681,13 @@ sap.ui.define([
 		mChangedEntities = {}, oEntityInfo = {};
 		
 		sResolvedPath = this.resolve(sPath, oContext);
-		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1); 
 		
 		var oEntry = this.getEntityByPath(sResolvedPath, null, oEntityInfo);
 		if (!oEntry) {
 			return false;
 		}
 		
+		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1); 
 		sKey = oEntityInfo.key;
 		oOriginalValue = this._getObject(sPath, oContext, true);
 		
