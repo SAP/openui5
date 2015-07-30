@@ -508,5 +508,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.5": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "2a02ac3d4a7b2c74dc194237013d4619f6c3ca49",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: node label alignment issue",
+        "references": []
+      }
+    ]
   }
 }

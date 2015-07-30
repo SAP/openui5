@@ -1757,5 +1757,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.5": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "b90724935cdd72ad38c9e52e0dd785ee1bc2a3e5",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: cleanup object bindings on destroy",
+        "references": []
+      },
+      {
+        "id": "75320383c2f5fa840b6ff5b1757543fdc05010d6",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: check negative date and month in strict mode",
+        "references": []
+      }
+    ]
   }
 }
