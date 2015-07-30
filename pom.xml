@@ -68,7 +68,7 @@
 
 		<!-- filtering properties -->
 		<version>${project.version}</version>
-		<copyright><![CDATA[SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+		<copyright><![CDATA[UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 ]]></copyright>
