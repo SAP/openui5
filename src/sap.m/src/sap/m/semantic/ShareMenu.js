@@ -72,13 +72,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	ShareMenu.prototype.getBaseButton = function () {
 		return this._oBaseButton;
 	};
-	
+
 	ShareMenu.prototype.getAggregation = function (sName) {
 		if (sName === "content") {
 			return this.getContent();
 		}
 	};
-	
+
 	ShareMenu.prototype.addAggregation = function (sName, oButton, bSuppressInvalidate) {
 		if (sName === "content") {
 			return this.addContent(oButton, bSuppressInvalidate);
@@ -90,19 +90,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 			return this.insertContent(oButton, iIndex, bSuppressInvalidate);
 		}
 	};
-	
+
 	ShareMenu.prototype.indexOfAggregation = function (sName, oButton) {
 		if (sName === "content") {
 			return this.indexOfContent(oButton);
 		}
 	};
-	
+
 	ShareMenu.prototype.removeAggregation = function (sName, oButton, bSuppressInvalidate) {
 		if (sName === "content") {
 			return this.removeContent(oButton, bSuppressInvalidate);
 		}
 	};
-	
+
 	ShareMenu.prototype.removeAllAggregation = function (sName, bSuppressInvalidate) {
 		if (sName === "content") {
 			return this.removeAllContent(bSuppressInvalidate);
@@ -355,6 +355,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 				}),
 				press: function () {
 					that._oActionSheet.openBy(that._oShareMenuBtn);
+				}
+			});
+
+			this._oShareMenuBtn.addEventDelegate({
+				onAfterRendering: function() {
+					that._oShareMenuBtn.$().attr("aria-haspopup", true);
 				}
 			});
 		}
