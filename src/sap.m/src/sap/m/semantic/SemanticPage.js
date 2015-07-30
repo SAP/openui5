@@ -441,6 +441,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 		if (!this._oNavButton) {
 			this._oNavButton = new Button(this.getId() + "-navButton", {
 				type: sap.m.ButtonType.Up,
+				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"),
 				press: jQuery.proxy(this.fireNavButtonPress, this)
 			});
 		}
