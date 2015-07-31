@@ -358,8 +358,8 @@ if (typeof window.sap.ui !== "object") {
 		return getDesktopOS();
 	}
 	
-	function setOS() {
-		device.os = getOS() || {};
+	function setOS(customUA) {
+		device.os = getOS(customUA) || {};
 		device.os.OS = OS;
 		device.os.version = device.os.versionStr ? parseFloat(device.os.versionStr) : -1;
 
@@ -372,6 +372,8 @@ if (typeof window.sap.ui !== "object") {
 		}
 	}
 	setOS();
+	// expose for unit test
+	device._setOS = setOS;
 
 
 
@@ -1235,45 +1237,47 @@ if (typeof window.sap.ui !== "object") {
 			"COMBI" : "combi"
 	};
 
-	var isWin8 = !!device.os.windows && device.os.version === 8;
-	var isWin7 = !!device.os.windows && device.os.version === 7;
-
 	device.system = {};
 
-	function getSystem(_simMobileOnDesktop) {
-		var t = isTablet();
-		
+	function getSystem(_simMobileOnDesktop, customUA) {
+		var t = isTablet(customUA);
+		var isWin8 = device.os.windows && device.os.version === 8;
+		var isWin7 = device.os.windows && device.os.version === 7;
+
 		var s = {};
 		s.tablet = ((device.support.touch && !isWin7) || isWin8 || !!_simMobileOnDesktop) && t;
 		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
 		s.desktop = (!s.tablet && !s.phone) || isWin8 || isWin7;
 		s.combi = (s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
-		
+
 		for (var type in SYSTEMTYPE) {
 			changeRootCSSClass("sap-" + SYSTEMTYPE[type], !s[SYSTEMTYPE[type]]);
 		}
 		return s;
 	}
 
-	function isTablet() {
-		var android_phone = (/(?=android)(?=.*mobile)/i.test(navigator.userAgent));
-		// According to google documentation: https://developer.chrome.com/multidevice/webview/overview, the WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android.
-		// If you're attempting to differentiate between the WebView and Chrome for Android, you should look for the presence of the Version/_X.X_ string in the WebView user-agent string
-		// The stock browser of Samsung device uses Chrome kernal from Android version 4.4. It behaves differently than the Chrome Webview, therefore it's excluded from this check by checking the 'SAMSUNG'
-		// string in the user agent.
-		var bChromeWebView = device.os.android && device.browser.chrome && (device.os.version >= 4.4) && /Version\/\d.\d/.test(navigator.userAgent) && !/SAMSUNG/.test(navigator.userAgent);
+	function isTablet(customUA) {
+		var ua = customUA || navigator.userAgent;
+		var isWin8 = device.os.windows && device.os.version === 8;
 		if (device.os.name === device.os.OS.IOS) {
-			return /ipad/i.test(navigator.userAgent);
+			return /ipad/i.test(ua);
 		} else {
+			//in real mobile device
 			if (device.support.touch) {
 				if (isWin8) {
 					return true;
 				}
-				
-				//in real mobile device
-				var densityFactor = window.devicePixelRatio ? window.devicePixelRatio : 1; // may be undefined in Windows Phone devices
-				if (!bChromeWebView && (device.os.name === device.os.OS.ANDROID) && device.browser.webkit && (parseFloat(device.browser.webkitVersion) > 537.10)) {
+
+				if (device.browser.chrome && device.os.android && device.os.version >= 4.4) {
+					// From Android version 4.4, WebView also uses Chrome as Kernel.
+					// We can use the user agent pattern defined in Chrome to do phone/tablet detection
+					// According to the information here: https://developer.chrome.com/multidevice/user-agent#chrome_for_android_user_agent,
+					//  the existence of "Mobile" indicates it's a phone. But because the crosswalk framework which is used in Fiori Client
+					//  inserts another "Mobile" to the user agent for both tablet and phone, we need to check whether "Mobile Safari/<Webkit Rev>" exists.
+					return !/Mobile Safari\/[.0-9]+/.test(ua);
+				} else {
+					var densityFactor = window.devicePixelRatio ? window.devicePixelRatio : 1; // may be undefined in Windows Phone devices
 					// On Android sometimes window.screen.width returns the logical CSS pixels, sometimes the physical device pixels;
 					// Tests on multiple devices suggest this depends on the Webkit version.
 					// The Webkit patch which changed the behavior was done here: https://bugs.webkit.org/show_bug.cgi?id=106460
@@ -1281,32 +1285,35 @@ if (typeof window.sap.ui !== "object") {
 					// Chrome 18 with Webkit 535.19 returns the physical pixels.
 					// The BlackBerry 10 browser with Webkit 537.10+ returns the physical pixels.
 					// So it appears like somewhere above Webkit 537.10 we do not hve to divide by the devicePixelRatio anymore.
+					if (device.os.android && device.browser.webkit && (parseFloat(device.browser.webkitVersion) > 537.10)) {
+						densityFactor = 1;
+					}
 
-					// update: Chrome WebView returns physical pixels therefore it's excluded from this special check
-					densityFactor = 1;
+					//this is how android distinguishes between tablet and phone
+					//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
+					var bTablet = (Math.min(window.screen.width / densityFactor, window.screen.height / densityFactor) >= 600);
+
+					// special workaround for Nexus 7 where the window.screen.width is 600px or 601px in portrait mode (=> tablet)
+					// but window.screen.height 552px in landscape mode (=> phone), because the browser UI takes some space on top.
+					// So the detected device type depends on the orientation :-(
+					// actually this is a Chrome bug, as "width"/"height" should return the entire screen's dimensions and
+					// "availWidth"/"availHeight" should return the size available after subtracting the browser UI
+					if (isLandscape()
+							&& (window.screen.height === 552 || window.screen.height === 553) // old/new Nexus 7
+							&& (/Nexus 7/i.test(ua))) {
+						bTablet = true;
+					}
+
+					return bTablet;
 				}
 
-				//this is how android distinguishes between tablet and phone
-				//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
-				var bTablet = (Math.min(window.screen.width / densityFactor, window.screen.height / densityFactor) >= 600);
-
-				// special workaround for Nexus 7 where the window.screen.width is 600px or 601px in portrait mode (=> tablet) 
-				// but window.screen.height 552px in landscape mode (=> phone), because the browser UI takes some space on top.
-				// So the detected device type depends on the orientation :-(
-				// actually this is a Chrome bug, as "width"/"height" should return the entire screen's dimensions and
-				// "availWidth"/"availHeight" should return the size available after subtracting the browser UI
-				if (isLandscape()
-						&& (window.screen.height === 552 || window.screen.height === 553) // old/new Nexus 7  
-						&& (/Nexus 7/i.test(navigator.userAgent))) {
-					bTablet = true;
-				}
-
-				return bTablet;
 			} else {
+				// This simple android phone detection can be used here because this is the mobile emulation mode in desktop browser
+				var android_phone = (/(?=android)(?=.*mobile)/i.test(ua));
 				// in desktop browser, it's detected as tablet when
 				// 1. Windows 8 device with a touch screen where "Touch" is contained in the userAgent
 				// 2. Android emulation and it's not an Android phone
-				return (device.browser.msie && ua.indexOf("Touch") !== -1) || (device.os.name === device.os.OS.ANDROID && !android_phone);
+				return (device.browser.msie && ua.indexOf("Touch") !== -1) || (device.os.android && !android_phone);
 			}
 		}
 	}
@@ -1318,6 +1325,8 @@ if (typeof window.sap.ui !== "object") {
 		}
 	}
 	setSystem();
+	// expose the function for unit test
+	device._getSystem = getSystem;
 
 //******** Orientation Detection ********
 
