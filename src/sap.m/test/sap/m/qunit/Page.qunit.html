@@ -80,7 +80,9 @@
 				ok(jQuery.sap.domById("hdrbtn"), "header right button should be rendered");
 				ok(jQuery.sap.domById("mySubHeader"), "Sub header should be rendered");
 				ok(jQuery.sap.domById("myFirstPage-navButton"), "nav button should be rendered");
-				ok(jQuery.sap.domById("qunit-header"), "page content should be rendered");
+				var sNavButtonTooltip = jQuery("#myFirstPage-navButton").attr("title");
+				ok(sNavButtonTooltip && (sNavButtonTooltip.length > 0), "nav button should have a tooltip by default");
+				ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
 				ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
 				ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
 				equal (jQuery.sap.byId("mySubHeader").position().top, (jQuery.sap.byId("myFirstPage-intHeader").position().top + jQuery.sap.byId("myFirstPage-intHeader").outerHeight()), "subHeader should be directly below header");
