@@ -41,7 +41,7 @@
 	width: 4rem;
 	height: 2rem;
 
-	/* use px instead of rem due a rounding issue of chrome when using rem as CSS unit for borders at zoom in < 100%  */
+	/* use px instead of rem, borders sized in "rem" disappear when the page is zoomed out in Chrome. */
 	border: 1px solid;
 
 	/* note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
