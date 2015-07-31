@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			L = "L",
 			XL = "XL",
 			HIDDEN_CLASS = "sapUiHidden",
-			SPAN_SIZE_12_CLASS = "sapUiSCSpan12",
+			SPAN_SIZE_12_CLASS = "sapUiDSCSpan12",
 			SPAN_SIZE_3 = 3,
 			SPAN_SIZE_4 = 4,
 			SPAN_SIZE_6 = 6,
