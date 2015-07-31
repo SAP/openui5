@@ -312,6 +312,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			},
+			getEventDelegates: function(oContext) {
+				return {
+					onAfterRendering: function () {
+						this.$().attr({"aria-haspopup": true, "role": ""});
+					}.bind(oContext)
+				};
+			},
 			order: 3,
 			constraints: "IconOnly"
 		};
@@ -384,6 +391,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 						moveToOverflow: true,
 						stayInOverflow: false
 					})
+				};
+			},
+			getEventDelegates: function(oContext) {
+				return {
+					onAfterRendering: function () {
+						this.$().attr({"aria-haspopup": true, "role": ""});
+					}.bind(oContext)
 				};
 			},
 			order: 5,

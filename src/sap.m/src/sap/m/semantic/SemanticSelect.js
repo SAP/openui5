@@ -115,6 +115,9 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 					}), true); //TODO: check bSuppressInvalidate needed?
 			oControl = this.getAggregation('_control');
 			oControl.applySettings(this._getConfiguration().getSettings());
+			if (typeof this._getConfiguration().getEventDelegates === "function") {
+				oControl.addEventDelegate(this._getConfiguration().getEventDelegates(oControl));
+			}
 		}
 
 		return oControl;
