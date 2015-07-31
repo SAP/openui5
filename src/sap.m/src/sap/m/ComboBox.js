@@ -988,7 +988,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.clearSelection = function() {
-			this.setSelection(null);
+			this.setSelection(null, {
+				suppressInvalidate: true
+			});
 		};
 
 		/**
