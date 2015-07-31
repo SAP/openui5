@@ -3,8 +3,8 @@
  */
 
 // Provides an abstract property binding.
-sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './PropertyBinding', './CompositeType'],
-	function(jQuery, BindingMode, ChangeReason, PropertyBinding, CompositeType) {
+sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './PropertyBinding', './CompositeType', './DataState'],
+	function(jQuery, BindingMode, ChangeReason, PropertyBinding, CompositeType, DataState) {
 	"use strict";
 
 
@@ -182,8 +182,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 * @public
 	 */
 	CompositeBinding.prototype.getExternalValue = function() {
-		var aValues = [],
-			oValue;
+		var aValues = [];
 		
 		if (this.bRawValues) {
 			aValues = this.getValue();
@@ -192,7 +191,11 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				aValues.push(oBinding.getExternalValue());
 			});
 		}
-		
+		return this._toExternalValue(aValues);
+	};
+	
+	CompositeBinding.prototype._toExternalValue = function(aValues) {
+		var oValue;
 		if (this.fnFormatter) {
 			oValue = this.fnFormatter.apply(this, aValues);
 		} else if (this.oType) {
@@ -262,6 +265,44 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	};
 	
 	/**
+	* Attach event-handler <code>fnFunction</code> to the 'messageChange' event of this <code>sap.ui.model.Model</code>.<br/>
+	* @param {function} fnFunction The function to call, when the event occurs.
+	* @param {object} [oListener] object on which to call the given function.
+	* @protected
+	*/
+	CompositeBinding.prototype.attachDataStateChange = function(fnFunction, oListener) {
+		var that = this;
+		this.fDataStateChangeHandler = function(oEvent) {
+			var oBinding = oEvent.getSource();
+			if (oBinding.getBindingMode() == BindingMode.OneTime) {
+				oBinding.detachDataStateChange(that.fChangeHandler);
+			}
+			that.checkDataState();
+		};
+		this.attachEvent("DataStateChange", fnFunction, oListener);
+		if (this.aBindings) {
+			jQuery.each(this.aBindings, function(i,oBinding) {
+				oBinding.attachDataStateChange(that.fDataStateChangeHandler);
+			});
+		}
+	};
+
+	/**
+	* Detach event-handler <code>fnFunction</code> from the 'messageChange' event of this <code>sap.ui.model.Model</code>.<br/>
+	* @param {function} fnFunction The function to call, when the event occurs.
+	* @param {object} [oListener] object on which to call the given function.
+	* @protected
+	*/
+	CompositeBinding.prototype.detachDataStateChange = function(fnFunction, oListener) {
+		var that = this;
+		this.detachEvent("DataStateChange", fnFunction, oListener);
+		if (this.aBindings) {
+			jQuery.each(this.aBindings, function(i,oBinding) {
+				oBinding.detachDataStateChange(that.fDataStateChangeHandler);
+			});
+		}
+	};
+	/**
 	 * Determines if the property bindings in the composite binding should be updated by calling updateRequired on all property bindings with the specified model.
 	 * @param {object} oModel The model instance to compare against
 	 * @returns {boolean} true if this binding should be updated
@@ -312,7 +353,29 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
-
+	
+	/**
+	 * Checks whether an update of the data state of this binding is required.
+	 * @private
+	 */
+	CompositeBinding.prototype._updateDataState = function() {
+		var oDataState = PropertyBinding.prototype._updateDataState.call(this),
+			aOriginalValues = [],
+			that = this;
+		jQuery.each(this.aBindings, function(i, oBinding) {
+			var oInnerDataState = oBinding._updateDataState();
+			if (that.bRawValues) {
+				aOriginalValues.push(oInnerDataState.getOriginalValue());
+			} else {
+				aOriginalValues.push(oInnerDataState.getOriginalInternalValue());
+			}
+		});
+		oDataState.setOriginalInternalValue(aOriginalValues);
+		oDataState.setValue(this._toExternalValue(oDataState.getInternalValue()));
+		oDataState.setOriginalValue(this._toExternalValue(aOriginalValues));
+		return oDataState;
+	};
+	
 	return CompositeBinding;
 
 });

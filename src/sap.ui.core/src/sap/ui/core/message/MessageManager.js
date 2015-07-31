@@ -78,12 +78,19 @@ sap.ui.define([
 			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
 				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
 			}
+			var oReference = {};
+			oReference[oElement.getId()] = {
+					properties:{},
+					fieldGroupIds: oElement.getFieldGroupIds ? oElement.getFieldGroupIds() : undefined
+			};
+			oReference[oElement.getId()].properties[sProperty] = true;
 			var oMessage = new Message({
 					type: sap.ui.core.MessageType.Error,
 					message: oEvent.getParameter("message"), 
 					target: sTarget,
 					processor: this.oControlMessageProcessor,
-					technical: bTechnical
+					technical: bTechnical,
+					references: oReference
 				});
 			this.addMessages(oMessage);
 		}
@@ -193,8 +200,8 @@ sap.ui.define([
 				aMessages = jQuery.merge(aMessages, vMessages);
 			});
 		});
-		oMessageModel.setData(aMessages);
 		this._pushMessages();
+		oMessageModel.setData(aMessages);
 	};
 	
 	/**
@@ -362,7 +369,7 @@ sap.ui.define([
 		this.mObjects = undefined;
 		this.oMessageModel.destroy();
 	};
-	
+
 	/**
 	 * Get the MessageModel
 	 * @return {sap.ui.core.message.MessageModel} oMessageModel The Message Model 
@@ -375,7 +382,6 @@ sap.ui.define([
 		}
 		return this.oMessageModel;
 	};
-	
 	return MessageManager;
 
 });

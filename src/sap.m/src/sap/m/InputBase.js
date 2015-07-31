@@ -1059,6 +1059,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	/**
+	 * @see sap.ui.core.Element.refreshDataState
+	 */
+	InputBase.prototype.refreshDataState = function(sName, oDataState) {
+		if (sName === "value") {
+			this.propagateMessages(sName, oDataState.getMessages());
+		}
+	};
 	return InputBase;
 
 }, /* bExport= */ true);
