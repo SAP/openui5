@@ -1027,8 +1027,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Different modes for the list selection (predefined modes)
-	 *
+	 * Defines the mode of the list. 
+	 * 
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1036,40 +1036,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.ListMode = {
 
 		/**
-		 * default mode (no selection)
+		 * Default mode (no selection).
 		 * @public
 		 */
 		None : "None",
 
 		/**
-		 * right positioned single selection mode (only one list item can be selected)
+		 * Right-positioned single selection mode (only one list item can be selected).
 		 * @public
 		 */
 		SingleSelect : "SingleSelect",
 
 		/**
-		 * multi selection mode (whole list item including checkbox will be selected)
+		 * Left-positioned single selection mode (only one list item can be selected).
+		 * @public
+		 */
+		SingleSelectLeft : "SingleSelectLeft",
+
+		/**
+		 * Selected item is highlighted but no selection control is visible (only one list item can be selected).
+		 * @public
+		 */
+		SingleSelectMaster : "SingleSelectMaster",
+		
+		/**
+		 * Multi selection mode (more than one list item can be selected).
 		 * @public
 		 */
 		MultiSelect : "MultiSelect",
 
 		/**
-		 * delete mode (only one list item can be deleted)
+		 * Delete mode (only one list item can be deleted via provided delete button)
 		 * @public
 		 */
-		Delete : "Delete",
-
-		/**
-		 * Single selection master mode (only one list item can be selected), selected item is highlighted but no radiobutton is visible.
-		 * @public
-		 */
-		SingleSelectMaster : "SingleSelectMaster",
-
-		/**
-		 * left positioned single selection mode (only one list item can be selected)
-		 * @public
-		 */
-		SingleSelectLeft : "SingleSelectLeft"
+		Delete : "Delete"
 
 	};
 
@@ -1106,7 +1106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * List types
+	 * Defines the visual indication and behaviour of the list items. 
 	 *
 	 * @enum {string}
 	 * @public
@@ -1115,31 +1115,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.ListType = {
 
 		/**
-		 * Inactive
+		 * Indicates the list item does not have any active feedback when item is pressed.
+		 * <b>Note:</b> <code>Inactive</code> type cannot be used to disable list items.
 		 * @public
 		 */
 		Inactive : "Inactive",
 
 		/**
-		 * Detail
+		 * Enables detail button of the list item that fires <code>detailPress</code> event.
+		 * Also see {@link sap.m.ListBase#attachDetailPress}.
 		 * @public
 		 */
 		Detail : "Detail",
 
 		/**
-		 * Navigation
+		 * Indicates the list item is navigable to show extra information about the item.
 		 * @public
 		 */
 		Navigation : "Navigation",
 
 		/**
-		 * Active
+		 * Indicates that the item is clickable via active feedback when item is pressed.
 		 * @public
 		 */
 		Active : "Active",
 
 		/**
-		 * DetailAndActive
+		 * Enables {@link sap.m.ListType#Detail} and {@link sap.m.ListType#Active} enumerations together.
 		 * @public
 		 */
 		DetailAndActive : "DetailAndActive"

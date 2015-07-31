@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	/**
 	 * Constructor for a new List.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The List control provides a container for all types of list items.
@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		properties : {
 	
 			/**
-			 * This property is used to set the background color of the list. Depending on the theme you can change the state of the background from "Solid" over "Translucent" to "Transparent".
+			 * Sets the background style of the list. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
 			 * @since 1.14
 			 */
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid}
@@ -42,9 +42,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		aggregations : {
 	
 			/**
-			 * Columns
-			 * @deprecated Since version 1.16. 
-			 * Use Table control instead.
+			 * Defines columns of the list.
+			 * @deprecated Since version 1.16. Instead, use the <code>sap.m.Table</code> control.
 			 */
 			columns : {type : "sap.m.Column", multiple : true, singularName : "column", deprecated: true}
 		}

@@ -12,15 +12,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * Constructor for a new GroupHeaderListItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The group header list item is used to display the title of a group and act as separator between groups in Lists.
+	 * <code>sap.m.GroupHeaderListItem</code> is used to display the title of a group and act as separator between groups in <code>sap.m.List</code> and <code>sap.m.Table</code>.
+	 * <b>Note:</b> The inherited properties <code>unread</code>, <code>selected</code>, <code>counter</code> and <code>press</code> event from <code>sap.m.ListItemBase</code> are not supported.
 	 * 
-	 * There are several API parts inherited from ListItemBase which do not apply here:
-	 * The properties "type", "unread", "selected" and "counter" are currently ignored.
-	 * Tap events will not be fired.
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
@@ -38,24 +36,24 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		properties : {
 	
 			/**
-			 * The title of the group header.
+			 * Defines the title of the group header.
 			 */
 			title : {type : "string", group : "Data", defaultValue : null},
 	
 			/**
-			 * A text to be displayed in the group header in brackets next to the group title. Usually the count of items in the group, but it could also be an amount which represents the sum of all amounts in the group.
-			 * Will not be displayed if not set.
+			 * Defines the count of items in the group, but it could also be an amount which represents the sum of all amounts in the group.
+			 * <b>Note:</b> Will not be displayed if not set.
 			 */
 			count : {type : "string", group : "Data", defaultValue : null},
 	
 			/**
-			 * Title will be put to capital letters by default, otherwise set this property to 'false'
+			 * By default, the title is capitalized automatically. To disable this automation, set this property to <b>false</b>.
 			 * @since 1.13.2
 			 */
 			upperCase : {type : "boolean", group : "Appearance", defaultValue : true},
 			
 			/**
-			 * This property specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * Defines the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
 			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
