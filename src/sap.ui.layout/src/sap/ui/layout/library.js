@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 
 	/**
-	 * @classdesc A string type that represents Grid's indent values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large  medium  small.
+	 * @classdesc A string type that represents Grid's indent values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters have to be provided in the order large  medium  small.
 	 *
 	 * @final
 	 * @namespace
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 
 	/**
-	 * @classdesc A string type that represents Grid's span values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large  medium  small.
+	 * @classdesc A string type that represents Grid's span values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters have to be provided in the order large  medium  small.
 	 *
 	 * @final
 	 * @namespace
@@ -130,24 +130,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	sap.ui.layout.form = sap.ui.layout.form || {};
 
 	/**
-	 * @classdesc A string that defines the number of used cells in a GridLayout. This can be a number from 1 to 16, "auto" or "full".
+	 * @classdesc A string that defines the number of used cells in a <code>GridLayout</code>. This can be a number from 1 to 16, "auto" or "full".
+	 * If set to "auto" the size is determined by the number of fields and the available cells. For labels the auto size is 3 cells.
+	 * If set to "full" only one field is allowed within the <code>FormElement</code>. It gets the full width of the row and the label is displayed above. <b>Note:</b> For labels full size has no effect.
 	 *
 	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.layout.form.GridElementCells = DataType.createType('sap.ui.layout.form.GridElementCells', {
-	    isValid : function(vValue) {
-	      return /^(auto|full|([1-9]|1[0-6]))$/.test(vValue);
-	    }
+		isValid : function(vValue) {
+			return /^(auto|full|([1-9]|1[0-6]))$/.test(vValue);
+			}
 
-	  },
-	  DataType.getType('string')
+		},
+		DataType.getType('string')
 	);
 
 
 	/**
-	 * Available FormLayouts used for the SimpleForm.
+	 * Available <code>FormLayouts</code> used to render a <code>SimpleForm</code>.
 	 *
 	 * @enum {string}
 	 * @public
@@ -157,19 +159,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	sap.ui.layout.form.SimpleFormLayout = {
 
 		/**
-		 * Uses the ResponsiveLayout for the SimpleForm
+		 * Uses the <code>ResponsiveLayout</code> to render the <code>SimpleForm</code>
 		 * @public
 		 */
 		ResponsiveLayout : "ResponsiveLayout",
 
 		/**
-		 * Uses the GridLayout for the SimpleForm
+		 * Uses the <code>GridLayout</code> to render the <code>SimpleForm</code>
 		 * @public
 		 */
 		GridLayout : "GridLayout",
 
 		/**
-		 * Uses the ResponsiveGridLayout for the SimpleForm
+		 * Uses the <code>ResponsiveGridLayout</code> to render the <code>SimpleForm</code>
 		 * @public
 		 * @since 1.16.0
 		 */
@@ -207,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 */
 		ShowAboveS: "ShowAboveS",
 		/**
-		 * Don't Show the side content on any breakpoints
+		 * Don't show the side content on any breakpoints
 		 * @public
 		 */
 		NeverShow: "NeverShow"
