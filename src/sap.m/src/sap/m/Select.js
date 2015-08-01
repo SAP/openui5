@@ -764,14 +764,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.onSelectionChange = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("selectedItem");
-
 			this.close();
 			this.setSelection(oItem);
 			this.fireChange({ selectedItem: oItem });
-
-			// update the label text
-			// note: if, due to invalid databinding, the selectedKey cannot be changed and is reset to null,
-			// oNewSelectedItem does not match getSelectedItem() and a wrong text is displayed in the Select field
 			this.setValue(this._getSelectedItemText());
 		};
 
@@ -1610,11 +1605,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				vItem = this.getDefaultSelectedItem();
 			}
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
 			this.setSelection(vItem);
 			this.setValue(this._getSelectedItemText(vItem));
-
 			return this;
 		};
 
@@ -1639,7 +1631,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			this.setSelection(vItem);
 			this.setValue(this._getSelectedItemText());
-
 			return this;
 		};
 
@@ -1663,25 +1654,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			if (oItem || (sKey === "")) {
 
-				// If the "sKey" value is an empty string "" or undefined,
-				// the first enabled item will be selected (if any).
-				// In the case that an item has the default key value, it will be selected instead.
+				// if "sKey" is an empty string "" or undefined,
+				// the first enabled item will be selected (if any)
 				if (!oItem && sKey === "") {
 					oItem = this.getDefaultSelectedItem();
 				}
 
-				// update and synchronize "selectedItem" association,
-				// "selectedKey" and "selectedItemId" properties
 				this.setSelection(oItem);
 				this.setValue(this._getSelectedItemText(oItem));
-
 				return this;
 			}
 
-			// note: setSelectedKey() method sometimes is called
-			// before the items are added, in this case the "selectedItem" association
-			// and "selectedItemId" property need to be updated in onBeforeRendering()
-			return this.setProperty("selectedKey", sKey);	// update "selectedKey" property, re-rendering is needed
+			return this.setProperty("selectedKey", sKey);
 		};
 
 		/**
@@ -1797,8 +1781,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			vItem = oList ? oList.removeItem(vItem) : null;
 
 			if (this.getItems().length === 0) {
-
-				// clear the selection
 				this.clearSelection();
 			} else if (this.isItemSelected(vItem)) {
 				oItem = this.findFirstEnabledItem();
