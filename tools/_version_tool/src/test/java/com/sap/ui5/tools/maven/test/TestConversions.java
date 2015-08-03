@@ -105,7 +105,7 @@ public class TestConversions {
   public void testSnapshotToRelease() throws Exception {
     final String scenario = "SnapshotToRelease";
     String destPath = setup(scenario);
-    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0" });
+    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0", "rel-0.10" });
     compare(scenario);
   }
 
@@ -114,8 +114,8 @@ public class TestConversions {
   public void testReleaseToSnapshot() throws Exception {
     final String scenario = "ReleaseToSnapshot";
     String destPath = setup(scenario);
-    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0" });
-    MyReleaseButton.main(new String[] { destPath, "0.10.0", "0.11.0-SNAPSHOT" });
+    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0", "rel-0.10"  });
+    MyReleaseButton.main(new String[] { destPath, "0.10.0", "0.11.0-SNAPSHOT", "rel-0.10" });
     compare(scenario);
   }
 
@@ -124,7 +124,7 @@ public class TestConversions {
   public void testSnapshotToAlpha() throws Exception {
     final String scenario = "SnapshotToAlpha";
     String destPath = setup(scenario);
-    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0-alpha-1" });
+    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0-alpha-1", "rel-0.10" });
     compare(scenario);
   }
 
@@ -133,8 +133,8 @@ public class TestConversions {
   public void testAlphaToSnapshot() throws Exception {
     final String scenario = "AlphaToSnapshot";
     String destPath = setup(scenario);
-    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0-alpha-1" });
-    MyReleaseButton.main(new String[] { destPath, "0.10.0-alpha-1", "0.11.0-SNAPSHOT" });
+    MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0-alpha-1",  "rel-0.10" });
+    MyReleaseButton.main(new String[] { destPath, "0.10.0-alpha-1", "0.11.0-SNAPSHOT",  "rel-0.10" });
     compare(scenario);
   }
 
@@ -147,7 +147,7 @@ public class TestConversions {
     Properties contributorsVersions = new Properties();
     contributorsVersions.put("com.sap.ui5:core", "1.22.8");
     contributorsVersions.put("contributorsRange", "[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)");
-    MyReleaseButton.updateVersion(new File(destPath), "1.22.9-SNAPSHOT", "1.22.9", contributorsVersions, null);
+    MyReleaseButton.updateVersion(new File(destPath), "1.22.9-SNAPSHOT", "1.22.9", contributorsVersions, null, "rel-1.22");
     compare(scenario, src);
   }
 

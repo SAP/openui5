@@ -278,18 +278,18 @@ public class MyReleaseButton {
   }
 
 
-  public static int updateVersion(File repository, String oldVersion, String newVersion, Map<String, String[]> diffDescs) throws IOException {
-    return updateVersion(repository, oldVersion, newVersion, null, diffDescs);
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Map<String, String[]> diffDescs, String branch) throws IOException {
+    return updateVersion(repository, oldVersion, newVersion, null, diffDescs, branch);
   }
   
-  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, Map<String, String[]> diffDescs) throws IOException {
-    return updateVersion(repository, oldVersion, newVersion, contributorsVersions, new ProcessingFilter(), diffDescs);
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, Map<String, String[]> diffDescs, String branch) throws IOException {
+    return updateVersion(repository, oldVersion, newVersion, contributorsVersions, new ProcessingFilter(), diffDescs, branch);
   }
   
   /**
    * @param args
    */
-  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, ProcessingFilter filter, Map<String, String[]> diffDescs)
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, ProcessingFilter filter, Map<String, String[]> diffDescs, String branch)
       throws IOException {
   File root = repository.getCanonicalFile();
     if (!root.isDirectory()) {
@@ -371,7 +371,7 @@ public class MyReleaseButton {
     scan(root, "");
 
     int diffdiffs = -1; // UNKNOWN
-    LastRunInfo lastRunInfo = new LastRunInfo(root, filter.name);
+    LastRunInfo lastRunInfo = new LastRunInfo(root, filter.name, branch);
     Properties prop = lastRunInfo.getDiffs();
     if ( !prop.isEmpty() ) {
       System.out.println("Comparing diff summary against results from last run");
@@ -427,11 +427,11 @@ public class MyReleaseButton {
   }
 
 	public static void main(String[] args) throws IOException {
-    if (args.length < 3) {
+    if (args.length < 4) {
       throw new RuntimeException(
           "usage: <root-dir> <from-version> <to-version>");
     }
-
-    updateVersion(new File(args[0]), args[1], args[2], null);
+    
+    updateVersion(new File(args[0]), args[1], args[2], null, args[3]);
   }
 }

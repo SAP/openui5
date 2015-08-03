@@ -23,23 +23,35 @@ public class TestLastRunInfo {
   
   @Before
   public void setup() throws Exception {
-    saveKey("update-core-only", "pom.xml", "2");
-    saveKey("default", "pom.xml", "2");
+    saveKey("update-core-only", "pom.xml", "2", "master");
+    saveKey("default", "pom.xml", "2", "master");
   }
 
-  private void saveKey(String profile, String key, String value) throws IOException {
-    LastRunInfo infoCoreOnly = new LastRunInfo(new File("src/test/resources/"), profile);
+  private void saveKey(String profile, String key, String value, String branch) throws IOException {
+    LastRunInfo infoCoreOnly = new LastRunInfo(new File("src/test/resources/"), profile, branch);
     infoCoreOnly.getDiffs().put(key, value);
     infoCoreOnly.save();
   }
   
   @Test
   public void testCreateAndSave() throws Exception {
-    LastRunInfo infoCoreOnly = new LastRunInfo(new File("src/test/resources/"), "update-core-only");
+    LastRunInfo infoCoreOnly = new LastRunInfo(new File("src/test/resources/"), "update-core-only", "master");
     assertEquals("2", infoCoreOnly.getDiffs().get("pom.xml"));
     infoCoreOnly.getDiffs().put("pom.xml", "3");
     infoCoreOnly.save();
-    LastRunInfo info = new LastRunInfo(new File("src/test/resources/"));
+    LastRunInfo info = new LastRunInfo(new File("src/test/resources/"), "master");
     assertEquals("2", info.getDiffs().get("pom.xml"));
+  }
+  
+  @Test
+  public void testLastCommitPerVersionCompatability() throws Exception {
+    LastRunInfo lastRunInfo = new LastRunInfo(new File("src/test/resources/"), "master");
+    assertEquals("d25b90d4432fd6765961bdd9620d65ea0ccca298", lastRunInfo.getLastCommitId());
+  }
+  
+  @Test
+  public void testLastCommitPerVersion() throws Exception {
+    LastRunInfo lastRunInfo = new LastRunInfo(new File("src/test/resources/input"), "master");
+    assertEquals("d25b90d4432fd6765961bdd9620d65ea0ccca299", lastRunInfo.getLastCommitId());
   }
 }

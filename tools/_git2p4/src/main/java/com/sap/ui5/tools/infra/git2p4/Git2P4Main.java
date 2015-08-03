@@ -99,7 +99,7 @@ public class Git2P4Main {
     }
   }
 
-  static void collect(Mapping repo, Boolean useLastCommit) throws IOException {
+  static void collect(Mapping repo, Boolean useLastCommit, String branch) throws IOException {
     git.setRepository(repo.gitRepository);
     if ( !git.getRepository().isDirectory() || !(new File(git.getRepository(), ".git").isDirectory()) && repo.giturl != null ) {
       git.getRepository().mkdirs();
@@ -113,10 +113,10 @@ public class Git2P4Main {
     if ("openui5".equals(repo.getRepositoryName()) && context.range.contains("1.24.0")){
       repo.range = "";
     } 
-    LastRunInfo lastRunInfo = new LastRunInfo(repo.getRepository());
-    if (useLastCommit){
+    LastRunInfo lastRunInfo = new LastRunInfo(repo.getRepository(), branch);
+    if (useLastCommit) {
       String lastCommitId = lastRunInfo.getLastCommitId();
-      if (lastCommitId != null){
+      if (lastCommitId != null) {
         repo.range = lastCommitId + "..";
       }
     }
@@ -190,7 +190,6 @@ public class Git2P4Main {
     } else if ( branch == null && op == null ) {
       throw new IllegalArgumentException("either branch or operation must be specified");
     }
-
     
     if ( fromVersion == null ) {
       fromVersion = findVersion(branch);
@@ -235,7 +234,7 @@ public class Git2P4Main {
       git.checkout("origin/" + branch);
 
       Map<String,String[]> suspiciousChanges = new TreeMap<String,String[]>();
-      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion, contributorsVersions, filter, suspiciousChanges);
+      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion, contributorsVersions, filter, suspiciousChanges, branch );
 
       git.addAll();
 
@@ -826,7 +825,7 @@ public class Git2P4Main {
 
     // collect commits across repositories
     for(Mapping repoMapping : mappings) {
-      collect(repoMapping, RELEASE_NOTES.equals(command) && useLastCommit);
+      collect(repoMapping, RELEASE_NOTES.equals(command) && useLastCommit, branch);
     }
     int index=0;
     for(GitClient.Commit commit : allCommits) {

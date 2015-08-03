@@ -172,7 +172,7 @@ public class ReleaseNotes {
         Set<String> filter; 
         //Special case for platform library sources
         if (lib.endsWith("_resource")){
-          filter = getFilterIds("src/framework/_resource", "src/framework/_shared_utils", "src/framework/_utils");
+          filter = getFilterIds("src/framework/_resource", "src/framework/_shared_utils", "src/framework/_utils", "src/framework/_core" );
         }
         else {
           filter = getFilterIds(lib);

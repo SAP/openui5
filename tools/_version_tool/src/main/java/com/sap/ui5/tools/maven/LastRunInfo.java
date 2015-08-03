@@ -31,42 +31,45 @@ import com.google.gson.stream.JsonReader;
  * @since 1.25.0
  */
 public class LastRunInfo {
-  private static final String LAST_COMMIT_ID = "lastCommitId";
   private File lastVersionToolResultsFile;
   private String profile;
+  private String branch;
   private VersionTool versionTool;
   
   private class VersionTool{
-    Map<String, Properties> changes;
-    String lastCommitId;
+      Map<String, LastPerVersion> lastPerVersion;
   }
   
-  public LastRunInfo (File root) throws IOException {
-    this(root, "default");
-  }
-   
-  public LastRunInfo (File root, String profile) throws IOException {
-    this.profile = profile;
-    versionTool = new VersionTool();
-    versionTool.changes = new HashMap<String, Properties>();
-    lastVersionToolResultsFile = new File(root, ".version-tool.xml");
-    if ( lastVersionToolResultsFile.canRead() ) {
-      try {
-        //try the old format
-        Properties diffs = new Properties();
-        diffs.loadFromXML(new FileInputStream(lastVersionToolResultsFile));
-        setLastCommitId((String)diffs.get(LAST_COMMIT_ID));
-        if (getLastCommitId() != null){
-          diffs.remove(LAST_COMMIT_ID);
-        }
-        versionTool.changes.put(profile, diffs);
-      } catch (InvalidPropertiesFormatException e) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        versionTool = gson.fromJson(new JsonReader(new FileReader(lastVersionToolResultsFile)), VersionTool.class);
-      }
+  private class LastPerVersion {
+      Map<String, Properties> changes;
+      String lastCommitId = null;
+      
+      public LastPerVersion() {
+        changes = new HashMap<String, Properties>();
     }
   }
   
+  public LastRunInfo (File root, String branch) throws IOException {
+    this(root, "default", branch);
+  }
+   
+  public LastRunInfo(File root, String profile, String branch) throws IOException {
+    this.profile = profile;
+    this.branch = branch;
+    lastVersionToolResultsFile = new File(root, ".version-tool.xml");
+    if (lastVersionToolResultsFile.canRead()) {
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      versionTool = gson.fromJson(new JsonReader(new FileReader(lastVersionToolResultsFile)), VersionTool.class);
+      if (versionTool.lastPerVersion == null) {
+        versionTool.lastPerVersion = new HashMap<String, LastPerVersion>();
+        versionTool.lastPerVersion.put(branch, (LastPerVersion) gson.fromJson(new JsonReader(new FileReader(lastVersionToolResultsFile)), LastPerVersion.class));
+      }
+    } else {
+      versionTool = new VersionTool();
+      versionTool.lastPerVersion = new HashMap<String, LastPerVersion>();
+    }
+  }
+
   public void save() throws IOException{
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     String json = gson.toJson(versionTool);
@@ -75,19 +78,30 @@ public class LastRunInfo {
     fw.close();
   }
   
-  public String getLastCommitId() {
-    return versionTool.lastCommitId;
-  }
-  public void setLastCommitId(String lastCommitId) {
-    versionTool.lastCommitId = lastCommitId;
-  }
   public Properties getDiffs() {
-    if (!versionTool.changes.containsKey(profile)) {
-      versionTool.changes.put(profile, new Properties());
+    LastPerVersion lastPerVersion = getLastPerVersion();
+    if (!lastPerVersion.changes.containsKey(profile)) {
+      lastPerVersion.changes.put(profile, new Properties());
     }
-    return versionTool.changes.get(profile);
+    return lastPerVersion.changes.get(profile);
   }
+    
   public void setDiffs(Properties diffs) {
-    versionTool.changes.put(profile, diffs);
+    getLastPerVersion().changes.put(profile, diffs);
+  }
+
+  private LastPerVersion getLastPerVersion() {
+    if (!versionTool.lastPerVersion.containsKey(branch)) {
+      versionTool.lastPerVersion.put(this.branch, new LastPerVersion());
+    }
+    return versionTool.lastPerVersion.get(branch);
+  }
+
+  public String getLastCommitId() {
+    return getLastPerVersion().lastCommitId;
+  }
+
+  public void setLastCommitId(String lastCommitId) {
+    getLastPerVersion().lastCommitId = lastCommitId;
   }
 }
