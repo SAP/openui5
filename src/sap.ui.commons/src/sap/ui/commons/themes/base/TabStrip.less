@@ -21,6 +21,7 @@
 .sapUiTab,
 .sapUiTabSel,
 .sapUiTabDsbl {
+	position: relative;
 	display: block;
 	white-space:nowrap;
 	float:left;
@@ -72,4 +73,10 @@ span.sapUiTabIco {
 .sapUiTabPanelHeight {
 	position: absolute;
 	bottom:0;
+}
+
+.sapUiTabStripNoSelection {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
