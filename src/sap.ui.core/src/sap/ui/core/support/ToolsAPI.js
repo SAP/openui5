@@ -4,7 +4,7 @@
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap/ui/core/Core', 'sap/ui/core/ElementMetadata'],
 	function (jQuery, library, Global, Core, ElementMetadata) {
-		"use strict";
+		'use strict';
 
 		var configurationInfo = sap.ui.getCore().getConfiguration();
 
@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				Object.keys(controlPropertiesFromMetadata).forEach(function (key) {
 					result.properties[key] = Object.create(null);
 					result.properties[key].value = control.getProperty(key);
-					result.properties[key].type = controlPropertiesFromMetadata[key].getType().getName();
+					result.properties[key].type = controlPropertiesFromMetadata[key].getType().getName ? controlPropertiesFromMetadata[key].getType().getName() : '';
 				});
 
 				return result;
@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				Object.keys(inheritedMetadataProperties).forEach(function (key) {
 					result.properties[key] = Object.create(null);
 					result.properties[key].value = inheritedMetadataProperties[key].get(control);
-					result.properties[key].type = inheritedMetadataProperties[key].getType().getName();
+					result.properties[key].type = inheritedMetadataProperties[key].getType().getName ? inheritedMetadataProperties[key].getType().getName() : '';
 				});
 
 				return result;
@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 						propertiesBindingData[key] = Object.create(null);
 						propertiesBindingData[key].path = control.getBinding(key).getPath();
 						propertiesBindingData[key].value = control.getBinding(key).getValue();
-						propertiesBindingData[key].type =  control.getMetadata().getProperty(key).getType().getName();
+						propertiesBindingData[key].type = control.getMetadata().getProperty(key).getType().getName ? control.getMetadata().getProperty(key).getType().getName() : '';
 						propertiesBindingData[key].mode = control.getBinding(key).getBindingMode();
 						propertiesBindingData[key].model = this._getModelFromContext(control, key);
 					}
@@ -376,6 +376,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				return result;
 			}
 		};
-
 
 	});
