@@ -806,5 +806,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "f81faeb31efb53e6cb1e5d54c72f8dd286ae2c19",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: De-Registration of Child Popups Fixed",
+        "references": []
+      },
+      {
+        "id": "1ac97c2f96877b70e1b13caf6d274a8d139592c0",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button: Contrast for semantic color buttons in High Contrast Black mode is now correct",
+        "references": []
+      },
+      {
+        "id": "b8f6eb96063582ff3eca713b74cd68b252dd6bda",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ListBox: Use native scrolling on touch devices",
+        "references": []
+      },
+      {
+        "id": "6fdabfc4af90f8f2bdc8e6e2f930c69a32b70248",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.ui.commons.InPlaceEdit: Alignment of button in HCB",
+        "references": []
+      }
+    ]
   }
 }

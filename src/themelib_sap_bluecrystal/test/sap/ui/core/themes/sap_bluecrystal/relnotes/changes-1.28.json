@@ -664,5 +664,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "c5371d62daf3677dfb626ed8cc6d3a3f116ac4ba",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
+        "references": []
+      },
+      {
+        "id": "f09aaa2c7e6a7b20e5aa5f84d329a4a36ad3d6f6",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: No separator between master and detail areas",
+        "references": []
+      },
+      {
+        "id": "c08234d563655c0291012745aa45f46c90eb11b8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Remove the thin blue line between master and detail when it\u0027s rendered in Launchpad shell",
+        "references": []
+      },
+      {
+        "id": "534a12f6dba204ed4254d60fe3461f34e899cc54",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Switch: Fix border issue at zoom in \u003c 100%",
+        "references": []
+      },
+      {
+        "id": "11b39ef338bfdf16901ace9059d80afdc1ac745d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: Full size labels",
+        "references": []
+      }
+    ]
   }
 }

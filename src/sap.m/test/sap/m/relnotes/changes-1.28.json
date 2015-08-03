@@ -3404,5 +3404,143 @@
         "references": []
       }
     ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "7ebca11f1d5c729927e6c615cfec05564d8fafa3",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocalBusyIndicator: Remove of \"tabindex\" Fixed",
+        "references": []
+      },
+      {
+        "id": "43b6b2bd40630b9663275be20e6b3d881706b7aa",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Make sap.m.App: Unit test more robust with Internet Explorer 11 (rounding height)",
+        "references": []
+      },
+      {
+        "id": "fc037cf61030cf0b70c29178bc1726afd625b007",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Add missing text in resource bundle",
+        "references": []
+      },
+      {
+        "id": "7d79c9b864ea660d678d30badfeb3048479a2fd3",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix error value state in compact mode",
+        "references": []
+      },
+      {
+        "id": "0b2345f712c2ce7ec7ba3f732d67a80b7f5c694e",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Value is updated when calling setters on items",
+        "references": []
+      },
+      {
+        "id": "84d098cfa7a0500a56e03e238da7d137c5e3b1b6",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBoxBase: Fix auto close issue in Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "e51314009b92734718304df5409684e8746b2cd8",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Disabled - right border missing in Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "3f071276f61cfac448e1518d23ea41024256a0e3",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Items are now rendered correctly in List",
+        "references": []
+      },
+      {
+        "id": "c5371d62daf3677dfb626ed8cc6d3a3f116ac4ba",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
+        "references": []
+      },
+      {
+        "id": "97b27f8a10e3e45b61763d6b8c872c4d1bd8b43e",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Placeholder is show incorrectly in tables",
+        "references": []
+      },
+      {
+        "id": "092347052b1fd52d41604b493df3f24b6daf2b31",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Click value help icon in multiline multiinput",
+        "references": []
+      },
+      {
+        "id": "80295b85e2080666e8565a48acfed7e17df4e488",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Scroll to top after focus out of multiline multiinput",
+        "references": []
+      },
+      {
+        "id": "6d15d8e750fd8c68c4c5bac433a6b1d2c2f12a8d",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: NavButton should have a tooltip",
+        "references": []
+      },
+      {
+        "id": "7ca174b119485d141ac4a98180e9692010b2c3b0",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Now registers itself as a child popup correctly",
+        "references": []
+      },
+      {
+        "id": "f09aaa2c7e6a7b20e5aa5f84d329a4a36ad3d6f6",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: No separator between master and detail areas",
+        "references": []
+      },
+      {
+        "id": "534a12f6dba204ed4254d60fe3461f34e899cc54",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Switch: Fix border issue at zoom in \u003c 100%",
+        "references": []
+      },
+      {
+        "id": "e5ca4a545c034f08388127a093f1afe0b81ad3bb",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Title: Fixed alignments begin/end in IE and Edge browser in RTL case",
+        "references": []
+      },
+      {
+        "id": "cf1d16542763483196ff536a397ddf029289b900",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Display of attachment after renaming corrected.",
+        "references": []
+      },
+      {
+        "id": "d878463fa88455389643f7c30ceae3ca6a4e3477",
+        "author": "Shweta Sugnani \u003cshweta.sugnani@sap.com\u003e",
+        "type": "FIX",
+        "text": "facetfilter: Remove icon issue",
+        "references": []
+      }
+    ]
   }
 }
