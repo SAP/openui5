@@ -1355,8 +1355,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
+		var sInputValue = this.getValue();
+		setTimeout(function() {
+			var $picker = jQuery(this.getPicker().getDomRef());
+			var $this = jQuery(this.getDomRef());
+			var $parents = $this.add($picker);
+			var bFocusOutsideOfControl = $parents.has(jQuery(document.activeElement)).length === 0;
+			if (bFocusOutsideOfControl && sInputValue && sInputValue.length > 0) {
+				this._showWrongValueVisualEffect();
+				this.setValue(null);
+			}
+		}.bind(this), 0);
+		
 		this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
+		
+		
 	};
 	
 	/**
