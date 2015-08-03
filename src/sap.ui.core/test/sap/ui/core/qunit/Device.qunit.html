@@ -144,15 +144,154 @@
 					version: 4,
 					versionStr: "4"
 				}
-			}
+			},
+			{
+				name: "Samsung Galaxy Tab 4.4.2 WebView",
+				ua: "Mozilla/5.0 (Linux; Android 4.4.2; SM-T805 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					name: "cr",
+					version: 30,
+					versionStr: "30"
+				},
+				system: {
+					desktop: false,
+					tablet: true,
+					phone: false,
+					combi: false,
+				},
+				touch: true
+			},
+			{
+				name: "Samsung Galaxy Tab 4.4.2 Fiori Client",
+				ua: "Mozilla/5.0 (Linux; Android 4.4.2; SM-T805 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.91 Mobile Crosswalk/11.40.277.7 Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					name: "cr",
+					version: 40,
+					versionStr: "40"
+				},
+				system: {
+					desktop: false,
+					tablet: true,
+					phone: false,
+					combi: false,
+				},
+				touch: true
+			},
+			{
+				name: "Google Nexus 10 5.1 WebView",
+				ua: "Mozilla/5.0 (Linux; Android 5.1; Nexus 10 Build/LMY47D; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.121 Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					name: "cr",
+					version: 43,
+					versionStr: "43"
+				},
+				system: {
+					desktop: false,
+					tablet: true,
+					phone: false,
+					combi: false,
+				},
+				touch: true
+			},
+			{
+				name: "Google Nexus 10 5.1 Fiori Client",
+				ua: "Mozilla/5.0 (Linux; Android 5.1; Nexus 10 Build/LMY47D; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.91 Mobile Crosswalk/11.40.277.7 Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					name: "cr",
+					version: 40,
+					versionStr: "40"
+				},
+				system: {
+					desktop: false,
+					tablet: true,
+					phone: false,
+					combi: false,
+				},
+				touch: true
+			},
+			{
+				name: "Samsung S5 5.0 WebView",
+				ua: "Mozilla/5.0 (Linux; Android 5.0; SM-G900F Build/LRX21T; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.121 Mobile Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					name: "cr",
+					version: 43,
+					versionStr: "43"
+				},
+				system: {
+					desktop: false,
+					tablet: false,
+					phone: true,
+					combi: false,
+				},
+				touch: true
+			},
+			{
+				name: "Samsung S5 5.0 Fiori Client",
+				ua: "Mozilla/5.0 (Linux; Android 5.0; SM-G900F Build/LRX21T; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.91 Mobile Crosswalk/11.40.277.7 Mobile Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					name: "cr",
+					version: 40,
+					versionStr: "40"
+				},
+				system: {
+					desktop: false,
+					tablet: false,
+					phone: true,
+					combi: false,
+				},
+				touch: true
+			},
 		];
-		
-		test("Test user agents", function() {
-			var actualResult, prop, currentTest;
-			for (var i = 0; i < aUserAgentsAndResults.length; i++) {
-				currentTest = aUserAgentsAndResults[i];
-				actualResult = sap.ui.Device._testUserAgent(currentTest.ua);
-				
+
+		var fnUATest =  function(i, oUserAgentAndResult) {
+
+			test(oUserAgentAndResult.name, function() {
+
+				var currentTest = oUserAgentAndResult;
+				var actualResult = sap.ui.Device._testUserAgent(currentTest.ua);
+
 				// redo additional settings normally done later
 				if(actualResult.name){
 					for(var b in BROWSER){
@@ -161,12 +300,34 @@
 						}
 					}
 				}
-				
+
 				for (var prop in currentTest.expected) {
 					strictEqual(actualResult[prop] , currentTest.expected[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
 				}
-			}
-		});
+
+				if (currentTest.system) {
+					var bOldSupportTouch = sap.ui.Device.support.touch,
+						oOldBrowserInfo = sap.ui.Device.browser;
+
+					sap.ui.Device._setOS(currentTest.ua);
+					sap.ui.Device.support.touch = currentTest.touch;
+					sap.ui.Device.browser = actualResult;
+
+					var oSystem = sap.ui.Device._getSystem(false, currentTest.ua);
+
+					for (prop in currentTest.system) {
+						strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+					}
+
+					sap.ui.Device.support.touch = bOldSupportTouch;
+					sap.ui.Device.browser = oOldBrowserInfo;
+				}
+			});
+		};
+
+		module("Test user agents");
+
+		jQuery.sap.each(aUserAgentsAndResults, fnUATest);
 
 		</script>
 	</head>
