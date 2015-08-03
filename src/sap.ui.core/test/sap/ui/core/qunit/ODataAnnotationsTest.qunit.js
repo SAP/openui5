@@ -12,7 +12,13 @@
  */
 function deepContains(oValue, oExpected, sMessage) {
 	for (var sKey in oExpected) {
-		equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+		
+		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
+			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+		} else {
+			ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
+		}
+		
 		
 		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
 			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
@@ -253,13 +259,13 @@ function runODataAnnotationTests() {
 			service          : "fakeService://testdata/odata/northwind-annotated/",
 			annotations      : null,
 			serviceValid     : true,
-			annotationsValid : "metadata",
+			annotationsValid : "metadata"
 		},
 		"Apply in If": {
 			service          : "fakeService://testdata/odata/northwind/",
 			annotations      : "fakeService://testdata/odata/apply-in-if.xml",
 			serviceValid     : true,
-			annotationsValid : "all",
+			annotationsValid : "all"
 		},
 		"Joined Loading with automated $metadata parsing": {
 			service          : "fakeService://testdata/odata/northwind-annotated/",
@@ -270,9 +276,14 @@ function runODataAnnotationTests() {
 				"fakeService://testdata/odata/multiple-annotations-03.xml"
 			],
 			serviceValid     : true,
-			annotationsValid : "all",
+			annotationsValid : "all"
+		},
+		"Empty collection": {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : "fakeService://testdata/odata/empty-collection.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
 		}
-		
 	};
 
 
@@ -4213,5 +4224,60 @@ function runODataAnnotationTests() {
 	}
 	
 	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
-	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
+	asyncTest("V2: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
+	
+	
+	
+	
+	var fnTestEmptyCollection = function(iModelVersion) {
+		expect(17);
+
+		var mTest = mAdditionalTestsServices["Empty collection"];
+		
+		var oModel;
+		if (iModelVersion == 1) {
+			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+				bAsync: true
+			});
+		} else if (iModelVersion == 2) {
+			oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+			});
+		} else {
+			ok(false, "Unknown ODataModel version requested for test");
+			return;
+		}
+
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["ui5.test.Annotation"],
+				{
+					"ui5.test.FilledCollection": {
+						"Collection": [
+							{"String":"THIS"},
+							{"String":"IS"},
+							{"String":"ODATA!"}
+						]
+					},
+					"ui5.test.EmptyCollection": {
+						"Collection": []
+					}
+				},
+				"Collections are correctly parsed as arrays"
+			);
+			
+			start();
+		});
+	};
+	
+	asyncTest("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
+	asyncTest("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
+	
 }
