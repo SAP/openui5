@@ -314,5 +314,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ce36fbfba29deb916bc6424ca541e7532c61e197",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell \u0026 NotificationBar: Reducing the z-index if NotificationBar is minimized",
+        "references": []
+      }
+    ]
   }
 }
