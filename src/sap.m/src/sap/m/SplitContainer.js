@@ -1495,6 +1495,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.toggleStyleClass("sapMSplitContainerShowHide", false);
 				this.toggleStyleClass("sapMSplitContainerHideMode", true);
 
+				// always hide the master area after changing mode to HideMode
+				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
+				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
+				this._bMasterisOpen = false;
+
 				this._setMasterButton(this._oDetailNav.getCurrentPage());
 				
 				if (this._isMie9) {

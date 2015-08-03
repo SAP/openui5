@@ -2307,7 +2307,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					rm.addStyle("opacity", fOpacity);
 				}
 
-				rm.writeClasses();
+				// no custom class from the control's custom class
+				// If a class is added using addStyleClass, this class will be output to this background image div without the 'false' param.
+				rm.writeClasses(false);
 				rm.writeStyles();
 				rm.write("></div>");
 			}
