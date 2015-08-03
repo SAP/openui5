@@ -4033,6 +4033,48 @@
 		// cleanup
 		oMultiComboBox.destroy();
 	});
+	
+	test("Input Value - reset on focus out", function() {
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+		
+		var oMultiComboBoxNext = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+
+		// arrange          
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		oMultiComboBoxNext.placeAt("MultiComboBox-content");
+		
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.setValue("foo")
+
+		// act
+		oMultiComboBox.focus();
+		oMultiComboBoxNext.focus();
+		
+		this.clock.tick(500);
+		var sInputValue = oMultiComboBox.getValue();
+		
+		// assertions                                  
+		ok(sInputValue === "",
+				'The InputValue of the MultiComboBox must be resetted (empty) when it loses the focus.');
+		ok(oMultiComboBox.getValueState() === "Error",
+		'ValueState must be "Error"');
+
+		// cleanup
+		oMultiComboBox.destroy();
+		oMultiComboBoxNext.destroy();
+		this.clock.reset();
+	});
 </script>
 </head>
 <body id="body" class="sapUiBody">
