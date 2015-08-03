@@ -23,6 +23,7 @@
 <script language="javascript">
 
 	// time to wait for server responses
+	sinon.config.useFakeTimers = false;
 	var timeout = 3000;
 	var oModel;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
