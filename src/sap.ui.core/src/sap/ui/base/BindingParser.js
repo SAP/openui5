@@ -54,12 +54,14 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			for (i = 0; i < n; i += 1) {
 				aResults[i] = aFormatters[i].apply(this, arguments);
 			}
-			return fnRootFormatter
-				? fnRootFormatter.apply(this, aResults)
-				// @see sap.ui.model.CompositeBinding#getExternalValue
-				// "default: multiple values are joined together as space separated list if no
-				//  formatter or type specified"
-				: aResults.join(" ");
+
+			if (fnRootFormatter) {
+				return fnRootFormatter.apply(this, aResults);
+			}
+			// @see sap.ui.model.CompositeBinding#getExternalValue
+			// "default: multiple values are joined together as space separated list if no
+			//  formatter or type specified"
+			return n > 1 ? aResults.join(" ") : aResults[0];
 		}
 		// @see sap.ui.core.ManagedObject#_bindProperty
 		formatter.textFragments = fnRootFormatter && fnRootFormatter.textFragments
@@ -400,6 +402,9 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	 * Merges the given binding info object's parts, which may have parts themselves, into a flat
 	 * list of parts, taking care of existing formatter functions. If the given binding info does
 	 * not have a root formatter, <code>Array.prototype.join(., " ")</code> is used instead.
+	 * Parts which are not binding info objects are also supported; they are removed from the
+	 * "parts" array and taken care of by the new root-level formatter function, which feeds them
+	 * into the old formatter function at the right place.
 	 *
 	 * Note: Truly hierarchical composite bindings are not yet supported. This method deals with a
 	 * special case of a two-level hierarchy which can be turned into a one-level hierarchy. The
@@ -408,7 +413,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	 * is replaced with the default <code>Array.prototype.join(., " ")</code>.
 	 *
 	 * @param {object} oBindingInfo
-	 *   a binding info object
+	 *   a binding info object with a possibly empty array of parts and a new formatter function
 	 * @throws {Error}
 	 *   in case precondition is not met
 	 * @private
@@ -417,40 +422,57 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 		var aFormatters = [],
 			aParts = [];
 
-		oBindingInfo.parts.forEach(function (oEmbeddedBinding) {
+		oBindingInfo.parts.forEach(function (vEmbeddedBinding) {
 			var iEnd,
+				fnFormatter = function () {
+					return vEmbeddedBinding; // just return constant value
+				},
 				sName,
 				iStart = aParts.length;
 
-			if (oEmbeddedBinding.parts) {
-				for (sName in oEmbeddedBinding) {
-					if (sName !== "formatter" && sName !== "parts") {
-						throw new Error("Unsupported property: " + sName);
-					}
-				}
-
-				aParts = aParts.concat(oEmbeddedBinding.parts);
-				iEnd = aParts.length;
-				if (oEmbeddedBinding.formatter) {
-					aFormatters.push(function () {
-						// old formatter needs to operate on its own slice of the overall arguments
-						return oEmbeddedBinding.formatter.apply(this,
-							Array.prototype.slice.call(arguments, iStart, iEnd));
-					});
-				} else {
-					aFormatters.push(function () {
-						// @see sap.ui.model.CompositeBinding#getExternalValue
-						// "default: multiple values are joined together as space separated list if
-						//  no formatter or type specified"
-						return Array.prototype.slice.call(arguments, iStart, iEnd).join(" ");
-					});
-				}
-			} else {
-				aParts.push(oEmbeddedBinding);
-				aFormatters.push(function () {
-					return arguments[iStart]; // just select corresponding argument
-				});
+			/*
+			 * Selects the overall argument corresponding to the current part.
+			 *
+			 * @returns {any}
+			 *   the argument at index <code>iStart</code>
+			 */
+			function select() {
+				return arguments[iStart];
 			}
+
+			// @see sap.ui.base.ManagedObject#extractBindingInfo
+			if (vEmbeddedBinding && typeof vEmbeddedBinding === "object") {
+				if (vEmbeddedBinding.parts) {
+					for (sName in vEmbeddedBinding) {
+						if (sName !== "formatter" && sName !== "parts") {
+							throw new Error("Unsupported property: " + sName);
+						}
+					}
+
+					aParts = aParts.concat(vEmbeddedBinding.parts);
+					iEnd = aParts.length;
+					if (vEmbeddedBinding.formatter) {
+						fnFormatter = function () {
+							// old formatter needs to operate on its own slice of overall arguments
+							return vEmbeddedBinding.formatter.apply(this,
+								Array.prototype.slice.call(arguments, iStart, iEnd));
+						};
+					} else if (iEnd - iStart > 1) {
+						fnFormatter = function () {
+							// @see sap.ui.model.CompositeBinding#getExternalValue
+							// "default: multiple values are joined together as space separated
+							//  list if no formatter or type specified"
+							return Array.prototype.slice.call(arguments, iStart, iEnd).join(" ");
+						};
+					} else {
+						fnFormatter = select;
+					}
+				} else if (vEmbeddedBinding.path) {
+					aParts.push(vEmbeddedBinding);
+					fnFormatter = select;
+				}
+			}
+			aFormatters.push(fnFormatter);
 		});
 
 		oBindingInfo.parts = aParts;

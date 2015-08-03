@@ -8,7 +8,7 @@ sap.ui.require([
 	"sap/ui/model/PropertyBinding"
 ], function(BindingParser, ManagedObject, JSONModel, AnnotationHelper, Basics, Expression,
 		ODataModel, PropertyBinding) {
-	/*global deepEqual, ok, QUnit, sinon, strictEqual */
+	/*global deepEqual, ok, QUnit, sinon, strictEqual, throws */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
@@ -492,6 +492,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		TestControl = ManagedObject.extend("TestControl", {
 			metadata: {
 				properties: {
+					any: "any",
 					text: "string"
 				}
 			}
@@ -1750,7 +1751,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.AnnotationHelper.createBindingInfo", {
+	module("sap.ui.model.odata.AnnotationHelper.createPropertySetting", {
 		afterEach : function afterEach() {
 			delete window.foo;
 		},
@@ -1766,11 +1767,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			// control instance for integration-like tests
 			this.oControl = oControl;
-			// candidate for a root formatter, joins its arguments and adds asterisks
+			// candidate for a root formatter
 			this.formatter = function formatter() {
-				strictEqual(this, oControl, "formatter: 'this' is kept");
-				return "*" + Array.prototype.join.call(arguments) + "*";
-			}
+				// turn arguments into a real array and return its JSON representation
+				var aArray = Array.prototype.slice.apply(arguments);
+				return JSON.stringify.call(JSON, aArray);
+			};
 			// candidate for a leaf formatter, also inside a composite binding
 			window.foo = {
 				Helper : {
@@ -1784,63 +1786,56 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		},
 
 		/**
-		 * Checks that createBindingInfo() works as expected for multiple bindings.
+		 * Checks that createPropertySetting() works as expected for multiple bindings.
 		 *
-		 * @param {string[]} aParts
-		 *   non-empty array of data binding expressions
-		 * @param {string[]} aExpectedText
-		 *   the expected value of each part
+		 * @param {any[]} aParts
+		 *   non-empty array of constants or data binding expressions
+		 * @param {any[]} aExpectedValues
+		 *   the expected values of each part
 		 */
-		checkMultiple : function checkMultiple(aParts, aExpectedTexts) {
+		checkMultiple : function checkMultiple(aParts, aExpectedValues) {
 			var oControl = this.oControl;
 
 			// test without and with root formatter
 			[undefined, this.formatter].forEach(function (fnRootFormatter) {
 				var sExpectedText = fnRootFormatter
-					? "*" + aExpectedTexts.join() + "*"
+					? JSON.stringify(aExpectedValues)
 					// @see sap.ui.model.CompositeBinding#getExternalValue
 					// "default: multiple values are joined together as space separated list if no
 					// formatter or type specified"
-					: aExpectedTexts.join(" ");
+					: aExpectedValues.join(" ");
 
-				oControl.bindProperty("text",
-					AnnotationHelper.createBindingInfo(aParts, fnRootFormatter));
+				oControl.applySettings({
+					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter)
+				});
+
 				strictEqual(oControl.getText(), sExpectedText);
 			});
 		},
 
 		/*
-		 * Checks that createBindingInfo() works as expected for a single binding.
+		 * Checks that createPropertySetting() works as expected for a single binding.
 		 *
 		 * @param {string} sBinding
-		 *   a data binding expression
+		 *   a constant or data binding expression
 		 * @param {string} sExpectedText
 		 *   the expected value of the test control's "text" property
 		 */
 		checkSingle : function checkSingle(sBinding, sExpectedText) {
-			var oControl = this.oControl;
+			var oControl = this.oControl,
+				vParts = [sBinding];
 
 			[undefined, this.formatter].forEach(function (fnRootFormatter) {
 				if (fnRootFormatter) {
-					sExpectedText = "*" + sExpectedText + "*";
+					sExpectedText = JSON.stringify([sExpectedText]);
 				}
 
-				// {string} vParts
-				oControl.bindProperty("text",
-					AnnotationHelper.createBindingInfo(sBinding, fnRootFormatter));
-				strictEqual(oControl.getText(), sExpectedText, "{string} vParts");
+				oControl.applySettings({
+					"text" : AnnotationHelper.createPropertySetting(vParts, fnRootFormatter)
+				});
 
-				// {object[]} vParts
-				oControl.bindProperty("text",
-					AnnotationHelper.createBindingInfo([
-						AnnotationHelper.createBindingInfo(sBinding)
-					], fnRootFormatter));
-				strictEqual(oControl.getText(), sExpectedText, "{object[]} vParts");
-
-				// {string[]} vParts
-				oControl.bindProperty("text",
-					AnnotationHelper.createBindingInfo([sBinding], fnRootFormatter));
-				strictEqual(oControl.getText(), sExpectedText, "{string[]} vParts");
+				strictEqual(oControl.getText(), sExpectedText, "sBinding: " + sBinding);
+				strictEqual(vParts[0], sBinding, "array argument unchanged");
 			});
 		}
 	});
@@ -1848,29 +1843,21 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	//*********************************************************************************************
 	QUnit.test("some basics", function () {
 		// see sap.ui.base.BindingParser: makeSimpleBindingInfo
-		deepEqual(AnnotationHelper.createBindingInfo("{/foo/bar}"), {
+		deepEqual(AnnotationHelper.createPropertySetting(["{/foo/bar}"]), {
 			path : "/foo/bar"
 		}, "{/foo/bar}");
-		deepEqual(AnnotationHelper.createBindingInfo("{meta>foo/bar}"), {
+		deepEqual(AnnotationHelper.createPropertySetting(["{meta>foo/bar}"]), {
 			model : "meta",
 			path : "foo/bar"
 		}, "{meta>foo/bar}");
 
 		// complex binding syntax
-		deepEqual(AnnotationHelper.createBindingInfo("{path:'foo/bar'}"), {
+		deepEqual(AnnotationHelper.createPropertySetting(["{path:'foo/bar'}"]), {
 			path : "foo/bar"
 		}, "{path:'foo/bar'}");
-		deepEqual(AnnotationHelper.createBindingInfo("{path:'meta>/foo/bar'}"), {
+		deepEqual(AnnotationHelper.createPropertySetting(["{path:'meta>/foo/bar'}"]), {
 			path : "meta>/foo/bar"
 		}, "{path:'meta>/foo/bar'}");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("copy 'textFragments' property only if present", function () {
-		var oBindingInfo = AnnotationHelper.createBindingInfo(
-				"{path : 'model>/bar', formatter : 'foo.Helper.help'}", this.formatter);
-
-		strictEqual("textFragments" in oBindingInfo.formatter, false);
 	});
 
 	//*********************************************************************************************
@@ -1881,9 +1868,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.test("complex binding syntax", function () {
-		this.checkSingle("{path : 'model>/bar', formatter : 'foo.Helper.help'}", "_world_");
+		this.checkSingle("{path : 'model>/foo', formatter : 'foo.Helper.help'}", "_hello_");
 		this.checkSingle("{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
 			"_world_");
+
+		// Note: formatters inside parts are not supported!
+//		this.checkSingle("{parts : [{path : '/foo', formatter : 'foo.Helper.help'}]}", "_hello_");
 	});
 
 	//*********************************************************************************************
@@ -1904,32 +1894,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.test("empty array of parts", function () {
-		throws(function () {
-			AnnotationHelper.createBindingInfo([]);
-		}, new Error("Missing parts"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Not a data binding expression", function () {
-		["", "foo", "{:= 'foo'}"].forEach(function (vPart) {
-			var oExpectedError = new Error("Not a data binding expression: " + vPart);
-
-			throws(function () {
-				AnnotationHelper.createBindingInfo(vPart);
-			}, oExpectedError, "" + vPart);
-			throws(function () {
-				AnnotationHelper.createBindingInfo([vPart]);
-			}, oExpectedError, "[" + vPart + "]");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Unsupported part", function () {
-		[undefined, null, false, true, 0, 1, NaN, []].forEach(function (vPart) {
-			throws(function () {
-				AnnotationHelper.createBindingInfo([vPart]);
-			}, new Error("Unsupported part: " + vPart), "Unsupported part: " + vPart);
-		});
+		strictEqual(AnnotationHelper.createPropertySetting([]), undefined);
+		strictEqual(AnnotationHelper.createPropertySetting([], this.formatter), "[]");
 	});
 
 	//*********************************************************************************************
@@ -1961,9 +1927,98 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			], ["hello>world", "world<hello"]);
 	});
 
-	//TODO constant strings
-	//TODO
-//		// @see applySettings: complex parser returns undefined if there is nothing to unescape
-//		return BindingParser.complexParser(sBinding, undefined, true) || sBinding;
-	//TODO check JsDoc of ManagedObject.prototype.bindProperty to learn more about binding infos
+	//*********************************************************************************************
+	QUnit.test("single constant string value", function () {
+		var that = this;
+
+		["", "hello, world!", "}{"].forEach(function (sConstant) {
+			// constant string
+			that.checkSingle(BindingParser.complexParser.escape(sConstant), sConstant);
+
+			// constant expression binding
+			that.checkSingle("{:= '" + sConstant + "'}", sConstant);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("single constant non-string value", function () {
+		var oControl = this.oControl,
+			that = this;
+
+		function strictEqualOrNaN(vActual, vExpected) {
+			if (vExpected !== vExpected) { // NaN
+				ok(vActual !== vActual);
+			} else {
+				strictEqual(vActual, vExpected);
+			}
+		}
+
+		[false, true, 0, 1, NaN, null, undefined, []].forEach(function (vConstant) {
+			var sBinding, vPropertySetting;
+
+			[undefined, that.formatter].forEach(function (fnRootFormatter) {
+				/*eslint no-self-compare: 0*/
+				var vExpectedValue = fnRootFormatter
+					? JSON.stringify([vConstant])
+					: vConstant,
+					vParts = [vConstant];
+
+				vPropertySetting
+					= AnnotationHelper.createPropertySetting(vParts, fnRootFormatter);
+
+				deepEqual(vParts, [vConstant], "array argument unchanged");
+				strictEqualOrNaN(vPropertySetting, vExpectedValue);
+
+				// Note: sap.ui.base.ManagedObject#validateProperty maps null to undefined
+				oControl.applySettings({"any" : vPropertySetting});
+				strictEqualOrNaN(oControl.getAny(),
+					oControl.validateProperty("any", vExpectedValue));
+
+				oControl.applySettings({"text" : vPropertySetting});
+				strictEqualOrNaN(oControl.getText(),
+					oControl.validateProperty("text", vExpectedValue));
+			});
+
+			// constant expression binding
+			sBinding = Array.isArray(vConstant)
+				? "{:= " + JSON.stringify(vConstant) + "}"
+				: "{:= " + vConstant + "}";
+
+			vPropertySetting = AnnotationHelper.createPropertySetting([sBinding]);
+
+			strictEqualOrNaN(vPropertySetting, "" + vConstant);
+			//TODO properly handle non-string constants in expression binding!
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("multiple constant values", function () {
+		var aParts = ["", "hello, world!", false, true, 0, 1, NaN, null, undefined, []],
+			aExpectedValues = aParts.slice();
+
+		aParts.push(BindingParser.complexParser.escape("}{"));
+		aExpectedValues.push("}{");
+
+		this.checkMultiple(aParts, aExpectedValues);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Unsupported part", function () {
+		[Function].forEach(function (vPart) {
+			throws(function () {
+				AnnotationHelper.createPropertySetting([vPart]);
+			}, new Error("Unsupported part: " + vPart), "Unsupported part: " + vPart);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Function name(s) not found", function () {
+		var sBinding = "{path:'/foo',formatter:'foo'} {path:'/bar',formatter:'bar'}";
+
+		throws(function () {
+			AnnotationHelper.createPropertySetting([sBinding]);
+		}, new Error("Function name(s) foo, bar not found"), "Function name(s) not found");
+	});
+
+	//TODO implement (and document?) "ui5object" as marker property for constant objects?
 });
