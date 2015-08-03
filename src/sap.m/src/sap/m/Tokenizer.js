@@ -419,7 +419,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			//to check how many tokens are selected before Ctrl + A in MultiInput
 			this._iSelectedToken = this.getSelectedTokens().length;
 			
-			if (!this.isAllTokenSelected()) {
+			if (this.getTokens().length > 0) {
 				this.focus();
 				this.selectAllTokens(true);
 				oEvent.preventDefault();
