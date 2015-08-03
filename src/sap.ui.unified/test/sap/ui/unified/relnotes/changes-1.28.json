@@ -323,5 +323,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "9c707cf5ea61b7058b15378d1e707e6db9da4c00",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Wrong date selected if daylight saving",
+        "references": []
+      },
+      {
+        "id": "55b6d1f269e30205d3589019886e5aab3e5450a2",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File is lost when pressing key fixed",
+        "references": []
+      },
+      {
+        "id": "5689d3d9ae88d05a055f2b7f339cac6e583abfe2",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Keyboard navigation in toolbar fixed",
+        "references": []
+      }
+    ]
   }
 }

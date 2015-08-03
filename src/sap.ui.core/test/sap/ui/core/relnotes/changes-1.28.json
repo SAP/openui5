@@ -2169,5 +2169,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "7ebca11f1d5c729927e6c615cfec05564d8fafa3",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocalBusyIndicator: Remove of \"tabindex\" Fixed",
+        "references": []
+      },
+      {
+        "id": "c2db52226a879eb1e7a5ac1b3825e94dd863b7f0",
+        "author": "Gal Roter \u003cgal.roter@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: Handle \u0027\u0026 \u0027 in URL parameters\u0027 values",
+        "references": []
+      },
+      {
+        "id": "8544488410a005b143435cded2a3e0621dd5a4e2",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Resize Directly After Open",
+        "references": []
+      },
+      {
+        "id": "f81faeb31efb53e6cb1e5d54c72f8dd286ae2c19",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: De-Registration of Child Popups Fixed",
+        "references": []
+      },
+      {
+        "id": "b316f58ebcd51b34edc2ae7ea4f33e25fbd147d6",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Device: Webview in Android 5 tablet is wrongly detected as a phone",
+        "references": []
+      }
+    ]
   }
 }
